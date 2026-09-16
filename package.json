@@ -50,7 +50,8 @@
     "module:add-slot": "npx tsx scripts/module-dev.ts add-slot",
     "module:add-cron": "npx tsx scripts/module-dev.ts add-cron",
     "module:add-search": "npx tsx scripts/module-dev.ts add-search",
-    "module:list": "npx tsx scripts/module-dev.ts list-modules"
+    "module:list": "npx tsx scripts/module-dev.ts list-modules",
+    "report:permissions": "npx tsx scripts/permission-report.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
