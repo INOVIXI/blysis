@@ -1,5 +1,6 @@
 import { ModuleEmailApiKeyEnvVars, ModuleEmailApiKeySettings } from "@/core/generated/module-data";
 import { readSettingValues } from "@/core/lib/setting-values";
+import { resolveAppUrl } from "@/core/lib/app-url";
 
 /**
  * Where the mailer gets its transport and its return address.
@@ -50,6 +51,23 @@ function firstString(...candidates: unknown[]): string | null {
  */
 const OWN_KEYS = ["email_from", "email_from_name"] as const;
 
+/**
+ * The return address when nobody has set one.
+ *
+ * It used to be `noreply@` at the product's own domain, which is a host this
+ * installation does not control: mail sent from it fails SPF at the receiving
+ * end and lands in a spam folder, and a reply goes to somebody else. Built
+ * from this installation's own address instead, so the worst case is a
+ * mailbox that does not exist on a domain that is the sender's.
+ */
+function defaultFromAddress(): string {
+    try {
+        return `noreply@${new URL(resolveAppUrl()).hostname}`;
+    } catch {
+        return "noreply@localhost";
+    }
+}
+
 export async function getEmailConfig(): Promise<EmailConfig> {
     const now = Date.now();
     if (cache && cache.expiresAt > now) return cache.value;
@@ -68,7 +86,7 @@ export async function getEmailConfig(): Promise<EmailConfig> {
             ...ModuleEmailApiKeyEnvVars.map((name) => process.env[name]),
         ),
         fromEmail:
-            firstString(stored.email_from, process.env.EMAIL_FROM) ?? "noreply@blysis.com",
+            firstString(stored.email_from, process.env.EMAIL_FROM) ?? defaultFromAddress(),
         fromName: firstString(stored.email_from_name),
     };
     cache = { value, expiresAt: now + CACHE_MS };

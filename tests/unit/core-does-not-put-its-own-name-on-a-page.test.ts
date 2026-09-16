@@ -87,6 +87,26 @@ describe("core", () => {
         expect(offenders, "read it from `site_name`, or from the catalogue's appName").toEqual([]);
     });
 
+    it("writes the product's own domain into no string a reader can reach", () => {
+        // A name on a screen is awkward; an address is worse, because
+        // something acts on it. The return address on outbound mail fell back
+        // to noreply@ at the product's domain, so every installation that had
+        // not set one sent its mail claiming to be a host it does not own -
+        // which fails SPF at the receiving end and lands in a spam folder.
+        const offenders: string[] = [];
+        for (const file of FILES) {
+            const code = stripComments(fs.readFileSync(file, "utf8"));
+            for (const literal of literals(code)) {
+                // A top level domain, not any dotted name: `blysis.shared-request`
+                // is a symbol key and `blysis.admin.updateBanner` a storage
+                // key, both internal, neither an address anything resolves.
+                if (!/\bblysis\.(com|net|org|io|dev|app|co)\b/i.test(literal)) continue;
+                offenders.push(`${rel(file)}: ${literal.slice(0, 60)}`);
+            }
+        }
+        expect(offenders, "build it from this installation's own host").toEqual([]);
+    });
+
     it("gives every exception a reason, and keeps none that has gone", () => {
         for (const [file, reason] of Object.entries(ARGUED_FOR)) {
             expect(fs.existsSync(path.join(ROOT, file)), `${file} is argued for but missing`).toBe(true);

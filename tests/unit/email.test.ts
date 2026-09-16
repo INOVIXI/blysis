@@ -497,10 +497,18 @@ describe("From header", () => {
         expect(lastSend().from).not.toMatch(/[\r\n]/);
     });
 
-    it("falls back to the default sender", async () => {
-        const { sendEmail } = await loadWithProvider();
+    it("falls back to this installation's own host, not the product's", async () => {
+        // It used to fall back to the product's own domain, which is a host
+        // an installation does not control: mail sent from it fails SPF at
+        // the receiving end and a reply goes to somebody else.
+        const { sendEmail } = await loadWithProvider({
+            SITE_NAME: "Acme Games",
+            AUTH_URL: "https://acme.test",
+        });
+
         await sendEmail({ to: "user@example.com", subject: "Hi", html: "x" });
-        expect(lastSend().from).toBe("Blysis <noreply@blysis.com>");
+
+        expect(lastSend().from).toBe("Acme Games <noreply@acme.test>");
     });
 });
 
