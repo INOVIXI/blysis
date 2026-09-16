@@ -109,6 +109,9 @@ backups/
 # module ZIP and are replayed by scripts/apply-migrations.ts.
 !module-sources/*/migrations/*.sql
 !module-template/migrations/*.sql
+# Core's own are the same kind of thing: the only way a core table changes
+# shape on a database that already has data, replayed by the same runner.
+!prisma/migrations/*.sql
 .env.production
 .env.staging
 logs/
