@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { pageSource } from "./module-page-source";
 
 /**
  * A date column that decides when something ends has to meet a clock.
@@ -114,15 +115,18 @@ describe("punishments derives its status rather than trusting a column", () => {
     });
 
     it("does not decide the badge from the stored column", () => {
+        const moduleRoot = path.join(MODULES, "punishments");
         for (const page of ["pages/admin/page.tsx", "pages/public/page.tsx"]) {
-            const rendered = fs.readFileSync(path.join(MODULES, "punishments", page), "utf8");
-            expect(rendered).toContain("punishmentStatus(");
+            // The public list moved into `components/`, so read the page with
+            // the screen it renders rather than the page alone.
+            expect(pageSource(path.join(moduleRoot, page), moduleRoot)).toContain("punishmentStatus(");
         }
     });
 
     it("answers with the derived status on the API", () => {
-        const route = fs.readFileSync(path.join(MODULES, "punishments", "api", "route.ts"), "utf8");
-        expect(route).toContain("punishmentStatus(p");
+        const moduleRoot = path.join(MODULES, "punishments");
+        const route = pageSource(path.join(moduleRoot, "api", "route.ts"), moduleRoot);
+        expect(route).toContain("punishmentStatus(");
         expect(route).toContain("statusWhere(status");
     });
 

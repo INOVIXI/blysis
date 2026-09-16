@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * A custom page. `content` is rendered as HTML after `sanitizeHtml`, and was
+ * A custom page. `content` is Markdown, sanitised where it is rendered, and was
  * previously accepted at any length the body cap allowed; `order` reached an
  * `Int` column untyped, so a string or a fraction was a 500 rather than a 400.
  */

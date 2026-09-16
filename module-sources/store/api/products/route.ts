@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { slugify } from "@/core/sdk";
-import { isAdmin, log, moduleSettings, pageParams, prisma, readJsonBody, sanitizeHtml } from "@/core/sdk/server";
+import { isAdmin, log, moduleSettings, pageParams, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../lib/validations";
 import { availabilityData } from "../../lib/availability-input";
@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
             data: {
                 name: data.name,
                 slug,
-                description: data.description !== undefined ? sanitizeHtml(data.description) : data.description,
+                description: data.description !== undefined ? data.description : data.description,
                 shortDesc: data.shortDesc,
                 price: data.price,
                 comparePrice: data.comparePrice,

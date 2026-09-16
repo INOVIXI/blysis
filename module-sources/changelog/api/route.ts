@@ -1,31 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { entrySlug } from "../lib/entry-page";
+import { readChangelogEntries } from "../lib/read-entries";
 
+// The read and what counts as published live in lib/read-entries.ts, because
+// the page renders the timeline on the server now and the two must not
+// disagree about which entries are out.
 export async function GET() {
-    const now = new Date();
-    // The long form is deliberately not in this response. It is a page's worth
-    // of markup per entry and the timeline renders none of it; what the list
-    // needs to know is whether there is a page to link to.
-    const rows = await prisma.changelogEntry.findMany({
-        where: {
-            isActive: true,
-            OR: [{ publishAt: null }, { publishAt: { lte: now } }],
-        },
-        orderBy: { createdAt: "desc" },
-        select: {
-            id: true, number: true, slug: true, version: true, title: true,
-            content: true, type: true, color: true, createdAt: true,
-            coverImage: true, details: true,
-        },
-    });
-    const entries = rows.map(({ details, ...entry }) => ({
-        ...entry,
-        hasDetails: typeof details === "string" && details.trim() !== "",
-    }));
-    return NextResponse.json({ entries });
+    return NextResponse.json({ entries: await readChangelogEntries() });
 }
 
 export async function POST(request: NextRequest) {
@@ -57,11 +41,11 @@ export async function POST(request: NextRequest) {
             version,
             title,
             slug: entrySlug(title),
-            content: sanitizeHtml(content),
+            content: content,
             // Sanitised like any other HTML an admin writes: it is rendered to
             // every visitor, and an admin account is a trust boundary, not a
             // guarantee.
-            details: details ? sanitizeHtml(details) : null,
+            details: details ? details : null,
             coverImage: coverImage || null,
             type: type || "update",
             color: color || "#3b82f6",

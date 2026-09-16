@@ -159,21 +159,34 @@ describe("the pages this was found on", () => {
     const byFile = (file: string) =>
         effectsIn(file, fs.readFileSync(path.join(ROOT, file), "utf8")).filter(races);
 
-    it("cancels on the store index, where the category tabs raced", () => {
-        const effects = byFile("module-sources/store/pages/public/page.tsx");
-        expect(effects.length).toBeGreaterThan(0);
-        expect(effects.every(cancels)).toBe(true);
-        expect(effects.some((e) => e.deps.includes("activeCategory"))).toBe(true);
+    it("has no race left to lose on the store index", () => {
+        // The category tabs were client state, each change firing its own
+        // fetch, so a slow answer for the section a shopper had just left
+        // could land on the one they were looking at. A section is an address
+        // now and the server reads the shelf, so there is no request in flight
+        // to arrive late.
+        const source = fs.readFileSync(path.join(ROOT, "module-sources/store/pages/public/page.tsx"), "utf8");
+        expect(source).not.toContain("useEffect");
+        expect(source).not.toContain("fetch(");
+        expect(byFile("module-sources/store/pages/public/page.tsx")).toEqual([]);
     });
 
-    it("cancels on the forum index, where the category, page and search raced", () => {
-        const effects = byFile("module-sources/forum/pages/public/page.tsx");
-        expect(effects.some((e) => e.deps.includes("searchQuery"))).toBe(true);
-        expect(effects.every(cancels)).toBe(true);
+    it("has no race left to lose on the forum index", () => {
+        // The category, the page and the search used to be client state, each
+        // firing its own fetch, and a slow answer for the section a reader had
+        // just left would land on top of the one they were looking at. They
+        // are addresses now: the server reads the board, so there is no
+        // request in flight to arrive late.
+        const source = fs.readFileSync(path.join(ROOT, "module-sources/forum/pages/public/page.tsx"), "utf8");
+        expect(source).not.toContain("useEffect");
+        expect(source).not.toContain("fetch(");
+        expect(byFile("module-sources/forum/pages/public/page.tsx")).toEqual([]);
     });
 
     it("cancels on the leaderboard, where the tabs raced", () => {
-        const effects = byFile("module-sources/leaderboard/pages/public/page.tsx");
+        // The page reads the first board on the server now and renders the
+        // tabs; the fetch that races is the tab switch, which is in them.
+        const effects = byFile("module-sources/leaderboard/components/BoardTabs.tsx");
         // The tab is `activeId` since the boards became whatever the
         // installed modules offer; the race it guards is the same one.
         expect(effects.some((e) => e.deps.includes("activeId"))).toBe(true);

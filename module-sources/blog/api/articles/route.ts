@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
-import { pageParams, enumParam, isAdmin, prisma, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { pageParams, enumParam, isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { ARTICLE_STATUSES, blogArticleSchema } from "../../lib/validations";
 
@@ -121,10 +121,10 @@ export async function POST(request: NextRequest) {
 
     const article = await prisma.blogArticle.create({
         data: {
-            title: sanitizeHtml(title),
+            title: title,
             slug,
             excerpt,
-            content: sanitizeHtml(content),
+            content: content,
             coverImage,
             status: effectiveStatus,
             publishedAt: effectivePublishedAt,

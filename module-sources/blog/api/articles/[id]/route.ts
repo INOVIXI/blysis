@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
-import { isAdmin, prisma, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { blogArticleSchema } from "../../../lib/validations";
 
@@ -142,7 +142,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             title,
             slug,
             excerpt,
-            content: content !== undefined ? sanitizeHtml(content) : undefined,
+            content: content !== undefined ? content : undefined,
             coverImage,
             status: effectiveStatus,
             publishedAt: effectivePublishedAt,

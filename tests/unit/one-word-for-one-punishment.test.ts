@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { pageSource } from "./module-page-source";
 import {
     PUNISHMENT_TYPES,
     canonicalType,
@@ -27,6 +28,11 @@ const MODULE = path.resolve(__dirname, "../../module-sources/punishments");
 
 function read(...parts: string[]): string {
     return fs.readFileSync(path.join(MODULE, ...parts), "utf8");
+}
+
+/** A page plus the screen it renders: the public list moved to `components/`. */
+function screen(...parts: string[]): string {
+    return pageSource(path.join(MODULE, ...parts), MODULE);
 }
 
 const MANIFEST = JSON.parse(read("module.json")) as {
@@ -69,7 +75,7 @@ describe("one vocabulary of punishment types", () => {
 
 describe("both screens read the one list", () => {
     const admin = read("pages", "admin", "page.tsx");
-    const publicPage = read("pages", "public", "page.tsx");
+    const publicPage = screen("pages", "public", "page.tsx");
     const api = read("api", "route.ts");
 
     it("offers the shared list on the admin form", () => {
@@ -85,9 +91,20 @@ describe("both screens read the one list", () => {
         expect(publicPage).toContain("canonicalType(");
     });
 
-    it("stores and filters through the shared fold", () => {
+    it("stores through the shared fold", () => {
         expect(api).toContain("canonicalType(type)");
-        expect(api).toContain("spellingsOf(canonical)");
+    });
+
+    /**
+     * The filter lives in the read both the page and the endpoint call, so a
+     * type asked for in an address and a type asked for over HTTP cannot mean
+     * two different things.
+     */
+    it("filters through the shared fold, once, for both callers", () => {
+        const shared = read("lib", "read-punishments.ts");
+        expect(shared).toContain("spellingsOf(canonical)");
+        expect(api).toContain("readPunishments(");
+        expect(publicPage).toContain("readPunishments(");
     });
 
     it("leaves no second list of type names behind", () => {

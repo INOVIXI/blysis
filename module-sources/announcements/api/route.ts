@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, logActivity, prisma, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { announcementCreateSchema } from "../lib/validations";
 
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     const announcement = await prisma.announcement.create({
         data: {
             title,
-            content: sanitizeHtml(content),
+            content: content,
             type: type || "info",
             isActive: isActive ?? true,
             dismissible: dismissible ?? true,

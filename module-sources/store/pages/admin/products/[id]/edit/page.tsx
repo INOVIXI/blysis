@@ -18,7 +18,7 @@ import { useState, useEffect, use } from "react";
 import Image from "next/image";
 import { useRouter } from "@/core/sdk/navigation";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, FileUpload, Input, Label, LoadFailed, NativeSelect, RichTextEditor, useConfirm, useSiteSettings } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, UrlOrFile, Input, Label, LoadFailed, NativeSelect, RichTextEditor, useConfirm, useSiteSettings } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, Trash2, X, Plus } from "lucide-react";
 import { writeError } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -224,24 +224,41 @@ export default function EditProductPage(props: PageProps) {
     return (
         <>
             <div className="flex items-center justify-between mb-8">
+                {/* The save sits beside the delete in the header, where every
+                    other admin screen keeps its primary action. It used to be
+                    a full-width button at the bottom of a three-column form,
+                    so on a long product the only way to save was to scroll
+                    past every card first. `form="product-form"` is what lets
+                    it submit from outside the form it saves. */}
                 <AdminPageHeader
                     title={t("adm_editProduct")}
                     description={form.name}
                     backHref="/admin/store/products"
                     backLabel={commonT("back")}
+                    actions={
+                        <>
+                            <Button
+                                variant="ghost"
+                                className="text-destructive hover:text-destructive"
+                                onClick={handleDelete}
+                                disabled={deleting}
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                {deleting ? t("adm_deleting") : t("adm_delete")}
+                            </Button>
+                            <Button type="submit" form="product-form" disabled={saving}>
+                                {saving ? (
+                                    <><Loader2 className="w-4 h-4 animate-spin" /> {t("adm_saving")}</>
+                                ) : (
+                                    t("adm_saveChanges")
+                                )}
+                            </Button>
+                        </>
+                    }
                 />
-                <Button
-                    variant="ghost"
-                    className="text-destructive hover:text-destructive"
-                    onClick={handleDelete}
-                    disabled={deleting}
-                >
-                    <Trash2 className="w-4 h-4" />
-                    {deleting ? t("adm_deleting") : t("adm_delete")}
-                </Button>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form id="product-form" onSubmit={handleSubmit}>
                 <div className="grid lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-6">
                         <Card>
@@ -267,11 +284,11 @@ export default function EditProductPage(props: PageProps) {
                                     />
                                 </div>
                                 <div>
-                                    <FileUpload
+                                    <UrlOrFile
                                         id="image"
                                         label={t("adm_mainImageUrl")}
-                                        value={form.image || null}
-                                        onChange={(v) => setForm({ ...form, image: v || "" })}
+                                        value={form.image || ""}
+                                        onChange={(v) => setForm({ ...form, image: v })}
                                         accept="image/*"
                                     />
                                 </div>
@@ -294,8 +311,8 @@ export default function EditProductPage(props: PageProps) {
                                             ))}
                                         </div>
                                     )}
-                                    <FileUpload
-                                        value={null}
+                                    <UrlOrFile
+                                        value=""
                                         onChange={(v) => {
                                             if (v) setForm({ ...form, images: [...form.images, v] });
                                         }}
@@ -467,13 +484,7 @@ export default function EditProductPage(props: PageProps) {
                             </div>
                         )}
 
-                        <Button type="submit" className="w-full" disabled={saving}>
-                            {saving ? (
-                                <><Loader2 className="w-4 h-4 animate-spin" /> {t("adm_saving")}</>
-                            ) : (
-                                t("adm_saveChanges")
-                            )}
-                        </Button>
+
                     </div>
                 </div>
             </form>

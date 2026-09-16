@@ -1,53 +1,28 @@
-"use client";
-
-import { useState, useEffect } from "react";
+/**
+ * The team, written by the server.
+ *
+ * The page fetched its members after it had loaded, so the HTML the server
+ * sent carried no name and no role: measured, 59 characters of text inside
+ * `<main>`. Nothing on this page needs a browser.
+ */
 import Image from "next/image";
-import { useTranslations } from "next-intl";
-import { Card, CardContent, LoadFailed } from "@/core/sdk/ui";
+import { getTranslations } from "next-intl/server";
 import { PageFrame } from "@/core/sdk/layout";
-import { Loader2 } from "lucide-react";
+import { Card, CardContent } from "@/core/sdk/ui";
+import { readStaff } from "../../lib/read-staff";
 
-interface StaffMember {
-    id: string;
-    name: string;
-    role: string;
-    avatar: string | null;
-    user: { username: string; avatar: string | null } | null;
-}
-
-export default function StaffPage() {
-    const t = useTranslations('staff');
-    const [members, setMembers] = useState<StaffMember[]>([]);
-    const [failed, setFailed] = useState(false);
-    const [reloadKey, setReloadKey] = useState(0);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        let cancelled = false;
-        fetch("/api/v1/staff")
-            .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
-            .then((d) => { if (cancelled) return; setMembers(d.members || []); setFailed(false); setLoading(false); })
-            .catch(() => { if (cancelled) return; setFailed(true); setLoading(false); });
-        return () => { cancelled = true; };
-    }, [reloadKey]);
+export default async function StaffPage() {
+    const t = await getTranslations("staff");
+    const members = await readStaff();
 
     return (
-        <PageFrame
-            title={t('title')}
-            description={t('subtitle')}
-        >
-            {loading ? (
-                <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
-            ) : failed ? (
-                <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
-            ) : members.length === 0 ? (
-                <Card><CardContent className="py-12 text-center text-muted-foreground">{t('empty')}</CardContent></Card>
+        <PageFrame title={t("title")} description={t("subtitle")}>
+            {members.length === 0 ? (
+                <Card><CardContent className="py-12 text-center text-muted-foreground">{t("empty")}</CardContent></Card>
             ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                     {members.map((member) => {
                         const avatarUrl = member.avatar || member.user?.avatar;
-                        const initial = member.name[0].toUpperCase();
-
                         return (
                             <Card key={member.id} className="text-center hover:shadow-md transition-shadow">
                                 <CardContent className="p-6">
@@ -55,7 +30,7 @@ export default function StaffPage() {
                                         {avatarUrl ? (
                                             <Image src={avatarUrl} alt={member.name} width={80} height={80} className="w-full h-full object-cover" />
                                         ) : (
-                                            initial
+                                            member.name[0].toUpperCase()
                                         )}
                                     </div>
                                     <h2 className="font-bold text-foreground">{member.name}</h2>
@@ -66,7 +41,6 @@ export default function StaffPage() {
                     })}
                 </div>
             )}
-
         </PageFrame>
     );
 }

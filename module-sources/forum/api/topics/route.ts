@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isRestrictedFrom } from "@/core/sdk/server";
 import { visibleCategoryIds } from "../../lib/visible-categories";
 import { generateSlug } from "@/core/sdk";
-import { pageParams, isAdmin, moduleSettings, prisma, rateLimitForRole, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { pageParams, isAdmin, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { forumTopicSchema } from "../../lib/validations";
 import { denyGuestView } from "../../lib/guest-view";
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
         data: {
             title,
             slug,
-            content: sanitizeHtml(content),
+            content: content,
             categoryId,
             authorId: session.user.id,
             moderationState,

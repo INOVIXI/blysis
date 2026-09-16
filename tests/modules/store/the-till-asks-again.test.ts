@@ -22,7 +22,13 @@ const read = (file: string) => fs.readFileSync(path.join(ROOT, file), "utf8");
 const CHECKOUT = read("module-sources/store/api/checkout/route.ts");
 const CART = read("module-sources/store/api/cart/route.ts");
 const LIST = read("module-sources/store/api/products/route.ts");
-const DETAIL = read("module-sources/store/api/products/[id]/route.ts");
+/**
+ * The product read, which both the page and the endpoint go through. The rules
+ * used to be inside the endpoint; the page renders the product on the server
+ * now, and two copies of "hide it while it is shut" would be one copy too
+ * many.
+ */
+const DETAIL = read("module-sources/store/lib/read-product.ts");
 
 describe("the checkout", () => {
     it("asks whether each product is for sale, for this person, now", () => {
@@ -56,7 +62,13 @@ describe("the screens in front of it", () => {
         // The detail answer for one of those is the same as for a product
         // that does not exist, so the two cannot be told apart.
         expect(DETAIL).toContain('outsideWindow === "hidden"');
-        expect(DETAIL).toMatch(/Product not found/);
+        // The read says "nothing here" rather than answering itself, and both
+        // callers turn that into not found - the endpoint with a 404, the page
+        // with `notFound()`. Either way indistinguishable from a product that
+        // was never there.
+        expect(DETAIL).toMatch(/hidden[\s\S]{0,120}return null/);
+        expect(read("module-sources/store/api/products/[id]/route.ts")).toMatch(/!product[\s\S]{0,120}Product not found/);
+        expect(read("module-sources/store/pages/public/product/[...params]/page.tsx")).toMatch(/!read[\s\S]{0,40}notFound\(\)/);
     });
 
     it("carry the state and the sale to the page that draws them", () => {

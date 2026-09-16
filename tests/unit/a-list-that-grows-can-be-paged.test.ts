@@ -18,6 +18,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { pageSource } from "./module-page-source";
 
 const ROOT = process.cwd();
 
@@ -81,7 +82,10 @@ describe("the public lists", () => {
         const unpaged: string[] = [];
         for (const page of pages) {
             if (BOUNDED[page]) continue;
-            const source = fs.readFileSync(path.join(ROOT, page), "utf8");
+            // A page that reads on the server hands the paging to the screen
+            // it renders, so read the page with what it imports.
+            const moduleRoot = path.join(ROOT, page.split("/").slice(0, 2).join("/"));
+            const source = pageSource(path.join(ROOT, page), moduleRoot);
             const pages_ = /<Pagination\b/.test(source) || /usePagedRows\(/.test(source)
                 // The blog and the forum page through the URL and the API
                 // rather than through the shared component.

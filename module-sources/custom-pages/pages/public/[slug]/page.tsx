@@ -2,12 +2,30 @@
 
 import { useState, useEffect, use } from "react";
 import { useTranslations } from "next-intl";
-import { Render, type Data } from "@measured/puck";
+import dynamic from "next/dynamic";
+import type { Data } from "@measured/puck";
 import "@measured/puck/puck.css";
 import { Card, CardContent, RichContent } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
 import { useMergedBlockConfig } from "@/core/sdk/blocks";
 import { Loader2 } from "lucide-react";
+
+/**
+ * The page builder's renderer, fetched when a built page is actually shown.
+ *
+ * Imported plainly, it travelled with every module page on the site: core
+ * renders module pages through one catch-all route, Next collects a route's
+ * client references by walking its whole module graph, and this file is in
+ * that graph. Measured on a production build, 87.5 KB gzipped on `/store`,
+ * `/forum`, `/leaderboard` and every other module page, for a library only
+ * `/page/<slug>` ever calls.
+ *
+ * `ssr: false` costs nothing here: this page already fetches its content in
+ * the browser, so the server has never rendered any of it.
+ */
+const Render = dynamic(() => import("@measured/puck").then((mod) => mod.Render), {
+    ssr: false,
+});
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -104,7 +122,7 @@ function PageContent({ page }: { page: CustomPage }) {
             <Card>
                 <CardContent className="p-8">
                     <RichContent
-                        html={page.content}
+                        markdown={page.content}
                     />
                 </CardContent>
             </Card>

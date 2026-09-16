@@ -78,7 +78,9 @@ const PRODUCT = {
     category: null,
 };
 
-const ProductDetailPage = (await import("@/modules/store/pages/public/product/[...params]/page")).default;
+// The page is a server component now - it reads the product and hands it over.
+// The screen is what draws it, so the screen is what this asks.
+const { ProductView } = await import("@/modules/store/components/ProductView");
 
 beforeEach(() => {
     vi.stubGlobal("fetch", vi.fn(async (url: string) =>
@@ -93,7 +95,7 @@ describe("a product filed under nothing", () => {
     it("still has a page a shopper can read", async () => {
         render(
             <NextIntlClientProvider locale="en" messages={MESSAGES}>
-                <ProductDetailPage />
+                <ProductView product={PRODUCT} />
             </NextIntlClientProvider>,
         );
 

@@ -79,11 +79,41 @@ function generateRegistry() {
     // component that is part of a page already rendering. The page registry
     // next door still uses it, because a module page is a route of its own.
     const imports = `/* eslint-disable */\nimport type { ComponentType } from 'react';\n\n`;
-    const pageImports = `/* eslint-disable */\nimport dynamic from 'next/dynamic';\nimport type { ComponentType } from 'react';\nimport { PageLoader } from '@/core/components/ui/page-loader';\n\n`;
+    /*
+     * A module page is imported for real, not through `next/dynamic`.
+     *
+     * `dynamic(..., { loading: () => <PageLoader /> })` split nothing: both
+     * mount points are server components, and Next collects a route's client
+     * references by walking its graph, so all of them were in the entry chunk
+     * with `async: false` either way. What it did do was put a Suspense
+     * boundary around every module page - the server streamed a full screen
+     * spinner into the first pass and the client, holding the already-loaded
+     * module, rendered the page there instead. Every module page on the site
+     * threw "Hydration failed because the server rendered HTML didn't match
+     * the client" and React threw its tree away and rebuilt it. Core's own
+     * pages were clean, which is what pointed here.
+     */
+    const publicImportLines: string[] = [];
+    const adminImportLines: string[] = [];
+    let pageSymbol = 0;
 
+    // Two registries, not one, and in two files rather than two exports.
+    //
+    // Both surfaces used to live in one map that both catch-alls imported, and
+    // Next collects a route's client references by walking its module graph:
+    // 110 admin page components were therefore first-loaded by every public
+    // module page, and 38 public ones by every admin screen. Measured on a
+    // production build, that one chunk was 520,464 raw bytes on a page where a
+    // visitor reads a blog article, and it held the store's admin product
+    // editor and the SEO admin screens.
+    //
+    // Two exports in one file would not have helped: the file is evaluated as
+    // a whole, so the `dynamic()` calls are in the graph whichever export is
+    // read.
     let mapping = `export const ModuleRegistry: Record<string, ComponentType<any>> = {\n`;
+    let adminMapping = `export const ModuleAdminRegistry: Record<string, ComponentType<any>> = {\n`;
     let apiMapping = `export const ModuleApiRegistry: Record<string, () => Promise<Record<string, unknown>>> = {\n`;
-    const routes: { path: string; key: string; module: string; isAdmin?: boolean; noindex?: boolean; titleFromPath?: boolean; titleKey?: string; userProfile?: boolean }[] = [];
+    const routes: { path: string; key: string; module: string; isAdmin?: boolean; noindex?: boolean; titleFromPath?: boolean; titleKey?: string; descriptionKey?: string; ogType?: "website" | "article" | "profile"; userProfile?: boolean }[] = [];
     const apiRoutes: { path: string; key: string; module: string; handler: string; method?: string; methods?: string[]; providerCallback?: boolean; rateLimit?: { maxRequests: number; windowMs: number } }[] = [];
     const routeResolvers: { key: string; module: string; handler: string }[] = [];
 
@@ -91,8 +121,10 @@ function generateRegistry() {
         for (const route of manifest.routes ?? []) {
             const componentKey = `${moduleName}:${route.component}`;
             const importPath = `@/modules/${moduleName}/${route.component.replace(/\.tsx?$/, '')}`;
-            mapping += `  '${componentKey}': dynamic(() => import('${importPath}').then((mod: { default?: ComponentType<any> }) => mod.default ?? (mod as unknown as ComponentType<any>)), { loading: () => <PageLoader /> }),\n`;
-            routes.push({ path: route.path, key: componentKey, module: moduleName, ...(route.noindex ? { noindex: true } : {}), ...(route.titleFromPath ? { titleFromPath: true } : {}), ...(route.titleKey ? { titleKey: route.titleKey } : {}), ...(route.userProfile ? { userProfile: true } : {}) });
+            const symbol = `Page${pageSymbol++}`;
+            publicImportLines.push(`import ${symbol} from '${importPath}';`);
+            mapping += `  '${componentKey}': ${symbol},\n`;
+            routes.push({ path: route.path, key: componentKey, module: moduleName, ...(route.noindex ? { noindex: true } : {}), ...(route.titleFromPath ? { titleFromPath: true } : {}), ...(route.titleKey ? { titleKey: route.titleKey } : {}), ...(route.descriptionKey ? { descriptionKey: route.descriptionKey } : {}), ...(route.ogType ? { ogType: route.ogType } : {}), ...(route.userProfile ? { userProfile: true } : {}) });
             if (route.resolver) routeResolvers.push({ key: componentKey, module: moduleName, handler: route.resolver });
         }
 
@@ -100,7 +132,9 @@ function generateRegistry() {
             const componentKey = `${moduleName}:${route.component}`;
             const importPath = `@/modules/${moduleName}/${route.component.replace(/\.tsx?$/, '')}`;
             const fullPath = `/admin${route.path.startsWith('/') ? route.path : '/' + route.path}`;
-            mapping += `  '${componentKey}': dynamic(() => import('${importPath}').then((mod: { default?: ComponentType<any> }) => mod.default ?? (mod as unknown as ComponentType<any>)), { loading: () => <PageLoader /> }),\n`;
+            const symbol = `Page${pageSymbol++}`;
+            adminImportLines.push(`import ${symbol} from '${importPath}';`);
+            adminMapping += `  '${componentKey}': ${symbol},\n`;
             routes.push({ path: fullPath, key: componentKey, module: moduleName, isAdmin: true });
         }
 
@@ -134,9 +168,10 @@ function generateRegistry() {
     }
 
     mapping += `};\n`;
+    adminMapping += `};\n`;
     apiMapping += `};\n\n`;
     // Route tables are plain data - no imports, safe anywhere.
-    let routeData = `export const ModuleRoutes: { path: string; key: string; module: string; isAdmin?: boolean; noindex?: boolean; titleFromPath?: boolean; titleKey?: string; userProfile?: boolean }[] = ${JSON.stringify(routes, null, 2)};\n\n`;
+    let routeData = `export const ModuleRoutes: { path: string; key: string; module: string; isAdmin?: boolean; noindex?: boolean; titleFromPath?: boolean; titleKey?: string; descriptionKey?: string; ogType?: "website" | "article" | "profile"; userProfile?: boolean }[] = ${JSON.stringify(routes, null, 2)};\n\n`;
     routeData += `export const ModuleApiRoutes: { path: string; key: string; module: string; handler: string; method?: string; methods?: string[]; providerCallback?: boolean; rateLimit?: { maxRequests: number; windowMs: number } }[] = ${JSON.stringify(apiRoutes, null, 2)};`;
 
     // Aggregate typed collections across all modules
@@ -298,7 +333,7 @@ function generateRegistry() {
     widgetRegistry += `export const ModulePermissionResources: string[] = ${JSON.stringify([...new Set(allPermissionResources)], null, 2)};\n\n`;
 
     emitStaticRegistry('Profile tab component registry', 'ProfileTabRegistry', allProfileTabs);
-    const profileTabImports = `export const ModuleProfileTabs: { id: string; label: string; component: string; order: number; module: string }[] = ${JSON.stringify(allProfileTabs, null, 2)};\n\n`;
+    const profileTabImports = `export const ModuleProfileTabs: { id: string; label: string; labelKey?: string; component: string; order: number; module: string }[] = ${JSON.stringify(allProfileTabs, null, 2)};\n\n`;
 
     widgetRegistry += profileTabImports;
     widgetRegistry += `export const ModuleOauthButtons: { id: string; provider: string; label: string; color: string; svgIcon: string; href?: string; module: string }[] = ${JSON.stringify(allOauthButtons, null, 2)};\n\n`;
@@ -409,8 +444,14 @@ function generateRegistry() {
     //
     // Only the two catch-all page routes consume this.
     const PAGE_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-page-registry.tsx');
-    fs.writeFileSync(PAGE_FILE, pageImports + mapping);
+    const pageHeader = (lines: string[]) =>
+        `/* eslint-disable */\nimport type { ComponentType } from 'react';\n${lines.join('\n')}\n\n`;
+    fs.writeFileSync(PAGE_FILE, pageHeader(publicImportLines) + mapping);
     console.log(`Generated module page registry at ${PAGE_FILE}`);
+
+    const ADMIN_PAGE_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-admin-page-registry.tsx');
+    fs.writeFileSync(ADMIN_PAGE_FILE, pageHeader(adminImportLines) + adminMapping);
+    console.log(`Generated module admin page registry at ${ADMIN_PAGE_FILE}`);
 
     const API_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-api-registry.ts');
     const apiContent =
@@ -433,7 +474,7 @@ function generateRegistry() {
     let dataContent = '// Auto-generated server-safe module data - no dynamic imports\n';
     dataContent += `import type { ModuleSetting } from "@/core/lib/module-types";\n\n`;
     dataContent += `export const ModuleApiRoutes: { path: string; key: string; module: string; handler: string; method?: string; methods?: string[]; providerCallback?: boolean; rateLimit?: { maxRequests: number; windowMs: number } }[] = ${JSON.stringify(apiRoutes, null, 2)};\n\n`;
-    dataContent += `export const ModuleRoutesList: { path: string; key: string; module: string; isAdmin?: boolean; noindex?: boolean; titleFromPath?: boolean; titleKey?: string; userProfile?: boolean }[] = ${JSON.stringify(routes, null, 2)};\n\n`;
+    dataContent += `export const ModuleRoutesList: { path: string; key: string; module: string; isAdmin?: boolean; noindex?: boolean; titleFromPath?: boolean; titleKey?: string; descriptionKey?: string; ogType?: "website" | "article" | "profile"; userProfile?: boolean }[] = ${JSON.stringify(routes, null, 2)};\n\n`;
     dataContent += `// Outbound webhook channels contributed by modules. Core owns the alert\n`;
     dataContent += `// content and the wire layouts; a channel only names its hosts and layout.\n`;
     dataContent += `// Admin-editable settings declared by each module, keyed by module id.\n`;

@@ -125,9 +125,9 @@ export default function ChangelogEntryPage() {
                     timeline and would otherwise start halfway through. */}
                 <Card>
                     <CardContent className="p-5 space-y-4">
-                        <RichContent className="text-muted-foreground" html={entry.content} />
+                        <RichContent className="text-muted-foreground" markdown={entry.content} />
                         <div className="border-t border-border pt-4">
-                            <RichContent html={entry.details} />
+                            <RichContent markdown={entry.details} />
                         </div>
                     </CardContent>
                 </Card>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { slugify } from "@/core/sdk";
-import { isAdmin, moduleSettings, prisma, rateLimitForRole, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { isAdmin, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { helpArticleSchema } from "../../../lib/validations";
 
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
         data: {
             title,
             slug: articleSlug,
-            content: sanitizeHtml(content),
+            content: content,
             categoryId,
         },
         include: {

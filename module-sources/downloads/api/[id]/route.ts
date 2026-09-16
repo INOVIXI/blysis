@@ -103,13 +103,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     // while the number in front of it keeps every shared link working. The
     // guide is sanitised on the way in, like the one the create path writes.
     const { title, details, ...rest } = validation.data;
-    const { sanitizeHtml } = await import("@/core/sdk/server");
     const download = await prisma.download.update({
         where: { id },
         data: {
             ...rest,
             ...(title !== undefined ? { title, slug: downloadSlug(title) } : {}),
-            ...(details !== undefined ? { details: details ? sanitizeHtml(details) : null } : {}),
+            ...(details !== undefined ? { details: details ? details : null } : {}),
         },
     });
     return NextResponse.json({ download });

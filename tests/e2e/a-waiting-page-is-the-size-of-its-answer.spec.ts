@@ -70,16 +70,43 @@ test.describe('a page that is waiting', () => {
         ).toBe(0);
     });
 
-    test('is the size of an empty topic list before the topics arrive', async ({ page }) => {
-        const { before, after } = await movementWhenTheAnswerArrives(
-            page,
-            '/tr/forum',
-            '**/api/v1/forum/topics**',
-            { topics: [], totalPages: 1, page: 1 },
+    /**
+     * The forum no longer waits. Its topics are read on the server and arrive
+     * in the document, so the placeholder this spec was written against is
+     * gone and the endpoint it held back is never called on load. Holding it
+     * back now waits thirty seconds for a request nobody makes.
+     *
+     * The guarantee that replaced it is the stronger one: a list that is in
+     * the HTML cannot move, so the page is its final length from the first
+     * paint. Asserting that directly is what keeps the forum from drifting
+     * back to fetching on mount.
+     */
+    test('does not wait for its topics at all', async ({ page }) => {
+        const asked: string[] = [];
+        page.on('request', (request) => asked.push(request.url()));
+
+        await page.goto('/tr/forum', { waitUntil: 'load' });
+        // The page's own region rather than the whole document: the footer
+        // carries widgets of its own that arrive on their own schedule, and
+        // what is under test here is the forum.
+        const height = () => page.evaluate(
+            () => Math.round(document.querySelector('main')?.getBoundingClientRect().height ?? -1),
         );
+        const atLoad = await height();
+        await page.waitForTimeout(HOLD_MS);
+        const settled = await height();
+
+        // A listener that recorded nothing would let the assertion below pass
+        // without having looked at anything.
+        expect(asked.length, 'no requests were observed at all').toBeGreaterThan(0);
         expect(
-            after - before,
-            `the topics changed the page length by ${after - before}px (${before} to ${after})`,
+            asked.filter((url) => url.includes('/api/v1/forum/topics')),
+            'the topics are in the document; asking for them again is the shape this replaced',
+        ).toEqual([]);
+        expect(atLoad, 'no main region was found to measure').toBeGreaterThan(0);
+        expect(
+            settled - atLoad,
+            `the forum changed its own height by ${settled - atLoad}px (${atLoad} to ${settled})`,
         ).toBe(0);
     });
 });

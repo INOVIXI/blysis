@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Button, Card, CardContent, FileUpload, Input, Label, RichTextEditor, useConfirm, useFormRoute, NativeSelect, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, UrlOrFile, Input, Label, RichTextEditor, useConfirm, useFormRoute, NativeSelect, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, FolderOpen, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -198,9 +198,9 @@ export default function AdminStoreCategoriesPage() {
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div>
                                     <Label>{t("adm_imageUrl")}</Label>
-                                    <FileUpload
-                                        value={form.image || null}
-                                        onChange={(v) => setForm({ ...form, image: v || "" })}
+                                    <UrlOrFile
+                                        value={form.image || ""}
+                                        onChange={(v) => setForm({ ...form, image: v })}
                                         accept="image/*"
                                     />
                                 </div>

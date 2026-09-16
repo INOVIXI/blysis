@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isRestrictedFrom } from "@/core/sdk/server";
-import { accessToCategory } from "../../../lib/visible-categories";
-import { pageParams, isAdmin, moduleSettings, prisma, rateLimitForRole, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { pageParams, isAdmin, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { forumPostSchema, forumTopicUpdateSchema } from "../../../lib/validations";
-import { denyGuestView } from "../../../lib/guest-view";
+import { countTopicView, readTopic } from "../../../lib/read-topic";
+import { accessToCategory } from "../../../lib/visible-categories";
 
 type ModerationSettingValue = {
     blog_comments?: "auto" | "manual";
@@ -22,82 +22,27 @@ async function getModerationMode(field: keyof ModerationSettingValue): Promise<"
 type RouteParams = { params: Promise<{ id: string }> };
 
 // GET /api/v1/forum/topics/[id] - Get topic with posts
+//
+// The rules about who may read a topic live in lib/read-topic.ts, because the
+// page renders the topic on the server now and the two must not disagree: a
+// private section hidden by one and not the other is worse than one nobody
+// hid. This endpoint is still what pages the replies and what the page asks
+// again after somebody posts.
 export async function GET(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
 
-    const denied = await denyGuestView();
-    if (denied) return denied;
-
-    const sessionGet = await auth();
-    const adminCheckGet = sessionGet?.user?.id ? await isAdmin(sessionGet.user.id) : false;
-
-    // Replies used to come back in one unbounded include: a thread that ran to
-    // ten thousand posts was ten thousand rows in one response, every time
-    // anyone opened it. They are now a page of `postsPerPage`, the size the
-    // admin sets.
-    const { postsPerPage } = await moduleSettings<{ postsPerPage: number }>("forum");
-    const { page: postsPage, skip: postsSkip, take: postsTake } = pageParams(
-        request.nextUrl.searchParams,
-        { pageParam: "postsPage", fixedLimit: postsPerPage },
-    );
-    const postWhere = adminCheckGet ? undefined : { moderationState: "APPROVED" as const };
-
-    const reader = await auth();
-    const topic = await prisma.forumTopic.findFirst({
-        where: { OR: [{ id }, { slug: id }, ...(isNaN(Number(id)) ? [] : [{ number: Number(id) }])] },
-        include: {
-            author: { select: { id: true, username: true, avatar: true } },
-            category: { select: { id: true, name: true, slug: true, color: true } },
-            posts: {
-                where: postWhere,
-                orderBy: { createdAt: "asc" },
-                skip: postsSkip,
-                take: postsTake,
-                include: {
-                    author: { select: { id: true, username: true, avatar: true } },
-                    _count: { select: { likes: true } },
-                },
-            },
-            _count: { select: { likes: true } },
-        },
+    const { page: postsPage } = pageParams(request.nextUrl.searchParams, {
+        pageParam: "postsPage",
+        fixedLimit: 1,
     });
 
-    if (!topic) {
+    const read = await readTopic(id, postsPage);
+    if (!read) {
         return NextResponse.json({ error: "Topic not found" }, { status: 404 });
     }
+    await countTopicView(read.topic.id);
 
-    // Not found rather than forbidden: a 403 confirms that a topic with that
-    // address exists, which is half of what a private section is hiding.
-    const mayRead = await accessToCategory(topic.categoryId, reader?.user?.role ?? null);
-    if (!mayRead.view) {
-        return NextResponse.json({ error: "Topic not found" }, { status: 404 });
-    }
-
-    // Non-admins cannot see pending/rejected topics
-    if (!adminCheckGet && topic.moderationState !== "APPROVED") {
-        return NextResponse.json({ error: "Topic not found" }, { status: 404 });
-    }
-
-    // Increment view count
-    await prisma.forumTopic.update({
-        where: { id: topic.id },
-        data: { views: { increment: 1 } },
-    });
-
-    // Counted separately rather than through `_count`: a non-admin only sees
-    // approved replies, and a pager built from the raw total would offer them
-    // pages that render empty.
-    const postsTotal = await prisma.forumPost.count({
-        where: { topicId: topic.id, ...(postWhere ?? {}) },
-    });
-
-    return NextResponse.json({
-        topic,
-        postsPage,
-        postsPerPage,
-        postsTotal,
-        postsPages: Math.max(1, Math.ceil(postsTotal / postsPerPage)),
-    });
+    return NextResponse.json(read);
 }
 
 // POST /api/v1/forum/topics/[id] - Reply to topic
@@ -132,6 +77,24 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Topic not found" }, { status: 404 });
     }
 
+    /*
+     * May this member post in the section the topic is in?
+     *
+     * This asked only whether the topic was locked. A private section was
+     * hidden from the list and from the topic itself, and this endpoint would
+     * still take a reply into it from anyone who had the id - which a member
+     * who was once in that section, or anyone they told, has. Not found rather
+     * than forbidden, for the reason the read gives: a 403 confirms that a
+     * topic with that address exists.
+     */
+    const mayPost = await accessToCategory(topic.categoryId, session.user.role ?? null);
+    if (!mayPost.view) {
+        return NextResponse.json({ error: "Topic not found" }, { status: 404 });
+    }
+    if (!mayPost.reply) {
+        return NextResponse.json({ error: "You cannot reply in this section" }, { status: 403 });
+    }
+
     if (topic.isLocked) {
         return NextResponse.json({ error: "This topic is locked" }, { status: 403 });
     }
@@ -150,7 +113,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     const post = await prisma.forumPost.create({
         data: {
-            content: sanitizeHtml(validation.data.content),
+            content: validation.data.content,
             topicId: id,
             authorId: session.user.id,
             moderationState,
@@ -218,7 +181,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     const data: Record<string, unknown> = {};
     if (isAuthor && fields.title) data.title = fields.title;
-    if (isAuthor && fields.content) data.content = sanitizeHtml(fields.content);
+    if (isAuthor && fields.content) data.content = fields.content;
     if (adminCheck && fields.isPinned !== undefined) data.isPinned = fields.isPinned;
     if (adminCheck && fields.isLocked !== undefined) data.isLocked = fields.isLocked;
 

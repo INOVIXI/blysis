@@ -2,43 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { staffMemberSchema } from "../lib/validations";
+import { readStaff } from "../lib/read-staff";
 
+// The read and what counts as online live in lib/read-staff.ts, because the
+// page renders the team on the server now and the two must not disagree.
 export async function GET(request: NextRequest) {
-    const { searchParams } = new URL(request.url);
-    const onlineOnly = searchParams.get("online") === "1";
-
-    const members = await prisma.staffMember.findMany({
-        where: { isActive: true },
-        orderBy: { order: "asc" },
-        include: { user: { select: { id: true, username: true, avatar: true } } },
-    });
-
-    if (!onlineOnly) {
-        return NextResponse.json({ members });
-    }
-
-    // Staff with an unexpired, non-revoked session count as online.
-    //
-    // Asked of the users rather than of the sessions: a row is written per
-    // sign-in and lives until its token expires, so reading every session of
-    // every staff member to keep their ids grows with logins. `some` is an
-    // existence check the database answers, and the result is one row per
-    // staff member however often they signed in.
-    const linkedUserIds = members.map((m) => m.user?.id).filter((id): id is string => !!id);
-    if (linkedUserIds.length === 0) {
-        return NextResponse.json({ members: [] });
-    }
-    const now = new Date();
-    const online = await prisma.user.findMany({
-        where: {
-            id: { in: linkedUserIds },
-            loginSessions: { some: { isRevoked: false, expiresAt: { gt: now } } },
-        },
-        select: { id: true },
-    });
-    const onlineUserIds = new Set(online.map((u) => u.id));
-    const onlineMembers = members.filter((m) => m.user?.id && onlineUserIds.has(m.user.id));
-    return NextResponse.json({ members: onlineMembers });
+    const onlineOnly = new URL(request.url).searchParams.get("online") === "1";
+    return NextResponse.json({ members: await readStaff(onlineOnly) });
 }
 
 export async function POST(request: NextRequest) {

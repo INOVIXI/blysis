@@ -16,7 +16,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "@/core/sdk/navigation";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, FileUpload, Input, Label, NativeSelect, RichTextEditor, useSiteSettings } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, UrlOrFile, Input, Label, NativeSelect, RichTextEditor, useSiteSettings } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, X } from "lucide-react";
 import { writeError } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -148,11 +148,11 @@ export default function NewProductPage() {
                                     />
                                 </div>
                                 <div>
-                                    <FileUpload
+                                    <UrlOrFile
                                         id="image"
                                         label={t("adm_mainImageUrl")}
-                                        value={form.image || null}
-                                        onChange={(v) => setForm({ ...form, image: v || "" })}
+                                        value={form.image || ""}
+                                        onChange={(v) => setForm({ ...form, image: v })}
                                         accept="image/*"
                                     />
                                 </div>
@@ -175,8 +175,8 @@ export default function NewProductPage() {
                                             ))}
                                         </div>
                                     )}
-                                    <FileUpload
-                                        value={null}
+                                    <UrlOrFile
+                                        value=""
                                         onChange={(v) => {
                                             if (v) setForm({ ...form, images: [...form.images, v] });
                                         }}

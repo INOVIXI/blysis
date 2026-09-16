@@ -183,7 +183,7 @@ export default function SuggestionPage({ params }: { params: Promise<{ id: strin
                 <div className="space-y-6">
                     <Card>
                         <CardContent className="p-6">
-                            <RichContent html={suggestion.content} />
+                            <RichContent markdown={suggestion.content} keepLineBreaks />
                         </CardContent>
                     </Card>
 
@@ -214,7 +214,7 @@ export default function SuggestionPage({ params }: { params: Promise<{ id: strin
                                                                 <span className="ml-2 text-xs font-normal text-warning">{t("awaitingReview")}</span>
                                                             )}
                                                         </p>
-                                                        <RichContent className="mt-2 text-sm" html={comment.content} />
+                                                        <RichContent className="mt-2 text-sm" markdown={comment.content} keepLineBreaks />
                                                     </div>
                                                     {comment.author?.id === session?.user?.id && (
                                                         <Button

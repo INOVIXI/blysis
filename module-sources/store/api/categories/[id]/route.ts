@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
-import { isAdmin, prisma, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { categorySchema } from "../../../lib/validations";
 
@@ -74,7 +74,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     if (typeof data.description === "string") {
-        data.description = sanitizeHtml(data.description);
+        data.description = data.description;
     }
 
     if (data.name && !data.slug) {

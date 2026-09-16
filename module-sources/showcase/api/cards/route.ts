@@ -3,6 +3,7 @@ import { isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { cardImage, cardLink } from "../../lib/card";
+import { readShowcaseCards } from "../../lib/read-cards";
 
 /**
  * The cards, as a visitor sees them and as an operator writes them.
@@ -19,25 +20,11 @@ const cardSchema = z.object({
     order: z.number().int().min(0).max(9999).default(0),
 });
 
+// The read and the address cleaning live in lib/read-cards.ts, because the
+// page renders the cards on the server now and a link cleaned on one path and
+// not the other is the whole point of cleaning it.
 export async function GET() {
-    const cards = await prisma.showcaseCard.findMany({
-        where: { isActive: true },
-        orderBy: [{ order: "asc" }, { createdAt: "asc" }],
-        take: 100,
-    });
-
-    return NextResponse.json(
-        {
-            cards: cards.map((card) => ({
-                id: card.id,
-                title: card.title,
-                body: card.body,
-                image: cardImage(card.image),
-                href: cardLink(card.href),
-            })),
-        },
-        { headers: { "Cache-Control": "public, max-age=60" } },
-    );
+    return NextResponse.json({ cards: await readShowcaseCards() });
 }
 
 export async function POST(request: NextRequest) {

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { pageSource } from "./module-page-source";
 import {
     SUGGESTION_STATUSES,
     STATUS_BADGE_CLASS,
@@ -73,7 +74,8 @@ describe("one vocabulary of suggestion statuses", () => {
 
 describe("both boards read the one list", () => {
     const admin = read("pages", "admin", "page.tsx");
-    const board = read("pages", "public", "page.tsx");
+    // The board moved into `components/`; the page reads it on the server.
+    const board = pageSource(path.join(MODULE, "pages", "public", "page.tsx"), MODULE);
     const api = read("api", "route.ts");
 
     it("offers every status on both screens", () => {
@@ -99,9 +101,17 @@ describe("both boards read the one list", () => {
         expect(admin).toContain("<Pagination");
     });
 
-    it("filters through the fold", () => {
-        expect(api).toContain("canonicalStatus(status)");
-        expect(api).toContain("spellingsOf(canonical)");
+    /**
+     * The filter lives in the read both the board and the endpoint call, so a
+     * status asked for in an address and one asked for over HTTP cannot mean
+     * two different things.
+     */
+    it("filters through the fold, once, for both callers", () => {
+        const shared = read("lib", "read-suggestions.ts");
+        expect(shared).toContain("canonicalStatus(options.status)");
+        expect(shared).toContain("spellingsOf(canonical)");
+        expect(api).toContain("readSuggestions(");
+        expect(board).toContain("readSuggestions(");
     });
 
     it("leaves no second list of statuses behind", () => {

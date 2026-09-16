@@ -2,45 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAdmin, moduleSettings, prisma, rateLimitForRole, readJsonBody, getClientIP } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { helpArticleUpdateSchema, helpFeedbackSchema } from "../../../../lib/validations";
+import { countArticleView, readArticle } from "../../../../lib/read-article";
 
 interface RouteParams {
     params: Promise<{ slug: string }>;
 }
 
 // GET /api/v1/help/articles/[slug] - Get article by slug
-export async function GET(request: NextRequest, { params }: RouteParams) {
+//
+// The read and the rule about what may be shown live in lib/read-article.ts,
+// because the page renders the article on the server now and the two must not
+// disagree.
+export async function GET(_request: NextRequest, { params }: RouteParams) {
     const { slug } = await params;
 
-    const article = await prisma.helpArticle.findUnique({
-        where: { slug },
-        include: {
-            category: { select: { id: true, name: true, slug: true } },
-        },
-    });
-
-    if (!article || !article.isActive) {
+    const read = await readArticle(slug);
+    if (!read) {
         return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
+    await countArticleView(read.article.id);
 
-    // Increment view count
-    await prisma.helpArticle.update({
-        where: { id: article.id },
-        data: { views: { increment: 1 } },
-    });
-
-    // The page that renders this is a client component, so what it may show is
-    // decided here rather than there: a hidden view count that still ships in
-    // the JSON is not hidden.
-    const { showViewCount, enableFeedback } = await moduleSettings<{
-        showViewCount: boolean;
-        enableFeedback: boolean;
-    }>("help-center");
-
-    return NextResponse.json({
-        ...article,
-        views: showViewCount ? article.views : null,
-        settings: { showViewCount, enableFeedback },
-    });
+    return NextResponse.json({ ...read.article, settings: read.settings });
 }
 
 // POST /api/v1/help/articles/[slug]/feedback - Submit feedback

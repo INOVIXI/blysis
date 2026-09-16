@@ -27,10 +27,14 @@ const FORUM = path.join(ROOT, "module-sources", "forum");
 /** Reading topics or categories to show them to somebody. */
 const READS = /prisma\.(forumTopic|forumCategory)\.(findMany|findFirst|findUnique|count|groupBy|aggregate)/;
 /**
- * Asking who this reader is allowed to see. Two doors, both in
- * `lib/visible-categories.ts`: the whole list, or one category.
+ * Asking who this reader is allowed to see. Two doors in
+ * `lib/visible-categories.ts` - the whole list, or one category - and
+ * `readTopic`, which is one topic with the same question already asked inside
+ * it. That third one exists because the page renders a topic on the server
+ * now, and the page and the endpoint must not each carry their own copy of the
+ * rule.
  */
-const ASKS = /visibleCategoryIds|accessToCategory/;
+const ASKS = /visibleCategoryIds|accessToCategory|readTopic/;
 
 function walk(dir: string, out: string[] = []): string[] {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -62,6 +66,8 @@ const SEES_EVERYTHING: Record<string, string> = {
         "The decision itself, with no database behind it: it is handed the rules rather than reading them.",
     "lib/visible-categories.ts":
         "The one place that answers the question.",
+    "lib/read-topic.ts":
+        "One topic with the question already asked: it calls accessToCategory itself, and is what both the page and the endpoint go through so the rule is written once.",
 };
 
 const files = walk(FORUM);

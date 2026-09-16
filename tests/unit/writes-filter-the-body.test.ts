@@ -133,7 +133,17 @@ describe("the changelog PATCH that prompted this", () => {
         }
     });
 
-    it("still sanitizes the content it stores", () => {
-        expect(route).toContain("sanitizeHtml(content)");
+    /**
+     * It used to sanitise on the way in, and that was right while the column
+     * held HTML. The column holds Markdown now: cleaning it here deleted a
+     * fenced code block that documented a tag, and stored `a &lt; b` where
+     * somebody had typed `a < b`. The cleaning is at the render, where the
+     * parser has already decided which is which. See
+     * `a-writer-gets-back-what-they-typed`.
+     */
+    it("stores the content as the writer typed it", () => {
+        expect(route).not.toContain("sanitizeHtml");
+        // Still bounded, which is the part this endpoint owes a reader.
+        expect(route).toContain("max(10000)");
     });
 });

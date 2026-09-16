@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { apiError, apiSuccess, isAdmin, prisma, rateLimitForRole, readJsonBody, sanitizeHtml } from "@/core/sdk/server";
+import { apiError, apiSuccess, isAdmin, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { suggestionCommentSchema } from "../../../lib/validations";
 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     const comment = await prisma.suggestionComment.create({
         data: {
-            content: sanitizeHtml(parsed.data.content),
+            content: parsed.data.content,
             suggestionId: suggestion.id,
             authorId: session.user.id,
             moderationState: mode === "manual" ? "PENDING" : "APPROVED",

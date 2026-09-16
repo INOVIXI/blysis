@@ -166,7 +166,7 @@ describe("the screens this was found on", () => {
     });
 
     it("does not thank a help-center reader for a vote that was dropped", () => {
-        const submit = handler(read("module-sources/help-center/pages/public/help/[slug]/page.tsx"), "submitFeedback");
+        const submit = handler(read("module-sources/help-center/components/ArticleView.tsx"), "submitFeedback");
         expect(submit.indexOf("writeError")).toBeLessThan(submit.indexOf("setFeedbackGiven(true)"));
     });
 

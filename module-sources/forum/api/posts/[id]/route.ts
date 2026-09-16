@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, sanitizeHtml, readJsonBody, rateLimitForRoleAsync } from "@/core/sdk/server";
+import { isAdmin, prisma, readJsonBody, rateLimitForRoleAsync } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { forumPostSchema } from "../../../lib/validations";
 
@@ -36,7 +36,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     // The create path parses forumPostSchema, so a reply is bounded at 50000
     // characters and cannot be empty. Editing has to hold the same line: without
-    // it a post could be blanked by PATCHing nothing at all (sanitizeHtml turns
+    // it a post could be blanked by PATCHing nothing at all (an empty body turns
     // a missing body field into ""), or grown past any bound the create path has.
     const validation = forumPostSchema.pick({ content: true }).safeParse(body);
     if (!validation.success) {
@@ -55,7 +55,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     const updated = await prisma.forumPost.update({
         where: { id },
-        data: { content: sanitizeHtml(validation.data.content) },
+        data: { content: validation.data.content },
         include: { author: { select: { id: true, username: true, avatar: true } } },
     });
 

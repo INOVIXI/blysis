@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { slugify } from "@/core/sdk";
-import { isAdmin, log, prisma, readJsonBody, sanitizeHtml } from "@/core/sdk/server";
+import { isAdmin, log, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { categorySchema } from "../../lib/validations";
 import { anyCategoryGated, gateProductIds, visibleCategories } from "../../lib/category-visibility";
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
             data: {
                 name: data.name,
                 slug,
-                description: data.description !== undefined ? sanitizeHtml(data.description) : data.description,
+                description: data.description !== undefined ? data.description : data.description,
                 image: data.image,
                 parentId: data.parentId,
                 order: data.order ?? 0,

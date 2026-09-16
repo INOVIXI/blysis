@@ -55,6 +55,21 @@ export function CurrencySelector() {
     const baseRate = list.find((c) => c.code === base)?.rate;
     const options = baseRate ? list : list.filter((c) => c.code === config?.base);
 
+    /*
+     * Nothing is drawn until `/api/v1/currency` answers, and the row it then
+     * adds is a row the footer did not have. Measured on a production build
+     * at 1280px: `/tr/forum` was 2791px at load and 2830px once the answer
+     * arrived, and the footer is on every page on the site.
+     *
+     * So the room is held while the answer is outstanding. A site that turns
+     * out to have fewer than two currencies collapses the row once, which is
+     * a single shift on a site that offers no picker at all - against one on
+     * every page load for every site that does.
+     */
+    if (!config) {
+        return <div className="h-5" aria-hidden="true" />;
+    }
+
     if (options.length < 2 || !baseRate) return null;
 
     const choose = (next: string) => {

@@ -4,7 +4,8 @@ import { useEffect, useState, use } from "react";
 import { Link, useRouter } from "@/core/sdk/navigation";
 import { Button, buttonClassName } from "@/core/sdk/ui";
 import { useMergedBlockConfig } from "@/core/sdk/blocks";
-import { Puck, type Data } from "@measured/puck";
+import dynamic from "next/dynamic";
+import type { Data } from "@measured/puck";
 import "@measured/puck/puck.css";
 import { ArrowLeft, Loader2, Save, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
@@ -13,6 +14,22 @@ import { useTranslations } from "next-intl";
 interface PageProps {
     params: Promise<{ id: string; locale: string }>;
 }
+
+/**
+ * The editor itself, fetched when somebody opens it.
+ *
+ * Imported plainly, it travelled with every module admin screen on the site:
+ * core renders them all through one catch-all route, and Next collects a
+ * route's client references by walking its whole module graph. Measured on a
+ * production build, 87.5 KB gzipped on the announcements screen, the SEO
+ * screen, the ticket queue - for an editor only this page opens.
+ *
+ * `ssr: false` costs nothing: this page already loads the page it is editing
+ * in the browser, so the server has never rendered any of it.
+ */
+const Puck = dynamic(() => import("@measured/puck").then((mod) => mod.Puck), {
+    ssr: false,
+});
 
 export default function PageBuilderPage(props: PageProps) {
     const params = use(props.params);

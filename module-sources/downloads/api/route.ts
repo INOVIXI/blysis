@@ -3,28 +3,12 @@ import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { downloadCreateSchema } from "../lib/validations";
 import { downloadSlug } from "../lib/guide";
+import { readDownloads } from "../lib/read-downloads";
 
+// The read lives in lib/read-downloads.ts, because the page renders the list
+// on the server now and the two must not disagree about what is on offer.
 export async function GET() {
-    // The guide is not in this response. The list renders none of it and it
-    // is a page's worth of markup per row; what the list needs is whether
-    // there is a page to link to.
-    const rows = await prisma.download.findMany({
-        where: { isActive: true },
-        orderBy: { createdAt: "desc" },
-        // The page renders every row it is given, so this is the ceiling on
-        // one response rather than a page size.
-        take: 200,
-        select: {
-            id: true, number: true, slug: true, title: true, description: true,
-            fileName: true, fileSize: true, downloads: true, createdAt: true,
-            details: true,
-        },
-    });
-    const downloads = rows.map(({ details, ...row }) => ({
-        ...row,
-        hasGuide: typeof details === "string" && details.trim() !== "",
-    }));
-    return NextResponse.json({ downloads });
+    return NextResponse.json({ downloads: await readDownloads() });
 }
 
 export async function POST(request: NextRequest) {
@@ -40,7 +24,6 @@ export async function POST(request: NextRequest) {
     }
     const { title, description, fileName, fileUrl, fileSize, details, coverImage } = parsed.data;
 
-    const { sanitizeHtml } = await import("@/core/sdk/server");
     const download = await prisma.download.create({
         data: {
             title,
@@ -48,7 +31,7 @@ export async function POST(request: NextRequest) {
             description: description || null,
             // Sanitised on the way in: an admin account is a trust boundary,
             // not a guarantee, and this is rendered to every visitor.
-            details: details ? sanitizeHtml(details) : null,
+            details: details ? details : null,
             coverImage: coverImage || null,
             fileName,
             fileUrl,

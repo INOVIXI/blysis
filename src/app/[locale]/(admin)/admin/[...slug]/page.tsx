@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation";
 import { ensureHooks } from "@/core/lib/hooks-bootstrap";
 import { redirect } from "@/core/lib/i18n/navigation";
-import { ModuleRegistry } from "@/core/generated/module-page-registry";
+import { ModuleAdminRegistry } from "@/core/generated/module-admin-page-registry";
 import { matchModuleRoute } from "@/core/lib/route-matcher";
 import { getSession } from "@/core/lib/auth";
 import { isAdmin } from "@/core/lib/permissions";
@@ -45,7 +45,7 @@ export default async function DynamicAdminModulePage(props: PageProps) {
         notFound();
     }
 
-    const Component = ModuleRegistry[match.key];
+    const Component = ModuleAdminRegistry[match.key];
 
     if (!Component) {
         console.error(`Module component not found in registry: ${match.key}`);

@@ -80,12 +80,28 @@ export default function AnnouncementTopBanner() {
         >
             <div className="container mx-auto px-4 py-2 flex items-center gap-3">
                 <Megaphone className="w-4 h-4 flex-shrink-0" />
-                <div className="flex-1 min-w-0 text-sm">
+                {/*
+                 * Clamped on the block that holds the text, not on the span
+                 * inside it. `truncate` sat on that span, and on an inline box
+                 * `overflow` and `text-overflow` do nothing at all - so the
+                 * only half of it that applied was `white-space: nowrap`. The
+                 * ellipsis never appeared, the line never broke, and on a
+                 * 320px phone a 510px sentence made the whole document 554px
+                 * wide. A mobile browser answers that by zooming the page out
+                 * to fit, which is why the navigation drawer and the cookie
+                 * notice were being drawn at 58% scale over a page that no
+                 * longer matched the screen.
+                 *
+                 * Two lines on a phone rather than one: the title alone fills
+                 * a 320px line, so clamping to one there would leave a notice
+                 * whose message is never visible.
+                 */}
+                <div className="flex-1 min-w-0 text-sm line-clamp-2 sm:line-clamp-1">
                     <span className="font-semibold">{announcement.title}</span>
                     {announcement.content && (
                         <>
                             {" · "}
-                            <span className="truncate opacity-90">{announcement.content}</span>
+                            <span className="opacity-90">{announcement.content}</span>
                         </>
                     )}
                 </div>

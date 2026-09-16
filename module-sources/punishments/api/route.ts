@@ -2,44 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { pageParams, isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { punishmentCreateSchema } from "../lib/validations";
-import { isPunishmentStatus, punishmentStatus, statusWhere } from "../lib/status";
-import { canonicalType, spellingsOf } from "../lib/punishment-types";
+import { canonicalType } from "../lib/punishment-types";
+import { readPunishments } from "../lib/read-punishments";
 
 // GET - Public: list punishments
+//
+// The read and what a filter means live in lib/read-punishments.ts, because
+// the page renders the record on the server now and a type filter has to mean
+// the same thing on both.
 export async function GET(request: NextRequest) {
-    const type = request.nextUrl.searchParams.get("type");
-    const search = request.nextUrl.searchParams.get("search");
-    const status = request.nextUrl.searchParams.get("status");
-    const { page, limit, skip, take } = pageParams(request.nextUrl.searchParams);
-
-    const now = new Date();
-    const where: Record<string, unknown> = {};
-    // A type filter is a filter on the punishment, not on the spelling the
-    // row happened to be written with.
-    if (type) {
-        const canonical = canonicalType(type);
-        where.type = canonical ? { in: spellingsOf(canonical) } : type;
-    }
-    if (search) where.playerName = { contains: search, mode: "insensitive" };
-    // Under AND rather than merged in, so the status clause keeps its own `OR`
-    // whatever else the caller filtered on.
-    if (isPunishmentStatus(status)) where.AND = [statusWhere(status, now)];
-
-    const [punishments, total] = await Promise.all([
-        prisma.punishment.findMany({
-            where,
-            orderBy: { createdAt: "desc" },
-            skip,
-            take,
-        }),
-        prisma.punishment.count({ where }),
-    ]);
-
-    // `status` travels with every row: a caller reading `active` alone cannot
-    // tell a ban that is still running from one whose clock ran out.
-    const rows = punishments.map((p) => ({ ...p, status: punishmentStatus(p, now.getTime()) }));
-
-    return NextResponse.json({ punishments: rows, total, pages: Math.ceil(total / limit) });
+    const params = request.nextUrl.searchParams;
+    const { page, limit } = pageParams(params);
+    const read = await readPunishments({
+        type: params.get("type"),
+        search: params.get("search"),
+        status: params.get("status"),
+        page,
+        perPage: limit,
+    });
+    return NextResponse.json({ punishments: read.punishments, total: read.total, pages: read.pages });
 }
 
 /**

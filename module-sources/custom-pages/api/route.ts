@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
-import { isAdmin, prisma, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { customPageCreateSchema } from "../lib/validations";
 
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     if (existing) slug = `${slug}-${Date.now().toString(36)}`;
 
     const page = await prisma.customPage.create({
-        data: { title, slug, content: sanitizeHtml(content), isActive: isActive ?? true, order: order || 0 },
+        data: { title, slug, content: content, isActive: isActive ?? true, order: order || 0 },
     });
 
     return NextResponse.json({ page }, { status: 201 });

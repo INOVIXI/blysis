@@ -51,7 +51,7 @@ const files = ROOTS.flatMap((root) => walk(root));
  * is. Each entry says which.
  */
 const ALLOWLIST: Record<string, string> = {
-    "module-sources/suggestions/pages/public/page.tsx":
+    "module-sources/suggestions/components/SuggestionBoard.tsx":
         "a public compose box, not an admin create screen: three fields a visitor fills in place while reading the board, and sending them to a separate page to type two sentences would lose the list they were reading",
 };
 
@@ -79,7 +79,6 @@ describe("a create screen is a place", () => {
             "module-sources/help-center/pages/admin/help/page.tsx",
             "module-sources/license-keys/pages/admin/licenses/page.tsx",
             "module-sources/punishments/pages/admin/page.tsx",
-            "module-sources/seo/pages/admin/pages/page.tsx",
             "module-sources/store/pages/admin/categories/page.tsx",
             "module-sources/store/pages/admin/coupons/page.tsx",
             "module-sources/store/pages/admin/gift-codes/page.tsx",
@@ -92,6 +91,17 @@ describe("a create screen is a place", () => {
                 /if \(show\w*(?:Form|Create)\) \{/,
             );
         }
+    });
+
+    it("keeps a two pane editor's selection in the address too", () => {
+        // The SEO screen is not a list with a form over it: the site is down
+        // the left and one page's head is always open on the right, so there
+        // is no form to show or hide. The rule this file defends is that the
+        // thing being edited has an address, and `?page=` is that address -
+        // reloadable, linkable, and closed by the back button.
+        const src = readFileSync("module-sources/seo/pages/admin/pages/page.tsx", "utf8");
+        expect(src).toContain('searchParams?.get("page")');
+        expect(src).toContain("router.push(`${pathname}?page=");
     });
 
     it("exports the hook to modules", () => {

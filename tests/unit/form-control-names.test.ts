@@ -116,7 +116,9 @@ describe("form controls", () => {
     it("the public store fields a visitor fills in are named", () => {
         for (const rel of [
             "module-sources/store/pages/public/cart/page.tsx",
-            "module-sources/store/pages/public/product/[...params]/page.tsx",
+            // The page is a server shell now; the fields a visitor fills in moved
+            // with the screen that draws them.
+            "module-sources/store/components/ProductView.tsx",
         ]) {
             expect(readFileSync(join(ROOT, rel), "utf8")).toContain("aria-label=");
         }

@@ -1,197 +1,144 @@
-"use client";
-
-import { useState, useEffect } from "react";
+/**
+ * The help centre, written by the server.
+ *
+ * It fetched its categories and its popular articles after the page had
+ * loaded, so the HTML the server sent held no link to a single article or a
+ * single section: measured, the page answered with 17 links and every one of
+ * them was the shared header and footer. The 30 articles the sitemap publishes
+ * had no path into them from anywhere on the site.
+ *
+ * The search is an address now rather than client state, which is what lets a
+ * result page be shared at all.
+ */
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
 import { PageFrame, StandardSidebarLayout } from "@/core/sdk/layout";
-import { LoadFailed } from "@/core/sdk/ui";
-import { useTranslations } from "next-intl";
-import { User, CreditCard, Package, Wrench, Info, BookOpen } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { BookOpen, CreditCard, Info, Package, User, Wrench, type LucideIcon } from "lucide-react";
+import { readHelpIndex, searchHelpArticles } from "../../../lib/read-article";
+import { HelpSearch } from "../../../components/HelpSearch";
 
-interface Category {
-    id: string;
-    name: string;
-    slug: string;
-    description: string | null;
-    icon: string | null;
-    _count: { articles: number };
+interface PageProps {
+    searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-interface Article {
-    id: string;
-    title: string;
-    slug: string;
-    /** null when the site has turned view counts off. */
-    views: number | null;
-    category: { name: string; slug: string };
-}
+/** A small fixed set, named so a bundler keeps only these six. */
+const ICONS: Record<string, LucideIcon> = {
+    account: User,
+    payment: CreditCard,
+    order: Package,
+    technical: Wrench,
+    general: Info,
+};
 
-export default function HelpCenterPage() {
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [popularArticles, setPopularArticles] = useState<Article[]>([]);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState<Article[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [failed, setFailed] = useState(false);
-    const [reloadKey, setReloadKey] = useState(0);
-    const t = useTranslations('helpCenter');
+export default async function HelpCenterPage({ searchParams }: PageProps) {
+    const query = (await searchParams) ?? {};
+    const raw = Array.isArray(query.q) ? query.q[0] : query.q;
+    const term = raw?.trim() ?? "";
 
-    useEffect(() => {
-        let cancelled = false;
-        const read = (url: string) => fetch(url).then(r => {
-            if (!r.ok) throw new Error("load failed");
-            return r.json();
-        });
-        Promise.all([
-            read("/api/v1/help/categories"),
-            read("/api/v1/help/articles?limit=5"),
-        ]).then(([cats, articles]) => { if (cancelled) return;
-            setCategories(cats || []);
-            setPopularArticles(articles || []);
-            setFailed(false);
-            setLoading(false);
-        }).catch(() => { if (cancelled) return; setFailed(true); setLoading(false); });
-        return () => { cancelled = true; };
-    }, [reloadKey]);
-
-    const handleSearch = async () => {
-        if (!searchQuery.trim()) {
-            setSearchResults([]);
-            return;
-        }
-        const res = await fetch(`/api/v1/help/articles?search=${encodeURIComponent(searchQuery)}`);
-        const data = await res.json();
-        setSearchResults(data || []);
-    };
-
-    const iconMap: Record<string, LucideIcon> = {
-        account: User,
-        payment: CreditCard,
-        order: Package,
-        technical: Wrench,
-        general: Info,
-    };
+    const t = await getTranslations("helpCenter");
+    const [{ categories, popular }, results] = await Promise.all([
+        readHelpIndex(),
+        searchHelpArticles(term),
+    ]);
 
     return (
-        <PageFrame
-            title={t('title')}
-        >
-            {/* The band is the search, and it is drawn on the primary
-                colour: a line of text-primary on it was the colour it was
-                printed on, so the invitation to search was invisible. */}
+        <PageFrame title={t("title")}>
+            {/* The band is the search, and it is drawn on the primary colour:
+                a line of text-primary on it was the colour it was printed on,
+                so the invitation to search was invisible. */}
             <div className="bg-gradient-to-r from-primary to-accent rounded-2xl p-8 text-white mb-8">
-                <h2 className="text-2xl font-bold mb-2">{t('heading')}</h2>
-                <p className="text-white/80 mb-6">{t('subtitle')}</p>
-
-                {/* Search */}
-                <div className="flex gap-2 max-w-xl">
-                    <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                        placeholder={t('searchPlaceholder')} aria-label={t('searchPlaceholder')}
-                        className="flex-1 min-w-0 px-4 py-3 rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-white"
-                    />
-                    <button
-                        onClick={handleSearch}
-                        className="px-6 py-3 bg-card/20 hover:bg-card/30 rounded-lg font-medium transition-colors"
-                    >
-                        {t('search')}
-                    </button>
-                </div>
+                <h2 className="text-2xl font-bold mb-2">{t("heading")}</h2>
+                <p className="text-white/80 mb-6">{t("subtitle")}</p>
+                <HelpSearch initial={term} />
             </div>
 
-            {/* Search Results */}
-            {searchResults.length > 0 && (
+            {term && (
                 <div className="bg-card rounded-xl border border-border p-6 mb-8">
-                    <h2 className="font-bold text-lg mb-4">{t('searchResults')} ({searchResults.length})</h2>
-                    <ul className="space-y-2">
-                        {searchResults.map((article) => (
-                            <li key={article.id}>
-                                <Link href={`/help/${article.slug}`} className="text-primary hover:underline">
-                                    {article.title}
-                                </Link>
-                                <span className="text-muted-foreground text-sm ml-2">{t('inCategory', { category: article.category.name })}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-
-            {loading ? (
-                <div className="text-center py-12">
-                    <p className="text-muted-foreground">{t('loading')}</p>
-                </div>
-            ) : (
-                <StandardSidebarLayout sidebar={(
-                            <div>
-                                <div className="bg-card rounded-xl border border-border p-6">
-                                    <h3 className="font-bold text-foreground mb-4">{t('popularArticles')}</h3>
-                                    {popularArticles.length > 0 ? (
-                                        <ul className="space-y-3">
-                                            {popularArticles.map((article) => (
-                                                <li key={article.id}>
-                                                    <Link href={`/help/${article.slug}`} className="text-primary hover:underline text-sm">
-                                                        {article.title}
-                                                    </Link>
-                                                    {article.views !== null && (
-                                                        <p className="text-xs text-muted-foreground">{t('views', { count: article.views })}</p>
-                                                    )}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    ) : (
-                                        <p className="text-sm text-muted-foreground">{t('noArticlesYet')}</p>
-                                    )}
-                                </div>
-
-                                <div className="bg-card rounded-xl border border-border p-6 mt-4">
-                                    <h3 className="font-bold text-foreground mb-2">{t('needHelp')}</h3>
-                                    <p className="text-sm text-muted-foreground mb-4">{t('cantFind')}</p>
-                                    <Link href="/support/new" className="text-primary hover:underline text-sm font-medium">
-                                        {t('createTicket')} →
+                    <h2 className="font-bold text-lg mb-4">{t("searchResults")} ({results.length})</h2>
+                    {results.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">{t("noArticlesYet")}</p>
+                    ) : (
+                        <ul className="space-y-2">
+                            {results.map((article) => (
+                                <li key={article.id}>
+                                    <Link href={`/help/${article.slug}`} className="text-primary hover:underline">
+                                        {article.title}
                                     </Link>
-                                </div>
-                            </div>
-                        )} heading={t('browseCategories')}>
-                    {(
-                            <div>
-                                <div className="grid md:grid-cols-2 gap-4">
-                                    {categories.map((category) => (
-                                        <Link key={category.id} href={`/help/category/${category.slug}`}>
-                                            <div className="bg-card rounded-xl border border-border p-6 hover:shadow-md transition-shadow">
-                                                <div className="flex items-start gap-4">
-                                                    {(() => {
-                                                        const Icon = iconMap[category.icon || ""] || BookOpen;
-                                                        return <Icon className="w-8 h-8 text-primary flex-shrink-0 mt-0.5" />;
-                                                    })()}
-                                                    <div>
-                                                        <h3 className="font-bold text-foreground">{category.name}</h3>
-                                                        {category.description && (
-                                                            <p className="text-sm text-muted-foreground mt-1">{category.description}</p>
-                                                        )}
-                                                        <p className="text-xs text-muted-foreground mt-2">
-                                                            {t('articles', { count: category._count.articles })}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Link>
-                                    ))}
-                                </div>
-
-                                {failed ? (
-                                    <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
-                                ) : categories.length === 0 ? (
-                                    <div className="bg-card rounded-xl p-8 text-center">
-                                        <p className="text-muted-foreground">{t('noCategories')}</p>
-                                    </div>
-                                ) : null}
-                            </div>
-                        )}
-                </StandardSidebarLayout>
+                                    {article.category && (
+                                        <span className="text-muted-foreground text-sm ml-2">
+                                            {t("inCategory", { category: article.category.name })}
+                                        </span>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
             )}
+
+            <StandardSidebarLayout
+                heading={t("browseCategories")}
+                sidebar={(
+                    <div>
+                        <div className="bg-card rounded-xl border border-border p-6">
+                            <h3 className="font-bold text-foreground mb-4">{t("popularArticles")}</h3>
+                            {popular.length > 0 ? (
+                                <ul className="space-y-3">
+                                    {popular.map((article) => (
+                                        <li key={article.id}>
+                                            <Link href={`/help/${article.slug}`} className="text-primary hover:underline text-sm">
+                                                {article.title}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="text-sm text-muted-foreground">{t("noArticlesYet")}</p>
+                            )}
+                        </div>
+
+                        <div className="bg-card rounded-xl border border-border p-6 mt-4">
+                            <h3 className="font-bold text-foreground mb-2">{t("needHelp")}</h3>
+                            <p className="text-sm text-muted-foreground mb-4">{t("cantFind")}</p>
+                            <Link href="/support/new" className="text-primary hover:underline text-sm font-medium">
+                                {t("createTicket")} →
+                            </Link>
+                        </div>
+                    </div>
+                )}
+            >
+                <div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                        {categories.map((category) => {
+                            const Icon = ICONS[category.icon || ""] || BookOpen;
+                            return (
+                                <Link key={category.id} href={`/help/category/${category.slug}`}>
+                                    <div className="bg-card rounded-xl border border-border p-6 hover:shadow-md transition-shadow">
+                                        <div className="flex items-start gap-4">
+                                            <Icon className="w-8 h-8 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
+                                            <div>
+                                                <h3 className="font-bold text-foreground">{category.name}</h3>
+                                                {category.description && (
+                                                    <p className="text-sm text-muted-foreground mt-1">{category.description}</p>
+                                                )}
+                                                <p className="text-xs text-muted-foreground mt-2">
+                                                    {t("articles", { count: category.articleCount })}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </div>
+
+                    {categories.length === 0 && (
+                        <div className="bg-card rounded-xl p-8 text-center">
+                            <p className="text-muted-foreground">{t("noCategories")}</p>
+                        </div>
+                    )}
+                </div>
+            </StandardSidebarLayout>
         </PageFrame>
     );
 }

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * An admin screen says what it is, and says it the same way everywhere.
@@ -98,6 +99,21 @@ function titled(file: string, seen = new Set<string>()): boolean {
     return false;
 }
 
+/**
+ * A page whose whole job is to send the reader somewhere else.
+ *
+ * `/admin/settings` is a group of sections with nothing of its own; the path
+ * an operator remembers answered 404 until it got a page that redirects to
+ * the first section. Such a page renders no markup at all, so it has no
+ * header to wear. That is a property of the file rather than an exception
+ * somebody has to remember, so it is read rather than listed.
+ */
+function onlyRedirects(file: string): boolean {
+    const source = stripComments(fs.readFileSync(file, "utf8"));
+    if (!/\bredirect\s*\(/.test(source)) return false;
+    return !/<[A-Za-z]/.test(source);
+}
+
 describe("an admin screen", () => {
     const pages = adminPages();
 
@@ -109,6 +125,7 @@ describe("an admin screen", () => {
         const untitled = pages
             .map((file) => path.relative(ROOT, file))
             .filter((rel) => !EXEMPT.has(rel))
+            .filter((rel) => !onlyRedirects(path.join(ROOT, rel)))
             .filter((rel) => !titled(path.join(ROOT, rel)));
         expect(untitled).toEqual([]);
     });
@@ -132,7 +149,10 @@ describe("an admin screen", () => {
         for (const rel of MOUNT_POINTS) {
             const source = fs.readFileSync(path.join(ROOT, rel), "utf8");
             // It renders whatever the registry resolved, and nothing else.
-            expect(source, rel).toContain("ModuleRegistry[match.key]");
+            // The registry it reads is the admin one: the two surfaces were
+            // one map that both mount points imported, so every public module
+            // page first-loaded all 110 admin screens.
+            expect(source, rel).toContain("ModuleAdminRegistry[match.key]");
             expect(source, rel).toContain("<Component");
         }
     });

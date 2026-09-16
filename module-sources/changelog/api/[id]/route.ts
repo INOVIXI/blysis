@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { entrySlug } from "../../lib/entry-page";
@@ -52,11 +52,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const patchData = {
         ...rest,
         ...(title !== undefined ? { title, slug: entrySlug(title) } : {}),
-        ...(content !== undefined ? { content: sanitizeHtml(content) } : {}),
+        ...(content !== undefined ? { content: content } : {}),
         // Sanitised on the way in like the summary beside it. The slug follows
         // the title so a renamed release reads correctly in a URL, while the
         // number in front of it keeps every shared link working.
-        ...(details !== undefined ? { details: details ? sanitizeHtml(details) : null } : {}),
+        ...(details !== undefined ? { details: details ? details : null } : {}),
         ...(publishAt !== undefined ? { publishAt: publishAt ? new Date(publishAt) : null } : {}),
     };
     const entry = await prisma.changelogEntry.update({ where: { id }, data: patchData });

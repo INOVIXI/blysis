@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { pageParams, isAdmin, prisma, rateLimitForRole, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { pageParams, isAdmin, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
-import { canonicalStatus, spellingsOf } from "../lib/statuses";
+import { readSuggestions } from "../lib/read-suggestions";
 
 type ModerationSettingValue = {
     blog_comments?: "auto" | "manual";
@@ -18,43 +18,24 @@ async function getModerationMode(field: keyof ModerationSettingValue): Promise<"
 }
 
 // GET /api/v1/suggestions - Public list
+//
+// The read and the rule about what a reader may see live in
+// lib/read-suggestions.ts, because the board renders on the server now and the
+// two must not disagree about which suggestions are public.
 export async function GET(request: NextRequest) {
-    const session = await auth();
-    const status = request.nextUrl.searchParams.get("status");
-    const sort = request.nextUrl.searchParams.get("sort") || "newest";
-    const { page, limit, skip, take } = pageParams(request.nextUrl.searchParams);
-
-    const isUserAdmin = session?.user?.id ? await isAdmin(session.user.id) : false;
-    const where: Record<string, unknown> = {};
-    // A status filter is a filter on the state, not on the spelling the row
-    // happened to be written with.
-    if (status) {
-        const canonical = canonicalStatus(status);
-        where.status = canonical ? { in: spellingsOf(canonical) } : status;
-    }
-    if (!isUserAdmin) {
-        where.visibility = "public";
-        where.moderationState = "APPROVED";
-    }
-    const orderBy = sort === "popular"
-        ? { upvotes: "desc" as const }
-        : { createdAt: "desc" as const };
-
-    const [suggestions, total] = await Promise.all([
-        prisma.suggestion.findMany({
-            where,
-            include: {
-                author: { select: { id: true, username: true, avatar: true } },
-                _count: { select: { votes: true } },
-            },
-            orderBy,
-            skip,
-            take,
-        }),
-        prisma.suggestion.count({ where }),
-    ]);
-
-    return NextResponse.json({ suggestions, total, pages: Math.ceil(total / limit) });
+    const params = request.nextUrl.searchParams;
+    const { page, limit } = pageParams(params);
+    const read = await readSuggestions({
+        status: params.get("status"),
+        sort: params.get("sort") || "newest",
+        page,
+        perPage: limit,
+    });
+    return NextResponse.json({
+        suggestions: read.suggestions,
+        total: read.total,
+        pages: read.pages,
+    });
 }
 
 // POST /api/v1/suggestions - Create suggestion
@@ -89,7 +70,7 @@ export async function POST(request: NextRequest) {
     const suggestion = await prisma.suggestion.create({
         data: {
             title,
-            content: sanitizeHtml(content),
+            content: content,
             visibility,
             authorId: session.user.id,
             moderationState,

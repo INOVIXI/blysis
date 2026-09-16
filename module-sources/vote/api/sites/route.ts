@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { readVoteSites } from "../../lib/read-sites";
 import { auth } from "@/core/sdk/auth";
 import { voteSiteCreateSchema } from "../../lib/validations";
 
 // GET /api/v1/vote - List vote sites
+// The read lives in lib/read-sites.ts, because the page renders the list on
+// the server now and the two must not drift.
 export async function GET() {
-    const sites = await prisma.voteSite.findMany({
-        where: { isActive: true },
-        orderBy: { order: "asc" },
-        include: { _count: { select: { votes: true } } },
-    });
-    return NextResponse.json({ sites });
+    return NextResponse.json({ sites: await readVoteSites() });
 }
 
 // POST /api/v1/vote - Create vote site (admin)

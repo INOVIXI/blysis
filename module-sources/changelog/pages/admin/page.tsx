@@ -22,7 +22,7 @@ export default function Page() {
                 // are one line, and an entry without them keeps its old
                 // behaviour - no page, and no link on the timeline.
                 { key: "details", label: t("adm_detailsLabel"), type: "richtext", placeholder: t("adm_detailsPlaceholder"), description: t("adm_detailsHelp") },
-                { key: "coverImage", label: t("adm_coverLabel"), type: "urlOrFile", description: t("adm_coverHelp") },
+                { key: "coverImage", label: t("adm_coverLabel"), type: "image", description: t("adm_coverHelp") },
                 {
                     key: "type",
                     label: t("adm_field4Label"),

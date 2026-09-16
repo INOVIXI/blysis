@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * An answer that is the same for everybody says how long it may be kept.
@@ -10,6 +11,11 @@ import path from "node:path";
  * announcements, the Discord server id, the SEO record for a path. Two
  * endpoints already said so with `s-maxage`; eight said nothing, so every
  * visitor's request travelled to the origin and ran the query again.
+ *
+ * One of the eight is gone rather than fixed: the SEO record for a path was
+ * fetched by a client component that rewrote `document.head` after the page
+ * had loaded, which no crawler ever ran. The override reaches the head on the
+ * server now and nothing asks for it over HTTP.
  *
  * `s-maxage` speaks to shared caches and not to browsers, which is the point:
  * a proxy in front of the site may hold the answer for thirty seconds, and no
@@ -34,7 +40,6 @@ const SAME_FOR_EVERYONE = [
     "src/app/api/v1/public-settings/route.ts",
     "module-sources/store/api/widget-stats/route.ts",
     "module-sources/discord-widget/api/route.ts",
-    "module-sources/seo/api/lookup/route.ts",
     "module-sources/currency/api/route.ts",
     "module-sources/announcements/api/route.ts",
     "module-sources/store/api/community-goal/route.ts",
@@ -84,7 +89,7 @@ describe("a public answer", () => {
                 // Comments are prose about the code, and this file's own
                 // comment explains that it reads no session - which is the
                 // sentence that used to fail it.
-                const code = handler.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
+                const code = stripComments(handler);
                 if (/\bauth\s*\(\s*\)|\bisAdmin\b|\bsession\b/.test(code)) {
                     leaky.push(path.relative(ROOT, file));
                 }

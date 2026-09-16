@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, sanitizeHtml, readJsonBody } from "@/core/sdk/server";
+import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { customPageUpdateSchema } from "../../lib/validations";
 
@@ -35,7 +35,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     const data: Record<string, unknown> = {};
     if (fields.title !== undefined) data.title = fields.title;
-    if (fields.content !== undefined) data.content = sanitizeHtml(fields.content);
+    if (fields.content !== undefined) data.content = fields.content;
     if (fields.isActive !== undefined) data.isActive = fields.isActive;
     if (fields.order !== undefined) data.order = fields.order;
 

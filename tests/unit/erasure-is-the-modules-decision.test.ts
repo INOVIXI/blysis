@@ -137,8 +137,11 @@ describe("every module table", () => {
 
     it("purges the six tables core used to purge itself", () => {
         // The behaviour this refactor must not quietly drop.
+        // `linkedAccount` was a seventh. It is not here because the table is
+        // gone: nothing wrote it but a text box a member typed their own
+        // in-game name into, and player-profiles asks the module that proved
+        // an account instead. See that module's migration 002.
         const expected: Record<string, string> = {
-            linkedAccount: "player-profiles",
             notification: "in-app-notifications",
             cartItem: "store",
             forumTopicLike: "forum",

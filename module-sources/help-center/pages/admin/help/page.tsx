@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, FileUpload, Input, Label, RichTextEditor, Textarea, NativeSelect, useFormRoute, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, UrlOrFile, Input, Label, RichTextEditor, Textarea, NativeSelect, useFormRoute, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
 import { writeError } from "@/core/sdk";
@@ -321,9 +321,9 @@ export default function AdminHelpCenterPage() {
                                         aria-label={t("adm_lucideIcon")}
                                     />
                                 ) : (
-                                    <FileUpload
-                                        value={categoryForm.image || null}
-                                        onChange={(v) => setCategoryForm({ ...categoryForm, image: v || "", icon: "" })}
+                                    <UrlOrFile
+                                        value={categoryForm.image || ""}
+                                        onChange={(v) => setCategoryForm({ ...categoryForm, image: v, icon: "" })}
                                         accept="image/*"
                                     />
                                 )}

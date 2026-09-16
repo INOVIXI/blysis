@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { readTrophies } from "../lib/read-trophies";
 import { auth } from "@/core/sdk/auth";
 
 /** GET - list all trophies (public endpoint, used by profile pages too) */
+// The read lives in lib/read-trophies.ts, because the page renders the list
+// on the server now and the two must not drift.
 export async function GET() {
-    const trophies = await prisma.trophy.findMany({
-        orderBy: { points: "desc" },
-        include: { _count: { select: { users: true } } },
-        // A curated set, and a public endpoint. The cap bounds an install that
-        // decided otherwise.
-        take: 200,
-    });
-    return NextResponse.json({ trophies });
+    return NextResponse.json({ trophies: await readTrophies() });
 }
 
 const trophySchema = z.object({

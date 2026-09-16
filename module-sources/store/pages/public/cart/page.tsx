@@ -7,8 +7,8 @@ import Image from "next/image";
 import { Link, useRouter } from "@/core/sdk/navigation";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, useConfirm, useSiteCurrency, buttonClassName, Waiting } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
-import * as LucideIcons from "lucide-react";
 import { Loader2, Check, X, CreditCard, Coins, ShoppingCart } from "lucide-react";
+import { NavIcon } from "@/core/sdk/ui";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { writeError, errorMessage } from "@/core/sdk";
@@ -40,8 +40,6 @@ interface CartData {
     total: number;
 }
 
-type IconComponent = React.ComponentType<{ className?: string }>;
-
 /**
  * Draws the Lucide icon a gateway named in its `payment.providers` answer.
  *
@@ -50,9 +48,11 @@ type IconComponent = React.ComponentType<{ className?: string }>;
  * checkout page.
  */
 function ProviderIcon({ name }: { name?: string }) {
-    const lib = LucideIcons as unknown as Record<string, IconComponent>;
-    const Icon = (name && lib[name]) || CreditCard;
-    return <Icon className="w-5 h-5 text-muted-foreground flex-shrink-0" />;
+    // The gateway names its icon in its manifest, so this is data. Answering
+    // it with `import * as LucideIcons` pulled all 1,723 icon modules into the
+    // chunk group every module page shares - 189 KB gzipped on each of them,
+    // measured on a production build.
+    return <NavIcon name={name} className="w-5 h-5 text-muted-foreground flex-shrink-0" fallback={CreditCard} />;
 }
 
 export default function CartPage() {

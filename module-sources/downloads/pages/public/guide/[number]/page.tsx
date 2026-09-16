@@ -144,10 +144,10 @@ export default function DownloadGuidePage() {
                 <Card>
                     <CardContent className="p-5 space-y-4">
                         {file.description && (
-                            <RichContent className="text-muted-foreground" html={file.description} />
+                            <RichContent className="text-muted-foreground" markdown={file.description} />
                         )}
                         <div className={file.description ? "border-t border-border pt-4" : ""}>
-                            <RichContent html={file.details} />
+                            <RichContent markdown={file.details} />
                         </div>
                     </CardContent>
                 </Card>

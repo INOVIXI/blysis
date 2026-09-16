@@ -230,7 +230,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                     {/* Content - RichTextEditor stores HTML, sanitize before render */}
                     <RichContent
                         className="text-lg"
-                        html={article.content}
+                        markdown={article.content}
                     />
 
 
@@ -255,7 +255,11 @@ export default async function BlogArticlePage({ params }: PageProps) {
                     )}
 
                     {/* Comment Section */}
-                    {allowComments && <CommentSection articleId={article.id} />}
+                    {allowComments && (
+                        <div className="mt-8 pt-8 border-t border-border">
+                            <CommentSection articleId={article.id} />
+                        </div>
+                    )}
                 </div>
             </article>
         </PageFrame>

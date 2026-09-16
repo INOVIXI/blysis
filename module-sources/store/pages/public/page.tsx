@@ -1,355 +1,199 @@
-"use client";
-
-import { useState, useEffect } from "react";
-
+/**
+ * The shop, written by the server.
+ *
+ * Two things were wrong with the page this replaces and they had one cause:
+ * everything it showed was fetched after the page had loaded, and which
+ * section a shopper had opened was client state.
+ *
+ * So the HTML the server sent held no link to a single product - measured, 17
+ * links and every one of them the shared header and footer - and the 34
+ * product URLs in the sitemap had no path into them from anywhere on the site.
+ * And no section of the shop had an address: a category could not be linked
+ * to, shared, or reopened, and the browser's back button walked out of the
+ * shop rather than up one level.
+ *
+ * A section is a place now. `/store` lists the top level, `?category=` opens
+ * one, `?q=` searches, `?sort=` and `?page=` do the rest. The crumb trail is
+ * links rather than buttons for the same reason.
+ */
+import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/core/sdk/navigation";
 import { PageFrame } from "@/core/sdk/layout";
-import { Coins, Box, ChevronRight, Search, X } from "lucide-react";
-import { type AvailabilityInfo } from "../../components/AvailabilityNote";
+import { Pagination, RichContent } from "@/core/sdk/ui";
+import { Box, ChevronRight, Coins } from "lucide-react";
 import { ProductCard } from "../../components/ProductCard";
-import { useTranslations } from "next-intl";
-import { LoadFailed, NativeSelect, Pagination, RichContent, Waiting } from "@/core/sdk/ui";
+import { StoreSearch, StoreSort } from "../../components/StoreControls";
+import {
+    readStoreCategories,
+    readStoreProducts,
+    STORE_SORTS,
+    type StoreSort as SortName,
+} from "../../lib/read-store";
 
-interface Category {
-    id: string;
-    name: string;
-    slug: string;
-    description: string | null;
-    image: string | null;
-    parentId: string | null;
-    children?: Category[];
+interface PageProps {
+    searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-interface Product {
-    id: string;
-    number: number;
-    name: string;
-    slug: string;
-    price: number;
-    comparePrice: number | null;
-    image: string | null;
-    // Both nullable in the schema: a product need not be counted and need not
-    // be filed under anything. Declaring them otherwise is how the detail page
-    // came to read a category that was not there.
-    stock: number | null;
-    isFeatured: boolean;
-    category: { slug: string; name: string } | null;
-    type: string;
-    availability?: AvailabilityInfo;
-    was?: number | null;
-    onSale?: boolean;
+const one = (value: string | string[] | undefined): string | undefined => {
+    const first = Array.isArray(value) ? value[0] : value;
+    const trimmed = first?.trim();
+    return trimmed ? trimmed : undefined;
+};
+
+/** `/store`, with the section, the search and the sort in the query string. */
+function storeHref(params: { category?: string; q?: string; sort?: string }): string {
+    const query = new URLSearchParams();
+    if (params.category) query.set("category", params.category);
+    if (params.q) query.set("q", params.q);
+    if (params.sort && params.sort !== "newest") query.set("sort", params.sort);
+    const qs = query.toString();
+    return qs ? `/store?${qs}` : "/store";
 }
 
-export default function StorePage() {
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [activeMode, setActiveMode] = useState<string | null>(null); // slug of root category
-    const [activeCategory, setActiveCategory] = useState<string | null>(null); // slug of sub category
+export default async function StorePage({ searchParams }: PageProps) {
+    const query = (await searchParams) ?? {};
+    const categorySlug = one(query.category);
+    const search = one(query.q);
+    const requestedSort = one(query.sort) ?? "newest";
+    const sort: SortName = (STORE_SORTS as string[]).includes(requestedSort)
+        ? (requestedSort as SortName)
+        : "newest";
+    const requestedPage = Number.parseInt(one(query.page) ?? "", 10);
+    const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
 
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loadingCategories, setLoadingCategories] = useState(true);
-    const [loadingProducts, setLoadingProducts] = useState(false);
-    const [sortBy, setSortBy] = useState("newest");
-    const [productPage, setProductPage] = useState(1);
-    const [productPages, setProductPages] = useState(1);
-    // What the shop calls "nearly gone", from its own settings.
-    const [lowStockAt, setLowStockAt] = useState(0);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState<Product[] | null>(null);
-    const [searching, setSearching] = useState(false);
+    const t = await getTranslations("store");
+    const categories = await readStoreCategories();
 
-    const t = useTranslations('store');
-    const commonT = useTranslations('common');
-    const [failed, setFailed] = useState(false);
-    const [reloadKey, setReloadKey] = useState(0);
+    const chosen = categorySlug ? categories.find((c) => c.slug === categorySlug) : undefined;
+    // A section nobody has is a 404, not the whole shop drawn as if the
+    // address had been something else.
+    if (categorySlug && !chosen) notFound();
 
-    // Fetch Categories
-    useEffect(() => {
-        let cancelled = false;
-        fetch("/api/v1/store/categories")
-            .then((res) => { if (!res.ok) throw new Error("load failed"); return res.json(); })
-            .then((data) => { if (cancelled) return;
-                setCategories(data.categories || []);
-                setFailed(false);
-                setLoadingCategories(false);
-            })
-            .catch(() => { if (cancelled) return; setFailed(true); setLoadingCategories(false); });
-        return () => { cancelled = true; };
-    }, [reloadKey]);
+    const parent = chosen?.parentId ? categories.find((c) => c.id === chosen.parentId) : undefined;
+    const roots = categories.filter((c) => c.parentId === null);
+    const subCategories = chosen?.children ?? [];
 
-    // Fetch Products when category changes
-    useEffect(() => {
-        let cancelled = false;
-        const categorySlug = activeCategory || activeMode;
-        if (categorySlug) {
-            setLoadingProducts(true);
-            // Paged by the endpoint rather than trimmed by it: the page used
-            // to ask for twelve and draw them with no way to reach the
-            // thirteenth, so a category quietly ended at its first screenful.
-            fetch(`/api/v1/store/products?category=${categorySlug}&limit=12&page=${productPage}&sort=${sortBy}`)
-                .then((res) => { if (!res.ok) throw new Error("load failed"); return res.json(); })
-                .then((data) => {
-                    if (cancelled) return;
-                    setProducts(data.products || []);
-                    setProductPages(Math.max(1, Number(data.pagination?.pages ?? data.pages ?? 1)));
-                    setLowStockAt(Number(data.lowStockAt ?? 0));
-                    setFailed(false);
-                    setLoadingProducts(false);
-                })
-                .catch(() => {
-                    if (cancelled) return;
-                    setFailed(true);
-                    setLoadingProducts(false);
-                });
-        } else {
-            setProducts([]);
-        }
-        return () => { cancelled = true; };
-    }, [activeCategory, activeMode, sortBy, productPage, reloadKey]);
-
-    // A reader who was on page three of one category has not asked to be on
-    // page three of the next one.
-    useEffect(() => { setProductPage(1); }, [activeCategory, activeMode, sortBy]);
-
-    // Derived state
-    const rootCategories = categories.filter((c) => c.parentId === null);
-    const activeRootCategory = categories.find((c) => c.slug === activeMode);
-    const subCategories = activeRootCategory?.children || [];
-
-    const showModes = !activeMode && !activeCategory;
-    const showSubCategories = activeMode && !activeCategory;
-    const showProducts = activeCategory !== null || (activeMode !== null && subCategories.length === 0);
-
-    const resetView = () => {
-        setActiveMode(null);
-        setActiveCategory(null);
-        setProducts([]);
-        setSearchResults(null);
-        setSearchQuery("");
-    };
-
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!searchQuery.trim()) {
-            setSearchResults(null);
-            return;
-        }
-        setSearching(true);
-        try {
-            const res = await fetch(`/api/v1/store/products?search=${encodeURIComponent(searchQuery)}&limit=20`);
-            const data = await res.json();
-            setSearchResults(data.products || []);
-        } catch {
-            setSearchResults([]);
-        } finally {
-            setSearching(false);
-        }
-    };
-
-    const clearSearch = () => {
-        setSearchQuery("");
-        setSearchResults(null);
-    };
-
-    const handleModeSelect = (slug: string) => {
-        setActiveMode(slug);
-        setActiveCategory(null);
-    };
+    // The top level lists sections rather than products, the way it always
+    // has. A section with no children of its own shows what is in it.
+    const showsProducts = Boolean(search) || Boolean(chosen && subCategories.length === 0);
+    const shelf = showsProducts
+        ? await readStoreProducts({ categorySlug: search ? undefined : chosen?.slug, search, sort, page })
+        : null;
 
     return (
-        <PageFrame title={t('title')}>
-            {/* Where the reader has drilled to inside the store. The frame's
-                crumb trail says how they arrived; this is category state
-                rather than a route, which is why it is buttons. */}
-            {activeMode && (
-            <div className="text-sm text-muted-foreground mb-6 flex items-center gap-2">
-                <button onClick={resetView} className="hover:text-primary">{t('allProducts')}</button>
-                {activeMode && (
-                    <>
-                        <ChevronRight className="w-4 h-4" />
-                        {activeCategory ? (
-                            <button
-                                type="button"
-                                onClick={() => setActiveCategory(null)}
-                                className="text-foreground capitalize hover:text-primary"
-                            >
-                                {activeRootCategory?.name || activeMode}
-                            </button>
-                        ) : (
-                            <span className="text-foreground capitalize">
-                                {activeRootCategory?.name || activeMode}
-                            </span>
-                        )}
-                    </>
-                )}
-                {activeCategory && (
-                    <>
-                        <ChevronRight className="w-4 h-4" />
-                        <span className="text-foreground capitalize">
-                            {categories.find(c => c.slug === activeCategory)?.name || activeCategory}
-                        </span>
-                    </>
-                )}
-            </div>
-            )}
-
-            {/* Search Bar */}
-            <form onSubmit={handleSearch} className="mb-6">
-                <div className="relative max-w-lg">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-                    <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder={t('searchProducts')}
-                        aria-label={t('searchProducts')}
-                        style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem" }}
-                        className="w-full py-2.5 bg-card border border-border rounded-lg text-sm focus:outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary"
-                    />
-                    {searchQuery && (
-                        <button type="button" onClick={clearSearch} aria-label={commonT('close')} className="absolute right-3 top-1/2 -translate-y-1/2">
-                            <X className="w-4 h-4 text-muted-foreground hover:text-muted-foreground" aria-hidden="true" />
-                        </button>
+        <PageFrame title={chosen?.name ?? t("title")}>
+            {(chosen || search) && (
+                <nav aria-label={t("title")} className="text-sm text-muted-foreground mb-6 flex items-center gap-2">
+                    <Link href="/store" className="hover:text-primary">{t("allProducts")}</Link>
+                    {parent && (
+                        <>
+                            <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                            <Link href={storeHref({ category: parent.slug })} className="text-foreground capitalize hover:text-primary">
+                                {parent.name}
+                            </Link>
+                        </>
                     )}
-                </div>
-            </form>
-
-            {/* Search Results */}
-            {searchResults !== null && (
-                <section className="mb-8">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-bold text-foreground">
-                            {searching ? t('searching') : t('searchResultsFor', { query: searchQuery, count: searchResults.length })}
-                        </h2>
-                        <button onClick={clearSearch} className="text-sm text-primary hover:underline">{t('clear')}</button>
-                    </div>
-                    {!searching && searchResults.length === 0 ? (
-                        <div className="bg-card rounded-xl p-8 text-center border border-border">
-                            <p className="text-muted-foreground">{t('noProductsSearch')}</p>
-                        </div>
-                    ) : !searching ? (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {searchResults.map((product) => (
-                                <ProductCard key={product.id} product={product} lowStockAt={lowStockAt} showCategory />
-                            ))}
-                        </div>
-                    ) : null}
-                </section>
+                    {chosen && (
+                        <>
+                            <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                            <span className="text-foreground capitalize">{chosen.name}</span>
+                        </>
+                    )}
+                </nav>
             )}
 
-            {/* Root Categories (Server Modes) */}
-            {showModes && (
+            <StoreSearch initial={search ?? ""} category={chosen?.slug} />
+
+            {!search && !chosen && (
                 <section>
-                    <h2 className="text-xl font-bold text-foreground mb-6">{t('title')}</h2>
-                    {loadingCategories ? (
-                        <Waiting label={commonT("loading")} />
-                    ) : failed ? (
-                        <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
-                    ) : rootCategories.length === 0 ? (
+                    <h2 className="text-xl font-bold text-foreground mb-6">{t("title")}</h2>
+                    {roots.length === 0 ? (
                         <div className="text-center py-12 bg-card rounded-xl">
-                            <p className="text-muted-foreground">{t('noCategories')}</p>
+                            <p className="text-muted-foreground">{t("noCategories")}</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                            {rootCategories.map((mode) => (
-                                <button
-                                    key={mode.id}
-                                    onClick={() => handleModeSelect(mode.slug)}
-                                    className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-md transition-all group text-left"
+                            {roots.map((root) => (
+                                <Link
+                                    key={root.id}
+                                    href={storeHref({ category: root.slug })}
+                                    className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-md transition-all group text-left block"
                                 >
                                     <div className="h-32 bg-muted flex items-center justify-center overflow-hidden">
-                                        {mode.image ? (
+                                        {root.image ? (
                                             <>{/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img src={mode.image} alt={mode.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /></>
+                                            <img src={root.image} alt={root.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /></>
                                         ) : (
-                                            <Box className="w-12 h-12 text-muted-foreground" />
+                                            <Box className="w-12 h-12 text-muted-foreground" aria-hidden="true" />
                                         )}
                                     </div>
                                     <div className="p-4">
-                                        <h3 className="font-semibold text-foreground">{mode.name}</h3>
-                                        {mode.description && (
-                                            <RichContent
-                                                className="text-sm text-muted-foreground mt-1"
-                                                html={mode.description}
-                                            />
+                                        <h3 className="font-semibold text-foreground">{root.name}</h3>
+                                        {root.description && (
+                                            <RichContent className="text-sm text-muted-foreground mt-1" markdown={root.description} />
                                         )}
                                     </div>
-                                </button>
+                                </Link>
                             ))}
                         </div>
                     )}
                 </section>
             )}
 
-            {/* Sub Categories */}
-            {showSubCategories && (
+            {!search && chosen && subCategories.length > 0 && (
                 <section>
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-xl font-bold text-foreground">{activeRootCategory?.name} - {t('categories')}</h2>
+                    <h2 className="text-xl font-bold text-foreground mb-6">{chosen.name} - {t("categories")}</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-10">
+                        {subCategories.map((child) => (
+                            <Link
+                                key={child.id}
+                                href={storeHref({ category: child.slug })}
+                                className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-md transition-all group text-left block"
+                            >
+                                <div className="h-32 bg-muted flex items-center justify-center overflow-hidden">
+                                    {child.image ? (
+                                        <>{/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={child.image} alt={child.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /></>
+                                    ) : (
+                                        <Coins className="w-12 h-12 text-muted-foreground" aria-hidden="true" />
+                                    )}
+                                </div>
+                                <div className="p-4">
+                                    <h3 className="font-medium text-foreground">{child.name}</h3>
+                                </div>
+                            </Link>
+                        ))}
                     </div>
-
-                    {subCategories.length > 0 ? (
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-10">
-                            {subCategories.map((cat) => (
-                                <button
-                                    key={cat.id}
-                                    onClick={() => setActiveCategory(cat.slug)}
-                                    className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-md transition-all group text-left"
-                                >
-                                    <div className="h-32 bg-muted flex items-center justify-center overflow-hidden">
-                                        {cat.image ? (
-                                            <>{/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /></>
-                                        ) : (
-                                            <Coins className="w-12 h-12 text-muted-foreground" />
-                                        )}
-                                    </div>
-                                    <div className="p-4">
-                                        <h3 className="font-medium text-foreground">{cat.name}</h3>
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                    ) : null}
                 </section>
             )}
 
-            {/* Products Grid */}
-            {(showProducts || (activeMode && subCategories.length === 0)) && (
+            {shelf && (
                 <section>
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-foreground">{t('products')}</h2>
-                        <NativeSelect
-                            value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value)}
-                            aria-label={t('sortBy')} inputSize="sm"
-                        >
-                            <option value="newest">{t('newest')}</option>
-                            <option value="price_asc">{t('priceLowHigh')}</option>
-                            <option value="price_desc">{t('priceHighLow')}</option>
-                            <option value="popular">{t('mostPopular')}</option>
-                        </NativeSelect>
+                        <h2 className="text-xl font-bold text-foreground">
+                            {search ? t("searchResultsFor", { query: search, count: shelf.total }) : t("products")}
+                        </h2>
+                        <StoreSort value={sort} category={chosen?.slug} search={search} />
                     </div>
-                    {loadingProducts ? (
-                        <Waiting label={commonT("loading")} />
-                    ) : failed ? (
-                        <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
-                    ) : products.length === 0 ? (
+                    {shelf.products.length === 0 ? (
                         <div className="bg-card rounded-xl p-8 text-center border border-border">
-                            <p className="text-muted-foreground">{t('noProducts')}</p>
+                            <p className="text-muted-foreground">{search ? t("noProductsSearch") : t("noProducts")}</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {products.map((product) => (
-                                <ProductCard key={product.id} product={product} lowStockAt={lowStockAt} />
+                            {shelf.products.map((product) => (
+                                <ProductCard
+                                    key={(product as { id: string }).id}
+                                    product={product as never}
+                                    lowStockAt={shelf.lowStockAt}
+                                    showCategory={Boolean(search)}
+                                />
                             ))}
                         </div>
                     )}
-                    {productPages > 1 && (
-                        <Pagination
-                            className="mt-6"
-                            page={productPage}
-                            pages={productPages}
-                            onPageChange={setProductPage}
-                        />
+                    {shelf.pages > 1 && (
+                        <Pagination className="mt-6" page={shelf.page} pages={shelf.pages} total={shelf.total} pageParam="page" />
                     )}
                 </section>
             )}

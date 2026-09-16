@@ -51,8 +51,15 @@ async function columnTops(page: import('@playwright/test').Page): Promise<Tops> 
             for (const el of root.querySelectorAll('*')) {
                 const box = el.getBoundingClientRect();
                 const style = getComputedStyle(el);
-                const boxed = style.borderTopWidth !== '0px'
-                    && style.backgroundColor !== 'rgba(0, 0, 0, 0)';
+                // A card is a panel a reader sees as one thing, and in this
+                // design what makes one is its rounded corner. Requiring a
+                // border over a filled background missed the homepage's promo
+                // panel, whose fill is on a child inside `overflow-hidden`, so
+                // this read the card *below* it and reported the two columns
+                // 195px apart when both start at 200.
+                const boxed = style.borderRadius !== '0px'
+                    || (style.borderTopWidth !== '0px'
+                        && style.backgroundColor !== 'rgba(0, 0, 0, 0)');
                 if (box.height > 40 && boxed) return Math.round(box.top);
             }
             return null;

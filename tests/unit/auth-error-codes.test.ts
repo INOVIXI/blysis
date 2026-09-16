@@ -15,6 +15,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync } from "fs";
 import { join } from "path";
+import { stripComments } from "./source-text";
 
 const ROOT = join(__dirname, "../..");
 const AUTH_API = join(ROOT, "src/app/api/v1/auth");
@@ -30,9 +31,7 @@ function walk(dir: string, match: RegExp, out: string[] = []): string[] {
 }
 
 function code(path: string): string {
-    return readFileSync(path, "utf8")
-        .replace(/\/\*[\s\S]*?\*\//g, "")
-        .replace(/^\s*\/\/.*$/gm, "");
+    return stripComments(readFileSync(path, "utf8"));
 }
 
 function catalogue(locale: string): Record<string, string> {
@@ -139,10 +138,19 @@ describe("auth screens", () => {
         expect(mappers.length).toBeGreaterThanOrEqual(4);
     });
 
-    it("the profile screen maps its auth failures too", () => {
-        const src = code(join(ROOT, "src/app/[locale]/(public)/profile/page.tsx"));
-        expect(src).not.toMatch(/\b(data|body)\.error\s*\|\|/);
-        expect(src).toContain("authErrorMessage(authT,");
+    it("the profile screens map their auth failures too", () => {
+        // The page was one file and is three: it kept the account form, the
+        // privacy panel and the section switcher in one place, and the two
+        // screens that talk to the auth endpoints moved out with the calls.
+        const screens = [
+            "src/core/components/profile/AccountSettings.tsx",
+            "src/core/components/profile/PrivacyPanel.tsx",
+        ];
+        for (const screen of screens) {
+            const src = code(join(ROOT, screen));
+            expect(src, screen).not.toMatch(/\b(data|body)\.error\s*\|\|/);
+            expect(src, screen).toContain("authErrorMessage(authT,");
+        }
     });
 
     it("the OAuth account-not-linked error has a real message now", () => {

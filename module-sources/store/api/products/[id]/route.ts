@@ -1,80 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, log, moduleSettings, prisma, readJsonBody, sanitizeHtml } from "@/core/sdk/server";
+import { isAdmin, log, moduleSettings, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../../lib/validations";
 import { availabilityData } from "../../../lib/availability-input";
 import { PUBLIC_PRODUCT } from "../../../lib/public-product";
-import { availabilityFor, type ProductRow } from "../../../lib/availability-server";
+import { readProduct } from "../../../lib/read-product";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
 // GET /api/v1/store/products/[id] - Get single product
-export async function GET(request: NextRequest, { params }: RouteParams) {
+//
+// The read and the two rules about what a visitor may see live in
+// lib/read-product.ts, because the page renders the product on the server now
+// and the two must not disagree.
+export async function GET(_request: NextRequest, { params }: RouteParams) {
     try {
         const { id } = await params;
-
-        // Switched off is a filter, not a check after the fact: the row never
-        // leaves the database, so there is nothing to leak by mistake later.
-        const product = await prisma.product.findFirst({
-            where: {
-                isActive: true,
-                OR: [
-                    { id },
-                    { slug: id },
-                    ...(isNaN(Number(id)) ? [] : [{ number: Number(id) }]),
-                ],
-            },
-            select: PUBLIC_PRODUCT,
-        });
-
+        const product = await readProduct(id);
         if (!product) {
             return NextResponse.json({ error: "Product not found" }, { status: 404 });
         }
-
-        // The page needs to know whether it may offer a buy button, and why
-        // not when it may not. Per-person counting needs the session, which is
-        // why this answer is not shared-cached the way the listing is.
-        const session = await auth();
-        const state = await availabilityFor(
-            prisma,
-            product as unknown as ProductRow,
-            session?.user?.id ?? null,
-        );
-
-        // A product an operator asked to hide while it is shut is not here as
-        // far as a visitor is concerned - the same answer as one that does not
-        // exist, so the two cannot be told apart.
-        const hidden = product.outsideWindow === "hidden"
-            && state.state !== "open" && state.state !== "limit_reached";
-        if (hidden && !(session?.user?.id && await isAdmin(session.user.id))) {
-            return NextResponse.json({ error: "Product not found" }, { status: 404 });
-        }
-
-        const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
-
-        return NextResponse.json({
-            product: {
-                ...product,
-                lowStockAt,
-                availability: {
-                    state: state.state,
-                    buyable: state.buyable,
-                    opensAt: state.opensAt,
-                    closesAt: state.closesAt,
-                    remainingForPerson: state.remainingForPerson,
-                    remainingInPeriod: state.remainingInPeriod,
-                },
-                price: state.price,
-                was: state.was,
-                onSale: state.onSale,
-            },
-        });
+        return NextResponse.json({ product });
     } catch (error) {
         log.error("Get product error", { error: error instanceof Error ? error.message : String(error) });
-        return NextResponse.json(
-            { error: "Internal server error" },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
 
@@ -111,7 +60,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
         const data = { ...validation.data };
         if (data.description !== undefined) {
-            data.description = sanitizeHtml(data.description);
+            data.description = data.description;
         }
 
         // The schedule arrives as wall-clock strings; the column holds

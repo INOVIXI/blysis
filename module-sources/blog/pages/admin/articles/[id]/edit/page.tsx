@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useEffect, use } from "react";
 import { useRouter } from "@/core/sdk/navigation";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, LoadFailed, RichTextEditor, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea, useConfirm } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, LoadFailed, RichTextEditor, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea, useConfirm, UrlOrFile} from "@/core/sdk/ui";
 import { Loader2, Trash2 } from "lucide-react";
 import { writeError } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -273,12 +273,12 @@ export default function EditBlogArticlePage(props: PageProps) {
                             </CardHeader>
                             <CardContent>
                                 <div>
-                                    <Label htmlFor="coverImage">{t("adm_coverImage")}</Label>
-                                    <Input
+                                    <UrlOrFile
                                         id="coverImage"
+                                        label={t("adm_coverImage")}
                                         value={formData.coverImage}
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, coverImage: e.target.value })}
-                                        placeholder="https://..."
+                                        onChange={(v) => setFormData({ ...formData, coverImage: v })}
+                                        accept="image/*"
                                     />
                                 </div>
                             </CardContent>

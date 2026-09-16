@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { applyFiltersAsync } from "@/core/sdk";
 import { logActivity, pageParams, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { LISTINGS_PER_PAGE, readListings } from "../../lib/read-listings";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { deliveryRefusal } from "../../lib/delivery";
@@ -28,25 +29,17 @@ const listingSchema = z.object({
     payload: z.unknown().optional(),
 });
 
+// The read and what counts as on sale live in lib/read-listings.ts, because
+// the page renders the board on the server now and the two must not drift.
 export async function GET(request: NextRequest) {
     // Through the shared reader rather than parsed here: it is the one place
     // that bounds a page number, and a `?page=1e9` skipping a billion rows is
     // a query nobody can serve.
-    const { page, skip, take } = pageParams(request.nextUrl.searchParams, { defaultLimit: 24 });
-
-    const [listings, total] = await Promise.all([
-        prisma.marketListing.findMany({
-            where: { isActive: true, isSold: false },
-            include: { seller: { select: { id: true, username: true, avatar: true } } },
-            orderBy: { createdAt: "desc" },
-            skip,
-            take,
-        }),
-        prisma.marketListing.count({ where: { isActive: true, isSold: false } }),
-    ]);
+    const { page } = pageParams(request.nextUrl.searchParams, { defaultLimit: LISTINGS_PER_PAGE });
+    const read = await readListings(page);
 
     return NextResponse.json({
-        listings: listings.map((listing) => ({
+        listings: read.listings.map((listing) => ({
             id: listing.id,
             title: listing.title,
             body: listing.body,
@@ -55,7 +48,7 @@ export async function GET(request: NextRequest) {
             seller: listing.seller,
             createdAt: listing.createdAt,
         })),
-        pagination: { page, pages: Math.max(1, Math.ceil(total / take)), total },
+        pagination: { page: read.page, pages: read.pages, total: read.total },
     });
 }
 
