@@ -20,17 +20,6 @@
  * browser-facing prefixes it sets over https, and `next-auth.` is the name it
  * used before the rename, still present in a session issued by an older build.
  */
-const SESSION_COOKIE_NAMES = [
-    "authjs.session-token",
-    "next-auth.session-token",
-];
-
-const PREFIXES = ["", "__Secure-", "__Host-"];
-
-const SESSION_NAMES = new Set(
-    PREFIXES.flatMap((prefix) => SESSION_COOKIE_NAMES.map((name) => prefix + name)),
-);
-
 /**
  * Whether this deployment hands the browser prefixed, `Secure` cookies.
  *
@@ -48,10 +37,65 @@ const SESSION_NAMES = new Set(
 export const SECURE_SESSION_COOKIES =
     (process.env.AUTH_URL ?? process.env.NEXTAUTH_URL ?? "").startsWith("https://");
 
+/**
+ * A word that keeps two installations on one host apart.
+ *
+ * A cookie belongs to a domain and ignores the port, so two installations on
+ * one machine - a staging site beside a live one, which is the ordinary shape
+ * of it - issue the same three cookie names at the same domain and overwrite
+ * each other. Signing into one signs you out of the other, which reads as a
+ * session bug rather than as two sites sharing a jar. Measured on this
+ * machine: both servers answered `/api/auth/csrf` with `authjs.csrf-token` and
+ * `authjs.callback-url`.
+ *
+ * Empty by default, so an installation that has never heard of this keeps the
+ * names it has been issuing and nobody is signed out by an upgrade. The word
+ * goes after `__Secure-` and `__Host-`, because a browser reads those prefixes
+ * at the very start of the name or not at all.
+ */
+const COOKIE_NAMESPACE = (process.env.AUTH_COOKIE_NAMESPACE ?? "").trim().replace(/[^a-zA-Z0-9-]/g, "");
+const NAMESPACED = COOKIE_NAMESPACE ? `${COOKIE_NAMESPACE}.` : "";
+
 /** The name the session token is issued under, prefix and all. */
 export const SESSION_TOKEN_COOKIE = SECURE_SESSION_COOKIES
-    ? "__Secure-authjs.session-token"
-    : "authjs.session-token";
+    ? `__Secure-${NAMESPACED}authjs.session-token`
+    : `${NAMESPACED}authjs.session-token`;
+
+const SESSION_COOKIE_NAMES = [
+    "authjs.session-token",
+    "next-auth.session-token",
+];
+
+const PREFIXES = ["", "__Secure-", "__Host-"];
+
+/**
+ * Built from the name this installation actually issues as well as the
+ * historical ones.
+ *
+ * The list used to be the historical names alone. Once a deployment can put a
+ * word in front of them to keep two installations apart, a fixed list stops
+ * matching what it hands out: this would answer "no session cookie" for every
+ * request on exactly the deployments that set one, and fail open on the
+ * caller that trusts a false.
+ */
+const SESSION_NAMES = new Set([
+    ...PREFIXES.flatMap((prefix) => SESSION_COOKIE_NAMES.map((name) => prefix + name)),
+    SESSION_TOKEN_COOKIE,
+]);
+
+
+/** Where a sign-in returns to. Same jar, so the same word keeps it apart. */
+export const CALLBACK_URL_COOKIE = SECURE_SESSION_COOKIES
+    ? `__Secure-${NAMESPACED}authjs.callback-url`
+    : `${NAMESPACED}authjs.callback-url`;
+
+/**
+ * The CSRF token. `__Host-` rather than `__Secure-`: it is the one of the
+ * three that must not be settable by a sibling domain.
+ */
+export const CSRF_TOKEN_COOKIE = SECURE_SESSION_COOKIES
+    ? `__Host-${NAMESPACED}authjs.csrf-token`
+    : `${NAMESPACED}authjs.csrf-token`;
 
 
 

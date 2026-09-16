@@ -6,7 +6,7 @@ import { impersonationRefusal } from "./impersonation";
 import { identifierLookup } from "./login-identifier";
 import { REFUSAL_CODE } from "./login-refusal";
 import { loginAllowedFrom, noteFailedLoginFrom } from "./login-throttle";
-import { SECURE_SESSION_COOKIES, SESSION_TOKEN_COOKIE } from "./session-cookie";
+import { CALLBACK_URL_COOKIE, CSRF_TOKEN_COOKIE, SECURE_SESSION_COOKIES, SESSION_TOKEN_COOKIE } from "./session-cookie";
 import { SignInRefusal } from "./sign-in-refusal";
 import {
     REMEMBERED_MAX_AGE_SECONDS,
@@ -108,7 +108,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
         },
         callbackUrl: {
-            name: IS_PROD_COOKIE ? "__Secure-authjs.callback-url" : "authjs.callback-url",
+            name: CALLBACK_URL_COOKIE,
             options: {
                 httpOnly: true,
                 sameSite: "lax",
@@ -117,7 +117,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
         },
         csrfToken: {
-            name: IS_PROD_COOKIE ? "__Host-authjs.csrf-token" : "authjs.csrf-token",
+            name: CSRF_TOKEN_COOKIE,
             options: {
                 httpOnly: true,
                 sameSite: "lax",
