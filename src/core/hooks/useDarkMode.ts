@@ -1,27 +1,33 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { COLOR_MODE_COOKIE, COLOR_MODE_MAX_AGE } from "@/core/lib/color-mode";
 
 /**
- * Shared dark mode hook - syncs state across components via storage events.
- * Single source of truth for dark mode toggle.
+ * The light/dark toggle, and the one place the choice is written.
+ *
+ * The choice is a **cookie**, because the server renders `data-mode` from it
+ * and a page that arrives in the right mode never flashes into it. See
+ * `color-mode.ts`.
+ *
+ * `localStorage` is written too, and only for one reason: it is what raises a
+ * `storage` event in the site's other open tabs. Nothing reads it back as a
+ * preference, so the two cannot disagree about anything that matters.
  */
 export function useDarkMode() {
     const [isDark, setIsDark] = useState(false);
 
     useEffect(() => {
-        // Read initial state from DOM (set by inline script in layout)
+        // Read initial state from the DOM, which the server wrote.
         const dark = document.documentElement.getAttribute("data-mode") === "dark";
          
         setIsDark(dark);
 
         // Listen for changes from other components/tabs
         const handleStorage = (e: StorageEvent) => {
-            if (e.key === "color-mode") {
-                const newDark = e.newValue === "dark";
-                setIsDark(newDark);
-                if (newDark) document.documentElement.setAttribute("data-mode", "dark");
-                else document.documentElement.removeAttribute("data-mode");
+            if (e.key === COLOR_MODE_COOKIE && e.newValue) {
+                setIsDark(e.newValue === "dark");
+                document.documentElement.setAttribute("data-mode", e.newValue);
             }
         };
 
@@ -39,15 +45,14 @@ export function useDarkMode() {
     }, []);
 
     const toggle = useCallback(() => {
-        const newDark = !isDark;
-        setIsDark(newDark);
-        if (newDark) {
-            document.documentElement.setAttribute("data-mode", "dark");
-            localStorage.setItem("color-mode", "dark");
-        } else {
-            document.documentElement.removeAttribute("data-mode");
-            localStorage.setItem("color-mode", "light");
-        }
+        const next = isDark ? "light" : "dark";
+        setIsDark(next === "dark");
+        // Removing the attribute is not the same as choosing light: a theme
+        // whose own default is dark would go back to dark on the next paint.
+        document.documentElement.setAttribute("data-mode", next);
+        document.cookie =
+            `${COLOR_MODE_COOKIE}=${next}; path=/; max-age=${COLOR_MODE_MAX_AGE}; samesite=lax`;
+        try { localStorage.setItem(COLOR_MODE_COOKIE, next); } catch { /* private mode */ }
         // Notify other components in the same tab
         window.dispatchEvent(new Event("darkmode-change"));
     }, [isDark]);

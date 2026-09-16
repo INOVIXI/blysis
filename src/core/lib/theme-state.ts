@@ -1,7 +1,26 @@
 import { cache } from "react";
+import { cookies } from "next/headers";
 import { prisma } from "./db";
+import { resolveMode } from "./theme-mode";
+import { COLOR_MODE_COOKIE } from "./color-mode";
 import { themeRegistry, defaultThemeId } from "@/core/generated/theme-registry";
 import type { ThemeManifest } from "./theme-manifest-schema";
+
+/**
+ * The visitor's own mode, or null where there is no visitor.
+ *
+ * `cookies()` throws rather than rejects when it is called with no request
+ * around it, so the guard has to be a `try` and not a `.catch` on the
+ * promise. A cron, a script and a test all reach this function and none of
+ * them is a person with a preference; they get the site's mode.
+ */
+async function visitorMode(): Promise<string | null> {
+    try {
+        return (await cookies()).get(COLOR_MODE_COOKIE)?.value ?? null;
+    } catch {
+        return null;
+    }
+}
 
 export interface ActiveTheme {
     themeId: string;
@@ -24,7 +43,17 @@ export const getActiveTheme = cache(async function getActiveTheme(): Promise<Act
     const state = await prisma.themeState.findFirst().catch(() => null);
     const themeId = state?.themeId && themeRegistry[state.themeId] ? state.themeId : defaultThemeId;
     const manifest = themeRegistry[themeId] ?? themeRegistry[defaultThemeId];
-    const mode = state?.mode && manifest.modes.available[state.mode] ? state.mode : manifest.modes.default;
+    /*
+     * The visitor's own choice, over the site's, over the theme's.
+     *
+     * Read here rather than in the layout so every caller in one request gets
+     * the same answer, and so the customization below is fetched for the mode
+     * the page is actually drawn in - it is keyed by mode, and fetching the
+     * site's while rendering the visitor's handed a dark page the light
+     * theme's colour overrides.
+     */
+    const chosen = await visitorMode();
+    const mode = resolveMode({ manifest, cookie: chosen, siteDefault: state?.mode ?? null });
 
     const [customization, settingRows] = await Promise.all([
         prisma.themeCustomization.findUnique({ where: { themeId_mode: { themeId, mode } } }).catch(() => null),

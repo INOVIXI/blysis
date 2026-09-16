@@ -35,6 +35,9 @@ function pickTheme(id: string): ThemeManifest {
 
 export function AppThemeProvider({ children, themeId, mode, serverConfig }: AppThemeProviderProps) {
     const activeTheme = useMemo(() => pickTheme(themeId), [themeId]);
+    // `mode` is what the server already resolved, visitor's cookie included,
+    // and it is on `<html>` before this runs. Resolving again only guards a
+    // theme switch that leaves a mode this theme does not have.
     const [currentMode, setCurrentMode] = useState<string>(() =>
         resolveMode({ manifest: activeTheme, forced: mode })
     );
