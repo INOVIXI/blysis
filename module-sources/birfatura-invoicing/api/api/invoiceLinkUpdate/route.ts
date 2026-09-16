@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { applyFiltersAsync } from "@/core/sdk";
 import { prisma, readJsonBody, siteTimeZone } from "@/core/sdk/server";
 import { z } from "zod";
 import { PRIVATE, refuseUnlessInvited } from "../../../lib/request";
@@ -47,7 +48,27 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    const orderId = String(parsed.data.orderId);
+    /*
+     * The integrator hands back the `OrderId` it was given, which is an
+     * integer now, and `ShopInvoice` is keyed by the shop's own cuid. So the
+     * number is resolved to an order rather than stringified into a key that
+     * matches nothing - which is what this did, and it wrote a row nobody
+     * could ever read back.
+     *
+     * The shop resolves it. A string is still accepted, because an integrator
+     * set up while this published cuids echoes one back until it refreshes
+     * its list, and the shop is the only thing here that knows all three of
+     * its own names for an order.
+     */
+    const orderId = await applyFiltersAsync("store.order.resolve", null, {
+        reference: parsed.data.orderId,
+    });
+    if (!orderId) {
+        return NextResponse.json(
+            { Success: false, Message: "No order with that id" },
+            { status: 404, headers: PRIVATE },
+        );
+    }
     const issuedAt = readTurkishDateTime(parsed.data.faturaTarihi, await siteTimeZone());
 
     await prisma.shopInvoice.upsert({

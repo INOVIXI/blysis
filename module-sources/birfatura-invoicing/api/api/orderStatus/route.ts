@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PRIVATE, refuseUnlessInvited } from "../../../lib/request";
+import { STATUS_IDS } from "../../../lib/integrator-ids";
 
 
 /*
@@ -17,11 +18,11 @@ import { PRIVATE, refuseUnlessInvited } from "../../../lib/request";
  * there is picking the state this shop actually reaches when money arrives.
  */
 const STATUSES = [
-    { Id: "PENDING", Value: "Pending" },
-    { Id: "PROCESSING", Value: "Processing" },
-    { Id: "COMPLETED", Value: "Completed" },
-    { Id: "CANCELLED", Value: "Cancelled" },
-    { Id: "REFUNDED", Value: "Refunded" },
+    { Id: STATUS_IDS.PENDING, Value: "Pending" },
+    { Id: STATUS_IDS.PROCESSING, Value: "Processing" },
+    { Id: STATUS_IDS.COMPLETED, Value: "Completed" },
+    { Id: STATUS_IDS.CANCELLED, Value: "Cancelled" },
+    { Id: STATUS_IDS.REFUNDED, Value: "Refunded" },
 ];
 
 export async function POST(request: NextRequest) {

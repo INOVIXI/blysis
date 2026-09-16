@@ -18,6 +18,7 @@
  */
 
 import { writeTurkishDateTime } from "./turkish-date";
+import { integerFor } from "./integrator-ids";
 
 /** Money, as it goes on a document. */
 function money(amount: number): number {
@@ -48,6 +49,7 @@ export function splitLine(
 interface Billing {
     kind: string;
     name: string;
+    phone: string;
     taxNumber: string;
     taxOffice: string;
     address: string;
@@ -58,7 +60,11 @@ interface Billing {
 /** An order as this module reads it. */
 export interface SoldOrder {
     id: string;
+    /** The integer the integrator holds and hands back. See store migration 014. */
+    number: number;
     orderNumber: string;
+    subtotal: unknown;
+    discount: unknown;
     createdAt: Date;
     currency: string;
     total: unknown;
@@ -86,6 +92,7 @@ function billingIn(value: unknown): Billing | null {
     return {
         kind: text("kind"),
         name,
+        phone: text("phone"),
         taxNumber: text("taxNumber"),
         taxOffice: text("taxOffice"),
         address: text("address"),
@@ -108,11 +115,17 @@ export function orderAnswer(order: SoldOrder, tax: TaxSetup): Record<string, unk
     const details = order.items.map((item) => {
         const split = splitLine(Number(item.price), tax.taxRate, tax.taxIncluded);
         return {
-            ProductId: item.productId ?? "",
+            // An integer, as the schema asks. A product's own id is a cuid, so
+            // the number is derived from it and is the same for ever.
+            ProductId: item.productId ? integerFor(item.productId) : 0,
             // The shop has no separate code for a product, and the integrator
-            // uses this to group repeat sales of one thing.
+            // uses this to group repeat sales of one thing. A string here, so
+            // the cuid itself is what an operator can look up.
             ProductCode: item.productId ?? "",
             ProductName: item.name,
+            // Everything this shop sells is sold by the piece: it has no
+            // weights and no lengths. The field is not optional.
+            ProductQuantityType: "Adet",
             ProductQuantity: item.quantity,
             VatRate: Number.isFinite(tax.taxRate) && tax.taxRate > 0 ? tax.taxRate : 0,
             ProductUnitPriceTaxIncluding: split.including,
@@ -121,9 +134,14 @@ export function orderAnswer(order: SoldOrder, tax: TaxSetup): Record<string, unk
     });
 
     const paidTotal = splitLine(Number(order.total), tax.taxRate, tax.taxIncluded);
+    // The two totals the schema keeps apart: what the goods came to before any
+    // reduction, and the reduction itself. Sending only the amount paid left
+    // the integrator to infer a discount it was given a field for.
+    const productsTotal = splitLine(Number(order.subtotal), tax.taxRate, tax.taxIncluded);
+    const discountTotal = splitLine(Number(order.discount), tax.taxRate, tax.taxIncluded);
 
     return {
-        OrderId: order.id,
+        OrderId: order.number,
         // The number the buyer sees on their confirmation, so an accountant
         // looking at either side can find the other.
         OrderCode: order.orderNumber,
@@ -132,17 +150,41 @@ export function orderAnswer(order: SoldOrder, tax: TaxSetup): Record<string, unk
         BillingName: billing.name,
         BillingAddress: billing.address,
         BillingCity: billing.city,
+        // The district. This shop asks for a city and not for one below it, so
+        // the city stands in rather than the field going out empty - the
+        // document needs somewhere to print.
         BillingTown: billing.city,
+        BillingMobilePhone: billing.phone,
+        /*
+         * Shipping repeats billing.
+         *
+         * Nothing here is posted: the shop sells ranks, keys and credits, so
+         * there is no second address and no delivery. The fields are in the
+         * schema and an integrator that finds them empty has an incomplete
+         * order rather than a digital one, so they carry the address the sale
+         * was billed to, which is the address the sale actually has.
+         */
+        ShippingName: billing.name,
+        ShippingAddress: billing.address,
+        ShippingCity: billing.city,
+        ShippingTown: billing.city,
         // Their field for a national identity number. A company sends its tax
         // number in the same place.
         SSNTCNo: billing.taxNumber,
         TaxOffice: billing.taxOffice,
         Email: order.email ?? "",
-        PaymentType: order.paymentMethod ?? "",
+        // The integer `/api/paymentMethods` published for this gateway. It
+        // used to be the gateway's own name, which matched nothing the
+        // integrator had been given.
+        PaymentTypeId: order.paymentMethod ? integerFor(order.paymentMethod) : 0,
         Currency: order.currency.toUpperCase(),
         CurrencyRate: 1,
         TotalPaidTaxIncluding: paidTotal.including,
         TotalPaidTaxExcluding: paidTotal.excluding,
+        ProductsTotalTaxIncluding: productsTotal.including,
+        ProductsTotalTaxExcluding: productsTotal.excluding,
+        DiscountTotalTaxIncluding: discountTotal.including,
+        DiscountTotalTaxExcluding: discountTotal.excluding,
         OrderDetails: details,
     };
 }

@@ -20,6 +20,7 @@
  */
 import { describe, it, expect } from "vitest";
 import { splitLine, orderAnswer } from "@/modules/birfatura-invoicing/lib/order-answer";
+import { integerFor } from "@/modules/birfatura-invoicing/lib/integrator-ids";
 
 describe("a line, split both ways", () => {
     it("adds the tax on when the shop quotes prices without it", () => {
@@ -46,6 +47,8 @@ describe("a line, split both ways", () => {
 describe("one order, as the integrator asks for it", () => {
     const order = {
         id: "order-1",
+        // The integer the shop keeps for an integrator that can only hold one.
+        number: 1042,
         orderNumber: "ORD-MHK2X9Q-A3F1",
         createdAt: new Date("2026-09-09T09:30:00Z"),
         currency: "TRY",
@@ -68,8 +71,12 @@ describe("one order, as the integrator asks for it", () => {
     const answer = orderAnswer(order, { taxRate: 20, taxIncluded: true, timeZone: "Europe/Istanbul" });
 
     it("is named by the number the buyer sees, not by a row id", () => {
+        // `OrderCode` is what an accountant and a customer can both quote.
+        // `OrderId` is the integer the document's schema asks for, and it is
+        // the shop's own column rather than a cuid stringified into a field
+        // that cannot hold one.
         expect(answer.OrderCode).toBe("ORD-MHK2X9Q-A3F1");
-        expect(answer.OrderId).toBe("order-1");
+        expect(answer.OrderId).toBe(1042);
     });
 
     it("carries who it is billed to", () => {
@@ -83,10 +90,16 @@ describe("one order, as the integrator asks for it", () => {
     it("carries every line with its tax rate and both prices", () => {
         expect(answer.OrderDetails).toEqual([
             {
-                ProductId: "vip",
+                // An integer for the field that is declared as one, derived
+                // from the product's own id so it never moves; the id itself
+                // travels in `ProductCode`, which is a string.
+                ProductId: integerFor("vip"),
                 ProductCode: "vip",
                 ProductName: "VIP",
                 ProductQuantity: 2,
+                // The unit the quantity is counted in, which the document
+                // requires and has no default for.
+                ProductQuantityType: "Adet",
                 VatRate: 20,
                 ProductUnitPriceTaxIncluding: 59.7,
                 ProductUnitPriceTaxExcluding: 49.75,

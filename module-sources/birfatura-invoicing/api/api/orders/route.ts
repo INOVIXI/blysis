@@ -6,6 +6,7 @@ import { PRIVATE, refuseUnlessInvited } from "../../../lib/request";
 import { orderAnswer } from "../../../lib/order-answer";
 import { taxSetup } from "../../../lib/setup";
 import { readTurkishDateTime } from "../../../lib/turkish-date";
+import { statusNameFor } from "../../../lib/integrator-ids";
 
 
 /*
@@ -33,20 +34,20 @@ import { readTurkishDateTime } from "../../../lib/turkish-date";
  * caller asking a question the shop cannot answer rather than an empty list
  * that reads like "no sales that day".
  */
-const STATUSES = ["PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"] as const;
-
 const askSchema = z.object({
     startDateTime: z.string().max(40).optional(),
     endDateTime: z.string().max(40).optional(),
-    // Upper-cased inside the schema rather than on the way in: the
-    // integrator echoes back the id it was given, and case is not something
-    // to refuse a nightly run over. Narrowed here so nothing casts a body.
-    orderStatusId: z
-        .string()
-        .max(32)
-        .transform((value) => value.toUpperCase())
-        .pipe(z.enum(STATUSES))
-        .optional(),
+    /*
+     * An integer, which is what the published schema says and what the
+     * integrator echoes back from `/api/orderStatus`.
+     *
+     * It used to be read as the shop's own enum name - "COMPLETED" - so the
+     * three endpoints agreed with each other and with nothing in the document.
+     * A string is still accepted because that is what this module published
+     * for as long as it did: an integrator set up against the old answer keeps
+     * working until it refreshes its mapping.
+     */
+    orderStatusId: z.union([z.number().int(), z.string().max(32)]).optional(),
 });
 
 /** A window this endpoint will answer for. */
@@ -80,7 +81,13 @@ export async function POST(request: NextRequest) {
     }
     // Paid unless the integrator asked for another state. An unpaid order is
     // not a sale, and invoicing one is a document to cancel later.
-    const status = parsed.data.orderStatusId ?? "COMPLETED";
+    const status = statusNameFor(parsed.data.orderStatusId);
+    if (!status) {
+        return NextResponse.json(
+            { Success: false, Message: "orderStatusId is not one this shop published" },
+            { status: 400, headers: PRIVATE },
+        );
+    }
 
     // The shop answers for its own sales. This used to be a query against
     // `Order` written here, which is an invoicing module knowing the shop's
@@ -98,7 +105,10 @@ export async function POST(request: NextRequest) {
             orderAnswer(
                 {
                     id: order.id,
+                    number: order.number ?? 0,
                     orderNumber: order.orderNumber,
+                    subtotal: order.subtotal ?? order.total,
+                    discount: order.discount ?? 0,
                     createdAt: order.createdAt ? new Date(order.createdAt) : new Date(),
                     currency: order.currency ?? "",
                     total: order.total,
