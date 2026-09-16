@@ -19,6 +19,14 @@
     {
       "name": "forum.moderate",
       "labelKey": "forum.perm_moderate"
+    },
+    {
+      "name": "forum.edit-any",
+      "labelKey": "forum.perm_editAny"
+    },
+    {
+      "name": "forum.delete-any",
+      "labelKey": "forum.perm_deleteAny"
     }
   ],
   "settings": [
@@ -288,6 +296,8 @@
         "noCategoriesHelp": "An admin needs to create at least one forum category before topics can be posted.",
         "noCategoriesTitle": "No forum categories yet",
         "noTopics": "No topics yet. Be the first to start a discussion!",
+        "perm_deleteAny": "Delete anybody's topics and posts",
+        "perm_editAny": "Edit anybody's topics and posts",
         "perm_manage": "Manage",
         "perm_moderate": "Moderate topics and posts",
         "perm_view": "Read the forum",
@@ -443,6 +453,8 @@
         "noCategoriesHelp": "Konu açılabilmesi için yöneticinin en az bir forum kategorisi oluşturması gerekiyor.",
         "noCategoriesTitle": "Henüz forum kategorisi yok",
         "noTopics": "Henüz konu yok. Bir tartışma başlatmak için ilk siz olun!",
+        "perm_deleteAny": "Herkesin konu ve iletisini silebilir",
+        "perm_editAny": "Herkesin konu ve iletisini düzenleyebilir",
         "perm_manage": "Yönetebilir",
         "perm_moderate": "Konu ve iletileri denetleyebilir",
         "perm_view": "Forumu okuyabilir",

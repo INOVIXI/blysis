@@ -55,6 +55,8 @@ const SRC_FILES = walk(join(ROOT, "src")).filter(
  * the palette, the renderer drops it, and the exemption is gone.
  */
 const UNGATED_BY_DESIGN: Record<string, string> = {
+    "src/app/api/v1/settings/route.ts":
+        "Reads the declared credential keys to decide whether a write needs the credentials permission. A key belonging to a disabled module is still a credential, and filtering by enablement would let somebody write a gateway's secret by turning that gateway off first.",
     "src/core/lib/auth.ts":
         "Auth.js builds its provider list synchronously at module load, before a database round-trip is possible. Activation is env-gated instead, as auth-providers.ts documents.",
     "src/app/api/v1/auth-providers/status/route.ts":

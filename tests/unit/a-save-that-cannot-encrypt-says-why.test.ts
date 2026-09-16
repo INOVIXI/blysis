@@ -33,7 +33,13 @@ vi.mock("@/core/lib/db", () => ({
     default: { setting, $transaction: transaction },
 }));
 vi.mock("@/core/lib/auth", () => ({ auth: async () => ({ user: { id: "u1", role: "admin" } }) }));
-vi.mock("@/core/lib/permissions", () => ({ isAdmin: async () => true }));
+// An administrator, which is what this test is about: the refusal it defends
+// is the one an operator sees when the install has no key, not a permission
+// check standing in front of it.
+vi.mock("@/core/lib/permissions", () => ({
+    isAdmin: async () => true,
+    hasPermission: async () => true,
+}));
 vi.mock("@/core/lib/activity-log", () => ({ logActivity: async () => undefined }));
 vi.mock("@/core/lib/cache", () => ({ invalidate: async () => undefined }));
 vi.mock("@/core/lib/email-config", () => ({ invalidateEmailConfig: () => undefined }));

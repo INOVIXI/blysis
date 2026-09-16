@@ -37,16 +37,14 @@ export const CORE_ADMIN_API: AdminApiRoute[] = [
     { path: "/v1/admin/alerting", permission: "admin.settings" },
     { path: "/v1/admin/alerting/test", permission: "admin.settings" },
 
-    // Members.
+    // Members. Three permissions rather than one: editing a member is an
+    // everyday job, deleting one takes their account and everything attached
+    // to it, and signing in as somebody is doing things in their name.
     { path: "/v1/users", permission: "admin.users" },
     { path: "/v1/users/[id]", permission: "admin.users" },
-    { path: "/v1/users/[id]/delete", permission: "admin.users" },
-    // Signing in as somebody else is the most powerful thing on this list. It
-    // sits with the members rather than in a name of its own because an
-    // operator who can edit any account can already reach the same effect;
-    // splitting it would suggest a boundary that is not there.
-    { path: "/v1/admin/impersonate/start", permission: "admin.users" },
-    { path: "/v1/admin/impersonate/stop", permission: "admin.users" },
+    { path: "/v1/users/[id]/delete", permission: "admin.users.delete" },
+    { path: "/v1/admin/impersonate/start", permission: "admin.users.impersonate" },
+    { path: "/v1/admin/impersonate/stop", permission: "admin.users.impersonate" },
 
     // Acting on members.
     { path: "/v1/warnings", permission: "admin.moderation" },
@@ -83,11 +81,11 @@ export const CORE_ADMIN_API: AdminApiRoute[] = [
 
     // Installing code.
     { path: "/v1/modules", permission: "admin.modules" },
-    { path: "/v1/modules/[id]", permission: "admin.modules" },
+    { path: "/v1/modules/[id]", permission: "admin.modules.install" },
     { path: "/v1/modules/update", permission: "admin.modules" },
-    { path: "/v1/modules/upload", permission: "admin.modules" },
-    { path: "/v1/modules/marketplace/install", permission: "admin.modules" },
-    { path: "/v1/modules/marketplace/bulk-install", permission: "admin.modules" },
+    { path: "/v1/modules/upload", permission: "admin.modules.install" },
+    { path: "/v1/modules/marketplace/install", permission: "admin.modules.install" },
+    { path: "/v1/modules/marketplace/bulk-install", permission: "admin.modules.install" },
     { path: "/v1/admin/updates", permission: "admin.modules" },
 
     // What the site is doing.
@@ -104,7 +102,7 @@ export const CORE_ADMIN_API: AdminApiRoute[] = [
     // The copy of everything.
     { path: "/v1/admin/backup", permission: "admin.backups" },
     { path: "/v1/admin/backup/[id]", permission: "admin.backups" },
-    { path: "/v1/admin/backup/[id]/restore", permission: "admin.backups" },
+    { path: "/v1/admin/backup/[id]/restore", permission: "admin.backups.restore" },
 ];
 
 export interface MemberMutation {

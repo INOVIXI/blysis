@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { CORE_PERMISSIONS, permissionModule } from "@/core/lib/permission-names";
 import { CORE_ADMIN_SCREENS } from "@/core/lib/admin-screens";
+import { CORE_ADMIN_API } from "@/core/lib/admin-api";
 import { stripComments } from "./source-text";
 
 /**
@@ -62,7 +63,6 @@ const SHARED_NAMESPACES = new Set(["admin"]);
  */
 const DECLARED_BUT_UNENFORCED = [
     "credits.view",
-    "forum.moderate",
     "forum.view",
     "help-center.view",
     "store.view",
@@ -94,7 +94,9 @@ function checkedNames(files: string[]): Map<string, string[]> {
     for (const file of files) {
         const body = stripComments(fs.readFileSync(file, "utf8"));
         for (const match of body.matchAll(pattern)) {
-            for (const literal of match[1].matchAll(/["']([a-z0-9-]+\.[a-z0-9-]+)["']/g)) {
+            // Two segments or more: a name may narrow itself, as
+            // `admin.users.delete` narrows `admin.users`.
+            for (const literal of match[1].matchAll(/["']([a-z0-9-]+(?:\.[a-z0-9-]+)+)["']/g)) {
                 const name = literal[1];
                 found.set(name, [...(found.get(name) ?? []), path.relative(ROOT, file)]);
             }
@@ -188,7 +190,13 @@ describe("permission declarations", () => {
     });
 
     it("shapes every declared permission as <namespace>.<action>", () => {
-        const malformed = [...allDeclared].filter((name) => !/^[a-z0-9-]+\.[a-z0-9-]+$/.test(name));
+        // A third segment narrows the second rather than inventing a new kind:
+        // `admin.users.delete` is a part of `admin.users`, held apart because
+        // deleting an account is not the same job as editing one. The rule is
+        // still one namespace at the front, which is what says who owns it.
+        const malformed = [...allDeclared].filter(
+            (name) => !/^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/.test(name),
+        );
         expect(malformed).toEqual([]);
     });
 });
@@ -207,6 +215,7 @@ describe("permission enforcement", () => {
         ...coreChecks.keys(),
         ...[...moduleChecks.values()].flatMap((m) => [...m.keys()]),
         ...CORE_ADMIN_SCREENS.map((screen) => screen.permission),
+        ...CORE_ADMIN_API.map((route) => route.permission),
         ...requiredByManifests(),
     ]);
 

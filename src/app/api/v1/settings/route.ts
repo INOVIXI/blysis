@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/core/lib/auth";
 import { prisma } from "@/core/lib/db";
-import { isAdmin } from "@/core/lib/permissions";
+import { hasPermission, isAdmin } from "@/core/lib/permissions";
+import { ModuleSecretSettings } from "@/core/generated/module-data";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { logActivity } from "@/core/lib/activity-log";
@@ -94,6 +95,16 @@ export async function PATCH(request: NextRequest) {
             { error: "Invalid settings data", issues: parsed.error.issues },
             { status: 400 }
         );
+    }
+
+    // A payment key, a mail credential, a webhook secret. Writing one is not
+    // the same act as renaming the site, and this endpoint is how both are
+    // done, so the permission is asked for here rather than at the door. The
+    // set is what the installed modules declared, never a list core keeps.
+    const secrets = new Set(ModuleSecretSettings.map((entry) => entry.split(".")[0]));
+    const touchesCredential = Object.keys(parsed.data).some((key) => secrets.has(key));
+    if (touchesCredential && !(await hasPermission(session.user.id, "admin.settings.credentials"))) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Pre-flight per-key string length cap. Enforced BEFORE any writes so a

@@ -37,10 +37,25 @@ export interface CorePermission {
 export const CORE_PERMISSION_CATALOGUE: CorePermission[] = [
     { name: "admin.access", labelKey: "permissions.adminAccess", section: "panel" },
     { name: "admin.settings", labelKey: "permissions.adminSettings", section: "panel" },
+    // A payment key, a mail credential, a webhook secret: reading one is not
+    // the same act as renaming the site, and the screens that hold them are
+    // the ones a fraud starts from.
+    { name: "admin.settings.credentials", labelKey: "permissions.adminSettingsCredentials", section: "panel" },
     { name: "admin.modules", labelKey: "permissions.adminModules", section: "panel" },
+    // Installing a module is running somebody else's code on this site.
+    // Turning an installed one on and off is not, and the second is a job an
+    // operator hands out freely.
+    { name: "admin.modules.install", labelKey: "permissions.adminModulesInstall", section: "panel" },
     { name: "admin.themes", labelKey: "permissions.adminThemes", section: "panel" },
 
     { name: "admin.users", labelKey: "permissions.adminUsers", section: "people" },
+    // Held apart from editing a member, because they are different jobs with
+    // different consequences. Deleting takes a person's account and everything
+    // attached to it; signing in as somebody is doing things in their name,
+    // which no audit trail can fully unpick afterwards. An operator who trusts
+    // somebody to fix a display name has not thereby trusted them with either.
+    { name: "admin.users.delete", labelKey: "permissions.adminUsersDelete", section: "people" },
+    { name: "admin.users.impersonate", labelKey: "permissions.adminUsersImpersonate", section: "people" },
     { name: "admin.roles", labelKey: "permissions.adminRoles", section: "people" },
     { name: "admin.moderation", labelKey: "permissions.adminModeration", section: "people" },
     { name: "admin.messaging", labelKey: "permissions.adminMessaging", section: "people" },
@@ -50,6 +65,9 @@ export const CORE_PERMISSION_CATALOGUE: CorePermission[] = [
     { name: "admin.observability", labelKey: "permissions.adminObservability", section: "system" },
     { name: "admin.security", labelKey: "permissions.adminSecurity", section: "system" },
     { name: "admin.backups", labelKey: "permissions.adminBackups", section: "system" },
+    // Taking a copy is safe. Putting one back overwrites everything written
+    // since it was taken, which is the only irreversible button in the panel.
+    { name: "admin.backups.restore", labelKey: "permissions.adminBackupsRestore", section: "system" },
 ];
 
 /** The names alone, which is what most callers want. */

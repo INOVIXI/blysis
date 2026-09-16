@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isRestrictedFrom } from "@/core/sdk/server";
-import { pageParams, isAdmin, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { pageParams, hasPermission, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { forumPostSchema, forumTopicUpdateSchema } from "../../../lib/validations";
 import { countTopicView, readTopic } from "../../../lib/read-topic";
@@ -165,11 +165,16 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Topic not found" }, { status: 404 });
     }
 
-    // Only author can edit content, admin can pin/lock
-    const adminCheck = await isAdmin(session.user.id);
+    // Three jobs, three answers. Editing your own topic is not a permission -
+    // the author is the author - while editing somebody else's and pinning or
+    // locking are two different things an operator hands out separately.
     const isAuthor = topic.authorId === session.user.id;
+    const [mayEditAny, mayModerate] = await Promise.all([
+        hasPermission(session.user.id, "forum.edit-any"),
+        hasPermission(session.user.id, "forum.moderate"),
+    ]);
 
-    if (!isAuthor && !adminCheck) {
+    if (!isAuthor && !mayEditAny && !mayModerate) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -180,10 +185,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const fields = parsedPatch.data;
 
     const data: Record<string, unknown> = {};
-    if (isAuthor && fields.title) data.title = fields.title;
-    if (isAuthor && fields.content) data.content = fields.content;
-    if (adminCheck && fields.isPinned !== undefined) data.isPinned = fields.isPinned;
-    if (adminCheck && fields.isLocked !== undefined) data.isLocked = fields.isLocked;
+    const mayEditThis = isAuthor || mayEditAny;
+    if (mayEditThis && fields.title) data.title = fields.title;
+    if (mayEditThis && fields.content) data.content = fields.content;
+    if (mayModerate && fields.isPinned !== undefined) data.isPinned = fields.isPinned;
+    if (mayModerate && fields.isLocked !== undefined) data.isLocked = fields.isLocked;
 
     // Only snapshot on content-meaningful edits (title / content), not pin/lock toggles
     if (data.title !== undefined || data.content !== undefined) {
@@ -216,8 +222,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Topic not found" }, { status: 404 });
     }
 
-    const adminCheck = await isAdmin(session.user.id);
-    if (topic.authorId !== session.user.id && !adminCheck) {
+    if (
+        topic.authorId !== session.user.id &&
+        !(await hasPermission(session.user.id, "forum.delete-any"))
+    ) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

@@ -81,10 +81,14 @@ export function RoleForm({ role }: { role?: RoleRecord }) {
     const isAdminRole = role?.name === "admin";
 
     useEffect(() => {
+        // The language can change while a catalogue is in flight, and an
+        // answer in the old one must not land under the new one.
+        let current = true;
         fetch(`/api/v1/admin/permission-catalogue?locale=${locale}`)
             .then((response) => response.json())
-            .then((data) => setSections(data.sections ?? []))
+            .then((data) => { if (current) setSections(data.sections ?? []); })
             .catch(() => { /* the form still saves; the grid stays empty */ });
+        return () => { current = false; };
     }, [locale]);
 
     const handleSubmit = async (e: React.FormEvent) => {
