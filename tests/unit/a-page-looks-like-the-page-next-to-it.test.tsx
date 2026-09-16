@@ -19,6 +19,8 @@ import { render, screen, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
+import { pageSource } from "./module-page-source";
 
 vi.mock("@/core/components/layout", () => ({
     Navbar: () => <nav data-testid="navbar" />,
@@ -116,7 +118,7 @@ describe("a public page", () => {
  * The rule only holds while every page keeps using the frame, and a new
  * module is written by copying an old one. This is the copy it should find.
  */
-describe("the public pages the modules ship", () => {
+describe("the public pages, core's own and the modules'", () => {
     const ROOT = process.cwd();
 
     /**
@@ -147,6 +149,17 @@ describe("the public pages the modules ship", () => {
             const pages = path.join(ROOT, "module-sources", moduleId, "pages");
             if (fs.existsSync(pages)) walk(pages);
         }
+        /*
+         * Core's own browsable pages, which this used to leave out - and they
+         * had drifted exactly as the modules once did, because nothing was
+         * looking. Measured on 2026-09-15: three pages, three widths, none of
+         * them the frame's and none carrying a crumb trail.
+         *
+         * `(auth)`, `(setup)` and `maintenance` stay outside it on purpose:
+         * they are flows and failures rather than somewhere to browse from,
+         * the same reason the store's order-success screen is listed above.
+         */
+        walk(path.join(ROOT, "src/app/[locale]/(public)"));
         return out.sort();
     }
 
@@ -156,10 +169,28 @@ describe("the public pages the modules ship", () => {
         expect(pages.length).toBeGreaterThan(20);
     });
 
+    /**
+     * The page's own code, plus the module component it hands the screen to.
+     *
+     * A page that reads its subject on the server is a short file that
+     * renders one client component, and the frame is in that component.
+     * Following the import keeps the rule about the frame rather than
+     * exempting the file: the list above is for pages that really draw no
+     * frame, and it should not collect an entry every time a page moves its
+     * fetch to the server.
+     */
+    function frameSource(page: string): string {
+        const moduleRoot = path.join(ROOT, page.split("/").slice(0, 2).join("/"));
+        return stripComments(pageSource(path.join(ROOT, page), moduleRoot));
+    }
+
+    /** The file's code, without its prose. A comment naming `<main>` is not one. */
+    function code(page: string): string {
+        return stripComments(fs.readFileSync(path.join(ROOT, page), "utf8"));
+    }
+
     it("draws every one of them in the frame", () => {
-        const freehand = pages.filter(
-            (p) => !NOT_A_PAGE[p] && !fs.readFileSync(path.join(ROOT, p), "utf8").includes("<PageFrame"),
-        );
+        const freehand = pages.filter((p) => !NOT_A_PAGE[p] && !frameSource(p).includes("<PageFrame"));
         expect(freehand).toEqual([]);
     });
 
@@ -169,7 +200,7 @@ describe("the public pages the modules ship", () => {
         const offenders: string[] = [];
         for (const page of pages) {
             if (NOT_A_PAGE[page]) continue;
-            const source = fs.readFileSync(path.join(ROOT, page), "utf8");
+            const source = code(page);
             if (/<main\b/.test(source)) offenders.push(`${page}: writes its own <main>`);
             if (/className="container/.test(source)) offenders.push(`${page}: sets its own container`);
         }
@@ -180,7 +211,7 @@ describe("the public pages the modules ship", () => {
         const offenders: string[] = [];
         for (const page of pages) {
             if (NOT_A_PAGE[page]) continue;
-            const source = fs.readFileSync(path.join(ROOT, page), "utf8");
+            const source = code(page);
             for (const own of ["<Navbar", "<Footer", "min-h-screen"]) {
                 if (source.includes(own)) offenders.push(`${page}: ${own}`);
             }

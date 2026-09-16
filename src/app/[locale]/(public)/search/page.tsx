@@ -2,15 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { Navbar, Footer } from "@/core/components/layout";
+import { PageFrame } from "@/core/components/layout/PageFrame";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { Input } from "@/core/components/ui/input";
 import { Button } from "@/core/components/ui/button";
 import { useTranslations } from "next-intl";
-import { ThemeComponentSlot } from "@/core/components/theme/ThemeComponentSlot";
-import type { ComponentType } from "react";
-import * as LucideIcons from "lucide-react";
-import { Search, Loader2, File } from "lucide-react";
+import { Loader2, File } from "lucide-react";
+import { NavIcon } from "@/core/components/ui/NavIcon";
 import { SEARCH_QUERY_MAX_LENGTH } from "@/core/lib/constants";
 
 interface SearchResult {
@@ -28,18 +26,6 @@ interface ResultGroup {
     results: SearchResult[];
 }
 
-type IconComponent = ComponentType<{ className?: string }>;
-
-/**
- * Resolves a Lucide icon name (declared by the search-providing module's
- * manifest, returned per result group by /api/v1/search) to its component.
- * Falls back to File so an unknown/missing name still renders an icon.
- */
-function iconFor(name: string | undefined): IconComponent {
-    if (!name) return File;
-    const lib = LucideIcons as unknown as Record<string, IconComponent>;
-    return lib[name] || File;
-}
 
 export default function SearchPage() {
     const t = useTranslations("search");
@@ -85,16 +71,13 @@ export default function SearchPage() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-background">
-            <ThemeComponentSlot name="Hero" />
-            <Navbar />
-
-            <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-6 flex-1 max-w-6xl">
-                <h1 className="text-3xl font-bold flex items-center gap-2 mb-6">
-                    <Search className="w-7 h-7" />
-                    {t("title")}
-                </h1>
-
+        /*
+         * The frame, like every other public page. This drew its own shell at
+         * `max-w-6xl` - a third width, beside the profile's `max-w-4xl` and
+         * the activity feed's `max-w-3xl` - and no crumb trail. The icon went
+         * with it: no other page title wears one.
+         */
+        <PageFrame title={t("title")}>
                 <form onSubmit={onSubmit} className="flex gap-2 mb-6 max-w-2xl">
                     <Input
                         ref={inputRef}
@@ -136,13 +119,14 @@ export default function SearchPage() {
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr">
                             {groups.map((group) => {
-                                const Icon = iconFor(group.icon);
                                 return (
                                     <Card key={group.id} className="flex flex-col">
                                         <CardHeader className="pb-2">
                                             <CardTitle className="text-base flex items-center justify-between gap-2">
                                                 <span className="flex items-center gap-2">
-                                                    <Icon className="w-4 h-4 text-primary" />
+                                                    {/* The name comes from whichever module answered the
+                                                        search, so it is data rather than an import. */}
+                                                    <NavIcon name={group.icon} className="w-4 h-4 text-primary" fallback={File} />
                                                     {group.label}
                                                 </span>
                                                 <span className="text-xs font-normal px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
@@ -184,9 +168,6 @@ export default function SearchPage() {
                         </div>
                     </>
                 )}
-            </main>
-
-            <Footer />
-        </div>
+        </PageFrame>
     );
 }

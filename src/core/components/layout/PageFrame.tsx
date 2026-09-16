@@ -48,7 +48,11 @@ export function PageFrame({ title, description, trail, actions, sidebar, childre
                     <PageBreadcrumb trail={trail} current={title} />
                     <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
                         <div className="min-w-0">
-                            <h1 className="text-3xl font-bold text-foreground">{title}</h1>
+                            {/* `font-extrabold`, not `font-bold`: the page's
+                                name is the heaviest thing on it, and at 700 it
+                                sat level with the section headings inside the
+                                article below it. */}
+                            <h1 className="text-3xl font-extrabold text-foreground">{title}</h1>
                             {description ? (
                                 <p className="text-muted-foreground mt-1">{description}</p>
                             ) : null}

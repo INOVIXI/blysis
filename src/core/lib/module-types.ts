@@ -112,7 +112,8 @@ export interface ModuleManifest {
     // Profile tabs - modules add their own tabs to user profile
     profileTabs?: {
         id: string;
-        label: string;
+        label: string;           // English fallback; labelKey is the name
+        labelKey?: string;       // `namespace.key` in this module's translations
         component: string;       // path to tab component
         order: number;           // render order
     }[];

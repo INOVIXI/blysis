@@ -1,21 +1,12 @@
 "use client";
 
-import { useState, useEffect, useId } from "react";
-import { useModalDialog } from "@/core/hooks/useModalDialog";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { useRouter, usePathname } from "@/core/lib/i18n/navigation";
-import { useTranslations, useLocale } from "next-intl";
-import Image from "next/image";
-import { Navbar, Footer } from "@/core/components/layout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button } from "@/core/components/ui/button";
-import { Input } from "@/core/components/ui/input";
-import { PasswordInput } from "@/core/components/ui/password-input";
-import { Label } from "@/core/components/ui/label";
-import { Loader2, Check, Download, AlertTriangle } from "lucide-react";
-import { toast } from "sonner";
-import { signOut } from "next-auth/react";
-import { formatDate } from "@/core/lib/utils";
+import { useTranslations } from "next-intl";
+import { Loader2 } from "lucide-react";
+import { PageFrame } from "@/core/components/layout/PageFrame";
 import { ModuleProfileTabs } from "@/core/generated/module-registry";
 import { ProfileTabRegistry } from "@/core/generated/module-components";
 import { useAllModules } from "@/core/providers/module-provider";
@@ -24,12 +15,11 @@ import { NotificationPrefsTab } from "@/core/components/profile/NotificationPref
 import { MessagesTab } from "@/core/components/profile/MessagesTab";
 import { SessionsTab } from "@/core/components/profile/SessionsTab";
 import { ActivityTab } from "@/core/components/profile/ActivityTab";
-import { ThemeComponentSlot } from "@/core/components/theme/ThemeComponentSlot";
+import { AccountNav, type AccountSection } from "@/core/components/profile/AccountNav";
+import { AccountSettings } from "@/core/components/profile/AccountSettings";
+import { PrivacyPanel } from "@/core/components/profile/PrivacyPanel";
 import { isEnabledIn } from "@/core/lib/module-enabled";
-import { authErrorMessage } from "@/core/lib/auth-error-message";
-import { dateLocaleTag } from "@/core/lib/utils";
-import { RoleBadge } from "@/core/components/ui/RoleBadge";
-import { RoleName } from "@/core/components/ui/RoleName";
+import { profileTabLabel } from "@/core/lib/profile-tab-label";
 
 interface UserProfile {
     id: string;
@@ -49,129 +39,81 @@ interface UserProfile {
     } | null;
 }
 
+/** The section a member lands on, and the one an unknown name falls back to. */
+const DEFAULT_SECTION = "profile";
+
+/**
+ * A member's own account.
+ *
+ * It drew its own page shell - its own `min-h-screen`, navbar, footer and a
+ * `max-w-4xl` nobody else used - so it was visibly narrower than every page a
+ * member reached it from, and the frame's crumb trail was missing. It also
+ * kept the open section in `useState` behind a row of buttons that scrolled
+ * sideways, which meant a section could not be linked to and the ones past
+ * the right edge were only reachable by dragging.
+ *
+ * Now: the frame owns the measure, the sections are a column of links, and
+ * `?section=` is the address. See `a-page-looks-like-the-page-next-to-it`,
+ * which grew to cover core's own public pages the day this was found.
+ */
 export default function ProfilePage() {
     const { status: authStatus } = useSession();
     const router = useRouter();
     const pathname = usePathname();
+    const params = useSearchParams();
     const modules = useAllModules();
     const t = useTranslations("profile");
-    const dateTag = dateLocaleTag(useLocale());
-    const authT = useTranslations("auth");
-    const commonT = useTranslations("common");
+    // No namespace: a module's label key names its own.
+    const rootT = useTranslations();
 
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<string>("profile");
 
-    // Stable ids for label associations
-    const usernameId = useId();
-    const avatarId = useId();
-    const emailId = useId();
-    const memberSinceId = useId();
-    const deletePasswordId = useId();
-    const deleteConfirmId = useId();
+    // Only the tabs whose module is installed, enabled, and shipped a
+    // component to draw.
+    const moduleSections = ModuleProfileTabs
+        .filter((tab) => isEnabledIn(modules, tab.module))
+        .filter((tab) => ProfileTabRegistry[tab.id]);
 
-    // Profile form
-    const [username, setUsername] = useState("");
-    const [avatar, setAvatar] = useState("");
-    const [savingProfile, setSavingProfile] = useState(false);
-    const [profileSaved, setProfileSaved] = useState(false);
-    const [profileError, setProfileError] = useState("");
+    const sections: AccountSection[] = [
+        { id: "profile", label: t("title") },
+        { id: "activity", label: t("activity") },
+        { id: "messages", label: t("messages") },
+        { id: "notifications", label: t("notifications") },
+        { id: "sessions", label: t("sessions") },
+        // A module names its own section; the manifest's English `label` is
+        // only the fallback.
+        ...moduleSections.map((tab) => ({
+            id: tab.id,
+            label: profileTabLabel(tab, (key) => rootT.has(key), (key) => rootT(key)),
+        })),
+    ];
 
-    // Privacy / GDPR
-    const [exportingData, setExportingData] = useState(false);
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [deletePassword, setDeletePassword] = useState("");
-    const [deleteConfirmText, setDeleteConfirmText] = useState("");
-    const [deletingAccount, setDeletingAccount] = useState(false);
-    const [deleteError, setDeleteError] = useState("");
-
-    const handleExportData = async () => {
-        setExportingData(true);
-        try {
-            const res = await fetch("/api/v1/auth/profile/export");
-            if (!res.ok) {
-                const body = await res.json().catch(() => ({}));
-                toast.error(authErrorMessage(authT, body, t("failedToExportData")));
-                return;
-            }
-            const blob = await res.blob();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            const cd = res.headers.get("Content-Disposition") || "";
-            const match = cd.match(/filename="([^"]+)"/);
-            a.download = match?.[1] || "blysis-data.zip";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            toast.success(t("dataExported"));
-        } catch {
-            toast.error(t("failedToExportData"));
-        } finally {
-            setExportingData(false);
-        }
-    };
-
-    const handleDeleteAccount = async () => {
-        setDeleteError("");
-        setDeletingAccount(true);
-        try {
-            const res = await fetch("/api/v1/auth/profile/delete", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    password: deletePassword,
-                    confirmText: deleteConfirmText,
-                }),
-            });
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok) {
-                setDeleteError(authErrorMessage(authT, data, t("failedToUpdate")));
-                return;
-            }
-            toast.success(t("accountDeleted"));
-            await signOut({ callbackUrl: "/" });
-        } catch {
-            setDeleteError(t("somethingWentWrong"));
-        } finally {
-            setDeletingAccount(false);
-        }
-    };
-
-    // Module profile tabs filtered by enabled modules and registered components
-    const moduleProfileTabs = ModuleProfileTabs
-        .filter(t => isEnabledIn(modules, t.module))
-        .filter(t => ProfileTabRegistry[t.id]);
-
-    // Escape, the Tab trap and returning focus to the button that opened it.
-    // A delete already in flight is not interruptible, so Escape does nothing
-    // until it finishes.
-    const deleteDialogRef = useModalDialog<HTMLDivElement>(deleteModalOpen, () => {
-        if (!deletingAccount) setDeleteModalOpen(false);
-    });
+    const asked = params.get("section");
+    // A name nobody offers opens the first section rather than an empty panel:
+    // a stale link from a module that has since been uninstalled is a link
+    // somebody still has.
+    const active = sections.some((s) => s.id === asked) ? (asked as string) : DEFAULT_SECTION;
+    const sectionHref = (id: string) => (id === DEFAULT_SECTION ? "/profile" : `/profile?section=${id}`);
 
     useEffect(() => {
         let cancelled = false;
         if (authStatus === "unauthenticated") {
-            // Keep the tab they were on: a session that expires while someone
-            // reads their own notification settings should not cost them the
-            // trip back to that screen.
-            router.push(`/auth/login?callbackUrl=${encodeURIComponent(pathname || "/profile")}`);
+            // Keep the section they were on: a session that expires while
+            // somebody reads their own notification settings should not cost
+            // them the trip back to that screen.
+            const query = params.toString();
+            const here = `${pathname || "/profile"}${query ? `?${query}` : ""}`;
+            router.push(`/auth/login?callbackUrl=${encodeURIComponent(here)}`);
             return;
         }
         if (authStatus !== "authenticated") return;
 
         fetch("/api/v1/auth/profile")
-            .then(r => r.json())
-            .then((profileData) => {
+            .then((r) => r.json())
+            .then((data) => {
                 if (cancelled) return;
-                if (profileData.user) {
-                    setProfile(profileData.user);
-                    setUsername(profileData.user.username);
-                    setAvatar(profileData.user.avatar || "");
-                }
+                if (data.user) setProfile(data.user);
                 setLoading(false);
             })
             .catch(() => {
@@ -179,339 +121,62 @@ export default function ProfilePage() {
                 setLoading(false);
             });
         return () => { cancelled = true; };
-    }, [authStatus, router, pathname]);
+    }, [authStatus, router, pathname, params]);
 
-    const saveProfile = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setSavingProfile(true);
-        setProfileError("");
-        setProfileSaved(false);
-
-        try {
-            const res = await fetch("/api/v1/auth/profile", {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, avatar: avatar || null }),
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                setProfileError(authErrorMessage(authT, data, t("failedToUpdate")));
-                return;
-            }
-            setProfileSaved(true);
-            setTimeout(() => setProfileSaved(false), 3000);
-        } catch {
-            setProfileError(t("somethingWentWrong"));
-        } finally {
-            setSavingProfile(false);
-        }
-    };
-
-    if (authStatus === "loading" || loading) {
+    if (authStatus === "loading" || loading || !profile) {
         return (
-            <div className="min-h-screen flex flex-col bg-background">
-                <ThemeComponentSlot name="Hero" />
-                <Navbar />
-                <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-6 flex-1 flex items-center justify-center">
+            <PageFrame title={t("title")}>
+                <div className="flex items-center justify-center py-24">
                     <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" aria-label={t("loadingProfile")} />
-                </main>
-                <Footer />
-            </div>
+                </div>
+            </PageFrame>
         );
     }
 
-    // Build tab list: core tabs + module tabs in between
-    const allTabs = [
-        { id: "profile", label: t("title") },
-        { id: "activity", label: t("activity") },
-        { id: "messages", label: t("messages") },
-        { id: "notifications", label: t("notifications") },
-        { id: "sessions", label: t("sessions") },
-        ...moduleProfileTabs.map(mt => {
-            const key = `profileTab_${mt.id}`;
-            return { id: mt.id, label: t.has(key) ? t(key) : mt.label };
-        }),
-    ];
-
     return (
-        <div className="min-h-screen flex flex-col bg-background">
-            <ThemeComponentSlot name="Hero" />
-            <Navbar />
+        <PageFrame title={t("title")}>
+            {/* The nav column is a fixed measure so the panel beside it keeps
+                the same width from section to section; a column sized by its
+                longest label moves the content every time a module adds one. */}
+            <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)] items-start">
+                <AccountNav
+                    sections={sections}
+                    active={active}
+                    href={sectionHref}
+                    identity={{
+                        username: profile.username,
+                        email: profile.email,
+                        avatar: profile.avatar,
+                        role: profile.role,
+                    }}
+                />
 
-            <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-6 flex-1 max-w-4xl">
-                {/* Header */}
-                <div className="flex items-center gap-4 mb-8">
-                    <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-2xl font-bold overflow-hidden">
-                        {profile?.avatar ? (
-                            <Image src={profile.avatar} alt="" width={64} height={64} className="w-full h-full object-cover" unoptimized />
-                        ) : (
-                            (profile?.username || "U")[0].toUpperCase()
-                        )}
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold text-foreground">
-                            <RoleName name={profile?.username ?? ""} role={profile?.role ?? null} />
-                        </h1>
-                        <p className="text-muted-foreground text-sm">{profile?.email}</p>
-                        <RoleBadge role={profile?.role ?? null} className="mt-1" />
-                    </div>
+                <div className="space-y-6 min-w-0">
+                    {active === "profile" && (
+                        <>
+                            <AccountSettings
+                                identity={profile}
+                                onSaved={(next) => setProfile({ ...profile, ...next })}
+                            />
+                            <PrivacyPanel />
+                        </>
+                    )}
+                    {active === "activity" && <ActivityTab />}
+                    {active === "messages" && <MessagesTab />}
+                    {active === "notifications" && <NotificationPrefsTab />}
+                    {active === "sessions" && <SessionsTab />}
+                    {moduleSections.map((tab) => {
+                        if (active !== tab.id) return null;
+                        const Section = ProfileTabRegistry[tab.id];
+                        if (typeof Section !== "function") return null;
+                        return (
+                            <ModuleErrorBoundary key={tab.id}>
+                                <Section />
+                            </ModuleErrorBoundary>
+                        );
+                    })}
                 </div>
-
-                {/* Tabs - horizontally scrollable on mobile so they never wrap awkwardly */}
-                <div className="-mx-4 px-4 mb-6 overflow-x-auto">
-                    <div
-                        className="flex gap-2 w-max"
-                        role="tablist"
-                        aria-label={t("title")}
-                    >
-                        {allTabs.map((tab) => (
-                            <Button
-                                key={tab.id}
-                                role="tab"
-                                aria-selected={activeTab === tab.id}
-                                aria-controls={`profile-tabpanel-${tab.id}`}
-                                id={`profile-tab-${tab.id}`}
-                                variant={activeTab === tab.id ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => setActiveTab(tab.id)}
-                                className="shrink-0"
-                            >
-                                {tab.label}
-                            </Button>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Active tab panel - the various activeTab === "X" blocks below
-                    are conditionally rendered into this single tabpanel container,
-                    so screen readers see the dangling aria-controls IDs resolve. */}
-                <div role="tabpanel" id={`profile-tabpanel-${activeTab}`} aria-labelledby={`profile-tab-${activeTab}`}>
-
-                {/* Profile Tab */}
-                {activeTab === "profile" && (
-                    <div className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{t("settings")}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <form onSubmit={saveProfile} className="space-y-4">
-                                {profileError && (
-                                    <div role="alert" className="p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-lg">{profileError}</div>
-                                )}
-                                <div>
-                                    <Label htmlFor={usernameId}>{t("username")}</Label>
-                                    <Input id={usernameId} value={username} onChange={(e) => setUsername(e.target.value)} />
-                                </div>
-                                <div>
-                                    <Label htmlFor={avatarId}>{t("avatarUrl")}</Label>
-                                    <Input id={avatarId} value={avatar} onChange={(e) => setAvatar(e.target.value)} placeholder="https://..." />
-                                </div>
-                                <div>
-                                    <Label htmlFor={emailId}>{t("email")}</Label>
-                                    <Input id={emailId} value={profile?.email || ""} disabled className="bg-muted" aria-describedby={`${emailId}-help`} />
-                                    <p id={`${emailId}-help`} className="text-xs text-muted-foreground mt-1">{t("emailCannotChange")}</p>
-                                </div>
-                                <div>
-                                    <Label htmlFor={memberSinceId}>{t("memberSince")}</Label>
-                                    <Input id={memberSinceId} value={profile ? formatDate(new Date(profile.createdAt), undefined, dateTag) : ""} disabled className="bg-muted" />
-                                </div>
-                                <Button type="submit" disabled={savingProfile}>
-                                    {savingProfile ? <><Loader2 className="w-4 h-4 animate-spin" /> {t("saving")}</> :
-                                     profileSaved ? <><Check className="w-4 h-4" /> {t("saved")}</> : t("saveChanges")}
-                                </Button>
-                            </form>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Download className="w-5 h-5 text-primary" />
-                                {t("privacy")}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="flex items-start justify-between gap-4">
-                                <div className="text-sm">
-                                    <div className="font-medium text-foreground">
-                                        {t("downloadYourData")}
-                                    </div>
-                                    <div className="text-muted-foreground">
-                                        {t("downloadYourDataDesc")}
-                                    </div>
-                                </div>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={handleExportData}
-                                    disabled={exportingData}
-                                >
-                                    {exportingData ? (
-                                        <>
-                                            <Loader2 className="w-4 h-4 animate-spin" />
-                                            {t("preparing")}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Download className="w-4 h-4" />
-                                            {t("download")}
-                                        </>
-                                    )}
-                                </Button>
-                            </div>
-                            <div className="border-t border-border pt-4 flex items-start justify-between gap-4">
-                                <div className="text-sm">
-                                    <div className="font-medium text-foreground">
-                                        {t("deleteYourAccount")}
-                                    </div>
-                                    <div className="text-muted-foreground">
-                                        {t("deleteYourAccountDesc")}
-                                    </div>
-                                </div>
-                                <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={() => {
-                                        setDeletePassword("");
-                                        setDeleteConfirmText("");
-                                        setDeleteError("");
-                                        setDeleteModalOpen(true);
-                                    }}
-                                >
-                                    {t("deleteAccount")}
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                    </div>
-                )}
-
-                {/* Activity Tab */}
-                {activeTab === "activity" && <ActivityTab />}
-
-                {/* Messages Tab */}
-                {activeTab === "messages" && <MessagesTab />}
-
-                {/* Notification Preferences Tab */}
-                {activeTab === "notifications" && <NotificationPrefsTab />}
-
-                {/* Active Sessions Tab */}
-                {activeTab === "sessions" && <SessionsTab />}
-
-                {/* Module Profile Tabs (rendered dynamically) */}
-                {moduleProfileTabs.map(mt => {
-                    if (activeTab !== mt.id) return null;
-                    const TabComponent = ProfileTabRegistry[mt.id];
-                    if (!TabComponent || typeof TabComponent !== "function") return null;
-                    return (
-                        <ModuleErrorBoundary key={mt.id}>
-                            <TabComponent />
-                        </ModuleErrorBoundary>
-                    );
-                })}
-
-                </div>
-            </main>
-
-            <Footer />
-
-            {deleteModalOpen && (
-                <div
-                    className="fixed inset-0 z-[100] flex items-center justify-center"
-                    role="presentation"
-                >
-                    <div
-                        className="fixed inset-0 bg-black/50"
-                        onClick={() => !deletingAccount && setDeleteModalOpen(false)}
-                        aria-hidden="true"
-                    />
-                    <div
-                        ref={deleteDialogRef}
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="delete-title"
-                        className="relative bg-card border border-[var(--blysis-color-border)] rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto"
-                    >
-                        <div className="flex items-start gap-3 mb-4">
-                            <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0">
-                                <AlertTriangle className="w-5 h-5 text-destructive" aria-hidden="true" />
-                            </div>
-                            <div>
-                                <h2 id="delete-title" className="font-semibold text-foreground">
-                                    {t("deleteAccountPermanently")}
-                                </h2>
-                                <p className="text-sm text-muted-foreground mt-1">
-                                    {t("deleteAccountWarning")}
-                                </p>
-                            </div>
-                        </div>
-
-                        {deleteError && (
-                            <div role="alert" className="mb-3 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-lg">
-                                {deleteError}
-                            </div>
-                        )}
-
-                        <div className="space-y-3">
-                            <div>
-                                <Label htmlFor={deletePasswordId}>{t("currentPassword")}</Label>
-                                <PasswordInput
-                                    id={deletePasswordId}
-                                    value={deletePassword}
-                                    onChange={(e) => setDeletePassword(e.target.value)}
-                                    autoComplete="current-password"
-                                    showLabel={authT("showPassword")}
-                                    hideLabel={authT("hidePassword")}
-                                />
-                            </div>
-                            <div>
-                                <Label htmlFor={deleteConfirmId}>
-                                    {t("typeDeleteToConfirm", { keyword: "DELETE" })}
-                                </Label>
-                                <Input
-                                    id={deleteConfirmId}
-                                    value={deleteConfirmText}
-                                    onChange={(e) =>
-                                        setDeleteConfirmText(e.target.value)
-                                    }
-                                    placeholder="DELETE"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end gap-2 mt-6">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setDeleteModalOpen(false)}
-                                disabled={deletingAccount}
-                            >
-                                {commonT("cancel")}
-                            </Button>
-                            <Button
-                                variant="destructive"
-                                size="sm"
-                                onClick={handleDeleteAccount}
-                                disabled={
-                                    deletingAccount ||
-                                    deletePassword.length === 0 ||
-                                    deleteConfirmText !== "DELETE"
-                                }
-                            >
-                                {deletingAccount ? (
-                                    <>
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                        {t("deleting")}
-                                    </>
-                                ) : (
-                                    t("deleteAccount")
-                                )}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
+            </div>
+        </PageFrame>
     );
 }

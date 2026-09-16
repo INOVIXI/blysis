@@ -1,30 +1,16 @@
-import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Activity } from "lucide-react";
-import { Navbar, Footer } from "@/core/components/layout";
+import { PageFrame } from "@/core/components/layout/PageFrame";
 import { ActivityFeedList, type ActivityItem } from "@/core/components/activity/ActivityFeedList";
 import { prisma } from "@/core/lib/db";
 import { getModuleStates } from "@/core/lib/module-cache";
-import { buildPageMeta } from "@/core/lib/seo";
-import { ThemeComponentSlot } from "@/core/components/theme/ThemeComponentSlot";
+import { coreScreenMetadata } from "@/core/lib/core-screens";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({
-    params,
-}: {
-    params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-    const { locale } = await params;
-    const t = await getTranslations({ locale, namespace: "activity" });
-    return buildPageMeta({
-        title: t("title"),
-        description: t("description"),
-        url: "/activity",
-        locale,
-        type: "website",
-    });
-}
+// The head comes from the CORE_SCREENS row for this path, like every other
+// page core renders itself. It used to be written out here, which is how the
+// page ended up the only one of the ten with a description at all.
+export const generateMetadata = coreScreenMetadata("/activity");
 
 async function fetchPublicFeed(limit = 20): Promise<ActivityItem[]> {
     try {
@@ -57,24 +43,16 @@ export default async function ActivityFeedPage() {
     const items = await fetchPublicFeed(20);
     const moduleStates = await getModuleStates();
 
+    /*
+     * The frame, like every other public page. This drew its own shell at
+     * `max-w-3xl` while the page a reader arrived from was the full measure,
+     * so the text jumped narrower on the way in and the crumb trail back was
+     * missing. The icon beside the title went with the shell: no other page
+     * title wears one.
+     */
     return (
-        <div className="min-h-screen flex flex-col bg-background">
-            <ThemeComponentSlot name="Hero" />
-            <Navbar />
-
-            <main className="container mx-auto px-4 py-6 flex-1 max-w-3xl">
-                <div className="mb-6">
-                    <h1 className="text-3xl font-bold flex items-center gap-2">
-                        <Activity className="w-7 h-7" aria-hidden="true" />
-                        {t("title")}
-                    </h1>
-                    <p className="text-muted-foreground">{t("description")}</p>
-                </div>
-
-                <ActivityFeedList items={items} moduleStates={moduleStates} />
-            </main>
-
-            <Footer />
-        </div>
+        <PageFrame title={t("title")} description={t("description")}>
+            <ActivityFeedList items={items} moduleStates={moduleStates} />
+        </PageFrame>
     );
 }
