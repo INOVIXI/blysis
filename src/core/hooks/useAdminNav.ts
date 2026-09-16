@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { createElement, useMemo } from "react";
 import { useTranslations } from "next-intl";
-import * as LucideIcons from "lucide-react";
 import { Package } from "lucide-react";
+import { NavIcon } from "@/core/components/ui/NavIcon";
 import { ModuleNavGroups } from "@/core/generated/module-registry";
 import {
     buildNavGroups,
@@ -31,10 +31,34 @@ export interface AdminNavModule {
  * Resolves a Lucide icon name (as stored on a module menu item) to its
  * React component. Falls back to Package so unknown icons still render.
  */
+/**
+ * A module's menu icon, named in its manifest and drawn from that name.
+ *
+ * Core's own groups import the fifty icons they use by name, which a bundler
+ * shakes down to fifty. A module's name arrives as data, and answering it used
+ * to mean `import * as LucideIcons` plus `lib[name]`: a namespace import
+ * cannot be shaken, so every one of the 1,723 icon modules landed in the admin
+ * shell's chunk group. Measured on a production build, 191 KB gzipped on each
+ * of 48 admin routes.
+ *
+ * `NavIcon` fetches the one icon's own chunk instead. It is wrapped rather
+ * than rendered here because the sidebar's contract is a component, and the
+ * wrappers are cached by name so React sees the same type between renders -
+ * a fresh function per render remounts the icon on every keystroke elsewhere
+ * on the screen.
+ */
+const wrappers = new Map<string, NavIconComponent>();
+
 export function resolveIcon(name: string | undefined): NavIconComponent {
     if (!name) return Package;
-    const lib = LucideIcons as unknown as Record<string, NavIconComponent>;
-    return lib[name] || Package;
+    const cached = wrappers.get(name);
+    if (cached) return cached;
+    // Both props, not just the class: the rail sizes with the attribute, and
+    // an icon that ignores it comes out at lucide's own default beside core's.
+    const wrapper: NavIconComponent = ({ className, size }) =>
+        createElement(NavIcon, { name, className, size, fallback: Package });
+    wrappers.set(name, wrapper);
+    return wrapper;
 }
 
 export function useAdminNav(modules: AdminNavModule[], activeThemeId?: string): NavGroup[] {

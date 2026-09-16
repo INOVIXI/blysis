@@ -20,7 +20,8 @@
  */
 
 import { adminHref } from "@/core/lib/admin-path";
-import type { ComponentType } from "react";
+import { createElement, type ComponentType } from "react";
+import { NavIcon } from "@/core/components/ui/NavIcon";
 import {
     byDeclaringModule,
     findNavGroupConflicts,
@@ -666,12 +667,28 @@ export function buildThemeNavGroup(activeThemeId: string): NavGroup | null {
     };
 }
 
+/**
+ * The icon a theme names in its manifest.
+ *
+ * This used to be `require("lucide-react")[name]`, which is `import *` wearing
+ * a different syntax: the bundler cannot shake a lookup it cannot see, so all
+ * 1,773 icon modules landed in the admin shell's chunk group. Measured on a
+ * production build, 133 KB gzipped on each of 48 admin routes, for one icon on
+ * one group in the rail.
+ *
+ * `NavIcon` fetches that one icon's chunk. Wrapped rather than rendered here
+ * because the rail's contract is a component, and cached by name so React
+ * sees the same type between renders - see `resolveIcon` in useAdminNav.ts,
+ * which answers the same question for a module's menu.
+ */
+const themeIcons = new Map<string, ComponentType>();
+
 function resolveLucideIcon(name: string | undefined): ComponentType | null {
     if (!name) return null;
-    // Typed lookup without coupling admin-nav-groups to every Lucide export
-    // shape - the icon library ships hundreds of components, any of them a
-    // valid reference for a theme manifest.
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const lib = require("lucide-react") as Record<string, ComponentType>;
-    return lib[name] ?? null;
+    const cached = themeIcons.get(name);
+    if (cached) return cached;
+    const wrapper: ComponentType<{ className?: string; size?: number }> = ({ className, size }) =>
+        createElement(NavIcon, { name, className, size });
+    themeIcons.set(name, wrapper as ComponentType);
+    return wrapper as ComponentType;
 }
