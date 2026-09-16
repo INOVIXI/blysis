@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { stripComments } from "./source-text";
 
 /**
  * A list query must have a ceiling.
@@ -63,9 +64,6 @@ function sourceFiles(dir: string, out: string[] = []): string[] {
 }
 
 /** Strips block comments so a query quoted in a doc comment is not a finding. */
-function stripComments(source: string): string {
-    return source.replace(/\/\*[\s\S]*?\*\//g, "");
-}
 
 /** The whole call text from its opening paren, brackets balanced. */
 export function callText(source: string, openParen: number): string {

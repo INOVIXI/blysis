@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * Every handler that changes a row says who is allowed to change it.
@@ -46,7 +47,7 @@ const DELEGATES: Record<string, string> = {
         "the module API dispatcher: it applies the rate limit and then loads the module's own handler, which authorises for itself - its comment says so, and it cannot know what any given module's rule is",
 };
 
-const strip = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+const strip = (s: string) => stripComments(s);
 
 /** The full text of every function a source defines, by name. */
 function functionsIn(source: string): Map<string, string> {

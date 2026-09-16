@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * An endpoint that only ever says no is a control that only ever fails.
@@ -35,7 +36,7 @@ function routeFiles(dir: string, out: string[] = []): string[] {
 }
 
 function withoutComments(source: string): string {
-    return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+    return stripComments(source);
 }
 
 /** The argument list of every `NextResponse.json(...)` call, paren matched. */

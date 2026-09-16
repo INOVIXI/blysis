@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { CORE_PERMISSIONS, permissionModule } from "@/core/lib/permission-names";
+import { stripComments } from "./source-text";
 
 /**
  * The roles screen is an authorization surface, and an authorization surface
@@ -101,9 +102,6 @@ function walk(dir: string, out: string[] = []): string[] {
  * `hasPermission(userId, "blog.manage")` example, and an example is not an
  * enforcement site.
  */
-function stripComments(body: string): string {
-    return body.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|\n)\s*\/\/[^\n]*/g, "$1");
-}
 
 /** Every permission name passed to a helper as a plain string literal. */
 function checkedNames(files: string[]): Map<string, string[]> {

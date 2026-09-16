@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * A screen with nothing on it says which kind of nothing it is.
@@ -34,8 +35,6 @@ const DIRS = ["src/app", "src/core", "module-sources"];
  * a decision, not a backlog.
  */
 const MAY_STAY_SILENT: Record<string, string> = {
-    "module-sources/forum/pages/public/page.tsx":
-        "The category filter beside the topic list. The list itself reports its own failure; an empty filter strip offers no filters rather than claiming there are none.",
     "module-sources/in-app-notifications/components/NotificationBell.tsx":
         "Both are mark-read PATCHes, not reads. Each checks res.ok before it touches the badge.",
     "module-sources/store/pages/admin/products/[id]/edit/page.tsx":
@@ -65,7 +64,7 @@ function walk(dir: string, out: string[] = []): string[] {
 
 const FILES = DIRS.flatMap((d) => walk(path.join(ROOT, d)));
 const rel = (f: string) => path.relative(ROOT, f);
-const code = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
+const code = (s: string) => stripComments(s);
 
 /** True when the file renders an explicit "there is nothing here" branch. */
 function hasEmptyState(source: string): boolean {

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import { join } from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * A colour is the theme's to choose.
@@ -72,11 +73,6 @@ function filesIn(dir: string, out: string[] = []): string[] {
         } else if (/\.tsx?$/.test(entry.name)) out.push(rel);
     }
     return out;
-}
-
-/** Prose about a class is not a class. The manifest's own docs name one. */
-function stripComments(src: string): string {
-    return src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
 }
 
 describe("a colour comes from the theme", () => {

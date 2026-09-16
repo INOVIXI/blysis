@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { resolveClientIp } from "@/core/lib/rate-limit";
+import { stripComments } from "./source-text";
 
 /**
  * Which address in a forwarded chain is the caller.
@@ -108,7 +109,7 @@ describe("nobody reads the raw header instead", () => {
                 }
                 if (!/\.tsx?$/.test(entry.name)) continue;
                 if (full.endsWith("rate-limit.ts")) continue;
-                const source = fs.readFileSync(full, "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+                const source = stripComments(fs.readFileSync(full, "utf8"));
                 // Any receiver, and optional chaining too: the two sites this
                 // caught were `headers?.get(...)` and a variable named `list`,
                 // neither of which a `headers.get` pattern would have found.

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * A Turkish admin is told what happened in Turkish.
@@ -78,9 +79,7 @@ function read(file: string): string {
 
 /** The file with block comments and line comments removed. */
 function code(file: string): string {
-    return read(file)
-        .replace(/\/\*[\s\S]*?\*\//g, "")
-        .replace(/^\s*\/\/.*$/gm, "");
+    return stripComments(read(file));
 }
 
 /**

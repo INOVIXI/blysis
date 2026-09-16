@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * A column an `orderBy` names has to exist on the model it orders.
@@ -135,10 +136,7 @@ function orderedQueries(): { file: string; model: string; keys: string[] }[] {
     const found: { file: string; model: string; keys: string[] }[] = [];
     for (const dir of SCANNED) {
         for (const file of sourceFiles(path.join(ROOT, dir))) {
-            const source = fs
-                .readFileSync(file, "utf8")
-                .replace(/\/\*[\s\S]*?\*\//g, "")
-                .replace(/^\s*\/\/.*$/gm, "");
+            const source = stripComments(fs.readFileSync(file, "utf8"));
             for (const match of source.matchAll(/\b(?:prisma|tx|db|client)\.(\w+)\.(findMany|findFirst|groupBy|aggregate)\s*\(/g)) {
                 const call = callAt(source, match.index + match[0].length - 1);
                 const expression = topLevelOrderBy(call);

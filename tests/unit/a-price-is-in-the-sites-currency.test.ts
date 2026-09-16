@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * Money on this site is written in the currency the site charges in.
@@ -60,7 +61,7 @@ const HARDCODED_SYMBOL = /[$€£₺₽¥](?=\$\{)/;
  * documentation.
  */
 function code(source: string): string {
-    return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+    return stripComments(source);
 }
 
 /** The argument list of each `formatCurrency(...)` call, parens balanced. */

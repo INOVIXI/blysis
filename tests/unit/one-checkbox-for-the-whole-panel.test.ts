@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { join } from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * There is one checkbox, and this is how it stays one.
@@ -55,7 +56,7 @@ describe("one checkbox for the whole panel", () => {
         const checkbox = fs.readFileSync(join(ROOT, "src/core/components/ui/checkbox.tsx"), "utf8");
         expect(checkbox).toContain("blysis-checkbox-radius");
         // The comments here explain the old class, so only the code counts.
-        const code = checkbox.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+        const code = stripComments(checkbox);
         expect(code).not.toMatch(/\brounded\b(?!-)/);
         const css = fs.readFileSync(join(ROOT, "src/app/globals.css"), "utf8");
         expect(css).toContain(".blysis-checkbox-radius");

@@ -1,11 +1,12 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { stripComments } from "./source-text";
 
 const root = path.resolve(import.meta.dirname, "../..");
 const read = (rel: string) => fs.readFileSync(path.join(root, rel), "utf8");
 const code = (source: string) =>
-    source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+    stripComments(source);
 
 /**
  * The documented external cron trigger did not drive the scheduler.

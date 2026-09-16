@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * Core's own endpoints are held to the rule its modules are held to.
@@ -29,7 +30,7 @@ const API_DIR = path.join(ROOT, "src/app/api");
 
 /** Comments hide a keyword as easily as they explain one. */
 function withoutComments(source: string): string {
-    return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+    return stripComments(source);
 }
 
 function routeFiles(dir: string, out: string[] = []): string[] {

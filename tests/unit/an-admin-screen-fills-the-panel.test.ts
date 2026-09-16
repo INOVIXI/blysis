@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { join } from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * A panel screen uses the panel it was given.
@@ -75,9 +76,6 @@ function tsxFilesIn(trees: string[]): string[] {
  * they dropped the measure they used to have, and a gate that read those
  * would fail on the record of its own rule being followed.
  */
-function stripComments(src: string): string {
-    return src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
-}
 
 /** The whole `className=` value around `at`, delimiters and all. */
 function classNameAround(src: string, at: number): string {

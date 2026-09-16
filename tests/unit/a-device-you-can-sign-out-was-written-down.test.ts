@@ -21,6 +21,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 interface Row {
     id: string;
@@ -216,10 +217,7 @@ describe("the jwt callback", () => {
     // them would pass on the prose rather than on the code. This has caught me
     // three times now.
     const code = (p: string) =>
-        fs
-            .readFileSync(path.join(process.cwd(), p), "utf8")
-            .replace(/\/\*[\s\S]*?\*\//g, "")
-            .replace(/^\s*\/\/.*$/gm, "");
+        stripComments(fs.readFileSync(path.join(process.cwd(), p), "utf8"));
 
     const AUTH = code("src/core/lib/auth.ts");
 

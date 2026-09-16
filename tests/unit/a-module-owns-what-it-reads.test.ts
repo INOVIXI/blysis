@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import { join } from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * A module reads its own tables, and asks for everything else.
@@ -88,7 +89,7 @@ describe("a module owns what it reads", () => {
         for (const id of modules) {
             const allowed = new Set(STILL_REACHING[id] ?? []);
             for (const file of sourceFiles(join(ROOT, MODULES, id))) {
-                const src = fs.readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+                const src = stripComments(fs.readFileSync(file, "utf8"));
                 // Three ways to reach a table: `prisma.order.findMany`, the
                 // "is this model installed?" lookup a module writes when it
                 // knows a name it should not, and the bracket form of either.

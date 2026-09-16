@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import { stripComments } from "./source-text";
 
 const activityLogDeleteMany = vi.fn();
 const activityFeedItemDeleteMany = vi.fn();
@@ -141,7 +142,7 @@ describe("a module's table", () => {
             path.join(path.resolve(import.meta.dirname, "../.."), "src/core/lib/retention.ts"),
             "utf8",
         );
-        const code = source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+        const code = stripComments(source);
         expect(code).not.toContain("webhookLog");
     });
 });

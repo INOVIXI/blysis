@@ -16,6 +16,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync } from "fs";
 import { join } from "path";
+import { stripComments } from "./source-text";
 
 const ROOT = join(__dirname, "../..");
 const GENERATED = join(ROOT, "src/core/generated");
@@ -34,9 +35,7 @@ function walk(dir: string, out: string[] = []): string[] {
 
 /** Source with comments removed, so prose about a rule never satisfies it. */
 function code(path: string): string {
-    return readFileSync(path, "utf8")
-        .replace(/\/\*[\s\S]*?\*\//g, "")
-        .replace(/^\s*\/\/.*$/gm, "");
+    return stripComments(readFileSync(path, "utf8"));
 }
 
 const SRC_FILES = walk(join(ROOT, "src")).filter(

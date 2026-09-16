@@ -16,6 +16,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { ModuleSeed } from "@/core/sdk/seed";
 import { inOrder } from "../../scripts/seed-demo";
+import { stripComments } from "./source-text";
 
 const seedOf = (needs?: string[]): ModuleSeed => ({ needs, run: async () => undefined });
 
@@ -85,7 +86,7 @@ describe("the seeds the modules ship", () => {
         // both may land on a row that was already there.
         const untracked: string[] = [];
         for (const { id, file } of seedFiles) {
-            const source = fs.readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+            const source = stripComments(fs.readFileSync(file, "utf8"));
             for (const match of source.matchAll(/ctx\.prisma\.(\w+)\.create\(/g)) {
                 const before = source.slice(Math.max(0, match.index! - 120), match.index!);
                 if (!/ctx\.create\("\w+",\s*\(\)\s*=>\s*$/.test(before)) {

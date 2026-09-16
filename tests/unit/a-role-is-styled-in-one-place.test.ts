@@ -21,6 +21,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 const ROOT = path.resolve(import.meta.dirname, "../..");
 const SCANNED = ["src/app", "src/core", "module-sources"];
@@ -62,7 +63,7 @@ describe("how a role is drawn", () => {
             if (ALLOWED.includes(relative)) continue;
             const source = fs.readFileSync(file, "utf8");
             // Comments say `role.color` when they explain why not to.
-            const code = source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
+            const code = stripComments(source);
             if (HAND_STYLED.test(code)) offenders.push(relative);
         }
         expect(

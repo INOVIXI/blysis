@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * Every URL core fetches server-side is one somebody decided about.
@@ -31,9 +32,6 @@ const ACCOUNTED_FOR: Record<string, string> = {
  * only `fetch(` is the prose explaining why `.then(r => r.json())` is wrong.
  * A guard that cries about a comment is one people learn to skip.
  */
-function stripComments(source: string): string {
-    return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
-}
 
 /** Server-side files under src/core that call fetch with a non-literal URL. */
 function unexplainedFetches(): string[] {

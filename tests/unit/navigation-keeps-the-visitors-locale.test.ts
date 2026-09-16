@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * A link does not send a Turkish visitor to the English page.
@@ -54,10 +55,7 @@ function walk(dir: string, out: string[] = []): string[] {
 const FILES = DIRS.flatMap((d) => walk(d));
 
 function read(file: string): string {
-    return fs
-        .readFileSync(path.join(ROOT, file), "utf8")
-        .replace(/\/\*[\s\S]*?\*\//g, "")
-        .replace(/^\s*\/\/.*$/gm, "");
+    return stripComments(fs.readFileSync(path.join(ROOT, file), "utf8"));
 }
 
 /** The import statements only, so a mention inside a comment or string is not a match. */

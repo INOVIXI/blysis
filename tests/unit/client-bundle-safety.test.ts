@@ -28,6 +28,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync, existsSync } from "fs";
 import { join, dirname, resolve as resolvePath, relative } from "path";
+import { stripComments } from "./source-text";
 
 const ROOT = join(__dirname, "../..");
 const SCANNED = ["src", "module-sources"];
@@ -120,10 +121,8 @@ function parse(file: string): Parsed {
         edges.push(m[1]);
     }
 
-    const stripped = body
+    const stripped = stripComments(body)
         .replace(/(?:^|\n)\s*import\s[^;]*;?/g, "")
-        .replace(/\/\*[\s\S]*?\*\//g, "")
-        .replace(/(?:^|\n)\s*\/\/[^\n]*/g, "")
         .replace(/;/g, ""); // semicolons left behind by a removed re-export
     const out = { edges, reexports, starReexport, hasOwnCode: /\S/.test(stripped) };
     parsed.set(file, out);

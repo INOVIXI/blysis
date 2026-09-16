@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { userProfilePath, userProfileRoutePattern } from "@/core/lib/user-profile-link";
+import { stripComments } from "./source-text";
 
 /**
  * A link in this product points at a page this product serves.
@@ -176,7 +177,7 @@ describe("an internal link", () => {
 describe("the blog's browsing", () => {
     /** Comments stripped: the doc comments here name the routes that died. */
     const read = (file: string) =>
-        fs.readFileSync(path.join(ROOT, file), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
+        stripComments(fs.readFileSync(path.join(ROOT, file), "utf8"));
     const index = read("module-sources/blog/pages/page.tsx");
     const article = read("module-sources/blog/pages/[...params]/page.tsx");
 

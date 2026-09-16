@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import { join } from "node:path";
 import { categoryTone } from "../../src/app/[locale]/(admin)/admin/modules/module-display";
+import { stripComments } from "./source-text";
 
 /**
  * The panel paints a category it has never heard of.
@@ -27,10 +28,10 @@ const ROOT = join(__dirname, "..", "..");
 
 describe("core knows no category", () => {
     it("names no category in the panel", () => {
-        const src = fs.readFileSync(
+        const src = stripComments(fs.readFileSync(
             join(ROOT, "src/app/[locale]/(admin)/admin/modules/module-display.ts"),
             "utf8",
-        ).replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+        ));
         for (const named of ["commerce", "community", "management", "gaming", "content", "integration"]) {
             expect(src, `the panel names "${named}"`).not.toMatch(new RegExp(`\\b${named}\\b`));
         }

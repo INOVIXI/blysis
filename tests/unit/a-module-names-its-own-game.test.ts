@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import { join } from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * A module that is not about one game does not assume one.
@@ -54,7 +55,7 @@ function filesIn(dir: string, out: string[] = []): string[] {
 function readable(file: string): string {
     const src = fs.readFileSync(join(ROOT, file), "utf8");
     if (file.endsWith(".json")) return src;
-    return src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+    return stripComments(src);
 }
 
 describe("a module names its own game", () => {

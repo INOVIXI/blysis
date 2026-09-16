@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * No boundary file renders a document of its own.
@@ -31,9 +32,6 @@ const BOUNDARIES = new Set(["not-found.tsx", "error.tsx"]);
  * Comments out, so that a file explaining why it renders no document does not
  * read as one that does.
  */
-export function stripComments(source: string): string {
-    return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/[^\n]*/g, "$1");
-}
 
 /** Does this file render a document root of its own? */
 export function rendersDocument(source: string): boolean {

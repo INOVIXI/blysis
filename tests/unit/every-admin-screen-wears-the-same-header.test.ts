@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { join } from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * One title row, one set of proportions.
@@ -91,9 +92,6 @@ function tsxFilesIn(trees: string[]): string[] {
  * doc comment spells out what an action looks like, and a gate that reads it
  * as a real button would fail on the documentation of the rule it enforces.
  */
-function stripComments(src: string): string {
-    return src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
-}
 
 /** Character ranges of each `pattern`'s balanced `{...}` value. */
 function braceRanges(src: string, pattern: RegExp): Array<[number, number]> {

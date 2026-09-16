@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { stripComments } from "./source-text";
 
 const root = path.resolve(import.meta.dirname, "../..");
 const routeSource = fs.readFileSync(
@@ -40,7 +41,7 @@ function publicKeys(): string[] {
  * fail them for describing the bug they fix.
  */
 function code(source: string): string {
-    return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+    return stripComments(source);
 }
 
 /** Every key a file pulls off the public-settings payload. */

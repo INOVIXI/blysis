@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import { join } from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * Waiting is said, not drawn.
@@ -67,7 +68,7 @@ describe("a wait is not a drawing", () => {
             for (const file of filesIn(tree, /\.tsx?$/)) {
                 if (PUBLISHES_THE_PRIMITIVE.includes(file)) continue;
                 const src = fs.readFileSync(join(ROOT, file), "utf8");
-                const code = src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+                const code = stripComments(src);
                 if (/animate-pulse/.test(code)) offenders.push(`${file} draws a pulsing block`);
                 if (/\bSkeleton[A-Za-z]*\b/.test(code)) offenders.push(`${file} names a skeleton`);
             }
