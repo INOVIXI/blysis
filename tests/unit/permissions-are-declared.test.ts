@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { CORE_PERMISSIONS, permissionModule } from "@/core/lib/permission-names";
+import { CORE_ADMIN_SCREENS } from "@/core/lib/admin-screens";
 import { stripComments } from "./source-text";
 
 /**
@@ -53,11 +54,7 @@ const SHARED_NAMESPACES = new Set(["admin"]);
  * govern. Do not add one.
  */
 const DECLARED_BUT_UNENFORCED = [
-    "admin.access",
     "admin.export",
-    "admin.roles",
-    "admin.settings",
-    "admin.users",
     "admin.webhooks",
     "announcements.manage",
     "changelog.manage",
@@ -184,14 +181,40 @@ describe("permission declarations", () => {
 });
 
 describe("permission enforcement", () => {
+    /**
+     * A name means something in one of two ways.
+     *
+     * It is passed to a helper somewhere, which is how the three enforced
+     * names have always worked. Or a screen declares that it is what opens it,
+     * which is the newer half: the panel reads the same declaration the
+     * sidebar draws from, so the name decides who gets in without any handler
+     * naming it. A name with neither is a checkbox that does nothing.
+     */
     const enforced = new Set<string>([
         ...coreChecks.keys(),
         ...[...moduleChecks.values()].flatMap((m) => [...m.keys()]),
+        ...CORE_ADMIN_SCREENS.map((screen) => screen.permission),
     ]);
 
     it("enforces at least the permissions the pinned inventory leaves out", () => {
         const actuallyEnforced = [...allDeclared].filter((name) => enforced.has(name)).sort();
-        expect(actuallyEnforced).toEqual(["custom-forms.manage", "downloads.manage", "tickets.manage"]);
+        expect(actuallyEnforced).toEqual([
+            "admin.access",
+            "admin.backups",
+            "admin.content",
+            "admin.messaging",
+            "admin.moderation",
+            "admin.modules",
+            "admin.observability",
+            "admin.roles",
+            "admin.security",
+            "admin.settings",
+            "admin.themes",
+            "admin.users",
+            "custom-forms.manage",
+            "downloads.manage",
+            "tickets.manage",
+        ]);
     });
 
     it("has not grown the set of permissions that gate nothing", () => {
