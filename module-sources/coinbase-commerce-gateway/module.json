@@ -74,12 +74,13 @@
   "translations": {
     "en": {
       "coinbaseCommerceGateway": {
-        "adm_title": "Coinbase Commerce Settings",
-        "adm_subtitle": "Keys for taking payments through Coinbase Commerce.",
         "adm_apiKey": "API Key",
         "adm_apiKeyDesc": "From your Coinbase Commerce dashboard.",
+        "adm_subtitle": "Keys for taking payments through Coinbase Commerce.",
+        "adm_title": "Coinbase Commerce Settings",
         "adm_webhookSecret": "Webhook Secret",
-        "adm_webhookSecretDesc": "From your Coinbase Commerce dashboard. Point the Coinbase Commerce notification URL at /api/v1/coinbase-commerce/webhook."
+        "adm_webhookSecretDesc": "From your Coinbase Commerce dashboard. Point the Coinbase Commerce notification URL at /api/v1/coinbase-commerce/webhook.",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_coinbase-commerce-gateway": "Coinbase Commerce Gateway",
@@ -90,12 +91,13 @@
     },
     "tr": {
       "coinbaseCommerceGateway": {
-        "adm_title": "Coinbase Commerce Ayarları",
-        "adm_subtitle": "Coinbase Commerce ile ödeme almak için gereken anahtarlar.",
         "adm_apiKey": "API Anahtarı",
         "adm_apiKeyDesc": "Coinbase Commerce panelinden alınır.",
+        "adm_subtitle": "Coinbase Commerce ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "Coinbase Commerce Ayarları",
         "adm_webhookSecret": "Webhook Gizli Anahtarı",
-        "adm_webhookSecretDesc": "Coinbase Commerce panelinden alınır. Coinbase Commerce bildirim adresini /api/v1/coinbase-commerce/webhook olarak ayarlayın."
+        "adm_webhookSecretDesc": "Coinbase Commerce panelinden alınır. Coinbase Commerce bildirim adresini /api/v1/coinbase-commerce/webhook olarak ayarlayın.",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_coinbase-commerce-gateway": "Coinbase Commerce Ödeme",
@@ -106,6 +108,9 @@
     }
   },
   "permissions": [
-    "coinbase-commerce-gateway.manage"
+    {
+      "name": "coinbase-commerce-gateway.manage",
+      "labelKey": "coinbaseCommerceGateway.perm_manage"
+    }
   ]
 }

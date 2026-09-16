@@ -42,20 +42,21 @@
   "translations": {
     "en": {
       "discordAuth": {
-        "title": "Discord Login",
-        "settings": "Discord OAuth Settings",
+        "adm_subtitle": "Configure Discord OAuth2 login for your site",
+        "adm_title": "Discord Auth Settings",
         "clientId": "Client ID",
         "clientSecret": "Client Secret",
-        "enabled": "Discord Login Enabled",
+        "description": "Configure Discord OAuth credentials for user login",
         "disabled": "Discord Login Disabled",
         "enable": "Enable Discord Login",
-        "save": "Save Settings",
-        "saved": "Discord OAuth settings saved successfully",
-        "saveError": "Failed to save Discord OAuth settings",
+        "enabled": "Discord Login Enabled",
         "linkAccount": "Link Discord Account",
-        "description": "Configure Discord OAuth credentials for user login",
-        "adm_title": "Discord Auth Settings",
-        "adm_subtitle": "Configure Discord OAuth2 login for your site"
+        "perm_manage": "Manage",
+        "save": "Save Settings",
+        "saveError": "Failed to save Discord OAuth settings",
+        "saved": "Discord OAuth settings saved successfully",
+        "settings": "Discord OAuth Settings",
+        "title": "Discord Login"
       },
       "admin": {
         "title": "Admin Panel",
@@ -66,20 +67,21 @@
     },
     "tr": {
       "discordAuth": {
-        "title": "Discord ile Giriş",
-        "settings": "Discord OAuth Ayarları",
+        "adm_subtitle": "Siteniz için Discord OAuth2 girişini yapılandırın",
+        "adm_title": "Discord Kimlik Doğrulama Ayarları",
         "clientId": "İstemci Kimliği",
         "clientSecret": "İstemci Şifresi",
-        "enabled": "Discord ile Giriş Etkin",
+        "description": "Kullanıcı girişi için Discord OAuth kimlik bilgilerini yapılandırın",
         "disabled": "Discord ile Giriş Devre Dışı",
         "enable": "Discord ile Girişi Etkinleştir",
-        "save": "Ayarları Kaydet",
-        "saved": "Discord OAuth ayarları başarıyla kaydedildi",
-        "saveError": "Discord OAuth ayarları kaydedilemedi",
+        "enabled": "Discord ile Giriş Etkin",
         "linkAccount": "Discord Hesabını Bağla",
-        "description": "Kullanıcı girişi için Discord OAuth kimlik bilgilerini yapılandırın",
-        "adm_title": "Discord Kimlik Doğrulama Ayarları",
-        "adm_subtitle": "Siteniz için Discord OAuth2 girişini yapılandırın"
+        "perm_manage": "Yönetebilir",
+        "save": "Ayarları Kaydet",
+        "saveError": "Discord OAuth ayarları kaydedilemedi",
+        "saved": "Discord OAuth ayarları başarıyla kaydedildi",
+        "settings": "Discord OAuth Ayarları",
+        "title": "Discord ile Giriş"
       },
       "admin": {
         "title": "Yönetim Paneli",
@@ -90,6 +92,9 @@
     }
   },
   "permissions": [
-    "discord-auth.manage"
+    {
+      "name": "discord-auth.manage",
+      "labelKey": "discordAuth.perm_manage"
+    }
   ]
 }

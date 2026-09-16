@@ -42,8 +42,9 @@
   "translations": {
     "en": {
       "tiktokAuth": {
+        "adm_subtitle": "Set up TikTok OAuth sign-in for your site.",
         "adm_title": "TikTok Login Settings",
-        "adm_subtitle": "Set up TikTok OAuth sign-in for your site."
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_tiktok-auth_name": "TikTok Login",
@@ -52,8 +53,9 @@
     },
     "tr": {
       "tiktokAuth": {
+        "adm_subtitle": "Siteniz için TikTok ile OAuth girişini yapılandırın.",
         "adm_title": "TikTok ile Giriş Ayarları",
-        "adm_subtitle": "Siteniz için TikTok ile OAuth girişini yapılandırın."
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_tiktok-auth_name": "TikTok ile Giriş",
@@ -62,6 +64,9 @@
     }
   },
   "permissions": [
-    "tiktok-auth.manage"
+    {
+      "name": "tiktok-auth.manage",
+      "labelKey": "tiktokAuth.perm_manage"
+    }
   ]
 }

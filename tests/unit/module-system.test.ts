@@ -25,7 +25,7 @@ import { moduleSystem } from "@/core/lib/modules";
 
 interface Manifest {
     id: string;
-    permissions?: string[];
+    permissions?: { name: string; labelKey: string }[];
 }
 
 function manifests(...list: Manifest[]) {
@@ -133,7 +133,13 @@ describe("getAllPermissions", () => {
     });
 
     it("adds the permissions of enabled modules", async () => {
-        manifests({ id: "shop", permissions: ["shop.manage", "shop.orders"] });
+        manifests({
+            id: "shop",
+            permissions: [
+                { name: "shop.manage", labelKey: "shop.perm_manage" },
+                { name: "shop.orders", labelKey: "shop.perm_orders" },
+            ],
+        });
         await moduleSystem.initialize([state("shop", true)]);
 
         expect(moduleSystem.getAllPermissions()).toEqual([
@@ -142,7 +148,7 @@ describe("getAllPermissions", () => {
     });
 
     it("never grants a disabled module's permissions", async () => {
-        manifests({ id: "shop", permissions: ["shop.manage"] });
+        manifests({ id: "shop", permissions: [{ name: "shop.manage", labelKey: "shop.perm_manage" }] });
         await moduleSystem.initialize([state("shop", false)]);
 
         expect(moduleSystem.getAllPermissions()).toEqual(CORE_PERMISSIONS);

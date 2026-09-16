@@ -11,7 +11,10 @@
   "author": "Blysis",
   "icon": "Cloud",
   "permissions": [
-    "cloudflare-r2.manage"
+    {
+      "name": "cloudflare-r2.manage",
+      "labelKey": "cloudflareR2.perm_manage"
+    }
   ],
   "menu": [
     {
@@ -57,26 +60,27 @@
   "translations": {
     "en": {
       "cloudflareR2": {
-        "title": "Cloudflare R2 Storage",
-        "subtitle": "S3-compatible object storage with zero egress fees",
-        "credentialsTitle": "Credentials",
-        "bucketTitle": "Bucket",
-        "accountId": "Account ID",
-        "bucket": "Bucket Name",
         "accessKey": "Access Key ID",
-        "secretKey": "Secret Access Key",
+        "accountId": "Account ID",
+        "active": "Set as active storage provider",
+        "bucket": "Bucket Name",
+        "bucketTitle": "Bucket",
+        "credentialsTitle": "Credentials",
+        "currentlyActive": "Currently active storage provider",
+        "perm_manage": "Manage",
         "publicUrl": "Public URL",
         "publicUrlHint": "Your R2 public bucket URL (e.g. https://pub-xxx.r2.dev)",
-        "active": "Set as active storage provider",
-        "saved": "Settings saved",
+        "save": "Save",
         "saveError": "Failed to save settings",
+        "saved": "Settings saved",
+        "saving": "Saving…",
+        "secretKey": "Secret Access Key",
+        "secretKeyNotSet": "Not set",
+        "secretKeyStored": "Saved. Type a new value to replace it.",
+        "subtitle": "S3-compatible object storage with zero egress fees",
         "test": "Test Connection",
         "testSuccess": "Connection successful",
-        "currentlyActive": "Currently active storage provider",
-        "save": "Save",
-        "saving": "Saving…",
-        "secretKeyStored": "Saved. Type a new value to replace it.",
-        "secretKeyNotSet": "Not set"
+        "title": "Cloudflare R2 Storage"
       },
       "admin": {
         "menu_cloudflare-r2": "Cloudflare R2",
@@ -87,26 +91,27 @@
     },
     "tr": {
       "cloudflareR2": {
-        "title": "Cloudflare R2 Depolama",
-        "subtitle": "Sıfır çıkış ücretli S3 uyumlu nesne depolama",
-        "credentialsTitle": "Kimlik Bilgileri",
-        "bucketTitle": "Bucket",
-        "accountId": "Hesap ID",
-        "bucket": "Bucket Adı",
         "accessKey": "Erişim Anahtarı",
-        "secretKey": "Gizli Anahtar",
+        "accountId": "Hesap ID",
+        "active": "Aktif depolama sağlayıcısı yap",
+        "bucket": "Bucket Adı",
+        "bucketTitle": "Bucket",
+        "credentialsTitle": "Kimlik Bilgileri",
+        "currentlyActive": "Şu anki aktif depolama sağlayıcısı",
+        "perm_manage": "Yönetebilir",
         "publicUrl": "Genel URL",
         "publicUrlHint": "R2 genel bucket URL'iniz (örn. https://pub-xxx.r2.dev)",
-        "active": "Aktif depolama sağlayıcısı yap",
-        "saved": "Ayarlar kaydedildi",
+        "save": "Kaydet",
         "saveError": "Ayarlar kaydedilemedi",
+        "saved": "Ayarlar kaydedildi",
+        "saving": "Kaydediliyor…",
+        "secretKey": "Gizli Anahtar",
+        "secretKeyNotSet": "Ayarlanmadı",
+        "secretKeyStored": "Kayıtlı. Değiştirmek için yeni bir değer yazın.",
+        "subtitle": "Sıfır çıkış ücretli S3 uyumlu nesne depolama",
         "test": "Bağlantıyı Test Et",
         "testSuccess": "Bağlantı başarılı",
-        "currentlyActive": "Şu anki aktif depolama sağlayıcısı",
-        "save": "Kaydet",
-        "saving": "Kaydediliyor…",
-        "secretKeyStored": "Kayıtlı. Değiştirmek için yeni bir değer yazın.",
-        "secretKeyNotSet": "Ayarlanmadı"
+        "title": "Cloudflare R2 Depolama"
       },
       "admin": {
         "menu_cloudflare-r2": "Cloudflare R2",

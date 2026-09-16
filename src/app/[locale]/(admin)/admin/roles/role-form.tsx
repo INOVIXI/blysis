@@ -8,11 +8,10 @@ import { Button, buttonClassName } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
 import { Link, useRouter } from "@/core/lib/i18n/navigation";
-import { CORE_PERMISSIONS } from "@/core/lib/permission-names";
 import { writeError } from "@/core/lib/write-result";
 import { toast } from "sonner";
-import { CheckboxField } from "@/core/components/ui/checkbox";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { PermissionMatrix, type PermissionSection, type PermissionState } from "@/core/components/admin/PermissionMatrix";
 import { cn } from "@/core/lib/utils";
 import { Textarea } from "@/core/components/ui/textarea";
 import { RoleBadge } from "@/core/components/ui/RoleBadge";
@@ -32,9 +31,8 @@ import { RoleName } from "@/core/components/ui/RoleName";
  */
 
 export interface RolePermission {
-    id: string;
-    name: string;
-    module: string;
+    permission: string;
+    state: PermissionState;
 }
 
 export interface RoleRecord {
@@ -47,21 +45,24 @@ export interface RoleRecord {
     /** Declarations an operator wrote, for the name and for the pill. */
     nameCss?: string | null;
     badgeCss?: string | null;
-    permissions: RolePermission[];
+    rolePermissions: RolePermission[];
     _count: { users: number };
 }
 
-// Core permissions always shown; module permissions added dynamically. The
-// names come from core so this screen and moduleSystem.getAllPermissions()
-// cannot drift apart.
-const corePermissions = [{ module: "admin", perms: [...CORE_PERMISSIONS] }];
+/**
+ * The vocabulary arrives already worded and already grouped.
+ *
+ * A module's label lives in that module's own translations, so resolving it
+ * here would mean loading ninety namespaces into this screen and core knowing
+ * which ones. The server does it and sends sentences.
+ */
 
 export function RoleForm({ role }: { role?: RoleRecord }) {
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
     const router = useRouter();
 
-    const [availablePermissions, setAvailablePermissions] = useState(corePermissions);
+    const [sections, setSections] = useState<PermissionSection[]>([]);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [form, setForm] = useState({
@@ -69,7 +70,9 @@ export function RoleForm({ role }: { role?: RoleRecord }) {
         displayName: role?.displayName ?? "",
         color: role?.color ?? "#6366f1",
         priority: role?.priority ?? 0,
-        permissions: role?.permissions.map((p) => p.name) ?? ([] as string[]),
+        permissions: Object.fromEntries(
+            (role?.rolePermissions ?? []).map((entry) => [entry.permission, entry.state]),
+        ) as Record<string, PermissionState>,
         nameCss: role?.nameCss ?? "",
         badgeCss: role?.badgeCss ?? "",
     });
@@ -77,31 +80,11 @@ export function RoleForm({ role }: { role?: RoleRecord }) {
     const isAdminRole = role?.name === "admin";
 
     useEffect(() => {
-        // Permission groups come from the installed module manifests, so a
-        // module's permissions appear here without core knowing their names.
-        fetch("/api/v1/modules")
-            .then((r) => r.json())
-            .then((data) => {
-                const modules = (data.modules || []).filter((m: { enabled: boolean }) => m.enabled);
-                const modulePerms = modules
-                    .filter((m: { permissions?: string[] }) => m.permissions && m.permissions.length > 0)
-                    .map((m: { id: string; permissions: string[] }) => ({
-                        module: m.id,
-                        perms: m.permissions as string[],
-                    }));
-                setAvailablePermissions([...corePermissions, ...modulePerms]);
-            })
-            .catch(() => { /* keep core permissions only */ });
+        fetch("/api/v1/admin/permission-catalogue")
+            .then((response) => response.json())
+            .then((data) => setSections(data.sections ?? []))
+            .catch(() => { /* the form still saves; the grid stays empty */ });
     }, []);
-
-    const togglePermission = (perm: string) => {
-        setForm((prev) => ({
-            ...prev,
-            permissions: prev.permissions.includes(perm)
-                ? prev.permissions.filter((p) => p !== perm)
-                : [...prev.permissions, perm],
-        }));
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -113,6 +96,10 @@ export function RoleForm({ role }: { role?: RoleRecord }) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ...form,
+                    // The role's whole opinion, sent as a list. A name that is
+                    // not here is the third state - nothing at all - which is
+                    // why the endpoint replaces rather than merges.
+                    permissions: Object.entries(form.permissions).map(([name, state]) => ({ name, state })),
                     // Empty means "no rule", which is a null column rather
                     // than an empty string nothing would ever match.
                     nameCss: form.nameCss.trim() || null,
@@ -258,23 +245,12 @@ export function RoleForm({ role }: { role?: RoleRecord }) {
                             {isAdminRole ? (
                                 <p className="text-sm text-muted-foreground">{t("roles_adminAllPerms")}</p>
                             ) : (
-                                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {availablePermissions.map((group) => (
-                                        <div key={group.module} className="border border-border rounded-lg p-3">
-                                            <p className="text-sm font-medium mb-2 capitalize">{group.module}</p>
-                                            <div className="space-y-1">
-                                                {group.perms.map((perm) => (
-                                                    <CheckboxField
-                                                        key={perm}
-                                                        checked={form.permissions.includes(perm)}
-                                                        onChange={() => togglePermission(perm)}
-                                                        label={<span className="text-muted-foreground">{perm}</span>}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                <PermissionMatrix
+                                    sections={sections}
+                                    value={form.permissions}
+                                    onChange={(permissions) => setForm((prev) => ({ ...prev, permissions }))}
+                                    disabled={saving}
+                                />
                             )}
                         </div>
 

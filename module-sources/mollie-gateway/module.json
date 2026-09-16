@@ -77,10 +77,11 @@
   "translations": {
     "en": {
       "mollieGateway": {
-        "adm_title": "Mollie Settings",
-        "adm_subtitle": "Keys for taking payments through Mollie.",
         "adm_apiKey": "API Key",
-        "adm_apiKeyDesc": "From your Mollie dashboard. Point the Mollie notification URL at /api/v1/mollie/webhook."
+        "adm_apiKeyDesc": "From your Mollie dashboard. Point the Mollie notification URL at /api/v1/mollie/webhook.",
+        "adm_subtitle": "Keys for taking payments through Mollie.",
+        "adm_title": "Mollie Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_mollie-gateway": "Mollie Gateway",
@@ -91,10 +92,11 @@
     },
     "tr": {
       "mollieGateway": {
-        "adm_title": "Mollie Ayarları",
-        "adm_subtitle": "Mollie ile ödeme almak için gereken anahtarlar.",
         "adm_apiKey": "API Anahtarı",
-        "adm_apiKeyDesc": "Mollie panelinden alınır. Mollie bildirim adresini /api/v1/mollie/webhook olarak ayarlayın."
+        "adm_apiKeyDesc": "Mollie panelinden alınır. Mollie bildirim adresini /api/v1/mollie/webhook olarak ayarlayın.",
+        "adm_subtitle": "Mollie ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "Mollie Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_mollie-gateway": "Mollie Ödeme",
@@ -105,6 +107,9 @@
     }
   },
   "permissions": [
-    "mollie-gateway.manage"
+    {
+      "name": "mollie-gateway.manage",
+      "labelKey": "mollieGateway.perm_manage"
+    }
   ]
 }

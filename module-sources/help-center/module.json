@@ -8,8 +8,14 @@
   "author": "Blysis Team",
   "icon": "HelpCircle",
   "permissions": [
-    "help-center.view",
-    "help-center.manage"
+    {
+      "name": "help-center.view",
+      "labelKey": "helpCenter.perm_view"
+    },
+    {
+      "name": "help-center.manage",
+      "labelKey": "helpCenter.perm_manage"
+    }
   ],
   "settings": [
     {
@@ -153,16 +159,20 @@
         "browseCategories": "Browse by Category",
         "cantFind": "Can't find what you're looking for?",
         "createTicket": "Create a support ticket",
+        "feedbackFailed": "Your feedback did not reach us. Please try again.",
         "feedbackThanks": "Thank you for your feedback!",
         "heading": "How can we help you?",
         "helpfulNo": "No, not helpful",
         "helpfulYes": "Yes, helpful",
         "inCategory": "in {category}",
+        "inThisCategory": "In this category",
         "loading": "Loading...",
         "needHelp": "Need more help?",
         "noArticlesInCategory": "No articles in this category yet",
         "noArticlesYet": "No articles yet",
         "noCategories": "No help categories available yet",
+        "perm_manage": "Manage",
+        "perm_view": "Read the help centre",
         "popularArticles": "Popular Articles",
         "search": "Search",
         "searchPlaceholder": "Search for articles...",
@@ -171,9 +181,7 @@
         "subtitle": "Search our knowledge base or browse categories below",
         "title": "Help Center",
         "views": "{count} views",
-        "wasHelpful": "Was this article helpful?",
-        "feedbackFailed": "Your feedback did not reach us. Please try again.",
-        "inThisCategory": "In this category"
+        "wasHelpful": "Was this article helpful?"
       },
       "admin": {
         "menu_help-center": "Help Center",
@@ -258,16 +266,20 @@
         "browseCategories": "Kategorilere Göre",
         "cantFind": "Aradığınızı bulamıyor musunuz?",
         "createTicket": "Destek talebi oluşturun",
+        "feedbackFailed": "Geri bildiriminiz bize ulaşmadı. Lütfen tekrar deneyin.",
         "feedbackThanks": "Geri bildirimin için teşekkürler!",
         "heading": "Size nasıl yardımcı olabiliriz?",
         "helpfulNo": "Hayır, yardımcı olmadı",
         "helpfulYes": "Evet, yardımcı oldu",
         "inCategory": "{category} kategorisinde",
+        "inThisCategory": "Bu kategoride",
         "loading": "Yükleniyor...",
         "needHelp": "Daha fazla yardıma mı ihtiyacınız var?",
         "noArticlesInCategory": "Bu kategoride henüz makale yok",
         "noArticlesYet": "Henüz makale yok",
         "noCategories": "Henüz yardım kategorisi mevcut değil",
+        "perm_manage": "Yönetebilir",
+        "perm_view": "Yardım merkezini okuyabilir",
         "popularArticles": "Popüler Makaleler",
         "search": "Ara",
         "searchPlaceholder": "Makale ara...",
@@ -276,9 +288,7 @@
         "subtitle": "Bilgi bankamızda arayın veya aşağıdaki kategorilere göz atın",
         "title": "Yardım Merkezi",
         "views": "{count} görüntülenme",
-        "wasHelpful": "Bu makale yardımcı oldu mu?",
-        "feedbackFailed": "Geri bildiriminiz bize ulaşmadı. Lütfen tekrar deneyin.",
-        "inThisCategory": "Bu kategoride"
+        "wasHelpful": "Bu makale yardımcı oldu mu?"
       },
       "admin": {
         "menu_help-center": "Yardım Merkezi",

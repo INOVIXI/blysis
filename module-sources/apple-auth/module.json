@@ -48,10 +48,11 @@
   "translations": {
     "en": {
       "appleAuth": {
-        "adm_title": "Apple Login Settings",
-        "adm_subtitle": "Set up Apple OAuth sign-in for your site.",
         "adm_keyNote": "Apple has no client secret: it takes a short-lived token you sign yourself. Give it the Services ID as AUTH_APPLE_ID, the team and key identifiers, and the contents of the .p8 key file as AUTH_APPLE_PRIVATE_KEY - newlines may be written as \\n. The token is minted when the site starts and is valid for six months, so a restart within that window is all the rotation Apple needs.",
-        "adm_nameNote": "Apple sends the person's name only the first time they approve your site, and it lets them hide their address behind a private relay. Both are normal: the account keeps whatever arrived, and the user can change it in their profile."
+        "adm_nameNote": "Apple sends the person's name only the first time they approve your site, and it lets them hide their address behind a private relay. Both are normal: the account keeps whatever arrived, and the user can change it in their profile.",
+        "adm_subtitle": "Set up Apple OAuth sign-in for your site.",
+        "adm_title": "Apple Login Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_apple-auth_name": "Apple Login",
@@ -60,10 +61,11 @@
     },
     "tr": {
       "appleAuth": {
-        "adm_title": "Apple ile Giriş Ayarları",
-        "adm_subtitle": "Siteniz için Apple ile OAuth girişini yapılandırın.",
         "adm_keyNote": "Apple'da client secret yoktur: kendi imzaladığınız kısa ömürlü bir jeton ister. AUTH_APPLE_ID olarak Services ID'yi, ekip ve anahtar kimliklerini, AUTH_APPLE_PRIVATE_KEY olarak da .p8 dosyasının içeriğini verin; satır sonları \\n olarak yazılabilir. Jeton site açılırken üretilir ve altı ay geçerlidir, yani bu süre içinde bir yeniden başlatma Apple'ın istediği tüm yenilemedir.",
-        "adm_nameNote": "Apple, kişinin adını yalnızca sitenizi ilk onayladığında gönderir ve adresini özel bir yönlendirme arkasına gizlemesine izin verir. İkisi de normaldir: hesap gelen bilgiyle açılır, kullanıcı profilinden değiştirebilir."
+        "adm_nameNote": "Apple, kişinin adını yalnızca sitenizi ilk onayladığında gönderir ve adresini özel bir yönlendirme arkasına gizlemesine izin verir. İkisi de normaldir: hesap gelen bilgiyle açılır, kullanıcı profilinden değiştirebilir.",
+        "adm_subtitle": "Siteniz için Apple ile OAuth girişini yapılandırın.",
+        "adm_title": "Apple ile Giriş Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_apple-auth_name": "Apple ile Giriş",
@@ -72,6 +74,9 @@
     }
   },
   "permissions": [
-    "apple-auth.manage"
+    {
+      "name": "apple-auth.manage",
+      "labelKey": "appleAuth.perm_manage"
+    }
   ]
 }

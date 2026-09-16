@@ -1,167 +1,162 @@
 {
-    "_comment": "This is a complete module.json template. Remove fields you don't need.",
-
-    "id": "my-module",
-    "name": "My Module",
-    "description": "A template module for Blysis",
-    "version": "1.0.0",
-    "coreVersion": "^1.0.0",
-    "category": "content",
-    "author": "Your Name",
-    "icon": "Star",
-
-    "dependencies": [],
-    "conflicts": [],
-
-    "permissions": [
-        "mymodule.view",
-        "mymodule.manage"
-    ],
-
-    "settings": [
-        {
-            "key": "exampleSetting",
-            "type": "boolean",
-            "default": true,
-            "label": "Example setting",
-            "description": "Read it with moduleSettings(\"my-module\") - a setting nothing reads fails validation."
-        }
-    ],
-
-
-    "menu": [
-        {
-            "label": "My Module",
-            "path": "/my-module",
-            "icon": "Star"
-        }
-    ],
-
-    "routes": [
-        {
-            "path": "/my-module",
-            "component": "pages/public/page.tsx"
-        }
-    ],
-
-    "adminRoutes": [
-        {
-            "path": "/my-module",
-            "component": "pages/admin/page.tsx"
-        }
-    ],
-
-    "api": [
-        {
-            "path": "/my-module/items",
-            "handler": "api/route.ts"
-        }
-    ],
-
-    "widgets": [
-        {
-            "id": "ExampleWidget",
-            "component": "widgets/ExampleWidget",
-            "defaultOrder": 50,
-            "defaultVisible": true
-        }
-    ],
-
-    "navLinks": [
-        {
-            "label": "My Module",
-            "href": "/my-module",
-            "icon": "Star",
-            "position": 50
-        }
-    ],
-
-    "footerLinks": [
-        {
-            "label": "My Module",
-            "href": "/my-module",
-            "section": "quick"
-        }
-    ],
-
-    "navbarComponents": [
-        {
-            "id": "MyModuleIcon",
-            "component": "components/ExampleWidget",
-            "order": 50
-        }
-    ],
-
-    "layoutComponents": [
-        {
-            "id": "MyModuleOverlay",
-            "component": "components/ExampleWidget",
-            "include": ["/*"],
-            "exclude": ["/admin/*"]
-        }
-    ],
-
-    "homepageSections": [
-        {
-            "id": "MyModuleSection",
-            "type": "content",
-            "component": "components/ExampleWidget",
-            "order": 50
-        }
-    ],
-
-    "profileTabs": [
-        {
-            "id": "MyModuleTab",
-            "label": "My Module",
-            "component": "components/ExampleWidget",
-            "order": 50
-        }
-    ],
-
-    "dashboardCards": [
-        {
-            "id": "my-module-items",
-            "label": "Items",
-            "icon": "Star",
-            "href": "/admin/my-module",
-            "color": "text-blue-600",
-            "statKey": "items"
-        }
-    ],
-
-    "statsApi": "/my-module/stats",
-
-    "settingsCards": [
-        {
-            "title": "My Module",
-            "description": "Configure my module settings.",
-            "href": "/my-module",
-            "icon": "Star",
-            "color": "text-blue-500"
-        }
-    ],
-
-    "oauthButtons": [],
-
-    "translations": {
-        "en": {
-            "myModule": {
-                "title": "My Module",
-                "description": "Example module for Blysis"
-            }
-        },
-        "tr": {
-            "myModule": {
-                "title": "Modulom",
-                "description": "Blysis icin ornek modul"
-            }
-        },
-        "de": {
-            "myModule": {
-                "title": "Mein Modul",
-                "description": "Beispielmodul fuer Blysis"
-            }
-        }
+  "_comment": "This is a complete module.json template. Remove fields you don't need.",
+  "id": "my-module",
+  "name": "My Module",
+  "description": "A template module for Blysis",
+  "version": "1.0.0",
+  "coreVersion": "^1.0.0",
+  "category": "content",
+  "author": "Your Name",
+  "icon": "Star",
+  "dependencies": [],
+  "conflicts": [],
+  "permissions": [
+    {
+      "name": "mymodule.view",
+      "labelKey": "myModule.perm_view"
+    },
+    {
+      "name": "mymodule.manage",
+      "labelKey": "myModule.perm_manage"
     }
+  ],
+  "settings": [
+    {
+      "key": "exampleSetting",
+      "type": "boolean",
+      "default": true,
+      "label": "Example setting",
+      "description": "Read it with moduleSettings(\"my-module\") - a setting nothing reads fails validation."
+    }
+  ],
+  "menu": [
+    {
+      "label": "My Module",
+      "path": "/my-module",
+      "icon": "Star"
+    }
+  ],
+  "routes": [
+    {
+      "path": "/my-module",
+      "component": "pages/public/page.tsx"
+    }
+  ],
+  "adminRoutes": [
+    {
+      "path": "/my-module",
+      "component": "pages/admin/page.tsx"
+    }
+  ],
+  "api": [
+    {
+      "path": "/my-module/items",
+      "handler": "api/route.ts"
+    }
+  ],
+  "widgets": [
+    {
+      "id": "ExampleWidget",
+      "component": "widgets/ExampleWidget",
+      "defaultOrder": 50,
+      "defaultVisible": true
+    }
+  ],
+  "navLinks": [
+    {
+      "label": "My Module",
+      "href": "/my-module",
+      "icon": "Star",
+      "position": 50
+    }
+  ],
+  "footerLinks": [
+    {
+      "label": "My Module",
+      "href": "/my-module",
+      "section": "quick"
+    }
+  ],
+  "navbarComponents": [
+    {
+      "id": "MyModuleIcon",
+      "component": "components/ExampleWidget",
+      "order": 50
+    }
+  ],
+  "layoutComponents": [
+    {
+      "id": "MyModuleOverlay",
+      "component": "components/ExampleWidget",
+      "include": [
+        "/*"
+      ],
+      "exclude": [
+        "/admin/*"
+      ]
+    }
+  ],
+  "homepageSections": [
+    {
+      "id": "MyModuleSection",
+      "type": "content",
+      "component": "components/ExampleWidget",
+      "order": 50
+    }
+  ],
+  "profileTabs": [
+    {
+      "id": "MyModuleTab",
+      "label": "My Module",
+      "component": "components/ExampleWidget",
+      "order": 50
+    }
+  ],
+  "dashboardCards": [
+    {
+      "id": "my-module-items",
+      "label": "Items",
+      "icon": "Star",
+      "href": "/admin/my-module",
+      "color": "text-blue-600",
+      "statKey": "items"
+    }
+  ],
+  "statsApi": "/my-module/stats",
+  "settingsCards": [
+    {
+      "title": "My Module",
+      "description": "Configure my module settings.",
+      "href": "/my-module",
+      "icon": "Star",
+      "color": "text-blue-500"
+    }
+  ],
+  "oauthButtons": [],
+  "translations": {
+    "en": {
+      "myModule": {
+        "description": "Example module for Blysis",
+        "perm_manage": "Manage",
+        "perm_view": "View",
+        "title": "My Module"
+      }
+    },
+    "tr": {
+      "myModule": {
+        "description": "Blysis icin ornek modul",
+        "perm_manage": "Yönetebilir",
+        "perm_view": "Görüntüleyebilir",
+        "title": "Modulom"
+      }
+    },
+    "de": {
+      "myModule": {
+        "description": "Beispielmodul fuer Blysis",
+        "perm_manage": "Verwalten",
+        "perm_view": "Ansehen",
+        "title": "Mein Modul"
+      }
+    }
+  }
 }

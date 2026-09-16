@@ -46,10 +46,11 @@
   "translations": {
     "en": {
       "instagramAuth": {
-        "adm_title": "Instagram Login Settings",
-        "adm_subtitle": "Set up Instagram OAuth sign-in for your site.",
+        "adm_accountNote": "Only professional accounts (business or creator) can sign in this way, and Instagram shares no email address, so these accounts get a placeholder one that can never receive mail.",
         "adm_apiNote": "Instagram's old Basic Display API was shut down in December 2024, so this uses Instagram API with Instagram Login. Create an app of that type in the Meta developer console and register the redirect URL above on it.",
-        "adm_accountNote": "Only professional accounts (business or creator) can sign in this way, and Instagram shares no email address, so these accounts get a placeholder one that can never receive mail."
+        "adm_subtitle": "Set up Instagram OAuth sign-in for your site.",
+        "adm_title": "Instagram Login Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_instagram-auth_name": "Instagram Login",
@@ -58,10 +59,11 @@
     },
     "tr": {
       "instagramAuth": {
-        "adm_title": "Instagram ile Giriş Ayarları",
-        "adm_subtitle": "Siteniz için Instagram ile OAuth girişini yapılandırın.",
+        "adm_accountNote": "Bu yolla yalnızca profesyonel hesaplar (işletme veya içerik üretici) giriş yapabilir. Instagram e-posta adresi paylaşmadığı için bu hesaplara posta alamayan geçici bir adres atanır.",
         "adm_apiNote": "Instagram'ın eski Basic Display API'si Aralık 2024'te kapatıldı; bu modül yerine gelen Instagram Login API'sini kullanır. Meta geliştirici konsolunda bu türde bir uygulama oluşturun ve yukarıdaki dönüş adresini ona kaydedin.",
-        "adm_accountNote": "Bu yolla yalnızca profesyonel hesaplar (işletme veya içerik üretici) giriş yapabilir. Instagram e-posta adresi paylaşmadığı için bu hesaplara posta alamayan geçici bir adres atanır."
+        "adm_subtitle": "Siteniz için Instagram ile OAuth girişini yapılandırın.",
+        "adm_title": "Instagram ile Giriş Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_instagram-auth_name": "Instagram ile Giriş",
@@ -70,6 +72,9 @@
     }
   },
   "permissions": [
-    "instagram-auth.manage"
+    {
+      "name": "instagram-auth.manage",
+      "labelKey": "instagramAuth.perm_manage"
+    }
   ]
 }

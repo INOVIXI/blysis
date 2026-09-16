@@ -59,22 +59,27 @@
   "translations": {
     "en": {
       "crispChat": {
-        "adm_title": "Crisp Chat",
         "adm_subtitle": "The chat bubble visitors talk to you through.",
+        "adm_title": "Crisp Chat",
         "adm_websiteId": "Website ID",
-        "adm_websiteIdDesc": "From the provider's dashboard, under Settings. It is a UUID; anything else is refused and the bubble stays away. Nothing loads until a visitor has accepted cookies."
+        "adm_websiteIdDesc": "From the provider's dashboard, under Settings. It is a UUID; anything else is refused and the bubble stays away. Nothing loads until a visitor has accepted cookies.",
+        "perm_manage": "Manage"
       }
     },
     "tr": {
       "crispChat": {
-        "adm_title": "Crisp Chat",
         "adm_subtitle": "Ziyaretçilerin sizinle konuştuğu sohbet balonu.",
+        "adm_title": "Crisp Chat",
         "adm_websiteId": "Website ID",
-        "adm_websiteIdDesc": "Sağlayıcının panelinde Ayarlar altında. Bir UUID'dir; başka her şey reddedilir ve balon çıkmaz. Ziyaretçi çerezleri kabul etmeden hiçbir şey yüklenmez."
+        "adm_websiteIdDesc": "Sağlayıcının panelinde Ayarlar altında. Bir UUID'dir; başka her şey reddedilir ve balon çıkmaz. Ziyaretçi çerezleri kabul etmeden hiçbir şey yüklenmez.",
+        "perm_manage": "Yönetebilir"
       }
     }
   },
   "permissions": [
-    "crisp-chat.manage"
+    {
+      "name": "crisp-chat.manage",
+      "labelKey": "crispChat.perm_manage"
+    }
   ]
 }

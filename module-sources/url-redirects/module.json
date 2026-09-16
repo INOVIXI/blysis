@@ -42,48 +42,53 @@
   "translations": {
     "en": {
       "urlRedirects": {
-        "adm_title": "Redirects",
-        "adm_subtitle": "When a page moves, every link to the old address keeps pointing at it. A redirect is the sign on the old door.",
+        "adm_add": "Add",
+        "adm_addFailed": "That redirect could not be added.",
+        "adm_added": "The sign is up.",
         "adm_from": "Old address",
         "adm_fromHint": "A path, without the language: /old-pricing, not /en/old-pricing.",
-        "adm_to": "New address",
-        "adm_toHint": "A path on this site, or a whole https address to leave it.",
+        "adm_none": "Nothing has moved yet.",
         "adm_permanent": "Permanent",
         "adm_permanentHint": "On, a search engine forgets the old address. Off is for a move you may undo.",
-        "adm_add": "Add",
-        "adm_none": "Nothing has moved yet.",
-        "adm_added": "The sign is up.",
-        "adm_addFailed": "That redirect could not be added.",
+        "adm_subtitle": "When a page moves, every link to the old address keeps pointing at it. A redirect is the sign on the old door.",
+        "adm_title": "Redirects",
+        "adm_to": "New address",
+        "adm_toHint": "A path on this site, or a whole https address to leave it.",
         "err": {
           "redirect_bad_target": "A new address has to be a path on this site or a whole https address.",
           "redirect_loop": "That would send visitors in a circle.",
           "redirect_exists": "There is already a sign on that door."
-        }
+        },
+        "perm_manage": "Manage"
       }
     },
     "tr": {
       "urlRedirects": {
-        "adm_title": "Yönlendirmeler",
-        "adm_subtitle": "Bir sayfa taşındığında eski adrese giden her bağlantı orayı göstermeye devam eder. Yönlendirme, eski kapıdaki tabeladır.",
+        "adm_add": "Ekle",
+        "adm_addFailed": "Yönlendirme eklenemedi.",
+        "adm_added": "Tabela asıldı.",
         "adm_from": "Eski adres",
         "adm_fromHint": "Dil olmadan bir yol: /eski-fiyatlar, /tr/eski-fiyatlar değil.",
-        "adm_to": "Yeni adres",
-        "adm_toHint": "Bu sitede bir yol ya da siteden çıkmak için tam bir https adresi.",
+        "adm_none": "Henüz taşınan bir sayfa yok.",
         "adm_permanent": "Kalıcı",
         "adm_permanentHint": "Açıkken arama motoru eski adresi unutur. Geri alabileceğiniz bir taşıma için kapatın.",
-        "adm_add": "Ekle",
-        "adm_none": "Henüz taşınan bir sayfa yok.",
-        "adm_added": "Tabela asıldı.",
-        "adm_addFailed": "Yönlendirme eklenemedi.",
+        "adm_subtitle": "Bir sayfa taşındığında eski adrese giden her bağlantı orayı göstermeye devam eder. Yönlendirme, eski kapıdaki tabeladır.",
+        "adm_title": "Yönlendirmeler",
+        "adm_to": "Yeni adres",
+        "adm_toHint": "Bu sitede bir yol ya da siteden çıkmak için tam bir https adresi.",
         "err": {
           "redirect_bad_target": "Yeni adres, bu sitede bir yol ya da tam bir https adresi olmalı.",
           "redirect_loop": "Bu, ziyaretçileri daire içinde döndürür.",
           "redirect_exists": "O kapıda zaten bir tabela var."
-        }
+        },
+        "perm_manage": "Yönetebilir"
       }
     }
   },
   "permissions": [
-    "url-redirects.manage"
+    {
+      "name": "url-redirects.manage",
+      "labelKey": "urlRedirects.perm_manage"
+    }
   ]
 }

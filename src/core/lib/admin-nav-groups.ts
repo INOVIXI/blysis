@@ -62,7 +62,6 @@ import {
     LayoutGrid,
     Code,
     Globe,
-    ClipboardCheck,
     ShieldAlert,
     Megaphone,
     Server,
@@ -182,7 +181,7 @@ export const CORE_NAV_GROUPS: NavGroup[] = [
         label: "People",
         labelKey: "sidebar_people",
         order: 60,
-        pathPrefix: ["/admin/users", "/admin/roles", "/admin/permissions", "/admin/resource-permissions"],
+        pathPrefix: ["/admin/users", "/admin/roles"],
         sections: [
             {
                 id: "accounts",
@@ -198,8 +197,6 @@ export const CORE_NAV_GROUPS: NavGroup[] = [
                 headerKey: "sidebar_access",
                 items: [
                     { href: "/admin/roles", label: "Roles", labelKey: "sidebar_roles", icon: ShieldCheck },
-                    { href: "/admin/permissions", label: "Permissions", labelKey: "sidebar_permissions", icon: ClipboardCheck },
-                    { href: "/admin/resource-permissions", label: "Resource Grants", labelKey: "sidebar_resourcePermissions", icon: ShieldCheck },
                 ],
             },
         ],

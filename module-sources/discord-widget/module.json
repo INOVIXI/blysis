@@ -53,20 +53,21 @@
         "widget_discordServer": "Discord Server"
       },
       "discordWidget": {
-        "adm_title": "Discord Widget Settings",
-        "adm_subtitle": "Configure the Discord widget shown on the homepage. You need the server ID with widget enabled in Discord → Server Settings → Widget.",
-        "adm_serverIdLabel": "Discord Server ID",
-        "adm_serverIdHelp": "Open Discord, right-click your server → Server Settings → Widget → enable widget → copy Server ID. Leave empty to hide the widget.",
-        "adm_serverIdPlaceholder": "e.g. 123456789012345678",
-        "adm_save": "Save",
-        "adm_saving": "Saving…",
-        "adm_saved": "Discord widget settings saved",
         "adm_error": "Failed to save",
-        "title": "Discord Server",
-        "online": "Online",
-        "offline": "Offline",
+        "adm_save": "Save",
+        "adm_saved": "Discord widget settings saved",
+        "adm_saving": "Saving…",
+        "adm_serverIdHelp": "Open Discord, right-click your server → Server Settings → Widget → enable widget → copy Server ID. Leave empty to hide the widget.",
+        "adm_serverIdLabel": "Discord Server ID",
+        "adm_serverIdPlaceholder": "e.g. 123456789012345678",
+        "adm_subtitle": "Configure the Discord widget shown on the homepage. You need the server ID with widget enabled in Discord → Server Settings → Widget.",
+        "adm_title": "Discord Widget Settings",
+        "error": "Failed to load Discord widget",
         "loading": "Loading Discord widget...",
-        "error": "Failed to load Discord widget"
+        "offline": "Offline",
+        "online": "Online",
+        "perm_manage": "Manage",
+        "title": "Discord Server"
       }
     },
     "tr": {
@@ -77,20 +78,21 @@
         "widget_discordServer": "Discord Sunucusu"
       },
       "discordWidget": {
-        "adm_title": "Discord Widget Ayarları",
-        "adm_subtitle": "Ana sayfada gösterilen Discord widget'ını yapılandır. Discord → Sunucu Ayarları → Widget'ten widget'i aç ve Sunucu ID'sini al.",
-        "adm_serverIdLabel": "Discord Sunucu ID",
-        "adm_serverIdHelp": "Discord'u aç, sunucuya sağ tık → Sunucu Ayarları → Widget → widget'i aktif et → Sunucu ID'sini kopyala. Boş bırakırsan widget gizlenir.",
-        "adm_serverIdPlaceholder": "Örn. 123456789012345678",
-        "adm_save": "Kaydet",
-        "adm_saving": "Kaydediliyor…",
-        "adm_saved": "Discord widget ayarları kaydedildi",
         "adm_error": "Kaydedilemedi",
-        "title": "Discord Sunucusu",
-        "online": "Çevrimiçi",
-        "offline": "Çevrimdışı",
+        "adm_save": "Kaydet",
+        "adm_saved": "Discord widget ayarları kaydedildi",
+        "adm_saving": "Kaydediliyor…",
+        "adm_serverIdHelp": "Discord'u aç, sunucuya sağ tık → Sunucu Ayarları → Widget → widget'i aktif et → Sunucu ID'sini kopyala. Boş bırakırsan widget gizlenir.",
+        "adm_serverIdLabel": "Discord Sunucu ID",
+        "adm_serverIdPlaceholder": "Örn. 123456789012345678",
+        "adm_subtitle": "Ana sayfada gösterilen Discord widget'ını yapılandır. Discord → Sunucu Ayarları → Widget'ten widget'i aç ve Sunucu ID'sini al.",
+        "adm_title": "Discord Widget Ayarları",
+        "error": "Discord widget'ı yüklenemedi",
         "loading": "Discord widget'ı yükleniyor...",
-        "error": "Discord widget'ı yüklenemedi"
+        "offline": "Çevrimdışı",
+        "online": "Çevrimiçi",
+        "perm_manage": "Yönetebilir",
+        "title": "Discord Sunucusu"
       }
     }
   },
@@ -100,6 +102,9 @@
     ]
   },
   "permissions": [
-    "discord-widget.manage"
+    {
+      "name": "discord-widget.manage",
+      "labelKey": "discordWidget.perm_manage"
+    }
   ]
 }

@@ -42,9 +42,10 @@
   "translations": {
     "en": {
       "yandexAuth": {
-        "adm_title": "Yandex Login Settings",
+        "adm_scopeNote": "The Yandex application needs the login:info, login:email and login:avatar permissions. Without login:email the account arrives without an address and gets a placeholder one.",
         "adm_subtitle": "Set up Yandex OAuth sign-in for your site.",
-        "adm_scopeNote": "The Yandex application needs the login:info, login:email and login:avatar permissions. Without login:email the account arrives without an address and gets a placeholder one."
+        "adm_title": "Yandex Login Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_yandex-auth_name": "Yandex Login",
@@ -53,9 +54,10 @@
     },
     "tr": {
       "yandexAuth": {
-        "adm_title": "Yandex ile Giriş Ayarları",
+        "adm_scopeNote": "Yandex uygulamasında login:info, login:email ve login:avatar izinleri açık olmalıdır. login:email olmadan hesap adressiz gelir ve geçici bir adres alır.",
         "adm_subtitle": "Siteniz için Yandex ile OAuth girişini yapılandırın.",
-        "adm_scopeNote": "Yandex uygulamasında login:info, login:email ve login:avatar izinleri açık olmalıdır. login:email olmadan hesap adressiz gelir ve geçici bir adres alır."
+        "adm_title": "Yandex ile Giriş Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_yandex-auth_name": "Yandex ile Giriş",
@@ -64,6 +66,9 @@
     }
   },
   "permissions": [
-    "yandex-auth.manage"
+    {
+      "name": "yandex-auth.manage",
+      "labelKey": "yandexAuth.perm_manage"
+    }
   ]
 }

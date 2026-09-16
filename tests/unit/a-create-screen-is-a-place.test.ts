@@ -118,7 +118,6 @@ describe("a create screen is a place", () => {
             "src/app/[locale]/(admin)/admin/api-keys/new/page.tsx",
             "src/app/[locale]/(admin)/admin/ip-blocks/new/page.tsx",
             "src/app/[locale]/(admin)/admin/warnings/new/page.tsx",
-            "src/app/[locale]/(admin)/admin/resource-permissions/new/page.tsx",
         ];
         for (const route of routes) {
             expect(files, `${route} is missing`).toContain(route);
@@ -131,7 +130,6 @@ describe("a create screen is a place", () => {
             ["api-keys", "/admin/api-keys/new"],
             ["ip-blocks", "/admin/ip-blocks/new"],
             ["warnings", "/admin/warnings/new"],
-            ["resource-permissions", "/admin/resource-permissions/new"],
         ];
         for (const [screen, href] of pairs) {
             const src = readFileSync(`src/app/[locale]/(admin)/admin/${screen}/page.tsx`, "utf8");

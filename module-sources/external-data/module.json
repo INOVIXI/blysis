@@ -40,6 +40,8 @@
   "translations": {
     "en": {
       "externalData": {
+        "adm_connection": "Connection string",
+        "adm_connectionDesc": "Give it a user that can only read, and only the tables you mean to publish. The session refuses writes as well, but a read-only user is what actually protects the other database.",
         "adm_connectionDialects": "PostgreSQL and MySQL are read. The scheme in the address decides which: postgres://, postgresql://, mysql:// or mariadb://.",
         "adm_connectionSave": "Save connection",
         "adm_connectionSaved": "Connection saved.",
@@ -75,10 +77,8 @@
         "adm_sourceTable": "Table",
         "adm_sourceTitle": "Title",
         "adm_sources": "Lists",
-        "adm_title": "External data",
         "adm_subtitle": "Read a list out of a database you already have. Nothing is ever written to it.",
-        "adm_connection": "Connection string",
-        "adm_connectionDesc": "Give it a user that can only read, and only the tables you mean to publish. The session refuses writes as well, but a read-only user is what actually protects the other database.",
+        "adm_title": "External data",
         "adm_try": "Try it",
         "adm_tryEmpty": "It answered, with no rows.",
         "adm_tryFailed": "The trial could not be run.",
@@ -91,11 +91,14 @@
           "external_no_such_table": "That table or column is not in the other database.",
           "external_timeout": "The other database took too long to answer.",
           "external_failed": "The other database could not be read."
-        }
+        },
+        "perm_manage": "Manage"
       }
     },
     "tr": {
       "externalData": {
+        "adm_connection": "Bağlantı dizesi",
+        "adm_connectionDesc": "Yalnızca okuyabilen ve yalnızca yayınlamak istediğiniz tablolara erişen bir kullanıcı verin. Oturum yazmayı da reddeder ama diğer veritabanını asıl koruyan salt okunur kullanıcıdır.",
         "adm_connectionDialects": "PostgreSQL ve MySQL okunur. Hangisi olduğunu adresteki şema belirler: postgres://, postgresql://, mysql:// ya da mariadb://.",
         "adm_connectionSave": "Bağlantıyı kaydet",
         "adm_connectionSaved": "Bağlantı kaydedildi.",
@@ -131,10 +134,8 @@
         "adm_sourceTable": "Tablo",
         "adm_sourceTitle": "Başlık",
         "adm_sources": "Listeler",
-        "adm_title": "Dış veri",
         "adm_subtitle": "Zaten sahip olduğunuz bir veritabanından liste okuyun. Oraya hiçbir şey yazılmaz.",
-        "adm_connection": "Bağlantı dizesi",
-        "adm_connectionDesc": "Yalnızca okuyabilen ve yalnızca yayınlamak istediğiniz tablolara erişen bir kullanıcı verin. Oturum yazmayı da reddeder ama diğer veritabanını asıl koruyan salt okunur kullanıcıdır.",
+        "adm_title": "Dış veri",
         "adm_try": "Dene",
         "adm_tryEmpty": "Cevap verdi, satır yok.",
         "adm_tryFailed": "Deneme çalıştırılamadı.",
@@ -147,11 +148,15 @@
           "external_no_such_table": "Bu tablo veya kolon diğer veritabanında yok.",
           "external_timeout": "Diğer veritabanı çok geç cevap verdi.",
           "external_failed": "Diğer veritabanı okunamadı."
-        }
+        },
+        "perm_manage": "Yönetebilir"
       }
     }
   },
   "permissions": [
-    "external-data.manage"
+    {
+      "name": "external-data.manage",
+      "labelKey": "externalData.perm_manage"
+    }
   ]
 }

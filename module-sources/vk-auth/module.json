@@ -42,9 +42,10 @@
   "translations": {
     "en": {
       "vkAuth": {
-        "adm_title": "VK Login Settings",
+        "adm_emailNote": "VK only passes on an email address when the account has a confirmed one and the person allows it. Without it the account gets a placeholder address that can never receive mail, and the user can set a real one in their profile.",
         "adm_subtitle": "Set up VK OAuth sign-in for your site.",
-        "adm_emailNote": "VK only passes on an email address when the account has a confirmed one and the person allows it. Without it the account gets a placeholder address that can never receive mail, and the user can set a real one in their profile."
+        "adm_title": "VK Login Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_vk-auth_name": "VK Login",
@@ -53,9 +54,10 @@
     },
     "tr": {
       "vkAuth": {
-        "adm_title": "VK ile Giriş Ayarları",
+        "adm_emailNote": "VK, yalnızca hesapta doğrulanmış bir e-posta varsa ve kişi izin verirse adresi paylaşır. Paylaşılmazsa hesaba posta alamayan geçici bir adres atanır; kullanıcı profilinden gerçek bir adres tanımlayabilir.",
         "adm_subtitle": "Siteniz için VK ile OAuth girişini yapılandırın.",
-        "adm_emailNote": "VK, yalnızca hesapta doğrulanmış bir e-posta varsa ve kişi izin verirse adresi paylaşır. Paylaşılmazsa hesaba posta alamayan geçici bir adres atanır; kullanıcı profilinden gerçek bir adres tanımlayabilir."
+        "adm_title": "VK ile Giriş Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_vk-auth_name": "VK ile Giriş",
@@ -64,6 +66,9 @@
     }
   },
   "permissions": [
-    "vk-auth.manage"
+    {
+      "name": "vk-auth.manage",
+      "labelKey": "vkAuth.perm_manage"
+    }
   ]
 }

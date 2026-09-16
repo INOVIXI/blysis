@@ -72,12 +72,13 @@
   "translations": {
     "en": {
       "paymentwallGateway": {
-        "adm_title": "Paymentwall Settings",
-        "adm_subtitle": "Keys for taking payments through Paymentwall.",
         "adm_projectKey": "Project Key",
         "adm_projectKeyDesc": "From your Paymentwall dashboard.",
         "adm_secretKey": "Secret Key",
-        "adm_secretKeyDesc": "From your Paymentwall dashboard. Point the Paymentwall notification URL at /api/v1/paymentwall/pingback."
+        "adm_secretKeyDesc": "From your Paymentwall dashboard. Point the Paymentwall notification URL at /api/v1/paymentwall/pingback.",
+        "adm_subtitle": "Keys for taking payments through Paymentwall.",
+        "adm_title": "Paymentwall Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_paymentwall-gateway": "Paymentwall Gateway",
@@ -88,12 +89,13 @@
     },
     "tr": {
       "paymentwallGateway": {
-        "adm_title": "Paymentwall Ayarları",
-        "adm_subtitle": "Paymentwall ile ödeme almak için gereken anahtarlar.",
         "adm_projectKey": "Proje Anahtarı",
         "adm_projectKeyDesc": "Paymentwall panelinden alınır.",
         "adm_secretKey": "Gizli Anahtar",
-        "adm_secretKeyDesc": "Paymentwall panelinden alınır. Paymentwall bildirim adresini /api/v1/paymentwall/pingback olarak ayarlayın."
+        "adm_secretKeyDesc": "Paymentwall panelinden alınır. Paymentwall bildirim adresini /api/v1/paymentwall/pingback olarak ayarlayın.",
+        "adm_subtitle": "Paymentwall ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "Paymentwall Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_paymentwall-gateway": "Paymentwall Ödeme",
@@ -104,6 +106,9 @@
     }
   },
   "permissions": [
-    "paymentwall-gateway.manage"
+    {
+      "name": "paymentwall-gateway.manage",
+      "labelKey": "paymentwallGateway.perm_manage"
+    }
   ]
 }

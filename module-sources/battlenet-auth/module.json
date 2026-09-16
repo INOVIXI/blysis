@@ -47,10 +47,11 @@
   "translations": {
     "en": {
       "battlenetAuth": {
-        "adm_title": "Battle.net Login Settings",
-        "adm_subtitle": "Set up Battle.net OAuth sign-in for your site.",
+        "adm_emailNote": "Battle.net does not share an email address, so an account created this way gets a placeholder one that can never receive mail. Ask these users to set a real address in their profile.",
         "adm_issuerNote": "AUTH_BATTLENET_ISSUER picks the region and has to be one of https://oauth.battle.net, https://eu.battle.net/oauth, https://us.battle.net/oauth, https://kr.battle.net/oauth, https://tw.battle.net/oauth, https://oauth.battlenet.com.cn or https://www.battlenet.com.cn/oauth. Sign-in stays off until it holds one of them.",
-        "adm_emailNote": "Battle.net does not share an email address, so an account created this way gets a placeholder one that can never receive mail. Ask these users to set a real address in their profile."
+        "adm_subtitle": "Set up Battle.net OAuth sign-in for your site.",
+        "adm_title": "Battle.net Login Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_battlenet-auth_name": "Battle.net Login",
@@ -59,10 +60,11 @@
     },
     "tr": {
       "battlenetAuth": {
-        "adm_title": "Battle.net ile Giriş Ayarları",
-        "adm_subtitle": "Siteniz için Battle.net ile OAuth girişini yapılandırın.",
+        "adm_emailNote": "Battle.net e-posta adresi paylaşmaz, bu yüzden bu yolla açılan hesaba posta alamayan geçici bir adres atanır. Bu kullanıcılardan profillerinde gerçek bir adres tanımlamalarını isteyin.",
         "adm_issuerNote": "AUTH_BATTLENET_ISSUER bölgeyi seçer ve şu adreslerden biri olmalıdır: https://oauth.battle.net, https://eu.battle.net/oauth, https://us.battle.net/oauth, https://kr.battle.net/oauth, https://tw.battle.net/oauth, https://oauth.battlenet.com.cn veya https://www.battlenet.com.cn/oauth. Bu değer bunlardan biri olmadıkça giriş açılmaz.",
-        "adm_emailNote": "Battle.net e-posta adresi paylaşmaz, bu yüzden bu yolla açılan hesaba posta alamayan geçici bir adres atanır. Bu kullanıcılardan profillerinde gerçek bir adres tanımlamalarını isteyin."
+        "adm_subtitle": "Siteniz için Battle.net ile OAuth girişini yapılandırın.",
+        "adm_title": "Battle.net ile Giriş Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_battlenet-auth_name": "Battle.net ile Giriş",
@@ -71,6 +73,9 @@
     }
   },
   "permissions": [
-    "battlenet-auth.manage"
+    {
+      "name": "battlenet-auth.manage",
+      "labelKey": "battlenetAuth.perm_manage"
+    }
   ]
 }

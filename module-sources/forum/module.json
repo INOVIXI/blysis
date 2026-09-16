@@ -8,9 +8,18 @@
   "author": "Blysis Team",
   "icon": "MessageSquare",
   "permissions": [
-    "forum.view",
-    "forum.manage",
-    "forum.moderate"
+    {
+      "name": "forum.view",
+      "labelKey": "forum.perm_view"
+    },
+    {
+      "name": "forum.manage",
+      "labelKey": "forum.perm_manage"
+    },
+    {
+      "name": "forum.moderate",
+      "labelKey": "forum.perm_moderate"
+    }
   ],
   "settings": [
     {
@@ -279,6 +288,9 @@
         "noCategoriesHelp": "An admin needs to create at least one forum category before topics can be posted.",
         "noCategoriesTitle": "No forum categories yet",
         "noTopics": "No topics yet. Be the first to start a discussion!",
+        "perm_manage": "Manage",
+        "perm_moderate": "Moderate topics and posts",
+        "perm_view": "Read the forum",
         "pinned": "Pinned",
         "postReply": "Post reply",
         "posting": "Posting…",
@@ -431,6 +443,9 @@
         "noCategoriesHelp": "Konu açılabilmesi için yöneticinin en az bir forum kategorisi oluşturması gerekiyor.",
         "noCategoriesTitle": "Henüz forum kategorisi yok",
         "noTopics": "Henüz konu yok. Bir tartışma başlatmak için ilk siz olun!",
+        "perm_manage": "Yönetebilir",
+        "perm_moderate": "Konu ve iletileri denetleyebilir",
+        "perm_view": "Forumu okuyabilir",
         "pinned": "Sabitlenmiş",
         "postReply": "Yanıt gönder",
         "posting": "Gönderiliyor…",

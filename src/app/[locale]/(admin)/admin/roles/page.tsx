@@ -133,17 +133,34 @@ export default function AdminRolesPage() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground mb-1">{t("roles_permissions")}</p>
+                                    {/*
+                                      * A count, not the names. An installation
+                                      * with ninety modules offers a hundred and
+                                      * three permissions, and a role that holds
+                                      * forty of them drew forty chips here -
+                                      * which told an operator scanning the list
+                                      * nothing they could act on. The names are
+                                      * one click away, worded, on the role's own
+                                      * screen.
+                                      */}
                                     {role.name === "admin" ? (
                                         <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">{t("roles_allPermissions")}</span>
-                                    ) : role.permissions.length === 0 ? (
+                                    ) : role.rolePermissions.length === 0 ? (
                                         <span className="text-xs text-muted-foreground">{t("roles_noPermissions")}</span>
                                     ) : (
-                                        <div className="flex flex-wrap gap-1">
-                                            {role.permissions.map((p) => (
-                                                <span key={p.id} className="text-xs bg-muted px-2 py-0.5 rounded">
-                                                    {p.name}
+                                        <div className="flex flex-wrap gap-2 text-xs">
+                                            <span className="bg-success/10 text-success px-2 py-0.5 rounded">
+                                                {t("roles_grantedCount", {
+                                                    count: role.rolePermissions.filter((p) => p.state === "ALLOW").length,
+                                                })}
+                                            </span>
+                                            {role.rolePermissions.some((p) => p.state === "NEVER") && (
+                                                <span className="bg-destructive/10 text-destructive px-2 py-0.5 rounded">
+                                                    {t("roles_refusedCount", {
+                                                        count: role.rolePermissions.filter((p) => p.state === "NEVER").length,
+                                                    })}
                                                 </span>
-                                            ))}
+                                            )}
                                         </div>
                                     )}
                                 </div>

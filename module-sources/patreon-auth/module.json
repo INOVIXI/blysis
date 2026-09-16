@@ -42,8 +42,9 @@
   "translations": {
     "en": {
       "patreonAuth": {
+        "adm_subtitle": "Set up Patreon OAuth sign-in for your site.",
         "adm_title": "Patreon Login Settings",
-        "adm_subtitle": "Set up Patreon OAuth sign-in for your site."
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_patreon-auth_name": "Patreon Login",
@@ -52,8 +53,9 @@
     },
     "tr": {
       "patreonAuth": {
+        "adm_subtitle": "Siteniz için Patreon ile OAuth girişini yapılandırın.",
         "adm_title": "Patreon ile Giriş Ayarları",
-        "adm_subtitle": "Siteniz için Patreon ile OAuth girişini yapılandırın."
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_patreon-auth_name": "Patreon ile Giriş",
@@ -62,6 +64,9 @@
     }
   },
   "permissions": [
-    "patreon-auth.manage"
+    {
+      "name": "patreon-auth.manage",
+      "labelKey": "patreonAuth.perm_manage"
+    }
   ]
 }

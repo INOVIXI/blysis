@@ -74,18 +74,19 @@
   "translations": {
     "en": {
       "paramGateway": {
-        "adm_title": "Param Settings",
-        "adm_subtitle": "Keys for taking payments through Param.",
         "adm_clientCode": "Client Code",
         "adm_clientCodeDesc": "From your Param dashboard.",
-        "adm_clientUser": "Client Username",
-        "adm_clientUserDesc": "From your Param dashboard.",
         "adm_clientPass": "Client Password",
         "adm_clientPassDesc": "From your Param dashboard.",
+        "adm_clientUser": "Client Username",
+        "adm_clientUserDesc": "From your Param dashboard.",
         "adm_guid": "Terminal GUID",
         "adm_guidDesc": "From your Param dashboard.",
         "adm_sandbox": "Sandbox Mode",
-        "adm_sandboxDesc": "Set to true to use the Param test environment."
+        "adm_sandboxDesc": "Set to true to use the Param test environment.",
+        "adm_subtitle": "Keys for taking payments through Param.",
+        "adm_title": "Param Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_param-gateway": "Param Gateway",
@@ -96,18 +97,19 @@
     },
     "tr": {
       "paramGateway": {
-        "adm_title": "Param Ayarları",
-        "adm_subtitle": "Param ile ödeme almak için gereken anahtarlar.",
         "adm_clientCode": "Müşteri Kodu",
         "adm_clientCodeDesc": "Param panelinden alınır.",
-        "adm_clientUser": "Müşteri Kullanıcı Adı",
-        "adm_clientUserDesc": "Param panelinden alınır.",
         "adm_clientPass": "Müşteri Şifresi",
         "adm_clientPassDesc": "Param panelinden alınır.",
+        "adm_clientUser": "Müşteri Kullanıcı Adı",
+        "adm_clientUserDesc": "Param panelinden alınır.",
         "adm_guid": "Terminal GUID",
         "adm_guidDesc": "Param panelinden alınır.",
         "adm_sandbox": "Test Ortamı",
-        "adm_sandboxDesc": "Param test ortamı için true yazın."
+        "adm_sandboxDesc": "Param test ortamı için true yazın.",
+        "adm_subtitle": "Param ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "Param Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_param-gateway": "Param Ödeme",
@@ -118,6 +120,9 @@
     }
   },
   "permissions": [
-    "param-gateway.manage"
+    {
+      "name": "param-gateway.manage",
+      "labelKey": "paramGateway.perm_manage"
+    }
   ]
 }

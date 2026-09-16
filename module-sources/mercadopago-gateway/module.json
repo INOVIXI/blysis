@@ -78,12 +78,13 @@
   "translations": {
     "en": {
       "mercadopagoGateway": {
-        "adm_title": "Mercado Pago Settings",
-        "adm_subtitle": "Keys for taking payments through Mercado Pago.",
         "adm_accessToken": "Access Token",
         "adm_accessTokenDesc": "From your Mercado Pago dashboard.",
+        "adm_subtitle": "Keys for taking payments through Mercado Pago.",
+        "adm_title": "Mercado Pago Settings",
         "adm_webhookSecret": "Webhook Secret",
-        "adm_webhookSecretDesc": "From your Mercado Pago dashboard. Point the Mercado Pago notification URL at /api/v1/mercadopago/webhook."
+        "adm_webhookSecretDesc": "From your Mercado Pago dashboard. Point the Mercado Pago notification URL at /api/v1/mercadopago/webhook.",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_mercadopago-gateway": "Mercado Pago Gateway",
@@ -94,12 +95,13 @@
     },
     "tr": {
       "mercadopagoGateway": {
-        "adm_title": "Mercado Pago Ayarları",
-        "adm_subtitle": "Mercado Pago ile ödeme almak için gereken anahtarlar.",
         "adm_accessToken": "Erişim Anahtarı",
         "adm_accessTokenDesc": "Mercado Pago panelinden alınır.",
+        "adm_subtitle": "Mercado Pago ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "Mercado Pago Ayarları",
         "adm_webhookSecret": "Webhook Gizli Anahtarı",
-        "adm_webhookSecretDesc": "Mercado Pago panelinden alınır. Mercado Pago bildirim adresini /api/v1/mercadopago/webhook olarak ayarlayın."
+        "adm_webhookSecretDesc": "Mercado Pago panelinden alınır. Mercado Pago bildirim adresini /api/v1/mercadopago/webhook olarak ayarlayın.",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_mercadopago-gateway": "Mercado Pago Ödeme",
@@ -110,6 +112,9 @@
     }
   },
   "permissions": [
-    "mercadopago-gateway.manage"
+    {
+      "name": "mercadopago-gateway.manage",
+      "labelKey": "mercadopagoGateway.perm_manage"
+    }
   ]
 }

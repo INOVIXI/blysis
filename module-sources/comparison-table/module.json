@@ -87,20 +87,21 @@
         "adm_saveFailed": "The table could not be saved.",
         "adm_saved": "Table saved.",
         "adm_size": "{columns} columns, {rows} rows",
+        "adm_subtitle": "Compare plans, ranks or packages feature by feature. A cell left alone shows a dash rather than a cross: it says nobody has answered, which is not the same as no.",
         "adm_tableDescription": "Description",
         "adm_tableSlug": "Address",
         "adm_tableTitle": "Title",
-        "title": "Compare",
-        "notFound": "There is no such comparison.",
-        "feature": "Feature",
-        "choose": "Choose",
-        "unstatedNote": "A dash means we have not said either way, not that it is missing.",
         "adm_title": "Comparison tables",
-        "adm_subtitle": "Compare plans, ranks or packages feature by feature. A cell left alone shows a dash rather than a cross: it says nobody has answered, which is not the same as no.",
-        "mark_yes": "included",
+        "choose": "Choose",
+        "feature": "Feature",
         "mark_no": "not included",
         "mark_unstated": "not stated",
-        "mark_value": "value"
+        "mark_value": "value",
+        "mark_yes": "included",
+        "notFound": "There is no such comparison.",
+        "perm_manage": "Manage",
+        "title": "Compare",
+        "unstatedNote": "A dash means we have not said either way, not that it is missing."
       },
       "pageDescriptions": {
         "compare": "Compare the options side by side, feature by feature, and see exactly what each one includes before you choose."
@@ -146,20 +147,21 @@
         "adm_saveFailed": "Tablo kaydedilemedi.",
         "adm_saved": "Tablo kaydedildi.",
         "adm_size": "{columns} sütun, {rows} satır",
+        "adm_subtitle": "Paketleri, rütbeleri ya da planları özellik özellik karşılaştırın. Doldurulmayan hücre çarpı değil tire gösterir: kimse cevaplamadı demektir, yok demek değil.",
         "adm_tableDescription": "Açıklama",
         "adm_tableSlug": "Adres",
         "adm_tableTitle": "Başlık",
-        "title": "Karşılaştır",
-        "notFound": "Böyle bir karşılaştırma yok.",
-        "feature": "Özellik",
-        "choose": "Seç",
-        "unstatedNote": "Tire, bu konuda bir şey söylemediğimiz anlamına gelir; yok demek değildir.",
         "adm_title": "Karşılaştırma tabloları",
-        "adm_subtitle": "Paketleri, rütbeleri ya da planları özellik özellik karşılaştırın. Doldurulmayan hücre çarpı değil tire gösterir: kimse cevaplamadı demektir, yok demek değil.",
-        "mark_yes": "var",
+        "choose": "Seç",
+        "feature": "Özellik",
         "mark_no": "yok",
         "mark_unstated": "belirtilmemiş",
-        "mark_value": "değer"
+        "mark_value": "değer",
+        "mark_yes": "var",
+        "notFound": "Böyle bir karşılaştırma yok.",
+        "perm_manage": "Yönetebilir",
+        "title": "Karşılaştır",
+        "unstatedNote": "Tire, bu konuda bir şey söylemediğimiz anlamına gelir; yok demek değildir."
       },
       "pageDescriptions": {
         "compare": "Seçenekleri yan yana, özellik özellik karşılaştırın ve karar vermeden önce her birinin neleri kapsadığını görün."
@@ -167,6 +169,9 @@
     }
   },
   "permissions": [
-    "comparison-table.manage"
+    {
+      "name": "comparison-table.manage",
+      "labelKey": "comparisonTable.perm_manage"
+    }
   ]
 }

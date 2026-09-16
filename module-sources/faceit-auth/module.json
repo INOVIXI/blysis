@@ -42,20 +42,21 @@
   "translations": {
     "en": {
       "faceitAuth": {
-        "title": "FACEIT Login",
-        "settings": "FACEIT OAuth Settings",
+        "adm_subtitle": "Configure FACEIT OAuth2 login for your site",
+        "adm_title": "FACEIT Auth Settings",
         "clientId": "Client ID",
         "clientSecret": "Client Secret",
-        "enabled": "FACEIT Login Enabled",
+        "description": "Configure FACEIT OAuth credentials for user login",
         "disabled": "FACEIT Login Disabled",
         "enable": "Enable FACEIT Login",
-        "save": "Save Settings",
-        "saved": "FACEIT OAuth settings saved successfully",
-        "saveError": "Failed to save FACEIT OAuth settings",
+        "enabled": "FACEIT Login Enabled",
         "linkAccount": "Link FACEIT Account",
-        "description": "Configure FACEIT OAuth credentials for user login",
-        "adm_title": "FACEIT Auth Settings",
-        "adm_subtitle": "Configure FACEIT OAuth2 login for your site"
+        "perm_manage": "Manage",
+        "save": "Save Settings",
+        "saveError": "Failed to save FACEIT OAuth settings",
+        "saved": "FACEIT OAuth settings saved successfully",
+        "settings": "FACEIT OAuth Settings",
+        "title": "FACEIT Login"
       },
       "admin": {
         "title": "Admin Panel",
@@ -66,20 +67,21 @@
     },
     "tr": {
       "faceitAuth": {
-        "title": "FACEIT ile Giriş",
-        "settings": "FACEIT OAuth Ayarları",
+        "adm_subtitle": "Siteniz için FACEIT OAuth2 girişini yapılandırın",
+        "adm_title": "FACEIT Kimlik Doğrulama Ayarları",
         "clientId": "İstemci Kimliği",
         "clientSecret": "İstemci Şifresi",
-        "enabled": "FACEIT ile Giriş Etkin",
+        "description": "Kullanıcı girişi için FACEIT OAuth kimlik bilgilerini yapılandırın",
         "disabled": "FACEIT ile Giriş Devre Dışı",
         "enable": "FACEIT ile Girişi Etkinleştir",
-        "save": "Ayarları Kaydet",
-        "saved": "FACEIT OAuth ayarları başarıyla kaydedildi",
-        "saveError": "FACEIT OAuth ayarları kaydedilemedi",
+        "enabled": "FACEIT ile Giriş Etkin",
         "linkAccount": "FACEIT Hesabını Bağla",
-        "description": "Kullanıcı girişi için FACEIT OAuth kimlik bilgilerini yapılandırın",
-        "adm_title": "FACEIT Kimlik Doğrulama Ayarları",
-        "adm_subtitle": "Siteniz için FACEIT OAuth2 girişini yapılandırın"
+        "perm_manage": "Yönetebilir",
+        "save": "Ayarları Kaydet",
+        "saveError": "FACEIT OAuth ayarları kaydedilemedi",
+        "saved": "FACEIT OAuth ayarları başarıyla kaydedildi",
+        "settings": "FACEIT OAuth Ayarları",
+        "title": "FACEIT ile Giriş"
       },
       "admin": {
         "title": "Yönetim Paneli",
@@ -90,6 +92,9 @@
     }
   },
   "permissions": [
-    "faceit-auth.manage"
+    {
+      "name": "faceit-auth.manage",
+      "labelKey": "faceitAuth.perm_manage"
+    }
   ]
 }

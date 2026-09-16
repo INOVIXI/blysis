@@ -83,23 +83,28 @@
   "translations": {
     "en": {
       "birfaturaInvoicing": {
-        "adm_title": "BirFatura invoicing",
         "adm_subtitle": "This service collects your orders rather than being sent them. Give it a secret here and the same one in its own store settings.",
+        "adm_title": "BirFatura invoicing",
         "adm_token": "Shared secret",
-        "adm_tokenDesc": "A long random string of your own choosing. It is the only thing guarding your customers' addresses and tax numbers, so treat it as a password. Blank means nobody gets in."
+        "adm_tokenDesc": "A long random string of your own choosing. It is the only thing guarding your customers' addresses and tax numbers, so treat it as a password. Blank means nobody gets in.",
+        "perm_manage": "Manage"
       }
     },
     "tr": {
       "birfaturaInvoicing": {
-        "adm_title": "BirFatura faturalama",
         "adm_subtitle": "Bu servis siparişleri kendisi toplar, biz göndermeyiz. Buraya bir gizli anahtar yazın ve aynısını onun mağaza ayarlarına girin.",
+        "adm_title": "BirFatura faturalama",
         "adm_token": "Paylaşılan gizli anahtar",
-        "adm_tokenDesc": "Kendi seçeceğiniz uzun ve rastgele bir dizi. Müşterilerinizin adreslerini ve vergi numaralarını koruyan tek şey bu, parola gibi saklayın. Boş bırakılırsa kimse giremez."
+        "adm_tokenDesc": "Kendi seçeceğiniz uzun ve rastgele bir dizi. Müşterilerinizin adreslerini ve vergi numaralarını koruyan tek şey bu, parola gibi saklayın. Boş bırakılırsa kimse giremez.",
+        "perm_manage": "Yönetebilir"
       }
     }
   },
   "userDataExport": [],
   "permissions": [
-    "birfatura-invoicing.manage"
+    {
+      "name": "birfatura-invoicing.manage",
+      "labelKey": "birfaturaInvoicing.perm_manage"
+    }
   ]
 }

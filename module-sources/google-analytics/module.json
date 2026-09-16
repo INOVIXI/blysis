@@ -59,22 +59,23 @@
         "module_google-analytics_description": "Google Analytics tracking integration"
       },
       "googleAnalytics": {
-        "title": "Google Analytics",
-        "settings": "Google Analytics Settings",
-        "enabled": "Analytics Enabled",
-        "disabled": "Analytics Disabled",
-        "saveSettings": "Save Settings",
-        "settingsSaved": "Analytics settings saved successfully",
-        "settingsError": "Failed to save analytics settings",
-        "description": "Configure Google Analytics tracking for your site",
-        "adm_title": "Google Analytics",
-        "adm_subtitle": "Configure Google Analytics tracking for your site",
-        "adm_field1Label": "Google Analytics ID",
         "adm_field1Desc": "Your Google Analytics measurement ID (e.g. G-XXXXXXXXXX)",
-        "adm_field2Label": "Enable Analytics",
+        "adm_field1Label": "Google Analytics ID",
         "adm_field2Desc": "Whether the tracking script loads on your site",
+        "adm_field2Label": "Enable Analytics",
+        "adm_field2Off": "Off",
         "adm_field2On": "On",
-        "adm_field2Off": "Off"
+        "adm_subtitle": "Configure Google Analytics tracking for your site",
+        "adm_title": "Google Analytics",
+        "description": "Configure Google Analytics tracking for your site",
+        "disabled": "Analytics Disabled",
+        "enabled": "Analytics Enabled",
+        "perm_manage": "Manage",
+        "saveSettings": "Save Settings",
+        "settings": "Google Analytics Settings",
+        "settingsError": "Failed to save analytics settings",
+        "settingsSaved": "Analytics settings saved successfully",
+        "title": "Google Analytics"
       }
     },
     "tr": {
@@ -88,22 +89,23 @@
         "module_google-analytics_description": "Google Analytics takip entegrasyonu"
       },
       "googleAnalytics": {
-        "title": "Google Analytics",
-        "settings": "Analitik Ayarları",
-        "enabled": "Analitik Etkin",
-        "disabled": "Analitik Devre Dışı",
-        "saveSettings": "Ayarları Kaydet",
-        "settingsSaved": "Analitik ayarları başarıyla kaydedildi",
-        "settingsError": "Analitik ayarları kaydedilemedi",
-        "description": "Siteniz için Google Analytics izlemesini yapılandırın",
-        "adm_title": "Google Analytics",
-        "adm_subtitle": "Siteniz için Google Analytics izlemeyi yapılandırın",
-        "adm_field1Label": "Google Analytics ID",
         "adm_field1Desc": "Google Analytics ölçüm kimliğiniz (örn. G-XXXXXXXXXX)",
-        "adm_field2Label": "Analitiği Etkinleştir",
+        "adm_field1Label": "Google Analytics ID",
         "adm_field2Desc": "İzleme betiğinin sitenizde yüklenip yüklenmeyeceği",
+        "adm_field2Label": "Analitiği Etkinleştir",
+        "adm_field2Off": "Kapalı",
         "adm_field2On": "Açık",
-        "adm_field2Off": "Kapalı"
+        "adm_subtitle": "Siteniz için Google Analytics izlemeyi yapılandırın",
+        "adm_title": "Google Analytics",
+        "description": "Siteniz için Google Analytics izlemesini yapılandırın",
+        "disabled": "Analitik Devre Dışı",
+        "enabled": "Analitik Etkin",
+        "perm_manage": "Yönetebilir",
+        "saveSettings": "Ayarları Kaydet",
+        "settings": "Analitik Ayarları",
+        "settingsError": "Analitik ayarları kaydedilemedi",
+        "settingsSaved": "Analitik ayarları başarıyla kaydedildi",
+        "title": "Google Analytics"
       }
     }
   },
@@ -113,6 +115,9 @@
     ]
   },
   "permissions": [
-    "google-analytics.manage"
+    {
+      "name": "google-analytics.manage",
+      "labelKey": "googleAnalytics.perm_manage"
+    }
   ]
 }

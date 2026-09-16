@@ -90,28 +90,18 @@
         "marketplace": "Marketplace"
       },
       "marketplace": {
-        "title": "Marketplace",
-        "subtitle": "What members are selling each other, paid for in credits.",
-        "empty": "Nothing is for sale right now.",
-        "by": "by {name}",
-        "buy": "Buy",
-        "list": "Put it up",
-        "listed": "It is up for sale.",
-        "listFailed": "That could not be listed.",
-        "bought": "Bought. It is on its way.",
-        "boughtNotDelivered": "Bought, but it could not be handed over. An operator has been told.",
-        "buyFailed": "That could not be bought.",
-        "buyConfirmTitle": "Buy this?",
-        "buyConfirmMessage": "{title} costs {price} credits and the sale is final.",
-        "formTitle": "What is it",
-        "formBody": "Anything else the buyer should know",
-        "formPrice": "Price in credits",
-        "formKind": "What gets handed over",
-        "formPickKind": "Pick one",
-        "adm_title": "Marketplace",
-        "adm_subtitle": "Members sell to each other in credits. This is what the site keeps.",
         "adm_commission": "Commission percent",
         "adm_commissionDesc": "Taken out of every sale before the seller is paid. Rounded down, so the odd credit goes to the seller. Empty or zero takes nothing.",
+        "adm_subtitle": "Members sell to each other in credits. This is what the site keeps.",
+        "adm_title": "Marketplace",
+        "bought": "Bought. It is on its way.",
+        "boughtNotDelivered": "Bought, but it could not be handed over. An operator has been told.",
+        "buy": "Buy",
+        "buyConfirmMessage": "{title} costs {price} credits and the sale is final.",
+        "buyConfirmTitle": "Buy this?",
+        "buyFailed": "That could not be bought.",
+        "by": "by {name}",
+        "empty": "Nothing is for sale right now.",
         "err": {
           "market_own_listing": "That is your own listing.",
           "market_already_sold": "Somebody else got there first.",
@@ -120,7 +110,18 @@
           "market_cannot_deliver": "Nothing here can hand that over.",
           "market_bad_payload": "That listing carries something this cannot store."
         },
-        "sellUnavailable": "We could not check what can be sold right now."
+        "formBody": "Anything else the buyer should know",
+        "formKind": "What gets handed over",
+        "formPickKind": "Pick one",
+        "formPrice": "Price in credits",
+        "formTitle": "What is it",
+        "list": "Put it up",
+        "listFailed": "That could not be listed.",
+        "listed": "It is up for sale.",
+        "perm_manage": "Manage",
+        "sellUnavailable": "We could not check what can be sold right now.",
+        "subtitle": "What members are selling each other, paid for in credits.",
+        "title": "Marketplace"
       },
       "nav": {
         "marketplace": "Marketplace"
@@ -134,28 +135,18 @@
         "marketplace": "Pazar"
       },
       "marketplace": {
-        "title": "Pazar",
-        "subtitle": "Üyelerin birbirine sattıkları, kredi ile ödenir.",
-        "empty": "Şu anda satılık bir şey yok.",
-        "by": "{name} tarafından",
-        "buy": "Satın al",
-        "list": "İlan ver",
-        "listed": "İlanınız yayında.",
-        "listFailed": "İlan verilemedi.",
-        "bought": "Alındı. Yola çıktı.",
-        "boughtNotDelivered": "Alındı ama teslim edilemedi. Yöneticiye bildirildi.",
-        "buyFailed": "Satın alınamadı.",
-        "buyConfirmTitle": "Satın alınsın mı?",
-        "buyConfirmMessage": "{title} {price} kredi tutuyor ve satış kesindir.",
-        "formTitle": "Ne satıyorsunuz",
-        "formBody": "Alıcının bilmesi gereken başka bir şey",
-        "formPrice": "Kredi cinsinden fiyat",
-        "formKind": "Ne teslim edilecek",
-        "formPickKind": "Birini seçin",
-        "adm_title": "Pazar",
-        "adm_subtitle": "Üyeler birbirine kredi ile satar. Sitenin aldığı pay burada.",
         "adm_commission": "Komisyon yüzdesi",
         "adm_commissionDesc": "Satıcıya ödenmeden önce her satıştan alınır. Aşağı yuvarlanır, artan kredi satıcıda kalır. Boş veya sıfır bırakmak komisyon almaz.",
+        "adm_subtitle": "Üyeler birbirine kredi ile satar. Sitenin aldığı pay burada.",
+        "adm_title": "Pazar",
+        "bought": "Alındı. Yola çıktı.",
+        "boughtNotDelivered": "Alındı ama teslim edilemedi. Yöneticiye bildirildi.",
+        "buy": "Satın al",
+        "buyConfirmMessage": "{title} {price} kredi tutuyor ve satış kesindir.",
+        "buyConfirmTitle": "Satın alınsın mı?",
+        "buyFailed": "Satın alınamadı.",
+        "by": "{name} tarafından",
+        "empty": "Şu anda satılık bir şey yok.",
         "err": {
           "market_own_listing": "Bu sizin kendi ilanınız.",
           "market_already_sold": "Başkası daha önce aldı.",
@@ -164,7 +155,18 @@
           "market_cannot_deliver": "Burada bunu teslim edebilecek bir şey yok.",
           "market_bad_payload": "Bu ilan burada saklanamayacak bir şey taşıyor."
         },
-        "sellUnavailable": "Şu anda nelerin satılabileceğini kontrol edemedik."
+        "formBody": "Alıcının bilmesi gereken başka bir şey",
+        "formKind": "Ne teslim edilecek",
+        "formPickKind": "Birini seçin",
+        "formPrice": "Kredi cinsinden fiyat",
+        "formTitle": "Ne satıyorsunuz",
+        "list": "İlan ver",
+        "listFailed": "İlan verilemedi.",
+        "listed": "İlanınız yayında.",
+        "perm_manage": "Yönetebilir",
+        "sellUnavailable": "Şu anda nelerin satılabileceğini kontrol edemedik.",
+        "subtitle": "Üyelerin birbirine sattıkları, kredi ile ödenir.",
+        "title": "Pazar"
       },
       "nav": {
         "marketplace": "Pazar"
@@ -189,6 +191,9 @@
     }
   ],
   "permissions": [
-    "marketplace.manage"
+    {
+      "name": "marketplace.manage",
+      "labelKey": "marketplace.perm_manage"
+    }
   ]
 }

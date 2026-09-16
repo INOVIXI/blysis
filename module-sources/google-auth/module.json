@@ -42,20 +42,21 @@
   "translations": {
     "en": {
       "googleAuth": {
-        "title": "Google Login",
-        "settings": "Google OAuth Settings",
+        "adm_subtitle": "Configure Google OAuth2 login for your site",
+        "adm_title": "Google Auth Settings",
         "clientId": "Client ID",
         "clientSecret": "Client Secret",
-        "enabled": "Google Login Enabled",
+        "description": "Configure Google OAuth credentials for user login",
         "disabled": "Google Login Disabled",
         "enable": "Enable Google Login",
-        "save": "Save Settings",
-        "saved": "Google OAuth settings saved successfully",
-        "saveError": "Failed to save Google OAuth settings",
+        "enabled": "Google Login Enabled",
         "linkAccount": "Link Google Account",
-        "description": "Configure Google OAuth credentials for user login",
-        "adm_title": "Google Auth Settings",
-        "adm_subtitle": "Configure Google OAuth2 login for your site"
+        "perm_manage": "Manage",
+        "save": "Save Settings",
+        "saveError": "Failed to save Google OAuth settings",
+        "saved": "Google OAuth settings saved successfully",
+        "settings": "Google OAuth Settings",
+        "title": "Google Login"
       },
       "admin": {
         "title": "Admin Panel",
@@ -66,20 +67,21 @@
     },
     "tr": {
       "googleAuth": {
-        "title": "Google ile Giriş",
-        "settings": "Google OAuth Ayarları",
+        "adm_subtitle": "Siteniz için Google OAuth2 girişini yapılandırın",
+        "adm_title": "Google Kimlik Doğrulama Ayarları",
         "clientId": "İstemci Kimliği",
         "clientSecret": "İstemci Şifresi",
-        "enabled": "Google ile Giriş Etkin",
+        "description": "Kullanıcı girişi için Google OAuth kimlik bilgilerini yapılandırın",
         "disabled": "Google ile Giriş Devre Dışı",
         "enable": "Google ile Girişi Etkinleştir",
-        "save": "Ayarları Kaydet",
-        "saved": "Google OAuth ayarları başarıyla kaydedildi",
-        "saveError": "Google OAuth ayarları kaydedilemedi",
+        "enabled": "Google ile Giriş Etkin",
         "linkAccount": "Google Hesabını Bağla",
-        "description": "Kullanıcı girişi için Google OAuth kimlik bilgilerini yapılandırın",
-        "adm_title": "Google Kimlik Doğrulama Ayarları",
-        "adm_subtitle": "Siteniz için Google OAuth2 girişini yapılandırın"
+        "perm_manage": "Yönetebilir",
+        "save": "Ayarları Kaydet",
+        "saveError": "Google OAuth ayarları kaydedilemedi",
+        "saved": "Google OAuth ayarları başarıyla kaydedildi",
+        "settings": "Google OAuth Ayarları",
+        "title": "Google ile Giriş"
       },
       "admin": {
         "title": "Yönetim Paneli",
@@ -90,6 +92,9 @@
     }
   },
   "permissions": [
-    "google-auth.manage"
+    {
+      "name": "google-auth.manage",
+      "labelKey": "googleAuth.perm_manage"
+    }
   ]
 }

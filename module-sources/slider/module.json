@@ -8,7 +8,10 @@
   "author": "Blysis",
   "icon": "Image",
   "permissions": [
-    "slider.manage"
+    {
+      "name": "slider.manage",
+      "labelKey": "slider.perm_manage"
+    }
   ],
   "menu": [
     {
@@ -54,20 +57,7 @@
   "translations": {
     "en": {
       "slider": {
-        "title": "Slider Management",
-        "description": "Manage homepage carousel slides",
-        "order": "Display Order",
         "active": "Active",
-        "inactive": "Inactive",
-        "status": "Status",
-        "saved": "Slide saved successfully",
-        "deleted": "Slide deleted successfully",
-        "saveError": "Failed to save slide",
-        "preview": "Preview",
-        "transition": "Transition Effect",
-        "slide": "Slide",
-        "adm_title": "Slider",
-        "adm_subtitle": "Manage homepage slider items",
         "adm_field1Label": "Title",
         "adm_field1Placeholder": "Slide title",
         "adm_field2Label": "Subtitle",
@@ -78,7 +68,21 @@
         "adm_field4Placeholder": "https://example.com",
         "adm_field5Label": "Order",
         "adm_field6Label": "Active",
-        "goToSlide": "Go to slide {n}"
+        "adm_subtitle": "Manage homepage slider items",
+        "adm_title": "Slider",
+        "deleted": "Slide deleted successfully",
+        "description": "Manage homepage carousel slides",
+        "goToSlide": "Go to slide {n}",
+        "inactive": "Inactive",
+        "order": "Display Order",
+        "perm_manage": "Manage",
+        "preview": "Preview",
+        "saveError": "Failed to save slide",
+        "saved": "Slide saved successfully",
+        "slide": "Slide",
+        "status": "Status",
+        "title": "Slider Management",
+        "transition": "Transition Effect"
       },
       "admin": {
         "menu_slider": "Slider",
@@ -92,20 +96,7 @@
     },
     "tr": {
       "slider": {
-        "title": "Slider Yönetimi",
-        "description": "Ana sayfa slaytlarını yönet",
-        "order": "Gösterim Sırası",
         "active": "Aktif",
-        "inactive": "Pasif",
-        "status": "Durum",
-        "saved": "Slayt başarıyla kaydedildi",
-        "deleted": "Slayt başarıyla silindi",
-        "saveError": "Slayt kaydedilemedi",
-        "preview": "Önizleme",
-        "transition": "Geçiş Efekti",
-        "slide": "Kaydırma",
-        "adm_title": "Kaydırıcı",
-        "adm_subtitle": "Ana sayfa slider öğelerini yönetin",
         "adm_field1Label": "Başlık",
         "adm_field1Placeholder": "Slayt başlığı",
         "adm_field2Label": "Alt Başlık",
@@ -116,7 +107,21 @@
         "adm_field4Placeholder": "https://example.com",
         "adm_field5Label": "Sıra",
         "adm_field6Label": "Aktif",
-        "goToSlide": "{n}. slayta git"
+        "adm_subtitle": "Ana sayfa slider öğelerini yönetin",
+        "adm_title": "Kaydırıcı",
+        "deleted": "Slayt başarıyla silindi",
+        "description": "Ana sayfa slaytlarını yönet",
+        "goToSlide": "{n}. slayta git",
+        "inactive": "Pasif",
+        "order": "Gösterim Sırası",
+        "perm_manage": "Yönetebilir",
+        "preview": "Önizleme",
+        "saveError": "Slayt kaydedilemedi",
+        "saved": "Slayt başarıyla kaydedildi",
+        "slide": "Kaydırma",
+        "status": "Durum",
+        "title": "Slider Yönetimi",
+        "transition": "Geçiş Efekti"
       },
       "admin": {
         "menu_slider": "Slayt",

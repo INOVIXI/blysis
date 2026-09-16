@@ -68,18 +68,18 @@
         "adm_draft": "Draft",
         "adm_editPage": "Edit Page",
         "adm_htmlEditor": "HTML editor",
+        "adm_loadFailed": "That page could not be loaded.",
         "adm_newPage": "New Page",
         "adm_noPagesYet": "No pages yet",
         "adm_openInBuilder": "Open in visual builder",
-        "adm_sortOrder": "Sort order",
         "adm_pageCreated": "Page created",
         "adm_pageDeleted": "Page deleted",
         "adm_pageTitle": "Page Title",
         "adm_pageUpdated": "Page updated",
         "adm_published": "Published",
         "adm_slugOptional": "Slug (optional)",
+        "adm_sortOrder": "Sort order",
         "adm_title": "Title",
-        "adm_loadFailed": "That page could not be loaded.",
         "adm_updateFailed": "Failed to update page",
         "adm_updatePage": "Update Page",
         "content": "Content",
@@ -93,6 +93,7 @@
         "manage": "Manage Pages",
         "pageNotFound": "Page not found",
         "pageTitle": "Page Title",
+        "perm_manage": "Manage",
         "preview": "Preview",
         "published": "Published",
         "slug": "URL Slug",
@@ -134,18 +135,18 @@
         "adm_draft": "Taslak",
         "adm_editPage": "Sayfayı Düzenle",
         "adm_htmlEditor": "HTML düzenleyici",
+        "adm_loadFailed": "Bu sayfa yüklenemedi.",
         "adm_newPage": "Yeni Sayfa",
         "adm_noPagesYet": "Henüz sayfa yok",
         "adm_openInBuilder": "Görsel düzenleyicide aç",
-        "adm_sortOrder": "Sıralama",
         "adm_pageCreated": "Sayfa oluşturuldu",
         "adm_pageDeleted": "Sayfa silindi",
         "adm_pageTitle": "Sayfa Başlığı",
         "adm_pageUpdated": "Sayfa güncellendi",
         "adm_published": "Yayınlandı",
         "adm_slugOptional": "Slug (isteğe bağlı)",
+        "adm_sortOrder": "Sıralama",
         "adm_title": "Başlık",
-        "adm_loadFailed": "Bu sayfa yüklenemedi.",
         "adm_updateFailed": "Sayfa güncellenemedi",
         "adm_updatePage": "Sayfayı Güncelle",
         "content": "İçerik",
@@ -159,6 +160,7 @@
         "manage": "Sayfaları Yönet",
         "pageNotFound": "Sayfa bulunamadı",
         "pageTitle": "Sayfa Başlığı",
+        "perm_manage": "Yönetebilir",
         "preview": "Önizleme",
         "published": "Yayınlandı",
         "slug": "URL Kısaltması",
@@ -190,6 +192,9 @@
     "custom-pages.page"
   ],
   "permissions": [
-    "custom-pages.manage"
+    {
+      "name": "custom-pages.manage",
+      "labelKey": "customPages.perm_manage"
+    }
   ]
 }

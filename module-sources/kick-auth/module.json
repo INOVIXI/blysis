@@ -46,9 +46,10 @@
   "translations": {
     "en": {
       "kickAuth": {
-        "adm_title": "Kick Login Settings",
+        "adm_scopeNote": "The Kick application needs the user:read scope. Kick's OAuth requires PKCE, which this module turns on, so nothing extra has to be configured for it.",
         "adm_subtitle": "Set up Kick OAuth sign-in for your site.",
-        "adm_scopeNote": "The Kick application needs the user:read scope. Kick's OAuth requires PKCE, which this module turns on, so nothing extra has to be configured for it."
+        "adm_title": "Kick Login Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_kick-auth_name": "Kick Login",
@@ -57,9 +58,10 @@
     },
     "tr": {
       "kickAuth": {
-        "adm_title": "Kick ile Giriş Ayarları",
+        "adm_scopeNote": "Kick uygulamasında user:read izni gerekir. Kick'in OAuth akışı PKCE zorunlu kılar; bu modül onu kendisi açar, ayrıca bir ayar yapmanız gerekmez.",
         "adm_subtitle": "Siteniz için Kick ile OAuth girişini yapılandırın.",
-        "adm_scopeNote": "Kick uygulamasında user:read izni gerekir. Kick'in OAuth akışı PKCE zorunlu kılar; bu modül onu kendisi açar, ayrıca bir ayar yapmanız gerekmez."
+        "adm_title": "Kick ile Giriş Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_kick-auth_name": "Kick ile Giriş",
@@ -68,6 +70,9 @@
     }
   },
   "permissions": [
-    "kick-auth.manage"
+    {
+      "name": "kick-auth.manage",
+      "labelKey": "kickAuth.perm_manage"
+    }
   ]
 }

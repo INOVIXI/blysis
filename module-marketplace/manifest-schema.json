@@ -38,10 +38,25 @@
       "maxItems": 100,
       "type": "array",
       "items": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 128,
-        "pattern": "^[a-z0-9._-]+$"
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9-]*(?:\\.[a-z][a-z0-9-]*)+$"
+          },
+          "labelKey": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 128,
+            "pattern": "^[a-zA-Z][a-zA-Z0-9]*(?:\\.[a-zA-Z0-9_-]+)+$"
+          }
+        },
+        "required": [
+          "name",
+          "labelKey"
+        ]
       }
     },
     "settings": {

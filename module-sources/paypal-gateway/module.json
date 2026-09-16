@@ -42,25 +42,26 @@
   "translations": {
     "en": {
       "paypalGateway": {
-        "title": "PayPal Settings",
-        "description": "Configure PayPal payment gateway",
+        "adm_field1Desc": "PayPal application Client ID",
+        "adm_field1Label": "Client ID",
+        "adm_field2Desc": "PayPal application Client Secret",
+        "adm_field2Label": "Client Secret",
+        "adm_field3Desc": "sandbox or live",
+        "adm_field3Label": "Mode",
+        "adm_subtitle": "Configure PayPal payment gateway",
+        "adm_title": "PayPal Settings",
         "clientId": "Client ID",
         "clientSecret": "Client Secret",
-        "enabled": "Enabled",
-        "disabled": "Disabled",
-        "saveSettings": "Save Settings",
-        "settingsSaved": "PayPal settings saved successfully",
-        "settingsError": "Failed to save PayPal settings",
-        "webhookUrl": "Webhook URL",
         "currency": "Currency",
-        "adm_title": "PayPal Settings",
-        "adm_subtitle": "Configure PayPal payment gateway",
-        "adm_field1Label": "Client ID",
-        "adm_field1Desc": "PayPal application Client ID",
-        "adm_field2Label": "Client Secret",
-        "adm_field2Desc": "PayPal application Client Secret",
-        "adm_field3Label": "Mode",
-        "adm_field3Desc": "sandbox or live"
+        "description": "Configure PayPal payment gateway",
+        "disabled": "Disabled",
+        "enabled": "Enabled",
+        "perm_manage": "Manage",
+        "saveSettings": "Save Settings",
+        "settingsError": "Failed to save PayPal settings",
+        "settingsSaved": "PayPal settings saved successfully",
+        "title": "PayPal Settings",
+        "webhookUrl": "Webhook URL"
       },
       "admin": {
         "menu_paypal-gateway": "Paypal Gateway",
@@ -73,25 +74,26 @@
     },
     "tr": {
       "paypalGateway": {
-        "title": "PayPal Ayarları",
-        "description": "PayPal ödeme ağırlığı yapılandırması",
+        "adm_field1Desc": "PayPal uygulama İstemci Kimliği",
+        "adm_field1Label": "İstemci Kimliği",
+        "adm_field2Desc": "PayPal uygulama İstemci Sırrı",
+        "adm_field2Label": "İstemci Sırrı",
+        "adm_field3Desc": "sandbox veya canlı",
+        "adm_field3Label": "Mod",
+        "adm_subtitle": "PayPal ödeme ağ geçidini yapılandırın",
+        "adm_title": "PayPal Ayarları",
         "clientId": "İstemci Kimlik Numarası",
         "clientSecret": "İstemci Gizli Anahtarı",
-        "enabled": "Etkin",
-        "disabled": "Devre Dışı",
-        "saveSettings": "Ayarları Kaydet",
-        "settingsSaved": "PayPal ayarları başarıyla kaydedildi",
-        "settingsError": "PayPal ayarları kaydedilemedi",
-        "webhookUrl": "Webhook URL",
         "currency": "Para Birimi",
-        "adm_title": "PayPal Ayarları",
-        "adm_subtitle": "PayPal ödeme ağ geçidini yapılandırın",
-        "adm_field1Label": "İstemci Kimliği",
-        "adm_field1Desc": "PayPal uygulama İstemci Kimliği",
-        "adm_field2Label": "İstemci Sırrı",
-        "adm_field2Desc": "PayPal uygulama İstemci Sırrı",
-        "adm_field3Label": "Mod",
-        "adm_field3Desc": "sandbox veya canlı"
+        "description": "PayPal ödeme ağırlığı yapılandırması",
+        "disabled": "Devre Dışı",
+        "enabled": "Etkin",
+        "perm_manage": "Yönetebilir",
+        "saveSettings": "Ayarları Kaydet",
+        "settingsError": "PayPal ayarları kaydedilemedi",
+        "settingsSaved": "PayPal ayarları başarıyla kaydedildi",
+        "title": "PayPal Ayarları",
+        "webhookUrl": "Webhook URL"
       },
       "admin": {
         "menu_paypal-gateway": "PayPal Ayarları",
@@ -130,6 +132,9 @@
     }
   ],
   "permissions": [
-    "paypal-gateway.manage"
+    {
+      "name": "paypal-gateway.manage",
+      "labelKey": "paypalGateway.perm_manage"
+    }
   ]
 }

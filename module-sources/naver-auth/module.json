@@ -42,9 +42,10 @@
   "translations": {
     "en": {
       "naverAuth": {
-        "adm_title": "Naver Login Settings",
+        "adm_reviewNote": "Naver reviews an application before it may serve users outside the developer's own account, so a new integration works for you immediately and for everyone else once it is approved.",
         "adm_subtitle": "Set up Naver OAuth sign-in for your site.",
-        "adm_reviewNote": "Naver reviews an application before it may serve users outside the developer's own account, so a new integration works for you immediately and for everyone else once it is approved."
+        "adm_title": "Naver Login Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_naver-auth_name": "Naver Login",
@@ -53,9 +54,10 @@
     },
     "tr": {
       "naverAuth": {
-        "adm_title": "Naver ile Giriş Ayarları",
+        "adm_reviewNote": "Naver, bir uygulamanın geliştirici hesabı dışındaki kullanıcılara hizmet vermesini incelemeye tabi tutar; yeni bir entegrasyon sizde hemen, herkeste ise onaydan sonra çalışır.",
         "adm_subtitle": "Siteniz için Naver ile OAuth girişini yapılandırın.",
-        "adm_reviewNote": "Naver, bir uygulamanın geliştirici hesabı dışındaki kullanıcılara hizmet vermesini incelemeye tabi tutar; yeni bir entegrasyon sizde hemen, herkeste ise onaydan sonra çalışır."
+        "adm_title": "Naver ile Giriş Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_naver-auth_name": "Naver ile Giriş",
@@ -64,6 +66,9 @@
     }
   },
   "permissions": [
-    "naver-auth.manage"
+    {
+      "name": "naver-auth.manage",
+      "labelKey": "naverAuth.perm_manage"
+    }
   ]
 }

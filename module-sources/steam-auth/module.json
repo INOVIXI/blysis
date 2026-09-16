@@ -73,17 +73,18 @@
   "translations": {
     "en": {
       "steamAuth": {
-        "title": "Steam Login",
-        "signingIn": "Signing you in with Steam...",
-        "signInFailed": "Steam sign-in did not complete. The link may have expired.",
-        "backToLogin": "Back to login",
-        "adm_title": "Steam Login",
-        "adm_subtitle": "Let visitors sign in with their Steam account.",
-        "adm_returnToLabel": "Return URL",
-        "adm_returnToHelp": "Steam sends people back here after they approve the sign-in. It is derived from AUTH_URL, so that variable has to match the address visitors actually use.",
-        "adm_realmLabel": "Domain",
+        "adm_emailNote": "Steam never shares an email address, so an account created this way gets a placeholder one that can never receive mail. Ask these users to set a real address in their profile.",
         "adm_realmHelp": "The site name Steam shows on its approval screen. This is the domain you register the API key against.",
-        "adm_emailNote": "Steam never shares an email address, so an account created this way gets a placeholder one that can never receive mail. Ask these users to set a real address in their profile."
+        "adm_realmLabel": "Domain",
+        "adm_returnToHelp": "Steam sends people back here after they approve the sign-in. It is derived from AUTH_URL, so that variable has to match the address visitors actually use.",
+        "adm_returnToLabel": "Return URL",
+        "adm_subtitle": "Let visitors sign in with their Steam account.",
+        "adm_title": "Steam Login",
+        "backToLogin": "Back to login",
+        "perm_manage": "Manage",
+        "signInFailed": "Steam sign-in did not complete. The link may have expired.",
+        "signingIn": "Signing you in with Steam...",
+        "title": "Steam Login"
       },
       "pageTitles": {
         "steam": "Steam Sign-in"
@@ -98,17 +99,18 @@
     },
     "tr": {
       "steamAuth": {
-        "title": "Steam ile Giriş",
-        "signingIn": "Steam ile giriş yapılıyor...",
-        "signInFailed": "Steam girişi tamamlanmadı. Bağlantının süresi dolmuş olabilir.",
-        "backToLogin": "Girişe dön",
-        "adm_title": "Steam ile Giriş",
-        "adm_subtitle": "Ziyaretçilerin Steam hesabıyla giriş yapmasına izin verin.",
-        "adm_returnToLabel": "Dönüş adresi",
-        "adm_returnToHelp": "Steam, girişi onaylayan kişiyi buraya geri gönderir. Adres AUTH_URL değişkeninden türetilir, bu yüzden o değişkenin ziyaretçilerin gerçekten kullandığı adresle aynı olması gerekir.",
-        "adm_realmLabel": "Alan adı",
+        "adm_emailNote": "Steam hiçbir zaman e-posta adresi paylaşmaz, bu yüzden bu yolla açılan hesaba posta alamayan geçici bir adres atanır. Bu kullanıcılardan profillerinde gerçek bir adres tanımlamalarını isteyin.",
         "adm_realmHelp": "Steam'in onay ekranında gösterdiği site adı. API anahtarını bu alan adına kaydedersiniz.",
-        "adm_emailNote": "Steam hiçbir zaman e-posta adresi paylaşmaz, bu yüzden bu yolla açılan hesaba posta alamayan geçici bir adres atanır. Bu kullanıcılardan profillerinde gerçek bir adres tanımlamalarını isteyin."
+        "adm_realmLabel": "Alan adı",
+        "adm_returnToHelp": "Steam, girişi onaylayan kişiyi buraya geri gönderir. Adres AUTH_URL değişkeninden türetilir, bu yüzden o değişkenin ziyaretçilerin gerçekten kullandığı adresle aynı olması gerekir.",
+        "adm_returnToLabel": "Dönüş adresi",
+        "adm_subtitle": "Ziyaretçilerin Steam hesabıyla giriş yapmasına izin verin.",
+        "adm_title": "Steam ile Giriş",
+        "backToLogin": "Girişe dön",
+        "perm_manage": "Yönetebilir",
+        "signInFailed": "Steam girişi tamamlanmadı. Bağlantının süresi dolmuş olabilir.",
+        "signingIn": "Steam ile giriş yapılıyor...",
+        "title": "Steam ile Giriş"
       },
       "pageTitles": {
         "steam": "Steam ile Giriş"
@@ -123,6 +125,9 @@
     }
   },
   "permissions": [
-    "steam-auth.manage"
+    {
+      "name": "steam-auth.manage",
+      "labelKey": "steamAuth.perm_manage"
+    }
   ]
 }

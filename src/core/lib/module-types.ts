@@ -26,7 +26,11 @@ export interface ModuleManifest {
     version: string;
     author?: string;
     icon?: string;
-    permissions?: string[];
+    /**
+     * The permission names this module owns, each with the words a person
+     * reads. `labelKey` resolves in this module's own translations.
+     */
+    permissions?: { name: string; labelKey: string }[];
     /**
      * Admin-editable settings this module reads at runtime. Each entry is
      * self-describing (type, default, bounds, label) so core can render the

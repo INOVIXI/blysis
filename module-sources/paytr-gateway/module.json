@@ -74,8 +74,6 @@
   "translations": {
     "en": {
       "paytrGateway": {
-        "adm_title": "PayTR Settings",
-        "adm_subtitle": "Keys for taking payments through PayTR.",
         "adm_merchantId": "Merchant ID",
         "adm_merchantIdDesc": "From your PayTR dashboard.",
         "adm_merchantKey": "Merchant Key",
@@ -83,7 +81,10 @@
         "adm_merchantSalt": "Merchant Salt",
         "adm_merchantSaltDesc": "From your PayTR dashboard. Point the PayTR notification URL at /api/v1/paytr/callback.",
         "adm_sandbox": "Sandbox Mode",
-        "adm_sandboxDesc": "Set to true to use the PayTR test environment."
+        "adm_sandboxDesc": "Set to true to use the PayTR test environment.",
+        "adm_subtitle": "Keys for taking payments through PayTR.",
+        "adm_title": "PayTR Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_paytr-gateway": "PayTR Gateway",
@@ -94,8 +95,6 @@
     },
     "tr": {
       "paytrGateway": {
-        "adm_title": "PayTR Ayarları",
-        "adm_subtitle": "PayTR ile ödeme almak için gereken anahtarlar.",
         "adm_merchantId": "Üye İşyeri Numarası",
         "adm_merchantIdDesc": "PayTR panelinden alınır.",
         "adm_merchantKey": "Üye İşyeri Anahtarı",
@@ -103,7 +102,10 @@
         "adm_merchantSalt": "Üye İşyeri Salt Değeri",
         "adm_merchantSaltDesc": "PayTR panelinden alınır. PayTR bildirim adresini /api/v1/paytr/callback olarak ayarlayın.",
         "adm_sandbox": "Test Ortamı",
-        "adm_sandboxDesc": "PayTR test ortamı için true yazın."
+        "adm_sandboxDesc": "PayTR test ortamı için true yazın.",
+        "adm_subtitle": "PayTR ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "PayTR Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_paytr-gateway": "PayTR Ödeme",
@@ -114,6 +116,9 @@
     }
   },
   "permissions": [
-    "paytr-gateway.manage"
+    {
+      "name": "paytr-gateway.manage",
+      "labelKey": "paytrGateway.perm_manage"
+    }
   ]
 }

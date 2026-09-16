@@ -113,8 +113,8 @@ const declaredByModule = new Map<string, string[]>(
     moduleIds.map((id) => {
         const manifest = JSON.parse(
             fs.readFileSync(path.join(MODULE_SOURCES, id, "module.json"), "utf8")
-        ) as { permissions?: string[] };
-        return [id, manifest.permissions ?? []];
+        ) as { permissions?: { name: string }[] };
+        return [id, (manifest.permissions ?? []).map((permission) => permission.name)];
     })
 );
 

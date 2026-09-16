@@ -171,6 +171,7 @@
         "adm_archived": "Archived",
         "adm_articleContent": "Article Content",
         "adm_author": "Author",
+        "adm_backToArticles": "Back to articles",
         "adm_blogArticles": "Blog Articles",
         "adm_blogCategories": "Blog Categories",
         "adm_briefDescription": "Brief Description",
@@ -183,7 +184,6 @@
         "adm_coverImage": "Cover Image",
         "adm_createArticleFailed": "That article could not be created.",
         "adm_createBlogArticle": "Create a new blog article",
-        "adm_backToArticles": "Back to articles",
         "adm_createCategory": "Create Category",
         "adm_date": "Date",
         "adm_delete": "Delete",
@@ -233,6 +233,7 @@
         "adm_updateArticleFailed": "That article could not be saved.",
         "adm_view": "View",
         "adm_views": "Views",
+        "allArticles": "All articles",
         "articles": "Articles",
         "author": "Author",
         "breadcrumb": "Blog",
@@ -242,6 +243,8 @@
         "noArticles": "No articles published yet.",
         "noCategories": "No categories yet.",
         "noComments": "No comments yet. Be the first to comment!",
+        "noImage": "No image",
+        "perm_manage": "Manage",
         "postComment": "Post Comment",
         "recentPosts": "Recent Posts",
         "relatedArticles": "Related Articles",
@@ -249,9 +252,7 @@
         "tags": "Tags",
         "title": "Blog",
         "views": "{count} views",
-        "writeComment": "Write a comment...",
-        "allArticles": "All articles",
-        "noImage": "No image"
+        "writeComment": "Write a comment..."
       },
       "news": {
         "empty": "No posts yet - check back soon.",
@@ -296,6 +297,7 @@
         "adm_archived": "Arşivlendi",
         "adm_articleContent": "Makale İçeriği",
         "adm_author": "Yazar",
+        "adm_backToArticles": "Makalelere dön",
         "adm_blogArticles": "Blog Makaleleri",
         "adm_blogCategories": "Blog Kategorileri",
         "adm_briefDescription": "Kısa Açıklama",
@@ -308,7 +310,6 @@
         "adm_coverImage": "Kapak Görseli",
         "adm_createArticleFailed": "Bu makale oluşturulamadı.",
         "adm_createBlogArticle": "Yeni bir blog makalesi oluşturun",
-        "adm_backToArticles": "Makalelere dön",
         "adm_createCategory": "Kategori Oluştur",
         "adm_date": "Tarih",
         "adm_delete": "Sil",
@@ -358,6 +359,7 @@
         "adm_updateArticleFailed": "Bu makale kaydedilemedi.",
         "adm_view": "Görüntüle",
         "adm_views": "Görüntülenme",
+        "allArticles": "Tüm makaleler",
         "articles": "Makaleler",
         "author": "Yazar",
         "breadcrumb": "Blog",
@@ -367,6 +369,8 @@
         "noArticles": "Henüz makale yayınlanmadı.",
         "noCategories": "Henüz kategori yok.",
         "noComments": "Henüz yorum yok. İlk yorumu siz yapın!",
+        "noImage": "Görsel yok",
+        "perm_manage": "Yönetebilir",
         "postComment": "Yorum Yap",
         "recentPosts": "Son Yazılar",
         "relatedArticles": "İlgili Makaleler",
@@ -374,9 +378,7 @@
         "tags": "Etiketler",
         "title": "Blog",
         "views": "{count} görüntülenme",
-        "writeComment": "Bir yorum yazın...",
-        "allArticles": "Tüm makaleler",
-        "noImage": "Görsel yok"
+        "writeComment": "Bir yorum yazın..."
       },
       "news": {
         "empty": "Henüz gönderi yok - yakında tekrar bakın.",
@@ -513,6 +515,9 @@
     "blog.category"
   ],
   "permissions": [
-    "blog.manage"
+    {
+      "name": "blog.manage",
+      "labelKey": "blog.perm_manage"
+    }
   ]
 }

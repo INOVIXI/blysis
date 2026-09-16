@@ -8,7 +8,10 @@
   "author": "Blysis",
   "icon": "Webhook",
   "permissions": [
-    "admin.webhooks"
+    {
+      "name": "admin.webhooks",
+      "labelKey": "webhookLogs.perm_webhooks"
+    }
   ],
   "menu": [
     {
@@ -64,6 +67,7 @@
         "method": "Method",
         "payload": "Payload",
         "pending": "Pending",
+        "perm_webhooks": "View deliveries",
         "refresh": "Refresh",
         "requestBody": "Request Body",
         "response": "Response",
@@ -107,6 +111,7 @@
         "method": "Metot",
         "payload": "Veri",
         "pending": "Beklemede",
+        "perm_webhooks": "Gönderimleri görüntüleyebilir",
         "refresh": "Yenile",
         "requestBody": "İstek Gövdesi",
         "response": "Yanıt",

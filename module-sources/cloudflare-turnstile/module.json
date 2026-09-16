@@ -53,21 +53,22 @@
   "translations": {
     "en": {
       "cloudflareTurnstile": {
-        "title": "Cloudflare Turnstile",
-        "subtitle": "Privacy-focused CAPTCHA",
-        "keysTitle": "Keys",
         "challengeTitle": "Challenge",
-        "siteKey": "Site Key",
-        "secretKey": "Secret Key",
         "enableOnLogin": "Enable on Login",
         "enableOnLoginDesc": "Require Turnstile challenge on the login page",
         "enableOnRegister": "Enable on Registration",
         "enableOnRegisterDesc": "Require Turnstile challenge on the register page",
+        "keysTitle": "Keys",
+        "perm_manage": "Manage",
         "save": "Save",
-        "saved": "Settings saved",
         "saveError": "Failed to save settings",
+        "saved": "Settings saved",
+        "secretKey": "Secret Key",
+        "secretKeyNotSet": "Not set",
         "secretKeyStored": "Saved. Type a new value to replace it.",
-        "secretKeyNotSet": "Not set"
+        "siteKey": "Site Key",
+        "subtitle": "Privacy-focused CAPTCHA",
+        "title": "Cloudflare Turnstile"
       },
       "admin": {
         "menu_cloudflare-turnstile": "Cloudflare Turnstile",
@@ -82,21 +83,22 @@
     },
     "tr": {
       "cloudflareTurnstile": {
-        "title": "Cloudflare Turnstile",
-        "subtitle": "Gizlilik odaklı CAPTCHA",
-        "keysTitle": "Anahtarlar",
         "challengeTitle": "Doğrulama",
-        "siteKey": "Site Anahtarı",
-        "secretKey": "Gizli Anahtar",
         "enableOnLogin": "Girişte Etkinleştir",
         "enableOnLoginDesc": "Giriş sayfasında Turnstile doğrulaması iste",
         "enableOnRegister": "Kayıtta Etkinleştir",
         "enableOnRegisterDesc": "Kayıt sayfasında Turnstile doğrulaması iste",
+        "keysTitle": "Anahtarlar",
+        "perm_manage": "Yönetebilir",
         "save": "Kaydet",
-        "saved": "Ayarlar kaydedildi",
         "saveError": "Ayarlar kaydedilemedi",
+        "saved": "Ayarlar kaydedildi",
+        "secretKey": "Gizli Anahtar",
+        "secretKeyNotSet": "Ayarlanmadı",
         "secretKeyStored": "Kayıtlı. Değiştirmek için yeni bir değer yazın.",
-        "secretKeyNotSet": "Ayarlanmadı"
+        "siteKey": "Site Anahtarı",
+        "subtitle": "Gizlilik odaklı CAPTCHA",
+        "title": "Cloudflare Turnstile"
       },
       "admin": {
         "menu_cloudflare-turnstile": "Cloudflare Turnstile",
@@ -134,6 +136,9 @@
     ]
   },
   "permissions": [
-    "cloudflare-turnstile.manage"
+    {
+      "name": "cloudflare-turnstile.manage",
+      "labelKey": "cloudflareTurnstile.perm_manage"
+    }
   ]
 }

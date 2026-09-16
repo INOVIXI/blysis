@@ -72,9 +72,12 @@ export const CORE_ADMIN_SCREENS: AdminScreen[] = [
     { path: "/roles", permission: "admin.roles" },
     { path: "/roles/new", permission: "admin.roles" },
     { path: "/roles/[id]/edit", permission: "admin.roles" },
-    { path: "/permissions", permission: "admin.roles" },
-    { path: "/resource-permissions", permission: "admin.roles" },
-    { path: "/resource-permissions/new", permission: "admin.roles" },
+    // What a role may do lives on the role. There used to be two more screens
+    // here - a matrix of resources and a list of grants - drawing the same
+    // table twice: one showed ten resource kinds of which the code consulted
+    // one, and the two it did consult were not declared and so never appeared.
+    // A per-entity rule belongs inside the thing it is about, beside the
+    // category or the department being edited, not in a page of abstractions.
 
     { path: "/settings", permission: "admin.settings" },
     { path: "/settings/general", permission: "admin.settings" },

@@ -63,21 +63,22 @@
         "showcase": "Showcase"
       },
       "showcase": {
-        "title": "Showcase",
-        "subtitle": "A few things worth looking at.",
-        "empty": "Nothing is on show yet.",
-        "adm_title": "Showcase",
-        "adm_subtitle": "The cards on the showcase page, in the order they are shown.",
-        "adm_cardTitle": "Heading",
         "adm_cardBody": "A line about it",
-        "adm_cardImage": "Picture",
         "adm_cardHref": "Where it goes",
+        "adm_cardImage": "Picture",
         "adm_cardOrder": "Order",
+        "adm_cardTitle": "Heading",
+        "adm_subtitle": "The cards on the showcase page, in the order they are shown.",
+        "adm_subtitleWithHint": "The cards on the showcase page, in the order they are shown. A picture and a link are each a path on this site, like /store, or a whole https address; anything else is refused.",
+        "adm_title": "Showcase",
+        "empty": "Nothing is on show yet.",
         "err": {
           "showcase_bad_link": "A link has to be a path on this site or a whole https address.",
           "showcase_bad_image": "A picture has to be a path on this site or a whole https address."
         },
-        "adm_subtitleWithHint": "The cards on the showcase page, in the order they are shown. A picture and a link are each a path on this site, like /store, or a whole https address; anything else is refused."
+        "perm_manage": "Manage",
+        "subtitle": "A few things worth looking at.",
+        "title": "Showcase"
       },
       "pageDescriptions": {
         "showcase": "Browse a handpicked selection of things worth a look, where every card leads to the page behind it."
@@ -91,21 +92,22 @@
         "showcase": "Vitrin"
       },
       "showcase": {
-        "title": "Vitrin",
-        "subtitle": "Bakmaya değer birkaç şey.",
-        "empty": "Henüz vitrinde bir şey yok.",
-        "adm_title": "Vitrin",
-        "adm_subtitle": "Vitrin sayfasındaki kartlar, gösterildikleri sırayla.",
-        "adm_cardTitle": "Başlık",
         "adm_cardBody": "Hakkında bir satır",
-        "adm_cardImage": "Görsel",
         "adm_cardHref": "Nereye gidiyor",
+        "adm_cardImage": "Görsel",
         "adm_cardOrder": "Sıra",
+        "adm_cardTitle": "Başlık",
+        "adm_subtitle": "Vitrin sayfasındaki kartlar, gösterildikleri sırayla.",
+        "adm_subtitleWithHint": "Vitrin sayfasındaki kartlar, gösterildikleri sırayla. Görsel ve bağlantı, bu sitede bir yol (/store gibi) ya da tam bir https adresi olmalı; başka bir şey kabul edilmiyor.",
+        "adm_title": "Vitrin",
+        "empty": "Henüz vitrinde bir şey yok.",
         "err": {
           "showcase_bad_link": "Bağlantı, bu sitede bir yol ya da tam bir https adresi olmalı.",
           "showcase_bad_image": "Görsel, bu sitede bir yol ya da tam bir https adresi olmalı."
         },
-        "adm_subtitleWithHint": "Vitrin sayfasındaki kartlar, gösterildikleri sırayla. Görsel ve bağlantı, bu sitede bir yol (/store gibi) ya da tam bir https adresi olmalı; başka bir şey kabul edilmiyor."
+        "perm_manage": "Yönetebilir",
+        "subtitle": "Bakmaya değer birkaç şey.",
+        "title": "Vitrin"
       },
       "pageDescriptions": {
         "showcase": "Görmeye değer, özenle seçilmiş içeriklere göz atın; her kart sizi arkasındaki sayfaya götürür."
@@ -113,6 +115,9 @@
     }
   },
   "permissions": [
-    "showcase.manage"
+    {
+      "name": "showcase.manage",
+      "labelKey": "showcase.perm_manage"
+    }
   ]
 }

@@ -42,20 +42,21 @@
   "translations": {
     "en": {
       "githubAuth": {
-        "title": "GitHub Login",
-        "settings": "GitHub OAuth Settings",
+        "adm_subtitle": "Configure GitHub OAuth2 login for your site",
+        "adm_title": "GitHub Auth Settings",
         "clientId": "Client ID",
         "clientSecret": "Client Secret",
-        "enabled": "GitHub Login Enabled",
+        "description": "Configure GitHub OAuth credentials for user login",
         "disabled": "GitHub Login Disabled",
         "enable": "Enable GitHub Login",
-        "save": "Save Settings",
-        "saved": "GitHub OAuth settings saved successfully",
-        "saveError": "Failed to save GitHub OAuth settings",
+        "enabled": "GitHub Login Enabled",
         "linkAccount": "Link GitHub Account",
-        "description": "Configure GitHub OAuth credentials for user login",
-        "adm_title": "GitHub Auth Settings",
-        "adm_subtitle": "Configure GitHub OAuth2 login for your site"
+        "perm_manage": "Manage",
+        "save": "Save Settings",
+        "saveError": "Failed to save GitHub OAuth settings",
+        "saved": "GitHub OAuth settings saved successfully",
+        "settings": "GitHub OAuth Settings",
+        "title": "GitHub Login"
       },
       "admin": {
         "title": "Admin Panel",
@@ -66,20 +67,21 @@
     },
     "tr": {
       "githubAuth": {
-        "title": "GitHub ile Giriş",
-        "settings": "GitHub OAuth Ayarları",
+        "adm_subtitle": "Siteniz için GitHub OAuth2 girişini yapılandırın",
+        "adm_title": "GitHub Kimlik Doğrulama Ayarları",
         "clientId": "İstemci Kimliği",
         "clientSecret": "İstemci Şifresi",
-        "enabled": "GitHub ile Giriş Etkin",
+        "description": "Kullanıcı girişi için GitHub OAuth kimlik bilgilerini yapılandırın",
         "disabled": "GitHub ile Giriş Devre Dışı",
         "enable": "GitHub ile Girişi Etkinleştir",
-        "save": "Ayarları Kaydet",
-        "saved": "GitHub OAuth ayarları başarıyla kaydedildi",
-        "saveError": "GitHub OAuth ayarları kaydedilemedi",
+        "enabled": "GitHub ile Giriş Etkin",
         "linkAccount": "GitHub Hesabını Bağla",
-        "description": "Kullanıcı girişi için GitHub OAuth kimlik bilgilerini yapılandırın",
-        "adm_title": "GitHub Kimlik Doğrulama Ayarları",
-        "adm_subtitle": "Siteniz için GitHub OAuth2 girişini yapılandırın"
+        "perm_manage": "Yönetebilir",
+        "save": "Ayarları Kaydet",
+        "saveError": "GitHub OAuth ayarları kaydedilemedi",
+        "saved": "GitHub OAuth ayarları başarıyla kaydedildi",
+        "settings": "GitHub OAuth Ayarları",
+        "title": "GitHub ile Giriş"
       },
       "admin": {
         "title": "Yönetim Paneli",
@@ -90,6 +92,9 @@
     }
   },
   "permissions": [
-    "github-auth.manage"
+    {
+      "name": "github-auth.manage",
+      "labelKey": "githubAuth.perm_manage"
+    }
   ]
 }

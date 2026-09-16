@@ -42,8 +42,9 @@
   "translations": {
     "en": {
       "xAuth": {
+        "adm_subtitle": "Set up X OAuth sign-in for your site.",
         "adm_title": "X Login Settings",
-        "adm_subtitle": "Set up X OAuth sign-in for your site."
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_x-auth_name": "X Login",
@@ -52,8 +53,9 @@
     },
     "tr": {
       "xAuth": {
+        "adm_subtitle": "Siteniz için X ile OAuth girişini yapılandırın.",
         "adm_title": "X ile Giriş Ayarları",
-        "adm_subtitle": "Siteniz için X ile OAuth girişini yapılandırın."
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_x-auth_name": "X ile Giriş",
@@ -62,6 +64,9 @@
     }
   },
   "permissions": [
-    "x-auth.manage"
+    {
+      "name": "x-auth.manage",
+      "labelKey": "xAuth.perm_manage"
+    }
   ]
 }

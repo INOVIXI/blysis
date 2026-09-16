@@ -61,18 +61,19 @@
         "paymentInstructions": "How to pay"
       },
       "manualPaymentGateway": {
-        "title": "How to pay",
-        "subtitle": "Your order is waiting. It is yours as soon as we see the money.",
-        "quoteThis": "Write this on the transfer",
-        "thenWhat": "We confirm by hand, so it can take until the next working day.",
-        "myOrders": "My orders",
-        "adm_title": "Pay by hand",
-        "adm_subtitle": "For money that arrives outside a processor: a bank transfer, cash, an invoice settled later.",
-        "adm_instructions": "How to pay",
-        "adm_instructionsPlaceholder": "Account name, IBAN, and anything the buyer should write on the transfer.",
-        "adm_instructionsDesc": "Shown to the buyer after checkout. Leave it empty and this way of paying is not offered at all.",
         "adm_currencies": "Currencies you take",
-        "adm_currenciesDesc": "Three letter codes, separated however you like. Leave it empty to take whatever the shop prices in."
+        "adm_currenciesDesc": "Three letter codes, separated however you like. Leave it empty to take whatever the shop prices in.",
+        "adm_instructions": "How to pay",
+        "adm_instructionsDesc": "Shown to the buyer after checkout. Leave it empty and this way of paying is not offered at all.",
+        "adm_instructionsPlaceholder": "Account name, IBAN, and anything the buyer should write on the transfer.",
+        "adm_subtitle": "For money that arrives outside a processor: a bank transfer, cash, an invoice settled later.",
+        "adm_title": "Pay by hand",
+        "myOrders": "My orders",
+        "perm_manage": "Manage",
+        "quoteThis": "Write this on the transfer",
+        "subtitle": "Your order is waiting. It is yours as soon as we see the money.",
+        "thenWhat": "We confirm by hand, so it can take until the next working day.",
+        "title": "How to pay"
       },
       "pageDescriptions": {
         "paymentInstructions": "Follow the payment instructions for your order: what to send, where to send it and what happens once it arrives."
@@ -83,18 +84,19 @@
         "paymentInstructions": "Nasıl ödenir"
       },
       "manualPaymentGateway": {
-        "title": "Nasıl ödenir",
-        "subtitle": "Siparişiniz bekliyor. Parayı gördüğümüz anda sizin olacak.",
-        "quoteThis": "Havale açıklamasına bunu yazın",
-        "thenWhat": "Onayı elle yapıyoruz, bu yüzden ertesi iş gününü bulabilir.",
-        "myOrders": "Siparişlerim",
-        "adm_title": "Elden ödeme",
-        "adm_subtitle": "Bir sağlayıcı üzerinden gelmeyen para için: havale, nakit, sonradan ödenen fatura.",
-        "adm_instructions": "Nasıl ödenir",
-        "adm_instructionsPlaceholder": "Hesap adı, IBAN ve alıcının açıklamaya yazması gerekenler.",
-        "adm_instructionsDesc": "Ödeme adımından sonra alıcıya gösterilir. Boş bırakırsanız bu ödeme yöntemi hiç sunulmaz.",
         "adm_currencies": "Kabul ettiğiniz para birimleri",
-        "adm_currenciesDesc": "Üç harfli kodlar, aralarına ne koyarsanız koyun. Boş bırakırsanız mağazanın fiyatladığı her para birimi kabul edilir."
+        "adm_currenciesDesc": "Üç harfli kodlar, aralarına ne koyarsanız koyun. Boş bırakırsanız mağazanın fiyatladığı her para birimi kabul edilir.",
+        "adm_instructions": "Nasıl ödenir",
+        "adm_instructionsDesc": "Ödeme adımından sonra alıcıya gösterilir. Boş bırakırsanız bu ödeme yöntemi hiç sunulmaz.",
+        "adm_instructionsPlaceholder": "Hesap adı, IBAN ve alıcının açıklamaya yazması gerekenler.",
+        "adm_subtitle": "Bir sağlayıcı üzerinden gelmeyen para için: havale, nakit, sonradan ödenen fatura.",
+        "adm_title": "Elden ödeme",
+        "myOrders": "Siparişlerim",
+        "perm_manage": "Yönetebilir",
+        "quoteThis": "Havale açıklamasına bunu yazın",
+        "subtitle": "Siparişiniz bekliyor. Parayı gördüğümüz anda sizin olacak.",
+        "thenWhat": "Onayı elle yapıyoruz, bu yüzden ertesi iş gününü bulabilir.",
+        "title": "Nasıl ödenir"
       },
       "pageDescriptions": {
         "paymentInstructions": "Siparişiniz için ödeme talimatlarını izleyin: neyi, nereye göndereceğinizi ve ulaştığında ne olacağını görün."
@@ -102,6 +104,9 @@
     }
   },
   "permissions": [
-    "manual-payment-gateway.manage"
+    {
+      "name": "manual-payment-gateway.manage",
+      "labelKey": "manualPaymentGateway.perm_manage"
+    }
   ]
 }

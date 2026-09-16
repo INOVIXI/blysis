@@ -17,32 +17,43 @@
  * *enforces* it is a separate question, pinned by
  * `tests/unit/permissions-are-declared.test.ts`.
  */
-export const CORE_PERMISSIONS = [
-    /** The door itself, and the overview behind it. */
-    "admin.access",
-    /** Members: reading them, editing them, signing them out. */
-    "admin.users",
-    /** Roles, permissions and exceptions. Granting the power to grant. */
-    "admin.roles",
-    /** Acting on members: warnings, the queue, blocked addresses. */
-    "admin.moderation",
-    /** What the site says: media, translations, revisions. */
-    "admin.content",
-    /** Writing to the members. */
-    "admin.messaging",
-    /** How the site looks: themes, custom CSS, navbar, footer, widgets. */
-    "admin.themes",
-    /** How the site is configured. */
-    "admin.settings",
-    /** Installing and updating code. */
-    "admin.modules",
-    /** What the site is doing: analytics, health, logs, jobs. */
-    "admin.observability",
-    /** Credentials this site issues. */
-    "admin.security",
-    /** The copy of everything, and putting it back. */
-    "admin.backups",
-] as const;
+/**
+ * Core's own vocabulary, with the words an operator reads.
+ *
+ * A name like `admin.moderation` is for the code. What the roles screen shows
+ * is the label, in the reader's language, under a section heading - because a
+ * permission list is read by somebody deciding what a job involves, not by
+ * somebody who knows the codebase. A module supplies the same two things for
+ * its own names through its manifest.
+ */
+export interface CorePermission {
+    name: string;
+    /** `namespace.key` in messages-core. */
+    labelKey: string;
+    /** Which heading it sits under on the roles screen. */
+    section: "panel" | "people" | "content" | "system";
+}
+
+export const CORE_PERMISSION_CATALOGUE: CorePermission[] = [
+    { name: "admin.access", labelKey: "permissions.adminAccess", section: "panel" },
+    { name: "admin.settings", labelKey: "permissions.adminSettings", section: "panel" },
+    { name: "admin.modules", labelKey: "permissions.adminModules", section: "panel" },
+    { name: "admin.themes", labelKey: "permissions.adminThemes", section: "panel" },
+
+    { name: "admin.users", labelKey: "permissions.adminUsers", section: "people" },
+    { name: "admin.roles", labelKey: "permissions.adminRoles", section: "people" },
+    { name: "admin.moderation", labelKey: "permissions.adminModeration", section: "people" },
+    { name: "admin.messaging", labelKey: "permissions.adminMessaging", section: "people" },
+
+    { name: "admin.content", labelKey: "permissions.adminContent", section: "content" },
+
+    { name: "admin.observability", labelKey: "permissions.adminObservability", section: "system" },
+    { name: "admin.security", labelKey: "permissions.adminSecurity", section: "system" },
+    { name: "admin.backups", labelKey: "permissions.adminBackups", section: "system" },
+];
+
+/** The names alone, which is what most callers want. */
+export const CORE_PERMISSIONS = CORE_PERMISSION_CATALOGUE.map((entry) => entry.name);
 
 /** A name in the one shape, as a type rather than a bare string. */
 export type PermissionName = string & { readonly __permission?: never };

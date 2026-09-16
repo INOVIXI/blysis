@@ -65,8 +65,6 @@ const UNGATED_BY_DESIGN: Record<string, string> = {
         "Titles rows already written to the activity log. History must keep rendering after a module is turned off, or it degrades to raw keys.",
     "src/core/lib/storage.ts":
         "The active storage provider is chosen by an explicit setting. Silently redirecting new uploads to local disk would split a site's media across two backends.",
-    "src/app/[locale]/(admin)/admin/permissions/page.tsx":
-        "The RBAC matrix. Grants outlive a disable, and hiding the resource would hide grants an admin still needs to edit.",
     "src/core/lib/api-matcher.ts":
         "Pure path matching. The proxy gates every module API path before a request reaches it.",
     "src/app/api/v1/[...path]/route.ts":

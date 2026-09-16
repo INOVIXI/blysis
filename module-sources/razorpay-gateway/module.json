@@ -78,14 +78,15 @@
   "translations": {
     "en": {
       "razorpayGateway": {
-        "adm_title": "Razorpay Settings",
-        "adm_subtitle": "Keys for taking payments through Razorpay.",
         "adm_keyId": "Key ID",
         "adm_keyIdDesc": "From your Razorpay dashboard.",
         "adm_keySecret": "Key Secret",
         "adm_keySecretDesc": "From your Razorpay dashboard.",
+        "adm_subtitle": "Keys for taking payments through Razorpay.",
+        "adm_title": "Razorpay Settings",
         "adm_webhookSecret": "Webhook Secret",
-        "adm_webhookSecretDesc": "From your Razorpay dashboard. Point the Razorpay notification URL at /api/v1/razorpay/webhook."
+        "adm_webhookSecretDesc": "From your Razorpay dashboard. Point the Razorpay notification URL at /api/v1/razorpay/webhook.",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_razorpay-gateway": "Razorpay Gateway",
@@ -96,14 +97,15 @@
     },
     "tr": {
       "razorpayGateway": {
-        "adm_title": "Razorpay Ayarları",
-        "adm_subtitle": "Razorpay ile ödeme almak için gereken anahtarlar.",
         "adm_keyId": "Anahtar Kimliği",
         "adm_keyIdDesc": "Razorpay panelinden alınır.",
         "adm_keySecret": "Gizli Anahtar",
         "adm_keySecretDesc": "Razorpay panelinden alınır.",
+        "adm_subtitle": "Razorpay ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "Razorpay Ayarları",
         "adm_webhookSecret": "Webhook Gizli Anahtarı",
-        "adm_webhookSecretDesc": "Razorpay panelinden alınır. Razorpay bildirim adresini /api/v1/razorpay/webhook olarak ayarlayın."
+        "adm_webhookSecretDesc": "Razorpay panelinden alınır. Razorpay bildirim adresini /api/v1/razorpay/webhook olarak ayarlayın.",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_razorpay-gateway": "Razorpay Ödeme",
@@ -114,6 +116,9 @@
     }
   },
   "permissions": [
-    "razorpay-gateway.manage"
+    {
+      "name": "razorpay-gateway.manage",
+      "labelKey": "razorpayGateway.perm_manage"
+    }
   ]
 }

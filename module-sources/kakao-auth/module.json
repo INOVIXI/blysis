@@ -42,9 +42,10 @@
   "translations": {
     "en": {
       "kakaoAuth": {
-        "adm_title": "Kakao Login Settings",
+        "adm_emailNote": "The email address is an optional consent item that Kakao has to approve for your app. Until it is, accounts arrive without one and get a placeholder address that can never receive mail.",
         "adm_subtitle": "Set up Kakao OAuth sign-in for your site.",
-        "adm_emailNote": "The email address is an optional consent item that Kakao has to approve for your app. Until it is, accounts arrive without one and get a placeholder address that can never receive mail."
+        "adm_title": "Kakao Login Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_kakao-auth_name": "Kakao Login",
@@ -53,9 +54,10 @@
     },
     "tr": {
       "kakaoAuth": {
-        "adm_title": "Kakao ile Giriş Ayarları",
+        "adm_emailNote": "E-posta adresi, Kakao'nun uygulamanız için onaylaması gereken isteğe bağlı bir izin kalemidir. Onaylanana kadar hesaplar e-postasız gelir ve posta alamayan geçici bir adres alır.",
         "adm_subtitle": "Siteniz için Kakao ile OAuth girişini yapılandırın.",
-        "adm_emailNote": "E-posta adresi, Kakao'nun uygulamanız için onaylaması gereken isteğe bağlı bir izin kalemidir. Onaylanana kadar hesaplar e-postasız gelir ve posta alamayan geçici bir adres alır."
+        "adm_title": "Kakao ile Giriş Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_kakao-auth_name": "Kakao ile Giriş",
@@ -64,6 +66,9 @@
     }
   },
   "permissions": [
-    "kakao-auth.manage"
+    {
+      "name": "kakao-auth.manage",
+      "labelKey": "kakaoAuth.perm_manage"
+    }
   ]
 }

@@ -42,8 +42,9 @@
   "translations": {
     "en": {
       "facebookAuth": {
+        "adm_subtitle": "Set up Facebook OAuth sign-in for your site.",
         "adm_title": "Facebook Login Settings",
-        "adm_subtitle": "Set up Facebook OAuth sign-in for your site."
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_facebook-auth_name": "Facebook Login",
@@ -52,8 +53,9 @@
     },
     "tr": {
       "facebookAuth": {
+        "adm_subtitle": "Siteniz için Facebook ile OAuth girişini yapılandırın.",
         "adm_title": "Facebook ile Giriş Ayarları",
-        "adm_subtitle": "Siteniz için Facebook ile OAuth girişini yapılandırın."
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_facebook-auth_name": "Facebook ile Giriş",
@@ -62,6 +64,9 @@
     }
   },
   "permissions": [
-    "facebook-auth.manage"
+    {
+      "name": "facebook-auth.manage",
+      "labelKey": "facebookAuth.perm_manage"
+    }
   ]
 }

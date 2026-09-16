@@ -8,7 +8,10 @@
   "author": "Blysis",
   "icon": "Trophy",
   "permissions": [
-    "trophies.manage"
+    {
+      "name": "trophies.manage",
+      "labelKey": "trophies.perm_manage"
+    }
   ],
   "menu": [
     {
@@ -163,8 +166,10 @@
         "noneYet": "You haven't earned any trophies yet.",
         "pageDesc": "Achievements you can earn across the community.",
         "pageTitle": "Trophies",
+        "perm_manage": "Manage",
         "points": "Points",
         "pointsShort": "{points} pts",
+        "profileTab": "Trophies",
         "rule": "Rule",
         "ruleEvent": "Rule event",
         "ruleEventHint": "Leave empty for manual awards only. Any hook event works.",
@@ -177,8 +182,7 @@
         "title": "Trophies",
         "toggleFailed": "Failed to toggle",
         "trophy": "Trophy",
-        "updated": "Trophy updated",
-        "profileTab": "Trophies"
+        "updated": "Trophy updated"
       },
       "nav": {
         "trophies": "Trophies"
@@ -232,8 +236,10 @@
         "noneYet": "Henüz hiç kupa kazanmadınız.",
         "pageDesc": "Toplulukta kazanabileceğiniz başarımlar.",
         "pageTitle": "Kupalar",
+        "perm_manage": "Yönetebilir",
         "points": "Puan",
         "pointsShort": "{points} puan",
+        "profileTab": "Kupalar",
         "rule": "Kural",
         "ruleEvent": "Kural olayı",
         "ruleEventHint": "Yalnızca manuel ödüller için boş bırakın. Herhangi bir hook olayı geçerlidir.",
@@ -246,8 +252,7 @@
         "title": "Kupalar",
         "toggleFailed": "Durum değiştirilemedi",
         "trophy": "Kupa",
-        "updated": "Kupa güncellendi",
-        "profileTab": "Kupalar"
+        "updated": "Kupa güncellendi"
       },
       "nav": {
         "trophies": "Kupalar"

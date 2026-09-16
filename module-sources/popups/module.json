@@ -8,7 +8,10 @@
   "author": "Blysis",
   "icon": "Bell",
   "permissions": [
-    "popups.manage"
+    {
+      "name": "popups.manage",
+      "labelKey": "popups.perm_manage"
+    }
   ],
   "menu": [
     {
@@ -44,23 +47,7 @@
   "translations": {
     "en": {
       "popups": {
-        "title": "Manage Popups",
-        "description": "Create and manage popup notifications",
-        "announcement": "Announcement",
-        "promotion": "Promotion",
-        "warning": "Warning",
         "active": "Active",
-        "inactive": "Inactive",
-        "status": "Status",
-        "startDate": "Start Date",
-        "endDate": "End Date",
-        "saved": "Popup saved successfully",
-        "deleted": "Popup deleted successfully",
-        "saveError": "Failed to save popup",
-        "close": "Close",
-        "learnMore": "Learn More",
-        "adm_title": "Popups",
-        "adm_subtitle": "Manage popup notifications",
         "adm_field1Label": "Title",
         "adm_field1Placeholder": "Popup title",
         "adm_field2Label": "Content",
@@ -73,7 +60,24 @@
         "adm_field5Placeholder": "Click here",
         "adm_field6Label": "Active",
         "adm_field7Label": "Start Date",
-        "adm_field8Label": "End Date"
+        "adm_field8Label": "End Date",
+        "adm_subtitle": "Manage popup notifications",
+        "adm_title": "Popups",
+        "announcement": "Announcement",
+        "close": "Close",
+        "deleted": "Popup deleted successfully",
+        "description": "Create and manage popup notifications",
+        "endDate": "End Date",
+        "inactive": "Inactive",
+        "learnMore": "Learn More",
+        "perm_manage": "Manage",
+        "promotion": "Promotion",
+        "saveError": "Failed to save popup",
+        "saved": "Popup saved successfully",
+        "startDate": "Start Date",
+        "status": "Status",
+        "title": "Manage Popups",
+        "warning": "Warning"
       },
       "admin": {
         "menu_popups": "Popups",
@@ -86,23 +90,7 @@
     },
     "tr": {
       "popups": {
-        "title": "Popup Yönetimi",
-        "description": "Popup bildirimlerini oluştur ve yönet",
-        "announcement": "Duyuru",
-        "promotion": "Promosyon",
-        "warning": "Uyarı",
         "active": "Aktif",
-        "inactive": "Pasif",
-        "status": "Durum",
-        "startDate": "Başlangıç Tarihi",
-        "endDate": "Bitiş Tarihi",
-        "saved": "Popup başarıyla kaydedildi",
-        "deleted": "Popup başarıyla silindi",
-        "saveError": "Popup kaydedilemedi",
-        "close": "Kapat",
-        "learnMore": "Daha Fazla",
-        "adm_title": "Açılır Pencereler",
-        "adm_subtitle": "Açılır pencere bildirimlerini yönetin",
         "adm_field1Label": "Başlık",
         "adm_field1Placeholder": "Açılır pencere başlığı",
         "adm_field2Label": "İçerik",
@@ -115,7 +103,24 @@
         "adm_field5Placeholder": "Tıklayın",
         "adm_field6Label": "Aktif",
         "adm_field7Label": "Başlangıç Tarihi",
-        "adm_field8Label": "Bitiş Tarihi"
+        "adm_field8Label": "Bitiş Tarihi",
+        "adm_subtitle": "Açılır pencere bildirimlerini yönetin",
+        "adm_title": "Açılır Pencereler",
+        "announcement": "Duyuru",
+        "close": "Kapat",
+        "deleted": "Popup başarıyla silindi",
+        "description": "Popup bildirimlerini oluştur ve yönet",
+        "endDate": "Bitiş Tarihi",
+        "inactive": "Pasif",
+        "learnMore": "Daha Fazla",
+        "perm_manage": "Yönetebilir",
+        "promotion": "Promosyon",
+        "saveError": "Popup kaydedilemedi",
+        "saved": "Popup başarıyla kaydedildi",
+        "startDate": "Başlangıç Tarihi",
+        "status": "Durum",
+        "title": "Popup Yönetimi",
+        "warning": "Uyarı"
       },
       "admin": {
         "menu_popups": "Açılır Pencereler",

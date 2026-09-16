@@ -70,14 +70,15 @@
   "translations": {
     "en": {
       "iyzicoGateway": {
-        "adm_title": "iyzico Settings",
-        "adm_subtitle": "Keys for taking payments through iyzico.",
         "adm_apiKey": "API Key",
         "adm_apiKeyDesc": "From your iyzico dashboard.",
+        "adm_sandbox": "Sandbox Mode",
+        "adm_sandboxDesc": "Set to true to use the iyzico test environment.",
         "adm_secretKey": "Secret Key",
         "adm_secretKeyDesc": "From your iyzico dashboard.",
-        "adm_sandbox": "Sandbox Mode",
-        "adm_sandboxDesc": "Set to true to use the iyzico test environment."
+        "adm_subtitle": "Keys for taking payments through iyzico.",
+        "adm_title": "iyzico Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_iyzico-gateway": "iyzico Gateway",
@@ -88,14 +89,15 @@
     },
     "tr": {
       "iyzicoGateway": {
-        "adm_title": "iyzico Ayarları",
-        "adm_subtitle": "iyzico ile ödeme almak için gereken anahtarlar.",
         "adm_apiKey": "API Anahtarı",
         "adm_apiKeyDesc": "iyzico panelinden alınır.",
+        "adm_sandbox": "Test Ortamı",
+        "adm_sandboxDesc": "iyzico test ortamı için true yazın.",
         "adm_secretKey": "Gizli Anahtar",
         "adm_secretKeyDesc": "iyzico panelinden alınır.",
-        "adm_sandbox": "Test Ortamı",
-        "adm_sandboxDesc": "iyzico test ortamı için true yazın."
+        "adm_subtitle": "iyzico ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "iyzico Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_iyzico-gateway": "iyzico Ödeme",
@@ -106,6 +108,9 @@
     }
   },
   "permissions": [
-    "iyzico-gateway.manage"
+    {
+      "name": "iyzico-gateway.manage",
+      "labelKey": "iyzicoGateway.perm_manage"
+    }
   ]
 }

@@ -45,26 +45,31 @@
   "translations": {
     "en": {
       "tawktoChat": {
-        "adm_title": "Live chat",
-        "adm_subtitle": "The chat bubble on every page. It loads only after a visitor accepts cookies, because it sets its own.",
         "adm_propertyId": "Property id",
         "adm_propertyIdDesc": "From the widget code on your dashboard: the first of the two ids in the script address.",
+        "adm_subtitle": "The chat bubble on every page. It loads only after a visitor accepts cookies, because it sets its own.",
+        "adm_title": "Live chat",
         "adm_widgetId": "Widget id",
-        "adm_widgetIdDesc": "The second one. Leave either empty and no chat is loaded at all."
+        "adm_widgetIdDesc": "The second one. Leave either empty and no chat is loaded at all.",
+        "perm_manage": "Manage"
       }
     },
     "tr": {
       "tawktoChat": {
-        "adm_title": "Canlı destek",
-        "adm_subtitle": "Her sayfadaki sohbet balonu. Kendi çerezlerini koyduğu için yalnızca ziyaretçi çerezleri kabul ettikten sonra yükleniyor.",
         "adm_propertyId": "Property numarası",
         "adm_propertyIdDesc": "Panelinizdeki widget kodundan: script adresindeki iki numaradan ilki.",
+        "adm_subtitle": "Her sayfadaki sohbet balonu. Kendi çerezlerini koyduğu için yalnızca ziyaretçi çerezleri kabul ettikten sonra yükleniyor.",
+        "adm_title": "Canlı destek",
         "adm_widgetId": "Widget numarası",
-        "adm_widgetIdDesc": "İkincisi. Herhangi birini boş bırakırsanız sohbet hiç yüklenmez."
+        "adm_widgetIdDesc": "İkincisi. Herhangi birini boş bırakırsanız sohbet hiç yüklenmez.",
+        "perm_manage": "Yönetebilir"
       }
     }
   },
   "permissions": [
-    "tawkto-chat.manage"
+    {
+      "name": "tawkto-chat.manage",
+      "labelKey": "tawktoChat.perm_manage"
+    }
   ]
 }

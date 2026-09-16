@@ -8,7 +8,10 @@
   "author": "Blysis",
   "icon": "Users",
   "permissions": [
-    "staff.manage"
+    {
+      "name": "staff.manage",
+      "labelKey": "staff.perm_manage"
+    }
   ],
   "menu": [
     {
@@ -51,12 +54,6 @@
   "translations": {
     "en": {
       "staff": {
-        "title": "Our team",
-        "description": "Meet our staff members",
-        "members": "Staff Members",
-        "role": "Role",
-        "adm_members_title": "Staff Members",
-        "adm_members_subtitle": "Manage staff members",
         "adm_members_field1Label": "Name",
         "adm_members_field1Placeholder": "Staff member name",
         "adm_members_field2Label": "Role",
@@ -66,8 +63,15 @@
         "adm_members_field4Label": "Order",
         "adm_members_field4Placeholder": "0",
         "adm_members_field5Label": "Active",
+        "adm_members_subtitle": "Manage staff members",
+        "adm_members_title": "Staff Members",
+        "description": "Meet our staff members",
+        "empty": "No staff members listed yet",
+        "members": "Staff Members",
+        "perm_manage": "Manage",
+        "role": "Role",
         "subtitle": "The people behind the community",
-        "empty": "No staff members listed yet"
+        "title": "Our team"
       },
       "admin": {
         "menu_staff": "Staff",
@@ -90,12 +94,6 @@
     },
     "tr": {
       "staff": {
-        "title": "Ekibimiz",
-        "description": "Ekip üyelerimizle tanışın",
-        "members": "Ekip Üyeleri",
-        "role": "Rol",
-        "adm_members_title": "Ekip Üyeleri",
-        "adm_members_subtitle": "Ekip üyelerini yönetin",
         "adm_members_field1Label": "Ad",
         "adm_members_field1Placeholder": "Ekip üyesi adı",
         "adm_members_field2Label": "Rol",
@@ -105,8 +103,15 @@
         "adm_members_field4Label": "Sıra",
         "adm_members_field4Placeholder": "0",
         "adm_members_field5Label": "Aktif",
+        "adm_members_subtitle": "Ekip üyelerini yönetin",
+        "adm_members_title": "Ekip Üyeleri",
+        "description": "Ekip üyelerimizle tanışın",
+        "empty": "Henüz ekip üyesi listelenmemiş",
+        "members": "Ekip Üyeleri",
+        "perm_manage": "Yönetebilir",
+        "role": "Rol",
         "subtitle": "Topluluğun arkasındaki ekip",
-        "empty": "Henüz ekip üyesi listelenmemiş"
+        "title": "Ekibimiz"
       },
       "admin": {
         "menu_staff": "Personel",

@@ -36,26 +36,27 @@
   "translations": {
     "en": {
       "resendProvider": {
-        "title": "Resend Settings",
-        "description": "Configure Resend email provider",
+        "adm_field1Desc": "Your Resend API key (starts with re_...)",
+        "adm_field1Label": "API Key",
+        "adm_field2Desc": "Email address that will appear as the sender",
+        "adm_field2Label": "From Email",
+        "adm_field3Desc": "Display name for the sender",
+        "adm_field3Label": "From Name",
+        "adm_subtitle": "Configure Resend as your email provider",
+        "adm_title": "Resend Email Settings",
         "apiKey": "API Key",
+        "description": "Configure Resend email provider",
+        "disabled": "Disabled",
+        "domain": "Domain",
+        "enabled": "Enabled",
         "fromEmail": "From Email",
         "fromName": "From Name",
+        "perm_manage": "Manage",
         "saveSettings": "Save Settings",
-        "settingsSaved": "Resend settings saved successfully",
         "settingsError": "Failed to save Resend settings",
-        "enabled": "Enabled",
-        "disabled": "Disabled",
+        "settingsSaved": "Resend settings saved successfully",
         "status": "Status",
-        "domain": "Domain",
-        "adm_title": "Resend Email Settings",
-        "adm_subtitle": "Configure Resend as your email provider",
-        "adm_field1Label": "API Key",
-        "adm_field1Desc": "Your Resend API key (starts with re_...)",
-        "adm_field2Label": "From Email",
-        "adm_field2Desc": "Email address that will appear as the sender",
-        "adm_field3Label": "From Name",
-        "adm_field3Desc": "Display name for the sender"
+        "title": "Resend Settings"
       },
       "admin": {
         "title": "Admin Panel",
@@ -66,26 +67,27 @@
     },
     "tr": {
       "resendProvider": {
-        "title": "Resend Ayarları",
-        "description": "Resend e-posta sağlayıcısını yapılandır",
+        "adm_field1Desc": "Resend API anahtarınız (re_... ile başlar)",
+        "adm_field1Label": "API Anahtarı",
+        "adm_field2Desc": "Gönderen olarak görünecek e-posta adresi",
+        "adm_field2Label": "Gönderen E-posta",
+        "adm_field3Desc": "Gönderen için görünen ad",
+        "adm_field3Label": "Gönderen Adı",
+        "adm_subtitle": "Resend'i e-posta sağlayıcınız olarak yapılandırın",
+        "adm_title": "Resend E-posta Ayarları",
         "apiKey": "API Anahtarı",
+        "description": "Resend e-posta sağlayıcısını yapılandır",
+        "disabled": "Devre Dışı",
+        "domain": "Alan Adı",
+        "enabled": "Etkin",
         "fromEmail": "Gönderen E-posta",
         "fromName": "Gönderen Adı",
+        "perm_manage": "Yönetebilir",
         "saveSettings": "Ayarları Kaydet",
-        "settingsSaved": "Resend ayarları başarıyla kaydedildi",
         "settingsError": "Resend ayarları kaydedilemedi",
-        "enabled": "Etkin",
-        "disabled": "Devre Dışı",
+        "settingsSaved": "Resend ayarları başarıyla kaydedildi",
         "status": "Durum",
-        "domain": "Alan Adı",
-        "adm_title": "Resend E-posta Ayarları",
-        "adm_subtitle": "Resend'i e-posta sağlayıcınız olarak yapılandırın",
-        "adm_field1Label": "API Anahtarı",
-        "adm_field1Desc": "Resend API anahtarınız (re_... ile başlar)",
-        "adm_field2Label": "Gönderen E-posta",
-        "adm_field2Desc": "Gönderen olarak görünecek e-posta adresi",
-        "adm_field3Label": "Gönderen Adı",
-        "adm_field3Desc": "Gönderen için görünen ad"
+        "title": "Resend Ayarları"
       },
       "admin": {
         "title": "Yönetim Paneli",
@@ -96,6 +98,9 @@
     }
   },
   "permissions": [
-    "resend-provider.manage"
+    {
+      "name": "resend-provider.manage",
+      "labelKey": "resendProvider.perm_manage"
+    }
   ]
 }

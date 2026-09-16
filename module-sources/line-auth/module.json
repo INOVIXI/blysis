@@ -42,9 +42,10 @@
   "translations": {
     "en": {
       "lineAuth": {
-        "adm_title": "LINE Login Settings",
+        "adm_emailNote": "Reading the email address is a separate permission on the LINE channel and needs LINE's approval. Without it accounts get a placeholder address that can never receive mail.",
         "adm_subtitle": "Set up LINE OAuth sign-in for your site.",
-        "adm_emailNote": "Reading the email address is a separate permission on the LINE channel and needs LINE's approval. Without it accounts get a placeholder address that can never receive mail."
+        "adm_title": "LINE Login Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_line-auth_name": "LINE Login",
@@ -53,9 +54,10 @@
     },
     "tr": {
       "lineAuth": {
-        "adm_title": "LINE ile Giriş Ayarları",
+        "adm_emailNote": "E-posta adresini okumak LINE kanalında ayrı bir izindir ve LINE onayı gerektirir. Bu izin olmadan hesaplara posta alamayan geçici bir adres atanır.",
         "adm_subtitle": "Siteniz için LINE ile OAuth girişini yapılandırın.",
-        "adm_emailNote": "E-posta adresini okumak LINE kanalında ayrı bir izindir ve LINE onayı gerektirir. Bu izin olmadan hesaplara posta alamayan geçici bir adres atanır."
+        "adm_title": "LINE ile Giriş Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_line-auth_name": "LINE ile Giriş",
@@ -64,6 +66,9 @@
     }
   },
   "permissions": [
-    "line-auth.manage"
+    {
+      "name": "line-auth.manage",
+      "labelKey": "lineAuth.perm_manage"
+    }
   ]
 }

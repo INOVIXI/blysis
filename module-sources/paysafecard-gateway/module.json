@@ -72,12 +72,13 @@
   "translations": {
     "en": {
       "paysafecardGateway": {
-        "adm_title": "paysafecard Settings",
-        "adm_subtitle": "Keys for taking payments through paysafecard.",
         "adm_apiKey": "API Key",
         "adm_apiKeyDesc": "From your paysafecard dashboard. Point the paysafecard notification URL at /api/v1/paysafecard/notify.",
         "adm_sandbox": "Sandbox Mode",
-        "adm_sandboxDesc": "Set to true to use the paysafecard test environment."
+        "adm_sandboxDesc": "Set to true to use the paysafecard test environment.",
+        "adm_subtitle": "Keys for taking payments through paysafecard.",
+        "adm_title": "paysafecard Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_paysafecard-gateway": "paysafecard Gateway",
@@ -88,12 +89,13 @@
     },
     "tr": {
       "paysafecardGateway": {
-        "adm_title": "paysafecard Ayarları",
-        "adm_subtitle": "paysafecard ile ödeme almak için gereken anahtarlar.",
         "adm_apiKey": "API Anahtarı",
         "adm_apiKeyDesc": "paysafecard panelinden alınır. paysafecard bildirim adresini /api/v1/paysafecard/notify olarak ayarlayın.",
         "adm_sandbox": "Test Ortamı",
-        "adm_sandboxDesc": "paysafecard test ortamı için true yazın."
+        "adm_sandboxDesc": "paysafecard test ortamı için true yazın.",
+        "adm_subtitle": "paysafecard ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "paysafecard Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_paysafecard-gateway": "paysafecard Ödeme",
@@ -104,6 +106,9 @@
     }
   },
   "permissions": [
-    "paysafecard-gateway.manage"
+    {
+      "name": "paysafecard-gateway.manage",
+      "labelKey": "paysafecardGateway.perm_manage"
+    }
   ]
 }

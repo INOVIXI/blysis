@@ -619,7 +619,7 @@ function checkPermissionsDeclared(modulePath: string): CheckResult {
     }
 
     const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8")) as {
-        permissions?: string[];
+        permissions?: { name: string; labelKey: string }[];
         menu?: { path: string; permission?: string }[];
         adminRoutes?: { path: string; permission?: string }[];
         api?: {
@@ -631,7 +631,7 @@ function checkPermissionsDeclared(modulePath: string): CheckResult {
         }[];
     };
 
-    const granted = new Set(manifest.permissions ?? []);
+    const granted = new Set((manifest.permissions ?? []).map((entry) => entry.name));
     const problems: string[] = [];
 
     const requiresName = [
@@ -663,6 +663,21 @@ function checkPermissionsDeclared(modulePath: string): CheckResult {
         }
         if (!entry.openTo) {
             problems.push(`api ${entry.path} writes and declares neither a permission nor openTo`);
+        }
+    }
+
+    // A label an operator never sees is worse than a name: the screen falls
+    // back to the raw `store.manage`, and nobody notices until they are asked
+    // to grant it.
+    const translations = (JSON.parse(fs.readFileSync(manifestPath, "utf8")) as {
+        translations?: Record<string, Record<string, Record<string, string>>>;
+    }).translations ?? {};
+    for (const entry of manifest.permissions ?? []) {
+        const [namespace, key] = entry.labelKey.split(".");
+        for (const [locale, bundle] of Object.entries(translations)) {
+            if (typeof bundle?.[namespace]?.[key] !== "string") {
+                problems.push(`permission ${entry.name} has no ${locale} label at ${entry.labelKey}`);
+            }
         }
     }
 

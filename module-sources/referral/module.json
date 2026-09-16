@@ -12,7 +12,10 @@
     "credits@^1.4.0"
   ],
   "permissions": [
-    "referral.manage"
+    {
+      "name": "referral.manage",
+      "labelKey": "referral.perm_manage"
+    }
   ],
   "routes": [
     {
@@ -107,6 +110,7 @@
         "notLoggedIn": "Please log in to access the referral program",
         "pending": "Pending",
         "pendingReferrals": "Pending",
+        "perm_manage": "Manage",
         "profileTab": "Referrals",
         "referralCount": "Referrals",
         "referralHistory": "Referral History",
@@ -197,6 +201,7 @@
         "notLoggedIn": "Referans programına erişmek için giriş yapın",
         "pending": "Bekliyor",
         "pendingReferrals": "Bekleyen",
+        "perm_manage": "Yönetebilir",
         "profileTab": "Referanslar",
         "referralCount": "Referans Sayısı",
         "referralHistory": "Referans Geçmişi",

@@ -32,8 +32,13 @@ function declaredByModules(): { module: string; name: string }[] {
         .flatMap((entry) => {
             const file = path.join(dir, entry.name, "module.json");
             if (!fs.existsSync(file)) return [];
-            const manifest = JSON.parse(fs.readFileSync(file, "utf8")) as { permissions?: string[] };
-            return (manifest.permissions ?? []).map((name) => ({ module: entry.name, name }));
+            const manifest = JSON.parse(fs.readFileSync(file, "utf8")) as {
+                permissions?: { name: string; labelKey: string }[];
+            };
+            return (manifest.permissions ?? []).map((permission) => ({
+                module: entry.name,
+                name: permission.name,
+            }));
         });
 }
 

@@ -8,7 +8,10 @@
   "author": "Blysis",
   "icon": "Search",
   "permissions": [
-    "seo.manage"
+    {
+      "name": "seo.manage",
+      "labelKey": "seo.perm_manage"
+    }
   ],
   "adminRoutes": [
     {
@@ -140,6 +143,7 @@
         "ogTitle": "OG Title",
         "pages": "Page SEO",
         "path": "URL Path",
+        "perm_manage": "Manage",
         "saved": "SEO settings saved",
         "title": "SEO Manager"
       },
@@ -238,6 +242,7 @@
         "ogTitle": "OG Başlık",
         "pages": "Sayfa SEO",
         "path": "URL Yolu",
+        "perm_manage": "Yönetebilir",
         "saved": "SEO ayarları kaydedildi",
         "title": "SEO Yöneticisi"
       },

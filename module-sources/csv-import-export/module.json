@@ -8,7 +8,10 @@
   "author": "Blysis",
   "icon": "Download",
   "permissions": [
-    "admin.export"
+    {
+      "name": "admin.export",
+      "labelKey": "csvImportExport.perm_export"
+    }
   ],
   "menu": [
     {
@@ -62,6 +65,7 @@
         "json": "JSON",
         "orders": "Orders",
         "overwrite": "Overwrite existing data",
+        "perm_export": "Import and export data",
         "preview": "Preview",
         "processing": "Processing...",
         "products": "Products",
@@ -94,6 +98,7 @@
         "json": "JSON",
         "orders": "Siparişler",
         "overwrite": "Mevcut verilerin üzerine yaz",
+        "perm_export": "Veri içe ve dışa aktarabilir",
         "preview": "Önizleme",
         "processing": "İşleniyor...",
         "products": "Ürünler",

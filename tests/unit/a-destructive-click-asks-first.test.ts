@@ -10,10 +10,11 @@
  * reach for it. This holds the rest to it: every DELETE a person can set off
  * has to pass through a confirmation somewhere in the function that sends it.
  *
- * A toggle is not a deletion. `/admin/permissions` sends DELETE to clear a
- * checkbox that the next click sets again, and asking twice for something
- * that undoes itself teaches people to click through the question - which is
- * what makes the dialog worthless where it matters.
+ * A toggle is not a deletion, and one screen used to be exempt for that
+ * reason: a permission matrix whose DELETE cleared a checkbox the next click
+ * set again. Asking twice for something that undoes itself teaches people to
+ * click through the question, which is what makes the dialog worthless where
+ * it matters. That screen is gone, and the list of exemptions with it.
  */
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
@@ -22,9 +23,7 @@ import path from "node:path";
 const ROOTS = ["src", "module-sources"];
 
 /** Reversible by the same control that sent it. */
-const TOGGLES = new Set([
-    "src/app/[locale]/(admin)/admin/permissions/page.tsx",
-]);
+const TOGGLES = new Set<string>([]);
 
 function walk(dir: string, out: string[] = []): string[] {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {

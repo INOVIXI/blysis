@@ -845,7 +845,25 @@ export const moduleManifestSchema = z.object({
     version: z.string().min(1).max(32).regex(/^\d+\.\d+\.\d+/, "version must be semver"),
     author: z.string().max(100).optional(),
     icon: iconName.optional(),
-    permissions: z.array(z.string().min(1).max(128).regex(/^[a-z0-9._-]+$/)).max(100).optional(),
+    /**
+     * The permission names this module owns, each with the words a person
+     * reads on the roles screen.
+     *
+     * The name is for the code; the label is what an operator decides a job by.
+     * `labelKey` resolves in this module's own `translations`, like `titleKey`,
+     * and says only what the capability is - the screen groups rows under the
+     * module's own name, so a label that repeated it would read as
+     * "Announcements Announcements yönetebilir".
+     */
+    permissions: z
+        .array(
+            z.object({
+                name: z.string().min(3).max(128).regex(/^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+$/),
+                labelKey: z.string().min(3).max(128).regex(/^[a-zA-Z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9_-]+)+$/),
+            }),
+        )
+        .max(100)
+        .optional(),
     /**
      * Admin-editable settings. `defaultConfig` is deliberately absent: the
      * manifest is `.strict()`, so a module still carrying it fails to load

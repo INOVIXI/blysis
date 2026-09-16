@@ -42,8 +42,9 @@
   "translations": {
     "en": {
       "spotifyAuth": {
+        "adm_subtitle": "Set up Spotify OAuth sign-in for your site.",
         "adm_title": "Spotify Login Settings",
-        "adm_subtitle": "Set up Spotify OAuth sign-in for your site."
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_spotify-auth_name": "Spotify Login",
@@ -52,8 +53,9 @@
     },
     "tr": {
       "spotifyAuth": {
+        "adm_subtitle": "Siteniz için Spotify ile OAuth girişini yapılandırın.",
         "adm_title": "Spotify ile Giriş Ayarları",
-        "adm_subtitle": "Siteniz için Spotify ile OAuth girişini yapılandırın."
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_spotify-auth_name": "Spotify ile Giriş",
@@ -62,6 +64,9 @@
     }
   },
   "permissions": [
-    "spotify-auth.manage"
+    {
+      "name": "spotify-auth.manage",
+      "labelKey": "spotifyAuth.perm_manage"
+    }
   ]
 }

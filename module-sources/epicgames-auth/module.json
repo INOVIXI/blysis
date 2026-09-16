@@ -46,10 +46,11 @@
   "translations": {
     "en": {
       "epicgamesAuth": {
-        "adm_title": "Epic Games Login Settings",
-        "adm_subtitle": "Set up Epic Games OAuth sign-in for your site.",
+        "adm_emailNote": "Epic Games does not share an email address, so an account created this way gets a placeholder one that can never receive mail. Ask these users to set a real address in their profile.",
         "adm_scopeNote": "The Epic Games product needs the basic_profile scope, and the redirect URL above has to be registered on the same product in the Developer Portal.",
-        "adm_emailNote": "Epic Games does not share an email address, so an account created this way gets a placeholder one that can never receive mail. Ask these users to set a real address in their profile."
+        "adm_subtitle": "Set up Epic Games OAuth sign-in for your site.",
+        "adm_title": "Epic Games Login Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_epicgames-auth_name": "Epic Games Login",
@@ -58,10 +59,11 @@
     },
     "tr": {
       "epicgamesAuth": {
-        "adm_title": "Epic Games ile Giriş Ayarları",
-        "adm_subtitle": "Siteniz için Epic Games ile OAuth girişini yapılandırın.",
+        "adm_emailNote": "Epic Games e-posta adresi paylaşmaz, bu yüzden bu yolla açılan hesaba posta alamayan geçici bir adres atanır. Bu kullanıcılardan profillerinde gerçek bir adres tanımlamalarını isteyin.",
         "adm_scopeNote": "Epic Games ürününde basic_profile izni açık olmalı ve yukarıdaki dönüş adresi Developer Portal'da aynı ürüne kayıtlı olmalıdır.",
-        "adm_emailNote": "Epic Games e-posta adresi paylaşmaz, bu yüzden bu yolla açılan hesaba posta alamayan geçici bir adres atanır. Bu kullanıcılardan profillerinde gerçek bir adres tanımlamalarını isteyin."
+        "adm_subtitle": "Siteniz için Epic Games ile OAuth girişini yapılandırın.",
+        "adm_title": "Epic Games ile Giriş Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_epicgames-auth_name": "Epic Games ile Giriş",
@@ -70,6 +72,9 @@
     }
   },
   "permissions": [
-    "epicgames-auth.manage"
+    {
+      "name": "epicgames-auth.manage",
+      "labelKey": "epicgamesAuth.perm_manage"
+    }
   ]
 }

@@ -42,8 +42,9 @@
   "translations": {
     "en": {
       "redditAuth": {
+        "adm_subtitle": "Set up Reddit OAuth sign-in for your site.",
         "adm_title": "Reddit Login Settings",
-        "adm_subtitle": "Set up Reddit OAuth sign-in for your site."
+        "perm_manage": "Manage"
       },
       "admin": {
         "module_reddit-auth_name": "Reddit Login",
@@ -52,8 +53,9 @@
     },
     "tr": {
       "redditAuth": {
+        "adm_subtitle": "Siteniz için Reddit ile OAuth girişini yapılandırın.",
         "adm_title": "Reddit ile Giriş Ayarları",
-        "adm_subtitle": "Siteniz için Reddit ile OAuth girişini yapılandırın."
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "module_reddit-auth_name": "Reddit ile Giriş",
@@ -62,6 +64,9 @@
     }
   },
   "permissions": [
-    "reddit-auth.manage"
+    {
+      "name": "reddit-auth.manage",
+      "labelKey": "redditAuth.perm_manage"
+    }
   ]
 }

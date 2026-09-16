@@ -77,12 +77,13 @@
   "translations": {
     "en": {
       "midtransGateway": {
-        "adm_title": "Midtrans Settings",
-        "adm_subtitle": "Keys for taking payments through Midtrans.",
+        "adm_sandbox": "Sandbox Mode",
+        "adm_sandboxDesc": "Set to true to use the Midtrans test environment.",
         "adm_serverKey": "Server Key",
         "adm_serverKeyDesc": "From your Midtrans dashboard. Point the Midtrans notification URL at /api/v1/midtrans/notify.",
-        "adm_sandbox": "Sandbox Mode",
-        "adm_sandboxDesc": "Set to true to use the Midtrans test environment."
+        "adm_subtitle": "Keys for taking payments through Midtrans.",
+        "adm_title": "Midtrans Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_midtrans-gateway": "Midtrans Gateway",
@@ -93,12 +94,13 @@
     },
     "tr": {
       "midtransGateway": {
-        "adm_title": "Midtrans Ayarları",
-        "adm_subtitle": "Midtrans ile ödeme almak için gereken anahtarlar.",
+        "adm_sandbox": "Test Ortamı",
+        "adm_sandboxDesc": "Midtrans test ortamı için true yazın.",
         "adm_serverKey": "Sunucu Anahtarı",
         "adm_serverKeyDesc": "Midtrans panelinden alınır. Midtrans bildirim adresini /api/v1/midtrans/notify olarak ayarlayın.",
-        "adm_sandbox": "Test Ortamı",
-        "adm_sandboxDesc": "Midtrans test ortamı için true yazın."
+        "adm_subtitle": "Midtrans ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "Midtrans Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_midtrans-gateway": "Midtrans Ödeme",
@@ -109,6 +111,9 @@
     }
   },
   "permissions": [
-    "midtrans-gateway.manage"
+    {
+      "name": "midtrans-gateway.manage",
+      "labelKey": "midtransGateway.perm_manage"
+    }
   ]
 }

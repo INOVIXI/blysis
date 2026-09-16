@@ -21,7 +21,7 @@ export async function GET() {
 
     const roles = await prisma.role.findMany({
         include: {
-            permissions: true,
+            rolePermissions: { select: { permission: true, state: true } },
             _count: { select: { users: true } },
         },
         orderBy: { priority: "desc" },

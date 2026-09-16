@@ -42,20 +42,21 @@
   "translations": {
     "en": {
       "twitchAuth": {
-        "title": "Twitch Login",
-        "settings": "Twitch OAuth Settings",
+        "adm_subtitle": "Configure Twitch OAuth2 login for your site",
+        "adm_title": "Twitch Auth Settings",
         "clientId": "Client ID",
         "clientSecret": "Client Secret",
-        "enabled": "Twitch Login Enabled",
+        "description": "Configure Twitch OAuth credentials for user login",
         "disabled": "Twitch Login Disabled",
         "enable": "Enable Twitch Login",
-        "save": "Save Settings",
-        "saved": "Twitch OAuth settings saved successfully",
-        "saveError": "Failed to save Twitch OAuth settings",
+        "enabled": "Twitch Login Enabled",
         "linkAccount": "Link Twitch Account",
-        "description": "Configure Twitch OAuth credentials for user login",
-        "adm_title": "Twitch Auth Settings",
-        "adm_subtitle": "Configure Twitch OAuth2 login for your site"
+        "perm_manage": "Manage",
+        "save": "Save Settings",
+        "saveError": "Failed to save Twitch OAuth settings",
+        "saved": "Twitch OAuth settings saved successfully",
+        "settings": "Twitch OAuth Settings",
+        "title": "Twitch Login"
       },
       "admin": {
         "title": "Admin Panel",
@@ -66,20 +67,21 @@
     },
     "tr": {
       "twitchAuth": {
-        "title": "Twitch ile Giriş",
-        "settings": "Twitch OAuth Ayarları",
+        "adm_subtitle": "Siteniz için Twitch OAuth2 girişini yapılandırın",
+        "adm_title": "Twitch Kimlik Doğrulama Ayarları",
         "clientId": "İstemci Kimliği",
         "clientSecret": "İstemci Şifresi",
-        "enabled": "Twitch ile Giriş Etkin",
+        "description": "Kullanıcı girişi için Twitch OAuth kimlik bilgilerini yapılandırın",
         "disabled": "Twitch ile Giriş Devre Dışı",
         "enable": "Twitch ile Girişi Etkinleştir",
-        "save": "Ayarları Kaydet",
-        "saved": "Twitch OAuth ayarları başarıyla kaydedildi",
-        "saveError": "Twitch OAuth ayarları kaydedilemedi",
+        "enabled": "Twitch ile Giriş Etkin",
         "linkAccount": "Twitch Hesabını Bağla",
-        "description": "Kullanıcı girişi için Twitch OAuth kimlik bilgilerini yapılandırın",
-        "adm_title": "Twitch Kimlik Doğrulama Ayarları",
-        "adm_subtitle": "Siteniz için Twitch OAuth2 girişini yapılandırın"
+        "perm_manage": "Yönetebilir",
+        "save": "Ayarları Kaydet",
+        "saveError": "Twitch OAuth ayarları kaydedilemedi",
+        "saved": "Twitch OAuth ayarları başarıyla kaydedildi",
+        "settings": "Twitch OAuth Ayarları",
+        "title": "Twitch ile Giriş"
       },
       "admin": {
         "title": "Yönetim Paneli",
@@ -90,6 +92,9 @@
     }
   },
   "permissions": [
-    "twitch-auth.manage"
+    {
+      "name": "twitch-auth.manage",
+      "labelKey": "twitchAuth.perm_manage"
+    }
   ]
 }

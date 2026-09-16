@@ -42,20 +42,21 @@
   "translations": {
     "en": {
       "robloxAuth": {
-        "title": "Roblox Login",
-        "settings": "Roblox OAuth Settings",
+        "adm_subtitle": "Configure Roblox OAuth2 login for your site",
+        "adm_title": "Roblox Auth Settings",
         "clientId": "Client ID",
         "clientSecret": "Client Secret",
-        "enabled": "Roblox Login Enabled",
+        "description": "Configure Roblox OAuth credentials for user login",
         "disabled": "Roblox Login Disabled",
         "enable": "Enable Roblox Login",
-        "save": "Save Settings",
-        "saved": "Roblox OAuth settings saved successfully",
-        "saveError": "Failed to save Roblox OAuth settings",
+        "enabled": "Roblox Login Enabled",
         "linkAccount": "Link Roblox Account",
-        "description": "Configure Roblox OAuth credentials for user login",
-        "adm_title": "Roblox Auth Settings",
-        "adm_subtitle": "Configure Roblox OAuth2 login for your site"
+        "perm_manage": "Manage",
+        "save": "Save Settings",
+        "saveError": "Failed to save Roblox OAuth settings",
+        "saved": "Roblox OAuth settings saved successfully",
+        "settings": "Roblox OAuth Settings",
+        "title": "Roblox Login"
       },
       "admin": {
         "title": "Admin Panel",
@@ -66,20 +67,21 @@
     },
     "tr": {
       "robloxAuth": {
-        "title": "Roblox ile Giriş",
-        "settings": "Roblox OAuth Ayarları",
+        "adm_subtitle": "Siteniz için Roblox OAuth2 girişini yapılandırın",
+        "adm_title": "Roblox Kimlik Doğrulama Ayarları",
         "clientId": "İstemci Kimliği",
         "clientSecret": "İstemci Şifresi",
-        "enabled": "Roblox ile Giriş Etkin",
+        "description": "Kullanıcı girişi için Roblox OAuth kimlik bilgilerini yapılandırın",
         "disabled": "Roblox ile Giriş Devre Dışı",
         "enable": "Roblox ile Girişi Etkinleştir",
-        "save": "Ayarları Kaydet",
-        "saved": "Roblox OAuth ayarları başarıyla kaydedildi",
-        "saveError": "Roblox OAuth ayarları kaydedilemedi",
+        "enabled": "Roblox ile Giriş Etkin",
         "linkAccount": "Roblox Hesabını Bağla",
-        "description": "Kullanıcı girişi için Roblox OAuth kimlik bilgilerini yapılandırın",
-        "adm_title": "Roblox Kimlik Doğrulama Ayarları",
-        "adm_subtitle": "Siteniz için Roblox OAuth2 girişini yapılandırın"
+        "perm_manage": "Yönetebilir",
+        "save": "Ayarları Kaydet",
+        "saveError": "Roblox OAuth ayarları kaydedilemedi",
+        "saved": "Roblox OAuth ayarları başarıyla kaydedildi",
+        "settings": "Roblox OAuth Ayarları",
+        "title": "Roblox ile Giriş"
       },
       "admin": {
         "title": "Yönetim Paneli",
@@ -90,6 +92,9 @@
     }
   },
   "permissions": [
-    "roblox-auth.manage"
+    {
+      "name": "roblox-auth.manage",
+      "labelKey": "robloxAuth.perm_manage"
+    }
   ]
 }

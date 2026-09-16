@@ -78,12 +78,13 @@
   "translations": {
     "en": {
       "nowpaymentsGateway": {
-        "adm_title": "NOWPayments Settings",
-        "adm_subtitle": "Keys for taking payments through NOWPayments.",
         "adm_apiKey": "API Key",
         "adm_apiKeyDesc": "From your NOWPayments dashboard.",
         "adm_ipnSecret": "IPN Secret",
-        "adm_ipnSecretDesc": "From your NOWPayments dashboard. Point the NOWPayments notification URL at /api/v1/nowpayments/ipn."
+        "adm_ipnSecretDesc": "From your NOWPayments dashboard. Point the NOWPayments notification URL at /api/v1/nowpayments/ipn.",
+        "adm_subtitle": "Keys for taking payments through NOWPayments.",
+        "adm_title": "NOWPayments Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_nowpayments-gateway": "NOWPayments Gateway",
@@ -94,12 +95,13 @@
     },
     "tr": {
       "nowpaymentsGateway": {
-        "adm_title": "NOWPayments Ayarları",
-        "adm_subtitle": "NOWPayments ile ödeme almak için gereken anahtarlar.",
         "adm_apiKey": "API Anahtarı",
         "adm_apiKeyDesc": "NOWPayments panelinden alınır.",
         "adm_ipnSecret": "IPN Gizli Anahtarı",
-        "adm_ipnSecretDesc": "NOWPayments panelinden alınır. NOWPayments bildirim adresini /api/v1/nowpayments/ipn olarak ayarlayın."
+        "adm_ipnSecretDesc": "NOWPayments panelinden alınır. NOWPayments bildirim adresini /api/v1/nowpayments/ipn olarak ayarlayın.",
+        "adm_subtitle": "NOWPayments ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "NOWPayments Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_nowpayments-gateway": "NOWPayments Ödeme",
@@ -110,6 +112,9 @@
     }
   },
   "permissions": [
-    "nowpayments-gateway.manage"
+    {
+      "name": "nowpayments-gateway.manage",
+      "labelKey": "nowpaymentsGateway.perm_manage"
+    }
   ]
 }

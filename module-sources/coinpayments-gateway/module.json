@@ -73,12 +73,13 @@
   "translations": {
     "en": {
       "coinpaymentsGateway": {
-        "adm_title": "CoinPayments Settings",
-        "adm_subtitle": "Keys for taking payments through CoinPayments.",
+        "adm_ipnSecret": "IPN Secret",
+        "adm_ipnSecretDesc": "From your CoinPayments dashboard. Point the CoinPayments notification URL at /api/v1/coinpayments/ipn.",
         "adm_merchantId": "Merchant ID",
         "adm_merchantIdDesc": "From your CoinPayments dashboard.",
-        "adm_ipnSecret": "IPN Secret",
-        "adm_ipnSecretDesc": "From your CoinPayments dashboard. Point the CoinPayments notification URL at /api/v1/coinpayments/ipn."
+        "adm_subtitle": "Keys for taking payments through CoinPayments.",
+        "adm_title": "CoinPayments Settings",
+        "perm_manage": "Manage"
       },
       "admin": {
         "menu_coinpayments-gateway": "CoinPayments Gateway",
@@ -89,12 +90,13 @@
     },
     "tr": {
       "coinpaymentsGateway": {
-        "adm_title": "CoinPayments Ayarları",
-        "adm_subtitle": "CoinPayments ile ödeme almak için gereken anahtarlar.",
+        "adm_ipnSecret": "IPN Gizli Anahtarı",
+        "adm_ipnSecretDesc": "CoinPayments panelinden alınır. CoinPayments bildirim adresini /api/v1/coinpayments/ipn olarak ayarlayın.",
         "adm_merchantId": "Üye İşyeri Numarası",
         "adm_merchantIdDesc": "CoinPayments panelinden alınır.",
-        "adm_ipnSecret": "IPN Gizli Anahtarı",
-        "adm_ipnSecretDesc": "CoinPayments panelinden alınır. CoinPayments bildirim adresini /api/v1/coinpayments/ipn olarak ayarlayın."
+        "adm_subtitle": "CoinPayments ile ödeme almak için gereken anahtarlar.",
+        "adm_title": "CoinPayments Ayarları",
+        "perm_manage": "Yönetebilir"
       },
       "admin": {
         "menu_coinpayments-gateway": "CoinPayments Ödeme",
@@ -105,6 +107,9 @@
     }
   },
   "permissions": [
-    "coinpayments-gateway.manage"
+    {
+      "name": "coinpayments-gateway.manage",
+      "labelKey": "coinpaymentsGateway.perm_manage"
+    }
   ]
 }

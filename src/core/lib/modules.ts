@@ -1,6 +1,6 @@
 
 import { moduleLoader } from './module-loader';
-import { CORE_PERMISSIONS } from './permission-names';
+import { CORE_PERMISSIONS, CORE_PERMISSION_CATALOGUE } from './permission-names';
 import { ModuleState, ModuleManifest } from './module-types';
 
 /**
@@ -56,20 +56,66 @@ class ModuleSystem {
     }
 
     /**
-     * Get all permissions from enabled modules
+     * Every permission name an installed module offers, core's own first.
+     *
+     * Names only. What the roles screen shows is the label beside each, which
+     * `permissionCatalogue()` carries because it also needs to know which
+     * module a name belongs to and under which heading it sits.
      */
     getAllPermissions(): string[] {
         const permissions: string[] = [...CORE_PERMISSIONS];
 
         for (const mod of this.getEnabledModules()) {
-            if (mod.permissions) {
-                permissions.push(...mod.permissions);
+            for (const entry of mod.permissions ?? []) {
+                permissions.push(entry.name);
             }
         }
 
         return permissions;
     }
 
+    /**
+     * The vocabulary as a screen needs it: every name, the words a person
+     * reads, and where those words live.
+     *
+     * A module's label resolves in that module's own translations, so core
+     * carries no wording for a module and a fork that ships different ones
+     * gets its own. Core's twelve sit in `messages-core` under sections,
+     * because the panel itself is not a module.
+     */
+    permissionCatalogue(): PermissionEntry[] {
+        const entries: PermissionEntry[] = CORE_PERMISSION_CATALOGUE.map((permission) => ({
+            name: permission.name,
+            labelKey: permission.labelKey,
+            namespace: "core",
+            section: permission.section,
+        }));
+
+        for (const mod of this.getEnabledModules()) {
+            for (const entry of mod.permissions ?? []) {
+                entries.push({
+                    name: entry.name,
+                    labelKey: entry.labelKey,
+                    namespace: mod.id,
+                    section: mod.id,
+                });
+            }
+        }
+
+        return entries;
+    }
+
+}
+
+/** One row of the roles screen: a name, its words, and where they live. */
+export interface PermissionEntry {
+    name: string;
+    /** `namespace.key`, resolved against `namespace`'s own translations. */
+    labelKey: string;
+    /** `core`, or the module id whose translations carry the label. */
+    namespace: string;
+    /** The heading it sits under: one of core's four, or a module id. */
+    section: string;
 }
 
 export const moduleSystem = new ModuleSystem();

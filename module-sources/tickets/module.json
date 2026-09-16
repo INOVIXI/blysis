@@ -8,10 +8,22 @@
   "author": "Blysis Team",
   "icon": "Ticket",
   "permissions": [
-    "tickets.view",
-    "tickets.manage",
-    "tickets.create",
-    "tickets.reply"
+    {
+      "name": "tickets.view",
+      "labelKey": "tickets.perm_view"
+    },
+    {
+      "name": "tickets.manage",
+      "labelKey": "tickets.perm_manage"
+    },
+    {
+      "name": "tickets.create",
+      "labelKey": "tickets.perm_create"
+    },
+    {
+      "name": "tickets.reply",
+      "labelKey": "tickets.perm_reply"
+    }
   ],
   "menu": [
     {
@@ -228,6 +240,7 @@
         "adm_whoMayCleared": "Rules removed. The department is open again.",
         "adm_whoMayRuled": "This department has a list, so any role not ticked here is shut out of it.",
         "adm_whoMayUnruled": "This department has no list, so anybody may open a ticket in it. Saving one closes it to every role you do not tick.",
+        "adm_writeFailed": "That did not go through. Please try again.",
         "adm_writeReply": "Write your reply...",
         "assignedTo": "Assigned To",
         "attachment": "Attachment",
@@ -244,6 +257,11 @@
         "department": "Department",
         "describeIssue": "Describe your issue in detail...",
         "description": "Get help from our support team",
+        "err": {
+          "ticket_fields_missing": "Some answers are missing. Fill in the marked boxes.",
+          "ticket_field_not_on_list": "One of the answers is not on the list.",
+          "restricted_from_tickets": "You cannot open a ticket at the moment."
+        },
         "high": "High",
         "home": "Home",
         "inProgress": "In Progress",
@@ -265,6 +283,10 @@
         "noTicketsYet": "You don't have any support tickets yet",
         "open": "Open",
         "openTickets": "Open Tickets",
+        "perm_create": "Open a ticket",
+        "perm_manage": "Manage every ticket",
+        "perm_reply": "Reply to tickets",
+        "perm_view": "Read every ticket",
         "priority": "Priority",
         "reply": "Reply",
         "replyFailed": "Failed to send reply",
@@ -284,13 +306,7 @@
         "title": "Support Tickets",
         "updatedAt": "Updated",
         "urgent": "Urgent",
-        "waitingReply": "Waiting for Reply",
-        "adm_writeFailed": "That did not go through. Please try again.",
-        "err": {
-          "ticket_fields_missing": "Some answers are missing. Fill in the marked boxes.",
-          "ticket_field_not_on_list": "One of the answers is not on the list.",
-          "restricted_from_tickets": "You cannot open a ticket at the moment."
-        }
+        "waitingReply": "Waiting for Reply"
       },
       "admin": {
         "menu_tickets": "Tickets",
@@ -416,6 +432,7 @@
         "adm_whoMayCleared": "Kurallar kaldırıldı. Departman yeniden herkese açık.",
         "adm_whoMayRuled": "Bu departmanın bir listesi var; burada işaretlenmemiş her rol dışarıda kalır.",
         "adm_whoMayUnruled": "Bu departmanın listesi yok, yani herkes talep açabilir. Bir liste kaydettiğinizde işaretlemediğiniz her role kapanır.",
+        "adm_writeFailed": "İşlem tamamlanmadı. Lütfen tekrar deneyin.",
         "adm_writeReply": "Yanıtınızı yazın...",
         "assignedTo": "Atanan",
         "attachment": "Ek Dosya",
@@ -432,6 +449,11 @@
         "department": "Departman",
         "describeIssue": "Sorununuzu ayrıntılı olarak açıklayın...",
         "description": "Destek ekibimizden yardım alın",
+        "err": {
+          "ticket_fields_missing": "Bazı cevaplar eksik. İşaretli kutuları doldurun.",
+          "ticket_field_not_on_list": "Cevaplardan biri listede yok.",
+          "restricted_from_tickets": "Şu anda destek kaydı açamazsınız."
+        },
         "high": "Yüksek",
         "home": "Ana sayfa",
         "inProgress": "İşleniyor",
@@ -453,6 +475,10 @@
         "noTicketsYet": "Henüz destek talebiniz yok",
         "open": "Açık",
         "openTickets": "Açık Talepler",
+        "perm_create": "Talep açabilir",
+        "perm_manage": "Tüm talepleri yönetebilir",
+        "perm_reply": "Talebe yanıt yazabilir",
+        "perm_view": "Tüm talepleri okuyabilir",
         "priority": "Öncelik",
         "reply": "Yanıt",
         "replyFailed": "Yanıt gönderilemedi",
@@ -472,13 +498,7 @@
         "title": "Destek Talepleri",
         "updatedAt": "Güncellendi",
         "urgent": "Acil",
-        "waitingReply": "Yanıt Bekleniyor",
-        "adm_writeFailed": "İşlem tamamlanmadı. Lütfen tekrar deneyin.",
-        "err": {
-          "ticket_fields_missing": "Bazı cevaplar eksik. İşaretli kutuları doldurun.",
-          "ticket_field_not_on_list": "Cevaplardan biri listede yok.",
-          "restricted_from_tickets": "Şu anda destek kaydı açamazsınız."
-        }
+        "waitingReply": "Yanıt Bekleniyor"
       },
       "admin": {
         "menu_tickets": "Destek Talepleri",
