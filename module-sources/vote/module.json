@@ -2,8 +2,8 @@
   "id": "vote",
   "name": "Vote Sites",
   "description": "Send players to the server listings you are ranked on, and count who voted",
-  "version": "1.3.3",
-  "coreVersion": "^2.0.0",
+  "version": "1.6.2",
+  "coreVersion": "^3.0.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Vote",
@@ -22,7 +22,8 @@
     {
       "path": "/vote",
       "component": "pages/public/page.tsx",
-      "titleKey": "pageTitles.vote"
+      "titleKey": "pageTitles.vote",
+      "descriptionKey": "pageDescriptions.vote"
     }
   ],
   "adminRoutes": [
@@ -106,6 +107,9 @@
       },
       "nav": {
         "vote": "Vote"
+      },
+      "pageDescriptions": {
+        "vote": "Vote for the server on the listing sites below, push it up the rankings and collect a reward for every vote."
       }
     },
     "tr": {
@@ -154,6 +158,9 @@
       },
       "nav": {
         "vote": "Oy Ver"
+      },
+      "pageDescriptions": {
+        "vote": "Aşağıdaki liste sitelerinde sunucuya oy verin, sıralamada yükselmesine yardım edin ve her oy için ödülünüzü alın."
       }
     }
   },

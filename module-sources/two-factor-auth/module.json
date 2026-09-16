@@ -2,8 +2,8 @@
   "id": "two-factor-auth",
   "name": "Two-Factor Authentication",
   "description": "TOTP-based 2FA with backup codes for enhanced account security",
-  "version": "1.2.1",
-  "coreVersion": "^2.0.0",
+  "version": "1.4.2",
+  "coreVersion": "^3.0.0",
   "category": "security",
   "author": "Blysis",
   "icon": "Shield",
@@ -54,7 +54,8 @@
       "id": "ProfileSecurityTab",
       "label": "Security",
       "component": "components/ProfileSecurityTab",
-      "order": 50
+      "order": 50,
+      "labelKey": "twoFactorAuth.profileTab"
     }
   ],
   "hooksEmitted": [
@@ -117,7 +118,8 @@
         "managementInstructions": "Enter a current verification code or your password to regenerate backup codes or disable 2FA.",
         "or": "or",
         "cancel": "Cancel",
-        "done": "Done"
+        "done": "Done",
+        "profileTab": "Security"
       },
       "admin": {
         "module_two-factor-auth_name": "Two-Factor Authentication",
@@ -166,7 +168,8 @@
         "managementInstructions": "Yedek kodları yeniden oluşturmak veya 2FA'yı devre dışı bırakmak için güncel bir doğrulama kodu veya şifrenizi girin.",
         "or": "veya",
         "cancel": "İptal",
-        "done": "Tamam"
+        "done": "Tamam",
+        "profileTab": "Güvenlik"
       },
       "admin": {
         "module_two-factor-auth_name": "İki Adımlı Doğrulama",

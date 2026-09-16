@@ -2,8 +2,8 @@
   "id": "paypal-gateway",
   "name": "PayPal Payment Gateway",
   "description": "Take payments through PayPal, with a balance or a linked card",
-  "version": "2.2.1",
-  "coreVersion": "^2.1.0",
+  "version": "2.3.2",
+  "coreVersion": "^3.0.0",
   "secretSettings": [
     "paypal_client_secret"
   ],

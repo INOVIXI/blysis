@@ -2,8 +2,8 @@
   "id": "comparison-table",
   "name": "Comparison Table",
   "description": "Compare several things feature by feature. A cell nobody filled in is left blank rather than marked as a no.",
-  "version": "1.3.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.5.2",
+  "coreVersion": "^3.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "Table",
@@ -12,7 +12,8 @@
       "path": "/compare/[slug]",
       "component": "pages/public/[slug]/page.tsx",
       "resolver": "lib/route-exists.ts",
-      "titleKey": "pageTitles.compare"
+      "titleKey": "pageTitles.compare",
+      "descriptionKey": "pageDescriptions.compare"
     }
   ],
   "adminRoutes": [
@@ -98,6 +99,9 @@
         "mark_no": "not included",
         "mark_unstated": "not stated",
         "mark_value": "value"
+      },
+      "pageDescriptions": {
+        "compare": "Compare the options side by side, feature by feature, and see exactly what each one includes before you choose."
       }
     },
     "tr": {
@@ -154,6 +158,9 @@
         "mark_no": "yok",
         "mark_unstated": "belirtilmemiş",
         "mark_value": "değer"
+      },
+      "pageDescriptions": {
+        "compare": "Seçenekleri yan yana, özellik özellik karşılaştırın ve karar vermeden önce her birinin neleri kapsadığını görün."
       }
     }
   }

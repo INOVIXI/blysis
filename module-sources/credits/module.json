@@ -2,8 +2,8 @@
   "id": "credits",
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
-  "version": "1.4.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.6.2",
+  "coreVersion": "^3.0.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Coins",
@@ -16,7 +16,8 @@
       "id": "credits",
       "label": "Credits",
       "component": "components/CreditsTab.tsx",
-      "order": 35
+      "order": 35,
+      "labelKey": "credits.profileTab"
     }
   ],
   "api": [
@@ -100,7 +101,8 @@
         "typeCashback": "Cashback",
         "typeMarket_purchase": "Bought from a member",
         "typeMarket_sale": "Sold to a member",
-        "typeMarket_commission": "Marketplace commission"
+        "typeMarket_commission": "Marketplace commission",
+        "profileTab": "Credits"
       },
       "admin": {
         "module_credits_name": "Credit System",
@@ -167,7 +169,8 @@
         "typeCashback": "İade",
         "typeMarket_purchase": "Üyeden satın alındı",
         "typeMarket_sale": "Üyeye satıldı",
-        "typeMarket_commission": "Pazar komisyonu"
+        "typeMarket_commission": "Pazar komisyonu",
+        "profileTab": "Krediler"
       },
       "admin": {
         "module_credits_name": "Kredi Sistemi",

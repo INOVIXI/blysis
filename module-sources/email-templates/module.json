@@ -2,8 +2,8 @@
   "id": "email-templates",
   "name": "Email Templates",
   "description": "Email service configuration and templates",
-  "version": "1.2.2",
-  "coreVersion": "^2.1.0",
+  "version": "1.3.2",
+  "coreVersion": "^3.0.0",
   "secretSettings": [
     "resend_api_key"
   ],

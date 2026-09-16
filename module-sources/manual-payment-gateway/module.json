@@ -2,8 +2,8 @@
   "id": "manual-payment-gateway",
   "name": "Pay by Hand",
   "description": "Take a payment nobody processes: a bank transfer, cash at the counter, an invoice settled later. The order waits unpaid until an operator confirms the money arrived.",
-  "version": "1.1.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.3.2",
+  "coreVersion": "^3.0.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Landmark",
@@ -42,7 +42,8 @@
       "path": "/payment-instructions",
       "component": "pages/public/instructions/page.tsx",
       "noindex": true,
-      "titleKey": "pageTitles.paymentInstructions"
+      "titleKey": "pageTitles.paymentInstructions",
+      "descriptionKey": "pageDescriptions.paymentInstructions"
     }
   ],
   "api": [
@@ -71,6 +72,9 @@
         "adm_instructionsDesc": "Shown to the buyer after checkout. Leave it empty and this way of paying is not offered at all.",
         "adm_currencies": "Currencies you take",
         "adm_currenciesDesc": "Three letter codes, separated however you like. Leave it empty to take whatever the shop prices in."
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "Follow the payment instructions for your order: what to send, where to send it and what happens once it arrives."
       }
     },
     "tr": {
@@ -90,6 +94,9 @@
         "adm_instructionsDesc": "Ödeme adımından sonra alıcıya gösterilir. Boş bırakırsanız bu ödeme yöntemi hiç sunulmaz.",
         "adm_currencies": "Kabul ettiğiniz para birimleri",
         "adm_currenciesDesc": "Üç harfli kodlar, aralarına ne koyarsanız koyun. Boş bırakırsanız mağazanın fiyatladığı her para birimi kabul edilir."
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "Siparişiniz için ödeme talimatlarını izleyin: neyi, nereye göndereceğinizi ve ulaştığında ne olacağını görün."
       }
     }
   }

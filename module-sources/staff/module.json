@@ -2,8 +2,8 @@
   "id": "staff",
   "name": "Staff",
   "description": "Staff member listing and applications",
-  "version": "1.2.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.5.2",
+  "coreVersion": "^3.0.0",
   "category": "management",
   "author": "Blysis",
   "icon": "Users",
@@ -22,7 +22,8 @@
     {
       "path": "/staff",
       "component": "pages/public/page.tsx",
-      "titleKey": "pageTitles.staff"
+      "titleKey": "pageTitles.staff",
+      "descriptionKey": "pageDescriptions.staff"
     }
   ],
   "adminRoutes": [
@@ -78,6 +79,9 @@
       },
       "nav": {
         "staff": "Staff"
+      },
+      "pageDescriptions": {
+        "staff": "Meet the people who run the community, see the role each one holds and find out how to reach them."
       }
     },
     "tr": {
@@ -114,6 +118,9 @@
       },
       "nav": {
         "staff": "Ekip"
+      },
+      "pageDescriptions": {
+        "staff": "Topluluğu yöneten kişilerle tanışın, her birinin hangi görevi üstlendiğini ve onlara nasıl ulaşabileceğinizi görün."
       }
     }
   },

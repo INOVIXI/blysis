@@ -2,8 +2,8 @@
   "id": "trophies",
   "name": "Trophies",
   "description": "Achievement badges with rule-based auto-award engine",
-  "version": "1.2.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.6.2",
+  "coreVersion": "^3.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Trophy",
@@ -22,7 +22,8 @@
     {
       "path": "/trophies",
       "component": "pages/public/page.tsx",
-      "titleKey": "pageTitles.trophies"
+      "titleKey": "pageTitles.trophies",
+      "descriptionKey": "pageDescriptions.trophies"
     }
   ],
   "adminRoutes": [
@@ -85,7 +86,8 @@
       "id": "trophies",
       "label": "Trophies",
       "component": "components/TrophiesTab",
-      "order": 25
+      "order": 25,
+      "labelKey": "trophies.profileTab"
     }
   ],
   "settingsCards": [
@@ -167,7 +169,8 @@
         "title": "Trophies",
         "toggleFailed": "Failed to toggle",
         "trophy": "Trophy",
-        "updated": "Trophy updated"
+        "updated": "Trophy updated",
+        "profileTab": "Trophies"
       },
       "nav": {
         "trophies": "Trophies"
@@ -179,6 +182,9 @@
         "menu_trophies_trophies": "Trophies",
         "module_trophies_name": "Trophies",
         "module_trophies_description": "Achievement badges with rule-based auto-award engine"
+      },
+      "pageDescriptions": {
+        "trophies": "Browse the achievements you can earn across the community and see which of them you have already unlocked."
       }
     },
     "tr": {
@@ -232,7 +238,8 @@
         "title": "Kupalar",
         "toggleFailed": "Durum değiştirilemedi",
         "trophy": "Kupa",
-        "updated": "Kupa güncellendi"
+        "updated": "Kupa güncellendi",
+        "profileTab": "Kupalar"
       },
       "nav": {
         "trophies": "Kupalar"
@@ -244,6 +251,9 @@
         "menu_trophies_trophies": "Kupalar",
         "module_trophies_name": "Kupalar",
         "module_trophies_description": "Kural tabanlı otomatik ödüllendirme motoruyla başarım rozetleri"
+      },
+      "pageDescriptions": {
+        "trophies": "Toplulukta kazanabileceğiniz başarımlara göz atın ve bunlardan hangilerini şimdiden açtığınızı görün."
       }
     }
   }

@@ -2,8 +2,8 @@
   "id": "blog",
   "name": "Blog Module",
   "description": "News and announcements system",
-  "version": "1.4.2",
-  "coreVersion": "^2.2.0",
+  "version": "1.6.2",
+  "coreVersion": "^3.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Newspaper",
@@ -38,13 +38,16 @@
     {
       "path": "/blog",
       "component": "pages/page.tsx",
-      "titleKey": "pageTitles.blog"
+      "titleKey": "pageTitles.blog",
+      "descriptionKey": "pageDescriptions.blog"
     },
     {
       "path": "/blog/[...params]",
       "component": "pages/[...params]/page.tsx",
+      "descriptionKey": "pageDescriptions.article",
       "titleFromPath": true,
-      "resolver": "lib/article-exists.ts"
+      "resolver": "lib/article-exists.ts",
+      "ogType": "article"
     }
   ],
   "menu": [
@@ -264,7 +267,11 @@
       "pageTitles": {
         "blog": "Blog"
       },
-      "profile": {}
+      "profile": {},
+      "pageDescriptions": {
+        "blog": "Read the latest news, updates and announcements from the community, with the newest posts at the top.",
+        "article": "Read the full article, see when it was published and who wrote it, then browse the rest of the blog."
+      }
     },
     "tr": {
       "nav": {
@@ -385,7 +392,11 @@
       "pageTitles": {
         "blog": "Blog"
       },
-      "profile": {}
+      "profile": {},
+      "pageDescriptions": {
+        "blog": "Topluluktan gelen en yeni haberleri, duyuruları ve güncellemeleri, en yeni yazı en üstte olacak şekilde okuyun.",
+        "article": "Yazının tamamını okuyun, ne zaman ve kim tarafından yayımlandığını görün, ardından diğer yazılara göz atın."
+      }
     }
   },
   "pageBlocks": [

@@ -2,8 +2,8 @@
   "id": "tickets",
   "name": "Support Tickets",
   "description": "Customer support ticket system with departments and priority levels",
-  "version": "1.4.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.6.2",
+  "coreVersion": "^3.0.0",
   "category": "management",
   "author": "Blysis Team",
   "icon": "Ticket",
@@ -32,19 +32,22 @@
       "path": "/support",
       "component": "pages/public/tickets/page.tsx",
       "noindex": true,
-      "titleKey": "pageTitles.support"
+      "titleKey": "pageTitles.support",
+      "descriptionKey": "pageDescriptions.support"
     },
     {
       "path": "/support/new",
       "component": "pages/public/tickets/new/page.tsx",
-      "titleKey": "pageTitles.newTicket"
+      "titleKey": "pageTitles.newTicket",
+      "descriptionKey": "pageDescriptions.newTicket"
     },
     {
       "path": "/support/[id]",
       "component": "pages/public/tickets/[id]/page.tsx",
       "resolver": "lib/route-exists.ts",
       "noindex": true,
-      "titleKey": "pageTitles.ticket"
+      "titleKey": "pageTitles.ticket",
+      "descriptionKey": "pageDescriptions.ticket"
     }
   ],
   "adminRoutes": [
@@ -321,6 +324,11 @@
       },
       "profile": {
         "notificationType_tickets_ticket_replied": "Reply to your support ticket"
+      },
+      "pageDescriptions": {
+        "support": "See every support request you have opened, follow the replies from the team and start a new one when you need to.",
+        "newTicket": "Open a support request: pick the right department, describe your issue and get an answer from the team.",
+        "ticket": "Follow this support request from start to finish, read every reply and answer the team in the same thread."
       }
     },
     "tr": {
@@ -504,6 +512,11 @@
       },
       "profile": {
         "notificationType_tickets_ticket_replied": "Destek talebinize yanıt"
+      },
+      "pageDescriptions": {
+        "support": "Açtığınız tüm destek taleplerini görün, ekipten gelen yanıtları takip edin ve gerektiğinde yenisini oluşturun.",
+        "newTicket": "Yeni bir destek talebi oluşturun: ilgili birimi seçin, sorununuzu ayrıntısıyla anlatın ve ekipten yanıt alın.",
+        "ticket": "Bu destek talebini baştan sona takip edin, tüm yanıtları okuyun ve aynı başlık altında ekibe cevap yazın."
       }
     }
   },

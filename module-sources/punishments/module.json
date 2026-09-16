@@ -2,8 +2,8 @@
   "id": "punishments",
   "name": "Punishments",
   "description": "Bans, mutes and warnings against members, issued here or reported by a module that watches somewhere else",
-  "version": "1.4.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.7.2",
+  "coreVersion": "^3.0.0",
   "category": "management",
   "author": "Blysis",
   "icon": "Shield",
@@ -14,7 +14,8 @@
     {
       "path": "/punishments",
       "component": "pages/public/page.tsx",
-      "titleKey": "pageTitles.punishments"
+      "titleKey": "pageTitles.punishments",
+      "descriptionKey": "pageDescriptions.punishments"
     }
   ],
   "adminRoutes": [
@@ -133,6 +134,9 @@
       },
       "profile": {
         "notificationType_punishments_punishment_issued": "A punishment on your account"
+      },
+      "pageDescriptions": {
+        "punishments": "Search the record of bans, mutes, kicks and warnings, with the reason, the date and whether each one is still active."
       }
     },
     "tr": {
@@ -205,6 +209,9 @@
       },
       "profile": {
         "notificationType_punishments_punishment_issued": "Hesabınıza verilen ceza"
+      },
+      "pageDescriptions": {
+        "punishments": "Yasak, susturma, atma ve uyarı kayıtlarında arama yapın; nedenini, tarihini ve halen geçerli olup olmadığını görün."
       }
     }
   },

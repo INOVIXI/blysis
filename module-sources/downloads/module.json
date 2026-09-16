@@ -2,8 +2,8 @@
   "id": "downloads",
   "name": "Downloads",
   "description": "A file library: releases, guides and anything else worth handing out",
-  "version": "1.2.2",
-  "coreVersion": "^2.1.0",
+  "version": "1.5.2",
+  "coreVersion": "^3.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "Download",
@@ -23,12 +23,14 @@
     {
       "path": "/downloads",
       "component": "pages/public/page.tsx",
-      "titleKey": "pageTitles.downloads"
+      "titleKey": "pageTitles.downloads",
+      "descriptionKey": "pageDescriptions.downloads"
     },
     {
       "path": "/downloads/[...slug]",
       "component": "pages/public/guide/[number]/page.tsx",
       "titleKey": "pageTitles.downloads",
+      "descriptionKey": "pageDescriptions.downloads",
       "resolver": "lib/download-exists.ts"
     }
   ],
@@ -128,6 +130,9 @@
       },
       "nav": {
         "downloads": "Downloads"
+      },
+      "pageDescriptions": {
+        "downloads": "Browse the files available to download, search them by name and open the guide that explains how to use each one."
       }
     },
     "tr": {
@@ -195,6 +200,9 @@
       },
       "nav": {
         "downloads": "İndirmeler"
+      },
+      "pageDescriptions": {
+        "downloads": "İndirilebilecek dosyalara göz atın, ada göre arama yapın ve her birinin nasıl kullanılacağını anlatan rehberi açın."
       }
     }
   },

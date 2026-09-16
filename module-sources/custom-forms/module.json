@@ -2,8 +2,8 @@
   "id": "custom-forms",
   "name": "Custom Forms",
   "description": "Dynamic form builder with submissions",
-  "version": "1.2.1",
-  "coreVersion": "^2.0.0",
+  "version": "1.4.2",
+  "coreVersion": "^3.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "FileEdit",
@@ -29,7 +29,8 @@
       "path": "/form/[slug]",
       "component": "pages/public/[slug]/page.tsx",
       "resolver": "lib/route-exists.ts",
-      "titleKey": "pageTitles.form"
+      "titleKey": "pageTitles.form",
+      "descriptionKey": "pageDescriptions.form"
     }
   ],
   "adminRoutes": [
@@ -165,6 +166,9 @@
       },
       "pageTitles": {
         "form": "Form"
+      },
+      "pageDescriptions": {
+        "form": "Fill in this form and send it straight to the team, answering every question it asks in one place."
       }
     },
     "tr": {
@@ -254,6 +258,9 @@
       },
       "pageTitles": {
         "form": "Form"
+      },
+      "pageDescriptions": {
+        "form": "Bu formu doldurup ekibe gönderin, sorulan her soruyu tek bir yerde yanıtlayın ve ulaştığında onay alın."
       }
     }
   },

@@ -2,8 +2,8 @@
   "id": "discord-auth",
   "name": "Discord Login",
   "description": "Allow users to sign in with their Discord account",
-  "version": "1.1.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.2.2",
+  "coreVersion": "^3.0.0",
   "category": "integration",
   "author": "Blysis",
   "icon": "MessageSquare",
@@ -52,7 +52,6 @@
         "saved": "Discord OAuth settings saved successfully",
         "saveError": "Failed to save Discord OAuth settings",
         "linkAccount": "Link Discord Account",
-        "linkError": "Failed to link Discord account",
         "description": "Configure Discord OAuth credentials for user login",
         "adm_title": "Discord Auth Settings",
         "adm_subtitle": "Configure Discord OAuth2 login for your site"
@@ -77,7 +76,6 @@
         "saved": "Discord OAuth ayarları başarıyla kaydedildi",
         "saveError": "Discord OAuth ayarları kaydedilemedi",
         "linkAccount": "Discord Hesabını Bağla",
-        "linkError": "Discord hesabı bağlanamadı",
         "description": "Kullanıcı girişi için Discord OAuth kimlik bilgilerini yapılandırın",
         "adm_title": "Discord Kimlik Doğrulama Ayarları",
         "adm_subtitle": "Siteniz için Discord OAuth2 girişini yapılandırın"

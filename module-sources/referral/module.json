@@ -2,8 +2,8 @@
   "id": "referral",
   "name": "Referral System",
   "description": "Earn credits by referring new users",
-  "version": "1.3.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.6.2",
+  "coreVersion": "^3.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "UserPlus",
@@ -18,7 +18,8 @@
     {
       "path": "/referral",
       "component": "pages/public/page.tsx",
-      "titleKey": "pageTitles.referral"
+      "titleKey": "pageTitles.referral",
+      "descriptionKey": "pageDescriptions.referral"
     }
   ],
   "adminRoutes": [
@@ -52,7 +53,8 @@
       "id": "referrals",
       "label": "Referrals",
       "component": "components/ReferralTab.tsx",
-      "order": 40
+      "order": 40,
+      "labelKey": "referral.profileTab"
     }
   ],
   "hooksEmitted": [
@@ -151,6 +153,9 @@
       },
       "nav": {
         "referral": "Referrals"
+      },
+      "pageDescriptions": {
+        "referral": "Share your invite link, see who has signed up with it and track the credits you have earned so far."
       }
     },
     "tr": {
@@ -238,6 +243,9 @@
       },
       "nav": {
         "referral": "Davetler"
+      },
+      "pageDescriptions": {
+        "referral": "Davet bağlantınızı paylaşın, kimlerin bu bağlantıyla kaydolduğunu görün ve şimdiye kadar kazandığınız kredileri takip edin."
       }
     }
   },

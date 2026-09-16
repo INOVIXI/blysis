@@ -2,8 +2,8 @@
   "id": "wheel",
   "name": "Wheel of Fortune",
   "description": "Spin-to-win game with configurable prizes and cooldowns",
-  "version": "1.6.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.8.2",
+  "coreVersion": "^3.0.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Dices",
@@ -28,7 +28,8 @@
     {
       "path": "/wheel",
       "component": "pages/public/page.tsx",
-      "titleKey": "pageTitles.wheel"
+      "titleKey": "pageTitles.wheel",
+      "descriptionKey": "pageDescriptions.wheel"
     }
   ],
   "adminRoutes": [
@@ -177,6 +178,9 @@
       },
       "nav": {
         "wheel": "Wheel"
+      },
+      "pageDescriptions": {
+        "wheel": "Turn the wheel for a chance at a prize, and see what is on it, what a turn costs and when you can turn it again."
       }
     },
     "tr": {
@@ -255,6 +259,9 @@
       },
       "nav": {
         "wheel": "Çark"
+      },
+      "pageDescriptions": {
+        "wheel": "Ödül kazanmak için çarkı çevirin; üzerinde neler olduğunu, bir çevirmenin maliyetini ve ne zaman tekrar çevirebileceğinizi görün."
       }
     }
   },

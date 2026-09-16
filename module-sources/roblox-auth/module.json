@@ -2,8 +2,8 @@
   "id": "roblox-auth",
   "name": "Roblox Login",
   "description": "Allow users to sign in with their Roblox account",
-  "version": "1.1.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.2.2",
+  "coreVersion": "^3.0.0",
   "category": "integration",
   "author": "Blysis",
   "icon": "Boxes",
@@ -52,7 +52,6 @@
         "saved": "Roblox OAuth settings saved successfully",
         "saveError": "Failed to save Roblox OAuth settings",
         "linkAccount": "Link Roblox Account",
-        "linkError": "Failed to link Roblox account",
         "description": "Configure Roblox OAuth credentials for user login",
         "adm_title": "Roblox Auth Settings",
         "adm_subtitle": "Configure Roblox OAuth2 login for your site"
@@ -77,7 +76,6 @@
         "saved": "Roblox OAuth ayarları başarıyla kaydedildi",
         "saveError": "Roblox OAuth ayarları kaydedilemedi",
         "linkAccount": "Roblox Hesabını Bağla",
-        "linkError": "Roblox hesabı bağlanamadı",
         "description": "Kullanıcı girişi için Roblox OAuth kimlik bilgilerini yapılandırın",
         "adm_title": "Roblox Kimlik Doğrulama Ayarları",
         "adm_subtitle": "Siteniz için Roblox OAuth2 girişini yapılandırın"

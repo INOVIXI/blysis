@@ -2,8 +2,8 @@
   "id": "custom-pages",
   "name": "Custom Pages",
   "description": "Admin-created HTML content pages",
-  "version": "1.1.1",
-  "coreVersion": "^2.1.0",
+  "version": "1.3.2",
+  "coreVersion": "^3.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "FileText",
@@ -12,7 +12,8 @@
       "path": "/page/[slug]",
       "component": "pages/public/[slug]/page.tsx",
       "resolver": "lib/route-exists.ts",
-      "titleKey": "pageTitles.page"
+      "titleKey": "pageTitles.page",
+      "descriptionKey": "pageDescriptions.page"
     }
   ],
   "adminRoutes": [
@@ -108,6 +109,9 @@
       },
       "pageTitles": {
         "page": "Page"
+      },
+      "pageDescriptions": {
+        "page": "Read the information published on this page, written and kept up to date by the team behind the community."
       }
     },
     "tr": {
@@ -171,6 +175,9 @@
       },
       "pageTitles": {
         "page": "Sayfa"
+      },
+      "pageDescriptions": {
+        "page": "Bu sayfada yayımlanan bilgileri okuyun; topluluğu yöneten ekip tarafından yazılır ve güncel tutulur."
       }
     }
   },

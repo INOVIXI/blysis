@@ -2,8 +2,8 @@
   "id": "license-keys",
   "name": "License Keys",
   "description": "Generate, deliver and activate license keys for digital products, with a machine limit per key",
-  "version": "1.2.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.4.2",
+  "coreVersion": "^3.0.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "KeyRound",
@@ -72,7 +72,8 @@
       "id": "ProfileLicensesTab",
       "label": "Licenses",
       "component": "components/ProfileLicensesTab",
-      "order": 45
+      "order": 45,
+      "labelKey": "licenseKeys.profileTab"
     }
   ],
   "hookListeners": [
@@ -144,7 +145,8 @@
         "prd_maxActivations": "Activations per key",
         "prd_validDays": "Valid for (days)",
         "prd_validDaysPlaceholder": "Leave empty for no expiry",
-        "prd_prefix": "Key prefix"
+        "prd_prefix": "Key prefix",
+        "profileTab": "Licenses"
       },
       "admin": {
         "module_license-keys_name": "License Keys",
@@ -212,7 +214,8 @@
         "prd_maxActivations": "Anahtar başına etkinleştirme",
         "prd_validDays": "Geçerlilik (gün)",
         "prd_validDaysPlaceholder": "Süresiz için boş bırak",
-        "prd_prefix": "Anahtar ön eki"
+        "prd_prefix": "Anahtar ön eki",
+        "profileTab": "Lisanslar"
       },
       "admin": {
         "module_license-keys_name": "Lisans Anahtarları",

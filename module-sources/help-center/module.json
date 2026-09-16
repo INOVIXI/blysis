@@ -2,8 +2,8 @@
   "id": "help-center",
   "name": "Help Center",
   "description": "Knowledge base with categories and searchable articles",
-  "version": "1.4.1",
-  "coreVersion": "^2.1.0",
+  "version": "1.8.2",
+  "coreVersion": "^3.0.0",
   "category": "management",
   "author": "Blysis Team",
   "icon": "HelpCircle",
@@ -47,19 +47,23 @@
     {
       "path": "/help",
       "component": "pages/public/help/page.tsx",
-      "titleKey": "pageTitles.help"
+      "titleKey": "pageTitles.help",
+      "descriptionKey": "pageDescriptions.help"
     },
     {
       "path": "/help/[slug]",
       "component": "pages/public/help/[slug]/page.tsx",
       "resolver": "lib/article-exists.ts",
-      "titleKey": "pageTitles.article"
+      "titleKey": "pageTitles.article",
+      "descriptionKey": "pageDescriptions.article",
+      "ogType": "article"
     },
     {
       "path": "/help/category/[slug]",
       "component": "pages/public/help/category/[slug]/page.tsx",
       "resolver": "lib/category-exists.ts",
-      "titleKey": "pageTitles.category"
+      "titleKey": "pageTitles.category",
+      "descriptionKey": "pageDescriptions.category"
     }
   ],
   "adminRoutes": [
@@ -139,14 +143,9 @@
         "adm_verdict_unrated": "Too few votes",
         "adm_views": "Views",
         "articleCategory": "Category: {name}",
-        "articleNotFound": "Article Not Found",
-        "articleNotFoundBody": "The article you're looking for doesn't exist.",
         "articles": "{count} articles",
-        "backToHelp": "Back to Help Center",
         "browseCategories": "Browse by Category",
         "cantFind": "Can't find what you're looking for?",
-        "categoryNotFound": "Category Not Found",
-        "categoryNotFoundBody": "The category you're looking for doesn't exist.",
         "createTicket": "Create a support ticket",
         "feedbackThanks": "Thank you for your feedback!",
         "heading": "How can we help you?",
@@ -200,6 +199,11 @@
         "help": "Help Center",
         "article": "Help Article",
         "category": "Help Category"
+      },
+      "pageDescriptions": {
+        "help": "Search the knowledge base or browse the categories to find an answer, with the most read articles listed first.",
+        "article": "Read this help article step by step, tell us whether it solved your problem and find the related guides.",
+        "category": "Browse every help article filed in this category and open the guide that answers the question you arrived with."
       }
     },
     "tr": {
@@ -244,14 +248,9 @@
         "adm_verdict_unrated": "Yeterli oy yok",
         "adm_views": "Görüntülenme",
         "articleCategory": "Kategori: {name}",
-        "articleNotFound": "Makale Bulunamadı",
-        "articleNotFoundBody": "Aradığın makale mevcut değil.",
         "articles": "{count} makale",
-        "backToHelp": "Yardım Merkezi'ne Dön",
         "browseCategories": "Kategorilere Göre",
         "cantFind": "Aradığınızı bulamıyor musunuz?",
-        "categoryNotFound": "Kategori Bulunamadı",
-        "categoryNotFoundBody": "Aradığın kategori mevcut değil.",
         "createTicket": "Destek talebi oluşturun",
         "feedbackThanks": "Geri bildirimin için teşekkürler!",
         "heading": "Size nasıl yardımcı olabiliriz?",
@@ -305,6 +304,11 @@
         "help": "Yardım Merkezi",
         "article": "Yardım Makalesi",
         "category": "Yardım Kategorisi"
+      },
+      "pageDescriptions": {
+        "help": "Bilgi bankasında arama yapın ya da kategorilere göz atarak yanıt bulun; en çok okunan makaleler en başta listelenir.",
+        "article": "Bu yardım makalesini adım adım okuyun, sorununuzu çözüp çözmediğini bize bildirin ve ilgili rehberleri bulun.",
+        "category": "Bu kategoride toplanan tüm yardım makalelerine göz atın ve aklınızdaki soruyu yanıtlayan rehberi açın."
       }
     }
   },

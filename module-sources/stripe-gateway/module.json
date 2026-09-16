@@ -2,8 +2,8 @@
   "id": "stripe-gateway",
   "name": "Stripe Payment Gateway",
   "description": "Take card, Apple Pay and Google Pay payments through Stripe, including subscriptions",
-  "version": "2.3.1",
-  "coreVersion": "^2.1.0",
+  "version": "2.4.2",
+  "coreVersion": "^3.0.0",
   "secretSettings": [
     "stripe_secret_key",
     "stripe_webhook_secret"

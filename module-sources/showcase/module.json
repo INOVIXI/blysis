@@ -2,8 +2,8 @@
   "id": "showcase",
   "name": "Showcase",
   "description": "A grid of cards: a picture, a heading, a line of text and somewhere to go. What is being shown is the operator's business.",
-  "version": "1.2.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.5.2",
+  "coreVersion": "^3.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "LayoutGrid",
@@ -11,7 +11,8 @@
     {
       "path": "/showcase",
       "component": "pages/public/page.tsx",
-      "titleKey": "pageTitles.showcase"
+      "titleKey": "pageTitles.showcase",
+      "descriptionKey": "pageDescriptions.showcase"
     }
   ],
   "navLinks": [
@@ -74,6 +75,9 @@
           "showcase_bad_image": "A picture has to be a path on this site or a whole https address."
         },
         "adm_subtitleWithHint": "The cards on the showcase page, in the order they are shown. A picture and a link are each a path on this site, like /store, or a whole https address; anything else is refused."
+      },
+      "pageDescriptions": {
+        "showcase": "Browse a handpicked selection of things worth a look, where every card leads to the page behind it."
       }
     },
     "tr": {
@@ -99,6 +103,9 @@
           "showcase_bad_image": "Görsel, bu sitede bir yol ya da tam bir https adresi olmalı."
         },
         "adm_subtitleWithHint": "Vitrin sayfasındaki kartlar, gösterildikleri sırayla. Görsel ve bağlantı, bu sitede bir yol (/store gibi) ya da tam bir https adresi olmalı; başka bir şey kabul edilmiyor."
+      },
+      "pageDescriptions": {
+        "showcase": "Görmeye değer, özenle seçilmiş içeriklere göz atın; her kart sizi arkasındaki sayfaya götürür."
       }
     }
   }

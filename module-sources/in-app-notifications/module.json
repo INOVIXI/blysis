@@ -2,8 +2,8 @@
   "id": "in-app-notifications",
   "name": "In-App Notifications",
   "description": "In-app notification system with bell icon",
-  "version": "1.3.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.5.2",
+  "coreVersion": "^3.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Bell",
@@ -18,7 +18,8 @@
     {
       "path": "/notifications",
       "component": "pages/public/notifications/page.tsx",
-      "titleKey": "pageTitles.notifications"
+      "titleKey": "pageTitles.notifications",
+      "descriptionKey": "pageDescriptions.notifications"
     }
   ],
   "api": [
@@ -70,6 +71,9 @@
       "admin": {
         "module_in-app-notifications_name": "In-App Notifications",
         "module_in-app-notifications_description": "In-app notification system with bell icon"
+      },
+      "pageDescriptions": {
+        "notifications": "See every notification you have been sent, mark them as read and open the page each one points to."
       }
     },
     "tr": {
@@ -113,6 +117,9 @@
       "admin": {
         "module_in-app-notifications_name": "Uygulama İçi Bildirimler",
         "module_in-app-notifications_description": "Zil simgeli uygulama içi bildirim sistemi"
+      },
+      "pageDescriptions": {
+        "notifications": "Size gönderilen tüm bildirimleri görün, okundu olarak işaretleyin ve her birinin işaret ettiği sayfayı açın."
       }
     }
   },

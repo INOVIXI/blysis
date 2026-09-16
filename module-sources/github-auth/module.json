@@ -2,8 +2,8 @@
   "id": "github-auth",
   "name": "GitHub Login",
   "description": "Allow users to sign in with their GitHub account",
-  "version": "1.1.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.2.2",
+  "coreVersion": "^3.0.0",
   "category": "integration",
   "author": "Blysis",
   "icon": "Code2",
@@ -52,7 +52,6 @@
         "saved": "GitHub OAuth settings saved successfully",
         "saveError": "Failed to save GitHub OAuth settings",
         "linkAccount": "Link GitHub Account",
-        "linkError": "Failed to link GitHub account",
         "description": "Configure GitHub OAuth credentials for user login",
         "adm_title": "GitHub Auth Settings",
         "adm_subtitle": "Configure GitHub OAuth2 login for your site"
@@ -77,7 +76,6 @@
         "saved": "GitHub OAuth ayarları başarıyla kaydedildi",
         "saveError": "GitHub OAuth ayarları kaydedilemedi",
         "linkAccount": "GitHub Hesabını Bağla",
-        "linkError": "GitHub hesabı bağlanamadı",
         "description": "Kullanıcı girişi için GitHub OAuth kimlik bilgilerini yapılandırın",
         "adm_title": "GitHub Kimlik Doğrulama Ayarları",
         "adm_subtitle": "Siteniz için GitHub OAuth2 girişini yapılandırın"

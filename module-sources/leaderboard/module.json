@@ -2,8 +2,8 @@
   "id": "leaderboard",
   "name": "Leaderboard",
   "description": "Member rankings by purchases, votes and activity",
-  "version": "1.2.4",
-  "coreVersion": "^2.2.0",
+  "version": "1.5.2",
+  "coreVersion": "^3.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Trophy",
@@ -14,7 +14,8 @@
     {
       "path": "/leaderboard",
       "component": "pages/public/page.tsx",
-      "titleKey": "pageTitles.leaderboard"
+      "titleKey": "pageTitles.leaderboard",
+      "descriptionKey": "pageDescriptions.leaderboard"
     }
   ],
   "api": [
@@ -49,6 +50,9 @@
       },
       "nav": {
         "leaderboard": "Leaderboard"
+      },
+      "pageDescriptions": {
+        "leaderboard": "See which members rank highest for purchases, votes and posts, over today, this week or all time."
       }
     },
     "tr": {
@@ -75,6 +79,9 @@
       },
       "nav": {
         "leaderboard": "Sıralama"
+      },
+      "pageDescriptions": {
+        "leaderboard": "Alışveriş, oy ve gönderi sıralamasında hangi üyelerin önde olduğunu bugün, bu hafta ya da tüm zamanlar için görün."
       }
     }
   },

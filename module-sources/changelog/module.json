@@ -2,8 +2,8 @@
   "id": "changelog",
   "name": "Changelog",
   "description": "Release notes and update history",
-  "version": "1.2.2",
-  "coreVersion": "^2.2.0",
+  "version": "1.5.2",
+  "coreVersion": "^3.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "History",
@@ -23,13 +23,16 @@
     {
       "path": "/changelog",
       "component": "pages/public/page.tsx",
-      "titleKey": "pageTitles.changelog"
+      "titleKey": "pageTitles.changelog",
+      "descriptionKey": "pageDescriptions.changelog"
     },
     {
       "path": "/changelog/[...slug]",
       "component": "pages/public/entry/[number]/page.tsx",
       "resolver": "lib/entry-exists.ts",
-      "titleKey": "pageTitles.changelog"
+      "titleKey": "pageTitles.changelog",
+      "descriptionKey": "pageDescriptions.changelog",
+      "ogType": "article"
     }
   ],
   "adminRoutes": [
@@ -132,6 +135,9 @@
       },
       "pageTitles": {
         "changelog": "Changelog"
+      },
+      "pageDescriptions": {
+        "changelog": "See what changed in every release, from new features to fixes, with the most recent update listed first."
       }
     },
     "tr": {
@@ -195,6 +201,9 @@
       },
       "pageTitles": {
         "changelog": "Değişiklikler"
+      },
+      "pageDescriptions": {
+        "changelog": "Her sürümde nelerin değiştiğini, yeni özelliklerden düzeltmelere kadar en güncel kayıt en üstte olacak şekilde görün."
       }
     }
   },
