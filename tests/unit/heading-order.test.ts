@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { stripComments } from "./source-text";
 
 /**
  * A heading rank is document structure, not a font size.
@@ -50,9 +51,6 @@ function tsxFiles(dir: string, out: string[] = []): string[] {
 }
 
 /** Block comments and whole-line `//` comments. A doc comment naming `<h3>` is not markup. */
-export function stripComments(source: string): string {
-    return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
-}
 
 export function headingLevels(source: string): number[] {
     return [...stripComments(source).matchAll(/<h([1-6])[\s>]/g)].map((m) => Number(m[1]));
@@ -103,6 +101,22 @@ const allTsx = SCANNED.flatMap((dir) => tsxFiles(path.join(root, dir)));
 const pageFiles = allTsx.filter((f) => path.basename(f) === "page.tsx");
 const rel = (f: string) => path.relative(root, f);
 
+/**
+ * A page whose whole job is to send the reader somewhere else.
+ *
+ * `/admin/settings` is a group of sections with nothing of its own; the path
+ * an operator remembers answered 404 until it got a page that redirects to
+ * the first section. Such a page renders no markup at all, so it has no
+ * heading to give and no title to take. That is a property of the file, not
+ * an exception somebody has to remember - hence a test rather than a list.
+ */
+function onlyRedirects(file: string): boolean {
+    const source = stripComments(fs.readFileSync(file, "utf8"));
+    if (!/\bredirect\s*\(/.test(source)) return false;
+    // Nothing is returned and nothing is rendered: no JSX anywhere in it.
+    return !/<[A-Za-z]/.test(source);
+}
+
 describe("heading ranks", () => {
     it("scans the whole product, not a sample", () => {
         expect(allTsx.length).toBeGreaterThan(200);
@@ -121,6 +135,7 @@ describe("heading ranks", () => {
         const offenders = pageFiles
             .map(rel)
             .filter((f) => !PAGES_WITHOUT_OWN_H1.has(f))
+            .filter((f) => !onlyRedirects(path.join(root, f)))
             .filter((f) => !reachesAnH1(path.join(root, f)));
         expect(offenders).toEqual([]);
     });
