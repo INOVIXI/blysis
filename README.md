@@ -181,7 +181,6 @@ A theme manifest can declare:
 | Theme | Description |
 |-------|-------------|
 | `flat` | The default. Light and dark modes in one manifest, on a neutral gray palette with a single blue accent; every token pair meets WCAG AA. No component overrides, no settings. |
-| `pixelcraft` | Gaming preset, dark only. Compact 3-column hero (server IP \| logo \| Discord) with schema-driven settings. Declares a `hero.liveStats` slot and suggests the `store` module. |
 
 **Data model.** `ThemeState` (singleton, `id = 1`) holds the active theme id and
 mode. `ThemeCustomization` (`@@unique([themeId, mode])`) holds mode-scoped token
@@ -244,7 +243,7 @@ src/
     sdk/                    The module-facing contract
     providers/              ModuleProvider, ThemeProvider
   modules/                  Installed module state (gitignored, populated at runtime)
-  themes/                   Installed themes (flat + pixelcraft ship in-tree)
+  themes/                   Installed themes (flat ships in-tree)
   proxy.ts                  Middleware: i18n, module route gating, CSRF
 
 messages-core/{en,tr}.json       Core translation seed sources
