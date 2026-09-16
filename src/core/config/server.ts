@@ -3,8 +3,6 @@
 // For initial setup, configure via Admin > Settings or environment variables.
 export const serverConfig = {
     name: process.env.SITE_NAME || "Blysis",
-    ip: process.env.SERVER_IP || "play.example.com",
-    onlineCount: 0,
     communityUrl: process.env.COMMUNITY_URL || "",
     description: process.env.SITE_DESCRIPTION || "",
     email: process.env.SITE_EMAIL || "",
