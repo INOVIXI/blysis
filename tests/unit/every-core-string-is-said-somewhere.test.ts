@@ -89,8 +89,6 @@ const SLUGS = breadcrumbSlugs();
 const CONSTRUCTED: { match: RegExp; built: string; resolves: (suffix: string) => boolean }[] = [
     // AdminBreadcrumb: `crumb_${slug}` for a route with no sidebar entry.
     { match: /^crumb_(.+)$/, built: "`crumb_${slug}`", resolves: (s) => SLUGS.has(s) },
-    // The profile page: one tab per module slot, named by the slot's id.
-    { match: /^profileTab_(.+)$/, built: "`profileTab_${mt.id}`", resolves: (s) => BLOB.includes(s) },
     // NotificationPrefsTab: one row per channel a notification can take.
     { match: /^channel_(.+)$/, built: "`channel_${c}`", resolves: (s) => BLOB.includes(s) },
     // The alerting screen, over a health status.

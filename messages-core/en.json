@@ -28,7 +28,6 @@
     "language": "Language",
     "loadFailed": "This could not be loaded. It may be a connection problem.",
     "loading": "Loading...",
-    "loadingEditor": "Loading editor...",
     "login": "Login",
     "logout": "Logout",
     "next": "Next",
@@ -70,7 +69,33 @@
     "err": {
       "demo_disabled": "This is the public demo, so this change is not saved. Run your own instance to try it.",
       "out_of_stock": "Sorry, one of these has just sold out."
-    }
+    },
+    "formatting": "Formatting",
+    "heading1": "Heading 1",
+    "heading2": "Heading 2",
+    "heading3": "Heading 3",
+    "bold": "Bold",
+    "italic": "Italic",
+    "strikethrough": "Strikethrough",
+    "inlineCode": "Code",
+    "codeBlock": "Code block",
+    "quote": "Quote",
+    "bulletList": "Bulleted list",
+    "numberedList": "Numbered list",
+    "link": "Link",
+    "image": "Image",
+    "video": "Video",
+    "headingSample": "Heading",
+    "boldSample": "bold text",
+    "italicSample": "italic text",
+    "strikethroughSample": "struck through",
+    "codeSample": "code",
+    "quoteSample": "quoted text",
+    "listItemSample": "list item",
+    "linkSample": "link text",
+    "imageSample": "image description",
+    "videoSample": "video link",
+    "mediaLibrary": "Media library"
   },
   "notFound": {
     "title": "Page not found",
@@ -1229,7 +1254,13 @@
     "sidebar_accounts": "Accounts",
     "sidebar_access": "Access",
     "navSection_payments": "Payments",
-    "navSection_integrations": "Integrations"
+    "navSection_integrations": "Integrations",
+    "generalSettings_memberContent": "Member content",
+    "generalSettings_memberAvatarUploads": "Profile pictures",
+    "generalSettings_memberAvatarUploadsHint": "Whether a member may upload their own profile picture. Turned off, they can still point at one they host themselves. Uploads are images only, at most 2 MB, and capped per member.",
+    "generalSettings_allowed": "Members may upload",
+    "generalSettings_notAllowed": "Link only",
+    "siteSettings_logo": "Logo"
   },
   "footer": {
     "quickLinks": "Quick Links",
@@ -1241,7 +1272,6 @@
     "title": "Profile",
     "settings": "Profile Settings",
     "username": "Username",
-    "avatarUrl": "Avatar URL",
     "email": "Email",
     "emailCannotChange": "Email cannot be changed",
     "memberSince": "Member since",
@@ -1301,11 +1331,8 @@
     "unknownIp": "unknown IP",
     "lastActive": "last active {date}",
     "failed": "Failed",
-    "profileTab_ProfileOrdersTab": "Orders",
-    "profileTab_ProfileChestTab": "Chest",
-    "profileTab_ProfileSecurityTab": "Security",
-    "profileTab_referrals": "Referrals",
-    "metaDescription": "Your account settings, sessions and privacy controls."
+    "metaDescription": "Your account settings, sessions and privacy controls.",
+    "avatar": "Profile picture"
   },
   "auth": {
     "accountLocked": "Too many failed attempts. Your account is temporarily locked. Check your email or try again in a few minutes.",

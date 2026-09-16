@@ -40,8 +40,6 @@ const LITERAL_EXAMPLES = new Set([
     "auto-generated-from-title", // what an empty slug becomes
     "HelpCircle, BookOpen, Lightbulb...", // Lucide icon identifiers
     "7d",                   // a punishment duration
-    "google-site-verification=...",
-    "msvalidate.01=...",
     "/about",               // a URL path
     "keyword1, keyword2, keyword3",
     "give {player} diamond 64", // a server command with a placeholder token

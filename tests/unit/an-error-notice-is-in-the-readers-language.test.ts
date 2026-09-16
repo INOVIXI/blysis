@@ -124,7 +124,6 @@ describe("every key these screens ask for exists in every locale", () => {
         ["common", "error_reported"],
         ["common", "reloadPage"],
         ["common", "componentFailed"],
-        ["common", "loadingEditor"],
         ["common", "retry"],
         ["auth", "backupCodesRemaining"],
         ["admin", "theme_installedRestart"],

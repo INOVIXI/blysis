@@ -28,7 +28,6 @@
     "language": "Dil",
     "loadFailed": "Bu içerik yüklenemedi. Bir bağlantı sorunu olabilir.",
     "loading": "Yükleniyor...",
-    "loadingEditor": "Düzenleyici yükleniyor...",
     "login": "Giriş Yap",
     "logout": "Çıkış Yap",
     "next": "Sonraki",
@@ -70,7 +69,33 @@
     "err": {
       "demo_disabled": "Burası herkese açık demo, bu yüzden bu değişiklik kaydedilmedi. Denemek için kendi kurulumunu çalıştır.",
       "out_of_stock": "Üzgünüz, bunlardan biri az önce tükendi."
-    }
+    },
+    "formatting": "Biçimlendirme",
+    "heading1": "Başlık 1",
+    "heading2": "Başlık 2",
+    "heading3": "Başlık 3",
+    "bold": "Kalın",
+    "italic": "İtalik",
+    "strikethrough": "Üstü çizili",
+    "inlineCode": "Kod",
+    "codeBlock": "Kod bloğu",
+    "quote": "Alıntı",
+    "bulletList": "Madde işaretli liste",
+    "numberedList": "Numaralı liste",
+    "link": "Bağlantı",
+    "image": "Görsel",
+    "video": "Video",
+    "headingSample": "Başlık",
+    "boldSample": "kalın metin",
+    "italicSample": "italik metin",
+    "strikethroughSample": "üstü çizili",
+    "codeSample": "kod",
+    "quoteSample": "alıntı metni",
+    "listItemSample": "liste öğesi",
+    "linkSample": "bağlantı metni",
+    "imageSample": "görsel açıklaması",
+    "videoSample": "video bağlantısı",
+    "mediaLibrary": "Medya kütüphanesi"
   },
   "notFound": {
     "title": "Sayfa bulunamadı",
@@ -1229,7 +1254,13 @@
     "sidebar_accounts": "Hesaplar",
     "sidebar_access": "Erişim",
     "navSection_payments": "Ödemeler",
-    "navSection_integrations": "Entegrasyonlar"
+    "navSection_integrations": "Entegrasyonlar",
+    "generalSettings_memberContent": "Üye içeriği",
+    "generalSettings_memberAvatarUploads": "Profil fotoğrafları",
+    "generalSettings_memberAvatarUploadsHint": "Bir üyenin kendi profil fotoğrafını yükleyip yükleyemeyeceği. Kapalıyken kendi barındırdığı bir adresi yine de verebilir. Yüklemeler yalnızca görsel, en fazla 2 MB ve üye başına sınırlı.",
+    "generalSettings_allowed": "Üyeler yükleyebilir",
+    "generalSettings_notAllowed": "Yalnızca bağlantı",
+    "siteSettings_logo": "Logo"
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",
@@ -1241,7 +1272,6 @@
     "title": "Profil",
     "settings": "Profil Ayarları",
     "username": "Kullanıcı Adı",
-    "avatarUrl": "Avatar URL",
     "email": "E-posta",
     "emailCannotChange": "E-posta değiştirilemez",
     "memberSince": "Katılma tarihi",
@@ -1301,11 +1331,8 @@
     "unknownIp": "bilinmeyen IP",
     "lastActive": "son etkinlik {date}",
     "failed": "Başarısız",
-    "profileTab_ProfileOrdersTab": "Siparişler",
-    "profileTab_ProfileChestTab": "Envanter",
-    "profileTab_ProfileSecurityTab": "Güvenlik",
-    "profileTab_referrals": "Referanslar",
-    "metaDescription": "Hesap ayarların, oturumların ve gizlilik denetimlerin."
+    "metaDescription": "Hesap ayarların, oturumların ve gizlilik denetimlerin.",
+    "avatar": "Profil fotoğrafı"
   },
   "auth": {
     "accountLocked": "Çok fazla başarısız deneme. Hesabın geçici olarak kilitlendi. E-postanı kontrol et veya birkaç dakika sonra tekrar dene.",
