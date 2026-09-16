@@ -4,9 +4,15 @@ import { STAFF_ROLE_PRIORITY } from "./constants";
 /**
  * Permission system.
  *
+ * A member holds a set of roles, and what they may do is the union of it.
+ * Roles only ever grant, so two of them cannot disagree and nothing has to
+ * arbitrate between them. The single role column a member used to have is
+ * still there and means something narrower now: the role shown beside their
+ * name, which is the highest-priority one they hold.
+ *
  * Two layers, both bypassed by the admin role:
- *   1. Role-level permissions (Permission table joined via Role) for
- *      module-wide access, e.g. hasPermission(userId, "blog.manage").
+ *   1. The union of the held roles' permissions, e.g.
+ *      hasPermission(userId, "blog.manage").
  *   2. ResourcePermission grants for per-resource or per-entity allow/deny,
  *      e.g. hasResourcePermission(userId, "blog.article", "edit", articleId).
  *
@@ -14,6 +20,79 @@ import { STAFF_ROLE_PRIORITY } from "./constants";
  * → role+resourceId → role+resource → legacy role permissions. Any matching
  * deny short-circuits.
  */
+
+/** What a member may do, worked out once from the roles they hold. */
+export interface EffectiveRoles {
+    /** Permission names granted by any unexpired role. Empty for an admin. */
+    permissions: Set<string>;
+    /** Holds a role named `admin`, which bypasses every check below. */
+    isAdmin: boolean;
+    /** The highest priority among the held roles, which is what staff means. */
+    priority: number;
+    /** Ids of the roles held, for the grants that are written against a role. */
+    roleIds: string[];
+}
+
+const NOBODY: EffectiveRoles = { permissions: new Set(), isAdmin: false, priority: 0, roleIds: [] };
+
+/**
+ * The roles a member holds right now.
+ *
+ * An expired row grants nothing from the moment it expires rather than from
+ * whenever the sweep next runs: a permission that outlives its expiry until a
+ * cron happens to fire is not an expiry. The sweep still deletes the rows, so
+ * this filter is the guarantee and the sweep is the tidying.
+ */
+async function resolveRoles(userId: string): Promise<EffectiveRoles> {
+    if (!userId) return NOBODY;
+
+    const held = await prisma.userRole.findMany({
+        where: {
+            userId,
+            OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+        },
+        select: {
+            roleId: true,
+            expiresAt: true,
+            role: {
+                select: {
+                    name: true,
+                    priority: true,
+                    permissions: { select: { name: true } },
+                },
+            },
+        },
+    });
+
+    if (held.length === 0) return NOBODY;
+
+    const permissions = new Set<string>();
+    let isAdmin = false;
+    let priority = 0;
+    const roleIds: string[] = [];
+
+    const now = Date.now();
+    for (const row of held) {
+        const role = row.role;
+        if (!role) continue;
+        // Asked for in the query and checked again here. The query is what
+        // keeps the read small; this is what makes the rule true, including
+        // for a caller that hands in rows it fetched some other way, and it
+        // costs one comparison per role.
+        if (row.expiresAt && row.expiresAt.getTime() <= now) continue;
+        if (typeof (row as { roleId?: string }).roleId === "string") roleIds.push((row as { roleId: string }).roleId);
+        if (role.name === "admin") isAdmin = true;
+        if (role.priority > priority) priority = role.priority;
+        for (const permission of role.permissions) permissions.add(permission.name);
+    }
+
+    return { permissions, isAdmin, priority, roleIds };
+}
+
+/** The names a member may act on, as a set. An admin's set is empty and bypasses. */
+export async function effectivePermissions(userId: string): Promise<Set<string>> {
+    return (await resolveRoles(userId)).permissions;
+}
 
 export interface PermissionCheck {
     userId: string;
@@ -24,20 +103,8 @@ export async function hasPermission(
     userId: string,
     permission: string
 ): Promise<boolean> {
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: {
-            role: {
-                include: {
-                    permissions: true,
-                },
-            },
-        },
-    });
-
-    if (!user || !user.role) return false;
-    if (user.role.name === "admin") return true;
-    return user.role.permissions.some((p: { name: string }) => p.name === permission);
+    const held = await resolveRoles(userId);
+    return held.isAdmin || held.permissions.has(permission);
 }
 
 /** True when the user has at least one of the listed permissions. */
@@ -45,13 +112,8 @@ export async function hasAnyPermission(
     userId: string,
     permissions: string[]
 ): Promise<boolean> {
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: { role: { include: { permissions: true } } },
-    });
-    if (!user || !user.role) return false;
-    if (user.role.name === "admin") return true;
-    return user.role.permissions.some((p: { name: string }) => permissions.includes(p.name));
+    const held = await resolveRoles(userId);
+    return held.isAdmin || permissions.some((permission) => held.permissions.has(permission));
 }
 
 /** True only when the user has every listed permission. */
@@ -59,32 +121,15 @@ export async function hasAllPermissions(
     userId: string,
     permissions: string[]
 ): Promise<boolean> {
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: { role: { include: { permissions: true } } },
-    });
-    if (!user || !user.role) return false;
-    if (user.role.name === "admin") return true;
-    const userPerms = user.role.permissions.map((p: { name: string }) => p.name);
-    return permissions.every((perm) => userPerms.includes(perm));
+    const held = await resolveRoles(userId);
+    return held.isAdmin || permissions.every((permission) => held.permissions.has(permission));
 }
 
 /** Returns `["*"]` for admin (matches all permissions). */
 export async function getUserPermissions(userId: string): Promise<string[]> {
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: {
-            role: {
-                include: {
-                    permissions: true,
-                },
-            },
-        },
-    });
-
-    if (!user || !user.role) return [];
-    if (user.role.name === "admin") return ["*"];
-    return user.role.permissions.map((p: { name: string }) => p.name);
+    const held = await resolveRoles(userId);
+    if (held.isAdmin) return ["*"];
+    return [...held.permissions];
 }
 
 /** Adapter for API routes that gate on a single permission. */
@@ -101,16 +146,17 @@ export function requirePermission(permission: string) {
     };
 }
 
-/** Pass sessionRole from JWT to skip the DB query. */
+/**
+ * Pass sessionRole from the token to skip the query.
+ *
+ * The token carries the *displayed* role, which is the highest-priority one
+ * held, so a member who holds the admin role holds it at the top: nothing
+ * outranks it. The fast path is therefore still exact, and the slow path asks
+ * the set rather than the column.
+ */
 export async function isAdmin(userId: string, sessionRole?: string): Promise<boolean> {
     if (sessionRole === "admin") return true;
-
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: { role: true },
-    });
-
-    return user?.role?.name === "admin";
+    return (await resolveRoles(userId)).isAdmin;
 }
 
 /**
@@ -132,12 +178,8 @@ export async function isStaff(
     if (sessionRole === "admin") return true;
     if (typeof sessionPriority === "number") return sessionPriority >= STAFF_ROLE_PRIORITY;
 
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: { role: true },
-    });
-
-    return (user?.role?.priority || 0) >= STAFF_ROLE_PRIORITY;
+    const held = await resolveRoles(userId);
+    return held.isAdmin || held.priority >= STAFF_ROLE_PRIORITY;
 }
 
 /* ─────────────────── Granular ResourcePermission ─────────────────── */
@@ -155,12 +197,9 @@ export async function hasResourcePermission(
     action: ResourceAction,
     resourceId?: string
 ): Promise<boolean> {
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: { role: true },
-    });
-    if (!user || !user.role) return false;
-    if (user.role.name === "admin") return true;
+    const held = await resolveRoles(userId);
+    if (held.roleIds.length === 0) return false;
+    if (held.isAdmin) return true;
 
     const candidates: { principalType: string; principalId: string; resourceId: string | null }[] = [];
 
@@ -169,10 +208,19 @@ export async function hasResourcePermission(
     }
     candidates.push({ principalType: "user", principalId: userId, resourceId: null });
 
+    // Every role the member holds sits at the same level of specificity: none
+    // of them is more theirs than another. A deny on any of them therefore
+    // wins over an allow on another, which is the only safe reading - the
+    // alternative is that granting somebody a second role can quietly lift a
+    // refusal written against the first.
     if (resourceId) {
-        candidates.push({ principalType: "role", principalId: user.role.id, resourceId });
+        for (const roleId of held.roleIds) {
+            candidates.push({ principalType: "role", principalId: roleId, resourceId });
+        }
     }
-    candidates.push({ principalType: "role", principalId: user.role.id, resourceId: null });
+    for (const roleId of held.roleIds) {
+        candidates.push({ principalType: "role", principalId: roleId, resourceId: null });
+    }
 
     const grants = await prisma.resourcePermission.findMany({
         where: {
@@ -180,7 +228,7 @@ export async function hasResourcePermission(
             action: { in: [action, "*"] },
             OR: [
                 { principalType: "user", principalId: userId },
-                { principalType: "role", principalId: user.role.id },
+                { principalType: "role", principalId: { in: held.roleIds } },
             ],
         },
     });
@@ -202,19 +250,32 @@ export async function hasResourcePermission(
         action: string;
         allow: boolean;
     };
+    const levels: { principalType: string; resourceId: string | null }[] = [];
     for (const c of candidates) {
-        const atThisLevel = (grants as Grant[]).filter(
-            (g) =>
-                g.principalType === c.principalType &&
-                g.principalId === c.principalId &&
-                g.resourceId === c.resourceId
-        );
-        const match =
-            atThisLevel.find((g) => g.action === action) ??
-            atThisLevel.find((g) => g.action === "*");
-        if (match) {
-            return match.allow;
+        if (!levels.some((l) => l.principalType === c.principalType && l.resourceId === c.resourceId)) {
+            levels.push({ principalType: c.principalType, resourceId: c.resourceId });
         }
+    }
+
+    for (const level of levels) {
+        const principals = candidates.filter(
+            (c) => c.principalType === level.principalType && c.resourceId === level.resourceId,
+        );
+        const matches: Grant[] = [];
+        for (const c of principals) {
+            const atThisPrincipal = (grants as Grant[]).filter(
+                (g) =>
+                    g.principalType === c.principalType &&
+                    g.principalId === c.principalId &&
+                    g.resourceId === c.resourceId
+            );
+            const match =
+                atThisPrincipal.find((g) => g.action === action) ??
+                atThisPrincipal.find((g) => g.action === "*");
+            if (match) matches.push(match);
+        }
+        if (matches.length === 0) continue;
+        return matches.every((match) => match.allow);
     }
     return false;
 }

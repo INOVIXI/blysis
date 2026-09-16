@@ -67,6 +67,16 @@ export const CORE_TABLES: CoreTable[] = [
         select: { id: true, roleId: true, expiresAt: true, source: true, createdAt: true },
     },
     {
+        key: "roles",
+        model: "userRole",
+        column: "userId",
+        // Every role they hold, when it was granted, what granted it, and when
+        // it lapses if it does. Theirs to have for the same reason the timed
+        // grant above was: it is a record of a decision made about them, and
+        // `source` is the answer to "why do I have this".
+        select: { id: true, roleId: true, grantedAt: true, expiresAt: true, source: true },
+    },
+    {
         // tokenId withheld: it is the live revocation key for the session.
         key: "sessions",
         model: "userSession",
@@ -330,6 +340,8 @@ Contents
                    until when.
   timedRoles       Roles you hold for a fixed period, and when each
                    one lapses.
+  roles            Every role you hold, when it was granted, what
+                   granted it, and when it lapses if it does.
   sessions         Login sessions (device, IP, last-active timestamp).
   warnings         Moderation warnings issued against you.
   notificationPrefs

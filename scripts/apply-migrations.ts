@@ -47,8 +47,30 @@ function getInstalledModules(): string[] {
         .sort();
 }
 
+/**
+ * Core's own migrations are recorded under this id, in the same table a
+ * module's are. A module can never be called this: `validate-module` requires
+ * an id that matches its directory, and `src/modules/core` is not a module.
+ */
+export const CORE_MIGRATION_OWNER = "core";
+
+/**
+ * Everything with migrations to run, core first.
+ *
+ * A module's migration may reasonably read a core table. A core migration may
+ * not read a module's, because the module may not be installed - so the order
+ * is not a preference, it is the only one that is always safe.
+ */
+export function migrationOwners(): string[] {
+    return [CORE_MIGRATION_OWNER, ...getInstalledModules()];
+}
+
 /** Resolve migrations directory: prefer installed copy, fall back to module-sources. */
-function getMigrationsDir(moduleName: string): string | null {
+export function migrationsDirFor(moduleName: string): string | null {
+    if (moduleName === CORE_MIGRATION_OWNER) {
+        const core = path.join(ROOT, "prisma/migrations");
+        return fs.existsSync(core) ? core : null;
+    }
     const installed = path.join(INSTALLED_MODULES_DIR, moduleName, "migrations");
     if (fs.existsSync(installed)) return installed;
     const source = path.join(MODULE_SOURCES_DIR, moduleName, "migrations");
@@ -174,7 +196,7 @@ async function applyModuleMigrations(
 ): Promise<ApplyResult> {
     const result: ApplyResult = { moduleId, applied: [], skipped: [], errors: [] };
 
-    const migrationsDir = getMigrationsDir(moduleId);
+    const migrationsDir = migrationsDirFor(moduleId);
     if (!migrationsDir) return result;
 
     const files = listMigrationFiles(migrationsDir);
@@ -256,11 +278,11 @@ async function applyModuleMigrations(
 export async function applyMigrations(options: Options = { moduleFilter: null, dryRun: false, bootstrap: false }): Promise<ApplyResult[]> {
     const modules = options.moduleFilter
         ? [options.moduleFilter]
-        : getInstalledModules();
+        : migrationOwners();
 
     const results: ApplyResult[] = [];
     for (const moduleId of modules) {
-        const migrationsDir = getMigrationsDir(moduleId);
+        const migrationsDir = migrationsDirFor(moduleId);
         if (!migrationsDir) continue;
         console.log(`\n[${moduleId}]`);
         const result = await applyModuleMigrations(moduleId, options);

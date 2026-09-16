@@ -38,8 +38,20 @@ model User {
   createdAt        DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  /**
+   * The role shown for this member: their highest-priority one.
+   *
+   * Not "the role they have" any more - that is `roles`. This is a cache of
+   * the top of that set, kept because a member list of fifty rows draws fifty
+   * badges and computing the maximum per row is a join per row for a value
+   * that changes rarely. `syncDisplayedRole` is the only writer, and a gate
+   * proves it against the set.
+   */
   role   Role?   @relation(fields: [roleId], references: [id])
   roleId String?
+
+  /** Every role this member holds, each with its own expiry and origin. */
+  roles  UserRole[]
 
   accounts Account[]
   sessions Session[]
@@ -125,6 +137,43 @@ model Role {
 
   permissions Permission[]
   users       User[]
+  members     UserRole[]
+}
+
+/**
+ * One role a member holds.
+ *
+ * A member used to hold exactly one, which is why handing out a rank had to
+ * remember what to put back: buying a rank could take somebody's moderator
+ * status away and give it back a month later. A set has no such problem, and a
+ * temporary role is just a row with a time on it.
+ *
+ * Roles only ever grant. Two of them cannot disagree, so nothing has to
+ * arbitrate between them and "which role wins" is a question this shape
+ * refuses to create. The only refusal is an exception written against one
+ * member or one role, deliberately.
+ */
+model UserRole {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roleId    String
+  role      Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  grantedAt DateTime  @default(now())
+  /** Null is permanent. A time here is what a timed grant used to be. */
+  expiresAt DateTime?
+  /**
+   * A free label naming what granted it, so core need not know what kinds of
+   * thing do: a purchase, a campaign, an operator with a form.
+   */
+  source    String    @default("manual")
+
+  // One row per member per role: granting the same rank again extends this
+  // row rather than adding a second that would lapse independently.
+  @@unique([userId, roleId])
+  // The sweep asks for the grants whose time is up and nothing else.
+  @@index([expiresAt])
+  @@index([roleId])
 }
 
 model TimedRoleGrant {

@@ -19,10 +19,14 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // Mock prisma - only the methods permissions.ts touches.
 const mockUserFindUnique = vi.fn();
+const mockUserRoleFindMany = vi.fn();
 const mockResourceFindMany = vi.fn();
 
 vi.mock("@/core/lib/db", () => ({
     prisma: {
+        userRole: {
+            findMany: (...args: unknown[]) => mockUserRoleFindMany(...args),
+        },
         user: {
             findUnique: (...args: unknown[]) => mockUserFindUnique(...args),
         },
@@ -42,24 +46,36 @@ import {
     isStaff,
 } from "@/core/lib/permissions";
 
-// Helpers to build the user-with-role shape that the include returns.
+// Helpers to build the held-role rows the resolver reads. A member holds a
+// set now, so each of these is a set with one role in it; the union itself is
+// covered in `roles-combine-by-union`.
 function memberWith(perms: string[], opts: { priority?: number; roleId?: string } = {}) {
-    return {
-        id: "u1",
-        role: {
-            id: opts.roleId ?? "role-member",
-            name: "member",
-            priority: opts.priority ?? 0,
-            permissions: perms.map((name) => ({ name })),
+    return [
+        {
+            roleId: opts.roleId ?? "role-member",
+            expiresAt: null,
+            role: {
+                name: "member",
+                priority: opts.priority ?? 0,
+                permissions: perms.map((name) => ({ name })),
+            },
         },
-    };
+    ];
 }
 
 function adminUser() {
-    return {
-        id: "admin1",
-        role: { id: "role-admin", name: "admin", priority: 100, permissions: [] },
-    };
+    return [
+        {
+            roleId: "role-admin",
+            expiresAt: null,
+            role: { name: "admin", priority: 100, permissions: [] },
+        },
+    ];
+}
+
+/** A member who holds nothing: the row set is empty, whatever the reason. */
+function holdsNothing() {
+    return [];
 }
 
 beforeEach(() => {
@@ -68,119 +84,119 @@ beforeEach(() => {
 
 describe("hasPermission", () => {
     it("returns true when the role carries the permission", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith(["blog.manage", "store.view"]));
+        mockUserRoleFindMany.mockResolvedValue(memberWith(["blog.manage", "store.view"]));
         expect(await hasPermission("u1", "blog.manage")).toBe(true);
     });
 
     it("returns false when the role lacks the permission", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith(["store.view"]));
+        mockUserRoleFindMany.mockResolvedValue(memberWith(["store.view"]));
         expect(await hasPermission("u1", "blog.manage")).toBe(false);
     });
 
     it("admin role bypasses the permission list entirely", async () => {
-        mockUserFindUnique.mockResolvedValue(adminUser());
+        mockUserRoleFindMany.mockResolvedValue(adminUser());
         expect(await hasPermission("admin1", "anything.at.all")).toBe(true);
     });
 
     it("returns false when the user does not exist", async () => {
-        mockUserFindUnique.mockResolvedValue(null);
+        mockUserRoleFindMany.mockResolvedValue(holdsNothing());
         expect(await hasPermission("ghost", "blog.manage")).toBe(false);
     });
 
     it("returns false when the user has no role", async () => {
-        mockUserFindUnique.mockResolvedValue({ id: "u1", role: null });
+        mockUserRoleFindMany.mockResolvedValue(holdsNothing());
         expect(await hasPermission("u1", "blog.manage")).toBe(false);
     });
 });
 
 describe("hasAnyPermission", () => {
     it("true when at least one listed permission is held", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith(["store.view"]));
+        mockUserRoleFindMany.mockResolvedValue(memberWith(["store.view"]));
         expect(await hasAnyPermission("u1", ["blog.manage", "store.view"])).toBe(true);
     });
 
     it("false when none of the listed permissions are held", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith(["forum.post"]));
+        mockUserRoleFindMany.mockResolvedValue(memberWith(["forum.post"]));
         expect(await hasAnyPermission("u1", ["blog.manage", "store.view"])).toBe(false);
     });
 
     it("admin bypasses", async () => {
-        mockUserFindUnique.mockResolvedValue(adminUser());
+        mockUserRoleFindMany.mockResolvedValue(adminUser());
         expect(await hasAnyPermission("admin1", ["nope.one", "nope.two"])).toBe(true);
     });
 
     it("false when no role", async () => {
-        mockUserFindUnique.mockResolvedValue({ id: "u1", role: null });
+        mockUserRoleFindMany.mockResolvedValue(holdsNothing());
         expect(await hasAnyPermission("u1", ["blog.manage"])).toBe(false);
     });
 });
 
 describe("hasAllPermissions", () => {
     it("true only when every listed permission is held", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith(["a.x", "b.y", "c.z"]));
+        mockUserRoleFindMany.mockResolvedValue(memberWith(["a.x", "b.y", "c.z"]));
         expect(await hasAllPermissions("u1", ["a.x", "b.y"])).toBe(true);
     });
 
     it("false when one of the listed permissions is missing", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith(["a.x"]));
+        mockUserRoleFindMany.mockResolvedValue(memberWith(["a.x"]));
         expect(await hasAllPermissions("u1", ["a.x", "b.y"])).toBe(false);
     });
 
     it("admin bypasses", async () => {
-        mockUserFindUnique.mockResolvedValue(adminUser());
+        mockUserRoleFindMany.mockResolvedValue(adminUser());
         expect(await hasAllPermissions("admin1", ["a.x", "b.y", "c.z"])).toBe(true);
     });
 
     it("false when no user", async () => {
-        mockUserFindUnique.mockResolvedValue(null);
+        mockUserRoleFindMany.mockResolvedValue(holdsNothing());
         expect(await hasAllPermissions("u1", ["a.x"])).toBe(false);
     });
 });
 
 describe("getUserPermissions", () => {
     it("aggregates the role's permission names", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith(["blog.manage", "store.view"]));
+        mockUserRoleFindMany.mockResolvedValue(memberWith(["blog.manage", "store.view"]));
         const perms = await getUserPermissions("u1");
         expect(perms).toEqual(["blog.manage", "store.view"]);
     });
 
     it("returns ['*'] for admin", async () => {
-        mockUserFindUnique.mockResolvedValue(adminUser());
+        mockUserRoleFindMany.mockResolvedValue(adminUser());
         expect(await getUserPermissions("admin1")).toEqual(["*"]);
     });
 
     it("returns [] when user has no role", async () => {
-        mockUserFindUnique.mockResolvedValue({ id: "u1", role: null });
+        mockUserRoleFindMany.mockResolvedValue(holdsNothing());
         expect(await getUserPermissions("u1")).toEqual([]);
     });
 
     it("returns [] when user is missing", async () => {
-        mockUserFindUnique.mockResolvedValue(null);
+        mockUserRoleFindMany.mockResolvedValue(holdsNothing());
         expect(await getUserPermissions("ghost")).toEqual([]);
     });
 });
 
 describe("hasResourcePermission", () => {
     it("admin bypasses without touching grants", async () => {
-        mockUserFindUnique.mockResolvedValue(adminUser());
+        mockUserRoleFindMany.mockResolvedValue(adminUser());
         expect(await hasResourcePermission("admin1", "blog.article", "edit", "art-1")).toBe(true);
         expect(mockResourceFindMany).not.toHaveBeenCalled();
     });
 
     it("denies when no grants exist at all", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith([], { roleId: "role-member" }));
+        mockUserRoleFindMany.mockResolvedValue(memberWith([], { roleId: "role-member" }));
         mockResourceFindMany.mockResolvedValue([]);
         expect(await hasResourcePermission("u1", "blog.article", "edit")).toBe(false);
     });
 
     it("denies when user/role has no role", async () => {
-        mockUserFindUnique.mockResolvedValue({ id: "u1", role: null });
+        mockUserRoleFindMany.mockResolvedValue(holdsNothing());
         expect(await hasResourcePermission("u1", "blog.article", "edit")).toBe(false);
         expect(mockResourceFindMany).not.toHaveBeenCalled();
     });
 
     it("allows via a role-wide grant", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith([], { roleId: "role-member" }));
+        mockUserRoleFindMany.mockResolvedValue(memberWith([], { roleId: "role-member" }));
         mockResourceFindMany.mockResolvedValue([
             { principalType: "role", principalId: "role-member", resourceId: null, action: "edit", allow: true },
         ]);
@@ -188,7 +204,7 @@ describe("hasResourcePermission", () => {
     });
 
     it("most-specific-wins: user+resourceId allow beats a role-wide deny", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith([], { roleId: "role-member" }));
+        mockUserRoleFindMany.mockResolvedValue(memberWith([], { roleId: "role-member" }));
         mockResourceFindMany.mockResolvedValue([
             { principalType: "role", principalId: "role-member", resourceId: null, action: "edit", allow: false },
             { principalType: "user", principalId: "u1", resourceId: "art-7", action: "edit", allow: true },
@@ -197,7 +213,7 @@ describe("hasResourcePermission", () => {
     });
 
     it("most-specific-wins: a user+resourceId deny short-circuits over a broader user allow", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith([], { roleId: "role-member" }));
+        mockUserRoleFindMany.mockResolvedValue(memberWith([], { roleId: "role-member" }));
         mockResourceFindMany.mockResolvedValue([
             { principalType: "user", principalId: "u1", resourceId: null, action: "edit", allow: true },
             { principalType: "user", principalId: "u1", resourceId: "art-7", action: "edit", allow: false },
@@ -206,7 +222,7 @@ describe("hasResourcePermission", () => {
     });
 
     it("falls back to role-wide when no user-level or resource-scoped grant matches", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith([], { roleId: "role-member" }));
+        mockUserRoleFindMany.mockResolvedValue(memberWith([], { roleId: "role-member" }));
         mockResourceFindMany.mockResolvedValue([
             { principalType: "role", principalId: "role-member", resourceId: null, action: "view", allow: true },
         ]);
@@ -228,7 +244,7 @@ describe("hasResourcePermission", () => {
      * Most specific wins, and an action names itself where "*" does not.
      */
     it("lets a deny on the action itself beat a wildcard allow beside it", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith([], { roleId: "role-member" }));
+        mockUserRoleFindMany.mockResolvedValue(memberWith([], { roleId: "role-member" }));
         mockResourceFindMany.mockResolvedValue([
             { principalType: "role", principalId: "role-member", resourceId: null, action: "*", allow: true },
             { principalType: "role", principalId: "role-member", resourceId: null, action: "edit", allow: false },
@@ -237,7 +253,7 @@ describe("hasResourcePermission", () => {
     });
 
     it("answers the same whichever way round the two rows arrive", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith([], { roleId: "role-member" }));
+        mockUserRoleFindMany.mockResolvedValue(memberWith([], { roleId: "role-member" }));
         mockResourceFindMany.mockResolvedValue([
             { principalType: "role", principalId: "role-member", resourceId: null, action: "edit", allow: false },
             { principalType: "role", principalId: "role-member", resourceId: null, action: "*", allow: true },
@@ -246,7 +262,7 @@ describe("hasResourcePermission", () => {
     });
 
     it("lets an allow on the action itself beat a wildcard deny beside it", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith([], { roleId: "role-member" }));
+        mockUserRoleFindMany.mockResolvedValue(memberWith([], { roleId: "role-member" }));
         mockResourceFindMany.mockResolvedValue([
             { principalType: "role", principalId: "role-member", resourceId: null, action: "*", allow: false },
             { principalType: "role", principalId: "role-member", resourceId: null, action: "view", allow: true },
@@ -255,7 +271,7 @@ describe("hasResourcePermission", () => {
     });
 
     it("a wildcard-action grant (action '*') satisfies a specific action request", async () => {
-        mockUserFindUnique.mockResolvedValue(memberWith([], { roleId: "role-member" }));
+        mockUserRoleFindMany.mockResolvedValue(memberWith([], { roleId: "role-member" }));
         // The route asks findMany for action in [action, "*"]; a "*" grant comes
         // back and matches the candidate resolution. The row carried no action at
         // all until the resolution started reading one, so this asserted the
@@ -277,17 +293,17 @@ describe("isAdmin", () => {
     });
 
     it("falls back to DB and returns true for an admin role", async () => {
-        mockUserFindUnique.mockResolvedValue({ role: { name: "admin" } });
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-admin", expiresAt: null, role: { name: "admin", priority: 0, permissions: [] } }]);
         expect(await isAdmin("u1")).toBe(true);
     });
 
     it("returns false for a non-admin role via DB", async () => {
-        mockUserFindUnique.mockResolvedValue({ role: { name: "member" } });
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-member", expiresAt: null, role: { name: "member", priority: 0, permissions: [] } }]);
         expect(await isAdmin("u1")).toBe(false);
     });
 
     it("returns false when user is missing", async () => {
-        mockUserFindUnique.mockResolvedValue(null);
+        mockUserRoleFindMany.mockResolvedValue(holdsNothing());
         expect(await isAdmin("ghost")).toBe(false);
     });
 });
@@ -301,7 +317,7 @@ describe("isStaff", () => {
     it("a role named moderator is not staff by its name alone", async () => {
         // It used to short-circuit true on the name. Demoting that role in the
         // admin panel hid the staff links and left the endpoints open.
-        mockUserFindUnique.mockResolvedValue({ role: { priority: 10 } });
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 10, permissions: [] } }]);
         expect(await isStaff("u1", "moderator")).toBe(false);
     });
 
@@ -312,22 +328,22 @@ describe("isStaff", () => {
     });
 
     it("a role the site invented is staff when it ranks high enough", async () => {
-        mockUserFindUnique.mockResolvedValue({ role: { priority: 70 } });
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 70, permissions: [] } }]);
         expect(await isStaff("u1", "developer")).toBe(true);
     });
 
     it("DB fallback: priority >= 50 is staff", async () => {
-        mockUserFindUnique.mockResolvedValue({ role: { priority: 50 } });
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 50, permissions: [] } }]);
         expect(await isStaff("u1")).toBe(true);
     });
 
     it("DB fallback: priority < 50 is not staff", async () => {
-        mockUserFindUnique.mockResolvedValue({ role: { priority: 10 } });
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 10, permissions: [] } }]);
         expect(await isStaff("u1")).toBe(false);
     });
 
     it("returns false when user has no role", async () => {
-        mockUserFindUnique.mockResolvedValue({ role: null });
+        mockUserRoleFindMany.mockResolvedValue(holdsNothing());
         expect(await isStaff("u1")).toBe(false);
     });
 });
