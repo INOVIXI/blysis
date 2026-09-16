@@ -22,7 +22,6 @@ vi.mock("@/core/config/server", () => ({ serverConfig }));
 import type { Metadata } from "next";
 import {
     buildPageMeta,
-    buildPageMetaSync,
     buildArticleJsonLd,
     buildOrganizationJsonLd,
 } from "@/core/lib/seo";
@@ -193,30 +192,18 @@ describe("open graph type", () => {
     });
 });
 
-describe("buildPageMetaSync", () => {
-    it("never touches the database", () => {
-        buildPageMetaSync({ title: "x" });
-        expect(setting.findMany).not.toHaveBeenCalled();
+describe("the card a link unfurls into", () => {
+    it("is the big one when the page brought its own picture", async () => {
+        const meta = await buildPageMeta({ title: "Patch notes", url: "/blog/patch", image: "/covers/patch.png" });
+        expect(tw(meta).card).toBe("summary_large_image");
+        expect(meta.twitter?.images).toEqual(["https://games.example/covers/patch.png"]);
     });
 
-    it("uses the serverConfig name rather than the stored one", async () => {
-        setting.findMany.mockResolvedValue([{ key: "site_name", value: "Acme Games" }]);
-
-        expect(buildPageMetaSync({ title: "x" }).openGraph?.siteName).toBe("Blysis");
-        expect((await buildPageMeta({ title: "x" })).openGraph?.siteName).toBe("Acme Games");
-    });
-
-    it("absolutises urls and images the same way", () => {
-        const meta = buildPageMetaSync({ title: "x", url: "/a", image: "b.png" });
-        expect(meta.openGraph?.url).toBe("https://games.example/a");
-        expect(meta.twitter?.images).toEqual(["https://games.example/b.png"]);
-    });
-
-    it("carries article fields", () => {
-        const meta = buildPageMetaSync({
-            title: "x", type: "article", publishedTime: "2026-01-01", authorName: "Ada",
-        });
-        expect(meta.openGraph).toMatchObject({ publishedTime: "2026-01-01", authors: ["Ada"] });
+    it("is the small one when the page has no picture of its own", async () => {
+        // The fallback is the site's own mark, which is square: stretched
+        // across a 2:1 banner it looked like a mistake on every unfurl.
+        const meta = await buildPageMeta({ title: "Leaderboard", url: "/leaderboard" });
+        expect(tw(meta).card).toBe("summary");
     });
 });
 

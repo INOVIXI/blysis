@@ -35,6 +35,16 @@ const DYNAMIC_SEGMENT = /^\[.*\]$/;
 /** How long a path-derived title may be before it stops looking like a title. */
 const MAX_TITLE_LENGTH = 120;
 
+/**
+ * How long a declared description may be before it stops being a snippet.
+ *
+ * Search engines cut a snippet around 160 characters, but a module is allowed
+ * to write a longer sentence and have the engine do the cutting. The ceiling
+ * exists only to reject a key that has been pointed at a paragraph of body
+ * copy by mistake.
+ */
+const MAX_DESCRIPTION_LENGTH = 320;
+
 /** "server-launch" -> "Server Launch" */
 export function humanizeSegment(segment: string): string {
     return segment
@@ -84,16 +94,38 @@ export function titleFromMessages(
     messages: Record<string, unknown> | null | undefined,
     titleKey: string | undefined,
 ): string | null {
-    if (!messages || !titleKey) return null;
+    return messageAt(messages, titleKey, MAX_TITLE_LENGTH);
+}
+
+/**
+ * The same lookup for a route's declared `descriptionKey`.
+ *
+ * Separate from the title only because the two have different ceilings: a
+ * description that tripped the title's 120 characters was silently dropped
+ * back to the site-wide sentence, which is the defect this exists to fix.
+ */
+export function descriptionFromMessages(
+    messages: Record<string, unknown> | null | undefined,
+    descriptionKey: string | undefined,
+): string | null {
+    return messageAt(messages, descriptionKey, MAX_DESCRIPTION_LENGTH);
+}
+
+function messageAt(
+    messages: Record<string, unknown> | null | undefined,
+    dotted: string | undefined,
+    maxLength: number,
+): string | null {
+    if (!messages || !dotted) return null;
     let node: unknown = messages;
-    for (const segment of titleKey.split(".")) {
+    for (const segment of dotted.split(".")) {
         if (!node || typeof node !== "object") return null;
         node = (node as Record<string, unknown>)[segment];
     }
     if (typeof node !== "string") return null;
-    const title = node.trim();
-    if (!title || title.length > MAX_TITLE_LENGTH) return null;
-    return title;
+    const text = node.trim();
+    if (!text || text.length > maxLength) return null;
+    return text;
 }
 
 export interface RouteTitleInput {

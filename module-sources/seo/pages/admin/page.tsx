@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Textarea } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Textarea, UrlOrFile} from "@/core/sdk/ui";
 import { Loader2, Check, FileText, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@/core/sdk/navigation";
@@ -11,18 +11,16 @@ import { AdminPageHeader } from "@/core/sdk/admin";
 import { errorMessage } from "@/core/sdk";
 
 interface SeoSettings {
-    seo_default_title: string;
     seo_title_template: string;
-    seo_default_description: string;
+    seo_keywords: string;
     seo_default_og_image: string;
     seo_google_verification: string;
     seo_bing_verification: string;
 }
 
 const DEFAULT_SETTINGS: SeoSettings = {
-    seo_default_title: "",
     seo_title_template: "",
-    seo_default_description: "",
+    seo_keywords: "",
     seo_default_og_image: "",
     seo_google_verification: "",
     seo_bing_verification: "",
@@ -44,9 +42,8 @@ export default function SeoSettingsPage() {
             .then((data) => {
                 const s = data.settings || {};
                 setSettings({
-                    seo_default_title: (s.seo_default_title as string) || "",
                     seo_title_template: (s.seo_title_template as string) || "",
-                    seo_default_description: (s.seo_default_description as string) || "",
+                    seo_keywords: (s.seo_keywords as string) || "",
                     seo_default_og_image: (s.seo_default_og_image as string) || "",
                     seo_google_verification: (s.seo_google_verification as string) || "",
                     seo_bing_verification: (s.seo_bing_verification as string) || "",
@@ -141,16 +138,7 @@ export default function SeoSettingsPage() {
                         <CardTitle className="text-foreground">{t("adm_globalSeoSettings")}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-5">
-                        <div>
-                            <Label className="text-foreground">{t("adm_defaultSiteTitle")}</Label>
-                            <Input
-                                aria-label={t("adm_defaultSiteTitle")}
-                                value={settings.seo_default_title}
-                                onChange={(e) => updateSetting("seo_default_title", e.target.value)}
-                                placeholder={t("adm_siteNamePlaceholder")}
-                            />
-                            <p className="text-xs text-muted-foreground mt-1">{t("adm_defaultSiteTitleDesc")}</p>
-                        </div>
+                        <p className="text-sm text-muted-foreground">{t("adm_siteWordsLiveElsewhere")}</p>
 
                         <div>
                             <Label className="text-foreground">{t("adm_titleTemplate")}</Label>
@@ -164,22 +152,23 @@ export default function SeoSettingsPage() {
                         </div>
 
                         <div>
-                            <Label className="text-foreground">{t("adm_defaultDescription")}</Label>
+                            <Label className="text-foreground">{t("adm_keywords")}</Label>
                             <Textarea
-                                aria-label={t("adm_defaultDescription")}
-                                value={settings.seo_default_description}
-                                onChange={(e) => updateSetting("seo_default_description", e.target.value)}
-                                placeholder={t("adm_defaultDescriptionPlaceholder")}
-                                rows={3}
+                                aria-label={t("adm_keywords")}
+                                value={settings.seo_keywords}
+                                onChange={(e) => updateSetting("seo_keywords", e.target.value)}
+                                placeholder="keyword1, keyword2, keyword3"
+                                rows={2}
                             />
+                            <p className="text-xs text-muted-foreground mt-1">{t("adm_siteKeywordsHelp")}</p>
                         </div>
 
                         <div>
-                            <Label className="text-foreground">{t("adm_defaultOgImage")}</Label>
-                            <Input
-                                aria-label={t("adm_defaultOgImage")}
+                            <UrlOrFile
+                                label={t("adm_defaultOgImage")}
                                 value={settings.seo_default_og_image}
-                                onChange={(e) => updateSetting("seo_default_og_image", e.target.value)}
+                                onChange={(v) => updateSetting("seo_default_og_image", v)}
+                                accept="image/*"
                                 placeholder="https://example.com/og-image.png"
                             />
                             <p className="text-xs text-muted-foreground mt-1">{t("adm_defaultOgImageHelp")}</p>
@@ -194,7 +183,7 @@ export default function SeoSettingsPage() {
                                         aria-label={t("adm_googleVerification")}
                                         value={settings.seo_google_verification}
                                         onChange={(e) => updateSetting("seo_google_verification", e.target.value)}
-                                        placeholder="google-site-verification=..."
+                                        placeholder="abcd1234efgh5678"
                                     />
                                     <p className="text-xs text-muted-foreground mt-1">{t("adm_googleVerificationHelp")}</p>
                                 </div>
@@ -204,7 +193,7 @@ export default function SeoSettingsPage() {
                                         aria-label={t("adm_bingVerification")}
                                         value={settings.seo_bing_verification}
                                         onChange={(e) => updateSetting("seo_bing_verification", e.target.value)}
-                                        placeholder="msvalidate.01=..."
+                                        placeholder="ABCD1234EFGH5678"
                                     />
                                     <p className="text-xs text-muted-foreground mt-1">{t("adm_bingVerificationHelp")}</p>
                                 </div>

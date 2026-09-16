@@ -140,6 +140,27 @@ const routeEntry = z.object({
      */
     titleKey: z.string().min(1).max(128).regex(/^[a-zA-Z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9_-]+)+$/, "titleKey must be namespace.key").optional(),
     /**
+     * What the page is about, as a key into the translations this module ships.
+     *
+     * Same format and same fallback rules as `titleKey`. Without one, a page's
+     * description was the site's: thirty-eight module pages shipped the single
+     * `site_description` row as their meta description and their og:description,
+     * so a search result for the store, the forum and the leaderboard said the
+     * same sentence, and the SEO screen had nothing to show as a default.
+     */
+    descriptionKey: z.string().min(1).max(128).regex(/^[a-zA-Z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9_-]+)+$/, "descriptionKey must be namespace.key").optional(),
+    /**
+     * What kind of thing this page is, for the card a link unfurls into.
+     *
+     * Core titles and describes a module's pages for it, and it had nothing to
+     * go on here, so it called every one of them an article: the cart, the
+     * leaderboard, the staff list and the vote page all announced themselves
+     * as `og:type: article` to anything that read a link to them. Defaults to
+     * `website`; a route that really is a piece of writing says so, and a
+     * route that is somebody's page says `profile`.
+     */
+    ogType: z.enum(["website", "article", "profile"]).optional(),
+    /**
      * Lets core title the page from the last URL segment.
      *
      * Only true where the page resolves the resource on the server and calls
@@ -269,7 +290,18 @@ const footerLink = z.object({
 
 const profileTab = z.object({
     id: z.string().min(1).max(64).regex(SAFE_SLUG),
+    /** English prose, and only ever the fallback. See `labelKey`. */
     label: z.string().min(1).max(100),
+    /**
+     * Where the tab's name lives in this module's own `translations`, as
+     * `namespace.key`.
+     *
+     * Without it a tab is named by `label`, which is one language. The names
+     * used to come from core's message file instead, keyed by the tab's id -
+     * so core knew a module called `ProfileOrdersTab` existed, and the five
+     * tabs nobody had added a key for printed English to Turkish readers.
+     */
+    labelKey: z.string().min(3).max(120).regex(/^[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+$/).optional(),
     component: relativePath("component"),
     order: z.number().int(),
 });

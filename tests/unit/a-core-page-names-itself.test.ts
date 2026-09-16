@@ -40,17 +40,19 @@ import path from "node:path";
 const ROOT = process.cwd();
 const LOCALE_ROOT = path.join(ROOT, "src/app/[locale]");
 
-const { setting, resolveAppUrl, serverConfig } = vi.hoisted(() => ({
+const { setting, resolveAppUrl, serverConfig, ensureHooks } = vi.hoisted(() => ({
     setting: { findMany: vi.fn(async () => []) },
     resolveAppUrl: vi.fn(() => "https://games.example"),
     serverConfig: { name: "Blysis", description: "Default description" },
+    ensureHooks: vi.fn(async () => {}),
 }));
 vi.mock("@/core/lib/db", () => ({ prisma: { setting }, default: { setting } }));
 vi.mock("@/core/lib/app-url", () => ({ resolveAppUrl }));
 vi.mock("@/core/config/server", () => ({ serverConfig }));
+vi.mock("@/core/lib/hooks-bootstrap", () => ({ ensureHooks }));
 
 const { CORE_SCREENS, coreScreen } = await import("@/core/lib/core-screens");
-const { buildPageMetaSync } = await import("@/core/lib/seo");
+const { buildPageMeta } = await import("@/core/lib/seo");
 const { locales, defaultLocale } = await import("@/core/lib/i18n/config");
 
 /** Every public page core renders, as a path below the locale segment. */
@@ -205,34 +207,34 @@ describe("every declared screen", () => {
 });
 
 describe("the canonical tag", () => {
-    it("names the URL the visitor is on, locale segment and all", () => {
-        const meta = buildPageMetaSync({ title: "Store", url: "/store", locale: "tr" });
+    it("names the URL the visitor is on, locale segment and all", async () => {
+        const meta = await buildPageMeta({ title: "Store", url: "/store", locale: "tr" });
         expect(meta.alternates?.canonical).toBe("https://games.example/tr/store");
     });
 
-    it("carries every locale plus an x-default", () => {
-        const meta = buildPageMetaSync({ title: "Store", url: "/store", locale: "en" });
+    it("carries every locale plus an x-default", async () => {
+        const meta = await buildPageMeta({ title: "Store", url: "/store", locale: "en" });
         const languages = meta.alternates?.languages as Record<string, string>;
         for (const locale of locales) expect(languages[locale]).toBe(`https://games.example/${locale}/store`);
         expect(languages["x-default"]).toBe(`https://games.example/${defaultLocale}/store`);
     });
 
-    it("writes the home page without a trailing slash", () => {
-        const meta = buildPageMetaSync({ title: "Home", url: "/", locale: "en" });
+    it("writes the home page without a trailing slash", async () => {
+        const meta = await buildPageMeta({ title: "Home", url: "/", locale: "en" });
         expect(meta.alternates?.canonical).toBe("https://games.example/en");
     });
 
-    it("says nothing when it has not been told the language", () => {
-        expect(buildPageMetaSync({ title: "Store", url: "/store" }).alternates).toBeUndefined();
+    it("says nothing when it has not been told the language", async () => {
+        expect((await buildPageMeta({ title: "Store", url: "/store" })).alternates).toBeUndefined();
     });
 
-    it("says nothing for a locale this site does not serve", () => {
-        expect(buildPageMetaSync({ title: "Store", url: "/store", locale: "de" }).alternates).toBeUndefined();
-        expect(buildPageMetaSync({ title: "Store", url: "/store", locale: "" }).alternates).toBeUndefined();
+    it("says nothing for a locale this site does not serve", async () => {
+        expect((await buildPageMeta({ title: "Store", url: "/store", locale: "de" })).alternates).toBeUndefined();
+        expect((await buildPageMeta({ title: "Store", url: "/store", locale: "" })).alternates).toBeUndefined();
     });
 
-    it("does not touch a URL that is already absolute", () => {
-        const meta = buildPageMetaSync({ title: "X", url: "https://elsewhere.example/x", locale: "en" });
+    it("does not touch a URL that is already absolute", async () => {
+        const meta = await buildPageMeta({ title: "X", url: "https://elsewhere.example/x", locale: "en" });
         expect(meta.alternates).toBeUndefined();
     });
 });
@@ -241,9 +243,14 @@ describe("the pages that ask for the canonical", () => {
     const reads = (file: string) => fs.readFileSync(path.join(ROOT, file), "utf8");
 
     it("passes the locale from every page that builds its own metadata", () => {
-        for (const file of ["src/app/[locale]/[...slug]/page.tsx", "src/app/[locale]/(public)/activity/page.tsx"]) {
-            expect(reads(file), file).toMatch(/locale,\n\s+type:/);
-        }
+        // A comment may sit between the two lines; the locale may not go away.
+        expect(reads("src/app/[locale]/[...slug]/page.tsx")).toMatch(/locale,\n(?:\s*\/\/[^\n]*\n)*\s+type:/);
+        // `/activity` wrote its own head here and was the one core page with a
+        // description of any kind. It is a row in the table now, and the table
+        // passes the locale for every screen in it, so the guarantee moved
+        // rather than went away.
+        expect(reads("src/app/[locale]/(public)/activity/page.tsx")).toContain('coreScreenMetadata("/activity")');
+        expect(reads("src/core/lib/core-screens.ts")).toMatch(/locale,\n\s+type:/);
     });
 
     it("leaves the root layout emitting none", () => {

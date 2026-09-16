@@ -4,6 +4,13 @@ import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 
 export async function GET() {
+    // The overrides are an operator's working notes about the site, and the
+    // screen that reads them is behind the panel. This asked nobody who they
+    // were and answered the whole table.
+    const session = await auth();
+    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
     try {
         const pages = await prisma.seoPage.findMany({
             orderBy: { path: "asc" },

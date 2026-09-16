@@ -3,10 +3,15 @@ import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 
+/**
+ * `seo_default_title` and `seo_default_description` used to be here. They were
+ * a second copy of `site_name` and `site_description`, written by this screen
+ * and read by nothing, while the real pair reaches every page on the site.
+ * Two boxes for one setting, one of which does nothing, is worse than one.
+ */
 const SEO_KEYS = [
-    "seo_default_title",
     "seo_title_template",
-    "seo_default_description",
+    "seo_keywords",
     "seo_default_og_image",
     "seo_google_verification",
     "seo_bing_verification",
@@ -39,9 +44,8 @@ export async function PATCH(request: NextRequest) {
         if (body instanceof NextResponse) return body;
 
         const schema = z.object({
-            seo_default_title: z.string().max(200).optional(),
             seo_title_template: z.string().max(200).optional(),
-            seo_default_description: z.string().max(500).optional(),
+            seo_keywords: z.string().max(500).optional(),
             seo_default_og_image: z.string().max(2000).optional(),
             seo_google_verification: z.string().max(200).optional(),
             seo_bing_verification: z.string().max(200).optional(),

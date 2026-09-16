@@ -115,10 +115,13 @@ describe("the catch-all", () => {
         expect(page).not.toMatch(/title:\s*moduleRouteTitle\(/);
     });
 
-    it("does not load a catalogue for a route that declared no name", () => {
+    it("does not load a catalogue for a route that declared nothing", () => {
         // Every unmatched URL on the site reaches this, and most of them are
-        // about to 404.
-        expect(page).toContain("route?.titleKey ? await getMessages(locale)");
+        // about to 404. A route that declared a name or a description needs
+        // the catalogue; one that declared neither is titled from its own path
+        // and never reads a word.
+        expect(page).toContain("const declared = Boolean(route?.titleKey || route?.descriptionKey);");
+        expect(page).toContain("declared ? await getMessages(locale)");
     });
 
     it("titles the page even when the catalogue cannot be read", () => {

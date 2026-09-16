@@ -1,152 +1,145 @@
 "use client";
 
+/**
+ * Per-page SEO: the site down the left, one page's head on the right.
+ *
+ * What was here before was a table of rows an operator had created by hand,
+ * which meant it started empty on every install and stayed empty on most of
+ * them. Nothing on the screen said which pages existed, what each one already
+ * told a search engine, or that a page had never been described at all. Core
+ * now answers the first two questions - see `listCataloguePages` - so this
+ * screen lists the site rather than its own table.
+ *
+ * The selected page lives in `?page=`, so a row can be linked, reloaded and
+ * closed with the back button.
+ */
 
-import { useTranslations } from "next-intl";
-import { useState, useEffect, useCallback } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Pagination, usePagedRows, useConfirm, useFormRoute, CheckboxField, Textarea, buttonClassName } from "@/core/sdk/ui";
-import { ArrowLeft, Plus, Pencil, Trash2, Loader2, Search, Globe, EyeOff } from "lucide-react";
-import { toast } from "sonner";
-import { Link } from "@/core/sdk/navigation";
+import { useTranslations, useLocale } from "next-intl";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Button, Card, CardContent, Input, Label, Waiting, useConfirm } from "@/core/sdk/ui";
+import { usePathname, useRouter } from "@/core/sdk/navigation";
 import { AdminPageHeader } from "@/core/sdk/admin";
 import { errorMessage } from "@/core/sdk";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
+import { SeoPageList } from "./SeoPageList";
+import { SeoPageForm } from "./SeoPageForm";
+import {
+    EMPTY_OVERRIDE,
+    formFrom,
+    saysNothing,
+    type CataloguePage,
+    type OverrideForm,
+    type SeoOverride,
+} from "../../../lib/catalogue";
 
-interface SeoPage {
-    id: string;
-    path: string;
-    metaTitle: string | null;
-    metaDescription: string | null;
-    ogTitle: string | null;
-    ogDescription: string | null;
-    ogImage: string | null;
-    keywords: string | null;
-    canonical: string | null;
-    noIndex: boolean;
-    noFollow: boolean;
-    structuredData: unknown;
-    createdAt: string;
-    updatedAt: string;
-}
+const NEW_PAGE = "new";
 
-interface FormData {
-    path: string;
-    metaTitle: string;
-    metaDescription: string;
-    ogTitle: string;
-    ogDescription: string;
-    ogImage: string;
-    keywords: string;
-    canonical: string;
-    noIndex: boolean;
-    noFollow: boolean;
-}
-
-const EMPTY_FORM: FormData = {
-    path: "",
-    metaTitle: "",
-    metaDescription: "",
-    ogTitle: "",
-    ogDescription: "",
-    ogImage: "",
-    keywords: "",
-    canonical: "",
-    noIndex: false,
-    noFollow: false,
-};
-
-export default function SeoPageOverridesPage() {
+export default function SeoPagesScreen() {
     const t = useTranslations("seo");
     const commonT = useTranslations("common");
-    const [pages, setPages] = useState<SeoPage[]>([]);
-    const [loading, setLoading] = useState(true);
-    // The override form used to be a modal over the table. A modal is still
-    // the same screen wearing one address: it cannot be linked, reloaded or
-    // closed with the back button. It is now a screen at `?form=new` or
-    // `?form=<id>`.
-    const { showForm, editingId, formHref, openForm, closeForm } = useFormRoute();
-    const [form, setForm] = useState<FormData>(EMPTY_FORM);
-    const [submitting, setSubmitting] = useState(false);
-    const paged = usePagedRows(pages);
+    const locale = useLocale();
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
     const { confirm } = useConfirm();
 
-    const fetchPages = useCallback(async () => {
+    const [catalogue, setCatalogue] = useState<CataloguePage[]>([]);
+    const [overrides, setOverrides] = useState<SeoOverride[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [query, setQuery] = useState("");
+    const [newPath, setNewPath] = useState("");
+    const [form, setForm] = useState<OverrideForm>(EMPTY_OVERRIDE);
+
+    const load = useCallback(async () => {
         try {
-            const res = await fetch("/api/v1/seo/pages");
+            const res = await fetch(`/api/v1/seo/catalogue?locale=${encodeURIComponent(locale)}`);
+            if (!res.ok) throw new Error("load");
             const data = await res.json();
-            setPages(data.pages || []);
+            setCatalogue(data.pages ?? []);
+            setOverrides(data.overrides ?? []);
         } catch {
             toast.error(t("adm_loadFailed"));
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [locale, t]);
 
     useEffect(() => {
-        fetchPages();
-    }, [fetchPages]);
+        load();
+    }, [load]);
 
-    // The override the URL names fills the form once the rows arrive, so
-    // `?form=<id>` survives a reload and can be sent to someone.
+    // A path somebody set an override on that no route serves any more - a
+    // module since removed, a page that moved. It stays visible so it can be
+    // found and cleared rather than going on answering for a URL nobody can
+    // see on this screen.
+    const pages = useMemo<CataloguePage[]>(() => {
+        const known = new Set(catalogue.map((p) => p.path));
+        const orphans = overrides
+            .filter((o) => !known.has(o.path))
+            .map<CataloguePage>((o) => ({
+                path: o.path,
+                title: o.metaTitle || o.path,
+                description: "",
+                owner: "custom",
+                indexable: !o.noIndex,
+                pattern: o.path.includes("["),
+            }));
+        return [...catalogue, ...orphans];
+    }, [catalogue, overrides]);
+
+    const param = searchParams?.get("page") ?? null;
+    const selectedPath = param ?? pages[0]?.path ?? "";
+    const addingPath = param === NEW_PAGE;
+
+    const selected = useMemo<CataloguePage | null>(() => {
+        if (addingPath) {
+            return { path: newPath, title: newPath || t("adm_addPath"), description: "", owner: "custom", indexable: true, pattern: newPath.includes("[") };
+        }
+        return pages.find((p) => p.path === selectedPath) ?? null;
+    }, [addingPath, newPath, pages, selectedPath, t]);
+
+    const override = overrides.find((o) => o.path === selected?.path);
+
+    // The form follows the selection rather than the typing, so switching page
+    // never carries half an edit across to another page's head.
     useEffect(() => {
-        if (!editingId) {
-            setForm(EMPTY_FORM);
-            return;
-        }
-        const page = pages.find((row) => row.id === editingId);
-        if (!page) return;
-        setForm({
-            path: page.path,
-            metaTitle: page.metaTitle || "",
-            metaDescription: page.metaDescription || "",
-            ogTitle: page.ogTitle || "",
-            ogDescription: page.ogDescription || "",
-            ogImage: page.ogImage || "",
-            keywords: page.keywords || "",
-            canonical: page.canonical || "",
-            noIndex: page.noIndex,
-            noFollow: page.noFollow,
-        });
-    }, [editingId, pages]);
+        setForm(formFrom(overrides.find((o) => o.path === (param === NEW_PAGE ? "" : (param ?? pages[0]?.path)))));
+    }, [param, overrides, pages]);
 
-    const handleDelete = async (page: SeoPage) => {
-        const ok = await confirm({
-            title: t("adm_deleteTitle"),
-            message: t("adm_deleteConfirm", { path: page.path }),
-            variant: "danger",
-            confirmText: t("adm_delete"),
-        });
-        if (!ok) return;
+    const select = (path: string) => router.push(`${pathname}?page=${encodeURIComponent(path)}`);
 
-        try {
-            const res = await fetch(`/api/v1/seo/pages/${page.id}`, { method: "DELETE" });
-            if (!res.ok) {
-                toast.error(t("adm_deleteFailed"));
-                return;
-            }
-            toast.success(t("adm_deletedToast"));
-            fetchPages();
-        } catch {
-            toast.error(t("adm_genericError"));
+    const updateField = <K extends keyof OverrideForm>(key: K, value: OverrideForm[K]) =>
+        setForm((prev) => ({ ...prev, [key]: value }));
+
+    const removeOverride = async (row: SeoOverride) => {
+        const res = await fetch(`/api/v1/seo/pages/${row.id}`, { method: "DELETE" });
+        if (!res.ok) {
+            toast.error(t("adm_saveFailed"));
+            return false;
         }
+        return true;
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!form.path.startsWith("/")) {
+    const handleSubmit = async () => {
+        if (!selected) return;
+        if (!selected.path.startsWith("/")) {
             toast.error(t("adm_pathInvalid"));
             return;
         }
 
-        setSubmitting(true);
-
+        setSaving(true);
         try {
-            const url = editingId ? `/api/v1/seo/pages/${editingId}` : "/api/v1/seo/pages";
-            const method = editingId ? "PATCH" : "POST";
-
-            const res = await fetch(url, {
-                method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    path: form.path,
+            // An empty form means "say what the page says", which is no row at
+            // all rather than a row of nulls.
+            if (saysNothing(form)) {
+                if (override && !(await removeOverride(override))) return;
+                toast.success(t("adm_settingsSaved"));
+            } else {
+                const body = {
+                    path: selected.path,
                     metaTitle: form.metaTitle || null,
                     metaDescription: form.metaDescription || null,
                     ogTitle: form.ogTitle || null,
@@ -156,282 +149,113 @@ export default function SeoPageOverridesPage() {
                     canonical: form.canonical || null,
                     noIndex: form.noIndex,
                     noFollow: form.noFollow,
-                }),
-            });
-
-            if (!res.ok) {
-                const data = await res.json();
-                toast.error(errorMessage(data, t("adm_saveFailed"), t));
-                return;
+                };
+                const res = await fetch(override ? `/api/v1/seo/pages/${override.id}` : "/api/v1/seo/pages", {
+                    method: override ? "PATCH" : "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body),
+                });
+                if (!res.ok) {
+                    toast.error(errorMessage(await res.json(), t("adm_saveFailed"), t));
+                    return;
+                }
+                toast.success(t("adm_settingsSaved"));
             }
 
-            toast.success(editingId
-                ? t("adm_updatedToast")
-                : t("adm_createdToast"));
-            await fetchPages();
-            closeForm();
+            await load();
+            if (addingPath) {
+                setNewPath("");
+                select(selected.path);
+            }
         } catch {
             toast.error(t("adm_genericError"));
         } finally {
-            setSubmitting(false);
+            setSaving(false);
         }
     };
 
-    const updateField = <K extends keyof FormData>(key: K, value: FormData[K]) => {
-        setForm((prev) => ({ ...prev, [key]: value }));
+    const handleReset = async () => {
+        if (!override) return;
+        const ok = await confirm({
+            title: t("adm_resetToDefault"),
+            message: t("adm_resetConfirm", { path: override.path }),
+            variant: "danger",
+            confirmText: t("adm_resetToDefault"),
+        });
+        if (!ok) return;
+        setSaving(true);
+        try {
+            if (await removeOverride(override)) {
+                toast.success(t("adm_resetDone"));
+                setForm(EMPTY_OVERRIDE);
+                await load();
+            }
+        } finally {
+            setSaving(false);
+        }
     };
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-            </div>
-        );
-    }
-
-    if (showForm) {
-        return (
-            <>
-                <AdminPageHeader
-                    title={editingId ? t("adm_editPageSeo") : t("adm_addPageSeo")}
-                    description={t("adm_configurePerPage")}
-                    onBack={closeForm}
-                    backLabel={commonT("back")}
-                />
-
-                <Card>
-                    <CardContent className="p-6">
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            {/* URL Path */}
-                            <div>
-                                <Label className="text-foreground">{`${t("adm_urlPath")} *`}</Label>
-                                <Input
-                                    aria-label={t("adm_urlPath")}
-                                    value={form.path}
-                                    onChange={(e) => updateField("path", e.target.value)}
-                                    placeholder="/about"
-                                    required
-                                />
-                                <p className="text-xs text-muted-foreground mt-1">{t("adm_urlPathHelp")}</p>
-                            </div>
-
-                            {/* Meta Tags Section */}
-                            <Card>
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="text-sm text-foreground">{t("adm_metaTags")}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div>
-                                        <Label className="text-foreground">{t("adm_metaTitle")}</Label>
-                                        <Input
-                                            aria-label={t("adm_metaTitle")}
-                                            value={form.metaTitle}
-                                            onChange={(e) => updateField("metaTitle", e.target.value)}
-                                            placeholder={t("adm_metaTitlePlaceholder")}
-                                        />
-                                        <p className="text-xs text-muted-foreground mt-1">
-                                            {form.metaTitle.length}/60 characters (recommended max)
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <Label className="text-foreground">{t("adm_metaDescription")}</Label>
-                                        <Textarea
-                                            aria-label={t("adm_metaDescription")}
-                                            value={form.metaDescription}
-                                            onChange={(e) => updateField("metaDescription", e.target.value)}
-                                            placeholder={t("adm_metaDescriptionPlaceholder")}
-                                            rows={2}
-                                            className="min-h-[60px]"
-                                        />
-                                        <p className="text-xs text-muted-foreground mt-1">
-                                            {form.metaDescription.length}/160 characters (recommended max)
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <Label className="text-foreground">{t("adm_keywords")}</Label>
-                                        <Input
-                                            aria-label={t("adm_keywords")}
-                                            value={form.keywords}
-                                            onChange={(e) => updateField("keywords", e.target.value)}
-                                            placeholder="keyword1, keyword2, keyword3"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label className="text-foreground">{t("adm_canonicalUrl")}</Label>
-                                        <Input
-                                            aria-label={t("adm_canonicalUrl")}
-                                            value={form.canonical}
-                                            onChange={(e) => updateField("canonical", e.target.value)}
-                                            placeholder="https://example.com/canonical-page"
-                                        />
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* OpenGraph Section */}
-                            <Card>
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="text-sm text-foreground">OpenGraph</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div>
-                                        <Label className="text-foreground">{t("adm_ogTitle")}</Label>
-                                        <Input
-                                            aria-label={t("adm_ogTitle")}
-                                            value={form.ogTitle}
-                                            onChange={(e) => updateField("ogTitle", e.target.value)}
-                                            placeholder={t("adm_ogTitlePlaceholder")}
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label className="text-foreground">{t("adm_ogDescription")}</Label>
-                                        <Textarea
-                                            aria-label={t("adm_ogDescription")}
-                                            value={form.ogDescription}
-                                            onChange={(e) => updateField("ogDescription", e.target.value)}
-                                            placeholder={t("adm_ogDescriptionPlaceholder")}
-                                            rows={2}
-                                            className="min-h-[60px]"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label className="text-foreground">{t("adm_ogImage")}</Label>
-                                        <Input
-                                            aria-label={t("adm_ogImage")}
-                                            value={form.ogImage}
-                                            onChange={(e) => updateField("ogImage", e.target.value)}
-                                            placeholder="https://example.com/og-image.png"
-                                        />
-                                        <p className="text-xs text-muted-foreground mt-1">{t("adm_ogImageHelp")}</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* Indexing Section */}
-                            <Card>
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="text-sm text-foreground">{t("adm_searchEngineDirectives")}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <CheckboxField
-                                        checked={form.noIndex}
-                                        onChange={(e) => updateField("noIndex", e.target.checked)}
-                                        label={<span className="font-medium">{t("adm_noIndex")}</span>}
-                                        description={t("adm_noIndexDesc")}
-                                    />
-                                    <CheckboxField
-                                        checked={form.noFollow}
-                                        onChange={(e) => updateField("noFollow", e.target.checked)}
-                                        label={<span className="font-medium">{t("adm_noFollow")}</span>}
-                                        description={t("adm_noFollowDesc")}
-                                    />
-                                </CardContent>
-                            </Card>
-
-                            {/* Actions */}
-                            <div className="flex justify-end gap-2 pt-2">
-                                <Button type="button" variant="outline" onClick={closeForm}>
-                                    {t("adm_cancel")}
-                                </Button>
-                                <Button type="submit" disabled={submitting}>
-                                    {submitting ? (
-                                        <><Loader2 className="w-4 h-4 animate-spin" /> {t("adm_saving")}</>
-                                    ) : editingId ? (
-                                        t("adm_update")
-                                    ) : (
-                                        t("adm_create")
-                                    )}
-                                </Button>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card>
-            </>
-        );
-    }
+    if (loading) return <Waiting label={commonT("loading")} />;
 
     return (
         <>
             <AdminPageHeader
                 title={t("adm_pageSeoOverrides")}
-                description={t("adm_configurePerPage")}
+                description={t("adm_pagesSubtitle")}
                 backHref="/admin/seo"
                 backLabel={commonT("back")}
                 actions={
-                    <Link href={formHref()} className={buttonClassName("default", "default")}><Plus className="w-4 h-4" /> {t("adm_addPage")}</Link>
+                    <Button type="button" variant="outline" onClick={() => select(NEW_PAGE)}>
+                        <Plus className="w-4 h-4" aria-hidden="true" /> {t("adm_addPath")}
+                    </Button>
                 }
             />
 
-            {/* Pages Table */}
-            {pages.length === 0 ? (
-                <Card>
-                    <CardContent className="p-12 text-center">
-                        <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <p className="text-lg font-medium text-foreground mb-1">{t("adm_noPageSeo")}</p>
-                        <p className="text-sm text-muted-foreground mb-6">{t("adm_noPageSeoDesc")}</p>
-                        <Link href={formHref()} className={buttonClassName("default", "default")}><Plus className="w-4 h-4" /> {t("adm_addPage")}</Link>
-                    </CardContent>
-                </Card>
-            ) : (
+            <div className="grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)] items-start">
                 <Card>
                     <CardContent className="p-0">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="border-b border-border">
-                                        <th className="text-left p-4 font-medium text-muted-foreground">{t("adm_path")}</th>
-                                        <th className="text-left p-4 font-medium text-muted-foreground">{t("adm_metaTitle")}</th>
-                                        <th className="text-left p-4 font-medium text-muted-foreground hidden md:table-cell">{t("adm_description")}</th>
-                                        <th className="text-center p-4 font-medium text-muted-foreground">{t("adm_index")}</th>
-                                        <th className="text-right p-4 font-medium text-muted-foreground">{t("adm_actions")}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {paged.rows.map((page) => (
-                                        <tr key={page.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
-                                            <td className="p-4">
-                                                <div className="flex items-center gap-2">
-                                                    <Globe className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                                                    <span className="font-mono text-foreground text-xs">{page.path}</span>
-                                                </div>
-                                            </td>
-                                            <td className="p-4 text-foreground max-w-[200px] truncate">
-                                                {page.metaTitle || <span className="text-muted-foreground">--</span>}
-                                            </td>
-                                            <td className="p-4 text-muted-foreground max-w-[250px] truncate hidden md:table-cell">
-                                                {page.metaDescription || "--"}
-                                            </td>
-                                            <td className="p-4 text-center">
-                                                {page.noIndex ? (
-                                                    <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-destructive/10 text-destructive">
-                                                        <EyeOff className="w-3 h-3" /> noindex
-                                                    </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-success/10 text-success">
-                                                        indexed
-                                                    </span>
-                                                )}
-                                            </td>
-                                            <td className="p-4 text-right">
-                                                <div className="flex items-center justify-end gap-1">
-                                                    <Button aria-label={commonT("edit")} variant="ghost" size="icon" onClick={() => openForm(page.id)}>
-                                                        <Pencil className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button aria-label={commonT("delete")} variant="ghost" size="icon" onClick={() => handleDelete(page)}>
-                                                        <Trash2 className="w-4 h-4 text-destructive" />
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <Pagination page={paged.page} pages={paged.pages} total={paged.total} onPageChange={paged.setPage} />
+                        <SeoPageList
+                            pages={pages}
+                            overrides={overrides}
+                            selected={addingPath ? "" : selectedPath}
+                            query={query}
+                            onQueryChange={setQuery}
+                            onSelect={select}
+                        />
                     </CardContent>
                 </Card>
-            )}
 
+                <Card>
+                    <CardContent className="p-6 space-y-5">
+                        {addingPath && (
+                            <div>
+                                <Label className="text-foreground">{`${t("adm_urlPath")} *`}</Label>
+                                <Input
+                                    aria-label={t("adm_urlPath")}
+                                    value={newPath}
+                                    onChange={(e) => setNewPath(e.target.value)}
+                                    placeholder="/about"
+                                />
+                                <p className="text-xs text-muted-foreground mt-1">{t("adm_urlPathHelp")}</p>
+                            </div>
+                        )}
+
+                        {selected ? (
+                            <SeoPageForm
+                                page={selected}
+                                form={form}
+                                hasOverride={Boolean(override)}
+                                saving={saving}
+                                onChange={updateField}
+                                onSubmit={handleSubmit}
+                                onReset={handleReset}
+                            />
+                        ) : (
+                            <p className="text-sm text-muted-foreground">{t("adm_noMatches")}</p>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
         </>
     );
 }

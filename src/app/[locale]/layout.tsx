@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isKnownLocale } from "@/core/lib/i18n/resolve-locale";
-import { buildPageMeta, buildOrganizationJsonLd } from "@/core/lib/seo";
+import { buildSiteHead, buildPageMeta, buildOrganizationJsonLd } from "@/core/lib/seo";
 import { serverConfig } from "@/core/config/server";
 import { Inter, Outfit, JetBrains_Mono } from "next/font/google";
 import { buildTokenOverrideCss } from "@/core/lib/theme-override-css";
@@ -48,20 +48,27 @@ const jetbrainsMono = JetBrains_Mono({
 export async function generateMetadata(): Promise<Metadata> {
   // Pull site_name/description from Settings, then layer root-layout-only
   // fields (title template, manifest) on top.
+  // The site's own name comes from the setting, not from the environment.
+  // Built from `serverConfig.name`, renaming a site in Admin > Settings
+  // changed every heading on it and left the browser tab reading the old
+  // name, because only this file can set a title template and this file was
+  // asking the wrong thing. `buildSiteHead` reads the setting and lets a
+  // module answer `seo.siteHead` on top of it.
+  const head = await buildSiteHead();
   const base = await buildPageMeta({
-    title: serverConfig.name,
+    title: head.defaultTitle,
     type: "website",
     url: "/",
   });
   return {
     ...base,
     title: {
-      default: serverConfig.name,
-      template: `%s | ${serverConfig.name}`,
+      default: head.defaultTitle,
+      template: head.titleTemplate,
     },
     keywords: ["open source", "modular platform", "plugin marketplace"],
-    manifest: "/manifest.json",
-    authors: [{ name: serverConfig.name }],
+    manifest: "/manifest.webmanifest",
+    authors: [{ name: head.defaultTitle }],
   };
 }
 
@@ -119,15 +126,23 @@ export default async function RootLayout({
     // is substituted on the element that declares it, and the theme tokens
     // are declared on `[data-theme][data-mode]`, which is this element. On
     // `body` a token could name `var(--font-inter)` and get nothing.
+    //
+    // `data-mode` is written here, by the server, so the first paint is
+    // already in the visitor's mode. It used to be an inline script in
+    // `<head>` reading localStorage - which the server cannot read, so the
+    // page arrived in the site's mode and the script corrected it, and the
+    // theme provider's effect corrected it straight back. Somebody who had
+    // picked dark watched every load turn light. The dev build also warns
+    // about a script tag in a component tree, for its own reason: one
+    // rendered on the client never runs at all.
     <html
       lang={locale}
       suppressHydrationWarning
+      data-theme={active.themeId}
+      data-mode={active.mode}
       className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable}`}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: `
-          try { if (localStorage.getItem('color-mode') === 'dark') document.documentElement.setAttribute('data-mode', 'dark'); } catch {}
-        ` }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: buildOrganizationJsonLd() }}

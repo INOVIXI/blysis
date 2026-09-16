@@ -8,7 +8,7 @@ import { ModuleRoutes } from "@/core/generated/module-registry";
 import { ModuleRouteResolvers } from "@/core/generated/module-route-resolvers";
 import { matchModuleRouteOnce } from "@/core/lib/route-matcher";
 import { buildPageMeta } from "@/core/lib/seo";
-import { resolveRouteTitle } from "@/core/lib/route-title";
+import { resolveRouteTitle, descriptionFromMessages } from "@/core/lib/route-title";
 import { getMessages } from "@/core/lib/i18n/translation-service";
 
 /**
@@ -59,8 +59,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const match = matchModuleRouteOnce(slug.join("/"));
     const route = match ? ModuleRoutes.find((r) => r.key === match.key) : undefined;
 
-    // Only for a route that declared a name; the fallback needs no catalogue.
-    const messages = route?.titleKey ? await getMessages(locale).catch(() => null) : null;
+    // Only for a route that declared a name or a description; the fallbacks
+    // need no catalogue.
+    const declared = Boolean(route?.titleKey || route?.descriptionKey);
+    const messages = declared ? await getMessages(locale).catch(() => null) : null;
+
+    // Without one, every module page shipped the single site-wide sentence as
+    // its meta description and its og:description, so a search result for the
+    // store, the forum and the leaderboard said exactly the same thing.
+    const description = descriptionFromMessages(messages, route?.descriptionKey);
 
     const meta = await buildPageMeta({
         title: resolveRouteTitle({
@@ -70,9 +77,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             titleKey: route?.titleKey,
             messages,
         }),
+        ...(description ? { description } : {}),
         url: "/" + (slug?.join("/") || ""),
         locale,
-        type: "article",
+        // What the route said it is, and `website` for everything that said
+        // nothing. This was `article` for every module page on the site.
+        type: route?.ogType ?? "website",
     });
 
     // Nothing serves this path, or the registry no longer carries the route it
