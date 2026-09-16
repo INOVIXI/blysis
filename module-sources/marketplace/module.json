@@ -45,7 +45,8 @@
   "adminRoutes": [
     {
       "path": "/settings/marketplace",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "marketplace.manage"
     }
   ],
   "settingsCards": [
@@ -61,22 +62,26 @@
     {
       "path": "/marketplace/listings",
       "handler": "api/listings/route.ts",
-      "description": "What is for sale, and putting something up."
+      "description": "What is for sale, and putting something up.",
+      "openTo": "member"
     },
     {
       "path": "/marketplace/listings/[id]",
       "handler": "api/listings/[id]/route.ts",
-      "description": "Take a listing down."
+      "description": "Take a listing down.",
+      "permission": "marketplace.manage"
     },
     {
       "path": "/marketplace/listings/[id]/buy",
       "handler": "api/listings/[id]/buy/route.ts",
-      "description": "Buy a listing with credits."
+      "description": "Buy a listing with credits.",
+      "openTo": "member"
     },
     {
       "path": "/marketplace/delivery-kinds",
       "handler": "api/delivery-kinds/route.ts",
-      "description": "What can be handed over here, for a seller to pick from."
+      "description": "What can be handed over here, for a seller to pick from.",
+      "openTo": "member"
     }
   ],
   "translations": {
@@ -182,5 +187,8 @@
       "column": "buyerId",
       "erasure": "retain"
     }
+  ],
+  "permissions": [
+    "marketplace.manage"
   ]
 }

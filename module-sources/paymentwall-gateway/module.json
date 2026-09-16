@@ -28,13 +28,15 @@
       "path": "/settings/paymentwall",
       "icon": "Globe",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "paymentwall-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/paymentwall",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "paymentwall-gateway.manage"
     }
   ],
   "api": [
@@ -100,5 +102,8 @@
         "module_paymentwall-gateway_description": "Paymentwall üzerinden yerel ödemeleri, cüzdanları ve mobil faturalandırmayı kullanın"
       }
     }
-  }
+  },
+  "permissions": [
+    "paymentwall-gateway.manage"
+  ]
 }

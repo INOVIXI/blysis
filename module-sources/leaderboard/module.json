@@ -22,7 +22,8 @@
     {
       "path": "/leaderboard",
       "handler": "api/route.ts",
-      "description": "Get the top players leaderboard ranking."
+      "description": "Get the top players leaderboard ranking.",
+      "openTo": "public"
     }
   ],
   "translations": {

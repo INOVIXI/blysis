@@ -29,13 +29,15 @@
       "path": "/settings/coinbase-commerce",
       "icon": "Bitcoin",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "coinbase-commerce-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/coinbase-commerce",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "coinbase-commerce-gateway.manage"
     }
   ],
   "api": [
@@ -102,5 +104,8 @@
         "module_coinbase-commerce-gateway_description": "Coinbase Commerce üzerinden Bitcoin, Ethereum, USDC ve diğer kripto ödemelerini alın"
       }
     }
-  }
+  },
+  "permissions": [
+    "coinbase-commerce-gateway.manage"
+  ]
 }

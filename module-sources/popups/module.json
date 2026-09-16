@@ -16,25 +16,29 @@
       "path": "/popups",
       "icon": "Bell",
       "group": "design",
-      "section": "layout"
+      "section": "layout",
+      "permission": "popups.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/popups",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "popups.manage"
     }
   ],
   "api": [
     {
       "path": "/popups",
       "handler": "api/route.ts",
-      "description": "List popups and create new ones (admin)."
+      "description": "List popups and create new ones (admin).",
+      "permission": "popups.manage"
     },
     {
       "path": "/popups/[id]",
       "handler": "api/[id]/route.ts",
-      "description": "Update or delete a single popup (admin)."
+      "description": "Update or delete a single popup (admin).",
+      "permission": "popups.manage"
     }
   ],
   "translations": {

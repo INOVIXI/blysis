@@ -19,20 +19,23 @@
       "path": "/storage/cloudflare-r2",
       "icon": "Cloud",
       "group": "system",
-      "section": "integrations"
+      "section": "integrations",
+      "permission": "cloudflare-r2.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/storage/cloudflare-r2",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "cloudflare-r2.manage"
     }
   ],
   "api": [
     {
       "path": "/storage/cloudflare-r2/settings",
       "handler": "api/settings/route.ts",
-      "description": "Get or update Cloudflare R2 storage settings (admin)."
+      "description": "Get or update Cloudflare R2 storage settings (admin).",
+      "permission": "cloudflare-r2.manage"
     }
   ],
   "settingsCards": [

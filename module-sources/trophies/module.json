@@ -15,7 +15,8 @@
       "label": "Trophies",
       "path": "/trophies",
       "icon": "Trophy",
-      "group": "gaming"
+      "group": "gaming",
+      "permission": "trophies.manage"
     }
   ],
   "routes": [
@@ -29,39 +30,46 @@
   "adminRoutes": [
     {
       "path": "/trophies",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "trophies.manage"
     }
   ],
   "api": [
     {
       "path": "/trophies",
       "handler": "api/route.ts",
-      "description": "Public list + admin create."
+      "description": "Public list + admin create.",
+      "permission": "trophies.manage"
     },
     {
       "path": "/trophies/[id]",
       "handler": "api/[id]/route.ts",
-      "description": "Admin update + delete."
+      "description": "Admin update + delete.",
+      "permission": "trophies.manage"
     },
     {
       "path": "/me/trophies",
       "handler": "api/me/route.ts",
-      "description": "Earned trophies for the current user."
+      "description": "Earned trophies for the current user.",
+      "openTo": "member"
     },
     {
       "path": "/admin/trophies",
       "handler": "api/admin/route.ts",
-      "description": "Admin trophy list + create."
+      "description": "Admin trophy list + create.",
+      "permission": "trophies.manage"
     },
     {
       "path": "/admin/trophies/[id]",
       "handler": "api/admin/[id]/route.ts",
-      "description": "Admin trophy update + delete."
+      "description": "Admin trophy update + delete.",
+      "permission": "trophies.manage"
     },
     {
       "path": "/admin/trophies/reload",
       "handler": "api/admin/reload/route.ts",
-      "description": "Re-register trophy hook listeners after a rule change."
+      "description": "Re-register trophy hook listeners after a rule change.",
+      "permission": "trophies.manage"
     }
   ],
   "navLinks": [

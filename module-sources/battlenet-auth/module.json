@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/battlenet-auth",
-      "component": "pages/admin/settings/battlenet-auth/page.tsx"
+      "component": "pages/admin/settings/battlenet-auth/page.tsx",
+      "permission": "battlenet-auth.manage"
     }
   ],
   "settingsCards": [
@@ -68,5 +69,8 @@
         "module_battlenet-auth_description": "Kullanıcıların Battle.net hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "battlenet-auth.manage"
+  ]
 }

@@ -24,7 +24,8 @@
   "adminRoutes": [
     {
       "path": "/google-analytics",
-      "component": "pages/admin/settings/analytics/page.tsx"
+      "component": "pages/admin/settings/analytics/page.tsx",
+      "permission": "google-analytics.manage"
     }
   ],
   "settingsCards": [
@@ -42,7 +43,8 @@
       "path": "/google-analytics",
       "icon": "BarChart",
       "group": "system",
-      "section": "integrations"
+      "section": "integrations",
+      "permission": "google-analytics.manage"
     }
   ],
   "translations": {
@@ -109,5 +111,8 @@
     "script-src": [
       "https://www.googletagmanager.com"
     ]
-  }
+  },
+  "permissions": [
+    "google-analytics.manage"
+  ]
 }

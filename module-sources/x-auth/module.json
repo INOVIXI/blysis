@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/x-auth",
-      "component": "pages/admin/settings/x-auth/page.tsx"
+      "component": "pages/admin/settings/x-auth/page.tsx",
+      "permission": "x-auth.manage"
     }
   ],
   "settingsCards": [
@@ -59,5 +60,8 @@
         "module_x-auth_description": "Kullanıcıların X (Twitter) hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "x-auth.manage"
+  ]
 }

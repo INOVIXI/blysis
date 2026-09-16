@@ -16,25 +16,29 @@
       "path": "/security/turnstile",
       "icon": "Shield",
       "group": "system",
-      "section": "security"
+      "section": "security",
+      "permission": "cloudflare-turnstile.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/security/turnstile",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "cloudflare-turnstile.manage"
     }
   ],
   "api": [
     {
       "path": "/security/turnstile/settings",
       "handler": "api/settings/route.ts",
-      "description": "Get or update Cloudflare Turnstile captcha settings (admin)."
+      "description": "Get or update Cloudflare Turnstile captcha settings (admin).",
+      "permission": "cloudflare-turnstile.manage"
     },
     {
       "path": "/security/turnstile/public-config",
       "handler": "api/public-config/route.ts",
-      "description": "Site key and per-form switches for the Turnstile widget (public; never the secret)."
+      "description": "Site key and per-form switches for the Turnstile widget (public; never the secret).",
+      "openTo": "public"
     }
   ],
   "settingsCards": [
@@ -128,5 +132,8 @@
     "frame-src": [
       "https://challenges.cloudflare.com"
     ]
-  }
+  },
+  "permissions": [
+    "cloudflare-turnstile.manage"
+  ]
 }

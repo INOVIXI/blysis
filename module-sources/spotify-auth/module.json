@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/spotify-auth",
-      "component": "pages/admin/settings/spotify-auth/page.tsx"
+      "component": "pages/admin/settings/spotify-auth/page.tsx",
+      "permission": "spotify-auth.manage"
     }
   ],
   "settingsCards": [
@@ -59,5 +60,8 @@
         "module_spotify-auth_description": "Kullanıcıların Spotify hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "spotify-auth.manage"
+  ]
 }

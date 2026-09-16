@@ -15,7 +15,8 @@
       "label": "Vote Sites",
       "path": "/vote-sites",
       "icon": "Vote",
-      "group": "gaming"
+      "group": "gaming",
+      "permission": "vote.manage"
     }
   ],
   "routes": [
@@ -29,19 +30,22 @@
   "adminRoutes": [
     {
       "path": "/vote-sites",
-      "component": "pages/admin/sites/page.tsx"
+      "component": "pages/admin/sites/page.tsx",
+      "permission": "vote.manage"
     }
   ],
   "api": [
     {
       "path": "/vote/sites",
       "handler": "api/sites/route.ts",
-      "description": "List vote sites and create new ones (admin)."
+      "description": "List vote sites and create new ones (admin).",
+      "permission": "vote.manage"
     },
     {
       "path": "/vote/sites/[id]",
       "handler": "api/sites/[id]/route.ts",
-      "description": "Update or delete a vote site (admin)."
+      "description": "Update or delete a vote site (admin).",
+      "permission": "vote.manage"
     },
     {
       "path": "/vote/record",
@@ -50,7 +54,8 @@
       "rateLimit": {
         "maxRequests": 30,
         "windowMs": 60000
-      }
+      },
+      "openTo": "member"
     }
   ],
   "dependencies": [],

@@ -37,7 +37,8 @@
   "adminRoutes": [
     {
       "path": "/settings/birfatura-invoicing",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "birfatura-invoicing.manage"
     }
   ],
   "settingsCards": [
@@ -97,5 +98,8 @@
       }
     }
   },
-  "userDataExport": []
+  "userDataExport": [],
+  "permissions": [
+    "birfatura-invoicing.manage"
+  ]
 }

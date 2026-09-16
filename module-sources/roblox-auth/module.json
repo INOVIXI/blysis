@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/roblox-auth",
-      "component": "pages/admin/settings/roblox-auth/page.tsx"
+      "component": "pages/admin/settings/roblox-auth/page.tsx",
+      "permission": "roblox-auth.manage"
     }
   ],
   "settingsCards": [
@@ -87,5 +88,8 @@
         "module_roblox-auth_description": "Kullanıcıların Roblox hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "roblox-auth.manage"
+  ]
 }

@@ -16,20 +16,23 @@
       "path": "/export",
       "icon": "Download",
       "group": "system",
-      "section": "operations"
+      "section": "operations",
+      "permission": "admin.export"
     }
   ],
   "adminRoutes": [
     {
       "path": "/export",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "admin.export"
     }
   ],
   "api": [
     {
       "path": "/admin/export",
       "handler": "api/export/route.ts",
-      "description": "Export tabular data to CSV (admin)."
+      "description": "Export tabular data to CSV (admin).",
+      "permission": "admin.export"
     }
   ],
   "dependencies": [

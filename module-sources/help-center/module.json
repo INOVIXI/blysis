@@ -40,7 +40,8 @@
       "path": "/help",
       "icon": "HelpCircle",
       "group": "content",
-      "section": "publishing"
+      "section": "publishing",
+      "permission": "help-center.manage"
     }
   ],
   "routes": [
@@ -69,29 +70,34 @@
   "adminRoutes": [
     {
       "path": "/help",
-      "component": "pages/admin/help/page.tsx"
+      "component": "pages/admin/help/page.tsx",
+      "permission": "help-center.manage"
     }
   ],
   "api": [
     {
       "path": "/help/articles",
       "handler": "api/help/articles/route.ts",
-      "description": "List help center articles and create new ones (admin)."
+      "description": "List help center articles and create new ones (admin).",
+      "permission": "help-center.manage"
     },
     {
       "path": "/help/articles/[slug]",
       "handler": "api/help/articles/[slug]/route.ts",
-      "description": "Get a help article by slug or update/delete it (admin)."
+      "description": "Get a help article by slug or update/delete it (admin).",
+      "permission": "help-center.manage"
     },
     {
       "path": "/help/categories",
       "handler": "api/help/categories/route.ts",
-      "description": "List help center categories and create new ones (admin)."
+      "description": "List help center categories and create new ones (admin).",
+      "permission": "help-center.manage"
     },
     {
       "path": "/help/categories/[id]",
       "handler": "api/help/categories/[id]/route.ts",
-      "description": "Update or delete a help centre category (admin)."
+      "description": "Update or delete a help centre category (admin).",
+      "permission": "help-center.manage"
     }
   ],
   "hooksEmitted": [

@@ -20,13 +20,15 @@
       "path": "/email",
       "icon": "Mail",
       "group": "system",
-      "section": "integrations"
+      "section": "integrations",
+      "permission": "email-templates.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/email",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "email-templates.manage"
     }
   ],
   "translations": {
@@ -122,5 +124,8 @@
         "adm_saved": "Kaydedildi"
       }
     }
-  }
+  },
+  "permissions": [
+    "email-templates.manage"
+  ]
 }

@@ -13,17 +13,20 @@
       "path": "/discord",
       "icon": "MessageSquare",
       "group": "system",
-      "section": "integrations"
+      "section": "integrations",
+      "permission": "discord-integration.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/discord",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "discord-integration.manage"
     },
     {
       "path": "/discord/messages",
-      "component": "pages/admin/messages/page.tsx"
+      "component": "pages/admin/messages/page.tsx",
+      "permission": "discord-integration.manage"
     }
   ],
   "settingsCards": [
@@ -277,13 +280,18 @@
     {
       "path": "/discord/events",
       "handler": "api/events/route.ts",
-      "description": "The events and the message designed for each (admin)."
+      "description": "The events and the message designed for each (admin).",
+      "permission": "discord-integration.manage"
     },
     {
       "path": "/discord/test-send",
       "handler": "api/test-send/route.ts",
       "method": "POST",
-      "description": "Send the message an operator is designing, and say what the service answered (admin)."
+      "description": "Send the message an operator is designing, and say what the service answered (admin).",
+      "permission": "discord-integration.manage"
     }
+  ],
+  "permissions": [
+    "discord-integration.manage"
   ]
 }

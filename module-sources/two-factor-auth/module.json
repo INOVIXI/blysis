@@ -11,42 +11,50 @@
     {
       "path": "/auth/two-factor/setup",
       "handler": "api/setup/route.ts",
-      "description": "Begin 2FA setup and return a TOTP secret and QR code."
+      "description": "Begin 2FA setup and return a TOTP secret and QR code.",
+      "openTo": "member"
     },
     {
       "path": "/auth/two-factor/verify",
       "handler": "api/verify/route.ts",
-      "description": "Verify a 2FA TOTP code to complete setup or login."
+      "description": "Verify a 2FA TOTP code to complete setup or login.",
+      "openTo": "member"
     },
     {
       "path": "/auth/two-factor/disable",
       "handler": "api/disable/route.ts",
-      "description": "Disable 2FA for the current user after password confirmation."
+      "description": "Disable 2FA for the current user after password confirmation.",
+      "openTo": "member"
     },
     {
       "path": "/auth/two-factor/status",
       "handler": "api/status/route.ts",
-      "description": "Get 2FA status for the current user."
+      "description": "Get 2FA status for the current user.",
+      "openTo": "member"
     },
     {
       "path": "/auth/two-factor/regenerate-codes",
       "handler": "api/regenerate-codes/route.ts",
-      "description": "Regenerate 2FA backup recovery codes."
+      "description": "Regenerate 2FA backup recovery codes.",
+      "openTo": "member"
     },
     {
       "path": "/auth/verify",
       "handler": "api/verify/route.ts",
-      "description": "Verify a 2FA TOTP code to complete setup or login."
+      "description": "Verify a 2FA TOTP code to complete setup or login.",
+      "openTo": "member"
     },
     {
       "path": "/auth/setup",
       "handler": "api/setup/route.ts",
-      "description": "Begin 2FA setup and return a TOTP secret and QR code."
+      "description": "Begin 2FA setup and return a TOTP secret and QR code.",
+      "openTo": "member"
     },
     {
       "path": "/auth/disable",
       "handler": "api/disable/route.ts",
-      "description": "Disable 2FA for the current user after password confirmation."
+      "description": "Disable 2FA for the current user after password confirmation.",
+      "openTo": "member"
     }
   ],
   "profileTabs": [

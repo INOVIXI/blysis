@@ -29,13 +29,15 @@
       "path": "/settings/param",
       "icon": "CreditCard",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "param-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/param",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "param-gateway.manage"
     }
   ],
   "api": [
@@ -114,5 +116,8 @@
         "module_param-gateway_description": "Param (TurkPos) üzerinden Türk kartı ve taksitli ödemeleri alın"
       }
     }
-  }
+  },
+  "permissions": [
+    "param-gateway.manage"
+  ]
 }

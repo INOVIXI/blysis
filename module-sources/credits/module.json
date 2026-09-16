@@ -24,12 +24,14 @@
     {
       "path": "/credits",
       "handler": "api/credits/route.ts",
-      "description": "Get the current user credit balance."
+      "description": "Get the current user credit balance.",
+      "openTo": "member"
     },
     {
       "path": "/credits/purchase",
       "handler": "api/credits/purchase/route.ts",
-      "description": "Purchase credits via the configured payment gateway."
+      "description": "Purchase credits via the configured payment gateway.",
+      "permission": "credits.manage"
     }
   ],
   "dependencies": [],
@@ -210,7 +212,8 @@
   "adminRoutes": [
     {
       "path": "/settings/credits",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "credits.manage"
     }
   ],
   "settingsCards": [

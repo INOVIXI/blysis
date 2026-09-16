@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/line-auth",
-      "component": "pages/admin/settings/line-auth/page.tsx"
+      "component": "pages/admin/settings/line-auth/page.tsx",
+      "permission": "line-auth.manage"
     }
   ],
   "settingsCards": [
@@ -61,5 +62,8 @@
         "module_line-auth_description": "Kullanıcıların LINE hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "line-auth.manage"
+  ]
 }

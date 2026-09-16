@@ -28,13 +28,15 @@
       "path": "/settings/mollie",
       "icon": "Landmark",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "mollie-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/mollie",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "mollie-gateway.manage"
     }
   ],
   "api": [
@@ -101,5 +103,8 @@
         "module_mollie-gateway_description": "Mollie üzerinden iDEAL, Bancontact, SEPA ve kart ödemelerini alın"
       }
     }
-  }
+  },
+  "permissions": [
+    "mollie-gateway.manage"
+  ]
 }

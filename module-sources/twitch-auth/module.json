@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/twitch-auth",
-      "component": "pages/admin/settings/twitch-auth/page.tsx"
+      "component": "pages/admin/settings/twitch-auth/page.tsx",
+      "permission": "twitch-auth.manage"
     }
   ],
   "settingsCards": [
@@ -87,5 +88,8 @@
         "module_twitch-auth_description": "Kullanıcıların Twitch hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "twitch-auth.manage"
+  ]
 }

@@ -29,13 +29,15 @@
       "path": "/settings/stripe",
       "icon": "CreditCard",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "stripe-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/stripe",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "stripe-gateway.manage"
     }
   ],
   "translations": {
@@ -158,5 +160,8 @@
       "type": "filter",
       "handler": "hooks/on-payment-session.ts"
     }
+  ],
+  "permissions": [
+    "stripe-gateway.manage"
   ]
 }

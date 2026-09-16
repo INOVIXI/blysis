@@ -26,7 +26,8 @@
     {
       "path": "/notifications",
       "handler": "api/route.ts",
-      "description": "Get user notifications and mark them read."
+      "description": "Get user notifications and mark them read.",
+      "openTo": "member"
     }
   ],
   "translations": {

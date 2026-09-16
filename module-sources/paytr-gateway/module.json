@@ -29,13 +29,15 @@
       "path": "/settings/paytr",
       "icon": "CreditCard",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "paytr-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/paytr",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "paytr-gateway.manage"
     }
   ],
   "api": [
@@ -110,5 +112,8 @@
         "module_paytr-gateway_description": "PayTR üzerinden Türk kartı, taksit ve havale ödemelerini alın"
       }
     }
-  }
+  },
+  "permissions": [
+    "paytr-gateway.manage"
+  ]
 }

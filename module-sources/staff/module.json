@@ -15,7 +15,8 @@
       "label": "Staff Members",
       "path": "/staff-members",
       "icon": "Users",
-      "group": "community"
+      "group": "community",
+      "permission": "staff.manage"
     }
   ],
   "routes": [
@@ -29,19 +30,22 @@
   "adminRoutes": [
     {
       "path": "/staff-members",
-      "component": "pages/admin/members/page.tsx"
+      "component": "pages/admin/members/page.tsx",
+      "permission": "staff.manage"
     }
   ],
   "api": [
     {
       "path": "/staff",
       "handler": "api/route.ts",
-      "description": "List staff members and create new ones (admin)."
+      "description": "List staff members and create new ones (admin).",
+      "permission": "staff.manage"
     },
     {
       "path": "/staff/[id]",
       "handler": "api/[id]/route.ts",
-      "description": "Update or delete a single staff member (admin)."
+      "description": "Update or delete a single staff member (admin).",
+      "permission": "staff.manage"
     }
   ],
   "translations": {

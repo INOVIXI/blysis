@@ -16,7 +16,8 @@
       "path": "/downloads",
       "icon": "Download",
       "group": "content",
-      "section": "publishing"
+      "section": "publishing",
+      "permission": "downloads.manage"
     }
   ],
   "routes": [
@@ -37,19 +38,22 @@
   "adminRoutes": [
     {
       "path": "/downloads",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "downloads.manage"
     }
   ],
   "api": [
     {
       "path": "/downloads",
       "handler": "api/route.ts",
-      "description": "List downloadable files and create new ones (admin)."
+      "description": "List downloadable files and create new ones (admin).",
+      "permission": "downloads.manage"
     },
     {
       "path": "/downloads/[id]",
       "handler": "api/[id]/route.ts",
-      "description": "Get, update, or delete a single download entry."
+      "description": "Get, update, or delete a single download entry.",
+      "permission": "downloads.manage"
     },
     {
       "path": "/downloads/guide/[number]",

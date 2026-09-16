@@ -21,7 +21,8 @@
   "adminRoutes": [
     {
       "path": "/settings/tawkto-chat",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "tawkto-chat.manage"
     }
   ],
   "settingsCards": [
@@ -62,5 +63,8 @@
         "adm_widgetIdDesc": "İkincisi. Herhangi birini boş bırakırsanız sohbet hiç yüklenmez."
       }
     }
-  }
+  },
+  "permissions": [
+    "tawkto-chat.manage"
+  ]
 }

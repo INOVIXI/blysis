@@ -29,13 +29,15 @@
       "path": "/settings/mercadopago",
       "icon": "Wallet",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "mercadopago-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/mercadopago",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "mercadopago-gateway.manage"
     }
   ],
   "api": [
@@ -106,5 +108,8 @@
         "module_mercadopago-gateway_description": "Mercado Pago üzerinden Latin Amerika genelinde kart, Pix, boleto ve nakit ödemelerini alın"
       }
     }
-  }
+  },
+  "permissions": [
+    "mercadopago-gateway.manage"
+  ]
 }

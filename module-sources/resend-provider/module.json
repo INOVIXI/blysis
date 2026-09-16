@@ -17,7 +17,8 @@
   "adminRoutes": [
     {
       "path": "/settings/resend",
-      "component": "pages/admin/settings/resend/page.tsx"
+      "component": "pages/admin/settings/resend/page.tsx",
+      "permission": "resend-provider.manage"
     }
   ],
   "settingsCards": [
@@ -93,5 +94,8 @@
         "module_resend-provider_description": "Resend API üzerinden e-posta gönderin"
       }
     }
-  }
+  },
+  "permissions": [
+    "resend-provider.manage"
+  ]
 }

@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/discord-auth",
-      "component": "pages/admin/settings/discord-auth/page.tsx"
+      "component": "pages/admin/settings/discord-auth/page.tsx",
+      "permission": "discord-auth.manage"
     }
   ],
   "settingsCards": [
@@ -87,5 +88,8 @@
         "module_discord-auth_description": "Kullanıcıların Discord hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "discord-auth.manage"
+  ]
 }

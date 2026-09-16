@@ -17,7 +17,8 @@
   "adminRoutes": [
     {
       "path": "/settings/url-redirects",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "url-redirects.manage"
     }
   ],
   "settingsCards": [
@@ -33,7 +34,8 @@
     {
       "path": "/url-redirects",
       "handler": "api/redirects/route.ts",
-      "description": "List the redirects, or add one (admin)."
+      "description": "List the redirects, or add one (admin).",
+      "permission": "url-redirects.manage"
     }
   ],
   "userDataExport": [],
@@ -80,5 +82,8 @@
         }
       }
     }
-  }
+  },
+  "permissions": [
+    "url-redirects.manage"
+  ]
 }

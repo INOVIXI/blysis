@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/yandex-auth",
-      "component": "pages/admin/settings/yandex-auth/page.tsx"
+      "component": "pages/admin/settings/yandex-auth/page.tsx",
+      "permission": "yandex-auth.manage"
     }
   ],
   "settingsCards": [
@@ -61,5 +62,8 @@
         "module_yandex-auth_description": "Kullanıcıların Yandex hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "yandex-auth.manage"
+  ]
 }

@@ -99,6 +99,28 @@ const panelRelativePath = routePath.refine(
     { message: "Admin paths are relative to the panel: drop the leading /admin" },
 );
 
+/**
+ * A permission name, in the one shape core enforces: `namespace.action`.
+ *
+ * The namespace is the module that owns it, or `admin` for a module that
+ * extends core's own panel rather than adding a surface of its own.
+ */
+const permissionName = z.string().min(3).max(128).regex(
+    /^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+$/,
+    "permission must be namespace.action in lower case",
+);
+
+/**
+ * Who an endpoint is for when no permission gates it.
+ *
+ * Most of a module's writes are not an operator's job: posting a topic,
+ * adding to a cart, voting, redeeming a code. Gating those would mean
+ * granting every member a permission, which is a permission that means
+ * nothing. `member` is anybody signed in, `public` is anybody at all, and
+ * saying which is how an endpoint stays a decision rather than an omission.
+ */
+const openTo = z.enum(["member", "public"]);
+
 const menuItem = z.object({
     label: z.string().min(1).max(100),
     path: panelRelativePath,
@@ -116,6 +138,15 @@ const menuItem = z.object({
      * slug and not display text.
      */
     section: z.string().min(1).max(64).regex(/^[a-z][a-z0-9-]*$/).optional(),
+    /**
+     * What opens the screen this links to.
+     *
+     * The sidebar draws only what the reader could actually open, so a link
+     * with no permission would be a link to a refusal. It has to be a name the
+     * module also declares in `permissions`, or nobody could ever be granted
+     * it.
+     */
+    permission: permissionName.optional(),
 });
 
 const routeEntry = z.object({
@@ -205,6 +236,12 @@ const routeEntry = z.object({
 const adminRouteEntry = z.object({
     path: panelRelativePath,
     component: relativePath("component"),
+    /**
+     * What opens this screen. An admin route is never public: core denies a
+     * panel path it has no permission for, so an undeclared screen is one
+     * only an administrator reaches.
+     */
+    permission: permissionName.optional(),
 });
 
 const apiEntry = z.object({
@@ -212,6 +249,20 @@ const apiEntry = z.object({
     handler: relativePath("handler"),
     method: z.enum(["GET", "POST", "PUT", "DELETE", "PATCH", "ALL"]).optional(),
     description: z.string().max(500).optional(),
+    /**
+     * What allows a write to this endpoint.
+     *
+     * Writes only. A reader is gated by the screen that does the reading, and
+     * an entry declared `ALL` commonly serves a public list from GET and an
+     * operator's create from POST: gating the pair together would take the
+     * list off a public page.
+     *
+     * Exactly one of `permission` and `openTo` belongs on an entry that
+     * writes, unless it is a `providerCallback`, which authenticates the
+     * caller itself because there is no session to read.
+     */
+    permission: permissionName.optional(),
+    openTo: openTo.optional(),
     /**
      * An endpoint a payment provider or other external service posts to
      * directly, with no browser and therefore no `Origin` header.

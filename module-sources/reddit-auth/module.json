@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/reddit-auth",
-      "component": "pages/admin/settings/reddit-auth/page.tsx"
+      "component": "pages/admin/settings/reddit-auth/page.tsx",
+      "permission": "reddit-auth.manage"
     }
   ],
   "settingsCards": [
@@ -59,5 +60,8 @@
         "module_reddit-auth_description": "Kullanıcıların Reddit hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "reddit-auth.manage"
+  ]
 }

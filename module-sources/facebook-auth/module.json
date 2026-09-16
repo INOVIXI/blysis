@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/facebook-auth",
-      "component": "pages/admin/settings/facebook-auth/page.tsx"
+      "component": "pages/admin/settings/facebook-auth/page.tsx",
+      "permission": "facebook-auth.manage"
     }
   ],
   "settingsCards": [
@@ -59,5 +60,8 @@
         "module_facebook-auth_description": "Kullanıcıların Facebook hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "facebook-auth.manage"
+  ]
 }

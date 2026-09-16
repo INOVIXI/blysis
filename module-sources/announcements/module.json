@@ -16,25 +16,29 @@
       "path": "/announcements",
       "icon": "Megaphone",
       "group": "content",
-      "section": "publishing"
+      "section": "publishing",
+      "permission": "announcements.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/announcements",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "announcements.manage"
     }
   ],
   "api": [
     {
       "path": "/announcements",
       "handler": "api/route.ts",
-      "description": "List public announcements and create new ones (admin)."
+      "description": "List public announcements and create new ones (admin).",
+      "permission": "announcements.manage"
     },
     {
       "path": "/announcements/[id]",
       "handler": "api/[id]/route.ts",
-      "description": "Update or delete a single announcement (admin)."
+      "description": "Update or delete a single announcement (admin).",
+      "permission": "announcements.manage"
     }
   ],
   "hooksEmitted": [

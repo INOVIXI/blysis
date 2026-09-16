@@ -13,13 +13,15 @@
       "path": "/security",
       "icon": "Shield",
       "group": "system",
-      "section": "security"
+      "section": "security",
+      "permission": "login-protection.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/security",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "login-protection.manage"
     }
   ],
   "settingsCards": [
@@ -128,5 +130,8 @@
         "adm_saved": "Kaydedildi"
       }
     }
-  }
+  },
+  "permissions": [
+    "login-protection.manage"
+  ]
 }

@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/microsoft-auth",
-      "component": "pages/admin/settings/microsoft-auth/page.tsx"
+      "component": "pages/admin/settings/microsoft-auth/page.tsx",
+      "permission": "microsoft-auth.manage"
     }
   ],
   "settingsCards": [
@@ -61,5 +62,8 @@
         "module_microsoft-auth_description": "Kullanıcıların Microsoft veya Xbox hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "microsoft-auth.manage"
+  ]
 }

@@ -29,13 +29,15 @@
       "path": "/settings/iyzico",
       "icon": "CreditCard",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "iyzico-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/iyzico",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "iyzico-gateway.manage"
     }
   ],
   "api": [
@@ -102,5 +104,8 @@
         "module_iyzico-gateway_description": "iyzico üzerinden taksit ve 3D Secure destekli Türk kartı ödemelerini alın"
       }
     }
-  }
+  },
+  "permissions": [
+    "iyzico-gateway.manage"
+  ]
 }

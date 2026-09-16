@@ -13,33 +13,39 @@
   "adminRoutes": [
     {
       "path": "/seo",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "seo.manage"
     },
     {
       "path": "/seo/pages",
-      "component": "pages/admin/pages/page.tsx"
+      "component": "pages/admin/pages/page.tsx",
+      "permission": "seo.manage"
     }
   ],
   "api": [
     {
       "path": "/seo/pages",
       "handler": "api/pages/route.ts",
-      "description": "List per-page SEO configurations and create new ones (admin)."
+      "description": "List per-page SEO configurations and create new ones (admin).",
+      "permission": "seo.manage"
     },
     {
       "path": "/seo/pages/[id]",
       "handler": "api/pages/[id]/route.ts",
-      "description": "Update or delete a single SEO page config (admin)."
+      "description": "Update or delete a single SEO page config (admin).",
+      "permission": "seo.manage"
     },
     {
       "path": "/seo/settings",
       "handler": "api/settings/route.ts",
-      "description": "Get or update global SEO settings (admin)."
+      "description": "Get or update global SEO settings (admin).",
+      "permission": "seo.manage"
     },
     {
       "path": "/seo/catalogue",
       "handler": "api/catalogue/route.ts",
-      "description": "Every public page on the site with its default title and description, plus the overrides set on them (admin)."
+      "description": "Every public page on the site with its default title and description, plus the overrides set on them (admin).",
+      "permission": "seo.manage"
     }
   ],
   "menu": [
@@ -48,7 +54,8 @@
       "path": "/seo",
       "icon": "Search",
       "group": "content",
-      "section": "publishing"
+      "section": "publishing",
+      "permission": "seo.manage"
     }
   ],
   "settingsCards": [

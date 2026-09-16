@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/steam-auth",
-      "component": "pages/admin/settings/steam-auth/page.tsx"
+      "component": "pages/admin/settings/steam-auth/page.tsx",
+      "permission": "steam-auth.manage"
     }
   ],
   "routes": [
@@ -120,5 +121,8 @@
         "steam": "Steam hesabınızla oturum açma işlemini tamamlayın; işlem biter bitmez kaldığınız yere geri dönersiniz."
       }
     }
-  }
+  },
+  "permissions": [
+    "steam-auth.manage"
+  ]
 }

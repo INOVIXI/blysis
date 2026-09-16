@@ -27,7 +27,8 @@
   "adminRoutes": [
     {
       "path": "/settings/showcase",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "showcase.manage"
     }
   ],
   "settingsCards": [
@@ -43,12 +44,14 @@
     {
       "path": "/showcase/cards",
       "handler": "api/cards/route.ts",
-      "description": "The cards on show, and adding one (admin)."
+      "description": "The cards on show, and adding one (admin).",
+      "permission": "showcase.manage"
     },
     {
       "path": "/showcase/cards/[id]",
       "handler": "api/cards/[id]/route.ts",
-      "description": "Edit or remove one card (admin)."
+      "description": "Edit or remove one card (admin).",
+      "permission": "showcase.manage"
     }
   ],
   "translations": {
@@ -108,5 +111,8 @@
         "showcase": "Görmeye değer, özenle seçilmiş içeriklere göz atın; her kart sizi arkasındaki sayfaya götürür."
       }
     }
-  }
+  },
+  "permissions": [
+    "showcase.manage"
+  ]
 }

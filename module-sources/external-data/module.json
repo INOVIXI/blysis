@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/external-data",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "external-data.manage"
     }
   ],
   "settingsCards": [
@@ -32,7 +33,8 @@
     {
       "path": "/external-data/admin/sources",
       "handler": "api/admin/sources/route.ts",
-      "description": "Read the sources for the editor, save one, try one against the other database, or remove one."
+      "description": "Read the sources for the editor, save one, try one against the other database, or remove one.",
+      "permission": "external-data.manage"
     }
   ],
   "translations": {
@@ -148,5 +150,8 @@
         }
       }
     }
-  }
+  },
+  "permissions": [
+    "external-data.manage"
+  ]
 }

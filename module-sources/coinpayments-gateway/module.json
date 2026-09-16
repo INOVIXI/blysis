@@ -28,13 +28,15 @@
       "path": "/settings/coinpayments",
       "icon": "Bitcoin",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "coinpayments-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/coinpayments",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "coinpayments-gateway.manage"
     }
   ],
   "api": [
@@ -101,5 +103,8 @@
         "module_coinpayments-gateway_description": "CoinPayments üzerinden Bitcoin, Litecoin, USDT ve diğer kripto ödemelerini alın"
       }
     }
-  }
+  },
+  "permissions": [
+    "coinpayments-gateway.manage"
+  ]
 }

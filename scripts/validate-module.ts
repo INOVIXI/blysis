@@ -599,6 +599,78 @@ function checkApiAuthChecks(modulePath: string): CheckResult {
  * (`doAction(`${resource}.created`, …)`, as core's crud helpers do) cannot be
  * declared and is not required to be.
  */
+/**
+ * Every admin surface and every write says who may reach it.
+ *
+ * Core denies a panel path it has no permission for, so a menu item or an
+ * admin route that declares none is a screen only an administrator can open -
+ * which is the safe failure and still a failure, because nobody decided it.
+ * A write is the same question with a second answer available: most of a
+ * module's writes are a member's own business rather than an operator's job,
+ * and `openTo` is how that is said out loud instead of left blank.
+ *
+ * The name has to be one the module also declares in `permissions`, or nobody
+ * could be granted it and the screen would be unreachable by everyone.
+ */
+function checkPermissionsDeclared(modulePath: string): CheckResult {
+    const manifestPath = path.join(modulePath, "module.json");
+    if (!fs.existsSync(manifestPath)) {
+        return { name: "Permission declarations", passed: true, message: "No manifest" };
+    }
+
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8")) as {
+        permissions?: string[];
+        menu?: { path: string; permission?: string }[];
+        adminRoutes?: { path: string; permission?: string }[];
+        api?: {
+            path: string;
+            method?: string;
+            permission?: string;
+            openTo?: string;
+            providerCallback?: boolean;
+        }[];
+    };
+
+    const granted = new Set(manifest.permissions ?? []);
+    const problems: string[] = [];
+
+    const requiresName = [
+        ...(manifest.menu ?? []).map((item) => ({ kind: "menu", path: item.path, permission: item.permission })),
+        ...(manifest.adminRoutes ?? []).map((item) => ({ kind: "adminRoute", path: item.path, permission: item.permission })),
+    ];
+
+    for (const entry of requiresName) {
+        if (!entry.permission) {
+            problems.push(`${entry.kind} ${entry.path} declares no permission`);
+        } else if (!granted.has(entry.permission)) {
+            problems.push(`${entry.kind} ${entry.path} requires ${entry.permission}, which this module does not declare in permissions`);
+        }
+    }
+
+    for (const entry of manifest.api ?? []) {
+        const method = entry.method ?? "ALL";
+        if (method === "GET") continue;
+        if (entry.providerCallback) continue;
+        if (entry.permission && entry.openTo) {
+            problems.push(`api ${entry.path} declares both a permission and openTo`);
+            continue;
+        }
+        if (entry.permission) {
+            if (!granted.has(entry.permission)) {
+                problems.push(`api ${entry.path} requires ${entry.permission}, which this module does not declare in permissions`);
+            }
+            continue;
+        }
+        if (!entry.openTo) {
+            problems.push(`api ${entry.path} writes and declares neither a permission nor openTo`);
+        }
+    }
+
+    return problems.length === 0
+        ? { name: "Permission declarations", passed: true, message: `${requiresName.length} admin surface(s) declared` }
+        : { name: "Permission declarations", passed: false, message: problems.join("; ") };
+}
+
 function checkHooksEmitted(modulePath: string): CheckResult {
     const manifestPath = path.join(modulePath, "module.json");
     if (!fs.existsSync(manifestPath)) {
@@ -2072,6 +2144,7 @@ function validateOne(modulePath: string, verbose: boolean, withTypeScript = true
               ]),
         checkNoAnyTypes(modulePath),
         checkApiAuthChecks(modulePath),
+        checkPermissionsDeclared(modulePath),
         checkApiRoutesWired(modulePath),
         checkCapabilityFilesDeclared(modulePath),
         checkStatsApiAuth(modulePath),

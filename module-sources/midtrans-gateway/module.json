@@ -28,13 +28,15 @@
       "path": "/settings/midtrans",
       "icon": "Smartphone",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "midtrans-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/midtrans",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "midtrans-gateway.manage"
     }
   ],
   "api": [
@@ -105,5 +107,8 @@
         "module_midtrans-gateway_description": "Midtrans üzerinden Endonezya'da havale, e-cüzdan, market ve kart ödemelerini alın"
       }
     }
-  }
+  },
+  "permissions": [
+    "midtrans-gateway.manage"
+  ]
 }

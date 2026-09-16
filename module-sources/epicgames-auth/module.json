@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/epicgames-auth",
-      "component": "pages/admin/settings/epicgames-auth/page.tsx"
+      "component": "pages/admin/settings/epicgames-auth/page.tsx",
+      "permission": "epicgames-auth.manage"
     }
   ],
   "settingsCards": [
@@ -67,5 +68,8 @@
         "module_epicgames-auth_description": "Kullanıcıların Epic Games hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "epicgames-auth.manage"
+  ]
 }

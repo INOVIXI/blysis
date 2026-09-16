@@ -12,20 +12,23 @@
       "label": "Currency",
       "path": "/currency",
       "icon": "DollarSign",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "currency.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/currency",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "currency.manage"
     }
   ],
   "api": [
     {
       "path": "/currency",
       "handler": "api/route.ts",
-      "description": "List available currencies and create new ones (admin)."
+      "description": "List available currencies and create new ones (admin).",
+      "permission": "currency.manage"
     }
   ],
   "settingsCards": [
@@ -132,5 +135,8 @@
       "handler": "hooks/on-currency-rate.ts",
       "priority": 10
     }
+  ],
+  "permissions": [
+    "currency.manage"
   ]
 }

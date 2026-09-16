@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/kick-auth",
-      "component": "pages/admin/settings/kick-auth/page.tsx"
+      "component": "pages/admin/settings/kick-auth/page.tsx",
+      "permission": "kick-auth.manage"
     }
   ],
   "settingsCards": [
@@ -65,5 +66,8 @@
         "module_kick-auth_description": "Kullanıcıların Kick hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "kick-auth.manage"
+  ]
 }

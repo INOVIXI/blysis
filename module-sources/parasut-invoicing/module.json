@@ -29,7 +29,8 @@
   "adminRoutes": [
     {
       "path": "/settings/parasut-invoicing",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "parasut-invoicing.manage"
     }
   ],
   "settingsCards": [
@@ -52,7 +53,8 @@
       "path": "/parasut-invoicing/document",
       "handler": "api/document/route.ts",
       "method": "POST",
-      "description": "Send the e-document for one recorded sale, or read where it got to."
+      "description": "Send the e-document for one recorded sale, or read where it got to.",
+      "permission": "parasut-invoicing.manage"
     }
   ],
   "translations": {
@@ -125,5 +127,8 @@
       "label": "Send the e-document automatically",
       "description": "Ask the tax authority for the e-Fatura or e-Arsiv a recorded sale is owed. Off until you turn it on: such a document is cancelled by a procedure, not deleted."
     }
+  ],
+  "permissions": [
+    "parasut-invoicing.manage"
   ]
 }

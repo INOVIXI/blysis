@@ -15,13 +15,15 @@
       "label": "Wheels",
       "path": "/wheel-wheels",
       "icon": "Dices",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "wheel.manage"
     },
     {
       "label": "Wheel Prizes",
       "path": "/wheel-prizes",
       "icon": "Dices",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "wheel.manage"
     }
   ],
   "routes": [
@@ -35,23 +37,27 @@
   "adminRoutes": [
     {
       "path": "/wheel-wheels",
-      "component": "pages/admin/wheels/page.tsx"
+      "component": "pages/admin/wheels/page.tsx",
+      "permission": "wheel.manage"
     },
     {
       "path": "/wheel-prizes",
-      "component": "pages/admin/prizes/page.tsx"
+      "component": "pages/admin/prizes/page.tsx",
+      "permission": "wheel.manage"
     }
   ],
   "api": [
     {
       "path": "/wheel/prizes",
       "handler": "api/prizes/route.ts",
-      "description": "List wheel prizes and create new ones (admin)."
+      "description": "List wheel prizes and create new ones (admin).",
+      "permission": "wheel.manage"
     },
     {
       "path": "/wheel/prizes/[id]",
       "handler": "api/prizes/[id]/route.ts",
-      "description": "Update or delete a single wheel prize (admin)."
+      "description": "Update or delete a single wheel prize (admin).",
+      "permission": "wheel.manage"
     },
     {
       "path": "/wheel/spin",
@@ -60,22 +66,26 @@
       "rateLimit": {
         "maxRequests": 30,
         "windowMs": 60000
-      }
+      },
+      "openTo": "member"
     },
     {
       "path": "/wheel/wheels",
       "handler": "api/wheels/route.ts",
-      "description": "List the wheels a visitor can see, with their prizes."
+      "description": "List the wheels a visitor can see, with their prizes.",
+      "openTo": "member"
     },
     {
       "path": "/wheel/admin/wheels",
       "handler": "api/admin/wheels/route.ts",
-      "description": "List every wheel including the switched-off ones, or create one (admin)."
+      "description": "List every wheel including the switched-off ones, or create one (admin).",
+      "permission": "wheel.manage"
     },
     {
       "path": "/wheel/admin/wheels/[id]",
       "handler": "api/admin/wheels/[id]/route.ts",
-      "description": "Update or delete a single wheel (admin)."
+      "description": "Update or delete a single wheel (admin).",
+      "permission": "wheel.manage"
     }
   ],
   "settings": [],

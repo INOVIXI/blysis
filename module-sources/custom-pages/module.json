@@ -19,11 +19,13 @@
   "adminRoutes": [
     {
       "path": "/custom-pages",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "custom-pages.manage"
     },
     {
       "path": "/custom-pages/builder/[id]",
-      "component": "pages/admin/builder/[id]/page.tsx"
+      "component": "pages/admin/builder/[id]/page.tsx",
+      "permission": "custom-pages.manage"
     }
   ],
   "menu": [
@@ -32,19 +34,22 @@
       "path": "/custom-pages",
       "icon": "FileText",
       "group": "content",
-      "section": "publishing"
+      "section": "publishing",
+      "permission": "custom-pages.manage"
     }
   ],
   "api": [
     {
       "path": "/custom-pages",
       "handler": "api/route.ts",
-      "description": "List custom pages and create new ones (admin)."
+      "description": "List custom pages and create new ones (admin).",
+      "permission": "custom-pages.manage"
     },
     {
       "path": "/custom-pages/[slug]",
       "handler": "api/[slug]/route.ts",
-      "description": "Get, update, or delete a single custom page by slug."
+      "description": "Get, update, or delete a single custom page by slug.",
+      "permission": "custom-pages.manage"
     }
   ],
   "translations": {
@@ -183,5 +188,8 @@
   },
   "permissionResources": [
     "custom-pages.page"
+  ],
+  "permissions": [
+    "custom-pages.manage"
   ]
 }

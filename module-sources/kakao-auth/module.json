@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/kakao-auth",
-      "component": "pages/admin/settings/kakao-auth/page.tsx"
+      "component": "pages/admin/settings/kakao-auth/page.tsx",
+      "permission": "kakao-auth.manage"
     }
   ],
   "settingsCards": [
@@ -61,5 +62,8 @@
         "module_kakao-auth_description": "Kullanıcıların Kakao hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "kakao-auth.manage"
+  ]
 }

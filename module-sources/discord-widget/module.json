@@ -23,14 +23,16 @@
   "adminRoutes": [
     {
       "path": "/discord-widget",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "discord-widget.manage"
     }
   ],
   "api": [
     {
       "path": "/discord-widget",
       "handler": "api/route.ts",
-      "description": "Public: returns the configured Discord server ID for the homepage widget."
+      "description": "Public: returns the configured Discord server ID for the homepage widget.",
+      "openTo": "public"
     }
   ],
   "settingsCards": [
@@ -96,5 +98,8 @@
     "frame-src": [
       "https://discord.com"
     ]
-  }
+  },
+  "permissions": [
+    "discord-widget.manage"
+  ]
 }

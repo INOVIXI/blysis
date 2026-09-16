@@ -25,19 +25,22 @@
   "adminRoutes": [
     {
       "path": "/referral",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "referral.manage"
     }
   ],
   "api": [
     {
       "path": "/referral",
       "handler": "api/route.ts",
-      "description": "Get referral info for the current user and claim/create a referral."
+      "description": "Get referral info for the current user and claim/create a referral.",
+      "openTo": "member"
     },
     {
       "path": "/referral/stats",
       "handler": "api/stats/route.ts",
-      "description": "Get referral statistics and optionally track a referral event."
+      "description": "Get referral statistics and optionally track a referral event.",
+      "permission": "referral.manage"
     }
   ],
   "menu": [
@@ -45,7 +48,8 @@
       "label": "Referrals",
       "path": "/referral",
       "icon": "UserPlus",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "referral.manage"
     }
   ],
   "profileTabs": [

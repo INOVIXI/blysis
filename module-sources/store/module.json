@@ -160,49 +160,57 @@
       "label": "Products",
       "path": "/store/products",
       "icon": "Package",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "store.manage"
     },
     {
       "label": "Store Categories",
       "path": "/store/categories",
       "icon": "Layers",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "store.manage"
     },
     {
       "label": "Orders",
       "path": "/store/orders",
       "icon": "ShoppingCart",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "store.manage"
     },
     {
       "label": "Coupons",
       "path": "/store/coupons",
       "icon": "Tag",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "store.manage"
     },
     {
       "label": "Payment Settings",
       "path": "/settings/payments",
       "icon": "DollarSign",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "store.manage"
     },
     {
       "label": "Bulk Discounts",
       "path": "/bulk-discounts",
       "icon": "Percent",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "store.manage"
     },
     {
       "label": "Creator Codes",
       "path": "/creator-codes",
       "icon": "UserCheck",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "store.manage"
     },
     {
       "label": "Gift Codes",
       "path": "/gift-codes",
       "icon": "Gift",
-      "group": "commerce"
+      "group": "commerce",
+      "permission": "store.manage"
     }
   ],
   "routes": [
@@ -243,59 +251,73 @@
   "adminRoutes": [
     {
       "path": "/store/products",
-      "component": "pages/admin/products/page.tsx"
+      "component": "pages/admin/products/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/store/products/new",
-      "component": "pages/admin/products/new/page.tsx"
+      "component": "pages/admin/products/new/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/store/products/[id]/edit",
-      "component": "pages/admin/products/[id]/edit/page.tsx"
+      "component": "pages/admin/products/[id]/edit/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/store/categories",
-      "component": "pages/admin/categories/page.tsx"
+      "component": "pages/admin/categories/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/store/orders",
-      "component": "pages/admin/orders/page.tsx"
+      "component": "pages/admin/orders/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/store/orders/[id]",
-      "component": "pages/admin/orders/[id]/page.tsx"
+      "component": "pages/admin/orders/[id]/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/store/coupons",
-      "component": "pages/admin/coupons/page.tsx"
+      "component": "pages/admin/coupons/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/settings/goals",
-      "component": "pages/admin/settings/goals/page.tsx"
+      "component": "pages/admin/settings/goals/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/settings/payments",
-      "component": "pages/admin/settings/payments/page.tsx"
+      "component": "pages/admin/settings/payments/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/bulk-discounts",
-      "component": "pages/admin/bulk-discounts/page.tsx"
+      "component": "pages/admin/bulk-discounts/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/creator-codes",
-      "component": "pages/admin/creator-codes/page.tsx"
+      "component": "pages/admin/creator-codes/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/gift-codes",
-      "component": "pages/admin/gift-codes/page.tsx"
+      "component": "pages/admin/gift-codes/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/store-campaigns",
-      "component": "pages/admin/campaigns/page.tsx"
+      "component": "pages/admin/campaigns/page.tsx",
+      "permission": "store.manage"
     },
     {
       "path": "/store/credit-packages",
-      "component": "pages/admin/credit-packages/page.tsx"
+      "component": "pages/admin/credit-packages/page.tsx",
+      "permission": "store.manage"
     }
   ],
   "seoRoutes": {
@@ -305,212 +327,254 @@
     {
       "path": "/store/cart",
       "handler": "api/cart/route.ts",
-      "description": "Get, add items to, or clear the current user shopping cart."
+      "description": "Get, add items to, or clear the current user shopping cart.",
+      "openTo": "member"
     },
     {
       "path": "/store/checkout",
       "handler": "api/checkout/route.ts",
-      "description": "Initiate checkout and create a payment session for the current cart."
+      "description": "Initiate checkout and create a payment session for the current cart.",
+      "openTo": "member"
     },
     {
       "path": "/store/categories",
       "handler": "api/categories/route.ts",
-      "description": "List store categories and create new ones (admin)."
+      "description": "List store categories and create new ones (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/categories/[id]",
       "handler": "api/categories/[id]/route.ts",
-      "description": "Get, update, or delete a single store category."
+      "description": "Get, update, or delete a single store category.",
+      "permission": "store.manage"
     },
     {
       "path": "/store/products",
       "handler": "api/products/route.ts",
-      "description": "List store products and create new ones (admin)."
+      "description": "List store products and create new ones (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/admin/products",
       "handler": "api/admin/products/route.ts",
-      "description": "List every product, including the ones switched off (admin)."
+      "description": "List every product, including the ones switched off (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/admin/products/[id]",
       "handler": "api/admin/products/[id]/route.ts",
-      "description": "Read a single product as an operator, including one switched off (admin)."
+      "description": "Read a single product as an operator, including one switched off (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/admin/products/[id]/copy",
       "handler": "api/admin/products/[id]/copy/route.ts",
-      "description": "Copy a product, switched off and having sold nothing (admin)."
+      "description": "Copy a product, switched off and having sold nothing (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/products/[id]",
       "handler": "api/products/[id]/route.ts",
-      "description": "Get, update, or delete a single store product."
+      "description": "Get, update, or delete a single store product.",
+      "permission": "store.manage"
     },
     {
       "path": "/store/orders",
       "handler": "api/orders/route.ts",
-      "description": "List orders. Orders are created at /store/checkout."
+      "description": "List orders. Orders are created at /store/checkout.",
+      "permission": "store.manage"
     },
     {
       "path": "/store/orders/[id]",
       "handler": "api/orders/[id]/route.ts",
-      "description": "Get a single order or update its status (admin)."
+      "description": "Get a single order or update its status (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/coupons",
       "handler": "api/coupons/route.ts",
-      "description": "List coupons and create new ones (admin)."
+      "description": "List coupons and create new ones (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/coupons/[id]",
       "handler": "api/coupons/[id]/route.ts",
-      "description": "Update or delete a single coupon (admin)."
+      "description": "Update or delete a single coupon (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/coupons/validate",
       "handler": "api/coupons/validate/route.ts",
-      "description": "Validate a coupon code against the current cart."
+      "description": "Validate a coupon code against the current cart.",
+      "openTo": "member"
     },
     {
       "path": "/store/stats",
       "handler": "api/stats/route.ts",
-      "description": "Get aggregate store statistics for the admin dashboard."
+      "description": "Get aggregate store statistics for the admin dashboard.",
+      "permission": "store.manage"
     },
     {
       "path": "/gift-codes",
       "handler": "api/gift-codes/route.ts",
-      "description": "List gift codes and create new ones (admin)."
+      "description": "List gift codes and create new ones (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/gift-codes/redeem",
       "handler": "api/gift-codes/redeem/route.ts",
-      "description": "Redeem a gift code for the current user."
+      "description": "Redeem a gift code for the current user.",
+      "openTo": "member"
     },
     {
       "path": "/creator-codes",
       "handler": "api/creator-codes/route.ts",
-      "description": "List creator codes and create new ones (admin)."
+      "description": "List creator codes and create new ones (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/bulk-discounts",
       "handler": "api/bulk-discounts/route.ts",
-      "description": "List bulk discount tiers and create new ones (admin)."
+      "description": "List bulk discount tiers and create new ones (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/bulk-discounts/[id]",
       "handler": "api/bulk-discounts/[id]/route.ts",
-      "description": "Update or delete a bulk discount tier (admin)."
+      "description": "Update or delete a bulk discount tier (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/chest",
       "handler": "api/chest/route.ts",
-      "description": "List loot chests available to the current user."
+      "description": "List loot chests available to the current user.",
+      "openTo": "member"
     },
     {
       "path": "/product-commands",
       "handler": "api/product-commands/route.ts",
-      "description": "List or create product delivery commands (admin)."
+      "description": "List or create product delivery commands (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/product-variables",
       "handler": "api/product-variables/route.ts",
-      "description": "List or create product variables used in commands (admin)."
+      "description": "List or create product variables used in commands (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/widget-stats",
       "handler": "api/widget-stats/route.ts",
-      "description": "Get store widget statistics for homepage display."
+      "description": "Get store widget statistics for homepage display.",
+      "openTo": "public"
     },
     {
       "path": "/chest/[id]",
       "handler": "api/chest/[id]/route.ts",
-      "description": "Open a loot chest and receive rewards."
+      "description": "Open a loot chest and receive rewards.",
+      "openTo": "member"
     },
     {
       "path": "/creator-codes/[id]",
       "handler": "api/creator-codes/[id]/route.ts",
-      "description": "Update or delete a single creator code (admin)."
+      "description": "Update or delete a single creator code (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/gift-codes/[id]",
       "handler": "api/gift-codes/[id]/route.ts",
-      "description": "Delete a single gift code (admin)."
+      "description": "Delete a single gift code (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/community-goal",
       "handler": "api/community-goal/route.ts",
-      "description": "Get current community goal progress or update the goal (admin)."
+      "description": "Get current community goal progress or update the goal (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/product-variables",
       "handler": "api/product-variables/route.ts",
-      "description": "List or create product variables used in commands (admin)."
+      "description": "List or create product variables used in commands (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/widget-stats",
       "handler": "api/widget-stats/route.ts",
-      "description": "Get store widget statistics for homepage display."
+      "description": "Get store widget statistics for homepage display.",
+      "openTo": "public"
     },
     {
       "path": "/store/chest",
       "handler": "api/chest/route.ts",
-      "description": "List loot chests available to the current user."
+      "description": "List loot chests available to the current user.",
+      "openTo": "member"
     },
     {
       "path": "/store/chest/[id]",
       "handler": "api/chest/[id]/route.ts",
-      "description": "Open a loot chest and receive rewards."
+      "description": "Open a loot chest and receive rewards.",
+      "openTo": "member"
     },
     {
       "path": "/store/product-commands",
       "handler": "api/product-commands/route.ts",
-      "description": "List or create product delivery commands (admin)."
+      "description": "List or create product delivery commands (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/bulk-discounts",
       "handler": "api/bulk-discounts/route.ts",
-      "description": "List bulk discount tiers and create new ones (admin)."
+      "description": "List bulk discount tiers and create new ones (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/creator-codes",
       "handler": "api/creator-codes/route.ts",
-      "description": "List creator codes and create new ones (admin)."
+      "description": "List creator codes and create new ones (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/creator-codes/[id]",
       "handler": "api/creator-codes/[id]/route.ts",
-      "description": "Update or delete a single creator code (admin)."
+      "description": "Update or delete a single creator code (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/creator-codes/validate",
       "handler": "api/creator-codes/validate/route.ts",
-      "description": "Validate a creator code at checkout."
+      "description": "Validate a creator code at checkout.",
+      "openTo": "public"
     },
     {
       "path": "/store/gift-codes",
       "handler": "api/gift-codes/route.ts",
-      "description": "List gift codes and create new ones (admin)."
+      "description": "List gift codes and create new ones (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/gift-codes/[id]",
       "handler": "api/gift-codes/[id]/route.ts",
-      "description": "Delete a single gift code (admin)."
+      "description": "Delete a single gift code (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/gift-codes/redeem",
       "handler": "api/gift-codes/redeem/route.ts",
-      "description": "Redeem a gift code for the current user."
+      "description": "Redeem a gift code for the current user.",
+      "openTo": "member"
     },
     {
       "path": "/store/community-goal",
       "handler": "api/community-goal/route.ts",
-      "description": "Get current community goal progress or update the goal (admin)."
+      "description": "Get current community goal progress or update the goal (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/credits/buy",
       "handler": "api/credits/buy/route.ts",
-      "description": "Buy store credits via the configured payment gateway."
+      "description": "Buy store credits via the configured payment gateway.",
+      "openTo": "member"
     },
     {
       "path": "/store/payment-providers",
@@ -521,37 +585,44 @@
     {
       "path": "/store/campaigns",
       "handler": "api/campaigns/route.ts",
-      "description": "List campaigns, or create one (admin)."
+      "description": "List campaigns, or create one (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/campaigns/[id]",
       "handler": "api/campaigns/[id]/route.ts",
-      "description": "Update or delete a single campaign (admin)."
+      "description": "Update or delete a single campaign (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/admin/orders",
       "handler": "api/admin/orders/route.ts",
-      "description": "Enter an order by hand for a sale that happened elsewhere (admin)."
+      "description": "Enter an order by hand for a sale that happened elsewhere (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/credit-packages",
       "handler": "api/credit-packages/route.ts",
-      "description": "The credit packages on sale, and what each one gives."
+      "description": "The credit packages on sale, and what each one gives.",
+      "openTo": "public"
     },
     {
       "path": "/store/credits/transfer",
       "handler": "api/credits/transfer/route.ts",
-      "description": "Send credits to another member."
+      "description": "Send credits to another member.",
+      "openTo": "member"
     },
     {
       "path": "/store/admin/credit-packages",
       "handler": "api/admin/credit-packages/route.ts",
-      "description": "List and create credit packages (admin)."
+      "description": "List and create credit packages (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/admin/credit-packages/[id]",
       "handler": "api/admin/credit-packages/[id]/route.ts",
-      "description": "Edit a credit package, or take it off sale (admin)."
+      "description": "Edit a credit package, or take it off sale (admin).",
+      "permission": "store.manage"
     }
   ],
   "dashboardCards": [

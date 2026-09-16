@@ -35,7 +35,8 @@
   "adminRoutes": [
     {
       "path": "/settings/crisp-chat",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "crisp-chat.manage"
     }
   ],
   "settingsCards": [
@@ -72,5 +73,8 @@
         "adm_websiteIdDesc": "Sağlayıcının panelinde Ayarlar altında. Bir UUID'dir; başka her şey reddedilir ve balon çıkmaz. Ziyaretçi çerezleri kabul etmeden hiçbir şey yüklenmez."
       }
     }
-  }
+  },
+  "permissions": [
+    "crisp-chat.manage"
+  ]
 }

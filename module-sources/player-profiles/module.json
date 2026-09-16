@@ -31,17 +31,20 @@
     {
       "path": "/players/[username]",
       "handler": "api/[username]/route.ts",
-      "description": "Get a public player profile by username."
+      "description": "Get a public player profile by username.",
+      "openTo": "public"
     },
     {
       "path": "/linked-accounts",
       "handler": "api/linked-accounts/route.ts",
-      "description": "Read the accounts a member has proved are theirs."
+      "description": "Read the accounts a member has proved are theirs.",
+      "openTo": "member"
     },
     {
       "path": "/players/linked-accounts",
       "handler": "api/linked-accounts/route.ts",
-      "description": "List, link, or unlink connected game accounts for the current user."
+      "description": "List, link, or unlink connected game accounts for the current user.",
+      "openTo": "member"
     }
   ],
   "translations": {

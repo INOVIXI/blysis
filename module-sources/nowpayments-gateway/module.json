@@ -29,13 +29,15 @@
       "path": "/settings/nowpayments",
       "icon": "Bitcoin",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "nowpayments-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/nowpayments",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "nowpayments-gateway.manage"
     }
   ],
   "api": [
@@ -106,5 +108,8 @@
         "module_nowpayments-gateway_description": "NOWPayments üzerinden 200'den fazla kripto para ile ödeme alın"
       }
     }
-  }
+  },
+  "permissions": [
+    "nowpayments-gateway.manage"
+  ]
 }

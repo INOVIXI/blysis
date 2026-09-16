@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/naver-auth",
-      "component": "pages/admin/settings/naver-auth/page.tsx"
+      "component": "pages/admin/settings/naver-auth/page.tsx",
+      "permission": "naver-auth.manage"
     }
   ],
   "settingsCards": [
@@ -61,5 +62,8 @@
         "module_naver-auth_description": "Kullanıcıların Naver hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "naver-auth.manage"
+  ]
 }

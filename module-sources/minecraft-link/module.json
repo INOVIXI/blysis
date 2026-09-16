@@ -13,7 +13,8 @@
   "adminRoutes": [
     {
       "path": "/settings/minecraft-link",
-      "component": "pages/admin/settings/minecraft-link/page.tsx"
+      "component": "pages/admin/settings/minecraft-link/page.tsx",
+      "permission": "minecraft-link.manage"
     }
   ],
   "settingsCards": [
@@ -29,13 +30,15 @@
     {
       "path": "/minecraft-link",
       "handler": "api/link/route.ts",
-      "description": "Read the caller's Minecraft link, request a code for a name, or unlink."
+      "description": "Read the caller's Minecraft link, request a code for a name, or unlink.",
+      "permission": "minecraft-link.manage"
     },
     {
       "path": "/minecraft-link/confirm",
       "handler": "api/link/confirm/route.ts",
       "method": "POST",
-      "description": "Redeem a whispered code and bind the Minecraft account to the caller."
+      "description": "Redeem a whispered code and bind the Minecraft account to the caller.",
+      "openTo": "member"
     }
   ],
   "profileTabs": [
@@ -154,5 +157,8 @@
       "type": "filter",
       "handler": "hooks/profile-linked-account.ts"
     }
+  ],
+  "permissions": [
+    "minecraft-link.manage"
   ]
 }

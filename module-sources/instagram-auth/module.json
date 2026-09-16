@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/instagram-auth",
-      "component": "pages/admin/settings/instagram-auth/page.tsx"
+      "component": "pages/admin/settings/instagram-auth/page.tsx",
+      "permission": "instagram-auth.manage"
     }
   ],
   "settingsCards": [
@@ -67,5 +68,8 @@
         "module_instagram-auth_description": "Kullanıcıların Instagram hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "instagram-auth.manage"
+  ]
 }

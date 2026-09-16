@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/apple-auth",
-      "component": "pages/admin/settings/apple-auth/page.tsx"
+      "component": "pages/admin/settings/apple-auth/page.tsx",
+      "permission": "apple-auth.manage"
     }
   ],
   "settingsCards": [
@@ -69,5 +70,8 @@
         "module_apple-auth_description": "Kullanıcıların Apple hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "apple-auth.manage"
+  ]
 }

@@ -16,20 +16,23 @@
       "path": "/webhook-logs",
       "icon": "Webhook",
       "group": "system",
-      "section": "history"
+      "section": "history",
+      "permission": "admin.webhooks"
     }
   ],
   "adminRoutes": [
     {
       "path": "/webhook-logs",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "admin.webhooks"
     }
   ],
   "api": [
     {
       "path": "/webhook-logs",
       "handler": "api/route.ts",
-      "description": "List webhook delivery logs (admin)."
+      "description": "List webhook delivery logs (admin).",
+      "permission": "admin.webhooks"
     }
   ],
   "cronJobs": [

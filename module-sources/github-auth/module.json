@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/github-auth",
-      "component": "pages/admin/settings/github-auth/page.tsx"
+      "component": "pages/admin/settings/github-auth/page.tsx",
+      "permission": "github-auth.manage"
     }
   ],
   "settingsCards": [
@@ -87,5 +88,8 @@
         "module_github-auth_description": "Kullanıcıların GitHub hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "github-auth.manage"
+  ]
 }

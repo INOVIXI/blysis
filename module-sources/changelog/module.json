@@ -16,7 +16,8 @@
       "path": "/changelog",
       "icon": "History",
       "group": "content",
-      "section": "publishing"
+      "section": "publishing",
+      "permission": "changelog.manage"
     }
   ],
   "routes": [
@@ -38,19 +39,22 @@
   "adminRoutes": [
     {
       "path": "/changelog",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "changelog.manage"
     }
   ],
   "api": [
     {
       "path": "/changelog",
       "handler": "api/route.ts",
-      "description": "List changelog entries and create new ones (admin)."
+      "description": "List changelog entries and create new ones (admin).",
+      "permission": "changelog.manage"
     },
     {
       "path": "/changelog/[id]",
       "handler": "api/[id]/route.ts",
-      "description": "Update or delete a single changelog entry (admin)."
+      "description": "Update or delete a single changelog entry (admin).",
+      "permission": "changelog.manage"
     },
     {
       "path": "/changelog/entry/[number]",

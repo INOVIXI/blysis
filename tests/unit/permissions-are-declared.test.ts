@@ -25,12 +25,19 @@ import { stripComments } from "./source-text";
  * live in `custom-forms`, which declared `forms.manage` and checked
  * `custom-forms.manage`.
  *
- * Declared but not checked is the milder one, and it is currently the norm
- * rather than the exception: most module permissions gate nothing, because
- * every admin route gates on `isAdmin` instead. That is a product decision to
- * make deliberately, not a thing to fix silently, so this file pins the exact
- * inventory rather than failing on it. The list may shrink freely. It may not
- * grow: a new declaration has to arrive with the check that gives it meaning.
+ * Declared but not checked is the milder one, and it used to be the norm
+ * rather than the exception: 90 names gated nothing, because every admin route
+ * gated on `isAdmin` instead. It is now the exception. A name means something
+ * in one of two ways - a handler passes it to a helper, or a screen, a menu
+ * item or a write declares that it is what opens them, and core refuses the
+ * path to a reader who does not hold it. The second way is how 95 of the 103
+ * declared names became real without a line of handler code.
+ *
+ * Eight are left, and this file pins those. Each one is a capability a member
+ * has rather than an operator's job - viewing a shop, replying to a ticket -
+ * and giving it meaning means a check inside the module that owns it. The list
+ * may shrink freely. It may not grow: a new declaration has to arrive with the
+ * check, or the declaration, that gives it meaning.
  */
 
 const ROOT = path.resolve(__dirname, "../..");
@@ -54,34 +61,14 @@ const SHARED_NAMESPACES = new Set(["admin"]);
  * govern. Do not add one.
  */
 const DECLARED_BUT_UNENFORCED = [
-    "admin.export",
-    "admin.webhooks",
-    "announcements.manage",
-    "changelog.manage",
-    "cloudflare-r2.manage",
-    "credits.manage",
     "credits.view",
-    "forum.manage",
     "forum.moderate",
     "forum.view",
-    "help-center.manage",
     "help-center.view",
-    "popups.manage",
-    "punishments.manage",
-    "referral.manage",
-    "seo.manage",
-    "servers.manage",
-    "slider.manage",
-    "staff.manage",
-    "store.manage",
     "store.view",
-    "suggestions.manage",
     "tickets.create",
     "tickets.reply",
     "tickets.view",
-    "trophies.manage",
-    "vote.manage",
-    "wheel.manage",
 ];
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -135,6 +122,32 @@ const allDeclared = new Set<string>([
     ...CORE_PERMISSIONS,
     ...[...declaredByModule.values()].flat(),
 ]);
+
+/**
+ * Names a manifest requires through a declaration rather than a call.
+ *
+ * A menu item, an admin route or a write declares what opens it, and core
+ * refuses the path when the reader does not hold that name. No handler in the
+ * module mentions it, and it gates as surely as one that did.
+ */
+function requiredByManifests(): string[] {
+    return moduleIds.flatMap((id) => {
+        const manifest = JSON.parse(
+            fs.readFileSync(path.join(MODULE_SOURCES, id, "module.json"), "utf8")
+        ) as {
+            menu?: { permission?: string }[];
+            adminRoutes?: { permission?: string }[];
+            api?: { permission?: string }[];
+        };
+        return [
+            ...(manifest.menu ?? []),
+            ...(manifest.adminRoutes ?? []),
+            ...(manifest.api ?? []),
+        ]
+            .map((entry) => entry.permission)
+            .filter((name): name is string => typeof name === "string");
+    });
+}
 
 const coreChecks = checkedNames(walk(path.join(ROOT, "src")));
 const moduleChecks = new Map<string, Map<string, string[]>>(
@@ -194,27 +207,15 @@ describe("permission enforcement", () => {
         ...coreChecks.keys(),
         ...[...moduleChecks.values()].flatMap((m) => [...m.keys()]),
         ...CORE_ADMIN_SCREENS.map((screen) => screen.permission),
+        ...requiredByManifests(),
     ]);
 
-    it("enforces at least the permissions the pinned inventory leaves out", () => {
-        const actuallyEnforced = [...allDeclared].filter((name) => enforced.has(name)).sort();
-        expect(actuallyEnforced).toEqual([
-            "admin.access",
-            "admin.backups",
-            "admin.content",
-            "admin.messaging",
-            "admin.moderation",
-            "admin.modules",
-            "admin.observability",
-            "admin.roles",
-            "admin.security",
-            "admin.settings",
-            "admin.themes",
-            "admin.users",
-            "custom-forms.manage",
-            "downloads.manage",
-            "tickets.manage",
-        ]);
+    it("gives every declared name meaning, except the ones pinned above", () => {
+        const pinned = new Set(DECLARED_BUT_UNENFORCED);
+        const meaningless = [...allDeclared].filter((name) => !enforced.has(name) && !pinned.has(name)).sort();
+        expect(meaningless, "a checkbox that changes no behaviour").toEqual([]);
+        // And the reverse, so the pin cannot quietly become the whole list.
+        expect([...allDeclared].filter((name) => enforced.has(name)).length).toBeGreaterThan(90);
     });
 
     it("has not grown the set of permissions that gate nothing", () => {

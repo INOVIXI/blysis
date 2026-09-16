@@ -19,6 +19,8 @@ const { moduleLoader } = vi.hoisted(() => ({
 
 vi.mock("@/core/lib/module-loader", () => ({ moduleLoader }));
 
+import { CORE_PERMISSIONS } from "@/core/lib/permission-names";
+
 import { moduleSystem } from "@/core/lib/modules";
 
 interface Manifest {
@@ -34,7 +36,9 @@ function manifests(...list: Manifest[]) {
     });
 }
 
-const CORE_PERMISSIONS = ["admin.access", "admin.settings", "admin.users", "admin.roles"];
+// The real list, not a copy of it. A second copy is what `permission-names.ts`
+// exists to prevent: core's names were written out twice and a name added to
+// one copy silently did not appear in the other.
 
 /** ModuleState always carries a config bag, even when it is empty. */
 function state(id: string, enabled: boolean, config: Record<string, unknown> = {}) {

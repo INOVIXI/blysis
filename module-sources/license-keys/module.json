@@ -13,11 +13,13 @@
   "adminRoutes": [
     {
       "path": "/licenses",
-      "component": "pages/admin/licenses/page.tsx"
+      "component": "pages/admin/licenses/page.tsx",
+      "permission": "license-keys.manage"
     },
     {
       "path": "/settings/license-keys",
-      "component": "pages/admin/settings/license-keys/page.tsx"
+      "component": "pages/admin/settings/license-keys/page.tsx",
+      "permission": "license-keys.manage"
     }
   ],
   "settingsCards": [
@@ -39,32 +41,38 @@
     {
       "path": "/licenses/activate",
       "handler": "api/licenses/activate/route.ts",
-      "description": "Claim or release an activation seat for a machine."
+      "description": "Claim or release an activation seat for a machine.",
+      "openTo": "public"
     },
     {
       "path": "/licenses/validate",
       "handler": "api/licenses/validate/route.ts",
-      "description": "Check whether a key is valid, without claiming a seat."
+      "description": "Check whether a key is valid, without claiming a seat.",
+      "openTo": "public"
     },
     {
       "path": "/licenses/admin",
       "handler": "api/licenses/admin/route.ts",
-      "description": "List every issued key, or mint new ones by hand (admin)."
+      "description": "List every issued key, or mint new ones by hand (admin).",
+      "permission": "license-keys.manage"
     },
     {
       "path": "/licenses/admin/[id]",
       "handler": "api/licenses/admin/[id]/route.ts",
-      "description": "Revoke, restore or delete a single key (admin)."
+      "description": "Revoke, restore or delete a single key (admin).",
+      "permission": "license-keys.manage"
     },
     {
       "path": "/licenses/products",
       "handler": "api/licenses/products/route.ts",
-      "description": "List or add the products that hand out a key (admin)."
+      "description": "List or add the products that hand out a key (admin).",
+      "permission": "license-keys.manage"
     },
     {
       "path": "/licenses/products/[id]",
       "handler": "api/licenses/products/[id]/route.ts",
-      "description": "Edit or remove one product mapping (admin)."
+      "description": "Edit or remove one product mapping (admin).",
+      "permission": "license-keys.manage"
     }
   ],
   "profileTabs": [
@@ -222,5 +230,8 @@
         "module_license-keys_description": "Dijital ürünler için lisans anahtarı üretin, teslim edin ve etkinleştirin; anahtar başına makine sınırı ile"
       }
     }
-  }
+  },
+  "permissions": [
+    "license-keys.manage"
+  ]
 }

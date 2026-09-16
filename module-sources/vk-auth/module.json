@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/vk-auth",
-      "component": "pages/admin/settings/vk-auth/page.tsx"
+      "component": "pages/admin/settings/vk-auth/page.tsx",
+      "permission": "vk-auth.manage"
     }
   ],
   "settingsCards": [
@@ -61,5 +62,8 @@
         "module_vk-auth_description": "Kullanıcıların VK hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "vk-auth.manage"
+  ]
 }

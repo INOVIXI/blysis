@@ -19,7 +19,8 @@
   "adminRoutes": [
     {
       "path": "/settings/comparison-tables",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "comparison-table.manage"
     }
   ],
   "settingsCards": [
@@ -41,7 +42,8 @@
     {
       "path": "/comparison-tables/admin/tables",
       "handler": "api/admin/tables/route.ts",
-      "description": "Read every table for the editor, replace one whole, or remove one."
+      "description": "Read every table for the editor, replace one whole, or remove one.",
+      "permission": "comparison-table.manage"
     }
   ],
   "translations": {
@@ -163,5 +165,8 @@
         "compare": "Seçenekleri yan yana, özellik özellik karşılaştırın ve karar vermeden önce her birinin neleri kapsadığını görün."
       }
     }
-  }
+  },
+  "permissions": [
+    "comparison-table.manage"
+  ]
 }

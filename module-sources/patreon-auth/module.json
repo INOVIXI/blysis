@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/patreon-auth",
-      "component": "pages/admin/settings/patreon-auth/page.tsx"
+      "component": "pages/admin/settings/patreon-auth/page.tsx",
+      "permission": "patreon-auth.manage"
     }
   ],
   "settingsCards": [
@@ -59,5 +60,8 @@
         "module_patreon-auth_description": "Kullanıcıların Patreon hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "patreon-auth.manage"
+  ]
 }

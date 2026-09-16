@@ -29,13 +29,15 @@
       "path": "/settings/razorpay",
       "icon": "Smartphone",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "razorpay-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/razorpay",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "razorpay-gateway.manage"
     }
   ],
   "api": [
@@ -110,5 +112,8 @@
         "module_razorpay-gateway_description": "Razorpay üzerinden Hindistan'da UPI, kart, internet bankacılığı ve cüzdan ödemelerini alın"
       }
     }
-  }
+  },
+  "permissions": [
+    "razorpay-gateway.manage"
+  ]
 }

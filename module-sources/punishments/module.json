@@ -21,7 +21,8 @@
   "adminRoutes": [
     {
       "path": "/punishments",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "punishments.manage"
     }
   ],
   "menu": [
@@ -29,7 +30,8 @@
       "label": "Punishments",
       "path": "/punishments",
       "icon": "Shield",
-      "group": "gaming"
+      "group": "gaming",
+      "permission": "punishments.manage"
     }
   ],
   "navLinks": [
@@ -45,12 +47,14 @@
     {
       "path": "/punishments",
       "handler": "api/route.ts",
-      "description": "List punishments and create new ones (admin)."
+      "description": "List punishments and create new ones (admin).",
+      "permission": "punishments.manage"
     },
     {
       "path": "/punishments/[id]",
       "handler": "api/[id]/route.ts",
-      "description": "Update or delete a single punishment (admin)."
+      "description": "Update or delete a single punishment (admin).",
+      "permission": "punishments.manage"
     }
   ],
   "hooksEmitted": [

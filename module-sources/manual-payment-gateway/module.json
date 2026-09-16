@@ -25,7 +25,8 @@
   "adminRoutes": [
     {
       "path": "/settings/manual-payment",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "manual-payment-gateway.manage"
     }
   ],
   "settingsCards": [
@@ -99,5 +100,8 @@
         "paymentInstructions": "Siparişiniz için ödeme talimatlarını izleyin: neyi, nereye göndereceğinizi ve ulaştığında ne olacağını görün."
       }
     }
-  }
+  },
+  "permissions": [
+    "manual-payment-gateway.manage"
+  ]
 }

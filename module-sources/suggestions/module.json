@@ -28,7 +28,8 @@
   "adminRoutes": [
     {
       "path": "/suggestions",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "suggestions.manage"
     }
   ],
   "menu": [
@@ -36,34 +37,40 @@
       "label": "Suggestions",
       "path": "/suggestions",
       "icon": "MessageSquare",
-      "group": "community"
+      "group": "community",
+      "permission": "suggestions.manage"
     }
   ],
   "api": [
     {
       "path": "/suggestions",
       "handler": "api/route.ts",
-      "description": "List suggestions and create a new suggestion."
+      "description": "List suggestions and create a new suggestion.",
+      "openTo": "member"
     },
     {
       "path": "/suggestions/[id]/vote",
       "handler": "api/[id]/vote/route.ts",
-      "description": "Vote on a suggestion."
+      "description": "Vote on a suggestion.",
+      "openTo": "member"
     },
     {
       "path": "/suggestions/[id]",
       "handler": "api/[id]/route.ts",
-      "description": "Update or delete a single suggestion (admin)."
+      "description": "Update or delete a single suggestion (admin).",
+      "permission": "suggestions.manage"
     },
     {
       "path": "/suggestions/[id]/comments",
       "handler": "api/[id]/comments/route.ts",
-      "description": "List the discussion under a suggestion, or add to it."
+      "description": "List the discussion under a suggestion, or add to it.",
+      "permission": "suggestions.manage"
     },
     {
       "path": "/suggestions/comments/[id]",
       "handler": "api/comments/[id]/route.ts",
-      "description": "Delete a comment (its author, or a moderator)."
+      "description": "Delete a comment (its author, or a moderator).",
+      "permission": "suggestions.manage"
     }
   ],
   "hooksEmitted": [

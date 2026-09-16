@@ -28,13 +28,15 @@
       "path": "/settings/paypal",
       "icon": "DollarSign",
       "group": "commerce",
-      "section": "payments"
+      "section": "payments",
+      "permission": "paypal-gateway.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/settings/paypal",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "paypal-gateway.manage"
     }
   ],
   "translations": {
@@ -126,5 +128,8 @@
       "type": "filter",
       "handler": "hooks/on-payment-session.ts"
     }
+  ],
+  "permissions": [
+    "paypal-gateway.manage"
   ]
 }

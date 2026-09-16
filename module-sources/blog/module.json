@@ -19,19 +19,23 @@
   "adminRoutes": [
     {
       "path": "/blog/articles",
-      "component": "pages/admin/articles/page.tsx"
+      "component": "pages/admin/articles/page.tsx",
+      "permission": "blog.manage"
     },
     {
       "path": "/blog/articles/new",
-      "component": "pages/admin/articles/new/page.tsx"
+      "component": "pages/admin/articles/new/page.tsx",
+      "permission": "blog.manage"
     },
     {
       "path": "/blog/articles/[id]/edit",
-      "component": "pages/admin/articles/[id]/edit/page.tsx"
+      "component": "pages/admin/articles/[id]/edit/page.tsx",
+      "permission": "blog.manage"
     },
     {
       "path": "/blog/categories",
-      "component": "pages/admin/categories/page.tsx"
+      "component": "pages/admin/categories/page.tsx",
+      "permission": "blog.manage"
     }
   ],
   "routes": [
@@ -55,50 +59,59 @@
       "label": "Articles",
       "path": "/blog/articles",
       "icon": "FileText",
-      "group": "content"
+      "group": "content",
+      "permission": "blog.manage"
     },
     {
       "label": "Blog Categories",
       "path": "/blog/categories",
       "icon": "FolderOpen",
-      "group": "content"
+      "group": "content",
+      "permission": "blog.manage"
     }
   ],
   "api": [
     {
       "path": "/blog/articles",
       "handler": "api/articles/route.ts",
-      "description": "List blog articles and create new ones (admin)."
+      "description": "List blog articles and create new ones (admin).",
+      "permission": "blog.manage"
     },
     {
       "path": "/blog/articles/[id]",
       "handler": "api/articles/[id]/route.ts",
-      "description": "Get, update, or delete a single blog article."
+      "description": "Get, update, or delete a single blog article.",
+      "permission": "blog.manage"
     },
     {
       "path": "/blog/categories",
       "handler": "api/categories/route.ts",
-      "description": "List blog categories and create new ones (admin)."
+      "description": "List blog categories and create new ones (admin).",
+      "permission": "blog.manage"
     },
     {
       "path": "/blog/categories/[id]",
       "handler": "api/categories/[id]/route.ts",
-      "description": "Get, update, or delete a single blog category."
+      "description": "Get, update, or delete a single blog category.",
+      "permission": "blog.manage"
     },
     {
       "path": "/blog/comments",
       "handler": "api/comments/route.ts",
-      "description": "List blog comments and post a new comment on an article."
+      "description": "List blog comments and post a new comment on an article.",
+      "permission": "blog.manage"
     },
     {
       "path": "/blog/comments/[id]",
       "handler": "api/comments/[id]/route.ts",
-      "description": "Approve, update, or delete a blog comment (admin)."
+      "description": "Approve, update, or delete a blog comment (admin).",
+      "permission": "blog.manage"
     },
     {
       "path": "/blog/stats",
       "handler": "api/stats/route.ts",
-      "description": "Get aggregate blog statistics for the admin dashboard."
+      "description": "Get aggregate blog statistics for the admin dashboard.",
+      "permission": "blog.manage"
     }
   ],
   "dashboardCards": [
@@ -498,5 +511,8 @@
   "permissionResources": [
     "blog.article",
     "blog.category"
+  ],
+  "permissions": [
+    "blog.manage"
   ]
 }

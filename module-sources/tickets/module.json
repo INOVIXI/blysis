@@ -18,13 +18,15 @@
       "label": "Tickets",
       "path": "/tickets",
       "icon": "Ticket",
-      "group": "community"
+      "group": "community",
+      "permission": "tickets.manage"
     },
     {
       "label": "Departments",
       "path": "/tickets/departments",
       "icon": "Building2",
-      "group": "community"
+      "group": "community",
+      "permission": "tickets.manage"
     }
   ],
   "routes": [
@@ -53,56 +55,67 @@
   "adminRoutes": [
     {
       "path": "/tickets",
-      "component": "pages/admin/tickets/page.tsx"
+      "component": "pages/admin/tickets/page.tsx",
+      "permission": "tickets.manage"
     },
     {
       "path": "/tickets/[id]",
-      "component": "pages/admin/tickets/[id]/page.tsx"
+      "component": "pages/admin/tickets/[id]/page.tsx",
+      "permission": "tickets.manage"
     },
     {
       "path": "/tickets/departments",
-      "component": "pages/admin/tickets/departments/page.tsx"
+      "component": "pages/admin/tickets/departments/page.tsx",
+      "permission": "tickets.manage"
     },
     {
       "path": "/tickets/departments/[id]",
-      "component": "pages/admin/tickets/departments/[id]/page.tsx"
+      "component": "pages/admin/tickets/departments/[id]/page.tsx",
+      "permission": "tickets.manage"
     }
   ],
   "api": [
     {
       "path": "/tickets",
       "handler": "api/tickets/route.ts",
-      "description": "List support tickets and create a new ticket."
+      "description": "List support tickets and create a new ticket.",
+      "permission": "tickets.manage"
     },
     {
       "path": "/tickets/departments",
       "handler": "api/tickets/departments/route.ts",
-      "description": "List ticket departments and create new ones (admin)."
+      "description": "List ticket departments and create new ones (admin).",
+      "permission": "tickets.manage"
     },
     {
       "path": "/tickets/departments/[id]",
       "handler": "api/tickets/departments/[id]/route.ts",
-      "description": "Update or delete a ticket department (admin)."
+      "description": "Update or delete a ticket department (admin).",
+      "permission": "tickets.manage"
     },
     {
       "path": "/tickets/[id]",
       "handler": "api/tickets/[id]/route.ts",
-      "description": "Get a ticket with messages, post a reply, or update its status."
+      "description": "Get a ticket with messages, post a reply, or update its status.",
+      "permission": "tickets.manage"
     },
     {
       "path": "/support/stats",
       "handler": "api/stats/route.ts",
-      "description": "Get aggregate ticket statistics for the admin dashboard."
+      "description": "Get aggregate ticket statistics for the admin dashboard.",
+      "permission": "tickets.manage"
     },
     {
       "path": "/tickets/stats",
       "handler": "api/stats/route.ts",
-      "description": "Get aggregate ticket statistics for the admin dashboard."
+      "description": "Get aggregate ticket statistics for the admin dashboard.",
+      "permission": "tickets.manage"
     },
     {
       "path": "/tickets/departments/[id]/setup",
       "handler": "api/tickets/departments/[id]/setup/route.ts",
-      "description": "The questions one department asks and who may write to it, read and written whole."
+      "description": "The questions one department asks and who may write to it, read and written whole.",
+      "permission": "tickets.manage"
     }
   ],
   "dashboardCards": [

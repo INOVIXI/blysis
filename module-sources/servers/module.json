@@ -15,45 +15,53 @@
       "label": "Game Servers",
       "path": "/servers",
       "icon": "Server",
-      "group": "gaming"
+      "group": "gaming",
+      "permission": "servers.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/servers",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "servers.manage"
     }
   ],
   "api": [
     {
       "path": "/servers",
       "handler": "api/route.ts",
-      "description": "List game servers and create new ones (admin)."
+      "description": "List game servers and create new ones (admin).",
+      "permission": "servers.manage"
     },
     {
       "path": "/server-status",
       "handler": "api/status/route.ts",
-      "description": "Get live status and player count for configured game servers."
+      "description": "Get live status and player count for configured game servers.",
+      "openTo": "public"
     },
     {
       "path": "/rcon",
       "handler": "api/rcon/route.ts",
-      "description": "Send RCON commands to a game server and list RCON-enabled servers (admin)."
+      "description": "Send RCON commands to a game server and list RCON-enabled servers (admin).",
+      "permission": "servers.manage"
     },
     {
       "path": "/servers/[id]",
       "handler": "api/[id]/route.ts",
-      "description": "Update or delete a single game server (admin)."
+      "description": "Update or delete a single game server (admin).",
+      "permission": "servers.manage"
     },
     {
       "path": "/servers/status",
       "handler": "api/status/route.ts",
-      "description": "Get live status and player count for configured game servers."
+      "description": "Get live status and player count for configured game servers.",
+      "openTo": "public"
     },
     {
       "path": "/servers/rcon",
       "handler": "api/rcon/route.ts",
-      "description": "Send RCON commands to a game server and list RCON-enabled servers (admin)."
+      "description": "Send RCON commands to a game server and list RCON-enabled servers (admin).",
+      "permission": "servers.manage"
     }
   ],
   "translations": {

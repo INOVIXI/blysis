@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/faceit-auth",
-      "component": "pages/admin/settings/faceit-auth/page.tsx"
+      "component": "pages/admin/settings/faceit-auth/page.tsx",
+      "permission": "faceit-auth.manage"
     }
   ],
   "settingsCards": [
@@ -87,5 +88,8 @@
         "module_faceit-auth_description": "Kullanıcıların FACEIT hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "faceit-auth.manage"
+  ]
 }

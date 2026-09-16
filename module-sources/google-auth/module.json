@@ -10,7 +10,8 @@
   "adminRoutes": [
     {
       "path": "/settings/google-auth",
-      "component": "pages/admin/settings/google-auth/page.tsx"
+      "component": "pages/admin/settings/google-auth/page.tsx",
+      "permission": "google-auth.manage"
     }
   ],
   "settingsCards": [
@@ -87,5 +88,8 @@
         "module_google-auth_description": "Kullanıcıların Google hesabıyla giriş yapmasına izin verin"
       }
     }
-  }
+  },
+  "permissions": [
+    "google-auth.manage"
+  ]
 }

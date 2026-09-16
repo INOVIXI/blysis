@@ -16,25 +16,29 @@
       "path": "/slider",
       "icon": "Image",
       "group": "design",
-      "section": "layout"
+      "section": "layout",
+      "permission": "slider.manage"
     }
   ],
   "adminRoutes": [
     {
       "path": "/slider",
-      "component": "pages/admin/page.tsx"
+      "component": "pages/admin/page.tsx",
+      "permission": "slider.manage"
     }
   ],
   "api": [
     {
       "path": "/slider",
       "handler": "api/route.ts",
-      "description": "List homepage slider slides and create new ones (admin)."
+      "description": "List homepage slider slides and create new ones (admin).",
+      "permission": "slider.manage"
     },
     {
       "path": "/slider/[id]",
       "handler": "api/[id]/route.ts",
-      "description": "Update or delete a slide (admin)."
+      "description": "Update or delete a slide (admin).",
+      "permission": "slider.manage"
     }
   ],
   "widgets": [

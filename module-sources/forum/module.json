@@ -44,13 +44,15 @@
       "label": "Forum Topics",
       "path": "/forum/topics",
       "icon": "MessageSquare",
-      "group": "community"
+      "group": "community",
+      "permission": "forum.manage"
     },
     {
       "label": "Forum Categories",
       "path": "/forum/categories",
       "icon": "LayoutList",
-      "group": "community"
+      "group": "community",
+      "permission": "forum.manage"
     }
   ],
   "routes": [
@@ -78,62 +80,74 @@
   "adminRoutes": [
     {
       "path": "/forum/topics",
-      "component": "pages/admin/topics/page.tsx"
+      "component": "pages/admin/topics/page.tsx",
+      "permission": "forum.manage"
     },
     {
       "path": "/forum/categories",
-      "component": "pages/admin/categories/page.tsx"
+      "component": "pages/admin/categories/page.tsx",
+      "permission": "forum.manage"
     },
     {
       "path": "/forum/permissions",
-      "component": "pages/admin/permissions/page.tsx"
+      "component": "pages/admin/permissions/page.tsx",
+      "permission": "forum.manage"
     }
   ],
   "api": [
     {
       "path": "/forum/categories",
       "handler": "api/categories/route.ts",
-      "description": "List forum categories and create new ones (admin)."
+      "description": "List forum categories and create new ones (admin).",
+      "permission": "forum.manage"
     },
     {
       "path": "/forum/categories/[id]",
       "handler": "api/categories/[id]/route.ts",
-      "description": "Update or delete a forum category (admin)."
+      "description": "Update or delete a forum category (admin).",
+      "permission": "forum.manage"
     },
     {
       "path": "/forum/topics",
       "handler": "api/topics/route.ts",
-      "description": "List forum topics and create a new topic."
+      "description": "List forum topics and create a new topic.",
+      "permission": "forum.manage"
     },
     {
       "path": "/forum/topics/[id]",
       "handler": "api/topics/[id]/route.ts",
-      "description": "Get a topic with replies, post a reply, or update/delete it."
+      "description": "Get a topic with replies, post a reply, or update/delete it.",
+      "permission": "forum.manage"
     },
     {
       "path": "/forum/posts/[id]",
       "handler": "api/posts/[id]/route.ts",
-      "description": "Update or delete a forum post."
+      "description": "Update or delete a forum post.",
+      "permission": "forum.manage"
     },
     {
       "path": "/forum/topics/[id]/like",
       "handler": "api/topics/[id]/like/route.ts",
-      "description": "Toggle like on a forum topic and fetch like state."
+      "description": "Toggle like on a forum topic and fetch like state.",
+      "openTo": "member"
     },
     {
       "path": "/forum/posts/[id]/like",
       "handler": "api/posts/[id]/like/route.ts",
-      "description": "Toggle like on a forum post."
+      "description": "Toggle like on a forum post.",
+      "openTo": "member"
     },
     {
       "path": "/forum/stats",
       "handler": "api/stats/route.ts",
-      "description": "Get aggregate forum statistics for the admin dashboard."
+      "description": "Get aggregate forum statistics for the admin dashboard.",
+      "permission": "forum.manage"
     },
     {
       "path": "/forum/categories/permissions",
       "handler": "api/categories/permissions/route.ts",
-      "description": "Which roles may read, post and reply in a category (admin)."
+      "description": "Which roles may read, post and reply in a category (admin).",
+      "permission": "forum.manage"
     }
   ],
   "dashboardCards": [
