@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
+import { MEMBER_AVATAR_UPLOADS_KEY } from "@/core/lib/member-uploads";
 
 interface FieldDef {
     key: string;
@@ -50,6 +51,17 @@ const USERNAME_RULE_LABELS: Record<UsernameRule, string> = {
 const HASH_CHOICES = HASH_ALGORITHMS.map((value) => ({ value, labelKey: HASH_LABELS[value] }));
 const USERNAME_RULE_CHOICES = USERNAME_RULES.map((value) => ({ value, labelKey: USERNAME_RULE_LABELS[value] }));
 
+/**
+ * Written as a choice rather than a switch because that is the control this
+ * screen has, and a two-value choice says the same thing. The stored value is
+ * read by `memberAvatarUploads()`, which treats anything but "false" as on: a
+ * site that never opens this screen gets the useful behaviour.
+ */
+const ALLOWED_CHOICES = [
+    { value: "true", labelKey: "generalSettings_allowed" },
+    { value: "false", labelKey: "generalSettings_notAllowed" },
+] as const;
+
 interface SectionDef {
     titleKey: string;
     fields: FieldDef[];
@@ -63,6 +75,12 @@ const sections: SectionDef[] = [
             { key: "email_verify_expiry_hours", labelKey: "generalSettings_emailVerifyExpiry", type: "number", defaultValue: 24 },
             { key: "password_reset_expiry_minutes", labelKey: "generalSettings_passwordResetExpiry", type: "number", defaultValue: 60 },
             { key: "password_hash_algorithm", labelKey: "generalSettings_hashAlgorithm", type: "choice", defaultValue: "bcrypt", choices: HASH_CHOICES, descriptionKey: "generalSettings_hashAlgorithmHint" },
+        ],
+    },
+    {
+        titleKey: "generalSettings_memberContent",
+        fields: [
+            { key: MEMBER_AVATAR_UPLOADS_KEY, labelKey: "generalSettings_memberAvatarUploads", type: "choice", defaultValue: "true", choices: ALLOWED_CHOICES, descriptionKey: "generalSettings_memberAvatarUploadsHint" },
         ],
     },
     {
