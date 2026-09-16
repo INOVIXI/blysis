@@ -82,8 +82,13 @@ class ModuleSystem {
      * carries no wording for a module and a fork that ships different ones
      * gets its own. Core's twelve sit in `messages-core` under sections,
      * because the panel itself is not a module.
+     *
+     * The enabled set is passed in rather than read from `isEnabled`. That
+     * flag answers false until somebody calls `initialize()`, and in a route
+     * handler nobody has: the screen would have shown core's twelve on an
+     * installation running ninety modules, which is exactly what it did.
      */
-    permissionCatalogue(): PermissionEntry[] {
+    permissionCatalogue(enabled: Record<string, boolean>): PermissionEntry[] {
         const entries: PermissionEntry[] = CORE_PERMISSION_CATALOGUE.map((permission) => ({
             name: permission.name,
             labelKey: permission.labelKey,
@@ -91,7 +96,12 @@ class ModuleSystem {
             section: permission.section,
         }));
 
-        for (const mod of this.getEnabledModules()) {
+        for (const mod of this.getDefinitions()) {
+            // Absent means nobody has ruled on it, which the rest of the
+            // product reads as enabled. A module explicitly turned off offers
+            // nothing: its screens are 404 and a permission for them would be
+            // a row an operator cannot act on.
+            if (enabled[mod.id] === false) continue;
             for (const entry of mod.permissions ?? []) {
                 entries.push({
                     name: entry.name,

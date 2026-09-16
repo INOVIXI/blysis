@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Button, buttonClassName } from "@/core/components/ui/button";
@@ -59,6 +59,7 @@ export interface RoleRecord {
 
 export function RoleForm({ role }: { role?: RoleRecord }) {
     const t = useTranslations("admin");
+    const locale = useLocale();
     const commonT = useTranslations("common");
     const router = useRouter();
 
@@ -80,11 +81,11 @@ export function RoleForm({ role }: { role?: RoleRecord }) {
     const isAdminRole = role?.name === "admin";
 
     useEffect(() => {
-        fetch("/api/v1/admin/permission-catalogue")
+        fetch(`/api/v1/admin/permission-catalogue?locale=${locale}`)
             .then((response) => response.json())
             .then((data) => setSections(data.sections ?? []))
             .catch(() => { /* the form still saves; the grid stays empty */ });
-    }, []);
+    }, [locale]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
