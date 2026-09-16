@@ -104,7 +104,7 @@ export const seed: ModuleSeed = {
                     slug: `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}-${i + 1}`,
                     excerpt: ctx.sentence(),
                     coverImage: ctx.chance(75) ? ctx.pick(COVERS) : null,
-                    content: ctx.html(ctx.int(3, 8)),
+                    content: ctx.paragraphs(ctx.int(3, 8)),
                     status: status as "PUBLISHED",
                     publishedAt: status === "PUBLISHED" ? createdAt : null,
                     publishAt: status === "SCHEDULED" ? new Date(Date.now() + ctx.int(1, 14) * 86_400_000) : null,

@@ -48,9 +48,9 @@ export const seed: ModuleSeed = {
                 data: {
                     version,
                     title,
-                    content: ctx.html(ctx.int(1, 3)),
+                    content: ctx.paragraphs(ctx.int(1, 3)),
                     slug: entrySlug(title),
-                    details: long ? ctx.html(ctx.int(4, 7)) : null,
+                    details: long ? ctx.paragraphs(ctx.int(4, 7)) : null,
                     coverImage: long ? ctx.pick(COVERS) : null,
                     type,
                     // A changelog is read in order, so the dates are stepped

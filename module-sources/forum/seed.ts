@@ -96,7 +96,7 @@ export const seed: ModuleSeed = {
                 data: {
                     title,
                     slug,
-                    content: ctx.html(ctx.int(1, 3)),
+                    content: ctx.paragraphs(ctx.int(1, 3)),
                     categoryId: ctx.pick(categories).id,
                     authorId: ctx.pick(ctx.users).id,
                     isPinned: i < 2,
@@ -117,7 +117,7 @@ export const seed: ModuleSeed = {
                 const author = ctx.chance(25) && staff.length ? ctx.pick(staff) : ctx.pick(ctx.users);
                 await ctx.create("forumPost", () => ctx.prisma.forumPost.create({
                     data: {
-                        content: `<p>${ctx.pick(REPLIES)}</p>`,
+                        content: ctx.pick(REPLIES),
                         topicId: topic.id,
                         authorId: author.id,
                         createdAt: new Date(when),

@@ -45,7 +45,7 @@ export const seed: ModuleSeed = {
             const suggestion = await ctx.create("suggestion", () => ctx.prisma.suggestion.create({
                 data: {
                     title: i < IDEAS.length ? base : `${base} (${Math.floor(i / IDEAS.length) + 1})`,
-                    content: ctx.html(ctx.int(1, 2)),
+                    content: ctx.paragraphs(ctx.int(1, 2)),
                     // Most boards are mostly open; the rest give every filter
                     // chip something to show.
                     // The module's own vocabulary, so the board's filter
@@ -76,7 +76,7 @@ export const seed: ModuleSeed = {
             for (const commenter of ctx.some(ctx.users, ctx.int(0, 5))) {
                 await ctx.create("suggestionComment", () => ctx.prisma.suggestionComment.create({
                     data: {
-                        content: `<p>${ctx.pick(REPLIES)}</p>`,
+                        content: ctx.pick(REPLIES),
                         suggestionId: suggestion.id,
                         authorId: commenter.id,
                         moderationState: ctx.chance(92) ? "APPROVED" : "PENDING",

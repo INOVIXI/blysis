@@ -40,7 +40,7 @@ export const seed: ModuleSeed = {
                     title,
                     slug: downloadSlug(title),
                     description,
-                    details: guide ? ctx.html(ctx.int(5, 9)) : null,
+                    details: guide ? ctx.paragraphs(ctx.int(5, 9)) : null,
                     coverImage: guide ? ctx.pick(COVERS) : null,
                     fileName,
                     fileUrl: `https://cdn.example.invalid/${fileName}`,

@@ -259,10 +259,10 @@ function makeContext(
         chance: (percent: number) => random() * 100 < percent,
         title: () => capitalise(words(int(2, 5))),
         sentence: () => pick(SENTENCES),
-        html: (paragraphs: number) =>
-            Array.from({ length: paragraphs }, () =>
-                `<p>${Array.from({ length: int(2, 4) }, () => pick(SENTENCES)).join(" ")}</p>`,
-            ).join("\n"),
+        paragraphs: (count: number) =>
+            Array.from({ length: count }, () =>
+                Array.from({ length: int(2, 4) }, () => pick(SENTENCES)).join(" "),
+            ).join("\n\n"),
         // Weighted towards now: a feed where everything landed a year ago
         // looks abandoned, which is its own unrepresentative state.
         daysAgo: (days: number) => new Date(Date.now() - Math.floor(random() ** 2 * days * 86_400_000)),
@@ -298,6 +298,33 @@ const AVATARS = [
     "/demo/avatar-05.svg", "/demo/avatar-06.svg", "/demo/avatar-07.svg", "/demo/avatar-08.svg",
     "/demo/avatar-09.svg", "/demo/avatar-10.svg", "/demo/avatar-11.svg", "/demo/avatar-12.svg",
 ];
+
+/**
+ * What the site calls itself, for an install that has never been through the
+ * setup wizard.
+ *
+ * `site_description` is what every page falls back to and what the home page
+ * has instead of a description of its own, and the wizard leaves it optional,
+ * so a demo seeded straight into an empty database served a home page with no
+ * meta description at all. Only filled in when it is missing: an operator who
+ * has written their own words keeps them.
+ */
+async function seedSiteIdentity(prisma: PrismaClient): Promise<void> {
+    const defaults: Record<string, string> = {
+        site_name: "Blysis",
+        site_description: "A modular community platform: forums, a store, support tickets and everything else, in one place.",
+    };
+    for (const [key, value] of Object.entries(defaults)) {
+        const existing = await prisma.setting.findUnique({ where: { key } });
+        const current = typeof existing?.value === "string" ? existing.value : "";
+        if (current.trim()) continue;
+        await prisma.setting.upsert({
+            where: { key },
+            update: { value },
+            create: { key, value },
+        });
+    }
+}
 
 /**
  * The people the rest of the data belongs to.
@@ -417,6 +444,7 @@ async function main(): Promise<void> {
             ledger.rows.push({ module, model, id });
         };
 
+        await seedSiteIdentity(prisma);
         const users = await seedUsers(prisma, record("core"));
         console.log(`core: ${users.length} accounts (password ${DEMO_PASSWORD})`);
 

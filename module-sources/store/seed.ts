@@ -145,7 +145,7 @@ export const seed: ModuleSeed = {
                 data: {
                     name,
                     slug,
-                    description: ctx.html(2),
+                    description: ctx.paragraphs(2),
                     shortDesc: ctx.sentence(),
                     price,
                     comparePrice,

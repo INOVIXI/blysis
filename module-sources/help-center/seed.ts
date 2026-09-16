@@ -51,7 +51,7 @@ export const seed: ModuleSeed = {
                     create: {
                         title,
                         slug: articleSlug,
-                        content: ctx.html(ctx.int(2, 5)),
+                        content: ctx.paragraphs(ctx.int(2, 5)),
                         views: ctx.int(10, 2500),
                         helpful: ctx.int(0, 60),
                         notHelpful: ctx.int(0, 8),
