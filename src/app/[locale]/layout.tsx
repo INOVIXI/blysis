@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isKnownLocale } from "@/core/lib/i18n/resolve-locale";
 import { buildSiteHead, buildPageMeta, buildOrganizationJsonLd } from "@/core/lib/seo";
-import { serverConfig } from "@/core/config/server";
 import { Inter, Outfit, JetBrains_Mono } from "next/font/google";
 import { buildTokenOverrideCss } from "@/core/lib/theme-override-css";
 import { NextIntlClientProvider } from "next-intl";

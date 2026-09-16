@@ -59,8 +59,10 @@ describe("the endpoint a member's avatar comes from", () => {
     it("is small, because an avatar is drawn at eighty pixels", () => {
         const size = /AVATAR_MAX_SIZE\s*=\s*([\d_ *]+)/.exec(source())?.[1] ?? "";
         expect(size, "a size should be stated").not.toBe("");
-        // eslint-disable-next-line no-eval
-        expect(eval(size)).toBeLessThanOrEqual(4 * 1024 * 1024);
+        // The limit is written the way a reader understands it, as a product
+        // of kilobytes, so the test multiplies rather than evaluating code.
+        const bytes = size.split("*").reduce((total, part) => total * Number(part.replace(/_/g, "").trim()), 1);
+        expect(bytes).toBeLessThanOrEqual(4 * 1024 * 1024);
     });
 
     it("counts what one member may do, not what one address may", () => {
