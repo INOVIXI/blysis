@@ -112,6 +112,70 @@ interface BlysisFilterPayloads {
      * answered.
      */
     "admin.customer.panels": CustomerPanel[];
+
+    /**
+     * What an operator has decided one page's head should say.
+     *
+     * Core builds a head from what the page itself declared and had no way to
+     * be told otherwise. Per-page overrides lived in a module that cannot
+     * export `generateMetadata` for pages it does not own, so it rewrote
+     * `document.head` from the browser and a crawler never saw any of it.
+     *
+     * Core asks per page, with the path and the language, and applies whatever
+     * comes back over the values it computed. Every field is an override and
+     * `null` means "no opinion", so a listener with nothing to say returns the
+     * value it was given. See core/lib/seo.ts.
+     */
+    "seo.pageMeta": PageMetaOverride;
+
+    /**
+     * The part of the head that belongs to the site rather than to a page:
+     * how a page's name is framed in the tab, and the tokens a search engine
+     * asks you to publish to prove you own the domain.
+     *
+     * Asked once, by the root layout. Kept apart from `seo.pageMeta` because
+     * only the root layout can set an inherited title template, and because a
+     * verification token is about the domain and would be a strange thing to
+     * answer per path.
+     */
+    "seo.siteHead": SiteHeadOverride;
+}
+
+/** The site's own head, as whatever manages SEO would have it. */
+interface SiteHeadOverride {
+    /** The tab title for a page that names none of its own. */
+    defaultTitle: string | null;
+    /** How a page's name is framed, with `%s` standing for the name. */
+    titleTemplate: string | null;
+    /** Comma-separated, or null for no keywords tag at all. */
+    keywords: string | null;
+    /** The `content` value from the tag the search engine hands you. */
+    googleVerification: string | null;
+    bingVerification: string | null;
+}
+
+/** One page's head, as whatever manages SEO would have it. */
+interface PageMetaOverride {
+    title: string | null;
+    description: string | null;
+    /**
+     * What a share card says, where it should differ from the search result.
+     * Falls back to `title` and `description`, which is what most pages want.
+     */
+    ogTitle: string | null;
+    ogDescription: string | null;
+    /** The social sharing image, absolute or rooted at the site. */
+    image: string | null;
+    /** Replaces the canonical core derived; the hreflang set is kept. */
+    canonical: string | null;
+    /** Comma-separated, as the `keywords` meta tag wants them. */
+    keywords: string | null;
+    /**
+     * Only ever a refusal. A page core already refuses to have indexed stays
+     * refused: core spreads its own `robots` over what comes back.
+     */
+    noIndex: boolean;
+    noFollow: boolean;
 }
 
 /**
@@ -183,6 +247,31 @@ interface BlysisFilterContexts {
         fields: Record<string, string>;
         ip: string | null;
     };
+
+    /**
+     * Which page is being described, as a path below the locale segment, and
+     * the language it is being rendered in. The path is the key an override is
+     * stored against; the locale is there for a listener that keeps its
+     * overrides per language.
+     */
+    "seo.pageMeta": {
+        path: string;
+        locale: string;
+        /**
+         * What core has built for this page so far.
+         *
+         * Here so a listener can tell an override from a fallback. A site-wide
+         * share image should lose to the image a page chose for itself, and
+         * without these a listener cannot know whether the page chose one -
+         * so it would have had to either always win or never apply.
+         */
+        title: string;
+        description: string;
+        image: string | null;
+    };
+
+    /** The site's name, for a listener building a title template out of it. */
+    "seo.siteHead": { siteName: string };
 
     /** Who the message is going to, before it reaches the provider. */
     "email.subject": { to: string };
