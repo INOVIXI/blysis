@@ -31,7 +31,7 @@ vi.mock("@/core/lib/app-url", () => ({ resolveAppUrl }));
 vi.mock("@/core/config/server", () => ({ serverConfig }));
 vi.mock("@/core/lib/hooks-bootstrap", () => ({ ensureHooks }));
 
-const { buildPageMeta } = await import("@/core/lib/seo");
+const { buildPageMeta, buildSiteHead } = await import("@/core/lib/seo");
 const { addFilter, resetHooks } = await import("@/core/lib/hooks");
 
 /** The answer a listener with nothing to say hands back untouched. */
@@ -109,6 +109,60 @@ describe("a page's head", () => {
         });
         const meta = await buildPageMeta({ title: "Store", description: "Buy things", url: "/store", locale: "en" });
         expect(meta.title).toBe("Store");
+    });
+
+    it("keeps the head core built when the bus itself cannot be reached", async () => {
+        // Not a listener failing - the bootstrap failing, which is what a
+        // build machine with no database looks like. A head is not worth a
+        // 500, so the page keeps what core worked out on its own.
+        ensureHooks.mockRejectedValueOnce(new Error("no database"));
+        const meta = await buildPageMeta({ title: "Store", description: "Buy things", url: "/store", locale: "en" });
+        expect(meta.title).toBe("Store");
+        expect(meta.description).toBe("Buy things");
+    });
+});
+
+describe("the site's head", () => {
+    beforeEach(() => resetHooks());
+
+    it("is the site's own name, with a page's name before it", async () => {
+        const head = await buildSiteHead();
+        expect(head.defaultTitle).toBe("Blysis");
+        expect(head.titleTemplate).toBe("%s | Blysis");
+    });
+
+    it("takes the name and the template a module gives it", async () => {
+        addFilter("seo.siteHead", (value) => ({ ...value, defaultTitle: "Acme Games", titleTemplate: "%s - Acme" }));
+        const head = await buildSiteHead();
+        expect(head.defaultTitle).toBe("Acme Games");
+        expect(head.titleTemplate).toBe("%s - Acme");
+    });
+
+    it("refuses a template that would title every page the same", async () => {
+        // Next substitutes the page's name into `%s`. A template without one
+        // is not a template, and it would put the same string in every tab on
+        // the site rather than failing where somebody would notice.
+        addFilter("seo.siteHead", (value) => ({ ...value, defaultTitle: "Acme Games", titleTemplate: "Acme Games" }));
+        const head = await buildSiteHead();
+        expect(head.titleTemplate).toBe("%s | Acme Games");
+    });
+
+    it("asks with the name core worked out, so a listener can build on it", async () => {
+        const asked: unknown[] = [];
+        addFilter("seo.siteHead", (value, context) => {
+            asked.push(context);
+            return value;
+        });
+        await buildSiteHead();
+        expect(asked).toEqual([{ siteName: "Blysis" }]);
+    });
+
+    it("keeps core's own answer when the bus cannot be reached", async () => {
+        ensureHooks.mockRejectedValueOnce(new Error("no database"));
+        const head = await buildSiteHead();
+        expect(head.defaultTitle).toBe("Blysis");
+        expect(head.titleTemplate).toBe("%s | Blysis");
+        expect(head.keywords).toBe("");
     });
 });
 
