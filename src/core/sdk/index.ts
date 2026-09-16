@@ -17,7 +17,7 @@
  * `tailwind-merge` and a hook bus with no imports at all. The project declares
  * no `sideEffects: false`, so a bundler cannot drop unused re-exports from a
  * barrel - anything heavy added here is paid for by every client component
- * that imports `formatDate`. `sanitizeHtml` lives in `/server` for exactly
+ * that imports `formatDate`. `renderMarkdown` cleans what it renders, for exactly
  * that reason: it pulls `isomorphic-dompurify`, and no module uses it from
  * client code.
  *
@@ -145,3 +145,4 @@ export type { Restriction } from "@/core/lib/restrictions";
 
 // Declarations an operator wrote for a role, judged as a browser reads them.
 export { safeRoleCss } from "@/core/lib/role-css";
+export { renderMarkdown } from "@/core/lib/markdown";

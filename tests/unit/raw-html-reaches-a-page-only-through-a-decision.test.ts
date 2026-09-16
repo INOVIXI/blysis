@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * Every `dangerouslySetInnerHTML` in this tree is one somebody argued for.
@@ -28,7 +29,9 @@ const ROOT = path.resolve(import.meta.dirname, "../..");
  */
 const ARGUED_FOR: Record<string, string> = {
     "src/core/components/ui/rich-content.tsx":
-        "the one renderer of editor output, and it passes the html through DOMPurify.sanitize",
+        "the one renderer of what a person wrote, and it passes the markdown through renderMarkdown, which parses and then sanitises with DOMPurify against an explicit tag and attribute allowlist",
+    "src/core/components/ui/rich-text-editor.tsx":
+        "the editor's preview, rendered through the same renderMarkdown the page uses. It has to be the same function: a preview drawn by a second renderer is a promise the page does not keep, and one that skipped the sanitiser would show a writer markup the page will strip",
     "src/app/[locale]/layout.tsx":
         "three sites: a static literal that reads localStorage, the organization JSON-LD which escapes `<`, and theme CSS built from an allowlist of token names and hex colours",
     "src/core/components/ui/RoleName.tsx":
@@ -40,7 +43,7 @@ const ARGUED_FOR: Record<string, string> = {
 };
 
 function withoutComments(source: string): string {
-    return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+    return stripComments(source);
 }
 
 /** Files that write raw HTML, excluding the installed runtime copy of a module. */
@@ -92,13 +95,19 @@ describe("raw HTML on a page", () => {
         expect(stale, "these no longer write raw html; drop them").toEqual([]);
     });
 
-    it("still sanitises the one place editor output is rendered", () => {
-        const source = fs.readFileSync(
-            path.join(ROOT, "src/core/components/ui/rich-content.tsx"),
-            "utf8",
-        );
-        // Not "DOMPurify is imported" - that it is the value being written.
-        expect(source).toMatch(/dangerouslySetInnerHTML=\{\{\s*__html:\s*DOMPurify\.sanitize\(/);
+    it("still sanitises both places what a person wrote is rendered", () => {
+        // Not "the sanitiser is imported somewhere" - that it is the value
+        // being written. Both the page and the editor's preview write what
+        // `renderMarkdown` returned, and that function parses and then cleans.
+        for (const file of [
+            "src/core/components/ui/rich-content.tsx",
+            "src/core/components/ui/rich-text-editor.tsx",
+        ]) {
+            const source = fs.readFileSync(path.join(ROOT, file), "utf8");
+            expect(source, file).toMatch(/dangerouslySetInnerHTML=\{\{\s*__html:\s*renderMarkdown\(/);
+        }
+        const markdown = fs.readFileSync(path.join(ROOT, "src/core/lib/markdown.ts"), "utf8");
+        expect(markdown).toMatch(/return DOMPurify\.sanitize\(/);
     });
 
     it("still escapes `<` in both JSON-LD builders", () => {

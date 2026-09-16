@@ -212,11 +212,18 @@ describe("the three controls a label could not reach", () => {
         }
     });
 
-    it("the rich text editor names its group, since Quill owns the field", () => {
+    it("the rich text editor names the field a writer types in", () => {
+        // Quill owned a contenteditable, so the best available was to name
+        // the toolbar-and-editor group around it. The field is a `<textarea>`
+        // now and takes the name itself, which is the thing a screen reader
+        // announces when the caret lands in it.
         const editor = fs.readFileSync(path.join(ROOT, "src/core/components/ui/rich-text-editor.tsx"), "utf8");
         expect(editor).toContain("labelledBy");
-        expect(editor).toContain('role={labelledBy ? "group" : undefined}');
         expect(editor).toContain("aria-labelledby={labelledBy}");
+        expect(editor).toMatch(/<textarea[\s\S]*?aria-labelledby/);
+        // The toolbar is a toolbar and says which field it acts on.
+        expect(editor).toContain('role="toolbar"');
+        expect(editor).toContain("aria-controls={textareaId}");
         for (const file of [
             "module-sources/blog/pages/admin/articles/new/page.tsx",
             "module-sources/store/pages/admin/products/new/page.tsx",
@@ -234,9 +241,12 @@ describe("the three controls a label could not reach", () => {
         expect(hidden).not.toContain("id={id}");
     });
 
-    it("the picker's preview image is described in the reader's language", () => {
-        const upload = fs.readFileSync(path.join(ROOT, "src/core/components/ui/file-upload.tsx"), "utf8");
-        expect(upload).toContain('alt={t("preview")}');
+    it("a field's preview image is described in the reader's language", () => {
+        // The preview moved out of the picker and into `FilePreview`, because
+        // a field shows what it is holding whether that was uploaded or
+        // pasted, and only the picker used to draw one.
+        const preview = fs.readFileSync(path.join(ROOT, "src/core/components/ui/file-preview.tsx"), "utf8");
+        expect(preview).toContain('alt={t("preview")}');
         for (const locale of ["en", "tr"]) {
             const messages = JSON.parse(fs.readFileSync(path.join(ROOT, `messages-core/${locale}.json`), "utf8"));
             expect(messages.common.preview, locale).toBeTruthy();

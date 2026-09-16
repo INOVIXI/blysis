@@ -7,7 +7,6 @@ import { themeRegistry } from "@/core/generated/theme-registry";
 import { logActivity } from "@/core/lib/activity-log";
 import { sanitizeCustomCss } from "@/core/lib/css-sanitizer";
 import { isTokenName } from "@/core/lib/theme-override-css";
-import { sanitizeHtml } from "@/core/lib/sanitize";
 import type { ThemeManifest, ThemeFieldDef } from "@/core/lib/theme-manifest-schema";
 import { isUnsafeKey, emptyRecord } from "@/core/lib/safe-object";
 import { z } from "zod";
@@ -74,7 +73,7 @@ function sanitizeField(def: ThemeFieldDef, value: unknown): unknown {
             return isSafeUrl(value) ? value : undefined;
         case "richtext": {
             const s = clampString(value, def.max ?? 10000);
-            return s !== undefined ? sanitizeHtml(s) : undefined;
+            return s !== undefined ? s : undefined;
         }
         case "image": {
             if (!isSafeUrl(value)) return undefined;

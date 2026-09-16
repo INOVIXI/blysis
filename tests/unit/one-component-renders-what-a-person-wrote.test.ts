@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { stripComments } from "./source-text";
 
 /**
  * Author-written HTML reaches the page through one component.
@@ -59,7 +60,7 @@ function atLeast(a: number[], b: readonly number[]): boolean {
     return true;
 }
 
-describe("HTML a person wrote", () => {
+describe("what a person wrote", () => {
     it("has module files to read", () => {
         expect(MODULE_FILES.length).toBeGreaterThan(200);
     });
@@ -90,9 +91,7 @@ describe("HTML a person wrote", () => {
         for (const file of MODULE_FILES) {
             // Comments are prose about prose: a note explaining why a column
             // of text is the width it is used to fail this.
-            const source = fs.readFileSync(file, "utf8")
-                .replace(/\/\*[\s\S]*?\*\//g, "")
-                .replace(/\/\/[^\n]*/g, "");
+            const source = stripComments(fs.readFileSync(file, "utf8"));
             if (/\bprose(?:-[a-z]+)?\b/.test(source)) offenders.push(`${rel(file)}: prose`);
             if (/\bdark:[a-z]/.test(source)) offenders.push(`${rel(file)}: dark:`);
         }
@@ -113,13 +112,77 @@ describe("HTML a person wrote", () => {
         expect(content).not.toMatch(/#[0-9a-fA-F]{3,8}\b|\brgb\(|\bhsl\(/);
     });
 
+    /**
+     * A row of badges is a row.
+     *
+     * Tailwind's preflight makes every `img` a block, so three badges written
+     * on three lines - the shape every project page opens with - came out
+     * stacked down the page one per line, each on its own row. Measured in
+     * the editor's preview against the real document: twelve images, twelve
+     * rows. They are inline by default now, and only an image that is a
+     * paragraph on its own is treated as a figure and given the room and the
+     * rounded corner that go with one.
+     */
+    it("lets images written side by side sit side by side", () => {
+        const css = fs.readFileSync(path.join(ROOT, "src/app/globals.css"), "utf8");
+        const rule = css.slice(css.indexOf(".blysis-content img"));
+        const shared = rule.slice(0, rule.indexOf("}"));
+        expect(shared).toContain("display: inline-block");
+        // The figure case, which is what the block display is actually for.
+        expect(css).toContain(".blysis-content p > img:only-child");
+        expect(css).toContain(".blysis-content p > a:only-child > img");
+    });
+
+    /**
+     * A top-level heading is ruled off.
+     *
+     * The line under a title in a rendered README is not something anybody
+     * typed - the source carries no `---` at all - it is a border the
+     * stylesheet puts under `h1` and `h2`, the way every markdown host draws
+     * them. Without it a long page is a run of bold lines and a reader has to
+     * find the seams themselves.
+     *
+     * Only the two top levels. An `h3` ruled off as well turns a page with
+     * sub-sections into a ladder.
+     */
+    it("rules off the headings that divide a page", () => {
+        const css = fs.readFileSync(path.join(ROOT, "src/app/globals.css"), "utf8");
+        const rule = css.slice(css.indexOf(".blysis-content h1,\n.blysis-content h2 {"));
+        expect(rule.slice(0, rule.indexOf("}"))).toContain("border-bottom");
+        // A writer's own `---` keeps its own rule, which is a different thing.
+        expect(css).toContain(".blysis-content hr");
+    });
+
+    /**
+     * A heading inside an article is not lighter than the title above it.
+     *
+     * Measured on the running site: the page `h1` renders at 700 and the
+     * headings inside `blysis-content` at 600, so a section heading in a long
+     * article read as quieter than its own page title - which inverts what
+     * the two are for. Modrinth, which is the reference here, sets its titles
+     * at 800 against body text at 500; the point is the contrast, not the
+     * number.
+     */
+    it("sets an article's headings no lighter than the page's own title", () => {
+        const css = fs.readFileSync(path.join(ROOT, "src/app/globals.css"), "utf8");
+        const block = css.slice(css.indexOf(".blysis-content h1,"));
+        const weight = /font-weight:\s*(\d+)/.exec(block.slice(0, block.indexOf("}")));
+        expect(weight, "the heading block should state a weight").not.toBeNull();
+        expect(Number(weight![1])).toBeGreaterThanOrEqual(700);
+    });
+
     it("is reachable by a module", () => {
         const sdk = fs.readFileSync(path.join(ROOT, "src/core/sdk/ui.ts"), "utf8");
         expect(sdk).toContain("RichContent");
         const component = fs.readFileSync(path.join(ROOT, "src/core/components/ui/rich-content.tsx"), "utf8");
-        expect(component).toContain('from "isomorphic-dompurify"');
-        expect(component).toContain("DOMPurify.sanitize(html)");
+        // The sanitising moved one file along, into `renderMarkdown`, because
+        // the editor's preview has to clean the same way the page does or it
+        // is showing a writer something the page will not print.
+        expect(component).toContain("renderMarkdown(markdown,");
         expect(component).toContain("blysis-content");
+        const markdown = fs.readFileSync(path.join(ROOT, "src/core/lib/markdown.ts"), "utf8");
+        expect(markdown).toContain('from "isomorphic-dompurify"');
+        expect(markdown).toContain("DOMPurify.sanitize(");
     });
 
     it("is required by every module that renders it", () => {

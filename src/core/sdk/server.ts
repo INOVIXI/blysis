@@ -13,7 +13,6 @@
  * surface.
  */
 // --- HTML sanitisation (isomorphic-dompurify; kept out of the light barrel) ---
-export { sanitizeHtml } from "@/core/lib/sanitize";
 
 // --- Database ---
 export { prisma } from "@/core/lib/db";
@@ -165,6 +164,13 @@ export { sendEmail, queueEmail } from "@/core/lib/email";
 
 // --- Structured data ---
 export { buildArticleJsonLd } from "@/core/lib/seo";
+
+// Every public page this site serves, with the title and description it shows
+// when nobody has overridden them. A module that manages search engine
+// metadata cannot enumerate the pages itself - most of them belong to other
+// modules - and a screen that starts empty asks an operator to already know
+// that `/store/product/[...params]` exists before they can describe it.
+export { listCataloguePages, type CataloguePage } from "@/core/lib/page-catalogue";
 
 // Structured logging. A module's cron jobs and hook listeners run outside any
 // request, and `log` handles that - it reads the correlation id from

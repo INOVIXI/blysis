@@ -4,7 +4,6 @@ import { isAdmin } from "@/core/lib/permissions";
 import { prisma } from "@/core/lib/db";
 import { Prisma } from "@prisma/client";
 import { themeRegistry } from "@/core/generated/theme-registry";
-import { sanitizeHtml } from "@/core/lib/sanitize";
 import type { ThemeFieldDef } from "@/core/lib/theme-manifest-schema";
 import { readJsonBody } from "@/core/lib/api-body";
 import { z } from "zod";
@@ -27,7 +26,7 @@ function sanitizeByType(def: ThemeFieldDef, value: unknown): unknown {
         case "toggle":   return typeof value === "boolean" ? value : undefined;
         case "text":     return typeof value === "string" ? value.slice(0, def.max ?? 10000) : undefined;
         case "url":      return typeof value === "string" && (value.startsWith("/") || /^https?:\/\//.test(value)) ? value : undefined;
-        case "richtext": return typeof value === "string" ? sanitizeHtml(value.slice(0, def.max ?? 10000)) : undefined;
+        case "richtext": return typeof value === "string" ? value.slice(0, def.max ?? 10000) : undefined;
         case "image":    return typeof value === "string" && (value.startsWith("/") || /^https?:\/\//.test(value) || value.startsWith("data:image/")) ? value : undefined;
         case "number":   return typeof value === "number" && Number.isFinite(value) ? value : undefined;
     }

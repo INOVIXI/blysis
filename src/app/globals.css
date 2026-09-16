@@ -76,9 +76,24 @@
   --radius:                       var(--blysis-radius);
 }
 
+/*
+ * Body text stays at 400, and this comment is the reason.
+ *
+ * The reference this product was compared to serves the same family we do -
+ * `Inter, -apple-system, ...` - and sets its text at 500 and its titles at
+ * 800, so the family was never the difference and the weight was. 500 was
+ * tried here and measured: `a-page-fits-the-phone-it-is-read-on` failed on
+ * `/en` with sixteen elements wider than a 320px screen, because Inter at 500
+ * is wider and the homepage cards no longer fit. At 400 all five pages pass.
+ *
+ * So the heavier body text costs a mobile layout pass across the homepage,
+ * and is not free the way the title weight was. The page title did move, to
+ * `font-extrabold` in `PageFrame`.
+ */
 body {
   color: var(--blysis-color-foreground);
   font-family: var(--blysis-font-body);
+  font-weight: 400;
   background: var(--blysis-color-background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -93,7 +108,8 @@ body {
 :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 
 /**
- * Author-written HTML: a blog article, a forum post, a product description.
+ * What a person wrote: a blog article, a forum post, a product description.
+ * Markdown, rendered and sanitised by `renderMarkdown` before it gets here.
  *
  * Seven module screens rendered sanitised HTML through `prose prose-lg
  * dark:prose-invert`, and this project has never had the typography plugin
@@ -120,13 +136,30 @@ body {
 .blysis-content h3,
 .blysis-content h4 {
   color: inherit;
-  font-weight: 600;
+  /* Not lighter than the page title above it. At 600 against a 700 `h1`, a
+     section heading in a long article read as quieter than the page it was
+     on, which inverts what the two are for. */
+  font-weight: 700;
   line-height: 1.3;
   margin: 1.6em 0 0.6em;
 }
 
 .blysis-content h1 { font-size: 1.75em; }
 .blysis-content h2 { font-size: 1.4em; }
+
+/*
+ * The line under a title is the stylesheet's, not the writer's. Every
+ * markdown host draws one, and a document that arrives without it is a run of
+ * bold lines with no seams a reader can find. Only the two top levels: an
+ * `h3` ruled off as well turns a page with sub-sections into a ladder.
+ *
+ * A writer's own `---` is a different thing and keeps its own rule below.
+ */
+.blysis-content h1,
+.blysis-content h2 {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.3em;
+}
 .blysis-content h3 { font-size: 1.2em; }
 .blysis-content h4 { font-size: 1.05em; }
 
@@ -199,6 +232,7 @@ body {
 
 .blysis-content code {
   background: var(--color-muted);
+  border: 1px solid var(--color-border);
   border-radius: 0.3rem;
   padding: 0.15em 0.4em;
   font-size: 0.9em;
@@ -216,16 +250,32 @@ body {
 
 .blysis-content pre code {
   background: transparent;
+  border: 0;
   padding: 0;
   font-size: 0.875em;
 }
 
+/* Tailwind's preflight makes every image a block. Here that is wrong more
+   often than it is right: the row of badges a project page opens with is
+   written one per line, and as blocks the nine of them came out stacked down
+   the page. Inline is what a reader means by "these go together". */
 .blysis-content img,
 .blysis-content video {
   max-width: 100%;
   height: auto;
-  border-radius: 0.6rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* An image that is a paragraph on its own is a figure: give it the room and
+   the rounded corner. A badge in a row is not, and gets neither - a radius
+   over artwork that already has its own clips the corners off it. */
+.blysis-content p > img:only-child,
+.blysis-content p > video:only-child,
+.blysis-content p > a:only-child > img {
+  display: block;
   margin: 1em 0;
+  border-radius: 0.6rem;
 }
 
 .blysis-content hr {
@@ -253,6 +303,154 @@ body {
   background: var(--color-muted);
   font-weight: 600;
 }
+
+/* ---------------------------------------------------------------
+   The elements the renderer learned to emit.
+
+   Each of these arrived with the Markdown port and had no rule, so it
+   rendered as whatever the browser does by default on a themed page: a
+   `<details>` as a bare triangle on an unboxed line, an alert as a plain
+   `<div>`, a task list as a checkbox with a bullet beside it.
+   `everything-the-renderer-emits-is-dressed` asks the renderer what it can
+   produce and fails on the next one that arrives undressed.
+   --------------------------------------------------------------- */
+
+.blysis-content del { opacity: 0.7; }
+.blysis-content sup,
+.blysis-content sub { font-size: 0.75em; line-height: 0; }
+
+/* A keystroke reads as a key: raised, bounded, and never wrapped mid-chord. */
+.blysis-content kbd {
+  display: inline-block;
+  padding: 0.1em 0.45em;
+  border: 1px solid var(--color-border);
+  border-bottom-width: 2px;
+  border-radius: 0.35rem;
+  background: var(--color-muted);
+  font-family: var(--blysis-font-mono);
+  font-size: 0.85em;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* A collapsed section is a control, so it looks like one: a bounded row that
+   fills in when the pointer is over it, and a marker that turns. */
+.blysis-content details {
+  margin: 0 0 0.75em;
+  border: 1px solid var(--color-border);
+  border-radius: 0.6rem;
+  background: var(--color-card);
+  overflow: hidden;
+}
+
+.blysis-content summary {
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  list-style: none;
+  transition: background 0.15s;
+}
+
+.blysis-content summary:hover { background: var(--color-muted); }
+.blysis-content summary::-webkit-details-marker { display: none; }
+
+/* The chevron is drawn here rather than left to the browser: the default
+   triangle is a different shape and colour in every engine, and it cannot be
+   pushed away from the text it sits against. */
+.blysis-content summary::before {
+  content: "";
+  display: inline-block;
+  width: 0.4em;
+  height: 0.4em;
+  margin-right: 0.6em;
+  border-right: 2px solid var(--color-muted-foreground);
+  border-bottom: 2px solid var(--color-muted-foreground);
+  transform: rotate(-45deg) translate(-0.1em, -0.1em);
+  transition: transform 0.15s;
+}
+
+.blysis-content details[open] > summary::before {
+  transform: rotate(45deg) translate(-0.1em, -0.1em);
+}
+
+.blysis-content details[open] > summary { border-bottom: 1px solid var(--color-border); }
+
+/* Margin, not padding.
+ *
+ * `padding: 0 1rem` held the content off the border and also reset
+ * `padding-left` on every child - including the `<ul>` whose own 1.5rem is
+ * where its bullets live. Measured at 1200px: a list inside a section drew
+ * its markers 17px from the panel edge against 24px for the same list
+ * outside, crowding the border and sitting left of the summary above it.
+ * Margin holds the child off the edge without touching what the child set
+ * for itself. */
+.blysis-content details > :not(summary) { margin-inline: 1rem; }
+.blysis-content details > :not(summary):first-of-type { margin-top: 0.8rem; }
+.blysis-content details > :last-child { margin-bottom: 0.8rem; }
+
+/* A task list's box. `appearance` is left alone on purpose: a tick a reader
+   recognises beats a prettier one they have to work out. It is disabled, so
+   the cursor says the list is a record rather than a form. */
+.blysis-content input[type="checkbox"] {
+  margin-right: 0.5em;
+  vertical-align: middle;
+  cursor: default;
+}
+
+/* A list of tasks has boxes instead of bullets. `:has` is how the rule finds
+   them without the renderer marking them: the item that holds a box is the
+   item whose marker is the box. */
+.blysis-content li:has(> input[type="checkbox"]) { list-style: none; margin-left: -1.2rem; }
+
+/* ---------------------------------------------------------------
+   GitHub's alert callouts, from `marked-alert`.
+   --------------------------------------------------------------- */
+
+.blysis-content .markdown-alert {
+  margin: 1.2em 0;
+  padding: 0.8rem 1rem;
+  border-left: 4px solid var(--color-primary);
+  border-radius: 0 0.5rem 0.5rem 0;
+  background: color-mix(in srgb, var(--color-primary) 7%, transparent);
+}
+
+.blysis-content .markdown-alert > :last-child { margin-bottom: 0; }
+
+.blysis-content .markdown-alert-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  margin-bottom: 0.35em;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* Each kind borrows the token that already means what it means, so an alert
+   recolours with the theme rather than carrying colours of its own. Note is
+   spelled out rather than left to the base rule: the set reads as five
+   choices that way, and the next reader does not have to work out which one
+   the default is. */
+.blysis-content .markdown-alert-note { border-left-color: var(--color-primary); }
+.blysis-content .markdown-alert-note .markdown-alert-title { color: var(--color-primary); }
+.blysis-content .markdown-alert-tip { border-left-color: var(--color-success); background: color-mix(in srgb, var(--color-success) 7%, transparent); }
+.blysis-content .markdown-alert-tip .markdown-alert-title { color: var(--color-success); }
+.blysis-content .markdown-alert-warning { border-left-color: var(--color-warning); background: color-mix(in srgb, var(--color-warning) 7%, transparent); }
+.blysis-content .markdown-alert-warning .markdown-alert-title { color: var(--color-warning); }
+.blysis-content .markdown-alert-caution { border-left-color: var(--color-destructive); background: color-mix(in srgb, var(--color-destructive) 7%, transparent); }
+.blysis-content .markdown-alert-caution .markdown-alert-title { color: var(--color-destructive); }
+.blysis-content .markdown-alert-important { border-left-color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 7%, transparent); }
+.blysis-content .markdown-alert-important .markdown-alert-title { color: var(--color-accent); }
+
+/* Footnotes are an appendix: ruled off from the article, and quieter than it. */
+.blysis-content .footnotes {
+  margin-top: 2.5em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.9em;
+  color: var(--color-muted-foreground);
+}
+
+.blysis-content .footnotes h2 { font-size: 1em; border-bottom: 0; padding-bottom: 0; margin-top: 0; }
 
 .text-gradient {
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));

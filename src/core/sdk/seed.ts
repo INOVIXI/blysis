@@ -70,8 +70,8 @@ export interface SeedContext {
     title(): string;
     /** A sentence. */
     sentence(): string;
-    /** Paragraphs of prose, as HTML, for a rich-text column. */
-    html(paragraphs: number): string;
+    /** Paragraphs of writing, as Markdown, for a rich-text column. */
+    paragraphs(count: number): string;
     /** A moment in the last `days` days, weighted towards recent. */
     daysAgo(days: number): Date;
 

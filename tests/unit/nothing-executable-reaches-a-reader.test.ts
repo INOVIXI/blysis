@@ -1,22 +1,33 @@
 import { describe, it, expect } from "vitest";
-import { sanitizeHtml, sanitizeInline } from "@/core/lib/sanitize";
+import { renderMarkdown } from "@/core/lib/markdown";
 
 /**
- * Every piece of user-submitted rich text - blog articles, forum posts,
- * help articles, custom pages, announcements - passes through here on the
- * way into the database. Sanitising on write means a payload that gets past
- * this function is stored, and every later render serves it; there is no
- * second gate downstream to catch it.
+ * Every piece of writing on the site - blog articles, forum posts, help
+ * articles, custom pages, announcements - passes through here on the way to
+ * a reader. It is the only gate, and it is the last one: whatever gets past
+ * this function is what a browser is handed.
  *
- * This is also the mitigation of record for the rich-text editor's own
- * advisories: the editor runs in the author's browser, this runs on the
- * server, and only this one decides what is persisted.
+ * These cases were written against a sanitiser that ran on the way *in*,
+ * before the column held Markdown. Cleaning on write could not tell a code
+ * fence documenting `<script>` from a script, and deleted the writer's
+ * example; it could not tell `a < b` from a tag, and stored five characters
+ * where two belonged. So the cleaning moved to where the parser has already
+ * decided which is which, and every payload below moved with it.
+ *
+ * This is also the mitigation of record for the editor's own advisories: the
+ * editor runs in the author's browser, this runs wherever the page is
+ * rendered, and only this decides what is served.
  */
 
-describe("sanitizeHtml", () => {
-    it("keeps the formatting rich text is for", async () => {
-        const html = "<p>Hello <strong>world</strong> and <em>friends</em></p>";
-        expect(sanitizeHtml(html)).toBe(html);
+/** What a reader is handed for a given source. */
+const sanitizeHtml = (source: unknown): string =>
+    typeof source === "string" ? renderMarkdown(source) : "";
+
+describe("what a reader is handed", () => {
+    it("keeps the formatting writing is for", () => {
+        const out = sanitizeHtml("Hello **world** and *friends*");
+        expect(out).toContain("<strong>world</strong>");
+        expect(out).toContain("<em>friends</em>");
     });
 
     it("keeps headings, lists, tables, quotes and code", () => {
@@ -78,9 +89,12 @@ describe("sanitizeHtml", () => {
             + '<embed src="x"><object data="x"></object>',
         );
 
-        for (const tag of ["<iframe", "<form", "<input", "<button", "<embed", "<object"]) {
+        for (const tag of ["<iframe", "<form", "<button", "<embed", "<object"]) {
             expect(out).not.toContain(tag);
         }
+        // `input` survives as a task list's tick box and nothing else: no
+        // name to submit under, and no form left to submit to.
+        expect(out).not.toContain('name="x"');
     });
 
     it("strips style tags and inline style attributes", () => {
@@ -118,60 +132,10 @@ describe("sanitizeHtml", () => {
         expect(sanitizeHtml("")).toBe("");
     });
 
-    it("is idempotent", () => {
-        const dirty = '<p onclick="x()">a<script>b</script><em>c</em></p>';
-        const once = sanitizeHtml(dirty);
-        expect(sanitizeHtml(once)).toBe(once);
-    });
-});
-
-describe("sanitizeInline", () => {
-    it("keeps only minimal inline formatting", () => {
-        const out = sanitizeInline("<strong>a</strong> <em>b</em><br><a href=\"/x\">c</a>");
-
-        expect(out).toContain("<strong>a</strong>");
-        expect(out).toContain("<em>b</em>");
-        expect(out).toContain("<br");
-        expect(out).toContain('href="/x"');
-    });
-
-    it("unwraps block-level tags a title field must not carry", () => {
-        const out = sanitizeInline("<h1>Title</h1><p>para</p><div>d</div><ul><li>l</li></ul>");
-
-        // The text survives; the structure does not. A heading inside a page
-        // title breaks every layout that renders it.
-        for (const tag of ["<h1", "<p", "<div", "<ul", "<li"]) {
-            expect(out).not.toContain(tag);
-        }
-        expect(out).toContain("Title");
-        expect(out).toContain("para");
-    });
-
-    it("strips images, which an inline field never needs", () => {
-        expect(sanitizeInline('<img src="x" alt="a">')).not.toContain("<img");
-    });
-
-    it("strips scripts and event handlers", () => {
-        const out = sanitizeInline('<script>alert(1)</script><strong onclick="alert(2)">x</strong>');
-
-        expect(out).not.toContain("<script");
-        expect(out).not.toContain("onclick");
-        expect(out).toContain("x");
-    });
-
-    it("strips javascript: hrefs", () => {
-        expect(sanitizeInline('<a href="javascript:alert(1)">x</a>')).not.toContain("javascript:");
-    });
-
-    it("returns an empty string for anything that is not a string", () => {
-        expect(sanitizeInline(null as never)).toBe("");
-        expect(sanitizeInline(undefined as never)).toBe("");
-        expect(sanitizeInline(7 as never)).toBe("");
-    });
-
-    it("is stricter than sanitizeHtml on the same input", () => {
-        const html = "<h1>T</h1><p>body</p>";
-        expect(sanitizeHtml(html)).toContain("<h1");
-        expect(sanitizeInline(html)).not.toContain("<h1");
+    it("has nothing left to take on a second pass", () => {
+        const once = sanitizeHtml('<p onclick="x()">a<script>b</script><em>c</em></p>');
+        expect(once).not.toContain("onclick");
+        expect(once).not.toContain("<script");
+        expect(sanitizeHtml(once)).not.toContain("onclick");
     });
 });

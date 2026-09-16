@@ -12,6 +12,33 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 3.0.0 - What a person writes is Markdown. `RichContent` takes `markdown`
+ * where it took `html`, `renderMarkdown` joins `@/core/sdk`, and the seed
+ * context's `html(n)` is `paragraphs(n)`. This is a break in both directions: a
+ * module passing `html` no longer compiles, and one that stored the HTML its
+ * editor produced now has that HTML rendered as the text it is.
+ *
+ * The reason is what was being stored rather than how it was typed. Content
+ * was authored in a Quill toolbar and saved as whatever HTML Quill emitted,
+ * so the database held the editor's output format: a paragraph was a `<p>`
+ * because Quill said so, and the writing could not outlive the editor.
+ * Markdown is the text somebody typed. It reads as itself in a database
+ * client, it diffs, and the HTML subset a layout needs survives it, because
+ * the sanitiser rather than the parser is the boundary.
+ *
+ * 2.3.0 - `listCataloguePages` joins `@/core/sdk/server`, and `seo.pageMeta`
+ * joins the filter registry. Between them they are how a module manages this
+ * site's search engine metadata without knowing which pages exist: the first
+ * answers what the site serves and what each page says about itself by
+ * default, the second is core asking, per page, whether it has been told
+ * otherwise. Before this, a per-page override could only be applied by
+ * rewriting `document.head` in the browser, which no crawler reads.
+ * `routes[].ogType` lands with them: core writes a module page's head, had
+ * nothing to go on, and called every one of them an article - the cart, the
+ * leaderboard and the staff list included. `PrismaTransaction` is exported in
+ * the same release: a module writing inside a transaction another module
+ * opened had no name for the handle it was passed. Additions.
+ *
  * 2.2.0 - `Waiting` is how a module says a region is still fetching. The
  * product stopped drawing page shaped placeholders: they were a second copy
  * of a layout nothing kept in step with the first, and the generic ones were
@@ -345,4 +372,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "2.2.0";
+export const CORE_API_VERSION = "3.0.0";
