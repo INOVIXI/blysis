@@ -12,7 +12,7 @@
  * look up a session to decide what to say, on the page every visitor asks for.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, log, prisma } from "@/core/sdk/server";
+import { hasPermission, log, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 
 type RouteParams = { params: Promise<{ id: string }> };
@@ -25,7 +25,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (!session?.user?.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: PRIVATE });
     }
-    if (!(await isAdmin(session.user.id))) {
+    if (!(await hasPermission(session.user.id, "store.manage"))) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403, headers: PRIVATE });
     }
 

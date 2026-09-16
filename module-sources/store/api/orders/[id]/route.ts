@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, log, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, log, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { settleOrder, voidOrder, refundPayment } from "../../../lib/fulfilment";
@@ -34,7 +34,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
             return NextResponse.json({ error: "Order not found" }, { status: 404 });
         }
 
-        const adminCheck = await isAdmin(session.user.id);
+        const adminCheck = await hasPermission(session.user.id, "store.orders");
         const isOwner = ownership.userId === session.user.id;
         if (!adminCheck && !isOwner) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -92,7 +92,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const adminCheck = await isAdmin(session.user.id);
+        const adminCheck = await hasPermission(session.user.id, "store.orders");
         if (!adminCheck) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }

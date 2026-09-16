@@ -1,7 +1,7 @@
 import { Link } from "@/core/sdk/navigation";
 import { redirect } from "@/core/sdk/navigation";
 import { formatDate } from "@/core/sdk";
-import { isAdmin, prisma } from "@/core/sdk/server";
+import { hasPermission, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { Card, CardContent, CardHeader, CardTitle, Pagination, buttonClassName } from "@/core/sdk/ui";
 import { getTranslations, getLocale } from "next-intl/server";
@@ -62,8 +62,11 @@ export default async function AdminBlogArticlesPage({ searchParams }: AdminBlogA
         redirect({ href: "/auth/login", locale });
     }
 
-    const adminCheck = await isAdmin(session.user.id);
-    if (!adminCheck) {
+    // The screen this module declares `blog.manage` for. The door will check
+    // the same name once enforcement moves there; until then the page asks,
+    // because a screen that lets somebody in and then refuses every write is
+    // worse than one that says no at the top.
+    if (!(await hasPermission(session.user.id, "blog.manage"))) {
         redirect({ href: "/", locale });
     }
 

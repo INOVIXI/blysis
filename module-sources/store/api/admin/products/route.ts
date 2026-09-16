@@ -8,7 +8,7 @@
  * a different endpoint: checked, and never offered to a shared cache.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, log, pageParams, prisma } from "@/core/sdk/server";
+import { hasPermission, log, pageParams, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 
 /** This answer depends on who asked, so nothing may keep a copy of it. */
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     if (!session?.user?.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: PRIVATE });
     }
-    if (!(await isAdmin(session.user.id))) {
+    if (!(await hasPermission(session.user.id, "store.manage"))) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403, headers: PRIVATE });
     }
 

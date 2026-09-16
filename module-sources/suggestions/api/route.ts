@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { pageParams, isAdmin, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { pageParams, hasPermission, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { readSuggestions } from "../lib/read-suggestions";

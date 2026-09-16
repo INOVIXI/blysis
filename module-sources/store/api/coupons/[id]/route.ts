@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { couponSchema } from "../../../lib/validations";
 
@@ -12,7 +12,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const adminCheck = await isAdmin(session.user.id);
+    const adminCheck = await hasPermission(session.user.id, "store.manage");
     if (!adminCheck) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -47,7 +47,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const adminCheck = await isAdmin(session.user.id);
+    const adminCheck = await hasPermission(session.user.id, "store.manage");
     if (!adminCheck) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

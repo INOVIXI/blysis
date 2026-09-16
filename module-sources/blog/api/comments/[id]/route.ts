@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { blogCommentModerationSchema } from "../../../lib/validations";
 
@@ -24,9 +24,14 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Comment not found" }, { status: 404 });
     }
 
-    // Check if user is the author or an admin
-    const adminCheck = await isAdmin(session.user.id);
-    if (comment.authorId !== session.user.id && !adminCheck) {
+    // The person who wrote it, or somebody who moderates what members write.
+    // Held apart from writing articles: the job of reading comments all day is
+    // not the job of writing the blog, and a site usually gives them to
+    // different people.
+    if (
+        comment.authorId !== session.user.id &&
+        !(await hasPermission(session.user.id, "blog.moderate"))
+    ) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -44,8 +49,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const adminCheck = await isAdmin(session.user.id);
-    if (!adminCheck) {
+    if (!(await hasPermission(session.user.id, "blog.moderate"))) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

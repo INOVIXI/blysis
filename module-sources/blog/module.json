@@ -244,7 +244,10 @@
         "noCategories": "No categories yet.",
         "noComments": "No comments yet. Be the first to comment!",
         "noImage": "No image",
+        "perm_edit_any": "Edit and delete anybody's articles",
         "perm_manage": "Manage",
+        "perm_moderate": "Moderate comments",
+        "perm_publish": "Publish and schedule articles",
         "postComment": "Post Comment",
         "recentPosts": "Recent Posts",
         "relatedArticles": "Related Articles",
@@ -370,7 +373,10 @@
         "noCategories": "Henüz kategori yok.",
         "noComments": "Henüz yorum yok. İlk yorumu siz yapın!",
         "noImage": "Görsel yok",
+        "perm_edit_any": "Herkesin yazısını düzenleyebilir ve silebilir",
         "perm_manage": "Yönetebilir",
+        "perm_moderate": "Yorumları denetleyebilir",
+        "perm_publish": "Yazı yayınlayabilir ve zamanlayabilir",
         "postComment": "Yorum Yap",
         "recentPosts": "Son Yazılar",
         "relatedArticles": "İlgili Makaleler",
@@ -518,6 +524,18 @@
     {
       "name": "blog.manage",
       "labelKey": "blog.perm_manage"
+    },
+    {
+      "name": "blog.edit-any",
+      "labelKey": "blog.perm_edit_any"
+    },
+    {
+      "name": "blog.publish",
+      "labelKey": "blog.perm_publish"
+    },
+    {
+      "name": "blog.moderate",
+      "labelKey": "blog.perm_moderate"
     }
   ]
 }

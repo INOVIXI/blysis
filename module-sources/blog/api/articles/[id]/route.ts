@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { blogArticleSchema } from "../../../lib/validations";
 
@@ -36,8 +36,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     // Non-admins cannot see scheduled/future articles
     const session = await auth();
-    const adminCheck = session?.user?.id ? await isAdmin(session.user.id) : false;
-    if (!adminCheck && article.publishAt && article.publishAt.getTime() > Date.now()) {
+    // Reading an article before its hour is an editorial act: whoever may
+    // publish is whoever may see what has not been published yet.
+    const mayPublish = session?.user?.id ? await hasPermission(session.user.id, "blog.publish") : false;
+    if (!mayPublish && article.publishAt && article.publishAt.getTime() > Date.now()) {
         return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
@@ -64,9 +66,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     // Object-level ownership: authors can edit their own article; admins can
     // edit any article. Checked BEFORE pulling the request body so a
     // non-owner never hits the update path at all.
-    const adminCheck = await isAdmin(session.user.id);
     const isAuthor = article.authorId === session.user.id;
-    if (!adminCheck && !isAuthor) {
+    const [mayEditAny, mayPublish] = await Promise.all([
+        hasPermission(session.user.id, "blog.edit-any"),
+        hasPermission(session.user.id, "blog.publish"),
+    ]);
+    if (!isAuthor && !mayEditAny) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -86,6 +91,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     const { title, slug: requestedSlug, excerpt, content, coverImage, status, publishedAt, publishAt, categoryId, tags } = validation.data;
+
+    // Writing is not publishing. A writer may draft and edit; releasing an
+    // article - or scheduling it, which is releasing it later - is the
+    // editor's act, and an author without that permission keeps the status
+    // the article already has.
+    if (!mayPublish && (status !== undefined || publishAt !== undefined)) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     // Resolve scheduled-publishing state
     let effectiveStatus = status;
@@ -180,9 +193,10 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
-    const adminCheck = await isAdmin(session.user.id);
-    const isAuthor = article.authorId === session.user.id;
-    if (!adminCheck && !isAuthor) {
+    if (
+        article.authorId !== session.user.id &&
+        !(await hasPermission(session.user.id, "blog.edit-any"))
+    ) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

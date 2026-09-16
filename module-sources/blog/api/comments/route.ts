@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { blogCommentSchema } from "../../lib/validations";
 import { publishedArticle } from "../../lib/visible-article";
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     if (!allowComments) return NextResponse.json([]);
 
     const session = await auth();
-    const adminCheck = session?.user?.id ? await isAdmin(session.user.id) : false;
+    const adminCheck = session?.user?.id ? await hasPermission(session.user.id, "blog.manage") : false;
 
     // The comments of an article nobody may read are not public either. An
     // administrator is exempt for the same reason they see PENDING comments:

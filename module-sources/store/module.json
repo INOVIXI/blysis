@@ -15,6 +15,10 @@
     {
       "name": "store.manage",
       "labelKey": "store.perm_manage"
+    },
+    {
+      "name": "store.orders",
+      "labelKey": "store.perm_orders"
     }
   ],
   "hookListeners": [
@@ -1172,6 +1176,7 @@
         "paymentsTitle": "Payment settings",
         "perPersonLeft": "{count} left for you",
         "perm_manage": "Manage",
+        "perm_orders": "Handle every order",
         "perm_view": "View orders",
         "playerName": "In-game name",
         "playerNameHelp": "What is bought is delivered to this name on the game server",
@@ -1901,6 +1906,7 @@
         "paymentsTitle": "Ödeme ayarları",
         "perPersonLeft": "Sana {count} tane kaldı",
         "perm_manage": "Yönetebilir",
+        "perm_orders": "Tüm siparişleri görebilir ve işleyebilir",
         "perm_view": "Siparişleri görüntüleyebilir",
         "playerName": "Oyun içi ad",
         "playerNameHelp": "Satın alınan, oyun sunucusunda bu ada teslim edilir",

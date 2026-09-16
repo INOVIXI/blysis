@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
-import { pageParams, enumParam, isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { pageParams, enumParam, hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { ARTICLE_STATUSES, blogArticleSchema } from "../../lib/validations";
 
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     // Non-admin users can only see published articles
     const session = await auth();
-    const adminCheck = session?.user?.id ? await isAdmin(session.user.id) : false;
+    const adminCheck = session?.user?.id ? await hasPermission(session.user.id, "blog.manage") : false;
 
     if (!adminCheck) {
         where.status = "PUBLISHED";
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const adminCheck = await isAdmin(session.user.id);
+    const adminCheck = await hasPermission(session.user.id, "blog.manage");
     if (!adminCheck) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

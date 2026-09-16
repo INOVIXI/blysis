@@ -55,6 +55,7 @@ vi.mock("@/core/sdk/server", () => ({
         activityFeedItem: { create: async () => ({}) },
     },
     isAdmin: async () => admin,
+    hasPermission: async () => admin,
     rateLimitForRole: async () => ({ success: true }),
     readJsonBody: async (request: Request) => request.json(),
     sanitizeHtml: (html: string) => html,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { ticketDepartmentUpdateSchema } from "../../../../lib/validations";
 
@@ -8,7 +8,7 @@ type RouteParams = { params: Promise<{ id: string }> };
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!(await hasPermission(session.user.id, "tickets.departments"))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { id } = await params;
     const body = await readJsonBody(request);
@@ -34,7 +34,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!(await hasPermission(session.user.id, "tickets.departments"))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { id } = await params;
     const existing = await prisma.ticketDepartment.findUnique({

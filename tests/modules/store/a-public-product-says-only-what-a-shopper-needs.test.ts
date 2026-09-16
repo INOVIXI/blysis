@@ -33,6 +33,9 @@ vi.mock("@/core/sdk/server", () => ({
     },
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     isAdmin: async () => callerIsAdmin,
+    // The same caller, asked the newer way: this file is about what a
+    // shopper may see, not about which name the check goes by.
+    hasPermission: async () => callerIsAdmin,
     pageParams: () => ({ page: 1, limit: 12, skip: 0, take: 12 }),
     readJsonBody: async (request: Request) => request.json(),
     sanitizeHtml: (value: string) => value,

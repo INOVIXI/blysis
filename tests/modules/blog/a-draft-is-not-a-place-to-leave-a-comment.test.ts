@@ -33,6 +33,9 @@ vi.mock("@/core/sdk/server", () => ({
     },
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     isAdmin: async () => false,
+    // A reader, holding nothing. The guarantee this file defends is about a
+    // draft being invisible, not about who may moderate it.
+    hasPermission: async () => false,
     readJsonBody: async (r: Request) => r.json(),
     sanitizeHtml: (v: string) => v,
     rateLimitForRoleAsync: async () => true,

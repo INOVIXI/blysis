@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, moduleSettings, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, moduleSettings, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { creatorCodeCreateSchema } from "../../lib/validations";
 
@@ -8,7 +8,7 @@ export async function GET() {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const adminCheck = await isAdmin(session.user.id);
+    const adminCheck = await hasPermission(session.user.id, "store.manage");
     const where = adminCheck ? {} : { creatorId: session.user.id };
 
     const codes = await prisma.creatorCode.findMany({
@@ -23,7 +23,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!(await hasPermission(session.user.id, "store.manage"))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const jsonBody = await readJsonBody(request);
     if (jsonBody instanceof NextResponse) return jsonBody;

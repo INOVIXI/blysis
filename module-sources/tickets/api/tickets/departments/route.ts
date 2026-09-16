@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { departmentsOpenTo, fieldsOf } from "../../../lib/departments";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { ticketDepartmentSchema } from "../../../lib/validations";
 
 // GET /api/v1/tickets/departments - List departments
 export async function GET(request: NextRequest) {
     const session = await auth();
-    const adminCheck = session?.user?.id ? await isAdmin(session.user.id) : false;
+    const adminCheck = session?.user?.id ? await hasPermission(session.user.id, "tickets.departments") : false;
 
     // An operator sees everything, including what they switched off: this is
     // the screen they manage departments from.
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const adminCheck = await isAdmin(session.user.id);
+    const adminCheck = await hasPermission(session.user.id, "tickets.departments");
     if (!adminCheck) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

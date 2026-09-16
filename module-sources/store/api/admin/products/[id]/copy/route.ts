@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
-import { isAdmin, log, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, log, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { copyOf, freeSlug } from "../../../../../lib/clone-product";
 import { copyProductSchema } from "../../../../../lib/validations";
@@ -25,7 +25,7 @@ type RouteParams = { params: Promise<{ id: string }> };
 export async function POST(request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (!(await isAdmin(session.user.id))) {
+    if (!(await hasPermission(session.user.id, "store.manage"))) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateOrderNumber } from "@/core/sdk";
-import { isAdmin, log, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, log, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { manualOrderTotal } from "../../../lib/manual-order";
 import { settleOrder } from "../../../lib/fulfilment";
@@ -22,7 +22,7 @@ import { manualOrderSchema } from "../../../lib/validations";
 export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (!(await isAdmin(session.user.id))) {
+    if (!(await hasPermission(session.user.id, "store.orders"))) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

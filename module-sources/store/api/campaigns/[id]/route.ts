@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, log, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, log, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { campaignSchema } from "../../../lib/validations";
 
@@ -8,7 +8,7 @@ type RouteParams = { params: Promise<{ id: string }> };
 async function refuse(): Promise<NextResponse | null> {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!(await hasPermission(session.user.id, "store.manage"))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     return null;
 }
 

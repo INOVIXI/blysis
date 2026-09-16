@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { slugify } from "@/core/sdk";
-import { isAdmin, log, moduleSettings, pageParams, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, log, moduleSettings, pageParams, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../lib/validations";
 import { availabilityData } from "../../lib/availability-input";
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const adminCheck = await isAdmin(session.user.id);
+        const adminCheck = await hasPermission(session.user.id, "store.manage");
         if (!adminCheck) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }

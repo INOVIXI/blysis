@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, log, pageParams, prisma } from "@/core/sdk/server";
+import { hasPermission, log, pageParams, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 
 /**
@@ -29,9 +29,12 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams;
         const { page, limit, skip, take } = pageParams(searchParams, { defaultLimit: 10 });
 
-        const adminCheck = await isAdmin(session.user.id);
+        // Seeing everybody's orders is the job of serving them, which is not
+        // the job of setting the prices. A member without it sees their own,
+        // which is what this endpoint is for in the first place.
+        const adminCheck = await hasPermission(session.user.id, "store.orders");
 
-        // Admin sees all orders, users see only their own
+        // Whoever serves orders sees all of them; a member sees their own
         const where = adminCheck ? {} : { userId: session.user.id };
 
         const [orders, total] = await Promise.all([

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, log, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, log, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { communityGoalSchema } from "../../lib/validations";
 
@@ -59,7 +59,7 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const adminCheck = await isAdmin(session.user.id);
+    const adminCheck = await hasPermission(session.user.id, "store.manage");
     if (!adminCheck) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

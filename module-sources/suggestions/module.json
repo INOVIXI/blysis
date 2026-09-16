@@ -11,6 +11,10 @@
     {
       "name": "suggestions.manage",
       "labelKey": "suggestions.perm_manage"
+    },
+    {
+      "name": "suggestions.moderate",
+      "labelKey": "suggestions.perm_moderate"
     }
   ],
   "routes": [
@@ -151,6 +155,7 @@
         "open": "Open",
         "other": "Other",
         "perm_manage": "Manage",
+        "perm_moderate": "Remove anybody's suggestions and comments",
         "planned": "Planned",
         "postComment": "Post comment",
         "removeVote": "Remove vote",
@@ -232,6 +237,7 @@
         "open": "Açık",
         "other": "Diğer",
         "perm_manage": "Yönetebilir",
+        "perm_moderate": "Herkesin önerisini ve yorumunu kaldırabilir",
         "planned": "Planlanmış",
         "postComment": "Yorumu gönder",
         "removeVote": "Oyu geri al",

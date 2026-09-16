@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma } from "@/core/sdk/server";
+import { hasPermission, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 
 type RouteParams = { params: Promise<{ id: string }> };
@@ -11,7 +11,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const adminCheck = await isAdmin(session.user.id);
+    const adminCheck = await hasPermission(session.user.id, "store.manage");
     if (!adminCheck) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

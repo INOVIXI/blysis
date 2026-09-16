@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { apiError, apiSuccess, isAdmin, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { apiError, apiSuccess, hasPermission, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { suggestionCommentSchema } from "../../../lib/validations";
 
@@ -25,7 +25,7 @@ function visibleTo(userId: string | null, moderator: boolean) {
 export async function GET(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     const session = await auth();
-    const moderator = session?.user?.id ? await isAdmin(session.user.id) : false;
+    const moderator = session?.user?.id ? await hasPermission(session.user.id, "suggestions.moderate") : false;
 
     const requested = Number(new URL(request.url).searchParams.get("limit"));
     const limit = Number.isFinite(requested) && requested > 0

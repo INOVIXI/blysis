@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { answersFor } from "../../lib/fields";
 import { fieldsOf, mayOpenIn } from "../../lib/departments";
 import { isRestrictedFrom } from "@/core/sdk/server";
-import { pageParams, enumParam, isAdmin, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { pageParams, enumParam, hasPermission, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { TICKET_STATUSES, ticketSchema } from "../../lib/validations";
 
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     const departmentId = searchParams.get("departmentId");
     const { page, limit, skip, take } = pageParams(searchParams, { defaultLimit: 10 });
 
-    const adminCheck = await isAdmin(session.user.id);
+    const adminCheck = await hasPermission(session.user.id, "tickets.manage");
 
     // Build where clause
     const where: Record<string, unknown> = {};

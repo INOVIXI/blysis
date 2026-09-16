@@ -66,6 +66,8 @@ vi.mock("@/core/sdk/server", () => ({
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     logActivity: vi.fn(async () => {}),
     isAdmin: vi.fn(async () => true),
+    // Whoever stocks the shelf, which is what a copy is.
+    hasPermission: vi.fn(async () => true),
     readJsonBody: vi.fn(async (request: Request) => request.json()),
 }));
 vi.mock("@/core/sdk/auth", () => ({ auth: vi.fn(async () => ({ user: { id: "admin-1" } })) }));

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { suggestionUpdateSchema } from "../../lib/validations";
 
@@ -15,7 +15,7 @@ type RouteParams = { params: Promise<{ id: string }> };
 export async function GET(_request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     const session = await auth();
-    const moderator = session?.user?.id ? await isAdmin(session.user.id) : false;
+    const moderator = session?.user?.id ? await hasPermission(session.user.id, "suggestions.manage") : false;
 
     const suggestion = await prisma.suggestion.findUnique({
         where: { id },
@@ -53,7 +53,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
     const fields = parsed.data;
 
-    const adminCheck = await isAdmin(session.user.id);
+    const adminCheck = await hasPermission(session.user.id, "suggestions.manage");
     const data: Record<string, unknown> = {};
 
     // Admin can change status
@@ -95,8 +95,13 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const suggestion = await prisma.suggestion.findUnique({ where: { id } });
     if (!suggestion) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const adminCheck = await isAdmin(session.user.id);
-    if (suggestion.authorId !== session.user.id && !adminCheck) {
+    // Removing somebody else's suggestion is moderation. Deciding what state
+    // the board says it is in - planned, done, refused - is running the board,
+    // and a site hands those to different people.
+    if (
+        suggestion.authorId !== session.user.id &&
+        !(await hasPermission(session.user.id, "suggestions.moderate"))
+    ) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

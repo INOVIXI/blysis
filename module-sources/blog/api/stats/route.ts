@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { dailySeries, dayLabels, isAdmin, prisma } from "@/core/sdk/server";
+import { dailySeries, dayLabels, hasPermission, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 
 /**
@@ -10,7 +10,7 @@ import { auth } from "@/core/sdk/auth";
 async function requireAdmin(): Promise<NextResponse | null> {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!(await hasPermission(session.user.id, "blog.manage"))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     return null;
 }
 

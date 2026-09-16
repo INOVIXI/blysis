@@ -23,6 +23,10 @@
     {
       "name": "tickets.reply",
       "labelKey": "tickets.perm_reply"
+    },
+    {
+      "name": "tickets.departments",
+      "labelKey": "tickets.perm_departments"
     }
   ],
   "menu": [
@@ -284,6 +288,7 @@
         "open": "Open",
         "openTickets": "Open Tickets",
         "perm_create": "Open a ticket",
+        "perm_departments": "Configure departments",
         "perm_manage": "Manage every ticket",
         "perm_reply": "Reply to tickets",
         "perm_view": "Read every ticket",
@@ -476,6 +481,7 @@
         "open": "Açık",
         "openTickets": "Açık Talepler",
         "perm_create": "Talep açabilir",
+        "perm_departments": "Departmanları yapılandırabilir",
         "perm_manage": "Tüm talepleri yönetebilir",
         "perm_reply": "Talebe yanıt yazabilir",
         "perm_view": "Tüm talepleri okuyabilir",

@@ -36,6 +36,8 @@ const db = {
 vi.mock("@/core/sdk/server", () => ({
     prisma: db,
     isAdmin: vi.fn(async () => true),
+    // Whoever serves the orders, which is the job this file is about.
+    hasPermission: vi.fn(async () => true),
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     logActivity: vi.fn(async () => {}),
     readJsonBody: vi.fn(async (request: Request) => request.json()),

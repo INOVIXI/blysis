@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hasPermission, isAdmin, prisma, rateLimitForRole, readJsonBody, rateLimitForRoleAsync } from "@/core/sdk/server";
+import { hasPermission, prisma, rateLimitForRole, readJsonBody, rateLimitForRoleAsync } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { ticketMessageSchema, ticketUpdateSchema } from "../../../lib/validations";
 import { canAccessTicket } from "../../../lib/can-access-ticket";
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     if (!(await canAccessTicket(session.user.id, id, "view"))) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-    const adminCheck = await isAdmin(session.user.id);
+    const adminCheck = await hasPermission(session.user.id, "tickets.manage");
 
     const body = await readJsonBody(request);
     if (body instanceof NextResponse) return body;
@@ -187,7 +187,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     // able to close their own; the queue's priority and who is responsible for
     // it are the support team's.
     const isStaff =
-        (await isAdmin(session.user.id, session.user.role)) ||
+        (await hasPermission(session.user.id, "tickets.manage")) ||
         (await hasPermission(session.user.id, "tickets.manage"));
     const decision = ticketFieldsFor({ isStaff }, validation.data);
 
@@ -197,7 +197,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (decision.allowed.assignedToId) {
         const assignee = decision.allowed.assignedToId;
         const staffAssignee =
-            (await isAdmin(assignee)) || (await hasPermission(assignee, "tickets.manage"));
+            (await hasPermission(assignee, "tickets.manage")) || (await hasPermission(assignee, "tickets.manage"));
         if (!staffAssignee) {
             return NextResponse.json(
                 { error: "That person is not on the support team", code: "assignee_not_staff" },
@@ -258,7 +258,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(_: NextRequest, { params }: RouteParams) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!(await hasPermission(session.user.id, "tickets.manage"))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { id } = await params;
     const existing = await prisma.ticket.findUnique({ where: { id } });

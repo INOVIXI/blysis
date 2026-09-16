@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { normalisedMatrix, type MatrixRule } from "@/core/sdk";
-import { isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { checkFields, usableOptions } from "../../../../../lib/field-draft";
 
@@ -42,7 +42,7 @@ const setupSchema = z.object({
 async function requireAdmin() {
     const session = await auth();
     if (!session?.user?.id) return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
-    if (!(await isAdmin(session.user.id))) return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
+    if (!(await hasPermission(session.user.id, "tickets.departments"))) return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
     return { session };
 }
 
