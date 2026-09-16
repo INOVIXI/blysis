@@ -134,9 +134,9 @@ model Role {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  permissions Permission[]
-  users       User[]
-  members     UserRole[]
+  rolePermissions RolePermission[]
+  users           User[]
+  members         UserRole[]
 }
 
 /**
@@ -176,15 +176,37 @@ model UserRole {
 }
 
 
-model Permission {
-  id          String  @id @default(cuid())
-  name        String  @unique
-  description String?
-  module      String
+/**
+ * What one role says about one permission: yes, never, or - by having no row
+ * at all - nothing.
+ *
+ * The third state is the one that makes the system usable. A member holds a
+ * set of roles and may do the union of what they allow, so without a refusal
+ * an operator can only ever build up: taking posting away from one person
+ * means unpicking every role they hold. `NEVER` is absolute - it beats a yes
+ * from any other role the member holds - which is how a "muted" role works.
+ *
+ * Keyed by the permission's name rather than by a row in a table of names. The
+ * vocabulary comes from core and from the installed manifests, so a table of
+ * names is a second copy of it that has to be kept in step, and was: the old
+ * `Permission` table held four rows on an installation whose manifests declare
+ * a hundred and three.
+ */
+model RolePermission {
+  id         String          @id @default(cuid())
+  roleId     String
+  role       Role            @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  /** `namespace.action`, as declared by core or by a module's manifest. */
+  permission String
+  state      PermissionState
 
-  roles Role[]
+  @@unique([roleId, permission])
+  @@index([permission])
+}
 
-  @@index([module])
+enum PermissionState {
+  ALLOW
+  NEVER
 }
 
 model Setting {

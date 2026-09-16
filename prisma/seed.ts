@@ -32,16 +32,9 @@ async function main() {
     console.log("[ok]Roles");
 
     // ==================== PERMISSIONS ====================
-    for (const perm of [
-        "admin.access", "admin.settings", "admin.users", "admin.roles",
-    ]) {
-        await prisma.permission.upsert({
-            where: { name: perm },
-            update: {},
-            create: { name: perm, module: perm.split(".")[0], description: perm },
-        });
-    }
-    console.log("[ok]Permissions");
+    // Nothing to seed. The vocabulary comes from core's own list and from the
+    // installed manifests, and what a role says about a name is a row on that
+    // role. A table of names was a second copy of a list nobody edits.
 
     // ==================== ADMIN USER ====================
     // No fixed default: a shipped password ends up unchanged on real

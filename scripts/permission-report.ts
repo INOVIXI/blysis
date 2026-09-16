@@ -16,7 +16,7 @@ import { ADMIN_PAGE_RULES, API_WRITE_RULES } from "../src/core/generated/permiss
 interface RoleRow {
     name: string;
     displayName: string;
-    permissions: { name: string }[];
+    rolePermissions: { permission: string; state: "ALLOW" | "NEVER" }[];
 }
 
 function countBy(rules: { permission: string | null; openTo?: string }[]): Map<string, number> {
@@ -39,9 +39,9 @@ async function roles(): Promise<RoleRow[]> {
     try {
         const { prisma } = await import("../src/core/lib/db");
         return (await prisma.role.findMany({
-            include: { permissions: true },
+            include: { rolePermissions: true },
             orderBy: { priority: "desc" },
-        })) as RoleRow[];
+        })) as unknown as RoleRow[];
     } catch (error) {
         console.log(`\nNo database read: ${error instanceof Error ? error.message : String(error)}`);
         return [];
@@ -70,9 +70,14 @@ async function main(): Promise<void> {
             console.log(`  ${role.displayName} (${role.name}): everything, by bypass`);
             continue;
         }
-        const held = new Set(role.permissions.map((permission) => permission.name));
-        const reachable = [...pageNames].filter((name) => held.has(name));
-        const refused = [...pageNames].filter((name) => !held.has(name));
+        const allowed = new Set(
+            role.rolePermissions.filter((row) => row.state === "ALLOW").map((row) => row.permission),
+        );
+        const never = new Set(
+            role.rolePermissions.filter((row) => row.state === "NEVER").map((row) => row.permission),
+        );
+        const reachable = [...pageNames].filter((name) => allowed.has(name) && !never.has(name));
+        const refused = [...pageNames].filter((name) => !allowed.has(name) || never.has(name));
         console.log(`  ${role.displayName} (${role.name}): ${reachable.length} reachable, ${refused.length} refused`);
         if (reachable.length > 0) console.log(`      opens: ${reachable.sort().join(", ")}`);
     }

@@ -75,7 +75,23 @@ export const roleSchema = z.object({
     displayName: z.string().min(1).max(100),
     color: z.string().optional(),
     priority: z.number().int().optional(),
-    permissions: z.array(z.string()).optional(),
+    /**
+     * What this role says about each permission it has an opinion on.
+     *
+     * A name with no entry is the third state: nothing at all, which is not a
+     * yes. `NEVER` is absolute - it beats a yes from any other role the member
+     * holds - so a role that takes something away is a role an operator writes
+     * once rather than an edit to every other role.
+     */
+    permissions: z
+        .array(
+            z.object({
+                name: z.string().min(3).max(128).regex(/^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+$/),
+                state: z.enum(["ALLOW", "NEVER"]),
+            }),
+        )
+        .max(500)
+        .optional(),
     /**
      * Declarations an operator writes for this role's name and badge. Bounded
      * here and judged by `safeRoleCss`: which characters are dangerous is not

@@ -58,7 +58,7 @@ async function resolveRoles(userId: string): Promise<EffectiveRoles> {
                 select: {
                     name: true,
                     priority: true,
-                    permissions: { select: { name: true } },
+                    rolePermissions: { select: { permission: true, state: true } },
                 },
             },
         },
@@ -66,7 +66,8 @@ async function resolveRoles(userId: string): Promise<EffectiveRoles> {
 
     if (held.length === 0) return NOBODY;
 
-    const permissions = new Set<string>();
+    const allowed = new Set<string>();
+    const refused = new Set<string>();
     let isAdmin = false;
     let priority = 0;
     const roleIds: string[] = [];
@@ -83,10 +84,18 @@ async function resolveRoles(userId: string): Promise<EffectiveRoles> {
         if (typeof (row as { roleId?: string }).roleId === "string") roleIds.push((row as { roleId: string }).roleId);
         if (role.name === "admin") isAdmin = true;
         if (role.priority > priority) priority = role.priority;
-        for (const permission of role.permissions) permissions.add(permission.name);
+        for (const entry of role.rolePermissions) {
+            if (entry.state === "NEVER") refused.add(entry.permission);
+            else allowed.add(entry.permission);
+        }
     }
 
-    return { permissions, isAdmin, priority, roleIds };
+    // Never beats yes, from whichever role each came. Collected into two sets
+    // first rather than decided row by row, because the database chooses the
+    // order rows come back in and it must not choose this.
+    for (const name of refused) allowed.delete(name);
+
+    return { permissions: allowed, isAdmin, priority, roleIds };
 }
 
 /** The names a member may act on, as a set. An admin's set is empty and bypasses. */

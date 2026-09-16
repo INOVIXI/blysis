@@ -57,7 +57,7 @@ function memberWith(perms: string[], opts: { priority?: number; roleId?: string 
             role: {
                 name: "member",
                 priority: opts.priority ?? 0,
-                permissions: perms.map((name) => ({ name })),
+                rolePermissions: perms.map((name) => ({ permission: name, state: "ALLOW" as const })),
             },
         },
     ];
@@ -68,7 +68,7 @@ function adminUser() {
         {
             roleId: "role-admin",
             expiresAt: null,
-            role: { name: "admin", priority: 100, permissions: [] },
+            role: { name: "admin", priority: 100, rolePermissions: [] },
         },
     ];
 }
@@ -293,12 +293,12 @@ describe("isAdmin", () => {
     });
 
     it("falls back to DB and returns true for an admin role", async () => {
-        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-admin", expiresAt: null, role: { name: "admin", priority: 0, permissions: [] } }]);
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-admin", expiresAt: null, role: { name: "admin", priority: 0, rolePermissions: [] } }]);
         expect(await isAdmin("u1")).toBe(true);
     });
 
     it("returns false for a non-admin role via DB", async () => {
-        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-member", expiresAt: null, role: { name: "member", priority: 0, permissions: [] } }]);
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-member", expiresAt: null, role: { name: "member", priority: 0, rolePermissions: [] } }]);
         expect(await isAdmin("u1")).toBe(false);
     });
 
@@ -317,7 +317,7 @@ describe("isStaff", () => {
     it("a role named moderator is not staff by its name alone", async () => {
         // It used to short-circuit true on the name. Demoting that role in the
         // admin panel hid the staff links and left the endpoints open.
-        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 10, permissions: [] } }]);
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 10, rolePermissions: [] } }]);
         expect(await isStaff("u1", "moderator")).toBe(false);
     });
 
@@ -328,17 +328,17 @@ describe("isStaff", () => {
     });
 
     it("a role the site invented is staff when it ranks high enough", async () => {
-        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 70, permissions: [] } }]);
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 70, rolePermissions: [] } }]);
         expect(await isStaff("u1", "developer")).toBe(true);
     });
 
     it("DB fallback: priority >= 50 is staff", async () => {
-        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 50, permissions: [] } }]);
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 50, rolePermissions: [] } }]);
         expect(await isStaff("u1")).toBe(true);
     });
 
     it("DB fallback: priority < 50 is not staff", async () => {
-        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 10, permissions: [] } }]);
+        mockUserRoleFindMany.mockResolvedValue([{ roleId: "role-x", expiresAt: null, role: { name: "invented", priority: 10, rolePermissions: [] } }]);
         expect(await isStaff("u1")).toBe(false);
     });
 

@@ -30,8 +30,12 @@ export async function GET() {
                         name: true,
                         displayName: true,
                         color: true,
-                        permissions: {
-                            select: { name: true },
+                        rolePermissions: {
+                            // What the role says yes to. A refusal is not a
+                            // capability, so it has no place in a list of what
+                            // somebody may do.
+                            where: { state: "ALLOW" },
+                            select: { permission: true },
                         },
                     },
                 },

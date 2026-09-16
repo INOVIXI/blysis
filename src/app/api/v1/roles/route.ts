@@ -88,16 +88,16 @@ export async function POST(request: NextRequest) {
             badgeCss: badgeCss ?? null,
             color,
             priority: priority || 0,
-            permissions: permissions?.length
+            rolePermissions: permissions?.length
                 ? {
-                    connectOrCreate: permissions.map((perm) => ({
-                        where: { name: perm },
-                        create: { name: perm, module: perm.split(".")[0], description: perm },
+                    create: permissions.map((entry) => ({
+                        permission: entry.name,
+                        state: entry.state,
                     })),
                 }
                 : undefined,
         },
-        include: { permissions: true, _count: { select: { users: true } } },
+        include: { rolePermissions: true, _count: { select: { users: true } } },
     });
 
     logActivity({

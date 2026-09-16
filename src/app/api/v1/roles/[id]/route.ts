@@ -69,17 +69,20 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         where: { id },
         data: {
             ...roleData,
-            permissions: permissions
+            // Written whole: what arrives is the role's complete opinion, and
+            // a name the screen left out is the third state rather than an
+            // omission to merge with what was there before.
+            rolePermissions: permissions
                 ? {
-                    set: [],
-                    connectOrCreate: permissions.map((perm) => ({
-                        where: { name: perm },
-                        create: { name: perm, module: perm.split(".")[0], description: perm },
+                    deleteMany: {},
+                    create: permissions.map((entry) => ({
+                        permission: entry.name,
+                        state: entry.state,
                     })),
                 }
                 : undefined,
         },
-        include: { permissions: true, _count: { select: { users: true } } },
+        include: { rolePermissions: true, _count: { select: { users: true } } },
     });
 
     logActivity({
