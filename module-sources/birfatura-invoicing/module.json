@@ -3,7 +3,7 @@
   "name": "BirFatura Invoicing",
   "description": "Publishes this shop's paid orders for BirFatura to pull and invoice. The integrator calls in with a shared secret; nothing is sent out.",
   "version": "1.7.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "secretSettings": [
     "birfatura_token"
   ],

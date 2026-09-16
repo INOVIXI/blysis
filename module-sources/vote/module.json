@@ -3,7 +3,7 @@
   "name": "Vote Sites",
   "description": "Send players to the server listings you are ranked on, and count who voted",
   "version": "1.6.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Vote",

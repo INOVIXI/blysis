@@ -3,7 +3,7 @@
   "name": "paysafecard Gateway",
   "description": "Take prepaid voucher payments through paysafecard, for buyers with no card or bank account",
   "version": "1.3.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "secretSettings": [
     "paysafecard_api_key"
   ],

@@ -3,7 +3,7 @@
   "name": "Custom Pages",
   "description": "Admin-created HTML content pages",
   "version": "1.3.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "FileText",

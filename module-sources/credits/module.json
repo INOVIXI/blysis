@@ -3,7 +3,7 @@
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
   "version": "1.6.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Coins",

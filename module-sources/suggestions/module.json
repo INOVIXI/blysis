@@ -3,7 +3,7 @@
   "name": "Suggestions",
   "description": "Community feature suggestions with voting",
   "version": "1.6.3",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "MessageSquare",

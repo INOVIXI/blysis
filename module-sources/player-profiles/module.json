@@ -3,7 +3,7 @@
   "name": "Member Profiles",
   "description": "Public profile pages, with what every installed module knows about a member",
   "version": "1.6.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Users",

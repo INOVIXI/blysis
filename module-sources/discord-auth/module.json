@@ -3,7 +3,7 @@
   "name": "Discord Login",
   "description": "Allow users to sign in with their Discord account",
   "version": "1.2.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "integration",
   "author": "Blysis",
   "icon": "MessageSquare",

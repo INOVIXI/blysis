@@ -3,7 +3,7 @@
   "name": "Minecraft Punishments (LiteBans)",
   "description": "Takes bans, mutes and kicks from a LiteBans server and records them against the member who owns the account",
   "version": "1.1.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Gavel",

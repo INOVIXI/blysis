@@ -3,7 +3,7 @@
   "name": "Resend Email Provider",
   "description": "Send emails via Resend API",
   "version": "1.3.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "secretSettings": [
     "resend_api_key"
   ],

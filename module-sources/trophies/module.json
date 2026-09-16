@@ -3,7 +3,7 @@
   "name": "Trophies",
   "description": "Achievement badges with rule-based auto-award engine",
   "version": "1.6.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Trophy",

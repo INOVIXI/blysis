@@ -3,7 +3,7 @@
   "name": "Punishments",
   "description": "Bans, mutes and warnings against members, issued here or reported by a module that watches somewhere else",
   "version": "1.7.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "management",
   "author": "Blysis",
   "icon": "Shield",

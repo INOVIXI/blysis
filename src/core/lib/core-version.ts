@@ -12,6 +12,23 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 4.0.0 - A member holds a set of roles. `TimedRoleGrant` is gone from the
+ * schema and a module that wrote it no longer compiles: `grantRole`,
+ * `revokeRole` and `rolesHeldBy` join `@/core/sdk/server` and are the way a
+ * role is handed out, because the write has a second half - the displayed role
+ * is a cache of the top of the set - that a module must not be the one to
+ * remember. `effectivePermissions` joins them.
+ *
+ * The break is the point rather than a cost of it. One role per member is why
+ * handing out a rank had to remember what to put back, so selling somebody a
+ * rank took away whatever else they were until it lapsed, and two jobs at once
+ * could not be expressed at all. A lapsed role now takes back only itself.
+ *
+ * A manifest also declares who may reach each of its surfaces:
+ * `menu[].permission`, `adminRoutes[].permission`, and `permission` or
+ * `openTo` on a write. `validate-module` refuses a surface that declares
+ * neither, so this is a break for a manifest as well as for code.
+ *
  * 3.0.0 - What a person writes is Markdown. `RichContent` takes `markdown`
  * where it took `html`, `renderMarkdown` joins `@/core/sdk`, and the seed
  * context's `html(n)` is `paragraphs(n)`. This is a break in both directions: a
@@ -372,4 +389,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "3.0.0";
+export const CORE_API_VERSION = "4.0.0";

@@ -3,7 +3,7 @@
   "name": "Changelog",
   "description": "Release notes and update history",
   "version": "1.5.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "History",

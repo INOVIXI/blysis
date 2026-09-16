@@ -58,7 +58,18 @@ export { moduleSettings } from "@/core/lib/module-cache";
 export type { SettingValue } from "@/core/lib/module-settings";
 
 // --- Authorization (session lookup lives in @/core/sdk/auth) ---
-export { hasPermission, hasResourcePermission, isAdmin } from "@/core/lib/permissions";
+export { hasPermission, hasResourcePermission, isAdmin, effectivePermissions } from "@/core/lib/permissions";
+
+/**
+ * Handing a member a role, which is core's to do rather than a module's.
+ *
+ * A module that wrote the rows itself would have to know that the displayed
+ * role is a cache of the top of the set and remember to bring it up to date -
+ * and one that forgot would leave a member wearing a role they no longer hold.
+ * `grantRole` extends rather than duplicates, never turns a permanent role
+ * into a temporary one, and leaves the cache true as its last act.
+ */
+export { grantRole, revokeRole, rolesHeldBy } from "@/core/lib/roles";
 
 // --- Rate limiting ---
 export {

@@ -14,7 +14,7 @@
         }
       },
       "version": "1.2.1",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Megaphone",
       "category": "management",
@@ -53,7 +53,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Apple",
       "category": "integration",
@@ -88,7 +88,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Swords",
       "category": "integration",
@@ -118,7 +118,7 @@
       "description": "Publishes this shop's paid orders for BirFatura to pull and invoice. The integrator calls in with a shared secret; nothing is sent out.",
       "i18n": {},
       "version": "1.7.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "commerce",
@@ -161,7 +161,7 @@
         }
       },
       "version": "1.6.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
@@ -205,7 +205,7 @@
         }
       },
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "History",
       "category": "community",
@@ -244,7 +244,7 @@
         }
       },
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Cloud",
       "category": "integration",
@@ -279,7 +279,7 @@
         }
       },
       "version": "1.7.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Shield",
       "category": "security",
@@ -316,7 +316,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Bitcoin",
       "category": "commerce",
@@ -359,7 +359,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Bitcoin",
       "category": "commerce",
@@ -397,7 +397,7 @@
       "description": "Compare several things feature by feature. A cell nobody filled in is left blank rather than marked as a no.",
       "i18n": {},
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Table",
       "category": "content",
@@ -432,7 +432,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Shield",
       "category": "content",
@@ -467,7 +467,7 @@
         }
       },
       "version": "1.6.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
@@ -504,7 +504,7 @@
       "description": "A live chat bubble on every page, served by Crisp. Nothing is loaded until the visitor has accepted cookies.",
       "i18n": {},
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "MessageCircle",
       "category": "integration",
@@ -539,7 +539,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Download",
       "category": "management",
@@ -576,7 +576,7 @@
         }
       },
       "version": "1.5.3",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "DollarSign",
       "category": "commerce",
@@ -613,7 +613,7 @@
         }
       },
       "version": "1.4.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "FileEdit",
       "category": "content",
@@ -653,7 +653,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "content",
@@ -688,7 +688,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "integration",
@@ -723,7 +723,7 @@
         }
       },
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "integration",
@@ -765,7 +765,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "integration",
@@ -802,7 +802,7 @@
         }
       },
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Download",
       "category": "content",
@@ -839,7 +839,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Mail",
       "category": "management",
@@ -874,7 +874,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Gamepad2",
       "category": "integration",
@@ -904,7 +904,7 @@
       "description": "Read a list out of a database this site does not own: a game server, a billing system, an old forum. Read only, one bounded query, and the connection never reaches a page.",
       "i18n": {},
       "version": "1.4.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Database",
       "category": "content",
@@ -939,7 +939,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "integration",
@@ -974,7 +974,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Swords",
       "category": "integration",
@@ -1009,7 +1009,7 @@
         }
       },
       "version": "1.7.3",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
@@ -1053,7 +1053,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Code2",
       "category": "integration",
@@ -1088,7 +1088,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "BarChart",
       "category": "integration",
@@ -1123,7 +1123,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Globe",
       "category": "integration",
@@ -1158,7 +1158,7 @@
         }
       },
       "version": "1.8.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis Team",
       "icon": "HelpCircle",
       "category": "management",
@@ -1195,7 +1195,7 @@
         }
       },
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Bell",
       "category": "community",
@@ -1238,7 +1238,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Camera",
       "category": "integration",
@@ -1273,7 +1273,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "CreditCard",
       "category": "commerce",
@@ -1315,7 +1315,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "integration",
@@ -1350,7 +1350,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Radio",
       "category": "integration",
@@ -1385,7 +1385,7 @@
         }
       },
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Trophy",
       "category": "community",
@@ -1424,7 +1424,7 @@
         }
       },
       "version": "1.4.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "KeyRound",
       "category": "commerce",
@@ -1463,7 +1463,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "MessageCircle",
       "category": "integration",
@@ -1498,7 +1498,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Shield",
       "category": "security",
@@ -1528,7 +1528,7 @@
       "description": "Take a payment nobody processes: a bank transfer, cash at the counter, an invoice settled later. The order waits unpaid until an operator confirms the money arrived.",
       "i18n": {},
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Landmark",
       "category": "commerce",
@@ -1563,7 +1563,7 @@
       "description": "Members sell to each other for credits and the site takes a cut. What is handed over is decided by whatever integration is installed.",
       "i18n": {},
       "version": "1.7.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Store",
       "category": "commerce",
@@ -1605,7 +1605,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Wallet",
       "category": "commerce",
@@ -1649,7 +1649,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Gamepad2",
       "category": "integration",
@@ -1684,7 +1684,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Smartphone",
       "category": "commerce",
@@ -1728,7 +1728,7 @@
         }
       },
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Link2",
       "category": "gaming",
@@ -1772,7 +1772,7 @@
         }
       },
       "version": "1.1.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Gavel",
       "category": "gaming",
@@ -1812,7 +1812,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Landmark",
       "category": "commerce",
@@ -1856,7 +1856,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Compass",
       "category": "integration",
@@ -1891,7 +1891,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Bitcoin",
       "category": "commerce",
@@ -1935,7 +1935,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "CreditCard",
       "category": "commerce",
@@ -1973,7 +1973,7 @@
       "description": "Issues a sales invoice in Parasut for every paid order, using the invoice details the checkout collected.",
       "i18n": {},
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "commerce",
@@ -2013,7 +2013,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Heart",
       "category": "integration",
@@ -2048,7 +2048,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Globe",
       "category": "commerce",
@@ -2091,7 +2091,7 @@
         }
       },
       "version": "2.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "DollarSign",
       "category": "commerce",
@@ -2133,7 +2133,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Ticket",
       "category": "commerce",
@@ -2176,7 +2176,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "CreditCard",
       "category": "commerce",
@@ -2219,7 +2219,7 @@
         }
       },
       "version": "1.6.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "gaming",
@@ -2256,7 +2256,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Bell",
       "category": "management",
@@ -2291,7 +2291,7 @@
         }
       },
       "version": "1.7.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Shield",
       "category": "management",
@@ -2331,7 +2331,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Smartphone",
       "category": "commerce",
@@ -2375,7 +2375,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "MessageCircle",
       "category": "integration",
@@ -2410,7 +2410,7 @@
         }
       },
       "version": "1.6.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "UserPlus",
       "category": "community",
@@ -2451,7 +2451,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Mail",
       "category": "integration",
@@ -2488,7 +2488,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Boxes",
       "category": "integration",
@@ -2518,7 +2518,7 @@
       "description": "Lets members sell a rank for a number of days in the market. The first thing anything here can hand over.",
       "i18n": {},
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "ShieldCheck",
       "category": "commerce",
@@ -2556,7 +2556,7 @@
         }
       },
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Search",
       "category": "content",
@@ -2594,7 +2594,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Server",
       "category": "gaming",
@@ -2626,7 +2626,7 @@
       "description": "A grid of cards: a picture, a heading, a line of text and somewhere to go. What is being shown is the operator's business.",
       "i18n": {},
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "LayoutGrid",
       "category": "content",
@@ -2661,7 +2661,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Image",
       "category": "content",
@@ -2696,7 +2696,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Music",
       "category": "integration",
@@ -2731,7 +2731,7 @@
         }
       },
       "version": "1.5.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "management",
@@ -2766,7 +2766,7 @@
         }
       },
       "version": "1.3.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Gamepad2",
       "category": "integration",
@@ -2801,7 +2801,7 @@
         }
       },
       "version": "2.34.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
@@ -2861,7 +2861,7 @@
         }
       },
       "version": "2.4.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "CreditCard",
       "category": "commerce",
@@ -2906,7 +2906,7 @@
         }
       },
       "version": "1.6.3",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "community",
@@ -2943,7 +2943,7 @@
       "description": "A live chat bubble on every page, served by Tawk.to. Nothing is loaded until the visitor has accepted cookies.",
       "i18n": {},
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "MessageCircle",
       "category": "integration",
@@ -2978,7 +2978,7 @@
         }
       },
       "version": "1.6.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis Team",
       "icon": "Ticket",
       "category": "management",
@@ -3018,7 +3018,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Video",
       "category": "integration",
@@ -3053,7 +3053,7 @@
         }
       },
       "version": "1.6.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Trophy",
       "category": "community",
@@ -3090,7 +3090,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Video",
       "category": "integration",
@@ -3125,7 +3125,7 @@
         }
       },
       "version": "1.4.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Shield",
       "category": "security",
@@ -3160,7 +3160,7 @@
       "description": "A sign on the door of a page that moved, so old links keep working.",
       "i18n": {},
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Signpost",
       "category": "content",
@@ -3197,7 +3197,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "MessagesSquare",
       "category": "integration",
@@ -3232,7 +3232,7 @@
         }
       },
       "version": "1.6.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Vote",
       "category": "gaming",
@@ -3271,7 +3271,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Webhook",
       "category": "integration",
@@ -3306,7 +3306,7 @@
         }
       },
       "version": "1.8.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Dices",
       "category": "commerce",
@@ -3349,7 +3349,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "AtSign",
       "category": "integration",
@@ -3384,7 +3384,7 @@
         }
       },
       "version": "1.2.2",
-      "coreVersion": "^3.0.0",
+      "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Search",
       "category": "integration",

@@ -69,7 +69,6 @@ model User {
   conversations    ConversationParticipant[] @relation("ConversationMember")
   messages         Message[]          @relation("MessageAuthor")
   loginSessions    UserSession[]      @relation("UserSessions")
-  timedRoleGrants  TimedRoleGrant[]
   themeCustomizations   ThemeCustomization[] @relation("ThemeCustomizationUpdater")
   themeSettingUpdates   ThemeSetting[]       @relation("ThemeSettingUpdater")
 
@@ -176,31 +175,6 @@ model UserRole {
   @@index([roleId])
 }
 
-model TimedRoleGrant {
-  id             String   @id @default(cuid())
-  userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  /** The role handed out. */
-  roleId         String
-  /** What the member held before, to be put back. Null means the default. */
-  previousRoleId String?
-  expiresAt      DateTime
-  /**
-   * Who handed it out, as a string the granter chooses. A free label rather
-   * than a relation on purpose: the core sweeps these and must not know what
-   * kinds of thing grant a role.
-   */
-  source         String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  // A member holds one role, so one live grant per role per member: buying
-  // the same rank again extends this row rather than adding a second one that
-  // would revert them the moment the first lapses.
-  @@unique([userId, roleId])
-  // The sweep asks for grants whose time is up and nothing else.
-  @@index([expiresAt])
-}
 
 model Permission {
   id          String  @id @default(cuid())

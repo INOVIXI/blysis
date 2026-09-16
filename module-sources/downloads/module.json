@@ -3,7 +3,7 @@
   "name": "Downloads",
   "description": "A file library: releases, guides and anything else worth handing out",
   "version": "1.5.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "Download",

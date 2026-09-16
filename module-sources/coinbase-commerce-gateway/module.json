@@ -3,7 +3,7 @@
   "name": "Coinbase Commerce Gateway",
   "description": "Take Bitcoin, Ethereum, USDC and other crypto payments through Coinbase Commerce",
   "version": "1.3.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "secretSettings": [
     "coinbase_api_key",
     "coinbase_webhook_secret"

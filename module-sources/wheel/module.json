@@ -3,7 +3,7 @@
   "name": "Wheel of Fortune",
   "description": "Spin-to-win game with configurable prizes and cooldowns",
   "version": "1.8.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Dices",

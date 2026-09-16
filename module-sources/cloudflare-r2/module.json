@@ -3,7 +3,7 @@
   "name": "Cloudflare R2 Storage",
   "description": "S3-compatible object storage backed by Cloudflare R2 (zero egress fees)",
   "version": "1.5.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "secretSettings": [
     "cloudflare_r2_config.secretKey"
   ],

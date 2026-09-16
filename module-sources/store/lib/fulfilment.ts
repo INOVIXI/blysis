@@ -8,7 +8,7 @@
  * rest of the site. A gateway only reports that money moved.
  */
 import { Prisma } from "@prisma/client";
-import { prisma, log } from "@/core/sdk/server";
+import { prisma, log, grantRole } from "@/core/sdk/server";
 import { sendOrderConfirmationEmail } from "./order-email";
 import { applyFiltersAsync } from "@/core/sdk";
 import { deliverProduct } from "./delivery";
@@ -128,6 +128,13 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
     // not end a millisecond apart because the loop took that long.
     const now = new Date();
 
+    // Filled inside the transaction, granted after it. A role grant leaves the
+    // displayed role true as its last act, which is a second write against a
+    // row this transaction does not hold, and an account deleted between
+    // paying and the webhook landing must not roll back an order somebody paid
+    // for.
+    const roleGrants: { userId: string; roleId: string; expiresAt: Date | null }[] = [];
+
     const settled = await prisma.$transaction(async (tx) => {
         const claimed = await tx.order.updateMany({
             where: { id: order.id, status: { not: "COMPLETED" } },
@@ -213,38 +220,23 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
 
             const granting = await roleGrantedBy(tx, grants);
             if (granting) {
-                // Read before the write: putting the role back when it lapses
-                // needs to know what they held instead, and a moment later it
-                // is gone.
-                const held = await tx.user.findUnique({
-                    where: { id: buyerId },
-                    select: { roleId: true },
-                });
-                // `updateMany` rather than `update`: the account can be deleted
-                // between paying and the webhook landing, and a missing row
-                // must not throw and roll back an order somebody paid for.
-                await tx.user.updateMany({ where: { id: buyerId }, data: { roleId: granting.roleId } });
+                // A rank is added to what the buyer already holds rather than
+                // replacing it. The shape this replaces held one role per
+                // member, so selling somebody a rank took away whatever else
+                // they were - a moderator who bought one stopped moderating
+                // until it lapsed.
+                const until =
+                    granting.durationDays !== null
+                        ? (extendedExpiry(null, granting.durationDays, now) as Date)
+                        : null;
 
-                if (granting.durationDays !== null) {
-                    const until = extendedExpiry(null, granting.durationDays, now) as Date;
-                    // One live grant per role per member: buying the same rank
-                    // again pushes this row out rather than adding a second
-                    // that would revert them the moment the first lapses.
-                    await tx.timedRoleGrant.upsert({
-                        where: { userId_roleId: { userId: buyerId, roleId: granting.roleId } },
-                        create: {
-                            userId: buyerId,
-                            roleId: granting.roleId,
-                            // What they held before this order. Null when they
-                            // held nothing, which the sweep reads as "put back
-                            // the site default".
-                            previousRoleId: held?.roleId ?? null,
-                            expiresAt: until,
-                            source: "store:product",
-                        },
-                        update: { expiresAt: until },
-                    });
-                }
+                // Outside the transaction's `tx` on purpose: the grant leaves
+                // the displayed role true as its last act, which is a second
+                // write this module must not be the one to remember. An
+                // account deleted between paying and the webhook landing makes
+                // this throw, and the catch below keeps that from rolling back
+                // an order somebody paid for.
+                roleGrants.push({ userId: buyerId, roleId: granting.roleId, expiresAt: until });
             }
         }
 
@@ -264,6 +256,24 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
 
     // Another delivery of the same payment got there first.
     if (!settled.settled) return ALREADY;
+
+    for (const grant of roleGrants) {
+        try {
+            await grantRole(grant.userId, grant.roleId, {
+                expiresAt: grant.expiresAt,
+                source: "store:product",
+            });
+        } catch (error) {
+            // The buyer's account went between paying and this running. The
+            // order is settled either way; a rank nobody can hold is not a
+            // reason to fail a payment that has already been taken.
+            log.error("[store] a paid rank could not be granted", {
+                userId: grant.userId,
+                roleId: grant.roleId,
+                error: error instanceof Error ? error.message : String(error),
+            });
+        }
+    }
 
     // The money moved before this ran, so a shelf that could not cover the
     // order is not something to refuse: the buyer paid and is granted what

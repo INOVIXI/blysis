@@ -3,7 +3,7 @@
   "name": "Cookie Consent",
   "description": "GDPR cookie consent banner",
   "version": "1.2.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "Shield",

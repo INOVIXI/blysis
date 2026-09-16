@@ -3,7 +3,7 @@
   "name": "Parasut Invoicing",
   "description": "Issues a sales invoice in Parasut for every paid order, using the invoice details the checkout collected.",
   "version": "1.5.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "secretSettings": [
     "parasut_client_secret",
     "parasut_password"

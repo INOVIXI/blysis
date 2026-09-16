@@ -3,7 +3,7 @@
   "name": "Announcements",
   "description": "Site-wide announcement banners",
   "version": "1.2.1",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "management",
   "author": "Blysis",
   "icon": "Megaphone",

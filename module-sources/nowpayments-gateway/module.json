@@ -3,7 +3,7 @@
   "name": "NOWPayments Gateway",
   "description": "Take payments in 200+ cryptocurrencies through NOWPayments",
   "version": "1.3.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "secretSettings": [
     "nowpayments_api_key",
     "nowpayments_ipn_secret"

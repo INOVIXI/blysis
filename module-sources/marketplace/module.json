@@ -3,7 +3,7 @@
   "name": "Marketplace",
   "description": "Members sell to each other for credits and the site takes a cut. What is handed over is decided by whatever integration is installed.",
   "version": "1.7.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Store",

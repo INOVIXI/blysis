@@ -3,7 +3,7 @@
   "name": "License Keys",
   "description": "Generate, deliver and activate license keys for digital products, with a machine limit per key",
   "version": "1.4.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "KeyRound",

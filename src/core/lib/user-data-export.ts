@@ -59,14 +59,6 @@ export const CORE_TABLES: CoreTable[] = [
         select: { id: true, scope: true, reason: true, expiresAt: true, createdAt: true },
     },
     {
-        key: "timedRoles",
-        model: "timedRoleGrant",
-        column: "userId",
-        // A role somebody paid to hold for a while, and when it lapses. Theirs
-        // to have: it is a record of something they bought.
-        select: { id: true, roleId: true, expiresAt: true, source: true, createdAt: true },
-    },
-    {
         key: "roles",
         model: "userRole",
         column: "userId",
@@ -338,10 +330,9 @@ Contents
   activityFeed     Public activity feed entries you generated.
   restrictions     Parts of the site you were kept out of, why, and
                    until when.
-  timedRoles       Roles you hold for a fixed period, and when each
-                   one lapses.
   roles            Every role you hold, when it was granted, what
-                   granted it, and when it lapses if it does.
+                   granted it, and when it lapses if it does. A role
+                   held for a fixed period carries the date it ends.
   sessions         Login sessions (device, IP, last-active timestamp).
   warnings         Moderation warnings issued against you.
   notificationPrefs

@@ -3,7 +3,7 @@
   "name": "Help Center",
   "description": "Knowledge base with categories and searchable articles",
   "version": "1.8.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "management",
   "author": "Blysis Team",
   "icon": "HelpCircle",

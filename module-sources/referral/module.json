@@ -3,7 +3,7 @@
   "name": "Referral System",
   "description": "Earn credits by referring new users",
   "version": "1.6.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "UserPlus",

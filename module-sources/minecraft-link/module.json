@@ -3,7 +3,7 @@
   "name": "Minecraft Link",
   "description": "Let players prove they own an in-game Minecraft account by reading a code whispered to them on the server",
   "version": "1.5.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Link2",

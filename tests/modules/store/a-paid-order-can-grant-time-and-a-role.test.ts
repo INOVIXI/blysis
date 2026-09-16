@@ -95,8 +95,11 @@ const prisma = {
     $transaction: async (run: (tx: typeof db) => unknown) => run(trace(db, true)),
 };
 
+const grantRole = vi.fn(async () => {});
+
 vi.mock("@/core/sdk/server", () => ({
     prisma,
+    grantRole: (...args: unknown[]) => grantRole(...(args as [])),
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     logActivity: vi.fn(async () => {}),
 }));
@@ -203,28 +206,31 @@ describe("a product sold for a while", () => {
 });
 
 describe("a product that names a role", () => {
-    it("gives the buyer that role", async () => {
+    it("gives the buyer that role, on top of what they already hold", async () => {
         db.product.findMany.mockResolvedValue([product({ grantsRoleId: "role-vip" })]);
         await settleOrder(settlement);
 
-        expect(db.user.updateMany).toHaveBeenCalledWith(
-            expect.objectContaining({
-                where: { id: "user-1" },
-                data: { roleId: "role-vip" },
-            }),
+        expect(grantRole).toHaveBeenCalledWith(
+            "user-1",
+            "role-vip",
+            expect.objectContaining({ expiresAt: null }),
         );
-        const grant = calls.find((c) => c.op === "user.updateMany");
-        expect(grant?.viaTx).toBe(true);
+        // What it must not do: write the buyer's single role column. That is
+        // the shape this replaces, and under it a moderator who bought a rank
+        // stopped being a moderator until it lapsed.
+        expect(db.user.updateMany).not.toHaveBeenCalledWith(
+            expect.objectContaining({ data: expect.objectContaining({ roleId: expect.anything() }) }),
+        );
     });
 
     it("gives nothing when the product names none", async () => {
         await settleOrder(settlement);
-        expect(db.user.updateMany).not.toHaveBeenCalled();
+        expect(grantRole).not.toHaveBeenCalled();
     });
 });
 
 describe("a role given only for a while", () => {
-    it("records what to put back, and when", async () => {
+    it("is granted with the day it runs out, and a label saying what bought it", async () => {
         db.product.findMany.mockResolvedValue([
             product({ grantsRoleId: "role-vip", durationDays: 30 }),
         ]);
@@ -232,39 +238,44 @@ describe("a role given only for a while", () => {
 
         await settleOrder(settlement);
 
-        expect(db.timedRoleGrant.upsert).toHaveBeenCalledTimes(1);
-        const call = db.timedRoleGrant.upsert.mock.calls[0][0] as {
-            where: { userId_roleId: { userId: string; roleId: string } };
-            create: { previousRoleId: string | null; expiresAt: Date; source: string };
-            update: { expiresAt: Date };
-        };
-        expect(call.where.userId_roleId).toEqual({ userId: "user-1", roleId: "role-vip" });
-        // What they held before the purchase, so the sweep can put it back.
-        expect(call.create.previousRoleId).toBe("role-member");
-        expect(call.create.expiresAt.getTime()).toBeGreaterThanOrEqual(before + 30 * 86_400_000);
-        // A label, not a relation: the core sweeps these and must not know
+        expect(grantRole).toHaveBeenCalledTimes(1);
+        const [userId, roleId, options] = grantRole.mock.calls[0] as unknown as [
+            string,
+            string,
+            { expiresAt: Date | null; source: string },
+        ];
+        expect(userId).toBe("user-1");
+        expect(roleId).toBe("role-vip");
+        expect(options.expiresAt?.getTime()).toBeGreaterThanOrEqual(before + 30 * 86_400_000);
+        // A label, not a relation: the core sweeps these and must not learn
         // what kinds of thing grant a role.
-        expect(call.create.source).toBeTruthy();
+        expect(options.source).toBeTruthy();
     });
 
-    it("records nothing when the role is given outright", async () => {
+    it("grants no end date when the role is given outright", async () => {
         db.product.findMany.mockResolvedValue([product({ grantsRoleId: "role-vip" })]);
         await settleOrder(settlement);
-        expect(db.user.updateMany).toHaveBeenCalled();
-        expect(db.timedRoleGrant.upsert).not.toHaveBeenCalled();
+        const [, , options] = grantRole.mock.calls[0] as unknown as [string, string, { expiresAt: Date | null }];
+        expect(options.expiresAt).toBeNull();
     });
 
-    it("records nothing when the timed product grants no role", async () => {
+    it("grants nothing when the timed product names no role", async () => {
         db.product.findMany.mockResolvedValue([product({ durationDays: 30 })]);
         await settleOrder(settlement);
-        expect(db.timedRoleGrant.upsert).not.toHaveBeenCalled();
+        expect(grantRole).not.toHaveBeenCalled();
     });
 
-    it("writes it inside the transaction that took the money", async () => {
+    it("grants after the money has moved, not inside the transaction that moved it", async () => {
+        // The grant's last act is to bring the displayed role up to date,
+        // which is a write against a row this transaction does not hold. And
+        // an account deleted between paying and the webhook landing must not
+        // roll back an order somebody has already paid for.
         db.product.findMany.mockResolvedValue([
             product({ grantsRoleId: "role-vip", durationDays: 30 }),
         ]);
         await settleOrder(settlement);
-        expect(calls.find((c) => c.op === "timedRoleGrant.upsert")?.viaTx).toBe(true);
+
+        expect(grantRole).toHaveBeenCalled();
+        expect(calls.some((c) => c.op.startsWith("timedRoleGrant"))).toBe(false);
     });
 });

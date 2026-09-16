@@ -3,7 +3,7 @@
   "name": "Staff",
   "description": "Staff member listing and applications",
   "version": "1.5.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "management",
   "author": "Blysis",
   "icon": "Users",

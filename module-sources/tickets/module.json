@@ -3,7 +3,7 @@
   "name": "Support Tickets",
   "description": "Customer support ticket system with departments and priority levels",
   "version": "1.6.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "management",
   "author": "Blysis Team",
   "icon": "Ticket",

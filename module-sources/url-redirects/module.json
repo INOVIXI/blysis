@@ -3,7 +3,7 @@
   "name": "URL Redirects",
   "description": "A sign on the door of a page that moved, so old links keep working.",
   "version": "1.2.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "Signpost",

@@ -1,33 +1,20 @@
-/**
- * Handing a rank over when a listing sells.
- *
- * The market moves credits and takes a cut and has no idea what is being
- * sold; whatever is installed says what it can deliver. Nothing could, so the
- * whole module was inert - a seller could not write a listing because there
- * was no kind to give it. This is the first thing that can.
- *
- * A rank is not a file. Handing one over changes what the buyer holds, and
- * putting it back thirty days later means having remembered what they held
- * before. Three ways that goes wrong, and each of them ends with somebody
- * paying and getting nothing or keeping something for ever.
- *
- * A role that has been deleted since the listing was written. The market asks
- * again at the moment of sale for exactly this reason, and answering "handled"
- * for a role that is not there is a sale nobody unpicks until the buyer
- * complains.
- *
- * A buyer who already holds the rank, permanently, because an operator gave it
- * to them. Selling them thirty days of it has two possible endings and both
- * are wrong: they keep it for ever, or the sweep takes away a promotion the
- * operator made. So it is refused before any credits move, which is the one
- * moment a refusal costs nothing.
- *
- * And a buyer who holds it already with time left. Twenty-five days remaining
- * plus thirty bought is fifty-five. Anything that starts the clock again is
- * taking money for days it then deletes.
- */
+// @vitest-environment node
 import { describe, it, expect } from "vitest";
 import { planGrant } from "@/modules/role-delivery/lib/grant-plan";
+
+/**
+ * What a listing may sell, and what it must refuse before any credits move.
+ *
+ * This decision used to carry the whole weight of a member holding exactly one
+ * role: a sold rank replaced what the buyer was, and putting it back thirty
+ * days later meant having remembered it, so the plan had to say which of two
+ * writes it was and what to restore. A member holds a set now. A rank is added
+ * to it, the lapse takes back only itself, and core decides whether the grant
+ * writes a row or pushes a date out.
+ *
+ * What is left here are the refusals, and they matter because the moment
+ * before the credits move is the only moment a refusal is free.
+ */
 
 const NOW = new Date("2026-09-10T12:00:00Z");
 const inDays = (days: number) => new Date(NOW.getTime() + days * 86_400_000);
@@ -36,76 +23,71 @@ const world = { existingRoleIds: new Set(["gold", "silver", "member"]) };
 const wanted = { roleId: "gold", days: 30 };
 
 describe("a rank that can be handed over", () => {
-    it("is granted, and remembers what the buyer held", () => {
-        const plan = planGrant(wanted, { roleId: "member" }, null, world, NOW);
-        expect(plan).toEqual({
-            create: { roleId: "gold", previousRoleId: "member", expiresAt: inDays(30) },
+    it("is granted until the day the listing sold", () => {
+        expect(planGrant(wanted, null, world, NOW)).toEqual({
+            grant: { roleId: "gold", expiresAt: inDays(30) },
         });
     });
 
-    it("remembers nothing when the buyer held nothing, which reads as the default", () => {
-        const plan = planGrant(wanted, { roleId: null }, null, world, NOW);
-        expect(plan).toEqual({
-            create: { roleId: "gold", previousRoleId: null, expiresAt: inDays(30) },
-        });
+    it("is added to whatever else the buyer holds", () => {
+        // Nothing in the plan names another role, which is the point: the
+        // buyer's other roles are not this decision's business, and the shape
+        // that made them its business is what let a bought rank take a
+        // moderator's job away.
+        const plan = planGrant(wanted, null, world, NOW);
+        expect(JSON.stringify(plan)).not.toContain("previous");
     });
 });
 
-describe("a rank that cannot", () => {
+describe("what is refused, before any credits move", () => {
     it("refuses a role that is not there any more", () => {
-        expect(planGrant({ roleId: "bronze", days: 30 }, { roleId: "member" }, null, world, NOW))
-            .toEqual({ refuse: "unknown_role" });
+        expect(planGrant({ roleId: "bronze", days: 30 }, null, world, NOW)).toEqual({
+            refuse: "unknown_role",
+        });
     });
 
     it("refuses a role named as nothing at all", () => {
-        expect(planGrant({ roleId: "  ", days: 30 }, { roleId: "member" }, null, world, NOW))
-            .toEqual({ refuse: "unknown_role" });
+        expect(planGrant({ roleId: "  ", days: 30 }, null, world, NOW)).toEqual({
+            refuse: "unknown_role",
+        });
     });
 
     it("refuses a length of time that is not one", () => {
-        for (const days of [0, -5, Number.NaN, Number.POSITIVE_INFINITY]) {
-            expect(planGrant({ roleId: "gold", days }, { roleId: "member" }, null, world, NOW))
-                .toEqual({ refuse: "bad_duration" });
+        for (const days of [0, -1, 0.5, Number.NaN, Number.POSITIVE_INFINITY, 3651]) {
+            expect(planGrant({ roleId: "gold", days }, null, world, NOW)).toEqual({
+                refuse: "bad_duration",
+            });
         }
     });
 
-    it("refuses a buyer who already holds it and holds it for good", () => {
-        // No grant behind it, so nothing is going to take it away. Selling
-        // them time would either be free money or a demotion later.
-        expect(planGrant(wanted, { roleId: "gold" }, null, world, NOW))
-            .toEqual({ refuse: "already_held" });
+    it("refuses a buyer who already holds it for good", () => {
+        // An operator gave it to them permanently. Selling thirty days of it
+        // would either do nothing or put an end date on a promotion somebody
+        // meant to last.
+        expect(planGrant(wanted, { expiresAt: null }, world, NOW)).toEqual({
+            refuse: "already_held",
+        });
     });
 });
 
-describe("buying more time", () => {
-    it("adds it to what is left rather than starting again", () => {
-        expect(planGrant(wanted, { roleId: "gold" }, { expiresAt: inDays(25) }, world, NOW))
-            .toEqual({ extend: { roleId: "gold", expiresAt: inDays(55) } });
+describe("buying more of a rank already held", () => {
+    it("adds to what is left rather than starting again", () => {
+        // Twenty-five days left plus thirty bought is fifty-five. Starting
+        // again is taking money for days it then deletes.
+        expect(planGrant(wanted, { expiresAt: inDays(25) }, world, NOW)).toEqual({
+            grant: { roleId: "gold", expiresAt: inDays(55) },
+        });
     });
 
     it("starts from now when the old grant has already lapsed", () => {
-        expect(planGrant(wanted, { roleId: "member" }, { expiresAt: inDays(-3) }, world, NOW))
-            .toEqual({ extend: { roleId: "gold", expiresAt: inDays(30) } });
+        expect(planGrant(wanted, { expiresAt: inDays(-3) }, world, NOW)).toEqual({
+            grant: { roleId: "gold", expiresAt: inDays(30) },
+        });
     });
 
-    it("says extend rather than handing back a memory to overwrite", () => {
-        // Extending must not touch what the row already remembers, and one
-        // shape with a nullable field would have meant both "put back the
-        // default" and "leave it alone".
-        for (const holder of [{ roleId: "gold" }, { roleId: "member" }, { roleId: null }]) {
-            const plan = planGrant(wanted, holder, { expiresAt: inDays(5) }, world, NOW);
-            expect(plan).not.toHaveProperty("create");
-        }
-    });
-
-    it("never records the granted role as the one to put back", () => {
-        // That is the shape that makes a rank permanent by accident: the
-        // sweep sees the member already holds what it was going to restore
-        // and writes nothing, for ever.
-        for (const holder of [{ roleId: "member" }, { roleId: null }, { roleId: "silver" }]) {
-            const plan = planGrant(wanted, holder, null, world, NOW);
-            if (!("create" in plan)) continue;
-            expect(plan.create.previousRoleId).not.toBe("gold");
-        }
+    it("takes the whole day count, never a part of one", () => {
+        expect(planGrant({ roleId: "gold", days: 30 }, { expiresAt: inDays(1) }, world, NOW)).toEqual({
+            grant: { roleId: "gold", expiresAt: inDays(31) },
+        });
     });
 });

@@ -3,7 +3,7 @@
   "name": "Webhook Logs",
   "description": "View and manage webhook delivery logs",
   "version": "1.2.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "integration",
   "author": "Blysis",
   "icon": "Webhook",

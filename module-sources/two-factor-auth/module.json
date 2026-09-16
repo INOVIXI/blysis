@@ -3,7 +3,7 @@
   "name": "Two-Factor Authentication",
   "description": "TOTP-based 2FA with backup codes for enhanced account security",
   "version": "1.4.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "security",
   "author": "Blysis",
   "icon": "Shield",

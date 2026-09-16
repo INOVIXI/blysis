@@ -3,7 +3,7 @@
   "name": "Discord Integration",
   "description": "Discord webhook notifications and settings",
   "version": "1.5.2",
-  "coreVersion": "^3.0.0",
+  "coreVersion": "^4.0.0",
   "category": "integration",
   "author": "Blysis",
   "icon": "MessageSquare",

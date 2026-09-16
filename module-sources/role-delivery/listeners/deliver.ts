@@ -1,4 +1,4 @@
-import { prisma } from "@/core/sdk/server";
+import { prisma, grantRole } from "@/core/sdk/server";
 import type { HookHandlerFor } from "@/core/sdk";
 import { planGrant } from "../lib/grant-plan";
 import { readRolePayload } from "../lib/payload";
@@ -25,9 +25,9 @@ const deliver: HookHandlerFor<"marketplace.deliver", "filter"> = async (outcome,
     if (!wanted) return { handled: true, error: "That listing does not say which rank." };
 
     const [buyer, role, standing] = await Promise.all([
-        prisma.user.findUnique({ where: { id: delivery.buyerId }, select: { roleId: true } }),
+        prisma.user.findUnique({ where: { id: delivery.buyerId }, select: { id: true } }),
         prisma.role.findUnique({ where: { id: wanted.roleId }, select: { id: true } }),
-        prisma.timedRoleGrant.findUnique({
+        prisma.userRole.findUnique({
             where: { userId_roleId: { userId: delivery.buyerId, roleId: wanted.roleId } },
             select: { expiresAt: true },
         }),
@@ -38,7 +38,6 @@ const deliver: HookHandlerFor<"marketplace.deliver", "filter"> = async (outcome,
 
     const plan = planGrant(
         wanted,
-        buyer,
         standing,
         { existingRoleIds: new Set(role ? [role.id] : []) },
         new Date(),
@@ -48,36 +47,13 @@ const deliver: HookHandlerFor<"marketplace.deliver", "filter"> = async (outcome,
         return { handled: true, error: REFUSALS[plan.refuse] };
     }
 
-    const roleId = "create" in plan ? plan.create.roleId : plan.extend.roleId;
-    const expiresAt = "create" in plan ? plan.create.expiresAt : plan.extend.expiresAt;
-
-    await prisma.$transaction(async (tx) => {
-        // `updateMany` rather than `update`: the account can be deleted
-        // between the two reads and this write, and a missing row must not
-        // throw where a sale has already been made.
-        await tx.user.updateMany({ where: { id: delivery.buyerId }, data: { roleId } });
-
-        if ("create" in plan) {
-            await tx.timedRoleGrant.create({
-                data: {
-                    userId: delivery.buyerId,
-                    roleId,
-                    previousRoleId: plan.create.previousRoleId,
-                    expiresAt,
-                    // A free label the core never interprets: it sweeps these
-                    // and must not learn what kinds of thing grant a role.
-                    source: "marketplace:role",
-                },
-            });
-            return;
-        }
-
-        // Extending leaves `previousRoleId` exactly as it is: the row already
-        // remembers what the buyer held before the first purchase.
-        await tx.timedRoleGrant.update({
-            where: { userId_roleId: { userId: delivery.buyerId, roleId } },
-            data: { expiresAt },
-        });
+    // Core writes the row and brings the displayed role up to date. A rank is
+    // added to what the buyer already holds: the shape this replaces swapped
+    // their one role for it, so buying a rank could take a moderator's job
+    // away for thirty days. The label is free text core never interprets.
+    await grantRole(delivery.buyerId, plan.grant.roleId, {
+        expiresAt: plan.grant.expiresAt,
+        source: "marketplace:role",
     });
 
     return { handled: true, error: null };

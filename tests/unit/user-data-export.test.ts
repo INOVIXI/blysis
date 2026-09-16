@@ -238,7 +238,7 @@ describe("exportUserData", () => {
             "accounts", "activityFeed", "apiKeys", "auditLog", "conversations",
             "dashboardLayout", "media", "messages", "modules",
             "notificationPrefs", "resourcePermissions", "restrictions",
-            "revisions", "roles", "sessions", "timedRoles", "user", "warnings",
+            "revisions", "roles", "sessions", "user", "warnings",
         ]);
     });
 
