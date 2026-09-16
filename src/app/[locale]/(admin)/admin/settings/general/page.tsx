@@ -16,6 +16,12 @@ import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
 import { MEMBER_AVATAR_UPLOADS_KEY } from "@/core/lib/member-uploads";
+import {
+    MEMBER_USERNAME_CHANGES_KEY,
+    MEMBER_EMAIL_CHANGES_KEY,
+    IDENTITY_REQUIRES_PASSWORD_KEY,
+    EMAIL_CHANGE_VERIFICATION_KEY,
+} from "@/core/lib/member-identity";
 
 interface FieldDef {
     key: string;
@@ -57,6 +63,14 @@ const USERNAME_RULE_CHOICES = USERNAME_RULES.map((value) => ({ value, labelKey: 
  * read by `memberAvatarUploads()`, which treats anything but "false" as on: a
  * site that never opens this screen gets the useful behaviour.
  */
+/** Asked for, or not. The wording differs from ALLOWED_CHOICES because the
+ *  question does: one is about what a member may do, the other about what the
+ *  site demands before it lets them. */
+const REQUIRED_CHOICES = [
+    { value: "true", labelKey: "generalSettings_required" },
+    { value: "false", labelKey: "generalSettings_notRequired" },
+] as const;
+
 const ALLOWED_CHOICES = [
     { value: "true", labelKey: "generalSettings_allowed" },
     { value: "false", labelKey: "generalSettings_notAllowed" },
@@ -81,6 +95,23 @@ const sections: SectionDef[] = [
         titleKey: "generalSettings_memberContent",
         fields: [
             { key: MEMBER_AVATAR_UPLOADS_KEY, labelKey: "generalSettings_memberAvatarUploads", type: "choice", defaultValue: "true", choices: ALLOWED_CHOICES, descriptionKey: "generalSettings_memberAvatarUploadsHint" },
+        ],
+    },
+    {
+        /*
+         * Who a member is, and what changing it costs them.
+         *
+         * The two guards default to on for the same reason: the address is the
+         * account. A password reset goes there, so somebody who can rewrite it
+         * from an unlocked screen owns the account, and an unproved address
+         * silently sends every future reset to a mailbox nobody reads.
+         */
+        titleKey: "generalSettings_memberIdentity",
+        fields: [
+            { key: MEMBER_USERNAME_CHANGES_KEY, labelKey: "generalSettings_usernameChanges", type: "choice", defaultValue: "true", choices: ALLOWED_CHOICES, descriptionKey: "generalSettings_usernameChangesHint" },
+            { key: MEMBER_EMAIL_CHANGES_KEY, labelKey: "generalSettings_emailChanges", type: "choice", defaultValue: "false", choices: ALLOWED_CHOICES, descriptionKey: "generalSettings_emailChangesHint" },
+            { key: IDENTITY_REQUIRES_PASSWORD_KEY, labelKey: "generalSettings_identityPassword", type: "choice", defaultValue: "true", choices: REQUIRED_CHOICES, descriptionKey: "generalSettings_identityPasswordHint" },
+            { key: EMAIL_CHANGE_VERIFICATION_KEY, labelKey: "generalSettings_emailVerification", type: "choice", defaultValue: "true", choices: REQUIRED_CHOICES, descriptionKey: "generalSettings_emailVerificationHint" },
         ],
     },
     {

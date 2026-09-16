@@ -6,6 +6,17 @@ import { rateLimit } from "@/core/lib/rate-limit";
 import { enforcePasswordPolicy } from "@/core/lib/security-settings";
 import { updateUserSchema, updatePasswordSchema } from "@/core/lib/validations";
 import { hashPassword, verifyPassword } from "@/core/lib/password-hash";
+import { readSettingValues } from "@/core/lib/setting-values";
+import { requestEmailChange } from "@/core/lib/email-change";
+/** What proves the person at the screen is the account's owner. */
+const identityProofSchema = z.object({ currentPassword: z.string().min(1).max(200).optional() });
+
+import {
+    MEMBER_USERNAME_CHANGES_KEY,
+    IDENTITY_REQUIRES_PASSWORD_KEY,
+    memberUsernameChanges,
+    identityRequiresPassword,
+} from "@/core/lib/member-identity";
 import { getHashAlgorithm } from "@/core/lib/security-settings";
 import { readJsonBody } from "@/core/lib/api-body";
 import { z } from "zod";
@@ -118,8 +129,65 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: validation.error.issues[0].message, code: "invalid_input" }, { status: 400 });
     }
 
+    const settings = await readSettingValues([
+        MEMBER_USERNAME_CHANGES_KEY,
+        IDENTITY_REQUIRES_PASSWORD_KEY,
+    ]);
+
+    // Changing who you are asks for the password that proves you are them.
+    // Somebody who walks up to an unlocked screen should not be able to take
+    // the account by rewriting one field.
+    const identityFields = validation.data.username !== undefined || validation.data.email !== undefined;
+    if (identityFields && identityRequiresPassword(settings[IDENTITY_REQUIRES_PASSWORD_KEY])) {
+        // Through a schema, like every other field a caller sends. Read raw,
+        // a body is whatever arrived: `bodies-are-narrowed` exists because a
+        // handler that trusts its shape is one cast away from trusting its
+        // contents.
+        const proof = identityProofSchema.safeParse(body);
+        const supplied = proof.success ? proof.data.currentPassword ?? "" : "";
+        const account = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            select: { password: true },
+        });
+        // An account created through a provider has no password to check, and
+        // asking for one it never had would lock those members out of their
+        // own name for ever.
+        if (account?.password) {
+            if (!supplied || !(await verifyPassword(supplied, account.password))) {
+                return NextResponse.json(
+                    { error: "Current password is incorrect", code: "wrong_password" },
+                    { status: 400 },
+                );
+            }
+        }
+    }
+
+    if (validation.data.email !== undefined) {
+        const current = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            select: { email: true },
+        });
+        const outcome = await requestEmailChange({
+            userId: session.user.id,
+            currentEmail: current?.email ?? "",
+            newEmail: validation.data.email,
+        });
+        if (!outcome.ok) {
+            return NextResponse.json({ error: "Email not changed", code: outcome.code }, { status: 400 });
+        }
+        if (outcome.verified) {
+            return NextResponse.json({ message: "Confirmation sent", code: "email_change_pending" });
+        }
+    }
+
     const data: Record<string, unknown> = {};
     if (validation.data.username) {
+        if (!memberUsernameChanges(settings[MEMBER_USERNAME_CHANGES_KEY])) {
+            return NextResponse.json(
+                { error: "Username changes are closed", code: "username_changes_closed" },
+                { status: 403 },
+            );
+        }
         const existing = await prisma.user.findFirst({
             where: { username: validation.data.username, id: { not: session.user.id } },
         });

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { afterAll, describe, it, expect } from "vitest";
 import { execFileSync } from "child_process";
 import fs from "fs";
 import os from "os";
@@ -12,9 +12,18 @@ const INSTALLER = path.join(REPO, "install.sh");
  * real install does - OS detection, secret generation, .env rendering - but
  * writes only into the directory given here and touches nothing else on the
  * host. Docker is never contacted.
+ *
+ * Every directory it makes is recorded and removed when the file is done.
+ * They were not: this file makes one per case per run, and a shared machine
+ * had 6,980 of them in /tmp, on a tmpfs that other projects were also
+ * filling. A test that leaves litter behind eventually takes the box down
+ * with it - the marketplace install route refuses at under 100 MB free and
+ * started answering 507, which reads as a code defect and is not one.
  */
+const MADE: string[] = [];
 function dryRun(args: string[]): { dir: string; env: Record<string, string>; stdout: string } {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "blysis-install-"));
+    MADE.push(dir);
     const stdout = execFileSync(
         "bash",
         [INSTALLER, "--dry-run", "--dir", dir, ...args],
@@ -28,6 +37,16 @@ function dryRun(args: string[]): { dir: string; env: Record<string, string>; std
     }
     return { dir, env, stdout };
 }
+
+afterAll(() => {
+    for (const dir of MADE) {
+        try {
+            fs.rmSync(dir, { recursive: true, force: true });
+        } catch {
+            // A directory that is already gone is the state we wanted.
+        }
+    }
+});
 
 describe("install.sh", () => {
     it("generates every secret the stack requires", () => {
@@ -121,6 +140,7 @@ describe("install.sh", () => {
         // installer downloads the stack files instead. BLYSIS_RAW_BASE points
         // that download at a local copy so the path is exercised offline.
         const raw = fs.mkdtempSync(path.join(os.tmpdir(), "blysis-raw-"));
+        MADE.push(raw);
         fs.mkdirSync(path.join(raw, "scripts"));
         for (const f of [
             "docker-compose.yml",
@@ -137,6 +157,7 @@ describe("install.sh", () => {
         fs.copyFileSync(path.join(REPO, "scripts/blysis"), path.join(raw, "scripts/blysis"));
 
         const dir = fs.mkdtempSync(path.join(os.tmpdir(), "blysis-piped-"));
+        MADE.push(dir);
         execFileSync("bash", ["-s", "--", "--dry-run", "--dir", dir], {
             input: fs.readFileSync(INSTALLER),
             encoding: "utf8",

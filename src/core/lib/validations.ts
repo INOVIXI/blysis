@@ -47,6 +47,12 @@ export const updateUserSchema = z.object({
             "Username can only contain letters, numbers, and underscores"
         )
         .optional(),
+    /**
+     * The address the account answers to. Accepted here, but never written
+     * from here: `requestEmailChange` holds it aside until the address itself
+     * answers a link, because whoever controls the mailbox controls the login.
+     */
+    email: z.string().email("Invalid email").max(254).optional(),
     avatar: z.string().url("Invalid URL").optional().nullable(),
     /**
      * The profile route wrote both of these to the user row untyped, so a

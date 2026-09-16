@@ -52,6 +52,7 @@ model User {
 
   /** Every role this member holds, each with its own expiry and origin. */
   roles  UserRole[]
+  emailChange EmailChange?
 
   accounts Account[]
   sessions Session[]
@@ -109,6 +110,30 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+/**
+ * An address somebody asked for, which is not yet theirs.
+ *
+ * The account keeps the address it has until the new one answers. Writing the
+ * new address first and verifying afterwards is how a typo silently moves
+ * every future password reset to a mailbox nobody reads, and how a hijack
+ * moves it to somebody else's: the reset link is the account.
+ *
+ * One live request per member. Asking again replaces it, so a link somebody
+ * mailed themselves twice cannot be spent on the older address.
+ */
+model EmailChange {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  newEmail  String
+  /** Hashed, like a session token: the column is not the credential. */
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
 }
 
 model VerificationToken {

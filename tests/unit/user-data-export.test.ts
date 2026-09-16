@@ -237,7 +237,7 @@ describe("exportUserData", () => {
         expect(Object.keys(result).sort()).toEqual([
             "accounts", "activityFeed", "apiKeys", "auditLog", "conversations",
             "dashboardLayout", "media", "messages", "modules",
-            "notificationPrefs", "resourcePermissions", "restrictions",
+            "notificationPrefs", "pendingEmailChange", "resourcePermissions", "restrictions",
             "revisions", "roles", "sessions", "user", "warnings",
         ]);
     });

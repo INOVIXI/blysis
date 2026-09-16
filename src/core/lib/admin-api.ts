@@ -131,6 +131,10 @@ export const MEMBER_MUTATIONS: MemberMutation[] = [
         reason: "Spending a reset token. The token is the authorisation; a permission would have to be granted to everybody to be useful.",
     },
     {
+        path: "/v1/auth/email-change",
+        reason: "Answering the link that moves an account to a new address. The token is the proof and the person clicking it is in a mail client, not signed in; requiring a session would break the ordinary case.",
+    },
+    {
         path: "/v1/auth/verify-email",
         reason: "Spending a verification token, which is the proof, and is checked by the handler before anything is written.",
     },

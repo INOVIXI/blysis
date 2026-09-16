@@ -1,5 +1,5 @@
 import { prisma } from "./db";
-import { resolveAppName } from "./app-url";
+import { resolveAppName, resolveAppUrl } from "./app-url";
 import { getEmailConfig } from "./email-config";
 import { log } from "./logger";
 
@@ -48,6 +48,8 @@ type EmailKey =
     | "resetSubject" | "resetHeading" | "resetIntro" | "resetCta" | "resetButton" | "resetIgnore"
     | "welcomeSubject" | "welcomeHeading" | "welcomeBody1" | "welcomeBody2"
     | "verifySubject" | "verifyHeading" | "verifyBody" | "verifyButton" | "verifyIgnore"
+    | "emailChangeSubject" | "emailChangeHeading" | "emailChangeBody" | "emailChangeButton" | "emailChangeIgnore"
+    | "emailChangeNoticeSubject" | "emailChangeNoticeHeading" | "emailChangeNoticeBody" | "emailChangeNoticeWarn"
     | "lockoutSubject" | "lockoutHeading" | "lockoutHi" | "lockoutIntro" | "lockoutUnlocks"
     | "lockoutWasYou" | "lockoutNotYou" | "lockoutFooter" | "lockoutIpLine";
 
@@ -63,6 +65,15 @@ const EMAIL_STRINGS: Record<"en" | "tr", Record<EmailKey, string>> = {
         welcomeHeading: "Welcome, {username}!",
         welcomeBody1: "Your {app} account has been created successfully.",
         welcomeBody2: "Explore the platform and discover all available features.",
+        emailChangeSubject: "Confirm your new {app} address",
+        emailChangeHeading: "Confirm this address",
+        emailChangeBody: "Somebody asked to move a {app} account to this address. The account keeps its old one until you confirm.",
+        emailChangeButton: "Confirm this address",
+        emailChangeIgnore: "If this was not you, ignore this message. Nothing has changed.",
+        emailChangeNoticeSubject: "A new address was requested for your {app} account",
+        emailChangeNoticeHeading: "Somebody asked to change your address",
+        emailChangeNoticeBody: "A request was made to move your {app} account to {newEmail}. Your account still uses this address, and will keep it until that one is confirmed.",
+        emailChangeNoticeWarn: "If this was not you, change your password now: whoever asked may be signed in as you.",
         verifySubject: "Verify your {app} email",
         verifyHeading: "Verify Your Email",
         verifyBody: "Click the button below to verify your email address.",
@@ -89,6 +100,15 @@ const EMAIL_STRINGS: Record<"en" | "tr", Record<EmailKey, string>> = {
         welcomeHeading: "Hoş geldin, {username}!",
         welcomeBody1: "{app} hesabın başarıyla oluşturuldu.",
         welcomeBody2: "Platformu keşfet ve tüm özellikleri kullanmaya başla.",
+        emailChangeSubject: "Yeni {app} adresini onayla",
+        emailChangeHeading: "Bu adresi onayla",
+        emailChangeBody: "Bir {app} hesabının bu adrese taşınması istendi. Onaylayana kadar hesap eski adresinde kalır.",
+        emailChangeButton: "Bu adresi onayla",
+        emailChangeIgnore: "Bunu sen istemediysen bu iletiyi yok say. Hiçbir şey değişmedi.",
+        emailChangeNoticeSubject: "{app} hesabın için yeni adres istendi",
+        emailChangeNoticeHeading: "Adresini değiştirme isteği var",
+        emailChangeNoticeBody: "{app} hesabının {newEmail} adresine taşınması istendi. Hesabın hâlâ bu adresi kullanıyor ve o adres onaylanana kadar da kullanacak.",
+        emailChangeNoticeWarn: "Bunu sen istemediysen hemen parolanı değiştir: isteği yapan kişi senin hesabında oturum açmış olabilir.",
         verifySubject: "{app} e-postanı doğrula",
         verifyHeading: "E-postanı Doğrula",
         verifyBody: "E-posta adresini doğrulamak için aşağıdaki butona tıkla.",
@@ -517,6 +537,62 @@ export async function sendVerificationEmail(email: string, verifyUrl: string, lo
                     ${emailT(locale, "verifyButton")}
                 </a>
                 <p style="color: #9ca3af; font-size: 14px;">${emailT(locale, "verifyIgnore")}</p>
+            </div>
+        `,
+    });
+}
+
+/**
+ * Sent to the address somebody is claiming. Until this link is answered the
+ * account keeps the address it has, which is what makes a typo harmless and a
+ * stranger's address useless to a hijacker.
+ */
+export async function sendEmailChangeVerification(email: string, token: string, locale?: string) {
+    const confirmUrl = `${resolveAppUrl()}/auth/email-change?token=${encodeURIComponent(token)}`;
+    if (!(await getEmailEnabled())) {
+        log.warn("email suppressed: no transport configured", {
+            kind: "email-change-verification",
+            to: email,
+            ...(process.env.NODE_ENV === "production" ? {} : { confirmUrl }),
+        });
+        return;
+    }
+
+    await sendEmail({
+        to: email,
+        subject: emailT(locale, "emailChangeSubject"),
+        html: `
+            <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #1f2937;">${emailT(locale, "emailChangeHeading")}</h2>
+                <p style="color: #6b7280;">${emailT(locale, "emailChangeBody")}</p>
+                <a href="${escapeHtml(confirmUrl)}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; margin: 16px 0;">
+                    ${emailT(locale, "emailChangeButton")}
+                </a>
+                <p style="color: #9ca3af; font-size: 14px;">${emailT(locale, "emailChangeIgnore")}</p>
+            </div>
+        `,
+    });
+}
+
+/**
+ * Sent to the address on file, which is the only warning this kind of hijack
+ * gives: somebody whose screen was borrowed for a minute finds a message
+ * saying what was asked for, and what to do about it.
+ */
+export async function sendEmailChangeNotice(email: string, newEmail: string, locale?: string) {
+    if (!(await getEmailEnabled())) {
+        log.warn("email suppressed: no transport configured", { kind: "email-change-notice", to: email });
+        return;
+    }
+
+    await sendEmail({
+        to: email,
+        subject: emailT(locale, "emailChangeNoticeSubject"),
+        html: `
+            <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #1f2937;">${emailT(locale, "emailChangeNoticeHeading")}</h2>
+                <p style="color: #6b7280;">${emailT(locale, "emailChangeNoticeBody", { newEmail: escapeHtml(newEmail) })}</p>
+                <p style="color: #b91c1c; font-size: 14px;">${emailT(locale, "emailChangeNoticeWarn")}</p>
             </div>
         `,
     });

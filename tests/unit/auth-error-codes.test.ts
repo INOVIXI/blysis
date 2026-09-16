@@ -43,7 +43,20 @@ const LOCALES = readdirSync(join(ROOT, "messages-core"))
     .filter((f) => f.endsWith(".json"))
     .map((f) => f.replace(/\.json$/, ""));
 
-const ROUTES = walk(AUTH_API, /^route\.ts$/);
+/**
+ * The endpoints, and the one library that decides a refusal for them.
+ *
+ * `email-change.ts` answers with a typed union of codes and the two routes
+ * that call it pass whatever comes back. A scan that reads only literals
+ * inside the route sees `code: outcome.code` and concludes the endpoint sends
+ * nothing and its messages are orphans. The union is the stronger version of
+ * the same promise - TypeScript refuses a code that is not in it - so the file
+ * that declares it is read here too.
+ */
+const ROUTES = [
+    ...walk(AUTH_API, /^route\.ts$/),
+    join(ROOT, "src/core/lib/email-change.ts"),
+];
 
 /**
  * A code an endpoint can answer with. Two spellings reach a caller: the
@@ -52,6 +65,9 @@ const ROUTES = walk(AUTH_API, /^route\.ts$/);
  * kind, so a scan that reads the first alone calls its message an orphan.
  */
 const CODE_LITERAL = /\bcode:\s*(?:[^,}\n]*\?\?\s*)?"([a-z_]+)"/g;
+
+/** A refusal declared as a union of literals, which is a code by another name. */
+const CODE_UNION = /export type \w*Refusal\s*=\s*([^;]+);/g;
 
 /**
  * A response body literal that names `error`. The capture is the whole
@@ -87,6 +103,12 @@ describe("auth API error contract", () => {
                 // the fallback when it does not. It still always yields a
                 // string, which is what this gate is for.
                 if (/\bcode:\s*\w+\.code \?\? "/.test(body)) continue;
+                // `code: outcome.code`, where `outcome` is a refusal typed as
+                // a union of literals. TypeScript refuses anything outside the
+                // union, which is a stronger promise than a literal written
+                // here - and the union's members are collected below, so the
+                // messages for them are still held to the same rule.
+                if (/\bcode:\s*outcome\.code\b/.test(body)) continue;
                 if (!/\bcode:\s*"/.test(body)) {
                     uncoded.push(`${route.slice(ROOT.length + 1)} -> ${body.replace(/\s+/g, " ").slice(0, 80)}`);
                 }
@@ -98,7 +120,11 @@ describe("auth API error contract", () => {
     it("every code used has a message in every locale", () => {
         const used = new Set<string>();
         for (const route of ROUTES) {
-            for (const m of code(route).matchAll(CODE_LITERAL)) used.add(m[1]);
+            const body = code(route);
+            for (const m of body.matchAll(CODE_LITERAL)) used.add(m[1]);
+            for (const m of body.matchAll(CODE_UNION)) {
+                for (const literal of m[1].matchAll(/"([a-z_]+)"/g)) used.add(literal[1]);
+            }
         }
         expect(used.size).toBeGreaterThan(10);
         for (const locale of LOCALES) {
@@ -110,7 +136,11 @@ describe("auth API error contract", () => {
     it("no locale carries a message no endpoint can send", () => {
         const used = new Set<string>();
         for (const route of ROUTES) {
-            for (const m of code(route).matchAll(CODE_LITERAL)) used.add(m[1]);
+            const body = code(route);
+            for (const m of body.matchAll(CODE_LITERAL)) used.add(m[1]);
+            for (const m of body.matchAll(CODE_UNION)) {
+                for (const literal of m[1].matchAll(/"([a-z_]+)"/g)) used.add(literal[1]);
+            }
         }
         for (const locale of LOCALES) {
             const orphans = Object.keys(catalogue(locale)).filter((c) => !used.has(c));

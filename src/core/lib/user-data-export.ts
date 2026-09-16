@@ -59,6 +59,16 @@ export const CORE_TABLES: CoreTable[] = [
         select: { id: true, scope: true, reason: true, expiresAt: true, createdAt: true },
     },
     {
+        key: "pendingEmailChange",
+        model: "emailChange",
+        column: "userId",
+        // An address they asked for and has not answered yet. Theirs to have:
+        // it is a request they made. The token is withheld - it is the
+        // credential that completes the change, and a bundle somebody
+        // downloads is not the place for a live one.
+        select: { id: true, newEmail: true, expiresAt: true, createdAt: true },
+    },
+    {
         key: "roles",
         model: "userRole",
         column: "userId",
@@ -333,6 +343,9 @@ Contents
   roles            Every role you hold, when it was granted, what
                    granted it, and when it lapses if it does. A role
                    held for a fixed period carries the date it ends.
+  pendingEmailChange
+                   An address you asked to move to, which has not yet
+                   been confirmed. The confirmation token is withheld.
   sessions         Login sessions (device, IP, last-active timestamp).
   warnings         Moderation warnings issued against you.
   notificationPrefs
