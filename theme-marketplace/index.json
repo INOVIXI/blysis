@@ -1,22 +1,5 @@
 {
   "version": "1.0.0",
   "updated": "2026-04-04",
-  "themes": [
-    {
-      "id": "pixelcraft",
-      "name": "PixelCraft",
-      "description": "Dark theme with pixel-art aesthetics and retro gaming vibes",
-      "version": "1.0.0",
-      "author": "Blysis",
-      "type": "dark",
-      "verified": true,
-      "preview": "/themes/pixelcraft-preview.png",
-      "zip": "pixelcraft.zip",
-      "colors": {
-        "primary": "#3ea72d",
-        "secondary": "#ffb800",
-        "background": "#1a1a1a"
-      }
-    }
-  ]
+  "themes": []
 }
