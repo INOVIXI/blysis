@@ -2,8 +2,8 @@
   "id": "minecraft-link",
   "name": "Minecraft Link",
   "description": "Let players prove they own an in-game Minecraft account by reading a code whispered to them on the server",
-  "version": "1.2.0",
-  "coreVersion": "^2.0.0",
+  "version": "1.5.2",
+  "coreVersion": "^3.0.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Link2",
@@ -43,7 +43,8 @@
       "id": "ProfileMinecraftTab",
       "label": "Minecraft",
       "component": "components/ProfileMinecraftTab",
-      "order": 40
+      "order": 40,
+      "labelKey": "minecraftLink.profileTab"
     }
   ],
   "hooksEmitted": [
@@ -93,7 +94,8 @@
         "adm_subtitle": "How the linking code is delivered to a player in game.",
         "adm_field1Label": "Whisper command",
         "adm_field1Desc": "Run to send a player their code. {player} and {message} are substituted. Defaults to Minecraft's tell command; change it for a proxy or a plugin that handles private messages differently.",
-        "unlinkFailed": "The account could not be unlinked. Please try again."
+        "unlinkFailed": "The account could not be unlinked. Please try again.",
+        "profileTab": "Minecraft"
       },
       "admin": {
         "module_minecraft-link_name": "Minecraft Link",
@@ -132,7 +134,8 @@
         "adm_subtitle": "Bağlama kodunun oyuncuya oyun içinde nasıl ileteceği.",
         "adm_field1Label": "Fısıltı komutu",
         "adm_field1Desc": "Oyuncuya kodunu göndermek için çalıştırılır. {player} ve {message} yerine geçer. Varsayılan Minecraft tell komutudur; proxy veya özel mesajları farklı işleyen bir eklenti kullanıyorsan değiştir.",
-        "unlinkFailed": "Hesap bağlantısı kaldırılamadı. Lütfen tekrar deneyin."
+        "unlinkFailed": "Hesap bağlantısı kaldırılamadı. Lütfen tekrar deneyin.",
+        "profileTab": "Minecraft"
       },
       "admin": {
         "module_minecraft-link_name": "Minecraft Bağlama",
@@ -145,6 +148,11 @@
       "hook": "game-account.resolve",
       "type": "filter",
       "handler": "hooks/resolve-account.ts"
+    },
+    {
+      "hook": "profile.linkedAccounts",
+      "type": "filter",
+      "handler": "hooks/profile-linked-account.ts"
     }
   ]
 }

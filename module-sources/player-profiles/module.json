@@ -2,8 +2,8 @@
   "id": "player-profiles",
   "name": "Member Profiles",
   "description": "Public profile pages, with what every installed module knows about a member",
-  "version": "1.2.3",
-  "coreVersion": "^2.0.0",
+  "version": "1.6.2",
+  "coreVersion": "^3.0.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Users",
@@ -13,7 +13,9 @@
       "component": "pages/public/[username]/page.tsx",
       "resolver": "lib/route-exists.ts",
       "titleKey": "pageTitles.player",
-      "userProfile": true
+      "descriptionKey": "pageDescriptions.player",
+      "userProfile": true,
+      "ogType": "profile"
     }
   ],
   "profileTabs": [
@@ -21,7 +23,8 @@
       "id": "ProfileAccountsTab",
       "label": "Accounts",
       "component": "components/ProfileAccountsTab",
-      "order": 60
+      "order": 60,
+      "labelKey": "playerProfiles.profileTab"
     }
   ],
   "api": [
@@ -33,7 +36,7 @@
     {
       "path": "/linked-accounts",
       "handler": "api/linked-accounts/route.ts",
-      "description": "List, link, or unlink connected game accounts for the current user."
+      "description": "Read the accounts a member has proved are theirs."
     },
     {
       "path": "/players/linked-accounts",
@@ -63,14 +66,8 @@
         "stat_comments": "Comments",
         "stat_suggestions": "Suggestions",
         "accounts": "Accounts",
-        "unlink": "Unlink",
-        "unlinkError": "Could not unlink that account.",
-        "linkGameAccount": "Link Game Account",
-        "gameUsername": "Game username",
-        "link": "Link",
-        "linkError": "Could not link that account.",
-        "oauthAutoLink": "Accounts you sign in with are linked automatically.",
-        "unlinkConfirm": "This account will be disconnected. You will have to link it again to use it."
+        "profileTab": "Linked accounts",
+        "linksAreManagedByTheirModule": "Each link is managed where it was made, in that game's own section."
       },
       "pageTitles": {
         "player": "Member Profile"
@@ -78,6 +75,9 @@
       "admin": {
         "module_player-profiles_name": "Member Profiles",
         "module_player-profiles_description": "Public profile pages, with what every installed module knows about a member"
+      },
+      "pageDescriptions": {
+        "player": "See a member's public profile: when they joined, the rank they hold and what they have posted across the community."
       }
     },
     "tr": {
@@ -101,14 +101,8 @@
         "stat_comments": "Yorum",
         "stat_suggestions": "Öneri",
         "accounts": "Hesaplar",
-        "unlink": "Bağlantıyı Kaldır",
-        "unlinkError": "Hesap bağlantısı kaldırılamadı.",
-        "linkGameAccount": "Oyun Hesabı Bağla",
-        "gameUsername": "Oyun kullanıcı adı",
-        "link": "Bağla",
-        "linkError": "Hesap bağlanamadı.",
-        "oauthAutoLink": "Giriş yaptığınız hesaplar otomatik olarak bağlanır.",
-        "unlinkConfirm": "Bu hesabın bağlantısı kesilecek. Tekrar kullanmak için yeniden bağlamanız gerekir."
+        "profileTab": "Bağlı hesaplar",
+        "linksAreManagedByTheirModule": "Her bağlantı, yapıldığı yerde - o oyunun kendi bölümünde - yönetilir."
       },
       "pageTitles": {
         "player": "Üye Profili"
@@ -116,15 +110,16 @@
       "admin": {
         "module_player-profiles_name": "Üye Profilleri",
         "module_player-profiles_description": "Herkese açık profil sayfaları; kurulu her modülün üye hakkında bildiği ile"
+      },
+      "pageDescriptions": {
+        "player": "Bir üyenin herkese açık profilini görün: ne zaman katıldığı, hangi rütbede olduğu ve toplulukta neler paylaştığı."
       }
     }
   },
-  "userDataExport": [
+  "hooksEmitted": [
     {
-      "model": "linkedAccount",
-      "key": "playerProfiles.linkedAccounts",
-      "column": "userId",
-      "erasure": "purge"
+      "hook": "profile.linkedAccounts",
+      "type": "filter"
     }
   ]
 }

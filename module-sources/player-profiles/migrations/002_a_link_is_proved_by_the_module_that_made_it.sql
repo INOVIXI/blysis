@@ -1,0 +1,23 @@
+-- A linked account is proved by the module that made it, not typed by its owner.
+--
+-- This module no longer declares `LinkedAccount`. Every row in that table was
+-- written by a text box on the profile tab: a member typed an in-game name and
+-- it was recorded as theirs and published on their public profile, with
+-- nothing checking it. The unique constraint on (provider, providerId) meant
+-- the first person to type a name held it, including somebody else's. The tab
+-- also promised that accounts you sign in with are linked automatically, and
+-- nothing ever did that - the box was the only writer there had ever been.
+--
+-- A link is a claim about an account somewhere else, so only a module that can
+-- reach that somewhere else can prove it. `profile.linkedAccounts` asks, and
+-- `minecraft-link` answers out of the table it fills after whispering a code
+-- to the player in game.
+--
+-- WHAT IS LOST: every self-declared name, and the fact that somebody had
+-- declared it. That is acceptable because none of it was ever true by
+-- construction - no row in this table was ever checked against anything - and
+-- because the rows carry names members typed about themselves. Leaving the
+-- table behind was the alternative and it is worse: nothing would read it, so
+-- nothing would erase it either, and deleting an account would leave that
+-- member's declared in-game name sitting in a table core no longer knows about.
+DROP TABLE IF EXISTS "LinkedAccount";

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readLinkedAccounts } from "../../lib/read-linked-accounts";
 import { prisma } from "@/core/sdk/server";
 
 type RouteParams = { params: Promise<{ username: string }> };
@@ -104,13 +105,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const [counts, recentTopics, linkedAccounts] = await Promise.all([
         countStatistics(user.id),
         recentForumTopics(user.id),
-        prisma.linkedAccount.findMany({
-            where: { userId: user.id },
-            // `avatar` because the profile draws it: a picture that came
-            // with an identity is the identity's to carry, and the page used
-            // to build one out of a linked name and a third party's URL.
-            select: { provider: true, username: true, avatar: true },
-        }),
+        // Asked for rather than read: the module that proved the account is
+        // the only one that can say it is this member's, and this used to
+        // publish whatever they had typed into a box. A picture still travels
+        // with the identity where the answering module has one; the page used
+        // to build one out of a linked name and a third party's URL.
+        readLinkedAccounts(user.id),
     ]);
 
     return NextResponse.json({
