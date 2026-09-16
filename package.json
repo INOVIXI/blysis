@@ -75,7 +75,7 @@
     "dompurify": "^3.4.15",
     "dotenv": "^17.4.2",
     "isomorphic-dompurify": "^4.2.0",
-    "lucide-react": "^1.43.0",
+    "lucide-react": "^1.45.0",
     "marked": "^18.0.13",
     "marked-alert": "^2.1.2",
     "marked-footnote": "^1.4.0",
@@ -135,7 +135,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "^5.0.1",
     "eslint": "^9.39.5",
-    "eslint-config-next": "^16.3.4",
+    "eslint-config-next": "^16.3.5",
     "jsdom": "^30.0.1",
     "vitest": "^5.0.1"
   },
