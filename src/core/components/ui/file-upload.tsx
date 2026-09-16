@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Upload, X, Loader2, ImageIcon } from "lucide-react";
+import { Upload, X, Loader2 } from "lucide-react";
+import { FilePreview } from "@/core/components/ui/file-preview";
 import { toast } from "sonner";
 import { Button } from "@/core/components/ui/button";
 import { Label } from "@/core/components/ui/label";
@@ -20,22 +21,19 @@ export interface FileUploadProps {
      * the picker.
      */
     id?: string;
+    /**
+     * Where the bytes go. The media library by default, which is an
+     * operator's tool and admin only; a screen a member uses names its own
+     * narrower door instead. What is on the other side decides the limits -
+     * this component only sends the file.
+     */
+    endpoint?: string;
 }
 
-/**
- * Looks like an image based on either the accept MIME prefix or the URL extension.
- */
-function looksLikeImage(value: string | null, accept?: string): boolean {
-    if (accept && accept.startsWith("image/")) return true;
-    if (!value) return false;
-    return /\.(png|jpe?g|gif|webp|svg|avif|bmp|ico)(\?.*)?$/i.test(value);
-}
-
-export function FileUpload({ value, onChange, accept, label, id }: FileUploadProps) {
+export function FileUpload({ value, onChange, accept, label, id, endpoint = "/api/v1/upload" }: FileUploadProps) {
     const t = useTranslations("common");
     const inputRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
-    const isImage = looksLikeImage(value, accept);
 
     const handlePick = () => {
         inputRef.current?.click();
@@ -51,7 +49,7 @@ export function FileUpload({ value, onChange, accept, label, id }: FileUploadPro
             const formData = new FormData();
             formData.append("file", file);
 
-            const res = await fetch("/api/v1/upload", {
+            const res = await fetch(endpoint, {
                 method: "POST",
                 body: formData,
             });
@@ -81,53 +79,33 @@ export function FileUpload({ value, onChange, accept, label, id }: FileUploadPro
             {label && <Label htmlFor={id}>{label}</Label>}
 
             {value && (
-                <div className="flex items-start gap-3 rounded-md border border-border bg-muted/30 p-3">
-                    {isImage ? (
-                        // Uploaded/user-provided URLs may be local or external - use plain img tag
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                            src={value}
-                            alt={t("preview")}
-                            className="h-20 w-20 rounded object-contain border border-border bg-muted p-1"
-                        />
-                    ) : (
-                        <div className="flex h-20 w-20 items-center justify-center rounded border border-border bg-muted text-muted-foreground">
-                            <ImageIcon className="h-6 w-6" />
-                        </div>
-                    )}
-                    <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs text-muted-foreground" title={value}>
-                            {value}
-                        </p>
-                        <div className="mt-2 flex gap-2">
-                            <Button
-                                id={id}
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={handlePick}
-                                disabled={uploading}
-                            >
-                                {uploading ? (
-                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                ) : (
-                                    <Upload className="h-3 w-3" />
-                                )}
-                                {t("replace")}
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleRemove}
-                                disabled={uploading}
-                            >
-                                <X className="h-3 w-3" aria-hidden="true" />
-                                {t("remove")}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
+                <FilePreview value={value} accept={accept}>
+                    <Button
+                        id={id}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handlePick}
+                        disabled={uploading}
+                    >
+                        {uploading ? (
+                            <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                        ) : (
+                            <Upload className="h-3 w-3" aria-hidden="true" />
+                        )}
+                        {t("replace")}
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRemove}
+                        disabled={uploading}
+                    >
+                        <X className="h-3 w-3" aria-hidden="true" />
+                        {t("remove")}
+                    </Button>
+                </FilePreview>
             )}
 
             {!value && (

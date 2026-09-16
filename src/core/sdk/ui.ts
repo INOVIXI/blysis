@@ -87,7 +87,10 @@ export { useConfirm } from "@/core/components/ui/confirm-dialog";
 export { useSiteCurrency } from "@/core/components/currency/site-currency";
 export type { SiteCurrency, DisplayCurrency } from "@/core/components/currency/site-currency";
 export { RichTextEditor } from "@/core/components/ui/rich-text-editor";
-export { FileUpload } from "@/core/components/ui/file-upload";
+// The picker belongs to `UrlOrFile`, not to a screen: a field that can be
+// uploaded to can also be linked, and a module reaching for the picker alone
+// draws half a field. See `an-image-field-is-one-control`.
+export { UrlOrFile } from "@/core/components/ui/url-or-file";
 export { FooterDropdown } from "@/core/components/ui/footer-dropdown";
 
 // The keyboard half of a dialog: Escape, a Tab trap, and focus handed back to

@@ -1,6 +1,6 @@
 "use client";
 
-import { FileUpload } from "@/core/components/ui/file-upload";
+import { UrlOrFile } from "@/core/components/ui/url-or-file";
 import { ResetToDefault } from "./ResetToDefault";
 import type { FieldProps } from "./types";
 
@@ -10,9 +10,9 @@ export function ImageField({ def, value, onChange, isDefault }: FieldProps<strin
 
     return (
         <div className="space-y-2">
-            <FileUpload
-                value={current}
-                onChange={(url) => onChange(url ?? undefined)}
+            <UrlOrFile
+                value={current ?? ""}
+                onChange={(url) => onChange(url || undefined)}
                 accept="image/*"
             />
             {!isDefault && <ResetToDefault onReset={() => onChange(undefined)} />}

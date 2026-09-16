@@ -11,7 +11,6 @@ import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { useTranslations } from "next-intl";
-import { FileUpload } from "@/core/components/ui/file-upload";
 import { UrlOrFile } from "@/core/components/ui/url-or-file";
 import { RichTextEditor } from "@/core/components/ui/rich-text-editor";
 import { IconPicker } from "@/core/components/ui/icon-picker";
@@ -33,7 +32,13 @@ export interface CrudField {
      * the way into the database.
      */
     /** "icon" renders the Lucide icon picker and stores the icon's kebab-case name. */
-    type?: "text" | "password" | "number" | "url" | "select" | "textarea" | "toggle" | "datetime" | "color" | "image" | "urlOrFile" | "richtext" | "icon";
+    /**
+     * What the field holds. `image` and `file` are the same control - a link
+     * or an upload - and differ only in what they accept. The old
+     * `urlOrFile` named the control rather than the field, and sat beside an
+     * `image` that could only be uploaded to; both now draw `UrlOrFile`.
+     */
+    type?: "text" | "password" | "number" | "url" | "select" | "textarea" | "toggle" | "datetime" | "color" | "image" | "file" | "richtext" | "icon";
     placeholder?: string;
     options?: { value: string; label: string }[];
     defaultValue?: string;
@@ -240,8 +245,8 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
                     </div>
                 );
             case "image":
-                return <FileUpload value={val || null} onChange={(v) => onChange(v || "")} accept={field.accept || "image/*"} />;
-            case "urlOrFile":
+                return <UrlOrFile value={val} onChange={onChange} accept={field.accept || "image/*"} placeholder={field.placeholder} />;
+            case "file":
                 return <UrlOrFile value={val} onChange={onChange} accept={field.accept} placeholder={field.placeholder} />;
             case "richtext":
                 return <RichTextEditor value={val} onChange={onChange} placeholder={field.placeholder} />;
@@ -282,7 +287,7 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid md:grid-cols-2 gap-4">
                                 {fields.map((field) => {
-                                    const fullWidth = field.type === "textarea" || field.type === "richtext" || field.type === "urlOrFile" || field.type === "image";
+                                    const fullWidth = field.type === "textarea" || field.type === "richtext" || field.type === "file" || field.type === "image";
                                     return (
                                         <div key={field.key} className={fullWidth ? "md:col-span-2" : ""}>
                                             <Label>{field.label} {field.required && <span className="text-destructive">*</span>}</Label>

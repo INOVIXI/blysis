@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
-import { FileUpload } from "@/core/components/ui/file-upload";
+import { UrlOrFile } from "@/core/components/ui/url-or-file";
 import { IconPicker } from "@/core/components/ui/icon-picker";
 import { Loader2, Check } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -173,9 +173,9 @@ export function SettingsForm({ title, subtitle, fields, children }: SettingsForm
                                         rows={3}
                                     />
                                 ) : field.type === "image" ? (
-                                    <FileUpload
-                                        value={values[field.key] || null}
-                                        onChange={(v) => setValues({ ...values, [field.key]: v || "" })}
+                                    <UrlOrFile
+                                        value={values[field.key] || ""}
+                                        onChange={(v) => setValues({ ...values, [field.key]: v })}
                                         accept={field.accept || "image/*"}
                                     />
                                 ) : field.type === "icon" ? (

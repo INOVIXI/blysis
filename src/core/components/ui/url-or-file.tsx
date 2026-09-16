@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link as LinkIcon, Upload } from "lucide-react";
+import { Link as LinkIcon, Upload, X, Images } from "lucide-react";
 import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
 import { FileUpload } from "@/core/components/ui/file-upload";
+import { FilePreview } from "@/core/components/ui/file-preview";
+import { Button } from "@/core/components/ui/button";
+import { MediaPicker } from "@/core/components/ui/media-picker";
 import { Radio } from "@/core/components/ui/radio";
 
 export interface UrlOrFileProps {
@@ -14,9 +17,21 @@ export interface UrlOrFileProps {
     label?: string;
     accept?: string;
     placeholder?: string;
+    /**
+     * Names the control a caller's own `<Label htmlFor>` points at. It lands
+     * on whichever control the current mode draws, because that is the one a
+     * reader is about to type into or press.
+     */
+    id?: string;
+    /** Where an upload goes; see `FileUploadProps`. */
+    endpoint?: string;
 }
 
 type Mode = "link" | "upload";
+
+/** The library's own upload door. A field posting elsewhere is not an
+ * operator's field, and `/api/v1/media` would refuse whoever is using it. */
+const LIBRARY_ENDPOINT = "/api/v1/upload";
 
 function detectMode(value: string): Mode {
     if (value && value.startsWith("/uploads/")) return "upload";
@@ -29,9 +44,21 @@ export function UrlOrFile({
     label,
     accept,
     placeholder = "https://...",
+    id,
+    endpoint,
 }: UrlOrFileProps) {
     const t = useTranslations("common");
     const [mode, setMode] = useState<Mode>(() => detectMode(value));
+    const [browsing, setBrowsing] = useState(false);
+
+    /*
+     * The library is an operator's shelf: `/api/v1/media` is admin only, so a
+     * field that uploads somewhere else - a member's avatar - is not offered
+     * a shelf it would be refused from. Derived rather than asked for,
+     * because the two are the same fact: the door and the shelf belong to the
+     * same surface.
+     */
+    const hasLibrary = (endpoint ?? LIBRARY_ENDPOINT) === LIBRARY_ENDPOINT;
 
     const handleModeChange = (next: Mode) => {
         setMode(next);
@@ -39,7 +66,7 @@ export function UrlOrFile({
 
     return (
         <div className="space-y-2">
-            {label && <Label>{label}</Label>}
+            {label && <Label htmlFor={id}>{label}</Label>}
 
             <div className="flex gap-2">
                 <label className="flex cursor-pointer items-center gap-2 rounded-md border border-border bg-background px-3 py-1.5 text-sm hover:bg-muted">
@@ -60,17 +87,44 @@ export function UrlOrFile({
                     <Upload className="h-3.5 w-3.5" />
                     <span>{t("uploadFile")}</span>
                 </label>
+                {hasLibrary && (
+                    <Button type="button" variant="outline" size="sm" onClick={() => setBrowsing(true)}>
+                        <Images className="h-3.5 w-3.5" aria-hidden="true" />
+                        {t("mediaLibrary")}
+                    </Button>
+                )}
             </div>
 
+            {browsing && (
+                <MediaPicker onPick={onChange} onClose={() => setBrowsing(false)} />
+            )}
+
             {mode === "link" ? (
-                <Input
-                    type="url"
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder={placeholder} aria-label={placeholder}
-                />
+                <>
+                    <Input
+                        id={id}
+                        type="url"
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        placeholder={placeholder} aria-label={placeholder}
+                    />
+                    {/* The same preview the picker draws. A pasted address is
+                        the same image at the same place, and an operator who
+                        pasted the wrong one used to find out when the page
+                        shipped. */}
+                    {value && (
+                        <FilePreview value={value} accept={accept}>
+                            <Button type="button" variant="ghost" size="sm" onClick={() => onChange("")}>
+                                <X className="h-3 w-3" aria-hidden="true" />
+                                {t("remove")}
+                            </Button>
+                        </FilePreview>
+                    )}
+                </>
             ) : (
                 <FileUpload
+                    id={id}
+                    endpoint={endpoint}
                     value={value || null}
                     onChange={(url) => onChange(url || "")}
                     accept={accept}
