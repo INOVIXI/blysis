@@ -899,6 +899,7 @@
     "roles_permissions": "İzinler",
     "roles_preview": "Görünecek hâli",
     "roles_previewName": "Üye adı",
+    "roles_previewRole": "Rol adı",
     "roles_priority": "Öncelik",
     "roles_priorityHint": "Yüksek = daha fazla yetki",
     "roles_refusedCount": "{count} asla",

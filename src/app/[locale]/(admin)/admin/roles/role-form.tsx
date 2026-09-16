@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Button, buttonClassName } from "@/core/components/ui/button";
@@ -60,6 +61,7 @@ export interface RoleRecord {
 export function RoleForm({ role }: { role?: RoleRecord }) {
     const t = useTranslations("admin");
     const locale = useLocale();
+    const { data: session } = useSession();
     const commonT = useTranslations("common");
     const router = useRouter();
 
@@ -233,15 +235,25 @@ export function RoleForm({ role }: { role?: RoleRecord }) {
 
                         {/* Drawn the way the site will draw it. A rule that is
                             refused shows the plain name here too, which is the
-                            only warning an operator gets before saving. */}
+                            only warning an operator gets before saving.
+
+                            Two different things are being previewed, so two
+                            different words. `nameCss` paints a *member's name*,
+                            so the preview uses the reader's own - watching your
+                            own name take the styling is the question an
+                            operator is actually asking. `badgeCss` paints the
+                            *role*, so the pill shows what is being typed into
+                            the display name field. It used to show the same
+                            placeholder in both places, which previewed
+                            nothing. */}
                         <div className="flex items-center gap-3 border border-border rounded-lg p-3">
                             <span className="text-xs text-muted-foreground">{t("roles_preview")}</span>
                             <RoleName
-                                name={form.displayName || t("roles_previewName")}
+                                name={session?.user?.name || t("roles_previewName")}
                                 role={{ id: "preview", displayName: form.displayName, color: form.color, nameCss: form.nameCss }}
                             />
                             <RoleBadge
-                                role={{ id: "preview", name: form.displayName || t("roles_previewName"), displayName: form.displayName, color: form.color, badgeCss: form.badgeCss }}
+                                role={{ id: "preview", name: form.displayName || t("roles_previewRole"), displayName: form.displayName, color: form.color, badgeCss: form.badgeCss }}
                             />
                         </div>
 

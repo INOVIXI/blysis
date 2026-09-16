@@ -899,6 +899,7 @@
     "roles_permissions": "Permissions",
     "roles_preview": "As it will look",
     "roles_previewName": "Member name",
+    "roles_previewRole": "Role name",
     "roles_priority": "Priority",
     "roles_priorityHint": "Higher = more authority",
     "roles_refusedCount": "{count} never",
