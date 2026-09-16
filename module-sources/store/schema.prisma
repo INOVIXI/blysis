@@ -146,6 +146,11 @@ enum ProductType {
 model Order {
   id            String      @id @default(cuid())
   orderNumber   String      @unique
+  /// An integer an integrator can hold and hand back. `id` is a cuid and
+  /// `orderNumber` is a string the buyer reads; a pulling integrator's schema
+  /// asks for an integer and returns it when the document is issued, so the
+  /// value has to lead back to this row. See migrations/014.
+  number        Int         @unique @default(autoincrement())
   status        OrderStatus @default(PENDING)
   total         Decimal     @db.Decimal(10, 2)
   subtotal      Decimal     @db.Decimal(10, 2)

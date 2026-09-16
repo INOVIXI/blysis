@@ -53,6 +53,8 @@ declare global {
         "coupon.issue": CouponIssued;
         /** The sales somebody is collecting, oldest first. */
         "store.orders.collect": StoreOrderHookPayload[];
+        /** The shop's own id for an order somebody named, or null for none. */
+        "store.order.resolve": string | null;
         /** Which gateways can take this currency right now. */
         "payment.providers": PaymentProviderSummary[];
         /** Where to send the buyer, once a gateway has started the payment. */
@@ -105,6 +107,15 @@ declare global {
             until?: Date | null;
             limit: number;
         };
+        /**
+         * An order named the way the caller was given it.
+         *
+         * A pulling integrator is handed a number and hands it back later,
+         * possibly after an upgrade that changed which of the shop's three
+         * names for an order it was holding. The shop knows all three; a
+         * module that files invoices should know none of them.
+         */
+        "store.order.resolve": { reference: string | number };
         /**
          * A coupon somebody won.
          *
@@ -272,8 +283,23 @@ interface StoreOrderHookPayload {
     /** Null once the buyer deletes their account - Order.userId is SetNull. */
     userId: string | null;
     orderNumber: string;
+    /**
+     * The integer an integrator holds and hands back.
+     *
+     * `id` is a cuid and `orderNumber` is a string the buyer reads. A pulling
+     * integrator's schema asks for an integer and returns it once it has
+     * issued the document, so the value has to lead back to this row - which
+     * a hash of the cuid would not. See migrations/014.
+     */
+    number?: number;
     status?: string;
     total: unknown;
+    /**
+     * What the goods came to and what came off. The amount paid alone left an
+     * invoicing module to infer a discount its schema has a field for.
+     */
+    subtotal?: unknown;
+    discount?: unknown;
     currency?: string;
     paymentMethod?: string | null;
     metadata?: unknown;

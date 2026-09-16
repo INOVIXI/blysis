@@ -39,10 +39,16 @@ const collectOrders: HookHandlerFor<"store.orders.collect", "filter"> = async (c
 
     return orders.map((order) => ({
         id: order.id,
+        // The integer an integrator holds; see the field's own comment in
+        // hooks.d.ts and store migration 014.
+        number: order.number,
         userId: order.userId,
         orderNumber: order.orderNumber,
         status: order.status,
         total: order.total,
+        // What the goods came to, and what came off.
+        subtotal: order.subtotal,
+        discount: order.discount,
         currency: order.currency,
         paymentMethod: order.paymentMethod,
         metadata: order.metadata,

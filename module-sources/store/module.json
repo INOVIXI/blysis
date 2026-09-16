@@ -2,8 +2,8 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.27.1",
-  "coreVersion": "^2.2.0",
+  "version": "2.34.2",
+  "coreVersion": "^3.0.0",
   "category": "commerce",
   "author": "Blysis Team",
   "icon": "ShoppingBag",
@@ -61,6 +61,11 @@
       "hook": "store.orders.collect",
       "type": "filter",
       "handler": "hooks/collect-orders.ts"
+    },
+    {
+      "hook": "store.order.resolve",
+      "type": "filter",
+      "handler": "hooks/resolve-order.ts"
     }
   ],
   "settings": [
@@ -204,30 +209,35 @@
     {
       "path": "/store",
       "component": "pages/public/page.tsx",
-      "titleKey": "pageTitles.store"
+      "titleKey": "pageTitles.store",
+      "descriptionKey": "pageDescriptions.store"
     },
     {
       "path": "/store/cart",
       "component": "pages/public/cart/page.tsx",
       "noindex": true,
-      "titleKey": "pageTitles.cart"
+      "titleKey": "pageTitles.cart",
+      "descriptionKey": "pageDescriptions.cart"
     },
     {
       "path": "/store/product/[...params]",
       "component": "pages/public/product/[...params]/page.tsx",
       "resolver": "lib/route-exists.ts",
-      "titleKey": "pageTitles.product"
+      "titleKey": "pageTitles.product",
+      "descriptionKey": "pageDescriptions.product"
     },
     {
       "path": "/store/order-success",
       "component": "pages/public/order-success/page.tsx",
       "noindex": true,
-      "titleKey": "pageTitles.orderSuccess"
+      "titleKey": "pageTitles.orderSuccess",
+      "descriptionKey": "pageDescriptions.orderSuccess"
     },
     {
       "path": "/store/vip",
       "component": "pages/public/vip/page.tsx",
-      "titleKey": "pageTitles.vip"
+      "titleKey": "pageTitles.vip",
+      "descriptionKey": "pageDescriptions.vip"
     }
   ],
   "adminRoutes": [
@@ -602,13 +612,15 @@
       "id": "ProfileOrdersTab",
       "label": "Orders",
       "component": "components/ProfileOrdersTab",
-      "order": 10
+      "order": 10,
+      "labelKey": "store.profileTab"
     },
     {
       "id": "ProfileChestTab",
       "label": "Chest",
       "component": "components/ProfileChestTab",
-      "order": 20
+      "order": 20,
+      "labelKey": "store.profileTabChest"
     }
   ],
   "dependencies": [
@@ -842,7 +854,6 @@
         "adm_yearly": "Yearly",
         "apply": "Apply",
         "available": "{count} available",
-        "backToStore": "Back to Store",
         "balance": "Balance: {amount}",
         "bd_categoryIdLabel": "Category ID",
         "bd_categoryIdPlaceholder": "Leave empty to apply to a single product",
@@ -949,7 +960,6 @@
         "priceLowHigh": "Price: Low to High",
         "proceedToCheckout": "Proceed to Checkout",
         "processing": "Processing...",
-        "productNotFound": "Product Not Found",
         "product_selectOption": "Select...",
         "product_thumbnail": "Thumbnail {n}",
         "products": "Products",
@@ -958,7 +968,6 @@
         "save": "Save {amount}",
         "searchProducts": "Search products...",
         "searchResultsFor": "Results for \"{query}\" ({count})",
-        "searching": "Searching...",
         "secureCheckout": "Secure checkout powered by Blysis",
         "shoppingCart": "Shopping Cart",
         "stock": "Stock",
@@ -1150,7 +1159,9 @@
         "adm_customerOrders": "Orders",
         "adm_customerSpent": "Paid in total",
         "adm_customerCredits": "Credit balance",
-        "leaderboardBuyers": "Top buyers"
+        "leaderboardBuyers": "Top buyers",
+        "profileTab": "Orders",
+        "profileTabChest": "Chest"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -1165,7 +1176,6 @@
       },
       "product": {
         "notFound": "Product Not Found",
-        "backToStore": "Back to Store",
         "featured": "Featured"
       },
       "sidebar": {
@@ -1374,6 +1384,13 @@
       },
       "profile": {
         "notificationType_store_order_completed": "Order complete"
+      },
+      "pageDescriptions": {
+        "store": "Browse everything on sale, filter it by category and add what you want to your cart in a couple of clicks.",
+        "cart": "Review everything in your cart, change a quantity or remove an item, then go through to checkout.",
+        "product": "See what this product includes, what it costs and what you receive once the order is paid, then add it to your cart.",
+        "orderSuccess": "Your order is complete: see what happens next, find it again in your order history or carry on shopping.",
+        "vip": "Compare the VIP ranks side by side, see what each one unlocks and pick the one that suits you best."
       }
     },
     "tr": {
@@ -1564,7 +1581,6 @@
         "adm_yearly": "Yıllık",
         "apply": "Uygula",
         "available": "{count} adet mevcut",
-        "backToStore": "Mağazaya Dön",
         "balance": "Bakiye: {amount}",
         "bd_categoryIdLabel": "Kategori ID",
         "bd_categoryIdPlaceholder": "Tek bir ürüne uygulamak için boş bırakın",
@@ -1671,7 +1687,6 @@
         "priceLowHigh": "Fiyat: Düşükten Yükseğe",
         "proceedToCheckout": "Ödemeye Geç",
         "processing": "İşleniyor...",
-        "productNotFound": "Ürün Bulunamadı",
         "product_selectOption": "Seçin...",
         "product_thumbnail": "Küçük görsel {n}",
         "products": "Ürünler",
@@ -1680,7 +1695,6 @@
         "save": "{amount} tasarruf",
         "searchProducts": "Ürün ara...",
         "searchResultsFor": "\"{query}\" için sonuçlar ({count})",
-        "searching": "Aranıyor...",
         "secureCheckout": "Blysis güvencesiyle güvenli ödeme",
         "shoppingCart": "Alışveriş Sepeti",
         "stock": "Stok",
@@ -1872,7 +1886,9 @@
         "adm_customerOrders": "Sipariş",
         "adm_customerSpent": "Toplam ödediği",
         "adm_customerCredits": "Kredi bakiyesi",
-        "leaderboardBuyers": "En çok alışveriş yapanlar"
+        "leaderboardBuyers": "En çok alışveriş yapanlar",
+        "profileTab": "Siparişler",
+        "profileTabChest": "Envanter"
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -1887,7 +1903,6 @@
       },
       "product": {
         "notFound": "Ürün Bulunamadı",
-        "backToStore": "Mağazaya Dön",
         "featured": "Öne Çıkan"
       },
       "sidebar": {
@@ -2096,6 +2111,13 @@
       },
       "profile": {
         "notificationType_store_order_completed": "Sipariş tamamlandı"
+      },
+      "pageDescriptions": {
+        "store": "Satıştaki her şeye göz atın, kategoriye göre filtreleyin ve istediğinizi birkaç tıkla sepetinize ekleyin.",
+        "cart": "Sepetinizdeki her şeyi gözden geçirin, adetleri değiştirin ya da bir ürünü çıkarın, ardından ödemeye geçin.",
+        "product": "Bu ürünün neleri kapsadığını, fiyatını ve ödeme tamamlandığında neler alacağınızı görün, sonra sepetinize ekleyin.",
+        "orderSuccess": "Siparişiniz tamamlandı: sırada ne olduğunu görün, sipariş geçmişinizden tekrar bulun ya da alışverişe devam edin.",
+        "vip": "VIP rütbelerini yan yana karşılaştırın, her birinin neleri açtığını görün ve size en uygun olanı seçin."
       }
     }
   },
