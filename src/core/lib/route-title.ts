@@ -14,7 +14,8 @@
  * 200 with `<title>`, `og:title` and `twitter:title` all reading "Free Nitro
  * Generator" beside the site's own name, which is exactly what an unfurled
  * link shows in Discord or Twitter. Any visitor could mint one on the site's
- * domain. With `custom-pages` installed the route is `/[slug]`, so it was
+ * domain. With a module installed that serves pages at the site root the
+ * route is `/[slug]`, so it was
  * every unrecognised URL on the site, not just the ones under a module.
  *
  * So a URL segment names the page only where a module has declared

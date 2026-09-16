@@ -179,8 +179,8 @@ export interface ModuleManifest {
     // Used by core's file upload system. Multiple providers can coexist; the active one is
     // selected via the `storage_active_provider` Setting key (or STORAGE_PROVIDER env var).
     storageProviders?: {
-        id: string;          // unique provider id, e.g. "cloudflare-r2"
-        name: string;        // human-readable, e.g. "Cloudflare R2"
+        id: string;          // unique among installed providers; its module picks it
+        name: string;        // human-readable, shown wherever the active one is chosen
         handler: string;     // path to file exporting `default: StorageProvider`
     }[];
 

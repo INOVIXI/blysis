@@ -81,8 +81,8 @@ export const SETTINGS_CACHE: DurationSetting = {
  *
  * The environment variable is the install's default - it is what a Docker
  * deployment sets once - and the admin screen overrides it per site. The
- * login-protection module has offered this field since it shipped and nothing
- * read the row, so an operator who set it to 3 still got 10.
+ * module that offers this field has done so since it shipped and nothing read
+ * the row, so an operator who set it to 3 still got 10.
  *
  * The floor is 3 rather than 1: a control that locks an account on the first
  * typo is a denial-of-service an attacker can aim at any account whose

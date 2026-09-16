@@ -17,11 +17,11 @@ import { errorText, log } from "./logger";
  * are what the observability screen reads, so a job that failed and then
  * stopped running had its failure swept away by the daily tidy-up.
  *
- * Core's tables only. `WebhookLog` used to be pruned here too, guarded by an
- * `in prisma` check because it belongs to the `webhook-logs` module - and that
- * module has always run its own daily cron over the same table with the same
- * thirty day window, so core was doing a module's work twice a day while
- * naming a model it has no business knowing.
+ * Core's tables only. One more used to be pruned here too, guarded by an
+ * `in prisma` check because the model belongs to a module - and that module has
+ * always run its own daily cron over the same table with the same thirty day
+ * window, so core was doing a module's work twice a day while naming a model it
+ * has no business knowing.
  *
  * `ActivityLog` is the table this file was written for and the one it did not
  * name. `logActivity` writes to it from sixty-two places - every admin

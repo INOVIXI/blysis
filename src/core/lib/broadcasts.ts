@@ -16,8 +16,8 @@ interface BroadcastFilter {
  * to the recipients in batches with a small delay to respect rate limits,
  * and updates progress columns.
  *
- * Send via the existing core/lib/email.ts which delegates to the active
- * provider (resend-provider, etc.).
+ * Send via the existing core/lib/email.ts, which delegates to whichever mail
+ * provider is installed and active.
  */
 
 /**

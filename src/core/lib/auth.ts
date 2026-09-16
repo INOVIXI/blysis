@@ -250,7 +250,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     })().catch(() => { /* Old hash stands. Tried again next time. */ });
                 }
 
-                // 2FA check - only if fields exist on user (added by two-factor-auth module)
+                // Second factor, only if the fields exist on the user: they are added by
+                // whichever module provides it.
                 const userAny = user as Record<string, unknown>;
                 if (userAny.twoFactorEnabled && userAny.twoFactorSecret) {
                     // Dynamic import to avoid hard dependency on two-factor module

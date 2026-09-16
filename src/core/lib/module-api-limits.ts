@@ -32,13 +32,13 @@ export interface BucketIdentity {
  * Which endpoint a request counts against.
  *
  * Not the URL. A manifest declares `{ path, handler }` pairs and nothing stops
- * it declaring one handler at two paths, which fifteen of them do: the store
- * lists thirteen of its routes both bare and under `/store/`, and `servers`
- * and `player-profiles` each list one twice. The registry key is built from
- * the path, so each spelling opened its own budget and the ceiling on those
- * endpoints was quietly twice what it read as - measured on the demo, 120
- * requests to `/api/v1/store/widget-stats` exhausted that path and 30 more to
- * `/api/v1/widget-stats` from the same caller were all served.
+ * it declaring one handler at two paths, which fifteen of them do: one module
+ * lists thirteen of its routes both bare and under a prefix of its own, and two
+ * others list one twice each. The registry key is built from the path, so each
+ * spelling opened its own budget and the ceiling on those endpoints was quietly
+ * twice what it read as - measured on the demo, the prefixed spelling was
+ * exhausted and thirty more requests to the bare one, from the same caller,
+ * were all served.
  *
  * Two of them dispense value on request, `gift-codes/redeem` and `chest/[id]`,
  * and the dispatcher's whole reason for existing is that an endpoint may not
