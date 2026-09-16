@@ -202,7 +202,7 @@ describe("the core tables", () => {
 describe("the README", () => {
     it("names every key the bundle carries", async () => {
         const { CORE_TABLES, buildExportReadme } = await exportModule();
-        const readme = buildExportReadme("usr_1", new Date());
+        const readme = buildExportReadme("usr_1", new Date(), "Acme Games");
         for (const table of CORE_TABLES) {
             expect(readme, `${table.key} is undocumented`).toContain(table.key);
         }
@@ -211,7 +211,7 @@ describe("the README", () => {
 
     it("says that some rows are held back, rather than claiming to hold everything", async () => {
         const { buildExportReadme } = await exportModule();
-        const readme = buildExportReadme("usr_1", new Date());
+        const readme = buildExportReadme("usr_1", new Date(), "Acme Games");
         // It used to promise "every row in our database that references your
         // account" and then name OAuth providers, neither of which was true.
         expect(readme).toMatch(/withheld on purpose/i);

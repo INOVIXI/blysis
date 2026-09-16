@@ -285,7 +285,7 @@ describe("buildExportReadme", () => {
         const { buildExportReadme } = await import("@/core/lib/user-data-export");
         const at = new Date("2026-09-01T12:00:00.000Z");
 
-        const readme = buildExportReadme("usr_1", at);
+        const readme = buildExportReadme("usr_1", at, "Acme Games");
 
         expect(readme).toContain("User ID: usr_1");
         expect(readme).toContain("Exported at: 2026-09-01T12:00:00.000Z");
@@ -293,7 +293,7 @@ describe("buildExportReadme", () => {
 
     it("documents every key the JSON dump actually contains", async () => {
         const { buildExportReadme } = await import("@/core/lib/user-data-export");
-        const readme = buildExportReadme("usr_1", new Date());
+        const readme = buildExportReadme("usr_1", new Date(), "Acme Games");
 
         for (const key of [
             "user", "activityFeed", "sessions", "warnings", "notificationPrefs",
@@ -306,7 +306,7 @@ describe("buildExportReadme", () => {
 
     it("states that secrets are omitted and points at the erasure right", async () => {
         const { buildExportReadme } = await import("@/core/lib/user-data-export");
-        const readme = buildExportReadme("usr_1", new Date());
+        const readme = buildExportReadme("usr_1", new Date(), "Acme Games");
 
         expect(readme).toMatch(/password hash and 2FA secrets/i);
         expect(readme).toMatch(/right to be forgotten/i);

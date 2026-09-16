@@ -13,7 +13,7 @@ import {
     type NavSection,
 } from "@/core/lib/admin-nav-groups";
 import { useAdminNav, type AdminNavModule } from "@/core/hooks/useAdminNav";
-import { SiteName, useSiteInitials } from "@/core/components/ui/site-name";
+import { SiteName, useSiteInitials, useSiteLogo } from "@/core/components/ui/site-name";
 
 interface AdminSidebarProps {
     userName?: string;
@@ -57,6 +57,7 @@ export function AdminSidebar({ modules = [], activeThemeId }: AdminSidebarProps)
     const { isDark, toggle: toggleDarkMode } = useDarkMode();
     const t = useTranslations("admin");
     const siteInitials = useSiteInitials();
+    const siteLogo = useSiteLogo();
 
     // The breadcrumb builds the same groups from the same hook, so the two
     // never disagree about what a route is called.
@@ -140,7 +141,16 @@ export function AdminSidebar({ modules = [], activeThemeId }: AdminSidebarProps)
                     className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition"
                     aria-label={t("sidebar_adminHome")}
                 >
-                    <span className="text-xs font-bold">{siteInitials}</span>
+                    {/* The operator's mark if they set one, their site's
+                        initials if they did not. A plain `img`: the address is
+                        whatever they uploaded or linked, and which storage
+                        provider answered is not core's business. */}
+                    {siteLogo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={siteLogo} alt="" className="w-7 h-7 object-contain" />
+                    ) : (
+                        <span className="text-xs font-bold">{siteInitials}</span>
+                    )}
                 </Link>
                 <span
                     role="tooltip"

@@ -44,7 +44,11 @@ export default function SetupWizardPage() {
     const [passwordConfirm, setPasswordConfirm] = useState("");
 
     // Step 3: Site
-    const [siteName, setSiteName] = useState("Blysis");
+    // Empty, not the product's name. This is the first field of the first
+    // screen an operator ever sees, and it is asking what *their* site is
+    // called; offering the name of the thing they installed answers it wrong
+    // and most of them press next.
+    const [siteName, setSiteName] = useState("");
     const [siteDescription, setSiteDescription] = useState("");
     const [defaultLocaleCode, setDefaultLocaleCode] = useState("en");
 

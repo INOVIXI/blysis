@@ -3,6 +3,7 @@ import AdmZip from "adm-zip";
 import { auth } from "@/core/lib/auth";
 import { isAdmin } from "@/core/lib/permissions";
 import { exportUserData, buildExportReadme } from "@/core/lib/user-data-export";
+import { getSeoSiteInfo } from "@/core/lib/seo";
 import { logActivity } from "@/core/lib/activity-log";
 import { getClientIP } from "@/core/lib/rate-limit";
 import { log } from "@/core/lib/logger";
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     try {
         const data = await exportUserData(targetId);
         const exportedAt = new Date();
-        const readme = buildExportReadme(targetId, exportedAt);
+        const readme = buildExportReadme(targetId, exportedAt, (await getSeoSiteInfo()).siteName);
         const jsonPayload = JSON.stringify(
             { exportedAt: exportedAt.toISOString(), ...data },
             null,

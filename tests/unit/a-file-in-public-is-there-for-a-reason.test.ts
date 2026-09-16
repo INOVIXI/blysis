@@ -27,11 +27,22 @@ const PUBLIC = path.join(ROOT, "public");
  * may shrink; an addition to it needs a reason as good as these.
  */
 const EXPLAINED: Record<string, string> = {
-    "manifest.json": "the web app manifest, linked from the root layout's metadata",
     ".well-known/security.txt": "RFC 9116 puts it at a fixed URL, so nothing links it by design",
-    "logo.png":
-        "shipped so an operator has something to point the site logo setting at; no code path links it, and it is a candidate for the same deletion as the backgrounds",
 };
+
+/*
+ * Two entries left this list rather than shrinking it by attrition.
+ *
+ * `manifest.json` was a static file with the product's own name, short name
+ * and description written into it, so every installation put the same word
+ * under the same home screen icon. It is `src/app/manifest.ts` now, built
+ * from the operator's settings.
+ *
+ * `logo.png` was 48 KB explained here as "something to point the site logo
+ * setting at" - a setting that did not exist. It does now, and pointing it at
+ * the product's own mark is the thing the manifest route was written to stop,
+ * so the file went with it.
+ */
 
 /** Runtime state rather than shipped content. */
 const RUNTIME = ["uploads"];

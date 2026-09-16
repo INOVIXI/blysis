@@ -58,7 +58,10 @@ function ensureDefaults(
         name: m.name,
         description: m.description ?? "",
         version: m.version,
-        author: m.author ?? "Blysis",
+        // Empty, not this product's name. A catalogue served from a fork or
+        // an internal mirror credited every unattributed module to whoever
+        // wrote the platform, which is a claim about somebody else's work.
+        author: m.author ?? "",
         icon: m.icon ?? "Package",
         category: m.category ?? "content",
         verified: m.verified ?? true,

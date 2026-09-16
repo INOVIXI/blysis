@@ -13,6 +13,8 @@ import { Loader2, Check } from "lucide-react";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
+import { UrlOrFile } from "@/core/components/ui/url-or-file";
+import { SITE_LOGO_KEY } from "@/core/lib/site-logo";
 
 /**
  * Every zone this runtime knows, so an operator picks rather than types.
@@ -39,7 +41,8 @@ export default function SiteSettingsPage() {
     const [error, setError] = useState<string | null>(null);
 
     const [form, setForm] = useState({
-        siteName: "Blysis",
+        siteName: "",
+        [SITE_LOGO_KEY]: "",
         siteDescription: "",
         serverIp: "",
         contactEmail: "",
@@ -55,7 +58,11 @@ export default function SiteSettingsPage() {
     // saving it renames the site to "Blysis" and empties every social link.
     const { loading, failed, retry } = useSettingsLoad((s) => {
         setForm({
-            siteName: (s.siteName as string) || "Blysis",
+            // Empty rather than the product's own name: a read that fell back
+            // to it and then saved would rename the operator's site after the
+            // thing it was built from.
+            siteName: (s.siteName as string) || "",
+            [SITE_LOGO_KEY]: (s[SITE_LOGO_KEY] as string) || "",
             siteDescription: (s.siteDescription as string) || "",
             serverIp: (s.serverIp as string) || "",
             contactEmail: (s.contactEmail as string) || "",
@@ -147,6 +154,18 @@ export default function SiteSettingsPage() {
                                     aria-label={t("siteSettings_siteName")}
                                     value={form.siteName}
                                     onChange={(e) => setForm({ ...form, siteName: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                {/* The mark that goes with the name. Unset,
+                                    the admin rail draws the name's initials,
+                                    which is what it did before there was a
+                                    logo to draw at all. */}
+                                <UrlOrFile
+                                    label={t("siteSettings_logo")}
+                                    value={form[SITE_LOGO_KEY]}
+                                    onChange={(v) => setForm({ ...form, [SITE_LOGO_KEY]: v })}
+                                    accept="image/*"
                                 />
                             </div>
                             <div>

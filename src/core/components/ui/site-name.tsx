@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useSiteSettings } from "@/core/hooks/useSiteSettings";
+import { SITE_LOGO_KEY, siteLogo } from "@/core/lib/site-logo";
 
 /**
  * What this installation calls itself.
@@ -39,4 +40,16 @@ export function useSiteInitials(): string {
     const words = name.split(/\s+/).filter(Boolean);
     if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
     return name.slice(0, 2).toUpperCase();
+}
+
+/**
+ * The mark this installation put on itself, or null.
+ *
+ * Null is an answer, and the reason `useSiteInitials` stays: a site with no
+ * logo draws its name's first letters, which is what the admin rail's square
+ * did before there was a logo to draw at all.
+ */
+export function useSiteLogo(): string | null {
+    const { settings } = useSiteSettings();
+    return siteLogo(settings[SITE_LOGO_KEY]);
 }

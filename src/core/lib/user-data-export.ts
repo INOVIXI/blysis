@@ -305,10 +305,15 @@ export async function exportUserData(userId: string): Promise<UserDataExport> {
 /**
  * Human-readable README bundled alongside the JSON dump. Kept here so the
  * API route and the admin export share one canonical explanation.
+ *
+ * `siteName` is passed in rather than read here: this is the file a member
+ * downloads about themselves, and it was headed with the product's name
+ * instead of the name of the site they downloaded it from.
  */
-export function buildExportReadme(userId: string, exportedAt: Date): string {
-    return `Blysis personal data export
-==============================
+export function buildExportReadme(userId: string, exportedAt: Date, siteName: string): string {
+    const heading = `${siteName} personal data export`;
+    return `${heading}
+${"=".repeat(heading.length)}
 
 User ID: ${userId}
 Exported at: ${exportedAt.toISOString()}
