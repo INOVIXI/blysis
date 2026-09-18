@@ -16,13 +16,30 @@ const BOARD = {
     unit: "currency" as const,
 };
 
+/**
+ * Number the ordering, then narrow it.
+ *
+ * Both halves matter and the order does. The rank is what the ranking said,
+ * so it is assigned before a search can remove anybody; the search is a
+ * plain, case-insensitive contains, because a leaderboard is read to find
+ * one person and nobody types an exact username.
+ */
+function ranked<T extends { username: string }>(rows: T[], search: string | undefined): (T & { rank: number })[] {
+    const numbered = rows.map((row, at) => ({ ...row, rank: at + 1 }));
+    const term = search?.trim().toLowerCase() ?? "";
+    return term === "" ? numbered : numbered.filter((row) => row.username.toLowerCase().includes(term));
+}
+
 const topBuyers: HookHandlerFor<"leaderboard.boards", "filter"> = async (current, context) => {
     if (context.boardId && context.boardId !== BOARD.id) return current;
     if (!context.boardId) return [...current, { ...BOARD, rows: [] }];
 
     const spend = await prisma.order.groupBy({
         by: ["userId"],
-        where: { status: "COMPLETED" },
+        where: {
+            status: "COMPLETED",
+            ...(context.since ? { createdAt: { gte: context.since } } : {}),
+        },
         _sum: { total: true },
         orderBy: { _sum: { total: "desc" } },
         take: context.limit,
@@ -46,7 +63,7 @@ const topBuyers: HookHandlerFor<"leaderboard.boards", "filter"> = async (current
         }))
         .filter((row) => row.username !== "");
 
-    return [...current, { ...BOARD, rows }];
+    return [...current, { ...BOARD, rows: ranked(rows, context.search) }];
 };
 
 export default topBuyers;

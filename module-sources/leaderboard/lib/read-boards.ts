@@ -19,6 +19,10 @@ import { applyFiltersAsync } from "@/core/sdk";
  * looser one here would let a board through that the tabs cannot draw. That is
  * what a cast at the call site was hiding.
  */
-export async function readBoards(boardId: string | null, limit = 20) {
-    return applyFiltersAsync("leaderboard.boards", [], { boardId, limit });
+export async function readBoards(
+    boardId: string | null,
+    limit = 20,
+    narrow: { search?: string; since?: Date | null } = {},
+) {
+    return applyFiltersAsync("leaderboard.boards", [], { boardId, limit, ...narrow });
 }

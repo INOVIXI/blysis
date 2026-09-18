@@ -37,7 +37,12 @@
         "thisWeek": "This Week",
         "title": "Leaderboard",
         "today": "Today",
-        "subtitle": "The members who buy, vote and post the most."
+        "subtitle": "The members who buy, vote and post the most.",
+        "searchMembers": "Search by name...",
+        "periodAll": "All time",
+        "periodWeek": "Last 7 days",
+        "periodMonth": "Last 30 days",
+        "periodYear": "Last year"
       },
       "pageTitles": {
         "leaderboard": "Leaderboard"
@@ -66,7 +71,12 @@
         "thisWeek": "Bu Hafta",
         "title": "Sıralama",
         "today": "Bugün",
-        "subtitle": "En çok satın alan, oy veren ve en aktif üyeler."
+        "subtitle": "En çok satın alan, oy veren ve en aktif üyeler.",
+        "searchMembers": "Ada göre ara...",
+        "periodAll": "Tüm zamanlar",
+        "periodWeek": "Son 7 gün",
+        "periodMonth": "Son 30 gün",
+        "periodYear": "Son bir yıl"
       },
       "pageTitles": {
         "leaderboard": "Sıralama"

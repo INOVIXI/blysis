@@ -3,13 +3,15 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Card, CardContent, LoadFailed, SegmentedTabs, Waiting, useSiteCurrency } from "@/core/sdk/ui";
+import { Card, CardContent, ListControls, LoadFailed, SegmentedTabs, Waiting, useSiteCurrency } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
 
 interface Row {
     username: string;
     avatar: string | null;
     value: number;
+    /** What the module that ordered the board says this row came. */
+    rank: number;
 }
 
 interface Board {
@@ -55,6 +57,8 @@ export function BoardTabs({ initialBoards, initialRows, initialId }: {
     const [loading, setLoading] = useState(false);
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
+    const [search, setSearch] = useState("");
+    const [period, setPeriod] = useState("");
 
     // And the rows of the one being looked at.
     /*
@@ -66,10 +70,17 @@ export function BoardTabs({ initialBoards, initialRows, initialId }: {
 
     useEffect(() => {
         if (!activeId) return;
-        if (serverDrewThisBoard.current) { serverDrewThisBoard.current = false; return; }
+        if (serverDrewThisBoard.current && search === "" && period === "") {
+            serverDrewThisBoard.current = false;
+            return;
+        }
+        serverDrewThisBoard.current = false;
         let cancelled = false;
         setLoading(true);
-        fetch(`/api/v1/leaderboard?board=${encodeURIComponent(activeId)}&limit=20`)
+        const params = new URLSearchParams({ board: activeId, limit: "20" });
+        if (search) params.set("q", search);
+        if (period) params.set("period", period);
+        fetch(`/api/v1/leaderboard?${params}`)
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
             .then((d: { boards?: Board[] }) => {
                 if (cancelled) return;
@@ -79,7 +90,7 @@ export function BoardTabs({ initialBoards, initialRows, initialId }: {
             })
             .catch(() => { if (!cancelled) { setFailed(true); setLoading(false); } });
         return () => { cancelled = true; };
-    }, [activeId, reloadKey]);
+    }, [activeId, reloadKey, search, period]);
 
     const active = boards.find((b) => b.id === activeId) ?? null;
 
@@ -101,6 +112,23 @@ export function BoardTabs({ initialBoards, initialRows, initialId }: {
                 />
             )}
 
+            <ListControls
+                className="mb-6"
+                search={{ value: search, onChange: setSearch, placeholder: t("searchMembers") }}
+                filters={[{
+                    id: "period",
+                    label: t("period"),
+                    value: period,
+                    onChange: setPeriod,
+                    options: [
+                        { value: "", label: t("periodAll") },
+                        { value: "week", label: t("periodWeek") },
+                        { value: "month", label: t("periodMonth") },
+                        { value: "year", label: t("periodYear") },
+                    ],
+                }]}
+            />
+
             <Card>
                 <CardContent className="p-0">
                     {loading ? (
@@ -113,8 +141,11 @@ export function BoardTabs({ initialBoards, initialRows, initialId }: {
                         <div className="divide-y">
                             {rows.map((row, i) => (
                                 <div key={`${row.username}-${i}`} className="flex items-center gap-4 p-4">
-                                    <div className={`w-8 text-center font-bold text-lg ${rankColours[i] || "text-muted-foreground"}`}>
-                                        #{i + 1}
+                                    {/* The rank the board gave it, not where it
+                                        landed in the array: a searched row is
+                                        still whatever it really came. */}
+                                    <div className={`w-10 text-center font-bold text-lg ${rankColours[row.rank - 1] || "text-muted-foreground"}`}>
+                                        #{row.rank}
                                     </div>
                                     <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center font-bold text-sm overflow-hidden">
                                         {row.avatar ? (

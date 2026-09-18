@@ -5,6 +5,20 @@ import { applyFiltersAsync } from "@/core/sdk";
 const LEADERBOARD_TTL_MS = 5 * 60_000;
 
 /**
+ * Where a named period starts, or null for all of it.
+ *
+ * Counted back from now rather than from a calendar boundary: "this month"
+ * meaning the 1st makes a board that is nearly empty on the 1st and full on
+ * the 30th, and a reader cannot tell that from the ranking having changed.
+ */
+const DAYS: Record<string, number> = { week: 7, month: 30, year: 365 };
+
+function periodStart(period: string): Date | null {
+    const days = DAYS[period];
+    return days ? new Date(Date.now() - days * 86_400_000) : null;
+}
+
+/**
  * The boards this install can show, and the rows of one of them.
  *
  * This module owns the page and the ranking; it owns none of the data. It
@@ -18,15 +32,21 @@ const LEADERBOARD_TTL_MS = 5 * 60_000;
  * costs a module nothing to give; with one, the module that owns that board
  * fills it.
  */
-// GET /api/v1/leaderboard?board=<id>&limit=20
+// GET /api/v1/leaderboard?board=<id>&limit=20&period=month&q=name
 export async function GET(request: NextRequest) {
-    const boardId = request.nextUrl.searchParams.get("board");
-    const limit = Math.min(100, Math.max(1, parseInt(request.nextUrl.searchParams.get("limit") || "20") || 20));
+    const params = request.nextUrl.searchParams;
+    const boardId = params.get("board");
+    const limit = Math.min(100, Math.max(1, parseInt(params.get("limit") || "20") || 20));
+    const period = params.get("period") ?? "";
+    const search = (params.get("q") ?? "").trim().slice(0, 64);
+    const since = periodStart(period);
 
     const boards = await cached(
-        `leaderboard:${boardId ?? "index"}:${limit}`,
+        // The term is in the key, so two readers looking for two different
+        // people do not read each other's answer back.
+        `leaderboard:${boardId ?? "index"}:${limit}:${period}:${search.toLowerCase()}`,
         LEADERBOARD_TTL_MS,
-        () => applyFiltersAsync("leaderboard.boards", [], { boardId, limit }),
+        () => applyFiltersAsync("leaderboard.boards", [], { boardId, limit, search, since }),
     );
 
     // A board named in the address that nobody offers is not an error: the

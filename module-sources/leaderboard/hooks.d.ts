@@ -17,6 +17,16 @@ interface LeaderboardRow {
     avatar: string | null;
     /** Money in the site currency, or a count. `unit` says which. */
     value: number;
+    /**
+     * Where this row came in the ranking, counted from 1.
+     *
+     * Said by the module that ordered the board rather than worked out from
+     * where the row landed in the array. The page used to print the array
+     * position, which is the same number right up until a reader narrows the
+     * board - and then the fifth place holder is the only row left and gets
+     * called first.
+     */
+    rank: number;
 }
 
 interface LeaderboardBoard {
@@ -48,7 +58,22 @@ declare global {
          * nothing. When it names a board, the module that owns it fills it and
          * the others answer as before.
          */
-        "leaderboard.boards": { boardId: string | null; limit: number };
+        "leaderboard.boards": {
+            boardId: string | null;
+            limit: number;
+            /**
+             * A name to look for. Matched after the ordering, so a row keeps
+             * the rank it really has.
+             */
+            search?: string;
+            /**
+             * Count only what happened since this moment. Narrowing in the
+             * database rather than after it: "this month" means a month's
+             * activity ranked, not a month's rows taken out of an all-time
+             * ranking.
+             */
+            since?: Date | null;
+        };
     }
 }
 
