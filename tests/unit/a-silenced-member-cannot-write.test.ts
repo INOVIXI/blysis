@@ -39,7 +39,6 @@ const NOT_SPEECH: Record<string, string> = {
     // what they paid for, and refusing a purchase mid-flow loses the payment.
     "module-sources/store/api/checkout/route.ts": "a purchase is a transaction, not speech",
     "module-sources/store/api/gift-codes/route.ts": "redeeming what was bought is not speech",
-    "module-sources/marketplace/api/listings/[id]/buy/route.ts": "buying is a transaction",
     "module-sources/wheel/api/spin/route.ts": "spending a spin they already hold is not speech",
     "module-sources/vote/api/record/route.ts": "a vote is a callback from a server list, not a post",
 

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-16",
-  "updatedAt": "2026-09-16T08:52:53Z",
+  "updatedAt": "2026-09-16T19:58:34Z",
   "modules": [
     {
       "id": "announcements",
@@ -1558,39 +1558,39 @@
       }
     },
     {
-      "id": "marketplace",
-      "name": "Marketplace",
-      "description": "Members sell to each other for credits and the site takes a cut. What is handed over is decided by whatever integration is installed.",
-      "i18n": {},
-      "version": "1.7.2",
+      "id": "member-profiles",
+      "name": "Member Profiles",
+      "description": "Public profile pages, with what every installed module knows about a member",
+      "i18n": {
+        "tr": {
+          "name": "Üye Profilleri",
+          "description": "Herkese açık profil sayfaları; kurulu her modülün üye hakkında bildiği ile"
+        }
+      },
+      "version": "1.6.2",
       "coreVersion": "^4.0.0",
       "author": "Blysis",
-      "icon": "Store",
-      "category": "commerce",
+      "icon": "Users",
+      "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-16T19:58:34Z",
       "screenshots": [],
       "tags": [
-        "commerce"
+        "gaming"
       ],
-      "zip": "marketplace.zip",
-      "dependencies": [
-        "store@^2.21.0",
-        "credits@^1.4.0"
-      ],
+      "zip": "member-profiles.zip",
+      "dependencies": [],
       "conflicts": [],
       "hooks": {
         "emits": [
-          "marketplace.delivery.kinds",
-          "marketplace.deliver",
-          "credit.change"
+          "profile.linkedAccounts"
         ],
         "listens": []
       },
       "stats": {
         "publicRoutes": 1,
-        "adminRoutes": 1,
-        "apiRoutes": 4,
+        "adminRoutes": 0,
+        "apiRoutes": 3,
         "widgets": 0
       }
     },
@@ -2209,43 +2209,6 @@
       }
     },
     {
-      "id": "player-profiles",
-      "name": "Member Profiles",
-      "description": "Public profile pages, with what every installed module knows about a member",
-      "i18n": {
-        "tr": {
-          "name": "Üye Profilleri",
-          "description": "Herkese açık profil sayfaları; kurulu her modülün üye hakkında bildiği ile"
-        }
-      },
-      "version": "1.6.2",
-      "coreVersion": "^4.0.0",
-      "author": "Blysis",
-      "icon": "Users",
-      "category": "gaming",
-      "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
-      "screenshots": [],
-      "tags": [
-        "gaming"
-      ],
-      "zip": "player-profiles.zip",
-      "dependencies": [],
-      "conflicts": [],
-      "hooks": {
-        "emits": [
-          "profile.linkedAccounts"
-        ],
-        "listens": []
-      },
-      "stats": {
-        "publicRoutes": 1,
-        "adminRoutes": 0,
-        "apiRoutes": 3,
-        "widgets": 0
-      }
-    },
-    {
       "id": "popups",
       "name": "Popups",
       "description": "Modal popup notifications and promotions",
@@ -2508,39 +2471,6 @@
       "stats": {
         "publicRoutes": 0,
         "adminRoutes": 1,
-        "apiRoutes": 0,
-        "widgets": 0
-      }
-    },
-    {
-      "id": "role-delivery",
-      "name": "Rank Delivery",
-      "description": "Lets members sell a rank for a number of days in the market. The first thing anything here can hand over.",
-      "i18n": {},
-      "version": "1.2.2",
-      "coreVersion": "^4.0.0",
-      "author": "Blysis",
-      "icon": "ShieldCheck",
-      "category": "commerce",
-      "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
-      "screenshots": [],
-      "tags": [
-        "commerce"
-      ],
-      "zip": "role-delivery.zip",
-      "dependencies": [],
-      "conflicts": [],
-      "hooks": {
-        "emits": [],
-        "listens": [
-          "marketplace.delivery.kinds",
-          "marketplace.deliver"
-        ]
-      },
-      "stats": {
-        "publicRoutes": 0,
-        "adminRoutes": 0,
         "apiRoutes": 0,
         "widgets": 0
       }

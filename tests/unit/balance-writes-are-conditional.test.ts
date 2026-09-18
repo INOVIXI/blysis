@@ -74,8 +74,9 @@ function creditDebits(source: string): { call: string; isConditional: boolean }[
 
 describe("spending a credit balance", () => {
     it("finds the one place that spends credits", () => {
-        // It used to be four: checkout, a paid spin, a marketplace purchase
-        // and a transfer, each with its own copy of the guard. The wallet
+        // It used to be four: checkout, a paid spin, a transfer, and a
+        // member-to-member sale that has since been removed - each with its
+        // own copy of the guard. The wallet
         // belongs to one module now and it is the only thing that decrements
         // a balance; the others ask, and are refused when the money is not
         // there. If this list grows, the guard has been copied again.
@@ -106,7 +107,6 @@ describe("spending a credit balance", () => {
             "module-sources/store/api/checkout/route.ts",
             "module-sources/store/api/credits/transfer/route.ts",
             "module-sources/wheel/api/spin/route.ts",
-            "module-sources/marketplace/api/listings/[id]/buy/route.ts",
         ]) {
             const source = fs.readFileSync(path.join(ROOT, name), "utf8");
             expect(source, `${name} must read the answer`).toMatch(/!\w*\.applied|applied\s*\)/);
