@@ -120,11 +120,23 @@ describe("the jwt callback", () => {
     it("still ends the session on every condition it used to", () => {
         const block = AUTH.slice(AUTH.indexOf("shouldRecheckSession(token, trigger)"));
         const head = block.slice(0, block.indexOf("originalUserId"));
-        expect(head).toContain("dbUser.isBanned || dbUser.isDeleted");
+        expect(head).toContain("isDeleted");
         expect(head).toContain("sess?.isRevoked");
         // A user row that is gone entirely used to fall through and keep the
         // token; now it ends the session like every other missing identity.
         expect(head).toContain("if (!dbUser)");
+    });
+
+    it("asks what the member may do rather than reading the ban column itself", () => {
+        // The recheck is what ends a session somebody is already holding, so
+        // it has to see a restriction that arrived while they were signed in -
+        // including one a module holds. Reading `isBanned` saw core's half
+        // only: a member banned on the punishment record kept their session
+        // until they signed out of their own accord.
+        const block = AUTH.slice(AUTH.indexOf("shouldRecheckSession(token, trigger)"));
+        const head = block.slice(0, block.indexOf("originalUserId"));
+        expect(head).toContain("memberStanding");
+        expect(head).toContain("mayEnter");
     });
 
     it("reads the columns it needs rather than the whole user row", () => {

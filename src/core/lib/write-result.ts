@@ -34,6 +34,8 @@ import type { Translator } from "./auth-error-message";
 export interface WriteErrorBody {
     error?: unknown;
     code?: unknown;
+    /** A sentence the refusal translated for itself, in the reader's language. */
+    reasonText?: unknown;
 }
 
 export async function writeError(res: Response, fallback: string, t?: Translator): Promise<string | null> {
@@ -59,6 +61,9 @@ export async function writeError(res: Response, fallback: string, t?: Translator
  * the key is reached only when the endpoint says nothing.
  */
 export function errorMessage(body: WriteErrorBody | null | undefined, fallback: string, t?: Translator): string {
+    const reasonText = typeof body?.reasonText === "string" ? body.reasonText.trim() : "";
+    if (reasonText !== "") return reasonText;
+
     const code = typeof body?.code === "string" ? body.code : null;
     if (t && code) {
         const key = `err.${code}`;

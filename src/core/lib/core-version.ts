@@ -12,6 +12,18 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 4.1.0 - `memberStanding` and `refuseSilenced` join `@/core/sdk/server`, and
+ * `member.standing` joins the filter registry. Three things on this site
+ * thought they decided who may take part and none of them agreed: a punishment
+ * record nothing read, so a muted member posted and a banned one signed in; a
+ * warning counter whose threshold action promised an auto-mute and had no
+ * listener; and `User.isBanned`, which refused a sign-in and knew nothing about
+ * either. They were three answers to one question. Core asks it now, a module
+ * answers by restricting - never by granting, or a row in a module table would
+ * be a way to unban an account - and core enforces the answer at the sign-in
+ * and through one refusal every endpoint that takes member-written content
+ * returns. Additive.
+ *
  * 4.0.0 - A member holds a set of roles. `TimedRoleGrant` is gone from the
  * schema and a module that wrote it no longer compiles: `grantRole`,
  * `revokeRole` and `rolesHeldBy` join `@/core/sdk/server` and are the way a
@@ -389,4 +401,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "4.0.0";
+export const CORE_API_VERSION = "4.1.0";

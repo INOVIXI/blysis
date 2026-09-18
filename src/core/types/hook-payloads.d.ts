@@ -81,6 +81,24 @@ interface BlysisFilterPayloads {
     "email.body": string;
 
     /**
+     * What a member may do: sign in, and write things other members read.
+     *
+     * Core asks; anything with an opinion about whether somebody may take part
+     * answers. A listener may only *restrict* - every field is combined with
+     * AND - because an answer that could widen core's own would make a row in
+     * a module's table a way to unban an account.
+     *
+     * `reasonKey` is a message key the screen translates, never an identifier.
+     * A member reads it.
+     */
+    "member.standing": {
+        mayEnter: boolean;
+        mayWrite: boolean;
+        until: Date | null;
+        reasonKey: string | null;
+    };
+
+    /**
      * Whether a login, registration or password reset may proceed. Core runs
      * this before it checks credentials or creates an account; a listener
      * returns `{ ok: false, code }` to refuse. See core/lib/auth-challenge.ts.
@@ -272,6 +290,9 @@ interface BlysisFilterContexts {
 
     /** The site's name, for a listener building a title template out of it. */
     "seo.siteHead": { siteName: string };
+
+    /** The member being asked about. Never empty: core refuses that earlier. */
+    "member.standing": { userId: string };
 
     /** Who the message is going to, before it reaches the provider. */
     "email.subject": { to: string };

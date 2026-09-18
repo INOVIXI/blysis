@@ -41,6 +41,19 @@ export type PrismaTransaction = Omit<
  */
 export { verifyPassword } from "@/core/lib/password-hash";
 
+/**
+ * What a member may do, and the refusal when they may not.
+ *
+ * Every endpoint that takes something a member wrote calls `refuseSilenced`
+ * and returns what it gives back. A punishment record that nothing enforced
+ * was the reason: a moderator muted somebody and they went on posting, because
+ * the mute was a row on a list and each endpoint decided for itself who could
+ * write. `memberStanding` is the question underneath it, for a caller that
+ * needs the answer rather than the refusal.
+ */
+export { refuseSilenced } from "@/core/lib/write-guard";
+export { memberStanding, type MemberStanding } from "@/core/lib/member-standing";
+
 // --- Homepage sections a theme or a module can render directly ---
 // Reads the activity feed straight from the database rather than through the
 // API. Its own doc comment always described it as something a theme could

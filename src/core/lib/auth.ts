@@ -22,6 +22,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { coreAuthAdapter } from "./auth-adapter";
 import { prisma } from "./db";
 import { hashPassword, needsRehash, verifyPassword } from "./password-hash";
+import { memberStanding } from "./member-standing";
 import { getHashAlgorithm } from "./security-settings";
 import {
     getLockoutStatus,
@@ -195,7 +196,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     return null;
                 }
 
-                if (user.isBanned) {
+                /*
+                 * `user.isBanned` was the whole of this, and it was one of
+                 * three things on the site that thought it decided who may
+                 * take part. A member could carry a permanent ban on the
+                 * punishment record and still sign in here, because this read
+                 * a column and that record was a list nothing enforced.
+                 * `memberStanding` is the one question now; this is core
+                 * asking it rather than answering half of it.
+                 */
+                const standing = await memberStanding(user.id);
+                if (!standing.mayEnter) {
                     throw new SignInRefusal(REFUSAL_CODE.banned);
                 }
 
@@ -388,10 +399,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             if (!user?.id) return true;
             const existing = await prisma.user.findUnique({
                 where: { id: user.id },
-                select: { isBanned: true, isDeleted: true },
+                select: { isDeleted: true },
             });
-            if (existing?.isBanned || existing?.isDeleted) return false;
-            return true;
+            if (existing?.isDeleted) return false;
+            // The same question the credentials path asks. An OAuth handshake
+            // that skipped it was a way around every restriction a module
+            // holds: sign in with the game launcher instead of a password.
+            return (await memberStanding(user.id)).mayEnter;
         },
         async jwt({ token, user, trigger, session: updatePayload }) {
             if (user) {
@@ -543,7 +557,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 if (!dbUser) {
                     return null as unknown as typeof token;
                 }
-                if (dbUser.isBanned || dbUser.isDeleted) {
+                if (dbUser.isDeleted) {
+                    return null as unknown as typeof token;
+                }
+                // The recheck is what ends a session somebody already holds,
+                // so it asks the whole question rather than reading one
+                // column: a ban recorded while the member was signed in has to
+                // reach them without waiting for them to sign out.
+                if (!(await memberStanding(token.id as string)).mayEnter) {
                     return null as unknown as typeof token;
                 }
                 if (token.tokenId) {
