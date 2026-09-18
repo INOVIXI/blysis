@@ -18,7 +18,7 @@ export default async function RecentErrorsWidget() {
     const hasErrors = count > 0;
 
     return (
-        <Link href="/admin/cron" className="block">
+        <Link href="/admin/cron" className="block h-full">
             <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
                 <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">

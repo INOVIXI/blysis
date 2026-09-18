@@ -52,7 +52,7 @@ export default function HealthSnapshotWidget() {
     const latency = data?.checks?.database?.latencyMs;
 
     return (
-        <Link href="/admin/observability" className="block">
+        <Link href="/admin/observability" className="block h-full">
             <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
                 <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">

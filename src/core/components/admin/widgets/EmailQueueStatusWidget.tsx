@@ -21,8 +21,8 @@ export default async function EmailQueueStatusWidget() {
     } catch { /* degrade */ }
 
     return (
-        <Link href="/admin/email-queue" className="block">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+        <Link href="/admin/email-queue" className="block h-full">
+            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
                 <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("widget_emailQueue")}</span>

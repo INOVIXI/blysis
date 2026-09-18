@@ -194,7 +194,17 @@ export function DashboardKpiRow({ order, coreSlots }: {
     return (
         <>
             {order.map((id) => {
-                if (coreSlots[id]) return <div key={id}>{coreSlots[id]}</div>;
+                /*
+                 * The widget itself is the grid item. It used to be wrapped in
+                 * a bare `<div>`, and that broke every card's height: the grid
+                 * stretched the div, the `<Link>` inside it sized to its
+                 * content, and the `h-full` on the card resolved against that
+                 * auto height and did nothing. A card with two lines of
+                 * content came out shorter than the three-line ones beside it,
+                 * which is what a reader sees as the boxes being different
+                 * sizes. The element already carries its own key.
+                 */
+                if (coreSlots[id]) return coreSlots[id];
                 if (!id.startsWith("mod:")) return null;
                 const card = byId.get(id);
                 // The row knows how many cards it will have before they
@@ -204,7 +214,7 @@ export function DashboardKpiRow({ order, coreSlots }: {
                 // the four boxes already say.
                 if (!card) return loading ? <Card key={id} aria-busy="true" className="h-full" /> : null;
                 return (
-                    <Link key={id} href={card.href} className="block">
+                    <Link key={id} href={card.href} className="block h-full">
                         <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
                             <CardContent className="p-4">
                                 <div className="flex items-center justify-between mb-2">
