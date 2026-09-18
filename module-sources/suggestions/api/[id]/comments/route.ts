@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { apiError, apiSuccess, hasPermission, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { refuseSilenced, apiError, apiSuccess, hasPermission, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { suggestionCommentSchema } from "../../../lib/validations";
 
@@ -51,6 +51,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function POST(request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     if (!session?.user?.id) return apiError("Unauthorized", 401);
+
+    // A mute on the record used to stop nothing. One call, so the next
+    // endpoint somebody writes cannot quietly forget it; see write-guard.ts.
+    const silenced = await refuseSilenced(session.user.id);
+    if (silenced) return silenced;
 
     const rl = await rateLimitForRole(
         `suggestion-comment:${session.user.id}`,

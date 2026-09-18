@@ -2,7 +2,7 @@
   "id": "blog",
   "name": "Blog Module",
   "description": "News and announcements system",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "coreVersion": "^4.0.0",
   "category": "community",
   "author": "Blysis",
@@ -243,7 +243,6 @@
         "noArticles": "No articles published yet.",
         "noCategories": "No categories yet.",
         "noComments": "No comments yet. Be the first to comment!",
-        "noImage": "No image",
         "perm_edit_any": "Edit and delete anybody's articles",
         "perm_manage": "Manage",
         "perm_moderate": "Moderate comments",
@@ -279,7 +278,8 @@
         "module_blog_description": "News and announcements system"
       },
       "activity": {
-        "blogArticlePublished": "published:"
+        "blogArticlePublished": "published:",
+        "kindBlogArticleCreated": "Blog Post"
       },
       "pageTitles": {
         "blog": "Blog"
@@ -372,7 +372,6 @@
         "noArticles": "Henüz makale yayınlanmadı.",
         "noCategories": "Henüz kategori yok.",
         "noComments": "Henüz yorum yok. İlk yorumu siz yapın!",
-        "noImage": "Görsel yok",
         "perm_edit_any": "Herkesin yazısını düzenleyebilir ve silebilir",
         "perm_manage": "Yönetebilir",
         "perm_moderate": "Yorumları denetleyebilir",
@@ -408,7 +407,8 @@
         "module_blog_description": "Haber ve duyuru sistemi"
       },
       "activity": {
-        "blogArticlePublished": "yayınladı:"
+        "blogArticlePublished": "yayınladı:",
+        "kindBlogArticleCreated": "Blog Yazısı"
       },
       "pageTitles": {
         "blog": "Blog"
@@ -512,6 +512,7 @@
   "activityTitles": [
     {
       "type": "blog.article.created",
+      "nameKey": "kindBlogArticleCreated",
       "prefix": "Published: ",
       "key": "blogArticlePublished"
     }

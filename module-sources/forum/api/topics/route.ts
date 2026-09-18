@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isRestrictedFrom } from "@/core/sdk/server";
+import { refuseSilenced, isRestrictedFrom } from "@/core/sdk/server";
 import { visibleCategoryIds } from "../../lib/visible-categories";
 import { generateSlug } from "@/core/sdk";
 import { pageParams, isAdmin, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
@@ -78,6 +78,11 @@ export async function POST(request: NextRequest) {
     if (!session?.user?.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // A mute on the record used to stop nothing. One call, so the next
+    // endpoint somebody writes cannot quietly forget it; see write-guard.ts.
+    const silenced = await refuseSilenced(session.user.id);
+    if (silenced) return silenced;
 
     const rl = await rateLimitForRole(
         `forum-topic:${session.user.id}`,

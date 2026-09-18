@@ -2,7 +2,7 @@
   "id": "forum",
   "name": "Forum Module",
   "description": "Community discussion forum with categories, topics, and replies",
-  "version": "1.7.3",
+  "version": "1.8.0",
   "coreVersion": "^4.0.0",
   "category": "community",
   "author": "Blysis Team",
@@ -353,8 +353,10 @@
         "module_forum_description": "Community discussion forum with categories, topics, and replies"
       },
       "activity": {
+        "forumPostCreated": "replied to:",
         "forumTopicCreated": "started a new topic:",
-        "forumPostCreated": "replied to:"
+        "kindForumPostCreated": "Forum Reply",
+        "kindForumTopicCreated": "Forum Topic"
       },
       "pageTitles": {
         "forum": "Forum",
@@ -362,7 +364,7 @@
         "newTopic": "New Topic"
       },
       "profile": {
-        "notificationType_forum_post_created": "Reply on your forum topic"
+        "notificationType_forum_post_created": "Reply on Your Forum Topic"
       },
       "pageDescriptions": {
         "forum": "Browse the discussion categories, see the newest topics and replies, and join the conversation with other members.",
@@ -510,8 +512,10 @@
         "module_forum_description": "Kategoriler, konular ve yanıtlarla topluluk tartışma forumu"
       },
       "activity": {
+        "forumPostCreated": "yanıt verdi:",
         "forumTopicCreated": "yeni konu açtı:",
-        "forumPostCreated": "yanıt verdi:"
+        "kindForumPostCreated": "Forum Yanıtı",
+        "kindForumTopicCreated": "Forum Konusu"
       },
       "pageTitles": {
         "forum": "Forum",
@@ -519,7 +523,7 @@
         "newTopic": "Yeni Konu"
       },
       "profile": {
-        "notificationType_forum_post_created": "Forum konunuza yanıt"
+        "notificationType_forum_post_created": "Forum Konunuza Yanıt"
       },
       "pageDescriptions": {
         "forum": "Tartışma kategorilerine göz atın, en yeni konuları ve yanıtları görün, diğer üyelerle sohbete katılın.",
@@ -623,11 +627,13 @@
   "activityTitles": [
     {
       "type": "forum.topic.created",
+      "nameKey": "kindForumTopicCreated",
       "prefix": "New topic: ",
       "key": "forumTopicCreated"
     },
     {
       "type": "forum.post.created",
+      "nameKey": "kindForumPostCreated",
       "prefix": "Replied to: ",
       "key": "forumPostCreated"
     }

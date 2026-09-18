@@ -4,6 +4,7 @@ import { auth } from "@/core/lib/auth";
 import { prisma } from "@/core/lib/db";
 import { rateLimitForRole } from "@/core/lib/rate-limit";
 import { readJsonBody } from "@/core/lib/api-body";
+import { refuseSilenced } from "@/core/lib/write-guard";
 
 type RouteParams = { params: Promise<{ conversationId: string }> };
 
@@ -54,6 +55,11 @@ const replySchema = z.object({
 export async function POST(request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // A mute on the record used to stop nothing. One call, so the next
+    // endpoint somebody writes cannot quietly forget it; see write-guard.ts.
+    const silenced = await refuseSilenced(session.user.id);
+    if (silenced) return silenced;
 
     // Same budget as starting one: a reply is a write into the other
     // participant's inbox.

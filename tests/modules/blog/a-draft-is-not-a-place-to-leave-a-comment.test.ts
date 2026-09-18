@@ -26,6 +26,9 @@ const commentCreate = vi.fn(async () => ({ id: "c1" }));
 const settingFindUnique = vi.fn(async () => null);
 
 vi.mock("@/core/sdk/server", () => ({
+    // A member in good standing. The guarantee this file defends is not
+    // about who is silenced; see a-silenced-member-cannot-write.test.ts.
+    refuseSilenced: async () => null,
     prisma: {
         blogArticle: { findUnique: (a: unknown) => findUnique(a as never), findFirst: (a: unknown) => findFirst(a as never) },
         blogComment: { findMany: () => commentFindMany(), create: () => commentCreate() },

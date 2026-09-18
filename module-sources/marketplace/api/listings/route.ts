@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { applyFiltersAsync } from "@/core/sdk";
-import { logActivity, pageParams, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { refuseSilenced, logActivity, pageParams, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { LISTINGS_PER_PAGE, readListings } from "../../lib/read-listings";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
@@ -55,6 +55,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // A mute on the record used to stop nothing. One call, so the next
+    // endpoint somebody writes cannot quietly forget it; see write-guard.ts.
+    const silenced = await refuseSilenced(session.user.id);
+    if (silenced) return silenced;
 
     const rl = await rateLimitForRole(
         `market-list:${session.user.id}`,

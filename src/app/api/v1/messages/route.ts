@@ -5,32 +5,77 @@ import { prisma } from "@/core/lib/db";
 import { oneToOneConversationWhere } from "@/core/lib/conversations";
 import { rateLimitForRole } from "@/core/lib/rate-limit";
 import { readJsonBody } from "@/core/lib/api-body";
+import { pageParams } from "@/core/lib/page-params";
+import { refuseSilenced } from "@/core/lib/write-guard";
 
 /**
  * GET - list current user's conversations with last message preview
  *       and unread count
+ *
+ * Query: ?page=1&limit=10&q=
+ *
+ * It used to answer with every conversation the account had ever had, newest
+ * first, and the screen drew all of them. An inbox is the one list on a
+ * member's account that only grows, and the one where the thing being looked
+ * for is usually old - so a page at a time, and a term that reads the other
+ * side's name, the conversation's own title and what was actually said.
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const myParticipations = await prisma.conversationParticipant.findMany({
-        where: { userId: session.user.id },
-        include: {
-            conversation: {
-                include: {
-                    participants: {
-                        include: { user: { select: { id: true, username: true, avatar: true } } },
-                    },
-                    messages: {
-                        orderBy: { createdAt: "desc" },
-                        take: 1,
+    const userId = session.user.id;
+    const { searchParams } = new URL(request.url);
+    const { page, limit, skip, take } = pageParams(searchParams, { defaultLimit: 10, maxLimit: 50 });
+    const term = (searchParams.get("q") ?? "").trim();
+
+    // Every clause hangs off conversations this account is already in, so the
+    // body match is a correlated exists over one person's own threads rather
+    // than a scan of the site's messages.
+    const where = {
+        userId,
+        ...(term
+            ? {
+                  conversation: {
+                      OR: [
+                          { title: { contains: term, mode: "insensitive" as const } },
+                          {
+                              participants: {
+                                  some: {
+                                      userId: { not: userId },
+                                      user: { username: { contains: term, mode: "insensitive" as const } },
+                                  },
+                              },
+                          },
+                          { messages: { some: { body: { contains: term, mode: "insensitive" as const } } } },
+                      ],
+                  },
+              }
+            : {}),
+    };
+
+    const [myParticipations, total] = await Promise.all([
+        prisma.conversationParticipant.findMany({
+            where,
+            include: {
+                conversation: {
+                    include: {
+                        participants: {
+                            include: { user: { select: { id: true, username: true, avatar: true } } },
+                        },
+                        messages: {
+                            orderBy: { createdAt: "desc" },
+                            take: 1,
+                        },
                     },
                 },
             },
-        },
-        orderBy: { conversation: { lastMessageAt: "desc" } },
-    });
+            orderBy: { conversation: { lastMessageAt: "desc" } },
+            skip,
+            take,
+        }),
+        prisma.conversationParticipant.count({ where }),
+    ]);
 
     // Unread counts in one grouped query.
     //
@@ -40,7 +85,6 @@ export async function GET() {
     // user's messages) on every load of the conversation list, for a number
     // that is almost always small. An OR of one clause per conversation says
     // the same thing to the database, which counts them without sending a row.
-    const userId = session.user.id;
     const unreadById = new Map<string, number>();
 
     if (myParticipations.length > 0) {
@@ -72,7 +116,10 @@ export async function GET() {
         unreadCount: unreadById.get(p.conversationId) ?? 0,
     }));
 
-    return NextResponse.json({ conversations });
+    return NextResponse.json({
+        conversations,
+        pagination: { page, limit, total, pages: Math.max(1, Math.ceil(total / limit)) },
+    });
 }
 
 const startSchema = z.object({
@@ -87,6 +134,11 @@ const startSchema = z.object({
 export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // A mute on the record used to stop nothing. One call, so the next
+    // endpoint somebody writes cannot quietly forget it; see write-guard.ts.
+    const silenced = await refuseSilenced(session.user.id);
+    if (silenced) return silenced;
 
     // Starting a conversation writes into someone else's inbox, and the
     // recipient is whoever the sender names, so one account could fan out to

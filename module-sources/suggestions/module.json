@@ -2,7 +2,7 @@
   "id": "suggestions",
   "name": "Suggestions",
   "description": "Community feature suggestions with voting",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "coreVersion": "^4.0.0",
   "category": "community",
   "author": "Blysis",
@@ -176,8 +176,10 @@
         "votes": "Votes"
       },
       "activity": {
-        "suggestionCreated": "suggested:",
-        "suggestionCommented": "Commented on a suggestion"
+        "kindSuggestionCommented": "Suggestion Comment",
+        "kindSuggestionCreated": "Suggestion",
+        "suggestionCommented": "Commented on a suggestion",
+        "suggestionCreated": "suggested:"
       },
       "nav": {
         "suggestions": "Suggestions"
@@ -258,8 +260,10 @@
         "votes": "Oylar"
       },
       "activity": {
-        "suggestionCreated": "öneri gönderdi:",
-        "suggestionCommented": "Bir öneriye yorum yaptı"
+        "kindSuggestionCommented": "Öneri Yorumu",
+        "kindSuggestionCreated": "Öneri",
+        "suggestionCommented": "Bir öneriye yorum yaptı",
+        "suggestionCreated": "öneri gönderdi:"
       },
       "nav": {
         "suggestions": "Öneriler"
@@ -332,11 +336,13 @@
   "activityTitles": [
     {
       "type": "suggestions.suggestion.created",
+      "nameKey": "kindSuggestionCreated",
       "prefix": "Suggested: ",
       "key": "suggestionCreated"
     },
     {
       "type": "suggestions.comment.created",
+      "nameKey": "kindSuggestionCommented",
       "prefix": "Commented on: ",
       "key": "suggestionCommented"
     }
