@@ -50,7 +50,7 @@ export default function AdminPunishmentsPage() {
     const commonT = useTranslations("common");
     const __locale = useLocale();
     const __dateTag = dateLocaleTag(__locale);
-    const { confirm } = useConfirm();
+    const { confirm, ask } = useConfirm();
     const [items, setItems] = useState<Punishment[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<StatusFilter>("all");
@@ -130,12 +130,29 @@ export default function AdminPunishmentsPage() {
     };
 
     const revoke = async (id: string, restore = false) => {
-        if (!restore && !(await confirm({ title: t("adm_revoke"), message: t("adm_revokeConfirm"), variant: "danger" }))) return;
+        /*
+         * Asked rather than confirmed, because the answer is the record. A
+         * punishment that stops with nothing said reads to the member it was
+         * against exactly like one that ran out, and the reason an appeal was
+         * upheld is the part worth keeping. Optional: `ask` returns "" for a
+         * confirmed empty box and null when the admin backed out, so an
+         * unanswered prompt still revokes and a cancelled one does nothing.
+         */
+        let liftReason: string | null = null;
+        if (!restore) {
+            liftReason = await ask({
+                title: t("adm_revoke"),
+                message: t("adm_revokeConfirm"),
+                placeholder: t("adm_revokeReason"),
+                confirmText: t("adm_revoke"),
+            });
+            if (liftReason === null) return;
+        }
         try {
             const res = await fetch(`/api/v1/punishments/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ active: restore }),
+                body: JSON.stringify({ active: restore, liftReason: liftReason || null }),
             });
             if (!res.ok) throw new Error("revoke failed");
             toast.success(restore ? t("adm_restoredToast") : t("adm_revokedToast"));

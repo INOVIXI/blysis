@@ -38,6 +38,13 @@ interface PunishmentReport {
     expiresAt?: string | null;
     /** False when the report is that a punishment was lifted. */
     active?: boolean;
+    /**
+     * Who lifted it, and the reason they gave. A record that says only that a
+     * ban stopped reads like it expired, which is the opposite of what an
+     * appeal upheld means to the member it was against.
+     */
+    liftedBy?: string | null;
+    liftReason?: string | null;
 }
 
 interface PunishmentRecorded {

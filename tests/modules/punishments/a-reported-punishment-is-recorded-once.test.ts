@@ -17,9 +17,20 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const upsert = vi.fn(async () => ({ id: "p1" }));
 
 vi.mock("@/core/sdk/server", () => ({
-    prisma: { punishment: { upsert: (args: unknown) => upsert(args as never) } },
+    prisma: {
+        punishment: {
+            // The handler reads the row before it writes, to tell a lift that
+            // just happened from history arriving for the first time. Nothing
+            // here is about that; see
+            // `a-lift-is-news-only-when-something-changed.test.ts`.
+            findUnique: async () => null,
+            upsert: (args: unknown) => upsert(args as never),
+        },
+    },
     log: { warn: vi.fn(), error: vi.fn(), info: vi.fn() },
 }));
+
+vi.mock("@/core/sdk", () => ({ doActionAsync: async () => {} }));
 
 const report = {
     source: "minecraft-litebans",

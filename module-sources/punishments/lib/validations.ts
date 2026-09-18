@@ -26,4 +26,6 @@ export const punishmentUpdateSchema = z.object({
     active: z.boolean().optional(),
     duration: z.string().max(64).optional().nullable(),
     expiresAt: z.iso.datetime({ offset: true }).optional().nullable(),
+    /** Why it was lifted. Read only when `active` is being set to false. */
+    liftReason: z.string().max(500).optional().nullable(),
 });

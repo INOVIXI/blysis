@@ -19,6 +19,8 @@ interface PunishmentItem {
     punishedBy: string | null;
     createdAt: string;
     expiresAt: string | null;
+    liftedBy: string | null;
+    liftReason: string | null;
 }
 
 const typeIcons: Record<PunishmentType, typeof Ban> = {
@@ -163,6 +165,15 @@ export function PunishmentList({ initial, initialPages }: { initial: PunishmentI
                                             <td className="py-3 px-4 text-sm text-muted-foreground">{new Date(p.createdAt).toLocaleDateString(__dateTag)}</td>
                                             <td className="py-3 px-4">
                                                 <span className={`text-xs px-2 py-1 rounded ${statusClass[status]}`}>{t(status)}</span>
+                                                {/* Under the chip rather than in a column of its own:
+                                                    seven columns already crowd a phone, and this is
+                                                    empty on every punishment nobody has lifted. */}
+                                                {status === "revoked" && p.liftedBy ? (
+                                                    <p className="text-xs text-muted-foreground mt-1">
+                                                        <span className="sr-only">{t("liftedBy")}: </span>
+                                                        {p.liftReason ? `${p.liftedBy} - ${p.liftReason}` : p.liftedBy}
+                                                    </p>
+                                                ) : null}
                                             </td>
                                         </tr>
                                     );

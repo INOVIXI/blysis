@@ -24,6 +24,21 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.active !== undefined) data.active = fields.active;
     if (fields.duration !== undefined) data.duration = fields.duration;
     if (fields.expiresAt !== undefined) data.expiresAt = fields.expiresAt ? new Date(fields.expiresAt) : null;
+
+    /*
+     * Who lifted it is taken from the session, never from the body: a name a
+     * caller can choose is a name a caller can put somebody else's staff on.
+     * Restoring clears both, because a punishment that is standing again was
+     * not lifted by anybody.
+     */
+    if (fields.active === false) {
+        data.liftedBy = session.user.name ?? session.user.email ?? null;
+        data.liftReason = fields.liftReason?.trim() || null;
+    } else if (fields.active === true) {
+        data.liftedBy = null;
+        data.liftReason = null;
+    }
+
     const punishment = await prisma.punishment.update({ where: { id }, data });
 
     // If the punishment was revoked (active → false), fire revoke hook + feed
@@ -34,6 +49,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             playerName: punishment.playerName,
             type: punishment.type,
             revokedBy: session.user.id,
+            liftedBy: punishment.liftedBy,
+            liftReason: punishment.liftReason,
         });
         await prisma.activityFeedItem.create({
             data: {

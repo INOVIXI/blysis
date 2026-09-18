@@ -32,6 +32,14 @@ model Punishment {
   reason     String?
   duration   String?
   active     Boolean   @default(true)
+  /**
+   * Who lifted it, and the reason they gave. Empty on a punishment nobody has
+   * lifted, and empty on one lifted by a system that does not say - a record
+   * that reports only that a ban stopped reads like it expired, which is the
+   * opposite of what an appeal upheld means to the member it was against.
+   */
+  liftedBy   String?
+  liftReason String?
   punishedBy String?
   createdAt  DateTime  @default(now())
   expiresAt  DateTime?

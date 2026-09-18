@@ -132,7 +132,9 @@
         "tempMute": "Temporary Mute",
         "title": "Punishments",
         "type": "Type",
-        "warning": "Warning"
+        "warning": "Warning",
+        "liftedBy": "Lifted by",
+        "adm_revokeReason": "Reason for lifting (optional)"
       },
       "nav": {
         "punishments": "Punishments"
@@ -141,10 +143,14 @@
         "punishments": "Punishments"
       },
       "profile": {
-        "notificationType_punishments_punishment_issued": "A punishment on your account"
+        "notificationType_punishments_punishment_issued": "A Punishment on Your Account"
       },
       "pageDescriptions": {
         "punishments": "Search the record of bans, mutes, kicks and warnings, with the reason, the date and whether each one is still active."
+      },
+      "activity": {
+        "kindPunishmentIssued": "Punishment",
+        "kindPunishmentRevoked": "Punishment Lifted"
       }
     },
     "tr": {
@@ -208,7 +214,9 @@
         "tempMute": "Geçici Susturma",
         "title": "Cezalar",
         "type": "Tür",
-        "warning": "Uyarı"
+        "warning": "Uyarı",
+        "liftedBy": "Kaldıran",
+        "adm_revokeReason": "Kaldırma sebebi (isteğe bağlı)"
       },
       "nav": {
         "punishments": "Cezalar"
@@ -217,10 +225,14 @@
         "punishments": "Cezalar"
       },
       "profile": {
-        "notificationType_punishments_punishment_issued": "Hesabınıza verilen ceza"
+        "notificationType_punishments_punishment_issued": "Hesabınıza Verilen Ceza"
       },
       "pageDescriptions": {
         "punishments": "Yasak, susturma, atma ve uyarı kayıtlarında arama yapın; nedenini, tarihini ve halen geçerli olup olmadığını görün."
+      },
+      "activity": {
+        "kindPunishmentIssued": "Ceza",
+        "kindPunishmentRevoked": "Ceza Kaldırma"
       }
     }
   },
@@ -246,6 +258,16 @@
       "key": "punishments.punishments",
       "column": "userId",
       "erasure": "retain"
+    }
+  ],
+  "activityTitles": [
+    {
+      "type": "punishments.punishment.issued",
+      "nameKey": "kindPunishmentIssued"
+    },
+    {
+      "type": "punishments.punishment.revoked",
+      "nameKey": "kindPunishmentRevoked"
     }
   ]
 }
