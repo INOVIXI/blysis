@@ -9,11 +9,21 @@ import type { ModuleSeed } from "@/core/sdk/seed";
  * because a feature that only shows up once somebody configures it is one
  * nobody discovers.
  *
- * The places are the point of the shape. "This site" restricts, because a
- * punishment an administrator hands down here is about here. The two game
- * modes do not, which is the arrangement most sites want and the one that is
- * least obvious from the switch alone: a Skyblock ban is on the record, and
- * the member can still post on the forum.
+ * A place is something an operator names, so the seed makes only the ones it
+ * can honestly name: two game modes. What this website does is not one of
+ * them - a punishment handed down here is unscoped, which is what unscoped
+ * already means and what every row written before places existed is. Seeding a
+ * scope called "This site" would have been the site inventing an operator's
+ * word for itself, in one language, on a list read in another.
+ *
+ * The two modes differ on the switch, which is the part the switch alone does
+ * not make obvious: Survival restricts this website and Skyblock does not, so
+ * a Skyblock ban is on the record and the member can still post on the forum.
+ *
+ * A kick is only ever written where a kick means something. It is a game
+ * server throwing somebody off a server, and there is nothing on a website to
+ * throw them off of - `hooks/standing.ts` says so, and a demo that files one
+ * against this site contradicts it on the screen.
  *
  * Names come from the demo accounts where it can, because a log full of
  * players nobody has heard of reads as fake even when it is.
@@ -21,10 +31,17 @@ import type { ModuleSeed } from "@/core/sdk/seed";
 
 /** What a reporting module would call each place. See `scopeKey` on the report. */
 const PLACES = [
-    { name: "This site", matchKey: null, restrictsSite: true, order: 0 },
     { name: "Survival", matchKey: "survival", restrictsSite: true, order: 1 },
     { name: "Skyblock", matchKey: "skyblock", restrictsSite: false, order: 2 },
 ] as const;
+
+/**
+ * What can happen where.
+ *
+ * A game server can throw somebody off it; this website has nowhere to throw
+ * them. Everything else means something in both.
+ */
+const OFF_A_SERVER_ONLY = ["kick"];
 
 const REASONS: Record<string, string[]> = {
     ban: ["Cheating - killaura", "Cheating - x-ray", "Ban evasion", "Advertising another server"],
@@ -62,6 +79,8 @@ export const seed: ModuleSeed = {
 
         for (let i = 0; i < howMany; i++) {
             const type = types[i % types.length];
+            // A third of them are this site's own, which is what unscoped is.
+            const inGame = OFF_A_SERVER_ONLY.includes(type) || ctx.chance(66);
             const createdAt = ctx.daysAgo(200);
             const temporary = type.startsWith("temp");
             const expiresAt = temporary
@@ -73,7 +92,7 @@ export const seed: ModuleSeed = {
             // Lifted is not the same as expired: one ran out, the other was
             // taken back by a person, and only that one has a name against it.
             const lifted = !active && expiresAt === null;
-            const scope = ctx.pick(scopes);
+            const scope = inGame ? ctx.pick(scopes) : null;
 
             await ctx.create("punishment", () => ctx.prisma.punishment.create({
                 data: {
@@ -87,16 +106,16 @@ export const seed: ModuleSeed = {
                     expiresAt,
                     liftedBy: lifted && staff.length ? ctx.pick(staff).username : null,
                     liftReason: lifted ? ctx.pick(LIFT_REASONS) : null,
-                    scopeId: scope.id,
+                    scopeId: scope?.id ?? null,
                     // What the reporter would have called it. Kept beside the
                     // scope so the admin screen's "arriving under a name
                     // nobody has claimed" list has the shape it will really
-                    // see.
-                    scopeKey: scope.matchKey,
+                    // see. Nothing reported the ones written here.
+                    scopeKey: scope?.matchKey ?? null,
                 },
             }));
         }
 
-        ctx.log(`${howMany} punishments across ${types.length} types and ${scopes.length} places`);
+        ctx.log(`${howMany} punishments across ${types.length} types, ${scopes.length} places and this site`);
     },
 };
