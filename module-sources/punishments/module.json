@@ -68,6 +68,10 @@
     {
       "hook": "punishments.punishment.revoked",
       "type": "action"
+    },
+    {
+      "hook": "punishment.record",
+      "type": "filter"
     }
   ],
   "translations": {
@@ -134,7 +138,10 @@
         "type": "Type",
         "warning": "Warning",
         "liftedBy": "Lifted by",
-        "adm_revokeReason": "Reason for lifting (optional)"
+        "adm_revokeReason": "Reason for lifting (optional)",
+        "standingBanned": "Your account is closed while a ban is on your record.",
+        "standingSilenced": "You cannot post while a mute is on your record.",
+        "warningPoints": "Warning points reached a threshold"
       },
       "nav": {
         "punishments": "Punishments"
@@ -216,7 +223,10 @@
         "type": "Tür",
         "warning": "Uyarı",
         "liftedBy": "Kaldıran",
-        "adm_revokeReason": "Kaldırma sebebi (isteğe bağlı)"
+        "adm_revokeReason": "Kaldırma sebebi (isteğe bağlı)",
+        "standingBanned": "Kaydında bir yasaklama dururken hesabın kapalı.",
+        "standingSilenced": "Kaydında bir susturma dururken yazamazsın.",
+        "warningPoints": "Uyarı puanı bir eşiğe ulaştı"
       },
       "nav": {
         "punishments": "Cezalar"
@@ -250,6 +260,16 @@
       "hook": "punishment.record",
       "type": "filter",
       "handler": "hooks/record.ts"
+    },
+    {
+      "hook": "member.standing",
+      "type": "filter",
+      "handler": "hooks/standing.ts"
+    },
+    {
+      "hook": "user.warning.threshold",
+      "type": "action",
+      "handler": "listeners/warning-threshold.ts"
     }
   ],
   "userDataExport": [
