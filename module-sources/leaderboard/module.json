@@ -7,9 +7,6 @@
   "category": "community",
   "author": "Blysis",
   "icon": "Trophy",
-  "dependencies": [
-    "store"
-  ],
   "routes": [
     {
       "path": "/leaderboard",
