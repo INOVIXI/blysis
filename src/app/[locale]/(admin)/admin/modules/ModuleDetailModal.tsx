@@ -2,11 +2,11 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useModalDialog } from "@/core/hooks/useModalDialog";
-import { dateLocaleTag } from "@/core/lib/utils";
 import { Button } from "@/core/components/ui/button";
 import { CheckCircle, X } from "lucide-react";
 import type { MarketplaceModule } from "./types";
 import { moduleDescription, moduleName } from "./module-name";
+import { useLocalDate } from "@/core/hooks/useLocalDate";
 
 interface DetailProps {
     module: MarketplaceModule;
@@ -15,7 +15,9 @@ interface DetailProps {
 
 export function ModuleDetailModal({ module: mod, onClose }: DetailProps) {
     const locale = useLocale();
-    const __dateTag = dateLocaleTag(locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
     const t = useTranslations("admin");
 
     // The modal is only ever rendered while it is open, so the hook is always
@@ -42,7 +44,7 @@ export function ModuleDetailModal({ module: mod, onClose }: DetailProps) {
                             {mod.verified && <CheckCircle className="w-4 h-4 text-primary" />}
                         </h2>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                            by {mod.author} · updated {new Date(mod.updatedAt).toLocaleDateString(__dateTag)}
+                            by {mod.author} · updated {formatDate(mod.updatedAt)}
                         </p>
                     </div>
                     <Button variant="ghost" size="icon" onClick={onClose} aria-label={t("common_close")}>

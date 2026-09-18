@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations, useLocale } from "next-intl";
-import { dateLocaleTag } from "@/core/sdk";
+import { useTranslations } from "next-intl";
 import { Target } from "lucide-react";
-import { useSiteCurrency } from "@/core/sdk/ui";
+import { useSiteCurrency, useLocalDate } from "@/core/sdk/ui";
 
 interface GoalData {
     target: number;
@@ -14,7 +13,9 @@ interface GoalData {
 }
 
 export function PaymentGoalWidget() {
-    const __dateTag = dateLocaleTag(useLocale());
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
     const sidebarT = useTranslations('sidebar');
     const { format: formatPrice } = useSiteCurrency();
     const [goal, setGoal] = useState<GoalData | null>(null);
@@ -58,7 +59,7 @@ export function PaymentGoalWidget() {
 
             {goal.endDate && (
                 <p className="text-xs text-muted-foreground mt-2 text-center">
-                    {sidebarT('endsOn', { date: new Date(goal.endDate).toLocaleDateString(__dateTag) })}
+                    {sidebarT('endsOn', { date: formatDate(goal.endDate) })}
                 </p>
             )}
 

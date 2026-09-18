@@ -2,14 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import {
-    Activity, Database, Server, Mail, Clock, AlertCircle,
-    CheckCircle2, XCircle, MinusCircle, Loader2, Users, Puzzle, History,
-} from "lucide-react";
-import { useTranslations, useLocale } from "next-intl";
-import { dateLocaleTag } from "@/core/lib/utils";
+import { Server, Mail, CheckCircle2, XCircle, MinusCircle, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface HealthData {
     status: "ok" | "degraded" | "down";
@@ -57,8 +54,12 @@ function StatusDot({ ok, disabled = false }: { ok: boolean; disabled?: boolean }
 }
 
 export default function ObservabilityPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
+    // Only the clock. `toLocaleString` with a time style and no date style
+    // prints exactly what `toLocaleTimeString` did.
+    const formatTime = useLocalDateTime({ timeStyle: "medium" });
     const t = useTranslations("admin");
     const [health, setHealth] = useState<HealthData | null>(null);
     const [errors, setErrors] = useState<CronError[]>([]);
@@ -126,7 +127,7 @@ export default function ObservabilityPage() {
                         {refreshing && <Loader2 className="w-3 h-3 animate-spin" />}
                         {lastRefresh && (
                             <span>
-                                {t("observability_lastRefresh")}: {lastRefresh.toLocaleTimeString(__dateTag)}
+                                {t("observability_lastRefresh")}: {formatTime(lastRefresh)}
                             </span>
                         )}
                     </div>
@@ -137,11 +138,8 @@ export default function ObservabilityPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm flex items-center gap-2">
-                            <Database className="w-4 h-4 text-primary" />
-                            {t("observability_database")}
-                            <StatusDot ok={health?.checks.database.ok ?? false} />
-                        </CardTitle>
+                        <CardTitle className="text-sm flex items-center gap-2">{t("observability_database")}
+                            <StatusDot ok={health?.checks.database.ok ?? false} /></CardTitle>
                     </CardHeader>
                     <CardContent className="text-sm">
                         {health?.checks.database.ok ? (
@@ -214,11 +212,8 @@ export default function ObservabilityPage() {
 
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-warning" />
-                            {t("observability_scheduler")}
-                            <StatusDot ok={health?.checks.scheduler.ok ?? false} />
-                        </CardTitle>
+                        <CardTitle className="text-sm flex items-center gap-2">{t("observability_scheduler")}
+                            <StatusDot ok={health?.checks.scheduler.ok ?? false} /></CardTitle>
                     </CardHeader>
                     <CardContent className="text-sm">
                         <div>
@@ -236,10 +231,7 @@ export default function ObservabilityPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <Card>
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm flex items-center gap-2">
-                                <Activity className="w-4 h-4 text-success" />
-                                {t("observability_activity24h")}
-                            </CardTitle>
+                            <CardTitle className="text-sm flex items-center gap-2">{t("observability_activity24h")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <span className="font-mono text-2xl">{stats.activityFeed.last24h}</span>
@@ -250,10 +242,7 @@ export default function ObservabilityPage() {
                     </Card>
                     <Card>
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm flex items-center gap-2">
-                                <Users className="w-4 h-4 text-primary" />
-                                {t("observability_users")}
-                            </CardTitle>
+                            <CardTitle className="text-sm flex items-center gap-2">{t("observability_users")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <span className="font-mono text-2xl">{stats.users}</span>
@@ -261,10 +250,7 @@ export default function ObservabilityPage() {
                     </Card>
                     <Card>
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm flex items-center gap-2">
-                                <Puzzle className="w-4 h-4 text-secondary" />
-                                {t("observability_modules")}
-                            </CardTitle>
+                            <CardTitle className="text-sm flex items-center gap-2">{t("observability_modules")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <span className="font-mono text-2xl">{stats.enabledModules}</span>
@@ -272,10 +258,7 @@ export default function ObservabilityPage() {
                     </Card>
                     <Card>
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm flex items-center gap-2">
-                                <History className="w-4 h-4 text-primary" />
-                                {t("observability_revisions")}
-                            </CardTitle>
+                            <CardTitle className="text-sm flex items-center gap-2">{t("observability_revisions")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <span className="font-mono text-2xl">{stats.revisions}</span>
@@ -288,10 +271,7 @@ export default function ObservabilityPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4 text-destructive" />
-                            {t("observability_recentErrors")}
-                        </CardTitle>
+                        <CardTitle className="text-base flex items-center gap-2">{t("observability_recentErrors")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {errorsFailed ? (
@@ -306,7 +286,7 @@ export default function ObservabilityPage() {
                                     <li key={e.jobKey} className="border-l-2 border-destructive pl-3">
                                         <div className="font-mono text-xs font-semibold">{e.jobKey}</div>
                                         <div className="text-xs text-muted-foreground">
-                                            {new Date(e.lastRunAt).toLocaleString(__dateTag)}
+                                            {formatDateTime(e.lastRunAt)}
                                         </div>
                                         {e.lastError && (
                                             <div className="text-xs text-destructive truncate">{e.lastError}</div>
@@ -320,10 +300,7 @@ export default function ObservabilityPage() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
-                            <Mail className="w-4 h-4 text-destructive" />
-                            {t("observability_failedEmails")}
-                        </CardTitle>
+                        <CardTitle className="text-base flex items-center gap-2">{t("observability_failedEmails")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {emailsFailed ? (

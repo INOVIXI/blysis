@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
-import { dateLocaleTag } from "@/core/sdk";
+import { useTranslations } from "next-intl";
 import type { ComponentConfig } from "@measured/puck";
-import { LoadFailed, Waiting } from "@/core/sdk/ui";
+import { LoadFailed, Waiting, useLocalDate } from "@/core/sdk/ui";
 
 /**
  * Puck page-builder block: ChangelogRecentEntries
@@ -29,7 +28,9 @@ interface ChangelogEntry {
 }
 
 function ChangelogRecentEntriesRender({ count, heading, showDate }: ChangelogRecentEntriesProps): React.ReactElement {
-    const __dateTag = dateLocaleTag(useLocale());
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
     const t = useTranslations("changelog");
     const commonT = useTranslations("common");
     const [entries, setEntries] = useState<ChangelogEntry[]>([]);
@@ -87,7 +88,7 @@ function ChangelogRecentEntriesRender({ count, heading, showDate }: ChangelogRec
                                 </span>
                                 {showDate ? (
                                     <span className="text-xs text-muted-foreground">
-                                        {new Date(entry.createdAt).toLocaleDateString(__dateTag)}
+                                        {formatDate(entry.createdAt)}
                                     </span>
                                 ) : null}
                             </div>

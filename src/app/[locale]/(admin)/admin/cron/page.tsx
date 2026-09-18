@@ -6,11 +6,11 @@ import { Button } from "@/core/components/ui/button";
 import { Loader2, Play, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
-import { useTranslations, useLocale } from "next-intl";
-import { dateLocaleTag } from "@/core/lib/utils";
+import { useTranslations } from "next-intl";
 import { badgeClassName, type BadgeTone } from "@/core/components/ui/badge";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { errorMessage } from "@/core/lib/write-result";
+import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface CronJobRow {
     key: string;
@@ -24,11 +24,6 @@ interface CronJobRow {
 
 const STATUS_TONE: Record<string, BadgeTone> = { ok: "success", error: "danger" };
 
-function formatDate(value: string | null, tag: string): string {
-    if (!value) return "-";
-    return new Date(value).toLocaleString(tag);
-}
-
 function formatDuration(ms: number | null): string {
     if (ms === null || ms === undefined) return "-";
     if (ms < 1000) return `${ms}ms`;
@@ -36,8 +31,9 @@ function formatDuration(ms: number | null): string {
 }
 
 export default function CronAdminPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
     const [jobs, setJobs] = useState<CronJobRow[]>([]);
     const [loading, setLoading] = useState(true);
@@ -141,7 +137,7 @@ export default function CronAdminPage() {
                                             <tr className="border-t border-border">
                                                 <td className="px-4 py-3 font-mono text-xs">{job.key}</td>
                                                 <td className="px-4 py-3 text-muted-foreground">{job.schedule}</td>
-                                                <td className="px-4 py-3 text-muted-foreground">{formatDate(job.lastRunAt, __dateTag)}</td>
+                                                <td className="px-4 py-3 text-muted-foreground">{job.lastRunAt ? formatDateTime(job.lastRunAt) : "-"}</td>
                                                 <td className="px-4 py-3">
                                                     {job.lastStatus ? (
                                                         <span
@@ -155,7 +151,7 @@ export default function CronAdminPage() {
                                                     )}
                                                 </td>
                                                 <td className="px-4 py-3 text-muted-foreground">{formatDuration(job.lastRunMs)}</td>
-                                                <td className="px-4 py-3 text-muted-foreground">{formatDate(job.nextRunAt, __dateTag)}</td>
+                                                <td className="px-4 py-3 text-muted-foreground">{job.nextRunAt ? formatDateTime(job.nextRunAt) : "-"}</td>
                                                 <td className="px-4 py-3 text-right">
                                                     <div className="flex justify-end gap-1">
                                                         {hasError && (

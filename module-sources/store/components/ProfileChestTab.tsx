@@ -3,20 +3,30 @@
 import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Button, Card, CardContent, CardHeader, CardTitle, LoadFailed, usePrompt } from "@/core/sdk/ui";
-import { dateLocaleTag, errorMessage } from "@/core/sdk";
-import { Gift } from "lucide-react";
+import { Button, Card, CardContent, CardHeader, CardTitle, LoadFailed, usePrompt, useLocalDate } from "@/core/sdk/ui";
+import { errorMessage } from "@/core/sdk";
+import { Gift, Package } from "lucide-react";
 
 interface ChestItem {
     id: string;
     productName: string;
     quantity: number;
     createdAt: string;
+    /**
+     * Whether this one may be handed to somebody else.
+     *
+     * The server's answer, not the screen's: gifting is a site switch and a
+     * product switch, and this row has already been through both. The button
+     * used to be drawn on everything and the refusal arrived after the click.
+     */
+    canGift: boolean;
 }
 
 export function ProfileChestTab() {
     const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
     const t = useTranslations("store");
     const commonT = useTranslations("common");
     const ask = usePrompt();
@@ -128,17 +138,19 @@ export function ProfileChestTab() {
                             <div key={item.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                                 <div>
                                     <p className="font-medium">{item.productName}</p>
-                                    <p className="text-xs text-muted-foreground">{t("tab_chest_qty")}: {item.quantity} · {new Date(item.createdAt).toLocaleDateString(__dateTag)}</p>
+                                    <p className="text-xs text-muted-foreground">{t("tab_chest_qty")}: {item.quantity} · {formatDate(item.createdAt)}</p>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        aria-label={`${t("tab_chest_gift")}: ${item.productName}`}
-                                        onClick={() => gift(item.id, item.productName)}
-                                    >
-                                        <Gift className="w-4 h-4" aria-hidden="true" />
-                                    </Button>
+                                    {item.canGift && (
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            aria-label={`${t("tab_chest_gift")}: ${item.productName}`}
+                                            onClick={() => gift(item.id, item.productName)}
+                                        >
+                                            <Gift className="w-4 h-4" aria-hidden="true" />
+                                        </Button>
+                                    )}
                                     <Button size="sm" onClick={() => redeem(item.id)}>{t("tab_chest_redeem")}</Button>
                                 </div>
                             </div>

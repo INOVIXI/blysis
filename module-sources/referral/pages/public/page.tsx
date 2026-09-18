@@ -3,11 +3,10 @@
 import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, LoadFailed, Pagination, usePagedRows } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, LoadFailed, Pagination, usePagedRows, useLocalDate } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
 import { Loader2, UserPlus, Users, Coins, Clock, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
-import { dateLocaleTag } from "@/core/sdk";
 import { copyText } from "@/core/sdk";
 import { errorMessage } from "@/core/sdk";
 
@@ -31,7 +30,9 @@ interface ReferralData {
 
 export default function ReferralPage() {
     const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
     const t = useTranslations("referral");
     const { data: session } = useSession();
     const [data, setData] = useState<ReferralData | null>(null);
@@ -140,10 +141,7 @@ export default function ReferralPage() {
                     {/* Referral Link */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <UserPlus className="w-5 h-5" />
-                                {t("yourLink")}
-                            </CardTitle>
+                            <CardTitle>{t("yourLink")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="text-sm text-muted-foreground mb-3">
@@ -256,7 +254,7 @@ export default function ReferralPage() {
                                                     </td>
                                                     <td className="py-3 px-2">{ref.rewardAmount.toFixed(2)} {t("creditsUnit")}</td>
                                                     <td className="py-3 px-2 text-muted-foreground">
-                                                        {new Date(ref.createdAt).toLocaleDateString(__dateTag)}
+                                                        {formatDate(ref.createdAt)}
                                                     </td>
                                                 </tr>
                                             ))}

@@ -1,16 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ArrowUpCircle, CheckCircle2, Loader2, ShieldAlert, WifiOff } from "lucide-react";
+import { CheckCircle2, Loader2, ShieldAlert, WifiOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
 import { CheckboxField } from "@/core/components/ui/checkbox";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { errorMessage } from "@/core/lib/write-result";
-import { dateLocaleTag } from "@/core/lib/utils";
+import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 /**
  * What version this install runs, and the one button that changes it.
@@ -81,7 +81,9 @@ interface UpdateState {
 
 export default function UpdatesPage() {
     const t = useTranslations("admin");
-    const __dateTag = dateLocaleTag(useLocale());
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
     const { confirm } = useConfirm();
     const [state, setState] = useState<UpdateState | null>(null);
     const [loading, setLoading] = useState(true);
@@ -162,10 +164,7 @@ export default function UpdatesPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
-                        <ArrowUpCircle className="w-4 h-4" />
-                        {t("updates_installed", { version: state.current })}
-                    </CardTitle>
+                    <CardTitle className="text-base flex items-center gap-2">{t("updates_installed", { version: state.current })}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {!state.feedReadable && (
@@ -259,7 +258,7 @@ export default function UpdatesPage() {
                                         <td className="px-4 py-2">{row.fromVersion} to {row.toVersion}</td>
                                         <td className="px-4 py-2">{t(stateLabel(row.status))}</td>
                                         <td className="px-4 py-2 text-muted-foreground">
-                                            {new Date(row.startedAt).toLocaleString(__dateTag)}
+                                            {formatDateTime(row.startedAt)}
                                         </td>
                                     </tr>
                                 ))}

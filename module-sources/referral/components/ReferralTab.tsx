@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useLocale, useTranslations } from "next-intl";
-import { dateLocaleTag } from "@/core/sdk";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input } from "@/core/sdk/ui";
-import { Loader2, UserPlus, Users, Coins, Copy, Check } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, useLocalDate } from "@/core/sdk/ui";
+import { Check, Coins, Copy, History, Loader2, UserPlus, Users } from "lucide-react";
 import { toast } from "sonner";
 import { copyText } from "@/core/sdk";
 
@@ -26,7 +25,9 @@ interface ReferralData {
 }
 
 export function ReferralTab() {
-    const __dateTag = dateLocaleTag(useLocale());
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
     const t = useTranslations("referral");
     const commonT = useTranslations("common");
     const [data, setData] = useState<ReferralData | null>(null);
@@ -71,10 +72,7 @@ export function ReferralTab() {
             {/* Referral Link */}
             <Card>
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-base flex items-center gap-2">
-                        <UserPlus className="w-4 h-4" />
-                        {t("yourLink")}
-                    </CardTitle>
+                    <CardTitle className="text-base flex items-center gap-2">{t("yourLink")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="flex gap-2">
@@ -129,7 +127,7 @@ export function ReferralTab() {
                                     <div>
                                         <p className="text-sm font-medium">{ref.username || "Unknown"}</p>
                                         <p className="text-xs text-muted-foreground">
-                                            {new Date(ref.createdAt).toLocaleDateString(__dateTag)}
+                                            {formatDate(ref.createdAt)}
                                         </p>
                                     </div>
                                     <div className="text-right">

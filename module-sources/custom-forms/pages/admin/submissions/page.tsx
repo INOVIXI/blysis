@@ -1,12 +1,11 @@
 "use client";
 
 
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
-import { Card, CardContent, NativeSelect, Pagination } from "@/core/sdk/ui";
+import { Card, CardContent, NativeSelect, Pagination, useLocalDateTime } from "@/core/sdk/ui";
 import { Loader2, ChevronDown, ChevronUp, FileText } from "lucide-react";
-import { dateLocaleTag } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
 
 interface Form {
@@ -26,8 +25,9 @@ interface Submission {
 }
 
 export default function SubmissionsPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("customForms");
     const commonT = useTranslations("common");
     const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -121,7 +121,7 @@ export default function SubmissionsPage() {
                                         <div>
                                             <span className="font-medium text-foreground">{sub.form.title}</span>
                                             <span className="text-xs text-muted-foreground">
-                                                {new Date(sub.createdAt).toLocaleString(__dateTag)}
+                                                {formatDateTime(sub.createdAt)}
                                             </span>
                                             <span className={`text-xs px-1.5 py-0.5 rounded ${sub.status === "new" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                                                 {sub.status === "new" ? t("adm_submissionNew") : sub.status}

@@ -16,6 +16,12 @@
  *
  * A literal tag is still fine in a test, a seed, or a script - those pick a
  * locale deliberately rather than inheriting the reader's.
+ *
+ * The locale was only half of it, and the other half cost a hydration error on
+ * every page holding a date: a tag pins the language and leaves the zone to
+ * the machine. `a-date-is-formatted-in-the-sites-zone.test.ts` holds that half,
+ * and between them a screen now takes both from `useLocalDate` rather than
+ * passing either.
  */
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync } from "fs";
@@ -120,7 +126,11 @@ describe("date formatting uses the reader's locale", () => {
     it("gives the shared formatDate() a locale at every call site", () => {
         const offenders: string[] = [];
         for (const { rel, source } of scanned()) {
-            if (/export function formatDate|function formatDate\(/.test(source)) continue;
+            // A file with its own `formatDate` is not calling the shared one.
+            // Most now bind it from `useLocalDate`, which carries the reader's
+            // locale and the site's zone without an argument - see
+            // `a-date-is-formatted-in-the-sites-zone.test.ts`.
+            if (/export function formatDate|function formatDate\(|const formatDate\s*=/.test(source)) continue;
             for (const m of source.matchAll(FORMAT_DATE_CALL)) {
                 // Read the argument list, tracking nesting, and count top-level commas.
                 let depth = 1;

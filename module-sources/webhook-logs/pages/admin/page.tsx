@@ -1,11 +1,10 @@
 "use client";
 
 
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Card, CardContent, LoadFailed, Pagination } from "@/core/sdk/ui";
+import { Card, CardContent, LoadFailed, Pagination, useLocalDateTime } from "@/core/sdk/ui";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
-import { dateLocaleTag } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
 
 interface Log {
@@ -18,8 +17,9 @@ interface Log {
 }
 
 export default function WebhookLogsPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("webhookLogs");
     const [logs, setLogs] = useState<Log[]>([]);
     const [failed, setFailed] = useState(false);
@@ -89,7 +89,7 @@ export default function WebhookLogsPage() {
                                                 <code className="text-xs bg-muted px-2 py-0.5 rounded">{log.event}</code>
                                             </td>
                                             <td className="py-3 px-4 text-sm text-muted-foreground max-w-[300px] truncate">{log.url}</td>
-                                            <td className="py-3 px-4 text-sm text-muted-foreground">{new Date(log.createdAt).toLocaleString(__dateTag)}</td>
+                                            <td className="py-3 px-4 text-sm text-muted-foreground">{formatDateTime(log.createdAt)}</td>
                                         </tr>
                                     ))}
                                 </tbody>

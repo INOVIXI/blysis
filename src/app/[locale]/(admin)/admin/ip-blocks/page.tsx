@@ -8,9 +8,9 @@ import { Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { Link } from "@/core/lib/i18n/navigation";
-import { useTranslations, useLocale } from "next-intl";
-import { dateLocaleTag } from "@/core/lib/utils";
+import { useTranslations } from "next-intl";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { useLocalDate, useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface IpBlock {
     id: string;
@@ -23,8 +23,10 @@ interface IpBlock {
 }
 
 export default function IpBlocksPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
 
@@ -122,14 +124,14 @@ export default function IpBlocksPage() {
                                                 <td className="p-3 text-muted-foreground">
                                                     {b.expiresAt ? (
                                                         <span className={expired ? "text-muted-foreground line-through" : ""}>
-                                                            {new Date(b.expiresAt).toLocaleString(__dateTag)}
+                                                            {formatDateTime(b.expiresAt)}
                                                         </span>
                                                     ) : (
                                                         t("ipBlocks_permanent")
                                                     )}
                                                 </td>
                                                 <td className="p-3 text-muted-foreground">
-                                                    {new Date(b.createdAt).toLocaleDateString(__dateTag)}
+                                                    {formatDate(b.createdAt)}
                                                 </td>
                                                 <td className="p-3 text-right">
                                                     <Button

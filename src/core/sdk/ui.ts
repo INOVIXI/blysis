@@ -67,11 +67,15 @@ export {
 } from "@/core/components/ui/select";
 export { NativeSelect } from "@/core/components/ui/native-select";
 export { Pagination, usePagedRows } from "@/core/components/ui/pagination";
+export { ListControls } from "@/core/components/ui/list-controls";
+export { ImageLightbox } from "@/core/components/ui/image-lightbox";
 export { Radio, RadioField } from "@/core/components/ui/radio";
 export { RichContent } from "@/core/components/ui/rich-content";
 export type { RadioProps, RadioFieldProps } from "@/core/components/ui/radio";
 export type { NativeSelectProps } from "@/core/components/ui/native-select";
 export type { PaginationProps } from "@/core/components/ui/pagination";
+export type { ListControlsProps, ListFilter } from "@/core/components/ui/list-controls";
+export type { ImageLightboxProps } from "@/core/components/ui/image-lightbox";
 export { Skeleton } from "@/core/components/ui/skeleton";
 export { Waiting } from "@/core/components/ui/waiting";
 export { Slider } from "@/core/components/ui/slider";
@@ -91,6 +95,18 @@ export { RichTextEditor } from "@/core/components/ui/rich-text-editor";
 // uploaded to can also be linked, and a module reaching for the picker alone
 // draws half a field. See `an-image-field-is-one-control`.
 export { UrlOrFile } from "@/core/components/ui/url-or-file";
+
+/**
+ * A member's face. Exported because every module that lists people drew its
+ * own - a letter here, a silhouette there, four sizes - and they disagreed
+ * about what to show for the members who have no picture, which is most of
+ * them.
+ */
+export { MemberAvatar } from "@/core/components/ui/MemberAvatar";
+export { MemberLink } from "@/core/components/ui/MemberLink";
+export { CountBadge } from "@/core/components/ui/count-badge";
+export type { CountBadgeProps } from "@/core/components/ui/count-badge";
+export type { MemberLinkProps } from "@/core/components/ui/MemberLink";
 export { FooterDropdown } from "@/core/components/ui/footer-dropdown";
 
 // The keyboard half of a dialog: Escape, a Tab trap, and focus handed back to
@@ -125,6 +141,6 @@ export { usePrompt, type PromptOptions } from "@/core/components/ui/confirm-dial
 // `toLocaleDateString()`, which formats in the browser's language whatever the
 // site is set to. The boundary check now catches that reach, so these have to
 // be here.
-export { useLocalDate } from "@/core/hooks/useLocalDate";
+export { useLocalDate, useLocalDateTime } from "@/core/hooks/useLocalDate";
 export { useRelativeTime } from "@/core/hooks/useRelativeTime";
 

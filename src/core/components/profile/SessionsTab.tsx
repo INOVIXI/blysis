@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
+import { ListControls } from "@/core/components/ui/list-controls";
+import { Pagination, usePagedRows } from "@/core/components/ui/pagination";
 import { Loader2, Smartphone, Monitor, Trash2, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
-import { dateLocaleTag } from "@/core/lib/utils";
+import { useLocalDate } from "@/core/hooks/useLocalDate";
 
 interface UserSession {
     id: string;
@@ -19,17 +21,26 @@ interface UserSession {
     expiresAt: string;
 }
 
-function formatDate(d: string, localeTag: string): string {
-    return new Date(d).toLocaleString(localeTag);
-}
-
+/**
+ * The devices this account is signed in on.
+ *
+ * The endpoint answers up to fifty - a row is written per sign-in, not per
+ * device - and every one of them was drawn, so the screen ran off the bottom
+ * with thirty near-identical rows and no way to find the one an unfamiliar
+ * address was on. The set is small and already in the browser, so the term
+ * and the pages are worked out here rather than asked for again.
+ */
 export function SessionsTab() {
     const t = useTranslations("profile");
+    // Still needed for the sign-out redirect below, which builds a path.
     const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate({ dateStyle: "medium", timeStyle: "short" });
     const [sessions, setSessions] = useState<UserSession[]>([]);
     const [loading, setLoading] = useState(true);
     const [revoking, setRevoking] = useState<Set<string>>(new Set());
+    const [term, setTerm] = useState("");
     const { confirm } = useConfirm();
 
     function detectDevice(ua: string | null): { icon: typeof Monitor; label: string } {
@@ -96,6 +107,19 @@ export function SessionsTab() {
         }
     };
 
+    // The device name and the address are what a reader recognises a session
+    // by; the user agent is what they paste in when they do not.
+    const matching = useMemo(() => {
+        const needle = term.trim().toLowerCase();
+        if (!needle) return sessions;
+        return sessions.filter((s) =>
+            [s.deviceInfo, s.ipAddress, s.userAgent]
+                .some((field) => (field ?? "").toLowerCase().includes(needle)),
+        );
+    }, [sessions, term]);
+
+    const paged = usePagedRows(matching, 10);
+
     if (loading) {
         return <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
     }
@@ -115,14 +139,23 @@ export function SessionsTab() {
                     )}
                 </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+                {sessions.length > 0 && (
+                    <ListControls
+                        search={{ value: term, onChange: setTerm, placeholder: t("searchDevices") }}
+                    />
+                )}
                 {sessions.length === 0 ? (
                     <p className="text-sm text-muted-foreground py-4 text-center">
                         {t("sessionTrackingStarts")}
                     </p>
+                ) : matching.length === 0 ? (
+                    <p className="text-sm text-muted-foreground py-4 text-center">
+                        {t("noMatchingDevices")}
+                    </p>
                 ) : (
                     <div className="space-y-2">
-                        {sessions.map((s) => {
+                        {paged.rows.map((s) => {
                             const device = detectDevice(s.userAgent);
                             const Icon = device.icon;
                             return (
@@ -135,7 +168,7 @@ export function SessionsTab() {
                                             {s.deviceInfo || device.label}
                                         </div>
                                         <div className="text-xs text-muted-foreground">
-                                            {s.ipAddress || t("unknownIp")} · {t("lastActive", { date: formatDate(s.lastActiveAt, __dateTag) })}
+                                            {s.ipAddress || t("unknownIp")} · {t("lastActive", { date: formatDate(s.lastActiveAt) })}
                                         </div>
                                     </div>
                                     <Button
@@ -151,6 +184,14 @@ export function SessionsTab() {
                             );
                         })}
                     </div>
+                )}
+                {matching.length > 0 && (
+                    <Pagination
+                        page={paged.page}
+                        pages={paged.pages}
+                        total={paged.total}
+                        onPageChange={paged.setPage}
+                    />
                 )}
             </CardContent>
         </Card>

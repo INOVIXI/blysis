@@ -1,13 +1,12 @@
 "use client";
 
 
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
-import { Button, Card, CardContent, Input, Label, Pagination, usePagedRows, useConfirm, useFormRoute, useSiteCurrency, NativeSelect, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Input, Label, Pagination, usePagedRows, useConfirm, useFormRoute, useSiteCurrency, NativeSelect, buttonClassName, useLocalDate } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, Tag } from "lucide-react";
 import { toast } from "sonner";
-import { dateLocaleTag } from "@/core/sdk";
 import { writeError } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
 import { errorMessage } from "@/core/sdk";
@@ -29,8 +28,9 @@ interface Coupon {
 
 export default function AdminCouponsPage() {
     const { format: money } = useSiteCurrency();
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
     const t = useTranslations("store");
     const commonT = useTranslations("common");
     const { confirm } = useConfirm();
@@ -374,7 +374,7 @@ export default function AdminCouponsPage() {
                                             </td>
                                             <td className="py-3 px-4 text-sm text-muted-foreground">
                                                 {coupon.expiresAt
-                                                    ? new Date(coupon.expiresAt).toLocaleDateString(__dateTag)
+                                                    ? formatDate(coupon.expiresAt)
                                                     : t("adm_never")}
                                             </td>
                                             <td className="py-3 px-4">

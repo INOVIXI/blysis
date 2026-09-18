@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/core/sdk/navigation";
-import { Card, CardContent, CardHeader, CardTitle, LoadFailed } from "@/core/sdk/ui";
+import { Card, CardContent, CardHeader, CardTitle, LoadFailed, useLocalDate } from "@/core/sdk/ui";
 import { Award, Loader2 } from "lucide-react";
-import { dateLocaleTag } from "@/core/sdk";
 
 interface EarnedTrophy {
     id: string;
@@ -23,7 +22,9 @@ interface EarnedTrophy {
 export default function TrophiesTab() {
     const t = useTranslations("trophies");
     const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
     const [earned, setEarned] = useState<EarnedTrophy[]>([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -86,7 +87,7 @@ export default function TrophiesTab() {
                                 <div className="min-w-0">
                                     <div className="font-medium text-xs truncate">{et.trophy.name}</div>
                                     <div className="text-[10px] text-muted-foreground">
-                                        {new Date(et.awardedAt).toLocaleDateString(__dateTag)}
+                                        {formatDate(et.awardedAt)}
                                     </div>
                                 </div>
                             </div>

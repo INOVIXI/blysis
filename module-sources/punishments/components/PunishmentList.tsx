@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useTranslations, useLocale } from "next-intl";
-import { Button, Card, CardContent, Input, LoadFailed, Pagination } from "@/core/sdk/ui";
+import { useTranslations } from "next-intl";
+import { Button, Card, CardContent, Input, LoadFailed, Pagination, useLocalDate } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
 import { Loader2, Search, Ban, VolumeX, LogOut, AlertTriangle } from "lucide-react";
-import { dateLocaleTag } from "@/core/sdk";
 import { punishmentStatus, type PunishmentStatus } from "../lib/status";
 import { PUNISHMENT_TYPES, canonicalType, type PunishmentType } from "../lib/punishment-types";
 
@@ -65,8 +64,10 @@ function typeLabel(t: { (key: string): string; has: (key: string) => boolean }, 
  * over; searching, filtering and paging still ask the endpoint.
  */
 export function PunishmentList({ initial, initialPages }: { initial: PunishmentItem[]; initialPages: number }) {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's. Without it the server drew one day
+    // and the browser drew the next, and React threw the table away and
+    // rebuilt it; see format-date.ts.
+    const formatDate = useLocalDate();
     const t = useTranslations("punishments");
     const [punishments, setPunishments] = useState<PunishmentItem[]>(initial);
     const [failed, setFailed] = useState(false);
@@ -162,7 +163,7 @@ export function PunishmentList({ initial, initialPages }: { initial: PunishmentI
                                             <td className="py-3 px-4 text-sm text-muted-foreground max-w-[200px] truncate">{p.reason || "-"}</td>
                                             <td className="py-3 px-4 text-sm text-muted-foreground">{p.punishedBy || t("console")}</td>
                                             <td className="py-3 px-4 text-sm">{p.duration || t("permanent")}</td>
-                                            <td className="py-3 px-4 text-sm text-muted-foreground">{new Date(p.createdAt).toLocaleDateString(__dateTag)}</td>
+                                            <td className="py-3 px-4 text-sm text-muted-foreground">{formatDate(p.createdAt)}</td>
                                             <td className="py-3 px-4">
                                                 <span className={`text-xs px-2 py-1 rounded ${statusClass[status]}`}>{t(status)}</span>
                                                 {/* Under the chip rather than in a column of its own:

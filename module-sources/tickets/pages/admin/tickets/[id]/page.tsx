@@ -1,12 +1,11 @@
 "use client";
 
 
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useState, useEffect, use } from "react";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, Textarea, NativeSelect, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Textarea, NativeSelect, buttonClassName, useLocalDate, useLocalDateTime } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, Send } from "lucide-react";
-import { dateLocaleTag } from "@/core/sdk";
 import { adminKeys, labelFor, PRIORITY_KEYS, STATUS_KEYS } from "../../../../lib/status-labels";
 import { toast } from "sonner";
 import { writeError } from "@/core/sdk";
@@ -62,8 +61,10 @@ interface PageProps {
 }
 
 export default function AdminTicketDetailPage(props: PageProps) {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("tickets");
     const commonT = useTranslations("common");
     const params = use(props.params);
@@ -155,7 +156,7 @@ export default function AdminTicketDetailPage(props: PageProps) {
             <AdminPageHeader
                 title={ticket.subject}
                 description={<>
-                    by {ticket.user.username} · {new Date(ticket.createdAt).toLocaleDateString(__dateTag)}
+                    by {ticket.user.username} · {formatDate(ticket.createdAt)}
                 </>}
                 backHref="/admin/tickets"
                 backLabel={commonT("back")}
@@ -179,7 +180,7 @@ export default function AdminTicketDetailPage(props: PageProps) {
                                             )}
                                         </p>
                                         <p className="text-xs text-muted-foreground">
-                                            {new Date(msg.createdAt).toLocaleString(__dateTag)}
+                                            {formatDateTime(msg.createdAt)}
                                         </p>
                                     </div>
                                 </div>

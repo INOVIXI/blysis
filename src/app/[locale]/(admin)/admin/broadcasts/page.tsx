@@ -10,11 +10,11 @@ import { RichTextEditor } from "@/core/components/ui/rich-text-editor";
 import { Send, Loader2, Trash2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
-import { useTranslations, useLocale } from "next-intl";
-import { dateLocaleTag } from "@/core/lib/utils";
+import { useTranslations } from "next-intl";
 import { writeError } from "@/core/lib/write-result";
 import { badgeClassName, type BadgeTone } from "@/core/components/ui/badge";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface Broadcast {
     id: string;
@@ -29,8 +29,9 @@ interface Broadcast {
 }
 
 export default function BroadcastsPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
     const [broadcasts, setBroadcasts] = useState<Broadcast[]>([]);
@@ -203,7 +204,7 @@ export default function BroadcastsPage() {
                                         </span>
                                     </div>
                                     <p className="text-xs text-muted-foreground">
-                                        {new Date(b.createdAt).toLocaleString(__dateTag)}
+                                        {formatDateTime(b.createdAt)}
                                         {b.totalCount > 0 && (
                                             <span className="ml-2">
                                                 {t("broadcasts_sentSuffix", { sent: b.sentCount, total: b.totalCount })}

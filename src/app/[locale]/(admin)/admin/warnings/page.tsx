@@ -8,10 +8,10 @@ import { Plus, Loader2, ShieldOff, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { Link } from "@/core/lib/i18n/navigation";
-import { useTranslations, useLocale } from "next-intl";
-import { dateLocaleTag } from "@/core/lib/utils";
+import { useTranslations } from "next-intl";
 import { badgeClassName } from "@/core/components/ui/badge";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { useLocalDate, useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface Warning {
     id: string;
@@ -25,8 +25,10 @@ interface Warning {
 }
 
 export default function WarningsPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
 
@@ -139,12 +141,12 @@ export default function WarningsPage() {
                                         <p className="text-xs text-muted-foreground mt-1">
                                             {t("warnings_by")}{" "}
                                             {w.issuedBy?.username || t("warnings_system")}{" "}
-                                            · {new Date(w.createdAt).toLocaleString(__dateTag)}
+                                            · {formatDateTime(w.createdAt)}
                                             {w.expiresAt && (
                                                 <>
                                                     {" "}
                                                     · {t("warnings_expires")}{" "}
-                                                    {new Date(w.expiresAt).toLocaleDateString(__dateTag)}
+                                                    {formatDate(w.expiresAt)}
                                                 </>
                                             )}
                                         </p>

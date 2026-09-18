@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useTranslations, useLocale } from "next-intl";
-import { Button, Card, CardContent, Input, Label, Pagination, useConfirm, useFormRoute, NativeSelect, buttonClassName } from "@/core/sdk/ui";
+import { useTranslations } from "next-intl";
+import { Button, Card, CardContent, Input, Label, Pagination, useConfirm, useFormRoute, NativeSelect, buttonClassName, useLocalDateTime } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, RotateCcw, Ban } from "lucide-react";
 import { toast } from "sonner";
-import { dateLocaleTag } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
 import { punishmentStatus, type PunishmentStatus } from "../../lib/status";
 import { PUNISHMENT_TYPES, canonicalType } from "../../lib/punishment-types";
@@ -48,8 +47,9 @@ const PAGE_SIZE = 20;
 export default function AdminPunishmentsPage() {
     const t = useTranslations("punishments");
     const commonT = useTranslations("common");
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
     const { confirm, ask } = useConfirm();
     const [items, setItems] = useState<Punishment[]>([]);
     const [loading, setLoading] = useState(true);
@@ -297,7 +297,7 @@ export default function AdminPunishmentsPage() {
                                     </td>
                                     <td className="px-4 py-2">{typeLabel(p.type)}</td>
                                     <td className="px-4 py-2 text-muted-foreground">{p.reason || "-"}</td>
-                                    <td className="px-4 py-2 text-muted-foreground">{new Date(p.createdAt).toLocaleString(__dateTag)}</td>
+                                    <td className="px-4 py-2 text-muted-foreground">{formatDateTime(p.createdAt)}</td>
                                     <td className="px-4 py-2">
                                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${BADGE_CLASS[status]}`}>
                                             {t(status)}

@@ -7,10 +7,10 @@ import { Pagination } from "@/core/components/ui/pagination";
 import { Loader2, Play, RefreshCw, RotateCcw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
-import { useTranslations, useLocale } from "next-intl";
-import { dateLocaleTag } from "@/core/lib/utils";
+import { useTranslations } from "next-intl";
 import { badgeClassName, type BadgeTone } from "@/core/components/ui/badge";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 type EmailStatus = "pending" | "sending" | "sent" | "failed";
 type StatusFilter = "all" | EmailStatus;
@@ -68,14 +68,10 @@ const TABS: { key: StatusFilter; labelKey: string }[] = [
     { key: "failed", labelKey: "emailQueue_failed" },
 ];
 
-function formatDate(value: string | null, tag: string): string {
-    if (!value) return "-";
-    return new Date(value).toLocaleString(tag);
-}
-
 export default function EmailQueueAdminPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
     const [jobs, setJobs] = useState<EmailJobRow[]>([]);
@@ -278,7 +274,7 @@ export default function EmailQueueAdminPage() {
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-3 text-muted-foreground">{job.attempts}</td>
-                                                <td className="px-4 py-3 text-muted-foreground">{formatDate(job.scheduledAt, __dateTag)}</td>
+                                                <td className="px-4 py-3 text-muted-foreground">{job.scheduledAt ? formatDateTime(job.scheduledAt) : "-"}</td>
                                                 <td className="px-4 py-3 text-right">
                                                     <div className="flex justify-end gap-1">
                                                         {hasError && (

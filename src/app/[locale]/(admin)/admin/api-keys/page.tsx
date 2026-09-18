@@ -6,12 +6,12 @@ import { Button, buttonClassName } from "@/core/components/ui/button";
 import { Pagination, usePagedRows } from "@/core/components/ui/pagination";
 import { Loader2, Plus, Trash2, Key } from "lucide-react";
 import { toast } from "sonner";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { Link } from "@/core/lib/i18n/navigation";
-import { dateLocaleTag } from "@/core/lib/utils";
 import { writeError } from "@/core/lib/write-result";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { useLocalDate } from "@/core/hooks/useLocalDate";
 
 interface ApiKeyItem {
     id: string;
@@ -23,8 +23,9 @@ interface ApiKeyItem {
 }
 
 export default function ApiKeysPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
     const [keys, setKeys] = useState<ApiKeyItem[]>([]);
@@ -94,7 +95,7 @@ export default function ApiKeysPage() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <span className="text-xs text-muted-foreground">{new Date(k.createdAt).toLocaleDateString(__dateTag)}</span>
+                                        <span className="text-xs text-muted-foreground">{formatDate(k.createdAt)}</span>
                                         <Button aria-label={commonT("delete")} variant="ghost" size="sm" className="text-destructive" onClick={() => deleteKey(k.id)}>
                                             <Trash2 className="w-3 h-3" />
                                         </Button>

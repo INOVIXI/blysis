@@ -13,11 +13,11 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
-import { useTranslations, useLocale } from "next-intl";
-import { dateLocaleTag } from "@/core/lib/utils";
+import { useTranslations } from "next-intl";
 import { writeError } from "@/core/lib/write-result";
 import { Checkbox } from "@/core/components/ui/checkbox";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface ModerationItem {
     id: string;
@@ -42,8 +42,9 @@ interface ListPayload {
 }
 
 export default function ModerationPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
     const [types, setTypes] = useState<Record<string, { label: string; labelKey?: string }>>({});
@@ -384,7 +385,7 @@ export default function ModerationPage() {
                                             {item.preview}
                                         </p>
                                         <p className="text-[11px] text-muted-foreground mt-1">
-                                            {new Date(item.createdAt).toLocaleString(__dateTag)}
+                                            {formatDateTime(item.createdAt)}
                                         </p>
                                     </div>
                                     <div className="flex gap-1">

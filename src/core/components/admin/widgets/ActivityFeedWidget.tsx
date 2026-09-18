@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Activity } from "lucide-react";
 import { prisma } from "@/core/lib/db";
 import { Link } from "@/core/lib/i18n/navigation";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getLocale, getTimeZone, getTranslations } from "next-intl/server";
 import { localizeActivityTitle } from "@/core/lib/activity-title";
 import { dateLocaleTag } from "@/core/lib/utils";
+import { formatInZone } from "@/core/lib/format-date";
 
 /**
  * Activity feed widget - 5 most recent public feed items.
@@ -13,7 +13,11 @@ export default async function ActivityFeedWidget() {
     const t = await getTranslations("admin");
     const activityT = await getTranslations("activity");
     const locale = await getLocale();
-    const dateTag = dateLocaleTag(locale);
+    // A server component, so the hook that does this everywhere else is not
+    // available. The zone comes from the same request config the client
+    // provider reads, so the two never disagree about what day it is.
+    const zone = await getTimeZone();
+    const formatDate = (value: Date) => formatInZone(value, dateLocaleTag(locale), zone);
     let items: Array<{ id: string; type: string; title: string; createdAt: Date; actor: { username: string } | null }> = [];
     try {
         items = await prisma.activityFeedItem.findMany({
@@ -27,10 +31,7 @@ export default async function ActivityFeedWidget() {
     return (
         <Card>
             <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                    <Activity className="w-4 h-4" />
-                    {t("widget_recentActivity")}
-                </CardTitle>
+                <CardTitle className="text-sm flex items-center gap-2">{t("widget_recentActivity")}</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
                 {items.length === 0 ? (
@@ -45,7 +46,7 @@ export default async function ActivityFeedWidget() {
                                     {localizeActivityTitle(item.type, item.title, activityT)}
                                 </span>
                                 <span className="text-muted-foreground whitespace-nowrap">
-                                    {new Date(item.createdAt).toLocaleDateString(dateTag)}
+                                    {formatDate(item.createdAt)}
                                 </span>
                             </li>
                         ))}

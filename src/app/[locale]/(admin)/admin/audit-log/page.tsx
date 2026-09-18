@@ -1,14 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Link } from "@/core/lib/i18n/navigation";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
 import { Input } from "@/core/components/ui/input";
 import { downloadFromUrl } from "@/core/lib/download";
-import { dateLocaleTag } from "@/core/lib/utils";
 import {
     Download,
     Loader2,
@@ -21,6 +20,7 @@ import { useAllModules } from "@/core/providers/module-provider";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { NativeSelect } from "@/core/components/ui/native-select";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface AuditLogEntry {
     id: string;
@@ -143,8 +143,9 @@ function MetadataCell({ metadata }: { metadata: unknown }) {
 }
 
 export default function AuditLogPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
     const modules = useAllModules();
     const [failed, setFailed] = useState(false);
@@ -355,7 +356,7 @@ export default function AuditLogPage() {
                                                 className="border-b last:border-0 hover:bg-muted/30"
                                             >
                                                 <td className="py-2 px-4 whitespace-nowrap text-xs text-muted-foreground">
-                                                    {new Date(log.createdAt).toLocaleString(__dateTag)}
+                                                    {formatDateTime(log.createdAt)}
                                                 </td>
                                                 <td className="py-2 px-4 whitespace-nowrap">
                                                     {log.user ? (

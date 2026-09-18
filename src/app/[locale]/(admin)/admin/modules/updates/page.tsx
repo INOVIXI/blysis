@@ -7,12 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/c
 import { Button } from "@/core/components/ui/button";
 import { Loader2, Download, Check, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { dateLocaleTag } from "@/core/lib/utils";
 
 import { moduleDescription, moduleName } from "../module-name";
 import { Badge } from "@/core/components/ui/badge";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { errorMessage } from "@/core/lib/write-result";
+import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface UpdateInfo {
     moduleId: string;
@@ -24,7 +24,9 @@ interface UpdateInfo {
 
 export default function ModuleUpdatesPage() {
     const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
     const [updates, setUpdates] = useState<UpdateInfo[]>([]);
@@ -97,7 +99,7 @@ export default function ModuleUpdatesPage() {
                         : (t("moduleUpdates_count", { count: updates.length }))}
                     {checkedAt && (
                         <span className="ml-2 text-xs">
-                            · {t("moduleUpdates_checkedAt", { date: new Date(checkedAt).toLocaleString(__dateTag) })}
+                            · {t("moduleUpdates_checkedAt", { date: formatDateTime(checkedAt) })}
                         </span>
                     )}
                 </>}

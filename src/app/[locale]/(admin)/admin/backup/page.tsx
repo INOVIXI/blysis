@@ -8,23 +8,13 @@ import { Button } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { toast } from "sonner";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { downloadFromUrl } from "@/core/lib/download";
-import { dateLocaleTag } from "@/core/lib/utils";
 import { Badge } from "@/core/components/ui/badge";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { errorMessage } from "@/core/lib/write-result";
-import {
-    Database,
-    Download,
-    Trash2,
-    RotateCcw,
-    Loader2,
-    RefreshCw,
-    Clock,
-    Plus,
-    AlertTriangle,
-} from "lucide-react";
+import { Database, Download, Trash2, RotateCcw, Loader2, RefreshCw, Plus, AlertTriangle } from "lucide-react";
+import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface BackupRow {
     id: string;
@@ -50,11 +40,6 @@ function formatBytes(bytes: number): string {
     return `${(bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
 }
 
-function formatDate(value: string | null, tag: string): string {
-    if (!value) return "-";
-    return new Date(value).toLocaleString(tag);
-}
-
 function TypeBadge({ type, label }: { type: "manual" | "scheduled"; label: string }) {
     return (
         <Badge tone={type === "manual" ? "info" : "success"} className="uppercase font-mono">
@@ -64,8 +49,9 @@ function TypeBadge({ type, label }: { type: "manual" | "scheduled"; label: strin
 }
 
 export default function BackupAdminPage() {
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
     const [backups, setBackups] = useState<BackupRow[]>([]);
     const [loading, setLoading] = useState(true);
@@ -272,22 +258,20 @@ export default function BackupAdminPage() {
                         <CardTitle className="text-xs text-muted-foreground uppercase tracking-wide">{t("backup_lastBackup")}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 pt-0">
-                        <div className="text-sm font-medium">{formatDate(lastBackupAt, __dateTag)}</div>
+                        <div className="text-sm font-medium">{lastBackupAt ? formatDateTime(lastBackupAt) : "-"}</div>
                         {lastScheduled && (
-                            <div className="text-xs text-muted-foreground mt-1">{t("backup_lastScheduled")}: {formatDate(lastScheduled, __dateTag)}</div>
+                            <div className="text-xs text-muted-foreground mt-1">{t("backup_lastScheduled")}: {lastScheduled ? formatDateTime(lastScheduled) : "-"}</div>
                         )}
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="p-4">
-                        <CardTitle className="text-xs text-muted-foreground uppercase tracking-wide flex items-center gap-1">
-                            <Clock className="w-3 h-3" /> {t("backup_nextScheduled")}
-                        </CardTitle>
+                        <CardTitle className="text-xs text-muted-foreground uppercase tracking-wide flex items-center gap-1">{t("backup_nextScheduled")}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 pt-0 space-y-3">
                         <div>
                             <div className="text-sm font-medium">
-                                {automated ? formatDate(nextScheduled, __dateTag) : t("backup_scheduleOffLabel")}
+                                {automated ? nextScheduled ? formatDateTime(nextScheduled) : "-" : t("backup_scheduleOffLabel")}
                             </div>
                             <div className="text-xs text-muted-foreground mt-1">
                                 {automated ? t("backup_runsDaily") : t("backup_scheduleOffHint")}
@@ -333,7 +317,7 @@ export default function BackupAdminPage() {
                                         <td className="px-4 py-3 font-mono text-xs break-all">{row.filename}</td>
                                         <td className="px-4 py-3"><TypeBadge type={row.type} label={row.type === "manual" ? t("backup_manual") : t("backup_scheduled")} /></td>
                                         <td className="px-4 py-3 text-muted-foreground">{row.sizeHuman || formatBytes(row.sizeBytes)}</td>
-                                        <td className="px-4 py-3 text-muted-foreground">{formatDate(row.createdAt, __dateTag)}</td>
+                                        <td className="px-4 py-3 text-muted-foreground">{row.createdAt ? formatDateTime(row.createdAt) : "-"}</td>
                                         <td className="px-4 py-3">
                                             <div className="flex justify-end gap-1">
                                                 <Button

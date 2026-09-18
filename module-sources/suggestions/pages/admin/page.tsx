@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useTranslations, useLocale } from "next-intl";
-import { Button, Card, CardContent, Pagination, useConfirm, NativeSelect } from "@/core/sdk/ui";
+import { useTranslations } from "next-intl";
+import { Button, Card, CardContent, Pagination, useConfirm, NativeSelect, useLocalDate } from "@/core/sdk/ui";
 import { Loader2, Trash2, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
-import { dateLocaleTag } from "@/core/sdk";
 import { SUGGESTION_STATUSES, STATUS_BADGE_CLASS, canonicalStatus } from "../../lib/statuses";
 import { AdminPageHeader } from "@/core/sdk/admin";
 
@@ -28,8 +27,9 @@ const PAGE_SIZE = 20;
 
 export default function AdminSuggestionsPage() {
     const t = useTranslations("suggestions");
-    const __locale = useLocale();
-    const __dateTag = dateLocaleTag(__locale);
+    // The site's zone, not the machine's: without it the server and the
+    // browser disagree about what day a timestamp near midnight is.
+    const formatDate = useLocalDate();
     const { confirm } = useConfirm();
     const [items, setItems] = useState<Suggestion[]>([]);
     const [loading, setLoading] = useState(true);
@@ -159,7 +159,7 @@ export default function AdminSuggestionsPage() {
                                     </div>
                                     <p className="text-sm text-muted-foreground line-clamp-3 mb-2">{s.content}</p>
                                     <div className="text-xs text-muted-foreground">
-                                        {t("submittedBy")} {s.author?.username || t("deletedUser")} · {new Date(s.createdAt).toLocaleDateString(__dateTag)}
+                                        {t("submittedBy")} {s.author?.username || t("deletedUser")} · {formatDate(s.createdAt)}
                                     </div>
                                 </div>
                                 <div className="flex md:flex-col gap-2 items-end">
