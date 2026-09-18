@@ -9,6 +9,35 @@
 
 // ==================== PUNISHMENTS ====================
 
+/// Where a rule applies, as the operator divides it up.
+///
+/// The record had one idea of "where" - which module reported it - and that
+/// answers a different question. One site runs Survival and Skyblock off the
+/// same server and wants them apart; another runs Minecraft and CS:GO; and
+/// nearly everyone wants a ban handed down in a game kept apart from what this
+/// website does about it.
+///
+/// `restrictsSite` is that last part, per scope, because it is the operator's
+/// call and not ours: a Skyblock ban should not have to close somebody's forum
+/// account, and a Survival ban might be exactly that.
+model PunishmentScope {
+  id            String   @id @default(cuid())
+  /// What an operator typed. This is the only form a reader ever sees.
+  name          String
+  /// What a reporting module calls this place - LiteBans' `server_scope`, for
+  /// instance. Machine-facing; never drawn.
+  matchKey      String?  @unique
+  /// Whether a punishment recorded here also restricts this website.
+  restrictsSite Boolean  @default(false)
+  order         Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  punishments   Punishment[]
+
+  @@index([isActive, order])
+}
+
 model Punishment {
   id         String    @id @default(cuid())
   /**
@@ -41,6 +70,16 @@ model Punishment {
   liftedBy   String?
   liftReason String?
   punishedBy String?
+  /// The place this happened, once somebody has named that place.
+  scopeId    String?
+  scope      PunishmentScope? @relation(fields: [scopeId], references: [id], onDelete: SetNull)
+  /**
+   * What the reporter called the place, kept whether or not a scope claims it.
+   * A key nothing matches is not turned into a scope: it is the other system's
+   * word, and inventing a scope out of it would put `srv-2` on a public list.
+   * Kept so a scope made later can claim the rows that were waiting.
+   */
+  scopeKey   String?
   createdAt  DateTime  @default(now())
   expiresAt  DateTime?
 
@@ -49,4 +88,6 @@ model Punishment {
   @@index([playerName])
   @@index([type])
   @@index([active])
+  @@index([scopeId])
+  @@index([scopeKey])
 }

@@ -34,6 +34,18 @@ const recordPunishment: HookHandlerFor<"punishment.record", "filter"> = async (c
     // claiming it would put its rows where a person's are.
     if (report.source === "site") return { recorded: false, id: null };
 
+    /*
+     * The reporter names a key, not a scope. `skyblock` or `srv-2` is the
+     * other system's word for a place, so it is matched against what the
+     * operator has actually named and never turned into a scope on its own -
+     * that would put `srv-2` on a public list under a column header. The key
+     * is kept either way, so a scope made later can claim these rows.
+     */
+    const scopeKey = report.scopeKey?.trim() || null;
+    const scopeId = scopeKey
+        ? (await prisma.punishmentScope.findFirst({ where: { matchKey: scopeKey }, select: { id: true } }))?.id ?? null
+        : null;
+
     const data = {
         userId: report.userId ?? null,
         playerName: report.playerName,
@@ -46,6 +58,8 @@ const recordPunishment: HookHandlerFor<"punishment.record", "filter"> = async (c
         active: report.active ?? true,
         liftedBy: report.liftedBy ?? null,
         liftReason: report.liftReason ?? null,
+        scopeId,
+        scopeKey,
     };
 
     try {

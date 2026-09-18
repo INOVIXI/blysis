@@ -16,7 +16,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
  * server was enough to silence whoever holds it here.
  */
 
-const rows: { value: { type: string; expiresAt: Date | null }[] } = { value: [] };
+/** Shaped like the real select, which always returns the scope, null or not. */
+const rows: { value: { type: string; expiresAt: Date | null; scope: null }[] } = { value: [] };
 const queries: Record<string, unknown>[] = [];
 
 vi.mock("@/core/sdk/server", () => ({
@@ -49,13 +50,13 @@ describe("a punishment restricts something", () => {
     });
 
     it("closes the account on a ban", async () => {
-        rows.value = [{ type: "ban", expiresAt: null }];
+        rows.value = [{ type: "ban", expiresAt: null, scope: null }];
 
         expect(await standing()).toMatchObject({ mayEnter: false, mayWrite: false });
     });
 
     it("takes writing away on a mute and leaves the door open", async () => {
-        rows.value = [{ type: "mute", expiresAt: null }];
+        rows.value = [{ type: "mute", expiresAt: null, scope: null }];
 
         const answer = await standing();
 
@@ -66,29 +67,29 @@ describe("a punishment restricts something", () => {
     });
 
     it("reads a spelling a game server plugin wrote", async () => {
-        rows.value = [{ type: "tempmute", expiresAt: new Date(Date.now() + 3_600_000) }];
+        rows.value = [{ type: "tempmute", expiresAt: new Date(Date.now() + 3_600_000), scope: null }];
 
         expect((await standing()).mayWrite).toBe(false);
     });
 
     it("says when a temporary one lifts", async () => {
         const ends = new Date(Date.now() + 3_600_000);
-        rows.value = [{ type: "tempMute", expiresAt: ends }];
+        rows.value = [{ type: "tempMute", expiresAt: ends, scope: null }];
 
         expect((await standing()).until).toEqual(ends);
     });
 
     it("says nothing lifts when one of them is permanent", async () => {
         rows.value = [
-            { type: "tempMute", expiresAt: new Date(Date.now() + 3_600_000) },
-            { type: "mute", expiresAt: null },
+            { type: "tempMute", expiresAt: new Date(Date.now() + 3_600_000), scope: null },
+            { type: "mute", expiresAt: null, scope: null },
         ];
 
         expect((await standing()).until).toBeNull();
     });
 
     it("lets a ban outrank a mute in what the member is told", async () => {
-        rows.value = [{ type: "mute", expiresAt: null }, { type: "ban", expiresAt: null }];
+        rows.value = [{ type: "mute", expiresAt: null, scope: null }, { type: "ban", expiresAt: null, scope: null }];
 
         expect((await standing()).reasonKey).toBe("punishments.standingBanned");
     });

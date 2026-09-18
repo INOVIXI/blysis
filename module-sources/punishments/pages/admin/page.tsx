@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/sdk/admin";
 import { punishmentStatus, type PunishmentStatus } from "../../lib/status";
 import { PUNISHMENT_TYPES, canonicalType } from "../../lib/punishment-types";
+import { ScopeManager } from "./ScopeManager";
 
 interface Punishment {
     id: string;
@@ -183,6 +184,8 @@ export default function AdminPunishmentsPage() {
                     onBack={closeForm}
                     backLabel={commonT("back")}
                 />
+
+                <ScopeManager />
 
                 <Card>
                     <CardContent className="p-6 space-y-3">

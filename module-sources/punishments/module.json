@@ -58,6 +58,12 @@
       "handler": "api/[id]/route.ts",
       "description": "Update or delete a single punishment (admin).",
       "permission": "punishments.manage"
+    },
+    {
+      "path": "/punishments/scopes",
+      "handler": "api/scopes/route.ts",
+      "description": "The places an operator divides the record into: read, save or remove one.",
+      "permission": "punishments.manage"
     }
   ],
   "hooksEmitted": [
@@ -141,7 +147,28 @@
         "adm_revokeReason": "Reason for lifting (optional)",
         "standingBanned": "Your account is closed while a ban is on your record.",
         "standingSilenced": "You cannot post while a mute is on your record.",
-        "warningPoints": "Warning points reached a threshold"
+        "warningPoints": "Warning points reached a threshold",
+        "allScopes": "Everywhere",
+        "adm_scopes": "Places",
+        "adm_scopesHint": "Divide the record by server or game mode. A punishment recorded in a place only restricts this website when the place says it does.",
+        "adm_scopeName": "Name",
+        "adm_scopeKey": "Reported as",
+        "adm_scopeKeyHint": "What the game server calls this place - LiteBans' server scope, for instance. Leave empty for a place nothing reports into.",
+        "adm_scopeRestricts": "Also restricts this website",
+        "adm_scopeRestrictsHint": "A ban here closes the member's account and a mute here stops them posting. Off means the punishment is recorded and shown, and nothing else.",
+        "adm_newScope": "New place",
+        "adm_saveScope": "Save",
+        "adm_scopeSaved": "Place saved.",
+        "adm_scopeClaimed": "{count} punishments moved into it.",
+        "adm_deleteScope": "Delete",
+        "adm_deleteScopeConfirm": "The punishments stay and go back to restricting this site. Remake the place to pick them up again.",
+        "adm_scopeDeleted": "Place deleted.",
+        "adm_noScopes": "No places yet. The whole record counts as one.",
+        "adm_unclaimed": "Arriving under a name nobody has claimed",
+        "adm_unclaimedHint": "A game server has been reporting these. Make a place with one as its reported name to take them.",
+        "adm_scopeOff": "not shown",
+        "err_key_taken": "Another place already claims that name.",
+        "err_invalid_scope": "That place could not be saved."
       },
       "nav": {
         "punishments": "Punishments"
@@ -226,7 +253,28 @@
         "adm_revokeReason": "Kaldırma sebebi (isteğe bağlı)",
         "standingBanned": "Kaydında bir yasaklama dururken hesabın kapalı.",
         "standingSilenced": "Kaydında bir susturma dururken yazamazsın.",
-        "warningPoints": "Uyarı puanı bir eşiğe ulaştı"
+        "warningPoints": "Uyarı puanı bir eşiğe ulaştı",
+        "allScopes": "Her yer",
+        "adm_scopes": "Yerler",
+        "adm_scopesHint": "Kaydı sunucuya veya oyun moduna göre böl. Bir yerde kayıtlı ceza, yalnızca o yer öyle diyorsa bu siteyi kısıtlar.",
+        "adm_scopeName": "Ad",
+        "adm_scopeKey": "Bildirilen ad",
+        "adm_scopeKeyHint": "Oyun sunucusunun bu yere verdiği ad - örneğin LiteBans'ın sunucu kapsamı. Hiçbir şeyin bildirmediği bir yer için boş bırak.",
+        "adm_scopeRestricts": "Bu siteyi de kısıtlar",
+        "adm_scopeRestrictsHint": "Buradaki bir yasaklama üyenin hesabını kapatır, buradaki bir susturma yazmasını engeller. Kapalıysa ceza kaydedilir ve gösterilir, başka bir şey olmaz.",
+        "adm_newScope": "Yeni yer",
+        "adm_saveScope": "Kaydet",
+        "adm_scopeSaved": "Yer kaydedildi.",
+        "adm_scopeClaimed": "{count} ceza bu yere taşındı.",
+        "adm_deleteScope": "Sil",
+        "adm_deleteScopeConfirm": "Cezalar kalır ve yeniden bu siteyi kısıtlamaya başlar. Yeri tekrar oluşturursan onları geri alır.",
+        "adm_scopeDeleted": "Yer silindi.",
+        "adm_noScopes": "Henüz yer yok. Kaydın tamamı tek bir yer sayılır.",
+        "adm_unclaimed": "Kimsenin sahiplenmediği bir adla geliyor",
+        "adm_unclaimedHint": "Bir oyun sunucusu bunları bildiriyor. Bildirilen adı bunlardan biri olan bir yer oluştur ve sahiplen.",
+        "adm_scopeOff": "gösterilmiyor",
+        "err_key_taken": "Bu adı başka bir yer sahiplenmiş.",
+        "err_invalid_scope": "Bu yer kaydedilemedi."
       },
       "nav": {
         "punishments": "Cezalar"

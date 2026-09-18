@@ -29,6 +29,13 @@
  * Expiry is read here rather than trusted from the column: `active` says
  * nobody lifted it, and a temporary punishment stops on its own without
  * anything writing a row.
+ *
+ * And a punishment only reaches this site if the place it happened says it
+ * should. A scope the operator made carries that flag and it defaults to off,
+ * so dividing the record into Survival and Skyblock never quietly closes
+ * anybody's forum account. A punishment with no scope restricts, which is what
+ * every row written before scopes existed is, and what an administrator
+ * issuing one here means.
  */
 import type { HookHandlerFor } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
@@ -51,7 +58,10 @@ const memberStanding: HookHandlerFor<"member.standing", "filter"> = async (curre
             type: { in: [...SILENCING, ...CLOSING] },
             OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
         },
-        select: { type: true, expiresAt: true },
+        // The scope comes back in the same read. This runs on the sign-in
+        // path, so a second query per row would put a round trip between a
+        // member and their own front page.
+        select: { type: true, expiresAt: true, scope: { select: { restrictsSite: true } } },
         // Bounded because it is on the sign-in path. A member with more than
         // this many standing punishments is restricted either way, and the
         // strictest of them is what decides.
@@ -67,7 +77,15 @@ const memberStanding: HookHandlerFor<"member.standing", "filter"> = async (curre
     // nothing.
     let until: Date | null = null;
 
-    for (const row of held) {
+    // Only the ones whose scope reaches this site. The rest are real
+    // punishments on a real server and belong on the list; they just do not
+    // decide anything here.
+    // No scope at all - including a row shaped without the field - counts as
+    // binding. The safe direction for a missing answer here is to restrict.
+    const binding = held.filter((row) => !row.scope || row.scope.restrictsSite);
+    if (binding.length === 0) return current;
+
+    for (const row of binding) {
         const kind = canonicalType(row.type);
         const closes = kind === "ban" || kind === "tempBan";
 
@@ -84,7 +102,7 @@ const memberStanding: HookHandlerFor<"member.standing", "filter"> = async (curre
         // A permanent one ends the question: nothing lifts by itself.
         if (row.expiresAt === null) until = null;
         else if (until !== null && row.expiresAt > until) until = row.expiresAt;
-        else if (until === null && !held.some((other) => other.expiresAt === null)) until = row.expiresAt;
+        else if (until === null && !binding.some((other) => other.expiresAt === null)) until = row.expiresAt;
     }
 
     return { mayEnter, mayWrite, until, reasonKey: reasonKey ?? current.reasonKey };

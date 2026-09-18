@@ -17,10 +17,16 @@ export async function GET(request: NextRequest) {
         type: params.get("type"),
         search: params.get("search"),
         status: params.get("status"),
+        scope: params.get("scope"),
         page,
         perPage: limit,
     });
-    return NextResponse.json({ punishments: read.punishments, total: read.total, pages: read.pages });
+    return NextResponse.json({
+        punishments: read.punishments,
+        total: read.total,
+        pages: read.pages,
+        scopes: read.scopes,
+    });
 }
 
 /**

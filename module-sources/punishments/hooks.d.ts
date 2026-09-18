@@ -45,6 +45,13 @@ interface PunishmentReport {
      */
     liftedBy?: string | null;
     liftReason?: string | null;
+    /**
+     * What the reporter calls the place this happened - LiteBans' server
+     * scope, a game mode, a second server. Matched against the scopes an
+     * operator has named; a key nothing matches leaves the punishment
+     * unscoped rather than inventing a scope out of a machine's word for it.
+     */
+    scopeKey?: string | null;
 }
 
 interface PunishmentRecorded {

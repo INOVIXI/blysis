@@ -20,6 +20,13 @@ interface PunishmentItem {
     expiresAt: string | null;
     liftedBy: string | null;
     liftReason: string | null;
+    scope: { id: string; name: string } | null;
+}
+
+/** A place the operator named. Only the name is ever drawn. */
+interface Scope {
+    id: string;
+    name: string;
 }
 
 const typeIcons: Record<PunishmentType, typeof Ban> = {
@@ -63,7 +70,12 @@ function typeLabel(t: { (key: string): string; has: (key: string) => boolean }, 
  * carried no entry at all. The server reads the first page now and hands it
  * over; searching, filtering and paging still ask the endpoint.
  */
-export function PunishmentList({ initial, initialPages }: { initial: PunishmentItem[]; initialPages: number }) {
+export function PunishmentList({ initial, initialPages, scopes }: {
+    initial: PunishmentItem[];
+    initialPages: number;
+    /** Empty on a site that has not divided its record, and then no row is drawn. */
+    scopes: Scope[];
+}) {
     // The site's zone, not the machine's. Without it the server drew one day
     // and the browser drew the next, and React threw the table away and
     // rebuilt it; see format-date.ts.
@@ -74,6 +86,7 @@ export function PunishmentList({ initial, initialPages }: { initial: PunishmentI
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
+    const [scopeFilter, setScopeFilter] = useState("");
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(initialPages);
 
@@ -82,6 +95,7 @@ export function PunishmentList({ initial, initialPages }: { initial: PunishmentI
         const params = new URLSearchParams({ page: String(page), limit: "20" });
         if (search) params.set("search", search);
         if (typeFilter) params.set("type", typeFilter);
+        if (scopeFilter) params.set("scope", scopeFilter);
 
         fetch(`/api/v1/punishments?${params}`)
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
@@ -100,7 +114,7 @@ export function PunishmentList({ initial, initialPages }: { initial: PunishmentI
     useEffect(() => {
         if (serverDrewThisPage.current) serverDrewThisPage.current = false;
         else fetchData();
-    }, [page, typeFilter]);
+    }, [page, typeFilter, scopeFilter]);
 
     const handleSearch = (e: React.FormEvent) => { e.preventDefault(); setPage(1); fetchData(); };
 
@@ -125,6 +139,20 @@ export function PunishmentList({ initial, initialPages }: { initial: PunishmentI
                     ))}
                 </div>
             </div>
+
+            {/* Only where an operator has actually divided the record. A site
+                with one server should not be asked to choose between one
+                thing and everything. */}
+            {scopes.length > 0 ? (
+                <div className="flex flex-wrap gap-2 mb-6">
+                    {[{ id: "", name: t("allScopes") }, ...scopes].map((sc) => (
+                        <Button key={sc.id || "all"} variant={scopeFilter === sc.id ? "default" : "outline"}
+                            onClick={() => { setScopeFilter(sc.id); setPage(1); }}>
+                            {sc.name}
+                        </Button>
+                    ))}
+                </div>
+            ) : null}
 
             {loading ? (
                 <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
@@ -154,7 +182,12 @@ export function PunishmentList({ initial, initialPages }: { initial: PunishmentI
                                     const status = punishmentStatus(p);
                                     return (
                                         <tr key={p.id} className="border-b last:border-0 hover:bg-muted">
-                                            <td className="py-3 px-4 font-medium">{p.playerName}</td>
+                                            <td className="py-3 px-4 font-medium">
+                                                {p.playerName}
+                                                {p.scope ? (
+                                                    <span className="block text-xs font-normal text-muted-foreground">{p.scope.name}</span>
+                                                ) : null}
+                                            </td>
                                             <td className="py-3 px-4">
                                                 <span className={`text-xs px-2 py-1 rounded inline-flex items-center gap-1 ${known ? typeColors[known] : ""}`}>
                                                     <Icon className="w-3 h-3" /> {typeLabel(t, p.type)}

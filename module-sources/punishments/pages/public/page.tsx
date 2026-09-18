@@ -20,5 +20,5 @@ export default async function PunishmentsPage() {
         createdAt: row.createdAt.toISOString(),
         expiresAt: row.expiresAt ? row.expiresAt.toISOString() : null,
     }));
-    return <PunishmentList initial={rows} initialPages={read.pages} />;
+    return <PunishmentList initial={rows} initialPages={read.pages} scopes={read.scopes} />;
 }
