@@ -58,6 +58,19 @@ vi.mock("@/core/lib/logger", () => ({
 // The eight core jobs are registered by bootstrapScheduler and therefore run
 // on every tick. Stub what their handlers reach for so a tick stays a unit
 // test of the loop rather than of everything the loop can call.
+/**
+ * A tick fills the hook bus before it runs anything, because a job is a module
+ * graph like a request is. Registering the real listeners means lazy-importing
+ * every installed module's handler, which is the whole system again and not
+ * what this file measures - and the drain below counts microtasks, which a
+ * chain of dynamic imports does not resolve in.
+ * `a-scheduled-job-can-ask-a-module-a-question.test.ts` is where that call is
+ * held to its contract.
+ */
+vi.mock("@/core/lib/hooks-bootstrap", () => ({
+    ensureHooks: async () => {},
+    bootstrapHooks: async () => {},
+}));
 vi.mock("@/core/lib/revisions", () => ({ pruneOldRevisions: async () => 0 }));
 vi.mock("@/core/lib/timed-roles", () => ({ sweepLapsedRoles: async () => 0 }));
 vi.mock("@/core/lib/broadcasts", () => ({ processQueuedBroadcasts: async () => undefined }));

@@ -136,6 +136,26 @@ async function tick(): Promise<string[]> {
     const ran: string[] = [];
     if (isShuttingDown()) return ran;
 
+    /*
+     * A job is a module graph like a request is, and this one was never
+     * filled. `instrumentation.ts` bootstraps the hook bus once per process
+     * but in its own graph, so a job calling `applyFiltersAsync` found no
+     * listeners and got its own input back - no error, no log line, and a run
+     * that reports success in three milliseconds having written nothing.
+     * Every other path that is about to ask a module a question calls this
+     * first; see `ensureHooks`. After the first call in a graph it is a
+     * boolean comparison, so it costs nothing on a per-tick path.
+     *
+     * A registry that will not load is a module's problem and must not stop
+     * core's own pruning from running, so it is reported rather than thrown.
+     */
+    try {
+        const { ensureHooks } = await import("./hooks-bootstrap");
+        await ensureHooks();
+    } catch (err) {
+        log.error("[scheduler] Could not register module hook listeners", { error: errorText(err) });
+    }
+
     let states: Record<string, boolean> = {};
     try {
         const { getModuleStates } = await import("./module-cache");
