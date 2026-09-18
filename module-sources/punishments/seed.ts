@@ -86,12 +86,20 @@ export const seed: ModuleSeed = {
             const expiresAt = temporary
                 ? new Date(createdAt.getTime() + ctx.int(1, 30) * 86_400_000)
                 : null;
-            // An expired or lifted punishment is what "active" is there to
-            // tell apart, so a quarter of them are not.
-            const active = expiresAt ? expiresAt > new Date() : ctx.chance(75);
-            // Lifted is not the same as expired: one ran out, the other was
-            // taken back by a person, and only that one has a name against it.
-            const lifted = !active && expiresAt === null;
+            /*
+             * `active` is not "is it still running". `lib/status.ts` is
+             * explicit: it means an administrator revoked this, and expiry is
+             * derived from the clock so a temporary punishment ends on a site
+             * whose scheduler is not. Writing `active: false` for one that
+             * merely ran out is what put "Revoked" on the screen beside a
+             * seven-day ban nobody ever touched.
+             *
+             * So the clock decides expired, a quarter are revoked, and both
+             * can be true of the same row - an admin can lift a ban a week
+             * before it would have ended.
+             */
+            const lifted = ctx.chance(25);
+            const active = !lifted;
             const scope = inGame ? ctx.pick(scopes) : null;
 
             await ctx.create("punishment", () => ctx.prisma.punishment.create({
