@@ -7,6 +7,7 @@ import { PageFrame } from "@/core/sdk/layout";
 import { Button, Card, CardContent, Input, Label, LoadFailed, NativeSelect, Textarea, useConfirm } from "@/core/sdk/ui";
 import { errorMessage } from "@/core/sdk";
 import { Coins, Loader2, Plus } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 /**
  * What members are selling each other.
@@ -39,6 +40,7 @@ interface Kind {
  * ask the endpoint.
  */
 export function ListingBoard({ initial }: { initial: Listing[] }) {
+    const { data: session } = useSession();
     const t = useTranslations("marketplace");
     const commonT = useTranslations("common");
     // No namespace: a kind names its key in full, because the
@@ -77,10 +79,22 @@ export function ListingBoard({ initial }: { initial: Listing[] }) {
         return () => { cancelled = true; };
     }, [reloadKey]);
 
-    // Null until it is known. An empty list means "nothing here can hand
-    // anything over, so nobody can sell", and a failed read must not be
-    // mistaken for that: the form would vanish with no explanation.
+    /*
+     * Null until it is known. An empty list means "nothing here can hand
+     * anything over, so nobody can sell", and a failed read must not be
+     * mistaken for that: the form would vanish with no explanation.
+     *
+     * A reader who is not signed in is a third thing and used to be counted as
+     * the second. The endpoint is `openTo: "member"`, so it answers 401 to
+     * them - correctly, and every time - and the board told them we could not
+     * check what was sellable, with a Retry that asked again and got the same
+     * refusal for ever. They cannot sell here; that is a fact about them and
+     * not a fault, so nothing is asked and nothing is said.
+     */
+    const signedIn = Boolean(session?.user);
+
     useEffect(() => {
+        if (!signedIn) { setKinds(null); setKindsFailed(false); return; }
         let cancelled = false;
         fetch("/api/v1/marketplace/delivery-kinds")
             .then((res) => { if (!res.ok) throw new Error("load"); return res.json(); })
@@ -91,7 +105,7 @@ export function ListingBoard({ initial }: { initial: Listing[] }) {
             })
             .catch(() => { if (!cancelled) setKindsFailed(true); });
         return () => { cancelled = true; };
-    }, [reloadKey]);
+    }, [reloadKey, signedIn]);
 
     const list = async (event: React.FormEvent) => {
         event.preventDefault();
