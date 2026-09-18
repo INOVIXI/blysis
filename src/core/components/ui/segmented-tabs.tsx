@@ -80,8 +80,15 @@ export function SegmentedTabs({ tabs, activeId, onChange, label, className }: Se
              * puts half the choices below the fold of the thing they choose,
              * and the underline stops reading as one row.
              */
+            /*
+             * `overflow-x-auto` alone is a trap: CSS computes the other axis
+             * as `auto` too the moment one of them is not `visible`, so a
+             * single pixel of vertical overflow raises a vertical scrollbar
+             * beside the tabs. The indicator used to be an absolutely
+             * positioned bar at `-bottom-px`, which is exactly that pixel.
+             */
             className={cn(
-                "flex items-stretch gap-1 overflow-x-auto border-b border-border",
+                "flex items-stretch gap-1 overflow-x-auto overflow-y-hidden border-b border-border",
                 className,
             )}
         >
@@ -97,11 +104,22 @@ export function SegmentedTabs({ tabs, activeId, onChange, label, className }: Se
                         tabIndex={selected ? 0 : -1}
                         onClick={() => onChange(tab.id)}
                         onKeyDown={(event) => move(event, at)}
+                        /*
+                         * The indicator is the button's own bottom border, and
+                         * it stays inside the button's box. The usual trick is
+                         * `-mb-px` so it lands exactly on the rail's line, and
+                         * that pixel is what a scrollbar appeared for: a flex
+                         * item with a negative bottom margin still counts its
+                         * border box as scrollable overflow. The focus ring is
+                         * inset for the same reason.
+                         */
                         className={cn(
-                            "relative flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-2.5 text-sm font-medium",
-                            "transition-colors duration-150 cursor-pointer",
+                            "flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-2.5 text-sm font-medium",
+                            "border-b-2 transition-colors duration-150 cursor-pointer",
                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-inset rounded-t-md",
-                            selected ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                            selected
+                                ? "border-primary text-foreground"
+                                : "border-transparent text-muted-foreground hover:text-foreground",
                         )}
                     >
                         {tab.icon ? <NavIcon name={tab.icon} className="w-4 h-4" aria-hidden="true" /> : null}
@@ -117,18 +135,6 @@ export function SegmentedTabs({ tabs, activeId, onChange, label, className }: Se
                             </span>
                         ) : null}
                         {tab.trailing}
-                        {/*
-                         * Sits on the container's own border rather than under
-                         * the text, so the chosen tab reads as joined to what
-                         * it opened instead of merely underlined.
-                         */}
-                        <span
-                            aria-hidden="true"
-                            className={cn(
-                                "absolute inset-x-0 -bottom-px h-0.5 rounded-full transition-colors duration-150",
-                                selected ? "bg-primary" : "bg-transparent",
-                            )}
-                        />
                     </button>
                 );
             })}
