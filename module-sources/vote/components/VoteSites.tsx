@@ -103,8 +103,20 @@ export function VoteSites({ initial }: { initial: VoteSite[] }) {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <h2 className="font-medium truncate">{site.name}</h2>
+                                    {/*
+                                        Clicks, not votes, and the label says
+                                        so. Nothing here hears back from the
+                                        listing: the button opens it and the
+                                        row is written because somebody went,
+                                        not because they voted. Calling this a
+                                        vote count put a number on the screen
+                                        the site cannot know. The key is
+                                        already lower case - lowercasing it
+                                        here would be the Turkish I bug
+                                        waiting to happen.
+                                    */}
                                     <p className="text-sm text-muted-foreground">
-                                        {site._count.votes} {t("totalVotes").toLowerCase()}
+                                        {site._count.votes} {t("totalVotes")}
                                     </p>
                                 </div>
                                 <Button size="sm" onClick={() => vote(site)} disabled={voting === site.id}>

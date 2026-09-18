@@ -18,6 +18,15 @@ model VoteSite {
   votes     VoteLog[]
 }
 
+/// One click through to a listing site, not one vote.
+///
+/// Nothing here hears back from the listing. The button opens it and this row
+/// is written because a member went, which is the only part this site can see.
+/// Everything built on it counts the same thing: the cooldown, the ranking and
+/// the trophy are all about going, and the screens say so.
+///
+/// The name predates the distinction and a rename is a migration that reaches
+/// the leaderboard and the trophy engine, so it is written down here instead.
 model VoteLog {
   id         String   @id @default(cuid())
   userId     String

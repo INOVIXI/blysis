@@ -1,7 +1,7 @@
 {
   "id": "vote",
   "name": "Vote Sites",
-  "description": "Send players to the server listings you are ranked on, and count who voted",
+  "description": "Send players to the server listings you are ranked on, and count how often they go",
   "version": "1.6.2",
   "coreVersion": "^4.0.0",
   "category": "gaming",
@@ -82,13 +82,13 @@
         "adm_title": "Vote Sites",
         "available": "Available",
         "cooldown": "Cooldown",
-        "cooldownHours": "You can vote again in {hours, plural, one {# hour} other {# hours}}",
+        "cooldownHours": "{hours, plural, one {You can go again in # hour} other {You can go again in # hours}}",
         "deleted": "Vote site deleted successfully",
-        "description": "Vote on the listing sites below to push the server up the rankings",
+        "description": "Vote for the server on the listings below. We count the click; the listing counts the vote.",
         "disabled": "Disabled",
         "enabled": "Enabled",
-        "leaderboardVoters": "Top voters",
-        "loginToVote": "Log in so your vote is counted",
+        "leaderboardVoters": "Most vote clicks",
+        "loginToVote": "Sign in so your clicks are counted.",
         "noSites": "No vote sites available",
         "perm_manage": "Manage",
         "saveError": "Failed to save vote site",
@@ -96,12 +96,11 @@
         "siteName": "Site Name",
         "siteUrl": "Vote URL",
         "title": "Vote for the server",
-        "topVoters": "Top Voters",
-        "totalVotes": "Total Votes",
-        "voteFailed": "Your vote could not be recorded. Try again.",
-        "voteInFlight": "Another vote is being recorded. Try again in a moment.",
+        "totalVotes": "clicks",
+        "voteFailed": "That click could not be recorded. Try again.",
+        "voteInFlight": "Another click is still being recorded. Try again in a moment.",
         "voteNow": "Vote Now",
-        "voteRecorded": "Thanks - your vote was counted"
+        "voteRecorded": "The listing is open. Finish your vote there."
       },
       "admin": {
         "menu_vote": "Vote",
@@ -119,6 +118,9 @@
       },
       "pageDescriptions": {
         "vote": "Vote for the server on the listing sites below, push it up the rankings and collect a reward for every vote."
+      },
+      "activity": {
+        "kindVoteCast": "Vote"
       }
     },
     "tr": {
@@ -134,13 +136,13 @@
         "adm_title": "Oy Siteleri",
         "available": "Mevcut",
         "cooldown": "Bekleme Süresi",
-        "cooldownHours": "{hours, plural, one {# saat} other {# saat}} sonra tekrar oy verebilirsiniz",
+        "cooldownHours": "{hours, plural, one {# saat sonra tekrar gidebilirsin} other {# saat sonra tekrar gidebilirsin}}",
         "deleted": "Oy sitesi başarıyla silindi",
-        "description": "Sunucuyu sıralamalarda yukarı taşımak için aşağıdaki listeleme sitelerinde oy verin",
+        "description": "Sunucuyu sıralamalarda yukarı taşımak için aşağıdaki sitelerde oy ver. Biz tıklamayı sayarız; oyu site sayar.",
         "disabled": "Devre Dışı",
         "enabled": "Etkin",
-        "leaderboardVoters": "En çok oy verenler",
-        "loginToVote": "Oyunuzun sayılması için giriş yapın",
+        "leaderboardVoters": "En çok oy tıklaması",
+        "loginToVote": "Tıklamaların sayılsın diye giriş yap.",
         "noSites": "Oy sitesi mevcut değil",
         "perm_manage": "Yönetebilir",
         "saveError": "Oy sitesi kaydedilemedi",
@@ -148,12 +150,11 @@
         "siteName": "Site Adı",
         "siteUrl": "Oy URL'si",
         "title": "Sunucuya oy ver",
-        "topVoters": "En Çok Oy Verenler",
-        "totalVotes": "Toplam Oy",
-        "voteFailed": "Oyunuz kaydedilemedi. Tekrar deneyin.",
-        "voteInFlight": "Başka bir oy kaydediliyor. Birazdan tekrar deneyin.",
+        "totalVotes": "tıklanma",
+        "voteFailed": "Tıklaman kaydedilemedi. Tekrar dene.",
+        "voteInFlight": "Başka bir tıklaman hâlâ kaydediliyor. Birazdan tekrar dene.",
         "voteNow": "Şimdi Oy Ver",
-        "voteRecorded": "Teşekkürler - oyunuz sayıldı"
+        "voteRecorded": "Site açıldı. Oyunu orada tamamla."
       },
       "admin": {
         "menu_vote": "Oylama Siteleri",
@@ -171,6 +172,9 @@
       },
       "pageDescriptions": {
         "vote": "Aşağıdaki liste sitelerinde sunucuya oy verin, sıralamada yükselmesine yardım edin ve her oy için ödülünüzü alın."
+      },
+      "activity": {
+        "kindVoteCast": "Oy"
       }
     }
   },
@@ -196,6 +200,12 @@
       "hook": "leaderboard.boards",
       "type": "filter",
       "handler": "hooks/leaderboard-board.ts"
+    }
+  ],
+  "activityTitles": [
+    {
+      "type": "vote.vote.cast",
+      "nameKey": "kindVoteCast"
     }
   ]
 }

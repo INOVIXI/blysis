@@ -4,7 +4,13 @@ import { auth } from "@/core/sdk/auth";
 import { voteClaimSchema } from "../../lib/validations";
 
 /**
- * POST /api/v1/vote/record - record that this user voted on a site.
+ * POST /api/v1/vote/record - record that this user went to a listing site.
+ *
+ * Called by their own browser right after the listing opens, so what it
+ * records is the click. No listing calls back here, which means the site
+ * cannot know whether a vote was actually cast - and the screens say clicks
+ * rather than votes for that reason. A listing's postback would be the thing
+ * that makes the word "vote" true; until then it is not ours to use.
  *
  * This used to be `/claim`, and it moved credits: each site carried a reward
  * and voting paid it out. The module sends people to a server listing to
