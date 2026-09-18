@@ -74,6 +74,24 @@ const KNOWN_MISSPELLINGS: Record<string, string> = {
 /** ICU keywords are English by specification and never translated. */
 const ICU = new Set(["one", "other", "zero", "two", "few", "many", "plural", "select", "selectordinal"]);
 
+/**
+ * Turkish words that happen to fold onto a different Turkish word.
+ *
+ * The fold assumes a plain-ASCII word that matches a diacritic one is the
+ * same word with the dots filed off. Usually it is. Sometimes both spellings
+ * are words in their own right, and then the rule accuses the correct one.
+ *
+ * "ise" is the case that found this: it is the conditional and the topic
+ * marker - "0 ise", "herkeste ise" - and it folds onto "işe", the dative of
+ * "iş". Neither is a misspelling of the other, and the catalogue held only
+ * one of them until a module wrote "bu işe yaramadı", at which point two
+ * correct sentences written years earlier started failing this gate.
+ *
+ * Kept short and argued for one word at a time. A long list here would turn
+ * the gate back into the dictionary it exists to avoid being.
+ */
+const DISTINCT_WORDS = new Set(["ise"]);
+
 const TURKISH = "ışğçöüİŞĞÇÖÜ";
 const ASCII_____ = "isgcouISGCOU";
 const WORD = /[A-Za-zçÇğĞıİöÖşŞüÜ]+/g;
@@ -152,7 +170,8 @@ describe("the Turkish catalogue", () => {
         const offenders: string[] = [];
         for (const { source, text } of catalogue) {
             for (const word of wordsIn(text)) {
-                if (word.length < 3 || fold(word) !== word || ICU.has(word.toLowerCase())) continue;
+                if (word.length < 3 || fold(word) !== word) continue;
+                if (ICU.has(word.toLowerCase()) || DISTINCT_WORDS.has(word.toLowerCase())) continue;
                 const twins = proper.get(word.toLowerCase());
                 if (!twins) continue;
                 const correct = [...twins].find((twin) => isDroppedDiacritic(word, twin));

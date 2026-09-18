@@ -1,0 +1,22 @@
+// Minecraft Punishments (LiteBans) - Database Models
+// These models are merged into prisma/schema.prisma by merge-schemas.ts
+
+// ==================== LITEBANS SYNC ====================
+
+/// How far through each of LiteBans' four punishment tables the last read got.
+///
+/// LiteBans numbers every table on its own - which is why its own API has four
+/// separate lookups rather than one - so there is one cursor per kind and not
+/// one for the database. The kind is the key rather than the table name so an
+/// operator who renames their tables keeps their place.
+///
+/// Nothing here is a copy of the punishments themselves. Those are the
+/// punishments module's, written through `punishment.record`, and this holds
+/// only enough to know what has already been asked for.
+model LiteBansSync {
+  /// ban, mute, warning or kick.
+  kind     String   @id
+  /// The highest id read from that table. Zero before the first run.
+  lastId   BigInt   @default(0)
+  syncedAt DateTime @default(now())
+}

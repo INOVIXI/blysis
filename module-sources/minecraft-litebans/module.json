@@ -1,8 +1,8 @@
 {
   "id": "minecraft-litebans",
   "name": "Minecraft Punishments (LiteBans)",
-  "description": "Takes bans, mutes and kicks from a LiteBans server and records them against the member who owns the account",
-  "version": "1.1.2",
+  "description": "Reads bans, mutes, warnings and kicks out of a LiteBans database and records them against the member who owns the account",
+  "version": "2.0.0",
   "coreVersion": "^4.0.0",
   "category": "gaming",
   "author": "Blysis",
@@ -10,13 +10,44 @@
   "dependencies": [
     "punishments"
   ],
+  "permissions": [
+    {
+      "name": "minecraft-litebans.manage",
+      "labelKey": "minecraftLitebans.perm_manage"
+    }
+  ],
+  "adminRoutes": [
+    {
+      "path": "/settings/minecraft-litebans",
+      "component": "pages/admin/page.tsx",
+      "permission": "minecraft-litebans.manage"
+    }
+  ],
+  "settingsCards": [
+    {
+      "title": "Minecraft punishments",
+      "description": "Read a game server's LiteBans database into the punishment record.",
+      "href": "/settings/minecraft-litebans",
+      "icon": "Gavel",
+      "color": "text-red-500"
+    }
+  ],
+  "secretSettings": [
+    "minecraft_litebans_config.connection"
+  ],
   "api": [
     {
-      "path": "/minecraft-litebans/punishments",
-      "handler": "api/punishments/route.ts",
-      "method": "POST",
-      "description": "Receives one punishment from a LiteBans server and hands it to the punishments module.",
-      "providerCallback": true
+      "path": "/minecraft-litebans/admin/connection",
+      "handler": "api/admin/connection/route.ts",
+      "description": "Read the connection status, save the address and prefix, try them, or run a read now.",
+      "permission": "minecraft-litebans.manage"
+    }
+  ],
+  "cronJobs": [
+    {
+      "id": "sync",
+      "schedule": "every-5-minutes",
+      "handler": "cron/sync.ts"
     }
   ],
   "hooksEmitted": [
@@ -33,13 +64,97 @@
     "en": {
       "admin": {
         "module_minecraft-litebans_name": "Minecraft Punishments (LiteBans)",
-        "module_minecraft-litebans_description": "Takes bans, mutes and kicks from a LiteBans server and records them against the member who owns the account"
+        "module_minecraft-litebans_description": "Reads bans, mutes, warnings and kicks out of a LiteBans database and records them against the member who owns the account"
+      },
+      "minecraftLitebans": {
+        "perm_manage": "Can manage",
+        "adm_title": "Minecraft Punishments",
+        "adm_subtitle": "Read a game server's LiteBans database into the punishment record on this site.",
+        "adm_connection": "Connection",
+        "adm_connectionDesc": "LiteBans can only announce a punishment as a Discord message, which names no row and carries no dates, so its database is read directly instead. Give it a user that can only read, and only the LiteBans tables. Nothing is ever written back: the game server decides who is banned from it.",
+        "adm_address": "Database address",
+        "adm_addressDialects": "MySQL, MariaDB and PostgreSQL are read. LiteBans stores in H2 out of the box, and H2 cannot be read from here, so move it onto one of these in LiteBans' own config first.",
+        "adm_addressStored": "An address is stored. Leave this empty to keep it.",
+        "adm_addressNone": "No address is stored yet.",
+        "adm_prefix": "Table prefix",
+        "adm_prefixHint": "What every LiteBans table name starts with. Its default is litebans_, and a server sharing a database with something else may have changed it.",
+        "adm_enabled": "Read this database",
+        "adm_enabledHint": "Checked every five minutes. Try the connection first.",
+        "adm_test": "Try it",
+        "adm_save": "Save",
+        "adm_saved": "Connection saved.",
+        "adm_saveFailed": "That could not be saved.",
+        "adm_testReached": "The database answered.",
+        "adm_testFailed": "That did not work.",
+        "adm_tableFound": "found",
+        "adm_tableMissing": "not found",
+        "adm_reading": "Reading",
+        "adm_readingDesc": "Each kind of punishment is numbered separately by LiteBans, so each is read separately and remembers its own place.",
+        "adm_upTo": "read up to #{id}",
+        "adm_neverRead": "Nothing has been read yet.",
+        "adm_syncNow": "Read now",
+        "adm_resync": "Read everything again",
+        "adm_syncDone": "{read} read, {recorded} recorded.",
+        "kind_ban": "Bans",
+        "kind_mute": "Mutes",
+        "kind_warning": "Warnings",
+        "kind_kick": "Kicks",
+        "err_unknown_dialect": "That address names a database this cannot read.",
+        "err_bad_prefix": "That is not a table prefix. Letters, digits and underscores only.",
+        "err_not_connected": "No address is stored yet.",
+        "err_litebans_unreachable": "The LiteBans database did not answer.",
+        "err_litebans_refused": "The LiteBans database refused the sign-in.",
+        "err_litebans_no_such_table": "Those tables are not in that database. Check the prefix.",
+        "err_litebans_timeout": "The LiteBans database took too long to answer.",
+        "err_litebans_failed": "The LiteBans database could not be read."
       }
     },
     "tr": {
       "admin": {
         "module_minecraft-litebans_name": "Minecraft Cezaları (LiteBans)",
-        "module_minecraft-litebans_description": "LiteBans sunucusundaki yasak, susturma ve atmaları alır ve hesabın sahibi olan üyenin kaydına yazar"
+        "module_minecraft-litebans_description": "Bir LiteBans veritabanındaki yasakları, susturmaları, uyarıları ve atmaları okur ve hesabın sahibi olan üyenin kaydına yazar"
+      },
+      "minecraftLitebans": {
+        "perm_manage": "Yönetebilir",
+        "adm_title": "Minecraft Cezaları",
+        "adm_subtitle": "Bir oyun sunucusunun LiteBans veritabanını bu sitedeki ceza kaydına okur.",
+        "adm_connection": "Bağlantı",
+        "adm_connectionDesc": "LiteBans bir cezayı yalnızca Discord mesajı olarak duyurabilir; o mesaj ne bir kaydı adlandırır ne de tarih taşır, bu yüzden veritabanı doğrudan okunur. Yalnızca okuyabilen ve yalnızca LiteBans tablolarına erişen bir kullanıcı ver. Geri hiçbir şey yazılmaz: kimin yasaklı olduğuna oyun sunucusu karar verir.",
+        "adm_address": "Veritabanı adresi",
+        "adm_addressDialects": "MySQL, MariaDB ve PostgreSQL okunur. LiteBans kutudan H2 ile gelir ve H2 buradan okunamaz; önce LiteBans'ın kendi ayarlarından bunlardan birine taşı.",
+        "adm_addressStored": "Kayıtlı bir adres var. Onu korumak için burayı boş bırak.",
+        "adm_addressNone": "Henüz kayıtlı bir adres yok.",
+        "adm_prefix": "Tablo öneki",
+        "adm_prefixHint": "Her LiteBans tablo adının başındaki ek. Varsayılanı litebans_, veritabanını başka bir şeyle paylaşan bir sunucu bunu değiştirmiş olabilir.",
+        "adm_enabled": "Bu veritabanını oku",
+        "adm_enabledHint": "Beş dakikada bir bakılır. Önce bağlantıyı dene.",
+        "adm_test": "Dene",
+        "adm_save": "Kaydet",
+        "adm_saved": "Bağlantı kaydedildi.",
+        "adm_saveFailed": "Bu kaydedilemedi.",
+        "adm_testReached": "Veritabanı cevap verdi.",
+        "adm_testFailed": "Bu işe yaramadı.",
+        "adm_tableFound": "bulundu",
+        "adm_tableMissing": "bulunamadı",
+        "adm_reading": "Okuma",
+        "adm_readingDesc": "LiteBans her ceza türünü ayrı numaralandırır, bu yüzden her biri ayrı okunur ve kendi yerini hatırlar.",
+        "adm_upTo": "#{id} numaraya kadar okundu",
+        "adm_neverRead": "Henüz hiçbir şey okunmadı.",
+        "adm_syncNow": "Şimdi oku",
+        "adm_resync": "Baştan oku",
+        "adm_syncDone": "{read} okundu, {recorded} kaydedildi.",
+        "kind_ban": "Yasaklar",
+        "kind_mute": "Susturmalar",
+        "kind_warning": "Uyarılar",
+        "kind_kick": "Atmalar",
+        "err_unknown_dialect": "Bu adres okunamayan bir veritabanını gösteriyor.",
+        "err_bad_prefix": "Bu bir tablo öneki değil. Yalnızca harf, rakam ve alt çizgi.",
+        "err_not_connected": "Henüz kayıtlı bir adres yok.",
+        "err_litebans_unreachable": "LiteBans veritabanı cevap vermedi.",
+        "err_litebans_refused": "LiteBans veritabanı girişi reddetti.",
+        "err_litebans_no_such_table": "Bu tablolar o veritabanında yok. Öneki kontrol et.",
+        "err_litebans_timeout": "LiteBans veritabanı çok geç cevap verdi.",
+        "err_litebans_failed": "LiteBans veritabanı okunamadı."
       }
     }
   }

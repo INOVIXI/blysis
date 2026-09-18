@@ -159,15 +159,24 @@ describe("every gateway callback", () => {
         // Twelve gateways report a payment. Three more belong to the
         // integrator that collects orders rather than being sent them: it
         // reads, it does not report, and it signs in with a shared secret.
-        // The sixteenth is a game server's ban plugin, which posts what it
-        // punished somebody for and proves itself with a shared key. The
-        // seventeenth is the invoice the same integrator sends back once it
+        // The sixteenth is the invoice the same integrator sends back once it
         // has issued one.
-        expect(declared.length).toBe(17);
+        //
+        // There used to be a seventeenth: a game server's ban plugin posting
+        // what it had punished somebody for, in a JSON shape this repo made
+        // up. LiteBans does send HTTP - 2.19.0 ships `webhooks.yml` - but it
+        // sends a Discord embed whose body is the prose in `messages.yml`,
+        // "$playerName has been banned!", carrying no id, no UUID and no
+        // timestamps. Nothing it can say fits that endpoint, so the endpoint
+        // was a door held open for a caller that does not exist, and the
+        // punishments are read out of its database on the scheduler instead.
+        // A door into the CSRF gate is worth closing the moment nothing needs
+        // it.
+        expect(declared.length).toBe(16);
         expect(declared).toContain("stripe-gateway");
         expect(declared).toContain("mollie-gateway");
         expect(declared.filter((name) => name === "birfatura-invoicing")).toHaveLength(4);
-        expect(declared).toContain("minecraft-litebans");
+        expect(declared).not.toContain("minecraft-litebans");
     });
 });
 
