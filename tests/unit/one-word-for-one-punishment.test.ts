@@ -83,7 +83,11 @@ describe("both screens read the one list", () => {
     });
 
     it("filters the public page by the shared list", () => {
-        expect(publicPage).toContain('["", ...PUNISHMENT_TYPES]');
+        // The shape moved from a row of buttons to a select inside the shared
+        // filter strip, so the spelling is no longer `["", ...TYPES]`. What is
+        // being defended is the same: the public filter is built from the one
+        // list and not a second copy of it.
+        expect(publicPage).toContain("PUNISHMENT_TYPES.map");
     });
 
     it("labels a row through the shared fold on both screens", () => {

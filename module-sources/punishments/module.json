@@ -168,7 +168,10 @@
         "adm_unclaimedHint": "A game server has been reporting these. Make a place with one as its reported name to take them.",
         "adm_scopeOff": "not shown",
         "err_key_taken": "Another place already claims that name.",
-        "err_invalid_scope": "That place could not be saved."
+        "err_invalid_scope": "That place could not be saved.",
+        "allTypes": "Any kind",
+        "allStatuses": "Any status",
+        "places": "Places"
       },
       "nav": {
         "punishments": "Punishments"
@@ -274,7 +277,10 @@
         "adm_unclaimedHint": "Bir oyun sunucusu bunları bildiriyor. Bildirilen adı bunlardan biri olan bir yer oluştur ve sahiplen.",
         "adm_scopeOff": "gösterilmiyor",
         "err_key_taken": "Bu adı başka bir yer sahiplenmiş.",
-        "err_invalid_scope": "Bu yer kaydedilemedi."
+        "err_invalid_scope": "Bu yer kaydedilemedi.",
+        "allTypes": "Her tür",
+        "allStatuses": "Her durum",
+        "places": "Yerler"
       },
       "nav": {
         "punishments": "Cezalar"

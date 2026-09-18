@@ -3,9 +3,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { Badge, Button, Card, CardContent, LoadFailed, useLocalDate } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, LoadFailed, useLocalDate, SegmentedTabs } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
-import { Coins, Gift, Loader2, Lock, PartyPopper, Timer } from "lucide-react";
+import { Coins, Gift, Loader2, PartyPopper, Timer } from "lucide-react";
 import { errorMessage } from "@/core/sdk";
 import { inkFor } from "../../lib/wheels";
 
@@ -252,31 +252,22 @@ export default function WheelPage() {
                            above the panel pushes the first card down a row,
                            which leaves every widget beside it floating that
                            much higher than the thing it sits next to. */
-                        <div
-                            className="flex flex-wrap gap-2 border-b border-border p-4"
-                            role="tablist"
-                            aria-label={t("pickAWheel")}
-                        >
-                            {wheels.map((w) => (
-                                <Button
-                                    key={w.slug}
-                                    role="tab"
-                                    aria-selected={w.slug === wheel?.slug}
-                                    variant={w.slug === wheel?.slug ? "default" : "outline"}
-                                    onClick={() => { setActiveSlug(w.slug); setResult(null); setRefused(null); }}
-                                >
-                                    {w.restricted && <Lock className="w-3.5 h-3.5" aria-hidden="true" />}
-                                    {w.name}
-                                    {w.cost > 0 && (
-                                        // The button spaces its own children; a
-                                        // margin here is the thing that drifts.
-                                        <span className="inline-flex items-center gap-1 text-xs opacity-80">
-                                            <Coins className="w-3 h-3" aria-hidden="true" />{w.cost}
-                                        </span>
-                                    )}
-                                </Button>
-                            ))}
-                        </div>
+                        <SegmentedTabs
+                            label={t("pickAWheel")}
+                            activeId={wheel?.slug ?? ""}
+                            onChange={(slug) => { setActiveSlug(slug); setResult(null); setRefused(null); }}
+                            className="px-2"
+                            tabs={wheels.map((w) => ({
+                                id: w.slug,
+                                label: w.name,
+                                icon: w.restricted ? "Lock" : null,
+                                trailing: w.cost > 0 ? (
+                                    <span className="inline-flex items-center gap-1 text-xs opacity-80">
+                                        <Coins className="w-3 h-3" aria-hidden="true" />{w.cost}
+                                    </span>
+                                ) : null,
+                            }))}
+                        />
                     )}
 
                     {wheel && wheel.prizes.length === 0 && (

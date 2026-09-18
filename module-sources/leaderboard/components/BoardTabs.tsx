@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Button, Card, CardContent, LoadFailed, NavIcon, Waiting, useSiteCurrency } from "@/core/sdk/ui";
+import { Card, CardContent, LoadFailed, SegmentedTabs, Waiting, useSiteCurrency } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
 
 interface Row {
@@ -85,19 +85,20 @@ export function BoardTabs({ initialBoards, initialRows, initialId }: {
 
     return (
         <PageFrame title={t("title")} description={t("subtitle")}>
+            {/* A board is a different list, not a narrower one, so it is a
+                tab. One board is not a choice and draws no rail. */}
             {boards.length > 1 && (
-                <div className="flex flex-wrap gap-2 mb-6">
-                    {boards.map((board) => (
-                        <Button
-                            key={board.id}
-                            variant={board.id === activeId ? "default" : "outline"}
-                            onClick={() => setActiveId(board.id)}
-                        >
-                            <NavIcon name={board.icon} className="w-4 h-4" />
-                            {everything(board.labelKey)}
-                        </Button>
-                    ))}
-                </div>
+                <SegmentedTabs
+                    label={t("title")}
+                    activeId={activeId ?? ""}
+                    onChange={setActiveId}
+                    className="mb-6"
+                    tabs={boards.map((board) => ({
+                        id: board.id,
+                        label: everything(board.labelKey),
+                        icon: board.icon,
+                    }))}
+                />
             )}
 
             <Card>

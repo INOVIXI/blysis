@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { Button, Card, CardContent, Input, LoadFailed, Pagination, useLocalDate } from "@/core/sdk/ui";
+import { Card, CardContent, ListControls, LoadFailed, Pagination, SegmentedTabs, useLocalDate } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
-import { Loader2, Search, Ban, VolumeX, LogOut, AlertTriangle } from "lucide-react";
+import { Loader2, Ban, VolumeX, LogOut, AlertTriangle } from "lucide-react";
 import { punishmentStatus, type PunishmentStatus } from "../lib/status";
 import { PUNISHMENT_TYPES, canonicalType, type PunishmentType } from "../lib/punishment-types";
 
@@ -85,6 +85,7 @@ export function PunishmentList({ initial, initialPages, scopes }: {
     const [failed, setFailed] = useState(false);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
+    const [status, setStatus] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
     const [scopeFilter, setScopeFilter] = useState("");
     const [page, setPage] = useState(1);
@@ -96,6 +97,7 @@ export function PunishmentList({ initial, initialPages, scopes }: {
         if (search) params.set("search", search);
         if (typeFilter) params.set("type", typeFilter);
         if (scopeFilter) params.set("scope", scopeFilter);
+        if (status) params.set("status", status);
 
         fetch(`/api/v1/punishments?${params}`)
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
@@ -114,45 +116,72 @@ export function PunishmentList({ initial, initialPages, scopes }: {
     useEffect(() => {
         if (serverDrewThisPage.current) serverDrewThisPage.current = false;
         else fetchData();
-    }, [page, typeFilter, scopeFilter]);
+    }, [page, typeFilter, scopeFilter, status, search]);
 
-    const handleSearch = (e: React.FormEvent) => { e.preventDefault(); setPage(1); fetchData(); };
+    /** Any change to what is being asked for starts at the first page. */
+    const narrow = (apply: () => void) => { apply(); setPage(1); };
 
     return (
         <PageFrame
             title={t("title")}
             description={t("description")}
         >
-            {/* The search box and the type filters read as one row, so they
-                are one height: the box was h-11 beside h-8 buttons. */}
-            <div className="flex flex-wrap items-center gap-3 mb-6">
-                <form onSubmit={handleSearch} className="relative w-full sm:w-72">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("searchPlaceholder")} aria-label={t("searchPlaceholder")} className="pl-10" />
-                </form>
-                <div className="flex flex-wrap gap-2">
-                    {["", ...PUNISHMENT_TYPES].map((tf) => (
-                        <Button key={tf} variant={typeFilter === tf ? "default" : "outline"}
-                            onClick={() => { setTypeFilter(tf); setPage(1); }}>
-                            {tf === "" ? t("type") : typeLabel(t, tf)}
-                        </Button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Only where an operator has actually divided the record. A site
-                with one server should not be asked to choose between one
-                thing and everything. */}
+            {/*
+             * Two layers, because there are two questions. Which record am I
+             * reading - a place is a different list, so it is a tab. Then:
+             * narrow it, which is the strip every other list a member meets
+             * already has. They used to be two identical rows of pills with
+             * nothing to say which was which.
+             *
+             * The rail only appears where an operator has actually divided
+             * the record. A site with one server should not be asked to
+             * choose between one thing and everything.
+             */}
             {scopes.length > 0 ? (
-                <div className="flex flex-wrap gap-2 mb-6">
-                    {[{ id: "", name: t("allScopes") }, ...scopes].map((sc) => (
-                        <Button key={sc.id || "all"} variant={scopeFilter === sc.id ? "default" : "outline"}
-                            onClick={() => { setScopeFilter(sc.id); setPage(1); }}>
-                            {sc.name}
-                        </Button>
-                    ))}
-                </div>
+                <SegmentedTabs
+                    label={t("places")}
+                    activeId={scopeFilter}
+                    onChange={(id) => narrow(() => setScopeFilter(id))}
+                    className="mb-4"
+                    tabs={[{ id: "", label: t("allScopes") }, ...scopes.map((sc) => ({ id: sc.id, label: sc.name }))]}
+                />
             ) : null}
+
+            <ListControls
+                className="mb-6"
+                search={{
+                    value: search,
+                    onChange: (value) => narrow(() => setSearch(value)),
+                    placeholder: t("searchPlaceholder"),
+                }}
+                filters={[
+                    {
+                        id: "type",
+                        label: t("type"),
+                        value: typeFilter,
+                        onChange: (value) => narrow(() => setTypeFilter(value)),
+                        options: [
+                            { value: "", label: t("allTypes") },
+                            ...PUNISHMENT_TYPES.map((tf) => ({ value: tf, label: typeLabel(t, tf) })),
+                        ],
+                    },
+                    {
+                        // The endpoint has answered this since it was written
+                        // and no screen ever asked: a reader could see that a
+                        // punishment was lifted and not ask for the lifted ones.
+                        id: "status",
+                        label: t("status"),
+                        value: status,
+                        onChange: (value) => narrow(() => setStatus(value)),
+                        options: [
+                            { value: "", label: t("allStatuses") },
+                            { value: "active", label: t("active") },
+                            { value: "expired", label: t("expired") },
+                            { value: "revoked", label: t("revoked") },
+                        ],
+                    },
+                ]}
+            />
 
             {loading ? (
                 <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>

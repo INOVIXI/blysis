@@ -23,6 +23,7 @@ import { isEnabledIn } from "@/core/lib/module-enabled";
 import { dateLocaleTag } from "@/core/lib/utils";
 import { useSiteCurrency } from "@/core/components/currency/site-currency";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { SegmentedTabs } from "@/core/components/ui/segmented-tabs";
 
 ChartJS.register(
     CategoryScale,
@@ -267,26 +268,17 @@ export default function AnalyticsPage() {
             {/* One tab is not a choice, so the strip appears only once a
                 module has filled a second one. */}
             {!loading && tabs.length > 1 && (
-                <div role="tablist" aria-label={t("analytics_reports")} className="flex gap-2 flex-wrap border-b border-border">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            type="button"
-                            role="tab"
-                            aria-selected={tab.id === shown.id}
-                            onClick={() => setOpenTab(tab.id)}
-                            className={`px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
-                                tab.id === shown.id
-                                    ? "border-primary text-foreground"
-                                    : "border-transparent text-muted-foreground hover:text-foreground"
-                            }`}
-                        >
-                            {tab.id === ALL_TAB
-                                ? t("analytics_tabAll")
-                                : translateLabel(tab.label ?? tab.id, tab.labelKey ?? undefined)}
-                        </button>
-                    ))}
-                </div>
+                <SegmentedTabs
+                    label={t("analytics_reports")}
+                    activeId={shown.id}
+                    onChange={setOpenTab}
+                    tabs={tabs.map((tab) => ({
+                        id: tab.id,
+                        label: tab.id === ALL_TAB
+                            ? t("analytics_tabAll")
+                            : translateLabel(tab.label ?? tab.id, tab.labelKey ?? undefined),
+                    }))}
+                />
             )}
 
             {loading ? (
