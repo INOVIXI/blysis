@@ -106,7 +106,9 @@
         "err_litebans_refused": "The LiteBans database refused the sign-in.",
         "err_litebans_no_such_table": "Those tables are not in that database. Check the prefix.",
         "err_litebans_timeout": "The LiteBans database took too long to answer.",
-        "err_litebans_failed": "The LiteBans database could not be read."
+        "err_litebans_failed": "The LiteBans database could not be read.",
+        "adm_scope": "Place, when a row does not say",
+        "adm_scopeHint": "LiteBans can divide one database between servers or game modes, and a punishment that names one is filed there. This is what to call the rest. Match it to a place under Punishments; leave it empty to file them under no place at all."
       }
     },
     "tr": {
@@ -154,7 +156,9 @@
         "err_litebans_refused": "LiteBans veritabanı girişi reddetti.",
         "err_litebans_no_such_table": "Bu tablolar o veritabanında yok. Öneki kontrol et.",
         "err_litebans_timeout": "LiteBans veritabanı çok geç cevap verdi.",
-        "err_litebans_failed": "LiteBans veritabanı okunamadı."
+        "err_litebans_failed": "LiteBans veritabanı okunamadı.",
+        "adm_scope": "Satır söylemediğinde yer",
+        "adm_scopeHint": "LiteBans tek veritabanını sunucular veya oyun modları arasında bölebilir; kendi yerini söyleyen ceza oraya yazılır. Bu, kalanların adı. Cezalar altındaki bir yerle eşleştir; hiçbir yere yazılmasın istiyorsan boş bırak."
       }
     }
   }

@@ -45,6 +45,7 @@ interface Status {
     configured: boolean;
     prefix: string;
     enabled: boolean;
+    scopeKey: string;
     cursors: Cursor[];
 }
 
@@ -60,6 +61,7 @@ export default function LiteBansSettingsPage() {
     const [status, setStatus] = useState<Status | null>(null);
     const [connection, setConnection] = useState("");
     const [prefix, setPrefix] = useState("litebans_");
+    const [scopeKey, setScopeKey] = useState("");
     const [enabled, setEnabled] = useState(false);
     const [probe, setProbe] = useState<TableProbe[] | null>(null);
     const [busy, setBusy] = useState<"save" | "test" | "sync" | "resync" | null>(null);
@@ -75,6 +77,7 @@ export default function LiteBansSettingsPage() {
             const body: Status = await res.json();
             setStatus(body);
             setPrefix(body.prefix);
+            setScopeKey(body.scopeKey ?? "");
             setEnabled(body.enabled);
         } catch {
             setFailed(true);
@@ -91,7 +94,7 @@ export default function LiteBansSettingsPage() {
             const res = await fetch("/api/v1/minecraft-litebans/admin/connection", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ connection: connection.trim(), prefix, enabled }),
+                body: JSON.stringify({ connection: connection.trim(), prefix, enabled, scopeKey }),
             });
             const wrong = await writeError(res, t("adm_saveFailed"), t);
             if (wrong) { toast.error(wrong); return; }
@@ -182,6 +185,17 @@ export default function LiteBansSettingsPage() {
                             onChange={(event) => setPrefix(event.target.value)}
                         />
                         <p className="text-xs text-muted-foreground mt-1">{t("adm_prefixHint")}</p>
+                    </div>
+
+                    <div>
+                        <Label htmlFor="scopeKey">{t("adm_scope")}</Label>
+                        <Input
+                            id="scopeKey"
+                            value={scopeKey}
+                            placeholder="survival"
+                            onChange={(event) => setScopeKey(event.target.value)}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">{t("adm_scopeHint")}</p>
                     </div>
 
                     <CheckboxField

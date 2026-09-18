@@ -67,6 +67,10 @@ const WANTED = [
     // before this line existed.
     "removed_by_name",
     "removed_by_reason",
+    // Which server or game mode the punishment was handed down on. LiteBans
+    // divides one database this way, so a site running Survival and Skyblock
+    // off one install can keep them apart without a second connection.
+    "server_scope",
 ] as const;
 
 /**

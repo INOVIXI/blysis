@@ -30,6 +30,8 @@ const saveSchema = z.object({
     connection: z.string().max(500).default(""),
     prefix: z.string().max(40).default("litebans_"),
     enabled: z.boolean().default(false),
+    /** Names the place when a row's own `server_scope` is empty. */
+    scopeKey: z.string().max(120).default(""),
 });
 
 const actionSchema = z.object({ action: z.enum(["test", "sync", "resync"]) });
@@ -55,6 +57,7 @@ export async function GET() {
             configured: config.connection !== "",
             prefix: config.prefix,
             enabled: config.enabled,
+            scopeKey: config.scopeKey,
             cursors: cursors.map((row) => ({
                 kind: row.kind,
                 lastId: Number(row.lastId),
@@ -94,7 +97,12 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: "That is not a table prefix", code: "bad_prefix" }, { status: 400 });
     }
 
-    const config = { connection, prefix, enabled: parsed.data.enabled && connection !== "" };
+    const config = {
+        connection,
+        prefix,
+        enabled: parsed.data.enabled && connection !== "",
+        scopeKey: parsed.data.scopeKey.trim(),
+    };
     await prisma.setting.upsert({
         where: { key: CONFIG_KEY },
         // Sealed on the way in: `secretSettings` in the manifest names
@@ -118,7 +126,7 @@ export async function PUT(request: NextRequest) {
         entityId: CONFIG_KEY,
         // The prefix and the switch, never the address. An activity row is
         // read in more places than this screen is.
-        metadata: { prefix, enabled: config.enabled },
+        metadata: { prefix, enabled: config.enabled, scopeKey: config.scopeKey },
     }).catch(() => {});
 
     return NextResponse.json({ saved: true, configured: connection !== "", enabled: config.enabled });

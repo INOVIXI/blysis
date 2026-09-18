@@ -30,9 +30,15 @@ export interface LiteBansConfig {
     prefix: string;
     /** Off until an operator has tried the connection and turned it on. */
     enabled: boolean;
+    /**
+     * What to call the place when a row does not say. LiteBans divides one
+     * database with `server_scope`, and a server that leaves it empty needs
+     * the connection itself to name where its punishments happened.
+     */
+    scopeKey: string;
 }
 
-export const EMPTY_CONFIG: LiteBansConfig = { connection: "", prefix: DEFAULT_PREFIX, enabled: false };
+export const EMPTY_CONFIG: LiteBansConfig = { connection: "", prefix: DEFAULT_PREFIX, enabled: false, scopeKey: "" };
 
 /**
  * The stored value, narrowed. A row written by an older version, by hand, or
@@ -47,6 +53,7 @@ export function configFrom(value: unknown): LiteBansConfig {
         connection: typeof raw.connection === "string" ? raw.connection.trim() : "",
         prefix: typeof raw.prefix === "string" && raw.prefix.trim() !== "" ? raw.prefix.trim() : DEFAULT_PREFIX,
         enabled: raw.enabled === true,
+        scopeKey: typeof raw.scopeKey === "string" ? raw.scopeKey.trim() : "",
     };
 }
 

@@ -46,6 +46,7 @@ export interface LiteBansRow {
     silent?: number | boolean | string | null;
     removed_by_name?: string | null;
     removed_by_reason?: string | null;
+    server_scope?: string | null;
 }
 
 const MINUTE = 60_000;
@@ -85,6 +86,12 @@ function durationOf(placed: number | null, ends: number | null): string | null {
     return `${Math.max(1, Math.round(span / MINUTE))}m`;
 }
 
+/** The place a row names, or null when it names none. */
+function scopeOf(value: string | null | undefined): string | null {
+    const scope = value?.trim() ?? "";
+    return scope === "" || scope === "*" ? null : scope;
+}
+
 /** What this module calls itself in the record. One place: the reference is built from it. */
 export const SOURCE = "minecraft-litebans";
 
@@ -101,6 +108,7 @@ export interface PunishmentReportDraft {
     active: boolean;
     liftedBy: string | null;
     liftReason: string | null;
+    scopeKey: string | null;
 }
 
 /**
@@ -112,6 +120,11 @@ export function toReport(
     kind: PunishmentKind,
     /** From the history table, or null when it did not know this UUID. */
     playerName: string | null,
+    /**
+     * What the operator called this connection, for a server that does not
+     * divide its own database. The row's own scope wins where there is one.
+     */
+    fallbackScope: string | null = null,
 ): PunishmentReportDraft | null {
     if (flag(row.silent) === true) return null;
 
@@ -144,5 +157,8 @@ export function toReport(
         // lifting something that was never lifted.
         liftedBy: lifted ? row.removed_by_name?.trim() || null : null,
         liftReason: lifted ? row.removed_by_reason?.trim() || null : null,
+        // LiteBans writes `*` for a punishment that applies everywhere, which
+        // names no place and is not a scope.
+        scopeKey: scopeOf(row.server_scope) ?? fallbackScope,
     };
 }

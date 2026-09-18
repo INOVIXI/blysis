@@ -80,10 +80,12 @@ async function record(
     rows: LiteBansRow[],
     table: LiteBansTable,
     names: Map<string, string>,
+    /** What to call the place when a row does not say. */
+    fallbackScope: string | null,
     into: SyncSummary,
 ): Promise<void> {
     for (const row of rows) {
-        const report = toReport(row, table.kind, names.get(String(row.uuid ?? "")) ?? null);
+        const report = toReport(row, table.kind, names.get(String(row.uuid ?? "")) ?? null, fallbackScope);
         if (!report) {
             into.skipped += 1;
             continue;
@@ -114,6 +116,7 @@ async function syncOneKind(
     prefix: string,
     dialect: "postgres" | "mysql",
     full: boolean,
+    fallbackScope: string | null,
     into: SyncSummary,
 ): Promise<void> {
     const name = `${prefix}${table.suffix}`;
@@ -147,7 +150,7 @@ async function syncOneKind(
         history,
         rows.map((row) => String(row.uuid ?? "")),
     );
-    await record(rows, table, names, into);
+    await record(rows, table, names, fallbackScope, into);
 
     // Only what the cursor scope returned moves it, and only after the batch
     // is in. The lifted rows are behind it by definition.
@@ -182,7 +185,10 @@ export async function syncLiteBans(options: { full?: boolean } = {}): Promise<Sy
     const summary: SyncSummary = { ...EMPTY, missing: [] };
     const outcome = await withLiteBans(config.connection, dialect, async (reader) => {
         for (const table of PUNISHMENT_TABLES) {
-            await syncOneKind(reader, table, config.prefix, dialect, options.full === true, summary);
+            await syncOneKind(
+                reader, table, config.prefix, dialect, options.full === true,
+                config.scopeKey || null, summary,
+            );
         }
     });
 
