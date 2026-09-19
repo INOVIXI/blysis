@@ -13,6 +13,7 @@
 
 import { prisma } from "@/core/lib/db";
 import { shippedMessages } from "@/core/lib/i18n/shipped-messages";
+import { defaultThemeId } from "@/core/generated/theme-registry";
 import { cacheGet, cacheSet, cacheDel } from "@/core/lib/redis";
 import { isUnsafeKey, emptyRecord } from "@/core/lib/safe-object";
 
@@ -27,6 +28,18 @@ const CACHE_TTL_SECONDS = 120;
  * Get the full nested message object for a locale.
  * Called by next-intl's `getRequestConfig` on every request.
  */
+/** The theme id alone, without the mode, the customization or the cookie. */
+async function activeThemeId(): Promise<string> {
+    try {
+        const state = await prisma.themeState.findFirst({ select: { themeId: true } });
+        return state?.themeId ?? defaultThemeId;
+    } catch {
+        // A read that fails leaves the theme's own labels falling back to the
+        // literals in its manifest, which is what they did before this.
+        return defaultThemeId;
+    }
+}
+
 export async function getMessages(locale: string): Promise<Record<string, unknown>> {
     const cacheKey = CACHE_PREFIX + locale;
 
@@ -40,7 +53,23 @@ export async function getMessages(locale: string): Promise<Record<string, unknow
 
     // 2. Query DB - only core + enabled modules
     const enabledModuleIds = await getEnabledModuleIds();
-    const allowedModules = ["core", ...enabledModuleIds];
+    /*
+     * The theme the site is wearing, whose settings screens are drawn from
+     * its own strings.
+     *
+     * A theme's manifest has carried a `translations` block since it was
+     * written and nothing read it, so every label on every theme settings
+     * screen was the English literal beside it. Its rows are filed under
+     * `theme:<id>` and would be filtered out here with everything else that
+     * is not core or an enabled module.
+     *
+     * One row, on a cache miss only - this whole catalogue is held for two
+     * minutes - and deliberately not `getActiveTheme`, which reads the
+     * visitor's cookie and three more tables. Which theme is on does not
+     * depend on who is asking.
+     */
+    const themeId = await activeThemeId();
+    const allowedModules = ["core", ...enabledModuleIds, `theme:${themeId}`];
 
     const rows = await prisma.translation.findMany({
         where: {

@@ -164,35 +164,66 @@
         "enabled": {
           "type": "toggle",
           "label": "Show hero on homepage",
-          "default": false
+          "default": false,
+          "labelKey": "theme_flat_hero_enabled"
         },
         "title": {
           "type": "text",
           "label": "Title",
-          "default": "Welcome"
+          "default": "Welcome",
+          "labelKey": "theme_flat_hero_title"
         },
         "subtitle": {
           "type": "text",
           "label": "Subtitle",
-          "default": "A clean starting point for your community."
+          "default": "A clean starting point for your community.",
+          "labelKey": "theme_flat_hero_subtitle"
         },
         "ctaText": {
           "type": "text",
           "label": "Button text",
-          "default": "Get started"
+          "default": "Get started",
+          "labelKey": "theme_flat_hero_ctaText"
         },
         "ctaHref": {
           "type": "url",
-          "label": "Button link"
+          "label": "Button link",
+          "labelKey": "theme_flat_hero_ctaHref"
         },
         "backgroundImage": {
           "type": "image",
-          "label": "Background image (optional)"
+          "label": "Background image",
+          "labelKey": "theme_flat_hero_backgroundImage"
         }
-      }
+      },
+      "labelKey": "theme_flat_hero"
     }
   },
   "components": {
     "Hero": "components/Hero.tsx"
+  },
+  "translations": {
+    "en": {
+      "admin": {
+        "theme_flat_hero": "Hero",
+        "theme_flat_hero_enabled": "Show the hero on the homepage",
+        "theme_flat_hero_title": "Heading",
+        "theme_flat_hero_subtitle": "Line under the heading",
+        "theme_flat_hero_ctaText": "Button text",
+        "theme_flat_hero_ctaHref": "Where the button goes",
+        "theme_flat_hero_backgroundImage": "Background picture"
+      }
+    },
+    "tr": {
+      "admin": {
+        "theme_flat_hero": "Hero",
+        "theme_flat_hero_enabled": "Hero'yu ana sayfada göster",
+        "theme_flat_hero_title": "Başlık",
+        "theme_flat_hero_subtitle": "Başlığın altındaki satır",
+        "theme_flat_hero_ctaText": "Düğme metni",
+        "theme_flat_hero_ctaHref": "Düğmenin gittiği yer",
+        "theme_flat_hero_backgroundImage": "Arka plan görseli"
+      }
+    }
   }
 }

@@ -28,6 +28,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { locales } from "../src/core/lib/i18n/config";
 import { manifestHash } from "../src/core/lib/module-install-audit";
+import { themeRegistry } from "../src/core/generated/theme-registry";
 
 /** Off by default: see the note above about container boots. */
 const REGISTER_MODULES = process.argv.includes("--register-modules");
@@ -269,10 +270,41 @@ async function main() {
     }
 
     console.log(`  Module total: ${modTotal} keys`);
+
+    /*
+     * 3. Theme translations.
+     *
+     * The manifest has carried a `translations` block since it was written
+     * and nothing ever wrote those rows, so every label on every theme
+     * settings screen was the English literal beside it - "Show hero on
+     * homepage" on a Turkish page. Read from the generated registry rather
+     * than the directory, because that is what the running app resolves a
+     * theme through, so a theme the registry does not know about is one the
+     * screen cannot draw either.
+     *
+     * Filed under `theme:<id>`, so a theme's strings leave with it the way a
+     * module's do and cannot collide with a module that shares its name.
+     */
+    let themeTotal = 0;
+    for (const [themeId, manifest] of Object.entries(themeRegistry)) {
+        const translations = (manifest as { translations?: Record<string, Record<string, unknown>> }).translations;
+        if (!translations || typeof translations !== "object") continue;
+        let count = 0;
+        for (const [locale, data] of Object.entries(translations)) {
+            if (typeof data !== "object" || data === null) continue;
+            if (!SUPPORTED_LOCALES.has(locale)) continue;
+            count += await seedLocale(locale, data as Record<string, unknown>, `theme:${themeId}`);
+        }
+        if (count > 0) {
+            console.log(`  theme ${themeId}: ${count} keys`);
+            themeTotal += count;
+        }
+    }
+    if (themeTotal > 0) console.log(`  Theme total: ${themeTotal} keys`);
     if (REGISTER_MODULES) console.log(`  Registered ${registered} module(s) in ModuleConfig`);
     await forgetCachedCatalogue();
 
-    console.log(`\nDone. ${coreTotal + modTotal} total translation keys seeded.`);
+    console.log(`\nDone. ${coreTotal + modTotal + themeTotal} total translation keys seeded.`);
     if (!REGISTER_MODULES) {
         console.log("Module strings stay invisible until each module has a ModuleConfig row.");
         console.log("For a local tree seeded from module-sources/, re-run with --register-modules.");

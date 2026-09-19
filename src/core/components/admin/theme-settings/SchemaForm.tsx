@@ -83,15 +83,37 @@ export function SchemaForm({ themeId, group, fields, initialValues, title, descr
 }
 
 function FieldRow({ fieldKey, def, value, onChange }: { fieldKey: string; def: ThemeFieldDef; value: unknown; onChange: (v: unknown) => void }) {
+    const t = useTranslations("admin");
     const isDefault = value === undefined;
     // ColorField renders its own label inline (color swatch + label side by
     // side); every other field component only renders the input, so we
     // stack a label header above.
-    const label = def.label ?? fieldKey;
+    /*
+     * The theme's own word for this field, in the reader's language.
+     *
+     * It used to be `def.label ?? fieldKey`: a literal the theme's author
+     * typed, or failing that the column name. So every label on every theme
+     * settings screen was whatever English got written, and a Turkish
+     * operator read "Show hero on homepage" with the panel's chrome in
+     * Turkish around it.
+     *
+     * The literal stays as the fallback. A theme somebody else wrote may
+     * declare no key and still has to render something, and the key is the
+     * only honest use of a `t.has` guard - it is built from a manifest core
+     * has never seen.
+     */
+    const label = (def.labelKey && t.has(def.labelKey) ? t(def.labelKey) : def.label) ?? fieldKey;
     const inner = renderField(def, value, onChange, isDefault);
-    // Some fields are too big for a column: an editor or an image picker
-    // squeezed into a third of the row is unusable.
-    const wide = def.type === "richtext" || def.type === "image";
+    /*
+     * Fields that do not share a row.
+     *
+     * An editor or an image picker squeezed into a third of the row is
+     * unusable; a switch is the opposite problem and the same mistake. It is
+     * eighteen pixels tall beside inputs that are forty, so the hero screen
+     * put "Show hero on homepage" and its little box next to "Title" and its
+     * full-height field, and the row read as misaligned because it was.
+     */
+    const wide = def.type === "richtext" || def.type === "image" || def.type === "toggle";
     if (def.type === "color") return inner;
     return (
         <div className={`space-y-1.5${wide ? " md:col-span-2 xl:col-span-3" : ""}`}>
