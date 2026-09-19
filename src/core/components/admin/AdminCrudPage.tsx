@@ -20,6 +20,7 @@ import { Pagination, usePagedRows } from "@/core/components/ui/pagination";
 import { Link } from "@/core/lib/i18n/navigation";
 import { useFormRoute } from "@/core/hooks/useFormRoute";
 import { Checkbox, CheckboxField } from "@/core/components/ui/checkbox";
+import { cn } from "@/core/lib/utils";
 import { headerState, narrowTo, pickAll, pickNone, togglePick, type Selection } from "@/core/lib/bulk-selection";
 
 export interface CrudField {
@@ -228,12 +229,26 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
                     </NativeSelect>
                 );
             case "toggle":
+                /*
+                 * The field's own label, not a word of the control's own. A
+                 * boolean used to be drawn with a heading above it and
+                 * "Enabled" beside the box, so the download editor read
+                 * "Active" over "Enabled" - two names for one answer.
+                 *
+                 * The height is the other half of it: a checkbox is 18px and
+                 * an input is 40, so the cell beside a text field held a
+                 * sliver where the field should be and the row looked
+                 * crooked. The box below is an input's height, and the cell
+                 * pushes it to the foot, which is where that input ends.
+                 */
                 return (
-                    <CheckboxField
-                        checked={val === "true"}
-                        onChange={(e) => onChange(String(e.target.checked))}
-                        label={ct("enabled")}
-                    />
+                    <div className="flex h-10 items-center">
+                        <CheckboxField
+                            checked={val === "true"}
+                            onChange={(e) => onChange(String(e.target.checked))}
+                            label={field.label}
+                        />
+                    </div>
                 );
             case "datetime":
                 return <Input type="datetime-local" value={val} onChange={(e) => onChange(e.target.value)} aria-label={field.label} />;
@@ -288,9 +303,19 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
                             <div className="grid md:grid-cols-2 gap-4">
                                 {fields.map((field) => {
                                     const fullWidth = field.type === "textarea" || field.type === "richtext" || field.type === "file" || field.type === "image";
+                                    const namesItself = field.type === "toggle";
                                     return (
-                                        <div key={field.key} className={fullWidth ? "md:col-span-2" : ""}>
-                                            <Label>{field.label} {field.required && <span className="text-destructive">*</span>}</Label>
+                                        <div
+                                            key={field.key}
+                                            data-field={field.key}
+                                            className={cn(
+                                                fullWidth && "md:col-span-2",
+                                                namesItself && "flex flex-col justify-end",
+                                            )}
+                                        >
+                                            {!namesItself && (
+                                                <Label>{field.label} {field.required && <span className="text-destructive">*</span>}</Label>
+                                            )}
                                             {renderField(field)}
                                             {field.description && (
                                                 <p className="text-xs text-muted-foreground mt-1">{field.description}</p>
