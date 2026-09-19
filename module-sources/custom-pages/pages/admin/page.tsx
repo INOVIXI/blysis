@@ -7,7 +7,7 @@ import { Link } from "@/core/sdk/navigation";
 import { Button, Card, CardContent, Checkbox, Input, Label, ListControls, Pagination, RichTextEditor, useConfirm, useFormRoute, useRowList, CheckboxField, buttonClassName } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, Plus, Trash2, ExternalLink, Pencil, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
-import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
 import { deleteEach } from "@/core/sdk";
 
 interface CustomPage {
@@ -272,8 +272,12 @@ export default function CustomPagesAdminPage() {
                                     >
                                         <LayoutDashboard className="w-3 h-3" />
                                     </Link>
-                                    <Button variant="ghost" size="sm" onClick={() => openForm(page.id)} title={t("adm_htmlEditor")}><Pencil className="w-3 h-3" /></Button>
-                                    <Button aria-label={commonT("delete")} variant="ghost" size="sm" className="text-destructive" onClick={() => deletePage(page)}><Trash2 className="w-3 h-3" /></Button>
+                                    <RowActions
+                                        actions={[
+                                            { icon: Pencil, label: t("adm_htmlEditor"), onClick: () => openForm(page.id) },
+                                            { icon: Trash2, label: commonT("delete"), onClick: () => deletePage(page), destructive: true },
+                                        ]}
+                                    />
                                 </div>
                             </CardContent>
                         </Card>

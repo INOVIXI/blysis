@@ -20,6 +20,11 @@ export type { AdminPageHeaderProps } from "@/core/components/admin/AdminPageHead
 export { BulkBar } from "@/core/components/admin/BulkBar";
 export type { BulkBarProps } from "@/core/components/admin/BulkBar";
 
+// What you can do to one row. A module passes what its rows can do; it does
+// not pass a size, a variant or a gap, because those are what drifted.
+export { RowActions } from "@/core/components/admin/RowActions";
+export type { RowAction, RowActionsProps } from "@/core/components/admin/RowActions";
+
 export { AdminCrudPage } from "@/core/components/admin/AdminCrudPage";
 export type { CrudField } from "@/core/components/admin/AdminCrudPage";
 export { SettingsForm } from "@/core/components/admin/SettingsForm";

@@ -8,7 +8,7 @@ import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, Gift, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { copyText, deleteEach } from "@/core/sdk";
-import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
 
 interface GiftCode {
     id: string;
@@ -252,12 +252,12 @@ export default function GiftCodesPage() {
                                             </td>
                                             <td className="py-3 px-4 text-right">
                                                 <div className="flex items-center justify-end gap-1">
-                                                    <Button aria-label={commonT("copy")} variant="ghost" size="sm" onClick={() => copyCode(code.code, code.id)}>
-                                                        {copiedId === code.id ? <Check className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3" />}
-                                                    </Button>
-                                                    <Button aria-label={commonT("delete")} variant="ghost" size="sm" className="text-destructive" onClick={() => deleteCode(code.id)}>
-                                                        <Trash2 className="w-3 h-3" />
-                                                    </Button>
+                                                    <RowActions
+                                                        actions={[
+                                                            { icon: copiedId === code.id ? Check : Copy, label: commonT("copy"), onClick: () => copyCode(code.code, code.id) },
+                                                            { icon: Trash2, label: commonT("delete"), onClick: () => deleteCode(code.id), destructive: true },
+                                                        ]}
+                                                    />
                                                 </div>
                                             </td>
                                         </tr>

@@ -67,8 +67,21 @@ function buttonBodies(source: string): { body: string; at: number }[] {
 
 describe("a button spaces its own icon", () => {
     it("finds buttons to look at", () => {
-        const some = buttonBodies(readFileSync(join(ROOT, "src/core/components/admin/AdminCrudPage.tsx"), "utf8"));
-        expect(some.length).toBeGreaterThan(3);
+        /*
+         * Counted across everything the rule covers rather than in one file.
+         * It used to read the crud shell and expect more than three buttons
+         * there, which failed the day two of that screen's buttons moved into
+         * a shared component - a refactor the rule has no opinion about.
+         */
+        let seen = 0;
+        for (const root of ROOTS) {
+            for (const file of walk(join(ROOT, root))) {
+                const source = readFileSync(file, "utf8");
+                if (!source.includes("<Button") && !source.includes("<button")) continue;
+                seen += buttonBodies(source).length;
+            }
+        }
+        expect(seen).toBeGreaterThan(200);
     });
 
     it("has no horizontal margins inside a button anywhere", () => {

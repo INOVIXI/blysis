@@ -23,6 +23,7 @@ import { useFormRoute } from "@/core/hooks/useFormRoute";
 import { Checkbox, CheckboxField } from "@/core/components/ui/checkbox";
 import { cn } from "@/core/lib/utils";
 import { BulkBar } from "@/core/components/admin/BulkBar";
+import { RowActions } from "@/core/components/admin/RowActions";
 import { deleteEach } from "@/core/lib/bulk-delete";
 import { headerState, narrowTo, pickAll, pickNone, togglePick, type Selection } from "@/core/lib/bulk-selection";
 
@@ -424,23 +425,23 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
                                             <p className="text-sm text-muted-foreground">{String(item[secondaryField] || "")}</p>
                                         ) : null}
                                     </div>
-                                    <div className="flex gap-1">
+                                    <div className="flex items-center gap-1">
+                                        {/* A row's second door - a department's
+                                            tickets, a wheel's prizes - keeps
+                                            its words: it goes somewhere else
+                                            rather than acting on this row, and
+                                            an icon cannot say where. */}
                                         {rowHref && rowActionLabel && (
                                             <Link href={rowHref(item)} className={buttonClassName("outline", "sm")}>
                                                 {rowActionLabel}
                                             </Link>
                                         )}
-                                        <Button
-                                            aria-label={commonT("edit")}
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => openForm(item.id as string)}
-                                        >
-                                            <Pencil className="w-3 h-3" />
-                                        </Button>
-                                        <Button aria-label={commonT("delete")} variant="ghost" size="sm" className="text-destructive" onClick={() => deleteItem(item.id as string)}>
-                                            <Trash2 className="w-3 h-3" />
-                                        </Button>
+                                        <RowActions
+                                            actions={[
+                                                { icon: Pencil, label: commonT("edit"), onClick: () => openForm(item.id as string) },
+                                                { icon: Trash2, label: commonT("delete"), onClick: () => deleteItem(item.id as string), destructive: true },
+                                            ]}
+                                        />
                                     </div>
                                 </div>
                             ))}

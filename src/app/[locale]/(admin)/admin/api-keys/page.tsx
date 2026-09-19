@@ -7,6 +7,7 @@ import { Pagination } from "@/core/components/ui/pagination";
 import { ListControls } from "@/core/components/ui/list-controls";
 import { Checkbox } from "@/core/components/ui/checkbox";
 import { BulkBar } from "@/core/components/admin/BulkBar";
+import { RowActions } from "@/core/components/admin/RowActions";
 import { useRowList } from "@/core/hooks/useRowList";
 import { deleteEach } from "@/core/lib/bulk-delete";
 import { Loader2, Plus, Trash2, Key } from "lucide-react";
@@ -139,9 +140,11 @@ export default function ApiKeysPage() {
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <span className="text-xs text-muted-foreground">{formatDate(k.createdAt)}</span>
-                                        <Button aria-label={commonT("delete")} variant="ghost" size="sm" className="text-destructive" onClick={() => deleteKey(k.id)}>
-                                            <Trash2 className="w-3 h-3" />
-                                        </Button>
+                                        <RowActions
+                                            actions={[
+                                                { icon: Trash2, label: commonT("delete"), onClick: () => deleteKey(k.id), destructive: true },
+                                            ]}
+                                        />
                                     </div>
                                 </div>
                             ))}

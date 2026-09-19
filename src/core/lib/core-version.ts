@@ -12,6 +12,13 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 4.5.0 - `RowActions` joins `@/core/sdk/admin`. Measured across the panel:
+ * 40 controls sitting in a row of a list, 23 an icon with a name and 17 an
+ * icon with its label written beside it - so Edit was a small grey pencil on
+ * one screen and a button reading "Edit" two screens over. Neither shape is
+ * wrong; making the choice forty times is. A caller passes what its rows can
+ * do and nothing about how they look.
+ *
  * 4.4.0 - `BulkBar` joins `@/core/sdk/admin`, `deleteEach` joins `@/core/sdk`
  * and `useRowPicks` joins `@/core/sdk/ui` for the screens whose rows are paged
  * by the endpoint rather than held in the browser. The shell kept its destructive
@@ -427,4 +434,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "4.4.0";
+export const CORE_API_VERSION = "4.5.0";

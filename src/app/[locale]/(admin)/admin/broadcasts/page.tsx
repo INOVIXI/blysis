@@ -7,6 +7,7 @@ import { Pagination } from "@/core/components/ui/pagination";
 import { ListControls } from "@/core/components/ui/list-controls";
 import { Checkbox } from "@/core/components/ui/checkbox";
 import { BulkBar } from "@/core/components/admin/BulkBar";
+import { RowActions } from "@/core/components/admin/RowActions";
 import { deleteEach } from "@/core/lib/bulk-delete";
 import { useRowList } from "@/core/hooks/useRowList";
 import { Input } from "@/core/components/ui/input";
@@ -263,9 +264,11 @@ export default function BroadcastsPage() {
                                             <Send className="w-3 h-3" /> {t("broadcasts_sendButton")}
                                         </Button>
                                     )}
-                                    <Button aria-label={commonT("delete")} variant="ghost" size="sm" className="text-destructive" onClick={() => deleteBroadcast(b)}>
-                                        <Trash2 className="w-3 h-3" />
-                                    </Button>
+                                    <RowActions
+                                        actions={[
+                                            { icon: Trash2, label: commonT("delete"), onClick: () => deleteBroadcast(b), destructive: true },
+                                        ]}
+                                    />
                                 </div>
                             </CardContent>
                         </Card>
