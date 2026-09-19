@@ -24,6 +24,7 @@ import { Checkbox, CheckboxField } from "@/core/components/ui/checkbox";
 import { cn } from "@/core/lib/utils";
 import { BulkBar } from "@/core/components/admin/BulkBar";
 import { RowActions } from "@/core/components/admin/RowActions";
+import { ReferencePicker } from "@/core/components/admin/ReferencePicker";
 import { deleteEach } from "@/core/lib/bulk-delete";
 import { headerState, narrowTo, pickAll, pickNone, togglePick, type Selection } from "@/core/lib/bulk-selection";
 
@@ -43,9 +44,25 @@ export interface CrudField {
      * `urlOrFile` named the control rather than the field, and sat beside an
      * `image` that could only be uploaded to; both now draw `UrlOrFile`.
      */
-    type?: "text" | "password" | "number" | "url" | "select" | "textarea" | "toggle" | "datetime" | "color" | "image" | "file" | "richtext" | "icon";
+    type?: "text" | "password" | "number" | "url" | "select" | "textarea" | "toggle" | "datetime" | "color" | "image" | "file" | "richtext" | "icon" | "reference";
     placeholder?: string;
     options?: { value: string; label: string }[];
+    /**
+     * Where the records this field names are listed, for `type: "reference"`.
+     *
+     * Nothing in the panel shows a record's id, so a field that holds one has
+     * to offer the records instead. `labelFromRow` is how a screen whose
+     * endpoint already joins the name - a creator code that carries its
+     * creator's username - shows it without asking again.
+     */
+    reference?: {
+        endpoint: string;
+        listKey: string;
+        labelField: string;
+        hintField?: string;
+        searchParam?: string;
+        labelFromRow?: (row: Record<string, unknown>) => string | undefined;
+    };
     defaultValue?: string;
     required?: boolean;
     accept?: string;
@@ -252,6 +269,22 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
                             label={field.label}
                         />
                     </div>
+                );
+            case "reference":
+                if (!field.reference) return null;
+                return (
+                    <ReferencePicker
+                        value={val}
+                        onChange={onChange}
+                        label={field.label}
+                        placeholder={field.placeholder}
+                        valueLabel={field.reference.labelFromRow?.(form)}
+                        endpoint={field.reference.endpoint}
+                        listKey={field.reference.listKey}
+                        labelField={field.reference.labelField}
+                        hintField={field.reference.hintField}
+                        searchParam={field.reference.searchParam}
+                    />
                 );
             case "datetime":
                 return <Input type="datetime-local" value={val} onChange={(e) => onChange(e.target.value)} aria-label={field.label} />;

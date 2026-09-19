@@ -12,9 +12,29 @@ const bulkDiscountSchema = z.object({
 });
 
 export async function GET() {
+    /*
+     * Every rule, not only the live ones.
+     *
+     * This filtered on `isActive` while the screen behind it offers a switch
+     * for exactly that column: turning a discount off made its row vanish
+     * from the only screen that could turn it back on. The public side asks
+     * this endpoint too and does its own filtering, which is where the
+     * filtering belongs.
+     *
+     * No join for the product or the category: `productId` and `categoryId`
+     * on this model are plain strings with an index, not foreign keys, so
+     * there is no relation to include and nothing stops a rule pointing at a
+     * product that has been deleted. Making them real references is a
+     * migration rather than a line here.
+     */
     const discounts = await prisma.bulkDiscount.findMany({
-        where: { isActive: true },
         orderBy: { minQuantity: "asc" },
+        // A ceiling rather than a page: the screen holds the rules and pages
+        // them in the browser, and the checkout needs all of them at once to
+        // find the most aggressive one that applies. An operator writes these
+        // by hand, so five hundred is a number nobody reaches - and if one
+        // did, a truncated answer beats an unbounded read.
+        take: 500,
     });
     return NextResponse.json({ discounts });
 }

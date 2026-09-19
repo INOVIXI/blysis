@@ -12,6 +12,13 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 4.6.0 - `ReferencePicker` joins `@/core/sdk/admin`, and `CrudField` takes
+ * `type: "reference"`. The bulk discount screen asked for a product id and a
+ * category id in two text boxes and the creator code screen asked for a user
+ * id in a third; nothing in the panel shows any of those ids, so the only way
+ * to fill one in was to open the database - and a mistyped id is refused by
+ * nothing, it just makes a rule that never applies.
+ *
  * 4.5.0 - `RowActions` joins `@/core/sdk/admin`. Measured across the panel:
  * 40 controls sitting in a row of a list, 23 an icon with a name and 17 an
  * icon with its label written beside it - so Edit was a small grey pencil on
@@ -434,4 +441,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "4.5.0";
+export const CORE_API_VERSION = "4.6.0";

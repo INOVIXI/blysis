@@ -74,6 +74,7 @@
     "quoteSample": "alıntı metni",
     "register": "Kayıt Ol",
     "reloadPage": "Sayfayı yenile",
+    "referenceNotFound": "Burada artık {id} kimliğinde bir şey yok.",
     "remove": "Kaldır",
     "replace": "Değiştir",
     "retry": "Tekrar dene",

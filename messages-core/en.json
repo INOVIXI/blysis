@@ -74,6 +74,7 @@
     "quoteSample": "quoted text",
     "register": "Register",
     "reloadPage": "Reload page",
+    "referenceNotFound": "Nothing here has the id {id} any more.",
     "remove": "Remove",
     "replace": "Replace",
     "retry": "Try again",

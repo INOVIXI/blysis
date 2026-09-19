@@ -22,6 +22,11 @@ export type { BulkBarProps } from "@/core/components/admin/BulkBar";
 
 // What you can do to one row. A module passes what its rows can do; it does
 // not pass a size, a variant or a gap, because those are what drifted.
+// A field that names another record. Nothing in the panel shows an id, so a
+// box asking for one can only be filled from the database.
+export { ReferencePicker } from "@/core/components/admin/ReferencePicker";
+export type { ReferencePickerProps } from "@/core/components/admin/ReferencePicker";
+
 export { RowActions } from "@/core/components/admin/RowActions";
 export type { RowAction, RowActionsProps } from "@/core/components/admin/RowActions";
 
