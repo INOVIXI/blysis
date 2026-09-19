@@ -3,12 +3,12 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Button, Card, CardContent, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, useSiteCurrency, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Checkbox, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, useRowPicks, useSiteCurrency, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, Gift, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
-import { copyText } from "@/core/sdk";
-import { AdminPageHeader } from "@/core/sdk/admin";
+import { copyText, deleteEach } from "@/core/sdk";
+import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
 
 interface GiftCode {
     id: string;
@@ -42,6 +42,10 @@ export default function GiftCodesPage() {
     // Sent to the endpoint: thousands of rows means the fifty in the browser
     // are not the list.
     const [search, setSearch] = useState("");
+    // The rows come a page at a time from the endpoint, so only the ticking
+    // is this screen's: the count on the button is a promise about the page
+    // in front of the operator.
+    const picks = useRowPicks(codes);
 
     const fetchCodes = async (targetPage = page) => {
         const query = new URLSearchParams({ page: String(targetPage) });
@@ -83,6 +87,25 @@ export default function GiftCodesPage() {
         } finally {
             setSaving(false);
         }
+    };
+
+    const deleteMany = async () => {
+        const ok = await confirm({
+            title: t("gc_deleteTitle"),
+            message: t("adm_deleteManyConfirm", { count: picks.picked.size }),
+            confirmText: t("gc_delete"),
+            variant: "danger",
+        });
+        if (!ok) return;
+        const { deleted, total } = await deleteEach([...picks.picked], async (id) => {
+            const res = await fetch(`/api/v1/gift-codes/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        picks.clear();
+        fetchCodes();
+        if (deleted === total) toast.success(t("gc_deletedToast"));
+        else if (deleted === 0) toast.error(t("gc_deleteError"));
+        else toast.error(t("adm_deletedPartly", { deleted, total }));
     };
 
     const deleteCode = async (id: string) => {
@@ -179,10 +202,25 @@ export default function GiftCodesPage() {
                             {search.trim() === "" ? t("adm_noGiftCodesYet") : commonT("noResults")}
                         </p>
                     ) : (
+                        <>
+                            {/* Outside the scrolling box: a bar that scrolled
+                                sideways with the table would take the
+                                select-all box off a narrow screen. */}
+                            <BulkBar
+                                state={picks.headerState}
+                                count={picks.picked.size}
+                                onToggleAll={picks.toggleAll}
+                                actions={
+                                    <Button variant="destructive" size="sm" onClick={deleteMany}>
+                                        <Trash2 className="w-4 h-4" /> {commonT("delete")} {picks.picked.size}
+                                    </Button>
+                                }
+                            />
                         <div className="overflow-x-auto">
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b">
+                                        <th className="w-10 py-3 px-4" />
                                         <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("adm_code")}</th>
                                         <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("adm_value")}</th>
                                         <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("adm_status")}</th>
@@ -193,6 +231,13 @@ export default function GiftCodesPage() {
                                 <tbody>
                                     {codes.map((code) => (
                                         <tr key={code.id} className="border-b last:border-0 hover:bg-muted/50">
+                                            <td className="py-3 px-4">
+                                                <Checkbox
+                                                    checked={picks.picked.has(code.id)}
+                                                    onChange={() => picks.toggle(code.id)}
+                                                    aria-label={t("adm_selectRow")}
+                                                />
+                                            </td>
                                             <td className="py-3 px-4">
                                                 <code className="font-mono text-sm bg-muted px-2 py-0.5 rounded">{code.code}</code>
                                             </td>
@@ -220,6 +265,7 @@ export default function GiftCodesPage() {
                                 </tbody>
                             </table>
                         </div>
+                        </>
                     )}
 
                     <Pagination page={page} pages={totalPages} onPageChange={setPage} />

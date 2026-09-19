@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { Button, Card, CardContent, ListControls, Pagination, useConfirm, NativeSelect, useLocalDate } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Checkbox, ListControls, Pagination, useConfirm, useRowPicks, NativeSelect, useLocalDate } from "@/core/sdk/ui";
 import { Loader2, Trash2, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
 import { SUGGESTION_STATUSES, STATUS_BADGE_CLASS, canonicalStatus } from "../../lib/statuses";
-import { AdminPageHeader } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { deleteEach } from "@/core/sdk";
 
 interface Suggestion {
     id: string;
@@ -33,6 +34,9 @@ export default function AdminSuggestionsPage() {
     const formatDate = useLocalDate();
     const { confirm } = useConfirm();
     const [items, setItems] = useState<Suggestion[]>([]);
+    // The endpoint pages this list, so only the ticking is the screen's: the
+    // count on the button is a promise about the page in front of somebody.
+    const picks = useRowPicks(items);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<(typeof FILTERS)[number]>("all");
@@ -81,6 +85,24 @@ export default function AdminSuggestionsPage() {
         } catch {
             toast.error(t("adm_error"));
         }
+    };
+
+    const removeMany = async () => {
+        if (!(await confirm({
+            title: t("adm_delete"),
+            message: t("adm_deleteManyConfirm", { count: picks.picked.size }),
+            confirmText: t("adm_delete"),
+            variant: "danger",
+        }))) return;
+        const { deleted, total } = await deleteEach([...picks.picked], async (id) => {
+            const res = await fetch(`/api/v1/suggestions/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        picks.clear();
+        await load();
+        if (deleted === total) toast.success(t("adm_deletedToast"));
+        else if (deleted === 0) toast.error(t("adm_error"));
+        else toast.error(t("adm_deletedPartly", { deleted, total }));
     };
 
     const remove = async (id: string) => {
@@ -149,9 +171,26 @@ export default function AdminSuggestionsPage() {
                 </Card>
             ) : (
                 <div className="space-y-3">
+                    <BulkBar
+                        className="rounded-lg border border-border"
+                        state={picks.headerState}
+                        count={picks.picked.size}
+                        onToggleAll={picks.toggleAll}
+                        actions={
+                            <Button variant="destructive" size="sm" onClick={removeMany}>
+                                <Trash2 className="w-4 h-4" /> {t("adm_delete")} {picks.picked.size}
+                            </Button>
+                        }
+                    />
                     {items.map(s => (
                         <Card key={s.id}>
                             <CardContent className="p-4 flex flex-col md:flex-row gap-4">
+                                <Checkbox
+                                    className="self-start md:self-center"
+                                    checked={picks.picked.has(s.id)}
+                                    onChange={() => picks.toggle(s.id)}
+                                    aria-label={t("adm_selectRow")}
+                                />
                                 <div className="flex flex-col items-center justify-center min-w-16 px-2 py-1 rounded bg-muted">
                                     <ThumbsUp className="w-4 h-4 text-muted-foreground mb-1" />
                                     <span className="text-lg font-bold">{s.upvotes}</span>

@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { Badge, Button, Card, CardContent, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, NativeSelect, buttonClassName, useLocalDateTime, type BadgeTone } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, Checkbox, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, useRowPicks, NativeSelect, buttonClassName, useLocalDateTime, type BadgeTone } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, RotateCcw, Ban } from "lucide-react";
 import { toast } from "sonner";
-import { AdminPageHeader } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { deleteEach } from "@/core/sdk";
 import { punishmentStatus, type PunishmentStatus } from "../../lib/status";
 import { PUNISHMENT_TYPES, canonicalType } from "../../lib/punishment-types";
 import { ScopeManager } from "./ScopeManager";
@@ -53,6 +54,9 @@ export default function AdminPunishmentsPage() {
     const formatDateTime = useLocalDateTime();
     const { confirm, ask } = useConfirm();
     const [items, setItems] = useState<Punishment[]>([]);
+    // The endpoint pages this list, so only the ticking is the screen's: the
+    // count on the button is a promise about the page in front of somebody.
+    const picks = useRowPicks(items);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<StatusFilter>("all");
@@ -165,6 +169,24 @@ export default function AdminPunishmentsPage() {
         } catch {
             toast.error(t("adm_error"));
         }
+    };
+
+    const removeMany = async () => {
+        if (!(await confirm({
+            title: t("adm_delete"),
+            message: t("adm_deleteManyConfirm", { count: picks.picked.size }),
+            confirmText: t("adm_delete"),
+            variant: "danger",
+        }))) return;
+        const { deleted, total } = await deleteEach([...picks.picked], async (id) => {
+            const res = await fetch(`/api/v1/punishments/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        picks.clear();
+        await load();
+        if (deleted === total) toast.success(t("adm_deletedToast"));
+        else if (deleted === 0) toast.error(t("adm_error"));
+        else toast.error(t("adm_deletedPartly", { deleted, total }));
     };
 
     const remove = async (id: string) => {
@@ -284,10 +306,24 @@ export default function AdminPunishmentsPage() {
                     </CardContent>
                 </Card>
             ) : (
-                <div className="bg-card rounded-lg overflow-x-auto border border-border">
+                <div className="bg-card rounded-lg border border-border">
+                    {/* Outside the scrolling box, or the select-all box goes
+                        sideways with the table on a narrow screen. */}
+                    <BulkBar
+                        state={picks.headerState}
+                        count={picks.picked.size}
+                        onToggleAll={picks.toggleAll}
+                        actions={
+                            <Button variant="destructive" size="sm" onClick={removeMany}>
+                                <Trash2 className="w-4 h-4" /> {t("adm_delete")} {picks.picked.size}
+                            </Button>
+                        }
+                    />
+                    <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead className="bg-muted/50">
                             <tr>
+                                <th className="w-10 px-4 py-2" />
                                 <th className="px-4 py-2 text-left">{t("player")}</th>
                                 <th className="px-4 py-2 text-left">{t("adm_source")}</th>
                                 <th className="px-4 py-2 text-left">{t("type")}</th>
@@ -302,6 +338,13 @@ export default function AdminPunishmentsPage() {
                                 const status = punishmentStatus(p);
                                 return (
                                 <tr key={p.id} className="border-t">
+                                    <td className="px-4 py-2">
+                                        <Checkbox
+                                            checked={picks.picked.has(p.id)}
+                                            onChange={() => picks.toggle(p.id)}
+                                            aria-label={t("adm_selectRow")}
+                                        />
+                                    </td>
                                     <td className="px-4 py-2 font-medium">{p.playerName}</td>
                                     {/* Where it came from, because a row an
                                         administrator wrote here and one a
@@ -337,6 +380,7 @@ export default function AdminPunishmentsPage() {
                             })}
                         </tbody>
                     </table>
+                    </div>
                     <Pagination page={page} pages={pages} total={total} onPageChange={setPage} />
                 </div>
             )}

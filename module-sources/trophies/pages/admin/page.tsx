@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, ListControls, Pagination, useRowList, Textarea, useConfirm, useFormRoute, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Checkbox, Input, Label, ListControls, Pagination, useRowList, Textarea, useConfirm, useFormRoute, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import {
     ArrowLeft,
@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { AdminPageHeader } from "@/core/sdk/admin";
-import { errorMessage } from "@/core/sdk";
+import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { deleteEach, errorMessage } from "@/core/sdk";
 
 interface AdminTrophy {
     id: string;
@@ -206,6 +206,25 @@ export default function AdminTrophiesPage() {
         } catch {
             toast.error(t("deleteFailed"));
         }
+    };
+
+    const deleteMany = async () => {
+        const ok = await confirm({
+            title: t("deleteTitle"),
+            message: t("deleteManyMessage", { count: list.picked.size }),
+            variant: "danger",
+            confirmText: tc("common_delete"),
+        });
+        if (!ok) return;
+        const { deleted, total } = await deleteEach([...list.picked], async (id) => {
+            const res = await fetch(`/api/v1/admin/trophies/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        list.clear();
+        fetchTrophies();
+        if (deleted === total) toast.success(t("deleted"));
+        else if (deleted === 0) toast.error(t("deleteFailed"));
+        else toast.error(t("deletedPartly", { deleted, total }));
     };
 
     const toggleActive = async (row: AdminTrophy) => {
@@ -400,10 +419,25 @@ export default function AdminTrophiesPage() {
                     ) : list.rows.length === 0 ? (
                         <p className="text-sm text-muted-foreground py-4">{commonT("noResults")}</p>
                     ) : (
+                        <>
+                            {/* Outside the scrolling box, or the select-all
+                                box scrolls off a narrow screen with the
+                                table. */}
+                            <BulkBar
+                                state={list.headerState}
+                                count={list.picked.size}
+                                onToggleAll={list.toggleAll}
+                                actions={
+                                    <Button variant="destructive" size="sm" onClick={deleteMany}>
+                                        <Trash2 className="w-4 h-4" /> {tc("common_delete")} {list.picked.size}
+                                    </Button>
+                                }
+                            />
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="border-b border-border text-left text-muted-foreground">
+                                        <th className="w-10 py-2 pr-3" />
                                         <th className="py-2 pr-3">{t("trophy")}</th>
                                         <th className="py-2 pr-3">{tc("common_description")}</th>
                                         <th className="py-2 pr-3">{t("points")}</th>
@@ -416,6 +450,13 @@ export default function AdminTrophiesPage() {
                                 <tbody>
                                     {list.rows.map((row) => (
                                         <tr key={row.id} className="border-b border-border/50">
+                                            <td className="py-2 pr-3">
+                                                <Checkbox
+                                                    checked={list.picked.has(row.id)}
+                                                    onChange={() => list.toggle(row.id)}
+                                                    aria-label={t("selectRow")}
+                                                />
+                                            </td>
                                             <td className="py-2 pr-3">
                                                 <div className="flex items-center gap-2">
                                                     <div
@@ -491,6 +532,7 @@ export default function AdminTrophiesPage() {
                             </table>
                             <Pagination page={list.page} pages={list.pages} total={list.total} onPageChange={list.setPage} />
                         </div>
+                        </>
                     )}
                 </CardContent>
             </Card>
