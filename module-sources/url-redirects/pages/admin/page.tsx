@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/sdk/admin";
-import { Button, Card, CardContent, CheckboxField, Input, Label, LoadFailed } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CheckboxField, Input, Label, ListControls, LoadFailed, Pagination, useRowList } from "@/core/sdk/ui";
 import { errorMessage } from "@/core/sdk";
 import { Loader2, Plus } from "lucide-react";
 
@@ -19,6 +19,9 @@ export default function UrlRedirectsPage() {
     const t = useTranslations("urlRedirects");
     const commonT = useTranslations("common");
     const [redirects, setRedirects] = useState<Redirect[]>([]);
+    // The two lines the table draws. A list like this grows without
+    // bound and paging to a row was the only way to reach one.
+    const list = useRowList(redirects, { text: (r) => [r.from, r.to], pageSize: 20 });
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
@@ -105,15 +108,22 @@ export default function UrlRedirectsPage() {
                 </CardContent>
             </Card>
 
+            <ListControls
+                className="mb-4"
+                search={{ value: list.search, onChange: list.setSearch }}
+            />
+
             {loading ? (
                 <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
             ) : failed ? (
                 <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
             ) : redirects.length === 0 ? (
                 <Card><CardContent className="py-10 text-center"><p className="text-muted-foreground">{t("adm_none")}</p></CardContent></Card>
+            ) : list.rows.length === 0 ? (
+                <Card><CardContent className="py-10 text-center"><p className="text-muted-foreground">{commonT("noResults")}</p></CardContent></Card>
             ) : (
                 <div className="space-y-2">
-                    {redirects.map((redirect) => (
+                    {list.rows.map((redirect) => (
                         <Card key={redirect.id}>
                             <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
                                 <div className="min-w-0 font-mono text-sm">
@@ -127,6 +137,12 @@ export default function UrlRedirectsPage() {
                             </CardContent>
                         </Card>
                     ))}
+                    <Pagination
+                        page={list.page}
+                        pages={list.pages}
+                        total={list.total}
+                        onPageChange={list.setPage}
+                    />
                 </div>
             )}
         </>

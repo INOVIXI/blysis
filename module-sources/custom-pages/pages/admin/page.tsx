@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, Input, Label, RichTextEditor, useConfirm, useFormRoute, CheckboxField, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Input, Label, ListControls, Pagination, RichTextEditor, useConfirm, useFormRoute, useRowList, CheckboxField, buttonClassName } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, Plus, Trash2, ExternalLink, Pencil, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -22,6 +22,9 @@ export default function CustomPagesAdminPage() {
     const t = useTranslations("customPages");
     const commonT = useTranslations("common");
     const [pages, setPages] = useState<CustomPage[]>([]);
+    // The two lines the table draws. A list like this grows without
+    // bound and paging to a row was the only way to reach one.
+    const list = useRowList(pages, { text: (row) => [row.title, row.slug], pageSize: 20 });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const { confirm } = useConfirm();
@@ -198,11 +201,18 @@ export default function CustomPagesAdminPage() {
                 </>}
             />
 
+            <ListControls
+                className="mb-4"
+                search={{ value: list.search, onChange: list.setSearch }}
+            />
+
             {pages.length === 0 ? (
                 <Card><CardContent className="py-8 text-center text-muted-foreground">{t("adm_noPagesYet")}</CardContent></Card>
+            ) : list.rows.length === 0 ? (
+                <Card><CardContent className="py-8 text-center text-muted-foreground">{commonT("noResults")}</CardContent></Card>
             ) : (
                 <div className="space-y-2">
-                    {pages.map((page) => (
+                    {list.rows.map((page) => (
                         <Card key={page.id}>
                             <CardContent className="p-4 flex items-center justify-between">
                                 <div>
@@ -229,6 +239,12 @@ export default function CustomPagesAdminPage() {
                             </CardContent>
                         </Card>
                     ))}
+                    <Pagination
+                        page={list.page}
+                        pages={list.pages}
+                        total={list.total}
+                        onPageChange={list.setPage}
+                    />
                 </div>
             )}
         </>

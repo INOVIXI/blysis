@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, Pagination, buttonClassName, useSiteCurrency } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, ListControls, Pagination, buttonClassName, useSiteCurrency } from "@/core/sdk/ui";
 import { Loader2, Copy, Package, Plus } from "lucide-react";
 import { AdminPageHeader } from "@/core/sdk/admin";
 import { errorMessage } from "@/core/sdk";
@@ -40,6 +40,9 @@ export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
+    // The endpoint has taken a `search` since it was written; the screen
+    // never sent one, so the only way to a product was to page to it.
+    const [search, setSearch] = useState("");
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
     const [copying, setCopying] = useState<string | null>(null);
@@ -47,7 +50,9 @@ export default function AdminProductsPage() {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/v1/store/admin/products?page=${page}&limit=20`);
+            const query = new URLSearchParams({ page: String(page), limit: "20" });
+            if (search.trim()) query.set("search", search.trim());
+            const res = await fetch(`/api/v1/store/admin/products?${query}`);
             if (res.ok) {
                 const data = await res.json();
                 setProducts(data.products || []);
@@ -64,7 +69,7 @@ export default function AdminProductsPage() {
     /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
         fetchProducts();
-    }, [page]);
+    }, [page, search]);
     /* eslint-enable react-hooks/exhaustive-deps */
 
     // The copy's name is sent from here rather than made by the endpoint: it
@@ -102,6 +107,14 @@ export default function AdminProductsPage() {
                 </>}
             />
 
+            <ListControls
+                className="mb-4"
+                search={{
+                    value: search,
+                    onChange: (term) => { setSearch(term); setPage(1); },
+                }}
+            />
+
             <Card>
                 <CardHeader>
                     <CardTitle>{t("adm_allProducts")}</CardTitle>
@@ -111,11 +124,15 @@ export default function AdminProductsPage() {
                         <div className="flex items-center justify-center py-12">
                             <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
                         </div>
+                    ) : products.length === 0 && search.trim() !== "" ? (
+                        // Not "no products yet" with a shelf full of them: that
+                        // sentence tells an operator their catalogue has gone.
+                        <p className="text-muted-foreground text-center py-12">{commonT("noResults")}</p>
                     ) : products.length === 0 ? (
                         <div className="text-center py-12">
                             <Package className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
                             <p className="text-muted-foreground">{t("adm_noProductsYet")}</p>
-                            <Link href="/admin/store/products/new" className={buttonClassName("default", "default", "mt-4")}>{t("adm_createFirstProduct")}</Link>
+                            <Link href="/admin/store/products/new" className={buttonClassName("default", "default", "mt-4")}><Plus className="w-4 h-4" /> {t("adm_createFirstProduct")}</Link>
                         </div>
                     ) : (
                         <>

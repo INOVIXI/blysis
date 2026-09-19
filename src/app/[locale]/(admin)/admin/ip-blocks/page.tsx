@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Button, buttonClassName } from "@/core/components/ui/button";
-import { Pagination, usePagedRows } from "@/core/components/ui/pagination";
+import { Pagination } from "@/core/components/ui/pagination";
+import { ListControls } from "@/core/components/ui/list-controls";
+import { useRowList } from "@/core/hooks/useRowList";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
@@ -31,7 +33,9 @@ export default function IpBlocksPage() {
     const commonT = useTranslations("common");
 
     const [blocks, setBlocks] = useState<IpBlock[]>([]);
-    const paged = usePagedRows(blocks);
+    // The address and the reason: the two the table draws that a reader would
+    // recognise. A list of blocks grows every time somebody is refused.
+    const list = useRowList(blocks, { text: (b) => [b.ip, b.reason], pageSize: 10 });
     const [loading, setLoading] = useState(true);
 
 
@@ -88,6 +92,8 @@ export default function IpBlocksPage() {
                 </>}
             />
 
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
             <Card>
                 <CardContent className="p-0">
                     {loading ? (
@@ -98,6 +104,8 @@ export default function IpBlocksPage() {
                         <p className="text-muted-foreground text-center py-8">
                             {t("ipBlocks_none")}
                         </p>
+                    ) : list.rows.length === 0 ? (
+                        <p className="text-muted-foreground text-center py-8">{commonT("noResults")}</p>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
@@ -112,7 +120,7 @@ export default function IpBlocksPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y">
-                                    {paged.rows.map((b) => {
+                                    {list.rows.map((b) => {
                                         const expired = b.expiresAt && new Date(b.expiresAt).getTime() < Date.now();
                                         return (
                                             <tr key={b.id}>
@@ -152,10 +160,10 @@ export default function IpBlocksPage() {
                         </div>
                     )}
                     <Pagination
-                        page={paged.page}
-                        pages={paged.pages}
-                        total={paged.total}
-                        onPageChange={paged.setPage}
+                        page={list.page}
+                        pages={list.pages}
+                        total={list.total}
+                        onPageChange={list.setPage}
                     />
                 </CardContent>
             </Card>

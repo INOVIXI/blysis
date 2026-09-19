@@ -40,6 +40,7 @@ vi.mock("@/core/sdk/ui", () => ({
     CardHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
     CardTitle: ({ children }: { children: React.ReactNode }) => <h2>{children}</h2>,
     Pagination: () => null,
+    ListControls: () => null,
     buttonClassName: () => "",
     useSiteCurrency: () => ({ format: (n: number) => `$${n.toFixed(2)}` }),
 }));

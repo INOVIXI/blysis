@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Card, CardContent, LoadFailed, Pagination, useLocalDateTime } from "@/core/sdk/ui";
+import { Card, CardContent, ListControls, LoadFailed, Pagination, useLocalDateTime } from "@/core/sdk/ui";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { AdminPageHeader } from "@/core/sdk/admin";
 
@@ -21,18 +21,24 @@ export default function WebhookLogsPage() {
     // browser disagree about what day a timestamp near midnight is.
     const formatDateTime = useLocalDateTime();
     const t = useTranslations("webhookLogs");
+    const commonT = useTranslations("common");
     const [logs, setLogs] = useState<Log[]>([]);
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    // Sent to the endpoint, not applied here: the server pages this list and
+    // the fifty rows in the browser are not the list.
+    const [search, setSearch] = useState("");
 
     useEffect(() => {
         let cancelled = false;
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
-        fetch(`/api/v1/webhook-logs?page=${page}`)
+        const query = new URLSearchParams({ page: String(page) });
+        if (search.trim()) query.set("q", search.trim());
+        fetch(`/api/v1/webhook-logs?${query}`)
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
             .then((d) => {
                 if (cancelled) return;
@@ -47,13 +53,18 @@ export default function WebhookLogsPage() {
                 setLoading(false);
             });
         return () => { cancelled = true; };
-    }, [page, reloadKey]);
+    }, [page, reloadKey, search]);
 
     return (
         <>
             <AdminPageHeader
                 title={t("adm_webhookLogs")}
                 description={t("adm_deliveryHistory")}
+            />
+
+            <ListControls
+                className="mb-4"
+                search={{ value: search, onChange: (term) => { setSearch(term); setPage(1); } }}
             />
 
             <Card>
@@ -63,7 +74,9 @@ export default function WebhookLogsPage() {
                     ) : failed ? (
                         <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
                     ) : logs.length === 0 ? (
-                        <p className="text-muted-foreground text-center py-8">{t("adm_noLogsYet")}</p>
+                        <p className="text-muted-foreground text-center py-8">
+                            {search.trim() === "" ? t("adm_noLogsYet") : commonT("noResults")}
+                        </p>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full">
