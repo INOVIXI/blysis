@@ -44,7 +44,7 @@ const rel = (f: string) => path.relative(ROOT, f);
 const OWNS_THE_PICKER = "src/core/components/ui/url-or-file.tsx";
 
 /** A name that says the field holds a picture. */
-const HOLDS_AN_IMAGE = /\b\w*(image|avatar|cover|logo|banner|thumbnail)\w*\b/i;
+const HOLDS_AN_IMAGE = /\b\w*(image|avatar|cover|logo|banner|thumbnail|photo|picture)\w*\b/i;
 
 /** The attributes of the JSX element opening at `start`. */
 function openTag(source: string, start: number): string {
@@ -57,6 +57,21 @@ function openTag(source: string, start: number): string {
         else if (c === ">" && depth === 0) break;
     }
     return source.slice(start, i);
+}
+
+/** The whole of the object a `key: "..."` sits in, brace to matching brace. */
+function fieldObject(source: string, keyAt: number): string {
+    const open = source.lastIndexOf("{", keyAt);
+    if (open === -1) return "";
+    let depth = 0;
+    for (let i = open; i < source.length; i++) {
+        if (source[i] === "{") depth++;
+        else if (source[i] === "}") {
+            depth--;
+            if (depth === 0) return source.slice(open, i + 1);
+        }
+    }
+    return source.slice(open);
 }
 
 describe("a field that holds a file", () => {
@@ -89,6 +104,37 @@ describe("a field that holds a file", () => {
             }
         }
         expect(offenders, "use UrlOrFile").toEqual([]);
+    });
+
+    it("is declared as one, on the screens that declare their fields", () => {
+        /*
+         * The rule above reads `<Input>` elements, and most screens here do
+         * not write one: they hand a list of fields to the crud shell or the
+         * settings form and the shell draws the control. A field declared
+         * `type: "url"` gets a text box - which is how the staff avatar ended
+         * up as a link-only box on a platform that has stored files since the
+         * first release, and why no gate said so.
+         *
+         * So what a field holds is read from its name, and the type it is
+         * given has to agree.
+         */
+        const DRAWS_ITS_OWN = /^(image|file|icon)$/;
+        const offenders: string[] = [];
+
+        for (const file of FILES) {
+            const source = fs.readFileSync(file, "utf8");
+            if (!source.includes("fields={[") && !source.includes("fields: [")) continue;
+            for (const m of source.matchAll(/key:\s*"(\w+)"/g)) {
+                if (!HOLDS_AN_IMAGE.test(m[1])) continue;
+                const body = fieldObject(source, m.index ?? 0);
+                // A field, not some other object that happens to carry a key.
+                if (!body.includes("label:")) continue;
+                const kind = /type:\s*"(\w+)"/.exec(body)?.[1] ?? "text";
+                if (DRAWS_ITS_OWN.test(kind)) continue;
+                offenders.push(`${rel(file)}: ${m[1]} is a ${kind} field`);
+            }
+        }
+        expect(offenders, "name the field by what it holds").toEqual([]);
     });
 
     it("is drawn by the two generic screens through the one control", () => {

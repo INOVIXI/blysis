@@ -16,7 +16,9 @@ export default function ShowcaseAdminPage() {
             fields={[
                 { key: "title", label: t("adm_cardTitle"), required: true },
                 { key: "body", label: t("adm_cardBody"), type: "textarea" },
-                { key: "image", label: t("adm_cardImage"), placeholder: "/uploads/one.png" },
+                // The same control as every other picture on the site, rather
+                // than a box whose placeholder was an example path.
+                { key: "image", label: t("adm_cardImage"), type: "image" },
                 { key: "href", label: t("adm_cardHref"), placeholder: "/store" },
                 { key: "order", label: t("adm_cardOrder"), type: "number" },
             ]}
