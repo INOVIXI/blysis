@@ -13,8 +13,10 @@ import {
     CardTitle,
     Input,
     Label,
+    ListControls,
     LoadFailed,
     useConfirm,
+    useRowList,
     useSiteCurrency,
 } from "@/core/sdk/ui";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -81,6 +83,9 @@ export default function CreditPackagesPage() {
     const { confirm } = useConfirm();
 
     const [packages, setPackages] = useState<Package[]>([]);
+    // The lines the row draws. This list grows and paging to a row was the
+    // only way to reach one.
+    const list = useRowList(packages, { text: (row) => [row.name], pageSize: 20 });
     const [drafts, setDrafts] = useState<Record<string, Draft>>({});
     const [fresh, setFresh] = useState<Draft>(EMPTY);
     const [adding, setAdding] = useState(false);
@@ -208,11 +213,13 @@ export default function CreditPackagesPage() {
                 </Card>
             )}
 
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
             {packages.length === 0 ? (
                 <Card><CardContent className="py-10 text-center text-muted-foreground">{t("adm_creditPackNone")}</CardContent></Card>
             ) : (
                 <div className="space-y-4">
-                    {packages.map((pack) => {
+                    {list.rows.map((pack) => {
                         const draft = drafts[pack.id] ?? draftOf(pack);
                         const rate = creditsPerUnit(pack);
                         const url = `/api/v1/store/admin/credit-packages/${pack.id}`;

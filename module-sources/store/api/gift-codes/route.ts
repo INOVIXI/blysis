@@ -25,8 +25,28 @@ export async function GET(request: NextRequest) {
     const page = intParam(params, "page", { fallback: 1, min: 1 });
     const perPage = intParam(params, "perPage", { fallback: 50, min: 1, max: 200 });
 
+    /*
+     * The term narrows the query rather than the page.
+     *
+     * A batch of gift codes is generated fifty or a hundred at a time, so this
+     * table is long within a week of being used and the only reason anybody
+     * opens it is to find one code - usually because a buyer has quoted it.
+     * Searching the fifty rows that arrived would answer that the code they
+     * are holding was never issued.
+     */
+    const term = (params.get("q") ?? "").trim();
+    const where = term === ""
+        ? {}
+        : {
+            OR: [
+                { code: { contains: term, mode: "insensitive" as const } },
+                { description: { contains: term, mode: "insensitive" as const } },
+            ],
+        };
+
     const [giftCodes, total] = await Promise.all([
         prisma.giftCode.findMany({
+            where,
             include: {
                 redeemedBy: { select: { id: true, username: true } },
             },
@@ -34,7 +54,7 @@ export async function GET(request: NextRequest) {
             skip: (page - 1) * perPage,
             take: perPage,
         }),
-        prisma.giftCode.count(),
+        prisma.giftCode.count({ where }),
     ]);
 
     return NextResponse.json({

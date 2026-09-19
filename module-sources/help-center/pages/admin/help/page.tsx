@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, UrlOrFile, Input, Label, RichTextEditor, Textarea, NativeSelect, useFormRoute, buttonClassName, type BadgeTone } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, ListControls, UrlOrFile, Input, Label, Pagination, RichTextEditor, Textarea, NativeSelect, useFormRoute, useRowList, buttonClassName, type BadgeTone } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
 import { writeError } from "@/core/sdk";
@@ -82,9 +82,16 @@ export default function AdminHelpCenterPage() {
 
     // Sorted on a copy: `articles` is what the endpoint sent, and reordering
     // it in place would make "off" unreachable without another request.
+    /*
+     * Searched before it is sorted, so the league table is a league table of
+     * what the reader asked for. The title and the address: the two the row
+     * draws that somebody looking for one article would type.
+     */
+    const found = useRowList(articles, { text: (row) => [row.title, row.slug], pageSize: 25 });
+
     const orderedArticles = byHelpfulness === "off"
-        ? articles
-        : [...articles].sort((a, b) => {
+        ? found.rows
+        : [...found.rows].sort((a, b) => {
             const left = helpfulness(a.helpful, a.notHelpful).score;
             const right = helpfulness(b.helpful, b.notHelpful).score;
             return byHelpfulness === "worst" ? left - right : right - left;
@@ -380,10 +387,17 @@ export default function AdminHelpCenterPage() {
             {/* Articles Tab */}
             {activeTab === "articles" && (
                 <>
+                    <ListControls
+                        className="mb-4"
+                        search={{ value: found.search, onChange: found.setSearch }}
+                    />
+
                     <Card>
                         <CardContent className="p-0">
                             {articles.length === 0 ? (
                                 <p className="text-muted-foreground text-center py-8">{t("adm_noHelpArticles")}</p>
+                            ) : orderedArticles.length === 0 ? (
+                                <p className="text-muted-foreground text-center py-8">{commonT("noResults")}</p>
                             ) : (
                                 <div className="overflow-x-auto">
                                     <table className="w-full">
@@ -432,6 +446,12 @@ export default function AdminHelpCenterPage() {
                                             ))}
                                         </tbody>
                                     </table>
+                                    <Pagination
+                                        page={found.page}
+                                        pages={found.pages}
+                                        total={found.total}
+                                        onPageChange={found.setPage}
+                                    />
                                 </div>
                             )}
                         </CardContent>

@@ -124,12 +124,20 @@ describe("the screens that were fixed", () => {
         const route = reads("module-sources/store/api/gift-codes/route.ts");
         expect(route).toContain("skip: (page - 1) * perPage");
         expect(route).toContain("take: perPage");
-        expect(route).toContain("prisma.giftCode.count()");
+        // The count, however it is scoped. It was pinned to `count()` with
+        // no argument, which stopped being right the moment the endpoint
+        // learned to narrow by a search term: the total under a filtered
+        // table has to be the filtered total, or the pager offers pages that
+        // render empty.
+        expect(route).toMatch(/prisma\.giftCode\.count\(/);
     });
 
     it("gives the gift code screen a way to reach the next page", () => {
         const page = reads("module-sources/store/pages/admin/gift-codes/page.tsx");
-        expect(page).toContain("?page=${targetPage}");
+        // That the request carries the page, not how the string is built.
+        // It was pinned to one spelling and broke when a search term joined
+        // the query and the parameters became a URLSearchParams.
+        expect(page).toMatch(/gift-codes\?\$\{|page: String\(targetPage\)/);
         // Its own two chevrons became the shared pager, which carries first,
         // last, numbered pages and a box to type a page number into.
         expect(page).toContain("<Pagination");

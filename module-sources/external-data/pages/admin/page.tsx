@@ -12,7 +12,9 @@ import {
     CardTitle,
     Input,
     Label,
+    ListControls,
     LoadFailed,
+    useRowList,
 } from "@/core/sdk/ui";
 import { AdminPageHeader } from "@/core/sdk/admin";
 import { writeError } from "@/core/sdk";
@@ -67,6 +69,9 @@ export default function ExternalDataSettingsPage() {
     const commonT = useTranslations("common");
 
     const [sources, setSources] = useState<StoredSource[]>([]);
+    // The lines the row draws. This list grows and paging to a row was the
+    // only way to reach one.
+    const list = useRowList(sources, { text: (row) => [row.title, row.slug], pageSize: 20 });
     const [draft, setDraft] = useState<SourceDraftValue | null>(null);
     const [connection, setConnection] = useState("");
     const [savingConnection, setSavingConnection] = useState(false);
@@ -180,11 +185,13 @@ export default function ExternalDataSettingsPage() {
                 <Card>
                     <CardHeader><CardTitle>{t("adm_sources")}</CardTitle></CardHeader>
                     <CardContent className="p-0">
+                        <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
                         {sources.length === 0 ? (
                             <p className="text-sm text-muted-foreground text-center py-8">{t("adm_noSources")}</p>
                         ) : (
                             <div className="divide-y">
-                                {sources.map((source) => (
+                                {list.rows.map((source) => (
                                     <div key={source.id} className="flex items-center gap-3 p-4">
                                         <div className="flex-1 min-w-0">
                                             <p className="font-medium">{source.title}</p>

@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import { Link } from "@/core/sdk/navigation";
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, LoadFailed, buttonClassName } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, ListControls, LoadFailed, Pagination, buttonClassName, useRowList } from "@/core/sdk/ui";
 import { useRelativeTime } from "@/core/sdk/ui";
 import { adminKeys, labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../lib/status-labels";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -28,8 +28,12 @@ interface Ticket {
 
 export default function AdminTicketsPage() {
     const t = useTranslations("tickets");
+    const commonT = useTranslations("common");
     const relativeTime = useRelativeTime();
     const [tickets, setTickets] = useState<Ticket[]>([]);
+    // The lines the row draws. This list grows and paging to a row was the
+    // only way to reach one.
+    const list = useRowList(tickets, { text: (row) => [row.subject, row.user?.username], pageSize: 20 });
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -164,6 +168,8 @@ export default function AdminTicketsPage() {
                 </Button>
             </div>
 
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
             {/* Tickets Table */}
             {loading ? (
                 <div className="bg-card rounded-lg p-8 text-center">
@@ -171,9 +177,11 @@ export default function AdminTicketsPage() {
                 </div>
             ) : failed ? (
                 <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
-            ) : tickets.length === 0 ? (
+            ) : list.rows.length === 0 ? (
                 <div className="bg-card rounded-lg p-8 text-center">
-                    <p className="text-muted-foreground">{t("adm_noTicketsFound")}</p>
+                    <p className="text-muted-foreground">
+                        {list.search.trim() === "" ? t("adm_noTicketsFound") : commonT("noResults")}
+                    </p>
                 </div>
             ) : (
                 <div className="bg-card rounded-lg overflow-x-auto">
@@ -190,7 +198,7 @@ export default function AdminTicketsPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {tickets.map((ticket) => (
+                            {list.rows.map((ticket) => (
                                 <tr key={ticket.id} className="hover:bg-muted/30">
                                     <td className="px-4 py-4">
                                         <Link href={`/admin/tickets/${ticket.id}`} className="text-primary hover:underline font-medium">
@@ -220,6 +228,12 @@ export default function AdminTicketsPage() {
                             ))}
                         </tbody>
                     </table>
+                    <Pagination
+                        page={list.page}
+                        pages={list.pages}
+                        total={list.total}
+                        onPageChange={list.setPage}
+                    />
                 </div>
             )}
         </>

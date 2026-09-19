@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Button, Card, CardContent, Input, Label, Pagination, useConfirm, useFormRoute, useSiteCurrency, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, useSiteCurrency, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, Gift, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
@@ -39,9 +39,14 @@ export default function GiftCodesPage() {
     // that genuinely reaches thousands of rows. It reads a page at a time.
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    // Sent to the endpoint: thousands of rows means the fifty in the browser
+    // are not the list.
+    const [search, setSearch] = useState("");
 
     const fetchCodes = async (targetPage = page) => {
-        const res = await fetch(`/api/v1/gift-codes?page=${targetPage}`);
+        const query = new URLSearchParams({ page: String(targetPage) });
+        if (search.trim()) query.set("q", search.trim());
+        const res = await fetch(`/api/v1/gift-codes?${query}`);
         if (res.ok) {
             const data = await res.json();
             setCodes(data.giftCodes || []);
@@ -51,7 +56,7 @@ export default function GiftCodesPage() {
     };
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    useEffect(() => { fetchCodes(page); }, [page]);
+    useEffect(() => { fetchCodes(page); }, [page, search]);
 
     const generate = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -162,10 +167,17 @@ export default function GiftCodesPage() {
                 </>}
             />
 
+            <ListControls
+                className="mb-4"
+                search={{ value: search, onChange: (term) => { setSearch(term); setPage(1); } }}
+            />
+
             <Card>
                 <CardContent className="p-0">
                     {codes.length === 0 ? (
-                        <p className="text-muted-foreground text-center py-8">{t("adm_noGiftCodesYet")}</p>
+                        <p className="text-muted-foreground text-center py-8">
+                            {search.trim() === "" ? t("adm_noGiftCodesYet") : commonT("noResults")}
+                        </p>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full">
