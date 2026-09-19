@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/c
 import { CheckboxField } from "@/core/components/ui/checkbox";
 import { Button } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
+import { ListControls } from "@/core/components/ui/list-controls";
+import { Pagination } from "@/core/components/ui/pagination";
+import { useRowList } from "@/core/hooks/useRowList";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -53,7 +56,12 @@ export default function BackupAdminPage() {
     // browser disagree about what day a timestamp near midnight is.
     const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
+    const commonT = useTranslations("common");
     const [backups, setBackups] = useState<BackupRow[]>([]);
+    // The filename and whatever was noted beside it. A site backing up nightly
+    // has a year of rows within a year, and the only reason to open this list
+    // is to find the one from before something went wrong.
+    const list = useRowList(backups, { text: (row) => [row.filename, row.notes], pageSize: 20 });
     const [loading, setLoading] = useState(true);
     const [creating, setCreating] = useState(false);
     const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -287,15 +295,19 @@ export default function BackupAdminPage() {
                 </Card>
             </div>
 
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
             {loading && backups.length === 0 ? (
                 <div className="flex justify-center py-12">
                     <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
                 </div>
-            ) : backups.length === 0 ? (
+            ) : list.rows.length === 0 ? (
                 <Card>
                     <CardContent className="py-12 text-center">
                         <Database className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-                        <p className="text-sm text-muted-foreground">{t("backup_noBackups")}</p>
+                        <p className="text-sm text-muted-foreground">
+                            {list.search.trim() === "" ? t("backup_noBackups") : commonT("noResults")}
+                        </p>
                     </CardContent>
                 </Card>
             ) : (
@@ -312,7 +324,7 @@ export default function BackupAdminPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {backups.map((row) => (
+                                {list.rows.map((row) => (
                                     <tr key={row.id} className="border-t border-border">
                                         <td className="px-4 py-3 font-mono text-xs break-all">{row.filename}</td>
                                         <td className="px-4 py-3"><TypeBadge type={row.type} label={row.type === "manual" ? t("backup_manual") : t("backup_scheduled")} /></td>
@@ -356,6 +368,12 @@ export default function BackupAdminPage() {
                                 ))}
                             </tbody>
                         </table>
+                        <Pagination
+                            page={list.page}
+                            pages={list.pages}
+                            total={list.total}
+                            onPageChange={list.setPage}
+                        />
                     </CardContent>
                 </Card>
             )}

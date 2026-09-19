@@ -10,8 +10,7 @@
  */
 
 import { useTranslations } from "next-intl";
-import { Badge, Input } from "@/core/sdk/ui";
-import { Search } from "lucide-react";
+import { Badge, ListControls } from "@/core/sdk/ui";
 import type { CataloguePage, SeoOverride } from "../../../lib/catalogue";
 
 interface Props {
@@ -47,17 +46,11 @@ export function SeoPageList({ pages, overrides, selected, query, onQueryChange, 
 
     return (
         <div className="flex flex-col h-full">
+            {/* The shared strip, not a box of its own. This screen grew one
+                before there was a shared one, and it was the only search in
+                the panel with its own spacing and no way to clear it. */}
             <div className="p-3 border-b border-border">
-                <div className="relative">
-                    <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
-                    <Input
-                        aria-label={t("adm_searchPages")}
-                        placeholder={t("adm_searchPages")}
-                        value={query}
-                        onChange={(e) => onQueryChange(e.target.value)}
-                        className="pl-9"
-                    />
-                </div>
+                <ListControls search={{ value: query, onChange: onQueryChange, placeholder: t("adm_searchPages") }} />
             </div>
 
             {shown.length === 0 ? (
