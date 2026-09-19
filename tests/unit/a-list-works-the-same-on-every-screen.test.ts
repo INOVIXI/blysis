@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useRowList } from "@/core/hooks/useRowList";
+import { useRowList, useRowPicks } from "@/core/hooks/useRowList";
 
 /**
  * Searching, paging and picking a list, written once.
@@ -128,5 +128,55 @@ describe("a list on any screen", () => {
         const { result } = renderHook(() => useRowList(ROWS, { text: (row) => [row.name] }));
         act(() => result.current.setSearch("example.com"));
         expect(result.current.rows).toHaveLength(0);
+    });
+});
+
+describe("ticking rows on a list somebody else pages", () => {
+    /**
+     * A screen whose rows come one page at a time from the endpoint - members,
+     * gift codes, orders - cannot use the hook above: the searching and the
+     * paging are the server's. What it still needs is the third part, and the
+     * same rule about it: the count on a destructive button is a promise about
+     * what is on screen.
+     */
+    it("picks a row and lets go of it", () => {
+        const { result } = renderHook(() => useRowPicks(ROWS));
+        act(() => result.current.toggle("a"));
+        expect([...result.current.picked]).toEqual(["a"]);
+        act(() => result.current.toggle("a"));
+        expect([...result.current.picked]).toEqual([]);
+    });
+
+    it("picks everything on the page and lets go of all of it", () => {
+        const { result } = renderHook(() => useRowPicks(ROWS));
+        act(() => result.current.toggleAll());
+        expect(result.current.picked.size).toBe(4);
+        expect(result.current.headerState).toBe("all");
+        act(() => result.current.toggleAll());
+        expect(result.current.picked.size).toBe(0);
+    });
+
+    it("says some while some are unticked", () => {
+        const { result } = renderHook(() => useRowPicks(ROWS));
+        act(() => result.current.toggle("a"));
+        expect(result.current.headerState).toBe("some");
+    });
+
+    it("forgets a row the next page does not carry", () => {
+        // This is the whole reason it exists: the page changes underneath and
+        // the button must not count a row that has left the screen.
+        const { result, rerender } = renderHook(({ rows }) => useRowPicks(rows), {
+            initialProps: { rows: ROWS },
+        });
+        act(() => result.current.toggle("d"));
+        rerender({ rows: ROWS.slice(0, 2) });
+        expect(result.current.picked.size).toBe(0);
+    });
+
+    it("clears when it is asked to", () => {
+        const { result } = renderHook(() => useRowPicks(ROWS));
+        act(() => result.current.toggle("a"));
+        act(() => result.current.clear());
+        expect(result.current.picked.size).toBe(0);
     });
 });

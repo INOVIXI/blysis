@@ -3,13 +3,12 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
-import { Button, Card, CardContent, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, useRowList, useSiteCurrency, NativeSelect, buttonClassName, useLocalDate } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Checkbox, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, useRowList, useSiteCurrency, NativeSelect, buttonClassName, useLocalDate } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, Tag } from "lucide-react";
 import { toast } from "sonner";
-import { writeError } from "@/core/sdk";
-import { AdminPageHeader } from "@/core/sdk/admin";
-import { errorMessage } from "@/core/sdk";
+import { deleteEach, errorMessage, writeError } from "@/core/sdk";
+import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
 
 interface Coupon {
     id: string;
@@ -153,6 +152,25 @@ export default function AdminCouponsPage() {
         } catch (err) {
             console.error(err);
         }
+    };
+
+    const deleteMany = async () => {
+        const ok = await confirm({
+            title: t("cou_deleteTitle"),
+            message: t("adm_deleteManyConfirm", { count: list.picked.size }),
+            variant: "danger",
+            confirmText: commonT("delete"),
+        });
+        if (!ok) return;
+        const { deleted, total } = await deleteEach([...list.picked], async (id) => {
+            const res = await fetch(`/api/v1/store/coupons/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        list.clear();
+        fetchCoupons();
+        if (deleted === total) toast.success(t("cou_deletedToast"));
+        else if (deleted === 0) toast.error(t("cou_deleteError"));
+        else toast.error(t("adm_deletedPartly", { deleted, total }));
     };
 
     const deleteCoupon = async (id: string) => {
@@ -339,10 +357,25 @@ export default function AdminCouponsPage() {
                     ) : list.rows.length === 0 ? (
                         <p className="text-muted-foreground text-center py-8">{commonT("noResults")}</p>
                     ) : (
+                        <>
+                            {/* Outside the scrolling box: a bar that scrolled
+                                sideways with the table would take the
+                                select-all box off a narrow screen. */}
+                            <BulkBar
+                                state={list.headerState}
+                                count={list.picked.size}
+                                onToggleAll={list.toggleAll}
+                                actions={
+                                    <Button variant="destructive" size="sm" onClick={deleteMany}>
+                                        <Trash2 className="w-4 h-4" /> {commonT("delete")} {list.picked.size}
+                                    </Button>
+                                }
+                            />
                         <div className="overflow-x-auto">
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b">
+                                        <th className="w-10 py-3 px-4" />
                                         <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_code")}</th>
                                         <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_discount")}</th>
                                         <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_usage")}</th>
@@ -354,6 +387,13 @@ export default function AdminCouponsPage() {
                                 <tbody>
                                     {list.rows.map((coupon) => (
                                         <tr key={coupon.id} className="hover:bg-muted/50 border-b last:border-0">
+                                            <td className="py-3 px-4">
+                                                <Checkbox
+                                                    checked={list.picked.has(coupon.id)}
+                                                    onChange={() => list.toggle(coupon.id)}
+                                                    aria-label={t("adm_selectRow")}
+                                                />
+                                            </td>
                                             <td className="py-3 px-4">
                                                 <div className="flex items-center gap-2">
                                                     <Tag className="w-4 h-4 text-muted-foreground" />
@@ -417,6 +457,7 @@ export default function AdminCouponsPage() {
                                 </tbody>
                             </table>
                         </div>
+                        </>
                     )}
                     <Pagination page={list.page} pages={list.pages} total={list.total} onPageChange={list.setPage} />
                 </CardContent>

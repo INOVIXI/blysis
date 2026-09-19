@@ -78,6 +78,48 @@ export interface RowList<T> {
     clear: () => void;
 }
 
+/** What a screen needs to tick rows, whoever is doing the paging. */
+export interface RowPicks {
+    /** The ids ticked, never including one that is not on screen. */
+    picked: Selection;
+    toggle: (id: string) => void;
+    /** Ticks every row on screen, or lets go of all of them. */
+    toggleAll: () => void;
+    headerState: HeaderState;
+    clear: () => void;
+}
+
+/**
+ * Ticking rows on a list somebody else pages.
+ *
+ * A screen whose rows arrive one page at a time from the endpoint - members,
+ * gift codes, orders - cannot use `useRowList`: the searching and the paging
+ * are the server's. What it still needs is the third part, and the same rule
+ * about it. The count on a destructive button is a promise about what is on
+ * screen, so a row the next page does not carry is a row the button must stop
+ * counting.
+ */
+export function useRowPicks<T>(rows: readonly T[], idOf?: (row: T) => string): RowPicks {
+    const [picked, setPicked] = useState<Selection>(pickNone());
+    const listedIds = rows.map((row) => (idOf ? idOf(row) : String((row as { id?: unknown }).id ?? "")));
+
+    // Narrowed during the render rather than in an effect: an effect runs
+    // after the paint, and that frame is the one an operator clicks in.
+    const narrowed = narrowTo(picked, listedIds);
+    if (narrowed !== picked) setPicked(narrowed);
+
+    return {
+        picked: narrowed,
+        toggle: (id: string) => setPicked((prev) => togglePick(prev, id)),
+        toggleAll: () =>
+            setPicked((prev) =>
+                headerState(prev, listedIds) === "all" ? pickNone() : pickAll(prev, listedIds),
+            ),
+        headerState: headerState(narrowed, listedIds),
+        clear: () => setPicked(pickNone()),
+    };
+}
+
 export function useRowList<T>(rows: readonly T[], options: RowListOptions<T>): RowList<T> {
     const { text, pageSize = 20, idOf } = options;
     const [search, setSearchTerm] = useState("");

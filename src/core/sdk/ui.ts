@@ -121,8 +121,8 @@ export { useModalDialog, type ModalDialogOptions } from "@/core/hooks/useModalDi
 // unfolding above the list it belongs to. Core's screens got route
 // segments; a module screen gets the same behaviour on the path it has.
 export { useFormRoute } from "@/core/hooks/useFormRoute";
-export { useRowList } from "@/core/hooks/useRowList";
-export type { RowList, RowListOptions } from "@/core/hooks/useRowList";
+export { useRowList, useRowPicks } from "@/core/hooks/useRowList";
+export type { RowList, RowListOptions, RowPicks } from "@/core/hooks/useRowList";
 
 // A module that builds a public page needs the same breadcrumb core uses.
 // This sat in the tree unreachable from a module, so the store hand-rolled

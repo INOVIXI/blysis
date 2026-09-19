@@ -12,8 +12,9 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
- * 4.4.0 - `BulkBar` joins `@/core/sdk/admin` and `deleteEach` joins
- * `@/core/sdk`. The shell kept its destructive
+ * 4.4.0 - `BulkBar` joins `@/core/sdk/admin`, `deleteEach` joins `@/core/sdk`
+ * and `useRowPicks` joins `@/core/sdk/ui` for the screens whose rows are paged
+ * by the endpoint rather than held in the browser. The shell kept its destructive
  * button in the page header beside "Add new", so an operator ticked three
  * rows halfway down a table and the button that would delete them was at the
  * top of the screen next to the one that makes another - never visible at the

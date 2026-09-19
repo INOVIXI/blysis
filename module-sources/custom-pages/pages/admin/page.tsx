@@ -4,10 +4,11 @@
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, Input, Label, ListControls, Pagination, RichTextEditor, useConfirm, useFormRoute, useRowList, CheckboxField, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Checkbox, Input, Label, ListControls, Pagination, RichTextEditor, useConfirm, useFormRoute, useRowList, CheckboxField, buttonClassName } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, Plus, Trash2, ExternalLink, Pencil, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
-import { AdminPageHeader } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { deleteEach } from "@/core/sdk";
 
 interface CustomPage {
     id: string;
@@ -116,6 +117,28 @@ export default function CustomPagesAdminPage() {
         }
     };
 
+    const deleteMany = async () => {
+        const ok = await confirm({
+            title: t("adm_deleteTitle"),
+            message: t("adm_deleteManyConfirm", { count: list.picked.size }),
+            variant: "danger",
+            confirmText: t("adm_delete"),
+        });
+        if (!ok) return;
+        // The endpoint takes the address, not the id: every answer is read so
+        // a run where some were refused cannot report itself as done.
+        const bySlug = new Map(pages.map((row) => [row.id, row.slug]));
+        const { deleted, total } = await deleteEach([...list.picked], async (id) => {
+            const res = await fetch(`/api/v1/custom-pages/${bySlug.get(id)}`, { method: "DELETE" });
+            return res.ok;
+        });
+        list.clear();
+        fetchPages();
+        if (deleted === total) toast.success(t("adm_pageDeleted"));
+        else if (deleted === 0) toast.error(t("adm_deleteFailed"));
+        else toast.error(t("adm_deletedPartly", { deleted, total }));
+    };
+
     const deletePage = async (page: CustomPage) => {
         const ok = await confirm({
             title: t("adm_deleteTitle"),
@@ -212,10 +235,26 @@ export default function CustomPagesAdminPage() {
                 <Card><CardContent className="py-8 text-center text-muted-foreground">{commonT("noResults")}</CardContent></Card>
             ) : (
                 <div className="space-y-2">
+                    <BulkBar
+                        className="rounded-lg border border-border"
+                        state={list.headerState}
+                        count={list.picked.size}
+                        onToggleAll={list.toggleAll}
+                        actions={
+                            <Button variant="destructive" size="sm" onClick={deleteMany}>
+                                <Trash2 className="w-4 h-4" /> {commonT("delete")} {list.picked.size}
+                            </Button>
+                        }
+                    />
                     {list.rows.map((page) => (
                         <Card key={page.id}>
-                            <CardContent className="p-4 flex items-center justify-between">
-                                <div>
+                            <CardContent className="p-4 flex items-center justify-between gap-3">
+                                <Checkbox
+                                    checked={list.picked.has(page.id)}
+                                    onChange={() => list.toggle(page.id)}
+                                    aria-label={t("adm_selectRow")}
+                                />
+                                <div className="flex-1 min-w-0">
                                     <h2 className="font-medium text-foreground">{page.title}</h2>
                                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                                         <ExternalLink className="w-3 h-3" /> /page/{page.slug}
