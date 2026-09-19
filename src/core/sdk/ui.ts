@@ -70,6 +70,7 @@ export { Pagination, usePagedRows } from "@/core/components/ui/pagination";
 export { ListControls } from "@/core/components/ui/list-controls";
 export { SegmentedTabs } from "@/core/components/ui/segmented-tabs";
 export { ImageLightbox } from "@/core/components/ui/image-lightbox";
+export { ModalLayer } from "@/core/components/ui/modal-layer";
 export { Radio, RadioField } from "@/core/components/ui/radio";
 export { RichContent } from "@/core/components/ui/rich-content";
 export type { RadioProps, RadioFieldProps } from "@/core/components/ui/radio";

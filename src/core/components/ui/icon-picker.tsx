@@ -8,6 +8,7 @@ import { Search, X, ChevronDown } from "lucide-react";
 import { Button } from "./button";
 import { Input } from "./input";
 import { NavIcon } from "./NavIcon";
+import { ModalLayer } from "./modal-layer";
 import { iconLabel, searchIconNames, toIconSlug } from "@/core/lib/icon-names";
 import { cn } from "@/core/lib/utils";
 
@@ -122,69 +123,71 @@ export function IconPicker({
             </div>
 
             {open && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center" role="presentation">
-                    <div className="fixed inset-0 bg-black/50" onClick={close} aria-hidden="true" />
-                    <div
-                        ref={dialogRef}
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label={t("iconPicker_title")}
-                        className="relative mx-4 flex max-h-[80vh] w-full max-w-2xl flex-col rounded-xl border border-[var(--blysis-color-border)] bg-card shadow-2xl"
-                    >
-                        <div className="flex items-center gap-2 border-b border-border p-4">
-                            <Input
-                                ref={searchRef}
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
-                                placeholder={t("iconPicker_search")}
-                                aria-label={t("iconPicker_search")}
-                            />
-                            <Button type="button" variant="ghost" size="icon" aria-label={t("iconPicker_close")} onClick={close}>
-                                <X className="h-4 w-4" />
-                            </Button>
-                        </div>
-
-                        <div className="flex-1 overflow-y-auto p-4">
-                            {shown.length === 0 ? (
-                                <p className="py-8 text-center text-sm text-muted-foreground">
-                                    {t("iconPicker_empty")}
-                                </p>
-                            ) : (
-                                <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-6">
-                                    {shown.map((name) => (
-                                        <button
-                                            key={name}
-                                            type="button"
-                                            onClick={() => choose(name)}
-                                            aria-pressed={name === selected}
-                                            title={iconLabel(name)}
-                                            className={cn(
-                                                "flex flex-col items-center gap-1 rounded-lg border p-2 text-center transition-colors hover:border-primary hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/50",
-                                                name === selected ? "border-primary bg-muted" : "border-transparent",
-                                            )}
-                                        >
-                                            <NavIcon name={name} className="h-5 w-5 text-foreground" />
-                                            <span className="w-full truncate text-[10px] leading-tight text-muted-foreground">
-                                                {name}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="flex items-center justify-between gap-2 border-t border-border p-4">
-                            <p className="text-xs text-muted-foreground">
-                                {t("iconPicker_count", { shown: shown.length, total: matches.length })}
-                            </p>
-                            {shown.length < matches.length && (
-                                <Button type="button" variant="outline" size="sm" onClick={() => setVisible((n) => n + PAGE_SIZE)}>
-                                    {t("iconPicker_loadMore")}
+                <ModalLayer>
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center" role="presentation">
+                        <div className="fixed inset-0 bg-black/50" onClick={close} aria-hidden="true" />
+                        <div
+                            ref={dialogRef}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-label={t("iconPicker_title")}
+                            className="relative mx-4 flex max-h-[80vh] w-full max-w-2xl flex-col rounded-xl border border-[var(--blysis-color-border)] bg-card shadow-2xl"
+                        >
+                            <div className="flex items-center gap-2 border-b border-border p-4">
+                                <Input
+                                    ref={searchRef}
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    placeholder={t("iconPicker_search")}
+                                    aria-label={t("iconPicker_search")}
+                                />
+                                <Button type="button" variant="ghost" size="icon" aria-label={t("iconPicker_close")} onClick={close}>
+                                    <X className="h-4 w-4" />
                                 </Button>
-                            )}
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto p-4">
+                                {shown.length === 0 ? (
+                                    <p className="py-8 text-center text-sm text-muted-foreground">
+                                        {t("iconPicker_empty")}
+                                    </p>
+                                ) : (
+                                    <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-6">
+                                        {shown.map((name) => (
+                                            <button
+                                                key={name}
+                                                type="button"
+                                                onClick={() => choose(name)}
+                                                aria-pressed={name === selected}
+                                                title={iconLabel(name)}
+                                                className={cn(
+                                                    "flex flex-col items-center gap-1 rounded-lg border p-2 text-center transition-colors hover:border-primary hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/50",
+                                                    name === selected ? "border-primary bg-muted" : "border-transparent",
+                                                )}
+                                            >
+                                                <NavIcon name={name} className="h-5 w-5 text-foreground" />
+                                                <span className="w-full truncate text-[10px] leading-tight text-muted-foreground">
+                                                    {name}
+                                                </span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex items-center justify-between gap-2 border-t border-border p-4">
+                                <p className="text-xs text-muted-foreground">
+                                    {t("iconPicker_count", { shown: shown.length, total: matches.length })}
+                                </p>
+                                {shown.length < matches.length && (
+                                    <Button type="button" variant="outline" size="sm" onClick={() => setVisible((n) => n + PAGE_SIZE)}>
+                                        {t("iconPicker_loadMore")}
+                                    </Button>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
+                </ModalLayer>
             )}
         </>
     );

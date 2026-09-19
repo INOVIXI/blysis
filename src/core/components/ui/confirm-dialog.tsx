@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useId, createContext, useContext } from 
 import { useTranslations } from "next-intl";
 import { useModalDialog } from "@/core/hooks/useModalDialog";
 import { Button } from "@/core/components/ui/button";
+import { ModalLayer } from "@/core/components/ui/modal-layer";
 import { AlertTriangle } from "lucide-react";
 
 interface ConfirmOptions {
@@ -110,56 +111,58 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
         <ConfirmContext.Provider value={{ confirm, ask }}>
             {children}
             {state.open && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center" role="presentation">
-                    <div className="fixed inset-0 bg-black/50" onClick={() => handleClose(false)} aria-hidden="true" />
-                    <div
-                        ref={dialogRef}
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="confirm-title"
-                        aria-describedby="confirm-message"
-                        className="relative bg-card border border-[var(--blysis-color-border)] rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto animate-fade-in"
-                    >
-                        <div className="flex items-start gap-4">
-                            {state.options.variant === "danger" && (
-                                <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0">
-                                    <AlertTriangle className="w-5 h-5 text-destructive" aria-hidden="true" />
+                <ModalLayer>
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center" role="presentation">
+                        <div className="fixed inset-0 bg-black/50" onClick={() => handleClose(false)} aria-hidden="true" />
+                        <div
+                            ref={dialogRef}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="confirm-title"
+                            aria-describedby="confirm-message"
+                            className="relative bg-card border border-[var(--blysis-color-border)] rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto animate-fade-in"
+                        >
+                            <div className="flex items-start gap-4">
+                                {state.options.variant === "danger" && (
+                                    <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                                        <AlertTriangle className="w-5 h-5 text-destructive" aria-hidden="true" />
+                                    </div>
+                                )}
+                                <div className="flex-1">
+                                    {state.options.title && (
+                                        <h2 id="confirm-title" className="font-semibold text-foreground mb-1">{state.options.title}</h2>
+                                    )}
+                                    <p id="confirm-message" className="text-sm text-muted-foreground">{state.options.message}</p>
+                                    {state.asking && (
+                                        <input
+                                            id={inputId}
+                                            aria-label={state.options.message}
+                                            autoFocus
+                                            value={answer}
+                                            placeholder={state.options.placeholder}
+                                            onChange={(e) => setAnswer(e.target.value)}
+                                            onKeyDown={(e) => { if (e.key === "Enter" && !blocked) handleClose(true); }}
+                                            className="mt-3 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                                        />
+                                    )}
                                 </div>
-                            )}
-                            <div className="flex-1">
-                                {state.options.title && (
-                                    <h2 id="confirm-title" className="font-semibold text-foreground mb-1">{state.options.title}</h2>
-                                )}
-                                <p id="confirm-message" className="text-sm text-muted-foreground">{state.options.message}</p>
-                                {state.asking && (
-                                    <input
-                                        id={inputId}
-                                        aria-label={state.options.message}
-                                        autoFocus
-                                        value={answer}
-                                        placeholder={state.options.placeholder}
-                                        onChange={(e) => setAnswer(e.target.value)}
-                                        onKeyDown={(e) => { if (e.key === "Enter" && !blocked) handleClose(true); }}
-                                        className="mt-3 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-                                    />
-                                )}
+                            </div>
+                            <div className="flex justify-end gap-2 mt-6">
+                                <Button variant="outline" size="sm" onClick={() => handleClose(false)}>
+                                    {state.options.cancelText || t("cancel")}
+                                </Button>
+                                <Button
+                                    variant={state.options.variant === "danger" ? "destructive" : "default"}
+                                    size="sm"
+                                    disabled={blocked}
+                                    onClick={() => handleClose(true)}
+                                >
+                                    {state.options.confirmText || t("confirm")}
+                                </Button>
                             </div>
                         </div>
-                        <div className="flex justify-end gap-2 mt-6">
-                            <Button variant="outline" size="sm" onClick={() => handleClose(false)}>
-                                {state.options.cancelText || t("cancel")}
-                            </Button>
-                            <Button
-                                variant={state.options.variant === "danger" ? "destructive" : "default"}
-                                size="sm"
-                                disabled={blocked}
-                                onClick={() => handleClose(true)}
-                            >
-                                {state.options.confirmText || t("confirm")}
-                            </Button>
-                        </div>
                     </div>
-                </div>
+                </ModalLayer>
             )}
         </ConfirmContext.Provider>
     );

@@ -14,6 +14,7 @@ export * from "./pagination";
 export * from "./list-controls";
 export * from "./segmented-tabs";
 export * from "./image-lightbox";
+export * from "./modal-layer";
 export * from "./MemberLink";
 export * from "./count-badge";
 export * from "./radio";

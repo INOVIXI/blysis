@@ -12,6 +12,14 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 4.2.0 - `ModalLayer` joins `@/core/sdk/ui`. A dialog that draws itself where
+ * it stands is a descendant of whatever opened it, and an admin screen that
+ * edits a row is one `<form>`: the media library's search box was a form
+ * inside a form, and every control in it was a submit button, because a
+ * `<button>` with no type is one. Drawing into the body answers both, and the
+ * two an overlay always fights as well - an ancestor's `overflow` clipping it
+ * and an ancestor's stacking context burying it.
+ *
  * 4.1.0 - `memberStanding` and `refuseSilenced` join `@/core/sdk/server`, and
  * `member.standing` joins the filter registry. Three things on this site
  * thought they decided who may take part and none of them agreed: a punishment
@@ -401,4 +409,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "4.1.0";
+export const CORE_API_VERSION = "4.2.0";
