@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Button, buttonClassName } from "@/core/components/ui/button";
+import { buttonClassName } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
 import { ListControls } from "@/core/components/ui/list-controls";
 import { useRowList } from "@/core/hooks/useRowList";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus, Trash2 , Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
@@ -15,6 +15,7 @@ import { writeError } from "@/core/lib/write-result";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import type { RoleRecord } from "./role-form";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { RowActions } from "@/core/components/admin/RowActions";
 import { RoleBadge } from "@/core/components/ui/RoleBadge";
 import { RoleName } from "@/core/components/ui/RoleName";
 
@@ -109,22 +110,24 @@ export default function AdminRolesPage() {
                                     <RoleName name={role.displayName} role={role} />
                                     <RoleBadge role={role} />
                                 </div>
-                                <div className="flex gap-1">
-                                    <Link href={`/admin/roles/${role.id}/edit`} className={buttonClassName("ghost", "sm")}>
-                                            {t("crud_edit")}
-                                        </Link>
-                                    {role.name !== "admin" && role.name !== "member" && (
-                                        <Button
-                                            aria-label={commonT("delete")}
-                                            variant="ghost"
-                                            size="sm"
-                                            className="text-destructive"
-                                            onClick={() => deleteRole(role.id)}
-                                        >
-                                            <Trash2 className="w-3 h-3" />
-                                        </Button>
-                                    )}
-                                </div>
+                                {/* A word for Edit and a bare icon for
+                                    Delete, on one row. The two built-in roles
+                                    cannot be deleted, so that action is
+                                    hidden rather than shown disabled - there
+                                    is nothing an operator could do to make it
+                                    available. */}
+                                <RowActions
+                                    actions={[
+                                        { icon: Pencil, label: t("crud_edit"), href: `/admin/roles/${role.id}/edit` },
+                                        {
+                                            icon: Trash2,
+                                            label: commonT("delete"),
+                                            onClick: () => deleteRole(role.id),
+                                            destructive: true,
+                                            hidden: role.name === "admin" || role.name === "member",
+                                        },
+                                    ]}
+                                />
                             </CardTitle>
                         </CardHeader>
                         <CardContent>

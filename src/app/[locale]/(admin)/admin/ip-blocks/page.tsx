@@ -6,6 +6,7 @@ import { Button, buttonClassName } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
 import { ListControls } from "@/core/components/ui/list-controls";
 import { BulkBar } from "@/core/components/admin/BulkBar";
+import { RowActions } from "@/core/components/admin/RowActions";
 import { Checkbox } from "@/core/components/ui/checkbox";
 import { deleteEach } from "@/core/lib/bulk-delete";
 import { useRowList } from "@/core/hooks/useRowList";
@@ -187,15 +188,14 @@ export default function IpBlocksPage() {
                                                     {formatDate(b.createdAt)}
                                                 </td>
                                                 <td className="p-3 text-right">
-                                                    <Button
-                                                        aria-label={commonT("delete")}
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="text-destructive"
-                                                        onClick={() => deleteBlock(b)}
-                                                    >
-                                                        <Trash2 className="w-3 h-3" />
-                                                    </Button>
+                                                    <RowActions
+                                                        actions={[{
+                                                            icon: Trash2,
+                                                            label: commonT("delete"),
+                                                            onClick: () => deleteBlock(b),
+                                                            destructive: true,
+                                                        }]}
+                                                    />
                                                 </td>
                                             </tr>
                                         );

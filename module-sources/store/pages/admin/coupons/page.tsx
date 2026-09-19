@@ -3,12 +3,13 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
-import { Button, Card, CardContent, Checkbox, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, useRowList, useSiteCurrency, NativeSelect, buttonClassName, useLocalDate } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, Checkbox, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, useRowList, useSiteCurrency, NativeSelect, buttonClassName, useLocalDate } from "@/core/sdk/ui";
+import { couponStanding, STANDING_TONE } from "../../../lib/coupon-standing";
 import { Link } from "@/core/sdk/navigation";
-import { ArrowLeft, Loader2, Plus, Trash2, Tag } from "lucide-react";
+import { Loader2, Pencil, Plus, ToggleLeft, ToggleRight, Trash2, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { deleteEach, errorMessage, writeError } from "@/core/sdk";
-import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
 
 interface Coupon {
     id: string;
@@ -55,6 +56,7 @@ export default function AdminCouponsPage() {
         minPurchase: "",
         maxDiscount: "",
         usageLimit: "",
+        startsAt: "",
         expiresAt: "",
         isActive: true,
     });
@@ -83,7 +85,7 @@ export default function AdminCouponsPage() {
     useEffect(() => {
         setError(null);
         if (!editingId) {
-            setForm({ code: "", description: "", type: "PERCENTAGE", value: "", minPurchase: "", maxDiscount: "", usageLimit: "", expiresAt: "", isActive: true });
+            setForm({ code: "", description: "", type: "PERCENTAGE", value: "", minPurchase: "", maxDiscount: "", usageLimit: "", startsAt: "", expiresAt: "", isActive: true });
             return;
         }
         const coupon = coupons.find((row) => row.id === editingId);
@@ -96,6 +98,7 @@ export default function AdminCouponsPage() {
             minPurchase: coupon.minPurchase ? String(coupon.minPurchase) : "",
             maxDiscount: coupon.maxDiscount ? String(coupon.maxDiscount) : "",
             usageLimit: coupon.usageLimit ? String(coupon.usageLimit) : "",
+            startsAt: coupon.startsAt ? new Date(coupon.startsAt).toISOString().slice(0, 16) : "",
             expiresAt: coupon.expiresAt ? new Date(coupon.expiresAt).toISOString().slice(0, 16) : "",
             isActive: coupon.isActive,
         });
@@ -119,6 +122,7 @@ export default function AdminCouponsPage() {
                     minPurchase: form.minPurchase ? parseFloat(form.minPurchase) : null,
                     maxDiscount: form.maxDiscount ? parseFloat(form.maxDiscount) : null,
                     usageLimit: form.usageLimit ? parseInt(form.usageLimit) : null,
+                    startsAt: form.startsAt ? new Date(form.startsAt).toISOString() : null,
                     expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
                     isActive: form.isActive,
                 }),
@@ -306,14 +310,34 @@ export default function AdminCouponsPage() {
                                 </div>
                             </div>
 
-                            <div>
-                                <Label>{t("adm_expiresAt")}</Label>
-                                <Input
-                                    aria-label={t("adm_expiresAt")}
-                                    type="datetime-local"
-                                    value={form.expiresAt}
-                                    onChange={(e) => setForm({ ...form, expiresAt: e.target.value })}
-                                />
+                            {/*
+                              * Both ends of the window. `startsAt` was read
+                              * from the row, honoured by the basket and shown
+                              * as nothing: a code meant to open on Friday
+                              * could only be made through the API, or made
+                              * live and switched off until Friday by hand.
+                              */}
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <Label>{t("adm_couponStarts")}</Label>
+                                    <Input
+                                        aria-label={t("adm_couponStarts")}
+                                        type="datetime-local"
+                                        value={form.startsAt}
+                                        onChange={(e) => setForm({ ...form, startsAt: e.target.value })}
+                                    />
+                                    <p className="mt-1 text-xs text-muted-foreground">{t("adm_couponStartsHint")}</p>
+                                </div>
+                                <div>
+                                    <Label>{t("adm_expiresAt")}</Label>
+                                    <Input
+                                        aria-label={t("adm_expiresAt")}
+                                        type="datetime-local"
+                                        value={form.expiresAt}
+                                        onChange={(e) => setForm({ ...form, expiresAt: e.target.value })}
+                                    />
+                                    <p className="mt-1 text-xs text-muted-foreground">{t("adm_couponExpiresHint")}</p>
+                                </div>
                             </div>
 
                             <div className="flex gap-2">
@@ -427,33 +451,46 @@ export default function AdminCouponsPage() {
                                                     : t("adm_never")}
                                             </td>
                                             <td className="py-3 px-4">
-                                                <button
-                                                    onClick={() => toggleActive(coupon)}
-                                                    className={`text-xs px-2 py-1 rounded cursor-pointer ${coupon.isActive
-                                                        ? "bg-success/10 text-success"
-                                                        : "bg-muted text-muted-foreground"
-                                                    }`}
-                                                >
-                                                    {coupon.isActive ? t("adm_active") : t("adm_inactive")}
-                                                </button>
+                                                {/* What an operator opens this
+                                                    list to see is which codes
+                                                    work today, and the column
+                                                    alone does not answer that:
+                                                    a coupon past its end date,
+                                                    or one that has been used
+                                                    up, is switched on and
+                                                    unusable. `couponStanding`
+                                                    asks the same four
+                                                    questions the basket does. */}
+                                                {(() => {
+                                                    const standing = couponStanding(coupon);
+                                                    return <Badge tone={STANDING_TONE[standing]}>{t(`adm_couponStanding_${standing}`)}</Badge>;
+                                                })()}
                                             </td>
                                             <td className="py-3 px-4 text-right">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => openForm(coupon.id)}
-                                                >
-                                                    {t("adm_edit")}
-                                                </Button>
-                                                <Button
-                                                    aria-label={commonT("delete")}
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="text-destructive"
-                                                    onClick={() => deleteCoupon(coupon.id)}
-                                                >
-                                                    <Trash2 className="w-3 h-3" />
-                                                </Button>
+                                                {/* The status used to be a
+                                                    `<button>` dressed as a
+                                                    badge - the same shape the
+                                                    rest of the site uses for
+                                                    something you cannot press.
+                                                    Switching a coupon on and
+                                                    off is an action, so it
+                                                    sits with the actions. */}
+                                                <RowActions
+                                                    actions={[
+                                                        {
+                                                            icon: coupon.isActive ? ToggleRight : ToggleLeft,
+                                                            label: coupon.isActive ? t("adm_couponTurnOff") : t("adm_couponTurnOn"),
+                                                            onClick: () => toggleActive(coupon),
+                                                        },
+                                                        { icon: Pencil, label: commonT("edit"), onClick: () => openForm(coupon.id) },
+                                                        {
+                                                            icon: Trash2,
+                                                            label: commonT("delete"),
+                                                            onClick: () => deleteCoupon(coupon.id),
+                                                            destructive: true,
+                                                        },
+                                                    ]}
+                                                />
                                             </td>
                                         </tr>
                                     ))}

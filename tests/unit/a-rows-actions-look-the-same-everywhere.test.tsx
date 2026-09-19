@@ -137,6 +137,14 @@ describe("the lists in the panel", () => {
             "A table editor. The bins remove a column and a row from the table being written, which is the editing.",
         "module-sources/tickets/pages/admin/tickets/departments/[id]/page.tsx":
             "One department's form. The bin removes a question from the form being written, not a department from a list of them.",
+        "module-sources/currency/pages/admin/page.tsx":
+            "A list of currencies being composed, not a list of records: each row is a draft with its own boxes and the bin removes a draft from the form, the way the four builders below do.",
+        "module-sources/store/pages/admin/orders/NewOrderForm.tsx":
+            "The lines of an order being written. The bin takes a line out of what is being composed; there is no record behind it to act on yet.",
+        "module-sources/discord-integration/pages/admin/messages/page.tsx":
+            "The fields of a message being drafted. Same shape as the form builders: the bin removes a field from the draft rather than acting on a stored row.",
+        "module-sources/store/pages/admin/credit-packages/page.tsx":
+            "A card per package holding its own editable form and a Save button. Its three controls all wear an icon and their word, consistently; they act on the thing being edited rather than on a row in a list.",
     };
 
     /**
@@ -184,9 +192,40 @@ describe("the lists in the panel", () => {
         for (const m of source.matchAll(/\.map\(/g)) {
             const body = mapBody(source, (m.index ?? 0) + m[0].length - 1);
             if (!/key=\{/.test(body)) continue;
-            if (/<(Button|Link|button)\b[\s\S]{0,400}?<(Pencil|Trash2|SquarePen)\b/.test(body)) return true;
+            for (const button of body.matchAll(/<(Button|Link|button)\b/g)) {
+                if (/<(Pencil|Trash2|SquarePen)\b/.test(element(body, button.index ?? 0, button[1]))) return true;
+            }
         }
         return false;
+    }
+
+    /**
+     * One element, from its opening tag to its matching close.
+     *
+     * This used to be "the next four hundred characters after a `<Button`",
+     * which is the same fixed-window mistake the note above `mapBody` records
+     * having fixed one level out. The coupons screen drew a row with a text
+     * Edit button and then an icon bin - two shapes for two actions, which is
+     * the whole point of this rule - and the distance from the first `<Button`
+     * to that `<Trash2` is nine hundred and forty-six characters, so the scan
+     * reported the screen as clean.
+     */
+    function element(source: string, open: number, tag: string): string {
+        let depth = 0;
+        const opener = new RegExp(`<${tag}\\b`, "g");
+        const closer = new RegExp(`</${tag}>`, "g");
+        for (let i = open; i < source.length; i++) {
+            opener.lastIndex = i;
+            closer.lastIndex = i;
+            if (source.startsWith(`<${tag}`, i)) depth++;
+            else if (source.startsWith(`</${tag}>`, i)) {
+                depth--;
+                if (depth === 0) return source.slice(open, i);
+            }
+            // A self-closing tag never gets a matching close.
+            else if (depth === 1 && source.startsWith("/>", i)) return source.slice(open, i);
+        }
+        return source.slice(open);
     }
 
     /**

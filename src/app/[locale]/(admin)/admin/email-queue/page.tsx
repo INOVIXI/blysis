@@ -7,9 +7,10 @@ import { Pagination } from "@/core/components/ui/pagination";
 import { ListControls } from "@/core/components/ui/list-controls";
 import { Checkbox } from "@/core/components/ui/checkbox";
 import { BulkBar } from "@/core/components/admin/BulkBar";
+import { RowActions } from "@/core/components/admin/RowActions";
 import { useRowPicks } from "@/core/hooks/useRowList";
 import { deleteEach } from "@/core/lib/bulk-delete";
-import { Loader2, Play, RefreshCw, RotateCcw, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2, Play, RefreshCw, RotateCcw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { useTranslations } from "next-intl";
@@ -333,38 +334,37 @@ export default function EmailQueueAdminPage() {
                                                 <td className="px-4 py-3 text-muted-foreground">{job.attempts}</td>
                                                 <td className="px-4 py-3 text-muted-foreground">{job.scheduledAt ? formatDateTime(job.scheduledAt) : "-"}</td>
                                                 <td className="px-4 py-3 text-right">
-                                                    <div className="flex justify-end gap-1">
-                                                        {hasError && (
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => setExpandedId(isExpanded ? null : job.id)}
-                                                            >
-                                                                {isExpanded ? t("emailQueue_hide") : t("emailQueue_error")}
-                                                            </Button>
-                                                        )}
-                                                        {job.status === "failed" && (
-                                                            <Button
-                                                                variant="outline"
-                                                                size="sm"
-                                                                onClick={() => handleRetry(job)}
-                                                                disabled={busyId === job.id}
-                                                            >
-                                                                <RotateCcw className="w-3 h-3" />
-                                                                {t("emailQueue_retry")}
-                                                            </Button>
-                                                        )}
-                                                        <Button
-                                                            aria-label={commonT("delete")}
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="text-destructive"
-                                                            onClick={() => handleDelete(job)}
-                                                            disabled={busyId === job.id}
-                                                        >
-                                                            <Trash2 className="w-3 h-3" />
-                                                        </Button>
-                                                    </div>
+                                                    {/* One shape. This row
+                                                        mixed a text button,
+                                                        an outline button with
+                                                        an icon and its word,
+                                                        and a ghost icon - for
+                                                        three things done to
+                                                        one job. */}
+                                                    <RowActions
+                                                        actions={[
+                                                            {
+                                                                icon: isExpanded ? ChevronUp : ChevronDown,
+                                                                label: isExpanded ? t("emailQueue_hide") : t("emailQueue_error"),
+                                                                onClick: () => setExpandedId(isExpanded ? null : job.id),
+                                                                hidden: !hasError,
+                                                            },
+                                                            {
+                                                                icon: RotateCcw,
+                                                                label: t("emailQueue_retry"),
+                                                                onClick: () => handleRetry(job),
+                                                                disabled: busyId === job.id,
+                                                                hidden: job.status !== "failed",
+                                                            },
+                                                            {
+                                                                icon: Trash2,
+                                                                label: commonT("delete"),
+                                                                onClick: () => handleDelete(job),
+                                                                disabled: busyId === job.id,
+                                                                destructive: true,
+                                                            },
+                                                        ]}
+                                                    />
                                                 </td>
                                             </tr>
                                             {isExpanded && hasError && (

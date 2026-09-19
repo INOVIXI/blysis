@@ -8,7 +8,7 @@ import { Loader2, Pin, PinOff, Lock, Unlock, Trash2, Eye, MessageSquare } from "
 import { toast } from "sonner";
 import { useRelativeTime } from "@/core/sdk/ui";
 import { deleteEach, writeError } from "@/core/sdk";
-import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
 
 interface Topic {
     id: string;
@@ -228,33 +228,34 @@ export default function AdminForumTopicsPage() {
                                                 </div>
                                             </td>
                                             <td className="py-3 px-4 text-right">
-                                                <div className="flex items-center justify-end gap-1">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        title={topic.isPinned ? "Unpin" : "Pin"}
-                                                        onClick={() => togglePin(topic.id, topic.isPinned)}
-                                                    >
-                                                        {topic.isPinned ? <PinOff className="w-3 h-3" /> : <Pin className="w-3 h-3" />}
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        title={topic.isLocked ? "Unlock" : "Lock"}
-                                                        onClick={() => toggleLock(topic.id, topic.isLocked)}
-                                                    >
-                                                        {topic.isLocked ? <Unlock className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
-                                                    </Button>
-                                                    <Button
-                                                        aria-label={commonT("delete")}
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="text-destructive"
-                                                        onClick={() => deleteTopic(topic.id)}
-                                                    >
-                                                        <Trash2 className="w-3 h-3" />
-                                                    </Button>
-                                                </div>
+                                                {/* One shape for a row's
+                                                    actions. Three ghost
+                                                    buttons with an English
+                                                    `title` each - "Unpin",
+                                                    "Lock" - on a Turkish
+                                                    page, which a screen
+                                                    reader announces as the
+                                                    whole of the button. */}
+                                                <RowActions
+                                                    actions={[
+                                                        {
+                                                            icon: topic.isPinned ? PinOff : Pin,
+                                                            label: topic.isPinned ? t("adm_unpin") : t("adm_pin"),
+                                                            onClick: () => togglePin(topic.id, topic.isPinned),
+                                                        },
+                                                        {
+                                                            icon: topic.isLocked ? Unlock : Lock,
+                                                            label: topic.isLocked ? t("adm_unlock") : t("adm_lock"),
+                                                            onClick: () => toggleLock(topic.id, topic.isLocked),
+                                                        },
+                                                        {
+                                                            icon: Trash2,
+                                                            label: commonT("delete"),
+                                                            onClick: () => deleteTopic(topic.id),
+                                                            destructive: true,
+                                                        },
+                                                    ]}
+                                                />
                                             </td>
                                         </tr>
                                     ))}

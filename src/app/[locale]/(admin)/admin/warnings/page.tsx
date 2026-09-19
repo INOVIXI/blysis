@@ -7,6 +7,7 @@ import { Pagination } from "@/core/components/ui/pagination";
 import { ListControls } from "@/core/components/ui/list-controls";
 import { Checkbox } from "@/core/components/ui/checkbox";
 import { BulkBar } from "@/core/components/admin/BulkBar";
+import { RowActions } from "@/core/components/admin/RowActions";
 import { useRowList } from "@/core/hooks/useRowList";
 import { deleteEach } from "@/core/lib/bulk-delete";
 import { Plus, Loader2, ShieldOff, Trash2 } from "lucide-react";
@@ -195,27 +196,22 @@ export default function WarningsPage() {
                                             )}
                                         </p>
                                     </div>
-                                    <div className="flex gap-1">
-                                        {w.isActive && (
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => revoke(w)}
-                                                title={t("warnings_revoke")}
-                                            >
-                                                <ShieldOff className="w-3 h-3" />
-                                            </Button>
-                                        )}
-                                        <Button
-                                            aria-label={commonT("delete")}
-                                            variant="ghost"
-                                            size="sm"
-                                            className="text-destructive"
-                                            onClick={() => deleteWarning(w)}
-                                        >
-                                            <Trash2 className="w-3 h-3" />
-                                        </Button>
-                                    </div>
+                                    <RowActions
+                                        actions={[
+                                            {
+                                                icon: ShieldOff,
+                                                label: t("warnings_revoke"),
+                                                onClick: () => revoke(w),
+                                                hidden: !w.isActive,
+                                            },
+                                            {
+                                                icon: Trash2,
+                                                label: commonT("delete"),
+                                                onClick: () => deleteWarning(w),
+                                                destructive: true,
+                                            },
+                                        ]}
+                                    />
                                 </div>
                             ))}
                         </div>
