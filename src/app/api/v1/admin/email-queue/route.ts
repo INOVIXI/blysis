@@ -24,7 +24,26 @@ export async function GET(request: NextRequest) {
 
     const { page, skip, take } = pageParams(url.searchParams, { fixedLimit: PAGE_SIZE });
 
-    const where = status ? { status } : {};
+    /*
+     * The term narrows the query rather than the page.
+     *
+     * The queue is read when a message did not arrive, and the thing the
+     * operator has to hand is the address it was sent to or the subject it
+     * carried. Searching the twenty rows on screen answers that the message
+     * was never queued.
+     */
+    const term = (url.searchParams.get("q") ?? "").trim();
+    const where = {
+        ...(status ? { status } : {}),
+        ...(term
+            ? {
+                OR: [
+                    { to: { contains: term, mode: "insensitive" as const } },
+                    { subject: { contains: term, mode: "insensitive" as const } },
+                ],
+            }
+            : {}),
+    };
 
     const [jobs, total, grouped] = await Promise.all([
         prisma.emailJob.findMany({

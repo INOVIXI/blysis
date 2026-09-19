@@ -4,6 +4,7 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
+import { ListControls } from "@/core/components/ui/list-controls";
 import { Loader2, Play, RefreshCw, RotateCcw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
@@ -85,12 +86,16 @@ export default function EmailQueueAdminPage() {
     const [busyId, setBusyId] = useState<string | null>(null);
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const { confirm } = useConfirm();
+    // Sent to the endpoint: the queue only grows, and the twenty rows in the
+    // browser are not the queue.
+    const [search, setSearch] = useState("");
 
     const fetchJobs = useCallback(async () => {
         setLoading(true);
         try {
             const params = new URLSearchParams();
             if (filter !== "all") params.set("status", filter);
+            if (search.trim()) params.set("q", search.trim());
             params.set("page", String(page));
             const res = await fetch(`/api/v1/admin/email-queue?${params.toString()}`);
             if (!res.ok) {
@@ -107,7 +112,7 @@ export default function EmailQueueAdminPage() {
         } finally {
             setLoading(false);
         }
-    }, [filter, page, t]);
+    }, [filter, page, search, t]);
 
     useEffect(() => {
         void fetchJobs();
@@ -215,6 +220,11 @@ export default function EmailQueueAdminPage() {
                     </Card>
                 ))}
             </div>
+
+            <ListControls
+                className="mb-4"
+                search={{ value: search, onChange: (term) => { setSearch(term); setPage(1); } }}
+            />
 
             <div className="flex gap-1 mb-4 border-b border-border">
                 {TABS.map((tab) => (

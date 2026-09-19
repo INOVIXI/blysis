@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { Button, buttonClassName } from "@/core/components/ui/button";
-import { Pagination, usePagedRows } from "@/core/components/ui/pagination";
-import { Loader2, Plus, Shield, Trash2 } from "lucide-react";
+import { Pagination } from "@/core/components/ui/pagination";
+import { ListControls } from "@/core/components/ui/list-controls";
+import { useRowList } from "@/core/hooks/useRowList";
+import { Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
@@ -22,7 +24,9 @@ export default function AdminRolesPage() {
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
     const [roles, setRoles] = useState<Role[]>([]);
-    const paged = usePagedRows(roles);
+    // The lines the card draws. Every one of these lists grows, and
+    // paging to a row was the only way to reach it.
+    const list = useRowList(roles, { text: (role) => [role.displayName, role.name], pageSize: 12 });
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
     const { confirm } = useConfirm();
@@ -85,17 +89,23 @@ export default function AdminRolesPage() {
                 </>}
             />
 
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
             {/* Roles List */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {paged.rows.map((role) => (
+                {list.rows.map((role) => (
                     <Card key={role.id} className="relative">
                         <CardHeader>
                             <CardTitle className="flex items-center justify-between">
                                 {/* Drawn the way the site draws it, so an
                                     operator sees what they wrote rather than a
                                     swatch of the colour underneath it. */}
+                                {/* No icon. Every card wore the same shield,
+                                    so it distinguished nothing and sat where
+                                    the role's own colour and badge - the two
+                                    things that do distinguish it - were trying
+                                    to be seen. */}
                                 <div className="flex items-center gap-2">
-                                    <Shield className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
                                     <RoleName name={role.displayName} role={role} />
                                     <RoleBadge role={role} />
                                 </div>
@@ -170,10 +180,10 @@ export default function AdminRolesPage() {
                 ))}
             </div>
             <Pagination
-                page={paged.page}
-                pages={paged.pages}
-                total={paged.total}
-                onPageChange={paged.setPage}
+                page={list.page}
+                pages={list.pages}
+                total={list.total}
+                onPageChange={list.setPage}
                 className="border-t-0"
             />
         </>

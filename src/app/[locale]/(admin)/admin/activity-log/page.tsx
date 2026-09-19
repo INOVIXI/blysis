@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Pagination } from "@/core/components/ui/pagination";
+import { ListControls } from "@/core/components/ui/list-controls";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LoadFailed } from "@/core/components/ui/load-failed";
@@ -24,19 +25,25 @@ export default function ActivityLogPage() {
     // browser disagree about what day a timestamp near midnight is.
     const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
+    const commonT = useTranslations("common");
     const [logs, setLogs] = useState<LogEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [failed, setFailed] = useState(false);
+    // Sent to the endpoint: this table only grows, and the twenty rows in the
+    // browser are not the list.
+    const [search, setSearch] = useState("");
 
     const fetchLogs = useCallback(() => {
         setLoading(true);
-        fetch(`/api/v1/activity-log?page=${page}`)
+        const query = new URLSearchParams({ page: String(page) });
+        if (search.trim()) query.set("q", search.trim());
+        fetch(`/api/v1/activity-log?${query}`)
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
             .then((d) => { setLogs(d.logs || []); setTotalPages(d.pages || 1); setFailed(false); setLoading(false); })
             .catch(() => { setFailed(true); setLoading(false); });
-    }, [page]);
+    }, [page, search]);
 
      
     useEffect(() => { fetchLogs(); }, [fetchLogs]);
@@ -48,6 +55,11 @@ export default function ActivityLogPage() {
                 description={t("activityLog_subtitle")}
             />
 
+            <ListControls
+                className="mb-4"
+                search={{ value: search, onChange: (term) => { setSearch(term); setPage(1); } }}
+            />
+
             <Card>
                 <CardContent className="p-0">
                     {loading ? (
@@ -55,7 +67,9 @@ export default function ActivityLogPage() {
                     ) : failed ? (
                         <LoadFailed onRetry={fetchLogs} />
                     ) : logs.length === 0 ? (
-                        <p className="text-muted-foreground text-center py-8">{t("activityLog_noLogs")}</p>
+                        <p className="text-muted-foreground text-center py-8">
+                            {search.trim() === "" ? t("activityLog_noLogs") : commonT("noResults")}
+                        </p>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full">

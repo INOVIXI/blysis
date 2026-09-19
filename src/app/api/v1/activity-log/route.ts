@@ -16,7 +16,27 @@ export async function GET(request: NextRequest) {
     });
     const action = request.nextUrl.searchParams.get("action");
 
-    const where = action ? { action } : {};
+    /*
+     * The term narrows the query rather than the page.
+     *
+     * This table only ever grows, and the screen reading it shows twenty rows
+     * at a time. Searching those twenty would answer that a thing an
+     * administrator did last month never happened.
+     *
+     * The action and the entity: the two the table draws.
+     */
+    const term = (request.nextUrl.searchParams.get("q") ?? "").trim();
+    const where = {
+        ...(action ? { action } : {}),
+        ...(term
+            ? {
+                OR: [
+                    { action: { contains: term, mode: "insensitive" as const } },
+                    { entity: { contains: term, mode: "insensitive" as const } },
+                ],
+            }
+            : {}),
+    };
 
     const [logs, total] = await Promise.all([
         prisma.activityLog.findMany({

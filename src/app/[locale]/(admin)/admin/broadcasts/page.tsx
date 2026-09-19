@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
-import { Pagination, usePagedRows } from "@/core/components/ui/pagination";
+import { Pagination } from "@/core/components/ui/pagination";
+import { ListControls } from "@/core/components/ui/list-controls";
+import { useRowList } from "@/core/hooks/useRowList";
 import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
 import { RichTextEditor } from "@/core/components/ui/rich-text-editor";
@@ -35,7 +37,9 @@ export default function BroadcastsPage() {
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
     const [broadcasts, setBroadcasts] = useState<Broadcast[]>([]);
-    const paged = usePagedRows(broadcasts);
+    // The lines the card draws. Every one of these lists grows, and
+    // paging to a row was the only way to reach it.
+    const list = useRowList(broadcasts, { text: (b) => [b.subject], pageSize: 12 });
     const [loading, setLoading] = useState(true);
     const [composing, setComposing] = useState(false);
     const [subject, setSubject] = useState("");
@@ -187,13 +191,15 @@ export default function BroadcastsPage() {
                 </Card>
             )}
 
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
             {loading ? (
                 <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
             ) : broadcasts.length === 0 ? (
                 <Card><CardContent className="py-12 text-center text-muted-foreground">{t("broadcasts_noBroadcasts")}</CardContent></Card>
             ) : (
                 <div className="space-y-2">
-                    {paged.rows.map((b) => (
+                    {list.rows.map((b) => (
                         <Card key={b.id}>
                             <CardContent className="p-4 flex items-center gap-4">
                                 <div className="flex-1 min-w-0">
@@ -227,10 +233,10 @@ export default function BroadcastsPage() {
                         </Card>
                     ))}
                     <Pagination
-                        page={paged.page}
-                        pages={paged.pages}
-                        total={paged.total}
-                        onPageChange={paged.setPage}
+                        page={list.page}
+                        pages={list.pages}
+                        total={list.total}
+                        onPageChange={list.setPage}
                         className="border-t-0"
                     />
                 </div>
