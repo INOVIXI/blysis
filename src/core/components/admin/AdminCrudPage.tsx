@@ -17,6 +17,7 @@ import { IconPicker } from "@/core/components/ui/icon-picker";
 import { writeError } from "@/core/lib/write-result";
 import { NativeSelect } from "@/core/components/ui/native-select";
 import { Pagination, usePagedRows } from "@/core/components/ui/pagination";
+import { ListControls } from "@/core/components/ui/list-controls";
 import { Link } from "@/core/lib/i18n/navigation";
 import { useFormRoute } from "@/core/hooks/useFormRoute";
 import { Checkbox, CheckboxField } from "@/core/components/ui/checkbox";
@@ -101,6 +102,7 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
     const [saving, setSaving] = useState(false);
     const [form, setForm] = useState<Record<string, string>>({});
     const [selected, setSelected] = useState<Selection>(new Set());
+    const [search, setSearch] = useState("");
     const { confirm } = useConfirm();
 
     // `?form=new` creates, `?form=<id>` edits, absent shows the list.
@@ -272,7 +274,32 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
         }
     };
 
-    const paged = usePagedRows(items);
+    /**
+     * What the reader typed, against what the row shows them.
+     *
+     * Every list here grows without bound and the only way to reach a row
+     * that was not on the first page was to page until it appeared. The rows
+     * are already in the browser, so this narrows what the screen holds
+     * rather than asking the endpoint again - the answer arrives as the
+     * reader types, and a list of forty rows costs one pass over forty
+     * strings.
+     *
+     * It reads the two lines the row draws and nothing else. Matching on
+     * every field would find rows for a reason the screen does not show,
+     * which reads as the search being broken.
+     */
+    const term = search.trim().toLocaleLowerCase();
+    const shown = term === ""
+        ? items
+        : items.filter((item) => {
+            const lines = [
+                String(item[displayField] ?? ""),
+                secondaryRender ? secondaryRender(item) : secondaryField ? String(item[secondaryField] ?? "") : "",
+            ];
+            return lines.some((line) => line.toLocaleLowerCase().includes(term));
+        });
+
+    const paged = usePagedRows(shown);
 
     /**
      * The selection follows the listing. Paging on, or a refetch that removed
@@ -356,10 +383,22 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
                 </>}
             />
 
+            {/* Above the card rather than inside it: the strip belongs to the
+                list, and a search that scrolled away with the rows it filters
+                is a search a reader cannot correct. */}
+            <ListControls
+                className="mb-4"
+                search={{ value: search, onChange: setSearch }}
+            />
+
             <Card>
                 <CardContent className="p-0">
                     {items.length === 0 ? (
                         <p className="text-muted-foreground text-center py-8">{ct("crud_noItems")}</p>
+                    ) : shown.length === 0 ? (
+                        /* Not "no items yet": that sentence in front of a full
+                           list tells an operator their data has gone. */
+                        <p className="text-muted-foreground text-center py-8">{commonT("noResults")}</p>
                     ) : (
                         <div className="divide-y">
                             {/* Two hundred rows and no select-all is two
