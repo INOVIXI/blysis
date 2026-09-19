@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, Checkbox, Input, Label, ListControls, Pagination, useRowList, Textarea, useConfirm, useFormRoute, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
+import { activityKinds, Button, Card, CardContent, CardHeader, CardTitle, Checkbox, IconPicker, Input, Label, ListControls, Pagination, useRowList, Textarea, useConfirm, useFormRoute, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import {
     ArrowLeft,
     Plus,
+    X,
     Loader2,
     Trash2,
     Pencil,
@@ -16,6 +17,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
 import { deleteEach, errorMessage } from "@/core/sdk";
+import { trophyConditions } from "../../lib/validations";
 
 interface AdminTrophy {
     id: string;
@@ -27,27 +29,14 @@ interface AdminTrophy {
     ruleType: string | null;
     ruleEvent: string | null;
     ruleThreshold: number | null;
+    /** The list, where a trophy has been written since it existed. */
+    rules?: { event: string; threshold: number }[] | null;
+    rulesMode?: string | null;
     isActive: boolean;
     createdAt: string;
     _count?: { users: number };
 }
 
-const SUGGESTED_EVENTS = [
-    "user.registered",
-    "user.login",
-    "forum.topic.created",
-    "forum.post.created",
-    "forum.topic.updated",
-    "blog.article.created",
-    "store.order.completed",
-    "vote.vote.cast",
-    "wheel.prize.won",
-    "suggestions.suggestion.created",
-    "tickets.ticket.opened",
-    "custom-forms.submission.created",
-    "downloads.file.downloaded",
-    "credits.credit.added",
-];
 
 type FormState = {
     name: string;
@@ -56,8 +45,9 @@ type FormState = {
     color: string;
     points: string;
     ruleType: string;
-    ruleEvent: string;
-    ruleThreshold: string;
+    /** One row each: what they did, and how many times. */
+    conditions: { event: string; threshold: string }[];
+    rulesMode: string;
     isActive: boolean;
 };
 
@@ -68,16 +58,38 @@ const BLANK_FORM: FormState = {
     color: "#f59e0b",
     points: "10",
     ruleType: "event-count",
-    ruleEvent: "",
-    ruleThreshold: "1",
+    conditions: [],
+    rulesMode: "all",
     isActive: true,
 };
+
+/**
+ * Every kind of activity anything on this site writes, which is what a trophy
+ * can wait for.
+ *
+ * This screen used to keep its own list of fourteen suggested strings beside
+ * a free text box. Three of them named nothing that is ever written -
+ * `user.login`, `forum.topic.updated`, and `custom-forms.submission.created`,
+ * which is a misspelling of a real one - so the suggestions themselves led an
+ * operator to a trophy that could never be awarded. Core declares these and
+ * names each in both languages; there is nothing here to keep in step.
+ */
+const KINDS = activityKinds();
+
+/** The form holds strings because its boxes do; the API takes numbers. */
+function conditionsPayload(rows: { event: string; threshold: string }[]) {
+    return rows
+        .filter((row) => row.event.trim() !== "")
+        .map((row) => ({ event: row.event, threshold: Math.max(1, parseInt(row.threshold) || 1) }));
+}
 
 export default function AdminTrophiesPage() {
     const t = useTranslations("trophies");
     const commonT = useTranslations("common");
     const tc = useTranslations("admin");
     const { confirm } = useConfirm();
+    // The kinds are named in the activity namespace, where the feed reads them.
+    const activityT = useTranslations("activity");
     const [trophies, setTrophies] = useState<AdminTrophy[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -128,8 +140,11 @@ export default function AdminTrophiesPage() {
             color: editing.color || "#f59e0b",
             points: String(editing.points),
             ruleType: editing.ruleType || "event-count",
-            ruleEvent: editing.ruleEvent || "",
-            ruleThreshold: String(editing.ruleThreshold ?? 1),
+            // The old columns are read as the list of one they describe, so a
+            // trophy written before this change opens with its condition in
+            // the list rather than empty.
+            conditions: trophyConditions(editing).map((c) => ({ event: c.event, threshold: String(c.threshold) })),
+            rulesMode: editing.rulesMode === "any" ? "any" : "all",
             isActive: editing.isActive,
         });
     }, [editing]);
@@ -142,12 +157,27 @@ export default function AdminTrophiesPage() {
         }
     };
 
+    const addCondition = () => setForm((f) => ({
+        ...f,
+        conditions: [...f.conditions, { event: KINDS[0]?.type ?? "", threshold: "1" }],
+    }));
+
+    const setCondition = (i: number, patch: Partial<{ event: string; threshold: string }>) =>
+        setForm((f) => ({
+            ...f,
+            conditions: f.conditions.map((c, idx) => (idx === i ? { ...c, ...patch } : c)),
+        }));
+
+    const removeCondition = (i: number) =>
+        setForm((f) => ({ ...f, conditions: f.conditions.filter((_, idx) => idx !== i) }));
+
     const handleSave = async () => {
         if (!form.name.trim()) {
             toast.error(t("nameRequired"));
             return;
         }
         setSaving(true);
+        const conditions = conditionsPayload(form.conditions);
         const payload = {
             name: form.name.trim(),
             description: form.description.trim() || null,
@@ -155,12 +185,20 @@ export default function AdminTrophiesPage() {
             color: form.color.trim() || null,
             points: parseInt(form.points) || 0,
             ruleType: form.ruleType.trim() || "event-count",
-            ruleEvent: form.ruleEvent.trim() || null,
-            ruleThreshold: parseInt(form.ruleThreshold) || 1,
+            rules: conditions,
+            rulesMode: form.rulesMode,
+            // Kept in step so anything still reading the old columns - an
+            // export, another installation's engine before it is updated -
+            // sees the first condition rather than nothing.
+            ruleEvent: conditions[0]?.event ?? null,
+            ruleThreshold: conditions[0]?.threshold ?? null,
             isActive: form.isActive,
         };
         try {
-            const originalEvent = editing?.ruleEvent || null;
+            // The engine installs one listener per event, so it has to be
+            // told whenever the set of events a trophy waits for changes -
+            // which is the whole list now, not one column.
+            const wasListeningFor = JSON.stringify(trophyConditions(editing ?? {}).map((c) => c.event).sort());
             const res = await fetch(
                 editing ? `/api/v1/admin/trophies/${editing.id}` : "/api/v1/admin/trophies",
                 {
@@ -175,7 +213,7 @@ export default function AdminTrophiesPage() {
                 return;
             }
             toast.success(editing ? t("updated") : t("created"));
-            if (payload.ruleEvent !== originalEvent) {
+            if (JSON.stringify(conditions.map((c) => c.event).sort()) !== wasListeningFor) {
                 await reloadEngine();
             }
             closeForm();
@@ -283,11 +321,11 @@ export default function AdminTrophiesPage() {
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <Label>{t("lucideIcon")}</Label>
-                                    <Input
-                                        aria-label={t("lucideIcon")}
+                                    {/* Picked, not typed. A misspelled icon
+                                        name drew nothing and said nothing. */}
+                                    <IconPicker
                                         value={form.icon}
-                                        onChange={(e) => setForm({ ...form, icon: e.target.value })}
-                                        placeholder={t("adm_categoryPlaceholder")}
+                                        onChange={(icon) => setForm({ ...form, icon })}
                                     />
                                 </div>
                                 <div>
@@ -308,58 +346,120 @@ export default function AdminTrophiesPage() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <Label>{t("points")}</Label>
-                                    <Input
-                                        aria-label={t("points")}
-                                        type="number"
-                                        value={form.points}
-                                        onChange={(e) => setForm({ ...form, points: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <Label>{t("ruleType")}</Label>
-                                    <NativeSelect
-                                        aria-label={t("ruleType")}
-                                        value={form.ruleType}
-                                        onChange={(e) => setForm({ ...form, ruleType: e.target.value })} className="w-full" inputSize="sm"
-                                    >
-                                        <option value="event-count">event-count</option>
-                                    </NativeSelect>
-                                </div>
-                            </div>
                             <div>
-                                <Label>{t("ruleEvent")}</Label>
+                                <Label>{t("points")}</Label>
                                 <Input
-                                    aria-label={t("ruleEvent")}
-                                    list="trophy-event-suggestions"
-                                    value={form.ruleEvent}
-                                    onChange={(e) => setForm({ ...form, ruleEvent: e.target.value })}
-                                    placeholder="forum.topic.created"
-                                />
-                                <datalist id="trophy-event-suggestions">
-                                    {SUGGESTED_EVENTS.map((ev) => (
-                                        <option key={ev} value={ev} />
-                                    ))}
-                                </datalist>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                    {t("ruleEventHint")}
-                                </p>
-                            </div>
-                            <div>
-                                <Label>{t("ruleThreshold")}</Label>
-                                <Input
-                                    aria-label={t("ruleThreshold")}
+                                    aria-label={t("points")}
                                     type="number"
-                                    min="1"
-                                    value={form.ruleThreshold}
-                                    onChange={(e) => setForm({ ...form, ruleThreshold: e.target.value })}
+                                    className="max-w-40"
+                                    value={form.points}
+                                    onChange={(e) => setForm({ ...form, points: e.target.value })}
                                 />
-                                <p className="text-xs text-muted-foreground mt-1">
-                                    {t("thresholdHint")}
-                                </p>
                             </div>
+
+                            {/*
+                              * What earns it.
+                              *
+                              * This was one free text box holding a string
+                              * like `forum.topic.created`: an operator had to
+                              * know the string existed, spell it, and know it
+                              * was the one the engine counts - and a
+                              * misspelling made a trophy nobody could ever be
+                              * given, with nothing on the screen to say so.
+                              * The site declares every kind of activity
+                              * anything writes and names each one in both
+                              * languages, so those are what is offered.
+                              *
+                              * And there is more than one of them now. A
+                              * trophy for somebody who has written ten forum
+                              * posts and bought something could not be
+                              * described at all before.
+                              */}
+                            <div className="space-y-3 rounded-lg border border-border p-3">
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                    <div>
+                                        <Label>{t("adm_conditions")}</Label>
+                                        <p className="text-xs text-muted-foreground">{t("adm_conditionsHint")}</p>
+                                    </div>
+                                    <Button type="button" variant="outline" size="sm" onClick={addCondition}>
+                                        <Plus className="w-3 h-3" /> {t("adm_addCondition")}
+                                    </Button>
+                                </div>
+
+                                {form.conditions.length === 0 ? (
+                                    <p className="text-sm text-muted-foreground">{t("adm_manualOnly")}</p>
+                                ) : (
+                                    <>
+                                        {form.conditions.map((condition, i) => (
+                                            <div key={i} className="grid gap-2 md:grid-cols-[1fr_8rem_auto] md:items-end">
+                                                <div>
+                                                    <Label>{t("adm_conditionEvent")}</Label>
+                                                    <NativeSelect
+                                                        aria-label={t("adm_conditionEvent")}
+                                                        className="w-full"
+                                                        value={condition.event}
+                                                        onChange={(e) => setCondition(i, { event: e.target.value })}
+                                                    >
+                                                        {/* A kind whose module has since been
+                                                            uninstalled is still what this trophy
+                                                            waits for, so it stays in the list and
+                                                            says what happened to it. */}
+                                                        {!KINDS.some((k) => k.type === condition.event) && condition.event && (
+                                                            <option value={condition.event}>
+                                                                {t("adm_kindGone", { type: condition.event })}
+                                                            </option>
+                                                        )}
+                                                        {KINDS.map((kind) => (
+                                                            <option key={kind.type} value={kind.type}>
+                                                                {activityT.has(kind.nameKey) ? activityT(kind.nameKey) : kind.type}
+                                                            </option>
+                                                        ))}
+                                                    </NativeSelect>
+                                                </div>
+                                                <div>
+                                                    <Label>{t("adm_conditionThreshold")}</Label>
+                                                    <Input
+                                                        aria-label={t("adm_conditionThreshold")}
+                                                        type="number"
+                                                        min="1"
+                                                        value={condition.threshold}
+                                                        onChange={(e) => setCondition(i, { threshold: e.target.value })}
+                                                    />
+                                                </div>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    aria-label={t("adm_removeCondition")}
+                                                    onClick={() => removeCondition(i)}
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        ))}
+
+                                        {/* Only worth asking once there are two. */}
+                                        {form.conditions.length > 1 && (
+                                            <div>
+                                                <Label>{t("adm_mode")}</Label>
+                                                {/* The measure is on the
+                                                    control, not on the
+                                                    screen. */}
+                                                <NativeSelect
+                                                    aria-label={t("adm_mode")}
+                                                    className="w-full max-w-60"
+                                                    value={form.rulesMode}
+                                                    onChange={(e) => setForm({ ...form, rulesMode: e.target.value })}
+                                                >
+                                                    <option value="all">{t("adm_modeAll")}</option>
+                                                    <option value="any">{t("adm_modeAny")}</option>
+                                                </NativeSelect>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+
                             <CheckboxField
                                 id="trophy-active"
                                 checked={form.isActive}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { invalidate, isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
+import { RULES_MODES, trophyRuleSchema } from "../../lib/validations";
 
 /**
  * Admin trophy CRUD.
@@ -43,6 +44,12 @@ const createSchema = z.object({
     ruleType: z.string().max(50).optional().nullable(),
     ruleEvent: z.string().max(120).optional().nullable(),
     ruleThreshold: z.number().int().min(1).optional().nullable(),
+    // A trophy can wait for more than one thing. The two columns above stay,
+    // holding the first of them, so anything still reading those - an export,
+    // an installation whose engine has not been updated - sees a rule rather
+    // than nothing.
+    rules: z.array(trophyRuleSchema).max(20).optional().nullable(),
+    rulesMode: z.enum(RULES_MODES).optional().nullable(),
     isActive: z.boolean().optional(),
 });
 
@@ -73,6 +80,11 @@ export async function POST(request: NextRequest) {
             ruleType: data.ruleType ?? "event-count",
             ruleEvent: data.ruleEvent || null,
             ruleThreshold: data.ruleThreshold ?? 1,
+            // The list, where the screen sent one. Named explicitly rather
+            // than spread, which is why `layout` went missing from the store's
+            // categories for as long as it did.
+            rules: data.rules ?? undefined,
+            rulesMode: data.rulesMode ?? "all",
             isActive: data.isActive ?? true,
             // Keep legacy awardOn in sync so older consumers keep working.
             awardOn: data.ruleEvent ? `${data.ruleEvent}:${data.ruleThreshold ?? 1}` : null,

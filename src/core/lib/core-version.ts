@@ -12,6 +12,14 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.3.0 - `activityKinds` and `activityTypeLabel` join `@/core/sdk/ui`. Every
+ * kind of activity anything writes is declared in a manifest and named in
+ * both languages, and until now only core could read that list. The trophies
+ * module asked an operator to type one of those strings into a free text box
+ * beside fourteen suggestions it kept by hand - three of which named nothing
+ * that is ever written, one a misspelling of a real one - and a mistake made
+ * a trophy that could never be awarded to anybody, silently.
+ *
  * 5.2.0 - `RichTextEditor` takes `minHeight`. Three hundred pixels is right
  * for an article and wrong for a sentence: on the shop's shelf form the
  * editor stood in the middle of the page as though a category's one-line
@@ -477,4 +485,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.2.0";
+export const CORE_API_VERSION = "5.3.0";

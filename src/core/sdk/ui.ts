@@ -105,6 +105,12 @@ export { UrlOrFile } from "@/core/components/ui/url-or-file";
  * about what to show for the members who have no picture, which is most of
  * them.
  */
+/*
+ * What a kind of activity is called, and the list of them. A screen that
+ * offers these to an operator - a trophy's rule, an activity filter - and a
+ * screen that prints one back read the same map.
+ */
+export { activityKinds, activityTypeLabel } from "@/core/lib/activity-title";
 export { MemberAvatar } from "@/core/components/ui/MemberAvatar";
 export { MemberLink } from "@/core/components/ui/MemberLink";
 export { CountBadge } from "@/core/components/ui/count-badge";

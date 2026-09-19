@@ -40,6 +40,9 @@ vi.mock("@/core/hooks/useSiteSettings", () => ({ useSiteSettings: () => ({ setti
 vi.mock("@/core/providers/module-provider", () => ({ useAllModules: () => ({}) }));
 vi.mock("@/core/providers/theme-provider", () => ({ useTheme: () => ({ activeTheme: null }) }));
 vi.mock("@/core/generated/module-registry", () => ({
+    // `@/core/sdk/ui` reads the activity kinds through this, so a mock
+    // that leaves it out breaks on import rather than on an assertion.
+    ModuleActivityTitles: [],
     ModuleNavLinks: links, ModuleRoutes: [], ModuleNavbarComponents: [], NavbarComponentRegistry: {},
 }));
 vi.mock("@/core/generated/theme-components", () => ({ getThemeComponent: () => null }));

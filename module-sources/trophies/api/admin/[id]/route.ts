@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { invalidate, isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
+import { RULES_MODES, trophyRuleSchema } from "../../../lib/validations";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -35,6 +36,11 @@ const patchSchema = z.object({
     ruleType: z.string().max(50).nullable().optional(),
     ruleEvent: z.string().max(120).nullable().optional(),
     ruleThreshold: z.number().int().min(1).nullable().optional(),
+    // A trophy can wait for more than one thing. The two columns above stay,
+    // holding the first of them, so anything still reading those sees a rule
+    // rather than nothing.
+    rules: z.array(trophyRuleSchema).max(20).nullable().optional(),
+    rulesMode: z.enum(RULES_MODES).nullable().optional(),
     isActive: z.boolean().optional(),
 });
 
@@ -65,6 +71,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (data.ruleType !== undefined) update.ruleType = data.ruleType;
     if (data.ruleEvent !== undefined) update.ruleEvent = data.ruleEvent;
     if (data.ruleThreshold !== undefined) update.ruleThreshold = data.ruleThreshold;
+    if (data.rules !== undefined) update.rules = data.rules;
+    if (data.rulesMode !== undefined) update.rulesMode = data.rulesMode;
     if (data.isActive !== undefined) update.isActive = data.isActive;
 
     // Keep legacy `awardOn` in sync whenever the rule changes.

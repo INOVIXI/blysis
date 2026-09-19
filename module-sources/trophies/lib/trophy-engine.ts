@@ -1,5 +1,6 @@
 import { addAction } from "@/core/sdk";
 import { log, prisma } from "@/core/sdk/server";
+import { trophyConditions, type RulesMode, type TrophyRule } from "./validations";
 
 /**
  * Trophy auto-award engine (DB-driven).
@@ -26,13 +27,24 @@ import { log, prisma } from "@/core/sdk/server";
  * "reload" endpoint to re-wire after rule edits.
  */
 
-interface TrophyRule {
+/**
+ * One trophy and everything it is waiting for.
+ *
+ * This used to be one rule - one event, one threshold - and a trophy was that
+ * rule. A trophy for somebody who has written ten forum posts *and* bought
+ * something could not be described, so the shape is a trophy holding a list
+ * of conditions, and `mode` says whether all of them or any of them earns it.
+ *
+ * A trophy still listens on every event any of its conditions names; what
+ * changed is what happens when one fires. Before, that condition alone
+ * decided. Now the whole trophy is re-asked, because the condition that
+ * fired may be the last of three.
+ */
+interface WatchedTrophy {
     /** Trophy row id (used for the userTrophy upsert). */
     trophyId: string;
-    /** Hook event name this rule listens to. */
-    event: string;
-    /** Minimum matching event count required to award. */
-    threshold: number;
+    mode: RulesMode;
+    conditions: TrophyRule[];
 }
 
 /**
@@ -73,31 +85,41 @@ export async function seedDefaultTrophies(): Promise<void> {
 
 let registered = false;
 
-async function qualifies(userId: string, rule: TrophyRule): Promise<boolean> {
+/**
+ * Whether this member has done everything - or anything - the trophy asks.
+ *
+ * A read that fails is not a member who has not qualified, so it refuses
+ * rather than awarding: the alternative under `any` would be to hand out a
+ * trophy because a count could not be taken.
+ */
+async function qualifies(userId: string, watched: WatchedTrophy): Promise<boolean> {
     try {
-        const count = await prisma.activityFeedItem.count({
-            where: { actorId: userId, type: rule.event },
-        });
-        return count >= rule.threshold;
+        const met = await Promise.all(watched.conditions.map(async (condition) => {
+            const count = await prisma.activityFeedItem.count({
+                where: { actorId: userId, type: condition.event },
+            });
+            return count >= condition.threshold;
+        }));
+        return watched.mode === "any" ? met.some(Boolean) : met.every(Boolean);
     } catch {
         return false;
     }
 }
 
-async function awardIfQualified(userId: string, rule: TrophyRule): Promise<void> {
-    if (!(await qualifies(userId, rule))) return;
+async function awardIfQualified(userId: string, watched: WatchedTrophy): Promise<void> {
+    if (!(await qualifies(userId, watched))) return;
     try {
         // Ensure trophy row exists - do not crash if it was deleted mid-flight.
         const trophy = await prisma.trophy.findUnique({
-            where: { id: rule.trophyId },
+            where: { id: watched.trophyId },
             select: { id: true, isActive: true },
         });
         if (!trophy || trophy.isActive === false) return;
 
         await prisma.userTrophy.upsert({
-            where: { userId_trophyId: { userId, trophyId: rule.trophyId } },
+            where: { userId_trophyId: { userId, trophyId: watched.trophyId } },
             update: {},
-            create: { userId, trophyId: rule.trophyId },
+            create: { userId, trophyId: watched.trophyId },
         });
     } catch {
         /* non-fatal: unique violations, DB hiccups */
@@ -109,25 +131,30 @@ async function awardIfQualified(userId: string, rule: TrophyRule): Promise<void>
  * logs a warning if the query fails - core does not ship any module-aware
  * fallback rules.
  */
-async function loadRules(): Promise<TrophyRule[]> {
+async function loadRules(): Promise<WatchedTrophy[]> {
     try {
+        // Not `ruleEvent: { not: null }` any more: a trophy whose conditions
+        // are in the list column has that one null, and filtering on it in
+        // SQL would have quietly dropped every trophy written after this
+        // change.
         const rows = await prisma.trophy.findMany({
-            where: { isActive: true, ruleEvent: { not: null } },
-            select: { id: true, ruleEvent: true, ruleThreshold: true, ruleType: true },
+            where: { isActive: true },
+            select: { id: true, ruleEvent: true, ruleThreshold: true, ruleType: true, rules: true, rulesMode: true },
         });
-        const rules: TrophyRule[] = [];
+        const watched: WatchedTrophy[] = [];
         for (const r of rows) {
-            if (!r.ruleEvent) continue;
             // Only event-count is implemented today; other types no-op
             // gracefully so the admin can stage them ahead of engine support.
             if (r.ruleType && r.ruleType !== "event-count") continue;
-            rules.push({
+            const conditions = trophyConditions(r);
+            if (conditions.length === 0) continue;
+            watched.push({
                 trophyId: r.id,
-                event: r.ruleEvent,
-                threshold: r.ruleThreshold ?? 1,
+                mode: r.rulesMode === "any" ? "any" : "all",
+                conditions,
             });
         }
-        return rules;
+        return watched;
     } catch (err) {
         log.warn("[trophy-engine] DB rule load failed; no trophy rules will be wired this boot", { error: String((err as Error).message) });
         return [];
@@ -148,15 +175,19 @@ export async function registerTrophyListeners(force = false): Promise<void> {
     if (registered && !force) return;
     registered = true;
 
-    const rules = await loadRules();
-    if (rules.length === 0) return;
+    const watched = await loadRules();
+    if (watched.length === 0) return;
 
-    // Group rules by event so each hook gets exactly one listener.
-    const byEvent = new Map<string, TrophyRule[]>();
-    for (const rule of rules) {
-        const list = byEvent.get(rule.event) || [];
-        list.push(rule);
-        byEvent.set(rule.event, list);
+    // Grouped by event so each hook gets exactly one listener - and a trophy
+    // with three conditions appears under all three, because any of them
+    // arriving may be the one that completes it.
+    const byEvent = new Map<string, WatchedTrophy[]>();
+    for (const trophy of watched) {
+        for (const condition of trophy.conditions) {
+            const list = byEvent.get(condition.event) || [];
+            if (!list.includes(trophy)) list.push(trophy);
+            byEvent.set(condition.event, list);
+        }
     }
 
     for (const [event, eventRules] of byEvent.entries()) {
@@ -166,8 +197,8 @@ export async function registerTrophyListeners(force = false): Promise<void> {
         addAction(event, async (payload: { userId?: string; authorId?: string }) => {
             const userId = payload.userId || payload.authorId;
             if (!userId) return;
-            for (const rule of eventRules) {
-                await awardIfQualified(userId, rule);
+            for (const trophy of eventRules) {
+                await awardIfQualified(userId, trophy);
             }
         });
     }

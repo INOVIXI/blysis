@@ -35,7 +35,6 @@ const EXEMPT: Record<string, string> = {
     "UserSession.isRevoked": "always paired with userId or expiresAt, both indexed",
     "UserSession.lastActiveAt": "always paired with tokenId, which is unique, so the planner has one row before this condition is applied",
     "Trophy.isActive": "a curated list an admin writes, tens of rows at most",
-    "Trophy.ruleEvent": "the same curated table, and the award check reads all of it",
     "Referral.status": "one row per referral, and the admin screen reads them all anyway",
     "HelpArticle.isActive": "a curated list, and the sitemap build is not a request path",
     "GiftCode.isRedeemed": "paired with the unique code on the redeem path",

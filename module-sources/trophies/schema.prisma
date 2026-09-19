@@ -28,6 +28,15 @@ model Trophy {
   ruleType      String?  @default("event-count")
   ruleEvent     String?
   ruleThreshold Int?     @default(1)
+  /// More than one condition, as `[{ "event": "...", "threshold": 3 }, ...]`.
+  /// A trophy for somebody who has written ten forum posts *and* bought
+  /// something could not be described with the single pair above, which is
+  /// the whole reason this column exists. Additive: a row that has only the
+  /// old columns is read as a list of one, so every trophy already in a
+  /// database keeps being awarded.
+  rules         Json?
+  /// "all" or "any". Which it is only matters once there are two.
+  rulesMode     String?  @default("all")
   isActive      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
