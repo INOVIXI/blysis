@@ -83,11 +83,29 @@ function resolveImport(spec: string, fromFile: string): string[] {
  * Barrel files (`@/core/sdk/*`) mean the chain is a few hops long, so this
  * follows imports to a small depth rather than only looking at the page.
  */
+/**
+ * Read and stripped once per file, for the whole run.
+ *
+ * The walk below starts again at every page, so a component imported by a
+ * hundred of them was read from disk and stripped a hundred times. On a busy
+ * box that was enough to push this test past its five-second limit - twice,
+ * on nothing but load, which is the kind of red that teaches people to re-run
+ * rather than to look.
+ */
+const stripped = new Map<string, string | null>();
+
+function sourceOf(file: string): string | null {
+    if (!stripped.has(file)) {
+        stripped.set(file, fs.existsSync(file) ? stripComments(fs.readFileSync(file, "utf8")) : null);
+    }
+    return stripped.get(file) ?? null;
+}
+
 export function reachesAnH1(file: string, depth = 0, seen = new Set<string>()): boolean {
     if (depth > 3 || seen.has(file)) return false;
     seen.add(file);
-    if (!fs.existsSync(file)) return false;
-    const source = stripComments(fs.readFileSync(file, "utf8"));
+    const source = sourceOf(file);
+    if (source === null) return false;
     if (/<h1[\s>]/.test(source) || /as=["']h1["']/.test(source)) return true;
     for (const [, spec] of source.matchAll(/from\s+["']([^"']+)["']/g)) {
         for (const target of resolveImport(spec, file)) {
