@@ -7,7 +7,7 @@ import { Link } from "@/core/sdk/navigation";
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, ListControls, LoadFailed, Pagination, buttonClassName, useRowList } from "@/core/sdk/ui";
 import { useRelativeTime } from "@/core/sdk/ui";
 import { adminKeys, labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../lib/status-labels";
-import { AdminPageHeader } from "@/core/sdk/admin";
+import { AdminPageHeader, FilterChips } from "@/core/sdk/admin";
 
 /** The admin catalogue's copy of the status labels. */
 const ADMIN_STATUS_KEYS = adminKeys(STATUS_KEYS);
@@ -38,7 +38,21 @@ export default function AdminTicketsPage() {
     const [reloadKey, setReloadKey] = useState(0);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState("");
-    const [stats, setStats] = useState({ open: 0, inProgress: 0, waiting: 0, closed: 0 });
+    /*
+     * One count per tab, and the strip has a tab for every status the filter
+     * offers. RESOLVED had a button and no number, because the four cards
+     * this replaced were written before that status existed and nobody went
+     * back. A tab whose count is missing is a tab that reads as empty.
+     */
+    const STATUSES = ["OPEN", "IN_PROGRESS", "WAITING_REPLY", "RESOLVED", "CLOSED"] as const;
+    const STATUS_LABEL: Record<(typeof STATUSES)[number], string> = {
+        OPEN: "open",
+        IN_PROGRESS: "inProgress",
+        WAITING_REPLY: "waitingReply",
+        RESOLVED: "resolved",
+        CLOSED: "closed",
+    };
+    const [stats, setStats] = useState<Record<string, number>>({});
 
     useEffect(() => {
         let cancelled = false;
@@ -63,20 +77,27 @@ export default function AdminTicketsPage() {
     }, [statusFilter, reloadKey]);
 
     useEffect(() => {
-        // Fetch stats
-        Promise.all([
-            fetch("/api/v1/tickets?status=OPEN").then(r => r.json()),
-            fetch("/api/v1/tickets?status=IN_PROGRESS").then(r => r.json()),
-            fetch("/api/v1/tickets?status=WAITING_REPLY").then(r => r.json()),
-            fetch("/api/v1/tickets?status=CLOSED").then(r => r.json()),
-        ]).then(([open, inProgress, waiting, closed]) => {
-            setStats({
-                open: open.pagination?.total || 0,
-                inProgress: inProgress.pagination?.total || 0,
-                waiting: waiting.pagination?.total || 0,
-                closed: closed.pagination?.total || 0,
-            });
-        }).catch(console.error);
+        let cancelled = false;
+        Promise.all(STATUSES.map((status) =>
+            fetch(`/api/v1/tickets?status=${status}`)
+                .then((r) => (r.ok ? r.json() : null))
+                .then((d) => [status, d === null ? null : (d?.pagination?.total ?? 0)] as const),
+        )).then((pairs) => {
+            // A count that could not be read is not zero. The chip leaves its
+            // number out where there is none, so "we could not ask" looks
+            // different from "nothing is waiting" - which is the whole reason
+            // a zero is drawn rather than dropped.
+            if (!cancelled) setStats(Object.fromEntries(pairs.filter(([, total]) => total !== null)));
+        }).catch((err) => {
+            // Blank chips are the trace a reader gets: no number is not zero.
+            // The reason goes to the console because this is a second read
+            // beside the list, and a toast over a list that loaded fine would
+            // be telling an operator about something they are not blocked on.
+            if (!cancelled) setStats({});
+            console.error("ticket counts could not be read", err);
+        });
+        return () => { cancelled = true; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -86,87 +107,29 @@ export default function AdminTicketsPage() {
                 description={t("adm_manageTickets")}
             />
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setStatusFilter("OPEN")}>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">{t("adm_open")}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-2xl font-bold text-primary">{stats.open}</p>
-                    </CardContent>
-                </Card>
-                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setStatusFilter("IN_PROGRESS")}>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">{t("adm_inProgress")}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-2xl font-bold text-warning">{stats.inProgress}</p>
-                    </CardContent>
-                </Card>
-                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setStatusFilter("WAITING_REPLY")}>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">{t("adm_waitingReply")}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-2xl font-bold text-secondary">{stats.waiting}</p>
-                    </CardContent>
-                </Card>
-                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setStatusFilter("")}>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">{t("adm_closed")}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-2xl font-bold text-muted-foreground">{stats.closed}</p>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Filter */}
-            <div className="flex gap-2 mb-4">
-                <Button
-                    variant={statusFilter === "" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setStatusFilter("")}
-                >
-                    {t("adm_all")}
-                </Button>
-                <Button
-                    variant={statusFilter === "OPEN" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setStatusFilter("OPEN")}
-                >
-                    {t("adm_open")}
-                </Button>
-                <Button
-                    variant={statusFilter === "IN_PROGRESS" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setStatusFilter("IN_PROGRESS")}
-                >
-                    {t("adm_inProgress")}
-                </Button>
-                <Button
-                    variant={statusFilter === "WAITING_REPLY" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setStatusFilter("WAITING_REPLY")}
-                >
-                    {t("adm_waitingReply")}
-                </Button>
-                <Button
-                    variant={statusFilter === "RESOLVED" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setStatusFilter("RESOLVED")}
-                >
-                    {t("adm_resolved")}
-                </Button>
-                <Button
-                    variant={statusFilter === "CLOSED" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setStatusFilter("CLOSED")}
-                >
-                    {t("adm_closed")}
-                </Button>
-            </div>
+            {/*
+              * One strip, not four cards and a row of buttons beneath them.
+              * The cards were the counts and the buttons were the filter, and
+              * both narrowed the same list - so the same five numbers were on
+              * the screen twice, and clicking a card set a filter the buttons
+              * below then disagreed about. A count with nothing waiting keeps
+              * its zero, so the strip does not change width as tickets
+              * arrive.
+              */}
+            <FilterChips
+                className="mb-4"
+                label={t("adm_status")}
+                active={statusFilter}
+                onSelect={setStatusFilter}
+                chips={[
+                    { id: "", label: t("adm_all") },
+                    ...STATUSES.map((status) => ({
+                        id: status,
+                        label: t(`adm_${STATUS_LABEL[status]}`),
+                        count: stats[status],
+                    })),
+                ]}
+            />
 
             <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
 
@@ -204,7 +167,8 @@ export default function AdminTicketsPage() {
                                         <Link href={`/admin/tickets/${ticket.id}`} className="text-primary hover:underline font-medium">
                                             {ticket.subject}
                                         </Link>
-                                        <p className="text-xs text-muted-foreground">{ticket._count.messages} messages</p>
+                                        {/* English, on a Turkish page, and "1 messages" in either. */}
+                                        <p className="text-xs text-muted-foreground">{t("adm_messageCount", { count: ticket._count.messages })}</p>
                                     </td>
                                     <td className="px-4 py-4 text-sm">
                                         {ticket.user.username}

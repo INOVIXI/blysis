@@ -116,6 +116,7 @@
         "moderationSettings_suggestions": "Suggestions",
         "moderationSettings_suggestionsDesc": "Require approval before user suggestions are listed publicly.",
         "moderation_suggestion": "Suggestions",
+        "moderation_suggestionComment": "Suggestion Comments",
         "module_suggestions_description": "Community feature suggestions with voting",
         "module_suggestions_name": "Suggestions"
       },
@@ -206,6 +207,7 @@
         "moderationSettings_suggestions": "Öneriler",
         "moderationSettings_suggestionsDesc": "Kullanıcı önerilerinin herkese açık listelenmeden önce onay gerektirmesi.",
         "moderation_suggestion": "Öneriler",
+        "moderation_suggestionComment": "Öneri Yorumları",
         "module_suggestions_description": "Oylamalı topluluk özellik önerileri",
         "module_suggestions_name": "Öneriler"
       },

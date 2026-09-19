@@ -9,7 +9,7 @@ import { Badge, Button, Card, CardContent, CardHeader, CardTitle, ListControls, 
 import { Loader2, Plus, ShoppingCart } from "lucide-react";
 import { dateLocaleTag } from "@/core/sdk";
 import { adminOrderStatusKeys, orderStatusLabel, orderStatusTone } from "../../../lib/order-status";
-import { AdminPageHeader } from "@/core/sdk/admin";
+import { AdminPageHeader, FilterChips } from "@/core/sdk/admin";
 import { NewOrderForm } from "./NewOrderForm";
 
 /** The admin catalogue's copy of the order status labels. */
@@ -107,22 +107,21 @@ export default function AdminOrdersPage() {
                 search={{ value: search, onChange: (term) => { setSearch(term); setPage(1); } }}
             />
 
-            {/* Status Filter Tabs */}
-            <div className="flex gap-2 mb-6 flex-wrap">
-                {statuses.map((status) => (
-                    <Button
-                        key={status}
-                        variant={activeStatus === status ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => { setActiveStatus(status); setPage(1); }}
-                    >
-                        {status === "ALL" ? t("adm_all") : t(`adm_orderStatus_${status}`)}
-                        {status !== "ALL" && counts[status] ? (
-                            <span className="text-xs opacity-70">({counts[status]})</span>
-                        ) : null}
-                    </Button>
+            {/* The counts come from the endpoint, not from the page in the
+                browser: this screen used to count the ten rows it had. A kind
+                with none waiting keeps its zero so the strip does not change
+                width as orders arrive. */}
+            <FilterChips
+                className="mb-6"
+                label={t("adm_status")}
+                active={activeStatus}
+                onSelect={(status) => { setActiveStatus(status); setPage(1); }}
+                chips={statuses.map((status) => (
+                    status === "ALL"
+                        ? { id: status, label: t("adm_all") }
+                        : { id: status, label: t(`adm_orderStatus_${status}`), count: counts[status] || 0 }
                 ))}
-            </div>
+            />
 
             <Card>
                 <CardHeader>

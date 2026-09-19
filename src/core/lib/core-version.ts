@@ -12,6 +12,20 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.1.0 - `FilterTabs` joins `@/core/sdk/admin`, and `BulkBar` takes `idle`.
+ * Three screens drew a strip that narrows a list to one named kind and all
+ * three drew it differently. The moderation queue set its count in a
+ * ten-pixel span pressed against the label, so the name and the number ran
+ * together, and a kind with nothing waiting got no count at all - so that tab
+ * was visibly shorter than the ones beside it, which is what "broken and out
+ * of proportion" was. The orders screen put its count in brackets, also only
+ * when it was not zero. The ticket queue had no counts on its tabs and four
+ * cards above them holding the same five numbers.
+ *
+ * A count of zero is shown: dropping it is what made the strip jump, and it
+ * takes information away at the same time, because an operator cannot tell
+ * "nothing is waiting here" from "this screen does not count that".
+ *
  * 5.0.0 - `@/core/sdk/blocks` is gone, and so is `pageBlocks` in the manifest.
  * A custom page has one `content` column and two editors were pointed at it: a
  * rich text box and a drag-and-drop block builder whose output was a JSON
@@ -457,4 +471,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.0.0";
+export const CORE_API_VERSION = "5.1.0";

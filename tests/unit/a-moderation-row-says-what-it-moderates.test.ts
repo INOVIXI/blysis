@@ -28,6 +28,8 @@ const MODULES = path.join(ROOT, "module-sources");
 
 interface Provider {
     id: string;
+    label: string;
+    labelKey?: string;
     settingKey?: string;
     settingLabelKey?: string;
     settingDescKey?: string;
@@ -90,12 +92,42 @@ describe("a moderation setting", () => {
         for (const { provider } of rows) {
             for (const locale of ["en", "tr"]) {
                 const admin = coreAdmin(locale);
-                for (const key of [provider.settingLabelKey, provider.settingDescKey]) {
+                for (const key of [provider.labelKey, provider.settingLabelKey, provider.settingDescKey]) {
                     if (key && key in admin) named.push(`${locale}: admin.${key}`);
                 }
             }
         }
         expect(named).toEqual([]);
+    });
+
+    it("names the kind of thing on the queue as well, in both languages", () => {
+        /*
+         * The rule above was written for the settings screen and only ever
+         * read `settingLabelKey`, so the queue kept the bug the settings
+         * screen was fixed for. `moderation_suggestionComment` was declared
+         * by the provider and shipped by nobody, and the queue drew the
+         * manifest's English literal - "Suggestion comments" - as a tab and
+         * again on every row of a Turkish page.
+         *
+         * That fallback is what makes this invisible: a missing string does
+         * not look missing, it looks like a translation somebody forgot. The
+         * fallback stays, because a third-party provider that ships no string
+         * still has to render something; the check moves here.
+         */
+        const unnamed: string[] = [];
+        for (const { module, provider, manifest } of rows) {
+            if (!provider.labelKey) {
+                unnamed.push(`${module}/${provider.id}: declares no labelKey for the queue`);
+                continue;
+            }
+            for (const locale of ["en", "tr"]) {
+                const admin = manifest.translations?.[locale]?.admin ?? {};
+                if (typeof admin[provider.labelKey] !== "string") {
+                    unnamed.push(`${module}/${provider.id} ${locale}: admin.${provider.labelKey}`);
+                }
+            }
+        }
+        expect(unnamed).toEqual([]);
     });
 
     it("shows a mode in words rather than the value it stores", () => {

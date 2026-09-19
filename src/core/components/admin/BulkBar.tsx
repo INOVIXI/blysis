@@ -34,10 +34,16 @@ export interface BulkBarProps {
     onToggleAll: () => void;
     /** Buttons, shown only while something is ticked. */
     actions?: React.ReactNode;
+    /**
+     * What the strip says with nothing ticked, where a screen has something
+     * better to say than how to tick a row - the moderation queue counts what
+     * is waiting, and that number is why an operator opened the screen.
+     */
+    idle?: React.ReactNode;
     className?: string;
 }
 
-export function BulkBar({ state, count, onToggleAll, actions, className }: BulkBarProps) {
+export function BulkBar({ state, count, onToggleAll, actions, idle, className }: BulkBarProps) {
     const t = useTranslations("admin");
 
     return (
@@ -59,7 +65,7 @@ export function BulkBar({ state, count, onToggleAll, actions, className }: BulkB
                 aria-label={t("crud_selectAll")}
             />
             <span className="text-sm text-muted-foreground">
-                {count > 0 ? t("crud_selectedCount", { count }) : t("crud_selectAll")}
+                {count > 0 ? t("crud_selectedCount", { count }) : (idle ?? t("crud_selectAll"))}
             </span>
             {count > 0 && actions ? <div className="ml-auto flex items-center gap-2">{actions}</div> : null}
         </div>

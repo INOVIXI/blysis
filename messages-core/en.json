@@ -292,7 +292,6 @@
     "common_refresh": "Refresh",
     "common_save": "Save",
     "common_saving": "Saving...",
-    "common_selectAll": "Select all",
     "common_selectRow": "Select row",
     "common_status": "Status",
     "common_subject": "Subject",
@@ -631,7 +630,6 @@
     "moderation_rejected": "Rejected {count} items",
     "moderation_rejectedSingle": "Rejected",
     "moderation_selectAtLeast": "Select at least one item",
-    "moderation_selectedCount": "{count} selected",
     "moderation_view": "view",
     "moduleUpdates_allUpToDate": "All installed modules are up to date",
     "moduleUpdates_checkFailed": "Failed to check for updates",
@@ -1167,7 +1165,8 @@
     "cron_everyMonth": "Every month",
     "cron_statusRunning": "Running",
     "cron_statusSucceeded": "Succeeded",
-    "cron_statusFailed": "Failed"
+    "cron_statusFailed": "Failed",
+    "moderation_kind": "Kind"
   },
   "footer": {
     "quickLinks": "Quick Links",

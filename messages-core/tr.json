@@ -292,7 +292,6 @@
     "common_refresh": "Yenile",
     "common_save": "Kaydet",
     "common_saving": "Kaydediliyor...",
-    "common_selectAll": "Tümünü seç",
     "common_selectRow": "Satırı seç",
     "common_status": "Durum",
     "common_subject": "Konu",
@@ -631,7 +630,6 @@
     "moderation_rejected": "{count} öğe reddedildi",
     "moderation_rejectedSingle": "Reddedildi",
     "moderation_selectAtLeast": "En az bir öğe seçin",
-    "moderation_selectedCount": "{count} seçildi",
     "moderation_view": "görüntüle",
     "moduleUpdates_allUpToDate": "Yüklü tüm modüller güncel",
     "moduleUpdates_checkFailed": "Güncellemeler kontrol edilemedi",
@@ -1167,7 +1165,8 @@
     "cron_everyMonth": "Ayda bir",
     "cron_statusRunning": "Çalışıyor",
     "cron_statusSucceeded": "Başarılı",
-    "cron_statusFailed": "Başarısız"
+    "cron_statusFailed": "Başarısız",
+    "moderation_kind": "Tür"
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",

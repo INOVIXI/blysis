@@ -17,6 +17,10 @@ import { useTranslations } from "next-intl";
 import { writeError } from "@/core/lib/write-result";
 import { Checkbox } from "@/core/components/ui/checkbox";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
+import { FilterChips } from "@/core/components/admin/FilterChips";
+import { BulkBar } from "@/core/components/admin/BulkBar";
+import { Badge } from "@/core/components/ui/badge";
+import { headerState } from "@/core/lib/bulk-selection";
 import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface ModerationItem {
@@ -249,96 +253,36 @@ export default function ModerationPage() {
                 description={t("moderation_description")}
             />
 
-            <div className="flex flex-wrap gap-2 mb-4">
-                <button
-                    type="button"
-                    onClick={() => {
-                        setActiveTab("all");
-                        setPage(1);
-                    }}
-                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === "all"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-foreground hover:bg-muted/80"
-                        }`}
-                >
-                    {t("moderation_all")}
-                    {totalAll > 0 && (
-                        <span
-                            className={`px-1.5 py-0.5 rounded text-[10px] ${activeTab === "all"
-                                ? "bg-primary-foreground/20"
-                                : "bg-background text-foreground"
-                                }`}
-                        >
-                            {totalAll}
-                        </span>
-                    )}
-                </button>
-                {typeIds.map((id) => {
-                    const count = counts[id] || 0;
-                    const isActive = activeTab === id;
-                    return (
-                        <button
-                            type="button"
-                            key={id}
-                            onClick={() => {
-                                setActiveTab(id);
-                                setPage(1);
-                            }}
-                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${isActive
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted text-foreground hover:bg-muted/80"
-                                }`}
-                        >
-                            {typeLabel(id)}
-                            {count > 0 && (
-                                <span
-                                    className={`px-1.5 py-0.5 rounded text-[10px] ${isActive
-                                        ? "bg-primary-foreground/20"
-                                        : "bg-background text-foreground"
-                                        }`}
-                                >
-                                    {count}
-                                </span>
-                            )}
-                        </button>
-                    );
-                })}
-            </div>
+            <FilterChips
+                className="mb-4"
+                label={t("moderation_kind")}
+                active={activeTab}
+                onSelect={(id) => { setActiveTab(id); setPage(1); }}
+                chips={[
+                    { id: "all", label: t("moderation_all"), count: totalAll },
+                    ...typeIds.map((id) => ({ id, label: typeLabel(id), count: counts[id] || 0 })),
+                ]}
+            />
 
             <Card>
                 <CardContent className="p-0">
                     {items.length > 0 && (
-                        <div className="flex items-center gap-3 p-3 border-b bg-muted/40">
-                            <Checkbox
-                                checked={selected.size === items.length && items.length > 0}
-                                onChange={toggleAll}
-                                aria-label={t("common_selectAll")}
-                            />
-                            <span className="text-xs text-muted-foreground flex-1">
-                                {selected.size > 0
-                                    ? t("moderation_selectedCount", { count: selected.size })
-                                    : t("moderation_itemsCount", { count: items.length })}
-                            </span>
-                            {selected.size > 0 && (
-                                <div className="flex gap-2">
-                                    <Button
-                                        size="sm"
-                                        disabled={working}
-                                        onClick={() => handleBulk("approve")}
-                                    >
-                                        <Check className="w-3 h-3" /> {t("moderation_approve")}
+                        <BulkBar
+                            state={headerState(selected, items.map((i) => i.id))}
+                            count={selected.size}
+                            onToggleAll={toggleAll}
+                            idle={t("moderation_itemsCount", { count: items.length })}
+                            actions={
+                                <>
+                                    <Button size="sm" disabled={working} onClick={() => handleBulk("approve")}>
+                                        <Check className="w-4 h-4" /> {t("moderation_approve")}
                                     </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        disabled={working}
-                                        onClick={() => handleBulk("reject")}
-                                    >
-                                        <X className="w-3 h-3" /> {t("moderation_reject")}
+                                    <Button size="sm" variant="destructive" disabled={working} onClick={() => handleBulk("reject")}>
+                                        <X className="w-4 h-4" /> {t("moderation_reject")}
                                     </Button>
-                                </div>
-                            )}
-                        </div>
+                                </>
+                            }
+                        />
                     )}
                     {loading ? (
                         <div className="flex justify-center py-12">
@@ -360,9 +304,11 @@ export default function ModerationPage() {
                                     />
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                            <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono bg-muted">
-                                                {typeLabel(item.type)}
-                                            </span>
+                                            {/* A name, set as a name. It was
+                                                uppercased and in a monospace
+                                                face, which is how this site
+                                                draws a machine's word. */}
+                                            <Badge tone="neutral">{typeLabel(item.type)}</Badge>
                                             <span className="font-medium text-sm">
                                                 {item.author?.username ?? t("moderation_anonymous")}
                                             </span>
@@ -388,25 +334,34 @@ export default function ModerationPage() {
                                             {formatDateTime(item.createdAt)}
                                         </p>
                                     </div>
-                                    <div className="flex gap-1">
+                                    {/*
+                                      * The two answers a row is waiting for,
+                                      * and they are the point of the screen.
+                                      * They were an outline button holding a
+                                      * grey tick and a ghost button holding a
+                                      * red cross - so the one thing an
+                                      * operator came here to do was the
+                                      * faintest thing on the row, and the two
+                                      * halves of one decision did not look
+                                      * like a pair. They say what they do now,
+                                      * and the same two words appear on the
+                                      * bar above when several rows are ticked.
+                                      */}
+                                    <div className="flex shrink-0 gap-2">
                                         <Button
-                                            variant="outline"
                                             size="sm"
                                             disabled={working}
                                             onClick={() => handleSingle(item, "approve")}
-                                            title={t("moderation_approve")}
                                         >
-                                            <Check className="w-3 h-3" />
+                                            <Check className="w-4 h-4" /> {t("moderation_approve")}
                                         </Button>
                                         <Button
-                                            variant="ghost"
                                             size="sm"
-                                            className="text-destructive"
+                                            variant="destructive"
                                             disabled={working}
                                             onClick={() => handleSingle(item, "reject")}
-                                            title={t("moderation_reject")}
                                         >
-                                            <X className="w-3 h-3" />
+                                            <X className="w-4 h-4" /> {t("moderation_reject")}
                                         </Button>
                                     </div>
                                 </div>

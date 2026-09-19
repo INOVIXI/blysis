@@ -61,6 +61,24 @@ vi.mock("@/core/sdk/ui", () => {
 });
 vi.mock("@/core/sdk/admin", () => ({
     AdminPageHeader: ({ title }: { title: React.ReactNode }) => <h1>{title}</h1>,
+    // The chip strip stands in for the real one, the way the search box above
+    // does: what is being asked here is what the screen sends the endpoint
+    // when a status is pressed, not how the strip is drawn. What it does have
+    // to keep is the contract - a chip carries a name and, where the screen
+    // gives it one, a count.
+    FilterChips: ({ chips, onSelect }: {
+        chips: { id: string; label: string; count?: number }[];
+        onSelect: (id: string) => void;
+    }) => (
+        <div>
+            {chips.map((chip) => (
+                <button key={chip.id} type="button" onClick={() => onSelect(chip.id)}>
+                    {chip.label}
+                    {chip.count !== undefined ? <span>{chip.count}</span> : null}
+                </button>
+            ))}
+        </div>
+    ),
 }));
 vi.mock("./NewOrderForm", () => ({ NewOrderForm: () => null }));
 
@@ -107,7 +125,10 @@ describe("the orders screen", () => {
 
     it("counts a status over the whole table, not over the rows on screen", async () => {
         draw();
-        expect(await screen.findByText("(40)")).toBeTruthy();
+        // The number alone. It used to be written "(40)" by the screen, and
+        // only when it was not zero, so the strip changed width as orders
+        // arrived; the shared strip sets it in a pill of its own.
+        expect(await screen.findByText("40")).toBeTruthy();
     });
 
     it("sends what was typed, because the endpoint has always taken it", async () => {
