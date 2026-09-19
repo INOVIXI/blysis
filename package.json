@@ -99,7 +99,7 @@
     "sonner": "^2.0.7",
     "stripe": "^22.6.2",
     "swagger-ui-react": "^5.32.15",
-    "tailwind-merge": "^3.5.0",
+    "tailwind-merge": "^3.7.0",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
