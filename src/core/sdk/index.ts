@@ -25,7 +25,6 @@
  *   `@/core/sdk/server`      server-only: database, permissions, crypto, I/O
  *   `@/core/sdk/auth`        the Auth.js session helper
  *   `@/core/sdk/navigation`  locale-aware client navigation
- *   `@/core/sdk/blocks`      page-builder block config (pulls in Puck)
  *   `@/core/sdk/theme`       active theme config + component overrides
  *   `@/core/sdk/ui`          shared UI primitives (client)
  *   `@/core/sdk/layout`      navbar / footer / slots (page composition)

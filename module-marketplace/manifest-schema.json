@@ -1038,34 +1038,6 @@
         ]
       }
     },
-    "pageBlocks": {
-      "maxItems": 100,
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 64,
-            "pattern": "^[A-Za-z0-9_-]+$"
-          },
-          "category": {
-            "type": "string",
-            "maxLength": 64
-          },
-          "component": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 256
-          }
-        },
-        "required": [
-          "id",
-          "component"
-        ]
-      }
-    },
     "cronJobs": {
       "maxItems": 50,
       "type": "array",
@@ -1181,6 +1153,12 @@
             "maxLength": 128,
             "pattern": "^[a-zA-Z0-9._-]+$"
           },
+          "nameKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-zA-Z0-9._-]+$"
+          },
           "prefix": {
             "type": "string",
             "maxLength": 128
@@ -1194,8 +1172,7 @@
         },
         "required": [
           "type",
-          "prefix",
-          "key"
+          "nameKey"
         ]
       }
     },

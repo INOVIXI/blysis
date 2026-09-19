@@ -207,7 +207,7 @@ const routeEntry = z.object({
      * catch-all before the page renders.
      *
      * A page that fetches its subject in the browser has already answered 200
-     * by the time it learns there is nothing there, so `/player/nobody` and
+     * by the time it learns there is nothing there, so `/u/nobody` and
      * `/store/product/99999` were soft 404s: indexable, invisible to link
      * checkers and to any monitor watching for a status. Rewriting seven
      * interactive pages as server components would be a large change for a
@@ -223,7 +223,7 @@ const routeEntry = z.object({
      * on the home page, the audit log - and used to link every one of them to
      * `/profile/<username>`, which is not a route: `/profile` is the signed-in
      * visitor's own page and takes no segment. Every one of those links was a
-     * 404, and core cannot fix it by hardcoding `/player/<username>` either,
+     * 404, and core cannot fix it by hardcoding `/u/<username>` either,
      * because that path belongs to a module that may not be installed.
      *
      * So the module that serves profiles says so, core asks the registry, and
@@ -553,12 +553,6 @@ const slotContribution = z.object({
     id: z.string().min(1).max(64).regex(SAFE_SLUG).optional(),
 });
 
-const pageBlock = z.object({
-    id: z.string().min(1).max(64).regex(SAFE_SLUG),
-    category: z.string().max(64).optional(),
-    component: relativePath("component"),
-});
-
 const cronJob = z.object({
     id: z.string().min(1).max(64).regex(SAFE_SLUG),
     // A name the scheduler cannot turn into an interval is a job that never
@@ -597,11 +591,27 @@ const searchProvider = z.object({
     indexes: z.array(searchIndex).max(5).optional(),
 });
 
+/**
+ * How an activity event is named and, where it can be, translated.
+ *
+ * `nameKey` is what the kind is called on its own - the word a filter above a
+ * feed offers. It is required, because the alternative is the `type` column,
+ * and a member reading their own account was shown `vote.vote.cast`.
+ *
+ * `prefix` and `key` translate the stored title, and they come as a pair or
+ * not at all. Six events cannot use them: their English puts the entity in
+ * the middle ("Received 40 credits") or after a clause, and `{ prefix, key }`
+ * can only replace a head. Those declare a name and leave the title alone.
+ */
 const activityTitle = z.object({
     type: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
-    prefix: z.string().max(128),
-    key: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
-});
+    nameKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
+    prefix: z.string().max(128).optional(),
+    key: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/).optional(),
+}).refine(
+    (entry) => (entry.prefix === undefined) === (entry.key === undefined),
+    { message: "prefix and key describe one substitution: declare both or neither" },
+);
 
 const webhookReceiver = z
     .object({
@@ -984,7 +994,6 @@ export const moduleManifestSchema = z.object({
     hooksEmitted: z.array(hookEmitted).max(200).optional(),
     slotContents: z.array(slotContent).max(100).optional(),
     slots: z.array(slotContribution).max(200).optional(),
-    pageBlocks: z.array(pageBlock).max(100).optional(),
     cronJobs: z.array(cronJob).max(50).optional(),
     searchProviders: z.array(searchProvider).max(20).optional(),
     activityTitles: z.array(activityTitle).max(50).optional(),
@@ -1055,7 +1064,6 @@ export function collectManifestFileRefs(m: ValidatedModuleManifest): string[] {
     m.hookListeners?.forEach((r) => push(r.handler));
     m.slotContents?.forEach((r) => push(r.component));
     m.slots?.forEach((s) => push(s.component));
-    m.pageBlocks?.forEach((r) => push(r.component));
     m.cronJobs?.forEach((r) => push(r.handler));
     m.searchProviders?.forEach((r) => push(r.handler));
     m.webhookReceivers?.forEach((r) => push(r.handler));

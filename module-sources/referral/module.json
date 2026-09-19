@@ -3,7 +3,7 @@
   "name": "Referral System",
   "description": "Earn credits by referring new users",
   "version": "1.6.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "UserPlus",
@@ -151,13 +151,14 @@
         "module_referral_description": "Earn credits by referring new users"
       },
       "activity": {
+        "kindReferralUsed": "Referral",
         "referralUsed": "referred by:"
       },
       "pageTitles": {
         "referral": "Referrals"
       },
       "profile": {
-        "notificationType_referral_referral_used": "Somebody used your referral code"
+        "notificationType_referral_referral_used": "Somebody Used Your Referral Code"
       },
       "nav": {
         "referral": "Referrals"
@@ -242,13 +243,14 @@
         "module_referral_description": "Yeni kullanıcı davet ederek kredi kazanın"
       },
       "activity": {
+        "kindReferralUsed": "Referans",
         "referralUsed": "davet eden:"
       },
       "pageTitles": {
         "referral": "Davetler"
       },
       "profile": {
-        "notificationType_referral_referral_used": "Biri davet kodunuzu kullandı"
+        "notificationType_referral_referral_used": "Biri Davet Kodunuzu Kullandı"
       },
       "nav": {
         "referral": "Davetler"
@@ -269,6 +271,7 @@
   "activityTitles": [
     {
       "type": "referral.referral.used",
+      "nameKey": "kindReferralUsed",
       "prefix": "Joined via referral from ",
       "key": "referralUsed"
     }

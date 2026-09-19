@@ -95,7 +95,6 @@ The template manifest enumerates every common UI registration so you can see all
 | `settingsCards` | Cards on the admin Settings page |
 | `oauthButtons` | OAuth login/register buttons |
 | `slotContents` | Render into core (`layout.beforeMain`, `layout.afterMain`, `head.extra`) or theme-declared slots |
-| `pageBlocks` | Page-builder blocks |
 
 ### Behavior (all optional)
 

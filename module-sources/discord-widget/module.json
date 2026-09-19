@@ -3,7 +3,7 @@
   "name": "Discord Widget",
   "description": "Discord server widget on homepage sidebar",
   "version": "1.3.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
   "icon": "MessageSquare",

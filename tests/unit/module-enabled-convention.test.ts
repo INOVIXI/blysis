@@ -46,7 +46,7 @@ const SRC_FILES = walk(join(ROOT, "src")).filter(
  * Consumers that read a registry without consulting the enabled flag, each
  * for a reason. Anything not on this list must gate.
  *
- * `blocks-merger.ts` used to sit here, on the grounds that one Puck config
+ * `blocks-merger.ts` used to sit here, on the grounds that one editor config
  * serves both the editor and the public renderer so dropping a block would
  * blank a page that already used it. What it actually did was mount the block
  * anyway, against a module API the proxy answers 404 for, and render a silent

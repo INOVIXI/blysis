@@ -9,12 +9,6 @@
  *
  * SUBCOMMANDS
  *
- *   add-block    <module> <BlockName>
- *     Creates module-sources/<module>/blocks/<BlockName>.tsx (and the
- *     mirrored src/modules/<module>/... file) from a minimal Puck block
- *     template. Adds the block to the manifest's `pageBlocks` array and
- *     re-runs scripts/generate-registry.ts.
- *
  *   add-hook     <module> <hookName>
  *     Example: add-hook discord-integration user.registered
  *     Creates module-sources/<module>/listeners/<hookName>.ts (mirrored
@@ -69,7 +63,6 @@ const VALID_SCHEDULES = [
 
 // ───────────────────────────────── Types ─────────────────────────────────
 
-interface ManifestPageBlock { id: string; category?: string; component: string }
 interface ManifestHookListener { hook: string; type: "action" | "filter"; handler: string; priority?: number }
 interface ManifestSlotContent { id: string; slot: string; component: string; order?: number }
 interface ManifestCronJob { id: string; schedule: string; handler: string }
@@ -79,7 +72,6 @@ interface Manifest {
     id?: string;
     name?: string;
     version?: string;
-    pageBlocks?: ManifestPageBlock[];
     hookListeners?: ManifestHookListener[];
     slotContents?: ManifestSlotContent[];
     cronJobs?: ManifestCronJob[];
@@ -185,43 +177,6 @@ function isValidIdentifier(name: string, pattern: RegExp, label: string): void {
 
 // ───────────────────────────────── Templates ─────────────────────────────────
 
-function blockTemplate(blockName: string): string {
-    return `"use client";
-
-import React from "react";
-import type { ComponentConfig } from "@measured/puck";
-
-/**
- * Puck page-builder block: ${blockName}
- * Exported as default so scripts/generate-registry.ts can pick it up
- * as a page block contribution declared in module.json.
- */
-interface ${blockName}Props {
-    title: string;
-    subtitle: string;
-}
-
-const ${blockName}: ComponentConfig<${blockName}Props> = {
-    fields: {
-        title: { type: "text", label: "Title" },
-        subtitle: { type: "textarea", label: "Subtitle" },
-    },
-    defaultProps: {
-        title: "${blockName}",
-        subtitle: "Edit this block in the page builder.",
-    },
-    render: ({ title, subtitle }: ${blockName}Props) => (
-        <section className="py-12 px-4 text-center">
-            <h2 className="text-3xl font-bold mb-2">{title}</h2>
-            {subtitle ? <p className="text-muted-foreground">{subtitle}</p> : null}
-        </section>
-    ),
-};
-
-export default ${blockName};
-`;
-}
-
 function hookListenerTemplate(hookName: string): string {
     return `/**
  * Hook listener: fires on \`${hookName}\`.
@@ -309,32 +264,6 @@ function toCamelCase(input: string): string {
 }
 
 // ───────────────────────────────── Subcommands ─────────────────────────────────
-
-function cmdAddBlock(args: string[]): void {
-    const [moduleName, blockName] = args;
-    if (!moduleName || !blockName) {
-        fail("Usage: module-dev add-block <module> <BlockName>");
-    }
-    assertModuleExists(moduleName);
-    isValidIdentifier(blockName, /^[A-Z][A-Za-z0-9]*$/, "block name (PascalCase)");
-
-    const relFile = path.join("blocks", `${blockName}.tsx`);
-    const changes: string[] = [];
-
-    writeFileBoth(relFile, blockTemplate(blockName), moduleName, changes);
-
-    updateManifestBoth(moduleName, (manifest) => {
-        const list = (manifest.pageBlocks ?? []) as ManifestPageBlock[];
-        if (list.some((b) => b.id === blockName)) {
-            fail(`pageBlocks already contains id "${blockName}" in ${moduleName}.`);
-        }
-        list.push({ id: blockName, category: "modules", component: relFile });
-        manifest.pageBlocks = list;
-    }, changes);
-
-    runRegistryGenerator(changes);
-    printChanges(`add-block ${moduleName} ${blockName}`, changes);
-}
 
 function cmdAddHook(args: string[]): void {
     const [moduleName, hookName] = args;
@@ -475,7 +404,6 @@ function cmdListModules(): void {
             push("api", "api");
             push("routes", "routes");
             push("adminRoutes", "admin");
-            push("pageBlocks", "blocks");
             push("hookListeners", "hooks");
             push("slotContents", "slots");
             push("cronJobs", "crons");
@@ -516,7 +444,6 @@ function usage(): never {
     console.error("Usage: npx tsx scripts/module-dev.ts <subcommand> [args...]");
     console.error("");
     console.error("Subcommands:");
-    console.error("  add-block     <module> <BlockName>");
     console.error("  add-hook      <module> <hookName>");
     console.error("  add-slot      <module> <slotName> <ComponentName>");
     console.error("  add-cron      <module> <jobId> <schedule>");
@@ -532,7 +459,6 @@ function main(): void {
     if (!subcommand) usage();
 
     switch (subcommand) {
-        case "add-block":    return cmdAddBlock(rest);
         case "add-hook":     return cmdAddHook(rest);
         case "add-slot":     return cmdAddSlot(rest);
         case "add-cron":     return cmdAddCron(rest);

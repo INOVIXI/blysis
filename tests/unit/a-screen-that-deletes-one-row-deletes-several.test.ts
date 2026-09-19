@@ -37,8 +37,6 @@ const ONE_AT_A_TIME: Record<string, string> = {
         "Restoring and deleting a backup are different weights of decision, and the row carries both. Ticking four and pressing delete is the wrong shape for the one action nobody should take quickly.",
     "module-sources/store/pages/admin/products/[id]/edit/page.tsx":
         "One product, on its own edit screen, where deleting is the end of editing rather than a list operation.",
-    "module-sources/custom-pages/pages/admin/builder/[id]/page.tsx":
-        "The page builder is a full-screen editor for one page, with its own canvas and toolbar. There is no list of pages in it to tick.",
     "src/app/[locale]/(admin)/admin/roles/page.tsx":
         "A role is a structural thing an operator has a handful of, and deleting one moves every member who wears it. Ticking four of them is the wrong shape for a decision that size.",
     "src/app/[locale]/(admin)/admin/settings/theme/page.tsx":

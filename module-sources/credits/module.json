@@ -3,7 +3,7 @@
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
   "version": "1.6.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Coins",
@@ -95,31 +95,34 @@
         "send_toPlaceholder": "Their username",
         "title": "Credits",
         "transfer": "Transfer Credits",
-        "typeAdmin_grant": "Granted by an admin",
+        "typeAdmin_grant": "Granted by an Admin",
         "typeCashback": "Cashback",
-        "typeCreator_commission": "Creator commission",
+        "typeCreator_commission": "Creator Commission",
         "typeCredit": "Credit",
         "typeCredit_purchase": "Bought",
         "typeDebit": "Debit",
-        "typeGift_redeem": "Gift code",
-        "typeMarket_commission": "Marketplace commission",
-        "typeMarket_purchase": "Bought from a member",
-        "typeMarket_sale": "Sold to a member",
+        "typeGift_redeem": "Gift Code",
+        "typeMarket_commission": "Marketplace Commission",
+        "typeMarket_purchase": "Bought from a Member",
+        "typeMarket_sale": "Sold to a Member",
         "typePurchase": "Purchase",
-        "typeReferral_reward": "Referral reward",
+        "typeReferral_reward": "Referral Reward",
         "typeTransfer": "Transfer",
         "typeTransfer_in": "Received",
         "typeTransfer_out": "Sent",
         "typeUnknown": "Adjustment",
-        "typeWheel_prize": "Wheel prize",
-        "typeWheel_spin": "Wheel spin"
+        "typeWheel_prize": "Wheel Prize",
+        "typeWheel_spin": "Wheel Spin"
       },
       "admin": {
         "module_credits_name": "Credit System",
         "module_credits_description": "Virtual currency wallet for users"
       },
       "profile": {
-        "notificationType_credits_credit_added": "Credits added to your balance"
+        "notificationType_credits_credit_added": "Credits Added to Your Balance"
+      },
+      "activity": {
+        "kindCreditAdded": "Credits Received"
       }
     },
     "tr": {
@@ -165,31 +168,34 @@
         "send_toPlaceholder": "Kullanıcı adı",
         "title": "Krediler",
         "transfer": "Kredi Transfer Et",
-        "typeAdmin_grant": "Yönetici tarafından verildi",
+        "typeAdmin_grant": "Yönetici Tarafından Verildi",
         "typeCashback": "İade",
-        "typeCreator_commission": "Üretici komisyonu",
+        "typeCreator_commission": "Üretici Komisyonu",
         "typeCredit": "Alacak",
-        "typeCredit_purchase": "Satın alındı",
+        "typeCredit_purchase": "Satın Alındı",
         "typeDebit": "Borç",
-        "typeGift_redeem": "Hediye kodu",
-        "typeMarket_commission": "Pazar komisyonu",
-        "typeMarket_purchase": "Üyeden satın alındı",
-        "typeMarket_sale": "Üyeye satıldı",
+        "typeGift_redeem": "Hediye Kodu",
+        "typeMarket_commission": "Pazar Komisyonu",
+        "typeMarket_purchase": "Üyeden Satın Alındı",
+        "typeMarket_sale": "Üyeye Satıldı",
         "typePurchase": "Satın Alma",
-        "typeReferral_reward": "Davet ödülü",
+        "typeReferral_reward": "Davet Ödülü",
         "typeTransfer": "Transfer",
         "typeTransfer_in": "Alındı",
         "typeTransfer_out": "Gönderildi",
         "typeUnknown": "Düzeltme",
-        "typeWheel_prize": "Çark ödülü",
-        "typeWheel_spin": "Çark çevirme"
+        "typeWheel_prize": "Çark Ödülü",
+        "typeWheel_spin": "Çark Çevirme"
       },
       "admin": {
         "module_credits_name": "Kredi Sistemi",
         "module_credits_description": "Kullanıcılar için sanal para cüzdanı"
       },
       "profile": {
-        "notificationType_credits_credit_added": "Bakiyenize kredi eklendi"
+        "notificationType_credits_credit_added": "Bakiyenize Kredi Eklendi"
+      },
+      "activity": {
+        "kindCreditAdded": "Gelen Kredi"
       }
     }
   },
@@ -241,6 +247,12 @@
       "key": "credits.creditTransactions",
       "column": "userId",
       "erasure": "retain"
+    }
+  ],
+  "activityTitles": [
+    {
+      "type": "credits.credit.added",
+      "nameKey": "kindCreditAdded"
     }
   ]
 }

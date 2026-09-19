@@ -2,30 +2,21 @@
 
 import { useState, useEffect, use } from "react";
 import { useTranslations } from "next-intl";
-import dynamic from "next/dynamic";
-import type { Data } from "@measured/puck";
-import "@measured/puck/puck.css";
 import { Card, CardContent, RichContent } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
-import { useMergedBlockConfig } from "@/core/sdk/blocks";
 import { Loader2 } from "lucide-react";
+import { wasBuiltWithBlocks } from "../../../lib/validations";
 
 /**
- * The page builder's renderer, fetched when a built page is actually shown.
+ * A custom page, as its author wrote it.
  *
- * Imported plainly, it travelled with every module page on the site: core
- * renders module pages through one catch-all route, Next collects a route's
- * client references by walking its whole module graph, and this file is in
- * that graph. Measured on a production build, 87.5 KB gzipped on `/store`,
- * `/forum`, `/leaderboard` and every other module page, for a library only
- * `/page/<slug>` ever calls.
- *
- * `ssr: false` costs nothing here: this page already fetches its content in
- * the browser, so the server has never rendered any of it.
+ * This used to decide between two grammars on every render: parse the content,
+ * and draw it with the block editor's renderer if it turned out to be that
+ * editor's JSON, or as Markdown if it did not. The editor is gone, so there is
+ * one grammar and nothing to decide - except for a page an installation wrote
+ * with the old editor, which is recognised and said out loud rather than
+ * poured at a reader as braces.
  */
-const Render = dynamic(() => import("@measured/puck").then((mod) => mod.Render), {
-    ssr: false,
-});
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -75,51 +66,19 @@ export default function CustomPageView({ params }: PageProps) {
             ) : notFound ? (
                 <Card><CardContent className="py-12 text-center text-muted-foreground">{t("pageNotFound")}</CardContent></Card>
             ) : page ? (
-                <PageContent page={page} />
+                <Card>
+                    <CardContent className="p-8">
+                        {wasBuiltWithBlocks(page.content) ? (
+                            <p className="text-muted-foreground">{t("builtWithBlocks")}</p>
+                        ) : (
+                            // The title is the frame's. This used to draw it
+                            // again underneath, so `/page/rules` was headed
+                            // Rules twice.
+                            <RichContent markdown={page.content} />
+                        )}
+                    </CardContent>
+                </Card>
             ) : null}
         </PageFrame>
-    );
-}
-
-/**
- * Render page content as either Puck blocks (if content parses to valid
- * Puck data) or sanitized HTML (legacy/fallback).
- */
-function PageContent({ page }: { page: CustomPage }) {
-    // A block whose module is off is not in this config, and Puck renders
-    // nothing for a component id it does not carry.
-    const blockConfig = useMergedBlockConfig("render");
-
-    let puckData: Data | null = null;
-    try {
-        const parsed = JSON.parse(page.content || "");
-        if (parsed && typeof parsed === "object" && Array.isArray(parsed.content)) {
-            puckData = parsed as Data;
-        }
-    } catch {
-        // Not JSON - fall through to HTML render
-    }
-
-    if (puckData) {
-        if (!blockConfig) {
-            return <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>;
-        }
-        return (
-            <Card>
-                <CardContent className="p-0 overflow-hidden">
-                    <Render config={blockConfig} data={puckData} />
-                </CardContent>
-            </Card>
-        );
-    }
-
-    // The title is the frame's. This used to draw it again underneath, so
-    // `/page/rules` was headed Rules twice.
-    return (
-        <Card>
-            <CardContent className="p-8">
-                <RichContent markdown={page.content} />
-            </CardContent>
-        </Card>
     );
 }

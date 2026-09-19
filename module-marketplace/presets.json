@@ -15,7 +15,7 @@
         "minecraft-link",
         "vote",
         "punishments",
-        "player-profiles",
+        "member-profiles",
         "leaderboard",
         "discord-auth",
         "announcements"
@@ -34,7 +34,7 @@
         "servers",
         "vote",
         "punishments",
-        "player-profiles",
+        "member-profiles",
         "leaderboard",
         "discord-auth",
         "announcements"
@@ -54,7 +54,7 @@
         "steam-auth",
         "vote",
         "punishments",
-        "player-profiles",
+        "member-profiles",
         "leaderboard",
         "announcements"
       ]
@@ -73,7 +73,7 @@
         "steam-auth",
         "vote",
         "punishments",
-        "player-profiles",
+        "member-profiles",
         "announcements"
       ]
     },
@@ -90,7 +90,7 @@
         "servers",
         "steam-auth",
         "punishments",
-        "player-profiles",
+        "member-profiles",
         "leaderboard",
         "staff",
         "announcements"
@@ -109,7 +109,7 @@
         "servers",
         "steam-auth",
         "punishments",
-        "player-profiles",
+        "member-profiles",
         "tickets",
         "staff",
         "announcements"
@@ -129,7 +129,7 @@
         "steam-auth",
         "vote",
         "punishments",
-        "player-profiles",
+        "member-profiles",
         "leaderboard"
       ]
     },
@@ -145,7 +145,7 @@
         "stripe-gateway",
         "servers",
         "punishments",
-        "player-profiles",
+        "member-profiles",
         "custom-forms",
         "staff",
         "tickets",
@@ -166,7 +166,7 @@
         "vote",
         "trophies",
         "leaderboard",
-        "player-profiles",
+        "member-profiles",
         "roblox-auth",
         "discord-auth",
         "announcements"

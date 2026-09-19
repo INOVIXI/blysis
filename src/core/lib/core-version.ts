@@ -12,6 +12,22 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.0.0 - `@/core/sdk/blocks` is gone, and so is `pageBlocks` in the manifest.
+ * A custom page has one `content` column and two editors were pointed at it: a
+ * rich text box and a drag-and-drop block builder whose output was a JSON
+ * document in the same column. An operator chose an editor before writing
+ * anything, and the choice decided what the other one would show them
+ * afterwards - a page built from blocks opened in the text editor as a wall of
+ * JSON, and whichever was used last won. The builder carried a dependency, a
+ * stylesheet that fetched a font from somebody else's server, six block
+ * components across five modules, four files of core machinery to merge them,
+ * and a second grammar for what a page is. What a person writes is Markdown,
+ * which is already true of an article, a forum post and a ticket reply.
+ *
+ * A module that declared `pageBlocks` no longer validates, which is what this
+ * bump is the signal for. `CrudField` also gains an optional `group`, which
+ * would be a minor on its own.
+ *
  * 4.6.0 - `ReferencePicker` joins `@/core/sdk/admin`, and `CrudField` takes
  * `type: "reference"`. The bulk discount screen asked for a product id and a
  * category id in two text boxes and the creator code screen asked for a user
@@ -441,4 +457,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "4.6.0";
+export const CORE_API_VERSION = "5.0.0";

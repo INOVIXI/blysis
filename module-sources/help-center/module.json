@@ -3,7 +3,7 @@
   "name": "Help Center",
   "description": "Knowledge base with categories and searchable articles",
   "version": "1.8.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "management",
   "author": "Blysis Team",
   "icon": "HelpCircle",
@@ -207,7 +207,8 @@
         "module_help-center_description": "Knowledge base with categories and searchable articles"
       },
       "activity": {
-        "helpArticleCreated": "added a help article:"
+        "helpArticleCreated": "added a help article:",
+        "kindHelpArticleCreated": "Help Article"
       },
       "pageTitles": {
         "help": "Help Center",
@@ -314,7 +315,8 @@
         "module_help-center_description": "Kategorili ve aranabilir makalelerden oluşan bilgi bankası"
       },
       "activity": {
-        "helpArticleCreated": "yardım makalesi ekledi:"
+        "helpArticleCreated": "yardım makalesi ekledi:",
+        "kindHelpArticleCreated": "Yardım Makalesi"
       },
       "pageTitles": {
         "help": "Yardım Merkezi",
@@ -371,6 +373,7 @@
   "activityTitles": [
     {
       "type": "helpcenter.article.created",
+      "nameKey": "kindHelpArticleCreated",
       "prefix": "New help article: ",
       "key": "helpArticleCreated"
     }

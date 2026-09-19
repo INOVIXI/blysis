@@ -3,7 +3,7 @@
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
   "version": "2.34.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis Team",
   "icon": "ShoppingBag",

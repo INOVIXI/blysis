@@ -3,7 +3,7 @@
   "name": "Changelog",
   "description": "Release notes and update history",
   "version": "1.5.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "History",
@@ -111,7 +111,6 @@
         "empty": "No changelog entries yet",
         "entryMissing": "That release note has nothing more to show.",
         "manage": "Manage Changelog",
-        "noEntries": "No changelog entries yet",
         "perm_manage": "Manage",
         "published": "Published",
         "readMore": "Read the full note",
@@ -139,7 +138,8 @@
         "changelog": "Changelog"
       },
       "activity": {
-        "changelogEntryPublished": "changelog"
+        "changelogEntryPublished": "changelog",
+        "kindChangelogEntryPublished": "Changelog Entry"
       },
       "pageTitles": {
         "changelog": "Changelog"
@@ -178,7 +178,6 @@
         "empty": "Henüz sürüm notu yok",
         "entryMissing": "Bu sürüm notunun gösterecek başka bir şeyi yok.",
         "manage": "Değişiklik Günlüğünü Yönet",
-        "noEntries": "Henüz değişiklik günlüğü girdisi yok",
         "perm_manage": "Yönetebilir",
         "published": "Yayınlandı",
         "readMore": "Notun tamamını oku",
@@ -206,7 +205,8 @@
         "changelog": "Değişiklikler"
       },
       "activity": {
-        "changelogEntryPublished": "değişiklik günlüğü"
+        "changelogEntryPublished": "değişiklik günlüğü",
+        "kindChangelogEntryPublished": "Değişiklik Kaydı"
       },
       "pageTitles": {
         "changelog": "Değişiklikler"
@@ -216,13 +216,6 @@
       }
     }
   },
-  "pageBlocks": [
-    {
-      "id": "ChangelogRecentEntries",
-      "category": "Changelog",
-      "component": "blocks/ChangelogRecentEntries.tsx"
-    }
-  ],
   "cronJobs": [
     {
       "id": "publish-scheduled",
@@ -250,6 +243,7 @@
   "activityTitles": [
     {
       "type": "changelog.entry.published",
+      "nameKey": "kindChangelogEntryPublished",
       "prefix": "Changelog ",
       "key": "changelogEntryPublished"
     }

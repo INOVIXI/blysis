@@ -45,7 +45,6 @@
     "create:module": "npx tsx scripts/create-module.ts",
     "validate:module": "npx tsx scripts/validate-module.ts",
     "module": "npx tsx scripts/module-dev.ts",
-    "module:add-block": "npx tsx scripts/module-dev.ts add-block",
     "module:add-hook": "npx tsx scripts/module-dev.ts add-hook",
     "module:add-slot": "npx tsx scripts/module-dev.ts add-slot",
     "module:add-cron": "npx tsx scripts/module-dev.ts add-cron",
@@ -56,7 +55,6 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
     "@aws-sdk/client-s3": "^3.1129.0",
-    "@measured/puck": "^0.20.2",
     "@next/bundle-analyzer": "^16.2.2",
     "@prisma/adapter-pg": "^7.6.0",
     "@prisma/client": "^7.6.0",

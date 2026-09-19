@@ -3,7 +3,7 @@
   "name": "Blog Module",
   "description": "News and announcements system",
   "version": "1.7.0",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Newspaper",
@@ -430,18 +430,6 @@
       }
     }
   },
-  "pageBlocks": [
-    {
-      "id": "BlogLatestPosts",
-      "category": "Blog",
-      "component": "blocks/BlogLatestPosts.tsx"
-    },
-    {
-      "id": "BlogCategoryGrid",
-      "category": "Blog",
-      "component": "blocks/BlogCategoryGrid.tsx"
-    }
-  ],
   "searchProviders": [
     {
       "id": "blog-search",

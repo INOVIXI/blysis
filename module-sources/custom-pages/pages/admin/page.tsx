@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "@/core/sdk/navigation";
 import { Button, Card, CardContent, Checkbox, Input, Label, ListControls, Pagination, RichTextEditor, useConfirm, useFormRoute, useRowList, CheckboxField, buttonClassName } from "@/core/sdk/ui";
-import { ArrowLeft, Loader2, Plus, Trash2, ExternalLink, Pencil, LayoutDashboard } from "lucide-react";
+import { Loader2, Plus, Trash2, ExternalLink, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
 import { deleteEach } from "@/core/sdk";
@@ -170,8 +170,12 @@ export default function CustomPagesAdminPage() {
 
                 <Card>
                     <CardContent className="p-6">
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid md:grid-cols-2 gap-4">
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {/* A row of one field is one column wide, so an
+                                edit form - which has no slug box to put
+                                beside the title - leaves no empty cell where
+                                the slug used to be. */}
+                            <div className={`grid gap-4 ${editingId ? "" : "md:grid-cols-2"}`}>
                                 <div>
                                     <Label>{`${t("adm_title")} *`}</Label>
                                     <Input aria-label={t("adm_title")} value={title} onChange={(e) => setTitle(e.target.value)} required placeholder={t("adm_pageTitle")} />
@@ -179,25 +183,41 @@ export default function CustomPagesAdminPage() {
                                 {!editingId && (
                                     <div>
                                         <Label>{t("adm_slugOptional")}</Label>
-                                        <Input aria-label={t("adm_slugOptional")} value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="auto-generated-from-title" />
+                                        <Input aria-label={t("adm_slugOptional")} value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="about-us" />
+                                        <p className="text-xs text-muted-foreground mt-1">{t("adm_slugHint")}</p>
                                     </div>
                                 )}
                             </div>
                             <div>
-                                <Label>{`${t("adm_contentHtml")} *`}</Label>
+                                <Label>{`${t("adm_contentLabel")} *`}</Label>
                                 <RichTextEditor value={content} onChange={setContent} />
+                                <p className="text-xs text-muted-foreground mt-1">{t("adm_contentHint")}</p>
                             </div>
-                            <div className="flex items-center gap-4">
+
+                            <section className="space-y-4">
+                                <h2 className="text-sm font-medium text-muted-foreground border-b border-border pb-2">
+                                    {t("adm_publishingGroup")}
+                                </h2>
+                                {/* The switch is on its own row rather than
+                                    beside the number box: a checkbox is
+                                    eighteen pixels tall and an input is
+                                    forty, and putting them in one row is what
+                                    made this strip read as misaligned. */}
                                 <CheckboxField
                                     checked={isActive}
                                     onChange={(e) => setIsActive(e.target.checked)}
                                     label={t("adm_published")}
                                 />
-                                <div className="flex items-center gap-2">
-                                    <Label className="text-sm">{t("adm_sortOrder")}</Label>
-                                    <Input aria-label={t("adm_sortOrder")} type="number" className="w-20" value={order} onChange={(e) => setOrder(parseInt(e.target.value) || 0)} />
+                                <div>
+                                    <Label>{t("adm_sortOrder")}</Label>
+                                    {/* The measure is on the control, not on
+                                        the screen: a number nobody types four
+                                        digits into does not want a box the
+                                        width of the panel. */}
+                                    <Input aria-label={t("adm_sortOrder")} type="number" className="max-w-40" value={order} onChange={(e) => setOrder(parseInt(e.target.value) || 0)} />
+                                    <p className="text-xs text-muted-foreground mt-1">{t("adm_sortOrderHint")}</p>
                                 </div>
-                            </div>
+                            </section>
                             <div className="flex gap-2">
                                 <Button type="submit" disabled={saving}>
                                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
@@ -263,22 +283,17 @@ export default function CustomPagesAdminPage() {
                                         </span>
                                     </p>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                    <Link
-                                        href={`/admin/custom-pages/builder/${page.id}`}
-                                        title={t("adm_openInBuilder")}
-                                        aria-label={t("adm_openInBuilder")}
-                                        className={buttonClassName("ghost", "sm")}
-                                    >
-                                        <LayoutDashboard className="w-3 h-3" />
-                                    </Link>
-                                    <RowActions
-                                        actions={[
-                                            { icon: Pencil, label: t("adm_htmlEditor"), onClick: () => openForm(page.id) },
-                                            { icon: Trash2, label: commonT("delete"), onClick: () => deletePage(page), destructive: true },
-                                        ]}
-                                    />
-                                </div>
+                                <RowActions
+                                    actions={[
+                                        // The page itself, which is the one
+                                        // thing an operator wanted from a row
+                                        // and had to assemble by hand from
+                                        // the address printed beside it.
+                                        { icon: ExternalLink, label: t("adm_openPage"), href: `/page/${page.slug}` },
+                                        { icon: Pencil, label: commonT("edit"), onClick: () => openForm(page.id) },
+                                        { icon: Trash2, label: commonT("delete"), onClick: () => deletePage(page), destructive: true },
+                                    ]}
+                                />
                             </CardContent>
                         </Card>
                     ))}

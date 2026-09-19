@@ -3,7 +3,7 @@
   "name": "Mollie Payment Gateway",
   "description": "Take iDEAL, Bancontact, SEPA and card payments through Mollie",
   "version": "1.3.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "secretSettings": [
     "mollie_api_key"
   ],

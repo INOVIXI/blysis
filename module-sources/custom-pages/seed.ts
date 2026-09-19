@@ -1,8 +1,8 @@
 import type { ModuleSeed } from "@/core/sdk/seed";
 
 /**
- * The two pages nearly every community writes, so the page builder, the
- * footer's legal links and the /page/[slug] route have something behind them.
+ * The two pages nearly every community writes, so the footer's legal links
+ * and the /page/[slug] route have something behind them.
  */
 const PAGES: [string, string, string][] = [
     ["Rules", "rules", `## The short version

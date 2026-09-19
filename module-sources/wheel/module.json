@@ -3,7 +3,7 @@
   "name": "Wheel of Fortune",
   "description": "Spin-to-win game with configurable prizes and cooldowns",
   "version": "1.8.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Dices",
@@ -188,13 +188,16 @@
         "wheel": "Wheel"
       },
       "profile": {
-        "notificationType_wheel_prize_won": "A prize you won"
+        "notificationType_wheel_prize_won": "A Prize You Won"
       },
       "nav": {
         "wheel": "Wheel"
       },
       "pageDescriptions": {
         "wheel": "Turn the wheel for a chance at a prize, and see what is on it, what a turn costs and when you can turn it again."
+      },
+      "activity": {
+        "kindWheelPrizeWon": "Wheel Prize"
       }
     },
     "tr": {
@@ -270,13 +273,16 @@
         "wheel": "Çark"
       },
       "profile": {
-        "notificationType_wheel_prize_won": "Kazandığınız ödül"
+        "notificationType_wheel_prize_won": "Kazandığınız Ödül"
       },
       "nav": {
         "wheel": "Çark"
       },
       "pageDescriptions": {
         "wheel": "Ödül kazanmak için çarkı çevirin; üzerinde neler olduğunu, bir çevirmenin maliyetini ve ne zaman tekrar çevirebileceğinizi görün."
+      },
+      "activity": {
+        "kindWheelPrizeWon": "Çark Ödülü"
       }
     }
   },
@@ -304,6 +310,12 @@
       "href": "/wheel",
       "icon": "Dices",
       "position": 130
+    }
+  ],
+  "activityTitles": [
+    {
+      "type": "wheel.prize.won",
+      "nameKey": "kindWheelPrizeWon"
     }
   ]
 }

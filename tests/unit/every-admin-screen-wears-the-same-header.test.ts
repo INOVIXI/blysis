@@ -18,8 +18,8 @@ import { stripComments } from "./source-text";
  *
  * `AdminPageHeader` is the row. These are the two rules that keep it one.
  *
- * A screen that is not a page - the page builder's fixed toolbar, an error
- * card - is not covered here, and does not pretend to be a page header.
+ * A screen that is not a page - an error card, a fixed toolbar - is not
+ * covered here, and does not pretend to be a page header.
  */
 
 const ROOT = join(__dirname, "..", "..");

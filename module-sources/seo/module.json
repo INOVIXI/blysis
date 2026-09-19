@@ -3,7 +3,7 @@
   "name": "SEO Manager",
   "description": "Advanced SEO management with per-page meta tags, OpenGraph, and structured data",
   "version": "1.5.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "Search",

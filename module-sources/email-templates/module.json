@@ -3,7 +3,7 @@
   "name": "Email Templates",
   "description": "Email service configuration and templates",
   "version": "1.3.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "secretSettings": [
     "resend_api_key"
   ],

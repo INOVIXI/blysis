@@ -3,7 +3,7 @@
   "name": "Minecraft Punishments (LiteBans)",
   "description": "Reads bans, mutes, warnings and kicks out of a LiteBans database and records them against the member who owns the account",
   "version": "2.0.0",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Gavel",

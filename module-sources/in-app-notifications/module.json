@@ -3,7 +3,7 @@
   "name": "In-App Notifications",
   "description": "In-app notification system with bell icon",
   "version": "1.5.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Bell",

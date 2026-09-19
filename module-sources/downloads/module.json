@@ -3,7 +3,7 @@
   "name": "Downloads",
   "description": "A file library: releases, guides and anything else worth handing out",
   "version": "1.5.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "Download",
@@ -131,7 +131,8 @@
         "module_downloads_description": "A file library: releases, guides and anything else worth handing out"
       },
       "activity": {
-        "fileDownloaded": "downloaded"
+        "fileDownloaded": "downloaded",
+        "kindFileDownloaded": "Download"
       },
       "pageTitles": {
         "downloads": "Downloads"
@@ -202,7 +203,8 @@
         "module_downloads_description": "Dosya kitaplığı: sürümler, rehberler ve paylaşmaya değer her şey"
       },
       "activity": {
-        "fileDownloaded": "indirdi:"
+        "fileDownloaded": "indirdi:",
+        "kindFileDownloaded": "İndirme"
       },
       "pageTitles": {
         "downloads": "İndirmeler"
@@ -218,6 +220,7 @@
   "activityTitles": [
     {
       "type": "downloads.file.downloaded",
+      "nameKey": "kindFileDownloaded",
       "prefix": "Downloaded ",
       "key": "fileDownloaded"
     }

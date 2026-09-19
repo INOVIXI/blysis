@@ -7,7 +7,7 @@ import dropRemoteImports from "../../scripts/postcss-drop-remote-imports.mjs";
 /**
  * A stylesheet this app ships does not go and fetch another one.
  *
- * `@measured/puck`'s stylesheet opens with
+ * The removed block editor's stylesheet opened with
  * `@import "https://rsms.me/inter/inter.css"`, and it reaches public pages
  * through the module that renders a built page. Every first visit fetched a
  * stranger's stylesheet and three font files from it, on top of the Inter

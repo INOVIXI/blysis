@@ -3,7 +3,7 @@
   "name": "Midtrans Gateway",
   "description": "Take bank transfer, e-wallet, convenience store and card payments in Indonesia through Midtrans",
   "version": "1.3.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "secretSettings": [
     "midtrans_server_key"
   ],

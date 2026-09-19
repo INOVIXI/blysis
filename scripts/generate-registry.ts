@@ -196,10 +196,9 @@ function generateRegistry() {
     const allContextProviders: ({ id: string; component: string; order?: number; module: string })[] = [];
     const allHookListeners: ({ hook: string; type: 'action' | 'filter'; handler: string; priority?: number; module: string })[] = [];
     const allSlotContents: ({ id: string; slot: string; component: string; order?: number; module: string })[] = [];
-    const allPageBlocks: ({ id: string; category?: string; component: string; module: string })[] = [];
     const allCronJobs: ({ id: string; schedule: string; handler: string; module: string })[] = [];
     const allSearchProviders: ({ id: string; label: string; handler: string; icon?: string; indexes?: { table: string; columns: string[] }[]; module: string })[] = [];
-    const allActivityTitles: ({ type: string; prefix: string; key: string; module: string })[] = [];
+    const allActivityTitles: ({ type: string; nameKey: string; prefix?: string; key?: string; module: string })[] = [];
     const allPermissionResources: string[] = [];
     const allWebhookReceivers: ({ provider: string; handler: string; signatureHeader?: string; secretEnv?: string; verifiesInHandler?: boolean; timestampHeader?: string; module: string })[] = [];
     const allNotificationTypes: ({ eventType: string; label: string; description?: string; channels?: string[]; module: string })[] = [];
@@ -235,7 +234,6 @@ function generateRegistry() {
         manifest.contextProviders?.forEach((cp) => allContextProviders.push({ ...cp, module: moduleName }));
         manifest.hookListeners?.forEach((hl) => allHookListeners.push({ ...hl, module: moduleName }));
         manifest.slotContents?.forEach((sc) => allSlotContents.push({ ...sc, module: moduleName }));
-        manifest.pageBlocks?.forEach((pb) => allPageBlocks.push({ ...pb, module: moduleName }));
         manifest.cronJobs?.forEach((cj) => allCronJobs.push({ ...cj, module: moduleName }));
         manifest.searchProviders?.forEach((sp) => allSearchProviders.push({ ...sp, module: moduleName }));
         manifest.activityTitles?.forEach((at) => allActivityTitles.push({ ...at, module: moduleName }));
@@ -330,7 +328,7 @@ function generateRegistry() {
     widgetRegistry += `export const ModuleDashboardCards: { id: string; label: string; labelKey?: string; icon: string; href: string; color: string; statKey: string; module: string }[] = ${JSON.stringify(allDashboardCards, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleDashboardSections: { id: string; label: string; labelKey?: string; module: string }[] = ${JSON.stringify(allDashboardSections, null, 2)};\n\n`;
     widgetRegistry += `// Activity-feed title localization entries contributed by modules.\n`;
-    widgetRegistry += `export const ModuleActivityTitles: { type: string; prefix: string; key: string; module: string }[] = ${JSON.stringify(allActivityTitles, null, 2)};\n\n`;
+    widgetRegistry += `export const ModuleActivityTitles: { type: string; nameKey: string; prefix?: string; key?: string; module: string }[] = ${JSON.stringify(allActivityTitles, null, 2)};\n\n`;
     widgetRegistry += `// RBAC resource strings modules own - surfaced in the admin permission matrix (flattened + deduped).\n`;
     widgetRegistry += `export const ModulePermissionResources: string[] = ${JSON.stringify([...new Set(allPermissionResources)], null, 2)};\n\n`;
 
@@ -615,17 +613,6 @@ function generateRegistry() {
     storageContent += '};\n\n';
     storageContent += `export const ModuleStorageProviders = ${JSON.stringify(allStorageProviders, null, 2)};\n`;
     fs.writeFileSync(STORAGE_FILE, storageContent);
-
-    const BLOCKS_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-blocks.ts');
-    let blocksContent = '// Auto-generated page-builder blocks registry\n\n';
-    blocksContent += 'export const ModulePageBlocks: { id: string; category?: string; component: string; module: string; loader: () => Promise<{ default: unknown }> }[] = [\n';
-    for (const pb of allPageBlocks) {
-        const handlerPath = pb.component.replace(/\.tsx?$/, '');
-        const importPath = `@/modules/${pb.module}/${handlerPath}`;
-        blocksContent += `  { id: ${JSON.stringify(pb.id)}, category: ${JSON.stringify(pb.category || 'modules')}, component: ${JSON.stringify(pb.component)}, module: ${JSON.stringify(pb.module)}, loader: () => import('${importPath}') },\n`;
-    }
-    blocksContent += '];\n';
-    fs.writeFileSync(BLOCKS_FILE, blocksContent);
 
     const CRONS_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-crons.ts');
     let cronsContent = '// Auto-generated module cron jobs registry\n\n';

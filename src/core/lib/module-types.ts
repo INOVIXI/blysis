@@ -229,16 +229,6 @@ export interface ModuleManifest {
         order?: number;       // render order within the slot (lower first)
     }[];
 
-    // Page-builder blocks - custom Puck blocks the module contributes.
-    // Each entry points to a module file that exports a Puck-compatible
-    // ComponentConfig as its default export. Merged into the page editor
-    // and renderer at build time.
-    pageBlocks?: {
-        id: string;           // unique component name (e.g. "ProductGrid")
-        category?: string;    // sidebar category in the editor
-        component: string;    // path to the file relative to module root
-    }[];
-
     // Cron jobs - periodic tasks run by the core scheduler.
     // Schedule keywords: every-minute | every-5-minutes | every-15-minutes
     //                    every-hour | every-day | every-week | every-month
@@ -262,14 +252,16 @@ export interface ModuleManifest {
         indexes?: { table: string; columns: string[] }[];
     }[];
 
-    // Activity-feed title localization - modules that emit activity events
-    // declare how to localize their English-formatted titles. Core strips
-    // `prefix` from the stored title and substitutes the translation under
-    // the "activity" namespace `key`. Keeps core ignorant of module events.
+    // Activity-feed naming and title localization - modules that emit activity
+    // events declare what each event is called and, where the shape allows,
+    // how to localize its English-formatted title. Core strips `prefix` from
+    // the stored title and substitutes the translation under the "activity"
+    // namespace `key`. Keeps core ignorant of module events.
     activityTitles?: {
         type: string;         // activity event type, e.g. "forum.topic.created"
-        prefix: string;       // English prefix to strip, e.g. "New topic: "
-        key: string;          // translation key under "activity", e.g. "forumTopicCreated"
+        nameKey: string;      // what the kind is called, e.g. "kindForumTopicCreated"
+        prefix?: string;      // English prefix to strip, e.g. "New topic: "
+        key?: string;         // translation key under "activity", e.g. "forumTopicCreated"
     }[];
 
     // RBAC resource strings the module owns (e.g. "blog.article"). Surfaced

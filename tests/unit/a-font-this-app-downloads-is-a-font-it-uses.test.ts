@@ -13,7 +13,7 @@ import path from "node:path";
  * Nothing referenced those variables. Every theme asked for `Inter` and
  * `Outfit` by their plain names, which the self hosted copies are not
  * registered under, so all three downloads were dead weight on a first visit.
- * `Inter` still rendered, from `https://rsms.me`, because `@measured/puck`'s
+ * `Inter` still rendered, from `https://rsms.me`, because the block editor's
  * stylesheet imports it and that stylesheet reaches public pages. It arrived
  * around 150ms and it is about ten percent wider than the system fallback,
  * which was enough to push the navigation onto a second row on nine public

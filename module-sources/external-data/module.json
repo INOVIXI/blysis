@@ -3,7 +3,7 @@
   "name": "External Data",
   "description": "Read a list out of a database this site does not own: a game server, a billing system, an old forum. Read only, one bounded query, and the connection never reaches a page.",
   "version": "1.4.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "Database",

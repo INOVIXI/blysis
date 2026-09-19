@@ -3,7 +3,7 @@
   "name": "Leaderboard",
   "description": "Member rankings by purchases, votes and activity",
   "version": "1.5.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Trophy",
@@ -93,13 +93,6 @@
       }
     }
   },
-  "pageBlocks": [
-    {
-      "id": "LeaderboardTop",
-      "category": "Leaderboard",
-      "component": "blocks/LeaderboardTop.tsx"
-    }
-  ],
   "navLinks": [
     {
       "label": "Leaderboard",

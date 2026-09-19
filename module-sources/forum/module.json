@@ -3,7 +3,7 @@
   "name": "Forum Module",
   "description": "Community discussion forum with categories, topics, and replies",
   "version": "1.8.0",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis Team",
   "icon": "MessageSquare",

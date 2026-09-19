@@ -20,8 +20,9 @@ import { stripComments } from "./source-text";
  *     `blog` as an article lookup, so these looked up an article called
  *     "category" and answered 404. The whole of the blog's browsing was dead.
  *   - `/login`, twice in the forum, where the route is `/auth/login`.
- *   - `/admin/page-builder/<id>` in the custom-pages admin, where the module
- *     declares `/custom-pages/builder/[id]`.
+ *   - a second address for the custom-pages editor, written by hand in that
+ *     module's own admin screen and differing from the one its manifest
+ *     declared.
  *   - `/profile/<username>`, in core's own activity feed and audit log.
  *     `/profile` is the signed-in visitor's own page and takes no segment.
  *     Core cannot hardcode the module path that does serve profiles either,
@@ -149,7 +150,7 @@ describe("the route table", () => {
         expect(coreRoutes()).toContain("/auth/login");
         expect(coreRoutes()).toContain("/profile");
         expect(moduleRoutes()).toContain("/blog");
-        expect(moduleRoutes()).toContain("/admin/custom-pages/builder/[id]");
+        expect(moduleRoutes()).toContain("/admin/custom-pages");
         expect(ALL_ROUTES.length).toBeGreaterThan(100);
     });
 
@@ -211,12 +212,12 @@ describe("userProfilePath", () => {
     const ON: Record<string, boolean> = {};
 
     it("resolves through the module that claims the capability", () => {
-        expect(userProfileRoutePattern(ON)).toBe("/player/[username]");
-        expect(userProfilePath("ada", ON)).toBe("/player/ada");
+        expect(userProfileRoutePattern(ON)).toBe("/u/[username]");
+        expect(userProfilePath("ada", ON)).toBe("/u/ada");
     });
 
     it("encodes a name that would otherwise invent a path segment", () => {
-        expect(userProfilePath("a/b", ON)).toBe("/player/a%2Fb");
+        expect(userProfilePath("a/b", ON)).toBe("/u/a%2Fb");
     });
 
     it("has nowhere to point without a username", () => {
@@ -225,14 +226,14 @@ describe("userProfilePath", () => {
     });
 
     it("stops linking when an admin turns the module off", () => {
-        const off = { "player-profiles": false };
+        const off = { "member-profiles": false };
         expect(userProfileRoutePattern(off)).toBeNull();
         expect(userProfilePath("ada", off)).toBeNull();
     });
 
     it("is claimed by exactly one installed module, with a resolver behind it", () => {
         const manifest = JSON.parse(
-            fs.readFileSync(path.join(ROOT, "module-sources/player-profiles/module.json"), "utf8"),
+            fs.readFileSync(path.join(ROOT, "module-sources/member-profiles/module.json"), "utf8"),
         ) as { routes: { path: string; userProfile?: boolean; resolver?: string }[] };
         const claimed = manifest.routes.filter((r) => r.userProfile);
         expect(claimed).toHaveLength(1);
@@ -251,7 +252,7 @@ describe("core's own username links", () => {
             const source = fs.readFileSync(path.join(ROOT, file), "utf8");
             expect(source, file).toContain("userProfilePath");
             expect(source, file).not.toContain("/profile/${");
-            expect(source, file).not.toContain("/player/");
+            expect(source, file).not.toContain("/u/");
         }
     });
 });

@@ -3,7 +3,7 @@
   "name": "Custom Forms",
   "description": "Dynamic form builder with submissions",
   "version": "1.4.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "FileEdit",
@@ -173,7 +173,8 @@
         "module_custom-forms_description": "Dynamic form builder with submissions"
       },
       "activity": {
-        "formSubmissionCreated": "submitted the form:"
+        "formSubmissionCreated": "submitted the form:",
+        "kindFormSubmissionCreated": "Form Submission"
       },
       "pageTitles": {
         "form": "Form"
@@ -266,7 +267,8 @@
         "module_custom-forms_description": "Gönderim takipli dinamik form oluşturucu"
       },
       "activity": {
-        "formSubmissionCreated": "formu gönderdi:"
+        "formSubmissionCreated": "formu gönderdi:",
+        "kindFormSubmissionCreated": "Form Gönderimi"
       },
       "pageTitles": {
         "form": "Form"
@@ -287,6 +289,7 @@
   "activityTitles": [
     {
       "type": "customforms.submission.created",
+      "nameKey": "kindFormSubmissionCreated",
       "prefix": "Submitted form: ",
       "key": "formSubmissionCreated"
     }

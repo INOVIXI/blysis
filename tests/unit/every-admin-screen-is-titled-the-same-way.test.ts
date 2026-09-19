@@ -27,11 +27,13 @@ const ROOT = path.resolve(__dirname, "../..");
 const SHELLS = ["AdminCrudPage", "SettingsForm", "AuthProviderSetup", "AdminPageHeader"];
 
 /**
- * A full-screen editor is not a panel screen: the Puck page builder fills the
- * viewport with its own canvas, toolbar and save button, and a panel header
- * above it would be a second toolbar for the same page.
+ * A screen that fills the viewport with an editor of its own would be given a
+ * second toolbar by the panel header, so it would go here. The one member
+ * this set ever had was the block page builder, and that is gone; the empty
+ * set stays because the next full-screen editor will want it, and the test
+ * below refuses a member that is not really one.
  */
-const FULL_SCREEN = new Set(["module-sources/custom-pages/pages/admin/builder/[id]/page.tsx"]);
+const FULL_SCREEN = new Set<string>([]);
 
 /**
  * Not a screen at all. `/admin/[...slug]` is where a module's admin page is
@@ -162,9 +164,12 @@ describe("an admin screen", () => {
     });
 
     it("keeps the exception list to screens that really are full-screen", () => {
+        // A screen claiming to own the viewport draws over the panel's chrome
+        // and says so in its own class list; one that does not is a screen
+        // that simply forgot its header.
         for (const rel of FULL_SCREEN) {
             const source = fs.readFileSync(path.join(ROOT, rel), "utf8");
-            expect(source, rel).toMatch(/puck|Puck/);
+            expect(source, rel).toMatch(/h-screen|inset-0|fixed/);
         }
     });
 

@@ -49,8 +49,6 @@ const IDENTIFIERS_BY_DESIGN: Record<string, string> = {
         "The same integer, shown beside each role so the admin can see which bucket wins when two roles overlap.",
     "module-sources/changelog/pages/public/page.tsx::entry.type":
         "The changelog entry's tag is free text the admin writes per entry, not an enum. There is nothing to look up.",
-    "module-sources/changelog/blocks/ChangelogRecentEntries.tsx::entry.type":
-        "The same admin-written tag, in the homepage block.",
 };
 
 /** A JSX child that is exactly one member expression, optionally .replace()d. */

@@ -3,7 +3,7 @@
   "name": "PayTR Payment Gateway",
   "description": "Take Turkish card, instalment and bank transfer payments through PayTR",
   "version": "1.3.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "secretSettings": [
     "paytr_merchant_key",
     "paytr_merchant_salt"

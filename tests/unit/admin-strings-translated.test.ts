@@ -37,7 +37,6 @@ const LITERAL_EXAMPLES = new Set([
     "abc123def456...",      // an R2 access key
     "my-bucket",            // an R2 bucket name
     "0x...",                // a Turnstile key prefix
-    "auto-generated-from-title", // what an empty slug becomes
     "HelpCircle, BookOpen, Lightbulb...", // Lucide icon identifiers
     "7d",                   // a punishment duration
     "/about",               // a URL path

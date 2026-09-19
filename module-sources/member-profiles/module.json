@@ -1,0 +1,153 @@
+{
+  "id": "member-profiles",
+  "name": "Member Profiles",
+  "description": "Public profile pages, with what every installed module knows about a member",
+  "version": "1.6.2",
+  "coreVersion": "^5.0.0",
+  "category": "gaming",
+  "author": "Blysis",
+  "icon": "Users",
+  "routes": [
+    {
+      "path": "/u/[username]",
+      "component": "pages/public/[username]/page.tsx",
+      "resolver": "lib/route-exists.ts",
+      "titleKey": "pageTitles.member",
+      "descriptionKey": "pageDescriptions.member",
+      "userProfile": true,
+      "ogType": "profile"
+    },
+    {
+      "path": "/u/[username]/content",
+      "component": "pages/public/[username]/content/page.tsx",
+      "resolver": "lib/route-exists.ts",
+      "titleKey": "pageTitles.memberContent",
+      "descriptionKey": "pageDescriptions.memberContent"
+    }
+  ],
+  "profileTabs": [
+    {
+      "id": "ProfileAccountsTab",
+      "label": "Accounts",
+      "component": "components/ProfileAccountsTab",
+      "order": 60,
+      "labelKey": "memberProfiles.profileTab"
+    }
+  ],
+  "api": [
+    {
+      "path": "/members/[username]",
+      "handler": "api/[username]/route.ts",
+      "description": "Get a public member profile by username.",
+      "openTo": "public"
+    },
+    {
+      "path": "/members/[username]/content",
+      "handler": "api/[username]/content/route.ts",
+      "description": "List what a member has written, by kind.",
+      "openTo": "public"
+    },
+    {
+      "path": "/linked-accounts",
+      "handler": "api/linked-accounts/route.ts",
+      "description": "Read the accounts a member has proved are theirs.",
+      "openTo": "member"
+    },
+    {
+      "path": "/members/linked-accounts",
+      "handler": "api/linked-accounts/route.ts",
+      "description": "List, link, or unlink connected game accounts for the current user.",
+      "openTo": "member"
+    }
+  ],
+  "translations": {
+    "en": {
+      "memberProfiles": {
+        "accounts": "Accounts",
+        "activity": "Activity",
+        "backToProfile": "Back to profile",
+        "badges": "Badges",
+        "contentKind": "What to show",
+        "joinDate": "Join Date",
+        "linkedAccounts": "Linked Accounts",
+        "linksAreManagedByTheirModule": "Each link is managed where it was made, in that game's own section.",
+        "memberNotFound": "Member not found",
+        "noLinkedAccounts": "No linked accounts",
+        "nothingOfThisKind": "Nothing of this kind yet.",
+        "offline": "Offline",
+        "online": "Online",
+        "profileTab": "Linked accounts",
+        "rank": "Rank",
+        "searchPlaceholder": "Enter username...",
+        "stat_comments": "Comments",
+        "stat_orders": "Orders",
+        "stat_posts": "Posts",
+        "stat_suggestions": "Suggestions",
+        "stat_topics": "Topics",
+        "statistics": "Statistics",
+        "title": "Member Profile",
+        "untitled": "Untitled",
+        "username": "Username"
+      },
+      "pageTitles": {
+        "member": "Member Profile",
+        "memberContent": "What They Have Written"
+      },
+      "admin": {
+        "module_member-profiles_name": "Member Profiles",
+        "module_member-profiles_description": "Public profile pages, with what every installed module knows about a member"
+      },
+      "pageDescriptions": {
+        "member": "See a member's public profile: when they joined, the rank they hold and what they have posted across the community.",
+        "memberContent": "Every topic, reply, comment and suggestion one member has written, newest first."
+      }
+    },
+    "tr": {
+      "memberProfiles": {
+        "accounts": "Hesaplar",
+        "activity": "Aktivite",
+        "backToProfile": "Profile dön",
+        "badges": "Rozetler",
+        "contentKind": "Ne gösterilsin",
+        "joinDate": "Katılma Tarihi",
+        "linkedAccounts": "Bağlı Hesaplar",
+        "linksAreManagedByTheirModule": "Her bağlantı, yapıldığı yerde - o oyunun kendi bölümünde - yönetilir.",
+        "memberNotFound": "Üye bulunamadı",
+        "noLinkedAccounts": "Bağlı hesap yok",
+        "nothingOfThisKind": "Bu türden henüz bir şey yok.",
+        "offline": "Çevrimdışı",
+        "online": "Çevrimiçi",
+        "profileTab": "Bağlı hesaplar",
+        "rank": "Rütbe",
+        "searchPlaceholder": "Kullanıcı adı girin...",
+        "stat_comments": "Yorum",
+        "stat_orders": "Sipariş",
+        "stat_posts": "Mesaj",
+        "stat_suggestions": "Öneri",
+        "stat_topics": "Konu",
+        "statistics": "İstatistikler",
+        "title": "Üye Profili",
+        "untitled": "Başlıksız",
+        "username": "Kullanıcı Adı"
+      },
+      "pageTitles": {
+        "member": "Üye Profili",
+        "memberContent": "Neler Yazmış"
+      },
+      "admin": {
+        "module_member-profiles_name": "Üye Profilleri",
+        "module_member-profiles_description": "Herkese açık profil sayfaları; kurulu her modülün üye hakkında bildiği ile"
+      },
+      "pageDescriptions": {
+        "member": "Bir üyenin herkese açık profilini görün: ne zaman katıldığı, hangi rütbede olduğu ve toplulukta neler paylaştığı.",
+        "memberContent": "Bir üyenin yazdığı bütün konular, yanıtlar, yorumlar ve öneriler, en yenisi önce."
+      }
+    }
+  },
+  "hooksEmitted": [
+    {
+      "hook": "profile.linkedAccounts",
+      "type": "filter"
+    }
+  ]
+}

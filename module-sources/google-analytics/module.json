@@ -3,7 +3,7 @@
   "name": "Google Analytics",
   "description": "Google Analytics tracking integration",
   "version": "1.2.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
   "icon": "BarChart",

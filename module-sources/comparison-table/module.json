@@ -3,7 +3,7 @@
   "name": "Comparison Table",
   "description": "Compare several things feature by feature. A cell nobody filled in is left blank rather than marked as a no.",
   "version": "1.5.2",
-  "coreVersion": "^4.0.0",
+  "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
   "icon": "Table",
@@ -18,18 +18,9 @@
   ],
   "adminRoutes": [
     {
-      "path": "/settings/comparison-tables",
+      "path": "/comparison-tables",
       "component": "pages/admin/page.tsx",
       "permission": "comparison-table.manage"
-    }
-  ],
-  "settingsCards": [
-    {
-      "title": "Comparison tables",
-      "description": "Compare plans, ranks or packages feature by feature.",
-      "href": "/settings/comparison-tables",
-      "icon": "Table",
-      "color": "text-violet-500"
     }
   ],
   "api": [
@@ -43,6 +34,12 @@
       "path": "/comparison-tables/admin/tables",
       "handler": "api/admin/tables/route.ts",
       "description": "Read every table for the editor, replace one whole, or remove one.",
+      "permission": "comparison-table.manage"
+    },
+    {
+      "path": "/comparison-tables/admin/subjects",
+      "handler": "api/admin/subjects/route.ts",
+      "description": "What a table can be built about, asked of whoever owns it.",
       "permission": "comparison-table.manage"
     }
   ],
@@ -64,6 +61,7 @@
         "adm_columnHref": "Link (optional)",
         "adm_columnLabel": "Column name",
         "adm_columns": "What is being compared",
+        "adm_columnsFromSubject": "These columns come from what you picked. Add or remove a product there and it appears or disappears here.",
         "adm_delete": "Delete",
         "adm_deleteConfirm": "The table and everything in it goes. This cannot be undone.",
         "adm_deleted": "Table deleted.",
@@ -87,11 +85,16 @@
         "adm_saveFailed": "The table could not be saved.",
         "adm_saved": "Table saved.",
         "adm_size": "{columns} columns, {rows} rows",
+        "adm_subject": "What this table is about",
+        "adm_subjectHint": "Pick a shelf and its products become the columns: their live names, prices and pictures, and a way to buy each one. You write the features underneath. Leave it as it is to compare things the site does not sell.",
+        "adm_subjectNone": "Nothing - I will type the columns",
+        "adm_subjectsFailed": "The list of things to compare could not be read.",
         "adm_subtitle": "Compare plans, ranks or packages feature by feature. A cell left alone shows a dash rather than a cross: it says nobody has answered, which is not the same as no.",
         "adm_tableDescription": "Description",
         "adm_tableSlug": "Address",
         "adm_tableTitle": "Title",
         "adm_title": "Comparison tables",
+        "buy": "Buy",
         "choose": "Choose",
         "feature": "Feature",
         "mark_no": "not included",
@@ -105,6 +108,10 @@
       },
       "pageDescriptions": {
         "compare": "Compare the options side by side, feature by feature, and see exactly what each one includes before you choose."
+      },
+      "admin": {
+        "menu_comparison-table": "Comparison Tables",
+        "menu_comparison-table_comparison_tables": "Comparison Tables"
       }
     },
     "tr": {
@@ -124,6 +131,7 @@
         "adm_columnHref": "Bağlantı (isteğe bağlı)",
         "adm_columnLabel": "Sütun adı",
         "adm_columns": "Karşılaştırılanlar",
+        "adm_columnsFromSubject": "Bu sütunlar seçtiğin şeyden geliyor. Oraya ürün ekleyip çıkardıkça burada da beliriyor ve kayboluyor.",
         "adm_delete": "Sil",
         "adm_deleteConfirm": "Tablo ve içindeki her şey gider. Bu işlem geri alınamaz.",
         "adm_deleted": "Tablo silindi.",
@@ -147,11 +155,16 @@
         "adm_saveFailed": "Tablo kaydedilemedi.",
         "adm_saved": "Tablo kaydedildi.",
         "adm_size": "{columns} sütun, {rows} satır",
+        "adm_subject": "Bu tablo neyle ilgili",
+        "adm_subjectHint": "Bir raf seç, o rafın ürünleri sütun olsun: canlı isimleri, fiyatları, görselleri ve her biri için satın alma yolu. Özellikleri sen altına yazarsın. Sitenin satmadığı şeyleri karşılaştıracaksan olduğu gibi bırak.",
+        "adm_subjectNone": "Hiçbir şey - sütunları kendim yazacağım",
+        "adm_subjectsFailed": "Karşılaştırılabilecek şeylerin listesi okunamadı.",
         "adm_subtitle": "Paketleri, rütbeleri ya da planları özellik özellik karşılaştırın. Doldurulmayan hücre çarpı değil tire gösterir: kimse cevaplamadı demektir, yok demek değil.",
         "adm_tableDescription": "Açıklama",
         "adm_tableSlug": "Adres",
         "adm_tableTitle": "Başlık",
         "adm_title": "Karşılaştırma tabloları",
+        "buy": "Satın Al",
         "choose": "Seç",
         "feature": "Özellik",
         "mark_no": "yok",
@@ -165,6 +178,10 @@
       },
       "pageDescriptions": {
         "compare": "Seçenekleri yan yana, özellik özellik karşılaştırın ve karar vermeden önce her birinin neleri kapsadığını görün."
+      },
+      "admin": {
+        "menu_comparison-table": "Karşılaştırma Tabloları",
+        "menu_comparison-table_comparison_tables": "Karşılaştırma Tabloları"
       }
     }
   },
@@ -172,6 +189,33 @@
     {
       "name": "comparison-table.manage",
       "labelKey": "comparisonTable.perm_manage"
+    }
+  ],
+  "slotContents": [
+    {
+      "id": "shelf-table",
+      "slot": "store.category.shelf",
+      "component": "slots/ShelfTable",
+      "order": 10
+    }
+  ],
+  "hooksEmitted": [
+    {
+      "hook": "comparison.subjects",
+      "type": "filter"
+    },
+    {
+      "hook": "comparison.columns",
+      "type": "filter"
+    }
+  ],
+  "menu": [
+    {
+      "label": "Comparison Tables",
+      "path": "/comparison-tables",
+      "icon": "Table",
+      "group": "commerce",
+      "permission": "comparison-table.manage"
     }
   ]
 }

@@ -109,7 +109,7 @@ tracked in git; the ZIPs are built from those sources by
 | Commerce | credits, currency, leaderboard, license-keys, store, vote, wheel |
 | Payment gateways | coinbase-commerce-gateway, coinpayments-gateway, iyzico-gateway, mercadopago-gateway, midtrans-gateway, mollie-gateway, nowpayments-gateway, param-gateway, paymentwall-gateway, paypal-gateway, paysafecard-gateway, paytr-gateway, razorpay-gateway, stripe-gateway |
 | Community | blog, changelog, forum, in-app-notifications, referral, suggestions, trophies |
-| Gaming | downloads, minecraft-link, player-profiles, punishments, servers |
+| Gaming | downloads, minecraft-link, member-profiles, punishments, servers |
 | Management | announcements, help-center, login-protection, popups, staff, tickets, two-factor-auth |
 | Content | cookie-consent, custom-forms, custom-pages, email-templates, seo, slider |
 | Sign-in | apple-auth, battlenet-auth, discord-auth, epicgames-auth, facebook-auth, faceit-auth, github-auth, google-auth, instagram-auth, kakao-auth, kick-auth, line-auth, microsoft-auth, naver-auth, patreon-auth, reddit-auth, roblox-auth, spotify-auth, steam-auth, tiktok-auth, twitch-auth, vk-auth, x-auth, yandex-auth |
@@ -119,7 +119,7 @@ A `module.json` declares everything the module contributes: routes, admin
 routes, API endpoints, sidebar menu, dashboard cards, widgets, navbar/footer/
 layout components, profile tabs, settings cards, OAuth buttons, dependencies,
 conflicts, RBAC permissions, cron jobs, webhook receivers, hook listeners, slot
-contributions, search providers, page-builder blocks, notification types and
+contributions, search providers, notification types and
 translations.
 
 **Compatibility contract.** A manifest declares `coreVersion`, a semver range
@@ -286,7 +286,6 @@ npx tsx scripts/reconcile-build.ts            # Rebuild if src/modules/ no longe
 
 # Module authoring
 npm run create:module <id> "Name" "Desc"      # Scaffold from module-template/
-npm run module:add-block                      # Add a page-builder block
 npm run module:add-hook                       # Add a hook listener
 npm run module:add-slot                       # Add a slot contribution
 npm run module:add-cron                       # Add a cron job
