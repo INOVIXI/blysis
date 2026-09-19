@@ -36,6 +36,12 @@
       "handler": "api/redirects/route.ts",
       "description": "List the redirects, or add one (admin).",
       "permission": "url-redirects.manage"
+    },
+    {
+      "path": "/url-redirects/[id]",
+      "handler": "api/redirects/[id]/route.ts",
+      "description": "Take one redirect down (admin).",
+      "permission": "url-redirects.manage"
     }
   ],
   "userDataExport": [],
@@ -50,6 +56,12 @@
         "adm_none": "Nothing has moved yet.",
         "adm_permanent": "Permanent",
         "adm_permanentHint": "On, a search engine forgets the old address. Off is for a move you may undo.",
+        "adm_removeConfirm": "The addresses stop being redirected as soon as this is saved.",
+        "adm_removeFailed": "Could not take them down.",
+        "adm_removeTitle": "Take these redirects down",
+        "adm_removed": "Taken down.",
+        "adm_removedPartly": "{deleted} of {total} taken down.",
+        "adm_selectRow": "Select this redirect",
         "adm_subtitle": "When a page moves, every link to the old address keeps pointing at it. A redirect is the sign on the old door.",
         "adm_title": "Redirects",
         "adm_to": "New address",
@@ -72,6 +84,12 @@
         "adm_none": "Henüz taşınan bir sayfa yok.",
         "adm_permanent": "Kalıcı",
         "adm_permanentHint": "Açıkken arama motoru eski adresi unutur. Geri alabileceğiniz bir taşıma için kapatın.",
+        "adm_removeConfirm": "Kaydedildiği anda bu adresler yönlendirilmeyi bırakır.",
+        "adm_removeFailed": "Kaldırılamadı.",
+        "adm_removeTitle": "Bu yönlendirmeleri kaldır",
+        "adm_removed": "Kaldırıldı.",
+        "adm_removedPartly": "{total} tanesinden {deleted} tanesi kaldırıldı.",
+        "adm_selectRow": "Bu yönlendirmeyi seç",
         "adm_subtitle": "Bir sayfa taşındığında eski adrese giden her bağlantı orayı göstermeye devam eder. Yönlendirme, eski kapıdaki tabeladır.",
         "adm_title": "Yönlendirmeler",
         "adm_to": "Yeni adres",

@@ -68,6 +68,12 @@ export { sharedJson, peekShared, invalidateShared } from "@/core/lib/shared-requ
 export { copyText } from "@/core/lib/copy-text";
 
 export { writeError, errorMessage } from "@/core/lib/write-result";
+// Deleting several rows and saying what actually happened. There is no
+// endpoint that takes a list of ids, so this is several requests - and the
+// partial outcome is the only one where the screen and the operator part
+// company.
+export { deleteEach } from "@/core/lib/bulk-delete";
+export type { BulkDeleteResult } from "@/core/lib/bulk-delete";
 
 /**
  * The site's clock, as pure functions. "Friday at 18:00" is not a moment

@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { AdminPageHeader } from "@/core/sdk/admin";
-import { Button, Card, CardContent, CheckboxField, Input, Label, ListControls, LoadFailed, Pagination, useRowList } from "@/core/sdk/ui";
-import { errorMessage } from "@/core/sdk";
-import { Loader2, Plus } from "lucide-react";
+import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { Button, Card, CardContent, Checkbox, CheckboxField, Input, Label, ListControls, LoadFailed, Pagination, useConfirm, useRowList } from "@/core/sdk/ui";
+import { deleteEach, errorMessage } from "@/core/sdk";
+import { Loader2, Plus, Trash2 } from "lucide-react";
 
 interface Redirect {
     id: string;
@@ -25,6 +25,7 @@ export default function UrlRedirectsPage() {
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
+    const { confirm } = useConfirm();
     const [saving, setSaving] = useState(false);
     const [from, setFrom] = useState("");
     const [to, setTo] = useState("");
@@ -60,6 +61,27 @@ export default function UrlRedirectsPage() {
         } finally {
             setSaving(false);
         }
+    };
+
+    const removeMany = async () => {
+        const ok = await confirm({
+            title: t("adm_removeTitle"),
+            message: t("adm_removeConfirm"),
+            variant: "danger",
+            confirmText: commonT("delete"),
+        });
+        if (!ok) return;
+        // Every answer read: a list where four of five were refused must not
+        // report itself as done and leave four signs still up.
+        const { deleted, total } = await deleteEach([...list.picked], async (id) => {
+            const res = await fetch(`/api/v1/url-redirects/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        list.clear();
+        setReloadKey((k) => k + 1);
+        if (deleted === total) toast.success(t("adm_removed"));
+        else if (deleted === 0) toast.error(t("adm_removeFailed"));
+        else toast.error(t("adm_removedPartly", { deleted, total }));
     };
 
     return (
@@ -123,9 +145,25 @@ export default function UrlRedirectsPage() {
                 <Card><CardContent className="py-10 text-center"><p className="text-muted-foreground">{commonT("noResults")}</p></CardContent></Card>
             ) : (
                 <div className="space-y-2">
+                    <BulkBar
+                        className="rounded-lg border border-border"
+                        state={list.headerState}
+                        count={list.picked.size}
+                        onToggleAll={list.toggleAll}
+                        actions={
+                            <Button variant="destructive" size="sm" onClick={removeMany}>
+                                <Trash2 className="w-4 h-4" /> {commonT("delete")} {list.picked.size}
+                            </Button>
+                        }
+                    />
                     {list.rows.map((redirect) => (
                         <Card key={redirect.id}>
                             <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
+                                <Checkbox
+                                    checked={list.picked.has(redirect.id)}
+                                    onChange={() => list.toggle(redirect.id)}
+                                    aria-label={t("adm_selectRow")}
+                                />
                                 <div className="min-w-0 font-mono text-sm">
                                     <span className="text-muted-foreground">{redirect.from}</span>
                                     <span className="mx-2 text-muted-foreground">-&gt;</span>
