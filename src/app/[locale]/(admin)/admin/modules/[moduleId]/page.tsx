@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/core/components/ui/card";
 import { Link } from "@/core/lib/i18n/navigation";
 import { ModuleIcon } from "../ModuleIcon";
 import { ModuleSettingsPanel } from "../ModuleSettingsPanel";
-import { moduleDescription, moduleName } from "../module-name";
+import { moduleDescription, moduleName } from "@/core/lib/module-label";
 import type { Module, ModuleSettingValues } from "../types";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";

@@ -196,7 +196,8 @@
       "admin": {
         "menu_trophies_trophies": "Trophies",
         "module_trophies_name": "Trophies",
-        "module_trophies_description": "Achievement badges with rule-based auto-award engine"
+        "module_trophies_description": "Achievement badges with rule-based auto-award engine",
+        "crumb_trophies": "Trophies"
       },
       "pageDescriptions": {
         "trophies": "Browse the achievements you can earn across the community and see which of them you have already unlocked."
@@ -269,7 +270,8 @@
       "admin": {
         "menu_trophies_trophies": "Kupalar",
         "module_trophies_name": "Kupalar",
-        "module_trophies_description": "Kural tabanlı otomatik ödüllendirme motoruyla başarım rozetleri"
+        "module_trophies_description": "Kural tabanlı otomatik ödüllendirme motoruyla başarım rozetleri",
+        "crumb_trophies": "Kupalar"
       },
       "pageDescriptions": {
         "trophies": "Toplulukta kazanabileceğiniz başarımlara göz atın ve bunlardan hangilerini şimdiden açtığınızı görün."

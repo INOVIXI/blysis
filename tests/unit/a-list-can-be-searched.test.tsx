@@ -67,6 +67,18 @@ function draw() {
     );
 }
 
+/**
+ * How long a test that waits out the debounce is given.
+ *
+ * The waits inside these tests already ask for five seconds, and vitest's own
+ * per-test ceiling is five seconds too, so the test was killed at the exact
+ * moment its wait was entitled to keep waiting: raising the inner number
+ * bought nothing. Measured on 2026-09-19 at a load average of 29, one of them
+ * finished at 5,025ms and failed. The outer ceiling has to be the larger of
+ * the two.
+ */
+const ROOM_FOR_THE_DEBOUNCE = 15_000;
+
 describe("a list drawn by the crud shell", () => {
     it("offers a box to search it", async () => {
         draw();
@@ -82,7 +94,7 @@ describe("a list drawn by the crud shell", () => {
         await waitFor(() => expect(screen.queryByText("Server rules")).toBeNull(), { timeout: 5000 });
         expect(screen.getByText("Client pack")).toBeTruthy();
         expect(screen.getByText("Texture pack")).toBeTruthy();
-    });
+    }, ROOM_FOR_THE_DEBOUNCE);
 
     it("matches what is under the name as well, because that is on the screen too", async () => {
         draw();
@@ -92,7 +104,7 @@ describe("a list drawn by the crud shell", () => {
 
         await waitFor(() => expect(screen.queryByText("Client pack")).toBeNull(), { timeout: 5000 });
         expect(screen.getByText("Server rules")).toBeTruthy();
-    });
+    }, ROOM_FOR_THE_DEBOUNCE);
 
     it("says the search found nothing, not that there is nothing", async () => {
         // "No items yet" in front of a full list is the panel telling an
@@ -107,5 +119,5 @@ describe("a list drawn by the crud shell", () => {
         // is not enough room for a debounce under that load.
         expect(await screen.findByText(MESSAGES.common.noResults, {}, { timeout: 5000 })).toBeTruthy();
         expect(screen.queryByText(MESSAGES.admin.crud_noItems)).toBeNull();
-    });
+    }, ROOM_FOR_THE_DEBOUNCE);
 });

@@ -131,6 +131,46 @@ function isSharedVocabulary(name: string): boolean {
     return name.startsWith("common.") || name.startsWith("admin.common_");
 }
 
+/**
+ * Words that are a module's id and also an ordinary English word, with the
+ * sense core is allowed to use them in.
+ *
+ * `core-names-no-module` reads code and comments and only flags the
+ * hyphenated ids, because "store", "blog" and "forum" are words anybody might
+ * write and a gate that flagged them would flag the sentence explaining why.
+ * A catalogue is smaller and it is all prose, so the same list can be checked
+ * here: measured on 2026-09-19 the twenty-two single-word ids matched eleven
+ * English strings, six of which were core describing a module's subject out
+ * loud - the theme screen offering to restyle "your store", the widgets
+ * screen explaining itself with a store that has no products, the account
+ * deletion warning listing forum posts and blog articles, the moderation
+ * screen naming suggestions, and two breadcrumbs for a module's own route.
+ *
+ * The other five are these, and each has to keep earning its place: a rule
+ * that stops matching is a rule that has outlived the string it was written
+ * for, and is removed rather than left to age.
+ *
+ * English only. Turkish carries its suffixes on the noun, so "mağaza" is
+ * inside "Modül Mağazası" and "talep" inside "talep kaydı", and the same
+ * check there matched seven strings of which one was real. A translation
+ * follows its English, and the English is where this is written first.
+ */
+const ORDINARY_SENSE: { name: string; word: string; because: string }[] = [
+    { name: "common.currency", word: "Currency", because: "the money a price is in, not the module that converts it" },
+    { name: "admin.users_currency", word: "Currency", because: "the same, on a member's row" },
+    { name: "setup.site.descriptionHint", word: "SEO", because: "the same, in the setup wizard" },
+    { name: "admin.settingsForm_secretKeyMissing", word: "store", because: "the verb: what an installation cannot do with a credential" },
+    { name: "admin.users_banReasonPlaceholder", word: "staff", because: "the people who run the site, who exist without the module that lists them" },
+];
+
+/** The ids that are one ordinary word, which is what needs a sense check. */
+function simpleModuleIds(): string[] {
+    return fs
+        .readdirSync(path.join(ROOT, "module-sources"), { withFileTypes: true })
+        .filter((e) => e.isDirectory() && !e.name.includes("-"))
+        .map((e) => e.name);
+}
+
 describe("the core catalogue", () => {
     it("has strings to read, and sources to weigh them against", () => {
         expect(CORE_CATALOGUE.get("en")!.size).toBeGreaterThan(1000);
@@ -166,5 +206,28 @@ describe("the core catalogue", () => {
             theirs.push(name);
         }
         expect(theirs, "declare it in the manifest beside the labelKey that asks for it").toEqual([]);
+    });
+
+    it("names no module in its own English prose", () => {
+        const ids = simpleModuleIds();
+        expect(ids.length).toBeGreaterThan(15);
+        const word = new RegExp(`\\b(${ids.join("|")})s?\\b`, "i");
+
+        const excused = new Set(ORDINARY_SENSE.map((rule) => rule.name));
+        const named: string[] = [];
+        for (const [name, value] of CORE_CATALOGUE.get("en")!) {
+            if (excused.has(name)) continue;
+            const hit = word.exec(value);
+            if (hit) named.push(`${name}: ${hit[0]}`);
+        }
+        expect(named, "say what the shape is, not which module has it").toEqual([]);
+    });
+
+    it("keeps no excuse for a string that no longer needs one", () => {
+        const idle = ORDINARY_SENSE.filter((rule) => {
+            const value = CORE_CATALOGUE.get("en")!.get(rule.name);
+            return value === undefined || !new RegExp(`\\b${rule.word}s?\\b`, "i").test(value);
+        }).map((rule) => rule.name);
+        expect(idle).toEqual([]);
     });
 });

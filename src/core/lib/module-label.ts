@@ -15,12 +15,18 @@
  *
  * This is one of the few honest uses of a `t.has` guard: the key is built
  * from a module id core does not know.
+ *
+ * It lived under the modules screen until the widget settings screen was
+ * found telling an operator that a widget came "from the store module" -
+ * `store` being the directory it lives in. Any screen that has a module id
+ * and a reader needs this, so it sits in core's lib beside `widget-label`.
  */
 
 export interface Named {
     id: string;
-    name: string;
-    description: string;
+    /** The manifest's English, where the caller has a manifest to hand. */
+    name?: string;
+    description?: string;
     i18n?: Record<string, { name: string; description: string }>;
 }
 
@@ -31,7 +37,7 @@ export function moduleName(
 ): string {
     const key = `module_${mod.id}_name`;
     if (t.has(key)) return t(key);
-    return mod.i18n?.[locale]?.name ?? mod.name;
+    return mod.i18n?.[locale]?.name ?? mod.name ?? mod.id;
 }
 
 export function moduleDescription(
@@ -41,5 +47,5 @@ export function moduleDescription(
 ): string {
     const key = `module_${mod.id}_description`;
     if (t.has(key)) return t(key);
-    return mod.i18n?.[locale]?.description ?? mod.description;
+    return mod.i18n?.[locale]?.description ?? mod.description ?? "";
 }

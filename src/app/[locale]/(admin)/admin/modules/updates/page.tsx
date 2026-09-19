@@ -8,7 +8,7 @@ import { Button } from "@/core/components/ui/button";
 import { Loader2, Download, Check, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
-import { moduleDescription, moduleName } from "../module-name";
+import { moduleDescription, moduleName } from "@/core/lib/module-label";
 import { Badge } from "@/core/components/ui/badge";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { errorMessage } from "@/core/lib/write-result";

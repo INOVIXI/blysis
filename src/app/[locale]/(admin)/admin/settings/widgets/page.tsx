@@ -8,10 +8,11 @@ import { Loader2, Check, Eye, EyeOff, ChevronUp, ChevronDown, AlertTriangle } fr
 import { toast } from "sonner";
 import { ModuleWidgets } from "@/core/generated/module-registry";
 import { useAllModules } from "@/core/providers/module-provider";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { isWidgetVisible } from "@/core/lib/homepage-widgets";
 import { widgetLabel } from "@/core/lib/widget-label";
+import { moduleName } from "@/core/lib/module-label";
 import { writeError } from "@/core/lib/write-result";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
@@ -19,6 +20,7 @@ import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 export default function WidgetSettingsPage() {
     const modules = useAllModules();
     const t = useTranslations("admin");
+    const locale = useLocale();
 
     // Build available widgets from registry, filtered to enabled modules
     const availableWidgets = useMemo(() =>
@@ -27,11 +29,12 @@ export default function WidgetSettingsPage() {
             .map((w) => ({
                 id: w.id,
                 name: widgetLabel(w, (key) => t.has(key), (key) => t(key)),
-                description: t("widgets_fromModule", { module: w.module }),
+                // The module's name, not the directory it lives in.
+                description: t("widgets_fromModule", { module: moduleName({ id: w.module }, locale, t) }),
                 module: w.module,
                 defaultVisible: w.defaultVisible,
             })),
-        [modules, t]
+        [modules, t, locale]
     );
 
     const [widgetConfig, setWidgetConfig] = useState<Record<string, boolean>>({});

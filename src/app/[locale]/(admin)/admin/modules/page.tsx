@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { categoryClassName, resolveDependencyBadge } from "./module-display";
-import { moduleDescription, moduleName } from "./module-name";
+import { moduleDescription, moduleName } from "@/core/lib/module-label";
 import type { SortKey } from "./types";
 import { useAdminModules } from "./useAdminModules";
 import { ModuleIcon } from "./ModuleIcon";

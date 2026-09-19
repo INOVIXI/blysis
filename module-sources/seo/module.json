@@ -167,7 +167,8 @@
         "create": "Create",
         "menu_seo_seo_manager": "SEO Manager",
         "module_seo_name": "SEO Manager",
-        "module_seo_description": "Advanced SEO management with per-page meta tags, OpenGraph, and structured data"
+        "module_seo_description": "Advanced SEO management with per-page meta tags, OpenGraph, and structured data",
+        "crumb_seo": "SEO"
       }
     },
     "tr": {
@@ -266,7 +267,8 @@
         "create": "Oluştur",
         "menu_seo_seo_manager": "SEO Yöneticisi",
         "module_seo_name": "SEO Yöneticisi",
-        "module_seo_description": "Sayfa başına meta etiketleri, OpenGraph ve yapılandırılmış veri ile gelişmiş SEO yönetimi"
+        "module_seo_description": "Sayfa başına meta etiketleri, OpenGraph ve yapılandırılmış veri ile gelişmiş SEO yönetimi",
+        "crumb_seo": "SEO"
       }
     }
   },

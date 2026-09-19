@@ -5,7 +5,7 @@ import { useModalDialog } from "@/core/hooks/useModalDialog";
 import { Button } from "@/core/components/ui/button";
 import { CheckCircle, X } from "lucide-react";
 import type { MarketplaceModule } from "./types";
-import { moduleDescription, moduleName } from "./module-name";
+import { moduleDescription, moduleName } from "@/core/lib/module-label";
 import { useLocalDate } from "@/core/hooks/useLocalDate";
 
 interface DetailProps {
