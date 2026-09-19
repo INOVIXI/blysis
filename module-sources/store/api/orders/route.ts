@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hasPermission, log, pageParams, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
+import { ORDER_STATUSES } from "../../lib/order-status";
 
 /**
  * Orders are listed here and made at `/store/checkout`.
@@ -34,10 +35,46 @@ export async function GET(request: NextRequest) {
         // which is what this endpoint is for in the first place.
         const adminCheck = await hasPermission(session.user.id, "store.orders");
 
-        // Whoever serves orders sees all of them; a member sees their own
-        const where = adminCheck ? {} : { userId: session.user.id };
+        const term = (searchParams.get("q") ?? "").trim();
+        // The column is an enum, so a name that is not one of its members is
+        // an error the database raises rather than an empty list. Anything
+        // unrecognised means "no status filter".
+        const asked = (searchParams.get("status") ?? "").trim().toUpperCase();
+        const status = (ORDER_STATUSES as readonly string[]).includes(asked)
+            ? (asked as (typeof ORDER_STATUSES)[number])
+            : null;
 
-        const [orders, total] = await Promise.all([
+        // Whoever serves orders sees all of them; a member sees their own
+        const where = {
+            ...(adminCheck ? {} : { userId: session.user.id }),
+            ...(status ? { status } : {}),
+            // An order number is what a buyer quotes in a ticket, and what
+            // they bought is what they remember instead when they cannot find
+            // the number. Both, or the box only answers half the questions
+            // anybody brings to this screen.
+            ...(term
+                ? {
+                      OR: [
+                          { orderNumber: { contains: term, mode: "insensitive" as const } },
+                          { items: { some: { name: { contains: term, mode: "insensitive" as const } } } },
+                      ],
+                  }
+                : {}),
+        };
+
+        /*
+         * How many orders are in each status, over the whole table.
+         *
+         * The screen used to count the ten rows it had and print that beside
+         * each tab, so a shop with four hundred orders said "(2)" next to
+         * Completed. The status filter itself is deliberately left out of the
+         * scope below: the tabs have to keep saying what is in the other
+         * statuses while one of them is selected, or picking a tab empties
+         * every number but its own.
+         */
+        const { status: _ignored, ...countScope } = where;
+
+        const [orders, total, byStatus] = await Promise.all([
             prisma.order.findMany({
                 where,
                 include: {
@@ -57,10 +94,15 @@ export async function GET(request: NextRequest) {
                 orderBy: { createdAt: "desc" },
             }),
             prisma.order.count({ where }),
+            prisma.order.groupBy({ by: ["status"], where: countScope, _count: true }),
         ]);
+
+        const counts: Record<string, number> = {};
+        for (const row of byStatus) counts[row.status] = row._count;
 
         return NextResponse.json({
             orders,
+            counts,
             pagination: { page, limit, total, pages: Math.ceil(total / limit) },
         });
     } catch (error) {

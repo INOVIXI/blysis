@@ -5,7 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useState, useEffect } from "react";
 import { Link } from "@/core/sdk/navigation";
 import { formatDate } from "@/core/sdk";
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Pagination, buttonClassName, useFormRoute, useSiteCurrency } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, ListControls, Pagination, buttonClassName, useFormRoute, useSiteCurrency } from "@/core/sdk/ui";
 import { Loader2, Plus, ShoppingCart } from "lucide-react";
 import { dateLocaleTag } from "@/core/sdk";
 import { adminOrderStatusKeys, orderStatusLabel, orderStatusTone } from "../../../lib/order-status";
@@ -35,17 +35,34 @@ export default function AdminOrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeStatus, setActiveStatus] = useState("ALL");
+    /*
+     * How many orders are in each status, from the endpoint.
+     *
+     * This screen used to count the ten rows it had and print that beside
+     * each tab, and it filtered by status over those same ten. So a shop with
+     * four hundred orders and two refunds showed nothing at all under
+     * "Refunded" unless both happened to be among the newest ten - which is
+     * worse than no filter: it says the refund never happened.
+     */
+    const [counts, setCounts] = useState<Record<string, number>>({});
     const [page, setPage] = useState(1);
+    // The endpoint has taken `q` since it was written and this screen never
+    // sent one, so the only way to an order was to page to it.
+    const [search, setSearch] = useState("");
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
 
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/v1/store/orders?page=${page}&limit=20`);
+            const query = new URLSearchParams({ page: String(page), limit: "20" });
+            if (search.trim()) query.set("q", search.trim());
+            if (activeStatus !== "ALL") query.set("status", activeStatus);
+            const res = await fetch(`/api/v1/store/orders?${query}`);
             if (res.ok) {
                 const data = await res.json();
                 setOrders(data.orders || []);
+                setCounts(data.counts || {});
                 setTotal(data.pagination?.total || 0);
                 setTotalPages(data.pagination?.pages || 1);
             }
@@ -58,17 +75,7 @@ export default function AdminOrdersPage() {
 
     useEffect(() => {
         fetchOrders();
-    }, [page]);  // eslint-disable-line react-hooks/exhaustive-deps
-
-    const filteredOrders = activeStatus === "ALL"
-        ? orders
-        : orders.filter((o) => o.status === activeStatus);
-
-    // Count per status from current page
-    const statusCounts = orders.reduce((acc, o) => {
-        acc[o.status] = (acc[o.status] || 0) + 1;
-        return acc;
-    }, {} as Record<string, number>);
+    }, [page, search, activeStatus]);  // eslint-disable-line react-hooks/exhaustive-deps
 
     if (showForm) {
         return (
@@ -95,6 +102,11 @@ export default function AdminOrdersPage() {
                 }
             />
 
+            <ListControls
+                className="mb-4"
+                search={{ value: search, onChange: (term) => { setSearch(term); setPage(1); } }}
+            />
+
             {/* Status Filter Tabs */}
             <div className="flex gap-2 mb-6 flex-wrap">
                 {statuses.map((status) => (
@@ -102,11 +114,11 @@ export default function AdminOrdersPage() {
                         key={status}
                         variant={activeStatus === status ? "default" : "outline"}
                         size="sm"
-                        onClick={() => setActiveStatus(status)}
+                        onClick={() => { setActiveStatus(status); setPage(1); }}
                     >
                         {status === "ALL" ? t("adm_all") : t(`adm_orderStatus_${status}`)}
-                        {status !== "ALL" && statusCounts[status] ? (
-                            <span className="text-xs opacity-70">({statusCounts[status]})</span>
+                        {status !== "ALL" && counts[status] ? (
+                            <span className="text-xs opacity-70">({counts[status]})</span>
                         ) : null}
                     </Button>
                 ))}
@@ -123,7 +135,7 @@ export default function AdminOrdersPage() {
                         <div className="flex items-center justify-center py-12">
                             <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
                         </div>
-                    ) : filteredOrders.length === 0 ? (
+                    ) : orders.length === 0 ? (
                         <div className="text-center py-12">
                             <ShoppingCart className="w-10 h-10 mx-auto mb-4 text-muted-foreground" />
                             <p className="text-muted-foreground">{t("adm_noOrdersFound")}</p>
@@ -143,7 +155,7 @@ export default function AdminOrdersPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredOrders.map((order) => (
+                                    {orders.map((order) => (
                                         <tr key={order.id} className="hover:bg-muted/50">
                                             <td className="py-3 px-4">
                                                 <p className="font-medium">{order.orderNumber}</p>
