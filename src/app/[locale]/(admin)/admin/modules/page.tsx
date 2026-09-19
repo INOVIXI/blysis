@@ -9,6 +9,7 @@ import {
     Search as SearchIcon, ArrowUp, X, Tag as TagIcon,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { ListControls } from "@/core/components/ui/list-controls";
 import { categoryClassName, resolveDependencyBadge } from "./module-display";
 import { moduleDescription, moduleName } from "@/core/lib/module-label";
 import type { SortKey } from "./types";
@@ -64,6 +65,8 @@ export default function AdminModulesPage() {
         categories,
         allTags,
         installedToShow,
+        search,
+        setSearch,
     } = useAdminModules();
 
     return (
@@ -138,8 +141,22 @@ export default function AdminModulesPage() {
                     {t("modules_installedModules")} ({installedToShow.length})
                 </h2>
 
+                {/* Eighty-nine cards is a wall, not a list. The term is
+                    matched against the name and description a card actually
+                    shows, in the reader's language. */}
+                <ListControls
+                    className="mb-4"
+                    search={{ value: search, onChange: setSearch, placeholder: t("modules_search") }}
+                />
+
                 {loading ? (
                     <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
+                ) : installedToShow.length === 0 && search.trim() !== "" ? (
+                    <Card>
+                        <CardContent className="py-8 text-center text-muted-foreground">
+                            {commonT("noResults")}
+                        </CardContent>
+                    </Card>
                 ) : installedToShow.length === 0 ? (
                     <Card>
                         <CardContent className="py-12 text-center">
@@ -155,8 +172,14 @@ export default function AdminModulesPage() {
                         {installedToShow.map((mod) => {
                             const mp = marketplaceById.get(mod.id);
                             return (
-                                <Card key={mod.id} className={`transition-all ${!mod.enabled ? "opacity-60" : ""}`}>
-                                    <CardContent className="p-4">
+                                /* A grid row is as tall as its tallest card,
+                                   so one with a three line description and a
+                                   dependency badge stretched the two beside
+                                   it and left their buttons floating in the
+                                   middle of the space. The card fills its
+                                   row and its actions sit at the foot. */
+                                <Card key={mod.id} className={`h-full transition-all ${!mod.enabled ? "opacity-60" : ""}`}>
+                                    <CardContent className="flex h-full flex-col p-4">
                                         <div className="flex items-start justify-between mb-3">
                                             <div className="flex items-center gap-2.5">
                                                 <span className="text-primary"><ModuleIcon name={mod.icon} /></span>
@@ -215,7 +238,10 @@ export default function AdminModulesPage() {
                                             </div>
                                         )}
 
-                                        <div className="flex gap-2">
+                                        {/* Pushed to the foot, so the row of
+                                            cards ends on one line however
+                                            long each description is. */}
+                                        <div className="mt-auto flex gap-2 pt-2">
                                             <Button
                                                 variant={mod.enabled ? "outline" : "default"}
                                                 size="sm"

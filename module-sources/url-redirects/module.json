@@ -72,6 +72,10 @@
           "redirect_exists": "There is already a sign on that door."
         },
         "perm_manage": "Manage"
+      },
+      "admin": {
+        "module_url-redirects_description": "Sends an old address to wherever the page lives now",
+        "module_url-redirects_name": "URL Redirects"
       }
     },
     "tr": {
@@ -100,6 +104,10 @@
           "redirect_exists": "O kapıda zaten bir tabela var."
         },
         "perm_manage": "Yönetebilir"
+      },
+      "admin": {
+        "module_url-redirects_description": "Eski bir adresi, sayfanın şimdi bulunduğu yere gönderir",
+        "module_url-redirects_name": "URL Yönlendirmeleri"
       }
     }
   },

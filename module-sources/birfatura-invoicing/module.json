@@ -88,6 +88,10 @@
         "adm_token": "Shared secret",
         "adm_tokenDesc": "A long random string of your own choosing. It is the only thing guarding your customers' addresses and tax numbers, so treat it as a password. Blank means nobody gets in.",
         "perm_manage": "Manage"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "Sends this shop's paid orders to BirFatura, which raises the invoice",
+        "module_birfatura-invoicing_name": "BirFatura Invoicing"
       }
     },
     "tr": {
@@ -97,6 +101,10 @@
         "adm_token": "Paylaşılan gizli anahtar",
         "adm_tokenDesc": "Kendi seçeceğiniz uzun ve rastgele bir dizi. Müşterilerinizin adreslerini ve vergi numaralarını koruyan tek şey bu, parola gibi saklayın. Boş bırakılırsa kimse giremez.",
         "perm_manage": "Yönetebilir"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "Bu mağazanın ödenmiş siparişlerini faturayı kesen BirFatura'ya gönderir",
+        "module_birfatura-invoicing_name": "BirFatura Faturalama"
       }
     }
   },

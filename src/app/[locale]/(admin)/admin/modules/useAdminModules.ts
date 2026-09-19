@@ -22,6 +22,7 @@ import { compareVersions } from "./module-display";
 import type { Module, MarketplaceModule, SortKey } from "./types";
 import { dateLocaleTag } from "@/core/lib/utils";
 import { errorMessage } from "@/core/lib/write-result";
+import { moduleDescription, moduleName } from "@/core/lib/module-label";
 
 export function useAdminModules() {
     const t = useTranslations("admin");
@@ -295,9 +296,24 @@ export function useAdminModules() {
         return Array.from(set).sort();
     }, [marketplace]);
 
-    const installedToShow = updatesOnly
-        ? modulesWithUpdates.filter((m) => m.updateAvailable)
-        : modulesWithUpdates;
+    /*
+     * Eighty-nine cards in one ungrouped wall, and the only way to reach one
+     * was to read them all. The term is matched against what a card actually
+     * shows - the name and the description in the reader's language - rather
+     * than against the id, because the id is not on the card.
+     */
+    const [search, setSearch] = useState("");
+
+    const installedToShow = useMemo(() => {
+        const base = updatesOnly
+            ? modulesWithUpdates.filter((m) => m.updateAvailable)
+            : modulesWithUpdates;
+        const term = search.trim().toLocaleLowerCase();
+        if (term === "") return base;
+        return base.filter((m) =>
+            [moduleName(m, __locale, t), moduleDescription(m, __locale, t), m.id]
+                .some((text) => text.toLocaleLowerCase().includes(term)));
+    }, [updatesOnly, modulesWithUpdates, search, __locale, t]);
 
 
     return {
@@ -342,5 +358,7 @@ export function useAdminModules() {
         categories,
         allTags,
         installedToShow,
+        search,
+        setSearch,
     };
 }

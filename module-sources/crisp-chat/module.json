@@ -64,6 +64,10 @@
         "adm_websiteId": "Website ID",
         "adm_websiteIdDesc": "From the provider's dashboard, under Settings. It is a UUID; anything else is refused and the bubble stays away. Nothing loads until a visitor has accepted cookies.",
         "perm_manage": "Manage"
+      },
+      "admin": {
+        "module_crisp-chat_description": "A live chat bubble on every page, served by Crisp",
+        "module_crisp-chat_name": "Crisp Chat"
       }
     },
     "tr": {
@@ -73,6 +77,10 @@
         "adm_websiteId": "Website ID",
         "adm_websiteIdDesc": "Sağlayıcının panelinde Ayarlar altında. Bir UUID'dir; başka her şey reddedilir ve balon çıkmaz. Ziyaretçi çerezleri kabul etmeden hiçbir şey yüklenmez.",
         "perm_manage": "Yönetebilir"
+      },
+      "admin": {
+        "module_crisp-chat_description": "Her sayfada Crisp tarafından sunulan bir canlı sohbet balonu",
+        "module_crisp-chat_name": "Crisp Sohbet"
       }
     }
   },

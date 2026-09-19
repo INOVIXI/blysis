@@ -93,6 +93,10 @@
           "external_failed": "The other database could not be read."
         },
         "perm_manage": "Manage"
+      },
+      "admin": {
+        "module_external-data_description": "Reads a figure from somewhere else and shows it on the site",
+        "module_external-data_name": "External Data"
       }
     },
     "tr": {
@@ -150,6 +154,10 @@
           "external_failed": "Diğer veritabanı okunamadı."
         },
         "perm_manage": "Yönetebilir"
+      },
+      "admin": {
+        "module_external-data_description": "Başka bir yerden bir değer okur ve sitede gösterir",
+        "module_external-data_name": "Dış Veri"
       }
     }
   },

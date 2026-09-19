@@ -52,6 +52,10 @@
         "adm_widgetId": "Widget id",
         "adm_widgetIdDesc": "The second one. Leave either empty and no chat is loaded at all.",
         "perm_manage": "Manage"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "A live chat widget on every page, served by Tawk.to",
+        "module_tawkto-chat_name": "Tawk.to Chat"
       }
     },
     "tr": {
@@ -63,6 +67,10 @@
         "adm_widgetId": "Widget numarası",
         "adm_widgetIdDesc": "İkincisi. Herhangi birini boş bırakırsanız sohbet hiç yüklenmez.",
         "perm_manage": "Yönetebilir"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "Her sayfada Tawk.to tarafından sunulan bir canlı sohbet aracı",
+        "module_tawkto-chat_name": "Tawk.to Sohbet"
       }
     }
   },

@@ -77,6 +77,10 @@
       },
       "pageDescriptions": {
         "paymentInstructions": "Follow the payment instructions for your order: what to send, where to send it and what happens once it arrives."
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "Takes an order and waits for the money to arrive by some other route",
+        "module_manual-payment-gateway_name": "Manual Payment"
       }
     },
     "tr": {
@@ -100,6 +104,10 @@
       },
       "pageDescriptions": {
         "paymentInstructions": "Siparişiniz için ödeme talimatlarını izleyin: neyi, nereye göndereceğinizi ve ulaştığında ne olacağını görün."
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "Siparişi alır ve paranın başka bir yoldan gelmesini bekler",
+        "module_manual-payment-gateway_name": "Manuel Ödeme"
       }
     }
   },

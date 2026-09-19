@@ -116,7 +116,12 @@
       "id": "birfatura-invoicing",
       "name": "BirFatura Invoicing",
       "description": "Publishes this shop's paid orders for BirFatura to pull and invoice. The integrator calls in with a shared secret; nothing is sent out.",
-      "i18n": {},
+      "i18n": {
+        "tr": {
+          "name": "BirFatura Faturalama",
+          "description": "Bu mağazanın ödenmiş siparişlerini faturayı kesen BirFatura'ya gönderir"
+        }
+      },
       "version": "1.7.2",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
@@ -395,7 +400,12 @@
       "id": "comparison-table",
       "name": "Comparison Table",
       "description": "Compare several things feature by feature. A cell nobody filled in is left blank rather than marked as a no.",
-      "i18n": {},
+      "i18n": {
+        "tr": {
+          "name": "Karşılaştırma Tablosu",
+          "description": "Birkaç şeyi özellik özellik karşılaştırın, herkesin okuyabileceği bir tabloda"
+        }
+      },
       "version": "1.5.2",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
@@ -505,7 +515,12 @@
       "id": "crisp-chat",
       "name": "Crisp Chat",
       "description": "A live chat bubble on every page, served by Crisp. Nothing is loaded until the visitor has accepted cookies.",
-      "i18n": {},
+      "i18n": {
+        "tr": {
+          "name": "Crisp Sohbet",
+          "description": "Her sayfada Crisp tarafından sunulan bir canlı sohbet balonu"
+        }
+      },
       "version": "1.2.2",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
@@ -905,7 +920,12 @@
       "id": "external-data",
       "name": "External Data",
       "description": "Read a list out of a database this site does not own: a game server, a billing system, an old forum. Read only, one bounded query, and the connection never reaches a page.",
-      "i18n": {},
+      "i18n": {
+        "tr": {
+          "name": "Dış Veri",
+          "description": "Başka bir yerden bir değer okur ve sitede gösterir"
+        }
+      },
       "version": "1.4.2",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
@@ -1527,7 +1547,12 @@
       "id": "manual-payment-gateway",
       "name": "Pay by Hand",
       "description": "Take a payment nobody processes: a bank transfer, cash at the counter, an invoice settled later. The order waits unpaid until an operator confirms the money arrived.",
-      "i18n": {},
+      "i18n": {
+        "tr": {
+          "name": "Manuel Ödeme",
+          "description": "Siparişi alır ve paranın başka bir yoldan gelmesini bekler"
+        }
+      },
       "version": "1.3.2",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
@@ -1972,7 +1997,12 @@
       "id": "parasut-invoicing",
       "name": "Parasut Invoicing",
       "description": "Issues a sales invoice in Parasut for every paid order, using the invoice details the checkout collected.",
-      "i18n": {},
+      "i18n": {
+        "tr": {
+          "name": "Paraşüt Faturalama",
+          "description": "Bu mağazanın ödenmiş siparişlerini faturayı kesen Paraşüt'e gönderir"
+        }
+      },
       "version": "1.5.2",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
@@ -2595,7 +2625,12 @@
       "id": "showcase",
       "name": "Showcase",
       "description": "A grid of cards: a picture, a heading, a line of text and somewhere to go. What is being shown is the operator's business.",
-      "i18n": {},
+      "i18n": {
+        "tr": {
+          "name": "Vitrin",
+          "description": "Topluluğun yaptıklarından bir galeri"
+        }
+      },
       "version": "1.5.2",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
@@ -2914,7 +2949,12 @@
       "id": "tawkto-chat",
       "name": "Tawk.to Chat",
       "description": "A live chat bubble on every page, served by Tawk.to. Nothing is loaded until the visitor has accepted cookies.",
-      "i18n": {},
+      "i18n": {
+        "tr": {
+          "name": "Tawk.to Sohbet",
+          "description": "Her sayfada Tawk.to tarafından sunulan bir canlı sohbet aracı"
+        }
+      },
       "version": "1.2.2",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
@@ -3131,7 +3171,12 @@
       "id": "url-redirects",
       "name": "URL Redirects",
       "description": "A sign on the door of a page that moved, so old links keep working.",
-      "i18n": {},
+      "i18n": {
+        "tr": {
+          "name": "URL Yönlendirmeleri",
+          "description": "Eski bir adresi, sayfanın şimdi bulunduğu yere gönderir"
+        }
+      },
       "version": "1.2.2",
       "coreVersion": "^5.0.0",
       "author": "Blysis",

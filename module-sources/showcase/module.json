@@ -82,6 +82,10 @@
       },
       "pageDescriptions": {
         "showcase": "Browse a handpicked selection of things worth a look, where every card leads to the page behind it."
+      },
+      "admin": {
+        "module_showcase_description": "A gallery of what the community has built",
+        "module_showcase_name": "Showcase"
       }
     },
     "tr": {
@@ -111,6 +115,10 @@
       },
       "pageDescriptions": {
         "showcase": "Görmeye değer, özenle seçilmiş içeriklere göz atın; her kart sizi arkasındaki sayfaya götürür."
+      },
+      "admin": {
+        "module_showcase_description": "Topluluğun yaptıklarından bir galeri",
+        "module_showcase_name": "Vitrin"
       }
     }
   },

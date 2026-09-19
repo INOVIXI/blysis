@@ -87,6 +87,10 @@
         "adm_username": "Account email",
         "adm_usernameDesc": "The account the invoices are issued by.",
         "perm_manage": "Manage"
+      },
+      "admin": {
+        "module_parasut-invoicing_description": "Sends this shop's paid orders to Parasut, which raises the invoice",
+        "module_parasut-invoicing_name": "Parasut Invoicing"
       }
     },
     "tr": {
@@ -118,6 +122,10 @@
         "adm_username": "Hesap e-postası",
         "adm_usernameDesc": "Faturaların kesileceği hesap.",
         "perm_manage": "Yönetebilir"
+      },
+      "admin": {
+        "module_parasut-invoicing_description": "Bu mağazanın ödenmiş siparişlerini faturayı kesen Paraşüt'e gönderir",
+        "module_parasut-invoicing_name": "Paraşüt Faturalama"
       }
     }
   },

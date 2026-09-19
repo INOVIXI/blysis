@@ -111,7 +111,9 @@
       },
       "admin": {
         "menu_comparison-table": "Comparison Tables",
-        "menu_comparison-table_comparison_tables": "Comparison Tables"
+        "menu_comparison-table_comparison_tables": "Comparison Tables",
+        "module_comparison-table_description": "Compare several things feature by feature, in a table anybody can read",
+        "module_comparison-table_name": "Comparison Table"
       }
     },
     "tr": {
@@ -181,7 +183,9 @@
       },
       "admin": {
         "menu_comparison-table": "Karşılaştırma Tabloları",
-        "menu_comparison-table_comparison_tables": "Karşılaştırma Tabloları"
+        "menu_comparison-table_comparison_tables": "Karşılaştırma Tabloları",
+        "module_comparison-table_description": "Birkaç şeyi özellik özellik karşılaştırın, herkesin okuyabileceği bir tabloda",
+        "module_comparison-table_name": "Karşılaştırma Tablosu"
       }
     }
   },
