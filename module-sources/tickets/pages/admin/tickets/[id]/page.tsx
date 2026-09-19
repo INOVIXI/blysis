@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import { useState, useEffect, use } from "react";
 import { Link } from "@/core/sdk/navigation";
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Textarea, NativeSelect, buttonClassName, useLocalDate, useLocalDateTime } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, MemberAvatar, RichContent, RichTextEditor, NativeSelect, buttonClassName, useLocalDate, useLocalDateTime } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, Send } from "lucide-react";
 import { adminKeys, labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../../lib/status-labels";
 import { toast } from "sonner";
@@ -141,7 +141,7 @@ export default function AdminTicketDetailPage(props: PageProps) {
             <AdminPageHeader
                 title={ticket.subject}
                 description={<>
-                    by {ticket.user.username} · {formatDate(ticket.createdAt)}
+                    {t("adm_openedBy", { name: ticket.user.username, date: formatDate(ticket.createdAt) })}
                 </>}
                 backHref="/admin/tickets"
                 backLabel={commonT("back")}
@@ -151,40 +151,63 @@ export default function AdminTicketDetailPage(props: PageProps) {
                 {/* Messages */}
                 <div className="lg:col-span-2 space-y-4">
                     {ticket.messages.map((msg) => (
-                        <Card key={msg.id} className={msg.isStaffReply ? "border-l-4 border-l-blue-500" : ""}>
+                        /*
+                         * A staff answer is tinted rather than ruled.
+                         *
+                         * It used to carry a four pixel stripe in `blue-500`,
+                         * so a theme that is not blue got a blue bar down
+                         * every answer - the forum's opening post had the
+                         * same mark and lost it for the same reason. The tint
+                         * is a token, so it follows the theme, and it colours
+                         * the whole card rather than one edge of it, which is
+                         * what tells two sides of a conversation apart at a
+                         * glance.
+                         */
+                        <Card key={msg.id} className={msg.isStaffReply ? "bg-primary/5 border-primary/30" : ""}>
                             <CardContent className="p-4">
                                 <div className="flex items-center gap-3 mb-3">
-                                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
-                                        {msg.user.username[0].toUpperCase()}
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium">
-                                            {msg.user.username}
-                                            {msg.isStaffReply && (
-                                                <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">{t("staff")}</span>
-                                            )}
-                                        </p>
+                                    <MemberAvatar name={msg.user.username} src={msg.user.avatar} size={32} />
+                                    <div className="min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium">{msg.user.username}</span>
+                                            {msg.isStaffReply && <Badge tone="info">{t("staff")}</Badge>}
+                                        </div>
                                         <p className="text-xs text-muted-foreground">
                                             {formatDateTime(msg.createdAt)}
                                         </p>
                                     </div>
                                 </div>
-                                <div className="text-sm text-foreground whitespace-pre-wrap">{msg.content}</div>
+                                <RichContent className="text-sm" markdown={msg.content} keepLineBreaks />
                             </CardContent>
                         </Card>
                     ))}
 
-                    {/* Reply Form */}
-                    {ticket.status !== "CLOSED" && (
+                    {/*
+                      * A closed ticket has no reply box, and used to say
+                      * nothing about why: the conversation simply ended and
+                      * the page looked like it had lost a control.
+                      */}
+                    {ticket.status === "CLOSED" ? (
+                        <Card>
+                            <CardContent className="p-4 text-sm text-muted-foreground">
+                                {t("adm_closedNoReply")}
+                            </CardContent>
+                        </Card>
+                    ) : (
                         <Card>
                             <CardContent className="p-4">
-                                <Textarea
+                                {/* What a person writes is Markdown, which is
+                                    already true of an article, a forum post
+                                    and a suggestion. A reply was the one
+                                    written thing on the site typed into a
+                                    bare box and printed back verbatim. */}
+                                <RichTextEditor
                                     value={replyContent}
-                                    onChange={(e) => setReplyContent(e.target.value)}
-                                    placeholder={t("adm_writeReply")} aria-label={t("adm_writeReply")}
-                                    rows={4}
-                                    className="mb-3"
+                                    onChange={setReplyContent}
+                                    placeholder={t("adm_writeReply")}
+                                    minHeight="8rem"
                                 />
+                                <p className="mt-1 mb-3 text-xs text-muted-foreground">{t("adm_replyIsMarkdown")}</p>
                                 <Button onClick={sendReply} disabled={sending || !replyContent.trim()}>
                                     {sending ? (
                                         <><Loader2 className="w-4 h-4 animate-spin" /> {t("adm_sending")}</>
@@ -212,8 +235,13 @@ export default function AdminTicketDetailPage(props: PageProps) {
                                     onChange={(e) => updateTicket("status", e.target.value)}
                                     disabled={updating} className="w-full"
                                 >
+                                    {/* The name, not the column. The card
+                                        below said "Kapatıldı" while this said
+                                        CLOSED, ten centimetres apart, and the
+                                        helper that names one was already
+                                        imported for the other. */}
                                     {statusOptions.map((s) => (
-                                        <option key={s} value={s}>{s.replace("_", " ")}</option>
+                                        <option key={s} value={s}>{labelFor(t, ADMIN_STATUS_KEYS, s)}</option>
                                     ))}
                                 </NativeSelect>
                             </div>
@@ -226,7 +254,7 @@ export default function AdminTicketDetailPage(props: PageProps) {
                                     disabled={updating} className="w-full"
                                 >
                                     {priorityOptions.map((p) => (
-                                        <option key={p} value={p}>{p}</option>
+                                        <option key={p} value={p}>{labelFor(t, PRIORITY_KEYS, p)}</option>
                                     ))}
                                 </NativeSelect>
                             </div>
@@ -241,14 +269,6 @@ export default function AdminTicketDetailPage(props: PageProps) {
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t("adm_department")}</span>
                                 <span>{ticket.department.name}</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">{t("adm_status")}</span>
-                                <Badge tone={statusTone(ticket.status)}>{labelFor(t, ADMIN_STATUS_KEYS, ticket.status)}</Badge>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">{t("adm_priority")}</span>
-                                <Badge tone={priorityTone(ticket.priority)}>{labelFor(t, PRIORITY_KEYS, ticket.priority)}</Badge>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t("adm_assignedTo")}</span>

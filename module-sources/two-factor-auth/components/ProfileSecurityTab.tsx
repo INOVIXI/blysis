@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, useConfirm } from "@/core/sdk/ui";
-import { Loader2, ShieldCheck, ShieldOff, KeyRound, RefreshCw } from "lucide-react";
+import { KeyRound, Loader2, Lock, RefreshCw, ShieldCheck, ShieldOff } from "lucide-react";
 import { copyText } from "@/core/sdk";
 import { errorMessage } from "@/core/sdk";
 
@@ -227,7 +227,10 @@ export function ProfileSecurityTab() {
         return (
             <Card>
                 <CardContent className="p-8 text-center">
-                    <div className="w-6 h-6 border-2 border-border border-t-gray-600 rounded-full animate-spin mx-auto" />
+                    {/* The site's spinner. This was a div with a spinning border
+                        whose top edge was a hardcoded grey, so on a dark theme it
+                        span a light ring against a dark one. */}
+                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground mx-auto" />
                 </CardContent>
             </Card>
         );
@@ -280,9 +283,16 @@ export function ProfileSecurityTab() {
                         </div>
                     )}
 
-                    {/* Setup flow */}
+                    {/* Setup flow.
+
+                        The column is narrow because a QR code and a six-digit
+                        field are narrow things, and it used to sit against the
+                        left edge of a full-width card with the code floating
+                        in the middle of it - the panel read as a mistake
+                        rather than a layout. Centred, the whole step is one
+                        object. */}
                     {twoFAStep === "setup" && (
-                        <div className="space-y-4 max-w-sm">
+                        <div className="space-y-4 max-w-sm mx-auto">
                             <p className="text-sm text-muted-foreground">{t("setupDescription")}</p>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             {qrCode && <img src={qrCode} alt={t("qrCode")} className="mx-auto" />}
@@ -303,7 +313,7 @@ export function ProfileSecurityTab() {
                                     maxLength={6}
                                 />
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex justify-center gap-2">
                                 <Button onClick={verifyAndEnable} disabled={actionLoading}>
                                     {actionLoading ? (
                                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -380,7 +390,7 @@ export function ProfileSecurityTab() {
                                 </div>
                             </div>
 
-                            <div className="space-y-3 max-w-md">
+                            <div className="space-y-3 max-w-md mx-auto">
                                 <p className="text-sm text-muted-foreground">
                                     {t("managementInstructions")}
                                 </p>

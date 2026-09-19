@@ -5,7 +5,7 @@ import { Link } from "@/core/sdk/navigation";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Badge, Button, Textarea, buttonClassName } from "@/core/sdk/ui";
+import { Badge, Button, RichContent, RichTextEditor, buttonClassName } from "@/core/sdk/ui";
 import { PageFrame, StandardSidebarLayout } from "@/core/sdk/layout";
 import { useRelativeTime } from "@/core/sdk/ui";
 import { labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../../lib/status-labels";
@@ -206,7 +206,7 @@ export default function TicketDetailPage({ params }: PageProps) {
                                                     <span className="text-xs text-muted-foreground">{relativeTime(message.createdAt)}</span>
                                                 </div>
                                             </div>
-                                            <div className="text-foreground whitespace-pre-wrap">{message.content}</div>
+                                            <RichContent markdown={message.content} keepLineBreaks />
                                         </div>
                                     ))}
                                 </div>
@@ -215,13 +215,20 @@ export default function TicketDetailPage({ params }: PageProps) {
                                 {ticket.status !== "CLOSED" && (
                                     <div className="bg-card rounded-xl border border-border p-4">
                                         <form onSubmit={handleReply}>
-                                            <Textarea
-                                                value={reply}
-                                                onChange={(e) => setReply(e.target.value)}
-                                                placeholder={t("replyPlaceholder")} aria-label={t("replyPlaceholder")}
-                                                rows={4}
-                                                className="mb-3"
-                                            />
+                                            {/* The same editor the staff
+                                                answer with. A reply typed as
+                                                plain text is still valid
+                                                Markdown, so a member who
+                                                ignores the toolbar loses
+                                                nothing. */}
+                                            <div className="mb-3">
+                                                <RichTextEditor
+                                                    value={reply}
+                                                    onChange={setReply}
+                                                    placeholder={t("replyPlaceholder")}
+                                                    minHeight="8rem"
+                                                />
+                                            </div>
                                             <Button type="submit" disabled={sending || !reply.trim()}>
                                                 {sending ? t("sending") : t("sendReply")}
                                             </Button>

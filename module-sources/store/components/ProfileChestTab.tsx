@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button, Card, CardContent, CardHeader, CardTitle, LoadFailed, usePrompt, useLocalDate } from "@/core/sdk/ui";
 import { errorMessage } from "@/core/sdk";
-import { Gift, Package } from "lucide-react";
+import { Gift, Package, Loader2 } from "lucide-react";
 
 interface ChestItem {
     id: string;
@@ -118,7 +118,10 @@ export function ProfileChestTab() {
         return (
             <Card>
                 <CardContent className="p-8 text-center">
-                    <div className="w-6 h-6 border-2 border-border border-t-gray-600 rounded-full animate-spin mx-auto" />
+                    {/* The site's spinner. This was a div with a spinning border
+                        whose top edge was a hardcoded grey, so on a dark theme it
+                        span a light ring against a dark one. */}
+                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground mx-auto" />
                 </CardContent>
             </Card>
         );

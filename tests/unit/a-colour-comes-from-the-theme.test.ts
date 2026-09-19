@@ -50,9 +50,17 @@ const PALETTE = [
     "purple", "fuchsia", "pink", "rose",
 ].join("|");
 
+/*
+ * `border-l` and its siblings were missing, which is the shape a coloured
+ * rule is actually drawn in: the ticket screen marked a staff reply with
+ * `border-l-4 border-l-blue-500`, so a theme that is not blue got a blue
+ * stripe down every answer - the same defect the forum's opening post carried
+ * and had removed, written down there in a comment. `border` alone does not
+ * match it, and neither does `divide` match `divide-y`.
+ */
 const UTILITY = [
-    "bg", "text", "border", "from", "to", "via", "ring", "fill", "stroke",
-    "decoration", "outline", "shadow", "accent", "caret", "divide", "placeholder",
+    "bg", "text", "border", "border-[ltrbxyse]", "from", "to", "via", "ring", "fill", "stroke",
+    "decoration", "outline", "shadow", "accent", "caret", "divide", "divide-[xy]", "placeholder",
 ].join("|");
 
 /** `hover:bg-blue-600`, `md:text-red-500/50`, `bg-slate-900`. */
