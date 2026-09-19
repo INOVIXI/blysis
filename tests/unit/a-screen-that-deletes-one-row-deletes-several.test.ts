@@ -39,6 +39,12 @@ const ONE_AT_A_TIME: Record<string, string> = {
         "One product, on its own edit screen, where deleting is the end of editing rather than a list operation.",
     "module-sources/custom-pages/pages/admin/builder/[id]/page.tsx":
         "The page builder is a full-screen editor for one page, with its own canvas and toolbar. There is no list of pages in it to tick.",
+    "src/app/[locale]/(admin)/admin/roles/page.tsx":
+        "A role is a structural thing an operator has a handful of, and deleting one moves every member who wears it. Ticking four of them is the wrong shape for a decision that size.",
+    "src/app/[locale]/(admin)/admin/settings/theme/page.tsx":
+        "Themes are installed one at a time and there are rarely more than two. Deleting the one in use is the risk here, not the number of clicks.",
+    "module-sources/blog/pages/admin/articles/[id]/edit/page.tsx":
+        "One article, on its own edit screen, where deleting is the end of editing rather than something done to a list.",
     "module-sources/help-center/pages/admin/help/page.tsx":
         "It has no delete for an article at all, and no edit either. Giving it a bulk delete before it can delete one row would be half an answer; that is its own item.",
 };
@@ -49,13 +55,7 @@ const ONE_AT_A_TIME: Record<string, string> = {
  * is visible and shrinking rather than forgotten.
  */
 const NOT_YET: Record<string, string> = {
-    "src/app/[locale]/(admin)/admin/api-keys/page.tsx": "",
-    "src/app/[locale]/(admin)/admin/broadcasts/page.tsx": "",
     "src/app/[locale]/(admin)/admin/email-queue/page.tsx": "",
-    "src/app/[locale]/(admin)/admin/roles/page.tsx": "",
-    "src/app/[locale]/(admin)/admin/warnings/page.tsx": "",
-    "src/app/[locale]/(admin)/admin/settings/theme/page.tsx": "",
-    "module-sources/blog/pages/admin/articles/[id]/edit/page.tsx": "",
     "module-sources/blog/pages/admin/categories/page.tsx": "",
     "module-sources/comparison-table/pages/admin/page.tsx": "",
     "module-sources/custom-forms/pages/admin/page.tsx": "",
@@ -119,7 +119,7 @@ describe("deleting rows", () => {
         }
         // The number this was written with. It may fall; a rise means a new
         // screen learned to delete a row and not several.
-        expect(Object.keys(NOT_YET).length).toBeLessThanOrEqual(15);
+        expect(Object.keys(NOT_YET).length).toBeLessThanOrEqual(9);
     });
 
     it("keeps every exemption to a screen that exists, with a reason", () => {

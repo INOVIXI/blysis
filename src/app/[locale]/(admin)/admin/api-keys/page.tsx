@@ -3,7 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Button, buttonClassName } from "@/core/components/ui/button";
-import { Pagination, usePagedRows } from "@/core/components/ui/pagination";
+import { Pagination } from "@/core/components/ui/pagination";
+import { ListControls } from "@/core/components/ui/list-controls";
+import { Checkbox } from "@/core/components/ui/checkbox";
+import { BulkBar } from "@/core/components/admin/BulkBar";
+import { useRowList } from "@/core/hooks/useRowList";
+import { deleteEach } from "@/core/lib/bulk-delete";
 import { Loader2, Plus, Trash2, Key } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -33,7 +38,9 @@ export default function ApiKeysPage() {
     // hundred with nothing to mark the edge is the silence the ceiling was
     // added to avoid.
     const [truncated, setTruncated] = useState(false);
-    const paged = usePagedRows(keys);
+    // A key list grows one integration at a time and nobody ever tidies it,
+    // because tidying it was one confirmation per key.
+    const list = useRowList(keys, { text: (k) => [k.name], pageSize: 10 });
     const [loading, setLoading] = useState(true);
     const { confirm } = useConfirm();
 
@@ -49,6 +56,25 @@ export default function ApiKeysPage() {
 
      
     useEffect(() => { fetchKeys(); }, [fetchKeys]);
+
+    const deleteMany = async () => {
+        const ok = await confirm({
+            title: t("apiKeys_deleteTitle"),
+            message: t("crud_deleteItemsConfirm", { count: list.picked.size }),
+            variant: "danger",
+            confirmText: t("common_delete"),
+        });
+        if (!ok) return;
+        const { deleted, total } = await deleteEach([...list.picked], async (id) => {
+            const res = await fetch(`/api/v1/api-keys/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        list.clear();
+        fetchKeys();
+        if (deleted === total) toast.success(t("crud_deleted"));
+        else if (deleted === 0) toast.error(t("crud_deleteFailed"));
+        else toast.error(t("crud_deletedPartly", { deleted, total }));
+    };
 
     const deleteKey = async (id: string) => {
         const ok = await confirm({ title: t("apiKeys_deleteTitle"), message: t("apiKeys_deleteMessage"), variant: "danger", confirmText: t("common_delete") });
@@ -79,15 +105,32 @@ export default function ApiKeysPage() {
                 </p>
             )}
 
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
             <Card>
                 <CardContent className="p-0">
                     {keys.length === 0 ? (
                         <p className="text-muted-foreground text-center py-8">{t("apiKeys_noKeys")}</p>
                     ) : (
                         <div className="divide-y">
-                            {paged.rows.map((k) => (
+                            <BulkBar
+                                state={list.headerState}
+                                count={list.picked.size}
+                                onToggleAll={list.toggleAll}
+                                actions={
+                                    <Button variant="destructive" size="sm" onClick={deleteMany}>
+                                        <Trash2 className="w-4 h-4" /> {commonT("delete")} {list.picked.size}
+                                    </Button>
+                                }
+                            />
+                            {list.rows.map((k) => (
                                 <div key={k.id} className="flex items-center justify-between p-4">
                                     <div className="flex items-center gap-3">
+                                        <Checkbox
+                                            checked={list.picked.has(k.id)}
+                                            onChange={() => list.toggle(k.id)}
+                                            aria-label={t("common_selectRow")}
+                                        />
                                         <Key className="w-4 h-4 text-muted-foreground" />
                                         <div>
                                             <p className="font-medium">{k.name}</p>
@@ -105,10 +148,10 @@ export default function ApiKeysPage() {
                         </div>
                     )}
                     <Pagination
-                        page={paged.page}
-                        pages={paged.pages}
-                        total={paged.total}
-                        onPageChange={paged.setPage}
+                        page={list.page}
+                        pages={list.pages}
+                        total={list.total}
+                        onPageChange={list.setPage}
                     />
                 </CardContent>
             </Card>

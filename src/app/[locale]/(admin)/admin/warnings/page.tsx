@@ -4,6 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Button, buttonClassName } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
+import { ListControls } from "@/core/components/ui/list-controls";
+import { Checkbox } from "@/core/components/ui/checkbox";
+import { BulkBar } from "@/core/components/admin/BulkBar";
+import { useRowList } from "@/core/hooks/useRowList";
+import { deleteEach } from "@/core/lib/bulk-delete";
 import { Plus, Loader2, ShieldOff, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
@@ -33,6 +38,9 @@ export default function WarningsPage() {
     const commonT = useTranslations("common");
 
     const [warnings, setWarnings] = useState<Warning[]>([]);
+    // One row per warning ever issued, so this only grows; tidying it was one
+    // confirmation per row.
+    const list = useRowList(warnings, { text: (w) => [w.user?.username, w.reason], pageSize: 20 });
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [pages, setPages] = useState(1);
@@ -59,6 +67,25 @@ export default function WarningsPage() {
     useEffect(() => {
         fetchWarnings();
     }, [fetchWarnings]);
+
+    const deleteMany = async () => {
+        const ok = await confirm({
+            title: t("warnings_deleteTitle"),
+            message: t("crud_deleteItemsConfirm", { count: list.picked.size }),
+            variant: "danger",
+            confirmText: t("common_delete"),
+        });
+        if (!ok) return;
+        const { deleted, total } = await deleteEach([...list.picked], async (id) => {
+            const res = await fetch(`/api/v1/admin/warnings/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        list.clear();
+        fetchWarnings();
+        if (deleted === total) toast.success(t("warnings_deleted"));
+        else if (deleted === 0) toast.error(t("common_failed"));
+        else toast.error(t("crud_deletedPartly", { deleted, total }));
+    };
 
     const revoke = async (w: Warning) => {
         const ok = await confirm({
@@ -105,6 +132,8 @@ export default function WarningsPage() {
                 </>}
             />
 
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
             <Card>
                 <CardContent className="p-0">
                     {loading ? (
@@ -117,8 +146,23 @@ export default function WarningsPage() {
                         </p>
                     ) : (
                         <div className="divide-y">
-                            {warnings.map((w) => (
+                            <BulkBar
+                                state={list.headerState}
+                                count={list.picked.size}
+                                onToggleAll={list.toggleAll}
+                                actions={
+                                    <Button variant="destructive" size="sm" onClick={deleteMany}>
+                                        <Trash2 className="w-4 h-4" /> {commonT("delete")} {list.picked.size}
+                                    </Button>
+                                }
+                            />
+                            {list.rows.map((w) => (
                                 <div key={w.id} className="p-4 flex items-center gap-3">
+                                    <Checkbox
+                                        checked={list.picked.has(w.id)}
+                                        onChange={() => list.toggle(w.id)}
+                                        aria-label={t("common_selectRow")}
+                                    />
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
                                             <span className="font-medium">

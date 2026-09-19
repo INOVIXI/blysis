@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/c
 import { Button } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
 import { ListControls } from "@/core/components/ui/list-controls";
+import { Checkbox } from "@/core/components/ui/checkbox";
+import { BulkBar } from "@/core/components/admin/BulkBar";
+import { deleteEach } from "@/core/lib/bulk-delete";
 import { useRowList } from "@/core/hooks/useRowList";
 import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
@@ -104,6 +107,25 @@ export default function BroadcastsPage() {
         }
     };
 
+    const deleteMany = async () => {
+        const ok = await confirm({
+            title: t("broadcasts_deleteTitle"),
+            message: t("crud_deleteItemsConfirm", { count: list.picked.size }),
+            variant: "danger",
+            confirmText: commonT("delete"),
+        });
+        if (!ok) return;
+        const { deleted, total } = await deleteEach([...list.picked], async (id) => {
+            const res = await fetch(`/api/v1/broadcasts/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        list.clear();
+        fetchBroadcasts();
+        if (deleted === total) toast.success(t("crud_deleted"));
+        else if (deleted === 0) toast.error(t("crud_deleteFailed"));
+        else toast.error(t("crud_deletedPartly", { deleted, total }));
+    };
+
     const deleteBroadcast = async (b: Broadcast) => {
         const ok = await confirm({
             title: t("broadcasts_deleteTitle"),
@@ -199,9 +221,25 @@ export default function BroadcastsPage() {
                 <Card><CardContent className="py-12 text-center text-muted-foreground">{t("broadcasts_noBroadcasts")}</CardContent></Card>
             ) : (
                 <div className="space-y-2">
+                    <BulkBar
+                        className="rounded-lg border border-border"
+                        state={list.headerState}
+                        count={list.picked.size}
+                        onToggleAll={list.toggleAll}
+                        actions={
+                            <Button variant="destructive" size="sm" onClick={deleteMany}>
+                                <Trash2 className="w-4 h-4" /> {commonT("delete")} {list.picked.size}
+                            </Button>
+                        }
+                    />
                     {list.rows.map((b) => (
                         <Card key={b.id}>
                             <CardContent className="p-4 flex items-center gap-4">
+                                <Checkbox
+                                    checked={list.picked.has(b.id)}
+                                    onChange={() => list.toggle(b.id)}
+                                    aria-label={t("common_selectRow")}
+                                />
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
                                         <h2 className="font-medium text-foreground truncate">{b.subject}</h2>
