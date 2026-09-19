@@ -6,6 +6,10 @@ import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Button, buttonClassName } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
+import { Checkbox } from "@/core/components/ui/checkbox";
+import { BulkBar } from "@/core/components/admin/BulkBar";
+import { useRowPicks } from "@/core/hooks/useRowList";
+import { deleteEach } from "@/core/lib/bulk-delete";
 import { Input } from "@/core/components/ui/input";
 import { Loader2, FileText, Trash2, Upload, X, Search, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
@@ -44,6 +48,10 @@ export default function MediaLibraryPage() {
     const [selected, setSelected] = useState<MediaItem | null>(null);
     const [uploading, setUploading] = useState(false);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    // A library is the one screen here that reaches thousands of rows, and
+    // clearing out last year's uploads one confirmation at a time is why
+    // nobody ever does it.
+    const picks = useRowPicks(items);
     const { confirm } = useConfirm();
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
@@ -109,7 +117,7 @@ export default function MediaLibraryPage() {
     const deleteItem = async (item: MediaItem) => {
         const ok = await confirm({
             title: t("media_deleteTitle"),
-            message: `Delete "${item.filename}"? This cannot be undone.`,
+            message: t("media_deleteConfirm", { filename: item.filename }),
             variant: "danger",
         });
         if (!ok) return;
@@ -121,6 +129,25 @@ export default function MediaLibraryPage() {
         } else {
             toast.error(t("media_deleteFailed"));
         }
+    };
+
+    const deleteMany = async () => {
+        const ok = await confirm({
+            title: t("media_deleteTitle"),
+            message: t("media_deleteManyConfirm", { count: picks.picked.size }),
+            variant: "danger",
+        });
+        if (!ok) return;
+        const { deleted, total } = await deleteEach([...picks.picked], async (id) => {
+            const res = await fetch(`/api/v1/media/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        if (selected && picks.picked.has(selected.id)) setSelected(null);
+        picks.clear();
+        fetchItems();
+        if (deleted === total) toast.success(t("media_deleted"));
+        else if (deleted === 0) toast.error(t("media_deleteFailed"));
+        else toast.error(t("crud_deletedPartly", { deleted, total }));
     };
 
     const updateItem = async (id: string, data: Partial<MediaItem>) => {
@@ -199,14 +226,36 @@ export default function MediaLibraryPage() {
                     {t("media_noItems")}
                 </CardContent></Card>
             ) : (
+                <>
+                <BulkBar
+                    className="mb-4 rounded-lg border border-border"
+                    state={picks.headerState}
+                    count={picks.picked.size}
+                    onToggleAll={picks.toggleAll}
+                    actions={
+                        <Button variant="destructive" size="sm" onClick={deleteMany}>
+                            <Trash2 className="w-4 h-4" /> {commonT("delete")} {picks.picked.size}
+                        </Button>
+                    }
+                />
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4">
                     {items.map((item) => (
+                        /* The tile is a button, so the box cannot be inside
+                           it: a control inside a control is a control a
+                           keyboard cannot reach separately. It sits over the
+                           corner instead. */
+                        <div key={item.id} className="relative">
+                        <Checkbox
+                            className="absolute left-2 top-2 z-10 bg-card"
+                            checked={picks.picked.has(item.id)}
+                            onChange={() => picks.toggle(item.id)}
+                            aria-label={t("common_selectRow")}
+                        />
                         <button
-                            key={item.id}
                             type="button"
                             onClick={() => setSelected(item)}
                             title={item.filename}
-                            className="group text-left rounded-lg border border-border bg-card overflow-hidden transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                            className="group block w-full text-left rounded-lg border border-border bg-card overflow-hidden transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                         >
                             <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden">
                                 {isImage(item.mimeType) ? (
@@ -231,8 +280,10 @@ export default function MediaLibraryPage() {
                                 <p className="text-[11px] text-muted-foreground">{formatBytes(item.size)}</p>
                             </div>
                         </button>
+                        </div>
                     ))}
                 </div>
+                </>
             )}
 
             <Pagination page={page} pages={totalPages} total={total} onPageChange={setPage} className="mt-6" />

@@ -645,6 +645,8 @@
     "media_altText": "Alt metin (erişilebilirlik)",
     "media_deleteFailed": "Silinemedi",
     "media_deleteTitle": "Medyayı Sil",
+    "media_deleteConfirm": "\"{filename}\" silinsin mi? Geri alınamaz.",
+    "media_deleteManyConfirm": "{count} dosya silinsin mi? Onlara işaret eden her şey kırılır.",
     "media_deleted": "Silindi",
     "media_documents": "Belgeler",
     "media_images": "Görseller",

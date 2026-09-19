@@ -645,6 +645,8 @@
     "media_altText": "Alt text (accessibility)",
     "media_deleteFailed": "Failed to delete",
     "media_deleteTitle": "Delete media",
+    "media_deleteConfirm": "Delete \"{filename}\"? This cannot be undone.",
+    "media_deleteManyConfirm": "Delete {count} files? Anything still pointing at them breaks.",
     "media_deleted": "Deleted",
     "media_documents": "Documents",
     "media_images": "Images",
