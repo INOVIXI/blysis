@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
     const read = await readSuggestions({
         status: params.get("status"),
         sort: params.get("sort") || "newest",
+        search: params.get("search"),
         page,
         perPage: limit,
     });

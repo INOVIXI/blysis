@@ -62,6 +62,8 @@ export async function readSuggestions(options: {
     sort?: string;
     page?: number;
     perPage?: number;
+    /** Narrows the query, not the page. */
+    search?: string | null;
 }): Promise<SuggestionListRead> {
     const session = await auth();
     const readerIsAdmin = session?.user?.id ? await isAdmin(session.user.id) : false;
@@ -78,6 +80,19 @@ export async function readSuggestions(options: {
     if (!readerIsAdmin) {
         where.visibility = "public";
         where.moderationState = "APPROVED";
+    }
+
+    /*
+     * The title and the body, because both are what somebody wrote and either
+     * is what a moderator remembers. Narrowing the page instead would tell
+     * them a suggestion they are looking at in a report does not exist.
+     */
+    const term = (options.search ?? "").trim();
+    if (term !== "") {
+        where.OR = [
+            { title: { contains: term, mode: "insensitive" as const } },
+            { content: { contains: term, mode: "insensitive" as const } },
+        ];
     }
 
     const orderBy = options.sort === "popular"

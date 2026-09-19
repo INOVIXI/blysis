@@ -161,6 +161,37 @@ async function seedLocale(
     return rows.length;
 }
 
+/**
+ * Drop the cached catalogue so a reseed is visible at once.
+ *
+ * The merged messages are cached for two minutes and this script writes the
+ * rows behind them, so without this a new key renders as its own name on the
+ * screen that was just given it - which looks exactly like the key not being
+ * there, and cost an hour of looking for a key that was already in the table.
+ *
+ * Deliberately not `@/core/lib/i18n/translation-service`: that reaches the
+ * app's Redis singleton, which holds its socket open for the life of the
+ * process, and this script would never exit.
+ */
+async function forgetCachedCatalogue(): Promise<void> {
+    const url = process.env.REDIS_URL;
+    if (!url) return;
+
+    const { createClient } = await import("redis");
+    const client = createClient({ url });
+    // A cache that cannot be reached is a cache nothing is reading either.
+    client.on("error", () => {});
+    try {
+        await client.connect();
+        await Promise.all(locales.map((locale) => client.del(`blysis:translations:${locale}`)));
+        console.log("  Cached catalogue dropped, so the new strings are live now.");
+    } catch {
+        console.log("  Could not reach the cache; it expires on its own within two minutes.");
+    } finally {
+        await client.quit().catch(() => {});
+    }
+}
+
 async function main() {
     console.log("Seeding translations...\n");
 
@@ -239,6 +270,8 @@ async function main() {
 
     console.log(`  Module total: ${modTotal} keys`);
     if (REGISTER_MODULES) console.log(`  Registered ${registered} module(s) in ModuleConfig`);
+    await forgetCachedCatalogue();
+
     console.log(`\nDone. ${coreTotal + modTotal} total translation keys seeded.`);
     if (!REGISTER_MODULES) {
         console.log("Module strings stay invisible until each module has a ModuleConfig row.");

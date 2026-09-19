@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { Badge, Button, Card, CardContent, Input, Label, Pagination, useConfirm, useFormRoute, NativeSelect, buttonClassName, useLocalDateTime, type BadgeTone } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, NativeSelect, buttonClassName, useLocalDateTime, type BadgeTone } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, RotateCcw, Ban } from "lucide-react";
 import { toast } from "sonner";
@@ -53,6 +53,7 @@ export default function AdminPunishmentsPage() {
     const formatDateTime = useLocalDateTime();
     const { confirm, ask } = useConfirm();
     const [items, setItems] = useState<Punishment[]>([]);
+    const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<StatusFilter>("all");
     const [page, setPage] = useState(1);
@@ -78,6 +79,9 @@ export default function AdminPunishmentsPage() {
         try {
             const params = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
             if (filter !== "all") params.set("status", filter);
+            // The endpoint narrows by name, and the list a moderator reads is
+            // the one screen where a name is the only thing they have.
+            if (search.trim()) params.set("search", search.trim());
             const res = await fetch(`/api/v1/punishments?${params}`);
             const data = await res.json();
             setItems(data.punishments || []);
@@ -90,7 +94,7 @@ export default function AdminPunishmentsPage() {
         } finally {
             setLoading(false);
         }
-    }, [page, filter]);
+    }, [page, filter, search]);
 
     useEffect(() => { load(); }, [load]);
 
@@ -249,6 +253,14 @@ export default function AdminPunishmentsPage() {
                 }
             />
 
+            <ListControls
+                search={{
+                    value: search,
+                    onChange: (term) => { setSearch(term); setPage(1); },
+                    placeholder: t("adm_searchPlayer"),
+                }}
+            />
+
             {/* Filters only. The screen's primary action is the header's, at
                 the size every other admin screen gives it; sitting it here in
                 `sm` next to the filters made the same control look like a
@@ -268,7 +280,7 @@ export default function AdminPunishmentsPage() {
             ) : items.length === 0 ? (
                 <Card>
                     <CardContent className="py-12 text-center text-muted-foreground">
-                        {t("adm_empty")}
+                        {search.trim() === "" ? t("adm_empty") : commonT("noResults")}
                     </CardContent>
                 </Card>
             ) : (

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { Button, Card, CardContent, Pagination, useConfirm, NativeSelect, useLocalDate } from "@/core/sdk/ui";
+import { Button, Card, CardContent, ListControls, Pagination, useConfirm, NativeSelect, useLocalDate } from "@/core/sdk/ui";
 import { Loader2, Trash2, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
 import { SUGGESTION_STATUSES, STATUS_BADGE_CLASS, canonicalStatus } from "../../lib/statuses";
@@ -27,11 +27,13 @@ const PAGE_SIZE = 20;
 
 export default function AdminSuggestionsPage() {
     const t = useTranslations("suggestions");
+    const commonT = useTranslations("common");
     // The site's zone, not the machine's: without it the server and the
     // browser disagree about what day a timestamp near midnight is.
     const formatDate = useLocalDate();
     const { confirm } = useConfirm();
     const [items, setItems] = useState<Suggestion[]>([]);
+    const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<(typeof FILTERS)[number]>("all");
     const [page, setPage] = useState(1);
@@ -47,6 +49,7 @@ export default function AdminSuggestionsPage() {
         try {
             const params = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
             if (filter !== "all") params.set("status", filter);
+            if (search.trim()) params.set("search", search.trim());
             const res = await fetch(`/api/v1/suggestions?${params}`);
             const data = await res.json();
             setItems(data.suggestions || []);
@@ -59,7 +62,7 @@ export default function AdminSuggestionsPage() {
         } finally {
             setLoading(false);
         }
-    }, [page, filter]);
+    }, [page, filter, search]);
 
     useEffect(() => { load(); }, [load]);
 
@@ -117,6 +120,10 @@ export default function AdminSuggestionsPage() {
                 description={t("adm_subtitle")}
             />
 
+            <ListControls
+                search={{ value: search, onChange: (term) => { setSearch(term); setPage(1); } }}
+            />
+
             <div className="flex flex-wrap gap-2">
                 {FILTERS.map(f => (
                     <Button
@@ -137,7 +144,7 @@ export default function AdminSuggestionsPage() {
             ) : items.length === 0 ? (
                 <Card>
                     <CardContent className="py-12 text-center text-muted-foreground">
-                        {t("adm_empty")}
+                        {search.trim() === "" ? t("adm_empty") : commonT("noResults")}
                     </CardContent>
                 </Card>
             ) : (
