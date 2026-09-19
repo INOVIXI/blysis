@@ -76,7 +76,7 @@ export { RichContent } from "@/core/components/ui/rich-content";
 export type { RadioProps, RadioFieldProps } from "@/core/components/ui/radio";
 export type { NativeSelectProps } from "@/core/components/ui/native-select";
 export type { PaginationProps } from "@/core/components/ui/pagination";
-export type { ListControlsProps, ListFilter } from "@/core/components/ui/list-controls";
+export type { ListControlsProps, ListFilter, ListSearch } from "@/core/components/ui/list-controls";
 export type { SegmentedTab, SegmentedTabsProps } from "@/core/components/ui/segmented-tabs";
 export type { ImageLightboxProps } from "@/core/components/ui/image-lightbox";
 export { Skeleton } from "@/core/components/ui/skeleton";
@@ -121,6 +121,8 @@ export { useModalDialog, type ModalDialogOptions } from "@/core/hooks/useModalDi
 // unfolding above the list it belongs to. Core's screens got route
 // segments; a module screen gets the same behaviour on the path it has.
 export { useFormRoute } from "@/core/hooks/useFormRoute";
+export { useRowList } from "@/core/hooks/useRowList";
+export type { RowList, RowListOptions } from "@/core/hooks/useRowList";
 
 // A module that builds a public page needs the same breadcrumb core uses.
 // This sat in the tree unreachable from a module, so the store hand-rolled

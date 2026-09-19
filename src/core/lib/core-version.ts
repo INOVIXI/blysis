@@ -12,6 +12,14 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 4.3.0 - `useRowList` joins `@/core/sdk/ui`. A list that grows had to be
+ * searched, paged and picked on 67 admin screens and three of them offered
+ * any of it. A shell owning the markup would have to own every table's
+ * columns and row actions, which is why nobody wrote one; this owns the
+ * behaviour instead, and the three parts of it that have to agree - a search
+ * returns the reader to page one, the selection is narrowed to the rows
+ * listed, and the header box says "some" while some are unticked.
+ *
  * 4.2.0 - `ModalLayer` joins `@/core/sdk/ui`. A dialog that draws itself where
  * it stands is a descendant of whatever opened it, and an admin screen that
  * edits a row is one `<form>`: the media library's search box was a form
@@ -409,4 +417,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "4.2.0";
+export const CORE_API_VERSION = "4.3.0";
