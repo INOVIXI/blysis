@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useRouter } from "@/core/sdk/navigation";
-import { Button, NativeSelect, RichContent, useSiteCurrency, buttonClassName } from "@/core/sdk/ui";
+import { Button, ImageLightbox, NativeSelect, RichContent, useSiteCurrency, buttonClassName } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -18,8 +18,13 @@ interface Product {
     name: string;
     slug: string;
     description: string | null;
+    /** What this reader pays. The upgrade credit is already off it. */
     price: number;
     comparePrice: number | null;
+    /** Taken off because a cheaper rung on this shelf is already owned. */
+    upgradeCredit?: number;
+    /** What it costs somebody who owns nothing on this shelf. */
+    fullPrice?: number;
     image: string | null;
     images?: string[];
     stock: number | null;
@@ -146,6 +151,9 @@ export function ProductView({ product: initialProduct }: { product: Product }) {
         }
     };
 
+    // Which image is open at full size. Null is closed.
+    const [zoomed, setZoomed] = useState<number | null>(null);
+
     // Build images array from product data
     const images = product?.images?.length
         ? product.images
@@ -167,6 +175,7 @@ export function ProductView({ product: initialProduct }: { product: Product }) {
 
     const maxStock = product.stock ?? 99;
     const totalPrice = product.price * quantity;
+    const upgradeCredit = Number(product.upgradeCredit ?? 0);
     const inStock = product.stock === null || product.stock > 0;
     // The window, the per-person limit and today's allowance, answered by the
     // endpoint for this person. The button follows it rather than guessing.
@@ -184,27 +193,41 @@ export function ProductView({ product: initialProduct }: { product: Product }) {
                 {/* Left Side - Image & Description */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Product Image Carousel */}
-                    <div className="relative bg-muted rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
-                        <Image
-                            src={images[currentImageIndex]}
-                            alt={`${product.name} - Image ${currentImageIndex + 1}`}
-                            fill
-                            className="object-cover"
-                        />
+                    {/* The same frame the shelf used, so the artwork an
+                        operator uploaded is cropped once rather than twice:
+                        2:1 on the card and 16:9 here meant the top and bottom
+                        of every product banner appeared and disappeared
+                        between the two screens. */}
+                    <div className="relative aspect-card overflow-hidden rounded-lg bg-muted">
+                        {/* The picture is the thing being sold, and the card
+                            crops it to 16:9. Pressing it opens it whole. */}
+                        <button
+                            type="button"
+                            onClick={() => setZoomed(currentImageIndex)}
+                            aria-label={t("product_enlarge")}
+                            className="absolute inset-0 z-0 cursor-zoom-in"
+                        >
+                            <Image
+                                src={images[currentImageIndex]}
+                                alt={`${product.name} - Image ${currentImageIndex + 1}`}
+                                fill
+                                className="object-cover"
+                            />
+                        </button>
 
                         {images.length > 1 && (
                             <>
                                 <button
                                     onClick={prevImage}
                                     aria-label={commonT('previous')}
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/80 hover:bg-card flex items-center justify-center shadow-lg transition-colors"
+                                    className="absolute left-4 top-1/2 z-10 -translate-y-1/2 w-10 h-10 rounded-full bg-card/80 hover:bg-card flex items-center justify-center shadow-lg transition-colors"
                                 >
                                     <ChevronLeft className="w-5 h-5 text-foreground" aria-hidden="true" />
                                 </button>
                                 <button
                                     onClick={nextImage}
                                     aria-label={commonT('next')}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/80 hover:bg-card flex items-center justify-center shadow-lg transition-colors"
+                                    className="absolute right-4 top-1/2 z-10 -translate-y-1/2 w-10 h-10 rounded-full bg-card/80 hover:bg-card flex items-center justify-center shadow-lg transition-colors"
                                 >
                                     <ChevronRight className="w-5 h-5 text-foreground" aria-hidden="true" />
                                 </button>
@@ -212,7 +235,7 @@ export function ProductView({ product: initialProduct }: { product: Product }) {
                         )}
 
                         {images.length > 1 && (
-                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                            <div className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 flex gap-2">
                                 {images.map((_, index) => (
                                     <button
                                         key={index}
@@ -225,7 +248,7 @@ export function ProductView({ product: initialProduct }: { product: Product }) {
                             </div>
                         )}
 
-                        <div className="absolute top-4 right-4 bg-black/50 text-white text-sm px-3 py-1 rounded-full">
+                        <div className="absolute top-4 right-4 z-10 bg-black/50 text-white text-sm px-3 py-1 rounded-full">
                             {currentImageIndex + 1} / {images.length}
                         </div>
                     </div>
@@ -238,7 +261,7 @@ export function ProductView({ product: initialProduct }: { product: Product }) {
                                     key={index}
                                     onClick={() => setCurrentImageIndex(index)}
                                     aria-label={t("product_thumbnail", { n: index + 1 })}
-                                    className={`relative w-20 h-14 rounded-lg overflow-hidden border-2 transition-colors ${index === currentImageIndex ? 'border-primary/30' : 'border-border hover:border-border'}`}
+                                    className={`relative aspect-card w-20 overflow-hidden rounded-lg border-2 transition-colors ${index === currentImageIndex ? 'border-primary/30' : 'border-border hover:border-border'}`}
                                 >
                                     <Image
                                         src={img}
@@ -251,34 +274,59 @@ export function ProductView({ product: initialProduct }: { product: Product }) {
                         </div>
                     )}
 
-                    {/* Product Info */}
-                    <div className="bg-card rounded-lg border border-border p-6">
-                        <h1 className="text-2xl font-bold text-foreground mb-2">{product.name}</h1>
-                        {product.description && (
+                    <ImageLightbox
+                        images={images}
+                        index={zoomed}
+                        onIndexChange={setZoomed}
+                        onClose={() => setZoomed(null)}
+                        label={product.name}
+                    />
+
+                    {/* The name is the frame's title. It was drawn again here,
+                        so every product page was headed twice; and with the
+                        heading gone the card has nothing to hold when a
+                        product carries no description. */}
+                    {product.description && (
+                        <div className="bg-card rounded-lg border border-border p-6">
                             <RichContent
                                 className="text-sm text-muted-foreground"
                                 markdown={product.description}
                             />
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Right Side - Payment Box */}
                 <div className="lg:col-span-1">
                     <div className="bg-card rounded-lg border border-border p-6 sticky top-24">
-                        {/* Price */}
+                        {/* Price.
+
+                            Two different reasons to show a struck-through
+                            figure, and they must not both fire: a sale is what
+                            everybody saves, an upgrade is what this reader
+                            saves. Showing the sale's line under an upgraded
+                            price would be subtracting the same thing twice on
+                            screen. */}
                         <div className="mb-4">
                             <div className="flex items-baseline gap-2">
-                                {product.comparePrice && (
+                                {upgradeCredit > 0 ? (
+                                    product.fullPrice !== undefined && (
+                                        <span className="text-lg text-muted-foreground line-through">{formatPrice(product.fullPrice)}</span>
+                                    )
+                                ) : product.comparePrice ? (
                                     <span className="text-lg text-muted-foreground line-through">{formatPrice(product.comparePrice)}</span>
-                                )}
+                                ) : null}
                                 <span className="text-3xl font-bold text-foreground">{formatPrice(product.price)}</span>
                             </div>
-                            {product.comparePrice && (
+                            {upgradeCredit > 0 ? (
+                                <div className="mt-2 inline-block rounded bg-success/10 px-2 py-1 text-xs font-medium text-success">
+                                    {t("upgradeNote", { amount: upgradeCredit.toFixed(2) })}
+                                </div>
+                            ) : product.comparePrice ? (
                                 <div className="inline-block bg-success/10 text-success text-xs font-medium px-2 py-1 rounded mt-2">
                                     {t('save', { amount: formatPrice(product.comparePrice - product.price) })}
                                 </div>
-                            )}
+                            ) : null}
                         </div>
 
                         {availability && (

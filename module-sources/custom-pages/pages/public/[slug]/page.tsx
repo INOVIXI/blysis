@@ -105,27 +105,21 @@ function PageContent({ page }: { page: CustomPage }) {
             return <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>;
         }
         return (
-            <div>
-                <h1 className="text-3xl font-bold text-foreground mb-6">{page.title}</h1>
-                <Card>
-                    <CardContent className="p-0 overflow-hidden">
-                        <Render config={blockConfig} data={puckData} />
-                    </CardContent>
-                </Card>
-            </div>
+            <Card>
+                <CardContent className="p-0 overflow-hidden">
+                    <Render config={blockConfig} data={puckData} />
+                </CardContent>
+            </Card>
         );
     }
 
+    // The title is the frame's. This used to draw it again underneath, so
+    // `/page/rules` was headed Rules twice.
     return (
-        <div>
-            <h1 className="text-3xl font-bold text-foreground mb-6">{page.title}</h1>
-            <Card>
-                <CardContent className="p-8">
-                    <RichContent
-                        markdown={page.content}
-                    />
-                </CardContent>
-            </Card>
-        </div>
+        <Card>
+            <CardContent className="p-8">
+                <RichContent markdown={page.content} />
+            </CardContent>
+        </Card>
     );
 }

@@ -219,6 +219,16 @@ describe("the public pages, core's own and the modules'", () => {
         expect(offenders).toEqual([]);
     });
 
+    it("lets none of them write its own title, because the frame already did", () => {
+        // A custom page drew `<h1>{page.title}</h1>` under a frame it had
+        // already handed the same title to, so `/page/rules` said Rules twice.
+        // The frame's heading is the page's only level-one heading; a second
+        // one is a second title to a reader and a broken outline to a screen
+        // reader.
+        const offenders = pages.filter((page) => !NOT_A_PAGE[page] && /<h1\b/.test(frameSource(page)));
+        expect(offenders).toEqual([]);
+    });
+
     it("keeps the exception list to pages that exist", () => {
         for (const page of Object.keys(NOT_A_PAGE)) {
             expect(fs.existsSync(path.join(ROOT, page)), page).toBe(true);
