@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
+import { stripComments } from "./source-text";
 import { join } from "node:path";
 
 /**
@@ -81,7 +82,12 @@ describe("a dropdown wears the panel's clothes", () => {
         const offenders = files.filter(
             (f) =>
                 !BARE_SELECT_ALLOWLIST[f] &&
-                /<select[\s>]/.test(readFileSync(f, "utf8")),
+                // The comments go first. A file explaining why it no longer
+                // writes a bare `<select>` is not a file writing one, and
+                // this gate flagged exactly that - the forms builder, whose
+                // note says the public form "drew a `<select>` holding one
+                // empty entry".
+                /<select[\s>]/.test(stripComments(readFileSync(f, "utf8"))),
         );
         expect(offenders).toEqual([]);
     });

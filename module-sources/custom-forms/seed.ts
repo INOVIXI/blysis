@@ -1,4 +1,6 @@
 import type { ModuleSeed } from "@/core/sdk/seed";
+import type { z } from "zod";
+import type { formFieldSchema } from "./lib/validations";
 
 /**
  * Two forms a community actually runs, with submissions under them.
@@ -8,14 +10,13 @@ import type { ModuleSeed } from "@/core/sdk/seed";
  * has checked. The submissions matter as much as the forms: the admin screen
  * is a queue, and an empty queue shows none of what it is for.
  */
-interface Field {
-    name: string;
-    type: "text" | "email" | "number" | "textarea" | "select" | "checkbox";
-    label: string;
-    required: boolean;
-    placeholder?: string;
-    options?: string[];
-}
+/**
+ * A seeded question, typed against the module's own list rather than a copy
+ * of it. The copy had six types in it while the module offered ten, so a seed
+ * that used one of the four newer ones would not compile for a reason that
+ * had nothing to do with the seed.
+ */
+type Field = z.infer<typeof formFieldSchema>;
 
 const FORMS: { slug: string; title: string; description: string; fields: Field[] }[] = [
     {
@@ -25,11 +26,14 @@ const FORMS: { slug: string; title: string; description: string; fields: Field[]
         fields: [
             { name: "name", type: "text", label: "Your in-game name", required: true, placeholder: "Exactly as it appears in chat" },
             { name: "email", type: "email", label: "Email", required: true, placeholder: "So we can reply" },
-            { name: "age", type: "number", label: "Age", required: true },
+            { name: "age", type: "number", label: "Age", required: true, min: 13, max: 120 },
             { name: "role", type: "select", label: "Which role", required: true, options: ["Helper", "Moderator", "Builder", "Event host"] },
             { name: "hours", type: "select", label: "Hours a week you can give", required: true, options: ["Under 5", "5 to 10", "10 to 20", "More than 20"] },
-            { name: "why", type: "textarea", label: "Why you, and what would you do first", required: true },
-            { name: "rules", type: "checkbox", label: "I have read the rules", required: true },
+            { name: "why", type: "textarea", label: "Why you, and what would you do first", required: true, help: "A paragraph is plenty. What you would do in your first week is the useful part.", maxLength: 2000 },
+            // The caption beside the tick, which the public form reads out
+            // of `placeholder`. The builder had no box for it, so both forms
+            // here shipped a required tick with nothing written next to it.
+            { name: "rules", type: "checkbox", label: "The rules", required: true, placeholder: "I have read the rules" },
         ],
     },
     {
@@ -40,7 +44,7 @@ const FORMS: { slug: string; title: string; description: string; fields: Field[]
             { name: "name", type: "text", label: "Your in-game name", required: true },
             { name: "where", type: "select", label: "Where did it happen", required: true, options: ["Survival", "Creative", "The lobby", "The website", "Somewhere else"] },
             { name: "what", type: "textarea", label: "What happened", required: true, placeholder: "What you did, then what happened instead of what you expected" },
-            { name: "again", type: "checkbox", label: "It happens every time", required: false },
+            { name: "again", type: "checkbox", label: "How often", required: false, placeholder: "It happens every time" },
         ],
     },
 ];

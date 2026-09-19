@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdmin, prisma, rateLimitForRoleAsync, readJsonBody, getClientIP } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { formSubmissionSchema, formUpdateSchema } from "../../lib/validations";
+import { checkAnswers, formSubmissionSchema, formUpdateSchema, storedFieldsSchema } from "../../lib/validations";
 
 type RouteParams = { params: Promise<{ slug: string }> };
 
@@ -42,6 +42,16 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Form data required" }, { status: 400 });
     }
     const { data } = parsed.data;
+
+    // The questions are already in hand; this is checking the answers against
+    // them rather than storing whatever was sent and finding out on the admin
+    // screen. The reason travels as a code so the page can say it in the
+    // visitor's language.
+    const questions = storedFieldsSchema.safeParse(form.fields);
+    const problem = questions.success ? checkAnswers(questions.data, data) : null;
+    if (problem) {
+        return NextResponse.json({ error: "Form data rejected", ...problem }, { status: 400 });
+    }
 
     const submission = await prisma.customFormSubmission.create({
         data: {

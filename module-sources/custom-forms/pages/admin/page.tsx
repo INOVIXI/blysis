@@ -3,20 +3,43 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
-import { Button, Card, CardContent, Input, Label, useConfirm, useFormRoute, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Input, Label, Textarea, useConfirm, useFormRoute, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
-import { ArrowLeft, Loader2, Plus, X, Trash2, FileText, Link as LinkIcon, Pencil } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, Loader2, Plus, X, Trash2, FileText, Link as LinkIcon, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { writeError } from "@/core/sdk";
-import { AdminPageHeader } from "@/core/sdk/admin";
+import { AdminPageHeader, RowActions } from "@/core/sdk/admin";
+import { FIELD_TYPES, fieldNeeds, uniqueName } from "../../lib/validations";
+
+/**
+ * The builder.
+ *
+ * It offered six types in a dropdown and no way to configure any of them.
+ * Picking "Dropdown" changed a string in the saved JSON and nothing else:
+ * there was nowhere to type the choices, so the public form drew a `<select>`
+ * holding one empty entry, which a visitor cannot answer and - if the field
+ * was required - cannot get past either. From the operator's seat the type
+ * had not changed, because the row looked identical afterwards and so did the
+ * form. The same went for a tick box, whose caption the public form reads out
+ * of `placeholder`: a box that was never shown, so both forms this module
+ * seeds have a required tick with nothing written beside it.
+ *
+ * A question is a card now, and the card asks for what the type it holds
+ * needs - `fieldNeeds` in the module's own lib, so the builder, the schema
+ * and the public form agree about it rather than each deciding separately.
+ */
 
 interface FormField {
     name: string;
     type: string;
     label: string;
     required: boolean;
+    help?: string;
     placeholder?: string;
     options?: string[];
+    min?: number;
+    max?: number;
+    maxLength?: number;
 }
 
 interface Form {
@@ -78,16 +101,67 @@ export default function FormsPage() {
     }, [editingSlug, t]);
 
     const addField = () => {
-        setFields([...fields, { name: `field_${fields.length}`, type: "text", label: "", required: false }]);
+        setFields([...fields, {
+            name: uniqueName("field", fields.map((f) => f.name)),
+            type: "text", label: "", required: false,
+        }]);
     };
 
     const updateField = (i: number, updates: Partial<FormField>) => {
         setFields(fields.map((f, idx) => idx === i ? { ...f, ...updates } : f));
     };
 
+    /*
+     * A question's label decides the key its answers are stored under, and
+     * `data` is keyed by that name - so two questions worded the same way
+     * used to collide and one person's answer overwrote the other's, with
+     * nothing said. The name is still readable, because somebody reads the
+     * stored answers; it is the collision that is new.
+     */
+    const renameFromLabel = (i: number, label: string) => {
+        const taken = fields.filter((_, idx) => idx !== i).map((f) => f.name);
+        updateField(i, { label, name: uniqueName(label, taken) });
+    };
+
     const removeField = (i: number) => {
         setFields(fields.filter((_, idx) => idx !== i));
     };
+
+    const moveField = (i: number, by: -1 | 1) => {
+        const to = i + by;
+        if (to < 0 || to >= fields.length) return;
+        const next = [...fields];
+        [next[i], next[to]] = [next[to], next[i]];
+        setFields(next);
+    };
+
+    const duplicateField = (i: number) => {
+        const source = fields[i];
+        const copy: FormField = {
+            ...source,
+            options: source.options ? [...source.options] : undefined,
+            name: uniqueName(source.label || "field", fields.map((f) => f.name)),
+        };
+        setFields([...fields.slice(0, i + 1), copy, ...fields.slice(i + 1)]);
+    };
+
+    const setOption = (i: number, optionIndex: number, value: string) => {
+        const options = [...(fields[i].options ?? [])];
+        options[optionIndex] = value;
+        updateField(i, { options });
+    };
+
+    const addOption = (i: number) => {
+        updateField(i, { options: [...(fields[i].options ?? []), ""] });
+    };
+
+    const removeOption = (i: number, optionIndex: number) => {
+        updateField(i, { options: (fields[i].options ?? []).filter((_, idx) => idx !== optionIndex) });
+    };
+
+    /** A number box's value, kept undefined rather than stored as NaN. */
+    const numberOr = (value: string): number | undefined =>
+        value.trim() === "" ? undefined : Number(value);
 
     const submitForm = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -160,27 +234,190 @@ export default function FormsPage() {
                                         <Plus className="w-3 h-3" /> {t("adm_addField")}
                                     </Button>
                                 </div>
-                                <div className="space-y-2">
-                                    {fields.map((field, i) => (
-                                        <div key={i} className="flex items-center gap-2 p-2 bg-muted/50 rounded">
-                                            <Input value={field.label} onChange={(e) => updateField(i, { label: e.target.value, name: e.target.value.toLowerCase().replace(/\s+/g, "_") })} placeholder={t("adm_fieldLabel")} aria-label={t("adm_fieldLabel")} className="flex-1" />
-                                            <NativeSelect value={field.type} onChange={(e) => updateField(i, { type: e.target.value })} aria-label={t("fieldType")} inputSize="sm">
-                                                <option value="text">{t("typeText")}</option>
-                                                <option value="email">{t("typeEmail")}</option>
-                                                <option value="number">{t("typeNumber")}</option>
-                                                <option value="textarea">{t("typeTextarea")}</option>
-                                                <option value="select">{t("typeSelect")}</option>
-                                                <option value="checkbox">{t("typeCheckbox")}</option>
-                                            </NativeSelect>
-                                            <CheckboxField
-                                                checked={field.required}
-                                                onChange={(e) => updateField(i, { required: e.target.checked })}
-                                                label={t("adm_required")}
-                                                rowClassName="text-xs whitespace-nowrap"
-                                            />
-                                            <Button aria-label={commonT("remove")} type="button" variant="ghost" size="sm" onClick={() => removeField(i)}><X className="w-3 h-3" /></Button>
-                                        </div>
-                                    ))}
+                                <div className="space-y-3">
+                                    {fields.map((field, i) => {
+                                        const needs = fieldNeeds(field.type);
+                                        return (
+                                        // Keyed by the field's own name, not
+                                        // by its index: moving a question up
+                                        // with an index key hands its boxes
+                                        // to whatever took its place.
+                                        <Card key={field.name}>
+                                            <CardContent className="p-4 space-y-3">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <span className="text-xs font-medium text-muted-foreground">
+                                                        {t("adm_question", { number: i + 1 })}
+                                                    </span>
+                                                    <RowActions
+                                                        actions={[
+                                                            { icon: ChevronUp, label: t("adm_moveUp"), onClick: () => moveField(i, -1), disabled: i === 0 },
+                                                            { icon: ChevronDown, label: t("adm_moveDown"), onClick: () => moveField(i, 1), disabled: i === fields.length - 1 },
+                                                            { icon: Copy, label: t("adm_duplicateField"), onClick: () => duplicateField(i) },
+                                                            { icon: Trash2, label: t("adm_removeField"), onClick: () => removeField(i), destructive: true, disabled: fields.length === 1 },
+                                                        ]}
+                                                    />
+                                                </div>
+
+                                                <div className="grid md:grid-cols-2 gap-3">
+                                                    <div>
+                                                        <Label>{t("adm_fieldLabel")}</Label>
+                                                        <Input
+                                                            value={field.label}
+                                                            onChange={(e) => renameFromLabel(i, e.target.value)}
+                                                            placeholder={t("adm_fieldLabel")}
+                                                            aria-label={t("adm_fieldLabel")}
+                                                        />
+                                                        {/* The key the answers are filed under. An
+                                                            operator reading the stored answers meets
+                                                            it, so it is not a secret. */}
+                                                        <p className="mt-1 text-xs text-muted-foreground">
+                                                            {t("adm_storedAs", { name: field.name })}
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <Label>{t("fieldType")}</Label>
+                                                        <NativeSelect
+                                                            value={field.type}
+                                                            onChange={(e) => {
+                                                                // Settings the new type has no use
+                                                                // for go with the old one, rather
+                                                                // than riding along invisibly and
+                                                                // coming back if the type is
+                                                                // switched a third time.
+                                                                const next = fieldNeeds(e.target.value);
+                                                                updateField(i, {
+                                                                    type: e.target.value,
+                                                                    options: next.options ? (field.options ?? [""]) : undefined,
+                                                                    placeholder: next.placeholder ? field.placeholder : undefined,
+                                                                    min: next.range ? field.min : undefined,
+                                                                    max: next.range ? field.max : undefined,
+                                                                    maxLength: next.length ? field.maxLength : undefined,
+                                                                });
+                                                            }}
+                                                            aria-label={t("fieldType")}
+                                                        >
+                                                            {FIELD_TYPES.map((type) => (
+                                                                <option key={type} value={type}>
+                                                                    {t(`type${type[0].toUpperCase()}${type.slice(1)}`)}
+                                                                </option>
+                                                            ))}
+                                                        </NativeSelect>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <Label>{t("adm_fieldHelp")}</Label>
+                                                    <Input
+                                                        value={field.help ?? ""}
+                                                        onChange={(e) => updateField(i, { help: e.target.value || undefined })}
+                                                        placeholder={t("adm_fieldHelpPlaceholder")}
+                                                        aria-label={t("adm_fieldHelp")}
+                                                    />
+                                                </div>
+
+                                                {needs.options && (
+                                                    <div>
+                                                        <Label>{t("adm_options")}</Label>
+                                                        <div className="space-y-2">
+                                                            {(field.options ?? []).map((option, optionIndex) => (
+                                                                <div key={optionIndex} className="flex items-center gap-2">
+                                                                    <Input
+                                                                        value={option}
+                                                                        onChange={(e) => setOption(i, optionIndex, e.target.value)}
+                                                                        placeholder={t("adm_optionPlaceholder")}
+                                                                        aria-label={t("adm_optionPlaceholder")}
+                                                                    />
+                                                                    <Button
+                                                                        type="button"
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        aria-label={t("adm_removeOption")}
+                                                                        onClick={() => removeOption(i, optionIndex)}
+                                                                    >
+                                                                        <X className="w-4 h-4" />
+                                                                    </Button>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => addOption(i)}>
+                                                            <Plus className="w-3 h-3" /> {t("adm_addOption")}
+                                                        </Button>
+                                                        {(field.options ?? []).length === 0 && (
+                                                            // Said here as well as refused by the
+                                                            // schema: a form saved with an empty
+                                                            // dropdown is one a visitor cannot get
+                                                            // past, and the operator should hear
+                                                            // that before they press save.
+                                                            <p className="mt-2 text-xs text-destructive">{t("adm_needsOptions")}</p>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {needs.placeholder && (
+                                                    <div>
+                                                        <Label>{field.type === "checkbox" ? t("adm_checkboxCaption") : t("adm_fieldPlaceholder")}</Label>
+                                                        <Input
+                                                            value={field.placeholder ?? ""}
+                                                            onChange={(e) => updateField(i, { placeholder: e.target.value || undefined })}
+                                                            aria-label={field.type === "checkbox" ? t("adm_checkboxCaption") : t("adm_fieldPlaceholder")}
+                                                        />
+                                                    </div>
+                                                )}
+
+                                                {(needs.range || needs.length) && (
+                                                    // Two columns only when
+                                                    // there are two boxes: a
+                                                    // lone limit takes the
+                                                    // width rather than
+                                                    // leaving half the row
+                                                    // empty beside it.
+                                                    <div className={`grid gap-3 ${needs.range ? "md:grid-cols-2" : ""}`}>
+                                                        {needs.range && (
+                                                            <>
+                                                                <div>
+                                                                    <Label>{t("adm_min")}</Label>
+                                                                    <Input
+                                                                        type="number"
+                                                                        value={field.min ?? ""}
+                                                                        onChange={(e) => updateField(i, { min: numberOr(e.target.value) })}
+                                                                        aria-label={t("adm_min")}
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <Label>{t("adm_max")}</Label>
+                                                                    <Input
+                                                                        type="number"
+                                                                        value={field.max ?? ""}
+                                                                        onChange={(e) => updateField(i, { max: numberOr(e.target.value) })}
+                                                                        aria-label={t("adm_max")}
+                                                                    />
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                        {needs.length && (
+                                                            <div>
+                                                                <Label>{t("adm_maxLength")}</Label>
+                                                                <Input
+                                                                    type="number"
+                                                                    min={1}
+                                                                    value={field.maxLength ?? ""}
+                                                                    onChange={(e) => updateField(i, { maxLength: numberOr(e.target.value) })}
+                                                                    aria-label={t("adm_maxLength")}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                <CheckboxField
+                                                    checked={field.required}
+                                                    onChange={(e) => updateField(i, { required: e.target.checked })}
+                                                    label={t("adm_required")}
+                                                />
+                                            </CardContent>
+                                        </Card>
+                                        );
+                                    })}
                                 </div>
                             </div>
 

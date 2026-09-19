@@ -12,8 +12,13 @@ interface FormField {
     type: string;
     label: string;
     required?: boolean;
+    /** A line under the question saying how to answer it. */
+    help?: string;
     placeholder?: string;
     options?: string[];
+    min?: number;
+    max?: number;
+    maxLength?: number;
 }
 
 interface CustomForm {
@@ -69,7 +74,22 @@ export default function FormPage({ params }: PageProps) {
                 setSubmitted(true);
                 toast.success(t("submitSuccess"));
             } else {
-                toast.error(t("submitError"));
+                /*
+                 * The endpoint checks the answers against the questions and
+                 * says which one it refused and why. "Something went wrong"
+                 * over a form somebody has just spent five minutes filling in
+                 * leaves them to guess which box it was.
+                 */
+                const said = await res.json().catch(() => null) as
+                    { reason?: string; label?: string; limit?: number } | null;
+                const key = said?.reason
+                    ? `err_${said.reason.replace(/_(.)/g, (_, c: string) => c.toUpperCase())}`
+                    : null;
+                toast.error(
+                    key && t.has(key)
+                        ? t(key, { label: said?.label ?? "", limit: said?.limit ?? 0 })
+                        : t("submitError"),
+                );
             }
         } catch {
             toast.error(t("submitError"));
@@ -84,13 +104,38 @@ export default function FormPage({ params }: PageProps) {
 
         switch (field.type) {
             case "textarea":
-                return <Textarea value={val} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} aria-label={field.label} required={field.required} rows={4} />;
+                return <Textarea value={val} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} aria-label={field.label} required={field.required} maxLength={field.maxLength} rows={4} />;
             case "select":
                 return (
                     <NativeSelect value={val} onChange={(e) => onChange(e.target.value)} required={field.required} aria-label={field.label} className="w-full">
                         <option value="">{t("selectOption")}</option>
                         {field.options?.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
                     </NativeSelect>
+                );
+            case "radio":
+                /*
+                 * A real radio group, not a select drawn differently: with a
+                 * handful of choices the answers are worth showing at once,
+                 * and one `name` across the set is what makes a keyboard move
+                 * between them with the arrows rather than the tab key.
+                 */
+                return (
+                    <div role="radiogroup" aria-label={field.label} className="space-y-1.5">
+                        {(field.options ?? []).map((opt) => (
+                            <label key={opt} className="flex items-center gap-2 text-sm">
+                                <input
+                                    type="radio"
+                                    name={field.name}
+                                    value={opt}
+                                    checked={val === opt}
+                                    onChange={() => onChange(opt)}
+                                    required={field.required}
+                                    className="h-4 w-4 accent-primary"
+                                />
+                                <span>{opt}</span>
+                            </label>
+                        ))}
+                    </div>
                 );
             case "checkbox":
                 return (
@@ -102,7 +147,23 @@ export default function FormPage({ params }: PageProps) {
                     />
                 );
             default:
-                return <Input type={field.type || "text"} value={val} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} aria-label={field.label} required={field.required} />;
+                // text, email, url, tel, number and date are all one box; the
+                // limits a question was given are what make it a different
+                // one. `min`/`max` mean a value for a number and a day for a
+                // date, which is why they are passed through as they stand.
+                return (
+                    <Input
+                        type={field.type || "text"}
+                        value={val}
+                        onChange={(e) => onChange(e.target.value)}
+                        placeholder={field.placeholder}
+                        aria-label={field.label}
+                        required={field.required}
+                        min={field.min}
+                        max={field.max}
+                        maxLength={field.maxLength}
+                    />
+                );
         }
     };
 
@@ -130,6 +191,12 @@ export default function FormPage({ params }: PageProps) {
                             {form.fields.map((field) => (
                                 <div key={field.name}>
                                     <Label>{field.label} {field.required && <span className="text-destructive">*</span>}</Label>
+                                    {/* Above the control, not below it: it is
+                                        how to answer, and it is no use after
+                                        somebody has answered. */}
+                                    {field.help && (
+                                        <p className="mb-1.5 text-xs text-muted-foreground">{field.help}</p>
+                                    )}
                                     {renderField(field)}
                                 </div>
                             ))}
