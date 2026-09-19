@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
+import { Card, CardContent } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
 import { ListControls } from "@/core/components/ui/list-controls";
@@ -13,11 +13,14 @@ import { useRowList } from "@/core/hooks/useRowList";
 import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
 import { RichTextEditor } from "@/core/components/ui/rich-text-editor";
-import { Send, Loader2, Trash2, Plus, X } from "lucide-react";
+import { Send, Loader2, Trash2, Plus, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { useTranslations } from "next-intl";
 import { writeError } from "@/core/lib/write-result";
+import { useFormRoute } from "@/core/hooks/useFormRoute";
+import { Link } from "@/core/lib/i18n/navigation";
+import { buttonClassName } from "@/core/components/ui/button";
 import { badgeClassName, type BadgeTone } from "@/core/components/ui/badge";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { useLocalDateTime } from "@/core/hooks/useLocalDate";
@@ -45,7 +48,15 @@ export default function BroadcastsPage() {
     // paging to a row was the only way to reach it.
     const list = useRowList(broadcasts, { text: (b) => [b.subject], pageSize: 12 });
     const [loading, setLoading] = useState(true);
-    const [composing, setComposing] = useState(false);
+    /*
+     * The composer is a place, not a card that unfolds over the list.
+     *
+     * It used to be a flag: the browser's back button did not close it, a
+     * half-written message could not be reloaded or linked, and the same
+     * address was two screens. `?form=new` writes a new one and
+     * `?form=<id>` picks a draft back up.
+     */
+    const { showForm, editingId, formHref, closeForm } = useFormRoute();
     const [subject, setSubject] = useState("");
     const [body, setBody] = useState("");
     const [sending, setSending] = useState(false);
@@ -64,6 +75,17 @@ export default function BroadcastsPage() {
 
     useEffect(() => { fetchBroadcasts(); }, []);
 
+    /*
+     * The draft being edited, read once its row has arrived. A composer
+     * opened straight from an address has no rows yet, so this waits for
+     * them rather than asking the endpoint a second time.
+     */
+    useEffect(() => {
+        if (!editingId) { setSubject(""); setBody(""); return; }
+        const draft = broadcasts.find((row) => row.id === editingId);
+        if (draft) { setSubject(draft.subject); setBody(draft.body); }
+    }, [editingId, broadcasts]);
+
     const send = async (sendNow: boolean) => {
         if (!subject.trim() || !body.trim()) {
             toast.error(t("broadcasts_subjectRequired"));
@@ -81,16 +103,46 @@ export default function BroadcastsPage() {
 
         setSending(true);
         try {
-            const res = await fetch("/api/v1/broadcasts", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    subject,
-                    body,
-                    filter: { all: true },
-                    sendNow,
-                }),
-            });
+            /*
+             * A draft that is being corrected is written back before it is
+             * sent, or the send would queue what was saved rather than what
+             * is on screen.
+             */
+            if (editingId) {
+                const saved = await fetch(`/api/v1/broadcasts/${editingId}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ subject, body }),
+                });
+                if (!saved.ok) {
+                    toast.error(await writeError(saved, t("broadcasts_sendFailed"), t) ?? t("broadcasts_sendFailed"));
+                    return;
+                }
+                if (!sendNow) {
+                    toast.success(t("broadcasts_draftSaved"));
+                    closeForm();
+                    fetchBroadcasts();
+                    return;
+                }
+            }
+
+            /*
+             * One request either way: a draft that already exists is queued
+             * by its own address, and a new one is written and queued in the
+             * same call. Chosen before it is sent rather than inside the
+             * call, so there is one answer to look at.
+             */
+            const request = editingId
+                ? { url: `/api/v1/broadcasts/${editingId}`, init: { method: "POST" } as RequestInit }
+                : {
+                    url: "/api/v1/broadcasts",
+                    init: {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ subject, body, filter: { all: true }, sendNow }),
+                    } as RequestInit,
+                };
+            const res = await fetch(request.url, request.init);
             if (res.ok) {
                 const data = await res.json();
                 toast.success(
@@ -98,7 +150,7 @@ export default function BroadcastsPage() {
                         ? (t("broadcasts_queuedToast", { count: data.queuedRecipients }))
                         : (t("broadcasts_draftSaved")),
                 );
-                setSubject(""); setBody(""); setComposing(false);
+                setSubject(""); setBody(""); closeForm();
                 fetchBroadcasts();
             } else {
                 toast.error(t("broadcasts_sendFailed"));
@@ -172,28 +224,18 @@ export default function BroadcastsPage() {
         failed: "danger",
     };
 
-    return (
-        <>
-            <AdminPageHeader
-                title={t("sidebar_broadcasts")}
-                description={t("settings_broadcastsDesc")}
-                actions={<>
-                    <Button
-                        variant={composing ? "outline" : "default"}
-                        onClick={() => setComposing(!composing)}
-                    >
-                        {composing ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                        {composing ? commonT("cancel") : t("common_new")}
-                    </Button>
-                </>}
-            />
+    if (showForm) {
+        return (
+            <>
+                <AdminPageHeader
+                    onBack={closeForm}
+                    backLabel={commonT("back")}
+                    title={editingId ? t("broadcasts_editDraft") : t("broadcasts_newBroadcast")}
+                    description={t("settings_broadcastsDesc")}
+                />
 
-            {composing && (
-                <Card className="mb-6">
-                    <CardHeader>
-                        <CardTitle>{t("broadcasts_newBroadcast")}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
+                <Card>
+                    <CardContent className="p-6 space-y-4">
                         <div>
                             <Label>{t("broadcasts_subject")}</Label>
                             <Input aria-label={t("broadcasts_subject")} value={subject} onChange={(e) => setSubject(e.target.value)} placeholder={t("broadcasts_subjectPlaceholder")} />
@@ -212,7 +254,21 @@ export default function BroadcastsPage() {
                         </div>
                     </CardContent>
                 </Card>
-            )}
+            </>
+        );
+    }
+
+    return (
+        <>
+            <AdminPageHeader
+                title={t("sidebar_broadcasts")}
+                description={t("settings_broadcastsDesc")}
+                actions={
+                    <Link href={formHref()} className={buttonClassName("default", "default")}>
+                        <Plus className="w-4 h-4" /> {t("common_new")}
+                    </Link>
+                }
+            />
 
             <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
 
@@ -266,6 +322,15 @@ export default function BroadcastsPage() {
                                     )}
                                     <RowActions
                                         actions={[
+                                            // Only a draft: a queued one is
+                                            // being walked by the sender and a
+                                            // sent one is a record.
+                                            {
+                                                icon: Pencil,
+                                                label: commonT("edit"),
+                                                href: formHref(b.id),
+                                                hidden: b.status !== "draft",
+                                            },
                                             { icon: Trash2, label: commonT("delete"), onClick: () => deleteBroadcast(b), destructive: true },
                                         ]}
                                     />

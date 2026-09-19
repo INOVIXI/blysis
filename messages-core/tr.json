@@ -313,6 +313,7 @@
     "broadcasts_deleteTitle": "Yayını Sil",
     "broadcasts_draft": "Taslak",
     "broadcasts_draftSaved": "Taslak kaydedildi",
+    "broadcasts_editDraft": "Taslağı Düzenle",
     "broadcasts_failed": "başarısız",
     "broadcasts_failedSuffix": "· {failed} başarısız",
     "broadcasts_newBroadcast": "Yeni Yayın",

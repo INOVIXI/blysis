@@ -313,6 +313,7 @@
     "broadcasts_deleteTitle": "Delete broadcast",
     "broadcasts_draft": "Draft",
     "broadcasts_draftSaved": "Draft saved",
+    "broadcasts_editDraft": "Edit Draft",
     "broadcasts_failed": "failed",
     "broadcasts_failedSuffix": "· {failed} failed",
     "broadcasts_newBroadcast": "New Broadcast",

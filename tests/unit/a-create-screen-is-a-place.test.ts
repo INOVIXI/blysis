@@ -29,9 +29,49 @@ const ROOTS = ["src/app", "src/core", "module-sources"];
 /**
  * The state names that used to gate an inline create or edit card, or the
  * modal that replaced one.
+ *
+ * A list of names catches the shapes somebody has already written and misses
+ * the next synonym. The broadcast screen called its flag `composing` and sat
+ * here unnoticed through every run of this gate: the whole composer unfolded
+ * over the list, with nothing in the address. So the names are the first
+ * question and `unfoldsAForm` below is the second.
  */
 const INLINE_FORM_STATE =
     /const \[\s*(?:show[A-Z]?\w*Form|showNew|showCreate|showModal|showDialog|modalOpen|dialogOpen|editing\w*)\s*,/;
+
+/** A boolean this file declares and renders a form behind. */
+const BOOLEAN_STATE = /const \[\s*(\w+)\s*,\s*set\w+\s*\] = useState(?:<[^>]*>)?\(\s*false\s*\)/g;
+const WRITES = /method:\s*["'](?:POST|PATCH|PUT)["']/;
+
+/** The file draws rows, so a form on it is a form over a list. */
+function drawsAList(source: string): boolean {
+    for (const m of source.matchAll(/\.map\(/g)) {
+        const body = source.slice(m.index ?? 0, (m.index ?? 0) + 1500);
+        if (/key=\{/.test(body) && /<tr\b|<li\b|<Card\b|divide-y/.test(body)) return true;
+    }
+    return false;
+}
+
+/**
+ * A list screen that hides a form behind a flag of its own, whatever the flag
+ * is called.
+ *
+ * The form has to be a form and not a disclosure: a section of extra settings
+ * behind a "show advanced" toggle is one screen, and so is a panel that
+ * appears once something is chosen. What marks a create screen is that the
+ * same file also sends a write.
+ */
+function unfoldsAForm(source: string): string | null {
+    if (!drawsAList(source) || !WRITES.test(source)) return null;
+    for (const m of source.matchAll(BOOLEAN_STATE)) {
+        const name = m[1];
+        for (const g of source.matchAll(new RegExp(`\\{${name}\\s*&&\\s*\\(`, "g"))) {
+            const window = source.slice((g.index ?? 0) + g[0].length, (g.index ?? 0) + g[0].length + 2500);
+            if (/<Input\b|<Textarea\b|<RichTextEditor\b/.test(window)) return name;
+        }
+    }
+    return null;
+}
 
 function walk(dir: string, out: string[] = []): string[] {
     for (const entry of readdirSync(dir)) {
@@ -53,6 +93,10 @@ const files = ROOTS.flatMap((root) => walk(root));
 const ALLOWLIST: Record<string, string> = {
     "module-sources/suggestions/components/SuggestionBoard.tsx":
         "a public compose box, not an admin create screen: three fields a visitor fills in place while reading the board, and sending them to a separate page to type two sentences would lose the list they were reading",
+    "src/app/[locale]/(admin)/admin/users/[id]/MemberRestrictions.tsx":
+        "three fields on one member's own screen, about that member. The list beside them is their restrictions, and sending an operator to another address to type a reason would lose the person they are looking at",
+    "module-sources/suggestions/pages/public/[id]/page.tsx":
+        "the flag is `truncated`, which says a discussion was cut short. The reply box the scan sees below it is the page's own, not something the flag unfolds",
 };
 
 describe("a create screen is a place", () => {
@@ -60,6 +104,16 @@ describe("a create screen is a place", () => {
         const offenders = files.filter(
             (file) => !ALLOWLIST[file] && INLINE_FORM_STATE.test(readFileSync(file, "utf8")),
         );
+        expect(offenders).toEqual([]);
+    });
+
+    it("holds none under a name nobody thought of either", () => {
+        const offenders: string[] = [];
+        for (const file of files) {
+            if (ALLOWLIST[file]) continue;
+            const flag = unfoldsAForm(readFileSync(file, "utf8"));
+            if (flag) offenders.push(`${file}: ${flag}`);
+        }
         expect(offenders).toEqual([]);
     });
 
