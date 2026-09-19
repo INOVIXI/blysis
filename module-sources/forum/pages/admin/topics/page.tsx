@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, Pagination, useConfirm } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, ListControls, Pagination, useConfirm } from "@/core/sdk/ui";
 import { Loader2, Pin, PinOff, Lock, Unlock, Trash2, Eye, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { useRelativeTime } from "@/core/sdk/ui";
@@ -31,13 +31,18 @@ export default function AdminForumTopicsPage() {
     const [topics, setTopics] = useState<Topic[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
+    // The endpoint has taken `search` since it was written; this screen never
+    // sent one, so a moderator looking for a topic paged until it appeared.
+    const [search, setSearch] = useState("");
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
 
     const fetchTopics = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/v1/forum/topics?page=${page}&limit=20`);
+            const query = new URLSearchParams({ page: String(page), limit: "20" });
+            if (search.trim()) query.set("search", search.trim());
+            const res = await fetch(`/api/v1/forum/topics?${query}`);
             if (res.ok) {
                 const data = await res.json();
                 setTopics(data.topics || []);
@@ -53,7 +58,7 @@ export default function AdminForumTopicsPage() {
 
     useEffect(() => {
         fetchTopics();
-    }, [page]);  // eslint-disable-line react-hooks/exhaustive-deps
+    }, [page, search]);  // eslint-disable-line react-hooks/exhaustive-deps
 
     const togglePin = async (topicId: string, isPinned: boolean) => {
         const res = await fetch(`/api/v1/forum/topics/${topicId}`, {
@@ -113,13 +118,20 @@ export default function AdminForumTopicsPage() {
                 description={t("adm_topicsTotal", { count: total })}
             />
 
+            <ListControls
+                className="mb-4"
+                search={{ value: search, onChange: (term) => { setSearch(term); setPage(1); } }}
+            />
+
             <Card>
                 <CardHeader>
                     <CardTitle>{t("adm_allTopics")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     {topics.length === 0 ? (
-                        <p className="text-muted-foreground text-center py-8">{t("adm_noForumTopics")}</p>
+                        <p className="text-muted-foreground text-center py-8">
+                            {search.trim() === "" ? t("adm_noForumTopics") : commonT("noResults")}
+                        </p>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full">

@@ -1,9 +1,10 @@
+import { Plus } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { redirect } from "@/core/sdk/navigation";
 import { formatDate } from "@/core/sdk";
 import { hasPermission, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { Card, CardContent, CardHeader, CardTitle, Pagination, buttonClassName } from "@/core/sdk/ui";
+import { Card, CardContent, CardHeader, CardTitle, ListControls, Pagination, buttonClassName } from "@/core/sdk/ui";
 import { getTranslations, getLocale } from "next-intl/server";
 import { dateLocaleTag } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -20,9 +21,30 @@ export const dynamic = "force-dynamic";
  */
 const PER_PAGE = 25;
 
-async function getBlogArticles(page: number) {
-    const [articles, stats] = await Promise.all([
+/**
+ * The term narrows the query rather than the page.
+ *
+ * This table is paged by the database, so searching the twenty rows that
+ * arrived would tell an editor an article does not exist because it is on
+ * page four. The title and the slug: the two the table draws that an editor
+ * would type.
+ *
+ * The counts above stay over the whole table on purpose. They answer "how
+ * much is drafted", which is not a question about the search.
+ */
+async function getBlogArticles(page: number, term: string) {
+    const where = term === ""
+        ? {}
+        : {
+            OR: [
+                { title: { contains: term, mode: "insensitive" as const } },
+                { slug: { contains: term, mode: "insensitive" as const } },
+            ],
+        };
+
+    const [articles, found, stats] = await Promise.all([
         prisma.blogArticle.findMany({
+            where,
             orderBy: { createdAt: "desc" },
             skip: (page - 1) * PER_PAGE,
             take: PER_PAGE,
@@ -31,13 +53,14 @@ async function getBlogArticles(page: number) {
                 category: { select: { name: true } },
             },
         }),
+        prisma.blogArticle.count({ where }),
         prisma.blogArticle.groupBy({
             by: ["status"],
             _count: true,
         }),
     ]);
 
-    return { articles, stats };
+    return { articles, found, stats };
 }
 
 interface AdminBlogArticlesPageProps {
@@ -46,6 +69,7 @@ interface AdminBlogArticlesPageProps {
 
 export default async function AdminBlogArticlesPage({ searchParams }: AdminBlogArticlesPageProps) {
     const t = await getTranslations("blog");
+    const commonT = await getTranslations("common");
 
     // ArticleStatus is a Prisma enum, so the column holds "PUBLISHED". The
     // four adm_* messages for it were already in the manifest, in both
@@ -73,13 +97,16 @@ export default async function AdminBlogArticlesPage({ searchParams }: AdminBlogA
     const raw = (await searchParams)?.page;
     const requested = Number.parseInt(Array.isArray(raw) ? raw[0] : raw ?? "", 10);
     const page = Number.isFinite(requested) && requested > 0 ? requested : 1;
-    const { articles, stats } = await getBlogArticles(page);
+    const rawTerm = (await searchParams)?.q;
+    const term = (Array.isArray(rawTerm) ? rawTerm[0] : rawTerm ?? "").trim();
+    const { articles, found, stats } = await getBlogArticles(page, term);
 
     const draftCount = stats.find(s => s.status === "DRAFT")?._count || 0;
     const publishedCount = stats.find(s => s.status === "PUBLISHED")?._count || 0;
     // The count card asks how many articles exist, not how many are on screen.
     const totalCount = stats.reduce((sum, s) => sum + s._count, 0);
-    const totalPages = Math.max(1, Math.ceil(totalCount / PER_PAGE));
+    // The pager counts what the search left; the card above counts the table.
+    const totalPages = Math.max(1, Math.ceil(found / PER_PAGE));
 
     return (
         <>
@@ -87,7 +114,7 @@ export default async function AdminBlogArticlesPage({ searchParams }: AdminBlogA
                 title={t("adm_blogArticles")}
                 description={t("adm_manageBlogContent")}
                 actions={<>
-                    <Link href="/admin/blog/articles/new" className={buttonClassName("default", "default")}>{`+ ${t("adm_newArticle")}`}</Link>
+                    <Link href="/admin/blog/articles/new" className={buttonClassName("default", "default")}><Plus className="w-4 h-4" /> {t("adm_newArticle")}</Link>
                 </>}
             />
 
@@ -125,6 +152,8 @@ export default async function AdminBlogArticlesPage({ searchParams }: AdminBlogA
                 </Card>
             </div>
 
+            <ListControls className="mb-4" search={{ param: "q" }} />
+
             {/* Articles Table */}
             <Card>
                 <CardHeader>
@@ -133,7 +162,9 @@ export default async function AdminBlogArticlesPage({ searchParams }: AdminBlogA
                 <CardContent>
                     {articles.length === 0 ? (
                         <p className="text-muted-foreground text-center py-8">
-                            {t("adm_noArticlesYet")}
+                            {/* Not "no articles yet" over a full blog: that
+                                sentence says the posts have gone. */}
+                            {term === "" ? t("adm_noArticlesYet") : commonT("noResults")}
                         </p>
                     ) : (
                         <div className="overflow-x-auto">
@@ -208,7 +239,7 @@ export default async function AdminBlogArticlesPage({ searchParams }: AdminBlogA
                         </div>
                     )}
 
-                    <Pagination page={page} pages={totalPages} total={totalCount} pageParam="page" />
+                    <Pagination page={page} pages={totalPages} total={found} pageParam="page" />
                 </CardContent>
             </Card>
         </>

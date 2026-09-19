@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
-import { Button, Card, CardContent, Input, Label, Pagination, usePagedRows, useConfirm, useFormRoute, useSiteCurrency, NativeSelect, buttonClassName, useLocalDate } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, useRowList, useSiteCurrency, NativeSelect, buttonClassName, useLocalDate } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, Tag } from "lucide-react";
 import { toast } from "sonner";
@@ -44,7 +44,9 @@ export default function AdminCouponsPage() {
     const { showForm, editingId, formHref, openForm, closeForm } = useFormRoute();
     const [error, setError] = useState<string | null>(null);
 
-    const paged = usePagedRows(coupons);
+    // The two lines the table draws. This list grows every time somebody
+    // adds one, and paging to a row was the only way to reach it.
+    const list = useRowList(coupons, { text: (c) => [c.code, c.description], pageSize: 10 });
 
     const [form, setForm] = useState({
         code: "",
@@ -327,11 +329,15 @@ export default function AdminCouponsPage() {
                 </p>
             )}
 
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
             {/* Coupons List */}
             <Card>
                 <CardContent className="p-0">
                     {coupons.length === 0 ? (
                         <p className="text-muted-foreground text-center py-8">{t("adm_noCouponsYet")}</p>
+                    ) : list.rows.length === 0 ? (
+                        <p className="text-muted-foreground text-center py-8">{commonT("noResults")}</p>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full">
@@ -346,7 +352,7 @@ export default function AdminCouponsPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {paged.rows.map((coupon) => (
+                                    {list.rows.map((coupon) => (
                                         <tr key={coupon.id} className="hover:bg-muted/50 border-b last:border-0">
                                             <td className="py-3 px-4">
                                                 <div className="flex items-center gap-2">
@@ -412,7 +418,7 @@ export default function AdminCouponsPage() {
                             </table>
                         </div>
                     )}
-                    <Pagination page={paged.page} pages={paged.pages} total={paged.total} onPageChange={paged.setPage} />
+                    <Pagination page={list.page} pages={list.pages} total={list.total} onPageChange={list.setPage} />
                 </CardContent>
             </Card>
         </>

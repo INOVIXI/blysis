@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Pagination, usePagedRows, Textarea, useConfirm, useFormRoute, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, ListControls, Pagination, useRowList, Textarea, useConfirm, useFormRoute, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import {
     ArrowLeft,
@@ -87,7 +87,9 @@ export default function AdminTrophiesPage() {
     // at `?form=new` or `?form=<id>`.
     const { showForm, editingId, formHref, openForm, closeForm } = useFormRoute();
     const [form, setForm] = useState<FormState>(BLANK_FORM);
-    const paged = usePagedRows(trophies);
+    // The two lines the table draws. This list grows every time somebody
+    // adds one, and paging to a row was the only way to reach it.
+    const list = useRowList(trophies, { text: (row) => [row.name, row.description], pageSize: 10 });
 
     const fetchTrophies = useCallback(async () => {
         setLoading(true);
@@ -378,6 +380,8 @@ export default function AdminTrophiesPage() {
                 </>}
             />
 
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
             <Card>
                 <CardHeader>
                     <CardTitle className="text-base">
@@ -393,6 +397,8 @@ export default function AdminTrophiesPage() {
                         <p className="text-sm text-muted-foreground py-4">
                             {t("noTrophies")}
                         </p>
+                    ) : list.rows.length === 0 ? (
+                        <p className="text-sm text-muted-foreground py-4">{commonT("noResults")}</p>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
@@ -408,7 +414,7 @@ export default function AdminTrophiesPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {paged.rows.map((row) => (
+                                    {list.rows.map((row) => (
                                         <tr key={row.id} className="border-b border-border/50">
                                             <td className="py-2 pr-3">
                                                 <div className="flex items-center gap-2">
@@ -483,7 +489,7 @@ export default function AdminTrophiesPage() {
                                     ))}
                                 </tbody>
                             </table>
-                            <Pagination page={paged.page} pages={paged.pages} total={paged.total} onPageChange={paged.setPage} />
+                            <Pagination page={list.page} pages={list.pages} total={list.total} onPageChange={list.setPage} />
                         </div>
                     )}
                 </CardContent>
