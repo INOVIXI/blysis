@@ -79,7 +79,7 @@ describe("a list drawn by the crud shell", () => {
 
         fireEvent.change(screen.getByRole("searchbox"), { target: { value: "pack" } });
 
-        await waitFor(() => expect(screen.queryByText("Server rules")).toBeNull());
+        await waitFor(() => expect(screen.queryByText("Server rules")).toBeNull(), { timeout: 5000 });
         expect(screen.getByText("Client pack")).toBeTruthy();
         expect(screen.getByText("Texture pack")).toBeTruthy();
     });
@@ -90,7 +90,7 @@ describe("a list drawn by the crud shell", () => {
 
         fireEvent.change(screen.getByRole("searchbox"), { target: { value: "PDF" } });
 
-        await waitFor(() => expect(screen.queryByText("Client pack")).toBeNull());
+        await waitFor(() => expect(screen.queryByText("Client pack")).toBeNull(), { timeout: 5000 });
         expect(screen.getByText("Server rules")).toBeTruthy();
     });
 
@@ -102,7 +102,10 @@ describe("a list drawn by the crud shell", () => {
 
         fireEvent.change(screen.getByRole("searchbox"), { target: { value: "nothing matches this" } });
 
-        expect(await screen.findByText(MESSAGES.common.noResults)).toBeTruthy();
+        // The strip waits 300ms before it tells anybody, and this box is
+        // shared with eight other test files: the default one-second ceiling
+        // is not enough room for a debounce under that load.
+        expect(await screen.findByText(MESSAGES.common.noResults, {}, { timeout: 5000 })).toBeTruthy();
         expect(screen.queryByText(MESSAGES.admin.crud_noItems)).toBeNull();
     });
 });

@@ -12,10 +12,13 @@ import {
     CardTitle,
     Input,
     Label,
+    ListControls,
     LoadFailed,
     NativeSelect,
+    Pagination,
     Textarea,
     useConfirm,
+    useRowList,
 } from "@/core/sdk/ui";
 import { AdminPageHeader } from "@/core/sdk/admin";
 import { writeError } from "@/core/sdk";
@@ -48,6 +51,8 @@ interface Draft {
     description: string;
     isActive: boolean;
     order: number;
+    /** What the table is about. "" means the operator types the columns. */
+    subjectRef: string;
     columns: DraftColumn[];
     groups: DraftGroup[];
     rows: DraftRow[];
@@ -60,7 +65,7 @@ const newKey = (prefix: string) => `${prefix}${(counter += 1)}`;
 
 const EMPTY: Draft = {
     id: null, slug: "", title: "", description: "", isActive: true, order: 0,
-    columns: [], groups: [], rows: [], cells: {},
+    subjectRef: "", columns: [], groups: [], rows: [], cells: {},
 };
 
 const at = (rowKey: string, columnKey: string) => `${rowKey}|${columnKey}`;
@@ -75,6 +80,7 @@ interface StoredTable {
     description: string | null;
     isActive: boolean;
     order: number;
+    subjectRef: string | null;
     columns: { id: string; label: string; subtitle: string | null; href: string | null; highlight: boolean }[];
     groups: { id: string; label: string }[];
     rows: { id: string; groupId: string | null; label: string; cells: { columnId: string; kind: string; value: string | null }[] }[];
@@ -97,6 +103,7 @@ function toDraft(table: StoredTable): Draft {
         description: table.description ?? "",
         isActive: table.isActive,
         order: table.order,
+        subjectRef: table.subjectRef ?? "",
         columns: table.columns.map((column) => ({
             key: column.id,
             label: column.label,
@@ -116,10 +123,32 @@ export default function ComparisonTablesAdminPage() {
     const { confirm } = useConfirm();
 
     const [tables, setTables] = useState<StoredTable[]>([]);
+    // The title and the address: the two the row draws.
+    const list = useRowList(tables, { text: (row) => [row.title, row.slug], pageSize: 15 });
+    const [subjects, setSubjects] = useState<{ ref: string; label: string; group: string }[]>([]);
     const [draft, setDraft] = useState<Draft | null>(null);
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
     const [saving, setSaving] = useState(false);
+
+    // What a table can be about. Asked once: it is a list of shelves, and an
+    // operator opening this screen is about to need it.
+    useEffect(() => {
+        let cancelled = false;
+        fetch("/api/v1/comparison-tables/admin/subjects")
+            // `Promise.reject`, not an empty list: a refusal that becomes
+            // `{ subjects: [] }` never reaches the catch, and the operator is
+            // shown a site with nothing to compare rather than a failure.
+            .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+            .then((data: { subjects?: { ref: string; label: string; group: string }[] }) => {
+                if (!cancelled) setSubjects(data.subjects ?? []);
+            })
+            // An empty picker and a picker that could not be read look the
+            // same, and the second one is an operator wondering why their
+            // shelves are not listed.
+            .catch(() => { if (!cancelled) toast.error(t("adm_subjectsFailed")); });
+        return () => { cancelled = true; };
+    }, []);
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -163,6 +192,7 @@ export default function ComparisonTablesAdminPage() {
                     description: draft.description.trim() || null,
                     isActive: draft.isActive,
                     order: draft.order,
+                    subjectRef: draft.subjectRef || null,
                     columns: draft.columns,
                     groups: draft.groups,
                     rows: draft.rows.map((row) => ({ key: row.key, groupKey: row.groupKey || null, label: row.label })),
@@ -216,11 +246,15 @@ export default function ComparisonTablesAdminPage() {
                 />
                 <Card>
                     <CardContent className="p-0">
+                        <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
                         {tables.length === 0 ? (
                             <p className="text-sm text-muted-foreground text-center py-10">{t("adm_noTables")}</p>
+                        ) : list.rows.length === 0 ? (
+                            <p className="text-sm text-muted-foreground text-center py-10">{commonT("noResults")}</p>
                         ) : (
                             <div className="divide-y">
-                                {tables.map((table) => (
+                                {list.rows.map((table) => (
                                     <div key={table.id} className="flex items-center gap-3 p-4">
                                         <div className="flex-1 min-w-0">
                                             <p className="font-medium">{table.title}</p>
@@ -260,6 +294,12 @@ export default function ComparisonTablesAdminPage() {
                                         </Button>
                                     </div>
                                 ))}
+                                <Pagination
+                                    page={list.page}
+                                    pages={list.pages}
+                                    total={list.total}
+                                    onPageChange={list.setPage}
+                                />
                             </div>
                         )}
                     </CardContent>
@@ -303,6 +343,20 @@ export default function ComparisonTablesAdminPage() {
                         <Label htmlFor="table-desc">{t("adm_tableDescription")}</Label>
                         <Textarea id="table-desc" rows={2} value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
                     </div>
+                    <div className="sm:col-span-2">
+                        <Label htmlFor="table-subject">{t("adm_subject")}</Label>
+                        <NativeSelect
+                            id="table-subject"
+                            value={draft.subjectRef}
+                            onChange={(e) => setDraft({ ...draft, subjectRef: e.target.value })}
+                        >
+                            <option value="">{t("adm_subjectNone")}</option>
+                            {subjects.map((subject) => (
+                                <option key={subject.ref} value={subject.ref}>{subject.label}</option>
+                            ))}
+                        </NativeSelect>
+                        <p className="mt-1 text-xs text-muted-foreground">{t("adm_subjectHint")}</p>
+                    </div>
                 </CardContent>
             </Card>
 
@@ -310,22 +364,40 @@ export default function ComparisonTablesAdminPage() {
                 <CardHeader>
                     <div className="flex items-center justify-between gap-2 flex-wrap">
                         <CardTitle>{t("adm_columns")}</CardTitle>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setDraft({
-                                ...draft,
-                                columns: [...draft.columns, { key: newKey("c"), label: "", subtitle: "", href: "", highlight: false }],
-                            })}
-                        >
-                            <Plus className="w-4 h-4" aria-hidden="true" />
-                            {t("adm_addColumn")}
-                        </Button>
+                        {/* A table about a subject does not own its columns:
+                            they are the things inside it, and they arrive and
+                            leave as that shelf changes. Offering Add here
+                            would be offering to write a column the next read
+                            takes straight back out. */}
+                        {!draft.subjectRef && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setDraft({
+                                    ...draft,
+                                    columns: [...draft.columns, { key: newKey("c"), label: "", subtitle: "", href: "", highlight: false }],
+                                })}
+                            >
+                                <Plus className="w-4 h-4" aria-hidden="true" />
+                                {t("adm_addColumn")}
+                            </Button>
+                        )}
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-2">
+                    {draft.subjectRef && (
+                        <p className="text-sm text-muted-foreground">{t("adm_columnsFromSubject")}</p>
+                    )}
                     {draft.columns.length === 0 ? (
                         <p className="text-sm text-muted-foreground">{t("adm_noColumns")}</p>
+                    ) : draft.subjectRef ? (
+                        <ul className="flex flex-wrap gap-2">
+                            {draft.columns.map((column) => (
+                                <li key={column.key} className="rounded-md border border-border bg-muted/40 px-3 py-1 text-sm">
+                                    {column.label}
+                                </li>
+                            ))}
+                        </ul>
                     ) : draft.columns.map((column, index) => (
                         <div key={column.key} className="flex items-center gap-2 flex-wrap">
                             <Input

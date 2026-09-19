@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
-    Button, Card, CardContent, CheckboxField, Input, Label, LoadFailed,
-    buttonClassName, useConfirm, useFormRoute, useSiteSettings,
+    Button, Card, CardContent, CheckboxField, Input, Label, ListControls, LoadFailed,
+    Pagination, buttonClassName, useConfirm, useFormRoute, useRowList, useSiteSettings,
 } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -46,6 +46,8 @@ export default function AdminStoreCampaignsPage() {
     const { showForm, formHref, editingId, closeForm } = useFormRoute();
 
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+    // The name is what the card draws and what an operator remembers.
+    const list = useRowList(campaigns, { text: (c) => [c.name], pageSize: 20 });
     const [products, setProducts] = useState<Product[]>([]);
     const [form, setForm] = useState<CampaignFormValue>(EMPTY_CAMPAIGN);
     const [loading, setLoading] = useState(true);
@@ -290,15 +292,23 @@ export default function AdminStoreCampaignsPage() {
                 }
             />
 
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
+
             {campaigns.length === 0 ? (
                 <Card>
                     <CardContent className="py-8 text-center">
                         <p className="text-muted-foreground">{t("adm_campaignsNone")}</p>
                     </CardContent>
                 </Card>
+            ) : list.rows.length === 0 ? (
+                <Card>
+                    <CardContent className="py-8 text-center">
+                        <p className="text-muted-foreground">{commonT("noResults")}</p>
+                    </CardContent>
+                </Card>
             ) : (
                 <div className="space-y-3">
-                    {campaigns.map((campaign) => (
+                    {list.rows.map((campaign) => (
                         <Card key={campaign.id}>
                             <CardContent className="flex items-center justify-between p-4">
                                 <div className="min-w-0">
@@ -335,6 +345,12 @@ export default function AdminStoreCampaignsPage() {
                             </CardContent>
                         </Card>
                     ))}
+                    <Pagination
+                        page={list.page}
+                        pages={list.pages}
+                        total={list.total}
+                        onPageChange={list.setPage}
+                    />
                 </div>
             )}
         </>
