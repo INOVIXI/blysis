@@ -76,6 +76,16 @@
       "hook": "store.order.resolve",
       "type": "filter",
       "handler": "hooks/resolve-order.ts"
+    },
+    {
+      "hook": "comparison.subjects",
+      "type": "filter",
+      "handler": "hooks/comparison-subjects.ts"
+    },
+    {
+      "hook": "comparison.columns",
+      "type": "filter",
+      "handler": "hooks/comparison-columns.ts"
     }
   ],
   "settings": [
@@ -101,6 +111,20 @@
       "default": true,
       "label": "Enable gift codes",
       "description": "Whether shoppers can redeem a gift code for store credit."
+    },
+    {
+      "key": "enableChestGifting",
+      "type": "boolean",
+      "default": true,
+      "label": "Allow gifting from the chest",
+      "description": "Whether a member may hand an unclaimed item to somebody else. A product can still refuse on its own."
+    },
+    {
+      "key": "enableUpgradeCredit",
+      "type": "boolean",
+      "default": true,
+      "label": "Pay the difference when upgrading",
+      "description": "Somebody who already owns a cheaper product on the same shelf pays only the difference for a dearer one. Turn it off to charge the full price every time."
     },
     {
       "key": "creditsPricePerUnit",
@@ -804,7 +828,7 @@
         "adm_cancel": "Cancel",
         "adm_category": "Category",
         "adm_code": "Code",
-        "adm_codesTotal": "{count} codes total",
+        "adm_codesTotal": "{total} codes, {available} not yet redeemed",
         "adm_comparePrice": "Compare Price",
         "adm_couponNotePlaceholder": "Summer sale discount",
         "adm_coupons": "Coupons",
@@ -864,7 +888,7 @@
         "adm_deletedProduct": "Deleted Product",
         "adm_deleting": "Deleting...",
         "adm_deliveryCommands": "Delivery Commands",
-        "adm_deliveryCommandsHelp": "RCON commands to execute on purchase. Use {player} for username.",
+        "adm_deliveryCommandsHelp": "RCON commands to run when this is bought. Write '{player}' where the username should go.",
         "adm_description": "Description",
         "adm_digital": "Digital",
         "adm_discount": "Discount",
@@ -902,6 +926,8 @@
         "adm_giftCodeFailed": "Those gift codes could not be generated.",
         "adm_giftCodes": "Gift Codes",
         "adm_giftCodesGenerated": "{count} gift codes generated.",
+        "adm_giftable": "Can be gifted",
+        "adm_giftableHint": "A buyer may hand an unclaimed copy to somebody else. Turn it off for anything bound to one account.",
         "adm_goalTitlePlaceholder": "Monthly Goal",
         "adm_grantsNoRole": "No role",
         "adm_grantsRole": "Role the buyer is given",
@@ -913,6 +939,10 @@
         "adm_items": "Items",
         "adm_itemsCount": "{count} items",
         "adm_itemsWithCount": "Items ({count})",
+        "adm_layout": "How this shelf is drawn",
+        "adm_layoutGrid": "A grid of cards",
+        "adm_layoutHint": "Cards are right for things a shopper picks one of. A table is right for a ladder - ranks, plans, tiers - where the question is what the next one up adds. The table itself is written under Settings, and the products on this shelf become its columns.",
+        "adm_layoutTable": "A comparison table",
         "adm_leaveEmptyUnlimited": "Leave empty for unlimited",
         "adm_listTruncated": "Only the first 500 are shown. Narrow the list to see the rest.",
         "adm_mainImageUrl": "Main Image URL",
@@ -1120,10 +1150,12 @@
         "endsIn": "Ends in {time}",
         "enterCode": "Enter code",
         "err": {
-          "manual_order_bad_line": "One of the lines has a price or a quantity that cannot be used.",
+          "billing_details_missing": "Some invoice details are missing. Fill in the marked boxes.",
+          "chest_gifting_off": "Gifting is turned off on this site.",
+          "chest_item_not_giftable": "This one cannot be given away.",
           "chest_needs_player_name": "Tell us which player to deliver to.",
-          "order_no_payment": "That order has no payment to refund. Cancel it instead.",
-          "billing_details_missing": "Some invoice details are missing. Fill in the marked boxes."
+          "manual_order_bad_line": "One of the lines has a price or a quantity that cannot be used.",
+          "order_no_payment": "That order has no payment to refund. Cancel it instead."
         },
         "err_checkoutFailed": "Checkout failed",
         "err_generic": "Something went wrong. Please try again.",
@@ -1151,6 +1183,7 @@
         "insufficient": "insufficient",
         "items": "Items ({count})",
         "leaderboardBuyers": "Top buyers",
+        "leftInStock": "{count} left",
         "login": "Log in",
         "loginRequired": "Please log in to continue",
         "mostPopular": "Most Popular",
@@ -1187,6 +1220,7 @@
         "priceLowHigh": "Price: Low to High",
         "proceedToCheckout": "Proceed to Checkout",
         "processing": "Processing...",
+        "product_enlarge": "See it full size",
         "product_goToImage": "Go to image {n}",
         "product_selectOption": "Select...",
         "product_thumbnail": "Thumbnail {n}",
@@ -1225,9 +1259,13 @@
         "tab_chest_title": "My Chest",
         "tab_chest_whoMessage": "This one has nobody recorded, so tell us which in-game name to deliver it to.",
         "tab_chest_whoTitle": "Who is it for?",
+        "tab_orders_allStatuses": "Any status",
         "tab_orders_browse": "Browse the store",
         "tab_orders_discount": "Discount",
         "tab_orders_empty": "You have no orders yet",
+        "tab_orders_noMatch": "No order matches that.",
+        "tab_orders_search": "Search by order number or item",
+        "tab_orders_status": "Order status",
         "tab_orders_statusCancelled": "Cancelled",
         "tab_orders_statusCompleted": "Completed",
         "tab_orders_statusPending": "Pending",
@@ -1237,6 +1275,7 @@
         "tab_orders_total": "Total",
         "title": "Store",
         "total": "Total",
+        "upgradeNote": "{amount} off: you own a lower rank",
         "viewDetails": "View Details",
         "vip_buy": "Buy",
         "vip_empty": "No VIP ranks are available yet",
@@ -1457,6 +1496,7 @@
         "widget_topCreditLoaders": "Top Credit Loaders"
       },
       "activity": {
+        "kindStoreOrderCompleted": "Order",
         "storeOrderCompleted": "purchased:"
       },
       "pageTitles": {
@@ -1467,7 +1507,7 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Order complete"
+        "notificationType_store_order_completed": "Order Complete"
       },
       "pageDescriptions": {
         "store": "Browse everything on sale, filter it by category and add what you want to your cart in a couple of clicks.",
@@ -1534,7 +1574,7 @@
         "adm_cancel": "İptal",
         "adm_category": "Kategori",
         "adm_code": "Kod",
-        "adm_codesTotal": "Toplam {count} kod",
+        "adm_codesTotal": "{total} kod, {available} tanesi henüz kullanılmadı",
         "adm_comparePrice": "Karşılaştırma Fiyatı",
         "adm_couponNotePlaceholder": "Yaz indirimi",
         "adm_coupons": "Kuponlar",
@@ -1594,7 +1634,7 @@
         "adm_deletedProduct": "Silinen Ürün",
         "adm_deleting": "Siliniyor...",
         "adm_deliveryCommands": "Teslimat Komutları",
-        "adm_deliveryCommandsHelp": "Satın almada çalıştırılacak RCON komutları. Kullanıcı adı için {player} kullanın.",
+        "adm_deliveryCommandsHelp": "Bu satın alındığında çalıştırılacak RCON komutları. Kullanıcı adının geleceği yere '{player}' yaz.",
         "adm_description": "Açıklama",
         "adm_digital": "Dijital",
         "adm_discount": "İndirim",
@@ -1632,6 +1672,8 @@
         "adm_giftCodeFailed": "Bu hediye kodları oluşturulamadı.",
         "adm_giftCodes": "Hediye Kodları",
         "adm_giftCodesGenerated": "{count} hediye kodu oluşturuldu.",
+        "adm_giftable": "Hediye edilebilir",
+        "adm_giftableHint": "Alıcı, henüz teslim almadığı bir kopyayı başkasına verebilir. Tek hesaba bağlı olan şeylerde kapatın.",
         "adm_goalTitlePlaceholder": "Aylık Hedef",
         "adm_grantsNoRole": "Rol verme",
         "adm_grantsRole": "Alıcıya verilen rol",
@@ -1643,6 +1685,10 @@
         "adm_items": "Ürünler",
         "adm_itemsCount": "{count} ürün",
         "adm_itemsWithCount": "Ürünler ({count})",
+        "adm_layout": "Bu raf nasıl çizilsin",
+        "adm_layoutGrid": "Kart ızgarası",
+        "adm_layoutHint": "Kartlar, alıcının birini seçtiği şeyler için doğrudur. Tablo bir merdiven için doğrudur - rütbeler, paketler, kademeler - orada soru bir üsttekinin ne eklediğidir. Tablonun kendisi Ayarlar altında yazılır, bu raftaki ürünler de onun sütunları olur.",
+        "adm_layoutTable": "Karşılaştırma tablosu",
         "adm_leaveEmptyUnlimited": "Sınırsız için boş bırakın",
         "adm_listTruncated": "Yalnızca ilk 500 tanesi gösteriliyor. Geri kalanını görmek için listeyi daraltın.",
         "adm_mainImageUrl": "Ana Görsel URL",
@@ -1850,10 +1896,12 @@
         "endsIn": "{time} sonra bitiyor",
         "enterCode": "Kod girin",
         "err": {
-          "manual_order_bad_line": "Satırlardan birinin fiyatı veya adedi kullanılamıyor.",
+          "billing_details_missing": "Bazı fatura bilgileri eksik. İşaretli kutuları doldurun.",
+          "chest_gifting_off": "Bu sitede hediye etme kapalı.",
+          "chest_item_not_giftable": "Bu eşya başkasına verilemez.",
           "chest_needs_player_name": "Hangi oyuncuya teslim edileceğini söyleyin.",
-          "order_no_payment": "Bu siparişin iade edilecek bir ödemesi yok. Bunun yerine iptal edin.",
-          "billing_details_missing": "Bazı fatura bilgileri eksik. İşaretli kutuları doldurun."
+          "manual_order_bad_line": "Satırlardan birinin fiyatı veya adedi kullanılamıyor.",
+          "order_no_payment": "Bu siparişin iade edilecek bir ödemesi yok. Bunun yerine iptal edin."
         },
         "err_checkoutFailed": "Ödeme tamamlanamadı",
         "err_generic": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
@@ -1881,6 +1929,7 @@
         "insufficient": "yetersiz",
         "items": "Ürünler ({count})",
         "leaderboardBuyers": "En çok alışveriş yapanlar",
+        "leftInStock": "{count} stokta",
         "login": "Giriş yap",
         "loginRequired": "Devam etmek için giriş yapın",
         "mostPopular": "En Popüler",
@@ -1917,6 +1966,7 @@
         "priceLowHigh": "Fiyat: Düşükten Yükseğe",
         "proceedToCheckout": "Ödemeye Geç",
         "processing": "İşleniyor...",
+        "product_enlarge": "Tam boyutta gör",
         "product_goToImage": "{n}. görsele git",
         "product_selectOption": "Seçin...",
         "product_thumbnail": "Küçük görsel {n}",
@@ -1955,9 +2005,13 @@
         "tab_chest_title": "Sandığım",
         "tab_chest_whoMessage": "Bunun için kayıtlı bir ad yok. Hangi oyun içi ada teslim edilsin?",
         "tab_chest_whoTitle": "Kimin için?",
+        "tab_orders_allStatuses": "Tüm durumlar",
         "tab_orders_browse": "Mağazaya göz atın",
         "tab_orders_discount": "İndirim",
         "tab_orders_empty": "Henüz siparişiniz yok",
+        "tab_orders_noMatch": "Buna uyan bir sipariş yok.",
+        "tab_orders_search": "Sipariş numarası veya ürün ara",
+        "tab_orders_status": "Sipariş durumu",
         "tab_orders_statusCancelled": "İptal Edildi",
         "tab_orders_statusCompleted": "Tamamlandı",
         "tab_orders_statusPending": "Beklemede",
@@ -1967,6 +2021,7 @@
         "tab_orders_total": "Toplam",
         "title": "Mağaza",
         "total": "Toplam",
+        "upgradeNote": "{amount} indirim: alt bir rütben var",
         "viewDetails": "Detayları Gör",
         "vip_buy": "Satın Al",
         "vip_empty": "Henüz VIP rütbesi yok",
@@ -2187,6 +2242,7 @@
         "widget_topCreditLoaders": "En Çok Kredi Yükleyenler"
       },
       "activity": {
+        "kindStoreOrderCompleted": "Sipariş",
         "storeOrderCompleted": "satın aldı:"
       },
       "pageTitles": {
@@ -2197,7 +2253,7 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Sipariş tamamlandı"
+        "notificationType_store_order_completed": "Sipariş Tamamlandı"
       },
       "pageDescriptions": {
         "store": "Satıştaki her şeye göz atın, kategoriye göre filtreleyin ve istediğinizi birkaç tıkla sepetinize ekleyin.",
@@ -2349,6 +2405,7 @@
   "activityTitles": [
     {
       "type": "store.order.completed",
+      "nameKey": "kindStoreOrderCompleted",
       "prefix": "Completed order ",
       "key": "storeOrderCompleted"
     }

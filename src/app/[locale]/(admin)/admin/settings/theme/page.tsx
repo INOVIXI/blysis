@@ -382,8 +382,12 @@ export default function ThemeSettingsPage() {
 
             <div className="rounded-md border border-primary/25 bg-primary/10 p-4 text-sm text-foreground">
                 <strong>{t("theme_libraryNoticeTitle")}</strong>{" "}
+                {/* A tag, not an argument. `t.rich` types an argument as a
+                    string, a number or a date, so a node can only reach the
+                    sentence by wrapping text the message already carries -
+                    and an argument handed a function is rendered as one. */}
                 {t.rich("theme_libraryNoticeBody", {
-                    path: () => <code className="font-mono text-xs">/admin/theme/appearance</code>,
+                    path: (chunks) => <code className="font-mono text-xs">{chunks}</code>,
                 })}
             </div>
 

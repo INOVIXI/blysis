@@ -173,7 +173,7 @@ export default function BroadcastsPage() {
                         </div>
                         <div>
                             <Label>{t("broadcasts_body")}</Label>
-                            <RichTextEditor value={body} onChange={setBody} placeholder="Hello {username}, ..." />
+                            <RichTextEditor value={body} onChange={setBody} placeholder={t("broadcasts_bodyPlaceholder")} />
                             <p className="text-xs text-muted-foreground mt-1">{t("broadcasts_usernamePlaceholder")}</p>
                         </div>
                         <div className="flex gap-2">

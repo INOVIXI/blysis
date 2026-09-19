@@ -67,7 +67,7 @@
   "translations": {
     "en": {
       "minecraftLink": {
-        "adm_field1Desc": "Run to send a player their code. {player} and {message} are substituted. Defaults to Minecraft's tell command; change it for a proxy or a plugin that handles private messages differently.",
+        "adm_field1Desc": "Run to send a player their code. '{player}' and '{message}' are substituted. Defaults to Minecraft's tell command; change it for a proxy or a plugin that handles private messages differently.",
         "adm_field1Label": "Whisper command",
         "adm_subtitle": "How the linking code is delivered to a player in game.",
         "adm_title": "Minecraft Link",
@@ -108,7 +108,7 @@
     },
     "tr": {
       "minecraftLink": {
-        "adm_field1Desc": "Oyuncuya kodunu göndermek için çalıştırılır. {player} ve {message} yerine geçer. Varsayılan Minecraft tell komutudur; proxy veya özel mesajları farklı işleyen bir eklenti kullanıyorsan değiştir.",
+        "adm_field1Desc": "Oyuncuya kodunu göndermek için çalıştırılır. '{player}' ve '{message}' yerine geçer. Varsayılan Minecraft tell komutudur; proxy veya özel mesajları farklı işleyen bir eklenti kullanıyorsan değiştir.",
         "adm_field1Label": "Fısıltı komutu",
         "adm_subtitle": "Bağlama kodunun oyuncuya oyun içinde nasıl ileteceği.",
         "adm_title": "Minecraft Bağlama",
