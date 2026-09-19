@@ -115,6 +115,7 @@
         "moderationSettings_suggestionCommentsDesc": "Hold replies on the suggestion board until somebody approves them.",
         "moderationSettings_suggestions": "Suggestions",
         "moderationSettings_suggestionsDesc": "Require approval before user suggestions are listed publicly.",
+        "moderation_suggestion": "Suggestions",
         "module_suggestions_description": "Community feature suggestions with voting",
         "module_suggestions_name": "Suggestions"
       },
@@ -204,6 +205,7 @@
         "moderationSettings_suggestionCommentsDesc": "Öneri panosundaki yanıtları biri onaylayana kadar beklet.",
         "moderationSettings_suggestions": "Öneriler",
         "moderationSettings_suggestionsDesc": "Kullanıcı önerilerinin herkese açık listelenmeden önce onay gerektirmesi.",
+        "moderation_suggestion": "Öneriler",
         "module_suggestions_description": "Oylamalı topluluk özellik önerileri",
         "module_suggestions_name": "Öneriler"
       },

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-09-16",
-  "updatedAt": "2026-09-16T19:58:34Z",
+  "updated": "2026-09-19",
+  "updatedAt": "2026-09-19T18:55:13Z",
   "modules": [
     {
       "id": "announcements",
@@ -160,13 +160,13 @@
           "description": "Haber ve duyuru sistemi"
         }
       },
-      "version": "1.6.2",
+      "version": "1.7.0",
       "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-19T18:55:13Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -411,13 +411,16 @@
       "dependencies": [],
       "conflicts": [],
       "hooks": {
-        "emits": [],
+        "emits": [
+          "comparison.subjects",
+          "comparison.columns"
+        ],
         "listens": []
       },
       "stats": {
         "publicRoutes": 1,
         "adminRoutes": 1,
-        "apiRoutes": 2,
+        "apiRoutes": 3,
         "widgets": 0
       }
     },
@@ -1008,13 +1011,13 @@
           "description": "Kategoriler, konular ve yanıtlarla topluluk tartışma forumu"
         }
       },
-      "version": "1.7.3",
+      "version": "1.8.0",
       "coreVersion": "^4.0.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-19T18:55:13Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -1396,9 +1399,7 @@
         "community"
       ],
       "zip": "leaderboard.zip",
-      "dependencies": [
-        "store"
-      ],
+      "dependencies": [],
       "conflicts": [],
       "hooks": {
         "emits": [
@@ -1588,9 +1589,9 @@
         "listens": []
       },
       "stats": {
-        "publicRoutes": 1,
+        "publicRoutes": 2,
         "adminRoutes": 0,
-        "apiRoutes": 3,
+        "apiRoutes": 4,
         "widgets": 0
       }
     },
@@ -1764,20 +1765,20 @@
     {
       "id": "minecraft-litebans",
       "name": "Minecraft Punishments (LiteBans)",
-      "description": "Takes bans, mutes and kicks from a LiteBans server and records them against the member who owns the account",
+      "description": "Reads bans, mutes, warnings and kicks out of a LiteBans database and records them against the member who owns the account",
       "i18n": {
         "tr": {
           "name": "Minecraft Cezaları (LiteBans)",
-          "description": "LiteBans sunucusundaki yasak, susturma ve atmaları alır ve hesabın sahibi olan üyenin kaydına yazar"
+          "description": "Bir LiteBans veritabanındaki yasakları, susturmaları, uyarıları ve atmaları okur ve hesabın sahibi olan üyenin kaydına yazar"
         }
       },
-      "version": "1.1.2",
+      "version": "2.0.0",
       "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "Gavel",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-19T18:55:13Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -1796,7 +1797,7 @@
       },
       "stats": {
         "publicRoutes": 0,
-        "adminRoutes": 0,
+        "adminRoutes": 1,
         "apiRoutes": 1,
         "widgets": 0
       }
@@ -2244,6 +2245,43 @@
       }
     },
     {
+      "id": "profile-posts",
+      "name": "Profile Posts",
+      "description": "A wall on every member's profile: short notes addressed to the person rather than comments on a thing, with one level of replies.",
+      "i18n": {
+        "tr": {
+          "name": "Profil Gönderileri",
+          "description": "Her üyenin profilinde bir duvar, tek seviyeli yanıtlarla"
+        }
+      },
+      "version": "1.1.0",
+      "coreVersion": "^4.0.0",
+      "author": "Blysis",
+      "icon": "MessageSquareQuote",
+      "category": "community",
+      "verified": true,
+      "updatedAt": "2026-09-19T18:55:13Z",
+      "screenshots": [],
+      "tags": [
+        "community"
+      ],
+      "zip": "profile-posts.zip",
+      "dependencies": [
+        "member-profiles"
+      ],
+      "conflicts": [],
+      "hooks": {
+        "emits": [],
+        "listens": []
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 0,
+        "apiRoutes": 2,
+        "widgets": 0
+      }
+    },
+    {
       "id": "punishments",
       "name": "Punishments",
       "description": "Bans, mutes and warnings against members, issued here or reported by a module that watches somewhere else",
@@ -2270,16 +2308,19 @@
       "hooks": {
         "emits": [
           "punishments.punishment.issued",
-          "punishments.punishment.revoked"
+          "punishments.punishment.revoked",
+          "punishment.record"
         ],
         "listens": [
-          "punishment.record"
+          "punishment.record",
+          "member.standing",
+          "user.warning.threshold"
         ]
       },
       "stats": {
         "publicRoutes": 1,
         "adminRoutes": 1,
-        "apiRoutes": 2,
+        "apiRoutes": 3,
         "widgets": 0
       }
     },
@@ -2770,7 +2811,9 @@
           "leaderboard.boards",
           "coupon.issue",
           "store.orders.collect",
-          "store.order.resolve"
+          "store.order.resolve",
+          "comparison.subjects",
+          "comparison.columns"
         ]
       },
       "stats": {
@@ -2835,13 +2878,13 @@
           "description": "Oylamalı topluluk özellik önerileri"
         }
       },
-      "version": "1.6.3",
+      "version": "1.7.0",
       "coreVersion": "^4.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-19T18:55:13Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -3112,7 +3155,7 @@
       "stats": {
         "publicRoutes": 0,
         "adminRoutes": 1,
-        "apiRoutes": 1,
+        "apiRoutes": 2,
         "widgets": 0
       }
     },
@@ -3154,7 +3197,7 @@
     {
       "id": "vote",
       "name": "Vote Sites",
-      "description": "Send players to the server listings you are ranked on, and count who voted",
+      "description": "Send players to the server listings you are ranked on, and count how often they go",
       "i18n": {
         "tr": {
           "name": "Oy Siteleri",

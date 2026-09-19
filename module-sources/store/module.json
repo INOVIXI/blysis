@@ -1497,7 +1497,14 @@
         "widget_topCustomer": "Top Customer",
         "widget_topBuyers": "Top Buyers",
         "widget_paymentGoal": "Payment Goal",
-        "widget_topCreditLoaders": "Top Credit Loaders"
+        "widget_topCreditLoaders": "Top Credit Loaders",
+        "analytics_storeOrdersPerDay": "Orders per day",
+        "analytics_storeRevenuePerDay": "Revenue per day",
+        "analytics_storeTopProducts": "Top products by revenue",
+        "dashboard_orders": "Orders",
+        "dashboard_products": "Products",
+        "dashboard_recentOrders": "Recent Orders",
+        "dashboard_revenue": "Revenue"
       },
       "activity": {
         "kindStoreOrderCompleted": "Order",
@@ -2247,7 +2254,14 @@
         "widget_topCustomer": "En İyi Müşteri",
         "widget_topBuyers": "En Çok Satın Alanlar",
         "widget_paymentGoal": "Ödeme Hedefi",
-        "widget_topCreditLoaders": "En Çok Kredi Yükleyenler"
+        "widget_topCreditLoaders": "En Çok Kredi Yükleyenler",
+        "analytics_storeOrdersPerDay": "Günlük sipariş",
+        "analytics_storeRevenuePerDay": "Günlük gelir",
+        "analytics_storeTopProducts": "Cirosu en yüksek ürünler",
+        "dashboard_orders": "Siparişler",
+        "dashboard_products": "Ürünler",
+        "dashboard_recentOrders": "Son Siparişler",
+        "dashboard_revenue": "Gelir"
       },
       "activity": {
         "kindStoreOrderCompleted": "Sipariş",

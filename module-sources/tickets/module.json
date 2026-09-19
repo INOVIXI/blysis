@@ -343,7 +343,10 @@
         "menu_tickets_tickets": "Tickets",
         "menu_tickets_departments": "Departments",
         "module_tickets_name": "Support Tickets",
-        "module_tickets_description": "Customer support ticket system with departments and priority levels"
+        "module_tickets_description": "Customer support ticket system with departments and priority levels",
+        "analytics_ticketsPerDay": "Tickets opened per day",
+        "dashboard_openTickets": "Open Tickets",
+        "dashboard_tickets": "Tickets"
       },
       "activity": {
         "kindTicketCreated": "Support Ticket",
@@ -539,7 +542,10 @@
         "menu_tickets_tickets": "Talepler",
         "menu_tickets_departments": "Departmanlar",
         "module_tickets_name": "Destek Talepleri",
-        "module_tickets_description": "Departmanlı ve öncelik seviyeli müşteri destek talebi sistemi"
+        "module_tickets_description": "Departmanlı ve öncelik seviyeli müşteri destek talebi sistemi",
+        "analytics_ticketsPerDay": "Günlük açılan talep",
+        "dashboard_openTickets": "Açık Talepler",
+        "dashboard_tickets": "Talepler"
       },
       "activity": {
         "kindTicketCreated": "Destek Talebi",

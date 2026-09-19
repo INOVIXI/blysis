@@ -114,7 +114,14 @@
         "draft": "Draft",
         "menu_custom-pages_custom_pages": "Custom Pages",
         "module_custom-pages_name": "Custom Pages",
-        "module_custom-pages_description": "Admin-created HTML content pages"
+        "module_custom-pages_description": "Admin-created HTML content pages",
+        "pageBuilder_error": "Save failed",
+        "pageBuilder_loadFailed": "Failed to load block library",
+        "pageBuilder_notFound": "Page not found",
+        "pageBuilder_save": "Save",
+        "pageBuilder_saveFailed": "Failed to save",
+        "pageBuilder_saved": "Saved",
+        "pageBuilder_saving": "Saving..."
       },
       "pageTitles": {
         "page": "Page"
@@ -184,7 +191,14 @@
         "draft": "Taslak",
         "menu_custom-pages_custom_pages": "Özel Sayfalar",
         "module_custom-pages_name": "Özel Sayfalar",
-        "module_custom-pages_description": "Yöneticinin oluşturduğu HTML içerik sayfaları"
+        "module_custom-pages_description": "Yöneticinin oluşturduğu HTML içerik sayfaları",
+        "pageBuilder_error": "Kaydetme başarısız",
+        "pageBuilder_loadFailed": "Blok kütüphanesi yüklenemedi",
+        "pageBuilder_notFound": "Sayfa bulunamadı",
+        "pageBuilder_save": "Kaydet",
+        "pageBuilder_saveFailed": "Kaydedilemedi",
+        "pageBuilder_saved": "Kaydedildi",
+        "pageBuilder_saving": "Kaydediliyor..."
       },
       "pageTitles": {
         "page": "Sayfa"

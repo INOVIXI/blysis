@@ -23,6 +23,8 @@ import path from "node:path";
 
 const ROOT = path.resolve(__dirname, "../..");
 const SOURCES = path.join(ROOT, "module-sources");
+/** The contract that makes a link's literal label compulsory. */
+const schemaSource = fs.readFileSync(path.join(ROOT, "src/core/lib/module-manifest-schema.ts"), "utf8");
 
 interface Manifest {
     id: string;
@@ -100,24 +102,40 @@ describe("module navigation labels", () => {
         expect(clashes).toEqual([]);
     });
 
-    it("carries the same string in core's own message files", () => {
-        // A site whose module translations have not been seeded yet still has
-        // to render a label rather than the raw key.
-        const gaps: string[] = [];
-        for (const locale of ["en", "tr"]) {
-            const core = JSON.parse(fs.readFileSync(path.join(ROOT, `messages-core/${locale}.json`), "utf8"));
-            for (const m of all) {
-                for (const key of new Set(publicLinks(m).map((l) => l.labelKey).filter(Boolean) as string[])) {
-                    if (typeof core.nav?.[key] !== "string") gaps.push(`${locale} nav.${key} (${m.id})`);
+    it("falls back to a word, not a key, before anything is seeded", () => {
+        /*
+         * This used to require core's own catalogue to carry a copy of every
+         * module's nav string, on the reasoning that a site whose module
+         * translations are not seeded yet must still render a label rather
+         * than a raw key. The reasoning was wrong, and it put sixteen
+         * modules' names into core.
+         *
+         * The renderers resolve `t.has(labelKey) ? t(labelKey) : label`, so an
+         * unseeded key never reaches a reader in the first place - the
+         * manifest's literal does, and the schema makes that literal
+         * compulsory and non-empty. Core's copy only ever answered for the
+         * sixteen modules core happened to have been told about, with the
+         * same English the manifest already carried, and it could never
+         * answer for the seventeenth.
+         *
+         * What has to be true is that the fallback says something. That is
+         * what is checked here.
+         */
+        const useless: string[] = [];
+        for (const m of all) {
+            for (const link of publicLinks(m)) {
+                if (!link.label.trim() || link.label === link.labelKey) {
+                    useless.push(`${m.id}.${link.where} ${link.href}`);
                 }
             }
         }
-        expect(gaps).toEqual([]);
+        expect(useless).toEqual([]);
+        expect(schemaSource).toContain("label: z.string().min(1).max(100),");
     });
 });
 
 describe("the manifest contract", () => {
-    const schema = fs.readFileSync(path.join(ROOT, "src/core/lib/module-manifest-schema.ts"), "utf8");
+    const schema = schemaSource;
 
     it("accepts labelKey on both link kinds", () => {
         const navLink = schema.slice(schema.indexOf("const navLink = z.object("));
