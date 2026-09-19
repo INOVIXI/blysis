@@ -85,7 +85,9 @@ export default function SuggestionPage({ params }: { params: Promise<{ id: strin
                 fetch(`/api/v1/suggestions/${id}`).then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); }),
                 fetch(`/api/v1/suggestions/${id}/comments`).then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); }),
             ]);
-            setSuggestion(one.suggestion ?? one);
+            const row = one.suggestion ?? one;
+            setSuggestion(row);
+            setVoted(Boolean(row?.voted));
             setComments(thread?.data?.comments ?? []);
             setTruncated(Boolean(thread?.data?.truncated));
             setFailed(false);
@@ -160,8 +162,13 @@ export default function SuggestionPage({ params }: { params: Promise<{ id: strin
                         <p className="text-2xl font-bold text-foreground">{suggestion.upvotes}</p>
                     </div>
                     {session?.user && (
-                        <Button variant={voted ? "default" : "outline"} className="w-full" onClick={vote}>
-                            <ThumbsUp className="w-4 h-4" /> {t("upvote")}
+                        <Button
+                            variant={voted ? "default" : "outline"}
+                            aria-pressed={voted}
+                            className="w-full"
+                            onClick={vote}
+                        >
+                            <ThumbsUp className="w-4 h-4" /> {voted ? t("removeVote") : t("upvote")}
                         </Button>
                     )}
                     <p className="text-xs text-muted-foreground">

@@ -21,15 +21,38 @@ import { auth } from "@/core/sdk/auth";
 import { accessToCategory, visibleCategoryIds } from "./visible-categories";
 import { mayViewForum } from "./guest-view";
 
+type FoundTopic = NonNullable<Awaited<ReturnType<typeof findTopic>>>;
+
+/** A reply, plus whether the reader asking for it has already liked it. */
+export type TopicPost = Omit<FoundTopic["posts"][number], "likes"> & { liked: boolean };
+
 export interface TopicRead {
-    topic: NonNullable<Awaited<ReturnType<typeof findTopic>>>;
+    topic: Omit<FoundTopic, "posts"> & { posts: TopicPost[] };
     postsPage: number;
     postsPerPage: number;
     postsTotal: number;
     postsPages: number;
 }
 
-function findTopic(id: string, postWhere: { moderationState: "APPROVED" } | undefined, skip: number, take: number) {
+/**
+ * `readerId` narrows the likes joined to each reply to that reader's own, so
+ * a reply arrives knowing whether the person reading it has liked it. It used
+ * to arrive knowing only the total: the like button started off on every load
+ * and the only thing that ever turned it on was the response to pressing it,
+ * so coming back to a thread offered to like a reply that was already liked
+ * and pressing it took the like away.
+ *
+ * The topic's own like was already read back, by a second request to
+ * `/like`. One per reply would be one request per row; this is a join on the
+ * unique constraint that already exists, and it costs the read nothing.
+ */
+function findTopic(
+    id: string,
+    postWhere: { moderationState: "APPROVED" } | undefined,
+    skip: number,
+    take: number,
+    readerId: string | null,
+) {
     return prisma.forumTopic.findFirst({
         where: { OR: [{ id }, { slug: id }, ...(isNaN(Number(id)) ? [] : [{ number: Number(id) }])] },
         include: {
@@ -43,6 +66,9 @@ function findTopic(id: string, postWhere: { moderationState: "APPROVED" } | unde
                 include: {
                     author: { select: { id: true, username: true, avatar: true } },
                     _count: { select: { likes: true } },
+                    likes: readerId
+                        ? { where: { userId: readerId }, select: { id: true }, take: 1 }
+                        : { where: { id: "" }, select: { id: true }, take: 0 },
                 },
             },
             _count: { select: { likes: true } },
@@ -66,7 +92,16 @@ export async function readTopic(id: string, postsPage: number): Promise<TopicRea
     const page = Math.max(1, Math.floor(postsPage) || 1);
     const postWhere = readerIsAdmin ? undefined : { moderationState: "APPROVED" as const };
 
-    const topic = await findTopic(id, postWhere, (page - 1) * perPage, perPage);
+    const found = await findTopic(id, postWhere, (page - 1) * perPage, perPage, reader?.user?.id ?? null);
+    if (!found) return null;
+
+    // The reader's own like leaves as a yes or a no. Handing back the row
+    // that records it would put one person's like on another's screen the
+    // moment anything caches a response.
+    const topic = {
+        ...found,
+        posts: found.posts.map(({ likes, ...post }) => ({ ...post, liked: likes.length > 0 })),
+    };
     if (!topic) return null;
     if (!(await accessToCategory(topic.categoryId, reader?.user?.role ?? null)).view) return null;
     if (!readerIsAdmin && topic.moderationState !== "APPROVED") return null;

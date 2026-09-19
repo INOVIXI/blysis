@@ -28,6 +28,8 @@ interface Suggestion {
     createdAt: string;
     author: { id: string; username: string; avatar: string | null };
     _count: { votes: number };
+    /** Whether the person reading this row has already voted for it. */
+    voted: boolean;
 }
 
 
@@ -80,7 +82,6 @@ export function SuggestionBoard({ initial }: { initial: { id: string }[] }) {
     const [saving, setSaving] = useState(false);
     const [filter, setFilter] = useState("");
     const [sort, setSort] = useState("newest");
-    const [votedIds, setVotedIds] = useState<Set<string>>(new Set());
     const paged = usePagedRows(suggestions, 10);
 
     const fetchSuggestions = () => {
@@ -133,14 +134,14 @@ export function SuggestionBoard({ initial }: { initial: { id: string }[] }) {
         const res = await fetch(`/api/v1/suggestions/${id}/vote`, { method: "POST" });
         if (res.ok) {
             const data = await res.json();
+            // The row carries the answer, so there is one place that knows
+            // it. A set beside the rows was a second one, and it started
+            // empty on every load: the button only ever turned on in
+            // response to being pressed, so coming back offered to cast a
+            // vote that was already cast - and pressing it took it away.
             setSuggestions((prev) =>
-                prev.map((s) => s.id === id ? { ...s, upvotes: data.upvotes } : s)
+                prev.map((s) => s.id === id ? { ...s, upvotes: data.upvotes, voted: Boolean(data.voted) } : s)
             );
-            setVotedIds((prev) => {
-                const next = new Set(prev);
-                if (data.voted) { next.add(id); } else { next.delete(id); }
-                return next;
-            });
         } else if (res.status === 401) {
             requireLogin();
         }
@@ -213,12 +214,13 @@ export function SuggestionBoard({ initial }: { initial: { id: string }[] }) {
                                 <div className="flex gap-4">
                                     <button
                                         onClick={() => toggleVote(s.id)}
-                                        aria-label={!session?.user ? t("loginToVote") : votedIds.has(s.id) ? t("removeVote") : t("upvote")}
+                                        aria-label={!session?.user ? t("loginToVote") : s.voted ? t("removeVote") : t("upvote")}
+                                        aria-pressed={session?.user ? s.voted : undefined}
                                         className={`flex flex-col items-center justify-center px-3 py-2 rounded-lg transition-colors min-w-[60px] cursor-pointer ${
-                                            votedIds.has(s.id) ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground hover:bg-primary/20 hover:text-primary"
+                                            s.voted ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground hover:bg-primary/20 hover:text-primary"
                                         }`}
                                     >
-                                        <ThumbsUp className={`w-4 h-4 ${votedIds.has(s.id) ? "fill-primary" : ""}`} />
+                                        <ThumbsUp className={`w-4 h-4 ${s.voted ? "fill-primary" : ""}`} />
                                         <span className="text-sm font-bold mt-0.5">{s.upvotes}</span>
                                     </button>
                                     <div className="flex-1 min-w-0">

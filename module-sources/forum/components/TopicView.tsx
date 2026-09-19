@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
+import { MemberAvatar } from "@/core/sdk/ui";
 import { useRouter } from "@/core/sdk/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -19,6 +19,8 @@ interface Post {
     /** Null once the account has been erased; the post stays. */
     author: { id: string; username: string; avatar: string | null } | null;
     _count: { likes: number };
+    /** Whether the person reading this reply has already liked it. */
+    liked: boolean;
 }
 
 interface Topic {
@@ -154,13 +156,7 @@ export function TopicView({ initialTopic, initialPostsPages }: { initialTopic: T
     };
 
     const renderAvatar = (user: { username: string; avatar: string | null }) => (
-        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold text-sm flex-shrink-0">
-            {user.avatar ? (
-                <Image src={user.avatar} alt="" width={40} height={40} className="w-full h-full rounded-full object-cover" />
-            ) : (
-                user.username[0].toUpperCase()
-            )}
-        </div>
+        <MemberAvatar name={user.username} src={user.avatar} size={40} />
     );
 
     return (
@@ -308,7 +304,7 @@ function PostCard({ post, renderAvatar, topicAuthor }: {
 }) {
     const t = useTranslations('forum');
     const relativeTime = useRelativeTime();
-    const [postLiked, setPostLiked] = useState(false);
+    const [postLiked, setPostLiked] = useState(Boolean(post.liked));
     const [postLikeCount, setPostLikeCount] = useState(post._count.likes);
 
     const togglePostLike = async () => {

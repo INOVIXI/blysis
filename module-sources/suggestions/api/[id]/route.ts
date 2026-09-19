@@ -17,14 +17,25 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     const moderator = session?.user?.id ? await hasPermission(session.user.id, "suggestions.manage") : false;
 
-    const suggestion = await prisma.suggestion.findUnique({
+    // The reader's own vote travels with the row. Without it the page had no
+    // way to know, so its button started off on every load and offered to
+    // cast a vote that was already cast - which takes it away.
+    const found = await prisma.suggestion.findUnique({
         where: { id },
         include: {
             author: { select: { id: true, username: true, avatar: true } },
             _count: { select: { comments: true } },
+            votes: session?.user?.id
+                ? { where: { userId: session.user.id }, select: { id: true }, take: 1 }
+                : { where: { id: "" }, select: { id: true }, take: 0 },
         },
     });
-    if (!suggestion) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!found) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    // As a yes or a no. One person's vote id has no business on another's
+    // screen the moment anything caches a response.
+    const { votes, ...rest } = found;
+    const suggestion = { ...rest, voted: votes.length > 0 };
 
     const mine = suggestion.authorId && suggestion.authorId === session?.user?.id;
     const readable = moderator || mine
