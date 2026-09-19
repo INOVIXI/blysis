@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { Button, Card, CardContent, Input, Label, Pagination, useConfirm, useFormRoute, NativeSelect, buttonClassName, useLocalDateTime } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, Input, Label, Pagination, useConfirm, useFormRoute, NativeSelect, buttonClassName, useLocalDateTime, type BadgeTone } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, RotateCcw, Ban } from "lucide-react";
 import { toast } from "sonner";
@@ -37,10 +37,10 @@ const FILTER_LABEL: Record<StatusFilter, string> = {
     revoked: "adm_filterRevoked",
 };
 
-const BADGE_CLASS: Record<PunishmentStatus, string> = {
-    active: "bg-destructive/10 text-destructive",
-    expired: "bg-warning/10 text-warning",
-    revoked: "bg-muted text-muted-foreground",
+const STATUS_TONES: Record<PunishmentStatus, BadgeTone> = {
+    active: "danger",
+    expired: "warning",
+    revoked: "neutral",
 };
 
 const PAGE_SIZE = 20;
@@ -302,9 +302,7 @@ export default function AdminPunishmentsPage() {
                                     <td className="px-4 py-2 text-muted-foreground">{p.reason || "-"}</td>
                                     <td className="px-4 py-2 text-muted-foreground">{formatDateTime(p.createdAt)}</td>
                                     <td className="px-4 py-2">
-                                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${BADGE_CLASS[status]}`}>
-                                            {t(status)}
-                                        </span>
+                                        <Badge tone={STATUS_TONES[status]}>{t(status)}</Badge>
                                     </td>
                                     <td className="px-4 py-2 text-right">
                                         <div className="inline-flex gap-1">

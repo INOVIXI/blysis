@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, UrlOrFile, Input, Label, RichTextEditor, Textarea, NativeSelect, useFormRoute, buttonClassName } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, UrlOrFile, Input, Label, RichTextEditor, Textarea, NativeSelect, useFormRoute, buttonClassName, type BadgeTone } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
 import { writeError } from "@/core/sdk";
@@ -32,11 +32,11 @@ interface HelpArticle {
     category: { id: string; name: string } | null;
 }
 
-const VERDICT_TONE: Record<Verdict, string> = {
-    helping: "bg-success/10 text-success",
-    mixed: "bg-warning/10 text-warning",
-    failing: "bg-destructive/10 text-destructive",
-    unrated: "bg-muted text-muted-foreground",
+const VERDICT_TONE: Record<Verdict, BadgeTone> = {
+    helping: "success",
+    mixed: "warning",
+    failing: "danger",
+    unrated: "neutral",
 };
 
 /**
@@ -53,9 +53,9 @@ function Helpfulness({ article }: { article: HelpArticle }) {
             <span className="tabular-nums font-medium">
                 {read.ratio === null ? "-" : `${Math.round(read.ratio * 100)}%`}
             </span>
-            <span className={`text-xs px-2 py-0.5 rounded ${VERDICT_TONE[read.verdict]}`}>
+            <Badge tone={VERDICT_TONE[read.verdict]}>
                 {t(`adm_verdict_${read.verdict}`)}
-            </span>
+            </Badge>
             <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
                 <ThumbsUp className="w-3 h-3" aria-hidden="true" />
                 {article.helpful}

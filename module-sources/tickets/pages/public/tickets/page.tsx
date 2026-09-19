@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "@/core/sdk/navigation";
 import { useSession } from "next-auth/react";
-import { LoadFailed, Pagination, buttonClassName, usePagedRows } from "@/core/sdk/ui";
+import { Badge, LoadFailed, Pagination, buttonClassName, usePagedRows } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
 import { useRelativeTime } from "@/core/sdk/ui";
-import { labelFor, PRIORITY_KEYS, STATUS_KEYS } from "../../../lib/status-labels";
+import { labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../lib/status-labels";
 import { useTranslations } from "next-intl";
 
 interface Ticket {
@@ -19,21 +19,6 @@ interface Ticket {
     department: { id: string; name: string; color: string | null };
     _count: { messages: number };
 }
-
-const statusColors: Record<string, string> = {
-    OPEN: "bg-primary/10 text-primary",
-    IN_PROGRESS: "bg-warning/10 text-warning",
-    WAITING_REPLY: "bg-accent/10 text-accent",
-    RESOLVED: "bg-success/10 text-success",
-    CLOSED: "bg-muted text-muted-foreground",
-};
-
-const priorityColors: Record<string, string> = {
-    LOW: "text-muted-foreground",
-    MEDIUM: "text-primary",
-    HIGH: "text-warning",
-    URGENT: "text-destructive",
-};
 
 export default function SupportPage() {
     const { data: session } = useSession();
@@ -119,14 +104,10 @@ export default function SupportPage() {
                                         {ticket.department.name}
                                     </td>
                                     <td className="px-4 py-4">
-                                        <span className={`px-2 py-1 rounded text-xs font-medium ${statusColors[ticket.status]}`}>
-                                            {statusLabel(ticket.status)}
-                                        </span>
+                                        <Badge tone={statusTone(ticket.status)}>{statusLabel(ticket.status)}</Badge>
                                     </td>
                                     <td className="px-4 py-4">
-                                        <span className={`text-sm font-medium ${priorityColors[ticket.priority]}`}>
-                                            {priorityLabel(ticket.priority)}
-                                        </span>
+                                        <Badge tone={priorityTone(ticket.priority)}>{priorityLabel(ticket.priority)}</Badge>
                                     </td>
                                     <td className="px-4 py-4 text-sm text-muted-foreground">
                                         {relativeTime(ticket.updatedAt)}

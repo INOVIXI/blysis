@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { stripComments } from "./source-text";
 
 /**
  * What a visitor sees is translated.
@@ -75,7 +76,10 @@ function isTranslatable(text: string): boolean {
 }
 
 function englishLiterals(file: string): string[] {
-    const source = fs.readFileSync(file, "utf8");
+    // Comments first: the footer explains in prose that a sentence "came out
+    // as Built with by Blysis", and a scan that reads its own documentation
+    // reports the bug it describes as the bug itself.
+    const source = stripComments(fs.readFileSync(file, "utf8"));
     const found: string[] = [];
 
     // A JSX text node that reads like a sentence or a label.
@@ -87,6 +91,22 @@ function englishLiterals(file: string): string[] {
     // A label a screen reader reads, written as a literal.
     for (const match of source.matchAll(/(placeholder|aria-label|title)=["']([^"']{2,60})["']/g)) {
         if (isTranslatable(match[2])) found.push(`${match[1]}: ${match[2]}`);
+    }
+
+    /*
+     * A string drawn from inside an expression rather than written as text.
+     *
+     * `{sending ? "Sending..." : "Send Reply"}` renders exactly what a text
+     * node renders and reads exactly as English to a Turkish visitor, but it
+     * is not between a `>` and a `<`, so the scan above never saw it. The
+     * public ticket page kept its reply button in English through two passes
+     * of this gate for that reason.
+     */
+    for (const match of source.matchAll(/>\s*\{([^{}]*)\}\s*</g)) {
+        for (const literal of match[1].matchAll(/["']([A-Z][A-Za-z][A-Za-z'’,.!?%: -]{2,60})["']/g)) {
+            const text = literal[1].trim();
+            if (isTranslatable(text)) found.push(`expression: ${text}`);
+        }
     }
 
     return found.map((hit) => `${path.relative(root, file)} -> ${hit}`);

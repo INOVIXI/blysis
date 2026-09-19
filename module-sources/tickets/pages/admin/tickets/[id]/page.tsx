@@ -4,9 +4,9 @@
 import { useTranslations } from "next-intl";
 import { useState, useEffect, use } from "react";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, Textarea, NativeSelect, buttonClassName, useLocalDate, useLocalDateTime } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Textarea, NativeSelect, buttonClassName, useLocalDate, useLocalDateTime } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, Send } from "lucide-react";
-import { adminKeys, labelFor, PRIORITY_KEYS, STATUS_KEYS } from "../../../../lib/status-labels";
+import { adminKeys, labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../../lib/status-labels";
 import { toast } from "sonner";
 import { writeError } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -40,21 +40,6 @@ interface Ticket {
 
 const statusOptions = ["OPEN", "IN_PROGRESS", "WAITING_REPLY", "RESOLVED", "CLOSED"];
 const priorityOptions = ["LOW", "MEDIUM", "HIGH", "URGENT"];
-
-const statusColors: Record<string, string> = {
-    OPEN: "bg-primary/10 text-primary",
-    IN_PROGRESS: "bg-warning/10 text-warning",
-    WAITING_REPLY: "bg-secondary/10 text-secondary",
-    RESOLVED: "bg-success/10 text-success",
-    CLOSED: "bg-muted text-foreground",
-};
-
-const priorityColors: Record<string, string> = {
-    LOW: "bg-muted text-foreground",
-    MEDIUM: "bg-primary/10 text-primary",
-    HIGH: "bg-warning/10 text-warning",
-    URGENT: "bg-destructive/10 text-destructive",
-};
 
 interface PageProps {
     params: Promise<{ id: string; locale: string }>;
@@ -259,15 +244,11 @@ export default function AdminTicketDetailPage(props: PageProps) {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t("adm_status")}</span>
-                                <span className={`text-xs px-2 py-1 rounded ${statusColors[ticket.status] || ""}`}>
-                                    {labelFor(t, ADMIN_STATUS_KEYS, ticket.status)}
-                                </span>
+                                <Badge tone={statusTone(ticket.status)}>{labelFor(t, ADMIN_STATUS_KEYS, ticket.status)}</Badge>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t("adm_priority")}</span>
-                                <span className={`text-xs px-2 py-1 rounded ${priorityColors[ticket.priority] || ""}`}>
-                                    {labelFor(t, PRIORITY_KEYS, ticket.priority)}
-                                </span>
+                                <Badge tone={priorityTone(ticket.priority)}>{labelFor(t, PRIORITY_KEYS, ticket.priority)}</Badge>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">{t("adm_assignedTo")}</span>

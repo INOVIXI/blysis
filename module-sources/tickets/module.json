@@ -299,6 +299,7 @@
         "resolved": "Resolved",
         "selectDepartment": "Select a department",
         "sendReply": "Send Reply",
+        "sending": "Sending...",
         "staff": "Staff",
         "status": "Status",
         "subject": "Subject",
@@ -345,6 +346,8 @@
         "module_tickets_description": "Customer support ticket system with departments and priority levels"
       },
       "activity": {
+        "kindTicketCreated": "Support Ticket",
+        "kindTicketReplyCreated": "Ticket Reply",
         "ticketCreated": "opened a ticket:",
         "ticketReplyCreated": "replied to ticket:"
       },
@@ -357,7 +360,7 @@
         "ticket": "Ticket"
       },
       "profile": {
-        "notificationType_tickets_ticket_replied": "Reply to your support ticket"
+        "notificationType_tickets_ticket_replied": "Reply to Your Support Ticket"
       },
       "pageDescriptions": {
         "support": "See every support request you have opened, follow the replies from the team and start a new one when you need to.",
@@ -492,6 +495,7 @@
         "resolved": "Çözüldü",
         "selectDepartment": "Departman seçin",
         "sendReply": "Yanıt Gönder",
+        "sending": "Gönderiliyor...",
         "staff": "Yetkili",
         "status": "Durum",
         "subject": "Konu",
@@ -538,6 +542,8 @@
         "module_tickets_description": "Departmanlı ve öncelik seviyeli müşteri destek talebi sistemi"
       },
       "activity": {
+        "kindTicketCreated": "Destek Talebi",
+        "kindTicketReplyCreated": "Talep Yanıtı",
         "ticketCreated": "bilet açtı:",
         "ticketReplyCreated": "bilete yanıt verdi:"
       },
@@ -550,7 +556,7 @@
         "ticket": "Talep"
       },
       "profile": {
-        "notificationType_tickets_ticket_replied": "Destek talebinize yanıt"
+        "notificationType_tickets_ticket_replied": "Destek Talebinize Yanıt"
       },
       "pageDescriptions": {
         "support": "Açtığınız tüm destek taleplerini görün, ekipten gelen yanıtları takip edin ve gerektiğinde yenisini oluşturun.",
@@ -602,11 +608,13 @@
   "activityTitles": [
     {
       "type": "tickets.ticket.opened",
+      "nameKey": "kindTicketCreated",
       "prefix": "Opened ticket: ",
       "key": "ticketCreated"
     },
     {
       "type": "tickets.ticket.replied",
+      "nameKey": "kindTicketReplyCreated",
       "prefix": "Replied to ticket: ",
       "key": "ticketReplyCreated"
     }

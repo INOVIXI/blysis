@@ -5,10 +5,10 @@ import { Link } from "@/core/sdk/navigation";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Button, Textarea, buttonClassName } from "@/core/sdk/ui";
+import { Badge, Button, Textarea, buttonClassName } from "@/core/sdk/ui";
 import { PageFrame, StandardSidebarLayout } from "@/core/sdk/layout";
 import { useRelativeTime } from "@/core/sdk/ui";
-import { labelFor, PRIORITY_KEYS, STATUS_KEYS } from "../../../../lib/status-labels";
+import { labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../../lib/status-labels";
 
 interface Message {
     id: string;
@@ -30,14 +30,6 @@ interface Ticket {
     assignedTo: { id: string; username: string; avatar: string | null } | null;
     messages: Message[];
 }
-
-const statusColors: Record<string, string> = {
-    OPEN: "bg-primary/10 text-primary",
-    IN_PROGRESS: "bg-warning/10 text-warning",
-    WAITING_REPLY: "bg-accent/10 text-accent",
-    RESOLVED: "bg-success/10 text-success",
-    CLOSED: "bg-muted text-muted-foreground",
-};
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -126,6 +118,15 @@ export default function TicketDetailPage({ params }: PageProps) {
         <PageFrame
             title={ticket?.subject ?? t("ticket")}
             trail={[{ label: t("support"), href: '/support' }]}
+            /* Where a ticket stands is the first thing its owner came to
+               read, so it sits beside the title rather than in a card of its
+               own below it. That card held one short line across the full
+               measure and nothing else. */
+            actions={ticket ? (
+                <Badge tone={statusTone(ticket.status)}>
+                    {labelFor(t, STATUS_KEYS, ticket.status)}
+                </Badge>
+            ) : null}
         >
             {loading ? (
                 <div className="bg-card rounded-xl p-8 text-center">
@@ -142,6 +143,16 @@ export default function TicketDetailPage({ params }: PageProps) {
                                 <div className="bg-card rounded-xl border border-border p-4">
                                     <h2 className="font-bold text-foreground mb-3">{t("ticketInfo")}</h2>
                                     <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between gap-3">
+                                            <span className="text-muted-foreground">{t("priority")}</span>
+                                            <Badge tone={priorityTone(ticket.priority)}>
+                                                {labelFor(t, PRIORITY_KEYS, ticket.priority)}
+                                            </Badge>
+                                        </div>
+                                        <div className="flex justify-between gap-3">
+                                            <span className="text-muted-foreground">{t("department")}</span>
+                                            <span className="text-foreground text-right">{ticket.department.name}</span>
+                                        </div>
                                         <div className="flex justify-between">
                                             <span className="text-muted-foreground">{t("createdAt")}</span>
                                             <span className="text-foreground">{relativeTime(ticket.createdAt)}</span>
@@ -166,21 +177,6 @@ export default function TicketDetailPage({ params }: PageProps) {
                         )}>
                     {(
                             <div className="space-y-4">
-                                {/* Ticket Header */}
-                                <div className="bg-card rounded-xl border border-border p-6">
-                                    <div className="flex flex-wrap gap-3 text-sm">
-                                        <span className={`px-2 py-1 rounded font-medium ${statusColors[ticket.status]}`}>
-                                            {labelFor(t, STATUS_KEYS, ticket.status)}
-                                        </span>
-                                        <span className="text-muted-foreground">
-                                            {t("priority")}: <strong>{labelFor(t, PRIORITY_KEYS, ticket.priority)}</strong>
-                                        </span>
-                                        <span className="text-muted-foreground">
-                                            {t("department")}: <strong>{ticket.department.name}</strong>
-                                        </span>
-                                    </div>
-                                </div>
-
                                 {/* Messages */}
                                 <div className="space-y-4">
                                     {ticket.messages.map((message) => (
@@ -204,7 +200,7 @@ export default function TicketDetailPage({ params }: PageProps) {
                                                     <div className="flex items-center gap-2">
                                                         <span className="font-medium text-foreground">{message.user.username}</span>
                                                         {message.isStaffReply && (
-                                                            <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded font-medium">{t("staff")}</span>
+                                                            <Badge tone="info">{t("staff")}</Badge>
                                                         )}
                                                     </div>
                                                     <span className="text-xs text-muted-foreground">{relativeTime(message.createdAt)}</span>
@@ -227,7 +223,7 @@ export default function TicketDetailPage({ params }: PageProps) {
                                                 className="mb-3"
                                             />
                                             <Button type="submit" disabled={sending || !reply.trim()}>
-                                                {sending ? "Sending..." : "Send Reply"}
+                                                {sending ? t("sending") : t("sendReply")}
                                             </Button>
                                         </form>
                                     </div>

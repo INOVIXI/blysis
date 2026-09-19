@@ -4,9 +4,9 @@
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, LoadFailed, buttonClassName } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, LoadFailed, buttonClassName } from "@/core/sdk/ui";
 import { useRelativeTime } from "@/core/sdk/ui";
-import { adminKeys, labelFor, PRIORITY_KEYS, STATUS_KEYS } from "../../../lib/status-labels";
+import { adminKeys, labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../lib/status-labels";
 import { AdminPageHeader } from "@/core/sdk/admin";
 
 /** The admin catalogue's copy of the status labels. */
@@ -25,21 +25,6 @@ interface Ticket {
     assignedTo: { id: string; username: string; avatar: string | null } | null;
     _count: { messages: number };
 }
-
-const statusColors: Record<string, string> = {
-    OPEN: "bg-primary/10 text-primary",
-    IN_PROGRESS: "bg-warning/10 text-warning",
-    WAITING_REPLY: "bg-secondary/10 text-secondary",
-    RESOLVED: "bg-success/10 text-success",
-    CLOSED: "bg-muted text-muted-foreground",
-};
-
-const priorityColors: Record<string, string> = {
-    LOW: "text-muted-foreground",
-    MEDIUM: "text-primary",
-    HIGH: "text-warning",
-    URGENT: "text-destructive",
-};
 
 export default function AdminTicketsPage() {
     const t = useTranslations("tickets");
@@ -220,14 +205,10 @@ export default function AdminTicketsPage() {
                                         {ticket.department.name}
                                     </td>
                                     <td className="px-4 py-4">
-                                        <span className={`px-2 py-1 rounded text-xs font-medium ${statusColors[ticket.status]}`}>
-                                            {labelFor(t, ADMIN_STATUS_KEYS, ticket.status)}
-                                        </span>
+                                        <Badge tone={statusTone(ticket.status)}>{labelFor(t, ADMIN_STATUS_KEYS, ticket.status)}</Badge>
                                     </td>
                                     <td className="px-4 py-4">
-                                        <span className={`text-sm font-medium ${priorityColors[ticket.priority]}`}>
-                                            {labelFor(t, PRIORITY_KEYS, ticket.priority)}
-                                        </span>
+                                        <Badge tone={priorityTone(ticket.priority)}>{labelFor(t, PRIORITY_KEYS, ticket.priority)}</Badge>
                                     </td>
                                     <td className="px-4 py-4 text-sm text-muted-foreground">
                                         {relativeTime(ticket.updatedAt)}

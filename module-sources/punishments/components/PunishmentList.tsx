@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { Card, CardContent, ListControls, LoadFailed, Pagination, SegmentedTabs, useLocalDate } from "@/core/sdk/ui";
+import { Badge, Card, CardContent, ListControls, LoadFailed, Pagination, SegmentedTabs, useLocalDate, type BadgeTone } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
 import { Loader2, Ban, VolumeX, LogOut, AlertTriangle } from "lucide-react";
 import { punishmentStatus, type PunishmentStatus } from "../lib/status";
@@ -37,24 +37,24 @@ const typeIcons: Record<PunishmentType, typeof Ban> = {
     kick: LogOut,
     warning: AlertTriangle,
 };
-const typeColors: Record<PunishmentType, string> = {
-    ban: "bg-destructive/10 text-destructive",
-    tempBan: "bg-destructive/10 text-destructive",
-    mute: "bg-warning/10 text-warning",
-    tempMute: "bg-warning/10 text-warning",
-    kick: "bg-warning/10 text-warning",
-    warning: "bg-primary/10 text-primary",
-};
-
 /**
  * A punishment's status was the one thing this table never said. It printed
  * the duration an admin had typed ("7d") next to a date months old and left
  * the reader to work out whether the ban was still running.
  */
-const statusClass: Record<PunishmentStatus, string> = {
-    active: "bg-destructive/10 text-destructive",
-    expired: "bg-warning/10 text-warning",
-    revoked: "bg-muted text-muted-foreground",
+const TYPE_TONES: Record<PunishmentType, BadgeTone> = {
+    ban: "danger",
+    tempBan: "danger",
+    mute: "warning",
+    tempMute: "warning",
+    kick: "warning",
+    warning: "info",
+};
+
+const STATUS_TONES: Record<PunishmentStatus, BadgeTone> = {
+    active: "danger",
+    expired: "warning",
+    revoked: "neutral",
 };
 
 /** The label for one type, falling back to the value when it is unmapped. */
@@ -218,16 +218,16 @@ export function PunishmentList({ initial, initialPages, scopes }: {
                                                 ) : null}
                                             </td>
                                             <td className="py-3 px-4">
-                                                <span className={`text-xs px-2 py-1 rounded inline-flex items-center gap-1 ${known ? typeColors[known] : ""}`}>
-                                                    <Icon className="w-3 h-3" /> {typeLabel(t, p.type)}
-                                                </span>
+                                                <Badge tone={known ? TYPE_TONES[known] : "neutral"}>
+                                                    <Icon className="w-3 h-3" aria-hidden="true" /> {typeLabel(t, p.type)}
+                                                </Badge>
                                             </td>
                                             <td className="py-3 px-4 text-sm text-muted-foreground max-w-[200px] truncate">{p.reason || "-"}</td>
                                             <td className="py-3 px-4 text-sm text-muted-foreground">{p.punishedBy || t("console")}</td>
                                             <td className="py-3 px-4 text-sm">{p.duration || t("permanent")}</td>
                                             <td className="py-3 px-4 text-sm text-muted-foreground">{formatDate(p.createdAt)}</td>
                                             <td className="py-3 px-4">
-                                                <span className={`text-xs px-2 py-1 rounded ${statusClass[status]}`}>{t(status)}</span>
+                                                <Badge tone={STATUS_TONES[status]}>{t(status)}</Badge>
                                                 {/* Under the chip rather than in a column of its own:
                                                     seven columns already crowd a phone, and this is
                                                     empty on every punishment nobody has lifted. */}

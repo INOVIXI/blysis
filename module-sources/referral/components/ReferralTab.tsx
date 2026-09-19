@@ -125,7 +125,7 @@ export function ReferralTab() {
                             {data.referrals.slice(0, 5).map(ref => (
                                 <div key={ref.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                                     <div>
-                                        <p className="text-sm font-medium">{ref.username || "Unknown"}</p>
+                                        <p className="text-sm font-medium">{ref.username || t("unknownUser")}</p>
                                         <p className="text-xs text-muted-foreground">
                                             {formatDate(ref.createdAt)}
                                         </p>

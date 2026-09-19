@@ -49,3 +49,39 @@ export function labelFor(t: Translator, keys: Record<string, string>, value: str
     const key = keys[value];
     return key && t.has(key) ? t(key) : value.replace(/_/g, " ");
 }
+
+/**
+ * The colour a status or a priority wears.
+ *
+ * Four screens each kept a map of their own - the public list, the public
+ * ticket, the admin list and the admin ticket - and no two agreed. A ticket
+ * waiting for a reply was accent-tinted on one screen and amber on another,
+ * and each map wrote its own `bg-.../10 text-...` pair rather than using the
+ * badge every other status on the site is drawn with. They are tones now, and
+ * the badge decides what a tone looks like.
+ */
+import type { BadgeTone } from "@/core/sdk/ui";
+
+const STATUS_TONES: Record<string, BadgeTone> = {
+    OPEN: "info",
+    IN_PROGRESS: "warning",
+    WAITING_REPLY: "warning",
+    RESOLVED: "success",
+    CLOSED: "neutral",
+};
+
+const PRIORITY_TONES: Record<string, BadgeTone> = {
+    LOW: "neutral",
+    MEDIUM: "info",
+    HIGH: "warning",
+    URGENT: "danger",
+};
+
+/** Neutral for a value no map names: an unknown state is not an alarming one. */
+export function statusTone(status: string): BadgeTone {
+    return STATUS_TONES[status] ?? "neutral";
+}
+
+export function priorityTone(priority: string): BadgeTone {
+    return PRIORITY_TONES[priority] ?? "neutral";
+}

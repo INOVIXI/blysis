@@ -43,3 +43,26 @@ export function orderStatusLabel(t: Translator, keys: Record<string, string>, st
     const key = keys[status];
     return key && t.has(key) ? t(key) : status;
 }
+
+/**
+ * The colour an order status wears.
+ *
+ * The orders table and the status control beside a single order each kept a
+ * map of their own, and they had already drifted: PROCESSING was primary on
+ * one and amber on the other. Both wrote `bg-.../10 text-...` pairs by hand
+ * rather than using the badge every other status on the site is drawn with.
+ */
+import type { BadgeTone } from "@/core/sdk/ui";
+
+const TONES: Record<string, BadgeTone> = {
+    PENDING: "warning",
+    PROCESSING: "info",
+    COMPLETED: "success",
+    CANCELLED: "danger",
+    REFUNDED: "neutral",
+};
+
+/** Neutral for a status no map names: an unknown state is not an alarming one. */
+export function orderStatusTone(status: string): BadgeTone {
+    return TONES[status] ?? "neutral";
+}

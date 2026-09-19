@@ -5,10 +5,10 @@ import { useTranslations, useLocale } from "next-intl";
 import { useState, useEffect } from "react";
 import { Link } from "@/core/sdk/navigation";
 import { formatDate } from "@/core/sdk";
-import { Button, Card, CardContent, CardHeader, CardTitle, Pagination, buttonClassName, useFormRoute, useSiteCurrency } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Pagination, buttonClassName, useFormRoute, useSiteCurrency } from "@/core/sdk/ui";
 import { Loader2, Plus, ShoppingCart } from "lucide-react";
 import { dateLocaleTag } from "@/core/sdk";
-import { adminOrderStatusKeys, orderStatusLabel } from "../../../lib/order-status";
+import { adminOrderStatusKeys, orderStatusLabel, orderStatusTone } from "../../../lib/order-status";
 import { AdminPageHeader } from "@/core/sdk/admin";
 import { NewOrderForm } from "./NewOrderForm";
 
@@ -26,14 +26,6 @@ interface Order {
 }
 
 const statuses = ["ALL", "PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"];
-
-const statusColors: Record<string, string> = {
-    COMPLETED: "bg-success/10 text-success",
-    PENDING: "bg-warning/10 text-warning",
-    PROCESSING: "bg-primary/10 text-primary",
-    CANCELLED: "bg-destructive/10 text-destructive",
-    REFUNDED: "bg-muted text-muted-foreground",
-};
 
 export default function AdminOrdersPage() {
     const { format: money } = useSiteCurrency();
@@ -170,9 +162,9 @@ export default function AdminOrdersPage() {
                                                 {money(Number(order.total))}
                                             </td>
                                             <td className="py-3 px-4">
-                                                <span className={`text-xs px-2 py-1 rounded ${statusColors[order.status] || "bg-muted text-muted-foreground"}`}>
+                                                <Badge tone={orderStatusTone(order.status)}>
                                                     {orderStatusLabel(t, ADMIN_ORDER_STATUS_KEYS, order.status)}
-                                                </span>
+                                                </Badge>
                                             </td>
                                             <td className="py-3 px-4 text-right">
                                                 <Link href={`/admin/store/orders/${order.id}`} className={buttonClassName("ghost", "sm")}>{t("adm_view")}</Link>
