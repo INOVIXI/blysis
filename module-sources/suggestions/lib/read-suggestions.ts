@@ -15,7 +15,7 @@ import { auth } from "@/core/sdk/auth";
 import { canonicalStatus, spellingsOf } from "./statuses";
 
 /** A row, plus whether the reader asking for it has already voted. */
-export type SuggestionListRow = Awaited<ReturnType<typeof rows>>[number] & { voted: boolean };
+export type SuggestionListRow = Omit<Awaited<ReturnType<typeof rows>>[number], "votes"> & { voted: boolean };
 
 export interface SuggestionListRead {
     suggestions: SuggestionListRow[];

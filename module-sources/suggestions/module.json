@@ -111,8 +111,12 @@
       "admin": {
         "menu_suggestions": "Suggestions",
         "menu_suggestions_suggestions": "All Suggestions",
-        "module_suggestions_name": "Suggestions",
-        "module_suggestions_description": "Community feature suggestions with voting"
+        "moderationSettings_suggestionComments": "Suggestion comments",
+        "moderationSettings_suggestionCommentsDesc": "Hold replies on the suggestion board until somebody approves them.",
+        "moderationSettings_suggestions": "Suggestions",
+        "moderationSettings_suggestionsDesc": "Require approval before user suggestions are listed publicly.",
+        "module_suggestions_description": "Community feature suggestions with voting",
+        "module_suggestions_name": "Suggestions"
       },
       "suggestions": {
         "adm_delete": "Delete",
@@ -143,8 +147,6 @@
         "login": "Log in",
         "loginToComment": "Sign in to join the discussion.",
         "loginToVote": "Log in to vote",
-        "moderationSettings_suggestionComments": "Suggestion comments",
-        "moderationSettings_suggestionCommentsDesc": "Hold replies on the suggestion board until somebody approves them.",
         "moderation_suggestionComment": "Suggestion comments",
         "mostVoted": "Most Voted",
         "newSuggestion": "New Suggestion",
@@ -195,8 +197,12 @@
       "admin": {
         "menu_suggestions": "Öneriler",
         "menu_suggestions_suggestions": "Tüm Öneriler",
-        "module_suggestions_name": "Öneriler",
-        "module_suggestions_description": "Oylamalı topluluk özellik önerileri"
+        "moderationSettings_suggestionComments": "Öneri yorumları",
+        "moderationSettings_suggestionCommentsDesc": "Öneri panosundaki yanıtları biri onaylayana kadar beklet.",
+        "moderationSettings_suggestions": "Öneriler",
+        "moderationSettings_suggestionsDesc": "Kullanıcı önerilerinin herkese açık listelenmeden önce onay gerektirmesi.",
+        "module_suggestions_description": "Oylamalı topluluk özellik önerileri",
+        "module_suggestions_name": "Öneriler"
       },
       "suggestions": {
         "adm_delete": "Sil",
@@ -227,8 +233,6 @@
         "login": "Giriş yap",
         "loginToComment": "Tartışmaya katılmak için giriş yap.",
         "loginToVote": "Oy vermek için giriş yapın",
-        "moderationSettings_suggestionComments": "Öneri yorumları",
-        "moderationSettings_suggestionCommentsDesc": "Öneri panosundaki yanıtları biri onaylayana kadar beklet.",
         "moderation_suggestionComment": "Öneri yorumları",
         "mostVoted": "En Çok Oy Alan",
         "newSuggestion": "Yeni Öneri",

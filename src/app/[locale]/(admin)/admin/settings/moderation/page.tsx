@@ -180,10 +180,17 @@ export default function ModerationSettingsPage() {
                                         <p className="text-xs text-muted-foreground">{t(field.descKey)}</p>
                                     )}
                                 </div>
+                                {/* The setting's own value used to be printed
+                                    here, so the badge read AUTO and MANUAL -
+                                    the two words the column stores, in the
+                                    typeface of a machine, on a screen an
+                                    operator reads. */}
                                 <span
-                                    className={badgeClassName(config[field.settingKey] === "manual" ? "warning" : "neutral", "uppercase font-mono")}
+                                    className={badgeClassName(config[field.settingKey] === "manual" ? "warning" : "neutral")}
                                 >
-                                    {config[field.settingKey]}
+                                    {config[field.settingKey] === "manual"
+                                        ? t("moderationSettings_manual")
+                                        : t("moderationSettings_auto")}
                                 </span>
                             </label>
                         ))

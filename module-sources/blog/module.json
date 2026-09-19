@@ -261,21 +261,23 @@
         "title": "News"
       },
       "admin": {
-        "published": "Published",
         "allArticles": "All Articles",
-        "publishing": "Publishing",
-        "status": "Status",
         "category": "Category",
-        "media": "Media",
         "coverImage": "Cover Image URL",
-        "tags": "Tags",
+        "media": "Media",
         "menu_blog": "Blog",
         "menu_blog_0": "Articles",
         "menu_blog_1": "Blog Categories",
         "menu_blog_articles": "Articles",
         "menu_blog_blog_categories": "Blog Categories",
+        "moderationSettings_blogComments": "Blog comments",
+        "moderationSettings_blogCommentsDesc": "Require approval before comments on blog articles appear publicly.",
+        "module_blog_description": "News and announcements system",
         "module_blog_name": "Blog Module",
-        "module_blog_description": "News and announcements system"
+        "published": "Published",
+        "publishing": "Publishing",
+        "status": "Status",
+        "tags": "Tags"
       },
       "activity": {
         "blogArticlePublished": "published:",
@@ -390,21 +392,23 @@
         "title": "Haberler"
       },
       "admin": {
-        "published": "Yayınlandı",
         "allArticles": "Tüm Makaleler",
-        "publishing": "Yayınlama",
-        "status": "Durum",
         "category": "Kategori",
-        "media": "Medya",
         "coverImage": "Kapak Görseli URL",
-        "tags": "Etiketler",
+        "media": "Medya",
         "menu_blog": "Blog",
         "menu_blog_0": "Makaleler",
         "menu_blog_1": "Blog Kategorileri",
         "menu_blog_articles": "Makaleler",
         "menu_blog_blog_categories": "Blog Kategorileri",
+        "moderationSettings_blogComments": "Blog yorumları",
+        "moderationSettings_blogCommentsDesc": "Blog makalelerindeki yorumların herkese görünür olmadan önce onay gerektirmesi.",
+        "module_blog_description": "Haber ve duyuru sistemi",
         "module_blog_name": "Blog Modülü",
-        "module_blog_description": "Haber ve duyuru sistemi"
+        "published": "Yayınlandı",
+        "publishing": "Yayınlama",
+        "status": "Durum",
+        "tags": "Etiketler"
       },
       "activity": {
         "blogArticlePublished": "yayınladı:",
