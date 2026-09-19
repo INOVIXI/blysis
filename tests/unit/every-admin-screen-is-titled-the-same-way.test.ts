@@ -138,6 +138,29 @@ describe("an admin screen", () => {
         expect(rolled).toEqual([]);
     });
 
+    it("gives the header the whole row, because it lays out that row itself", () => {
+        /*
+         * The header is `justify-between`: the title on the left, the back
+         * link and the actions on the right. That only separates them while
+         * the header is as wide as the page. Put it inside a flex row of its
+         * own and it becomes a flex item, shrinks to its contents, and the
+         * separation collapses - which is how the product editor ended up
+         * with Back, Delete and Save pressed against the word "Edit product"
+         * in the middle of an otherwise empty line.
+         *
+         * Nothing about it looks broken in the source, so it is read here.
+         */
+        const boxed: string[] = [];
+        for (const file of pages) {
+            const source = stripComments(fs.readFileSync(file, "utf8"));
+            // A JSX comment leaves its braces behind when the comment inside
+            // it goes, and one sits between the wrapper and the header.
+            const wrapped = /<div className="([^"]*\bflex\b[^"]*)"[^>]*>\s*(?:\{\s*\}\s*)?<AdminPageHeader/.exec(source);
+            if (wrapped) boxed.push(`${path.relative(ROOT, file)}: ${wrapped[1]}`);
+        }
+        expect(boxed).toEqual([]);
+    });
+
     it("keeps the exception list to screens that really are full-screen", () => {
         for (const rel of FULL_SCREEN) {
             const source = fs.readFileSync(path.join(ROOT, rel), "utf8");

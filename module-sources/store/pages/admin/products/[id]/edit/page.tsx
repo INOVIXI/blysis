@@ -66,6 +66,7 @@ export default function EditProductPage(props: PageProps) {
         type: "DIGITAL",
         isActive: true,
         isFeatured: false,
+        giftable: true,
         subscriptionInterval: "month" as string,
         subscriptionIntervalCount: "1",
     });
@@ -101,6 +102,7 @@ export default function EditProductPage(props: PageProps) {
                     type: p.type || "DIGITAL",
                     isActive: p.isActive ?? true,
                     isFeatured: p.isFeatured ?? false,
+                    giftable: p.giftable ?? true,
                     subscriptionInterval: p.subscriptionInterval || "month",
                     subscriptionIntervalCount: p.subscriptionIntervalCount ? String(p.subscriptionIntervalCount) : "1",
                 });
@@ -163,6 +165,7 @@ export default function EditProductPage(props: PageProps) {
                 type: form.type,
                 isActive: form.isActive,
                 isFeatured: form.isFeatured,
+                giftable: form.giftable,
                 subscriptionInterval: form.type === "SUBSCRIPTION" ? form.subscriptionInterval : null,
                 subscriptionIntervalCount: form.type === "SUBSCRIPTION" ? parseInt(form.subscriptionIntervalCount) || 1 : null,
                 ...availabilityPayload(availability),
@@ -223,40 +226,43 @@ export default function EditProductPage(props: PageProps) {
 
     return (
         <>
-            <div className="flex items-center justify-between mb-8">
-                {/* The save sits beside the delete in the header, where every
-                    other admin screen keeps its primary action. It used to be
-                    a full-width button at the bottom of a three-column form,
-                    so on a long product the only way to save was to scroll
-                    past every card first. `form="product-form"` is what lets
-                    it submit from outside the form it saves. */}
-                <AdminPageHeader
-                    title={t("adm_editProduct")}
-                    description={form.name}
-                    backHref="/admin/store/products"
-                    backLabel={commonT("back")}
-                    actions={
-                        <>
-                            <Button
-                                variant="ghost"
-                                className="text-destructive hover:text-destructive"
-                                onClick={handleDelete}
-                                disabled={deleting}
-                            >
-                                <Trash2 className="w-4 h-4" />
-                                {deleting ? t("adm_deleting") : t("adm_delete")}
-                            </Button>
-                            <Button type="submit" form="product-form" disabled={saving}>
-                                {saving ? (
-                                    <><Loader2 className="w-4 h-4 animate-spin" /> {t("adm_saving")}</>
-                                ) : (
-                                    t("adm_saveChanges")
-                                )}
-                            </Button>
-                        </>
-                    }
-                />
-            </div>
+            {/* The save sits beside the delete in the header, where every
+                other admin screen keeps its primary action. It used to be a
+                full-width button at the bottom of a three-column form, so on a
+                long product the only way to save was to scroll past every card
+                first. `form="product-form"` is what lets it submit from
+                outside the form it saves.
+
+                No wrapper: the header separates the title from that cluster
+                itself, and it can only do that while it is as wide as the
+                page. Boxed in a flex row it shrank to its contents and the
+                three controls ended up against the title. */}
+            <AdminPageHeader
+                title={t("adm_editProduct")}
+                description={form.name}
+                backHref="/admin/store/products"
+                backLabel={commonT("back")}
+                actions={
+                    <>
+                        <Button
+                            variant="ghost"
+                            className="text-destructive hover:text-destructive"
+                            onClick={handleDelete}
+                            disabled={deleting}
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            {deleting ? t("adm_deleting") : t("adm_delete")}
+                        </Button>
+                        <Button type="submit" form="product-form" disabled={saving}>
+                            {saving ? (
+                                <><Loader2 className="w-4 h-4 animate-spin" /> {t("adm_saving")}</>
+                            ) : (
+                                t("adm_saveChanges")
+                            )}
+                        </Button>
+                    </>
+                }
+            />
 
             <form id="product-form" onSubmit={handleSubmit}>
                 <div className="grid lg:grid-cols-3 gap-8">
@@ -452,6 +458,12 @@ export default function EditProductPage(props: PageProps) {
                                     checked={form.isFeatured}
                                     onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })}
                                     label={t("adm_featured")}
+                                />
+                                <CheckboxField
+                                    checked={form.giftable}
+                                    onChange={(e) => setForm({ ...form, giftable: e.target.checked })}
+                                    label={t("adm_giftable")}
+                                    description={t("adm_giftableHint")}
                                 />
                             </CardContent>
                         </Card>
