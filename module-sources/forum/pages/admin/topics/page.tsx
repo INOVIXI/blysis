@@ -3,12 +3,12 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, ListControls, Pagination, useConfirm } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Checkbox, ListControls, Pagination, useConfirm, useRowPicks } from "@/core/sdk/ui";
 import { Loader2, Pin, PinOff, Lock, Unlock, Trash2, Eye, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { useRelativeTime } from "@/core/sdk/ui";
-import { writeError } from "@/core/sdk";
-import { AdminPageHeader } from "@/core/sdk/admin";
+import { deleteEach, writeError } from "@/core/sdk";
+import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
 
 interface Topic {
     id: string;
@@ -34,6 +34,9 @@ export default function AdminForumTopicsPage() {
     // The endpoint has taken `search` since it was written; this screen never
     // sent one, so a moderator looking for a topic paged until it appeared.
     const [search, setSearch] = useState("");
+    // The endpoint pages this, so only the ticking is the screen's. Clearing
+    // a spam run was one confirmation per topic.
+    const picks = useRowPicks(topics);
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
 
@@ -80,6 +83,25 @@ export default function AdminForumTopicsPage() {
         const failed = await writeError(res, t("adm_writeFailed"), t);
         if (failed) { toast.error(failed); return; }
         fetchTopics();
+    };
+
+    const deleteMany = async () => {
+        const ok = await confirm({
+            title: t("adm_deleteTopicTitle"),
+            message: t("adm_deleteManyConfirm", { count: picks.picked.size }),
+            variant: "danger",
+            confirmText: commonT("delete"),
+        });
+        if (!ok) return;
+        const { deleted, total } = await deleteEach([...picks.picked], async (id) => {
+            const res = await fetch(`/api/v1/forum/topics/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        picks.clear();
+        fetchTopics();
+        if (deleted === total) toast.success(t("adm_topicDeleted"));
+        else if (deleted === 0) toast.error(t("adm_deleteFailed"));
+        else toast.error(t("adm_deletedPartly", { deleted, total }));
     };
 
     const deleteTopic = async (topicId: string) => {
@@ -133,10 +155,24 @@ export default function AdminForumTopicsPage() {
                             {search.trim() === "" ? t("adm_noForumTopics") : commonT("noResults")}
                         </p>
                     ) : (
+                        <>
+                            {/* Outside the scrolling box, or the select-all
+                                box goes sideways with the table. */}
+                            <BulkBar
+                                state={picks.headerState}
+                                count={picks.picked.size}
+                                onToggleAll={picks.toggleAll}
+                                actions={
+                                    <Button variant="destructive" size="sm" onClick={deleteMany}>
+                                        <Trash2 className="w-4 h-4" /> {commonT("delete")} {picks.picked.size}
+                                    </Button>
+                                }
+                            />
                         <div className="overflow-x-auto">
                             <table className="w-full">
                                 <thead>
                                     <tr>
+                                        <th className="w-10 py-3 px-4" />
                                         <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_topic")}</th>
                                         <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_category")}</th>
                                         <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_author")}</th>
@@ -148,6 +184,13 @@ export default function AdminForumTopicsPage() {
                                 <tbody>
                                     {topics.map((topic) => (
                                         <tr key={topic.id} className="hover:bg-muted/50">
+                                            <td className="py-3 px-4">
+                                                <Checkbox
+                                                    checked={picks.picked.has(topic.id)}
+                                                    onChange={() => picks.toggle(topic.id)}
+                                                    aria-label={t("adm_selectRow")}
+                                                />
+                                            </td>
                                             <td className="py-3 px-4">
                                                 <div className="flex items-center gap-2">
                                                     {topic.isPinned && <Pin className="w-3 h-3 text-primary flex-shrink-0" />}
@@ -218,6 +261,7 @@ export default function AdminForumTopicsPage() {
                                 </tbody>
                             </table>
                         </div>
+                        </>
                     )}
 
                     <Pagination page={page} pages={totalPages} onPageChange={setPage} />

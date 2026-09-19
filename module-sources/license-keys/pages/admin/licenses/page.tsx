@@ -13,11 +13,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, useConfirm, useFormRoute, useLocalDate, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Checkbox, Input, Label, useConfirm, useFormRoute, useLocalDate, useRowPicks, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, Ban, RotateCcw, Copy, Check, KeyRound } from "lucide-react";
-import { copyText } from "@/core/sdk";
-import { AdminPageHeader } from "@/core/sdk/admin";
+import { copyText, deleteEach } from "@/core/sdk";
+import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
 
 interface License {
     id: string;
@@ -41,6 +41,9 @@ export default function LicensesPage() {
     const { confirm } = useConfirm();
 
     const [licenses, setLicenses] = useState<License[]>([]);
+    // The endpoint pages this, so only the ticking is the screen's. Keys are
+    // minted in batches, so clearing a batch was a batch of confirmations.
+    const picks = useRowPicks(licenses);
     const [loading, setLoading] = useState(true);
     // Issuing keys is a screen at `?form=new`, not a card above the table.
     const { showForm, formHref, closeForm } = useFormRoute();
@@ -121,6 +124,26 @@ export default function LicensesPage() {
             return;
         }
         setLicenses((rows) => rows.map((row) => (row.id === id ? { ...row, status } : row)));
+    };
+
+    const deleteMany = async () => {
+        const ok = await confirm({
+            title: t("adm_deleteTitle"),
+            message: t("adm_deleteManyConfirm", { count: picks.picked.size }),
+            confirmText: t("adm_delete"),
+            variant: "danger",
+        });
+        if (!ok) return;
+        const gone = new Set(picks.picked);
+        const { deleted, total } = await deleteEach([...picks.picked], async (id) => {
+            const res = await fetch(`/api/v1/licenses/admin/${id}`, { method: "DELETE" });
+            if (!res.ok) gone.delete(id);
+            return res.ok;
+        });
+        picks.clear();
+        setLicenses((rows) => rows.filter((row) => !gone.has(row.id)));
+        if (deleted === 0) toast.error(t("adm_deleteFailed"));
+        else if (deleted < total) toast.error(t("adm_deletedPartly", { deleted, total }));
     };
 
     const remove = async (id: string) => {
@@ -254,10 +277,7 @@ export default function LicensesPage() {
             {minted.length > 0 && (
                 <Card className="mb-6 border-primary">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <KeyRound className="w-5 h-5" />
-                            {t("adm_mintedTitle")}
-                        </CardTitle>
+                        <CardTitle>{t("adm_mintedTitle")}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
                         <p className="text-sm text-muted-foreground">{t("adm_mintedOnce")}</p>
@@ -290,10 +310,24 @@ export default function LicensesPage() {
                 </Card>
             ) : (
                 <Card>
-                    <CardContent className="p-0 overflow-x-auto">
+                    <CardContent className="p-0">
+                        {/* Outside the scrolling box, or the select-all box
+                            goes sideways with the table. */}
+                        <BulkBar
+                            state={picks.headerState}
+                            count={picks.picked.size}
+                            onToggleAll={picks.toggleAll}
+                            actions={
+                                <Button variant="destructive" size="sm" onClick={deleteMany}>
+                                    <Trash2 className="w-4 h-4" /> {commonT("delete")} {picks.picked.size}
+                                </Button>
+                            }
+                        />
+                        <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead className="border-b bg-muted/40">
                                 <tr className="text-left">
+                                    <th className="w-10 p-3" />
                                     <th className="p-3 font-medium">{t("adm_colKey")}</th>
                                     <th className="p-3 font-medium">{t("adm_colProduct")}</th>
                                     <th className="p-3 font-medium">{t("adm_colActivations")}</th>
@@ -305,6 +339,13 @@ export default function LicensesPage() {
                             <tbody>
                                 {licenses.map((license) => (
                                     <tr key={license.id} className="border-b last:border-0">
+                                        <td className="p-3">
+                                            <Checkbox
+                                                checked={picks.picked.has(license.id)}
+                                                onChange={() => picks.toggle(license.id)}
+                                                aria-label={t("adm_selectRow")}
+                                            />
+                                        </td>
                                         <td className="p-3 font-mono">{license.keyHint}</td>
                                         <td className="p-3">{license.productName || "-"}</td>
                                         <td className="p-3">
@@ -359,6 +400,7 @@ export default function LicensesPage() {
                                 ))}
                             </tbody>
                         </table>
+                        </div>
                     </CardContent>
                 </Card>
             )}

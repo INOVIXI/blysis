@@ -45,26 +45,33 @@ const ONE_AT_A_TIME: Record<string, string> = {
         "Themes are installed one at a time and there are rarely more than two. Deleting the one in use is the risk here, not the number of clicks.",
     "module-sources/blog/pages/admin/articles/[id]/edit/page.tsx":
         "One article, on its own edit screen, where deleting is the end of editing rather than something done to a list.",
+    "module-sources/blog/pages/admin/categories/page.tsx":
+        "Categories are hand-curated and an operator holds the whole list in their head. The same decision as the search gate makes about the three category screens.",
+    "module-sources/store/pages/admin/categories/page.tsx":
+        "The same, and this one is a tree: a child row only means anything underneath its parent, so a selection spanning both reads as a selection of unrelated things.",
+    "module-sources/custom-forms/pages/admin/page.tsx":
+        "The forms an operator built, which is a short list they know by name. Their submissions grow and that screen is its own item.",
+    "module-sources/comparison-table/pages/admin/page.tsx":
+        "The tables an operator wrote, a handful at most, and each one is a piece of work rather than a row.",
+    "module-sources/store/pages/admin/campaigns/page.tsx":
+        "A campaign is a schedule an operator designed; there are a few and each is deliberate. Deleting several at once is not a thing anybody wants to do quickly.",
+    "module-sources/seo/pages/admin/pages/page.tsx":
+        "The list here is a picker for which page to edit, not a list of rows to act on. What gets deleted is one page's override, from that page's own panel.",
     "module-sources/help-center/pages/admin/help/page.tsx":
         "It has no delete for an article at all, and no edit either. Giving it a bulk delete before it can delete one row would be half an answer; that is its own item.",
 };
 
 /**
  * Screens that should offer it and do not yet. Unlike the list above, these
- * are not decisions - they are work outstanding, and the list is here so it
- * is visible and shrinking rather than forgotten.
+ * are not decisions - they are work outstanding, and the list was here so it
+ * stayed visible and shrinking rather than forgotten.
+ *
+ * It is empty. Every screen that deletes a row now either deletes several or
+ * has a reason above for why it should not. Keeping it, and keeping its
+ * ceiling at zero, is what makes the next screen to grow a delete land in the
+ * failing list rather than quietly here.
  */
-const NOT_YET: Record<string, string> = {
-    "src/app/[locale]/(admin)/admin/email-queue/page.tsx": "",
-    "module-sources/blog/pages/admin/categories/page.tsx": "",
-    "module-sources/comparison-table/pages/admin/page.tsx": "",
-    "module-sources/custom-forms/pages/admin/page.tsx": "",
-    "module-sources/forum/pages/admin/topics/page.tsx": "",
-    "module-sources/license-keys/pages/admin/licenses/page.tsx": "",
-    "module-sources/seo/pages/admin/pages/page.tsx": "",
-    "module-sources/store/pages/admin/campaigns/page.tsx": "",
-    "module-sources/store/pages/admin/categories/page.tsx": "",
-};
+const NOT_YET: Record<string, string> = {};
 
 /** A screen asks to delete a row when it sends DELETE from a row's control. */
 function deletesARow(source: string): boolean {
@@ -119,7 +126,7 @@ describe("deleting rows", () => {
         }
         // The number this was written with. It may fall; a rise means a new
         // screen learned to delete a row and not several.
-        expect(Object.keys(NOT_YET).length).toBeLessThanOrEqual(9);
+        expect(Object.keys(NOT_YET).length).toBeLessThanOrEqual(0);
     });
 
     it("keeps every exemption to a screen that exists, with a reason", () => {

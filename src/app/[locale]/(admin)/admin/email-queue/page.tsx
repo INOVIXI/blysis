@@ -5,6 +5,10 @@ import { Card, CardContent } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
 import { ListControls } from "@/core/components/ui/list-controls";
+import { Checkbox } from "@/core/components/ui/checkbox";
+import { BulkBar } from "@/core/components/admin/BulkBar";
+import { useRowPicks } from "@/core/hooks/useRowList";
+import { deleteEach } from "@/core/lib/bulk-delete";
 import { Loader2, Play, RefreshCw, RotateCcw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
@@ -89,6 +93,9 @@ export default function EmailQueueAdminPage() {
     // Sent to the endpoint: the queue only grows, and the twenty rows in the
     // browser are not the queue.
     const [search, setSearch] = useState("");
+    // The endpoint pages this, so only the ticking is the screen's. A queue
+    // that failed overnight is a hundred rows an operator wants gone at once.
+    const picks = useRowPicks(jobs);
 
     const fetchJobs = useCallback(async () => {
         setLoading(true);
@@ -165,6 +172,25 @@ export default function EmailQueueAdminPage() {
         } finally {
             setBusyId(null);
         }
+    };
+
+    const deleteMany = async () => {
+        const ok = await confirm({
+            title: t("emailQueue_deleteTitle"),
+            message: t("crud_deleteItemsConfirm", { count: picks.picked.size }),
+            variant: "danger",
+            confirmText: t("common_delete"),
+        });
+        if (!ok) return;
+        const { deleted, total } = await deleteEach([...picks.picked], async (id) => {
+            const res = await fetch(`/api/v1/admin/email-queue/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        picks.clear();
+        fetchJobs();
+        if (deleted === total) toast.success(t("crud_deleted"));
+        else if (deleted === 0) toast.error(t("crud_deleteFailed"));
+        else toast.error(t("crud_deletedPartly", { deleted, total }));
     };
 
     const handleDelete = async (job: EmailJobRow) => {
@@ -255,10 +281,24 @@ export default function EmailQueueAdminPage() {
                 </Card>
             ) : (
                 <Card>
-                    <CardContent className="p-0 overflow-x-auto">
+                    <CardContent className="p-0">
+                        {/* Outside the scrolling box, or the select-all box
+                            goes sideways with the table on a narrow screen. */}
+                        <BulkBar
+                            state={picks.headerState}
+                            count={picks.picked.size}
+                            onToggleAll={picks.toggleAll}
+                            actions={
+                                <Button variant="destructive" size="sm" onClick={deleteMany}>
+                                    <Trash2 className="w-4 h-4" /> {t("common_delete")} {picks.picked.size}
+                                </Button>
+                            }
+                        />
+                        <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
                                 <tr>
+                                    <th className="w-10 px-4 py-3" />
                                     <th className="px-4 py-3 font-medium">{t("emailQueue_to")}</th>
                                     <th className="px-4 py-3 font-medium">{t("common_subject")}</th>
                                     <th className="px-4 py-3 font-medium">{t("common_status")}</th>
@@ -274,6 +314,13 @@ export default function EmailQueueAdminPage() {
                                     return (
                                         <Fragment key={job.id}>
                                             <tr className="border-t border-border">
+                                                <td className="px-4 py-3">
+                                                    <Checkbox
+                                                        checked={picks.picked.has(job.id)}
+                                                        onChange={() => picks.toggle(job.id)}
+                                                        aria-label={t("common_selectRow")}
+                                                    />
+                                                </td>
                                                 <td className="px-4 py-3 truncate max-w-[200px]">{job.to}</td>
                                                 <td className="px-4 py-3 truncate max-w-[260px]">{job.subject}</td>
                                                 <td className="px-4 py-3">
@@ -334,6 +381,7 @@ export default function EmailQueueAdminPage() {
                                 })}
                             </tbody>
                         </table>
+                        </div>
                     </CardContent>
                 </Card>
             )}
