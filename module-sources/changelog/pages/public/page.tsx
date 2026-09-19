@@ -14,9 +14,9 @@ import { PageFrame } from "@/core/sdk/layout";
 import { Badge, Card, CardContent, Pagination, RichContent } from "@/core/sdk/ui";
 import { formatDate, dateLocaleTag } from "@/core/sdk";
 import { getLocale } from "next-intl/server";
-import { changelogTone, changelogTypeLabel } from "../../lib/types";
+import { changelogTone, changelogKindLabel } from "../../lib/types";
 import { entryHref } from "../../lib/entry-page";
-import { readChangelogEntries } from "../../lib/read-entries";
+import { readChangelogEntries, readChangelogKinds } from "../../lib/read-entries";
 
 const PER_PAGE = 10;
 
@@ -31,7 +31,8 @@ export default async function ChangelogPage({ searchParams }: PageProps) {
 
     const t = await getTranslations("changelog");
     const dateTag = dateLocaleTag(await getLocale());
-    const entries = await readChangelogEntries();
+    // The two reads are independent, so they go together.
+    const [entries, kinds] = await Promise.all([readChangelogEntries(), readChangelogKinds()]);
     const pages = Math.max(1, Math.ceil(entries.length / PER_PAGE));
     const rows = entries.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
@@ -63,8 +64,8 @@ export default async function ChangelogPage({ searchParams }: PageProps) {
                                         <Card>
                                             <CardContent className="p-5">
                                                 <div className="flex items-center gap-2 mb-2">
-                                                    <Badge tone={changelogTone(entry.type)}>
-                                                        {changelogTypeLabel(t, entry.type)}
+                                                    <Badge tone={changelogTone(entry.type, kinds)}>
+                                                        {changelogKindLabel(t, entry.type, kinds)}
                                                     </Badge>
                                                     <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded font-mono">
                                                         v{entry.version}

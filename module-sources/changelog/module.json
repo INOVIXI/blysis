@@ -2,7 +2,7 @@
   "id": "changelog",
   "name": "Changelog",
   "description": "Release notes and update history",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
@@ -18,6 +18,14 @@
       "label": "Changelog",
       "path": "/changelog",
       "icon": "History",
+      "group": "content",
+      "section": "publishing",
+      "permission": "changelog.manage"
+    },
+    {
+      "label": "Release kinds",
+      "path": "/changelog/types",
+      "icon": "Tags",
       "group": "content",
       "section": "publishing",
       "permission": "changelog.manage"
@@ -44,6 +52,11 @@
       "path": "/changelog",
       "component": "pages/admin/page.tsx",
       "permission": "changelog.manage"
+    },
+    {
+      "path": "/changelog/types",
+      "component": "pages/admin/types/page.tsx",
+      "permission": "changelog.manage"
     }
   ],
   "api": [
@@ -64,6 +77,12 @@
       "handler": "api/entry/[number]/route.ts",
       "method": "GET",
       "description": "One published release entry in full, for its own page."
+    },
+    {
+      "path": "/changelog/types",
+      "handler": "api/types/route.ts",
+      "description": "The kinds of release this community names (admin).",
+      "permission": "changelog.manage"
     }
   ],
   "hooksEmitted": [
@@ -83,6 +102,7 @@
   "translations": {
     "en": {
       "changelog": {
+        "adm_addKind": "Add a kind",
         "adm_coverHelp": "Shown at the top of the release's own page. The timeline stays a list.",
         "adm_coverLabel": "Cover image",
         "adm_detailsHelp": "Optional. Fill this in and the release gets a page of its own, linked from the timeline.",
@@ -95,6 +115,19 @@
         "adm_field3Label": "Content",
         "adm_field3Placeholder": "What changed in this version?",
         "adm_field4Label": "Type",
+        "adm_kindDeleteConfirm": "Releases already written as this keep saying so, and will show the key instead of a name.",
+        "adm_kindDeleteTitle": "Remove this kind",
+        "adm_kindDeleted": "Removed",
+        "adm_kindKey": "Key",
+        "adm_kindKeyHint": "How a release records this kind. Lower case, no spaces. It cannot be changed later.",
+        "adm_kindName": "Name",
+        "adm_kindSaveFailed": "That could not be saved.",
+        "adm_kindSaved": "Saved",
+        "adm_kindTaken": "A kind with that key already exists.",
+        "adm_kindTone": "Badge",
+        "adm_kinds": "Release Kinds",
+        "adm_kindsHint": "What a release can be called here. Remove one you do not use, or add one of your own.",
+        "adm_kindsNone": "No kinds yet.",
         "adm_subtitle": "Manage changelog entries",
         "adm_title": "Changelog",
         "backToList": "All releases",
@@ -116,6 +149,11 @@
         "readMore": "Read the full note",
         "subtitle": "Latest updates and improvements",
         "title": "Changelog",
+        "tone_danger": "Red",
+        "tone_info": "Blue",
+        "tone_neutral": "Grey",
+        "tone_success": "Green",
+        "tone_warning": "Amber",
         "type_breaking": "Breaking",
         "type_feature": "New",
         "type_fix": "Fixed",
@@ -128,11 +166,12 @@
       },
       "admin": {
         "menu_changelog": "Changelog",
-        "title": "Admin Panel",
-        "subtitle": "Manage your platform settings and content",
         "menu_changelog_changelog": "Changelog",
+        "menu_changelog_release_kinds": "Release Kinds",
+        "module_changelog_description": "Release notes and update history",
         "module_changelog_name": "Changelog",
-        "module_changelog_description": "Release notes and update history"
+        "subtitle": "Manage your platform settings and content",
+        "title": "Admin Panel"
       },
       "nav": {
         "changelog": "Changelog"
@@ -150,6 +189,7 @@
     },
     "tr": {
       "changelog": {
+        "adm_addKind": "Tür ekle",
         "adm_coverHelp": "Sürümün kendi sayfasının başında görünür. Zaman çizelgesi liste olarak kalır.",
         "adm_coverLabel": "Kapak görseli",
         "adm_detailsHelp": "İsteğe bağlı. Doldurursanız sürüm kendi sayfasını alır ve zaman çizelgesinden bağlanır.",
@@ -162,6 +202,19 @@
         "adm_field3Label": "İçerik",
         "adm_field3Placeholder": "Bu versiyonda neler değişti?",
         "adm_field4Label": "Tür",
+        "adm_kindDeleteConfirm": "Bu tür olarak yazılmış sürümler öyle kalmaya devam eder ve ad yerine anahtarı gösterir.",
+        "adm_kindDeleteTitle": "Bu türü kaldır",
+        "adm_kindDeleted": "Kaldırıldı",
+        "adm_kindKey": "Anahtar",
+        "adm_kindKeyHint": "Bir sürümün bu türü nasıl kaydettiği. Küçük harf, boşluksuz. Sonradan değiştirilemez.",
+        "adm_kindName": "Ad",
+        "adm_kindSaveFailed": "Bu kaydedilemedi.",
+        "adm_kindSaved": "Kaydedildi",
+        "adm_kindTaken": "Bu anahtara sahip bir tür zaten var.",
+        "adm_kindTone": "Rozet",
+        "adm_kinds": "Sürüm Türleri",
+        "adm_kindsHint": "Burada bir sürümün ne olarak adlandırılabileceği. Kullanmadığınızı kaldırın ya da kendinizinkini ekleyin.",
+        "adm_kindsNone": "Henüz tür yok.",
         "adm_subtitle": "Değişiklik günlüğü girişlerini yönetin",
         "adm_title": "Değişiklik Günlüğü",
         "backToList": "Tüm sürümler",
@@ -183,6 +236,11 @@
         "readMore": "Notun tamamını oku",
         "subtitle": "Son güncellemeler ve iyileştirmeler",
         "title": "Sürüm Notları",
+        "tone_danger": "Kırmızı",
+        "tone_info": "Mavi",
+        "tone_neutral": "Gri",
+        "tone_success": "Yeşil",
+        "tone_warning": "Turuncu",
         "type_breaking": "Kırıcı",
         "type_feature": "Yeni",
         "type_fix": "Düzeltme",
@@ -195,11 +253,12 @@
       },
       "admin": {
         "menu_changelog": "Değişiklik Günlüğü",
-        "title": "Yönetim Paneli",
-        "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
         "menu_changelog_changelog": "Değişiklik Günlüğü",
+        "menu_changelog_release_kinds": "Sürüm Türleri",
+        "module_changelog_description": "Sürüm notları ve güncelleme geçmişi",
         "module_changelog_name": "Değişiklik Günlüğü",
-        "module_changelog_description": "Sürüm notları ve güncelleme geçmişi"
+        "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
+        "title": "Yönetim Paneli"
       },
       "nav": {
         "changelog": "Değişiklikler"

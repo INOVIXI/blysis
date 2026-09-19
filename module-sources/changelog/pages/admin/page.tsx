@@ -1,11 +1,30 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AdminCrudPage } from "@/core/sdk/admin";
-import { CHANGELOG_TYPES, changelogTypeLabel } from "../../lib/types";
+import { changelogKindLabel, type ChangelogKind } from "../../lib/types";
 
 export default function Page() {
     const t = useTranslations("changelog");
+    /*
+     * The kinds this community names, read from the table rather than from an
+     * array in the source. Six were written in here, and six is not every
+     * community's six; they are managed on a screen of their own now.
+     *
+     * A read that fails leaves the picker empty rather than offering six
+     * words that may no longer be the six - the screen for kinds is where an
+     * operator is told what exists.
+     */
+    const [kinds, setKinds] = useState<ChangelogKind[]>([]);
+    useEffect(() => {
+        let cancelled = false;
+        fetch("/api/v1/changelog/types")
+            .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+            .then((body) => { if (!cancelled) setKinds(body.types ?? []); })
+            .catch((err) => console.error("changelog kinds could not be read", err));
+        return () => { cancelled = true; };
+    }, []);
     return (
         <AdminCrudPage
             title={t("adm_title")}
@@ -27,11 +46,11 @@ export default function Page() {
                     key: "type",
                     label: t("adm_field4Label"),
                     type: "select",
-                    defaultValue: "feature",
-                    // The colour follows the type, so there is no second field
+                    defaultValue: kinds[0]?.key ?? "feature",
+                    // The colour follows the kind, so there is no second field
                     // to keep in step with it - and no default that made every
                     // release on the page the same shade of blue.
-                    options: CHANGELOG_TYPES.map((value) => ({ value, label: changelogTypeLabel(t, value) })),
+                    options: kinds.map((kind) => ({ value: kind.key, label: changelogKindLabel(t, kind.key, kinds) })),
                 },
             ]}
         />

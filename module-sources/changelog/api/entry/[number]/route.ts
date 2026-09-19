@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { readChangelogKinds } from "../../../lib/read-entries";
 import { prisma } from "@/core/sdk/server";
 
 type RouteParams = { params: Promise<{ number: string }> };
@@ -41,5 +42,13 @@ export async function GET(_request: Request, { params }: RouteParams) {
     }
 
     const { isActive: _isActive, publishAt: _publishAt, ...body } = entry;
-    return NextResponse.json({ entry: body });
+    /*
+     * The kinds travel with the entry.
+     *
+     * The page draws a badge whose word and colour come from the kind this
+     * release was written under, and asking a second endpoint for that would
+     * mean a second public route whose only job is to be read by one page -
+     * and a second round trip before the badge settles.
+     */
+    return NextResponse.json({ entry: body, kinds: await readChangelogKinds() });
 }

@@ -3,6 +3,34 @@
 
 // ==================== CHANGELOG ====================
 
+/// A kind of release, as this community names them.
+///
+/// Six were written into the module as an array - feature, improvement, fix,
+/// security, removed, breaking - with a colour and a translation key each.
+/// Six good words, and six is not every community's six: nobody could add
+/// "Known issue" or "Map reset", and nobody could take one away.
+///
+/// A kind an operator adds carries `name`, the word they typed, and nothing
+/// else. The six this module ships carry `nameKey` instead so they stay
+/// translated - the same split `PunishmentScope` makes between a name a
+/// reader sees and a key nothing draws.
+model ChangelogType {
+  id        String   @id @default(cuid())
+  /// What an entry's `type` column holds. Stable; the label may change.
+  key       String   @unique
+  /// The word a reader sees, for a kind somebody here invented.
+  name      String?
+  /// The module's own key, for the six it ships. Wins over `name`.
+  nameKey   String?
+  /// Which badge it wears: neutral, success, warning, danger or info.
+  tone      String   @default("neutral")
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([isActive, order])
+}
+
 model ChangelogEntry {
   id        String   @id @default(cuid())
   /// Stable number in the URL, so renaming a release does not break a link

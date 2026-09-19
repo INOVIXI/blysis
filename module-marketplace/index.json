@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-19",
-  "updatedAt": "2026-09-19T18:55:13Z",
+  "updatedAt": "2026-09-19T23:52:40Z",
   "modules": [
     {
       "id": "announcements",
@@ -209,13 +209,13 @@
           "description": "Sürüm notları ve güncelleme geçmişi"
         }
       },
-      "version": "1.5.2",
+      "version": "1.6.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "History",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-19T23:52:40Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -233,8 +233,8 @@
       },
       "stats": {
         "publicRoutes": 2,
-        "adminRoutes": 1,
-        "apiRoutes": 3,
+        "adminRoutes": 2,
+        "apiRoutes": 4,
         "widgets": 0
       }
     },

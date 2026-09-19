@@ -8,7 +8,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { Badge, Card, CardContent, LoadFailed, RichContent, useLocalDate } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
-import { changelogTone, changelogTypeLabel } from "../../../../lib/types";
+import { changelogTone, changelogKindLabel, type ChangelogKind } from "../../../../lib/types";
 import { entryNumberFrom } from "../../../../lib/entry-page";
 
 interface Entry {
@@ -42,6 +42,12 @@ export default function ChangelogEntryPage() {
     const params = useParams();
     const formatLocalDate = useLocalDate();
     const [entry, setEntry] = useState<Entry | null>(null);
+    /*
+     * The kinds, for the badge's colour and its word. A read that fails
+     * leaves the badge grey with the key in it, which is what an unknown kind
+     * has always looked like.
+     */
+    const [kinds, setKinds] = useState<ChangelogKind[]>([]);
     const [state, setState] = useState<"loading" | "ready" | "failed" | "missing">("loading");
     const [reloadKey, setReloadKey] = useState(0);
 
@@ -54,12 +60,14 @@ export default function ChangelogEntryPage() {
             .then(async (r) => {
                 if (r.status === 404) return { missing: true as const };
                 if (!r.ok) throw new Error("load failed");
-                return r.json() as Promise<{ entry: Entry }>;
+                return r.json() as Promise<{ entry: Entry; kinds?: ChangelogKind[] }>;
             })
             .then((d) => {
                 if (cancelled) return;
                 if ("missing" in d) { setState("missing"); return; }
                 setEntry(d.entry);
+                // They arrive with the entry rather than from a second request.
+                setKinds(d.kinds ?? []);
                 setState("ready");
             })
             .catch(() => { if (!cancelled) setState("failed"); });
@@ -107,13 +115,13 @@ export default function ChangelogEntryPage() {
                 {back}
 
                 {entry.coverImage && (
-                    <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-border bg-muted">
+                    <div className="relative aspect-card w-full overflow-hidden rounded-xl border border-border bg-muted">
                         <Image src={entry.coverImage} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 768px" />
                     </div>
                 )}
 
                 <div className="flex flex-wrap items-center gap-2">
-                    <Badge tone={changelogTone(entry.type)}>{changelogTypeLabel(t, entry.type)}</Badge>
+                    <Badge tone={changelogTone(entry.type, kinds)}>{changelogKindLabel(t, entry.type, kinds)}</Badge>
                     <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded font-mono">
                         v{entry.version}
                     </span>
