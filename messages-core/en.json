@@ -1194,7 +1194,17 @@
     "widgets_saving": "Saving...",
     "widgets_subtitle": "Toggle visibility and reorder homepage sidebar widgets",
     "widgets_title": "Sidebar Widgets",
-    "widgets_visible": "Visible"
+    "widgets_visible": "Visible",
+    "cron_everyMinute": "Every minute",
+    "cron_every5Minutes": "Every 5 minutes",
+    "cron_every15Minutes": "Every 15 minutes",
+    "cron_everyHour": "Every hour",
+    "cron_everyDay": "Every day",
+    "cron_everyWeek": "Every week",
+    "cron_everyMonth": "Every month",
+    "cron_statusRunning": "Running",
+    "cron_statusSucceeded": "Succeeded",
+    "cron_statusFailed": "Failed"
   },
   "footer": {
     "quickLinks": "Quick Links",

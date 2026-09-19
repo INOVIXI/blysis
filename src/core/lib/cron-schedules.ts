@@ -34,3 +34,45 @@ export const SCHEDULE_MS: Record<string, number> = {
     "every-week": 7 * 24 * 60 * 60_000,
     "every-month": 30 * 24 * 60 * 60_000,
 };
+
+/**
+ * The outcomes the scheduler records, and what each of them is called.
+ *
+ * `lastStatus` is a column, and the jobs screen used to set it in a mono
+ * uppercase badge - `OK`, `ERROR` - which is the database talking, not the
+ * site. The same went for the cadence beside it: `every-5-minutes` is what a
+ * manifest writes, not what an operator reads.
+ *
+ * Both sets are closed and both belong to core, so both are named here rather
+ * than at the screen: `a-scheduled-job-says-how-it-went` compares the
+ * statuses named below against the ones the scheduler writes, and a new
+ * outcome that arrives without a word for it fails there instead of reaching
+ * whoever is on call.
+ *
+ * This file stays free of imports so the manifest schema can read the
+ * schedule list without pulling the scheduler and its database client in
+ * behind it. Keys, not strings: the catalogue holds the words.
+ */
+/** `admin` namespace, one per cadence. */
+export const SCHEDULE_NAME_KEY: Record<CronSchedule, string> = {
+    "every-minute": "cron_everyMinute",
+    "every-5-minutes": "cron_every5Minutes",
+    "every-15-minutes": "cron_every15Minutes",
+    "every-hour": "cron_everyHour",
+    "every-day": "cron_everyDay",
+    "every-week": "cron_everyWeek",
+    "every-month": "cron_everyMonth",
+};
+
+/**
+ * `admin` namespace, one per outcome. The outcomes are the keys of this map
+ * rather than a list beside it: a second list would be a second thing to keep
+ * true, and what the set has to agree with is the scheduler, not itself.
+ */
+export const STATUS_NAME_KEY = {
+    "running": "cron_statusRunning",
+    "ok": "cron_statusSucceeded",
+    "error": "cron_statusFailed",
+} as const;
+
+export type CronStatus = keyof typeof STATUS_NAME_KEY;

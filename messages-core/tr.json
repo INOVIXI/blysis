@@ -1194,7 +1194,17 @@
     "widgets_saving": "Kaydediliyor...",
     "widgets_subtitle": "Ana sayfa kenar çubuğu bileşenlerinin görünürlüğünü ve sırasını ayarlayın",
     "widgets_title": "Kenar Çubuğu Bileşenleri",
-    "widgets_visible": "Görünür"
+    "widgets_visible": "Görünür",
+    "cron_everyMinute": "Dakikada bir",
+    "cron_every5Minutes": "5 dakikada bir",
+    "cron_every15Minutes": "15 dakikada bir",
+    "cron_everyHour": "Saatte bir",
+    "cron_everyDay": "Günde bir",
+    "cron_everyWeek": "Haftada bir",
+    "cron_everyMonth": "Ayda bir",
+    "cron_statusRunning": "Çalışıyor",
+    "cron_statusSucceeded": "Başarılı",
+    "cron_statusFailed": "Başarısız"
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",

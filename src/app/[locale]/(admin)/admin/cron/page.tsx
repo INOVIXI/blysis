@@ -7,22 +7,23 @@ import { Loader2, Play, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { useTranslations } from "next-intl";
-import { badgeClassName, type BadgeTone } from "@/core/components/ui/badge";
+import { Badge, type BadgeTone } from "@/core/components/ui/badge";
+import { SCHEDULE_NAME_KEY, STATUS_NAME_KEY, type CronSchedule, type CronStatus } from "@/core/lib/cron-schedules";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { errorMessage } from "@/core/lib/write-result";
 import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface CronJobRow {
     key: string;
-    schedule: string;
+    schedule: CronSchedule;
     lastRunAt: string | null;
-    lastStatus: string | null;
+    lastStatus: CronStatus | null;
     lastError: string | null;
     lastRunMs: number | null;
     nextRunAt: string | null;
 }
 
-const STATUS_TONE: Record<string, BadgeTone> = { ok: "success", error: "danger" };
+const STATUS_TONE: Record<CronStatus, BadgeTone> = { running: "info", ok: "success", error: "danger" };
 
 function formatDuration(ms: number | null): string {
     if (ms === null || ms === undefined) return "-";
@@ -35,6 +36,20 @@ export default function CronAdminPage() {
     // browser disagree about what day a timestamp near midnight is.
     const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
+    /*
+     * A cadence and an outcome are both closed sets core owns, so both have a
+     * word. A token outside either set is a job the scheduler cannot run or a
+     * status it does not write - neither reaches a reader, and showing the
+     * token is the only honest thing left to do with one.
+     */
+    const scheduleName = (schedule: CronSchedule) => {
+        const key = SCHEDULE_NAME_KEY[schedule];
+        return key && t.has(key) ? t(key) : schedule;
+    };
+    const statusName = (status: CronStatus) => {
+        const key = STATUS_NAME_KEY[status];
+        return key && t.has(key) ? t(key) : status;
+    };
     const [jobs, setJobs] = useState<CronJobRow[]>([]);
     const [loading, setLoading] = useState(true);
     const [runningKey, setRunningKey] = useState<string | null>(null);
@@ -136,16 +151,16 @@ export default function CronAdminPage() {
                                         <Fragment key={job.key}>
                                             <tr className="border-t border-border">
                                                 <td className="px-4 py-3 font-mono text-xs">{job.key}</td>
-                                                <td className="px-4 py-3 text-muted-foreground">{job.schedule}</td>
+                                                <td className="px-4 py-3 text-muted-foreground">{scheduleName(job.schedule)}</td>
                                                 <td className="px-4 py-3 text-muted-foreground">{job.lastRunAt ? formatDateTime(job.lastRunAt) : "-"}</td>
                                                 <td className="px-4 py-3">
                                                     {job.lastStatus ? (
-                                                        <span
-                                                            className={badgeClassName(STATUS_TONE[job.lastStatus] ?? "neutral", "uppercase font-mono")}
+                                                        <Badge
+                                                            tone={STATUS_TONE[job.lastStatus] ?? "neutral"}
                                                             title={hasError ? job.lastError ?? "" : undefined}
                                                         >
-                                                            {job.lastStatus}
-                                                        </span>
+                                                            {statusName(job.lastStatus)}
+                                                        </Badge>
                                                     ) : (
                                                         <span className="text-muted-foreground">-</span>
                                                     )}
