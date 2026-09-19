@@ -105,15 +105,25 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        /*
+         * Named one by one rather than spread, so a column is never written
+         * from a field the schema happens to accept. The cost of that is a
+         * list somebody has to remember to add to, and `layout` was never
+         * added: every category made through the panel came out a grid
+         * whatever the operator chose, and the only way to get a comparison
+         * table was to create the shelf and then edit it. `a-shelf-keeps-
+         * what-it-was-given` is what notices the next time.
+         */
         const category = await prisma.category.create({
             data: {
                 name: data.name,
                 slug,
-                description: data.description !== undefined ? data.description : data.description,
+                description: data.description,
                 image: data.image,
                 parentId: data.parentId,
                 order: data.order ?? 0,
                 isActive: data.isActive ?? true,
+                layout: data.layout ?? "grid",
                 visibleAfterProductIds: data.visibleAfterProductIds ?? [],
             },
         });

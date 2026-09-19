@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Button, Card, CardContent, UrlOrFile, Input, Label, RichTextEditor, useConfirm, useFormRoute, NativeSelect, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CheckboxField, UrlOrFile, Input, Label, RichTextEditor, useConfirm, useFormRoute, NativeSelect, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, FolderOpen, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -165,41 +165,75 @@ export default function AdminStoreCategoriesPage() {
 
                 <Card>
                     <CardContent className="p-6">
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid md:grid-cols-2 gap-4">
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {/*
+                              * Three groups with a heading each, rather than
+                              * eight controls in a stack with one of them
+                              * wrapped in a card of its own for no reason a
+                              * reader can see. And nothing tall sits beside
+                              * anything short: the order box used to be
+                              * paired with the picture field, which is three
+                              * buttons, a box and a preview.
+                              */}
+                            <section className="space-y-4">
+                                <h2 className="text-sm font-medium text-muted-foreground border-b border-border pb-2">
+                                    {t("adm_categoryBasics")}
+                                </h2>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <Label>{`${t("adm_name")} *`}</Label>
+                                        <Input
+                                            aria-label={t("adm_name")}
+                                            value={form.name}
+                                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label>{t("adm_parentCategory")}</Label>
+                                        <NativeSelect
+                                            aria-label={t("adm_parentCategory")}
+                                            value={form.parentId}
+                                            onChange={(e) => setForm({ ...form, parentId: e.target.value })} className="w-full"
+                                        >
+                                            <option value="">{t("adm_rootCategory")}</option>
+                                            {rootCategories.map((cat) => (
+                                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                            ))}
+                                        </NativeSelect>
+                                    </div>
+                                </div>
                                 <div>
-                                    <Label>{`${t("adm_name")} *`}</Label>
-                                    <Input
-                                        aria-label={t("adm_name")}
-                                        value={form.name}
-                                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                        required
+                                    <Label>{t("adm_description")}</Label>
+                                    {/*
+                                      * Markdown, because the shop's front page
+                                      * renders it as such - but a shelf's blurb
+                                      * is a sentence, and the editor stood
+                                      * three hundred pixels tall in the middle
+                                      * of this form as though it were the
+                                      * point of the screen.
+                                      */}
+                                    <RichTextEditor
+                                        value={form.description}
+                                        onChange={(value: string) => setForm({ ...form, description: value })}
+                                        minHeight="6rem"
                                     />
+                                    <p className="mt-1 text-xs text-muted-foreground">{t("adm_categoryDescriptionHint")}</p>
                                 </div>
-                                <div>
-                                    <Label>{t("adm_parentCategory")}</Label>
-                                    <NativeSelect
-                                        aria-label={t("adm_parentCategory")}
-                                        value={form.parentId}
-                                        onChange={(e) => setForm({ ...form, parentId: e.target.value })} className="w-full"
-                                    >
-                                        <option value="">{t("adm_rootCategory")}</option>
-                                        {rootCategories.map((cat) => (
-                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                        ))}
-                                    </NativeSelect>
-                                </div>
-                            </div>
-                            <div>
-                                <Label>{t("adm_description")}</Label>
-                                <RichTextEditor
-                                    value={form.description}
-                                    onChange={(value: string) => setForm({ ...form, description: value })}
+                                <CheckboxField
+                                    checked={form.isActive}
+                                    onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+                                    label={t("adm_categoryActive")}
+                                    description={t("adm_categoryActiveHint")}
                                 />
-                            </div>
-                            <div className="grid md:grid-cols-2 gap-4">
+                            </section>
+
+                            <section className="space-y-4">
+                                <h2 className="text-sm font-medium text-muted-foreground border-b border-border pb-2">
+                                    {t("adm_categoryAppearance")}
+                                </h2>
                                 <div>
-                                    <Label>{t("adm_imageUrl")}</Label>
+                                    <Label>{t("adm_categoryImage")}</Label>
                                     <UrlOrFile
                                         value={form.image || ""}
                                         onChange={(v) => setForm({ ...form, image: v })}
@@ -207,27 +241,33 @@ export default function AdminStoreCategoriesPage() {
                                     />
                                 </div>
                                 <div>
+                                    <Label>{t("adm_layout")}</Label>
+                                    <NativeSelect
+                                        aria-label={t("adm_layout")}
+                                        value={form.layout}
+                                        onChange={(e) => setForm({ ...form, layout: e.target.value })}
+                                    >
+                                        <option value="grid">{t("adm_layoutGrid")}</option>
+                                        <option value="table">{t("adm_layoutTable")}</option>
+                                    </NativeSelect>
+                                    <p className="mt-1 text-xs text-muted-foreground">{t("adm_layoutHint")}</p>
+                                </div>
+                                <div>
                                     <Label>{t("adm_sortOrder")}</Label>
+                                    {/* The measure is on the control, not on
+                                        the screen: a number nobody types four
+                                        digits into does not want a box the
+                                        width of the panel. */}
                                     <Input
                                         aria-label={t("adm_sortOrder")}
                                         type="number"
+                                        className="max-w-40"
                                         value={form.order}
                                         onChange={(e) => setForm({ ...form, order: e.target.value })}
                                     />
                                 </div>
-                            </div>
-                            <div>
-                                <Label>{t("adm_layout")}</Label>
-                                <NativeSelect
-                                    aria-label={t("adm_layout")}
-                                    value={form.layout}
-                                    onChange={(e) => setForm({ ...form, layout: e.target.value })}
-                                >
-                                    <option value="grid">{t("adm_layoutGrid")}</option>
-                                    <option value="table">{t("adm_layoutTable")}</option>
-                                </NativeSelect>
-                                <p className="mt-1 text-xs text-muted-foreground">{t("adm_layoutHint")}</p>
-                            </div>
+                            </section>
+
                             <RequirementFields
                                 value={{
                                     requiresProductIds: form.visibleAfterProductIds,

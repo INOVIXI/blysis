@@ -12,6 +12,12 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.2.0 - `RichTextEditor` takes `minHeight`. Three hundred pixels is right
+ * for an article and wrong for a sentence: on the shop's shelf form the
+ * editor stood in the middle of the page as though a category's one-line
+ * blurb were the point of the screen. A style rather than a class, because a
+ * class assembled at runtime is a class Tailwind never sees.
+ *
  * 5.1.0 - `FilterTabs` joins `@/core/sdk/admin`, and `BulkBar` takes `idle`.
  * Three screens drew a strip that narrows a list to one named kind and all
  * three drew it differently. The moderation queue set its count in a
@@ -471,4 +477,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.1.0";
+export const CORE_API_VERSION = "5.2.0";

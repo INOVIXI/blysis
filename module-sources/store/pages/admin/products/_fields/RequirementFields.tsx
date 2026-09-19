@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Card, CardContent, CardHeader, CardTitle, CheckboxField, LoadFailed } from "@/core/sdk/ui";
+import { Card, CardContent, CardHeader, CardTitle, CheckboxField, ListControls, LoadFailed } from "@/core/sdk/ui";
 import { choosableProducts, type RequirementValue } from "./requirement-payload";
 
 /**
@@ -43,6 +43,7 @@ export function RequirementFields({ value, onChange, selfId, title, hint, hideAn
     const [products, setProducts] = useState<Choice[]>([]);
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
+    const [search, setSearch] = useState("");
     const set = (patch: Partial<RequirementValue>) => onChange({ ...value, ...patch });
 
     useEffect(() => {
@@ -69,6 +70,20 @@ export function RequirementFields({ value, onChange, selfId, title, hint, hideAn
     }, [reloadKey]);
 
     const offered = choosableProducts(products, selfId);
+    /*
+     * Two hundred names in a scrolling box, on all three screens that draw
+     * this. A shop with a hundred products makes picking one a scroll, and
+     * this is the shape core's rule about a list that grows is written for.
+     *
+     * The list is already in the browser, so the term is matched here. What
+     * is ticked is never narrowed away: a product chosen and then searched
+     * past is still chosen, and hiding it would read as having lost it.
+     */
+    const term = search.trim().toLocaleLowerCase();
+    const shown = term === ""
+        ? offered
+        : offered.filter((product) =>
+            product.name.toLocaleLowerCase().includes(term) || value.requiresProductIds.includes(product.id));
     const toggle = (id: string) =>
         set({
             requiresProductIds: value.requiresProductIds.includes(id)
@@ -89,8 +104,14 @@ export function RequirementFields({ value, onChange, selfId, title, hint, hideAn
                     <p className="text-sm text-muted-foreground">{t("adm_requiresNothingToPick")}</p>
                 ) : (
                     <>
+                        <ListControls
+                            search={{ value: search, onChange: setSearch, placeholder: t("adm_searchProducts") }}
+                        />
+                        {shown.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">{t("adm_noProductMatches")}</p>
+                        ) : (
                         <div className="max-h-64 space-y-2 overflow-y-auto rounded-md border border-border p-3">
-                            {offered.map((product) => (
+                            {shown.map((product) => (
                                 <CheckboxField
                                     key={product.id}
                                     id={`requires-${product.id}`}
@@ -101,6 +122,7 @@ export function RequirementFields({ value, onChange, selfId, title, hint, hideAn
                                 />
                             ))}
                         </div>
+                        )}
 
                         {!hideAnySwitch && (
                             <CheckboxField

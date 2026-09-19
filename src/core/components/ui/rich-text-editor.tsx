@@ -21,6 +21,15 @@ interface RichTextEditorProps {
      * named nothing.
      */
     labelledBy?: string;
+    /**
+     * How tall the writing area starts, as a CSS length.
+     *
+     * Three hundred pixels is right for an article and wrong for a sentence:
+     * on the shelf form it stood in the middle of the page as though the
+     * blurb were the point of the screen. A style rather than a class,
+     * because a class assembled at runtime is a class Tailwind never sees.
+     */
+    minHeight?: string;
 }
 
 /**
@@ -46,6 +55,7 @@ export function RichTextEditor({
     placeholder,
     className = "",
     labelledBy,
+    minHeight = "300px",
 }: RichTextEditorProps) {
     const t = useTranslations("common");
     const textareaId = useId();
@@ -152,7 +162,7 @@ export function RichTextEditor({
             {previewing ? (
                 /* The same minimum height as the textarea, so turning the
                    preview on and off does not move the page under the writer. */
-                <div className="blysis-content min-h-[300px] px-4 py-3"
+                <div className="blysis-content px-4 py-3" style={{ minHeight }}
                     dangerouslySetInnerHTML={{ __html: renderMarkdown(value) }} />
             ) : (
                 <textarea
@@ -163,8 +173,9 @@ export function RichTextEditor({
                     placeholder={placeholder ?? t("writeContentHere")}
                     aria-labelledby={labelledBy}
                     spellCheck
+                    style={{ minHeight }}
                     className={cn(
-                        "min-h-[300px] w-full resize-y rounded-b-md bg-transparent px-4 py-3",
+                        "w-full resize-y rounded-b-md bg-transparent px-4 py-3",
                         "font-mono text-sm leading-relaxed text-foreground",
                         // The ring is inset because the textarea fills the
                         // panel it sits in; drawn outside, it would be clipped

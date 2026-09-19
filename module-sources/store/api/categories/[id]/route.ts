@@ -73,10 +73,6 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         }
     }
 
-    if (typeof data.description === "string") {
-        data.description = data.description;
-    }
-
     if (data.name && !data.slug) {
         const newSlug = generateSlug(data.name as string);
         const slugExists = await prisma.category.findFirst({
