@@ -76,15 +76,29 @@ describe("a boolean field", () => {
         expect(named).toHaveLength(1);
     });
 
-    it("stands as tall as the control it sits beside, and at the same height", async () => {
-        // jsdom has no layout, so the agreement is read off the box the
-        // toggle is drawn in: an input's height, pushed to the foot of the
-        // cell, which is where the input in the cell beside it ends.
+    it("is not asked to line up with a control of another height", async () => {
+        /*
+         * This used to read `justify-end`: the toggle was pushed to the foot
+         * of its cell so that it landed where the input beside it ended. That
+         * was a remedy for the wrong thing. The shell poured every field into
+         * one grid, so what sat beside a toggle was whatever happened to be
+         * declared next, and bottom-aligning it only chose which of the two
+         * misalignments to have.
+         *
+         * `form-rows` decides the rows now, and a switch shares one only with
+         * another switch. There is nothing of another height to line up with,
+         * so there is nothing to push. The input-height box stays, because
+         * that is what keeps a row of switches the same height as the rows
+         * above and below it.
+         */
         const { container } = draw();
         await screen.findByRole("checkbox", { name: "Active" });
         const box = container.querySelector("[data-field='isActive']") as HTMLElement;
         expect(box).toBeTruthy();
-        expect(box.className).toContain("justify-end");
         expect(box.querySelector(".h-10")).toBeTruthy();
+
+        const row = box.parentElement as HTMLElement;
+        const beside = [...row.querySelectorAll("[data-field]")].filter((el) => el !== box);
+        expect(beside.every((el) => el.querySelector('input[type="checkbox"]'))).toBe(true);
     });
 });

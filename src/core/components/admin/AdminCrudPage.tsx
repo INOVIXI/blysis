@@ -26,6 +26,7 @@ import { BulkBar } from "@/core/components/admin/BulkBar";
 import { RowActions } from "@/core/components/admin/RowActions";
 import { ReferencePicker } from "@/core/components/admin/ReferencePicker";
 import { deleteEach } from "@/core/lib/bulk-delete";
+import { formSections } from "@/core/lib/form-rows";
 import { headerState, narrowTo, pickAll, pickNone, togglePick, type Selection } from "@/core/lib/bulk-selection";
 
 export interface CrudField {
@@ -75,6 +76,17 @@ export interface CrudField {
      * label nobody understands and a feature nobody finds.
      */
     description?: string;
+    /**
+     * A heading to stand this field, and the ones declared beside it, under.
+     *
+     * A form of nine fields with no structure is nine questions in a row, and
+     * the announcement screen was exactly that: whether it can be dismissed
+     * sat between the kind of announcement and the paths it appears on. Which
+     * fields answer the same question is something only the screen knows, so
+     * the screen says it, and consecutive fields naming the same heading
+     * become one section.
+     */
+    group?: string;
 }
 
 interface AdminCrudPageProps {
@@ -322,13 +334,37 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
      * every field would find rows for a reason the screen does not show,
      * which reads as the search being broken.
      */
+    /**
+     * The line under a row's name.
+     *
+     * When it names a field that offers choices, what the database holds is a
+     * value and what the screen calls it is a label - so the list printed
+     * `info` under an announcement whose form, one click away, calls that
+     * "Info (Blue)". The form already knows the names; the list only has to
+     * read them.
+     *
+     * A value no option matches is shown as it stands: a free text column has
+     * no names to choose between, and blanking the line would lose it.
+     *
+     * Defined once because the search reads it too. A row an operator can see
+     * by its second line and cannot find by typing it is a search that looks
+     * broken.
+     */
+    const secondLine = (item: Record<string, unknown>): string => {
+        if (secondaryRender) return secondaryRender(item);
+        if (!secondaryField) return "";
+        const value = String(item[secondaryField] ?? "");
+        const options = fields.find((f) => f.key === secondaryField)?.options;
+        return options?.find((o) => o.value === value)?.label ?? value;
+    };
+
     const term = search.trim().toLocaleLowerCase();
     const shown = term === ""
         ? items
         : items.filter((item) => {
             const lines = [
                 String(item[displayField] ?? ""),
-                secondaryRender ? secondaryRender(item) : secondaryField ? String(item[secondaryField] ?? "") : "",
+                secondLine(item),
             ];
             return lines.some((line) => line.toLocaleLowerCase().includes(term));
         });
@@ -360,31 +396,39 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
 
                 <Card>
                     <CardContent className="p-6">
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid md:grid-cols-2 gap-4">
-                                {fields.map((field) => {
-                                    const fullWidth = field.type === "textarea" || field.type === "richtext" || field.type === "file" || field.type === "image";
-                                    const namesItself = field.type === "toggle";
-                                    return (
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {formSections(fields, (f) => f.type, (f) => f.group).map((section, index) => (
+                                <section key={section.group ?? `_${index}`} className="space-y-4">
+                                    {section.group && (
+                                        <h2 className="text-sm font-medium text-muted-foreground border-b border-border pb-2">
+                                            {section.group}
+                                        </h2>
+                                    )}
+                                    {section.rows.map((row) => (
+                                        // A row of one is one column wide, so there is
+                                        // no cell beside it left to sit empty.
                                         <div
-                                            key={field.key}
-                                            data-field={field.key}
-                                            className={cn(
-                                                fullWidth && "md:col-span-2",
-                                                namesItself && "flex flex-col justify-end",
-                                            )}
+                                            key={row[0].key}
+                                            className={cn("grid gap-4", row.length > 1 && "md:grid-cols-2")}
                                         >
-                                            {!namesItself && (
-                                                <Label>{field.label} {field.required && <span className="text-destructive">*</span>}</Label>
-                                            )}
-                                            {renderField(field)}
-                                            {field.description && (
-                                                <p className="text-xs text-muted-foreground mt-1">{field.description}</p>
-                                            )}
+                                            {row.map((field) => {
+                                                const namesItself = field.type === "toggle";
+                                                return (
+                                                    <div key={field.key} data-field={field.key}>
+                                                        {!namesItself && (
+                                                            <Label>{field.label} {field.required && <span className="text-destructive">*</span>}</Label>
+                                                        )}
+                                                        {renderField(field)}
+                                                        {field.description && (
+                                                            <p className="text-xs text-muted-foreground mt-1">{field.description}</p>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
-                                    );
-                                })}
-                            </div>
+                                    ))}
+                                </section>
+                            ))}
                             <div className="flex gap-2">
                                 <Button type="submit" disabled={saving}>
                                     {saving ? <><Loader2 className="w-4 h-4 animate-spin" /> {ct("crud_saving")}</> : editingId ? ct("crud_saveChanges") : ct("crud_create")}
@@ -452,10 +496,8 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
                                     />
                                     <div className="flex-1 min-w-0">
                                         <p className="font-medium">{String(item[displayField] || "")}</p>
-                                        {secondaryRender ? (
-                                            <p className="text-sm text-muted-foreground">{secondaryRender(item)}</p>
-                                        ) : secondaryField ? (
-                                            <p className="text-sm text-muted-foreground">{String(item[secondaryField] || "")}</p>
+                                        {secondLine(item) ? (
+                                            <p className="text-sm text-muted-foreground">{secondLine(item)}</p>
                                         ) : null}
                                     </div>
                                     <div className="flex items-center gap-1">
