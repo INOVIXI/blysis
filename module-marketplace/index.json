@@ -2319,7 +2319,7 @@
       },
       "stats": {
         "publicRoutes": 1,
-        "adminRoutes": 1,
+        "adminRoutes": 2,
         "apiRoutes": 3,
         "widgets": 0
       }

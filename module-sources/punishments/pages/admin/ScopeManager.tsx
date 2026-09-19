@@ -9,8 +9,6 @@ import {
     Button,
     Card,
     CardContent,
-    CardHeader,
-    CardTitle,
     CheckboxField,
     Input,
     Label,
@@ -144,10 +142,6 @@ export function ScopeManager() {
 
     return (
         <Card className="mb-6">
-            <CardHeader>
-                <CardTitle>{t("adm_scopes")}</CardTitle>
-                <p className="text-sm text-muted-foreground">{t("adm_scopesHint")}</p>
-            </CardHeader>
             <CardContent className="space-y-4">
                 {scopes.length === 0 ? (
                     <p className="text-sm text-muted-foreground">{t("adm_noScopes")}</p>

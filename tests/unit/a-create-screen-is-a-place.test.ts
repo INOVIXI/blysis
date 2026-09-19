@@ -66,11 +66,47 @@ function unfoldsAForm(source: string): string | null {
     for (const m of source.matchAll(BOOLEAN_STATE)) {
         const name = m[1];
         for (const g of source.matchAll(new RegExp(`\\{${name}\\s*&&\\s*\\(`, "g"))) {
-            const window = source.slice((g.index ?? 0) + g[0].length, (g.index ?? 0) + g[0].length + 2500);
-            if (/<Input\b|<Textarea\b|<RichTextEditor\b/.test(window)) return name;
+            const open = (g.index ?? 0) + g[0].length - 1;
+            const hidden = behind(source, open);
+            /*
+             * A dialog is not a create screen unfolded. The admin's own
+             * account-deletion dialog asks the operator to type a username
+             * before it will go ahead, so it holds an `<Input>` - and what it
+             * is is a confirmation, which belongs over the page rather than
+             * as a page. It announces itself as one.
+             */
+            if (/role="dialog"|aria-modal|<ModalLayer\b/.test(hidden)) continue;
+            if (/<Input\b|<Textarea\b|<RichTextEditor\b/.test(hidden)) return name;
         }
     }
     return null;
+}
+
+/**
+ * What the flag actually hides: from its `(` to the matching `)`.
+ *
+ * This was "the next two thousand five hundred characters", which is the same
+ * fixed-window mistake two other gates in this directory record having fixed.
+ * It reported the punishments screen, where a one-line `{scopesUnread && (<p
+ * .../>)}` sits a few hundred characters above the duration box - a sibling,
+ * not something the flag hides. A window cannot tell those apart; the
+ * brackets can.
+ */
+function behind(source: string, open: number): string {
+    let depth = 0;
+    let quote: string | null = null;
+    for (let i = open; i < source.length; i++) {
+        const c = source[i];
+        if (quote) {
+            if (c === "\\") { i++; continue; }
+            if (c === quote) quote = null;
+            continue;
+        }
+        if (c === '"' || c === "'" || c === "`") { quote = c; continue; }
+        if (c === "(") depth++;
+        else if (c === ")") { depth--; if (depth === 0) return source.slice(open, i + 1); }
+    }
+    return source.slice(open);
 }
 
 function walk(dir: string, out: string[] = []): string[] {

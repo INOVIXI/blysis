@@ -18,6 +18,13 @@ export const punishmentCreateSchema = z.object({
     duration: z.string().max(64).optional().nullable(),
     punishedBy: z.string().max(64).optional().nullable(),
     expiresAt: z.iso.datetime({ offset: true }).optional().nullable(),
+    /**
+     * Where this happened, when the operator says. A scope carries
+     * `restrictsSite`, which is what decides whether a ban on one game mode
+     * also closes the website account - so a scope the panel could declare
+     * and never attach was a setting with nothing to apply it to.
+     */
+    scopeId: z.string().max(64).optional().nullable(),
 });
 
 /** What an admin may change afterwards: the reason, the clock, or revoke it. */

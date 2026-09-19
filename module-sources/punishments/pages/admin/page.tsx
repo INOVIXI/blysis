@@ -10,7 +10,6 @@ import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
 import { deleteEach } from "@/core/sdk";
 import { punishmentStatus, type PunishmentStatus } from "../../lib/status";
 import { PUNISHMENT_TYPES, canonicalType } from "../../lib/punishment-types";
-import { ScopeManager } from "./ScopeManager";
 
 interface Punishment {
     id: string;
@@ -72,8 +71,35 @@ export default function AdminPunishmentsPage() {
         type: "ban",
         reason: "",
         duration: "",
-        expiresAt: "",
+        scopeId: "",
     });
+
+    /** The places an operator has declared, for the picker on the form. */
+    const [scopes, setScopes] = useState<{ id: string; name: string }[]>([]);
+    /*
+     * A read that failed is not "there are no places". Without this the
+     * picker would offer only Everywhere and an operator would conclude
+     * nobody had declared any, which is a different and wrong thing.
+     */
+    const [scopesUnread, setScopesUnread] = useState(false);
+
+    // The places the picker offers. Declared on their own screen; read here
+    // because a punishment has to be able to name one.
+    useEffect(() => {
+        let cancelled = false;
+        fetch("/api/v1/punishments/scopes")
+            .then((res) => {
+                if (!res.ok) throw new Error(String(res.status));
+                return res.json();
+            })
+            .then((body) => { if (!cancelled) setScopes(body.scopes ?? []); })
+            .catch((err) => {
+                if (cancelled) return;
+                setScopesUnread(true);
+                console.error("punishment places could not be read", err);
+            });
+        return () => { cancelled = true; };
+    }, []);
 
     // The filter and the paging both belong to the query. Filtering a fetched
     // page in the browser hid every match that fell outside it and still
@@ -123,16 +149,22 @@ export default function AdminPunishmentsPage() {
                     type: form.type,
                     reason: form.reason || null,
                     duration: form.duration || null,
-                    expiresAt: form.expiresAt || null,
+                    scopeId: form.scopeId || null,
                 }),
             });
-            if (!res.ok) throw new Error("create failed");
+            if (!res.ok) {
+                // The one refusal an operator can act on: the length was not
+                // one this understands, and a generic "something failed"
+                // would leave them retyping the same thing.
+                const said = await res.json().catch(() => null) as { code?: string } | null;
+                throw new Error(said?.code === "bad_duration" ? "bad_duration" : "create failed");
+            }
             toast.success(t("adm_createdToast"));
-            setForm({ playerName: "", type: "ban", reason: "", duration: "", expiresAt: "" });
+            setForm({ playerName: "", type: "ban", reason: "", duration: "", scopeId: "" });
             await load();
             closeForm();
-        } catch {
-            toast.error(t("adm_error"));
+        } catch (err) {
+            toast.error(err instanceof Error && err.message === "bad_duration" ? t("adm_badDuration") : t("adm_error"));
         } finally {
             setSaving(false);
         }
@@ -211,10 +243,11 @@ export default function AdminPunishmentsPage() {
                     backLabel={commonT("back")}
                 />
 
-                <ScopeManager />
-
                 <Card>
                     <CardContent className="p-6 space-y-3">
+                        <h2 className="text-sm font-medium text-muted-foreground border-b border-border pb-2">
+                            {t("adm_whoAndWhat")}
+                        </h2>
                         <div className="grid md:grid-cols-2 gap-3">
                             <div>
                                 <Label>{t("adm_playerName")}</Label>
@@ -242,14 +275,50 @@ export default function AdminPunishmentsPage() {
                                 <Label>{t("adm_reason")}</Label>
                                 <Input aria-label={t("adm_reason")} value={form.reason} onChange={e => setForm(f => ({ ...f, reason: e.target.value }))} />
                             </div>
+                            {/*
+                              * Where, which is what a place is for: a scope
+                              * carries `restrictsSite`, and that is the rule
+                              * deciding whether a ban on one game mode also
+                              * closes the website account. The manager could
+                              * declare places and this form could not use
+                              * one, so the column was only ever filled by a
+                              * game server reporting in.
+                              */}
                             <div>
-                                <Label>{t("adm_duration")}</Label>
-                                <Input aria-label={t("adm_duration")} value={form.duration} onChange={e => setForm(f => ({ ...f, duration: e.target.value }))} placeholder="7d" />
+                                <Label>{t("adm_where")}</Label>
+                                <NativeSelect
+                                    aria-label={t("adm_where")} className="w-full"
+                                    value={form.scopeId}
+                                    onChange={e => setForm(f => ({ ...f, scopeId: e.target.value }))}
+                                >
+                                    <option value="">{t("adm_whereAnywhere")}</option>
+                                    {scopes.map(s => (
+                                        <option key={s.id} value={s.id}>{s.name}</option>
+                                    ))}
+                                </NativeSelect>
+                                <p className="mt-1 text-xs text-muted-foreground">{t("adm_whereHint")}</p>
+                                {scopesUnread && (
+                                    <p className="mt-1 text-xs text-destructive">{t("adm_placesUnread")}</p>
+                                )}
                             </div>
-                            <div className="md:col-span-2">
-                                <Label>{t("adm_expiresAt")}</Label>
-                                <Input aria-label={t("adm_expiresAt")} type="datetime-local" value={form.expiresAt} onChange={e => setForm(f => ({ ...f, expiresAt: e.target.value }))} />
-                            </div>
+                        </div>
+
+                        <h2 className="text-sm font-medium text-muted-foreground border-b border-border pb-2">
+                            {t("adm_howLong")}
+                        </h2>
+                        {/*
+                          * One answer, not two. There used to be a duration
+                          * box and, below it, a separate "End date
+                          * (optional)" - and only the second one did
+                          * anything: `duration` was stored as text and read
+                          * by nothing, so `7d` with the date box left alone
+                          * was a permanent ban that showed as Active for
+                          * ever. The shorthand decides now.
+                          */}
+                        <div>
+                            <Label>{t("adm_duration")}</Label>
+                            <Input aria-label={t("adm_duration")} value={form.duration} onChange={e => setForm(f => ({ ...f, duration: e.target.value }))} placeholder="7d" />
+                            <p className="mt-1 text-xs text-muted-foreground">{t("adm_durationHint")}</p>
                         </div>
                         <div className="flex justify-end gap-2">
                             <Button variant="outline" onClick={closeForm}>{commonT("cancel")}</Button>

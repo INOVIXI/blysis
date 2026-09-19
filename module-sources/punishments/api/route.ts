@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pageParams, isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
+import { parseDuration } from "../lib/duration";
 import { punishmentCreateSchema } from "../lib/validations";
 import { canonicalType } from "../lib/punishment-types";
 import { readPunishments } from "../lib/read-punishments";
@@ -51,7 +52,23 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
         return NextResponse.json({ error: "playerName and type required" }, { status: 400 });
     }
-    const { playerName, playerUuid, type, reason, duration, punishedBy, expiresAt } = parsed.data;
+    const { playerName, playerUuid, type, reason, duration, punishedBy, expiresAt, scopeId } = parsed.data;
+
+    /*
+     * When it ends, from the length that was asked for.
+     *
+     * `duration` was stored verbatim and read by nothing: the status is
+     * decided from `expiresAt`, which only ever came from a second box below
+     * the duration field. So `7d` with that box left alone was a permanent
+     * ban that showed as Active for ever. The shorthand decides now, and an
+     * explicit end date still wins where one is given - a game server
+     * reporting in sends the date it worked out itself.
+     */
+    const ends = parseDuration(duration, new Date());
+    if (ends === undefined) {
+        return NextResponse.json({ error: "duration is not a length", code: "bad_duration" }, { status: 400 });
+    }
+    const endsAt = expiresAt ? new Date(expiresAt) : ends;
     // Stored in this module's own words when it recognises them, so the
     // filters and the labels have one thing to match.
     const storedType = canonicalType(type) ?? type;
@@ -74,7 +91,8 @@ export async function POST(request: NextRequest) {
             reason: reason || null,
             duration: duration || null,
             punishedBy: punishedBy || null,
-            expiresAt: expiresAt ? new Date(expiresAt) : null,
+            scopeId: scopeId || null,
+            expiresAt: endsAt,
         },
     });
 

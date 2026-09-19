@@ -26,6 +26,11 @@
       "path": "/punishments",
       "component": "pages/admin/page.tsx",
       "permission": "punishments.manage"
+    },
+    {
+      "path": "/punishments/places",
+      "component": "pages/admin/places/page.tsx",
+      "permission": "punishments.manage"
     }
   ],
   "menu": [
@@ -33,6 +38,13 @@
       "label": "Punishments",
       "path": "/punishments",
       "icon": "Shield",
+      "group": "gaming",
+      "permission": "punishments.manage"
+    },
+    {
+      "label": "Punishment places",
+      "path": "/punishments/places",
+      "icon": "MapPin",
       "group": "gaming",
       "permission": "punishments.manage"
     }
@@ -84,12 +96,14 @@
     "en": {
       "admin": {
         "menu_punishments": "Punishments",
+        "menu_punishments_punishment_places": "Places",
         "menu_punishments_punishments": "All Punishments",
-        "module_punishments_name": "Punishments",
-        "module_punishments_description": "Bans, mutes and warnings against members, issued here or reported by a module that watches somewhere else"
+        "module_punishments_description": "Bans, mutes and warnings against members, issued here or reported by a module that watches somewhere else",
+        "module_punishments_name": "Punishments"
       },
       "punishments": {
         "active": "Active",
+        "adm_badDuration": "That is not a length. Use 30m, 24h, 7d, 2w, 3M, or permanent.",
         "adm_create": "Create",
         "adm_createdToast": "Punishment issued",
         "adm_creating": "Creating…",
@@ -100,7 +114,8 @@
         "adm_deleteScopeConfirm": "The punishments stay and go back to restricting this site. Remake the place to pick them up again.",
         "adm_deletedPartly": "{deleted} of {total} deleted.",
         "adm_deletedToast": "Punishment deleted",
-        "adm_duration": "Duration (e.g. 7d, 24h, permanent)",
+        "adm_duration": "Length",
+        "adm_durationHint": "How long it lasts: 30m, 24h, 7d, 2w, 3M, or permanent. Leave empty for permanent.",
         "adm_empty": "No punishments yet. Create one or wait for plugin webhooks.",
         "adm_error": "Operation failed",
         "adm_expiresAt": "Expires at (optional)",
@@ -108,9 +123,13 @@
         "adm_filterAll": "All",
         "adm_filterExpired": "Expired",
         "adm_filterRevoked": "Revoked",
+        "adm_howLong": "How long",
+        "adm_managePlaces": "Manage places",
         "adm_newPunishment": "New Punishment",
         "adm_newScope": "New place",
         "adm_noScopes": "No places yet. The whole record counts as one.",
+        "adm_placesTitle": "Places",
+        "adm_placesUnread": "The places could not be read, so only Everywhere is offered.",
         "adm_playerName": "Member or reported name",
         "adm_playerNameHelp": "A member's username links the punishment to their account. A name from somewhere else is recorded as it was reported.",
         "adm_reason": "Reason",
@@ -141,6 +160,10 @@
         "adm_unclaimed": "Arriving under a name nobody has claimed",
         "adm_unclaimedHint": "A game server has been reporting these. Make a place with one as its reported name to take them.",
         "adm_unrevoke": "Restore",
+        "adm_where": "Where",
+        "adm_whereAnywhere": "Everywhere",
+        "adm_whereHint": "A place carries its own rule about whether a punishment there also restricts this website.",
+        "adm_whoAndWhat": "Who and what",
         "allScopes": "Everywhere",
         "allStatuses": "Any status",
         "allTypes": "Any kind",
@@ -197,12 +220,14 @@
     "tr": {
       "admin": {
         "menu_punishments": "Cezalar",
+        "menu_punishments_punishment_places": "Yerler",
         "menu_punishments_punishments": "Tüm Cezalar",
-        "module_punishments_name": "Cezalar",
-        "module_punishments_description": "Üyelere verilen yasak, susturma ve uyarılar; burada verilenler ve başka bir yeri izleyen modülün bildirdikleri"
+        "module_punishments_description": "Üyelere verilen yasak, susturma ve uyarılar; burada verilenler ve başka bir yeri izleyen modülün bildirdikleri",
+        "module_punishments_name": "Cezalar"
       },
       "punishments": {
         "active": "Aktif",
+        "adm_badDuration": "Bu bir süre değil. 30m, 24h, 7d, 2w, 3M ya da permanent kullanın.",
         "adm_create": "Oluştur",
         "adm_createdToast": "Ceza verildi",
         "adm_creating": "Oluşturuluyor…",
@@ -213,7 +238,8 @@
         "adm_deleteScopeConfirm": "Cezalar kalır ve yeniden bu siteyi kısıtlamaya başlar. Yeri tekrar oluşturursan onları geri alır.",
         "adm_deletedPartly": "{total} tanesinden {deleted} tanesi silindi.",
         "adm_deletedToast": "Ceza silindi",
-        "adm_duration": "Süre (örn. 7d, 24h, permanent)",
+        "adm_duration": "Süre",
+        "adm_durationHint": "Ne kadar sürer: 30m, 24h, 7d, 2w, 3M ya da permanent. Süresiz için boş bırakın.",
         "adm_empty": "Henüz ceza yok. Yeni bir tane oluştur veya plugin webhook'larını bekle.",
         "adm_error": "İşlem başarısız",
         "adm_expiresAt": "Bitiş tarihi (opsiyonel)",
@@ -221,9 +247,13 @@
         "adm_filterAll": "Tümü",
         "adm_filterExpired": "Süresi dolmuş",
         "adm_filterRevoked": "İptal edilmiş",
+        "adm_howLong": "Ne kadar",
+        "adm_managePlaces": "Yerleri yönet",
         "adm_newPunishment": "Yeni Ceza",
         "adm_newScope": "Yeni yer",
         "adm_noScopes": "Henüz yer yok. Kaydın tamamı tek bir yer sayılır.",
+        "adm_placesTitle": "Yerler",
+        "adm_placesUnread": "Yerler okunamadı, bu yüzden yalnızca Her yerde sunuluyor.",
         "adm_playerName": "Üye veya bildirilen ad",
         "adm_playerNameHelp": "Bir üyenin kullanıcı adı cezayı o hesaba bağlar. Başka bir yerden gelen ad, bildirildiği gibi kaydedilir.",
         "adm_reason": "Sebep",
@@ -254,6 +284,10 @@
         "adm_unclaimed": "Kimsenin sahiplenmediği bir adla geliyor",
         "adm_unclaimedHint": "Bir oyun sunucusu bunları bildiriyor. Bildirilen adı bunlardan biri olan bir yer oluştur ve sahiplen.",
         "adm_unrevoke": "Geri Al",
+        "adm_where": "Nerede",
+        "adm_whereAnywhere": "Her yerde",
+        "adm_whereHint": "Bir yer, oradaki bir cezanın bu siteyi de kısıtlayıp kısıtlamayacağına dair kendi kuralını taşır.",
+        "adm_whoAndWhat": "Kime ve ne",
         "allScopes": "Her yer",
         "allStatuses": "Her durum",
         "allTypes": "Her tür",
