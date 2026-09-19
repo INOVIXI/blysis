@@ -1166,7 +1166,11 @@
     "cron_statusRunning": "Çalışıyor",
     "cron_statusSucceeded": "Başarılı",
     "cron_statusFailed": "Başarısız",
-    "moderation_kind": "Tür"
+    "moderation_kind": "Tür",
+    "translations_workingIn": "Çalışılan dil",
+    "translations_behind": "{count, plural, =0 {tamam} other {# dize eksik}}",
+    "translations_onlyMissing": "Yalnızca bu dilde eksik olanlar",
+    "translations_noneMissing": "Bu dilde eksik bir şey yok."
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",

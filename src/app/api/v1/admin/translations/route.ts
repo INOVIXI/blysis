@@ -6,7 +6,7 @@ import { readJsonBody } from "@/core/lib/api-body";
 import { apiError, apiSuccess } from "@/core/lib/api-utils";
 import { auth } from "@/core/lib/auth";
 import { prisma } from "@/core/lib/db";
-import { locales } from "@/core/lib/i18n/config";
+import { defaultLocale, locales } from "@/core/lib/i18n/config";
 import { shippedValue } from "@/core/lib/i18n/shipped-value";
 import { invalidateTranslationCache } from "@/core/lib/i18n/translation-service";
 import { MAX_MESSAGE_LENGTH, checkMessageEdit } from "@/core/lib/message-edit";
@@ -51,7 +51,16 @@ function refOf(ref: KeyRef, locale: string): string {
 }
 
 /** One line of the editor: a key, and what every locale says for it. */
-async function describe(refs: KeyRef[]) {
+/**
+ * What everything else is translated from.
+ *
+ * `defaultLocale` is the language a visitor gets when they have asked for
+ * none, and it is also the one the software is written in, so it is the one
+ * to show beside whatever is being worked on.
+ */
+const SOURCE_LOCALE = defaultLocale;
+
+async function describe(refs: KeyRef[], wanted: readonly string[]) {
     if (refs.length === 0) return [];
 
     const rows = await prisma.translation.findMany({
@@ -65,7 +74,7 @@ async function describe(refs: KeyRef[]) {
         namespace: ref.namespace,
         key: ref.key,
         locales: Object.fromEntries(
-            locales.map((locale) => {
+            wanted.map((locale) => {
                 const row = byRef.get(refOf(ref, locale));
                 return [locale, {
                     value: row?.value ?? null,
@@ -82,6 +91,18 @@ const listSchema = z.object({
     namespace: z.string().max(120).optional(),
     q: z.string().max(200).optional(),
     custom: z.enum(["1"]).optional(),
+    /**
+     * The language being worked in. The screen used to send every locale's
+     * text for every key, which is fine for the two this site ships and is a
+     * thousand boxes on a page at twenty.
+     *
+     * `z.enum(locales)` rather than a string: this reaches a query, and a
+     * locale nobody serves would otherwise be reported as a language with
+     * every string missing.
+     */
+    locale: z.enum(locales).optional(),
+    /** Only the keys this language has nothing for. */
+    missing: z.enum(["1"]).optional(),
     page: z.coerce.number().int().min(1).max(10000).default(1),
 });
 
@@ -92,7 +113,14 @@ export async function GET(request: NextRequest) {
     const params = Object.fromEntries(new URL(request.url).searchParams);
     const parsed = listSchema.safeParse(params);
     if (!parsed.success) return apiError(parsed.error.issues[0]?.message || "Invalid filter", 400);
-    const { module: moduleId, namespace, q, custom, page } = parsed.data;
+    const { module: moduleId, namespace, q, custom, page, missing } = parsed.data;
+    // The source is what the software ships and what everything else is
+    // translated from; the target is what the operator is working in. Asking
+    // for the source as the target is asking for one column twice.
+    const target = request.nextUrl.searchParams.get("locale");
+    const wanted = listSchema.shape.locale.safeParse(target).success
+        ? [SOURCE_LOCALE, target as (typeof locales)[number]].filter((l, i, a) => a.indexOf(l) === i)
+        : [...locales];
 
     // The page and the count are two questions about one filter, so the
     // filter is written once. Two hand-kept copies of the same clause is how
@@ -104,6 +132,18 @@ export async function GET(request: NextRequest) {
     if (q) {
         const like = `%${q}%`;
         conditions.push(Prisma.sql`("key" ILIKE ${like} OR "value" ILIKE ${like})`);
+    }
+    if (missing === "1" && wanted.length === 2) {
+        // Keys this language has no row for at all. `NOT EXISTS` rather than
+        // a join, so a key with fifty locales is still one index probe.
+        const locale = wanted[1];
+        conditions.push(Prisma.sql`NOT EXISTS (
+            SELECT 1 FROM "Translation" AS have
+            WHERE have."module" = "Translation"."module"
+              AND have."namespace" = "Translation"."namespace"
+              AND have."key" = "Translation"."key"
+              AND have."locale" = ${locale}
+        )`);
     }
     const filter = Prisma.join(conditions, " AND ");
 
@@ -124,7 +164,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     const total = counted[0]?.total ?? 0;
-    const items = await describe(refs);
+    const items = await describe(refs, wanted);
     return apiSuccess({ items, page, total, pages: Math.max(1, Math.ceil(total / PAGE_SIZE)) });
 }
 
@@ -211,7 +251,7 @@ export async function PATCH(request: NextRequest) {
         metadata: { module: moduleId, namespace, key, locales: writes.map((w) => w.locale) },
     }).catch(() => {});
 
-    const [item] = await describe([{ module: moduleId, namespace, key }]);
+    const [item] = await describe([{ module: moduleId, namespace, key }], locales);
     return apiSuccess({ item });
 }
 
@@ -272,6 +312,6 @@ export async function DELETE(request: NextRequest) {
         metadata: { module: moduleId, namespace, key, locales: rows.map((r) => r.locale) },
     }).catch(() => {});
 
-    const [item] = await describe([{ module: moduleId, namespace, key }]);
+    const [item] = await describe([{ module: moduleId, namespace, key }], locales);
     return apiSuccess({ item });
 }

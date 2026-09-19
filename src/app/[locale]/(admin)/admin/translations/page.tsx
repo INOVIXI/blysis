@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, Search } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { Card, CardContent } from "@/core/components/ui/card";
@@ -12,6 +12,8 @@ import { NativeSelect } from "@/core/components/ui/native-select";
 import { Pagination } from "@/core/components/ui/pagination";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { errorMessage } from "@/core/lib/write-result";
+import { Label } from "@/core/components/ui/label";
+import { defaultLocale, localeNames, locales, type Locale } from "@/core/lib/i18n/config";
 import { Entry, TranslationEntry } from "./TranslationEntry";
 
 /**
@@ -45,8 +47,12 @@ const REFUSALS: Record<string, string> = {
     translation_not_custom: "translations_errNotCustom",
 };
 
+/** What everything else is translated from. */
+const SOURCE = defaultLocale;
+
 export default function TranslationsPage() {
     const t = useTranslations("admin");
+    const locale = useLocale();
     const { confirm } = useConfirm();
 
     const [items, setItems] = useState<Entry[]>([]);
@@ -60,10 +66,23 @@ export default function TranslationsPage() {
     const [moduleId, setModuleId] = useState("");
     const [namespace, setNamespace] = useState("");
     const [onlyEdited, setOnlyEdited] = useState(false);
-    const [facets, setFacets] = useState<{ modules: string[]; namespaces: string[] }>({
-        modules: [],
-        namespaces: [],
-    });
+    const [onlyMissing, setOnlyMissing] = useState(false);
+    /*
+     * The language being worked in.
+     *
+     * The screen used to show every locale on every row, which is a sound
+     * shape for two and an impossible one for twenty. It opens on the
+     * language the operator is reading the panel in, because that is the one
+     * they are most likely to be fixing - and on the source itself that would
+     * be a column against itself, so it falls back to the other.
+     */
+    const [target, setTarget] = useState<Locale>(() =>
+        locale !== SOURCE ? (locale as Locale) : (locales.find((l) => l !== SOURCE) ?? SOURCE));
+    const [facets, setFacets] = useState<{
+        modules: string[];
+        namespaces: string[];
+        locales: { locale: string; held: number; missing: number }[];
+    }>({ modules: [], namespaces: [], locales: [] });
 
     // Typing is not a request. Without this the endpoint runs a distinct
     // count over the whole catalogue on every keystroke.
@@ -85,7 +104,7 @@ export default function TranslationsPage() {
                 const body = await res.json();
                 if (body?.ok) setFacets(body.data);
             } catch {
-                setFacets({ modules: [], namespaces: [] });
+                setFacets({ modules: [], namespaces: [], locales: [] });
             }
         };
         loadFacets();
@@ -98,6 +117,8 @@ export default function TranslationsPage() {
         if (moduleId) params.set("module", moduleId);
         if (namespace) params.set("namespace", namespace);
         if (onlyEdited) params.set("custom", "1");
+        params.set("locale", target);
+        if (onlyMissing) params.set("missing", "1");
         try {
             const res = await fetch(`/api/v1/admin/translations?${params}`);
             const body = (await res.json()) as ListResponse;
@@ -113,7 +134,7 @@ export default function TranslationsPage() {
         } finally {
             setLoading(false);
         }
-    }, [page, query, moduleId, namespace, onlyEdited, t]);
+    }, [page, query, moduleId, namespace, onlyEdited, onlyMissing, target, t]);
 
     useEffect(() => {
         load();
@@ -220,7 +241,34 @@ export default function TranslationsPage() {
                             </option>
                         ))}
                     </NativeSelect>
-                    <label className="flex items-center gap-2 text-sm md:col-span-4">
+                    {/*
+                      * Which language is being worked in, and how far behind
+                      * each one is - the question the old screen could not
+                      * answer at all, because it showed every language on
+                      * every row and you found out by scrolling.
+                      */}
+                    <div className="md:col-span-2">
+                        <Label>{t("translations_workingIn")}</Label>
+                        <NativeSelect
+                            aria-label={t("translations_workingIn")}
+                            value={target}
+                            onChange={(event) => {
+                                setTarget(event.target.value as Locale);
+                                setPage(1);
+                            }}
+                        >
+                            {locales.filter((l) => l !== SOURCE).map((l) => {
+                                const behind = facets.locales.find((row) => row.locale === l)?.missing;
+                                return (
+                                    <option key={l} value={l}>
+                                        {localeNames[l]}
+                                        {behind === undefined ? "" : ` - ${t("translations_behind", { count: behind })}`}
+                                    </option>
+                                );
+                            })}
+                        </NativeSelect>
+                    </div>
+                    <label className="flex items-center gap-2 text-sm md:col-span-2">
                         <Checkbox
                             checked={onlyEdited}
                             onChange={(event) => {
@@ -229,6 +277,16 @@ export default function TranslationsPage() {
                             }}
                         />
                         {t("translations_onlyEdited")}
+                    </label>
+                    <label className="flex items-center gap-2 text-sm md:col-span-2">
+                        <Checkbox
+                            checked={onlyMissing}
+                            onChange={(event) => {
+                                setOnlyMissing(event.target.checked);
+                                setPage(1);
+                            }}
+                        />
+                        {t("translations_onlyMissing")}
                     </label>
                 </CardContent>
             </Card>
@@ -240,7 +298,7 @@ export default function TranslationsPage() {
             ) : items.length === 0 ? (
                 <Card>
                     <CardContent className="py-12 text-center text-muted-foreground">
-                        {t("translations_none")}
+                        {onlyMissing ? t("translations_noneMissing") : t("translations_none")}
                     </CardContent>
                 </Card>
             ) : (
@@ -249,6 +307,8 @@ export default function TranslationsPage() {
                         <TranslationEntry
                             key={`${entry.module}/${entry.namespace}/${entry.key}`}
                             entry={entry}
+                            source={SOURCE}
+                            target={target}
                             onSave={(values) => send(entry, "PATCH", { values })}
                             onRestore={async () => {
                                 const sure = await confirm({
