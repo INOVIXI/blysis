@@ -44,7 +44,6 @@ export default function SiteSettingsPage() {
         siteName: "",
         [SITE_LOGO_KEY]: "",
         siteDescription: "",
-        serverIp: "",
         contactEmail: "",
         socialFacebook: "",
         socialInstagram: "",
@@ -64,7 +63,6 @@ export default function SiteSettingsPage() {
             siteName: (s.siteName as string) || "",
             [SITE_LOGO_KEY]: (s[SITE_LOGO_KEY] as string) || "",
             siteDescription: (s.siteDescription as string) || "",
-            serverIp: (s.serverIp as string) || "",
             contactEmail: (s.contactEmail as string) || "",
             socialFacebook: (s.socialFacebook as string) || "",
             socialInstagram: (s.socialInstagram as string) || "",
@@ -188,15 +186,6 @@ export default function SiteSettingsPage() {
                                     {zones.map((zone) => <option key={zone} value={zone}>{zone}</option>)}
                                 </NativeSelect>
                                 <p className="mt-1 text-sm text-muted-foreground">{t("siteSettings_timezoneHint")}</p>
-                            </div>
-                            <div>
-                                <Label>{t("siteSettings_serverIp")}</Label>
-                                <Input
-                                    aria-label={t("siteSettings_serverIp")}
-                                    value={form.serverIp}
-                                    onChange={(e) => setForm({ ...form, serverIp: e.target.value })}
-                                    placeholder="play.example.com"
-                                />
                             </div>
                             <div>
                                 <Label>{t("siteSettings_contactEmail")}</Label>

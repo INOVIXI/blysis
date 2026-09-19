@@ -58,6 +58,25 @@ function flattenObject(
     }
 }
 
+/**
+ * The stored rows this catalogue no longer ships.
+ *
+ * A namespace and a key together name a string; either alone does not, and
+ * comparing on the key would keep a row whose namespace has moved and delete
+ * one that only shares a key with something else.
+ */
+export function staleTranslations<T extends { namespace: string; key: string }>(
+    shipped: { namespace: string; key: string }[],
+    stored: T[],
+): T[] {
+    // A catalogue that ships nothing is a read that failed, not an
+    // instruction to empty the table.
+    if (shipped.length === 0) return [];
+
+    const names = new Set(shipped.map((r) => `${r.namespace}\u0000${r.key}`));
+    return stored.filter((row) => !names.has(`${row.namespace}\u0000${row.key}`));
+}
+
 async function seedLocale(
     locale: string,
     data: Record<string, unknown>,
@@ -111,6 +130,32 @@ async function seedLocale(
                 }),
             ),
         );
+    }
+
+    /*
+     * A key that has left the catalogue leaves the database too.
+     *
+     * The seeder only ever upserted, so every string ever shipped stayed in
+     * the table for the life of the installation. `siteSettings_serverIp` was
+     * deleted from core and its two rows were still there afterwards - not
+     * rendered anywhere, because nothing asks for a key that no longer
+     * exists, but listed by the translations screen as two strings an
+     * operator could sit down and translate into a site that would never
+     * show them.
+     *
+     * Only rows this seeder wrote. A row an operator has edited is their
+     * text, and deleting it because the key moved would throw away work
+     * without asking; the translations screen is where a stranded custom
+     * belongs, not here.
+     */
+    const stored = await prisma.translation.findMany({
+        where: { locale, module: moduleId, isCustom: false },
+        select: { id: true, namespace: true, key: true },
+    });
+    const gone = staleTranslations(rows, stored);
+    if (gone.length > 0) {
+        await prisma.translation.deleteMany({ where: { id: { in: gone.map((row) => row.id) } } });
+        console.log(`  ${moduleId}/${locale}: ${gone.length} key(s) no longer shipped, removed`);
     }
 
     return rows.length;
@@ -201,6 +246,10 @@ async function main() {
     }
 }
 
-main()
-    .catch((e) => { console.error(e); process.exit(1); })
-    .finally(() => prisma.$disconnect());
+// Guarded so the helpers above can be imported and tested without this
+// script connecting to a database and rewriting every string in it.
+if (process.argv[1] && process.argv[1].endsWith("seed-translations.ts")) {
+    main()
+        .catch((e) => { console.error(e); process.exit(1); })
+        .finally(() => prisma.$disconnect());
+}
