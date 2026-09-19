@@ -5,6 +5,9 @@ import { Card, CardContent } from "@/core/components/ui/card";
 import { Button, buttonClassName } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
 import { ListControls } from "@/core/components/ui/list-controls";
+import { BulkBar } from "@/core/components/admin/BulkBar";
+import { Checkbox } from "@/core/components/ui/checkbox";
+import { deleteEach } from "@/core/lib/bulk-delete";
 import { useRowList } from "@/core/hooks/useRowList";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -58,6 +61,26 @@ export default function IpBlocksPage() {
         fetchBlocks();
     }, [fetchBlocks]);
 
+    const removeMany = async () => {
+        const ok = await confirm({
+            title: t("ipBlocks_removeTitle"),
+            message: t("ipBlocks_removeConfirm"),
+            variant: "danger",
+        });
+        if (!ok) return;
+        // Every answer read, not just the last one: a list of addresses where
+        // four of five were refused must not report itself as done.
+        const { deleted, total } = await deleteEach([...list.picked], async (id) => {
+            const res = await fetch(`/api/v1/admin/ip-blocks/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        list.clear();
+        fetchBlocks();
+        if (deleted === total) toast.success(t("ipBlocks_removed"));
+        else if (deleted === 0) toast.error(t("ipBlocks_removeFailed"));
+        else toast.error(t("crud_deletedPartly", { deleted, total }));
+    };
+
     const deleteBlock = async (b: IpBlock) => {
         const ok = await confirm({
             title: t("ipBlocks_removeTitle"),
@@ -107,10 +130,25 @@ export default function IpBlocksPage() {
                     ) : list.rows.length === 0 ? (
                         <p className="text-muted-foreground text-center py-8">{commonT("noResults")}</p>
                     ) : (
-                        <div className="overflow-x-auto">
+                        <>
+                            {/* Outside the scrolling box on purpose: a bar
+                                that scrolls sideways with the table takes the
+                                select-all box off a narrow screen. */}
+                            <BulkBar
+                                state={list.headerState}
+                                count={list.picked.size}
+                                onToggleAll={list.toggleAll}
+                                actions={
+                                    <Button variant="destructive" size="sm" onClick={removeMany}>
+                                        <Trash2 className="w-4 h-4" /> {commonT("delete")} {list.picked.size}
+                                    </Button>
+                                }
+                            />
+                            <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead className="text-xs uppercase text-muted-foreground border-b">
                                     <tr>
+                                        <th className="w-10 p-3" />
                                         <th className="text-left p-3">{t("ipBlocks_colIp")}</th>
                                         <th className="text-left p-3">{t("ipBlocks_colScope")}</th>
                                         <th className="text-left p-3">{t("ipBlocks_colReason")}</th>
@@ -124,6 +162,13 @@ export default function IpBlocksPage() {
                                         const expired = b.expiresAt && new Date(b.expiresAt).getTime() < Date.now();
                                         return (
                                             <tr key={b.id}>
+                                                <td className="p-3">
+                                                    <Checkbox
+                                                        checked={list.picked.has(b.id)}
+                                                        onChange={() => list.toggle(b.id)}
+                                                        aria-label={t("common_selectRow")}
+                                                    />
+                                                </td>
                                                 <td className="p-3 font-mono">{b.ip}</td>
                                                 <td className="p-3">{scopeLabel(b.scope)}</td>
                                                 <td className="p-3 text-muted-foreground max-w-xs truncate">
@@ -157,7 +202,8 @@ export default function IpBlocksPage() {
                                     })}
                                 </tbody>
                             </table>
-                        </div>
+                            </div>
+                        </>
                     )}
                     <Pagination
                         page={list.page}

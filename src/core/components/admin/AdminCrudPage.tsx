@@ -23,6 +23,7 @@ import { useFormRoute } from "@/core/hooks/useFormRoute";
 import { Checkbox, CheckboxField } from "@/core/components/ui/checkbox";
 import { cn } from "@/core/lib/utils";
 import { BulkBar } from "@/core/components/admin/BulkBar";
+import { deleteEach } from "@/core/lib/bulk-delete";
 import { headerState, narrowTo, pickAll, pickNone, togglePick, type Selection } from "@/core/lib/bulk-selection";
 
 export interface CrudField {
@@ -196,12 +197,10 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
         if (!ok) return;
         // One request per row, and every answer used to be thrown away: five
         // rows selected, four refused, and the panel still said "Deleted".
-        let deleted = 0;
-        for (const id of selected) {
+        const { deleted, total } = await deleteEach([...selected], async (id) => {
             const res = await fetch(`${apiPath}/${id}`, { method: "DELETE" });
-            if (!(await writeError(res, ct("crud_deleteFailed"), ct))) deleted++;
-        }
-        const total = selected.size;
+            return !(await writeError(res, ct("crud_deleteFailed"), ct));
+        });
         setSelected(pickNone());
         fetchItems();
         if (deleted === total) toast.success(ct("crud_deleted"));
