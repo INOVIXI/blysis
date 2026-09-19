@@ -411,7 +411,10 @@ export default function AdminCouponsPage() {
                                                 </span>
                                                 {coupon.minPurchase && (
                                                     <p className="text-xs text-muted-foreground">
-                                                        {t("adm_minPurchase", { amount: money(Number(coupon.minPurchase)) })}
+                                                        {/* The field's label names the setting; this line
+                                                            states it. One key did both, so the list said
+                                                            "Min. purchase" and never the number. */}
+                                                        {t("adm_minPurchaseIs", { amount: money(Number(coupon.minPurchase)) })}
                                                     </p>
                                                 )}
                                             </td>

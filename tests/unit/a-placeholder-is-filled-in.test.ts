@@ -214,6 +214,57 @@ describe("reading an ICU argument", () => {
     });
 });
 
+/**
+ * The mirror: a value handed to a message that does not ask for it.
+ *
+ * It renders as nothing, so the sentence silently loses the part the caller
+ * thought it was saying. The reference picker said "nothing here has the id
+ * '{id}' any more" and passed the id - and the apostrophes made the braces
+ * an ICU escape, so the message showed the word `{id}` to the operator and
+ * the id itself never appeared anywhere.
+ */
+function unwanted(): { where: string; message: string; extra: string[] }[] {
+    const messages = catalogue();
+    const found: { where: string; message: string; extra: string[] }[] = [];
+    const BINDING =
+        /(?:const|let)\s+(\w+)\s*=\s*(?:await\s+)?(?:useTranslations|getTranslations)\s*\(\s*(?:\{[^}]*namespace:\s*)?["'`]([\w.]+)["'`]/g;
+
+    for (const file of sources()) {
+        const source = stripComments(fs.readFileSync(file, "utf8"));
+        const bound = new Map<string, string>();
+        for (const m of source.matchAll(BINDING)) bound.set(m[1], m[2]);
+        if (bound.size === 0) continue;
+
+        const CALL = new RegExp(`\\b(${[...bound.keys()].join("|")})(?:\\.rich)?\\(\\s*["'\`]([\\w.]+)["'\`]`, "g");
+        for (const m of source.matchAll(CALL)) {
+            const id = `${bound.get(m[1])}.${m[2]}`;
+            const texts = messages.get(id);
+            if (!texts) continue;
+
+            const declared = new Set<string>();
+            const tags = new Set<string>();
+            for (const text of texts.values()) {
+                for (const name of icuArguments(text)) declared.add(name);
+                for (const tag of icuTags(text)) tags.add(tag);
+            }
+
+            const call = callAt(source, source.indexOf("(", m.index!));
+            // Only a call that passes a values object at all.
+            if (!/,\s*\{/.test(call)) continue;
+            const supplied = [...valueExpressions(call).keys()];
+            const extra = supplied.filter((name) => !declared.has(name) && !tags.has(name));
+            if (extra.length === 0) continue;
+
+            found.push({
+                where: `${path.relative(ROOT, file)}:${source.slice(0, m.index).split("\n").length}`,
+                message: id,
+                extra: extra.sort(),
+            });
+        }
+    }
+    return found;
+}
+
 describe("a placeholder is filled in", () => {
     const offenders = unfilled();
 
@@ -226,6 +277,10 @@ describe("a placeholder is filled in", () => {
 
     it("supplies every argument the message declares", () => {
         expect(offenders).toEqual([]);
+    });
+
+    it("is not handed a value the message never asks for", () => {
+        expect(unwanted()).toEqual([]);
     });
 
     it("declares the same arguments in both languages", () => {
