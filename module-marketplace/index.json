@@ -641,7 +641,7 @@
       "stats": {
         "publicRoutes": 1,
         "adminRoutes": 2,
-        "apiRoutes": 3,
+        "apiRoutes": 4,
         "widgets": 0
       }
     },

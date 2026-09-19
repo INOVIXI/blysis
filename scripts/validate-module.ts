@@ -977,10 +977,23 @@ function checkTranslationKeys(modulePath: string): CheckResult {
 
                 for (const locale of locales) {
                     const bucket = translations[locale]?.[namespace];
-                    // Namespace not this module's: core or another module owns it.
-                    if (!bucket) continue;
-                    if (coreMessages[locale]?.[namespace]?.[key] !== undefined) continue;
-                    if (bucket[key] === undefined) {
+                    const core = coreMessages[locale]?.[namespace];
+                    /*
+                     * A namespace neither this module nor core declares is one
+                     * nothing here can check.
+                     *
+                     * This used to skip on `!bucket` alone, so a module that
+                     * declared no block for a namespace had every key it read
+                     * in that namespace waved through - which is the opposite
+                     * of what it should do, because a module reading a
+                     * namespace it does not own is reading core's. The forms
+                     * screen called `commonT("all")` and `commonT("selectRow")`,
+                     * neither of which core carries, and the key path was
+                     * drawn on the page while this check reported a pass.
+                     */
+                    if (!bucket && !core) continue;
+                    if (core?.[key] !== undefined) continue;
+                    if (bucket?.[key] === undefined) {
                         const where = path.relative(modulePath, file);
                         violations.push(`${where}: ${namespace}.${key} missing from ${locale}`);
                     }

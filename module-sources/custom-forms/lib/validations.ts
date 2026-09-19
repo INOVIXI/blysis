@@ -42,3 +42,20 @@ export const formUpdateSchema = z.object({
 export const formSubmissionSchema = z.object({
     data: z.record(z.string().max(64), z.string().max(10_000)),
 });
+
+/**
+ * Where a submission can be in an operator's day.
+ *
+ * The column has held one of these three since the module was written and
+ * nothing in it ever wrote the column, so the value a row was created with
+ * was the value it kept. A list that only grows is not an inbox; these are
+ * what an operator moves a row between, and the list is closed so the screen
+ * can name every one of them.
+ */
+export const SUBMISSION_STATES = ["new", "read", "handled"] as const;
+
+export type SubmissionState = (typeof SUBMISSION_STATES)[number];
+
+export const submissionUpdateSchema = z.object({
+    status: z.enum(SUBMISSION_STATES),
+});

@@ -79,6 +79,17 @@ function draw() {
  */
 const ROOM_FOR_THE_DEBOUNCE = 15_000;
 
+/**
+ * How long a single wait inside one of them may take.
+ *
+ * Smaller than the test's own ceiling, so a wait that runs out reports the
+ * assertion it was retrying rather than the test being killed mid-retry -
+ * which is what "expected <p class=\"font-medium\"></p> to be null" was, at
+ * 5,179ms under a load average of 17. Both numbers are generous because this
+ * box builds and serves nine other projects.
+ */
+const SETTLE_MS = 10_000;
+
 describe("a list drawn by the crud shell", () => {
     it("offers a box to search it", async () => {
         draw();
@@ -91,7 +102,7 @@ describe("a list drawn by the crud shell", () => {
 
         fireEvent.change(screen.getByRole("searchbox"), { target: { value: "pack" } });
 
-        await waitFor(() => expect(screen.queryByText("Server rules")).toBeNull(), { timeout: 5000 });
+        await waitFor(() => expect(screen.queryByText("Server rules")).toBeNull(), { timeout: SETTLE_MS });
         expect(screen.getByText("Client pack")).toBeTruthy();
         expect(screen.getByText("Texture pack")).toBeTruthy();
     }, ROOM_FOR_THE_DEBOUNCE);
@@ -102,7 +113,7 @@ describe("a list drawn by the crud shell", () => {
 
         fireEvent.change(screen.getByRole("searchbox"), { target: { value: "PDF" } });
 
-        await waitFor(() => expect(screen.queryByText("Client pack")).toBeNull(), { timeout: 5000 });
+        await waitFor(() => expect(screen.queryByText("Client pack")).toBeNull(), { timeout: SETTLE_MS });
         expect(screen.getByText("Server rules")).toBeTruthy();
     }, ROOM_FOR_THE_DEBOUNCE);
 
@@ -117,7 +128,7 @@ describe("a list drawn by the crud shell", () => {
         // The strip waits 300ms before it tells anybody, and this box is
         // shared with eight other test files: the default one-second ceiling
         // is not enough room for a debounce under that load.
-        expect(await screen.findByText(MESSAGES.common.noResults, {}, { timeout: 5000 })).toBeTruthy();
+        expect(await screen.findByText(MESSAGES.common.noResults, {}, { timeout: SETTLE_MS })).toBeTruthy();
         expect(screen.queryByText(MESSAGES.admin.crud_noItems)).toBeNull();
     }, ROOM_FOR_THE_DEBOUNCE);
 });
