@@ -9,7 +9,7 @@ import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, FolderOpen, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { writeError, errorMessage } from "@/core/sdk";
-import { AdminPageHeader } from "@/core/sdk/admin";
+import { AdminPageHeader, RowActions } from "@/core/sdk/admin";
 import {
     EMPTY_CATEGORY,
     categoryPayload,
@@ -28,6 +28,7 @@ interface Category {
     isActive: boolean;
     order: number;
     visibleAfterProductIds?: string[];
+    layout?: string;
     children?: Category[];
     _count?: { products: number };
 }
@@ -82,6 +83,7 @@ export default function AdminStoreCategoriesPage() {
             order: String(row.order ?? 0),
             isActive: row.isActive,
             visibleAfterProductIds: row.visibleAfterProductIds ?? [],
+            layout: row.layout ?? "grid",
         });
     }, [editingId, categories]);
 
@@ -214,6 +216,18 @@ export default function AdminStoreCategoriesPage() {
                                     />
                                 </div>
                             </div>
+                            <div>
+                                <Label>{t("adm_layout")}</Label>
+                                <NativeSelect
+                                    aria-label={t("adm_layout")}
+                                    value={form.layout}
+                                    onChange={(e) => setForm({ ...form, layout: e.target.value })}
+                                >
+                                    <option value="grid">{t("adm_layoutGrid")}</option>
+                                    <option value="table">{t("adm_layoutTable")}</option>
+                                </NativeSelect>
+                                <p className="mt-1 text-xs text-muted-foreground">{t("adm_layoutHint")}</p>
+                            </div>
                             <RequirementFields
                                 value={{
                                     requiresProductIds: form.visibleAfterProductIds,
@@ -286,22 +300,12 @@ export default function AdminStoreCategoriesPage() {
                                         <span className={`text-xs px-2 py-1 rounded ${cat.isActive ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}>
                                             {cat.isActive ? t("adm_active") : t("adm_inactive")}
                                         </span>
-                                        <Link
-                                            href={formHref(cat.id)}
-                                            aria-label={commonT("edit")}
-                                            className={buttonClassName("ghost", "sm")}
-                                        >
-                                            <Pencil className="w-4 h-4" aria-hidden="true" />
-                                        </Link>
-                                        <Button
-                                            aria-label={commonT("delete")}
-                                            variant="ghost"
-                                            size="sm"
-                                            className="text-destructive"
-                                            onClick={() => deleteCategory(cat.id)}
-                                        >
-                                            <Trash2 className="w-3 h-3" />
-                                        </Button>
+                                        <RowActions
+                                            actions={[
+                                                { icon: Pencil, label: commonT("edit"), href: formHref(cat.id) },
+                                                { icon: Trash2, label: commonT("delete"), onClick: () => deleteCategory(cat.id), destructive: true },
+                                            ]}
+                                        />
                                     </div>
                                 </div>
 
@@ -315,15 +319,11 @@ export default function AdminStoreCategoriesPage() {
                                                     <p className="text-sm font-medium">{sub.name}</p>
                                                     <p className="text-xs text-muted-foreground">/{sub.slug}</p>
                                                 </div>
-                                                <Button
-                                                    aria-label={commonT("delete")}
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="text-destructive"
-                                                    onClick={() => deleteCategory(sub.id)}
-                                                >
-                                                    <Trash2 className="w-3 h-3" />
-                                                </Button>
+                                                <RowActions
+                                                    actions={[
+                                                        { icon: Trash2, label: commonT("delete"), onClick: () => deleteCategory(sub.id), destructive: true },
+                                                    ]}
+                                                />
                                             </div>
                                         ))}
                                     </div>

@@ -17,7 +17,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Checkbox, Input, Labe
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, Ban, RotateCcw, Copy, Check, KeyRound } from "lucide-react";
 import { copyText, deleteEach } from "@/core/sdk";
-import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
 
 interface License {
     id: string;
@@ -368,33 +368,28 @@ export default function LicensesPage() {
                                                 : t("adm_never")}
                                         </td>
                                         <td className="p-3 text-right whitespace-nowrap">
-                                            {license.status === "active" ? (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => setStatus(license.id, "revoked")}
-                                                    title={t("adm_revoke")}
-                                                >
-                                                    <Ban className="w-4 h-4" />
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => setStatus(license.id, "active")}
-                                                    title={t("adm_restore")}
-                                                >
-                                                    <RotateCcw className="w-4 h-4" />
-                                                </Button>
-                                            )}
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => remove(license.id)}
-                                                title={t("adm_delete")}
-                                            >
-                                                <Trash2 className="w-4 h-4 text-destructive" />
-                                            </Button>
+                                            <RowActions
+                                                actions={[
+                                                    {
+                                                        icon: Ban,
+                                                        label: t("adm_revoke"),
+                                                        onClick: () => setStatus(license.id, "revoked"),
+                                                        hidden: license.status !== "active",
+                                                    },
+                                                    {
+                                                        icon: RotateCcw,
+                                                        label: t("adm_restore"),
+                                                        onClick: () => setStatus(license.id, "active"),
+                                                        hidden: license.status === "active",
+                                                    },
+                                                    {
+                                                        icon: Trash2,
+                                                        label: t("adm_delete"),
+                                                        onClick: () => remove(license.id),
+                                                        destructive: true,
+                                                    },
+                                                ]}
+                                            />
                                         </td>
                                     </tr>
                                 ))}

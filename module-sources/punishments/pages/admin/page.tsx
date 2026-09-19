@@ -6,7 +6,7 @@ import { Badge, Button, Card, CardContent, Checkbox, Input, Label, ListControls,
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, RotateCcw, Ban } from "lucide-react";
 import { toast } from "sonner";
-import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
 import { deleteEach } from "@/core/sdk";
 import { punishmentStatus, type PunishmentStatus } from "../../lib/status";
 import { PUNISHMENT_TYPES, canonicalType } from "../../lib/punishment-types";
@@ -360,20 +360,13 @@ export default function AdminPunishmentsPage() {
                                         <Badge tone={STATUS_TONES[status]}>{t(status)}</Badge>
                                     </td>
                                     <td className="px-4 py-2 text-right">
-                                        <div className="inline-flex gap-1">
-                                            {p.active ? (
-                                                <Button variant="ghost" size="sm" onClick={() => revoke(p.id, false)} title={t("adm_revoke")}>
-                                                    <Ban className="w-4 h-4" />
-                                                </Button>
-                                            ) : (
-                                                <Button variant="ghost" size="sm" onClick={() => revoke(p.id, true)} title={t("adm_unrevoke")}>
-                                                    <RotateCcw className="w-4 h-4" />
-                                                </Button>
-                                            )}
-                                            <Button variant="ghost" size="sm" className="text-destructive" onClick={() => remove(p.id)} title={t("adm_delete")}>
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </div>
+                                        <RowActions
+                                            actions={[
+                                                { icon: Ban, label: t("adm_revoke"), onClick: () => revoke(p.id, false), hidden: !p.active },
+                                                { icon: RotateCcw, label: t("adm_unrevoke"), onClick: () => revoke(p.id, true), hidden: p.active },
+                                                { icon: Trash2, label: t("adm_delete"), onClick: () => remove(p.id), destructive: true },
+                                            ]}
+                                        />
                                     </td>
                                 </tr>
                                 );

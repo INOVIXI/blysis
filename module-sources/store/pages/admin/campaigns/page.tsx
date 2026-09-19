@@ -7,7 +7,7 @@ import {
     Pagination, buttonClassName, useConfirm, useFormRoute, useRowList, useSiteSettings,
 } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
-import { AdminPageHeader } from "@/core/sdk/admin";
+import { AdminPageHeader, RowActions } from "@/core/sdk/admin";
 import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { writeError, errorMessage } from "@/core/sdk";
@@ -325,22 +325,12 @@ export default function AdminStoreCampaignsPage() {
                                     <span className={`rounded px-2 py-1 text-xs ${campaign.isActive ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}>
                                         {campaign.isActive ? t("adm_active") : t("adm_inactive")}
                                     </span>
-                                    <Link
-                                        href={formHref(campaign.id)}
-                                        aria-label={commonT("edit")}
-                                        className={buttonClassName("ghost", "sm")}
-                                    >
-                                        <Pencil className="h-4 w-4" aria-hidden="true" />
-                                    </Link>
-                                    <Button
-                                        aria-label={commonT("delete")}
-                                        variant="ghost"
-                                        size="sm"
-                                        className="text-destructive"
-                                        onClick={() => remove(campaign.id)}
-                                    >
-                                        <Trash2 className="h-4 w-4" aria-hidden="true" />
-                                    </Button>
+                                    <RowActions
+                                        actions={[
+                                            { icon: Pencil, label: commonT("edit"), href: formHref(campaign.id) },
+                                            { icon: Trash2, label: commonT("delete"), onClick: () => remove(campaign.id), destructive: true },
+                                        ]}
+                                    />
                                 </div>
                             </CardContent>
                         </Card>

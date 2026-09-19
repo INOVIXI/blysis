@@ -135,19 +135,18 @@ describe("the lists in the panel", () => {
             "A form builder. The bin removes a field from the form on screen, which is part of editing it.",
         "module-sources/comparison-table/pages/admin/page.tsx":
             "A table editor. The bins remove a column and a row from the table being written, which is the editing.",
+        "module-sources/tickets/pages/admin/tickets/departments/[id]/page.tsx":
+            "One department's form. The bin removes a question from the form being written, not a department from a list of them.",
     };
 
-    /** Screens whose rows still draw their own. The list should only shrink. */
-    const NOT_YET: Record<string, string> = {
-        "module-sources/blog/pages/admin/categories/page.tsx": "",
-        "module-sources/license-keys/pages/admin/licenses/page.tsx": "",
-        "module-sources/punishments/pages/admin/page.tsx": "",
-        "module-sources/store/pages/admin/campaigns/page.tsx": "",
-        "module-sources/store/pages/admin/categories/page.tsx": "",
-        "module-sources/suggestions/pages/admin/page.tsx": "",
-        "module-sources/tickets/pages/admin/tickets/departments/[id]/page.tsx": "",
-        "module-sources/trophies/pages/admin/page.tsx": "",
-    };
+    /**
+     * Screens whose rows still draw their own.
+     *
+     * It is empty. Keeping it, and keeping its ceiling at zero, is what makes
+     * the next screen to draw its own pencil land in the failing list rather
+     * than quietly on a backlog.
+     */
+    const NOT_YET: Record<string, string> = {};
 
     function strip(source: string): string {
         return stripComments(source);
@@ -227,7 +226,7 @@ describe("the lists in the panel", () => {
         }
         // The number this was written with. A rise means a new screen drew
         // its own pencil rather than asking for one.
-        expect(Object.keys(NOT_YET).length).toBeLessThanOrEqual(8);
+        expect(Object.keys(NOT_YET).length).toBeLessThanOrEqual(0);
     });
 
     it("keeps every exemption to a file that exists, with a reason", () => {

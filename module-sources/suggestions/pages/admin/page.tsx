@@ -6,7 +6,7 @@ import { Button, Card, CardContent, Checkbox, ListControls, Pagination, useConfi
 import { Loader2, Trash2, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
 import { SUGGESTION_STATUSES, STATUS_BADGE_CLASS, canonicalStatus } from "../../lib/statuses";
-import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
 import { deleteEach } from "@/core/sdk";
 
 interface Suggestion {
@@ -218,9 +218,11 @@ export default function AdminSuggestionsPage() {
                                             <option key={o} value={o}>{t(o)}</option>
                                         ))}
                                     </NativeSelect>
-                                    <Button variant="ghost" size="sm" className="text-destructive" onClick={() => remove(s.id)}>
-                                        <Trash2 className="w-4 h-4" /> {t("adm_delete")}
-                                    </Button>
+                                    <RowActions
+                                        actions={[
+                                            { icon: Trash2, label: t("adm_delete"), onClick: () => remove(s.id), destructive: true },
+                                        ]}
+                                    />
                                 </div>
                             </CardContent>
                         </Card>

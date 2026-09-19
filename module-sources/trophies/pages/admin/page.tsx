@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { AdminPageHeader, BulkBar } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
 import { deleteEach, errorMessage } from "@/core/sdk";
 
 interface AdminTrophy {
@@ -508,23 +508,12 @@ export default function AdminTrophiesPage() {
                                                 </button>
                                             </td>
                                             <td className="py-2 pr-3 text-right whitespace-nowrap">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => openForm(row.id)}
-                                                    title={tc("common_edit")}
-                                                >
-                                                    <Pencil className="w-4 h-4" />
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="text-destructive"
-                                                    onClick={() => handleDelete(row)}
-                                                    title={tc("common_delete")}
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
+                                                <RowActions
+                                                    actions={[
+                                                        { icon: Pencil, label: tc("common_edit"), onClick: () => openForm(row.id) },
+                                                        { icon: Trash2, label: tc("common_delete"), onClick: () => handleDelete(row), destructive: true },
+                                                    ]}
+                                                />
                                             </td>
                                         </tr>
                                     ))}
