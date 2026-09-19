@@ -14,6 +14,12 @@
 export { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 export type { AdminPageHeaderProps } from "@/core/components/admin/AdminPageHeader";
 
+// The strip above a list: how to tick the page, and what can be done to what
+// is ticked. A module drawing its own table gets the same two answers in the
+// same place as the shell's, rather than a destructive button in the corner.
+export { BulkBar } from "@/core/components/admin/BulkBar";
+export type { BulkBarProps } from "@/core/components/admin/BulkBar";
+
 export { AdminCrudPage } from "@/core/components/admin/AdminCrudPage";
 export type { CrudField } from "@/core/components/admin/AdminCrudPage";
 export { SettingsForm } from "@/core/components/admin/SettingsForm";

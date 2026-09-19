@@ -374,6 +374,7 @@
     "crud_addNew": "Add New",
     "crud_create": "Create",
     "crud_createNew": "Create New",
+    "crud_bulkBar": "Rows ticked on this page",
     "crud_created": "Created",
     "crud_delete": "Delete",
     "crud_deleteFailed": "Failed to delete",

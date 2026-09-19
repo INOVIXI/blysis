@@ -374,6 +374,7 @@
     "crud_addNew": "Yeni Ekle",
     "crud_create": "Oluştur",
     "crud_createNew": "Yeni Oluştur",
+    "crud_bulkBar": "Bu sayfada seçili satırlar",
     "crud_created": "Oluşturuldu",
     "crud_delete": "Sil",
     "crud_deleteFailed": "Silinemedi",

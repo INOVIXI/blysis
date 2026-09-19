@@ -22,6 +22,7 @@ import { Link } from "@/core/lib/i18n/navigation";
 import { useFormRoute } from "@/core/hooks/useFormRoute";
 import { Checkbox, CheckboxField } from "@/core/components/ui/checkbox";
 import { cn } from "@/core/lib/utils";
+import { BulkBar } from "@/core/components/admin/BulkBar";
 import { headerState, narrowTo, pickAll, pickNone, togglePick, type Selection } from "@/core/lib/bulk-selection";
 
 export interface CrudField {
@@ -371,16 +372,14 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
             <AdminPageHeader
                 title={title}
                 description={subtitle}
-                actions={<>
-                    {narrowed.size > 0 && (
-                        <Button variant="destructive" onClick={bulkDelete}>
-                            <Trash2 className="w-4 h-4" /> {ct("crud_delete")} {narrowed.size}
-                        </Button>
-                    )}
+                /* Only the screen's own action. What touches the ticked rows
+                   lives in the strip above them; the two buttons that used to
+                   sit here together were the two with the least in common. */
+                actions={
                     <Link href={formHref()} className={buttonClassName("default", "default")}>
-                            <Plus className="w-4 h-4" /> {ct("crud_addNew")}
-                        </Link>
-                </>}
+                        <Plus className="w-4 h-4" /> {ct("crud_addNew")}
+                    </Link>
+                }
             />
 
             {/* Above the card rather than inside it: the strip belongs to the
@@ -401,21 +400,16 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
                         <p className="text-muted-foreground text-center py-8">{commonT("noResults")}</p>
                     ) : (
                         <div className="divide-y">
-                            {/* Two hundred rows and no select-all is two
-                                hundred clicks, and the box that does it has
-                                to say "some" while some are unticked or its
-                                next click clears the lot. */}
-                            <div className="flex items-center gap-3 px-4 py-2 bg-muted/50">
-                                <Checkbox
-                                    checked={header === "all"}
-                                    indeterminate={header === "some"}
-                                    onChange={() => setSelected(header === "all" ? pickNone() : pickAll(narrowed, listedIds))}
-                                    aria-label={ct("crud_selectAll")}
-                                />
-                                <span className="text-sm text-muted-foreground">
-                                    {narrowed.size > 0 ? ct("crud_selectedCount", { count: narrowed.size }) : ct("crud_selectAll")}
-                                </span>
-                            </div>
+                            <BulkBar
+                                state={header}
+                                count={narrowed.size}
+                                onToggleAll={() => setSelected(header === "all" ? pickNone() : pickAll(narrowed, listedIds))}
+                                actions={
+                                    <Button variant="destructive" size="sm" onClick={bulkDelete}>
+                                        <Trash2 className="w-4 h-4" /> {ct("crud_delete")} {narrowed.size}
+                                    </Button>
+                                }
+                            />
                             {paged.rows.map((item) => (
                                 <div key={item.id as string} className="flex items-center gap-3 p-4 hover:bg-muted/50">
                                     <Checkbox

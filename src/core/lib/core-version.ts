@@ -12,6 +12,14 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 4.4.0 - `BulkBar` joins `@/core/sdk/admin`. The shell kept its destructive
+ * button in the page header beside "Add new", so an operator ticked three
+ * rows halfway down a table and the button that would delete them was at the
+ * top of the screen next to the one that makes another - never visible at the
+ * same time as the rows it named. The strip above the rows already existed to
+ * hold the select-all box; it holds the action now, and a module drawing its
+ * own table gets the same two answers in the same place.
+ *
  * 4.3.0 - `useRowList` joins `@/core/sdk/ui`. A list that grows had to be
  * searched, paged and picked on 67 admin screens and three of them offered
  * any of it. A shell owning the markup would have to own every table's
@@ -417,4 +425,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "4.3.0";
+export const CORE_API_VERSION = "4.4.0";
