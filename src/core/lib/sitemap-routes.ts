@@ -97,7 +97,7 @@ export interface RouteLike {
  * Static public pages contributed by enabled modules.
  *
  * A path with a dynamic segment is skipped: core knows the pattern
- * (`/player/[username]`) and not the values, so listing it would submit a URL
+ * (`/u/[username]`) and not the values, so listing it would submit a URL
  * that 404s. Those belong to the module's own `seo` contributor.
  */
 export function staticModuleRoutes(

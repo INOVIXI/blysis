@@ -104,7 +104,7 @@ const CORE_PRIVATE_MODELS = [
  * by the five modules that own them.
  */
 const MODULE_TABLES: UserDataTable[] = [
-    { model: "linkedAccount", key: "playerProfiles.linkedAccounts", column: "userId", erasure: "purge", module: "player-profiles" },
+    { model: "linkedAccount", key: "memberProfiles.linkedAccounts", column: "userId", erasure: "purge", module: "member-profiles" },
     { model: "notification", key: "notifications.items", column: "userId", erasure: "purge", module: "in-app-notifications" },
     { model: "cartItem", key: "store.cart", column: "userId", erasure: "purge", module: "store" },
     { model: "order", key: "store.orders", column: "userId", erasure: "retain", module: "store" },

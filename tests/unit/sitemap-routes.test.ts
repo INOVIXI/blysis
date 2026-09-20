@@ -16,7 +16,7 @@ import { locales, defaultLocale } from "@/core/lib/i18n/config";
 const ROUTES = [
     { path: "/store", module: "store" },
     { path: "/store/cart", module: "store" },
-    { path: "/player/[username]", module: "player-profiles" },
+    { path: "/u/[username]", module: "member-profiles" },
     { path: "/vote", module: "vote" },
     { path: "/admin/announcements", module: "announcements", isAdmin: true },
 ];
@@ -42,14 +42,14 @@ describe("CORE_STATIC_ROUTES", () => {
 });
 
 describe("staticModuleRoutes", () => {
-    const enabled = { store: true, vote: true, "player-profiles": true, announcements: true };
+    const enabled = { store: true, vote: true, "member-profiles": true, announcements: true };
 
     it("lists the static public pages of enabled modules", () => {
         expect(staticModuleRoutes(ROUTES, enabled)).toEqual(["/store", "/store/cart", "/vote"]);
     });
 
     it("skips a dynamic path, whose values only the module knows", () => {
-        expect(staticModuleRoutes(ROUTES, enabled)).not.toContain("/player/[username]");
+        expect(staticModuleRoutes(ROUTES, enabled)).not.toContain("/u/[username]");
     });
 
     it("skips admin routes", () => {

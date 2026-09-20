@@ -21,7 +21,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const ROOT = process.cwd();
-const MODULE = path.join(ROOT, "module-sources/player-profiles");
+const MODULE = path.join(ROOT, "module-sources/member-profiles");
 
 function read(...parts: string[]): string {
     return fs.readFileSync(path.join(...parts), "utf8");
@@ -44,7 +44,7 @@ describe("the linked accounts a member sees", () => {
     it("promises no automatic linking, because nothing does it", () => {
         const manifest = JSON.parse(read(MODULE, "module.json"));
         for (const locale of ["en", "tr"]) {
-            expect(manifest.translations[locale].playerProfiles.oauthAutoLink, locale).toBeUndefined();
+            expect(manifest.translations[locale].memberProfiles.oauthAutoLink, locale).toBeUndefined();
         }
         expect(tab).not.toContain("oauthAutoLink");
     });

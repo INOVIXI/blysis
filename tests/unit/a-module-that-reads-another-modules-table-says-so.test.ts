@@ -30,7 +30,7 @@ const SOURCES = path.join(ROOT, "module-sources");
  *    is core's, but half its columns arrive from modules.
  *
  * What does not, deliberately: reading such a field back off a result and
- * tolerating its absence. `player-profiles` shows an order count, a topic
+ * tolerating its absence. `member-profiles` shows an order count, a topic
  * count and a suggestion count on a profile and filters out whichever ones
  * came back undefined, which is a module working with or without its
  * neighbours rather than depending on them. This gate cannot tell that shape

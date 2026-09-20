@@ -80,7 +80,7 @@ async function recentForumTopics(userId: string): Promise<RecentTopic[]> {
     });
 }
 
-// GET /api/v1/players/[username] - Public player profile
+// GET /api/v1/members/[username] - Public member profile
 export async function GET(request: NextRequest, { params }: RouteParams) {
     const { username } = await params;
 
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         },
     });
 
-    if (!user) return NextResponse.json({ error: "Player not found" }, { status: 404 });
+    if (!user) return NextResponse.json({ error: "Member not found" }, { status: 404 });
 
     // The `_count` key is what the profile page has always read; a site with
     // every one of these modules gets exactly the object it got before.
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     ]);
 
     return NextResponse.json({
-        player: {
+        member: {
             ...user,
             _count: counts,
             recentTopics,

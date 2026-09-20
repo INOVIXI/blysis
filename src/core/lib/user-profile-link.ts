@@ -8,7 +8,7 @@
  * answered 404. The name that hurt most was the activity feed's, which is on
  * the home page of every install that turned it on.
  *
- * Core cannot fix that by writing `/player/<username>` instead, because that
+ * Core cannot fix that by writing `/u/<username>` instead, because that
  * path belongs to a module that may not be installed. So the module that
  * serves profiles declares `userProfile: true` on the route, and core asks
  * the registry. With no such module, a username is text rather than a link to
@@ -19,7 +19,7 @@ import { ModuleRoutes } from "@/core/generated/module-registry";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 
 /**
- * The declared profile route pattern, e.g. `/player/[username]`.
+ * The declared profile route pattern, e.g. `/u/[username]`.
  *
  * A registry entry only says the module's files are installed. An admin who
  * has turned that module off is served a 404 at its routes, so its pattern is

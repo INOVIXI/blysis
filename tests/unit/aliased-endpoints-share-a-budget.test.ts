@@ -10,7 +10,7 @@ import { ModuleApiRoutes } from "@/core/generated/module-registry";
  *
  * A manifest declares `{ path, handler }` pairs and nothing stops it naming
  * one handler at two paths. Fifteen do: the store lists thirteen of its routes
- * both bare and under `/store/`, and `servers` and `player-profiles` each list
+ * both bare and under `/store/`, and `servers` and `member-profiles` each list
  * one twice. The dispatcher keyed its rate-limit bucket on a registry key
  * built from the path, so every alias opened a second budget and the ceiling
  * on those endpoints was twice what it read as.

@@ -73,7 +73,7 @@ vi.mock("@/core/lib/db", () => {
 
 /**
  * Every core delegate the export reads. `linkedAccount` is not among them
- * any more: it is `player-profiles`' table, and core hardcoding a module's
+ * any more: it is `member-profiles`' table, and core hardcoding a module's
  * model was the thing the registry exists to avoid. It now reaches the
  * bundle through that module's own manifest, like every other module table.
  */

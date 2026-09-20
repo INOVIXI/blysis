@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Loader2 } from "lucide-react";
+import { Link2, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, LoadFailed } from "@/core/sdk/ui";
 
 interface LinkedAccount {
@@ -25,7 +25,7 @@ interface LinkedAccount {
  * Unlinking belongs to that module too, beside the step that made the link.
  */
 export function ProfileAccountsTab() {
-    const t = useTranslations("playerProfiles");
+    const t = useTranslations("memberProfiles");
     const [accounts, setAccounts] = useState<LinkedAccount[]>([]);
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
