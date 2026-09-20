@@ -111,6 +111,17 @@ export { UrlOrFile } from "@/core/components/ui/url-or-file";
  * screen that prints one back read the same map.
  */
 export { activityKinds, activityTypeLabel } from "@/core/lib/activity-title";
+
+/**
+ * A check in front of a form, for a module that takes something written.
+ *
+ * `Challenge` draws whatever challenge module is installed into the form and
+ * renders nothing when none is; `useChallenge` collects what it reports and
+ * hands it back for the request. The point is the id the module declared in
+ * its manifest, so one widget can behave differently on a login and on a
+ * contact form.
+ */
+export { Challenge, useChallenge } from "@/core/components/auth/Challenge";
 export { MemberAvatar } from "@/core/components/ui/MemberAvatar";
 export { MemberLink } from "@/core/components/ui/MemberLink";
 export { CountBadge } from "@/core/components/ui/count-badge";

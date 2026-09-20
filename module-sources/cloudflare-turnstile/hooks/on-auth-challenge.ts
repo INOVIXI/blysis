@@ -1,5 +1,5 @@
 /**
- * Refuses a login or registration whose Turnstile token does not check out.
+ * Refuses anything whose Turnstile token does not check out.
  *
  * This is the half that matters. Before it existed the admin page offered
  * `enableOnLogin` and `enableOnRegister`, saved them, and nothing read them:
@@ -12,9 +12,13 @@
  * with the switch off for this particular form also lets everything through.
  * Only when both are true is a token required, and then a missing one is
  * refused as firmly as a bad one - otherwise the check is decorative.
+ *
+ * The form is whichever one asked. It used to be a choice between two, which
+ * is all core could name; a form that declares itself as a challenge point is
+ * answered for here like any other.
  */
 import type { HookHandlerFor } from "@/core/sdk";
-import { getTurnstileConfig, verifyTurnstileToken } from "../lib/verify";
+import { getTurnstileConfig, isPointEnabled, verifyTurnstileToken } from "../lib/verify";
 
 const FIELD = "cf-turnstile-response";
 
@@ -25,13 +29,7 @@ const onAuthChallenge: HookHandlerFor<"auth.challenge", "filter"> = async (resul
     const config = await getTurnstileConfig();
     if (!config?.siteKey || !config?.secretKey) return result;
 
-    const enabled =
-        context.action === "register"
-            ? config.enableOnRegister === true
-            : context.action === "login"
-              ? config.enableOnLogin === true
-              : false;
-    if (!enabled) return result;
+    if (!isPointEnabled(config, context.action)) return result;
 
     const token = context.fields[FIELD];
     if (!token) return { ok: false, code: "captcha_missing" };

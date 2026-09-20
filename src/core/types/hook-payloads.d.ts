@@ -261,7 +261,17 @@ interface BlysisFilterContexts {
      * slot asked to be sent, and where the request came from.
      */
     "auth.challenge": {
-        action: "login" | "register" | "forgotPassword";
+        /**
+         * Which form is being filled in: one of core's own three, or a point
+         * a module declared in its `challengePoints`.
+         *
+         * The wire name still says `auth` because it is the module-facing
+         * contract and every module in the tree declares `coreVersion
+         * ^5.0.0`; renaming it would refuse all of them until each was
+         * republished. What it guards is any form that takes something
+         * written - see `challenge-points.ts`.
+         */
+        action: string;
         fields: Record<string, string>;
         ip: string | null;
     };

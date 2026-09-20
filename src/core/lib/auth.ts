@@ -30,7 +30,7 @@ import {
     resetFailedLogins,
 } from "./account-lockout";
 import { getClientIP } from "./rate-limit";
-import { runAuthChallenge } from "./auth-challenge";
+import { runChallenge } from "./auth-challenge";
 import { parseChallengeFields, CHALLENGE_FIELD } from "./auth-challenge-shared";
 
 import type { Provider } from "next-auth/providers";
@@ -167,7 +167,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 // nothing about whether the address exists. With no module
                 // installed the filter has no listeners and this passes.
                 const challengeHeaders = (request as Request | undefined)?.headers;
-                const challenge = await runAuthChallenge({
+                const challenge = await runChallenge({
                     action: "login",
                     fields: parseChallengeFields(credentials?.[CHALLENGE_FIELD]),
                     ip: challengeHeaders ? getClientIP(challengeHeaders) : null,

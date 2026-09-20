@@ -180,6 +180,7 @@ function generateRegistry() {
     const allWidgets: ({ id: string; component: string; defaultOrder: number; defaultVisible: boolean; module: string })[] = [];
     const allNavLinks: ({ label: string; labelKey?: string; href: string; icon?: string; position?: number; module: string })[] = [];
     const allFooterLinks: ManifestItem[] = [];
+    const allChallengePoints: ManifestItem[] = [];
     const allDashboardCards: ManifestItem[] = [];
     const allDashboardSections: ManifestItem[] = [];
     const allHomepageSections: ({ id: string; type: 'content' | 'widget'; component: string; order: number; module: string })[] = [];
@@ -215,6 +216,7 @@ function generateRegistry() {
         manifest.widgets?.forEach((w) => allWidgets.push({ ...w, module: moduleName }));
         manifest.navLinks?.forEach((l) => allNavLinks.push({ ...l, module: moduleName }));
         manifest.footerLinks?.forEach((l) => allFooterLinks.push({ ...l, module: moduleName }));
+        manifest.challengePoints?.forEach((c) => allChallengePoints.push({ ...c, module: moduleName }));
         manifest.dashboardCards?.forEach((c) => allDashboardCards.push({ ...c, module: moduleName }));
         manifest.dashboardSections?.forEach((sec) => allDashboardSections.push({ ...sec, module: moduleName }));
         manifest.layoutComponents?.forEach((lc) => allLayoutComponents.push({ ...lc, module: moduleName }));
@@ -325,6 +327,9 @@ function generateRegistry() {
     let widgetRegistry = `export const ModuleWidgets: { id: string; label?: string; labelKey?: string; component: string; module: string; defaultOrder: number; defaultVisible: boolean }[] = ${JSON.stringify(allWidgets, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleNavLinks: { label: string; labelKey?: string; href: string; icon?: string; position?: number; module: string }[] = ${JSON.stringify(allNavLinks, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleFooterLinks: { label: string; labelKey?: string; href: string; section?: string; module: string }[] = ${JSON.stringify(allFooterLinks, null, 2)};\n\n`;
+    // The forms a challenge module may be switched on for. Core's own three
+    // are added beside these in `challenge-points.ts`.
+    widgetRegistry += `export const ModuleChallengePoints: { id: string; labelKey: string; module: string }[] = ${JSON.stringify(allChallengePoints, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleDashboardCards: { id: string; label: string; labelKey?: string; icon: string; href: string; color: string; statKey: string; module: string }[] = ${JSON.stringify(allDashboardCards, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleDashboardSections: { id: string; label: string; labelKey?: string; module: string }[] = ${JSON.stringify(allDashboardSections, null, 2)};\n\n`;
     widgetRegistry += `// Activity-feed title localization entries contributed by modules.\n`;

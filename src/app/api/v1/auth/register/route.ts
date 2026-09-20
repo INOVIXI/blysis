@@ -14,7 +14,7 @@ import {
     getRegistrationCaps,
     getUsernameRule,
 } from "@/core/lib/security-settings";
-import { runAuthChallenge } from "@/core/lib/auth-challenge";
+import { runChallenge } from "@/core/lib/auth-challenge";
 import { challengeFieldsFrom } from "@/core/lib/auth-challenge-shared";
 import { readJsonBody } from "@/core/lib/api-body";
 import { log } from "@/core/lib/logger";
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         // Whatever module owns the auth.form.challenge slot gets to refuse
         // here, before an account exists. With none installed the filter has
         // no listeners and this returns the value it was handed.
-        const challenge = await runAuthChallenge({
+        const challenge = await runChallenge({
             action: "register",
             fields: challengeFieldsFrom(body),
             ip,

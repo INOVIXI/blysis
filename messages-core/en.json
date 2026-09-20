@@ -1185,7 +1185,10 @@
     "backup_scheduleLabel": "How often",
     "backup_scheduleSaved": "Backup schedule saved",
     "backup_keepLabel": "Keep",
-    "backup_keepHint": "How many automated backups to keep. Older ones are deleted after each run."
+    "backup_keepHint": "How many automated backups to keep. Older ones are deleted after each run.",
+    "challengePoint_login": "Signing in",
+    "challengePoint_register": "Creating an account",
+    "challengePoint_forgotPassword": "Asking for a password reset"
   },
   "footer": {
     "quickLinks": "Quick Links",

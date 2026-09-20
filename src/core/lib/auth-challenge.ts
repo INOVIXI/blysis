@@ -18,7 +18,7 @@
  *     returns `{ ok: false, code }` to refuse.
  *
  * With no module installed the slot renders nothing, the filter has no
- * listeners, and `runAuthChallenge` returns the value it was given. The
+ * listeners, and `runChallenge` returns the value it was given. The
  * three forms behave exactly as they did.
  *
  * The names the browser also needs - the field, the action union, the
@@ -40,7 +40,7 @@ import { CHALLENGE_PASSED, type AuthChallengeAction, type AuthChallengeResult } 
  * with it - stays out of the Auth.js edge bundle until something is actually
  * registered.
  */
-export async function runAuthChallenge(context: {
+export async function runChallenge(context: {
     action: AuthChallengeAction;
     fields: Record<string, string>;
     ip: string | null;

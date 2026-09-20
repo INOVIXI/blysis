@@ -9,13 +9,13 @@ import { Input } from "@/core/components/ui/input";
 import { PasswordInput } from "@/core/components/ui/password-input";
 import { useTranslations } from "next-intl";
 import { authErrorMessage } from "@/core/lib/auth-error-message";
-import { AuthChallenge, useAuthChallenge } from "@/core/components/auth/AuthChallenge";
+import { Challenge, useChallenge } from "@/core/components/auth/Challenge";
 import { CHALLENGE_FIELD } from "@/core/lib/auth-challenge-shared";
 
 export default function RegisterPage() {
     const router = useRouter();
     const t = useTranslations('auth');
-    const challenge = useAuthChallenge();
+    const challenge = useChallenge();
     const [formData, setFormData] = useState({
         email: "",
         username: "",
@@ -164,7 +164,7 @@ export default function RegisterPage() {
                                 />
                             </div>
 
-                            <AuthChallenge action="register" onField={challenge.onField} />
+                            <Challenge action="register" onField={challenge.onField} />
 
                             <Button
                                 type="submit"

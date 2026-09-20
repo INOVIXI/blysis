@@ -8,12 +8,12 @@ import { Button, buttonClassName } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
 import { useTranslations } from "next-intl";
 import { authErrorMessage } from "@/core/lib/auth-error-message";
-import { AuthChallenge, useAuthChallenge } from "@/core/components/auth/AuthChallenge";
+import { Challenge, useChallenge } from "@/core/components/auth/Challenge";
 import { CHALLENGE_FIELD } from "@/core/lib/auth-challenge-shared";
 
 export default function ForgotPasswordPage() {
     const t = useTranslations('auth');
-    const challenge = useAuthChallenge();
+    const challenge = useChallenge();
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [sent, setSent] = useState(false);
@@ -104,7 +104,7 @@ export default function ForgotPasswordPage() {
                                     />
                                 </div>
 
-                                <AuthChallenge action="forgotPassword" onField={challenge.onField} />
+                                <Challenge action="forgotPassword" onField={challenge.onField} />
 
                                 <Button
                                     type="submit"

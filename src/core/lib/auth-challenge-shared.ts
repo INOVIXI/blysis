@@ -3,7 +3,7 @@
  *
  * The login, register and forgot-password forms are client components, so
  * anything they import is bundled for the browser - including the far side of
- * a dynamic `import()`. `runAuthChallenge` reaches the hook bus, which reaches
+ * a dynamic `import()`. `runChallenge` reaches the hook bus, which reaches
  * the database and the logger, which reaches `next/headers`; pulling any of
  * that into a browser bundle fails the build outright.
  *
@@ -13,7 +13,15 @@
  * `tests/unit/client-bundle-safety.test.ts` keeps the two apart.
  */
 
-export type AuthChallengeAction = "login" | "register" | "forgotPassword";
+/**
+ * Which form is being filled in.
+ *
+ * Core's own three are named because core renders the slot inside them; a
+ * module names its own, declared in its manifest as a `challengePoints`
+ * entry, so the union is open. It was closed to the three, which is why a
+ * module that takes something written could not ask for a challenge at all.
+ */
+export type AuthChallengeAction = "login" | "register" | "forgotPassword" | (string & {});
 
 export interface AuthChallengeResult {
     ok: boolean;

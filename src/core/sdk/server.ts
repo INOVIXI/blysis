@@ -163,6 +163,27 @@ export type { StorageProvider, UploadResult } from "@/core/lib/storage";
 export { listBackups, getBackupPath } from "@/core/lib/backup";
 export type { BackupMeta } from "@/core/lib/backup";
 
+/**
+ * Asking, on the server, whether the challenge in front of a form was
+ * answered - and pulling the answer out of a body whose shape the route does
+ * not own.
+ *
+ * A route calls this before it writes anything. With no challenge module
+ * installed there are no listeners and it passes, so a module that asks
+ * behaves exactly as it did on an install that never wanted one.
+ */
+export { runChallenge } from "@/core/lib/auth-challenge";
+/**
+ * Every form on this site that can ask whether a human is filling it in,
+ * core's own three beside whatever the enabled modules declared. For a
+ * challenge module's own settings screen, which has one question to answer -
+ * is it switched on here? - and no reason to know which of them core owns.
+ */
+export { challengePoints } from "@/core/lib/challenge-points";
+export type { ChallengePoint } from "@/core/lib/challenge-points";
+export { challengeFieldsFrom, CHALLENGE_FIELD } from "@/core/lib/auth-challenge-shared";
+export type { AuthChallengeResult as ChallengeResult } from "@/core/lib/auth-challenge-shared";
+
 // --- TOTP / backup codes ---
 export {
     generateSecret,

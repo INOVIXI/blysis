@@ -11,21 +11,46 @@ import { errorMessage } from "@/core/sdk";
 interface TurnstileConfig {
     siteKey: string;
     secretKey: string;
-    enableOnLogin: boolean;
-    enableOnRegister: boolean;
+    /** The forms the widget belongs on, by the id each one declared. */
+    points: string[];
+}
+
+/**
+ * The old two switches as points.
+ *
+ * An install that has Turnstile on its login form stored `enableOnLogin`, and
+ * the listener still reads it. The screen shows that state as what it is - the
+ * login point, ticked - so the first save writes it the new way and nothing
+ * has to be migrated.
+ */
+function pointsFrom(stored: Record<string, unknown>): string[] {
+    const chosen = new Set(Array.isArray(stored.points) ? (stored.points as string[]) : []);
+    if (stored.enableOnLogin === true) chosen.add("login");
+    if (stored.enableOnRegister === true) chosen.add("register");
+    return [...chosen];
 }
 
 export default function CloudflareTurnstileAdminPage() {
     const t = useTranslations("cloudflareTurnstile");
+    // The root catalogue: a point's name lives in the namespace of whichever
+    // module declared it, core's own included.
+    const anyT = useTranslations();
+    // What can be switched on comes down with the settings: the list depends
+    // on which modules are enabled, and that is a question for the server.
+    const [points, setPoints] = useState<{ id: string; labelKey: string }[]>([]);
     const [loading, setLoading] = useState(true);
     const [secretStored, setSecretStored] = useState(false);
     const [saving, setSaving] = useState(false);
     const [config, setConfig] = useState<TurnstileConfig>({
         siteKey: "",
         secretKey: "",
-        enableOnLogin: false,
-        enableOnRegister: false,
+        points: [],
     });
+
+    // A point whose catalogue has no word for it falls back to its id rather
+    // than rendering a key at the operator.
+    const nameOf = (point: { id: string; labelKey: string }) =>
+        (anyT.has(point.labelKey) ? anyT(point.labelKey) : point.id);
 
     useEffect(() => {
         let cancelled = false;
@@ -39,10 +64,10 @@ export default function CloudflareTurnstileAdminPage() {
                 setConfig({
                     siteKey: d.siteKey || "",
                     secretKey: "",
-                    enableOnLogin: !!d.enableOnLogin,
-                    enableOnRegister: !!d.enableOnRegister,
+                    points: pointsFrom(d as Record<string, unknown>),
                 });
                 setSecretStored((d.secretsConfigured ?? []).length > 0);
+                setPoints(Array.isArray(d.offered) ? d.offered : []);
             })
             .catch(() => toast.error(t("saveError")))
             .finally(() => {
@@ -132,23 +157,29 @@ export default function CloudflareTurnstileAdminPage() {
                     </CardContent>
                 </Card>
 
+                {/* Every form this site takes something written through, not
+                    the two this screen used to name. The list is whatever is
+                    installed: a module that declares a point appears here
+                    without this file knowing it exists. */}
                 <Card>
                     <CardHeader>
                         <CardTitle>{t("challengeTitle")}</CardTitle>
+                        <p className="text-sm text-muted-foreground">{t("challengeSubtitle")}</p>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                        <CheckboxField
-                            checked={config.enableOnLogin}
-                            onChange={(e) => setConfig({ ...config, enableOnLogin: e.target.checked })}
-                            label={<span className="font-medium">{t("enableOnLogin")}</span>}
-                            description={t("enableOnLoginDesc")}
-                        />
-                        <CheckboxField
-                            checked={config.enableOnRegister}
-                            onChange={(e) => setConfig({ ...config, enableOnRegister: e.target.checked })}
-                            label={<span className="font-medium">{t("enableOnRegister")}</span>}
-                            description={t("enableOnRegisterDesc")}
-                        />
+                        {points.map((point) => (
+                            <CheckboxField
+                                key={point.id}
+                                checked={config.points.includes(point.id)}
+                                onChange={(e) => setConfig({
+                                    ...config,
+                                    points: e.target.checked
+                                        ? [...config.points, point.id]
+                                        : config.points.filter((one) => one !== point.id),
+                                })}
+                                label={<span className="font-medium">{nameOf(point)}</span>}
+                            />
+                        ))}
                     </CardContent>
                 </Card>
             </div>

@@ -5,11 +5,13 @@ import { Slot } from "@/core/components/Slot";
 import type { AuthChallengeAction } from "@/core/lib/auth-challenge-shared";
 
 /**
- * Where a module gets to put a check in front of an auth form.
+ * Where a module gets to put a check in front of a form.
  *
- * Core renders this inside the login, register and forgot-password forms and
- * has no idea whether anything fills it. With no module installed the slot
- * has no contributions, this renders nothing, and `useAuthChallenge()` hands
+ * Core renders this inside the login, register and forgot-password forms, and
+ * a module renders it inside its own - a topic, a suggestion, a submission -
+ * naming the point it declared in its manifest. Core has no idea whether
+ * anything fills it. With no challenge module installed the slot has no
+ * contributions, this renders nothing, and `useChallenge()` hands
  * the form an empty object that changes none of its behaviour.
  *
  * A module's slot component receives `action` (so one widget can behave
@@ -18,7 +20,7 @@ import type { AuthChallengeAction } from "@/core/lib/auth-challenge-shared";
  * never looks inside them: naming them is the module's business, and a
  * second challenge module would simply add its own.
  */
-export function useAuthChallenge() {
+export function useChallenge() {
     const fields = useRef<Record<string, string>>({});
     // Re-render when a field arrives so a form can tell whether a widget has
     // produced anything yet.
@@ -36,7 +38,7 @@ export function useAuthChallenge() {
     return { onField, read, ready };
 }
 
-export function AuthChallenge({
+export function Challenge({
     action,
     onField,
 }: {

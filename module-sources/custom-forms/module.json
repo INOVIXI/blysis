@@ -2,7 +2,7 @@
   "id": "custom-forms",
   "name": "Custom Forms",
   "description": "Dynamic form builder with submissions",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
@@ -210,7 +210,8 @@
         "typeText": "Text",
         "typeTextarea": "Text Area",
         "typeUrl": "Web Address",
-        "updated": "Form updated successfully"
+        "updated": "Form updated successfully",
+        "adm_challengePoint": "A form somebody fills in"
       },
       "admin": {
         "menu_custom-forms": "Custom Forms",
@@ -349,7 +350,8 @@
         "typeText": "Metin",
         "typeTextarea": "Metin Alanı",
         "typeUrl": "Web Adresi",
-        "updated": "Form başarıyla güncellendi"
+        "updated": "Form başarıyla güncellendi",
+        "adm_challengePoint": "Birinin doldurduğu form"
       },
       "admin": {
         "menu_custom-forms": "Formlar",
@@ -388,6 +390,12 @@
       "nameKey": "kindFormSubmissionCreated",
       "prefix": "Submitted form: ",
       "key": "formSubmissionCreated"
+    }
+  ],
+  "challengePoints": [
+    {
+      "id": "forms.submit",
+      "labelKey": "customForms.adm_challengePoint"
     }
   ]
 }

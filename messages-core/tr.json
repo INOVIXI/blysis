@@ -1185,7 +1185,10 @@
     "backup_scheduleLabel": "Ne sıklıkla",
     "backup_scheduleSaved": "Yedekleme sıklığı kaydedildi",
     "backup_keepLabel": "Saklanacak sayı",
-    "backup_keepHint": "Kaç otomatik yedek saklanacak. Her çalışmadan sonra daha eskiler silinir."
+    "backup_keepHint": "Kaç otomatik yedek saklanacak. Her çalışmadan sonra daha eskiler silinir.",
+    "challengePoint_login": "Giriş yapma",
+    "challengePoint_register": "Hesap oluşturma",
+    "challengePoint_forgotPassword": "Şifre sıfırlama isteme"
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",

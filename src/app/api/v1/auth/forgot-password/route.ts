@@ -6,7 +6,7 @@ import { PASSWORD_RESET_EXPIRY, getDurationMs } from "@/core/lib/security-settin
 import { randomBytes, createHash } from "crypto";
 import { sendPasswordResetEmail } from "@/core/lib/email";
 import { rateLimit, getClientIP } from "@/core/lib/rate-limit";
-import { runAuthChallenge } from "@/core/lib/auth-challenge";
+import { runChallenge } from "@/core/lib/auth-challenge";
 import { resolveAppUrl } from "@/core/lib/app-url";
 import { challengeFieldsFrom } from "@/core/lib/auth-challenge-shared";
 import { log } from "@/core/lib/logger";
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         // a challenge module gets a say here too. The refusal keeps the same
         // generic shape as every other branch: this endpoint never confirms
         // whether an address exists.
-        const challenge = await runAuthChallenge({
+        const challenge = await runChallenge({
             action: "forgotPassword",
             fields: challengeFieldsFrom(raw),
             ip,

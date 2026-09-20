@@ -12,6 +12,17 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.7.0 - a challenge is offered to any form that takes something written.
+ * `Challenge` and `useChallenge` join `@/core/sdk/ui`; `runChallenge`,
+ * `challengeFieldsFrom`, `CHALLENGE_FIELD`, `challengePoints` and the
+ * `ChallengeResult` and `ChallengePoint` types join `@/core/sdk/server`; and a
+ * manifest may declare `challengePoints`, the forms it takes writing through.
+ * Core had both halves of a challenge and neither was reachable from a
+ * module, and the action was a closed union of three auth words. The wire
+ * names still say `auth.challenge` and `auth.form.challenge`: they are the
+ * module-facing contract and every module declares `coreVersion ^5.0.0`, so
+ * renaming them would refuse all of them until each was republished.
+ *
  * 5.6.0 - `listBackups`, `getBackupPath` and `BackupMeta` join
  * `@/core/sdk/server`. Every dump lived on the same disk as the database, so
  * the box that lost one lost the other; a destination is a module's job
@@ -501,4 +512,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.6.0";
+export const CORE_API_VERSION = "5.7.0";

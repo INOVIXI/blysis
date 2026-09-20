@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { isAdmin, prisma, readJsonBody, settingsForStorage, withoutSecrets } from "@/core/sdk/server";
+import { challengePoints, isAdmin, prisma, readJsonBody, settingsForStorage, withoutSecrets } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 
 const SETTING_KEY = "cloudflare_turnstile_config";
@@ -12,8 +12,12 @@ const configSchema = z.object({
     // toggling "require on login" would silently switch the widget off by
     // wiping the key it verifies with.
     secretKey: z.string().max(200).default(""),
-    enableOnLogin: z.boolean().default(false),
-    enableOnRegister: z.boolean().default(false),
+    /**
+     * The forms the widget belongs on, by the id each one declared. The two
+     * booleans that came before are still read by the listener, so an install
+     * that never opens this screen keeps the login form it had.
+     */
+    points: z.array(z.string().min(1).max(64)).max(50).default([]),
 });
 
 /** The sealed secret key exactly as stored, for a save that is not changing it. */
@@ -36,8 +40,18 @@ export async function GET() {
 
     const setting = await prisma.setting.findUnique({ where: { key: SETTING_KEY } });
     const { settings, secretsConfigured } = withoutSecrets({ [SETTING_KEY]: setting?.value ?? null });
-    const config = settings[SETTING_KEY] || { siteKey: "", enableOnLogin: false, enableOnRegister: false };
-    return NextResponse.json({ ...(config as object), secretsConfigured });
+    const config = settings[SETTING_KEY] || { siteKey: "", points: [] };
+    /*
+     * The forms that can be switched on travel with the answer. The screen is
+     * a client component and the list depends on which modules are enabled,
+     * which is a question for the database, so it is answered here rather
+     * than assembled there.
+     */
+    return NextResponse.json({
+        ...(config as object),
+        secretsConfigured,
+        offered: (await challengePoints()).map((point) => ({ id: point.id, labelKey: point.labelKey })),
+    });
 }
 
 export async function POST(request: NextRequest) {

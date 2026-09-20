@@ -339,6 +339,23 @@ const footerLink = z.object({
     section: z.enum(["quick", "legal"]).optional(),
 });
 
+/**
+ * A form this module takes something written through, which a challenge
+ * module may be switched on for.
+ *
+ * Core has no CAPTCHA and must not grow one; what it has is the slot a widget
+ * is drawn into and the filter that refuses. Until a module could name its
+ * own forms, the only ones either could reach were core's three, so the one
+ * form a stranger can write through without an account had a rate limit and
+ * nothing else.
+ */
+const challengePoint = z.object({
+    /** Stable, and what `runChallenge` is called with. Never shown. */
+    id: z.string().min(1).max(64).regex(/^[a-zA-Z0-9._-]+$/),
+    /** Where the name lives, namespace and all: the words are this module's. */
+    labelKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
+});
+
 const profileTab = z.object({
     id: z.string().min(1).max(64).regex(SAFE_SLUG),
     /** English prose, and only ever the fallback. See `labelKey`. */
@@ -981,6 +998,7 @@ export const moduleManifestSchema = z.object({
     widgets: z.array(widgetEntry).max(50).optional(),
     navLinks: z.array(navLink).max(50).optional(),
     footerLinks: z.array(footerLink).max(50).optional(),
+    challengePoints: z.array(challengePoint).max(20).optional(),
     profileTabs: z.array(profileTab).max(50).optional(),
     oauthButtons: z.array(oauthButton).max(20).optional(),
     navGroups: z.array(navGroup).max(20).optional(),

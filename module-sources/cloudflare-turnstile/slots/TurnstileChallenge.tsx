@@ -17,8 +17,8 @@ import { useEffect, useRef, useState } from "react";
  */
 interface PublicConfig {
     siteKey: string;
-    enableOnLogin: boolean;
-    enableOnRegister: boolean;
+    /** The forms the widget belongs on, by the id each one declared. */
+    points: string[];
 }
 
 interface TurnstileApi {
@@ -66,7 +66,8 @@ export default function TurnstileChallenge({
     action,
     onField,
 }: {
-    action?: "login" | "register" | "forgotPassword";
+    /** The point the form declared. Core's own three, or a module's own. */
+    action?: string;
     onField?: (name: string, value: string) => void;
 }) {
     const [config, setConfig] = useState<PublicConfig | null>(null);
@@ -92,13 +93,13 @@ export default function TurnstileChallenge({
 
     // Cloudflare's own reset-callback surface uses the widget id, so the
     // whole lifecycle lives in one effect keyed on the site key.
-    const enabled =
-        !!config?.siteKey &&
-        (action === "register"
-            ? config.enableOnRegister
-            : action === "login"
-              ? config.enableOnLogin
-              : config.enableOnLogin || config.enableOnRegister);
+    /*
+     * Drawn where the operator switched it on, whichever form that is. It
+     * used to be a choice between two, with a third branch that drew the
+     * widget on the forgot-password form whenever either of them was on -
+     * which is a form nobody had asked to protect.
+     */
+    const enabled = !!config?.siteKey && !!action && (config.points ?? []).includes(action);
 
     useEffect(() => {
         if (!enabled || !config?.siteKey) return;

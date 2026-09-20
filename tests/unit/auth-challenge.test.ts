@@ -27,7 +27,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
-import { runAuthChallenge } from "@/core/lib/auth-challenge";
+import { runChallenge } from "@/core/lib/auth-challenge";
 import {
     CHALLENGE_FIELD,
     CHALLENGE_PASSED,
@@ -67,7 +67,7 @@ describe("parseChallengeFields", () => {
     });
 });
 
-describe("runAuthChallenge", () => {
+describe("runChallenge", () => {
     const listeners: (() => void)[] = [];
 
     afterEach(() => {
@@ -81,14 +81,14 @@ describe("runAuthChallenge", () => {
 
     it("passes when nothing is listening", async () => {
         await expect(
-            runAuthChallenge({ action: "login", fields: {}, ip: null }),
+            runChallenge({ action: "login", fields: {}, ip: null }),
         ).resolves.toEqual(CHALLENGE_PASSED);
     });
 
     it("lets a listener refuse with its own code", async () => {
         listen(() => ({ ok: false, code: "captcha_failed" }));
         await expect(
-            runAuthChallenge({ action: "register", fields: {}, ip: "1.2.3.4" }),
+            runChallenge({ action: "register", fields: {}, ip: "1.2.3.4" }),
         ).resolves.toEqual({ ok: false, code: "captcha_failed" });
     });
 
@@ -98,7 +98,7 @@ describe("runAuthChallenge", () => {
             seen.push(context);
             return result;
         });
-        await runAuthChallenge({ action: "login", fields: { t: "x" }, ip: "9.9.9.9" });
+        await runChallenge({ action: "login", fields: { t: "x" }, ip: "9.9.9.9" });
         expect(seen).toEqual([{ action: "login", fields: { t: "x" }, ip: "9.9.9.9" }]);
     });
 
@@ -107,7 +107,7 @@ describe("runAuthChallenge", () => {
             throw new Error("module is broken");
         });
         await expect(
-            runAuthChallenge({ action: "login", fields: {}, ip: null }),
+            runChallenge({ action: "login", fields: {}, ip: null }),
         ).resolves.toEqual(CHALLENGE_PASSED);
     });
 
@@ -115,7 +115,7 @@ describe("runAuthChallenge", () => {
         listen(() => ({ ok: false, code: "captcha_missing" }));
         listen((result) => result);
         await expect(
-            runAuthChallenge({ action: "login", fields: {}, ip: null }),
+            runChallenge({ action: "login", fields: {}, ip: null }),
         ).resolves.toEqual({ ok: false, code: "captcha_missing" });
     });
 });
@@ -123,7 +123,7 @@ describe("runAuthChallenge", () => {
 describe("the three auth forms", () => {
     it("all render the slot", () => {
         for (const rel of AUTH_FORMS) {
-            expect(read(rel), rel).toContain("<AuthChallenge");
+            expect(read(rel), rel).toContain("<Challenge");
         }
     });
 
@@ -154,7 +154,7 @@ describe("the three server entry points", () => {
     it("all await the challenge and keep its answer", () => {
         for (const rel of ENTRIES) {
             expect(read(rel), rel).toMatch(
-                /const challenge = await runAuthChallenge\(\{/,
+                /const challenge = await runChallenge\(\{/,
             );
         }
     });
@@ -167,7 +167,7 @@ describe("the three server entry points", () => {
 
     it("run it before the account is looked up or created", () => {
         const auth = read("src/core/lib/auth.ts");
-        expect(auth.indexOf("runAuthChallenge")).toBeLessThan(auth.indexOf("prisma.user.findUnique"));
+        expect(auth.indexOf("runChallenge")).toBeLessThan(auth.indexOf("prisma.user.findUnique"));
     });
 });
 

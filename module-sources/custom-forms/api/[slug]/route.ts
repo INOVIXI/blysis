@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, rateLimitForRoleAsync, readJsonBody, getClientIP } from "@/core/sdk/server";
+import { challengeFieldsFrom, getClientIP, isAdmin, prisma, rateLimitForRoleAsync, readJsonBody, runChallenge } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { checkAnswers, formSubmissionSchema, formUpdateSchema, storedFieldsSchema } from "../../lib/validations";
 
@@ -37,6 +37,28 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     const jsonBody = await readJsonBody(request);
     if (jsonBody instanceof NextResponse) return jsonBody;
+
+    /*
+     * Whatever check the operator put in front of this form, asked before
+     * anything is written and before the answers are even looked at.
+     *
+     * This is the one form on the site somebody with no account can write
+     * through, so a rate limit per address was all that stood between it and
+     * a script. With no challenge module installed there are no listeners and
+     * this passes, so a site that never wanted one behaves as it did.
+     *
+     * The challenge field is deliberately outside `formSubmissionSchema`: the
+     * shape of what a challenge module collects is that module's business.
+     */
+    const challenge = await runChallenge({
+        action: "forms.submit",
+        fields: challengeFieldsFrom(jsonBody),
+        ip,
+    });
+    if (!challenge.ok) {
+        return NextResponse.json({ error: "Challenge failed", reason: challenge.code }, { status: 400 });
+    }
+
     const parsed = formSubmissionSchema.safeParse(jsonBody);
     if (!parsed.success) {
         return NextResponse.json({ error: "Form data required" }, { status: 400 });

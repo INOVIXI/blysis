@@ -557,6 +557,31 @@
         ]
       }
     },
+    "challengePoints": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9._-]+$"
+          },
+          "labelKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-zA-Z0-9._-]+$"
+          }
+        },
+        "required": [
+          "id",
+          "labelKey"
+        ]
+      }
+    },
     "profileTabs": {
       "maxItems": 50,
       "type": "array",

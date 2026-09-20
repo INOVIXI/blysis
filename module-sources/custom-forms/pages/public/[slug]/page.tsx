@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from "react";
 import { useTranslations } from "next-intl";
-import { Button, Card, CardContent, Input, Label, Textarea, NativeSelect, CheckboxField } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Challenge, Input, Label, Textarea, NativeSelect, CheckboxField, useChallenge } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
 import { Loader2, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -58,6 +58,16 @@ export default function FormPage({ params }: PageProps) {
         return () => { cancelled = true; };
     }, [slug]);
 
+    /*
+     * Whatever check the operator put in front of this form.
+     *
+     * This is the one form on the site a stranger can write through without
+     * an account, and until it could ask, five submissions a minute per
+     * address was the whole of what stood between it and a script. With no
+     * challenge module installed this renders nothing and sends nothing.
+     */
+    const challenge = useChallenge();
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!form) return;
@@ -67,7 +77,7 @@ export default function FormPage({ params }: PageProps) {
             const res = await fetch(`/api/v1/forms/${slug}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ data: values }),
+                body: JSON.stringify({ data: values, challenge: challenge.read() }),
             });
 
             if (res.ok) {
@@ -200,6 +210,10 @@ export default function FormPage({ params }: PageProps) {
                                     {renderField(field)}
                                 </div>
                             ))}
+                            {/* Above the button, which is where a person
+                                looks for the last thing to do before
+                                pressing it. */}
+                            <Challenge action="forms.submit" onField={challenge.onField} />
                             <Button type="submit" disabled={submitting}>
                                 {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> {t("submitting")}</> : t("submit")}
                             </Button>

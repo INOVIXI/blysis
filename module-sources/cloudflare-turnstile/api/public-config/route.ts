@@ -18,9 +18,18 @@ export const dynamic = "force-dynamic";
 export async function GET() {
     const setting = await prisma.setting.findUnique({ where: { key: SETTING_KEY } });
     const value = (setting?.value ?? {}) as Record<string, unknown>;
+    /*
+     * The forms the widget belongs on, as one list. The two booleans are
+     * folded into it rather than sent beside it: the widget asks "am I on
+     * here?" about whatever form it is drawn in, and an install that predates
+     * the list must get the same answer as one that has it.
+     */
+    const points = new Set(Array.isArray(value.points) ? (value.points as string[]) : []);
+    if (value.enableOnLogin === true) points.add("login");
+    if (value.enableOnRegister === true) points.add("register");
+
     return NextResponse.json({
         siteKey: typeof value.siteKey === "string" ? value.siteKey : "",
-        enableOnLogin: value.enableOnLogin === true,
-        enableOnRegister: value.enableOnRegister === true,
+        points: [...points],
     });
 }

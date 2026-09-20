@@ -14,7 +14,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useAllModules } from "@/core/providers/module-provider";
 import { ModuleOauthButtons } from "@/core/generated/module-registry";
 import { isEnabledIn } from "@/core/lib/module-enabled";
-import { AuthChallenge, useAuthChallenge } from "@/core/components/auth/AuthChallenge";
+import { Challenge, useChallenge } from "@/core/components/auth/Challenge";
 import { CHALLENGE_FIELD } from "@/core/lib/auth-challenge-shared";
 import { authErrorMessage } from "@/core/lib/auth-error-message";
 import { readRefusal } from "@/core/lib/login-refusal";
@@ -35,7 +35,7 @@ export default function LoginPage() {
     // is what stands between that and an open redirect, and a rejected one
     // falls back to the homepage rather than to a guess.
     const destination = safeInternalPath(searchParams.get("callbackUrl")) ?? "/";
-    const challenge = useAuthChallenge();
+    const challenge = useChallenge();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -274,7 +274,7 @@ export default function LoginPage() {
                                 </Link>
                             </div>
 
-                            <AuthChallenge action="login" onField={challenge.onField} />
+                            <Challenge action="login" onField={challenge.onField} />
 
                             <Button
                                 type="submit"
