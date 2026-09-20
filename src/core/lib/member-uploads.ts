@@ -18,15 +18,43 @@
 export const MEMBER_AVATAR_UPLOADS_KEY = "member_avatar_uploads";
 
 /**
- * On unless it is explicitly turned off. A member with no picture is the
- * state the door exists to fix, so a site that never opens the settings
- * screen gets the useful behaviour.
+ * Three answers, because an operator has three positions and only two were
+ * offered.
  *
- * Stored as JSON, so it arrives as a boolean from a toggle and as a string
- * from anything that wrote it by hand. Both spellings of "off" mean off.
+ * `upload` lets a member send a file. `link` takes that away and still lets
+ * them point at a picture they host. `off` is the one that was missing: no
+ * member picture at all, everybody drawn from their name - which is what a
+ * site that does not want to police images at all actually wants, and the
+ * only setting that stops a member putting a picture on their profile by
+ * pasting an address.
+ *
+ * Stored as JSON. The older spellings still arrive from installations written
+ * before there was a third answer: `true` was upload, `false` was link.
  */
+type AvatarPolicy = "upload" | "link" | "off";
+
+/** Not exported: the two questions callers actually ask are below. */
+function memberAvatarPolicy(stored: unknown): AvatarPolicy {
+    if (stored === true) return "upload";
+    if (stored === false) return "link";
+    if (typeof stored === "string") {
+        const said = stored.trim().toLowerCase();
+        if (said === "off") return "off";
+        if (said === "link" || said === "false") return "link";
+        if (said === "upload" || said === "true") return "upload";
+    }
+    // Nothing said. A member with no picture is the state the door exists to
+    // fix, so a site that never opens the settings screen gets the useful
+    // behaviour.
+    return "upload";
+}
+
+/** Whether the upload control is drawn at all. */
 export function memberAvatarUploads(stored: unknown): boolean {
-    if (stored === false) return false;
-    if (typeof stored === "string" && stored.trim().toLowerCase() === "false") return false;
-    return true;
+    return memberAvatarPolicy(stored) === "upload";
+}
+
+/** Whether a member may set a picture by any means. */
+export function memberAvatarsAllowed(stored: unknown): boolean {
+    return memberAvatarPolicy(stored) !== "off";
 }

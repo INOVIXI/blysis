@@ -63,18 +63,37 @@ const USERNAME_RULE_CHOICES = USERNAME_RULES.map((value) => ({ value, labelKey: 
  * read by `memberAvatarUploads()`, which treats anything but "false" as on: a
  * site that never opens this screen gets the useful behaviour.
  */
-/** Asked for, or not. The wording differs from ALLOWED_CHOICES because the
- *  question does: one is about what a member may do, the other about what the
- *  site demands before it lets them. */
+/**
+ * Open, or closed. Three sets of words rather than one, because the questions
+ * are three: what a member may upload, whether a door is open at all, and what
+ * the site demands before it lets somebody through it. The upload wording was
+ * reused here once - "Members may upload / Link only" beside "Username
+ * changes" - which is nonsense in the exact way a reader notices and a writer
+ * does not.
+ */
+const OPEN_CHOICES = [
+    { value: "true", labelKey: "generalSettings_open" },
+    { value: "false", labelKey: "generalSettings_closed" },
+] as const;
+
+/** Asked for, or not. */
 const REQUIRED_CHOICES = [
     { value: "true", labelKey: "generalSettings_required" },
     { value: "false", labelKey: "generalSettings_notRequired" },
 ] as const;
 
-const ALLOWED_CHOICES = [
-    { value: "true", labelKey: "generalSettings_allowed" },
-    { value: "false", labelKey: "generalSettings_notAllowed" },
+/**
+ * What a member may put on their own profile. Three positions, because an
+ * operator has three: send a file, point at one, or have none at all. The
+ * third was missing, so a site that did not want member pictures could only
+ * take the upload away and still had every pasted address to police.
+ */
+const AVATAR_CHOICES = [
+    { value: "upload", labelKey: "generalSettings_allowed" },
+    { value: "link", labelKey: "generalSettings_notAllowed" },
+    { value: "off", labelKey: "generalSettings_avatarsOff" },
 ] as const;
+
 
 interface SectionDef {
     titleKey: string;
@@ -94,7 +113,7 @@ const sections: SectionDef[] = [
     {
         titleKey: "generalSettings_memberContent",
         fields: [
-            { key: MEMBER_AVATAR_UPLOADS_KEY, labelKey: "generalSettings_memberAvatarUploads", type: "choice", defaultValue: "true", choices: ALLOWED_CHOICES, descriptionKey: "generalSettings_memberAvatarUploadsHint" },
+            { key: MEMBER_AVATAR_UPLOADS_KEY, labelKey: "generalSettings_memberAvatarUploads", type: "choice", defaultValue: "upload", choices: AVATAR_CHOICES, descriptionKey: "generalSettings_memberAvatarUploadsHint" },
         ],
     },
     {
@@ -108,8 +127,8 @@ const sections: SectionDef[] = [
          */
         titleKey: "generalSettings_memberIdentity",
         fields: [
-            { key: MEMBER_USERNAME_CHANGES_KEY, labelKey: "generalSettings_usernameChanges", type: "choice", defaultValue: "true", choices: ALLOWED_CHOICES, descriptionKey: "generalSettings_usernameChangesHint" },
-            { key: MEMBER_EMAIL_CHANGES_KEY, labelKey: "generalSettings_emailChanges", type: "choice", defaultValue: "false", choices: ALLOWED_CHOICES, descriptionKey: "generalSettings_emailChangesHint" },
+            { key: MEMBER_USERNAME_CHANGES_KEY, labelKey: "generalSettings_usernameChanges", type: "choice", defaultValue: "true", choices: OPEN_CHOICES, descriptionKey: "generalSettings_usernameChangesHint" },
+            { key: MEMBER_EMAIL_CHANGES_KEY, labelKey: "generalSettings_emailChanges", type: "choice", defaultValue: "false", choices: OPEN_CHOICES, descriptionKey: "generalSettings_emailChangesHint" },
             { key: IDENTITY_REQUIRES_PASSWORD_KEY, labelKey: "generalSettings_identityPassword", type: "choice", defaultValue: "true", choices: REQUIRED_CHOICES, descriptionKey: "generalSettings_identityPasswordHint" },
             { key: EMAIL_CHANGE_VERIFICATION_KEY, labelKey: "generalSettings_emailVerification", type: "choice", defaultValue: "true", choices: REQUIRED_CHOICES, descriptionKey: "generalSettings_emailVerificationHint" },
         ],

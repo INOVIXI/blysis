@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { Loader2, Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
@@ -10,6 +10,13 @@ import { UrlOrFile } from "@/core/components/ui/url-or-file";
 import { Label } from "@/core/components/ui/label";
 import { authErrorMessage } from "@/core/lib/auth-error-message";
 import { formatDate, dateLocaleTag } from "@/core/lib/utils";
+import { useSiteSettings } from "@/core/hooks/useSiteSettings";
+import { memberAvatarUploads, memberAvatarsAllowed } from "@/core/lib/member-uploads";
+import {
+    memberUsernameChanges,
+    memberEmailChanges,
+    identityRequiresPassword,
+} from "@/core/lib/member-identity";
 
 export interface AccountIdentity {
     email: string;
@@ -37,13 +44,29 @@ export function AccountSettings({
     const authT = useTranslations("auth");
     const dateTag = dateLocaleTag(useLocale());
 
+    // What this site lets a member change about themselves. Read from the
+    // public settings rather than assumed: a screen that offers a field the
+    // operator has closed is a save button that always fails.
+    const { settings } = useSiteSettings();
+    const mayChangeUsername = memberUsernameChanges(settings.member_username_changes);
+    const mayChangeEmail = memberEmailChanges(settings.member_email_changes);
+    const needsPassword = identityRequiresPassword(settings.identity_requires_password);
+
     const usernameId = useId();
+    const passwordId = useId();
     const avatarId = useId();
     const emailId = useId();
     const memberSinceId = useId();
 
     const [username, setUsername] = useState(identity.username);
+    const [email, setEmail] = useState(identity.email);
+    const [currentPassword, setCurrentPassword] = useState("");
     const [avatar, setAvatar] = useState(identity.avatar ?? "");
+    const [pending, setPending] = useState(false);
+
+    // Only then is the password asked for: a member fixing their avatar is
+    // not proving anything.
+    const identityChanged = username !== identity.username || email !== identity.email;
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState("");
@@ -57,14 +80,28 @@ export function AccountSettings({
             const res = await fetch("/api/v1/auth/profile", {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, avatar: avatar || null }),
+                body: JSON.stringify({
+                    ...(mayChangeUsername ? { username } : {}),
+                    ...(mayChangeEmail && email !== identity.email ? { email } : {}),
+                    ...(needsPassword && identityChanged ? { currentPassword } : {}),
+                    avatar: avatar || null,
+                }),
             });
             const data = await res.json();
             if (!res.ok) {
                 setError(authErrorMessage(authT, data, t("failedToUpdate")));
                 return;
             }
+            // The address does not move until the link sent to it is
+            // answered, so the screen says that rather than showing the new
+            // one as though it were already theirs.
+            if (data?.code === "email_change_pending") {
+                setPending(true);
+                setCurrentPassword("");
+                return;
+            }
             onSaved({ username, avatar: avatar || null });
+            setCurrentPassword("");
             setSaved(true);
             setTimeout(() => setSaved(false), 3000);
         } catch {
@@ -92,8 +129,25 @@ export function AccountSettings({
                     <div className="grid gap-4 md:grid-cols-2">
                         <div>
                             <Label htmlFor={usernameId}>{t("username")}</Label>
-                            <Input id={usernameId} value={username} onChange={(e) => setUsername(e.target.value)} />
+                            <Input
+                                id={usernameId}
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                disabled={!mayChangeUsername}
+                                className={mayChangeUsername ? undefined : "bg-muted"}
+                                aria-describedby={mayChangeUsername ? undefined : `${usernameId}-help`}
+                            />
+                            {!mayChangeUsername && (
+                                <p id={`${usernameId}-help`} className="text-xs text-muted-foreground mt-1">
+                                    {t("usernameCannotChange")}
+                                </p>
+                            )}
                         </div>
+                        {/* Drawn at all only where the operator allows a member
+                            picture. Closed entirely, everybody wears the face
+                            their name makes, and there is no field here to
+                            promise otherwise. */}
+                        {memberAvatarsAllowed(settings.member_avatar_uploads) && (
                         <div>
                             {/* A member's own picture, uploaded through the one
                                 door that is theirs: `/api/v1/me/avatar`, which
@@ -107,21 +161,44 @@ export function AccountSettings({
                                 onChange={setAvatar}
                                 accept="image/*"
                                 endpoint="/api/v1/me/avatar"
+                                canUpload={memberAvatarUploads(settings.member_avatar_uploads)}
                             />
                         </div>
+                        )}
                         <div>
                             <Label htmlFor={emailId}>{t("email")}</Label>
                             <Input
                                 id={emailId}
-                                value={identity.email}
-                                disabled
-                                className="bg-muted"
+                                type="email"
+                                value={mayChangeEmail ? email : identity.email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                disabled={!mayChangeEmail}
+                                className={mayChangeEmail ? undefined : "bg-muted"}
                                 aria-describedby={`${emailId}-help`}
                             />
                             <p id={`${emailId}-help`} className="text-xs text-muted-foreground mt-1">
-                                {t("emailCannotChange")}
+                                {mayChangeEmail ? t("emailChangeNeedsConfirming") : t("emailCannotChange")}
                             </p>
+                            {pending && (
+                                <p className="text-xs text-success mt-1">{t("emailChangePending")}</p>
+                            )}
                         </div>
+                        {needsPassword && identityChanged && (
+                            <div>
+                                <Label htmlFor={passwordId}>{t("currentPassword")}</Label>
+                                <Input
+                                    id={passwordId}
+                                    type="password"
+                                    autoComplete="current-password"
+                                    value={currentPassword}
+                                    onChange={(e) => setCurrentPassword(e.target.value)}
+                                    aria-describedby={`${passwordId}-help`}
+                                />
+                                <p id={`${passwordId}-help`} className="text-xs text-muted-foreground mt-1">
+                                    {t("currentPasswordWhy")}
+                                </p>
+                            </div>
+                        )}
                         <div>
                             <Label htmlFor={memberSinceId}>{t("memberSince")}</Label>
                             <Input

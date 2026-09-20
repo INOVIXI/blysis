@@ -7,6 +7,7 @@ import { enforcePasswordPolicy } from "@/core/lib/security-settings";
 import { updateUserSchema, updatePasswordSchema } from "@/core/lib/validations";
 import { hashPassword, verifyPassword } from "@/core/lib/password-hash";
 import { readSettingValues } from "@/core/lib/setting-values";
+import { MEMBER_AVATAR_UPLOADS_KEY, memberAvatarsAllowed } from "@/core/lib/member-uploads";
 import { requestEmailChange } from "@/core/lib/email-change";
 /** What proves the person at the screen is the account's owner. */
 const identityProofSchema = z.object({ currentPassword: z.string().min(1).max(200).optional() });
@@ -196,7 +197,19 @@ export async function PATCH(request: NextRequest) {
         }
         data.username = validation.data.username;
     }
-    if (validation.data.avatar !== undefined) data.avatar = validation.data.avatar;
+    if (validation.data.avatar !== undefined) {
+        // A site that wants no member pictures means none: closing the upload
+        // door while a pasted address still works is a policy with a hole in
+        // it, and the screen stops offering the field either way.
+        const policy = await readSettingValues([MEMBER_AVATAR_UPLOADS_KEY]);
+        if (validation.data.avatar && !memberAvatarsAllowed(policy[MEMBER_AVATAR_UPLOADS_KEY])) {
+            return NextResponse.json(
+                { error: "Member pictures are turned off", code: "avatars_closed" },
+                { status: 403 },
+            );
+        }
+        data.avatar = validation.data.avatar;
+    }
     if (validation.data.locale) data.locale = validation.data.locale;
     if (validation.data.currency) data.currency = validation.data.currency;
 

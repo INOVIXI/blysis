@@ -22,6 +22,19 @@ const PUBLIC_KEYS = [
     // what it keeps. Unset, the rail draws the icon the installation ships.
     "site_logo",
     "site_description",
+    // What the profile screen may offer. Not secrets: they describe which
+    // controls a member sees, and a member who tries anyway is refused by the
+    // endpoint - the screen just stops promising something the site will not
+    // do. The rail drew the initials of a name it could read; a profile that
+    // offered a field the operator had closed would be the same mistake with
+    // a save button on it.
+    // The same reason as the three below: the profile screen draws an upload
+    // button only if the site has one to offer. The endpoint refuses either
+    // way; this stops the screen promising it.
+    "member_avatar_uploads",
+    "member_username_changes",
+    "member_email_changes",
+    "identity_requires_password",
     "site_email",
     "site_discord_url",
     // Rendered by the footer. Core hardcodes no column at all: the headings,

@@ -6,6 +6,7 @@ import { Link as LinkIcon, Upload, X, Images } from "lucide-react";
 import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
 import { FileUpload } from "@/core/components/ui/file-upload";
+import { cn } from "@/core/lib/utils";
 import { FilePreview } from "@/core/components/ui/file-preview";
 import { Button } from "@/core/components/ui/button";
 import { MediaPicker } from "@/core/components/ui/media-picker";
@@ -25,6 +26,15 @@ export interface UrlOrFileProps {
     id?: string;
     /** Where an upload goes; see `FileUploadProps`. */
     endpoint?: string;
+    /**
+     * False draws a link field and nothing else.
+     *
+     * An operator can close member uploads, and the endpoint refuses one when
+     * they have - but a screen that still offers the button is a control whose
+     * only outcome is a refusal. Whoever knows the switch passes the answer
+     * down; the field itself reads no settings.
+     */
+    canUpload?: boolean;
 }
 
 type Mode = "link" | "upload";
@@ -46,9 +56,12 @@ export function UrlOrFile({
     placeholder = "https://...",
     id,
     endpoint,
+    canUpload = true,
 }: UrlOrFileProps) {
     const t = useTranslations("common");
-    const [mode, setMode] = useState<Mode>(() => detectMode(value));
+    // A field that cannot upload is a link field, whatever it holds: the
+    // choice is not drawn, so a mode nobody can leave would be a dead end.
+    const [mode, setMode] = useState<Mode>(() => (canUpload ? detectMode(value) : "link"));
     const [browsing, setBrowsing] = useState(false);
 
     /*
@@ -58,7 +71,7 @@ export function UrlOrFile({
      * because the two are the same fact: the door and the shelf belong to the
      * same surface.
      */
-    const hasLibrary = (endpoint ?? LIBRARY_ENDPOINT) === LIBRARY_ENDPOINT;
+    const hasLibrary = canUpload && (endpoint ?? LIBRARY_ENDPOINT) === LIBRARY_ENDPOINT;
 
     const handleModeChange = (next: Mode) => {
         setMode(next);
@@ -68,7 +81,7 @@ export function UrlOrFile({
         <div className="space-y-2">
             {label && <Label htmlFor={id}>{label}</Label>}
 
-            <div className="flex gap-2">
+            <div className={cn("flex gap-2", !canUpload && "hidden")}>
                 <label className="flex cursor-pointer items-center gap-2 rounded-md border border-border bg-background px-3 py-1.5 text-sm hover:bg-muted">
                     <Radio
                         name={`url-or-file-${label || "field"}`}
