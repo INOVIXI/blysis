@@ -86,6 +86,11 @@
       "hook": "comparison.columns",
       "type": "filter",
       "handler": "hooks/comparison-columns.ts"
+    },
+    {
+      "hook": "csv.exports",
+      "type": "filter",
+      "handler": "hooks/csv-exports.ts"
     }
   ],
   "settings": [
@@ -1329,7 +1334,9 @@
         "vip_notStatedNote": "A dash means nothing was said either way, not that it is missing.",
         "vip_popular": "Most popular",
         "vip_subtitle": "Compare what each rank unlocks",
-        "vip_title": "VIP Ranks"
+        "vip_title": "VIP Ranks",
+        "adm_exportProducts": "Products",
+        "adm_exportOrders": "Orders"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -2114,7 +2121,9 @@
         "vip_notStatedNote": "Tire, bu konuda bir şey söylenmediği anlamına gelir; yok demek değildir.",
         "vip_popular": "En çok tercih edilen",
         "vip_subtitle": "Her rütbenin neler açtığını karşılaştırın",
-        "vip_title": "VIP Rütbeleri"
+        "vip_title": "VIP Rütbeleri",
+        "adm_exportProducts": "Ürünler",
+        "adm_exportOrders": "Siparişler"
       },
       "cart": {
         "title": "Alışveriş Sepeti",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T05:20:51Z",
+  "updatedAt": "2026-09-20T05:53:52Z",
   "modules": [
     {
       "id": "announcements",
@@ -548,21 +548,21 @@
     },
     {
       "id": "csv-import-export",
-      "name": "CSV Import/Export",
-      "description": "CSV export and import utilities for data backup",
+      "name": "CSV Export",
+      "description": "Export the site's tables as CSV",
       "i18n": {
         "tr": {
-          "name": "CSV İçe/Dışa Aktarma",
-          "description": "Veri yedeklemesi için CSV dışa ve içe aktarma araçları"
+          "name": "CSV Dışa Aktarma",
+          "description": "Sitenin tablolarını CSV olarak dışa aktarın"
         }
       },
-      "version": "1.2.2",
+      "version": "1.3.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Download",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T05:48:20Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -573,7 +573,9 @@
       ],
       "conflicts": [],
       "hooks": {
-        "emits": [],
+        "emits": [
+          "csv.exports"
+        ],
         "listens": []
       },
       "stats": {
@@ -2812,7 +2814,7 @@
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T02:33:22Z",
+      "updatedAt": "2026-09-20T05:53:52Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -2848,7 +2850,8 @@
           "store.orders.collect",
           "store.order.resolve",
           "comparison.subjects",
-          "comparison.columns"
+          "comparison.columns",
+          "csv.exports"
         ]
       },
       "stats": {

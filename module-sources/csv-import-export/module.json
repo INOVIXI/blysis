@@ -1,8 +1,8 @@
 {
   "id": "csv-import-export",
-  "name": "CSV Import/Export",
-  "description": "CSV export and import utilities for data backup",
-  "version": "1.2.2",
+  "name": "CSV Export",
+  "description": "Export the site's tables as CSV",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "management",
   "author": "Blysis",
@@ -15,7 +15,7 @@
   ],
   "menu": [
     {
-      "label": "Export/Import",
+      "label": "Export",
       "path": "/export",
       "icon": "Download",
       "group": "system",
@@ -44,69 +44,41 @@
   "translations": {
     "en": {
       "admin": {
-        "export": "Export",
-        "menu_csv-import-export": "Csv Import Export",
-        "menu_csv-import-export_export/import": "Export/Import",
-        "module_csv-import-export_name": "CSV Import/Export",
-        "module_csv-import-export_description": "CSV export and import utilities for data backup"
+        "menu_csv-import-export": "Csv Export",
+        "menu_csv-import-export_export": "Export",
+        "module_csv-import-export_description": "Export the site's tables as CSV",
+        "module_csv-import-export_name": "CSV Export"
       },
       "csvImportExport": {
         "adm_export": "Export",
-        "adm_exportImport": "Export / Import",
-        "adm_exportImportSubtitle": "Export and import your data",
-        "adm_exportOrders": "Export Orders",
-        "adm_exportProducts": "Export Products",
-        "adm_exportUsers": "Export Users",
-        "cancel": "Cancel",
-        "confirm": "Confirm Import",
-        "csv": "CSV",
-        "export": "Export",
-        "exportData": "Export Data",
-        "json": "JSON",
-        "orders": "Orders",
-        "overwrite": "Overwrite existing data",
-        "perm_export": "Import and export data",
-        "preview": "Preview",
-        "processing": "Processing...",
-        "products": "Products",
-        "skipDuplicates": "Skip duplicates",
-        "title": "Data Tools",
-        "uploadFile": "Upload File",
-        "users": "Users"
+        "adm_exportSubtitle": "Hand any of these over as a CSV file",
+        "adm_exportTitle": "Export",
+        "adm_exportUsers": "Members",
+        "adm_nothingToExport": "Nothing installed here exports anything yet.",
+        "perm_export": "Export data"
       }
     },
     "tr": {
       "admin": {
-        "export": "Dışa Aktar",
-        "menu_csv-import-export": "Dışa/İçe Aktarma",
-        "menu_csv-import-export_export/import": "Dışa/İçe Aktarma",
-        "module_csv-import-export_name": "CSV İçe/Dışa Aktarma",
-        "module_csv-import-export_description": "Veri yedeklemesi için CSV dışa ve içe aktarma araçları"
+        "menu_csv-import-export": "Csv Dışa Aktarma",
+        "menu_csv-import-export_export": "Dışa Aktarma",
+        "module_csv-import-export_description": "Sitenin tablolarını CSV olarak dışa aktarın",
+        "module_csv-import-export_name": "CSV Dışa Aktarma"
       },
       "csvImportExport": {
-        "adm_export": "Dışa Aktar",
-        "adm_exportImport": "Dışa / İçe Aktar",
-        "adm_exportImportSubtitle": "Verilerinizi dışa ve içe aktarın",
-        "adm_exportOrders": "Siparişleri Dışa Aktar",
-        "adm_exportProducts": "Ürünleri Dışa Aktar",
-        "adm_exportUsers": "Kullanıcıları Dışa Aktar",
-        "cancel": "İptal",
-        "confirm": "İçerik Aktarımını Onayla",
-        "csv": "CSV",
-        "export": "Dışa Aktar",
-        "exportData": "Verileri Dışa Aktar",
-        "json": "JSON",
-        "orders": "Siparişler",
-        "overwrite": "Mevcut verilerin üzerine yaz",
-        "perm_export": "Veri içe ve dışa aktarabilir",
-        "preview": "Önizleme",
-        "processing": "İşleniyor...",
-        "products": "Ürünler",
-        "skipDuplicates": "Yinelenen kayıtları atla",
-        "title": "Veri Araçları",
-        "uploadFile": "Dosya Yükle",
-        "users": "Kullanıcılar"
+        "adm_export": "Dışa aktar",
+        "adm_exportSubtitle": "Bunlardan herhangi birini CSV dosyası olarak alın",
+        "adm_exportTitle": "Dışa Aktarma",
+        "adm_exportUsers": "Üyeler",
+        "adm_nothingToExport": "Burada kurulu hiçbir şey henüz bir şey dışa aktarmıyor.",
+        "perm_export": "Veri dışa aktarabilir"
       }
     }
-  }
+  },
+  "hooksEmitted": [
+    {
+      "hook": "csv.exports",
+      "type": "filter"
+    }
+  ]
 }
