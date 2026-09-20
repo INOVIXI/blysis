@@ -14,6 +14,8 @@ export const productSchema = z.object({
     stock: z.number().int().min(0).optional().nullable(),
     isActive: z.boolean().optional(),
     isFeatured: z.boolean().optional(),
+    /** Whether an unclaimed copy may be handed to somebody else. */
+    giftable: z.boolean().optional(),
     type: z.enum(["DIGITAL", "PHYSICAL", "GAME_ITEM", "SUBSCRIPTION"]).optional(),
     categoryId: z.string().optional().nullable(),
     deliveryData: z.any().optional(),

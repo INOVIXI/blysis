@@ -1,0 +1,12 @@
+-- A product can say it is not to be given away.
+--
+-- Gifting from the chest was unconditional, so a rank bound to one account
+-- and a key bought at a member price could be handed to anybody. The column
+-- defaults to true, which is what every existing product already allowed:
+-- nothing that was giftable yesterday stops being giftable on deploy, and an
+-- operator turns off the ones that should never have travelled.
+--
+-- The site-wide switch lives beside the shop's other settings
+-- (`enableChestGifting`) rather than here; it is one row in Setting, written
+-- the first time an operator saves that screen, and absent means on.
+ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "giftable" BOOLEAN NOT NULL DEFAULT true;

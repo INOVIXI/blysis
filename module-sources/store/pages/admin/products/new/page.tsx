@@ -54,6 +54,7 @@ export default function NewProductPage() {
         type: "DIGITAL" as string,
         isActive: true,
         isFeatured: false,
+        giftable: true,
         subscriptionInterval: "month" as string,
         subscriptionIntervalCount: "1",
     });
@@ -83,6 +84,7 @@ export default function NewProductPage() {
                 type: form.type,
                 isActive: form.isActive,
                 isFeatured: form.isFeatured,
+                giftable: form.giftable,
                 subscriptionInterval: form.type === "SUBSCRIPTION" ? form.subscriptionInterval : null,
                 subscriptionIntervalCount: form.type === "SUBSCRIPTION" ? parseInt(form.subscriptionIntervalCount) || 1 : null,
                 ...availabilityPayload(availability),
@@ -319,6 +321,12 @@ export default function NewProductPage() {
                                     checked={form.isFeatured}
                                     onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })}
                                     label={t("adm_featured")}
+                                />
+                                <CheckboxField
+                                    checked={form.giftable}
+                                    onChange={(e) => setForm({ ...form, giftable: e.target.checked })}
+                                    label={t("adm_giftable")}
+                                    description={t("adm_giftableHint")}
                                 />
                             </CardContent>
                         </Card>

@@ -127,6 +127,18 @@ model Product {
   /** Own any one of the list rather than all of it. */
   requiresAny          Boolean   @default(false)
 
+  /**
+   * Whether an unclaimed copy of this may be handed to somebody else.
+   *
+   * Gifting from the chest was unconditional: every product was giftable and
+   * nothing could say otherwise, so a rank tied to one account and a key
+   * bought at a member price travelled as easily as a crate key. Two switches
+   * because the two questions are different - a site decides whether gifting
+   * exists at all (`enableChestGifting`), and a product decides whether it is
+   * one of the things that travels.
+   */
+  giftable             Boolean   @default(true)
+
   /** A sale with a start and an end, rather than a price somebody remembers. */
   salePrice            Decimal?  @db.Decimal(10, 2)
   saleFrom             DateTime?

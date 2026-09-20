@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { log, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { log, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { deliverProduct } from "../../../lib/delivery";
 import { deliveryFor } from "../../../lib/chest";
@@ -37,6 +37,27 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     // Gift to another user
     if (fields.giftTo) {
+        // Both switches are read here rather than trusted from the screen:
+        // the button is hidden when gifting is off, and a hidden button is
+        // not a check.
+        const { enableChestGifting } = await moduleSettings<{ enableChestGifting: boolean }>("store");
+        if (enableChestGifting === false) {
+            return NextResponse.json(
+                { error: "Gifting is turned off", code: "chest_gifting_off" },
+                { status: 403 },
+            );
+        }
+        const product = await prisma.product.findUnique({
+            where: { id: item.productId },
+            select: { giftable: true },
+        });
+        if (!product?.giftable) {
+            return NextResponse.json(
+                { error: "This one cannot be given away", code: "chest_item_not_giftable" },
+                { status: 403 },
+            );
+        }
+
         const target = await prisma.user.findFirst({
             where: { OR: [{ username: fields.giftTo }, { id: fields.giftTo }] },
         });

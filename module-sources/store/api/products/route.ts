@@ -181,6 +181,7 @@ export async function POST(request: NextRequest) {
                 stock: data.stock,
                 isActive: data.isActive ?? true,
                 isFeatured: data.isFeatured ?? false,
+                giftable: data.giftable ?? true,
                 type: data.type || "DIGITAL",
                 categoryId: data.categoryId,
                 deliveryData: data.deliveryData,

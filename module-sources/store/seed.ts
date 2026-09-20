@@ -220,6 +220,41 @@ export const seed: ModuleSeed = {
             await ctx.prisma.product.update({ where: { id: productId }, data: { unitsSold: units } });
         }
 
+        // What is waiting in a chest.
+        //
+        // A chest holds what was bought and not yet claimed, and nothing had
+        // ever written one: the tab was the empty state on every install, so
+        // neither the claim button, the gift dialog nor the dialog that asks
+        // who an unbought item is for had a subject. The last of those is the
+        // reason one row here carries no player name.
+        const chestOwners = [ctx.me, ...ctx.some(ctx.users, 3)];
+        let chestRows = 0;
+        for (const owner of chestOwners) {
+            const howManyItems = owner.id === ctx.me.id ? 5 : 2;
+            for (let item = 0; item < howManyItems; item++) {
+                const product = ctx.pick(products);
+                const already = await ctx.prisma.chestItem.findFirst({
+                    where: { userId: owner.id, productId: product.id, isRedeemed: false },
+                });
+                if (already) continue;
+                await ctx.create("chestItem", () => ctx.prisma.chestItem.create({
+                    data: {
+                        userId: owner.id,
+                        productId: product.id,
+                        productName: product.name,
+                        quantity: ctx.int(1, 3),
+                        // One row with nobody recorded, per owner: that is an
+                        // item an operator put there by hand, and the only
+                        // case the claim step asks a question.
+                        playerName: item === 0 ? null : owner.username,
+                        createdAt: ctx.daysAgo(60),
+                    },
+                }));
+                chestRows += 1;
+            }
+        }
+
+
         // The ranks shelf is a ladder, so it is drawn as one.
         //
         // The switch is the shop's, because the category is the shop's row.
@@ -231,6 +266,6 @@ export const seed: ModuleSeed = {
             await ctx.prisma.category.update({ where: { id: ranks.id }, data: { layout: "table" } });
         }
 
-        ctx.log(`${products.length} products in ${categories.size} categories, ${howMany} orders`);
+        ctx.log(`${products.length} products in ${categories.size} categories, ${howMany} orders, ${chestRows} chest items`);
     },
 };
