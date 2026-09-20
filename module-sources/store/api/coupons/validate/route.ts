@@ -4,7 +4,7 @@ import { auth } from "@/core/sdk/auth";
 import { couponValidateSchema } from "../../../lib/validations";
 import { computeCouponDiscount, scopedSubtotal } from "../../../lib/pricing";
 import { priceCartLines } from "../../../lib/cart-pricing";
-import { creditingPurchases } from "../../../lib/upgrade-credit-server";
+import { creditingPurchases, ownedRungsOn } from "../../../lib/upgrade-credit-server";
 
 // POST /api/v1/store/coupons/validate - Check coupon validity
 export async function POST(request: NextRequest) {
@@ -52,14 +52,17 @@ export async function POST(request: NextRequest) {
         where: { userId: session.user.id },
         include: { product: { select: { id: true, price: true, categoryId: true } } },
     });
+    const basket = cartItems.map((item) => ({
+        productId: item.product.id,
+        categoryId: item.product.categoryId ?? null,
+        price: Number(item.product.price),
+        quantity: item.quantity,
+    }));
+    const ownedIds = await creditingPurchases(session.user.id);
     const { lines, subtotal: cartSubtotal } = priceCartLines(
-        cartItems.map((item) => ({
-            productId: item.product.id,
-            categoryId: item.product.categoryId ?? null,
-            price: Number(item.product.price),
-            quantity: item.quantity,
-        })),
-        await creditingPurchases(session.user.id),
+        basket,
+        ownedIds,
+        await ownedRungsOn(basket.map((line) => line.categoryId), ownedIds),
     );
 
     // The same function the checkout charges by.

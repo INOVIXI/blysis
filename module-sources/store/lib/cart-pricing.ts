@@ -1,4 +1,4 @@
-import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
+import { priceAfterCredit, upgradeCredit, type UpgradeCandidate } from "./upgrade-credit";
 
 /**
  * What the basket costs this buyer, worked out once.
@@ -8,6 +8,12 @@ import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
  * took whatever number the browser sent it. So the shop's own idea of what a
  * basket was worth depended on which request asked, and a coupon's minimum
  * purchase was checked against a figure the buyer's page had computed.
+ *
+ * The rungs a buyer already stands on are passed in rather than taken from the
+ * basket. They have to be: the rung somebody owns is the one thing that is not
+ * in their basket, and building the ladder out of the lines meant the credit
+ * only fired for a shopper who had put a product they already own in beside
+ * the one above it. The shelf quoted 10.00 and the till took 19.99.
  *
  * Bulk discounts are deliberately not here. The cart has never shown them and
  * the till has always taken them, which is a gap of its own; closing it means
@@ -32,12 +38,17 @@ export interface PricedCartLine extends CartLine {
 export function priceCartLines(
     lines: readonly CartLine[],
     ownedIds: ReadonlySet<string>,
+    /** What the buyer already owns on these shelves. See `ownedRungsOn`. */
+    ownedRungs: readonly UpgradeCandidate[],
 ): { lines: PricedCartLine[]; subtotal: number } {
-    const ladder = lines.map((line) => ({
-        id: line.productId,
-        categoryId: line.categoryId,
-        price: line.price,
-    }));
+    const ladder = [
+        ...lines.map((line) => ({
+            id: line.productId,
+            categoryId: line.categoryId,
+            price: line.price,
+        })),
+        ...ownedRungs,
+    ];
 
     const priced = lines.map((line) => {
         const credit = upgradeCredit(

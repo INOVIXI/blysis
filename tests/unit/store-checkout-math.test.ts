@@ -42,6 +42,8 @@ describe("computeOrderPricing", () => {
             products,
             bulkDiscounts: [],
             ownedProductIds: noOwned,
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         expect(subtotal).toBe(10 * 2 + 5 * 3);
         expect(orderItems).toHaveLength(2);
@@ -59,6 +61,8 @@ describe("computeOrderPricing", () => {
             products,
             bulkDiscounts: bulk,
             ownedProductIds: noOwned,
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         // 100 * 0.8 = 80 per unit * 3 = 240
         expect(orderItems[0].price).toBe(80);
@@ -76,6 +80,8 @@ describe("computeOrderPricing", () => {
             products,
             bulkDiscounts: bulk,
             ownedProductIds: noOwned,
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         expect(orderItems[0].price).toBe(100);
         expect(subtotal).toBe(200);
@@ -95,6 +101,8 @@ describe("computeOrderPricing", () => {
             products,
             bulkDiscounts: bulk,
             ownedProductIds: noOwned,
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         expect(orderItems[0].price).toBe(70);
         expect(orderItems[0].metadata.bulkDiscount).toBe(30);
@@ -115,6 +123,8 @@ describe("computeOrderPricing", () => {
             products,
             bulkDiscounts: bulk,
             ownedProductIds: noOwned,
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         const p1 = orderItems.find((i) => i.productId === "p1")!;
         const p2 = orderItems.find((i) => i.productId === "p2")!;
@@ -143,6 +153,8 @@ describe("computeOrderPricing", () => {
             products,
             bulkDiscounts: bulk,
             ownedProductIds: noOwned,
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         expect(orderItems[0].price).toBe(100);
     });
@@ -157,6 +169,8 @@ describe("computeOrderPricing", () => {
             products,
             bulkDiscounts: bulk,
             ownedProductIds: noOwned,
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         expect(orderItems[0].price).toBe(60);
     });
@@ -171,6 +185,8 @@ describe("computeOrderPricing", () => {
             products,
             bulkDiscounts: [],
             ownedProductIds: new Set(["vip"]),
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         // owns vip (30) in same category, buying mvp (50) -> pay 20
         expect(orderItems[0].price).toBe(20);
@@ -189,6 +205,8 @@ describe("computeOrderPricing", () => {
             products,
             bulkDiscounts: [],
             ownedProductIds: new Set(["expensive"]),
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         expect(orderItems[0].price).toBe(10);
     });
@@ -206,6 +224,8 @@ describe("computeOrderPricing", () => {
             products,
             bulkDiscounts: bulk,
             ownedProductIds: new Set(["vip"]),
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         // 50 - 30 (upgrade) = 20, then 50% bulk -> 10
         expect(orderItems[0].price).toBe(10);
@@ -218,6 +238,8 @@ describe("computeOrderPricing", () => {
             products,
             bulkDiscounts: [],
             ownedProductIds: noOwned,
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
             variables: { p1: { ign: "Steve" } },
         });
         expect(orderItems[0].metadata.variables).toEqual({ ign: "Steve" });

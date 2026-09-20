@@ -3,7 +3,7 @@ import { log, moduleSettings, prisma, rateLimitForRoleAsync, readJsonBody } from
 import { auth } from "@/core/sdk/auth";
 import { availabilityFor, type ProductRow } from "../../lib/availability-server";
 import { priceCartLines } from "../../lib/cart-pricing";
-import { creditingPurchases } from "../../lib/upgrade-credit-server";
+import { creditingPurchases, ownedRungsOn } from "../../lib/upgrade-credit-server";
 import { z } from "zod";
 
 const cartItemSchema = z.object({
@@ -47,17 +47,20 @@ export async function GET() {
         // and was taken a smaller one a click later. A cart that disagrees with
         // the till is a cart nobody can trust in either direction.
         const ownedIds = await creditingPurchases(session.user.id);
+        const basket = cartItems.map((item) => ({
+            productId: item.product.id,
+            categoryId: (item.product as unknown as { categoryId: string | null }).categoryId ?? null,
+            price: Number(item.product.price),
+            quantity: item.quantity,
+        }));
         // The arithmetic lives in `cart-pricing.ts` because the coupon
         // preview has to reach the same number, and reaching it separately is
-        // how the two came to disagree.
+        // how the two came to disagree. The rungs come from the shelf rather
+        // than the basket: what somebody owns is what they did not put in it.
         const { lines, subtotal: total } = priceCartLines(
-            cartItems.map((item) => ({
-                productId: item.product.id,
-                categoryId: (item.product as unknown as { categoryId: string | null }).categoryId ?? null,
-                price: Number(item.product.price),
-                quantity: item.quantity,
-            })),
+            basket,
             ownedIds,
+            await ownedRungsOn(basket.map((line) => line.categoryId), ownedIds),
         );
         const byProduct = new Map(lines.map((line) => [line.productId, line]));
         const priced = cartItems.map((item) => ({

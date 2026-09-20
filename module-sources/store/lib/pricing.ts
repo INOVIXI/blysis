@@ -7,7 +7,7 @@
 // imports computeOrderPricing/computeCouponDiscount/computeTotals instead of
 // inlining the arithmetic.
 
-import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
+import { priceAfterCredit, upgradeCredit, type UpgradeCandidate } from "./upgrade-credit";
 
 /**
  * Money, to the cent.
@@ -104,9 +104,18 @@ export function computeOrderPricing(params: {
     products: PricingProduct[];
     bulkDiscounts: PricingBulkDiscount[];
     ownedProductIds: Set<string>;
+    /**
+     * What this buyer already owns on the shelves the basket is from.
+     *
+     * Required, and separate from `products`, because `products` is the
+     * basket: the rung somebody owns is the one thing that is not in it. A
+     * ladder built from the lines alone credited nothing to an upgrade, so the
+     * shelf advertised 10.00 and this function returned 19.99.
+     */
+    ownedRungs: readonly UpgradeCandidate[];
     variables?: Record<string, Record<string, string>>;
 }): { subtotal: number; orderItems: ComputedOrderItem[] } {
-    const { items, products, bulkDiscounts, ownedProductIds, variables } = params;
+    const { items, products, bulkDiscounts, ownedProductIds, ownedRungs, variables } = params;
 
     let subtotal = 0;
     const orderItems = items.map((item): ComputedOrderItem => {
@@ -120,7 +129,10 @@ export function computeOrderPricing(params: {
             price,
             upgradeCredit(
                 { id: product.id, categoryId: product.categoryId ?? null, price },
-                products.map((p) => ({ id: p.id, categoryId: p.categoryId ?? null, price: Number(p.price) })),
+                [
+                    ...products.map((p) => ({ id: p.id, categoryId: p.categoryId ?? null, price: Number(p.price) })),
+                    ...ownedRungs,
+                ],
                 ownedProductIds,
             ),
         );

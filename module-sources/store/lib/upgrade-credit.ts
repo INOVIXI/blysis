@@ -62,7 +62,15 @@ export function upgradeCredit(
     return best;
 }
 
-/** What is left to pay after the credit. Never below zero. */
+/**
+ * What is left to pay after the credit. Never below zero.
+ *
+ * A whole number of cents, because both sides of the subtraction are money and
+ * binary floating point is not: 19.99 less 9.99 is 9.999999999999998, which
+ * the cart returned as its subtotal and a coupon's minimum purchase was then
+ * compared against. A basket worth exactly ten was refused a coupon that asked
+ * for ten.
+ */
 export function priceAfterCredit(price: number, credit: number): number {
-    return Math.max(0, price - credit);
+    return Math.max(0, Math.round((price - credit) * 100) / 100);
 }

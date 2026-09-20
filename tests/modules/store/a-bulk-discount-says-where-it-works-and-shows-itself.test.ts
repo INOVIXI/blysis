@@ -119,6 +119,8 @@ describe("the till", () => {
             products: [VIP, HAT],
             bulkDiscounts: rules,
             ownedProductIds: new Set(),
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         expect(quoted).toBe(20);
         expect(orderItems[0].metadata.bulkDiscount).toBe(20);
@@ -131,6 +133,8 @@ describe("the till", () => {
             products: [VIP, HAT],
             bulkDiscounts: [{ name: "five", minQuantity: 5, discountPercent: 20, categoryIds: [RANKS] }],
             ownedProductIds: new Set(),
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         expect(subtotal).toBe(20);
     });

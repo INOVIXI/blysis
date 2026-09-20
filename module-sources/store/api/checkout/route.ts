@@ -22,7 +22,7 @@ import {
     computeTotals,
     grossUpForFee,
 } from "../../lib/pricing";
-import { creditingPurchases } from "../../lib/upgrade-credit-server";
+import { creditingPurchases, ownedRungsOn } from "../../lib/upgrade-credit-server";
 import { z } from "zod";
 
 /**
@@ -231,6 +231,9 @@ export async function POST(request: NextRequest) {
             })),
             bulkDiscounts,
             ownedProductIds: ownedIds,
+            // From the shelf, not the basket: the rung somebody stands on is
+            // the one product an upgrade does not contain.
+            ownedRungs: await ownedRungsOn(products.map((p) => p.categoryId), ownedIds, now),
             variables,
         });
 

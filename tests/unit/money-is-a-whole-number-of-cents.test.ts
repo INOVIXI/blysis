@@ -41,6 +41,8 @@ describe("every amount the store computes is a whole number of cents", () => {
                         products: [{ id: "p", name: "Rank", price }],
                         bulkDiscounts: percent ? [{ minQuantity: 1, discountPercent: percent }] : [],
                         ownedProductIds: new Set(),
+                        // Nothing owned off the basket: these are not about the upgrade credit.
+                        ownedRungs: [],
                     });
                     if (!whole(orderItems[0].price)) bad.push(`unit ${price}/${percent}% = ${orderItems[0].price}`);
                     if (!whole(subtotal)) bad.push(`subtotal ${price}/${percent}%/x${quantity} = ${subtotal}`);
@@ -59,6 +61,8 @@ describe("every amount the store computes is a whole number of cents", () => {
             ],
             bulkDiscounts: [{ minQuantity: 2, discountPercent: 7 }],
             ownedProductIds: new Set(["silver"]),
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         expect(whole(orderItems[0].price)).toBe(true);
         expect(whole(subtotal)).toBe(true);
@@ -128,6 +132,8 @@ describe("every amount the store computes is a whole number of cents", () => {
             products: [{ id: "p", name: "Rank", price: 9.99 }],
             bulkDiscounts: [{ minQuantity: 3, discountPercent: 33 }],
             ownedProductIds: new Set(),
+            // Nothing owned off the basket: these are not about the upgrade credit.
+            ownedRungs: [],
         });
         const { discount } = computeCouponDiscount(
             { isActive: true, type: "PERCENTAGE", value: 15 },
