@@ -10,20 +10,19 @@ test.describe('Admin broadcasts', () => {
 
         // The h1 is `sidebar_broadcasts` - "Broadcasts" in en. "Email
         // Broadcasts" is the settings-index card label, not this page.
-        const heading = page
-            .getByRole('heading', { name: /Broadcasts/i })
-            .first();
+        const heading = page.getByRole('heading', { name: /^Broadcasts$/i }).first();
         await expect(heading).toBeVisible();
 
-        // Open composer
-        // `common_new` - the button reads "New", not "Compose".
-        const composeButton = page.getByRole('button', { name: /^New$/i }).first();
-        await expect(composeButton).toBeVisible();
-        await composeButton.click();
+        // The composer is a screen at `?form=new`, so the control that opens
+        // it is a link rather than a button. It reads `common_new` - "New".
+        const compose = page.getByRole('link', { name: /^New$/i }).first();
+        await expect(compose).toBeVisible();
+        await compose.click();
 
         await expect(
             page.getByRole('heading', { name: /New Broadcast/i }).first(),
         ).toBeVisible();
+        await expect(page, 'the composer has an address of its own').toHaveURL(/form=new/);
 
         // Fill subject
         const subjectInput = page
@@ -39,11 +38,13 @@ test.describe('Admin broadcasts', () => {
             await page.keyboard.type('Test body content');
         }
 
-        // Close without sending - click Cancel (the Compose button becomes Cancel)
-        await page.getByRole('button', { name: /^Cancel$/i }).first().click();
+        // Leave without sending. The composer is its own screen, so what
+        // leaves it is the header's back control - `common_back`.
+        await page.getByRole('button', { name: /^Back$/i }).first().click();
         await expect(page.getByRole('heading', { name: /New Broadcast/i })).toHaveCount(0);
 
-        // Page still stable
+        // Back on the list, at the address the list has.
         await expect(heading).toBeVisible();
+        await expect(page).not.toHaveURL(/form=/);
     });
 });

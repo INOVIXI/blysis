@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { login } from './helpers/login';
 
 test.describe('Module System', () => {
     test('/api/v1/modules requires auth and returns modules object', async ({ request }) => {
@@ -24,12 +25,19 @@ test.describe('Module System', () => {
         }
     });
 
-    test('/api/v1/modules/marketplace returns module list shape', async ({ request }) => {
-        const response = await request.get('/api/v1/modules/marketplace');
-        // Marketplace fetches from GitHub; may be 200 (success) or 502 (network)
+    test('/api/v1/modules/marketplace is admin-gated and lists modules for an admin', async ({ page }) => {
+        // The catalogue names every module the registry offers and where its
+        // archive is, which is the panel's own view of what can be installed
+        // rather than a public one.
+        const anonymous = await page.request.get('/api/v1/modules/marketplace');
+        expect([401, 403]).toContain(anonymous.status());
+
+        await login(page);
+        const response = await page.request.get('/api/v1/modules/marketplace');
+        // The catalogue is fetched from the registry; a box with no route out
+        // answers 502, and both answers carry a `modules` array.
         expect([200, 502]).toContain(response.status());
         const data = await response.json();
-        // Both success and error responses include a `modules` array
         expect(data).toHaveProperty('modules');
         expect(Array.isArray(data.modules)).toBe(true);
     });
