@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T06:29:49Z",
+  "updatedAt": "2026-09-20T06:52:55Z",
   "modules": [
     {
       "id": "announcements",
@@ -1513,20 +1513,20 @@
     {
       "id": "login-protection",
       "name": "Login Protection",
-      "description": "Login throttling: how many failed attempts lock an account",
+      "description": "Login throttling: how many failed attempts lock an account, and letting one back in",
       "i18n": {
         "tr": {
           "name": "Giriş Koruması",
-          "description": "Giriş sınırlaması: kaç başarısız denemenin hesabı kilitleyeceği"
+          "description": "Giriş sınırlaması: kaç başarısız denemenin hesabı kilitleyeceği ve kilidin nasıl açılacağı"
         }
       },
-      "version": "1.2.2",
+      "version": "1.3.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Shield",
       "category": "security",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T06:52:55Z",
       "screenshots": [],
       "tags": [
         "security"

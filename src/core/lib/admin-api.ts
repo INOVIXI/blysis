@@ -59,8 +59,12 @@ export const CORE_ADMIN_API: AdminApiRoute[] = [
     // Who may do what.
     { path: "/v1/roles", permission: "admin.roles" },
     { path: "/v1/roles/[id]", permission: "admin.roles" },
-    { path: "/v1/admin/resource-permissions", permission: "admin.roles" },
-    { path: "/v1/admin/resource-permissions/[id]", permission: "admin.roles" },
+    // There were two more here, writing per-entity exceptions for the two
+    // screens that drew them. Both screens are gone - one showed ten resource
+    // kinds of which the code consulted one - and an endpoint nobody can reach
+    // a screen for is code that rots. `hasResourcePermission` stays: three
+    // modules read those rows, and the writer comes back with the screen that
+    // belongs inside the category being edited.
 
     // What the site says.
     { path: "/v1/media/[id]", permission: "admin.content" },
@@ -96,6 +100,10 @@ export const CORE_ADMIN_API: AdminApiRoute[] = [
     { path: "/v1/admin/email-queue/process", permission: "admin.observability" },
 
     // Credentials this site issues.
+    // Lifting a lock is putting somebody's account back where a remembered
+    // password would have: a security operation rather than a member edit,
+    // and the same permission the keys screen answers to.
+    { path: "/v1/admin/security/lockouts", permission: "admin.security" },
     { path: "/v1/api-keys", permission: "admin.security" },
     { path: "/v1/api-keys/[id]", permission: "admin.security" },
 

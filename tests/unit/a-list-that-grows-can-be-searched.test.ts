@@ -44,6 +44,8 @@ const BOUNDED: Record<string, string> = {
         "The settings one theme declares. An operator cannot add to it.",
     "src/app/[locale]/(admin)/admin/settings/footer/page.tsx":
         "The footer an operator built, plus what the installed modules put in it. Both are as long as the site was configured to be, and a footer is read whole rather than looked one thing up in.",
+    "module-sources/login-protection/pages/admin/page.tsx":
+        "The accounts locked out at this moment, which on a site that is not under attack is none and under one is a handful the operator reads whole. It is capped at 200 and every row leaves it within the hour.",
     "src/app/[locale]/(admin)/admin/updates/page.tsx":
         "The releases behind the version installed, which is a handful.",
     "src/app/[locale]/(admin)/admin/observability/page.tsx":

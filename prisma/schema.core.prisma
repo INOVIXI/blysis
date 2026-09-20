@@ -80,6 +80,12 @@ model User {
 
   // The admin dashboard's signup chart scans a date window.
   @@index([createdAt])
+
+  /// Who is locked out right now. Almost every row here is null, so the
+  /// index exists for the one query that asks for the handful that are not:
+  /// a full scan of every account to find three of them is the wrong price
+  /// for a screen an operator opens when somebody writes in.
+  @@index([lockedUntil])
 }
 
 model Account {

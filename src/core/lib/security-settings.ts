@@ -23,6 +23,8 @@ import {
 } from "./registration-rules";
 
 const SETTING_KEYS = {
+    lockoutWindowMinutes: "lockout_window_minutes",
+    lockoutDurationMinutes: "lockout_duration_minutes",
     passwordMinLength: "password_min_length",
     passwordResetExpiryMinutes: "password_reset_expiry_minutes",
     emailVerifyExpiryHours: "email_verify_expiry_hours",
@@ -96,6 +98,44 @@ export const MAX_LOGIN_ATTEMPTS: BoundedSetting = {
     })(),
     min: 3,
     max: 100,
+};
+
+/**
+ * The other two numbers a lockout has: how long wrong passwords are counted
+ * over, and how long the account then stays shut.
+ *
+ * Both were environment-only, and `account-lockout.ts` said why in its own
+ * words: neither had a screen offering to change it. So a site that wanted a
+ * ten minute window and an hour's lock had to be redeployed to get one. The
+ * environment variable stays the install's default - it is what a deployment
+ * sets once - and a stored row overrides it per site, exactly as the attempt
+ * threshold beside them already did.
+ *
+ * The floors are not cosmetic. A window of nothing would count every typo a
+ * member has ever made as one run, so the third mistake of the year locks
+ * them out. A lock of nothing is no lock at all.
+ */
+export const LOCKOUT_WINDOW: DurationSetting = {
+    key: SETTING_KEYS.lockoutWindowMinutes,
+    defaultValue: (() => {
+        const raw = Number(process.env.ACCOUNT_LOCKOUT_WINDOW_MS);
+        return Number.isFinite(raw) && raw > 0 ? Math.max(1, Math.round(raw / 60_000)) : 15;
+    })(),
+    min: 1,
+    max: 1440,
+    unitMs: 60_000,
+};
+
+/** A day is the ceiling: a lock nobody can lift is a deleted account. */
+export const LOCKOUT_DURATION: DurationSetting = {
+    key: SETTING_KEYS.lockoutDurationMinutes,
+    defaultValue: (() => {
+        const raw = Number(process.env.ACCOUNT_LOCKOUT_MS);
+        return Number.isFinite(raw) && raw > 0 ? Math.max(1, Math.round(raw / 60_000)) : 15;
+    })(),
+    min: 1,
+    max: 1440,
+    unitMs: 60_000,
 };
 
 /**
