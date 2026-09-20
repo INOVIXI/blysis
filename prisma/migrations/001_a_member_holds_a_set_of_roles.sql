@@ -60,16 +60,35 @@ ON CONFLICT ("userId", "roleId") DO NOTHING;
 -- A live timed grant becomes the same row with the time it already carried.
 -- `previousRoleId` is not carried over and is not needed: the member keeps
 -- whatever else they hold, so there is nothing to put back.
-INSERT INTO "UserRole" ("id", "userId", "roleId", "grantedAt", "expiresAt", "source")
-SELECT
-    gen_random_uuid()::text,
-    g."userId",
-    g."roleId",
-    g."createdAt",
-    g."expiresAt",
-    g."source"
-FROM "TimedRoleGrant" g
-WHERE g."expiresAt" > CURRENT_TIMESTAMP
-ON CONFLICT ("userId", "roleId") DO UPDATE
-    SET "expiresAt" = EXCLUDED."expiresAt",
-        "source"    = EXCLUDED."source";
+--
+-- Only where there is one to carry. `TimedRoleGrant` exists on a site that is
+-- being upgraded and has never existed on a site being installed today, and
+-- reading it unguarded made every fresh install fail here with `relation
+-- "TimedRoleGrant" does not exist` - the migration runner stopped on it, so
+-- the database was left with none of the migrations after this one. The next
+-- migration already drops the table with `IF EXISTS`; this is the same
+-- question asked on the way in.
+--
+-- Through EXECUTE because PL/pgSQL resolves a table name when the statement
+-- first runs, and a branch that is never taken must not need the table to
+-- exist for the block to be valid.
+DO $$
+BEGIN
+    IF to_regclass('"TimedRoleGrant"') IS NOT NULL THEN
+        EXECUTE $sql$
+            INSERT INTO "UserRole" ("id", "userId", "roleId", "grantedAt", "expiresAt", "source")
+            SELECT
+                gen_random_uuid()::text,
+                g."userId",
+                g."roleId",
+                g."createdAt",
+                g."expiresAt",
+                g."source"
+            FROM "TimedRoleGrant" g
+            WHERE g."expiresAt" > CURRENT_TIMESTAMP
+            ON CONFLICT ("userId", "roleId") DO UPDATE
+                SET "expiresAt" = EXCLUDED."expiresAt",
+                    "source"    = EXCLUDED."source"
+        $sql$;
+    END IF;
+END $$;
