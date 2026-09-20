@@ -23,6 +23,19 @@ import { stripComments } from "./source-text";
  * in a `@public-mutation:` line why it needs none of those. The tag is the
  * same shape as `@provider-callback:` and carries the same obligation: a
  * reason, not a marker.
+ *
+ * ## Reads were not asked the same question
+ *
+ * Only writes were checked here, which left a hole an audit found on
+ * 2026-09-20: `/api/v1/modules/marketplace` and `/api/v1/themes/marketplace`
+ * answered anybody. Both are read by one screen each in the admin panel,
+ * `_catalog.ts` calls the first "admin-facing" in its own words, and both
+ * fetch a remote index - so an anonymous caller got the list of everything
+ * this site can install and made it go and get one.
+ *
+ * A read is not a write, so the bar is lower: a public read that is bounded
+ * and says so passes. But it has to say so, in a `@public-read:` line, for
+ * the same reason a write does - the next one lands green otherwise.
  */
 
 const ROOT = path.resolve(import.meta.dirname, "../..");
@@ -43,11 +56,17 @@ function routeFiles(dir: string, out: string[] = []): string[] {
 }
 
 const HANDLER = /export\s+(?:async\s+function|const)\s+(GET|POST|PUT|PATCH|DELETE)\b/g;
-const LIMITED = /\b(withRateLimit|rateLimitForRole|rateLimit)\s*\(/;
+/** `rateLimitForRoleAsync` was missing, so the health probe read as unguarded
+ *  while limiting itself to thirty a minute. */
+const LIMITED = /\b(withRateLimit|rateLimitForRoleAsync|rateLimitForRole|rateLimit)\s*\(/;
 const AUTHENTICATED = /\bawait\s+auth\(\)|getSession\(|isAdmin\(|requireAdmin|requirePermission|hasPermission/;
 const PROVES_THE_SENDER = /timingSafeEqual|constructEvent|verifyWebhookSignature/;
 /** A reason, not just the marker: the same rule validate-module applies. */
 const DECLARED = /@public-mutation:[ \t]*\S+/;
+/** The same obligation for a read that answers anybody on purpose. */
+const DECLARED_READ = /@public-read:[ \t]*\S+/;
+/** Setup answers once and then refuses, which is a guard of its own kind. */
+const BEFORE_SETUP = /isSetupComplete\s*\(|user\.count\s*\(/;
 
 describe("a core endpoint that changes something", () => {
     const routes = routeFiles(API_DIR).map((file) => {
@@ -58,8 +77,10 @@ describe("a core endpoint that changes something", () => {
             path: path.relative(ROOT, file),
             mutates: methods.some((m) => m !== "GET"),
             guarded:
-                LIMITED.test(code) || AUTHENTICATED.test(code) || PROVES_THE_SENDER.test(code),
+                LIMITED.test(code) || AUTHENTICATED.test(code) || PROVES_THE_SENDER.test(code)
+                || BEFORE_SETUP.test(code),
             declared: DECLARED.test(raw),
+            declaredRead: DECLARED_READ.test(raw),
         };
     });
 
@@ -78,6 +99,19 @@ describe("a core endpoint that changes something", () => {
             `These change state for an unauthenticated caller with nothing in the way.\n` +
             `Add rateLimit(), an auth check, a signature check, or a\n` +
             `"@public-mutation: <why>" line stating what makes it safe:\n${open.join("\n")}`,
+        ).toEqual([]);
+    });
+
+    it("does the same for a read, which answers anybody just as freely", () => {
+        const open = routes
+            .filter((r) => !r.guarded && !r.declared && !r.declaredRead)
+            .map((r) => r.path);
+
+        expect(
+            open,
+            `These answer an unauthenticated caller with nothing in the way.\n` +
+            `Add a rate limit, an auth check, or a\n` +
+            `"@public-read: <why>" line stating what makes it safe:\n${open.join("\n")}`,
         ).toEqual([]);
     });
 

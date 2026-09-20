@@ -1,3 +1,10 @@
+/**
+ * @public-read: the site's own name, logo, description and which profile
+ * controls it offers - drawn on every page before anybody has signed in, which
+ * is why it is public. The keys are an allowlist below rather than whatever is
+ * in the table, and the answer is served from a cache with its own TTL, so the
+ * work a caller can make it do is bounded whatever they ask for.
+ */
 import { NextResponse } from "next/server";
 import { prisma } from "@/core/lib/db";
 import { cached } from "@/core/lib/cache";
