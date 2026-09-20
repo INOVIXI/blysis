@@ -325,6 +325,7 @@
     "crud_deletedPartly": "{total} öğeden {deleted} tanesi silindi; kalanlar silinemedi.",
     "crud_edit": "Düzenle",
     "crud_noItems": "Henüz öğe yok",
+    "crud_notOn": "{field} Değil",
     "crud_saveChanges": "Değişiklikleri Kaydet",
     "crud_saving": "Kaydediliyor...",
     "crud_selectAll": "Bu sayfadaki tüm satırları seç",

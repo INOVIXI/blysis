@@ -325,6 +325,7 @@
     "crud_deletedPartly": "Deleted {deleted} of {total}; the rest could not be deleted.",
     "crud_edit": "Edit",
     "crud_noItems": "No items yet",
+    "crud_notOn": "Not {field}",
     "crud_saveChanges": "Save Changes",
     "crud_saving": "Saving...",
     "crud_selectAll": "Select every row on this page",

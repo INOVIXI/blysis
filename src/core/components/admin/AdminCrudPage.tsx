@@ -22,6 +22,7 @@ import { Link } from "@/core/lib/i18n/navigation";
 import { useFormRoute } from "@/core/hooks/useFormRoute";
 import { Checkbox, CheckboxField } from "@/core/components/ui/checkbox";
 import { cn } from "@/core/lib/utils";
+import { Badge } from "@/core/components/ui/badge";
 import { BulkBar } from "@/core/components/admin/BulkBar";
 import { RowActions } from "@/core/components/admin/RowActions";
 import { ReferencePicker } from "@/core/components/admin/ReferencePicker";
@@ -113,6 +114,16 @@ interface AdminCrudPageProps {
     secondaryField?: string; // subtitle in list
     secondaryRender?: (item: Record<string, unknown>) => string; // overrides secondaryField when provided
     /**
+     * Which toggle decides whether a row is live, so the list can mark the
+     * rows that are not.
+     *
+     * `isActive` by convention, which is what every screen drawn by this shell
+     * calls it. A screen that calls its switch something else says so here;
+     * a screen with no such switch passes a key it does not declare, and
+     * nothing is marked.
+     */
+    activeField?: string;
+    /**
      * A second place a row can go, beside editing its own fields.
      *
      * Some rows are a door as well as a record - a support department has
@@ -140,7 +151,7 @@ interface AdminCrudPageProps {
  * two more files per module. The address changes, the back button works and
  * the form owns the screen, which is what the path segment was for.
  */
-export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, listKey, displayField, secondaryField, secondaryRender, rowHref, rowActionLabel }: AdminCrudPageProps) {
+export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, listKey, displayField, secondaryField, secondaryRender, rowHref, rowActionLabel, activeField = "isActive" }: AdminCrudPageProps) {
     const ct = useTranslations("admin");
     const commonT = useTranslations("common");
     const [items, setItems] = useState<Record<string, unknown>[]>([]);
@@ -400,6 +411,25 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
         return options?.find((o) => o.value === value)?.label ?? value;
     };
 
+    /**
+     * The word for a row that is switched off, or nothing when it is on.
+     *
+     * Only the off row is marked. A list where every row says "Active" has
+     * spent the reader's attention on the ordinary case and has none left for
+     * the one they are looking for.
+     *
+     * The screen's own label for its switch, because the screens do not agree
+     * on what it means: a slide is Active, an article is Published, and the
+     * shell has no business deciding that for them.
+     */
+    const switchedOff = (item: Record<string, unknown>): string | null => {
+        const field = fields.find((f) => f.key === activeField && f.type === "toggle");
+        if (!field) return null;
+        const value = item[activeField];
+        if (value === undefined || value === null) return null;
+        return value === false || value === "false" ? ct("crud_notOn", { field: field.label }) : null;
+    };
+
     const term = search.trim().toLocaleLowerCase();
     const shown = term === ""
         ? items
@@ -537,7 +567,16 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
                                         aria-label={ct("common_selectRow")}
                                     />
                                     <div className="flex-1 min-w-0">
-                                        <p className="font-medium">{String(item[displayField] || "")}</p>
+                                        <p className="font-medium flex items-center gap-2">
+                                            <span className="truncate">{String(item[displayField] || "")}</span>
+                                            {/* Neutral, because switched off is
+                                                a state an operator chose and
+                                                not a fault to alarm them
+                                                about. */}
+                                            {switchedOff(item) && (
+                                                <Badge tone="neutral">{switchedOff(item)}</Badge>
+                                            )}
+                                        </p>
                                         {secondLine(item) ? (
                                             <p className="text-sm text-muted-foreground">{secondLine(item)}</p>
                                         ) : null}

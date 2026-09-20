@@ -12,6 +12,13 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.10.0 - `AdminCrudPage` marks a row that is switched off, and takes
+ * `activeField` for a screen whose switch is not called `isActive`. Twelve
+ * module screens declared such a toggle and not one drew it in the list, so a
+ * deactivated download, slide, prize or server looked exactly like a live one
+ * until somebody opened it. Additive: a screen that passes nothing gets the
+ * convention, and a screen with no such toggle is untouched.
+ *
  * 5.9.0 - a mail transport is a module. `emailProvider` in a manifest takes
  * a `handler` exporting `isConfigured` and `send`, the generator collects them
  * into `EmailProviderRegistry`, and `emailProviders` and
@@ -531,4 +538,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.9.0";
+export const CORE_API_VERSION = "5.10.0";
