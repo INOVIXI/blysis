@@ -82,8 +82,15 @@ function englishLiterals(file: string): string[] {
     const source = stripComments(fs.readFileSync(file, "utf8"));
     const found: string[] = [];
 
-    // A JSX text node that reads like a sentence or a label.
-    for (const match of source.matchAll(/>\s*([A-Z][A-Za-z][A-Za-z'’,.!?%: -]{3,60})\s*</g)) {
+    /*
+     * A JSX text node that reads like a sentence or a label.
+     *
+     * The `>` must not be the tail of an arrow: `=> Promise<boolean>` in a
+     * type annotation is a `>`, a capitalised word and a `<`, which is this
+     * pattern exactly. It reported a forum component for writing the word
+     * "Promise" in its own props.
+     */
+    for (const match of source.matchAll(/(?<!=)>\s*([A-Z][A-Za-z][A-Za-z'’,.!?%: -]{3,60})\s*</g)) {
         const text = match[1].trim();
         if (isTranslatable(text)) found.push(`text: ${text}`);
     }

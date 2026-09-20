@@ -195,6 +195,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (mayEditThis && fields.content) data.content = fields.content;
     if (mayModerate && fields.isPinned !== undefined) data.isPinned = fields.isPinned;
     if (mayModerate && fields.isLocked !== undefined) data.isLocked = fields.isLocked;
+    // Hiding is a moderator's, like the pins: it decides what every visitor
+    // sees rather than what one topic says.
+    if (mayModerate && fields.moderationState !== undefined) data.moderationState = fields.moderationState;
 
     // Only snapshot on content-meaningful edits (title / content), not pin/lock toggles
     if (data.title !== undefined || data.content !== undefined) {

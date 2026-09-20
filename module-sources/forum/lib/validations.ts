@@ -25,6 +25,14 @@ export const forumTopicUpdateSchema = z.object({
     content: z.string().min(1).max(50_000).optional(),
     isPinned: z.boolean().optional(),
     isLocked: z.boolean().optional(),
+    /**
+     * Shown or hidden. The column has always decided what a visitor may see -
+     * the reads ask for `APPROVED` and nothing else - and the only screen
+     * that could write it was the moderation queue, which lists `PENDING`
+     * rows. So a topic that had been approved could not be hidden at all,
+     * short of deleting it and losing what it said.
+     */
+    moderationState: z.enum(["APPROVED", "REJECTED"]).optional(),
 });
 
 export const forumTopicSchema = z.object({

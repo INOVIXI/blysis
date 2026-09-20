@@ -8,9 +8,20 @@ import { toast } from "sonner";
 import { Link } from "@/core/sdk/navigation";
 import { Badge, Button, Card, CardContent, Pagination, RichContent, Textarea } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
-import { Pin, Lock, Eye, ThumbsUp, Send, Loader2 } from "lucide-react";
+import { Pin, Lock, Eye, ThumbsUp, Send, Loader2, Pencil, Quote, Trash2, X } from "lucide-react";
 import { useRelativeTime } from "@/core/sdk/ui";
 import { useTranslations } from "next-intl";
+import { errorMessage } from "@/core/sdk";
+import { useConfirm } from "@/core/sdk/ui";
+
+/**
+ * What a reply may hold, in characters.
+ *
+ * `forumPostSchema` caps it at fifty thousand and the box held no bound at
+ * all, so the only way to learn was to type past it, press the button and be
+ * told nothing.
+ */
+const REPLY_LIMIT = 50_000;
 
 interface Post {
     id: string;
@@ -47,16 +58,35 @@ interface Topic {
  * it now and hands it over; this still owns replying, liking and paging
  * through the replies, and asks the endpoint again for those.
  */
-export function TopicView({ initialTopic, initialPostsPages }: { initialTopic: Topic; initialPostsPages: number }) {
+export function TopicView({
+    initialTopic,
+    initialPostsPages,
+    canModerate = false,
+}: {
+    initialTopic: Topic;
+    initialPostsPages: number;
+    /**
+     * Whether this reader may work on anybody's post. Asked on the server,
+     * where the permission lives; the author's own rights are decided here,
+     * because the author is the author.
+     */
+    canModerate?: boolean;
+}) {
     const t = useTranslations('forum');
+    const commonT = useTranslations('common');
     const router = useRouter();
+    const { confirm } = useConfirm();
     const { data: session } = useSession();
+    const replyBox = useRef<HTMLTextAreaElement>(null);
     const relativeTime = useRelativeTime();
     const topicId = initialTopic.id;
 
     const [topic, setTopic] = useState<Topic | null>(initialTopic);
     const [loading, setLoading] = useState(false);
     const [replyContent, setReplyContent] = useState("");
+    const [editingTopic, setEditingTopic] = useState(false);
+    const [topicDraft, setTopicDraft] = useState(initialTopic.content);
+    const [savingTopic, setSavingTopic] = useState(false);
     const [sending, setSending] = useState(false);
     const [liked, setLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(0);
@@ -135,6 +165,48 @@ export function TopicView({ initialTopic, initialPostsPages }: { initialTopic: T
         }
     };
 
+    /**
+     * Quote a reply into the box below.
+     *
+     * Markdown is what a person writes here, so a quote is what Markdown
+     * already has: the lines prefixed with `>` under the name of whoever
+     * wrote them. Without it every long thread turns into "as the person
+     * above said".
+     */
+    const quotePost = (author: string, content: string) => {
+        const quoted = content.split("\n").map((line) => `> ${line}`).join("\n");
+        setReplyContent((held) => `${held ? `${held}\n\n` : ""}**${author}**\n${quoted}\n\n`);
+        replyBox.current?.focus();
+    };
+
+    /**
+     * The opening post, changed by whoever wrote it or whoever the site
+     * trusts with anybody's. `PATCH /forum/topics/[id]` has taken a title and
+     * a body since it was written and no screen had ever sent either, so a
+     * member who mistyped their own question lived with it.
+     */
+    const saveTopic = async () => {
+        if (!topic) return;
+        setSavingTopic(true);
+        try {
+            const res = await fetch(`/api/v1/forum/topics/${topic.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: topicDraft }),
+            });
+            if (!res.ok) {
+                const said = await res.json().catch(() => null);
+                toast.error(errorMessage(said, t("editFailed"), t));
+                return;
+            }
+            setEditingTopic(false);
+            fetchTopic();
+            router.refresh();
+        } finally {
+            setSavingTopic(false);
+        }
+    };
+
     const submitReply = async () => {
         if (!replyContent.trim() || !topic) return;
         setSending(true);
@@ -147,9 +219,19 @@ export function TopicView({ initialTopic, initialPostsPages }: { initialTopic: T
             if (res.ok) {
                 setReplyContent("");
                 fetchTopic();
+            } else {
+                /*
+                 * It used to be `if (res.ok)` and nothing else, so a member
+                 * the site has restricted from the forum, one posting where
+                 * they may not reply and one whose reply is too long all
+                 * pressed the button and watched nothing happen. The endpoint
+                 * sends a code; the words are chosen here.
+                 */
+                const said = await res.json().catch(() => null);
+                toast.error(errorMessage(said, t("replyFailed"), t));
             }
-        } catch (err) {
-            console.error("Failed to post reply:", err);
+        } catch {
+            toast.error(t("replyFailed"));
         } finally {
             setSending(false);
         }
@@ -238,10 +320,57 @@ export function TopicView({ initialTopic, initialPostsPages }: { initialTopic: T
                             </div>
                             {/* Typed into a box with no preview: every line
                                 the member ended is a line a reader sees. */}
-                            <RichContent
-                                markdown={topic.content}
-                                keepLineBreaks
-                            />
+                            {editingTopic ? (
+                                <>
+                                    <Textarea
+                                        value={topicDraft}
+                                        onChange={(e) => setTopicDraft(e.target.value)}
+                                        aria-label={t("editPost")}
+                                        rows={8}
+                                        maxLength={REPLY_LIMIT}
+                                        className="mb-2"
+                                    />
+                                    <div className="flex gap-2">
+                                        <Button size="sm" onClick={saveTopic} disabled={savingTopic || !topicDraft.trim()}>
+                                            {commonT("save")}
+                                        </Button>
+                                        <Button size="sm" variant="outline" onClick={() => { setTopicDraft(topic.content); setEditingTopic(false); }}>
+                                            <X className="w-3 h-3" aria-hidden="true" /> {commonT("cancel")}
+                                        </Button>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <RichContent
+                                        markdown={topic.content}
+                                        keepLineBreaks
+                                    />
+                                    <div className="mt-3 flex items-center gap-1">
+                                        {!topic.isLocked && (
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                aria-label={t("quote")}
+                                                title={t("quote")}
+                                                onClick={() => quotePost(topic.author?.username ?? t("deletedAuthor"), topic.content)}
+                                            >
+                                                <Quote className="w-3 h-3" aria-hidden="true" />
+                                            </Button>
+                                        )}
+                                        {(canModerate || topic.author?.id === session?.user?.id) && (
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                aria-label={commonT("edit")}
+                                                title={commonT("edit")}
+                                                onClick={() => setEditingTopic(true)}
+                                            >
+                                                <Pencil className="w-3 h-3" aria-hidden="true" />
+                                            </Button>
+                                        )}
+                                    </div>
+                                </>
+                            )}
                         </CardContent>
                     </Card>
 
@@ -255,6 +384,10 @@ export function TopicView({ initialTopic, initialPostsPages }: { initialTopic: T
                                     post={post}
                                     renderAvatar={renderAvatar}
                                     topicAuthor={topic.author?.username ?? null}
+                                    mayWork={canModerate || post.author?.id === session?.user?.id}
+                                    mayQuote={!topic.isLocked}
+                                    onQuote={quotePost}
+                                    onChanged={fetchTopic}
                                 />
                             ))}
                         </div>
@@ -268,13 +401,23 @@ export function TopicView({ initialTopic, initialPostsPages }: { initialTopic: T
                         <Card>
                             <CardContent className="p-5">
                                 <h2 className="font-medium text-foreground mb-3">{t('reply')}</h2>
+                                {/* The same bound the endpoint holds. Without
+                                    it a long reply was typed, sent, refused
+                                    and silently lost. */}
                                 <Textarea
+                                    ref={replyBox}
                                     value={replyContent}
                                     onChange={(e) => setReplyContent(e.target.value)}
                                     placeholder={t('writeYourReply')} aria-label={t('writeYourReply')}
                                     rows={4}
-                                    className="mb-3"
+                                    maxLength={REPLY_LIMIT}
+                                    className="mb-1"
                                 />
+                                <p className="mb-3 text-xs text-muted-foreground">
+                                    {replyContent.length > REPLY_LIMIT * 0.8
+                                        ? t("replyRoomLeft", { left: REPLY_LIMIT - replyContent.length })
+                                        : ""}
+                                </p>
                                 <Button onClick={submitReply} disabled={sending || !replyContent.trim()}>
                                     {sending ? (
                                         <><Loader2 className="w-4 h-4 animate-spin" /> {t('posting')}</>
@@ -295,17 +438,72 @@ export function TopicView({ initialTopic, initialPostsPages }: { initialTopic: T
     );
 }
 
-function PostCard({ post, renderAvatar, topicAuthor }: {
+function PostCard({ post, renderAvatar, topicAuthor, mayWork, mayQuote, onQuote, onChanged }: {
     post: Post;
     renderAvatar: (user: { username: string; avatar: string | null }) => React.ReactNode;
     /** Who asked, so a reply from them can say so. */
     /** Null once that account has been erased, so nobody matches it. */
     topicAuthor: string | null;
+    /** Whether this reader may change or remove this particular reply. */
+    mayWork: boolean;
+    mayQuote: boolean;
+    onQuote: (author: string, content: string) => void;
+    onChanged: () => void;
 }) {
     const t = useTranslations('forum');
+    const commonT = useTranslations('common');
+    const { confirm } = useConfirm();
     const relativeTime = useRelativeTime();
     const [postLiked, setPostLiked] = useState(Boolean(post.liked));
     const [postLikeCount, setPostLikeCount] = useState(post._count.likes);
+    const [editing, setEditing] = useState(false);
+    const [draft, setDraft] = useState(post.content);
+    const [saving, setSaving] = useState(false);
+
+    /*
+     * `PATCH` and `DELETE /forum/posts/[id]` were written carefully - the
+     * author is the author, editing somebody else's post and removing it are
+     * separate grants, both snapshot a revision first - and nothing in the
+     * product had ever called either. A member who typed a word wrong lived
+     * with it, and a moderator who wanted one reply gone had to delete the
+     * topic it was in.
+     */
+    const save = async () => {
+        setSaving(true);
+        try {
+            const res = await fetch(`/api/v1/forum/posts/${post.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: draft }),
+            });
+            if (!res.ok) {
+                const said = await res.json().catch(() => null);
+                toast.error(errorMessage(said, t("editFailed"), t));
+                return;
+            }
+            setEditing(false);
+            onChanged();
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const remove = async () => {
+        const sure = await confirm({
+            title: t("deletePostTitle"),
+            message: t("deletePostConfirm"),
+            confirmText: commonT("delete"),
+            variant: "danger",
+        });
+        if (!sure) return;
+        const res = await fetch(`/api/v1/forum/posts/${post.id}`, { method: "DELETE" });
+        if (!res.ok) {
+            const said = await res.json().catch(() => null);
+            toast.error(errorMessage(said, t("deleteFailed"), t));
+            return;
+        }
+        onChanged();
+    };
 
     const togglePostLike = async () => {
         try {
@@ -322,7 +520,7 @@ function PostCard({ post, renderAvatar, topicAuthor }: {
 
     return (
         <Card>
-            <CardContent className="p-5">
+            <CardContent className="p-5" data-post={post.id}>
                 <div className="flex items-center gap-3 mb-3">
                     {post.author && renderAvatar(post.author)}
                     <div>
@@ -339,18 +537,75 @@ function PostCard({ post, renderAvatar, topicAuthor }: {
                         <p className="text-xs text-muted-foreground">{relativeTime(new Date(post.createdAt))}</p>
                     </div>
                 </div>
-                <RichContent
-                    className="text-sm mb-3"
-                    markdown={post.content}
-                    keepLineBreaks
-                />
-                <button
-                    onClick={togglePostLike}
-                    className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${postLiked ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-muted-foreground"}`}
-                >
-                    <ThumbsUp className={`w-3 h-3 ${postLiked ? "fill-primary" : ""}`} />
-                    {postLikeCount}
-                </button>
+                {editing ? (
+                    <div className="mb-3">
+                        <Textarea
+                            value={draft}
+                            onChange={(e) => setDraft(e.target.value)}
+                            aria-label={t("editPost")}
+                            rows={4}
+                            maxLength={REPLY_LIMIT}
+                            className="mb-2"
+                        />
+                        <div className="flex gap-2">
+                            <Button size="sm" onClick={save} disabled={saving || !draft.trim()}>
+                                {commonT("save")}
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => { setDraft(post.content); setEditing(false); }}>
+                                <X className="w-3 h-3" aria-hidden="true" /> {commonT("cancel")}
+                            </Button>
+                        </div>
+                    </div>
+                ) : (
+                    <RichContent
+                        className="text-sm mb-3"
+                        markdown={post.content}
+                        keepLineBreaks
+                    />
+                )}
+                <div className="flex items-center gap-1">
+                    <button
+                        onClick={togglePostLike}
+                        className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${postLiked ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-muted-foreground"}`}
+                    >
+                        <ThumbsUp className={`w-3 h-3 ${postLiked ? "fill-primary" : ""}`} />
+                        {postLikeCount}
+                    </button>
+                    {mayQuote && (
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            aria-label={t("quote")}
+                            title={t("quote")}
+                            onClick={() => onQuote(post.author?.username ?? t("deletedAuthor"), post.content)}
+                        >
+                            <Quote className="w-3 h-3" aria-hidden="true" />
+                        </Button>
+                    )}
+                    {mayWork && !editing && (
+                        <>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                aria-label={commonT("edit")}
+                                title={commonT("edit")}
+                                onClick={() => setEditing(true)}
+                            >
+                                <Pencil className="w-3 h-3" aria-hidden="true" />
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                aria-label={commonT("delete")}
+                                title={commonT("delete")}
+                                onClick={remove}
+                                className="text-destructive hover:text-destructive"
+                            >
+                                <Trash2 className="w-3 h-3" aria-hidden="true" />
+                            </Button>
+                        </>
+                    )}
+                </div>
             </CardContent>
         </Card>
     );

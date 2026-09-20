@@ -131,6 +131,8 @@ const ALLOWLIST: Record<string, string> = {
         "a public compose box, not an admin create screen: three fields a visitor fills in place while reading the board, and sending them to a separate page to type two sentences would lose the list they were reading",
     "src/app/[locale]/(admin)/admin/users/[id]/MemberRestrictions.tsx":
         "three fields on one member's own screen, about that member. The list beside them is their restrictions, and sending an operator to another address to type a reason would lose the person they are looking at",
+    "module-sources/forum/components/TopicView.tsx":
+        "a reply is edited where it sits, in the card it already occupies. The rule exists because a form unfolding above a list pushes the row you came for off the screen and cannot be linked or reloaded; a post is not a row in a list of candidates, it is the thing being read, and sending somebody to a second address to fix a typo in it would lose their place in the thread",
     "module-sources/suggestions/pages/public/[id]/page.tsx":
         "the flag is `truncated`, which says a discussion was cut short. The reply box the scan sees below it is the page's own, not something the flag unfolds",
 };

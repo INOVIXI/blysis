@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import { Button, Card, CardContent, CardHeader, CardTitle, Checkbox, ListControls, Pagination, useConfirm, useRowPicks } from "@/core/sdk/ui";
-import { Loader2, Pin, PinOff, Lock, Unlock, Trash2, Eye, MessageSquare } from "lucide-react";
+import { Loader2, Pin, PinOff, Lock, Unlock, Trash2, Eye, EyeOff, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { useRelativeTime } from "@/core/sdk/ui";
 import { deleteEach, writeError } from "@/core/sdk";
@@ -16,6 +16,8 @@ interface Topic {
     slug: string;
     isPinned: boolean;
     isLocked: boolean;
+    /** `APPROVED` is on the forum; anything else is not shown to a visitor. */
+    moderationState: string;
     views: number;
     createdAt: string;
     author: { id: string; username: string };
@@ -79,6 +81,24 @@ export default function AdminForumTopicsPage() {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ isLocked: !isLocked }),
+        });
+        const failed = await writeError(res, t("adm_writeFailed"), t);
+        if (failed) { toast.error(failed); return; }
+        fetchTopics();
+    };
+
+    /*
+     * Shown, or not. `moderationState` has always decided what a visitor sees
+     * and the only screen that could write it was the moderation queue, which
+     * lists what is waiting. A topic already approved could not be hidden at
+     * all - the only way to take something down was to delete it and lose
+     * what it said.
+     */
+    const toggleHidden = async (topicId: string, hidden: boolean) => {
+        const res = await fetch(`/api/v1/forum/topics/${topicId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ moderationState: hidden ? "APPROVED" : "REJECTED" }),
         });
         const failed = await writeError(res, t("adm_writeFailed"), t);
         if (failed) { toast.error(failed); return; }
@@ -225,6 +245,7 @@ export default function AdminForumTopicsPage() {
                                                 <div className="flex gap-1">
                                                     {topic.isPinned && <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded">{t("adm_pinned")}</span>}
                                                     {topic.isLocked && <span className="text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded">{t("adm_locked")}</span>}
+                                                    {topic.moderationState !== "APPROVED" && <span className="text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded">{t("adm_hidden")}</span>}
                                                 </div>
                                             </td>
                                             <td className="py-3 px-4 text-right">
@@ -247,6 +268,11 @@ export default function AdminForumTopicsPage() {
                                                             icon: topic.isLocked ? Unlock : Lock,
                                                             label: topic.isLocked ? t("adm_unlock") : t("adm_lock"),
                                                             onClick: () => toggleLock(topic.id, topic.isLocked),
+                                                        },
+                                                        {
+                                                            icon: topic.moderationState === "APPROVED" ? EyeOff : Eye,
+                                                            label: topic.moderationState === "APPROVED" ? t("adm_hide") : t("adm_show"),
+                                                            onClick: () => toggleHidden(topic.id, topic.moderationState !== "APPROVED"),
                                                         },
                                                         {
                                                             icon: Trash2,

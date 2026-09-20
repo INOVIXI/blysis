@@ -12,6 +12,8 @@
  * not the other is worse than one nobody hid.
  */
 import { notFound } from "next/navigation";
+import { hasPermission } from "@/core/sdk/server";
+import { auth } from "@/core/sdk/auth";
 import { countTopicView, readTopic } from "../../../../lib/read-topic";
 import { TopicView } from "../../../../components/TopicView";
 
@@ -46,5 +48,22 @@ export default async function TopicPage({ params }: PageProps) {
         posts: read.topic.posts.map((post) => ({ ...post, createdAt: post.createdAt.toISOString() })),
     };
 
-    return <TopicView initialTopic={topic} initialPostsPages={read.postsPages} />;
+    /*
+     * Whether this reader may work on anybody's reply, asked here because the
+     * permission lives on the server. A reader's rights over their own reply
+     * are decided in the screen - the author is the author - and both
+     * endpoints check again, so this only decides which controls are drawn.
+     */
+    const session = await auth();
+    const canModerate = session?.user?.id
+        ? await hasPermission(session.user.id, "forum.edit-any")
+        : false;
+
+    return (
+        <TopicView
+            initialTopic={topic}
+            initialPostsPages={read.postsPages}
+            canModerate={canModerate}
+        />
+    );
 }
