@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useModalDialog } from "@/core/hooks/useModalDialog";
 import { useRouter } from "@/core/lib/i18n/navigation";
 import { ModalLayer } from "@/core/components/ui/modal-layer";
-import { useAdminNav, type AdminNavModule } from "@/core/hooks/useAdminNav";
+import { type AdminNavReader, useAdminNav, type AdminNavModule } from "@/core/hooks/useAdminNav";
 import { ModuleRoutes, ModuleSettingsCards } from "@/core/generated/module-registry";
 import { offerableRoutes } from "@/core/lib/admin-search";
 import { adminHref } from "@/core/lib/admin-path";
@@ -69,9 +69,12 @@ const KIND_ICON: Record<string, NavIconComponent> = {
 export function AdminSpotlight({
     modules = [],
     activeThemeId,
+    reader,
 }: {
     modules?: AdminNavModule[];
     activeThemeId?: string;
+    /** Offer only what this person may open: the palette is a way in. */
+    reader?: AdminNavReader;
 }) {
     const router = useRouter();
     const locale = useLocale();
@@ -87,7 +90,7 @@ export function AdminSpotlight({
     const [selected, setSelected] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const groups = useAdminNav(modules, activeThemeId);
+    const groups = useAdminNav(modules, activeThemeId, reader);
 
     const enabled = useMemo(() => new Set(modules.map((module) => module.id)), [modules]);
 

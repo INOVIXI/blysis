@@ -353,6 +353,18 @@ export interface BuildNavGroupsOptions {
     translate?: (key: string, fallback: string) => string;
     /** Resolves a Lucide icon name from a manifest to a component. */
     resolveIcon?: (name: string | undefined) => NavIconComponent;
+    /**
+     * Whether the reader may open a link, by its href.
+     *
+     * Absent means draw everything, which is what the breadcrumb and the
+     * command palette want: they name a route rather than offer it to
+     * somebody. The sidebar passes one, because a menu entry that answers a
+     * refusal is a menu entry that lies about what the panel holds.
+     *
+     * Sections and groups left empty by it are dropped the same way as ones a
+     * module never filled.
+     */
+    mayOpen?: (href: string) => boolean;
 }
 
 function cloneGroup(group: NavGroup): NavGroup {
@@ -416,6 +428,7 @@ export function buildNavGroups({
     coreGroups = CORE_NAV_GROUPS,
     translate = (_key, fallback) => fallback,
     resolveIcon = () => Package,
+    mayOpen,
 }: BuildNavGroupsOptions = {}): NavGroup[] {
     const groups: NavGroup[] = coreGroups.map(cloneGroup);
     const sortOrder = new Map<string, number>();
@@ -535,6 +548,15 @@ export function buildNavGroups({
 
     return groups
         .map((group) => {
+            // Filtered in place rather than into new objects: the pooled and
+            // shared sets below hold these very sections by identity, and a
+            // copy would drop out of both and be ordered as if core had
+            // declared it.
+            if (mayOpen) {
+                for (const section of group.sections) {
+                    section.items = section.items.filter((item) => mayOpen(item.href));
+                }
+            }
             const kept = group.sections.filter((s) => s.items.length > 0);
             // Core's own sections first, then the ones a module named for
             // itself, then the ones several modules share, then the drawer.

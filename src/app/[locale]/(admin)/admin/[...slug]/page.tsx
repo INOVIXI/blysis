@@ -5,7 +5,7 @@ import { redirect } from "@/core/lib/i18n/navigation";
 import { ModuleAdminRegistry } from "@/core/generated/module-admin-page-registry";
 import { matchModuleRoute } from "@/core/lib/route-matcher";
 import { getSession } from "@/core/lib/auth";
-import { isAdmin } from "@/core/lib/permissions";
+import { canOpenAdminPage } from "@/core/lib/permissions";
 import { getLocale } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
@@ -30,13 +30,15 @@ export default async function DynamicAdminModulePage(props: PageProps) {
         redirect({ href: "/auth/login", locale });
     }
 
-    const admin = await isAdmin(session.user.id);
-    if (!admin) {
-        redirect({ href: "/", locale });
-    }
-
     const { params } = props;
     const { slug } = await params;
+
+    // A module screen is opened by the permission its manifest declares, the
+    // same one the proxy checked on the way in. Asking `isAdmin` here refused
+    // everybody an operator had granted that permission to.
+    if (!(await canOpenAdminPage(session.user.id, `/${locale}/admin/${slug.join("/")}`))) {
+        redirect({ href: "/admin", locale });
+    }
 
     const pathSegments = ["admin", ...slug];
     const match = matchModuleRoute(pathSegments);

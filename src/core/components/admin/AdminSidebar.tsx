@@ -12,7 +12,7 @@ import {
     type NavItem,
     type NavSection,
 } from "@/core/lib/admin-nav-groups";
-import { useAdminNav, type AdminNavModule } from "@/core/hooks/useAdminNav";
+import { type AdminNavReader, useAdminNav, type AdminNavModule } from "@/core/hooks/useAdminNav";
 import { SiteMark, SiteName } from "@/core/components/ui/site-name";
 
 interface AdminSidebarProps {
@@ -27,6 +27,8 @@ interface AdminSidebarProps {
      * when passed as a prop.
      */
     activeThemeId?: string;
+    /** Draw only what this person may open. See `useAdminNav`. */
+    reader?: AdminNavReader;
 }
 
 /**
@@ -45,7 +47,7 @@ interface AdminSidebarProps {
  *
  * Mobile: both rails collapse into a single overlay sheet.
  */
-export function AdminSidebar({ modules = [], activeThemeId }: AdminSidebarProps) {
+export function AdminSidebar({ modules = [], activeThemeId, reader }: AdminSidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -59,7 +61,7 @@ export function AdminSidebar({ modules = [], activeThemeId }: AdminSidebarProps)
 
     // The breadcrumb builds the same groups from the same hook, so the two
     // never disagree about what a route is called.
-    const groups: NavGroup[] = useAdminNav(modules, activeThemeId);
+    const groups: NavGroup[] = useAdminNav(modules, activeThemeId, reader);
 
     // Selection state machine:
     //   - `pathDerivedId` is the group the current URL resolves to

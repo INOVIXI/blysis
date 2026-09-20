@@ -2,7 +2,7 @@ import { Link } from "@/core/lib/i18n/navigation";
 import { redirect } from "@/core/lib/i18n/navigation";
 import { getSession } from "@/core/lib/auth";
 import { prisma } from "@/core/lib/db";
-import { isAdmin } from "@/core/lib/permissions";
+import { canOpenAdminPage } from "@/core/lib/permissions";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { formatDate } from "@/core/lib/utils";
@@ -71,8 +71,9 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
     const locale = await getLocale();
     if (!session?.user) redirect({ href: "/auth/login", locale });
 
-    const adminCheck = await isAdmin(session.user.id);
-    if (!adminCheck) redirect({ href: "/", locale });
+    if (!(await canOpenAdminPage(session.user.id, `/${locale}/admin/users`))) {
+        redirect({ href: "/admin", locale });
+    }
 
     const sp = await searchParams;
     const requestedPage = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);

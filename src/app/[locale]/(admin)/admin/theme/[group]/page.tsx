@@ -1,15 +1,22 @@
 import { notFound } from "next/navigation";
 import { getSession } from "@/core/lib/auth";
-import { isAdmin } from "@/core/lib/permissions";
+import { canOpenAdminPage } from "@/core/lib/permissions";
 import { prisma } from "@/core/lib/db";
 import { getActiveTheme } from "@/core/lib/theme-state";
 import { SchemaForm } from "@/core/components/admin/theme-settings/SchemaForm";
 
-export default async function ThemeSettingsPage({ params }: { params: Promise<{ group: string }> }) {
+export default async function ThemeSettingsPage({
+    params,
+}: {
+    params: Promise<{ group: string; locale: string }>;
+}) {
     const session = await getSession();
-    if (!session?.user?.id || !(await isAdmin(session.user.id))) notFound();
+    const { group, locale } = await params;
+    // `/theme/appearance` is the declared path; a group nobody declared falls
+    // through to `notFound` below, which is the same answer as a permission
+    // nobody holds.
+    if (!(await canOpenAdminPage(session?.user?.id, `/${locale}/admin/theme/${group}`))) notFound();
 
-    const { group } = await params;
     const { themeId, manifest } = await getActiveTheme();
     const groupDef = manifest.settings?.[group];
     if (!groupDef) notFound();

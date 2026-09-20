@@ -1,6 +1,6 @@
 import { redirect } from "@/core/lib/i18n/navigation";
 import { getSession } from "@/core/lib/auth";
-import { isAdmin } from "@/core/lib/permissions";
+import { canOpenAdminPage } from "@/core/lib/permissions";
 import { getLocale, getTranslations } from "next-intl/server";
 import {
     DashboardKpiRow,
@@ -51,7 +51,7 @@ export default async function AdminDashboard() {
     const session = await getSession();
     const locale = await getLocale();
     if (!session?.user) redirect({ href: "/auth/login", locale });
-    if (!(await isAdmin(session.user.id))) redirect({ href: "/", locale });
+    if (!(await canOpenAdminPage(session.user.id, `/${locale}/admin`))) redirect({ href: "/", locale });
 
     const t = await getTranslations("admin");
 

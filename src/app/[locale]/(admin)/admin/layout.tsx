@@ -3,7 +3,8 @@ import { redirect } from "@/core/lib/i18n/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { getSession } from "@/core/lib/auth";
-import { isAdmin } from "@/core/lib/permissions";
+import { panelReaderFor } from "@/core/lib/permissions";
+import { mayEnterPanel } from "@/core/lib/admin-access";
 import { AdminSidebar } from "@/core/components/admin/AdminSidebar";
 import { AdminSpotlight } from "@/core/components/admin/AdminSpotlight";
 import { AdminBreadcrumb } from "@/core/components/admin/AdminBreadcrumb";
@@ -21,8 +22,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         redirect({ href: "/auth/login", locale });
     }
 
-    const admin = await isAdmin(session.user.id);
-    if (!admin) {
+    // The building, not the room. A layout is not given the pathname, so
+    // which screen a reader may open is settled in the proxy, which knows
+    // both; this is the door, and it is checked here as well because a
+    // request that reaches a server component has to have been let in by
+    // something that saw a real session.
+    const reader = await panelReaderFor(session.user.id);
+    if (!mayEnterPanel(reader)) {
         redirect({ href: "/", locale });
     }
 
@@ -40,6 +46,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
     const { themeId } = await getActiveTheme();
 
+    // What the menu and the palette may offer. A `Set` does not cross into a
+    // client component, so the names travel as a list.
+    const navReader = { isAdmin: reader.isAdmin, permissions: [...reader.permissions] };
+
     // The locale layout drops the admin namespace from what it sends to the
     // browser, since no public page renders it. This is where it comes back,
     // for the one tree that does. See core/lib/i18n/message-scopes.ts.
@@ -53,6 +63,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 userEmail={session.user.email || ""}
                 modules={modules}
                 activeThemeId={themeId}
+                reader={navReader}
             />
             {/* Main content - cleared 56 (icon rail) + 224 (context sidebar) = 280px */}
             <main
@@ -65,7 +76,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                         <AdminBreadcrumb modules={modules} activeThemeId={themeId} />
                         <div className="flex items-center gap-3">
                             <div className="hidden md:block w-64">
-                                <AdminSpotlight modules={modules} activeThemeId={themeId} />
+                                <AdminSpotlight modules={modules} activeThemeId={themeId} reader={navReader} />
                             </div>
                             <ModuleUpdateBadge />
                         </div>

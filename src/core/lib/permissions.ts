@@ -1,4 +1,5 @@
 import { prisma } from "./db";
+import { mayOpenAdminPath, type PanelReader } from "./admin-access";
 import { STAFF_ROLE_PRIORITY } from "./constants";
 
 /**
@@ -101,6 +102,37 @@ async function resolveRoles(userId: string): Promise<EffectiveRoles> {
 /** The names a member may act on, as a set. An admin's set is empty and bypasses. */
 export async function effectivePermissions(userId: string): Promise<Set<string>> {
     return (await resolveRoles(userId)).permissions;
+}
+
+/**
+ * Both halves of the panel's question, from one read of the roles.
+ *
+ * The shell, the sidebar and the proxy each have to answer "may this person
+ * open this" and they have to answer it the same way. Asking `isAdmin` and
+ * `effectivePermissions` separately is two queries and two chances for the
+ * answers to come from different moments.
+ */
+export async function panelReaderFor(userId: string | null | undefined): Promise<PanelReader> {
+    if (!userId) return { isAdmin: false, permissions: new Set() };
+    const held = await resolveRoles(userId);
+    return { isAdmin: held.isAdmin, permissions: held.permissions };
+}
+
+/**
+ * Whether this person may open this panel screen, for a page that knows its
+ * own path.
+ *
+ * The proxy asks the same question of every panel request and is the reason a
+ * screen is reachable at all. A page that guards itself as well is defence
+ * against the day something reaches it another way, and it has to ask the
+ * same question: several pages asked `isAdmin` instead, which is not what
+ * opens them any more and refused everybody the roles screen had granted.
+ */
+export async function canOpenAdminPage(
+    userId: string | null | undefined,
+    pathname: string,
+): Promise<boolean> {
+    return mayOpenAdminPath(await panelReaderFor(userId), pathname);
 }
 
 export interface PermissionCheck {

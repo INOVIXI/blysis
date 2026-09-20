@@ -1,7 +1,8 @@
 "use client";
 
 import { createElement, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { mayOpenAdminPath } from "@/core/lib/admin-access";
 import { Package } from "lucide-react";
 import { NavIcon } from "@/core/components/ui/NavIcon";
 import { ModuleNavGroups } from "@/core/generated/module-registry";
@@ -25,6 +26,20 @@ import {
 export interface AdminNavModule {
     id: string;
     menu?: { path: string; label: string; icon?: string; group?: string }[];
+}
+
+/**
+ * What the panel knows about whoever is reading it, as it crosses to the
+ * browser: a `Set` does not survive the boundary, so the names travel as a
+ * list and are put back into one here.
+ *
+ * Not a secret. It is this reader's own set, and the refusal that matters is
+ * made by the proxy and by each endpoint; this only decides what is worth
+ * drawing.
+ */
+export interface AdminNavReader {
+    isAdmin: boolean;
+    permissions: string[];
 }
 
 /**
@@ -61,8 +76,18 @@ export function resolveIcon(name: string | undefined): NavIconComponent {
     return wrapper;
 }
 
-export function useAdminNav(modules: AdminNavModule[], activeThemeId?: string): NavGroup[] {
+/**
+ * @param reader Draw only what this person may open. Absent draws everything,
+ * which is what the breadcrumb wants: it names the route somebody is already
+ * on rather than offering them a way in.
+ */
+export function useAdminNav(
+    modules: AdminNavModule[],
+    activeThemeId?: string,
+    reader?: AdminNavReader,
+): NavGroup[] {
     const t = useTranslations("admin");
+    const locale = useLocale();
 
     return useMemo(() => {
         // Only groups declared by a module that is actually installed here -
@@ -74,6 +99,12 @@ export function useAdminNav(modules: AdminNavModule[], activeThemeId?: string): 
             themeGroup: activeThemeId ? buildThemeNavGroup(activeThemeId) : null,
             translate: (key, fallback) => (t.has(key) ? t(key) : fallback),
             resolveIcon,
+            mayOpen: reader
+                ? (href) => mayOpenAdminPath(
+                    { isAdmin: reader.isAdmin, permissions: new Set(reader.permissions) },
+                    `/${locale}${href}`,
+                )
+                : undefined,
         });
-    }, [modules, activeThemeId, t]);
+    }, [modules, activeThemeId, t, reader, locale]);
 }

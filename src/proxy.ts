@@ -21,6 +21,8 @@ import { safeInternalPath } from '@/core/lib/safe-redirect';
 import { siteRedirects } from '@/core/lib/redirects';
 import { resolveRedirect } from '@/core/lib/redirect-resolve';
 import { ensureHooks } from '@/core/lib/hooks-bootstrap';
+import { panelReaderFor } from '@/core/lib/permissions';
+import { mayEnterPanel, mayOpenAdminPath } from '@/core/lib/admin-access';
 
 const intlMiddleware = createIntlMiddleware({
     locales: locales,
@@ -433,6 +435,38 @@ async function proxyImpl(request: NextRequest, correlationId: string): Promise<N
             );
             if (destination) url.searchParams.set('callbackUrl', destination);
             return NextResponse.redirect(url);
+        }
+
+        // ===== Which part of the panel this reader may open =====
+        // The table saying which permission opens which panel path has been
+        // generated for a long time and nothing read it, so every `admin.*`
+        // permission the roles screen offers changed nothing: the shell asked
+        // `isAdmin` and that was the whole of it.
+        //
+        // This is the only place that knows both the path and the reader. A
+        // layout is not given the pathname, by design, so it can refuse the
+        // building but not the room. It still refuses the building - see
+        // `mayEnterPanel` there - and this refuses the room.
+        //
+        // An administrator is unaffected: `isAdmin` opens everything, exactly
+        // as before, so nobody who could reach a screen yesterday cannot
+        // today. Somebody inside the panel who lacks this screen is sent to
+        // the panel's front door rather than off the site, because they do
+        // belong here.
+        if (isAdminPage && hasSessionCookie(request)) {
+            try {
+                const session = await auth();
+                const reader = await panelReaderFor(session?.user?.id);
+                if (!mayEnterPanel(reader)) {
+                    return NextResponse.redirect(new URL(`/${locale}`, request.url));
+                }
+                if (!mayOpenAdminPath(reader, pathname)) {
+                    return NextResponse.redirect(new URL(`/${locale}/admin`, request.url));
+                }
+            } catch {
+                // A lookup that fell over must not lock the panel: the shell
+                // asks again against a real session and refuses there.
+            }
         }
     }
 

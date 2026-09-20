@@ -12,6 +12,15 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.14.0 - the panel enforces the permission map it has always generated.
+ * `admin.*` was decorative: the shell asked `isAdmin` and nothing read the
+ * table saying which permission opens which screen, so an operator could
+ * grant `admin.moderation` and the moderator was still sent to the home page.
+ * A module screen is now opened by the permission its own manifest declares,
+ * which is a behaviour change for a module that declared one and was reachable
+ * by any administrator regardless. An administrator is unaffected: the role
+ * named `admin` opens everything, as it always has.
+ *
  * 5.13.0 - `SeedContext` carries `me`, the account whoever runs the seed is
  * signed in as. Every seed wrote its rows onto the made-up accounts, which is
  * right for a forum or a shop and wrong for every screen that is about *you*:
@@ -563,4 +572,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.13.0";
+export const CORE_API_VERSION = "5.14.0";
