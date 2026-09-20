@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T02:14:21Z",
+  "updatedAt": "2026-09-20T02:33:22Z",
   "modules": [
     {
       "id": "announcements",
@@ -2812,7 +2812,7 @@
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T02:14:21Z",
+      "updatedAt": "2026-09-20T02:33:22Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -3323,13 +3323,13 @@
           "description": "Yapılandırılabilir ödüller ve bekleme süreleriyle çevir-kazan oyunu"
         }
       },
-      "version": "1.8.2",
+      "version": "1.9.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Dices",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T02:32:59Z",
       "screenshots": [],
       "tags": [
         "commerce"

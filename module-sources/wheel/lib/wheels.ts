@@ -106,6 +106,45 @@ export function refusalFor(rules: WheelRules, turner: Turner, now: Date = new Da
  * divide by - it is a wheel with nothing on it, which the caller has to say
  * differently from a wheel with no prizes at all.
  */
+/**
+ * The kinds of prize this wheel can actually hand over.
+ *
+ * The spin route grants credits and mints a coupon, and does nothing at all
+ * for anything else. The demo ships four prizes of kind `item` - three keys
+ * and a week of VIP - which are drawn, written to the spin log, announced in
+ * the public feed and notified to the winner, who receives nothing. A kind
+ * nothing grants is not a prize, so the panel says which ones are like that
+ * rather than leaving an operator to find out from a complaint.
+ */
+export const GRANTABLE_PRIZE_KINDS = ["credits", "coupon", "nothing"] as const;
+
+export function prizeIsGrantable(type: string): boolean {
+    return (GRANTABLE_PRIZE_KINDS as readonly string[]).includes(type);
+}
+
+/**
+ * How often a prize actually comes up, as a percentage of the wheel.
+ *
+ * The number an operator types is a weight, not a percentage: the draw adds
+ * them up and takes a share. The box told them otherwise - "Probability
+ * (1-100)" - so three prizes at 100 read as certain three times over when
+ * they are a third each, and an operator tuning one number moved every other
+ * prize's odds without being shown it.
+ *
+ * A prize switched off is not on the wheel, so it has no chance and does not
+ * count against the ones that do.
+ */
+export function prizeChance<T extends { probability: number; isActive?: boolean }>(
+    prizes: readonly T[],
+    prize: T,
+): number {
+    if (prize.isActive === false) return 0;
+    const live = prizes.filter((one) => one.isActive !== false);
+    const total = live.reduce((sum, one) => sum + Math.max(0, one.probability), 0);
+    if (total <= 0) return 0;
+    return (Math.max(0, prize.probability) / total) * 100;
+}
+
 export function drawPrize<T extends { probability: number }>(
     prizes: T[],
     roll: (max: number) => number,
