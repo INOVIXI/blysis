@@ -742,6 +742,7 @@
     "navbar_subItemPlaceholder": "Sub-item label",
     "navbar_subtitle": "Customize navigation links, order, and dropdown menus",
     "navbar_title": "Navbar Editor",
+    "navbar_visitorsSee": "Visitors see: {label}",
     "observability_activity24h": "Activity 24h",
     "observability_activity7d": "Activity 7d",
     "observability_database": "Database",

@@ -17,15 +17,10 @@ import { ModuleErrorBoundary } from "@/core/components/ModuleErrorBoundary";
 import { Slot } from "@/core/components/Slot";
 import { MobileMenu } from "@/core/components/layout/MobileMenu";
 
-/**
- * How many links the bar draws before it folds the rest away.
- *
- * By count, not by measurement: a number renders the same on the server as in
- * the browser, while anything measured is known only after paint - which puts
- * a layout shift in the header of every page. Eight is what fits beside the
- * account controls at the width the bar started wrapping.
- */
-export const INLINE_NAV_LINKS = 8;
+// Re-exported from `navbar-links`, where the fold that uses it lives and the
+// reason for the number is written down. Callers importing it from the bar
+// were here first.
+export { INLINE_NAV_LINKS } from "@/core/lib/navbar-links";
 
 function DefaultNavbar() {
     const pathname = usePathname();
@@ -125,22 +120,11 @@ function DefaultNavbar() {
 
     // A bar the admin arranged is drawn as arranged - they put the dropdowns
     // where they wanted them. The bar the site ships with grows by one link
-    // per module installed, so it folds its own overflow.
-    const shownLinks = (!adminConfigured && navLinks.length > INLINE_NAV_LINKS)
-        ? [
-            ...navLinks.slice(0, INLINE_NAV_LINKS),
-            {
-                label: t('more'),
-                href: "#",
-                icon: "MoreHorizontal",
-                children: navLinks.slice(INLINE_NAV_LINKS).map((link) => ({
-                    label: link.label,
-                    href: link.href,
-                    icon: link.icon,
-                })),
-            },
-        ]
-        : navLinks;
+    // per module installed, so it folds its own overflow. The fold is
+    // `foldNavLinks`, which the navbar editor asks too: what an operator
+    // opens has to be what the site is drawing, or the first save they make
+    // replaces the fold with nine links inline.
+    const shownLinks = adminConfigured ? navLinks : foldNavLinks(navLinks, t('more'));
 
     const menuRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -330,6 +314,7 @@ function DefaultNavbar() {
 
 import { ThemeComponentSlot } from "@/core/components/theme/ThemeComponentSlot";
 import { isEnabledIn } from "@/core/lib/module-enabled";
+import { foldNavLinks } from "@/core/lib/navbar-links";
 import { STAFF_ROLE_PRIORITY } from "@/core/lib/constants";
 
 export function Navbar() {

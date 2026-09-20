@@ -10,6 +10,7 @@ import { Loader2, Check, Plus, X, Trash2, ChevronDown, ChevronUp, ExternalLink }
 import { toast } from "sonner";
 import { invalidateSettingsCache } from "@/core/hooks/useSiteSettings";
 import { useTranslations } from "next-intl";
+import { foldNavLinks } from "@/core/lib/navbar-links";
 import { ModuleNavLinks } from "@/core/generated/module-registry";
 import { useAllModules } from "@/core/providers/module-provider";
 import { IconPicker } from "@/core/components/ui/icon-picker";
@@ -36,6 +37,9 @@ interface NavLink {
 
 export default function NavbarSettingsPage() {
     const t = useTranslations("admin");
+    // The bar's own words, so this screen can seed itself with the bar the
+    // site is actually drawing rather than with a flat list of every link.
+    const navT = useTranslations("nav");
     const commonT = useTranslations("common");
     const moduleStatus = useAllModules();
     const [links, setLinks] = useState<NavLink[]>([]);
@@ -51,17 +55,29 @@ export default function NavbarSettingsPage() {
             setLinks(navLinks);
             return;
         }
-        // No override yet - seed the editor with what the navbar is currently
-        // rendering from the module registry, so the admin sees real state
-        // and can edit from there.
+        /*
+         * No override yet - seed with what the navbar is currently drawing,
+         * fold and all.
+         *
+         * It used to seed a flat list of every link. The bar folds anything
+         * past eight under "More", so an operator opened this screen, saw a
+         * different bar from the one on their own site, and the first save
+         * they made - to change one label - replaced the fold with nine
+         * links inline. `foldNavLinks` is the bar's own function.
+         */
         const registry = ModuleNavLinks
             .filter(nl => isEnabledIn(moduleStatus, nl.module))
             .map(nl => ({ label: nl.label, labelKey: nl.labelKey, href: nl.href, icon: nl.icon || "" }));
-        setLinks([{ label: "Home", labelKey: "home", href: "/", icon: "Home" }, ...registry]);
+        setLinks(foldNavLinks(
+            [{ label: "Home", labelKey: "home", href: "/", icon: "Home" }, ...registry],
+            navT("more"),
+        ));
     }, [moduleStatus]);
 
     const addLink = () => setLinks([...links, { label: "", href: "/", icon: "" }]);
-    const addDropdown = () => setLinks([...links, { label: "More", href: "#", icon: "Star", children: [{ label: "", href: "/" }] }]);
+    // The word the bar uses for a fold, not an English one written into an
+    // operator's own navbar.
+    const addDropdown = () => setLinks([...links, { label: navT("more"), href: "#", icon: "Star", children: [{ label: "", href: "/" }] }]);
 
     const updateLink = (i: number, field: string, value: string) => {
         setLinks(links.map((l, idx) => {
@@ -205,6 +221,25 @@ export default function NavbarSettingsPage() {
                                         )}
                                         <Button aria-label={commonT("remove")} variant="ghost" size="sm" onClick={() => removeLink(i)}><Trash2 className="w-3 h-3 text-destructive" /></Button>
                                     </div>
+
+                                    {/* What a visitor reads, where it differs
+                                        from what is stored.
+
+                                        A module's link is stored as its own
+                                        English name with a translation key
+                                        beside it, and the box above holds
+                                        what is stored - typing in it is the
+                                        operator's own word and drops the key,
+                                        so the box cannot simply show the
+                                        translation. This screen said "Store"
+                                        where the site says "Magaza", and an
+                                        operator had no way to know the two
+                                        were the same link. */}
+                                    {link.labelKey && navT.has(link.labelKey) && navT(link.labelKey) !== link.label && (
+                                        <p className="border-t border-border bg-muted px-3 pb-2 text-xs text-muted-foreground">
+                                            {t("navbar_visitorsSee", { label: navT(link.labelKey) })}
+                                        </p>
+                                    )}
 
                                     {/* Dropdown children */}
                                     {isDropdown && isExpanded && (

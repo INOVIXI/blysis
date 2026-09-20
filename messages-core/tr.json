@@ -742,6 +742,7 @@
     "navbar_subItemPlaceholder": "Alt öğe etiketi",
     "navbar_subtitle": "Gezinme bağlantılarını, sıralarını ve açılır menüleri düzenleyin",
     "navbar_title": "Menü Düzenleyici",
+    "navbar_visitorsSee": "Ziyaretçiler şunu görür: {label}",
     "observability_activity24h": "24s Aktivite",
     "observability_activity7d": "7g Aktivite",
     "observability_database": "Veritabanı",
