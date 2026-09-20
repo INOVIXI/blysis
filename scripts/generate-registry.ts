@@ -179,6 +179,9 @@ function generateRegistry() {
     // Aggregate typed collections across all modules
     const allWidgets: ({ id: string; component: string; defaultOrder: number; defaultVisible: boolean; module: string })[] = [];
     const allNavLinks: ({ label: string; labelKey?: string; href: string; icon?: string; position?: number; module: string })[] = [];
+    // Endpoints a module says a public demo must refuse. Core knows the shape
+    // of the danger and cannot know which of a module's paths has it.
+    const allDemoUnsafe: ({ path: string; module: string })[] = [];
     const allFooterLinks: ManifestItem[] = [];
     const allChallengePoints: ManifestItem[] = [];
     const allDashboardCards: ManifestItem[] = [];
@@ -216,6 +219,7 @@ function generateRegistry() {
     for (const { moduleName, manifest } of loaded) {
         manifest.widgets?.forEach((w) => allWidgets.push({ ...w, module: moduleName }));
         manifest.navLinks?.forEach((l) => allNavLinks.push({ ...l, module: moduleName }));
+        manifest.demoUnsafe?.forEach((path: string) => allDemoUnsafe.push({ path, module: moduleName }));
         manifest.footerLinks?.forEach((l) => allFooterLinks.push({ ...l, module: moduleName }));
         manifest.challengePoints?.forEach((c) => allChallengePoints.push({ ...c, module: moduleName }));
         manifest.dashboardCards?.forEach((c) => allDashboardCards.push({ ...c, module: moduleName }));
@@ -335,6 +339,7 @@ function generateRegistry() {
 
     let widgetRegistry = `export const ModuleWidgets: { id: string; label?: string; labelKey?: string; component: string; module: string; defaultOrder: number; defaultVisible: boolean }[] = ${JSON.stringify(allWidgets, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleNavLinks: { label: string; labelKey?: string; href: string; icon?: string; position?: number; module: string }[] = ${JSON.stringify(allNavLinks, null, 2)};\n\n`;
+    widgetRegistry += `export const ModuleDemoUnsafe: { path: string; module: string }[] = ${JSON.stringify(allDemoUnsafe.sort((a, b) => a.path.localeCompare(b.path)), null, 2)};\n\n`;
     widgetRegistry += `export const ModuleFooterLinks: { label: string; labelKey?: string; href: string; section?: string; module: string }[] = ${JSON.stringify(allFooterLinks, null, 2)};\n\n`;
     // The forms a challenge module may be switched on for. Core's own three
     // are added beside these in `challenge-points.ts`.

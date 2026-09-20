@@ -2,7 +2,7 @@
   "id": "url-redirects",
   "name": "URL Redirects",
   "description": "A sign on the door of a page that moved, so old links keep working.",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
@@ -120,5 +120,8 @@
       "name": "url-redirects.manage",
       "labelKey": "urlRedirects.perm_manage"
     }
+  ],
+  "demoUnsafe": [
+    "/url-redirects"
   ]
 }

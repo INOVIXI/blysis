@@ -2,7 +2,7 @@
   "id": "minecraft-litebans",
   "name": "Minecraft Punishments (LiteBans)",
   "description": "Reads bans, mutes, warnings and kicks out of a LiteBans database and records them against the member who owns the account",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "coreVersion": "^5.0.0",
   "category": "gaming",
   "author": "Blysis",
@@ -165,5 +165,8 @@
         "adm_scopeHint": "LiteBans tek veritabanını sunucular veya oyun modları arasında bölebilir; kendi yerini söyleyen ceza oraya yazılır. Bu, kalanların adı. Cezalar altındaki bir yerle eşleştir; hiçbir yere yazılmasın istiyorsan boş bırak."
       }
     }
-  }
+  },
+  "demoUnsafe": [
+    "/minecraft-litebans/admin/connection"
+  ]
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T14:15:02Z",
+  "updatedAt": "2026-09-20T16:38:42Z",
   "modules": [
     {
       "id": "announcements",
@@ -742,13 +742,13 @@
           "description": "Discord webhook bildirimleri ve ayarları"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "integration",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-09-20T16:38:42Z",
       "screenshots": [],
       "tags": [
         "integration"
@@ -928,13 +928,13 @@
           "description": "Başka bir yerden bir değer okur ve sitede gösterir"
         }
       },
-      "version": "1.5.0",
+      "version": "1.6.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Database",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-09-20T16:38:42Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -1799,13 +1799,13 @@
           "description": "Bir LiteBans veritabanındaki yasakları, susturmaları, uyarıları ve atmaları okur ve hesabın sahibi olan üyenin kaydına yazar"
         }
       },
-      "version": "2.1.0",
+      "version": "2.2.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Gavel",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-09-20T16:38:42Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -3219,13 +3219,13 @@
           "description": "Eski bir adresi, sayfanın şimdi bulunduğu yere gönderir"
         }
       },
-      "version": "1.4.0",
+      "version": "1.5.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Signpost",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-09-20T16:38:42Z",
       "screenshots": [],
       "tags": [
         "content"

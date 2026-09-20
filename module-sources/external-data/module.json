@@ -2,7 +2,7 @@
   "id": "external-data",
   "name": "External Data",
   "description": "Read a list out of a database this site does not own: a game server, a billing system, an old forum. Read only, one bounded query, and the connection never reaches a page.",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
@@ -168,5 +168,8 @@
       "name": "external-data.manage",
       "labelKey": "externalData.perm_manage"
     }
+  ],
+  "demoUnsafe": [
+    "/external-data/admin/sources"
   ]
 }

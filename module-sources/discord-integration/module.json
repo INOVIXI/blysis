@@ -2,7 +2,7 @@
   "id": "discord-integration",
   "name": "Discord Integration",
   "description": "Discord webhook notifications and settings",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -292,5 +292,8 @@
       "name": "discord-integration.manage",
       "labelKey": "discordIntegration.perm_manage"
     }
+  ],
+  "demoUnsafe": [
+    "/discord/test-send"
   ]
 }

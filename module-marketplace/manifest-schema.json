@@ -1002,6 +1002,15 @@
         ]
       }
     },
+    "demoUnsafe": {
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
     "slotContents": {
       "maxItems": 100,
       "type": "array",

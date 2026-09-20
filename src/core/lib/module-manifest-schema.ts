@@ -1021,6 +1021,21 @@ export const moduleManifestSchema = z.object({
     contextProviders: z.array(contextProvider).max(20).optional(),
     hookListeners: z.array(hookListener).max(200).optional(),
     hooksEmitted: z.array(hookEmitted).max(200).optional(),
+    /**
+     * Endpoints of this module's own that a public demo must refuse.
+     *
+     * A demo lets a visitor use the product and refuses the handful of things
+     * that would take it away from the next one - closing the site, sending
+     * mail, making the server dial an address the visitor chose. Core knows
+     * that shape and cannot know which of a module's endpoints has it, so the
+     * module says: paths as they are written in `api`, and core matches them
+     * by prefix so a nested route under one is covered too.
+     *
+     * Declared rather than guessed, and declared here rather than listed in
+     * core, because a list of module paths inside core is core knowing about
+     * modules - which is the one thing it does not do.
+     */
+    demoUnsafe: z.array(z.string().min(1).max(200)).max(50).optional(),
     slotContents: z.array(slotContent).max(100).optional(),
     slots: z.array(slotContribution).max(200).optional(),
     cronJobs: z.array(cronJob).max(50).optional(),
