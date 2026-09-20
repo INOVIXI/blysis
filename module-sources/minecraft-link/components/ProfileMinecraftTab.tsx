@@ -131,10 +131,7 @@ export function ProfileMinecraftTab() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <Link2 className="h-5 w-5" />
-                    {t("title")}
-                </CardTitle>
+                <CardTitle>{t("title")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 {state.account ? (

@@ -98,10 +98,7 @@ export function ProfileLicensesTab() {
         return (
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <KeyRound className="h-5 w-5" />
-                        {t("title")}
-                    </CardTitle>
+                    <CardTitle>{t("title")}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">{t("empty")}</CardContent>
             </Card>
