@@ -42,6 +42,7 @@ export const CORE_SCREENS: CoreScreen[] = [
     { path: "/auth/forgot-password", titleKey: "auth.forgotPassword", descriptionKey: "auth.forgotSubtitle" },
     { path: "/auth/reset-password", titleKey: "auth.resetTitle", descriptionKey: "auth.resetSubtitle" },
     { path: "/auth/verify-email", titleKey: "auth.verifyTitle", descriptionKey: "auth.verifyMetaDescription" },
+    { path: "/auth/email-change", titleKey: "auth.emailChangeDone", descriptionKey: "auth.emailChangeDoneBody" },
     { path: "/auth/error", titleKey: "auth.errorTitle", descriptionKey: "auth.errorDefault" },
     { path: "/activity", titleKey: "activity.title", descriptionKey: "activity.description" },
     { path: "/profile", titleKey: "profile.title", descriptionKey: "profile.metaDescription" },

@@ -710,6 +710,80 @@ describe("verification mail", () => {
     });
 });
 
+describe("the mail that moves an address", () => {
+    it("sends the link to the address being claimed", async () => {
+        const { sendEmailChangeVerification } = await loadWithProvider();
+
+        await sendEmailChangeVerification("new@example.com", "a-token");
+
+        expect(lastSend().to).toBe("new@example.com");
+        expect(lastSend().html).toContain("a-token");
+    });
+
+    it("escapes what it puts in the link, like every other mail here", async () => {
+        const { sendEmailChangeVerification } = await loadWithProvider();
+
+        await sendEmailChangeVerification("new@example.com", '"><img src=x>');
+
+        const html = lastSend().html as string;
+        expect(html).not.toContain("<img");
+    });
+
+    it("warns the address on file, naming the one that was asked for", async () => {
+        // The only warning this kind of hijack gives: somebody whose screen
+        // was borrowed finds a message saying what was requested.
+        const { sendEmailChangeNotice } = await loadWithProvider();
+
+        await sendEmailChangeNotice("old@example.com", "new@example.com");
+
+        expect(lastSend().to).toBe("old@example.com");
+        expect(lastSend().html).toContain("new@example.com");
+    });
+
+    it("escapes the address it names in that warning", async () => {
+        const { sendEmailChangeNotice } = await loadWithProvider();
+
+        await sendEmailChangeNotice("old@example.com", '"><img src=x>@evil.test');
+
+        expect(lastSend().html as string).not.toContain("<img");
+    });
+
+    it("sends nothing at all when the site has no way to send", async () => {
+        // Both of these are security mail. Pretending to have sent one is
+        // worse than the log line that says it could not.
+        const { sendEmailChangeVerification, sendEmailChangeNotice } = await loadWithoutProvider();
+
+        await sendEmailChangeVerification("new@example.com", "a-token");
+        await sendEmailChangeNotice("old@example.com", "new@example.com");
+
+        expect(providerSend).not.toHaveBeenCalled();
+        expect(logWarn).toHaveBeenCalledWith(
+            "email suppressed: no transport configured",
+            expect.objectContaining({ kind: "email-change-notice" }),
+        );
+    });
+
+    it("logs the confirmation link outside production, and never in it", async () => {
+        // The same rule the password reset follows: a developer with no mail
+        // transport still needs to finish the flow, and a production log is
+        // not a place to write a link that moves an account.
+        const dev = await loadWithoutProvider({ NODE_ENV: "development" });
+        await dev.sendEmailChangeVerification("new@example.com", "a-token");
+        expect(logWarn).toHaveBeenCalledWith(
+            "email suppressed: no transport configured",
+            expect.objectContaining({ confirmUrl: expect.stringContaining("a-token") }),
+        );
+
+        logWarn.mockClear();
+        const prod = await loadWithoutProvider({ NODE_ENV: "production" });
+        await prod.sendEmailChangeVerification("new@example.com", "a-token");
+        expect(logWarn).toHaveBeenCalledWith(
+            "email suppressed: no transport configured",
+            expect.not.objectContaining({ confirmUrl: expect.anything() }),
+        );
+    });
+});
+
 describe("welcome mail", () => {
     it("is queued rather than sent inline", async () => {
         const { sendWelcomeEmail } = await loadWithProvider({ SITE_NAME: "Acme" });
