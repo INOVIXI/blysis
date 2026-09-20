@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { sharedJson } from "@/core/sdk";
-import { useSiteCurrency } from "@/core/sdk/ui";
+import { MemberLink, useSiteCurrency } from "@/core/sdk/ui";
 
 export function TopCustomerWidget() {
     const sidebarT = useTranslations('sidebar');
@@ -24,17 +24,18 @@ export function TopCustomerWidget() {
     return (
         <div className="bg-card rounded-xl border border-border p-5">
             <h2 className="font-bold text-foreground mb-4">{sidebarT('topCustomer')}</h2>
-            <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-3 bg-muted rounded-lg flex items-center justify-center text-muted-foreground font-bold text-xl overflow-hidden">
-                    {topCustomer.avatar ? (
-                        <>{/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={topCustomer.avatar} alt="" className="w-full h-full object-cover" /></>
-                    ) : (
-                        topCustomer.username[0].toUpperCase()
-                    )}
-                </div>
-                <h3 className="font-semibold text-foreground">{topCustomer.username}</h3>
-                <p className="text-sm text-muted-foreground">
+            <div className="flex flex-col items-center text-center">
+                {/* The one widget that stacks rather than lines up: the face is
+                    the point of it. `MemberLink` lays out in a row, so the
+                    column is made here and the link still wraps both. */}
+                <MemberLink
+                    username={topCustomer.username}
+                    avatar={topCustomer.avatar}
+                    size={64}
+                    className="flex-col gap-2"
+                    nameClassName="text-center font-semibold"
+                />
+                <p className="mt-1 text-sm text-muted-foreground">
                     {sidebarT('paidThisMonth', { amount: formatPrice(topCustomer.total) })}
                 </p>
             </div>

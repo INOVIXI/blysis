@@ -2,7 +2,7 @@
   "id": "in-app-notifications",
   "name": "In-App Notifications",
   "description": "In-app notification system with bell icon",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
@@ -34,6 +34,7 @@
     "en": {
       "inAppNotifications": {
         "title": "Notifications",
+        "titleUnread": "Notifications, {count} unread",
         "noNotifications": "No notifications",
         "markAllRead": "Mark all as read",
         "markRead": "Mark as read",
@@ -80,6 +81,7 @@
     "tr": {
       "inAppNotifications": {
         "title": "Bildirimler",
+        "titleUnread": "Bildirimler, {count} okunmamış",
         "noNotifications": "Bildirim yok",
         "markAllRead": "Tümünü okundu olarak işaretle",
         "markRead": "Okundu olarak işaretle",

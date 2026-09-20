@@ -6,7 +6,7 @@ import { Link } from "@/core/sdk/navigation";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { notificationText } from "../lib/render";
-import { useRelativeTime } from "@/core/sdk/ui";
+import { CountBadge, useRelativeTime } from "@/core/sdk/ui";
 import { useModalDialog } from "@/core/sdk/ui";
 
 interface NotificationItem {
@@ -102,18 +102,19 @@ export function NotificationBell() {
             <button
                 type="button"
                 onClick={() => setOpen(o => !o)}
-                aria-label={t("title")}
+                /* The count is drawn on the corner and hidden from the
+                   accessible tree, because a bare number read out beside
+                   "Notifications" is a puzzle rather than a fact. It belongs
+                   in the button's own name: without it, somebody listening to
+                   the page is never told there is anything waiting. */
+                aria-label={unread > 0 ? t("titleUnread", { count: unread }) : t("title")}
                 aria-expanded={open}
                 aria-haspopup="dialog"
                 className="relative p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 title={t("title")}
             >
                 <Bell className="w-4 h-4" />
-                {unread > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-destructive text-destructive-foreground text-[10px] rounded-full flex items-center justify-center font-bold">
-                        {unread > 9 ? "9+" : unread}
-                    </span>
-                )}
+                <CountBadge count={unread} />
             </button>
 
             {open && (

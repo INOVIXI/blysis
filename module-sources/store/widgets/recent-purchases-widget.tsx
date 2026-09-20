@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { sharedJson } from "@/core/sdk";
-import { useRelativeTime } from "@/core/sdk/ui";
+import { MemberLink, useRelativeTime } from "@/core/sdk/ui";
 
 interface RecentPurchase {
     username: string;
@@ -35,18 +35,13 @@ export function RecentPurchasesWidget() {
             <div className="space-y-3">
                 {purchases.map((purchase, i) => (
                     <div key={i} className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground font-medium text-sm overflow-hidden">
-                            {purchase.avatar ? (
-                                <>{/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={purchase.avatar} alt="" className="w-full h-full object-cover" /></>
-                            ) : (
-                                purchase.username[0].toUpperCase()
-                            )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="font-medium text-foreground text-sm truncate">{purchase.username}</p>
-                            <p className="text-xs text-muted-foreground truncate">{purchase.product}</p>
-                        </div>
+                        <MemberLink
+                            username={purchase.username}
+                            avatar={purchase.avatar}
+                            subtitle={purchase.product}
+                            className="flex-1"
+                            nameClassName="text-sm"
+                        />
                         <span className="text-xs text-muted-foreground whitespace-nowrap">
                             {relativeTime(new Date(purchase.time))}
                         </span>

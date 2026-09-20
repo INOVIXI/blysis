@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { sharedJson } from "@/core/sdk";
-import { useSiteCurrency } from "@/core/sdk/ui";
+import { MemberLink, useSiteCurrency } from "@/core/sdk/ui";
 
 interface TopBuyer {
     username: string;
@@ -34,17 +34,13 @@ export function TopBuyersWidget() {
             <div className="space-y-3">
                 {buyers.map((buyer, i) => (
                     <div key={i} className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground font-bold text-sm overflow-hidden">
-                            {buyer.avatar ? (
-                                <>{/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={buyer.avatar} alt="" className="w-full h-full object-cover" /></>
-                            ) : (
-                                buyer.username[0].toUpperCase()
-                            )}
-                        </div>
-                        <div className="flex-1">
-                            <p className="font-medium text-foreground text-sm">{buyer.username}</p>
-                        </div>
+                        <MemberLink
+                            username={buyer.username}
+                            avatar={buyer.avatar}
+                            size={40}
+                            className="flex-1"
+                            nameClassName="text-sm"
+                        />
                         <span className="text-sm text-muted-foreground">{formatPrice(buyer.total)}</span>
                     </div>
                 ))}

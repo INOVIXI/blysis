@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/core/sdk/navigation";
+import { CountBadge } from "@/core/sdk/ui";
 import { useSession } from "next-auth/react";
 
 export function CartIcon() {
@@ -31,7 +32,12 @@ export function CartIcon() {
 
     if (!session?.user) return null;
 
-    const ariaLabel = t("cartAriaLabel");
+    // The number is drawn on the corner of the icon and `CountBadge` hides it
+    // from the accessible tree, because a bare "3" beside "Cart" is a second
+    // thing to work out rather than a fact. It belongs in the link's own name:
+    // without this, somebody listening to the page is told there is a cart and
+    // never that anything is in it.
+    const ariaLabel = count > 0 ? t("cartAriaLabelCounted", { count }) : t("cartAriaLabel");
 
     return (
         <Link
@@ -40,11 +46,7 @@ export function CartIcon() {
             className="relative p-2 rounded-md text-muted-foreground hover:text-muted-foreground hover:bg-muted transition-colors"
         >
             <ShoppingCart className="w-4 h-4" />
-            {count > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-full flex items-center justify-center font-bold">
-                    {count > 9 ? "9+" : count}
-                </span>
-            )}
+            <CountBadge count={count} tone="primary" />
         </Link>
     );
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T10:13:42Z",
+  "updatedAt": "2026-09-20T10:44:45Z",
   "modules": [
     {
       "id": "announcements",
@@ -1219,13 +1219,13 @@
           "description": "Zil simgeli uygulama içi bildirim sistemi"
         }
       },
-      "version": "1.5.2",
+      "version": "1.6.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Bell",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T10:44:45Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2845,13 +2845,13 @@
           "description": "Ürün, kategori, sepet ve siparişleriyle eksiksiz e-ticaret"
         }
       },
-      "version": "2.40.2",
+      "version": "2.41.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T10:13:42Z",
+      "updatedAt": "2026-09-20T10:44:45Z",
       "screenshots": [],
       "tags": [
         "commerce"

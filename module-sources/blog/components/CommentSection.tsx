@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { Button, LoadFailed } from "@/core/sdk/ui";
+import { Button, LoadFailed, MemberAvatar, MemberLink, Textarea, useRelativeTime } from "@/core/sdk/ui";
 import { Loader2, MessageCircle, Send } from "lucide-react";
 
 interface Comment {
@@ -15,6 +16,23 @@ interface Comment {
 }
 
 /**
+ * The conversation under an article.
+ *
+ * It was a stack of bordered boxes with a name, a dot and a date in one grey
+ * line, and no face anywhere - on a community site, where a comment is read as
+ * much for who wrote it as for what it says, and where every other list had
+ * already moved to the shared avatar. The name was not a link either, so the
+ * one screen where members meet each other was the one screen with no way from
+ * a member to their profile.
+ *
+ * And the box to write in was an `<input>`: one line, no wrapping, no way to
+ * see the second sentence of what you had typed.
+ *
+ * Now: a face beside every comment and beside the box you write in, the name
+ * goes to the person, the body wraps, and the rows are separated by a hairline
+ * rather than each being its own card - a card per comment made ten comments
+ * look like ten unrelated notices.
+ *
  * The endpoint is `/blog/comments?articleId=`, not `/blog/<id>/comments`.
  * This component asked for the second one, which the manifest never declared:
  * the dispatcher answered 404, the `.then` swallowed it, and the section
@@ -26,7 +44,8 @@ export function CommentSection({ postId, articleId }: { postId?: string; article
     const id = postId || articleId || "";
     const t = useTranslations("blog");
     const commonT = useTranslations("common");
-    const locale = useLocale();
+    const relativeTime = useRelativeTime();
+    const { data: session } = useSession();
     const [comments, setComments] = useState<Comment[]>([]);
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(true);
@@ -90,35 +109,59 @@ export function CommentSection({ postId, articleId }: { postId?: string; article
                 <MessageCircle className="w-5 h-5" aria-hidden="true" />
                 {t("comments")} ({comments.length})
             </h2>
-            <form onSubmit={handleSubmit} className="flex gap-2">
-                <input
-                    value={content}
-                    onChange={e => setContent(e.target.value)}
-                    placeholder={t("writeComment")}
-                    aria-label={t("writeComment")}
-                    className="flex-1 rounded-lg border border-border bg-background px-4 py-2 text-sm"
+            <form onSubmit={handleSubmit} className="flex gap-3">
+                <MemberAvatar
+                    name={session?.user?.name ?? "?"}
+                    src={session?.user?.image ?? null}
+                    size={36}
+                    className="mt-1"
                 />
-                <Button type="submit" size="sm" disabled={submitting || !content.trim()} aria-label={t("postComment")}>
-                    {submitting
-                        ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                        : <Send className="w-4 h-4" aria-hidden="true" />}
-                </Button>
+                <div className="flex-1 space-y-2">
+                    <Textarea
+                        value={content}
+                        onChange={e => setContent(e.target.value)}
+                        placeholder={t("writeComment")}
+                        aria-label={t("writeComment")}
+                        rows={3}
+                    />
+                    <div className="flex justify-end">
+                        <Button type="submit" size="sm" disabled={submitting || !content.trim()}>
+                            {submitting
+                                ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                                : <Send className="w-4 h-4" aria-hidden="true" />}
+                            {t("postComment")}
+                        </Button>
+                    </div>
+                </div>
             </form>
             {pending && (
                 <p className="text-sm text-muted-foreground" role="status">{t("commentPending")}</p>
             )}
-            <div className="space-y-4">
+            <div className="divide-y divide-border">
                 {comments.map(comment => (
-                    <div key={comment.id} className="rounded-lg border border-border p-4 space-y-1">
-                        <div className="flex items-center gap-2 text-sm">
-                            <span className="font-medium">{comment.author?.username}</span>
-                            <span className="text-muted-foreground">&middot;</span>
-                            <span className="text-muted-foreground text-xs">
-                                {new Date(comment.createdAt).toLocaleDateString(locale)}
-                            </span>
+                    <article key={comment.id} className="flex gap-3 py-4 first:pt-0">
+                        <MemberAvatar
+                            name={comment.author?.username ?? "?"}
+                            src={comment.author?.avatar}
+                            size={36}
+                            className="mt-0.5"
+                        />
+                        <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-baseline gap-x-2">
+                                <MemberLink
+                                    username={comment.author?.username ?? "?"}
+                                    hideAvatar
+                                    nameClassName="text-sm"
+                                />
+                                <span className="text-xs text-muted-foreground">
+                                    {relativeTime(comment.createdAt)}
+                                </span>
+                            </div>
+                            <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                                {comment.content}
+                            </p>
                         </div>
-                        <p className="text-sm">{comment.content}</p>
-                    </div>
+                    </article>
                 ))}
                 {failed ? (
                     <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
