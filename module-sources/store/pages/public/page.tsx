@@ -138,7 +138,7 @@ export default async function StorePage({ searchParams }: PageProps) {
                                     href={storeHref({ category: root.slug })}
                                     className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-md transition-all group text-left block"
                                 >
-                                    <div className="h-32 bg-muted flex items-center justify-center overflow-hidden">
+                                    <div className="aspect-card bg-muted flex items-center justify-center overflow-hidden">
                                         {root.image ? (
                                             <>{/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img src={root.image} alt={root.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /></>
@@ -169,7 +169,7 @@ export default async function StorePage({ searchParams }: PageProps) {
                                 href={storeHref({ category: child.slug })}
                                 className="bg-card rounded-lg border border-border overflow-hidden hover:shadow-md transition-all group text-left block"
                             >
-                                <div className="h-32 bg-muted flex items-center justify-center overflow-hidden">
+                                <div className="aspect-card bg-muted flex items-center justify-center overflow-hidden">
                                     {child.image ? (
                                         <>{/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img src={child.image} alt={child.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /></>

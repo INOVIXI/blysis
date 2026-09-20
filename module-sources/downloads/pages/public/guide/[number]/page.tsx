@@ -114,7 +114,7 @@ export default function DownloadGuidePage() {
                 {back}
 
                 {file.coverImage && (
-                    <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-border bg-muted">
+                    <div className="relative aspect-card w-full overflow-hidden rounded-xl border border-border bg-muted">
                         <Image src={file.coverImage} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 768px" />
                     </div>
                 )}

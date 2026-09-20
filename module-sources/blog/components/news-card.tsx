@@ -2,8 +2,8 @@
 
 import { Link } from "@/core/sdk/navigation";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
-import { useLocalDate } from "@/core/sdk/ui";
+import { Newspaper } from "lucide-react";
+import { Badge, useLocalDate } from "@/core/sdk/ui";
 
 /**
  * One article, drawn the same way wherever it appears.
@@ -15,9 +15,18 @@ import { useLocalDate } from "@/core/sdk/ui";
  * whose authors have not uploaded anything. And it linked to `/blog/<slug>`
  * while every other link in this module is `/blog/<number>/<slug>`.
  *
- * The picture keeps its space when there is none. Two cards side by side
- * should not be different heights depending on who remembered to upload a
- * cover, and the same goes for the title and the excerpt below it.
+ * The picture keeps its space when there is none, so two cards side by side
+ * are not different heights depending on who remembered to upload a cover.
+ *
+ * That was also done to the text, by giving the headline two lines of room
+ * and the excerpt two more whether or not they filled them - and a one-line
+ * headline then had a finger's width of nothing under it before its excerpt
+ * began. The cards were even and every one of them had a hole in it. The row
+ * is a grid, and a grid already stretches its cells to the tallest; the card
+ * only has to be a full-height column so its own border reaches the bottom.
+ *
+ * Where a cover is missing the box is quiet rather than captioned. "No image"
+ * is a note to whoever uploads, printed on the page for everybody who reads.
  */
 export interface BlogCardArticle {
     id: string;
@@ -32,44 +41,44 @@ export interface BlogCardArticle {
 }
 
 export function NewsCard({ post }: { post: BlogCardArticle }) {
-    const t = useTranslations("blog");
     const formatLocalDate = useLocalDate();
     const date = post.publishedAt || post.createdAt;
 
     return (
         <Link
             href={`/blog/${post.number}/${post.slug}`}
-            className="group block bg-card rounded-lg border border-border overflow-hidden hover:shadow-md transition-all"
+            className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/40"
         >
-            <div className="h-44 bg-muted flex items-center justify-center overflow-hidden">
+            <div className="relative aspect-card overflow-hidden bg-muted">
                 {post.coverImage ? (
                     <Image
                         src={post.coverImage}
-                        alt={post.title}
-                        width={0}
-                        height={0}
-                        sizes="100vw"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        alt=""
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                     />
                 ) : (
-                    <span className="text-muted-foreground text-sm">{t("noImage")}</span>
+                    <div className="flex h-full w-full items-center justify-center">
+                        <Newspaper className="h-8 w-8 text-muted-foreground/40" aria-hidden="true" />
+                    </div>
+                )}
+                {post.category && (
+                    <Badge tone="info" solid className="absolute left-3 top-3">{post.category.name}</Badge>
                 )}
             </div>
-            <div className="p-4">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                    {post.category && <span className="font-medium text-primary">{post.category.name}</span>}
-                    {post.category && date && <span>&middot;</span>}
-                    {date && <span>{formatLocalDate(date)}</span>}
-                </div>
-                {/* Both blocks are clamped at two lines and hold two lines of
-                    room whether or not they fill it, so a short headline in one
-                    card cannot make its row shorter than the row above. */}
-                <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
+            <div className="flex flex-1 flex-col gap-1.5 p-4">
+                <h3 className="line-clamp-2 font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
                     {post.title}
                 </h3>
-                <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5rem]">
-                    {post.excerpt}
-                </p>
+                {post.excerpt && (
+                    <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{post.excerpt}</p>
+                )}
+                {/* The date sits on the floor of the card, so the dates in a
+                    row line up however long the headlines above them are. */}
+                {date && (
+                    <p className="mt-auto pt-3 text-xs text-muted-foreground">{formatLocalDate(date)}</p>
+                )}
             </div>
         </Link>
     );

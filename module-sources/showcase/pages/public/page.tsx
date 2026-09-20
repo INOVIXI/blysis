@@ -24,7 +24,7 @@ function CardFace({ card }: { card: ShowcaseCard }) {
     return (
         <Card className="h-full overflow-hidden">
             {card.image && (
-                <div className="relative aspect-video w-full bg-muted">
+                <div className="relative aspect-card w-full bg-muted">
                     <Image
                         src={card.image}
                         alt=""

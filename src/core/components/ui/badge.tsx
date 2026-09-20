@@ -35,21 +35,39 @@ const TONES: Record<BadgeTone, string> = {
     info: "bg-primary/10 text-primary border-primary/25",
 };
 
-export function badgeClassName(tone: BadgeTone = "neutral", className?: string): string {
+/**
+ * The same five tones, painted rather than tinted.
+ *
+ * Every tone above is a ten-percent wash over whatever is behind it, which is
+ * right on a panel and wrong on a photograph: the shop drew "Featured" in
+ * warning-on-warning-tint over a saturated blue product banner and the words
+ * disappeared into the picture. A badge that sits on an image has to bring its
+ * own surface, and the shadow is what keeps its edge off a busy one.
+ */
+const SOLID_TONES: Record<BadgeTone, string> = {
+    neutral: "bg-card text-foreground border-border",
+    success: "bg-success text-success-foreground border-success",
+    warning: "bg-warning text-warning-foreground border-warning",
+    danger: "bg-destructive text-destructive-foreground border-destructive",
+    info: "bg-primary text-primary-foreground border-primary",
+};
+
+export function badgeClassName(tone: BadgeTone = "neutral", className?: string, solid = false): string {
     return cn(
         // `border-border` is the base rather than a per-tone class so a tone that
         // forgets one still gets a themed hairline instead of the CSS default,
         // which since Tailwind 4 is `currentColor` - a black stroke.
         "inline-flex items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs font-medium whitespace-nowrap",
-        TONES[tone],
+        solid ? cn(SOLID_TONES[tone], "shadow-sm") : TONES[tone],
         className,
     );
 }
 
 export function Badge({
     tone = "neutral",
+    solid = false,
     className,
     ...props
-}: React.HTMLAttributes<HTMLSpanElement> & { tone?: BadgeTone }) {
-    return <span className={badgeClassName(tone, className)} {...props} />;
+}: React.HTMLAttributes<HTMLSpanElement> & { tone?: BadgeTone; solid?: boolean }) {
+    return <span className={badgeClassName(tone, className, solid)} {...props} />;
 }

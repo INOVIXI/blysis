@@ -2,7 +2,7 @@
   "id": "showcase",
   "name": "Showcase",
   "description": "A grid of cards: a picture, a heading, a line of text and somewhere to go. What is being shown is the operator's business.",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",

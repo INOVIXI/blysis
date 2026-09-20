@@ -2,7 +2,7 @@
   "id": "downloads",
   "name": "Downloads",
   "description": "A file library: releases, guides and anything else worth handing out",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",

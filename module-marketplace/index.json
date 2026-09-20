@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T10:44:45Z",
+  "updatedAt": "2026-09-20T10:48:52Z",
   "modules": [
     {
       "id": "announcements",
@@ -165,13 +165,13 @@
           "description": "Haber ve duyuru sistemi"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-19T18:55:13Z",
+      "updatedAt": "2026-09-20T10:48:52Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -821,13 +821,13 @@
           "description": "Dosya kitaplığı: sürümler, rehberler ve paylaşmaya değer her şey"
         }
       },
-      "version": "1.5.2",
+      "version": "1.6.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Download",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T10:48:52Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -2633,13 +2633,13 @@
           "description": "Topluluğun yaptıklarından bir galeri"
         }
       },
-      "version": "1.5.2",
+      "version": "1.6.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "LayoutGrid",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T10:48:52Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -2845,13 +2845,13 @@
           "description": "Ürün, kategori, sepet ve siparişleriyle eksiksiz e-ticaret"
         }
       },
-      "version": "2.41.0",
+      "version": "2.42.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T10:44:45Z",
+      "updatedAt": "2026-09-20T10:48:52Z",
       "screenshots": [],
       "tags": [
         "commerce"

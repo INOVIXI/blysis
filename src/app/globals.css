@@ -99,6 +99,25 @@
   --font-body:                    var(--blysis-font-body);
   --font-mono:                    var(--blysis-font-mono);
   --radius:                       var(--blysis-radius);
+
+  /*
+   * The shape every cover picture is drawn in: `aspect-card`.
+   *
+   * A product banner, an article cover and a showcase shot are the same kind
+   * of picture doing the same job, and each screen had picked its own frame
+   * for it - 2:1 on a product card, 16:9 on a news card, a flat 128px on a
+   * category tile, 160px on the homepage block. One artwork uploaded once was
+   * cropped four ways, and a row that mixed two of them did not line up.
+   *
+   * 2:1 because that is the widest of the shapes already in use and the one a
+   * rank banner is actually drawn in; anything taller wastes the row.
+   *
+   * Named rather than written as `aspect-[2/1]` at each site so there is one
+   * place to change it, and so a reader can see that the shape is a decision
+   * rather than whatever the last person typed. `a-cover-is-two-to-one`
+   * holds every cover to it.
+   */
+  --aspect-card: 2 / 1;
 }
 
 /*

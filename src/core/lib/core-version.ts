@@ -12,6 +12,14 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.12.0 - `Badge` takes `solid`, and `aspect-card` is the shape every cover
+ * picture is drawn in. Every tone was a ten percent wash over whatever sits
+ * behind it, which is right on a panel and wrong on a photograph: the shop
+ * drew "Featured" in warning-on-warning-tint over a saturated product banner
+ * and the word disappeared into the picture. A badge that sits on an image
+ * brings its own background now. Additive on both counts: a badge without
+ * `solid` is drawn exactly as before.
+ *
  * 5.11.0 - `MemberAvatar`, `MemberLink` and `CountBadge` join `@/core/sdk/ui`.
  * Five screens drew a member's face and each one disagreed about size, shape
  * and what to draw for the members who have no picture, which is most of
@@ -548,4 +556,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.11.0";
+export const CORE_API_VERSION = "5.12.0";

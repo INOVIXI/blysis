@@ -28,8 +28,10 @@ vi.mock("@/core/sdk/navigation", () => ({
         <a href={href} {...rest}>{children}</a>
     ),
 }));
-vi.mock("@/core/sdk/ui", () => ({ useLocalDate: () => () => "30.01.2026" }));
-vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
+vi.mock("@/core/sdk/ui", () => ({
+    useLocalDate: () => () => "30.01.2026",
+    Badge: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
+}));
 vi.mock("next/image", () => ({
     default: ({ src, alt }: { src: string; alt: string }) =>
         // eslint-disable-next-line @next/next/no-img-element
@@ -64,10 +66,24 @@ describe("an article card", () => {
 
     it("keeps the picture's space when there is no picture", () => {
         // Otherwise one card in a row is shorter than the one beside it, and
-        // the grid goes ragged as soon as an author skips a cover.
+        // the grid goes ragged as soon as an author skips a cover. It is a
+        // ratio rather than a fixed height, so the space holds at every
+        // column count instead of only at the one somebody measured.
+        //
+        // `aspect-card` is the site's one cover shape, declared in
+        // `globals.css` and held to 2:1 by `a-cover-is-two-to-one`: an article
+        // cover is framed the way a product banner beside it is.
         const { container } = render(<NewsCard post={{ ...article, coverImage: null }} />);
         expect(container.querySelector("img")).toBeNull();
-        expect(container.innerHTML).toContain("h-44");
+        expect(container.innerHTML).toContain("aspect-card");
+    });
+
+    it("names the section the article is in", () => {
+        // On the picture rather than in the body: the category is what a
+        // reader scans a row of cards for, and it was a line of small grey
+        // text under the fold of the card.
+        const { getByText } = render(<NewsCard post={article} />);
+        expect(getByText("Improvement")).toBeTruthy();
     });
 
     it("says what it is about", () => {

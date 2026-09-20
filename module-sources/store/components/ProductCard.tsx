@@ -80,7 +80,7 @@ export function ProductCard({ product, lowStockAt = 0, showCategory = false }: P
             href={`/store/product/${product.number}/${product.slug}`}
             className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/40"
         >
-            <div className={`relative aspect-[2/1] overflow-hidden bg-muted ${shut ? "opacity-60" : ""}`}>
+            <div className={`relative aspect-card overflow-hidden bg-muted ${shut ? "opacity-60" : ""}`}>
                 {product.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -93,8 +93,12 @@ export function ProductCard({ product, lowStockAt = 0, showCategory = false }: P
                         <Box className="h-8 w-8 text-muted-foreground/50" aria-hidden="true" />
                     </div>
                 )}
+                {/* Solid, because this one sits on a photograph. A tinted
+                    badge takes its background from whatever is behind it, and
+                    behind it is a product banner in a colour nobody here
+                    chose - the word vanished into a blue rank card. */}
                 {product.isFeatured && (
-                    <Badge tone="warning" className="absolute right-2 top-2">{t("featured")}</Badge>
+                    <Badge tone="warning" solid className="absolute right-2 top-2">{t("featured")}</Badge>
                 )}
             </div>
 
