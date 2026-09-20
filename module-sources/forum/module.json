@@ -2,7 +2,7 @@
   "id": "forum",
   "name": "Forum Module",
   "description": "Community discussion forum with categories, topics, and replies",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis Team",
@@ -382,7 +382,9 @@
         "stats": "Stats",
         "status": "Status",
         "topic": "Topic",
-        "menu_forum_forum_permissions": "Forum Permissions"
+        "menu_forum_forum_permissions": "Forum Permissions",
+        "revision_forum_post": "Forum Post",
+        "revision_forum_topic": "Forum Topic"
       },
       "activity": {
         "forumPostCreated": "replied to:",
@@ -566,7 +568,9 @@
         "stats": "İstatistikler",
         "status": "Durum",
         "topic": "Konu",
-        "menu_forum_forum_permissions": "Forum İzinleri"
+        "menu_forum_forum_permissions": "Forum İzinleri",
+        "revision_forum_post": "Forum Mesajı",
+        "revision_forum_topic": "Forum Konusu"
       },
       "activity": {
         "forumPostCreated": "yanıt verdi:",

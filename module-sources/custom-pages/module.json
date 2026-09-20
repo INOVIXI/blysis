@@ -2,7 +2,7 @@
   "id": "custom-pages",
   "name": "Custom Pages",
   "description": "Pages the team writes, at an address of their own",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
@@ -113,7 +113,8 @@
         "draft": "Draft",
         "menu_custom-pages_custom_pages": "Custom Pages",
         "module_custom-pages_name": "Custom Pages",
-        "module_custom-pages_description": "Pages the team writes, at an address of their own"
+        "module_custom-pages_description": "Pages the team writes, at an address of their own",
+        "revision_custom-pages_page": "Page"
       },
       "pageTitles": {
         "page": "Page"
@@ -187,7 +188,8 @@
         "draft": "Taslak",
         "menu_custom-pages_custom_pages": "Özel Sayfalar",
         "module_custom-pages_name": "Özel Sayfalar",
-        "module_custom-pages_description": "Ekibin yazdığı, kendi adresi olan sayfalar"
+        "module_custom-pages_description": "Ekibin yazdığı, kendi adresi olan sayfalar",
+        "revision_custom-pages_page": "Sayfa"
       },
       "pageTitles": {
         "page": "Sayfa"

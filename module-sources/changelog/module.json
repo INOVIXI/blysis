@@ -2,7 +2,7 @@
   "id": "changelog",
   "name": "Changelog",
   "description": "Release notes and update history",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
@@ -171,7 +171,8 @@
         "module_changelog_description": "Release notes and update history",
         "module_changelog_name": "Changelog",
         "subtitle": "Manage your platform settings and content",
-        "title": "Admin Panel"
+        "title": "Admin Panel",
+        "revision_changelog_entry": "Changelog Entry"
       },
       "nav": {
         "changelog": "Changelog"
@@ -258,7 +259,8 @@
         "module_changelog_description": "Sürüm notları ve güncelleme geçmişi",
         "module_changelog_name": "Değişiklik Günlüğü",
         "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
-        "title": "Yönetim Paneli"
+        "title": "Yönetim Paneli",
+        "revision_changelog_entry": "Değişiklik Kaydı"
       },
       "nav": {
         "changelog": "Değişiklikler"

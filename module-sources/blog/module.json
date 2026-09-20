@@ -2,7 +2,7 @@
   "id": "blog",
   "name": "Blog Module",
   "description": "News and announcements system",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
@@ -278,7 +278,8 @@
         "published": "Published",
         "publishing": "Publishing",
         "status": "Status",
-        "tags": "Tags"
+        "tags": "Tags",
+        "revision_blog_article": "Article"
       },
       "activity": {
         "blogArticlePublished": "published:",
@@ -410,7 +411,8 @@
         "published": "Yayınlandı",
         "publishing": "Yayınlama",
         "status": "Durum",
-        "tags": "Etiketler"
+        "tags": "Etiketler",
+        "revision_blog_article": "Yazı"
       },
       "activity": {
         "blogArticlePublished": "yayınladı:",

@@ -98,6 +98,26 @@ interface Manifest {
     translations?: Record<string, Record<string, Record<string, string>>>;
 }
 
+/** Every resource this module records a revision of. */
+function revisionResources(id: string): string[] {
+    const found = new Set<string>();
+    const walk = (dir: string) => {
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+            const full = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                if (entry.name !== "node_modules") walk(full);
+                continue;
+            }
+            if (!/\.tsx?$/.test(entry.name)) continue;
+            for (const hit of fs.readFileSync(full, "utf8").matchAll(/recordRevision\(\s*["']([a-z0-9.-]+)["']/g)) {
+                found.add(hit[1]);
+            }
+        }
+    };
+    walk(path.join(ROOT, "module-sources", id));
+    return [...found];
+}
+
 function manifests(): [string, Manifest][] {
     return fs
         .readdirSync(path.join(ROOT, "module-sources"))
@@ -120,6 +140,12 @@ function derivedKeys(id: string, manifest: Manifest): Set<string> {
     if ((manifest.settingsCards ?? []).length > 0) {
         keys.add(`settings_${id}`);
         keys.add(`settings_${id}_description`);
+    }
+    // A kind of thing the module records a revision of, named for the audit
+    // trail. The resource is the module's own word and core derives the key
+    // from it, so neither appears written out anywhere.
+    for (const resource of revisionResources(id)) {
+        keys.add(`revision_${resource.replace(/\./g, "_")}`);
     }
     return keys;
 }

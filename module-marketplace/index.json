@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T13:18:04Z",
+  "updatedAt": "2026-09-20T13:30:08Z",
   "modules": [
     {
       "id": "announcements",
@@ -165,13 +165,13 @@
           "description": "Haber ve duyuru sistemi"
         }
       },
-      "version": "1.9.0",
+      "version": "1.10.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-20T12:11:23Z",
+      "updatedAt": "2026-09-20T13:25:07Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -209,13 +209,13 @@
           "description": "Sürüm notları ve güncelleme geçmişi"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "History",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-20T08:38:05Z",
+      "updatedAt": "2026-09-20T13:25:07Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -672,13 +672,13 @@
           "description": "Ekibin yazdığı, kendi adresi olan sayfalar"
         }
       },
-      "version": "1.4.0",
+      "version": "1.5.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-09-20T08:38:05Z",
+      "updatedAt": "2026-09-20T13:25:07Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -1033,13 +1033,13 @@
           "description": "Kategoriler, konular ve yanıtlarla topluluk tartışma forumu"
         }
       },
-      "version": "1.11.0",
+      "version": "1.12.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-20T12:11:23Z",
+      "updatedAt": "2026-09-20T13:25:07Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2845,13 +2845,13 @@
           "description": "Ürün, kategori, sepet ve siparişleriyle eksiksiz e-ticaret"
         }
       },
-      "version": "2.45.0",
+      "version": "2.46.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T13:18:04Z",
+      "updatedAt": "2026-09-20T13:30:08Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -2955,13 +2955,13 @@
           "description": "Oylamalı topluluk özellik önerileri"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-19T18:55:13Z",
+      "updatedAt": "2026-09-20T13:25:07Z",
       "screenshots": [],
       "tags": [
         "community"

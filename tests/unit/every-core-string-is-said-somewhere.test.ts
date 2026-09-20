@@ -91,6 +91,13 @@ const CONSTRUCTED: { match: RegExp; built: string; resolves: (suffix: string) =>
     { match: /^crumb_(.+)$/, built: "`crumb_${slug}`", resolves: (s) => SLUGS.has(s) },
     // NotificationPrefsTab: one row per channel a notification can take.
     { match: /^channel_(.+)$/, built: "`channel_${channel}`", resolves: (s) => BLOB.includes(s) },
+    // The revisions screen, over the action a revision recorded. The proof
+    // is a `recordRevision(..., "<action>")` call somewhere in the tree.
+    {
+        match: /^revisions_action_(.+)$/,
+        built: "`revisions_action_${action}`",
+        resolves: (s) => BLOB.includes(`"${s}",`) || BLOB.includes(`"${s}" `),
+    },
     // The alerting screen, over a health status.
     { match: /^health_(.+)$/, built: "`health_${status}`", resolves: (s) => BLOB.includes(s) },
     { match: /^alerting_(.+)Hint$/, built: "`alerting_${status}Hint`", resolves: (s) => BLOB.includes(s) },

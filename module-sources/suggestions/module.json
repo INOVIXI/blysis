@@ -2,7 +2,7 @@
   "id": "suggestions",
   "name": "Suggestions",
   "description": "Community feature suggestions with voting",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
@@ -118,7 +118,8 @@
         "moderation_suggestion": "Suggestions",
         "moderation_suggestionComment": "Suggestion Comments",
         "module_suggestions_description": "Community feature suggestions with voting",
-        "module_suggestions_name": "Suggestions"
+        "module_suggestions_name": "Suggestions",
+        "revision_suggestions_suggestion": "Suggestion"
       },
       "suggestions": {
         "adm_delete": "Delete",
@@ -208,7 +209,8 @@
         "moderation_suggestion": "Öneriler",
         "moderation_suggestionComment": "Öneri Yorumları",
         "module_suggestions_description": "Oylamalı topluluk özellik önerileri",
-        "module_suggestions_name": "Öneriler"
+        "module_suggestions_name": "Öneriler",
+        "revision_suggestions_suggestion": "Öneri"
       },
       "suggestions": {
         "adm_delete": "Sil",

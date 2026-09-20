@@ -16,6 +16,22 @@ import { badgeClassName } from "@/core/components/ui/badge";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
+/**
+ * What a kind of thing is called, rather than how the code refers to it.
+ *
+ * A revision's `resource` is the recording module's own word - `forum.post`,
+ * `blog.article` - and this screen printed it in monospace. That is a machine
+ * name on a screen a person reads, which is the one thing the panel does not
+ * do; the module that records the kind names it, under the key derived here.
+ *
+ * The raw string is the fallback, so a module that has not named its kind yet
+ * shows something rather than nothing. `a-revision-says-what-changed` is what
+ * stops that being the normal case.
+ */
+function revisionNameKey(resource: string): string {
+    return `revision_${resource.replace(/\./g, "_")}`;
+}
+
 interface Revision {
     id: string;
     resource: string;
@@ -39,6 +55,10 @@ export default function RevisionsPage() {
     // browser disagree about what day a timestamp near midnight is.
     const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
+    const revisionName = (resource: string) => {
+        const key = revisionNameKey(resource);
+        return t.has(key) ? t(key) : resource;
+    };
     const [revisions, setRevisions] = useState<Revision[]>([]);
     const [resources, setResources] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
@@ -84,10 +104,20 @@ export default function RevisionsPage() {
         });
     };
 
+    /**
+     * What happened, in words.
+     *
+     * It read DELETE and UPDATE in monospace capitals, which is the column
+     * name in a database rather than a thing that happened to a forum post.
+     * An action nobody has named shows its own word, because an audit trail
+     * that hides an entry it does not recognise is worse than one that spells
+     * it oddly.
+     */
     const actionBadge = (action: string) => {
+        const key = `revisions_action_${action}`;
         return (
-            <span className={badgeClassName(action === "delete" ? "danger" : "info", "uppercase font-mono")}>
-                {action}
+            <span className={badgeClassName(action === "delete" ? "danger" : "info")}>
+                {t.has(key) ? t(key) : action}
             </span>
         );
     };
@@ -114,7 +144,7 @@ export default function RevisionsPage() {
                             <option value="">{t("revisions_allResources")}</option>
                             {resources.map((r) => (
                                 <option key={r} value={r}>
-                                    {r}
+                                    {revisionName(r)}
                                 </option>
                             ))}
                         </NativeSelect>
@@ -161,8 +191,8 @@ export default function RevisionsPage() {
                                                 <ChevronRightIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                                             )}
                                             <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-5 gap-2 items-center">
-                                                <span className="font-mono text-xs truncate" title={rev.resource}>
-                                                    {rev.resource}
+                                                <span className="truncate font-medium">
+                                                    {revisionName(rev.resource)}
                                                 </span>
                                                 <span
                                                     className="font-mono text-xs text-muted-foreground truncate"
