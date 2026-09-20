@@ -34,10 +34,49 @@ import { errorText, log } from "./logger";
 
 export type CronHandler = () => Promise<void>;
 
+/**
+ * How often a job runs.
+ *
+ * A literal for a job whose cadence is decided by the code that registers it,
+ * which is nearly all of them. A function for a job whose cadence is the
+ * operator's: it is called on the tick rather than at registration, so a
+ * cadence changed on a screen takes effect on the next minute instead of the
+ * next restart - which is not a connection an operator has any reason to
+ * make.
+ */
+export type CronCadence = string | (() => Promise<string>);
+
 interface CronJob {
     key: string;          // "<moduleId>:<jobId>" or "core:<jobId>"
-    schedule: string;
+    schedule: CronCadence;
     handler: CronHandler;
+}
+
+/** The fallback for a cadence that answers with a name the scheduler does not
+ *  know. An unknown name is a job that never runs and never says so. */
+const CADENCE_FALLBACK = "every-day";
+
+/**
+ * What a job's cadence is right now.
+ *
+ * A function that throws, or answers with a name outside the list, falls back
+ * rather than leaving the job unclaimable: the setting behind it is the
+ * operator's and a bad one must not be the thing that silently stops a job.
+ */
+async function cadenceOf(job: CronJob): Promise<string> {
+    if (typeof job.schedule !== "function") return job.schedule;
+    let answer: string;
+    try {
+        answer = await job.schedule();
+    } catch (err) {
+        log.error(`[scheduler] Could not read the cadence for ${job.key}`, { error: errorText(err) });
+        return CADENCE_FALLBACK;
+    }
+    if (!SCHEDULE_MS[answer]) {
+        log.warn(`[scheduler] Unknown cadence "${answer}" for ${job.key}, using ${CADENCE_FALLBACK}`);
+        return CADENCE_FALLBACK;
+    }
+    return answer;
 }
 
 
@@ -47,7 +86,9 @@ let tickIntervalHandle: ReturnType<typeof setInterval> | null = null;
 let tickTimeoutHandle: ReturnType<typeof setTimeout> | null = null;
 
 export function registerCronJob(job: CronJob): void {
-    if (!SCHEDULE_MS[job.schedule]) {
+    // A cadence that is read from a setting has nothing to check here; it is
+    // checked on the tick, where the answer actually exists.
+    if (typeof job.schedule !== "function" && !SCHEDULE_MS[job.schedule]) {
         log.warn(`[scheduler] Unknown schedule "${job.schedule}" for ${job.key}`);
         return;
     }
@@ -83,7 +124,7 @@ async function claimJob(key: string, schedule: string): Promise<boolean> {
     }
 }
 
-async function runJob(job: CronJob): Promise<void> {
+async function runJob(job: CronJob, cadence: string): Promise<void> {
     const start = Date.now();
     let status: "ok" | "error" = "ok";
     let error: string | null = null;
@@ -96,7 +137,7 @@ async function runJob(job: CronJob): Promise<void> {
     }
     const lastRunMs = Date.now() - start;
     const lastRunAt = new Date();
-    const intervalMs = SCHEDULE_MS[job.schedule];
+    const intervalMs = SCHEDULE_MS[cadence];
     const nextRunAt = intervalMs ? new Date(lastRunAt.getTime() + intervalMs) : null;
 
     try {
@@ -170,8 +211,9 @@ async function tick(): Promise<string[]> {
         if (isShuttingDown()) return ran;
         if (isDisabled(job.key, states)) continue;
         try {
-            if (await claimJob(job.key, job.schedule)) {
-                await runJob(job);
+            const cadence = await cadenceOf(job);
+            if (await claimJob(job.key, cadence)) {
+                await runJob(job, cadence);
                 ran.push(job.key);
             }
         } catch (err) {
@@ -315,7 +357,10 @@ export async function bootstrapScheduler(): Promise<void> {
 
     registerCronJob({
         key: "core:automated-backup",
-        schedule: "every-day",
+        // How often is the operator's answer, read on the tick rather than
+        // here: a cadence changed on the backup screen takes effect on the
+        // next minute instead of the next restart.
+        schedule: async () => (await import("./backup-schedule")).automatedBackupSchedule(),
         // Nothing is caught here. `runJob` writes the failure into this job's
         // CronRun row, which is what the observability screen reads; catching
         // it made a backup that never ran report `ok`. It never ran: pg_dump
@@ -378,16 +423,28 @@ export async function bootstrapScheduler(): Promise<void> {
     });
 }
 
-export function listScheduledJobs(): { key: string; schedule: string }[] {
-    return Array.from(registeredJobs.values()).map((j) => ({ key: j.key, schedule: j.schedule }));
+/**
+ * Every registered job, including one that has never run yet.
+ *
+ * Keys only. A job's cadence may be a setting now, and answering with the
+ * function that reads it - or with whatever it happened to say at
+ * registration - would be answering with something that is not the cadence.
+ * `listJobsWithSchedule` is the answer that includes it.
+ */
+export function listRegisteredJobs(): { key: string }[] {
+    return Array.from(registeredJobs.values()).map((j) => ({ key: j.key }));
 }
 
 /**
- * List all currently registered jobs (key + schedule). Used by the admin
- * cron page to show every job, even ones that have never executed yet.
+ * Every registered job and the cadence it is on right now, which for a job
+ * whose cadence is the operator's means reading the setting. Used by the
+ * admin cron screen, so the cadence beside a job is the one it will be
+ * claimed on rather than the one it was registered with.
  */
-export function listRegisteredJobs(): { key: string; schedule: string }[] {
-    return Array.from(registeredJobs.values()).map((j) => ({ key: j.key, schedule: j.schedule }));
+export async function listJobsWithSchedule(): Promise<{ key: string; schedule: string }[]> {
+    return Promise.all(
+        Array.from(registeredJobs.values()).map(async (j) => ({ key: j.key, schedule: await cadenceOf(j) })),
+    );
 }
 
 /**
@@ -406,5 +463,5 @@ export async function runJobNow(key: string): Promise<void> {
     if (isDisabled(key, await getModuleStates())) {
         throw new Error(`Module "${key.slice(0, key.indexOf(":"))}" is disabled`);
     }
-    await runJob(job);
+    await runJob(job, await cadenceOf(job));
 }

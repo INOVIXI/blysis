@@ -3,7 +3,7 @@ import { auth } from "@/core/lib/auth";
 import { isAdmin } from "@/core/lib/permissions";
 import { validateApiKey } from "@/core/lib/api-key-auth";
 import { prisma } from "@/core/lib/db";
-import { listRegisteredJobs, bootstrapScheduler, runDueJobs } from "@/core/lib/scheduler";
+import { listJobsWithSchedule, bootstrapScheduler, runDueJobs } from "@/core/lib/scheduler";
 
 interface CronJobRow {
     key: string;
@@ -25,7 +25,7 @@ export async function GET() {
     // even on a freshly booted dev process that has not yet ticked.
     await bootstrapScheduler();
 
-    const registered = listRegisteredJobs();
+    const registered = await listJobsWithSchedule();
     const runs = await prisma.cronRun.findMany();
     const runMap = new Map(runs.map((r) => [r.jobKey, r]));
 

@@ -4,6 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useModalDialog } from "@/core/hooks/useModalDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { CheckboxField } from "@/core/components/ui/checkbox";
+import { NativeSelect } from "@/core/components/ui/native-select";
+import { Label } from "@/core/components/ui/label";
+import { SCHEDULE_NAME_KEY } from "@/core/lib/cron-schedules";
 import { Button } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
 import { ListControls } from "@/core/components/ui/list-controls";
@@ -67,6 +70,17 @@ export default function BackupAdminPage() {
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [restoringId, setRestoringId] = useState<string | null>(null);
     const [automated, setAutomated] = useState(true);
+    /*
+     * How often, and how many to keep. Both used to be written into the
+     * source beside the job - `every-day` at the registration and a constant
+     * in `backup.ts` - so a shop taking orders all day could not ask for an
+     * hourly dump and a host with 20 GB free could not keep fewer than
+     * thirty. The cadences on offer come with the answer rather than being
+     * listed again here: core owns that list.
+     */
+    const [schedule, setSchedule] = useState("every-day");
+    const [keep, setKeep] = useState(30);
+    const [schedules, setSchedules] = useState<string[]>([]);
     const [savingSchedule, setSavingSchedule] = useState(false);
     const [nextScheduled, setNextScheduled] = useState<string | null>(null);
     const [lastScheduled, setLastScheduled] = useState<string | null>(null);
@@ -84,6 +98,9 @@ export default function BackupAdminPage() {
             const data = await res.json();
             setBackups(data.backups || []);
             setAutomated(data.automated?.enabled !== false);
+            if (typeof data.automated?.schedule === "string") setSchedule(data.automated.schedule);
+            if (typeof data.automated?.keep === "number") setKeep(data.automated.keep);
+            if (Array.isArray(data.schedules)) setSchedules(data.schedules);
         } catch {
             toast.error(t("backup_loadFailed"));
         } finally {
@@ -113,33 +130,64 @@ export default function BackupAdminPage() {
 
     const lastBackupAt = backups.length > 0 ? backups[0].createdAt : null;
 
-    const toggleAutomated = async (next: boolean) => {
-        const previous = automated;
-        // Moved before the request so the box does not lag behind the click;
-        // put back on any answer that is not a yes.
-        setAutomated(next);
+    /**
+     * One writer for the three controls.
+     *
+     * Each control moves first and is put back on any answer that is not a
+     * yes, so nothing lags behind a click - and a refusal, which is what a
+     * cadence core does not offer gets, leaves the screen showing what is
+     * really stored rather than what was asked for.
+     */
+    const saveSchedule = async (
+        patch: { automated?: boolean; schedule?: string; keep?: number },
+        undo: () => void,
+        announce: string,
+    ) => {
         setSavingSchedule(true);
         try {
             const res = await fetch("/api/v1/admin/backup", {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ automated: next }),
+                body: JSON.stringify(patch),
             });
             if (!res.ok) {
-                setAutomated(previous);
+                undo();
                 const data = await res.json().catch(() => null);
                 toast.error(errorMessage(data, t("backup_scheduleFailed"), t));
                 return;
             }
-            toast.success(next ? t("backup_scheduleOn") : t("backup_scheduleOff"));
+            toast.success(announce);
             void fetchCronInfo();
         } catch {
-            setAutomated(previous);
+            undo();
             toast.error(t("backup_scheduleFailed"));
         } finally {
             setSavingSchedule(false);
         }
     };
+
+    const toggleAutomated = async (next: boolean) => {
+        const previous = automated;
+        setAutomated(next);
+        await saveSchedule(
+            { automated: next },
+            () => setAutomated(previous),
+            next ? t("backup_scheduleOn") : t("backup_scheduleOff"),
+        );
+    };
+
+    const chooseSchedule = async (next: string) => {
+        const previous = schedule;
+        setSchedule(next);
+        await saveSchedule({ schedule: next }, () => setSchedule(previous), t("backup_scheduleSaved"));
+    };
+
+    const chooseKeep = async (next: number) => {
+        const previous = keep;
+        setKeep(next);
+        await saveSchedule({ keep: next }, () => setKeep(previous), t("backup_scheduleSaved"));
+    };
+
 
     const handleCreate = async () => {
         setCreating(true);
@@ -281,8 +329,13 @@ export default function BackupAdminPage() {
                             <div className="text-sm font-medium">
                                 {automated ? nextScheduled ? formatDateTime(nextScheduled) : "-" : t("backup_scheduleOffLabel")}
                             </div>
+                            {/* The cadence that is really set, not the word
+                                "daily": this card said "runs daily" whatever
+                                the job was on. */}
                             <div className="text-xs text-muted-foreground mt-1">
-                                {automated ? t("backup_runsDaily") : t("backup_scheduleOffHint")}
+                                {automated
+                                    ? t("backup_runsOn", { schedule: t(SCHEDULE_NAME_KEY[schedule as keyof typeof SCHEDULE_NAME_KEY] ?? "cron_everyDay") })
+                                    : t("backup_scheduleOffHint")}
                             </div>
                         </div>
                         <CheckboxField
@@ -294,6 +347,62 @@ export default function BackupAdminPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* How often, and how many to keep. Both were constants in the
+                source until now, so this card is the whole of what an
+                operator could not say. It is greyed rather than hidden when
+                the job is off: the settings still stand, and hiding them
+                makes switching back on look like it forgets them. */}
+            <Card className="mb-6">
+                <CardHeader className="p-4 pb-2">
+                    <CardTitle className="text-sm">{t("backup_scheduleTitle")}</CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 pt-2 space-y-2">
+                    <div className="flex flex-wrap items-start gap-4">
+                    <div className="w-56">
+                        <Label htmlFor="backup-schedule">{t("backup_scheduleLabel")}</Label>
+                        <NativeSelect
+                            id="backup-schedule"
+                            value={schedule}
+                            disabled={savingSchedule || !automated}
+                            onChange={(e) => void chooseSchedule(e.target.value)}
+                            className="w-full"
+                            inputSize="sm"
+                        >
+                            {schedules.map((one) => (
+                                <option key={one} value={one}>
+                                    {t(SCHEDULE_NAME_KEY[one as keyof typeof SCHEDULE_NAME_KEY] ?? "cron_everyDay")}
+                                </option>
+                            ))}
+                        </NativeSelect>
+                    </div>
+                    <div className="w-32">
+                        <Label htmlFor="backup-keep">{t("backup_keepLabel")}</Label>
+                        <Input
+                            id="backup-keep"
+                            type="number"
+                            min={1}
+                            max={365}
+                            value={keep}
+                            disabled={savingSchedule || !automated}
+                            onChange={(e) => setKeep(Number(e.target.value))}
+                            // Written when the box is left rather than on every
+                            // keystroke: typing "12" over "30" passes through
+                            // "1", and a backup count is not a thing to save
+                            // halfway through.
+                            onBlur={(e) => {
+                                const asked = Number(e.target.value);
+                                if (Number.isInteger(asked) && asked >= 1 && asked <= 365) void chooseKeep(asked);
+                            }}
+                        />
+                    </div>
+                    </div>
+                    {/* Under the row rather than under one box: a hint below a
+                        single control stretches that column and leaves the one
+                        beside it floating at a different height. */}
+                    <p className="text-xs text-muted-foreground">{t("backup_keepHint")}</p>
+                </CardContent>
+            </Card>
 
             <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
 

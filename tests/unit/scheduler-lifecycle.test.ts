@@ -130,19 +130,19 @@ describe("registerCronJob", () => {
         "every-minute", "every-5-minutes", "every-15-minutes",
         "every-hour", "every-day", "every-week", "every-month",
     ])("accepts the %o keyword", async (schedule) => {
-        const { registerCronJob, listRegisteredJobs } = await load();
+        const { registerCronJob, listJobsWithSchedule } = await load();
         registerCronJob({ key: "t:job", schedule, handler: async () => { } });
 
-        expect(listRegisteredJobs()).toContainEqual({ key: "t:job", schedule });
+        expect(await listJobsWithSchedule()).toContainEqual({ key: "t:job", schedule });
     });
 
     it("replaces a job re-registered under the same key", async () => {
-        const { registerCronJob, listRegisteredJobs } = await load();
+        const { registerCronJob, listJobsWithSchedule } = await load();
         registerCronJob({ key: "t:job", schedule: "every-hour", handler: async () => { } });
         registerCronJob({ key: "t:job", schedule: "every-day", handler: async () => { } });
 
         // A module reinstall must not leave two copies ticking.
-        expect(listRegisteredJobs().filter((j) => j.key === "t:job")).toEqual([
+        expect((await listJobsWithSchedule()).filter((j) => j.key === "t:job")).toEqual([
             { key: "t:job", schedule: "every-day" },
         ]);
     });
@@ -244,11 +244,11 @@ describe("bootstrapScheduler", () => {
         moduleCrons = [
             { module: "blog", id: "digest", schedule: "every-day", loader: async () => ({ default: handler }) },
         ];
-        const { bootstrapScheduler, listRegisteredJobs } = await load();
+        const { bootstrapScheduler, listJobsWithSchedule } = await load();
 
         await bootstrapScheduler();
 
-        expect(listRegisteredJobs()).toContainEqual({ key: "blog:digest", schedule: "every-day" });
+        expect(await listJobsWithSchedule()).toContainEqual({ key: "blog:digest", schedule: "every-day" });
     });
 
     it("skips a module job with no default export and keeps the rest", async () => {

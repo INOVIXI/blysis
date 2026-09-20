@@ -65,7 +65,10 @@ describe("the scheduler", () => {
             scheduler.indexOf("async function tick()"),
             scheduler.indexOf("export async function runDueJobs()"),
         );
-        expect(tick).toContain("await claimJob(job.key, job.schedule)");
+        // The cadence is resolved on the tick - a job whose cadence is a
+        // setting reads it here - and the claim is made on the resolved one.
+        expect(tick).toContain("const cadence = await cadenceOf(job)");
+        expect(tick).toContain("await claimJob(job.key, cadence)");
         expect(scheduler).toContain("ON CONFLICT");
     });
 

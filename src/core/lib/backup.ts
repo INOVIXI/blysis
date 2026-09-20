@@ -34,8 +34,16 @@ const BACKUP_DIR = path.resolve(process.cwd(), "backups");
 const FILE_EXT = ".sql.gz";
 const FILENAME_RE = /^blysis-(manual|scheduled)-([0-9TZ\-]+)\.sql\.gz$/;
 
+/**
+ * How many manual backups are kept.
+ *
+ * Fixed, unlike the automated ones: a manual backup is one somebody took
+ * deliberately, usually just before doing something frightening, and ten of
+ * those is a long history. How many *automated* backups to keep is the
+ * operator's answer, because it is their disk filling up - see
+ * `scheduledBackupsToKeep`.
+ */
 const RETAIN_MANUAL = 10;
-const RETAIN_SCHEDULED = 30;
 
 // ─── helpers ──────────────────────────────────────────────────────────────
 
@@ -329,8 +337,9 @@ export async function getBackupPath(id: string): Promise<string | null> {
 }
 
 /**
- * Retention: keep the newest `RETAIN_MANUAL` manual and `RETAIN_SCHEDULED`
- * scheduled backups. Delete everything older in each category.
+ * Retention: keep the newest `RETAIN_MANUAL` manual backups and as many
+ * automated ones as the operator asked for. Delete everything older in each
+ * category.
  */
 async function rotateBackups(): Promise<void> {
     const all = await listBackups(); // already sorted newest first
@@ -340,9 +349,12 @@ async function rotateBackups(): Promise<void> {
     };
     for (const b of all) byType[b.type].push(b);
 
+    const { scheduledBackupsToKeep } = await import("./backup-schedule");
+    const keepScheduled = await scheduledBackupsToKeep();
+
     const toDelete: BackupMeta[] = [
         ...byType.manual.slice(RETAIN_MANUAL),
-        ...byType.scheduled.slice(RETAIN_SCHEDULED),
+        ...byType.scheduled.slice(keepScheduled),
     ];
 
     for (const b of toDelete) {

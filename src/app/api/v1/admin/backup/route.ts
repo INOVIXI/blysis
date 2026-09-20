@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/core/lib/auth";
 import { isAdmin } from "@/core/lib/permissions";
 import { createBackup, listBackups, formatBytes } from "@/core/lib/backup";
-import { isAutomatedBackupEnabled, setAutomatedBackupEnabled } from "@/core/lib/backup-schedule";
+import {
+    AUTOMATED_BACKUP_SCHEDULES,
+    getAutomatedBackup,
+    setAutomatedBackup,
+} from "@/core/lib/backup-schedule";
 import { logActivity } from "@/core/lib/activity-log";
 import { readJsonBody } from "@/core/lib/api-body";
 import { z } from "zod";
@@ -10,8 +14,25 @@ import { z } from "zod";
 /** An optional note filed alongside a manual backup. */
 const backupBodySchema = z.object({ notes: z.string().max(500).optional() });
 
-/** The one thing the screen can change about the nightly job: whether it runs. */
-const scheduleBodySchema = z.object({ automated: z.boolean() });
+/**
+ * What the screen may change about the automated backup.
+ *
+ * Every field is optional and at least one is required, so the switch, the
+ * cadence and the retention are three controls rather than one form that has
+ * to send all of them back. The cadence is an enum of the offered list: an
+ * unknown name would be stored happily and then turn the job into one that
+ * never runs, because the scheduler has no interval for it.
+ */
+const scheduleBodySchema = z
+    .object({
+        automated: z.boolean().optional(),
+        schedule: z.enum(AUTOMATED_BACKUP_SCHEDULES).optional(),
+        keep: z.number().int().min(1).max(365).optional(),
+    })
+    .refine(
+        (body) => body.automated !== undefined || body.schedule !== undefined || body.keep !== undefined,
+        { message: "Nothing to change" },
+    );
 
 /**
  * GET /api/v1/admin/backup
@@ -42,9 +63,12 @@ export async function GET() {
         return NextResponse.json({
             backups: serialised,
             total: serialised.length,
-            // The screen shows whether the nightly job is running, so it reads
-            // the answer from the same place the job does rather than assuming.
-            automated: { enabled: await isAutomatedBackupEnabled() },
+            // The screen shows what the job is really set to, read from the
+            // same place the job reads it rather than assumed.
+            automated: await getAutomatedBackup(),
+            // The cadences on offer travel with the answer, so the screen does
+            // not keep a second copy of a list core owns.
+            schedules: [...AUTOMATED_BACKUP_SCHEDULES],
         });
     } catch {
         return NextResponse.json({ error: "Failed to list backups" }, { status: 500 });
@@ -107,11 +131,12 @@ export async function POST(request: NextRequest) {
 
 /**
  * PATCH /api/v1/admin/backup
- * Switch the nightly backup on or off. Body: { automated: boolean }.
+ * Change the automated backup. Body: { automated?, schedule?, keep? }.
  *
  * An operator who dumps the database from outside the application has no use
- * for this job, and before this the only state open to them was one failed run
- * a night.
+ * for this job, and before the switch existed the only state open to them was
+ * one failed run a night. The cadence and how many to keep were written into
+ * the source beside the job, which is not where either of them belongs.
  */
 export async function PATCH(request: NextRequest) {
     const session = await auth();
@@ -126,13 +151,21 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: "Invalid payload", issues: parsed.error.issues }, { status: 400 });
     }
 
-    await setAutomatedBackupEnabled(parsed.data.automated);
+    const { automated, schedule, keep } = parsed.data;
+    const next = await setAutomatedBackup({
+        ...(automated === undefined ? {} : { enabled: automated }),
+        ...(schedule === undefined ? {} : { schedule }),
+        ...(keep === undefined ? {} : { keep }),
+    });
 
     logActivity({
         userId: session.user.id,
-        action: parsed.data.automated ? "backup.schedule.enable" : "backup.schedule.disable",
+        // Switching it off is the change worth finding in the log later; the
+        // other two are recorded as what they are.
+        action: automated === false ? "backup.schedule.disable" : "backup.schedule.update",
         entity: "backup",
+        metadata: { enabled: next.enabled, schedule: next.schedule, keep: next.keep },
     });
 
-    return NextResponse.json({ automated: { enabled: parsed.data.automated } });
+    return NextResponse.json({ automated: next });
 }
