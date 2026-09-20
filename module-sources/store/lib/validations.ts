@@ -65,6 +65,8 @@ export const categorySchema = z.object({
     parentId: z.string().optional().nullable(),
     order: z.number().int().optional(),
     isActive: z.boolean().optional(),
+    /** How the shelf is drawn. Anything else is a shape nothing can render. */
+    layout: z.enum(["grid", "table"]).optional(),
 });
 
 export const manualOrderSchema = z.object({

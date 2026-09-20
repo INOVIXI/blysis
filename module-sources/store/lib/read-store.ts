@@ -32,6 +32,8 @@ export interface StoreCategory {
     slug: string;
     image: string | null;
     description: string | null;
+    /** `grid` or `table`: how this shelf is drawn. */
+    layout: string;
     parentId: string | null;
     children: { id: string; name: string; slug: string; image: string | null; description: string | null }[];
 }
@@ -43,7 +45,7 @@ export async function readStoreCategories(): Promise<StoreCategory[]> {
         orderBy: { order: "asc" },
         take: 300,
         select: {
-            id: true, name: true, slug: true, image: true, description: true, parentId: true,
+            id: true, name: true, slug: true, image: true, description: true, layout: true, parentId: true,
             children: {
                 where: { isActive: true },
                 orderBy: { order: "asc" },

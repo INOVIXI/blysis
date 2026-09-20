@@ -220,6 +220,17 @@ export const seed: ModuleSeed = {
             await ctx.prisma.product.update({ where: { id: productId }, data: { unitsSold: units } });
         }
 
+        // The ranks shelf is a ladder, so it is drawn as one.
+        //
+        // The switch is the shop's, because the category is the shop's row.
+        // Whether anything can draw a comparison is somebody else's business:
+        // with nothing installed to fill that slot the shelf falls back to its
+        // grid, so turning this on is safe on a site with no such module.
+        const ranks = categories.get("Ranks");
+        if (ranks) {
+            await ctx.prisma.category.update({ where: { id: ranks.id }, data: { layout: "table" } });
+        }
+
         ctx.log(`${products.length} products in ${categories.size} categories, ${howMany} orders`);
     },
 };

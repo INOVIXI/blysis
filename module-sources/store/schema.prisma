@@ -36,6 +36,20 @@ model Category {
   children    Category[] @relation("CategoryChildren")
   order       Int       @default(0)
   isActive    Boolean   @default(true)
+  /**
+   * How this shelf is drawn: `grid` or `table`.
+   *
+   * A grid of cards is right for things a shopper picks one of. It is the
+   * wrong shape for a ladder - ranks, plans, tiers - where the question is
+   * not "which of these do I want" but "what does the next one up give me
+   * that this one does not", and answering that from five cards means opening
+   * five pages and remembering them.
+   *
+   * `table` hands the shelf to whatever module draws comparisons; the store
+   * does not know how, and with none installed the grid is what is drawn.
+   * The shop keeps the switch because the shelf is the shop's.
+   */
+  layout      String    @default("grid")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

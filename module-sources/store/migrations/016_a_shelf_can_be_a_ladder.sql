@@ -1,0 +1,11 @@
+-- A shelf can be drawn as a ladder rather than a grid.
+--
+-- Ranks, plans and tiers are compared, not browsed: the question is what the
+-- next one up adds, and a row of cards answers it by making somebody open
+-- five pages and remember them. `layout` says which shape a category takes.
+--
+-- Defaults to `grid`, which is what every category has always been, so
+-- nothing changes on deploy. `table` only does anything where a module that
+-- draws comparisons is installed; with none, the store falls back to the grid
+-- rather than showing an empty shelf.
+ALTER TABLE "Category" ADD COLUMN IF NOT EXISTS "layout" TEXT NOT NULL DEFAULT 'grid';

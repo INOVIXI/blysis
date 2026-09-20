@@ -22,6 +22,8 @@ export interface CategoryFormValue {
     isActive: boolean;
     /** Own any one of these to see the shelf. Empty shows it to everybody. */
     visibleAfterProductIds: string[];
+    /** `grid` or `table`: cards to browse, or a ladder to compare. */
+    layout: string;
 }
 
 export const EMPTY_CATEGORY: CategoryFormValue = {
@@ -32,6 +34,7 @@ export const EMPTY_CATEGORY: CategoryFormValue = {
     order: "0",
     isActive: true,
     visibleAfterProductIds: [],
+    layout: "grid",
 };
 
 /** The address and verb for saving, given what is being edited. */
@@ -54,5 +57,6 @@ export function categoryPayload(value: CategoryFormValue) {
         order: Number.isFinite(order) ? order : 0,
         isActive: value.isActive,
         visibleAfterProductIds: value.visibleAfterProductIds,
+        layout: value.layout,
     };
 }

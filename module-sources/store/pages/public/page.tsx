@@ -19,7 +19,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
-import { PageFrame } from "@/core/sdk/layout";
+import { PageFrame, Slot } from "@/core/sdk/layout";
 import { Pagination, RichContent } from "@/core/sdk/ui";
 import { Box, ChevronRight, Coins } from "lucide-react";
 import { ProductCard } from "../../components/ProductCard";
@@ -77,9 +77,27 @@ export default async function StorePage({ searchParams }: PageProps) {
     // The top level lists sections rather than products, the way it always
     // has. A section with no children of its own shows what is in it.
     const showsProducts = Boolean(search) || Boolean(chosen && subCategories.length === 0);
+    // Only a category is a ladder. A search result mixes shelves, and there is
+    // nothing to compare across two of them.
+    const asTable = !search && chosen?.layout === "table";
     const shelf = showsProducts
         ? await readStoreProducts({ categorySlug: search ? undefined : chosen?.slug, search, sort, page })
         : null;
+
+    // Named because the shelf is drawn from two places now: on its own, and as
+    // the fallback under a comparison nobody has written yet.
+    const ProductGrid = () => (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {(shelf?.products ?? []).map((product) => (
+                <ProductCard
+                    key={(product as { id: string }).id}
+                    product={product as never}
+                    lowStockAt={shelf?.lowStockAt ?? 0}
+                    showCategory={Boolean(search)}
+                />
+            ))}
+        </div>
+    );
 
     return (
         <PageFrame title={chosen?.name ?? t("title")}>
@@ -180,17 +198,26 @@ export default async function StorePage({ searchParams }: PageProps) {
                         <div className="bg-card rounded-xl p-8 text-center border border-border">
                             <p className="text-muted-foreground">{search ? t("noProductsSearch") : t("noProducts")}</p>
                         </div>
+                    ) : asTable ? (
+                        /* A ladder rather than a grid.
+
+                           Ranks, plans and tiers are compared, not browsed: the
+                           question is what the next one up adds, and a row of
+                           cards answers it by making somebody open five pages
+                           and remember them. The shop owns the switch, because
+                           the shelf is the shop's, and knows nothing about how
+                           a comparison is drawn.
+
+                           The grid is the fallback, so a site that has turned
+                           this on and then removed whatever draws comparisons
+                           gets its shelf back rather than an empty page. */
+                        <Slot
+                            name="store.category.shelf"
+                            context={{ subjectRef: `store.category:${chosen?.id}` }}
+                            fallback={<ProductGrid />}
+                        />
                     ) : (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {shelf.products.map((product) => (
-                                <ProductCard
-                                    key={(product as { id: string }).id}
-                                    product={product as never}
-                                    lowStockAt={shelf.lowStockAt}
-                                    showCategory={Boolean(search)}
-                                />
-                            ))}
-                        </div>
+                        <ProductGrid />
                     )}
                     {shelf.pages > 1 && (
                         <Pagination className="mt-6" page={shelf.page} pages={shelf.pages} total={shelf.total} pageParam="page" />
