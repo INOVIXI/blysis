@@ -3,13 +3,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AdminCrudPage } from "@/core/sdk/admin";
-import { prizeChance, prizeIsGrantable } from "../../../lib/wheels";
+import { prizeChance, prizeHandsSomethingOver, prizeIsGrantable } from "../../../lib/wheels";
 
 interface PrizeRow {
     probability?: unknown;
     isActive?: unknown;
     wheelId?: unknown;
     type?: unknown;
+    productId?: unknown;
 }
 
 /**
@@ -58,9 +59,14 @@ export default function Page() {
      * never received - the row says so rather than leaving an operator to
      * find out from a complaint.
      */
-    const kindLabel = (type: unknown) => {
-        const kind = String(type ?? "");
+    const kindLabel = (row: { type?: unknown; productId?: unknown }) => {
+        const kind = String(row.type ?? "");
         if (!prizeIsGrantable(kind)) return t("adm_prizeUnbound");
+        // A prize that could hand something over and has not been told what
+        // is the same broken promise as a kind nothing grants.
+        if (!prizeHandsSomethingOver({ type: kind, productId: row.productId as string | null })) {
+            return t("adm_prizeUnboundThing");
+        }
         const key = `adm_prizeKind_${kind}`;
         return t.has(key) ? t(key) : kind;
     };
@@ -85,7 +91,7 @@ export default function Page() {
                     : 0;
                 return t("adm_prizeRow", {
                     wheel,
-                    kind: kindLabel(row.type),
+                    kind: kindLabel(row),
                     chance: Math.round(chance * 10) / 10,
                 });
             }}
@@ -112,8 +118,25 @@ export default function Page() {
                 { key: "type", label: t("adm_field2Label"), type: "select", required: true, options: [
                     { value: "credits", label: t("adm_prizeKind_credits") },
                     { value: "coupon", label: t("adm_prizeKind_coupon") },
+                    { value: "product", label: t("adm_prizeKind_product") },
                     { value: "nothing", label: t("adm_prizeKind_nothing") },
                 ], defaultValue: "credits" },
+                {
+                    // Whatever is installed answers; with nothing that owns a
+                    // thing, the picker is empty and the kind is not usable,
+                    // which is the honest state rather than a hidden field.
+                    key: "productId",
+                    label: t("adm_thingLabel"),
+                    type: "reference",
+                    placeholder: t("adm_thingPlaceholder"),
+                    description: t("adm_thingHint"),
+                    reference: {
+                        endpoint: "/api/v1/wheel/admin/grantables",
+                        listKey: "grantables",
+                        labelField: "label",
+                        hintField: "hint",
+                    },
+                },
                 { key: "value", label: t("adm_field6Label"), type: "number", placeholder: t("adm_field2Placeholder"), defaultValue: "0" },
                 { key: "color", label: t("adm_field7Label"), type: "color", defaultValue: "#3b82f6" },
                 {

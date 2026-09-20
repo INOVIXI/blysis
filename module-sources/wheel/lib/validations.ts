@@ -15,6 +15,12 @@ export const wheelPrizeCreateSchema = z.object({
     wheelId: z.string().max(64).optional().nullable(),
     name: z.string().trim().min(1, "Name and type required").max(100),
     type: z.string().trim().min(1, "Name and type required").max(32),
+    /**
+     * What a prize of kind `product` hands over, as whoever owns the thing
+     * named it. Opaque: this module has no vocabulary for what it is, which
+     * is the whole point of asking rather than reading.
+     */
+    productId: z.string().trim().max(64).optional().nullable(),
     value: z.coerce.number().int().min(0).max(1_000_000).optional(),
     color: z.string().max(32).optional(),
     probability: z.coerce.number().int().min(0).max(1_000_000).optional(),

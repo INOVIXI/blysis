@@ -44,6 +44,16 @@ model WheelPrize {
   wheel       Wheel?  @relation(fields: [wheelId], references: [id], onDelete: Cascade)
   name        String
   type        String
+  /**
+   * For a prize of kind `product`: what to hand over, as whoever owns it
+   * named itself through `grantable.options`.
+   *
+   * Opaque here on purpose. This module gives prizes and has no vocabulary
+   * for what a prize is made of; it knew about credits and discounts and
+   * nothing else, so a prize of any other kind was drawn, written down,
+   * announced in the public feed and handed over as thin air.
+   */
+  productId   String?
   value       Int     @default(0)
   color       String  @default("#3b82f6")
   probability Int     @default(10)

@@ -1,3 +1,4 @@
+import { applyFiltersAsync } from "@/core/sdk";
 import type { ModuleSeed } from "@/core/sdk/seed";
 
 /**
@@ -25,10 +26,10 @@ const WHEELS: {
             ["50 credits", "credits", 50, 30, "#3b82f6"],
             ["100 credits", "credits", 100, 20, "#22c55e"],
             ["250 credits", "credits", 250, 10, "#f59e0b"],
-            ["Common key", "item", 1, 20, "#06b6d4"],
-            ["Rare key", "item", 1, 10, "#a855f7"],
+            ["Common Key", "product", 1, 20, "#06b6d4"],
+            ["Rare Key", "product", 1, 10, "#a855f7"],
             ["Nothing this time", "nothing", 0, 8, "#6b7280"],
-            ["Legendary key", "item", 1, 2, "#eab308"],
+            ["Legendary Key", "product", 1, 2, "#eab308"],
         ],
     },
     {
@@ -42,7 +43,7 @@ const WHEELS: {
             ["2500 credits", "credits", 2500, 8, "#22c55e"],
             ["10 percent off", "coupon", 10, 25, "#f59e0b"],
             ["25 percent off", "coupon", 25, 12, "#ef4444"],
-            ["VIP for a week", "item", 1, 5, "#a855f7"],
+            ["VIP", "product", 1, 5, "#a855f7"],
             ["Nothing this time", "nothing", 0, 30, "#6b7280"],
         ],
     },
@@ -52,6 +53,22 @@ export const seed: ModuleSeed = {
     run: async (ctx) => {
         let prizes = 0;
         let spins = 0;
+
+        /*
+         * What a prize of kind `product` hands over.
+         *
+         * Asked for rather than looked up: this module has no business
+         * reading another's table, and on an install with nothing that owns
+         * things the answer is empty - so a prize that cannot be filled is
+         * seeded as `nothing`, which is the honest kind, rather than as a
+         * promise nobody keeps. That is exactly what the four `item` prizes
+         * here used to be.
+         *
+         * Matched by name, because the demo names its prizes after the things
+         * the shop sells.
+         */
+        const grantables = await applyFiltersAsync("grantable.options", [], {});
+        const thingCalled = new Map(grantables.map((thing) => [thing.label.toLowerCase(), thing.id]));
 
         for (const [index, plan] of WHEELS.entries()) {
             const existing = await ctx.prisma.wheel.findUnique({ where: { slug: plan.slug }, select: { id: true } });
@@ -70,8 +87,20 @@ export const seed: ModuleSeed = {
             for (const [order, [name, type, value, probability, color]] of plan.prizes.entries()) {
                 const already = await ctx.prisma.wheelPrize.findFirst({ where: { wheelId: wheel.id, name } });
                 if (already) { madePrizes.push(already); continue; }
+                const productId = type === "product" ? thingCalled.get(name.toLowerCase()) ?? null : null;
                 madePrizes.push(await ctx.create("wheelPrize", () => ctx.prisma.wheelPrize.create({
-                    data: { wheelId: wheel.id, name, type, value, probability, color, order },
+                    data: {
+                        wheelId: wheel.id,
+                        name,
+                        // Nothing owns a thing by that name here, so the prize
+                        // says what it is rather than promising one.
+                        type: type === "product" && !productId ? "nothing" : type,
+                        productId,
+                        value,
+                        probability,
+                        color,
+                        order,
+                    },
                 })));
                 prizes += 1;
             }

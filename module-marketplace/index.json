@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T12:27:54Z",
+  "updatedAt": "2026-09-20T13:18:04Z",
   "modules": [
     {
       "id": "announcements",
@@ -2845,13 +2845,13 @@
           "description": "Ürün, kategori, sepet ve siparişleriyle eksiksiz e-ticaret"
         }
       },
-      "version": "2.44.0",
+      "version": "2.45.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-09-20T13:18:04Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -2888,7 +2888,9 @@
           "store.order.resolve",
           "comparison.subjects",
           "comparison.columns",
-          "csv.exports"
+          "csv.exports",
+          "product.grant",
+          "grantable.options"
         ]
       },
       "stats": {
@@ -3365,13 +3367,13 @@
           "description": "Yapılandırılabilir ödüller ve bekleme süreleriyle çevir-kazan oyunu"
         }
       },
-      "version": "1.9.0",
+      "version": "1.10.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Dices",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T02:32:59Z",
+      "updatedAt": "2026-09-20T13:18:04Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -3387,14 +3389,16 @@
           "wheel.prize.won",
           "wheel.spin.completed",
           "credit.change",
-          "coupon.issue"
+          "coupon.issue",
+          "product.grant",
+          "grantable.options"
         ],
         "listens": []
       },
       "stats": {
         "publicRoutes": 1,
         "adminRoutes": 2,
-        "apiRoutes": 6,
+        "apiRoutes": 7,
         "widgets": 0
       }
     },

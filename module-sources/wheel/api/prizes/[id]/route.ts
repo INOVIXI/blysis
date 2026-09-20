@@ -41,6 +41,35 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
     if (fields.name !== undefined) data.name = fields.name;
     if (fields.type !== undefined) data.type = fields.type;
+    /*
+     * What the prize hands over, and the kind it is, have to agree.
+     *
+     * A prize changed from `product` to `credits` keeps a thing it no longer
+     * gives; one changed the other way promises a thing it has not been told
+     * about. Both are the same broken promise, so the pair is settled here
+     * against whichever of the two the request did not send.
+     */
+    if (fields.productId !== undefined || fields.type !== undefined) {
+        const kind = fields.type ?? (await prisma.wheelPrize.findUnique({
+            where: { id },
+            select: { type: true },
+        }))?.type;
+        if (kind === "product") {
+            const thing = fields.productId ?? (await prisma.wheelPrize.findUnique({
+                where: { id },
+                select: { productId: true },
+            }))?.productId;
+            if (!thing) {
+                return NextResponse.json(
+                    { error: "Pick what this prize hands over", code: "wheel_prize_needs_a_thing" },
+                    { status: 400 },
+                );
+            }
+            data.productId = thing;
+        } else {
+            data.productId = null;
+        }
+    }
     if (fields.value !== undefined) data.value = fields.value;
     if (fields.color !== undefined) data.color = fields.color;
     if (fields.probability !== undefined) data.probability = fields.probability;

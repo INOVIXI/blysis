@@ -1,0 +1,12 @@
+-- A prize can be something another module hands over.
+--
+-- The wheel understood credits and discounts. Anything else was drawn,
+-- written to WheelSpin, announced in the activity feed and notified to the
+-- winner, who received nothing at all. `productId` is what to hand over, as
+-- whoever owns the thing named it through `grantable.options`; the wheel
+-- never reads it itself.
+--
+-- Nullable, because every prize that exists today is of a kind that needs no
+-- such thing, and a prize of kind `product` without one is refused by the
+-- endpoint rather than by the column.
+ALTER TABLE "WheelPrize" ADD COLUMN IF NOT EXISTS "productId" TEXT;

@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
                 type: "wheel_spin",
                 description: `${wheel.name}: paid turn (${wheel.cost} credits)`,
             });
-            if (!paid.applied) return false;
+            if (!paid.applied) return "wheel_not_enough_credits";
         }
 
         await tx.wheelSpin.create({
@@ -159,15 +159,42 @@ export async function POST(request: NextRequest) {
                 amount: selectedPrize.value,
                 usageLimit: 1,
             });
+        } else if (selectedPrize.type === "product" && selectedPrize.productId) {
+            // What a thing is belongs to whoever owns it. This module used to
+            // know about credits and discounts and nothing else, so a prize of
+            // any other kind was drawn, written down, announced in the public
+            // feed and handed over as thin air.
+            //
+            // A refusal undoes the turn rather than recording a prize nobody
+            // received: if the thing has since been taken down, the fairest
+            // answer is that the turn did not happen.
+            const handed = await applyFiltersAsync("product.grant", { granted: false }, {
+                tx,
+                userId: session.user.id,
+                productId: selectedPrize.productId,
+                quantity: Math.max(1, selectedPrize.value || 1),
+                reason: `${wheel.name}: ${selectedPrize.name}`,
+            });
+            if (!handed.granted) return "wheel_prize_unavailable";
         }
 
-        return true;
+        return null;
     });
 
-    if (!spun) {
+    // Why the turn did not happen, or null because it did. It used to be a
+    // boolean, and every falsehood was reported as an empty wallet - which
+    // was true of the only case there was. A prize whose thing has since been
+    // taken down is a different sentence and a different status.
+    if (spun === "wheel_not_enough_credits") {
         return NextResponse.json(
             { error: "not_enough_credits", code: "wheel_not_enough_credits", cost: wheel.cost },
             { status: 429 },
+        );
+    }
+    if (spun) {
+        return NextResponse.json(
+            { error: "That prize cannot be handed over right now", code: spun },
+            { status: 409 },
         );
     }
 

@@ -109,17 +109,30 @@ export function refusalFor(rules: WheelRules, turner: Turner, now: Date = new Da
 /**
  * The kinds of prize this wheel can actually hand over.
  *
- * The spin route grants credits and mints a coupon, and does nothing at all
- * for anything else. The demo ships four prizes of kind `item` - three keys
- * and a week of VIP - which are drawn, written to the spin log, announced in
- * the public feed and notified to the winner, who receives nothing. A kind
- * nothing grants is not a prize, so the panel says which ones are like that
- * rather than leaving an operator to find out from a complaint.
+ * It used to be two. The spin route granted credits and minted a coupon and
+ * did nothing at all for anything else, while the demo shipped four prizes of
+ * kind `item` - three keys and a week of VIP - which were drawn, written to
+ * the spin log, announced in the public feed and notified to the winner, who
+ * received nothing. A kind nothing grants is not a prize, so the panel says
+ * which ones are like that rather than leaving an operator to find out from a
+ * complaint.
+ *
+ * `product` is the answer to that: the wheel hands the id to whoever owns the
+ * thing and keeps knowing nothing about what it is. It is grantable only once
+ * an operator has picked something, which `prizeHandsSomethingOver` is for -
+ * a prize of that kind with an empty box is the same promise unkept.
  */
-export const GRANTABLE_PRIZE_KINDS = ["credits", "coupon", "nothing"] as const;
+export const GRANTABLE_PRIZE_KINDS = ["credits", "coupon", "product", "nothing"] as const;
 
 export function prizeIsGrantable(type: string): boolean {
     return (GRANTABLE_PRIZE_KINDS as readonly string[]).includes(type);
+}
+
+/** Whether this row, as it stands, will give the winner anything. */
+export function prizeHandsSomethingOver(prize: { type: string; productId?: string | null }): boolean {
+    if (!prizeIsGrantable(prize.type)) return false;
+    if (prize.type === "product") return Boolean(prize.productId);
+    return true;
 }
 
 /**

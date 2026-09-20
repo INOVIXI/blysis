@@ -134,7 +134,11 @@ describe("a spin is one event", () => {
     });
 
     it("still refuses a spin the balance cannot cover, without spending it", () => {
-        expect(spin).toContain("if (!paid.applied) return false;");
+        // The transaction used to answer with a boolean and every falsehood
+        // was reported as an empty wallet, which was true of the only case
+        // there was. It answers with the reason now, so a prize that cannot
+        // be handed over is a different sentence.
+        expect(spin).toContain('if (!paid.applied) return "wheel_not_enough_credits";');
         expect(spin).toContain('code: "wheel_not_enough_credits"');
     });
 });

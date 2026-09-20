@@ -12,6 +12,15 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.16.0 - `product.grant` and `grantable.options` join the hook payload
+ * registry. A module that gives things away has no vocabulary for what a
+ * thing is and must not grow one: the wheel understood credits and discounts,
+ * so a prize of any other kind was drawn, written down, announced in the
+ * public feed and handed over as thin air. It asks for a list to offer an
+ * operator, and hands an opaque id back on its own transaction; whoever owns
+ * the thing answers. Additive, and a platform with nothing that owns things
+ * answers the list empty, which is the honest state.
+ *
  * 5.15.0 - a module's `settingsCards` entry becomes a link in the panel's
  * Settings group, named from the module's own translations under
  * `settings_<id>` with the manifest literal as the fallback. A card used to
@@ -580,4 +589,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.15.0";
+export const CORE_API_VERSION = "5.16.0";

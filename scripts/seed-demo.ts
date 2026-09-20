@@ -33,6 +33,7 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import type { ModuleSeed, SeedContext, SeededUser } from "@/core/sdk/seed";
+import { ensureHooks } from "@/core/lib/hooks-bootstrap";
 
 const ROOT = process.cwd();
 const INSTALLED = path.join(ROOT, "src/modules");
@@ -572,6 +573,13 @@ async function main(): Promise<void> {
     if (process.env.NODE_ENV === "production" && !OPTIONS.force) {
         throw new Error("NODE_ENV is production. This writes made-up data; pass --force if you meant it.");
     }
+
+    // A seed that asks another module something - what may be handed over,
+    // what a shelf holds - gets its own argument back on a bus nobody filled,
+    // and the tell is a prize that silently seeds as `nothing`. Every script
+    // process is its own module graph, so it is filled here rather than by
+    // whichever seed happens to ask first.
+    await ensureHooks();
 
     const pool = new Pool({ connectionString: process.env.DATABASE_URL });
     const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });

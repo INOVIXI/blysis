@@ -41,7 +41,18 @@ export async function POST(request: NextRequest) {
     if (jsonBody instanceof NextResponse) return jsonBody;
     const parsed = wheelPrizeCreateSchema.safeParse(jsonBody);
     if (!parsed.success) return NextResponse.json({ error: "Name and type required" }, { status: 400 });
-    const { name, type, value, color, probability, order, wheelId } = parsed.data;
+    const { name, type, value, color, probability, order, wheelId, productId } = parsed.data;
+
+    // A prize that says it hands something over has to say what. Refusing
+    // here rather than at the column, because the column is nullable for
+    // every other kind and the message an operator reads should name the
+    // field they left empty.
+    if (type === "product" && !productId) {
+        return NextResponse.json(
+            { error: "Pick what this prize hands over", code: "wheel_prize_needs_a_thing" },
+            { status: 400 },
+        );
+    }
 
     // A prize with no wheel is a prize nobody can win, so one that names none
     // joins the first wheel the site has - which on an install with a single
@@ -56,6 +67,7 @@ export async function POST(request: NextRequest) {
             wheelId: wheel.id,
             name,
             type,
+            productId: type === "product" ? productId : null,
             value: value || 0,
             color: color || "#3b82f6",
             probability: probability || 10,

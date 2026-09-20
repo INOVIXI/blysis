@@ -2,7 +2,7 @@
   "id": "wheel",
   "name": "Wheel of Fortune",
   "description": "Spin-to-win game with configurable prizes and cooldowns",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis",
@@ -89,6 +89,12 @@
       "handler": "api/admin/wheels/[id]/route.ts",
       "description": "Update or delete a single wheel (admin).",
       "permission": "wheel.manage"
+    },
+    {
+      "path": "/wheel/admin/grantables",
+      "handler": "api/admin/grantables/route.ts",
+      "description": "What a prize may be set to hand over, asked of whichever modules own things.",
+      "permission": "wheel.manage"
     }
   ],
   "settings": [],
@@ -111,6 +117,14 @@
     },
     {
       "hook": "coupon.issue",
+      "type": "filter"
+    },
+    {
+      "hook": "product.grant",
+      "type": "filter"
+    },
+    {
+      "hook": "grantable.options",
       "type": "filter"
     }
   ],
@@ -179,7 +193,13 @@
         "turnForCredits": "Turn for {count} credits",
         "whatIsOnIt": "What is on it",
         "wheelWith": "A wheel with {count} prizes",
-        "yourCredits": "Your credits"
+        "yourCredits": "Your credits",
+        "refusal_wheel_prize_unavailable": "That prize cannot be handed over right now. Nothing was taken for the turn - try again.",
+        "adm_prizeKind_product": "A thing from another module",
+        "adm_thingLabel": "What it hands over",
+        "adm_thingPlaceholder": "Pick something",
+        "adm_thingHint": "Only for a prize that hands something over. It arrives in the winner's chest, where they claim it.",
+        "adm_prizeUnboundThing": "Hands over nothing until you pick something"
       },
       "admin": {
         "menu_wheel": "Wheel",
@@ -270,7 +290,13 @@
         "turnForCredits": "{count} kredi ile çevir",
         "whatIsOnIt": "Üzerinde ne var",
         "wheelWith": "{count} ödüllü çark",
-        "yourCredits": "Kredin"
+        "yourCredits": "Kredin",
+        "refusal_wheel_prize_unavailable": "Bu ödül şu anda verilemiyor. Çevirme için hiçbir şey alınmadı, tekrar deneyin.",
+        "adm_prizeKind_product": "Başka bir modülden bir şey",
+        "adm_thingLabel": "Ne verir",
+        "adm_thingPlaceholder": "Bir şey seçin",
+        "adm_thingHint": "Yalnızca bir şey veren ödül için. Kazananın sandığına düşer, oradan alır.",
+        "adm_prizeUnboundThing": "Bir şey seçene kadar hiçbir şey vermez"
       },
       "admin": {
         "menu_wheel": "Çark Ödülleri",

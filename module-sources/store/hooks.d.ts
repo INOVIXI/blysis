@@ -22,6 +22,42 @@ interface CouponIssued {
     issued: boolean;
 }
 
+interface ProductGrantRequest {
+    /** The caller's transaction; the grant joins whatever else it is doing. */
+    tx: import("@/core/sdk/server").PrismaTransaction;
+    /** Who is being given the thing. */
+    userId: string;
+    /** Which thing, as `grantable.options` named it. */
+    productId: string;
+    /** How many. One unless the caller says otherwise. */
+    quantity?: number;
+    /** What to write on the row, so a member can see where it came from. */
+    reason?: string | null;
+}
+
+interface ProductGranted {
+    granted: boolean;
+    /** What the thing is called, for whatever tells the winner. */
+    name?: string;
+}
+
+/**
+ * Something a module can hand somebody, offered by whoever owns it.
+ *
+ * A module that gives prizes has no vocabulary for what a prize is made of,
+ * and must not grow one: the wheel knew about credits and discounts and
+ * nothing else, so a prize of any other kind was drawn, announced and
+ * handed over as thin air.
+ */
+interface Grantable {
+    /** Opaque to the caller. It travels back in `product.grant`. */
+    id: string;
+    /** What a person calls it. Already the operator's own words. */
+    label: string;
+    /** A second line: a price, a category, whatever tells two apart. */
+    hint?: string | null;
+}
+
 declare global {
     interface BlysisHookPayloads {
         "store.order.created": StoreOrderHookPayload;
@@ -51,6 +87,10 @@ declare global {
     interface BlysisFilterPayloads {
         /** Whether a coupon was created for the code the caller minted. */
         "coupon.issue": CouponIssued;
+        /** Whether the thing was handed over, and what it is called. */
+        "product.grant": ProductGranted;
+        /** Everything any module will hand over on request. */
+        "grantable.options": Grantable[];
         /** The sales somebody is collecting, oldest first. */
         "store.orders.collect": StoreOrderHookPayload[];
         /** The shop's own id for an order somebody named, or null for none. */
@@ -127,6 +167,18 @@ declare global {
          * a prize and the coupon it promised commit together.
          */
         "coupon.issue": CouponRequest;
+        /**
+         * Hand somebody a thing another module owns.
+         *
+         * The wheel drew a prize of a kind it could not deliver - a crate key,
+         * a week of VIP - wrote the spin, announced it in the public feed and
+         * notified the winner, who received nothing. It has no business
+         * knowing what a key is; the shop does, and the shop already has a
+         * place to put one somebody did not buy.
+         */
+        "product.grant": ProductGrantRequest;
+        /** Nothing to ask; the answer is the list. */
+        "grantable.options": Record<string, never>;
         "payment.providers": { currency: string };
         "payment.session": PaymentSessionRequest;
         "payment.settled": PaymentSettlement;

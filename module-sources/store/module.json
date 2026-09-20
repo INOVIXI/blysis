@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.44.0",
+  "version": "2.45.0",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -91,6 +91,16 @@
       "hook": "csv.exports",
       "type": "filter",
       "handler": "hooks/csv-exports.ts"
+    },
+    {
+      "hook": "product.grant",
+      "type": "filter",
+      "handler": "hooks/grant-product.ts"
+    },
+    {
+      "hook": "grantable.options",
+      "type": "filter",
+      "handler": "hooks/grantable-products.ts"
     }
   ],
   "settings": [
