@@ -21,10 +21,17 @@ interface BlogPost {
 
 /**
  * Room the news section holds from its first paint: a heading over two rows
- * of cards, measured at 720px. Every state below renders that same shape, so
- * the number is what the section already is rather than a guess about it.
+ * of cards, measured at 786px on a 1280px viewport. Every state below renders
+ * that same shape, so the number is what the section already is rather than a
+ * guess about it.
+ *
+ * It is only a number worth writing down because `NewsCard` reserves its own
+ * text: a card that grew with its headline made this section 757px for one
+ * set of articles and 801px for another, and no single reservation can be
+ * right for both. Measure it again if that card changes;
+ * `a-section-keeps-the-room-it-reserves.spec.ts` is what says so.
  */
-const NEWS_SECTION_HEIGHT = "min-h-[720px]";
+const NEWS_SECTION_HEIGHT = "min-h-[786px]";
 
 export function BlogNewsSection() {
   const [currentPage, setCurrentPage] = useState(1);

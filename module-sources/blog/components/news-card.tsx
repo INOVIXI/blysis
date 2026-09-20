@@ -18,12 +18,23 @@ import { Badge, useLocalDate } from "@/core/sdk/ui";
  * The picture keeps its space when there is none, so two cards side by side
  * are not different heights depending on who remembered to upload a cover.
  *
- * That was also done to the text, by giving the headline two lines of room
- * and the excerpt two more whether or not they filled them - and a one-line
- * headline then had a finger's width of nothing under it before its excerpt
- * began. The cards were even and every one of them had a hole in it. The row
- * is a grid, and a grid already stretches its cells to the tallest; the card
- * only has to be a full-height column so its own border reaches the bottom.
+ * The text keeps its space too, and it took two goes to keep it in the right
+ * place. Reserving two lines for the headline and two for the excerpt
+ * separately left a one-line headline with a finger's width of nothing under
+ * it before its excerpt began: the cards were even and every one of them had
+ * a hole in it. Dropping the reservation altogether fixed the hole and moved
+ * the problem: the card was then as tall as whatever an author had typed, so
+ * the homepage section holding two rows of these was a different height for
+ * every set of articles. It reserves 720px before the articles arrive and
+ * rendered 757px with ordinary headlines and 801px with long ones, which is
+ * the footer moving under a reader on every load.
+ *
+ * So the reservation is on the pair rather than on each of them: four line
+ * boxes, filled from the top, with whatever is left over collecting under the
+ * excerpt where the date already holds the floor. The leading is pinned for
+ * the same reason - a reservation counted in line boxes has to know how tall
+ * one is - and `a-section-keeps-the-room-it-reserves.spec.ts` asks the
+ * section its height with three different sets of articles.
  *
  * Where a cover is missing the box is quiet rather than captioned. "No image"
  * is a note to whoever uploads, printed on the page for everybody who reads.
@@ -67,13 +78,17 @@ export function NewsCard({ post }: { post: BlogCardArticle }) {
                     <Badge tone="info" solid className="absolute left-3 top-3">{post.category.name}</Badge>
                 )}
             </div>
-            <div className="flex flex-1 flex-col gap-1.5 p-4">
-                <h3 className="line-clamp-2 font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
-                    {post.title}
-                </h3>
-                {post.excerpt && (
-                    <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{post.excerpt}</p>
-                )}
+            <div className="flex flex-1 flex-col p-4">
+                {/* Two lines of headline over two of summary: 3rem and 2.5rem
+                    of line boxes with 0.375rem between them. */}
+                <div className="flex min-h-[5.875rem] flex-col gap-1.5">
+                    <h3 className="line-clamp-2 font-semibold leading-6 text-foreground transition-colors group-hover:text-primary">
+                        {post.title}
+                    </h3>
+                    {post.excerpt && (
+                        <p className="line-clamp-2 text-sm leading-5 text-muted-foreground">{post.excerpt}</p>
+                    )}
+                </div>
                 {/* The date sits on the floor of the card, so the dates in a
                     row line up however long the headlines above them are. */}
                 {date && (
