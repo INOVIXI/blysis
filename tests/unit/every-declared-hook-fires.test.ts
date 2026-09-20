@@ -173,7 +173,9 @@ describe("the email filters", () => {
     });
 
     it("sends what the filter returned", () => {
-        const send = email.slice(email.indexOf("resend.emails.send"));
+        // `mailer.send` rather than a vendor's client: core builds the message
+        // and whatever transport is installed sends it.
+        const send = email.slice(email.indexOf("mailer.send"));
         expect(send.slice(0, 300)).toContain("subject: safeSubject");
         expect(send.slice(0, 300)).toContain("html,");
         expect(send.slice(0, 300)).not.toContain("html: opts.html");

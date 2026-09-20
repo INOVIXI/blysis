@@ -30,14 +30,17 @@ vi.mock("@/core/lib/logger", () => ({
     errorText: (e: unknown) => (e instanceof Error ? e.message : String(e)),log: { debug: vi.fn(), info: vi.fn(), warn: logWarn, error: vi.fn() },
 }));
 
-// --- resend ----------------------------------------------------------------
+// --- the transport ---------------------------------------------------------
+//
+// Core used to construct a vendor's client here, so this mocked the vendor.
+// It resolves whatever transport is installed now, so this mocks that: the
+// seam moved, the assertions about what is sent did not.
 
 const providerSend = vi.fn(async (_opts: Record<string, unknown>) => ({ id: "re_1" }));
+let transportInstalled = true;
 
-vi.mock("resend", () => ({
-    Resend: class {
-        emails = { send: providerSend };
-    },
+vi.mock("@/core/lib/mailer", () => ({
+    resolveMailer: async () => (transportInstalled ? { send: providerSend } : null),
 }));
 
 // ---------------------------------------------------------------------------
@@ -50,7 +53,7 @@ type EmailModule = typeof import("@/core/lib/email");
  */
 async function load(env: Record<string, string> = {}): Promise<EmailModule> {
     vi.resetModules();
-    vi.stubEnv("RESEND_API_KEY", "");
+    transportInstalled = true;
     vi.stubEnv("SITE_NAME", "");
     vi.stubEnv("NEXT_PUBLIC_APP_NAME", "");
     vi.stubEnv("EMAIL_FROM", "");
@@ -58,9 +61,16 @@ async function load(env: Record<string, string> = {}): Promise<EmailModule> {
     return (await import("@/core/lib/email")) as EmailModule;
 }
 
-/** Load with a working provider so deliverViaProvider actually calls out. */
+/** Load with a working transport so deliverViaProvider actually calls out. */
 function loadWithProvider(env: Record<string, string> = {}): Promise<EmailModule> {
-    return load({ RESEND_API_KEY: "re_test_key", ...env });
+    return load(env);
+}
+
+/** Load with nothing installed, which is what suppresses a send. */
+async function loadWithoutProvider(env: Record<string, string> = {}): Promise<EmailModule> {
+    const mod = await load(env);
+    transportInstalled = false;
+    return mod;
 }
 
 interface JobRow {
@@ -402,8 +412,8 @@ describe("recipient validation", () => {
     });
 
     it("rejects before the transport check, so a missing provider is no excuse", async () => {
-        // No RESEND_API_KEY: delivery is otherwise treated as successful.
-        const { sendEmail } = await load();
+        // Nothing installed: delivery is otherwise treated as successful.
+        const { sendEmail } = await loadWithoutProvider();
 
         await expect(sendEmail({ to: "a\r\nBcc: b@c.co", subject: "Hi", html: "x" }))
             .resolves.toBe(false);
@@ -576,7 +586,7 @@ describe("sendEmail auditing", () => {
 
 describe("with no transport configured", () => {
     it("treats delivery as successful so dev flows are not blocked", async () => {
-        const { sendEmail } = await load();
+        const { sendEmail } = await loadWithoutProvider();
 
         await expect(sendEmail({ to: "user@example.com", subject: "Hi", html: "x" }))
             .resolves.toBe(true);
@@ -588,7 +598,7 @@ describe("with no transport configured", () => {
     });
 
     it("skips the password reset entirely rather than writing a job row", async () => {
-        const { sendPasswordResetEmail } = await load();
+        const { sendPasswordResetEmail } = await loadWithoutProvider();
 
         await sendPasswordResetEmail("user@example.com", "https://app.test/reset?token=abc");
 
@@ -596,7 +606,7 @@ describe("with no transport configured", () => {
     });
 
     it("logs the reset link outside production so a dev can finish the flow", async () => {
-        const { sendPasswordResetEmail } = await load({ NODE_ENV: "development" });
+        const { sendPasswordResetEmail } = await loadWithoutProvider({ NODE_ENV: "development" });
 
         await sendPasswordResetEmail("user@example.com", "https://app.test/reset?token=abc");
 
@@ -607,7 +617,7 @@ describe("with no transport configured", () => {
     });
 
     it("never logs the reset link in production", async () => {
-        const { sendPasswordResetEmail } = await load({ NODE_ENV: "production" });
+        const { sendPasswordResetEmail } = await loadWithoutProvider({ NODE_ENV: "production" });
 
         await sendPasswordResetEmail("user@example.com", "https://app.test/reset?token=abc");
 
@@ -617,7 +627,7 @@ describe("with no transport configured", () => {
     });
 
     it("never logs the verification link in production", async () => {
-        const { sendVerificationEmail } = await load({ NODE_ENV: "production" });
+        const { sendVerificationEmail } = await loadWithoutProvider({ NODE_ENV: "production" });
 
         await sendVerificationEmail("user@example.com", "https://app.test/verify?token=abc");
 
@@ -625,7 +635,7 @@ describe("with no transport configured", () => {
     });
 
     it("logs the verification link outside production", async () => {
-        const { sendVerificationEmail } = await load({ NODE_ENV: "test" });
+        const { sendVerificationEmail } = await loadWithoutProvider({ NODE_ENV: "test" });
 
         await sendVerificationEmail("user@example.com", "https://app.test/verify?token=abc");
 
@@ -635,7 +645,7 @@ describe("with no transport configured", () => {
     });
 
     it("skips the welcome mail without queueing anything", async () => {
-        const { sendWelcomeEmail } = await load();
+        const { sendWelcomeEmail } = await loadWithoutProvider();
 
         await sendWelcomeEmail("user@example.com", "ada");
 

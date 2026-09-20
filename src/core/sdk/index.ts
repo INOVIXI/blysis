@@ -151,3 +151,14 @@ export type { Restriction } from "@/core/lib/restrictions";
 // Declarations an operator wrote for a role, judged as a browser reads them.
 export { safeRoleCss } from "@/core/lib/role-css";
 export { renderMarkdown } from "@/core/lib/markdown";
+
+/**
+ * The mail transports installed here, as names an operator reads.
+ *
+ * For a provider module's own settings screen, which offers "send this site's
+ * mail through this one" and cannot know what else is installed. Core resolves
+ * the choice; see `mailer.ts` for why one installed transport needs no choice
+ * at all.
+ */
+export { ModuleEmailProviders as emailProviders } from "@/core/generated/module-data";
+export { ACTIVE_EMAIL_PROVIDER_KEY } from "@/core/lib/mailer-key";

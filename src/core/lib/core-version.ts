@@ -12,6 +12,17 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.9.0 - a mail transport is a module. `emailProvider` in a manifest takes
+ * a `handler` exporting `isConfigured` and `send`, the generator collects them
+ * into `EmailProviderRegistry`, and `emailProviders` and
+ * `ACTIVE_EMAIL_PROVIDER_KEY` join `@/core/sdk` so a provider's own screen can
+ * offer the choice between the transports installed. Core used to import a
+ * vendor's client and call it, which named a vendor in core and meant there
+ * was exactly one way to send mail on the whole platform. Called directly
+ * rather than through the hook bus: every listener there is raced against a
+ * five second timeout, and an SMTP send that times out at the bus while
+ * arriving at the relay is a message the queue sends twice.
+ *
  * 5.8.0 - `recordWebhookDelivery`, `redactWebhookTarget` and the
  * `WebhookDelivery` type join `@/core/sdk/server`, and core fires
  * `core.webhook.delivered` after every webhook it sends. The table that keeps
@@ -520,4 +531,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.8.0";
+export const CORE_API_VERSION = "5.9.0";

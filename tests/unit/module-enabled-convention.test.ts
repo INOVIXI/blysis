@@ -65,6 +65,8 @@ const UNGATED_BY_DESIGN: Record<string, string> = {
         "Registry introspection for developers. Its whole purpose is to report what is installed, enabled or not.",
     "src/core/lib/activity-title.ts":
         "Titles rows already written to the activity log. History must keep rendering after a module is turned off, or it degrades to raw keys.",
+    "src/core/sdk/index.ts":
+        "A re-export of the installed mail transports, so a provider module's own settings screen can offer the choice between them. It is the isomorphic barrel and cannot reach the database to ask what is enabled; `mailer.ts` gates the same list where it decides anything, so a transport belonging to a disabled module is offered but never used.",
     "src/core/lib/storage.ts":
         "The active storage provider is chosen by an explicit setting. Silently redirecting new uploads to local disk would split a site's media across two backends.",
     "src/core/lib/api-matcher.ts":

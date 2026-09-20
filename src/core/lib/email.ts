@@ -1,6 +1,7 @@
 import { prisma } from "./db";
 import { resolveAppName, resolveAppUrl } from "./app-url";
 import { getEmailConfig } from "./email-config";
+import { resolveMailer } from "./mailer";
 import { log } from "./logger";
 
 /**
@@ -149,8 +150,9 @@ function escapeHtml(str: string): string {
  * Strip CR / LF / NUL from a value before it can reach an SMTP header.
  * Without this, a malicious `subject` field like "Hi\r\nBcc: me@example.com"
  * lets an attacker inject arbitrary recipients - the classic SMTP header
- * injection. The Resend SDK normalizes most of this, but we defend at the
- * edge so the invariant holds regardless of the provider in use.
+ * injection. Some transports normalize most of this on the way out; core
+ * cannot know which, and the edge is the only place the invariant holds
+ * whatever is installed.
  */
 function stripHeaderInjection(value: string, maxLen = 998): string {
     if (typeof value !== "string") return "";
@@ -172,26 +174,18 @@ function validateEmailAddress(addr: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Provider (Resend)
+// Transport
 // ---------------------------------------------------------------------------
 
-let _resend: unknown = null;
-/** The key `_resend` was built from, so an admin's edit rebuilds the client. */
-let _resendKey: string | null = null;
-
-async function getResend(): Promise<{ emails: { send: (opts: Record<string, unknown>) => Promise<unknown> } } | null> {
-    const { apiKey } = await getEmailConfig();
-    if (!apiKey) return null;
-    if (!_resend || _resendKey !== apiKey) {
-        const { Resend } = await import("resend");
-        _resend = new Resend(apiKey);
-        _resendKey = apiKey;
-    }
-    return _resend as { emails: { send: (opts: Record<string, unknown>) => Promise<unknown> } };
-}
-
+/**
+ * Whether anything installed here can send.
+ *
+ * This used to ask whether a mail API key was set, which was the same
+ * question only while there was one way to send mail. A transport with a
+ * host and a password has no API key and was mail this site could not send.
+ */
 async function getEmailEnabled(): Promise<boolean> {
-    return !!(await getEmailConfig()).apiKey;
+    return (await resolveMailer()) !== null;
 }
 
 /**
@@ -236,11 +230,11 @@ async function deliverViaProvider(opts: {
         log.warn("email suppressed: no transport configured", { to: opts.to, subject: safeSubject });
         return { ok: true }; // Treat as delivered (dev/test mode)
     }
-    const resend = await getResend();
-    if (!resend) return { ok: false, error: "Resend client unavailable" };
+    const mailer = await resolveMailer();
+    if (!mailer) return { ok: false, error: "No mail transport is configured" };
     try {
         const { fromEmail, fromName } = await getEmailConfig();
-        await resend.emails.send({
+        await mailer.send({
             from: `${stripHeaderInjection(fromName ?? APP_NAME)} <${stripHeaderInjection(fromEmail)}>`,
             to: opts.to,
             subject: safeSubject,

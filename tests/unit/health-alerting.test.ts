@@ -47,6 +47,8 @@ let healthThrows: Error | null;
 /** Response the webhook endpoint should produce. */
 let webhookStatus: number;
 let webhookThrows: Error | null;
+/** A receiver that refuses and then dies before it finishes saying why. */
+let webhookBodyThrows: boolean;
 
 beforeEach(() => {
     calls = [];
@@ -54,6 +56,7 @@ beforeEach(() => {
     healthThrows = null;
     webhookStatus = 204;
     webhookThrows = null;
+    webhookBodyThrows = false;
     ModuleWebhookChannels.length = 0;
 
     setting.findUnique.mockReset().mockResolvedValue(null);
@@ -72,7 +75,10 @@ beforeEach(() => {
         return {
             ok: webhookStatus < 400,
             status: webhookStatus,
-            text: async () => (webhookStatus < 400 ? "" : `refused ${webhookStatus}`),
+            text: async () => {
+                if (webhookBodyThrows) throw new Error("connection reset");
+                return webhookStatus < 400 ? "" : `refused ${webhookStatus}`;
+            },
         } as unknown as Response;
     }));
 });
@@ -279,6 +285,15 @@ describe("sendHealthWebhook", () => {
 
     it("reports a non-2xx response as a failure", async () => {
         webhookStatus = 500;
+        await expect(sendHealthWebhook(config, {}, GENERIC_CHANNEL))
+            .resolves.toEqual({ ok: false, error: "HTTP 500" });
+    });
+
+    it("still reports the refusal when the receiver dies before saying why", async () => {
+        // The body is read for the webhook log; a receiver that drops the
+        // connection mid-answer must not turn a 500 into a thrown request.
+        webhookStatus = 500;
+        webhookBodyThrows = true;
         await expect(sendHealthWebhook(config, {}, GENERIC_CHANNEL))
             .resolves.toEqual({ ok: false, error: "HTTP 500" });
     });

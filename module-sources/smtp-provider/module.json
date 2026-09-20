@@ -1,0 +1,105 @@
+{
+  "id": "smtp-provider",
+  "name": "SMTP Email Provider",
+  "description": "Send email through an SMTP relay you run or pay for",
+  "version": "1.0.0",
+  "coreVersion": "^5.0.0",
+  "secretSettings": [
+    "smtp_password"
+  ],
+  "emailProvider": {
+    "apiKeySetting": "smtp_password",
+    "handler": "lib/provider.ts",
+    "name": "SMTP"
+  },
+  "category": "integration",
+  "author": "Blysis",
+  "icon": "Mail",
+  "dependencies": [
+    "email-templates"
+  ],
+  "permissions": [
+    {
+      "name": "smtp-provider.manage",
+      "labelKey": "smtpProvider.perm_manage"
+    }
+  ],
+  "adminRoutes": [
+    {
+      "path": "/settings/smtp",
+      "component": "pages/admin/settings/smtp/page.tsx",
+      "permission": "smtp-provider.manage"
+    }
+  ],
+  "settingsCards": [
+    {
+      "title": "SMTP",
+      "description": "The relay this site hands its mail to.",
+      "href": "/settings/smtp",
+      "icon": "Mail",
+      "color": "text-emerald-500"
+    }
+  ],
+  "translations": {
+    "en": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "SMTP Email Provider",
+        "module_smtp-provider_description": "Send email through an SMTP relay you run or pay for"
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "Which of the installed transports this site hands its mail to. With only one installed there is nothing to choose.",
+        "adm_activeLabel": "Send through",
+        "adm_fromDesc": "What a reply goes to. It has to be an address this relay is allowed to send as.",
+        "adm_fromLabel": "Return address",
+        "adm_fromNameDesc": "The name beside the address in a mailbox.",
+        "adm_fromNameLabel": "Return name",
+        "adm_hostDesc": "The address of the relay, without a port.",
+        "adm_hostLabel": "Server",
+        "adm_passwordDesc": "Stored encrypted. Leave it empty to keep the one already saved.",
+        "adm_passwordLabel": "Password",
+        "adm_portDesc": "587 for a relay that upgrades the connection, 465 for one encrypted from the first byte.",
+        "adm_portLabel": "Port",
+        "adm_secureDesc": "Both encrypt the password before it crosses. Which one a relay wants is decided by the port it listens on.",
+        "adm_secureLabel": "Connection",
+        "adm_secureOff": "Upgraded after connecting (port 587)",
+        "adm_secureOn": "Encrypted from the first byte (port 465)",
+        "adm_subtitle": "The relay this site hands its mail to",
+        "adm_title": "SMTP",
+        "adm_userDesc": "Left blank, the relay is used without authenticating, which most will refuse.",
+        "adm_userLabel": "Username",
+        "perm_manage": "Manage"
+      }
+    },
+    "tr": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "SMTP E-posta Sağlayıcısı",
+        "module_smtp-provider_description": "E-postayı kendi kurduğunuz ya da kiraladığınız bir SMTP sunucusundan gönderin"
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "Bu sitenin postasını kurulu taşıyıcılardan hangisine teslim edeceği. Tek bir tane kuruluysa seçilecek bir şey yoktur.",
+        "adm_activeLabel": "Gönderim yolu",
+        "adm_fromDesc": "Yanıtların gideceği adres. Bu sunucunun adına gönderim yapmasına izin verilen bir adres olmalı.",
+        "adm_fromLabel": "Dönüş adresi",
+        "adm_fromNameDesc": "Posta kutusunda adresin yanında görünen ad.",
+        "adm_fromNameLabel": "Dönüş adı",
+        "adm_hostDesc": "Sunucunun adresi, port olmadan.",
+        "adm_hostLabel": "Sunucu",
+        "adm_passwordDesc": "Şifrelenmiş olarak saklanır. Kayıtlı olanı korumak için boş bırakın.",
+        "adm_passwordLabel": "Şifre",
+        "adm_portDesc": "Bağlantıyı sonradan şifreleyen bir sunucu için 587, ilk bayttan itibaren şifreli olan için 465.",
+        "adm_portLabel": "Port",
+        "adm_secureDesc": "İkisi de şifre geçmeden önce bağlantıyı şifreler. Hangisinin isteneceğini sunucunun dinlediği port belirler.",
+        "adm_secureLabel": "Bağlantı",
+        "adm_secureOff": "Bağlandıktan sonra şifrelenir (port 587)",
+        "adm_secureOn": "İlk bayttan itibaren şifreli (port 465)",
+        "adm_subtitle": "Bu sitenin postasını teslim ettiği sunucu",
+        "adm_title": "SMTP",
+        "adm_userDesc": "Boş bırakılırsa sunucu kimlik doğrulamadan kullanılır; çoğu sunucu bunu reddeder.",
+        "adm_userLabel": "Kullanıcı adı",
+        "perm_manage": "Yönetebilir"
+      }
+    }
+  }
+}

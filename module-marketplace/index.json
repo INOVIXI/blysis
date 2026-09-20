@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T07:12:15Z",
+  "updatedAt": "2026-09-20T07:53:36Z",
   "modules": [
     {
       "id": "announcements",
@@ -2486,13 +2486,13 @@
           "description": "Resend API üzerinden e-posta gönderin"
         }
       },
-      "version": "1.3.2",
+      "version": "1.4.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Mail",
       "category": "integration",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T07:53:36Z",
       "screenshots": [],
       "tags": [
         "integration"
@@ -2691,6 +2691,43 @@
         "adminRoutes": 1,
         "apiRoutes": 2,
         "widgets": 1
+      }
+    },
+    {
+      "id": "smtp-provider",
+      "name": "SMTP Email Provider",
+      "description": "Send email through an SMTP relay you run or pay for",
+      "i18n": {
+        "tr": {
+          "name": "SMTP E-posta Sağlayıcısı",
+          "description": "E-postayı kendi kurduğunuz ya da kiraladığınız bir SMTP sunucusundan gönderin"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.0.0",
+      "author": "Blysis",
+      "icon": "Mail",
+      "category": "integration",
+      "verified": true,
+      "updatedAt": "2026-09-20T07:53:36Z",
+      "screenshots": [],
+      "tags": [
+        "integration"
+      ],
+      "zip": "smtp-provider.zip",
+      "dependencies": [
+        "email-templates"
+      ],
+      "conflicts": [],
+      "hooks": {
+        "emits": [],
+        "listens": []
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 1,
+        "apiRoutes": 0,
+        "widgets": 0
       }
     },
     {

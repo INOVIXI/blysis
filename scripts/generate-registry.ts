@@ -210,6 +210,7 @@ function generateRegistry() {
     const allSecretSettings = new Set<string>();
     const allEmailApiKeySettings = new Set<string>();
     const allEmailApiKeyEnvVars = new Set<string>();
+    const allEmailProviders: { id: string; name: string; handler: string; module: string }[] = [];
 
 
     for (const { moduleName, manifest } of loaded) {
@@ -229,6 +230,14 @@ function generateRegistry() {
         manifest.secretSettings?.forEach((key: string) => allSecretSettings.add(key));
         if (manifest.emailProvider) allEmailApiKeySettings.add(manifest.emailProvider.apiKeySetting);
         if (manifest.emailProvider?.envVar) allEmailApiKeyEnvVars.add(manifest.emailProvider.envVar);
+        if (manifest.emailProvider?.handler) {
+            allEmailProviders.push({
+                id: moduleName,
+                name: manifest.emailProvider.name || manifest.name || moduleName,
+                handler: manifest.emailProvider.handler,
+                module: moduleName,
+            });
+        }
         manifest.settingsCards?.forEach((sc) => allSettingsCards.push({ ...sc, module: moduleName }));
         manifest.navbarComponents?.forEach((nc) => allNavbarComponents.push({ ...nc, module: moduleName }));
         manifest.footerComponents?.forEach((fc) => allFooterComponents.push({ ...fc, module: moduleName }));
@@ -493,6 +502,10 @@ function generateRegistry() {
     dataContent += `// mailer and asks which key holds the credential rather than knowing a name.\n`;
     dataContent += `export const ModuleEmailApiKeySettings: string[] = ${JSON.stringify([...allEmailApiKeySettings].sort(), null, 2)};\n\n`;
     dataContent += `export const ModuleEmailApiKeyEnvVars: string[] = ${JSON.stringify([...allEmailApiKeyEnvVars].sort(), null, 2)};\n\n`;
+    // The transports installed, as names an operator reads. Plain data, kept
+    // apart from the registry beside it: that one holds dynamic imports of
+    // server-only handlers and has no business in a browser bundle.
+    dataContent += `export const ModuleEmailProviders: { id: string; name: string }[] = ${JSON.stringify(allEmailProviders.map((e) => ({ id: e.id, name: e.name })), null, 2)};\n\n`;
     dataContent += `export const ModuleWebhookChannels: { id: string; label: string; layout: "json" | "embed" | "attachment"; hosts?: string[]; urlPlaceholder?: string; module: string }[] = ${JSON.stringify(allWebhookChannels, null, 2)};\n`;
     fs.writeFileSync(DATA_FILE, dataContent);
 
@@ -618,6 +631,20 @@ function generateRegistry() {
     storageContent += '};\n\n';
     storageContent += `export const ModuleStorageProviders = ${JSON.stringify(allStorageProviders, null, 2)};\n`;
     fs.writeFileSync(STORAGE_FILE, storageContent);
+
+    // What sends this site's mail. Core used to import a vendor's client and
+    // call it, which meant one way to send mail on the whole platform; a
+    // transport is a module core loads and calls, like a storage provider.
+    const EMAIL_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-email.ts');
+    let emailContent = '// Auto-generated server-only email provider registry\n\n';
+    emailContent += 'export const EmailProviderRegistry: Record<string, () => Promise<unknown>> = {\n';
+    for (const ep of allEmailProviders) {
+        const handlerPath = ep.handler.replace(/\.tsx?$/, '');
+        const importPath = `@/modules/${ep.module}/${handlerPath}`;
+        emailContent += `  '${ep.id}': () => import('${importPath}').then((mod) => mod.default || mod),\n`;
+    }
+    emailContent += '};\n\n';
+    fs.writeFileSync(EMAIL_FILE, emailContent);
 
     const CRONS_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-crons.ts');
     let cronsContent = '// Auto-generated module cron jobs registry\n\n';

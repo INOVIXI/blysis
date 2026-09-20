@@ -2,14 +2,16 @@
   "id": "resend-provider",
   "name": "Resend Email Provider",
   "description": "Send emails via Resend API",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "resend_api_key"
   ],
   "emailProvider": {
     "apiKeySetting": "resend_api_key",
-    "envVar": "RESEND_API_KEY"
+    "envVar": "RESEND_API_KEY",
+    "handler": "lib/provider.ts",
+    "name": "Resend"
   },
   "category": "integration",
   "author": "Blysis",
@@ -36,6 +38,8 @@
   "translations": {
     "en": {
       "resendProvider": {
+        "adm_activeDesc": "Which of the installed transports this site hands its mail to. With only one installed there is nothing to choose.",
+        "adm_activeLabel": "Send through",
         "adm_field1Desc": "Your Resend API key (starts with re_...)",
         "adm_field1Label": "API Key",
         "adm_field2Desc": "Email address that will appear as the sender",
@@ -67,6 +71,8 @@
     },
     "tr": {
       "resendProvider": {
+        "adm_activeDesc": "Bu sitenin postasını kurulu taşıyıcılardan hangisine teslim edeceği. Tek bir tane kuruluysa seçilecek bir şey yoktur.",
+        "adm_activeLabel": "Gönderim yolu",
         "adm_field1Desc": "Resend API anahtarınız (re_... ile başlar)",
         "adm_field1Label": "API Anahtarı",
         "adm_field2Desc": "Gönderen olarak görünecek e-posta adresi",

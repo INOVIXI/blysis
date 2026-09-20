@@ -929,6 +929,17 @@ export const moduleManifestSchema = z.object({
                 .max(64)
                 .regex(/^[A-Z][A-Z0-9_]*$/, "emailProvider.envVar must be SCREAMING_SNAKE_CASE")
                 .optional(),
+            /**
+             * What actually sends, exporting `isConfigured` and `send`.
+             *
+             * Core used to import a vendor's client and call it, which meant
+             * one way to send mail on the whole platform. Declaring the
+             * handler makes a transport what a storage provider already is:
+             * a module core loads and calls, knowing nothing about it.
+             */
+            handler: relativePath("emailProvider.handler").optional(),
+            /** What the operator reads when they choose between transports. */
+            name: z.string().min(1).max(64).optional(),
         })
         .strict()
         .optional(),
