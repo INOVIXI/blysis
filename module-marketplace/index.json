@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T11:33:53Z",
+  "updatedAt": "2026-09-20T11:38:31Z",
   "modules": [
     {
       "id": "announcements",
@@ -479,13 +479,13 @@
           "description": "Kullanıcılar için sanal para cüzdanı"
         }
       },
-      "version": "1.6.3",
+      "version": "1.7.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T10:50:42Z",
+      "updatedAt": "2026-09-20T11:38:31Z",
       "screenshots": [],
       "tags": [
         "commerce"
