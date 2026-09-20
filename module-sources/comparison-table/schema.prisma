@@ -13,6 +13,20 @@ model ComparisonTable {
   description String?
   isActive    Boolean  @default(true)
   order       Int      @default(0)
+  /**
+   * What this table is about, when it is about something the site already
+   * has: `store.category:<id>`, and whatever another module mints later.
+   *
+   * With one, the columns are not typed by an operator - they are the things
+   * inside the subject, asked for through `comparison.columns`, so a table of
+   * a shop category has the category's own products in it with their live
+   * prices and a way to buy each one. Without one, the table is a standalone
+   * comparison of whatever somebody typed, which is what every table was
+   * before and what a site with no shop still wants.
+   *
+   * Unique: two tables about one subject is two answers to the same question.
+   */
+  subjectRef  String?  @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -36,10 +50,26 @@ model ComparisonColumn {
   /// The one an operator wants the eye to land on.
   highlight Boolean @default(false)
   order    Int     @default(0)
+  /**
+   * The thing this column is, when the table has a subject.
+   *
+   * Opaque here. It is how the operator's cells stay attached to the right
+   * product while everything visible about that product - its name, its
+   * price, its picture - comes from whoever owns it at the moment the page is
+   * drawn. `label` is kept as the fallback for the day that module is
+   * uninstalled: the table then reads the way it did before, rather than
+   * losing a column and every cell in it.
+   *
+   * A column whose source has gone is kept and not drawn. Deleting it would
+   * take an operator's answers with it, and a product moved out of a category
+   * this week is often back in it next week.
+   */
+  sourceRef String?
 
   cells ComparisonCell[]
 
   @@index([tableId, order])
+  @@unique([tableId, sourceRef])
 }
 
 /// A heading over a run of rows.

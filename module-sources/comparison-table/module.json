@@ -2,7 +2,7 @@
   "id": "comparison-table",
   "name": "Comparison Table",
   "description": "Compare several things feature by feature. A cell nobody filled in is left blank rather than marked as a no.",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",

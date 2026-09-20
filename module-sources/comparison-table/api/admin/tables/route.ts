@@ -18,6 +18,14 @@ import { storedCells, type DraftCell } from "../../../lib/table-payload";
  * anywhere, and that is data - so the simplest correct write is to delete the
  * children and lay down what the operator has now, with the client's own keys
  * mapped to fresh ids on the way in.
+ *
+ * With one exception, and it is the whole reason this file changed: a table
+ * about a subject does not own its columns. They are the things inside that
+ * subject - the products on a shelf - and they are reconciled on read. Deleting
+ * and recreating them here would give every column a new id on every save, and
+ * the cells hang off those ids: an operator would fill in a grid, press save,
+ * and find it empty. So for those tables the columns are left alone and the
+ * cells arrive keyed by the column ids the editor was given.
  */
 
 const cellSchema = z.object({
@@ -34,6 +42,8 @@ const tableSchema = z.object({
     description: z.string().max(1000).optional().nullable(),
     isActive: z.boolean().default(true),
     order: z.number().int().min(0).max(9999).default(0),
+    /** What the table is about. Null means the operator types the columns. */
+    subjectRef: z.string().max(160).optional().nullable(),
     columns: z.array(z.object({
         key: z.string().min(1).max(64),
         label: z.string().min(1).max(120),
@@ -97,6 +107,15 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: "That address is taken", code: "slug_taken" }, { status: 409 });
     }
 
+    // Read before the write: the update below sets the new subject, so asking
+    // the row afterwards compares a value to itself and never sees a change.
+    const previousSubject = draft.id
+        ? (await prisma.comparisonTable.findUnique({
+            where: { id: draft.id },
+            select: { subjectRef: true },
+        }))?.subjectRef ?? null
+        : null;
+
     const tableId = await prisma.$transaction(async (tx) => {
         const table = draft.id
             ? await tx.comparisonTable.update({
@@ -107,6 +126,7 @@ export async function PUT(request: NextRequest) {
                     description: draft.description ?? null,
                     isActive: draft.isActive,
                     order: draft.order,
+                    subjectRef: draft.subjectRef || null,
                 },
             })
             : await tx.comparisonTable.create({
@@ -116,12 +136,21 @@ export async function PUT(request: NextRequest) {
                     description: draft.description ?? null,
                     isActive: draft.isActive,
                     order: draft.order,
+                    subjectRef: draft.subjectRef || null,
                 },
             });
 
+        // Columns belong to the subject where there is one. Changing the
+        // subject is the one case where they do not survive: they describe
+        // the old one, and so do the answers in them.
+        const boundToSubject = Boolean(draft.subjectRef);
+        const subjectChanged = Boolean(draft.id) && previousSubject !== (draft.subjectRef || null);
+
         // Cells hang off rows and columns, so both cascades clear them.
         await tx.comparisonRow.deleteMany({ where: { tableId: table.id } });
-        await tx.comparisonColumn.deleteMany({ where: { tableId: table.id } });
+        if (!boundToSubject || subjectChanged) {
+            await tx.comparisonColumn.deleteMany({ where: { tableId: table.id } });
+        }
         await tx.comparisonGroup.deleteMany({ where: { tableId: table.id } });
 
         // The ids are made here rather than by the database, so the key the
@@ -129,11 +158,17 @@ export async function PUT(request: NextRequest) {
         // table goes down in four statements instead of one per row. A
         // transaction held open for a round trip per row is a table nobody
         // else can read for as long as the operator's connection takes.
-        const columnId = new Map(draft.columns.map((column) => [column.key, crypto.randomUUID()]));
+        // A subject's columns keep the ids they already have, because the
+        // cells the operator just filled in are keyed to them.
+        const columnId = new Map(
+            boundToSubject && !subjectChanged
+                ? draft.columns.map((column) => [column.key, column.key])
+                : draft.columns.map((column) => [column.key, crypto.randomUUID()]),
+        );
         const groupId = new Map(draft.groups.map((group) => [group.key, crypto.randomUUID()]));
         const rowId = new Map(draft.rows.map((row) => [row.key, crypto.randomUUID()]));
 
-        if (draft.columns.length > 0) {
+        if (draft.columns.length > 0 && (!boundToSubject || subjectChanged)) {
             await tx.comparisonColumn.createMany({
                 data: draft.columns.map((column, at) => ({
                     id: columnId.get(column.key) as string,
@@ -174,9 +209,18 @@ export async function PUT(request: NextRequest) {
 
         // The unstated cells are dropped here rather than stored as "no". See
         // `table-payload.ts` for why that is the whole point of this endpoint.
+        // A subject's columns were never deleted, so a cell may name one the
+        // draft did not carry; `known` is what actually exists to hang off.
+        const known = new Set(
+            (await tx.comparisonColumn.findMany({ where: { tableId: table.id }, select: { id: true } }))
+                .map((column) => column.id),
+        );
         const cells = storedCells(draft.cells.map((cell): DraftCell => ({
             rowId: rowId.get(cell.rowKey) ?? "",
-            columnId: columnId.get(cell.columnKey) ?? "",
+            columnId: (() => {
+                const mapped = columnId.get(cell.columnKey) ?? "";
+                return known.has(mapped) ? mapped : "";
+            })(),
             kind: cell.kind,
             value: cell.value ?? null,
         })));

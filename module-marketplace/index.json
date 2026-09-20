@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T11:30:12Z",
+  "updatedAt": "2026-09-20T11:33:53Z",
   "modules": [
     {
       "id": "announcements",
@@ -406,13 +406,13 @@
           "description": "Birkaç şeyi özellik özellik karşılaştırın, herkesin okuyabileceği bir tabloda"
         }
       },
-      "version": "1.5.2",
+      "version": "1.6.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Table",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T11:33:53Z",
       "screenshots": [],
       "tags": [
         "content"

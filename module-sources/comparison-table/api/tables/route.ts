@@ -1,18 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/core/sdk/server";
-import { buildGrid } from "../../lib/grid";
+import { readTable } from "../../lib/read-table";
 
 /**
  * GET /api/v1/comparison-tables?slug=... - one table, ready to draw.
+ * GET /api/v1/comparison-tables?subject=... - the table about one thing.
  *
  * The whole table in one answer: a reader comparing five plans across twenty
- * features should not cost a hundred requests. Public and the same for
- * everybody, so it may be kept for a minute.
+ * features should not cost a hundred requests.
+ *
+ * The subject form is what a shelf drawn as a comparison asks, and it is not
+ * cached: its columns are products, with prices that a campaign or a sale
+ * window can change between one minute and the next, and a shop showing last
+ * minute's price is worse than a shop that is slow.
  */
 export async function GET(request: NextRequest) {
     const slug = request.nextUrl.searchParams.get("slug");
+    const subject = request.nextUrl.searchParams.get("subject");
 
-    if (!slug) {
+    if (!slug && !subject) {
         const tables = await prisma.comparisonTable.findMany({
             where: { isActive: true },
             orderBy: [{ order: "asc" }, { title: "asc" }],
@@ -22,46 +28,16 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ tables }, { headers: { "Cache-Control": "public, max-age=60" } });
     }
 
-    const table = await prisma.comparisonTable.findFirst({
-        where: { slug, isActive: true },
-        include: {
-            columns: { orderBy: { order: "asc" } },
-            groups: { orderBy: { order: "asc" } },
-            rows: { orderBy: { order: "asc" }, include: { cells: true } },
-        },
-    });
+    // The reader's language, because a column's note is prose its owner
+    // writes and this route has no locale in its path to infer one from.
+    const locale = request.nextUrl.searchParams.get("locale") ?? undefined;
+    const table = await readTable({ slug: slug ?? undefined, subject: subject ?? undefined, locale });
     if (!table) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const grid = buildGrid(
-        table.columns.map((column) => ({ id: column.id, label: column.label, order: column.order })),
-        table.groups.map((group) => ({ id: group.id, label: group.label, order: group.order })),
-        table.rows.map((row) => ({ id: row.id, groupId: row.groupId, label: row.label, order: row.order })),
-        table.rows.flatMap((row) =>
-            row.cells.map((cell) => ({
-                rowId: cell.rowId,
-                columnId: cell.columnId,
-                kind: cell.kind as "yes" | "no" | "value",
-                value: cell.value,
-            })),
-        ),
-    );
-
     return NextResponse.json(
-        {
-            table: {
-                slug: table.slug,
-                title: table.title,
-                description: table.description,
-                columns: table.columns.map((column) => ({
-                    id: column.id,
-                    label: column.label,
-                    subtitle: column.subtitle,
-                    href: column.href,
-                    highlight: column.highlight,
-                })),
-                groups: grid.groups,
-            },
-        },
-        { headers: { "Cache-Control": "public, max-age=60" } },
+        { table },
+        // A table of typed columns says the same thing for a minute. One whose
+        // columns are things for sale does not.
+        { headers: { "Cache-Control": table.subjectRef ? "no-store" : "public, max-age=60" } },
     );
 }
