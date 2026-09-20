@@ -12,6 +12,13 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.13.0 - `SeedContext` carries `me`, the account whoever runs the seed is
+ * signed in as. Every seed wrote its rows onto the made-up accounts, which is
+ * right for a forum or a shop and wrong for every screen that is about *you*:
+ * the operator opened their own profile to look at the trophies, licences,
+ * chest and wallet that had just been seeded and found the empty state on all
+ * four. Additive: a seed that does not read it behaves as before.
+ *
  * 5.12.0 - `Badge` takes `solid`, and `aspect-card` is the shape every cover
  * picture is drawn in. Every tone was a ten percent wash over whatever sits
  * behind it, which is right on a panel and wrong on a photograph: the shop
@@ -556,4 +563,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.12.0";
+export const CORE_API_VERSION = "5.13.0";

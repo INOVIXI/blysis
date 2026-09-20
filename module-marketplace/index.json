@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T10:48:52Z",
+  "updatedAt": "2026-09-20T10:50:42Z",
   "modules": [
     {
       "id": "announcements",
@@ -479,13 +479,13 @@
           "description": "Kullanıcılar için sanal para cüzdanı"
         }
       },
-      "version": "1.6.2",
+      "version": "1.6.3",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T10:50:42Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -1446,13 +1446,13 @@
           "description": "Dijital ürünler için lisans anahtarı üretin, teslim edin ve etkinleştirin; anahtar başına makine sınırı ile"
         }
       },
-      "version": "1.4.2",
+      "version": "1.4.3",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "KeyRound",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T10:50:42Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -1755,13 +1755,13 @@
           "description": "Oyuncuların sunucuda kendilerine fısıldanan bir kodu okuyarak Minecraft hesabının sahibi olduklarını kanıtlamasını sağlayın"
         }
       },
-      "version": "1.5.2",
+      "version": "1.5.3",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Link2",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T10:50:42Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -2445,13 +2445,13 @@
           "description": "Yeni kullanıcı davet ederek kredi kazanın"
         }
       },
-      "version": "1.6.2",
+      "version": "1.6.3",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "UserPlus",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T10:50:42Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2845,13 +2845,13 @@
           "description": "Ürün, kategori, sepet ve siparişleriyle eksiksiz e-ticaret"
         }
       },
-      "version": "2.42.0",
+      "version": "2.42.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T10:48:52Z",
+      "updatedAt": "2026-09-20T10:50:42Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -3105,13 +3105,13 @@
           "description": "Kural tabanlı otomatik ödüllendirme motoruyla başarım rozetleri"
         }
       },
-      "version": "1.6.2",
+      "version": "1.6.3",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Trophy",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T10:50:42Z",
       "screenshots": [],
       "tags": [
         "community"

@@ -12,7 +12,7 @@ import type { ModuleSeed } from "@/core/sdk/seed";
  */
 const CATEGORIES: [string, string][] = [
     ["Ranks", "Permanent upgrades for your account."],
-    ["Crate keys", "Open a crate, get a drop."],
+    ["Crate Keys", "Open a crate, get a drop."],
     ["Cosmetics", "Hats, trails and pets."],
     ["Boosters", "More XP and money for everyone online."],
 ];
@@ -22,21 +22,21 @@ const CATEGORIES: [string, string][] = [
  * each, the window, the limit and the sale are branches nobody looks at.
  */
 const SCHEDULES: Record<string, Record<string, unknown>> = {
-    "Weekend booster pack": {
+    "Weekend Booster Pack": {
         // Friday and Saturday evenings only.
         availableDays: [5, 6],
         availableFromMinute: 18 * 60,
         availableUntilMinute: 23 * 60,
         outsideWindow: "countdown",
     },
-    "Legendary key": {
+    "Legendary Key": {
         // Ten a day, and one per person a day: the two limits together.
         periodStock: 10,
         periodStockWindow: "day",
         perPersonLimit: 1,
         perPersonPeriod: "day",
     },
-    "Key bundle (10)": {
+    "Key Bundle (10)": {
         // A sale that started yesterday and ends in a few days.
         salePrice: 19.99,
         saleFrom: new Date(Date.now() - 86_400_000),
@@ -56,7 +56,7 @@ const SCHEDULES: Record<string, Record<string, unknown>> = {
 };
 
 /** Products the seed leaves nearly gone, so the urgency badge has a subject. */
-const NEARLY_GONE = new Set(["Pet: baby dragon"]);
+const NEARLY_GONE = new Set(["Pet: Baby Dragon"]);
 
 /**
  * A name to a slug.
@@ -82,16 +82,16 @@ const PRODUCTS: [string, string, number, number | null][] = [
     ["MVP", "Ranks", 39.99, null],
     ["MVP+", "Ranks", 74.99, 89.99],
     ["Legend", "Ranks", 129.99, null],
-    ["Common key", "Crate keys", 1.49, null],
-    ["Rare key", "Crate keys", 3.99, null],
-    ["Legendary key", "Crate keys", 9.99, 12.99],
-    ["Key bundle (10)", "Crate keys", 29.99, 39.9],
-    ["Particle trail", "Cosmetics", 4.99, null],
-    ["Pet: baby dragon", "Cosmetics", 7.99, null],
-    ["Hat collection", "Cosmetics", 14.99, null],
-    ["2x XP for an hour", "Boosters", 2.99, null],
-    ["2x money for an hour", "Boosters", 2.99, null],
-    ["Weekend booster pack", "Boosters", 9.99, 14.99],
+    ["Common Key", "Crate Keys", 1.49, null],
+    ["Rare Key", "Crate Keys", 3.99, null],
+    ["Legendary Key", "Crate Keys", 9.99, 12.99],
+    ["Key Bundle (10)", "Crate Keys", 29.99, 39.9],
+    ["Particle Trail", "Cosmetics", 4.99, null],
+    ["Pet: Baby Dragon", "Cosmetics", 7.99, null],
+    ["Hat Collection", "Cosmetics", 14.99, null],
+    ["2x XP for an Hour", "Boosters", 2.99, null],
+    ["2x Money for an Hour", "Boosters", 2.99, null],
+    ["Weekend Booster Pack", "Boosters", 9.99, 14.99],
 ];
 
 /**
@@ -108,6 +108,20 @@ const ART = [
     "/demo/product-01.svg", "/demo/product-02.svg", "/demo/product-03.svg", "/demo/product-04.svg",
     "/demo/product-05.svg", "/demo/product-06.svg", "/demo/product-07.svg", "/demo/product-08.svg",
 ];
+
+/**
+ * How many pictures a seeded product has.
+ *
+ * A third of them used to get three and the rest got one, which left the
+ * gallery - arrows, dots, a counter, a thumbnail strip and the full-size view
+ * behind them - drawn on two products out of fifteen. Every product has a
+ * gallery now, and the count varies so the strip is exercised at each width:
+ * a shop where every product has exactly three pictures tests one layout.
+ */
+function galleryFor(index: number): string[] {
+    const many = 2 + (index % 3); // two, three or four
+    return Array.from({ length: many }, (_, at) => ART[(index + at * 3) % ART.length]);
+}
 
 const STATUSES = ["COMPLETED", "COMPLETED", "COMPLETED", "PENDING", "PROCESSING", "CANCELLED", "REFUNDED"] as const;
 
@@ -155,10 +169,10 @@ export const seed: ModuleSeed = {
                     stock: NEARLY_GONE.has(name)
                         ? 2
                         : limited ? (index === 4 ? 0 : ctx.int(1, 25)) : null,
-                    image: ART[index % ART.length],
-                    images: index % 3 === 0
-                        ? [ART[index % ART.length], ART[(index + 3) % ART.length], ART[(index + 5) % ART.length]]
-                        : [],
+                    // The first of the gallery is the card's picture, so the
+                    // shelf and the page open on the same image.
+                    image: galleryFor(index)[0],
+                    images: galleryFor(index),
                     isFeatured: index < 3,
                     createdAt: ctx.daysAgo(365),
                     categoryId: categories.get(category)?.id ?? null,
@@ -171,7 +185,7 @@ export const seed: ModuleSeed = {
                     ...(SCHEDULES[name] ?? {}),
                     // One product for a rank, so the badge and the refusal
                     // are both visible on a seeded shop.
-                    ...(name === "Hat collection" && vipRole ? { roleIds: [vipRole.id] } : {}),
+                    ...(name === "Hat Collection" && vipRole ? { roleIds: [vipRole.id] } : {}),
                 },
             }));
             products.push({ id: row.id, price, name });
@@ -198,7 +212,12 @@ export const seed: ModuleSeed = {
                     total: subtotal,
                     currency: "USD",
                     paymentMethod: ctx.pick(["stripe", "paypal", "paytr", "credits"]),
-                    userId: ctx.pick(ctx.users).id,
+                    // Half of them are the operator's own. Their order tab
+                    // pages ten at a time and shows a status filter, and none
+                    // of that is visible on an account that has never bought
+                    // anything - which is what every seeded install left the
+                    // operator looking at.
+                    userId: i % 2 === 0 ? ctx.me.id : ctx.pick(ctx.users).id,
                     createdAt,
                 },
             }));
@@ -259,7 +278,6 @@ export const seed: ModuleSeed = {
                 chestRows += 1;
             }
         }
-
 
         // Who already stands on a rung.
         //

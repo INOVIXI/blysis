@@ -233,6 +233,7 @@ export function inOrder(seeds: Map<string, ModuleSeed>): string[] {
 function makeContext(
     prisma: PrismaClient,
     users: SeededUser[],
+    me: SeededUser,
     moduleId: string,
     record: (model: string, id: string) => void,
 ): SeedContext {
@@ -245,6 +246,7 @@ function makeContext(
     return {
         prisma,
         users,
+        me,
         scale: OPTIONS.scale,
         int,
         pick,
@@ -373,6 +375,148 @@ async function seedUsers(
     return users;
 }
 
+/**
+ * An inbox with something in it.
+ *
+ * Messages are core's, so no module seeds them, and nothing else writes a
+ * conversation - which left the one screen on a member's account that is
+ * nothing but a list with no list on it. The term and the pager above it
+ * cannot be judged against an empty state, and neither can the unread badge,
+ * the read receipt or the reply box.
+ *
+ * Every thread is with the operator, because that is the account the inbox
+ * will be read from. A few are left unread: `lastReadAt` is what the badge
+ * counts against, and a list where every row is read shows the badge nowhere.
+ */
+const OPENERS = [
+    "Is the weekend event still on?",
+    "Thanks for sorting that out yesterday.",
+    "I bought the wrong rank, can you swap it?",
+    "Somebody is griefing near spawn.",
+    "Any chance of a discount code for the new key?",
+    "My licence key stopped working after the update.",
+    "Where do I claim what I bought?",
+    "Can you look at my appeal when you get a minute?",
+    "The store page is showing the old price for me.",
+    "Adding a friend to my plot - what is the command?",
+    "Got the reward, thank you.",
+    "Is there a way to change my display name?",
+    "The vote link sends me to a dead page.",
+    "Reporting a bug: the chest shows an item twice.",
+];
+
+const REPLIES = [
+    "Taking a look now.",
+    "That one is fixed on the test server already.",
+    "Give it an hour and try again.",
+    "Sorted - let me know if it comes back.",
+    "Thanks for reporting it.",
+    "I have passed it to whoever owns that part.",
+];
+
+async function seedConversations(
+    prisma: PrismaClient,
+    users: SeededUser[],
+    me: SeededUser,
+    record: (model: string, id: string) => void,
+): Promise<number> {
+    const withMe = users.filter((user) => user.id !== me.id).slice(0, OPENERS.length);
+    let written = 0;
+
+    for (const [index, other] of withMe.entries()) {
+        // One thread per pair, which is the rule the app itself follows when
+        // somebody starts a conversation with a person they have written to
+        // before. A rerun finds it and leaves it alone.
+        const existing = await prisma.conversation.findFirst({
+            where: {
+                AND: [
+                    { participants: { some: { userId: me.id } } },
+                    { participants: { some: { userId: other.id } } },
+                ],
+            },
+            select: { id: true },
+        });
+        if (existing) continue;
+
+        const opened = new Date(Date.now() - (index + 1) * 36 * 3_600_000);
+        const conversation = await prisma.conversation.create({
+            data: {
+                participants: {
+                    create: [
+                        // Every third thread is left unread, so the badge and
+                        // the bold row have somewhere to appear.
+                        { userId: me.id, lastReadAt: index % 3 === 0 ? null : new Date() },
+                        { userId: other.id, lastReadAt: new Date() },
+                    ],
+                },
+                createdAt: opened,
+            },
+        });
+        record("conversation", conversation.id);
+
+        const lines: { authorId: string; body: string; createdAt: Date }[] = [
+            { authorId: other.id, body: OPENERS[index], createdAt: opened },
+            { authorId: me.id, body: REPLIES[index % REPLIES.length], createdAt: new Date(opened.getTime() + 600_000) },
+        ];
+        if (index % 2 === 0) {
+            lines.push({
+                authorId: other.id,
+                body: "Appreciated, thank you.",
+                createdAt: new Date(opened.getTime() + 1_200_000),
+            });
+        }
+
+        for (const line of lines) {
+            const message = await prisma.message.create({
+                data: { conversationId: conversation.id, ...line },
+            });
+            record("message", message.id);
+            written += 1;
+        }
+
+        await prisma.conversation.update({
+            where: { id: conversation.id },
+            data: { lastMessageAt: lines[lines.length - 1].createdAt },
+        });
+    }
+
+    return written;
+}
+
+/**
+ * Whose own screens this run should fill.
+ *
+ * `--clean` takes these rows back like any other, and the tool already
+ * refuses a production database without being told twice, so writing onto a
+ * real account here is a development convenience rather than a surprise.
+ *
+ * The site's own administrator, highest role first, and never a demo account:
+ * an operator seeds a site so they can look at it, and the account they look
+ * at it with is their own. A database with no staff account outside the demo
+ * set falls back to the first demo account, which is an admin by
+ * construction.
+ */
+async function whoIsLookingAtThis(prisma: PrismaClient, demo: SeededUser[]): Promise<SeededUser> {
+    const real = await prisma.user.findFirst({
+        where: {
+            email: { not: { endsWith: `@${DEMO_DOMAIN}` } },
+            role: { priority: { gt: 0 } },
+        },
+        // Two administrators tie on priority, and a tie broken by whatever
+        // the database felt like returning seeds a different account on
+        // different runs. The oldest of them is the one who set the site up.
+        orderBy: [{ role: { priority: "desc" } }, { createdAt: "asc" }],
+        select: { id: true, username: true, email: true, role: { select: { priority: true } } },
+    });
+    if (!real) return demo[0];
+    return {
+        id: real.id,
+        username: real.username,
+        email: real.email,
+        rolePriority: real.role?.priority ?? 0,
+    };
+}
+
 // ---------------------------------------------------------------------------
 // Running
 // ---------------------------------------------------------------------------
@@ -446,7 +590,10 @@ async function main(): Promise<void> {
 
         await seedSiteIdentity(prisma);
         const users = await seedUsers(prisma, record("core"));
+        const operator = await whoIsLookingAtThis(prisma, users);
+        const messages = await seedConversations(prisma, users, operator, record("core"));
         console.log(`core: ${users.length} accounts (password ${DEMO_PASSWORD})`);
+        console.log(`      personal screens seeded for ${operator.username}, ${messages} messages`);
 
         let toRun = inOrder(seeds);
         if (OPTIONS.only) {
@@ -468,7 +615,7 @@ async function main(): Promise<void> {
             if (!seed) continue;
             console.log(`${id}:`);
             try {
-                await seed.run(makeContext(prisma, users, id, record(id)));
+                await seed.run(makeContext(prisma, users, operator, id, record(id)));
             } catch (err) {
                 // One module's seed failing is not a reason to lose the rest,
                 // and the ledger is written either way so what it did write

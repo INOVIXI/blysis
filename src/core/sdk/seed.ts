@@ -41,6 +41,23 @@ export interface SeedContext {
     users: SeededUser[];
 
     /**
+     * The account whoever runs this is signed in as.
+     *
+     * Every seed wrote its rows onto the made-up accounts, which is right for
+     * a forum or a shop - those are screens about other people. It is wrong
+     * for every screen that is about *you*: the operator opened their own
+     * profile to look at the trophies, the licence keys, the chest and the
+     * wallet that had just been seeded, and found the empty state on all four,
+     * because none of those rows were theirs.
+     *
+     * So a seed that writes something a member sees on their own account
+     * gives this one a share of it. It is the site's own administrator when
+     * there is one, and the first demo account otherwise, so a fresh install
+     * with nobody in it still seeds.
+     */
+    me: SeededUser;
+
+    /**
      * How much to write, as a multiplier on each seed's own idea of "a few".
      * 1 is a handful, 3 is a site that looks lived in, 10 is where pagination
      * and truncation start to matter.

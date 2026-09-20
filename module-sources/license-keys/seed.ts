@@ -41,8 +41,12 @@ export const seed: ModuleSeed = {
                 }));
             }
 
-            for (let i = 0; i < 3; i++) {
-                const owner = ctx.pick(ctx.users);
+            // Four keys per product, and the first is the operator's own. A
+            // licence screen is the buyer's screen: the only account that can
+            // see what a key looks like revealed, copied and counted against
+            // its activations is the account holding one.
+            for (let i = 0; i < 4; i++) {
+                const owner = i === 0 ? ctx.me : ctx.pick(ctx.users);
                 const plain = generateKey(product.prefix);
                 const key = await ctx.create("licenseKey", () => ctx.prisma.licenseKey.create({
                     data: {
@@ -61,11 +65,19 @@ export const seed: ModuleSeed = {
                 }));
                 issued += 1;
 
-                // One of each product is retired and one is used up, so the
-                // status filter and the activation counter both have something
-                // to show.
+                // One of each product is retired, one is used up and one has
+                // lapsed, so the status filter and the activation counter
+                // both have something to show.
                 if (i === 1) {
                     await ctx.prisma.licenseKey.update({ where: { id: key.id }, data: { status: "revoked", note: "Refunded" } });
+                } else if (i === 3) {
+                    // The fourth state the screen has a column for, and the
+                    // one this seed claimed to write and never did: a key
+                    // whose window has closed rather than been taken away.
+                    await ctx.prisma.licenseKey.update({
+                        where: { id: key.id },
+                        data: { expiresAt: ctx.daysAgo(20) },
+                    });
                 } else if (i === 2) {
                     for (let machine = 0; machine < product.maxActivations; machine++) {
                         await ctx.create("licenseActivation", () => ctx.prisma.licenseActivation.create({
@@ -84,6 +96,6 @@ export const seed: ModuleSeed = {
                 }
             }
         }
-        ctx.log(`${PRODUCTS.length} products, ${issued} keys`);
+        ctx.log(`${PRODUCTS.length} products, ${issued} keys (one of each to ${ctx.me.username})`);
     },
 };

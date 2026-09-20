@@ -8,14 +8,14 @@ import type { ModuleSeed } from "@/core/sdk/seed";
  * most accounts, the rare ones to two or three.
  */
 const TROPHIES: [string, string, number, string, string][] = [
-    ["First post", "Wrote something on the forum.", 5, "MessageSquare", "#3b82f6"],
+    ["First Post", "Wrote something on the forum.", 5, "MessageSquare", "#3b82f6"],
     ["Welcome", "Signed in for the first time.", 5, "Hand", "#22c55e"],
     ["Regular", "Signed in on thirty different days.", 25, "CalendarCheck", "#8b5cf6"],
     ["Supporter", "Bought something from the store.", 20, "ShoppingBag", "#f59e0b"],
     ["Patron", "Spent over a hundred.", 100, "Crown", "#eab308"],
     ["Voter", "Voted for the server ten times.", 15, "Vote", "#06b6d4"],
     ["Helper", "Answered ten support threads.", 50, "LifeBuoy", "#10b981"],
-    ["Bug hunter", "Reported something that turned out to be real.", 40, "Bug", "#ef4444"],
+    ["Bug Hunter", "Reported something that turned out to be real.", 40, "Bug", "#ef4444"],
     ["Veteran", "Been here a year.", 75, "Medal", "#a855f7"],
 ];
 
@@ -34,7 +34,15 @@ export const seed: ModuleSeed = {
         for (const trophy of trophies) {
             // Worth more, held by fewer: the points are the difficulty.
             const share = trophy.points >= 75 ? 0.1 : trophy.points >= 40 ? 0.25 : trophy.points >= 20 ? 0.5 : 0.85;
-            for (const user of ctx.some(ctx.users, Math.ceil(ctx.users.length * share))) {
+            // The operator's own trophy case is the first one they open, and
+            // it was always the empty state. All but the rarest: a case with
+            // every trophy in it shows nothing about what rare looks like,
+            // and the count under each trophy is what the public page is for.
+            const holders = [
+                ...(trophy.points < 75 ? [ctx.me] : []),
+                ...ctx.some(ctx.users, Math.ceil(ctx.users.length * share)),
+            ];
+            for (const user of holders) {
                 const already = await ctx.prisma.userTrophy.findFirst({
                     where: { userId: user.id, trophyId: trophy.id },
                 });
