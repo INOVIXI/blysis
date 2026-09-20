@@ -3,6 +3,8 @@ import { moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/s
 import { auth } from "@/core/sdk/auth";
 import { couponValidateSchema } from "../../../lib/validations";
 import { computeCouponDiscount, scopedSubtotal } from "../../../lib/pricing";
+import { priceCartLines } from "../../../lib/cart-pricing";
+import { creditingPurchases } from "../../../lib/upgrade-credit-server";
 
 // POST /api/v1/store/coupons/validate - Check coupon validity
 export async function POST(request: NextRequest) {
@@ -50,13 +52,15 @@ export async function POST(request: NextRequest) {
         where: { userId: session.user.id },
         include: { product: { select: { id: true, price: true, categoryId: true } } },
     });
-    const lines = cartItems.map((item) => ({
-        productId: item.product.id,
-        categoryId: item.product.categoryId ?? null,
-        price: Number(item.product.price),
-        quantity: item.quantity,
-    }));
-    const cartSubtotal = lines.reduce((sum, line) => sum + line.price * line.quantity, 0);
+    const { lines, subtotal: cartSubtotal } = priceCartLines(
+        cartItems.map((item) => ({
+            productId: item.product.id,
+            categoryId: item.product.categoryId ?? null,
+            price: Number(item.product.price),
+            quantity: item.quantity,
+        })),
+        await creditingPurchases(session.user.id),
+    );
 
     // The same function the checkout charges by.
     //
@@ -67,7 +71,7 @@ export async function POST(request: NextRequest) {
     // till is worse than no preview.
     const eligible = scopedSubtotal(
         coupon,
-        lines,
+        lines.map((line) => ({ productId: line.productId, price: line.payPrice, quantity: line.quantity })),
         lines.map((line) => ({ id: line.productId, categoryId: line.categoryId })),
     );
     const priced = computeCouponDiscount(coupon, cartSubtotal, new Date(), eligible);

@@ -15,6 +15,9 @@
  * is applied in `hideShut` rather than in SQL.
  */
 import { moduleSettings, prisma, siteTimeZone } from "@/core/sdk/server";
+import { auth } from "@/core/sdk/auth";
+import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
+import { creditingPurchases } from "./upgrade-credit-server";
 import { PUBLIC_PRODUCT } from "./public-product";
 import { availabilityOf, effectivePrice } from "./availability";
 import { pricedForCampaign, runningCampaignEntries } from "./campaign-server";
@@ -56,8 +59,48 @@ export async function readStoreCategories(): Promise<StoreCategory[]> {
     return rows;
 }
 
+/**
+ * One product as a shelf draws it.
+ *
+ * Named, and built field by field rather than spread from the row, because
+ * this crosses into a Client Component. `price` was already a number - the
+ * window works it out - but `comparePrice` and `salePrice` came straight off
+ * Prisma as `Decimal`, and React refuses to serialise one: every visit to a
+ * category threw "Only plain objects can be passed to Client Components".
+ *
+ * It went unnoticed because the page handed the row over as `as never`, which
+ * is a cast that agrees with anything. `readProduct` had already converted the
+ * same two columns for the same reason; the listing had not.
+ */
+export interface ShelfProduct {
+    id: string;
+    number: number;
+    name: string;
+    slug: string;
+    /** What this reader pays: the credit for what they own is already off it. */
+    price: number;
+    /** Taken off because they already own a cheaper rung. Zero for most people. */
+    upgradeCredit: number;
+    /** What it costs somebody who owns nothing on this shelf. */
+    fullPrice: number;
+    comparePrice: number | null;
+    was: number | null;
+    onSale: boolean;
+    image: string | null;
+    stock: number | null;
+    isFeatured: boolean;
+    category: { id: string; name: string; slug: string } | null;
+    availability: {
+        state: string;
+        buyable: boolean;
+        opensAt: string | null;
+        closesAt: string | null;
+        restricted: boolean;
+    };
+}
+
 export interface StoreProducts {
-    products: unknown[];
+    products: ShelfProduct[];
     lowStockAt: number;
     page: number;
     pages: number;
@@ -67,9 +110,14 @@ export interface StoreProducts {
 /**
  * One page of products, annotated the way the card expects.
  *
- * Nobody in particular: no per-person counting and no rank, because the same
- * answer is drawn for every reader. The product page, which knows who is
- * asking, says the rest.
+ * Almost nobody in particular: no per-person limit counting and no rank gate,
+ * because those hide things and the shelf is the same list for everybody.
+ *
+ * The price is not the same for everybody. A shop selling a ladder makes a
+ * different offer to somebody standing on it - pay the difference - and that
+ * offer was invisible until the checkout took the money: the card said 19.99
+ * and the charge was 10.00. A price nobody can see before they commit is not
+ * an offer.
  */
 export async function readStoreProducts(options: {
     categorySlug?: string;
@@ -112,11 +160,54 @@ export async function readStoreProducts(options: {
     const campaignEntries = await runningCampaignEntries(prisma, now, zone);
     const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
 
-    const annotated = hideShut(products as unknown as ProductRow[], now, zone).map((row) => {
+    // Once for the page: empty for a visitor, and for a shop that has turned
+    // the credit off.
+    const session = await auth();
+    const ownedIds = await creditingPurchases(session?.user?.id);
+
+    const visible = hideShut(products as unknown as ProductRow[], now, zone);
+    // The rungs of every ladder on this page, priced the way the cards are.
+    // A credit is worked out against what is on the shelf, so it is the same
+    // list the reader is looking at.
+    const ladder = visible.map((other) => ({
+        id: other.id,
+        categoryId: (other as unknown as { category: { id: string } | null }).category?.id ?? null,
+        price: pricedForCampaign(other.id, effectivePrice(rulesOf(other), now), campaignEntries).price,
+    }));
+
+    const annotated: ShelfProduct[] = visible.map((row) => {
         const rules = rulesOf(row);
         const state = availabilityOf({ ...rules, roleIds: [] }, { boughtByPerson: 0, soldInPeriod: 0 }, now, zone);
+        const priced = pricedForCampaign(row.id, effectivePrice(rules, now), campaignEntries);
+        const credit = upgradeCredit(
+            {
+                id: row.id,
+                categoryId: (row as unknown as { category: { id: string } | null }).category?.id ?? null,
+                price: priced.price,
+            },
+            ladder,
+            ownedIds,
+        );
+        const source = row as unknown as {
+            id: string; number: number; name: string; slug: string;
+            comparePrice: unknown; image: string | null; stock: number | null; isFeatured: boolean;
+            category: { id: string; name: string; slug: string } | null;
+        };
         return {
-            ...row,
+            id: source.id,
+            number: source.number,
+            name: source.name,
+            slug: source.slug,
+            price: priceAfterCredit(priced.price, credit),
+            upgradeCredit: credit,
+            fullPrice: priced.price,
+            comparePrice: source.comparePrice === null ? null : Number(source.comparePrice),
+            was: priced.was,
+            onSale: priced.onSale,
+            image: source.image,
+            stock: source.stock,
+            isFeatured: source.isFeatured,
+            category: source.category,
             availability: {
                 state: state.state,
                 buyable: state.buyable,
@@ -124,7 +215,6 @@ export async function readStoreProducts(options: {
                 closesAt: state.closesAt ? state.closesAt.toISOString() : null,
                 restricted: row.roleIds.length > 0,
             },
-            ...pricedForCampaign(row.id, effectivePrice(rules, now), campaignEntries),
         };
     });
 

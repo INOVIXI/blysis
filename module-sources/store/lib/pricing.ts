@@ -7,6 +7,8 @@
 // imports computeOrderPricing/computeCouponDiscount/computeTotals instead of
 // inlining the arithmetic.
 
+import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
+
 /**
  * Money, to the cent.
  *
@@ -111,16 +113,17 @@ export function computeOrderPricing(params: {
         const product = products.find((p) => p.id === item.productId)!;
         let price = Number(product.price);
 
-        // Cumulative upgrade: pay difference if user owns cheaper in same category
-        if (product.categoryId) {
-            const ownedInCategory = products.filter(
-                (p) => p.categoryId === product.categoryId && ownedProductIds.has(p.id) && Number(p.price) < price
-            );
-            if (ownedInCategory.length > 0) {
-                const highestOwned = Math.max(...ownedInCategory.map((p) => Number(p.price)));
-                price = Math.max(0, price - highestOwned);
-            }
-        }
+        // Pay the difference where a cheaper rung on the same ladder is
+        // already owned. The rule is `upgrade-credit.ts`, because four screens
+        // ahead of this one have to quote the same number the checkout takes.
+        price = priceAfterCredit(
+            price,
+            upgradeCredit(
+                { id: product.id, categoryId: product.categoryId ?? null, price },
+                products.map((p) => ({ id: p.id, categoryId: p.categoryId ?? null, price: Number(p.price) })),
+                ownedProductIds,
+            ),
+        );
 
         // The same rung the product page quoted, from the same function.
         const bulkDiscountApplied = bulkDiscountFor(bulkDiscounts, product, item.quantity);

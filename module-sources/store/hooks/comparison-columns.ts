@@ -21,6 +21,9 @@ import { effectivePrice } from "../lib/availability";
 import { pricedForCampaign, runningCampaignEntries } from "../lib/campaign-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "../lib/availability-server";
 import { categoryIdIn } from "../lib/comparison-subject";
+import { priceAfterCredit, upgradeCredit } from "../lib/upgrade-credit";
+import { creditingPurchases } from "../lib/upgrade-credit-server";
+import { auth } from "@/core/sdk/auth";
 
 /** How many products one shelf may put in a table before it stops being one. */
 const MOST_COLUMNS = 12;
@@ -43,9 +46,19 @@ const columns: HookHandlerFor<"comparison.columns", "filter"> = async (current, 
 
     const visible = hideShut(rows as unknown as ProductRow[], now, zone);
 
+    // A ladder is exactly where the upgrade credit matters most: the whole
+    // point of the table is choosing the next rung up, and the price of that
+    // rung is different for somebody already on one.
+    const session = await auth();
+    const ownedIds = await creditingPurchases(session?.user?.id);
+    const ladder = visible.map((row) => ({
+        id: row.id,
+        categoryId,
+        price: pricedForCampaign(row.id, effectivePrice(rulesOf(row), now), campaignEntries).price,
+    }));
     // The reader's own language: this runs from an API route with no locale in
     // its path, so without being told it answers in the default and a Turkish
-    // shopper was shown an English line under the price.
+    // shopper was shown "19.99 off: you own a lower rank".
     const t = who?.locale
         ? await getTranslations({ locale: who.locale, namespace: "store" })
         : await getTranslations("store");
@@ -71,6 +84,7 @@ const columns: HookHandlerFor<"comparison.columns", "filter"> = async (current, 
             // the card beside it does.
             const compareAt = source.comparePrice === null ? null : Number(source.comparePrice);
             const was = priced.was ?? (compareAt !== null && compareAt > priced.price ? compareAt : null);
+            const credit = upgradeCredit({ id: source.id, categoryId, price: priced.price }, ladder, ownedIds);
             const path = `/store/product/${source.number}/${source.slug}`;
             const low = typeof lowStockAt === "number" && lowStockAt > 0
                 && source.stock !== null && source.stock > 0 && source.stock <= lowStockAt;
@@ -79,13 +93,20 @@ const columns: HookHandlerFor<"comparison.columns", "filter"> = async (current, 
                 ref: source.id,
                 label: source.name,
                 image: source.image,
-                price: priced.price,
+                price: priceAfterCredit(priced.price, credit),
                 was,
+                // What somebody with no history pays. The table draws the sale
+                // badge from this rather than from the price, so a personal
+                // credit is not advertised as a discount to everybody.
                 fullPrice: priced.price,
-                // One line under the price. Written here rather than in the
-                // table, because the shop is what knows the words for its own
-                // shelves.
-                note: low ? t("leftInStock", { count: Number(source.stock) }) : null,
+                // One line under the price, and the upgrade outranks the stock:
+                // "you already own VIP" changes what somebody pays, and "4
+                // left" changes only how fast they decide. Written here rather
+                // than in the table, because the shop is what knows the words
+                // for its own offers.
+                note: credit > 0
+                    ? t("upgradeNote", { amount: credit.toFixed(2) })
+                    : low ? t("leftInStock", { count: Number(source.stock) }) : null,
                 href: path,
                 buyHref: path,
                 // Cheapest first, so the ladder reads upward.

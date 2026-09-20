@@ -22,7 +22,7 @@ import {
     computeTotals,
     grossUpForFee,
 } from "../../lib/pricing";
-import { stillOwnedWhere } from "../../lib/ownership";
+import { creditingPurchases } from "../../lib/upgrade-credit-server";
 import { z } from "zod";
 
 /**
@@ -210,13 +210,11 @@ export async function POST(request: NextRequest) {
         });
 
         // ── Cumulative upgrade check ──
-        // A lapsed purchase stops crediting the upgrade it once paid for; see
-        // `stillOwnedWhere`.
-        const ownedProducts = await prisma.ownedProduct.findMany({
-            where: stillOwnedWhere(session.user.id, new Date()),
-            select: { productId: true },
-        });
-        const ownedIds = new Set(ownedProducts.map((o) => o.productId));
+        // The same set every screen ahead of this one asked for, so the price
+        // quoted on the card, the product page, the cart and the comparison
+        // table is the price taken here. It is empty where the operator has
+        // turned the credit off, and a lapsed purchase stops crediting.
+        const ownedIds = await creditingPurchases(session.user.id);
 
         // ── Calculate item prices (with bulk discounts + cumulative upgrades) ──
         const { subtotal, orderItems } = computeOrderPricing({

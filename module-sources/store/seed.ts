@@ -255,6 +255,50 @@ export const seed: ModuleSeed = {
         }
 
 
+        // Who already stands on a rung.
+        //
+        // A paid order writes an ownership at settlement, and the seed's orders
+        // never go through a gateway, so a demo site had none at all: the
+        // upgrade credit - pay the difference for the next rank up - could not
+        // fire anywhere, which made a whole feature invisible to anybody
+        // looking at the demo. The operator gets the bottom rung, because the
+        // offer they are being shown is the one they are most likely to test.
+        const ranksShelf = categories.get("Ranks");
+        if (ranksShelf) {
+            const rungs = await ctx.prisma.product.findMany({
+                where: { categoryId: ranksShelf.id },
+                orderBy: { price: "asc" },
+                select: { id: true, name: true },
+                take: 12,
+            });
+            const owners = [ctx.me, ...ctx.some(ctx.users, 4)];
+            let owned = 0;
+            for (const [index, owner] of owners.entries()) {
+                // Different people on different rungs, so a table read as one
+                // of them shows a different offer from the next.
+                const rung = rungs[index % Math.max(1, rungs.length - 1)];
+                if (!rung) continue;
+                const already = await ctx.prisma.ownedProduct.findFirst({
+                    where: { userId: owner.id, productId: rung.id },
+                    select: { id: true },
+                });
+                if (already) continue;
+                await ctx.create("ownedProduct", () => ctx.prisma.ownedProduct.create({
+                    data: {
+                        userId: owner.id,
+                        productId: rung.id,
+                        // Owned outright: a rank with an end date is a
+                        // different demo, and the credit rule already has its
+                        // own test for the lapsed case.
+                        expiresAt: null,
+                        createdAt: ctx.daysAgo(90),
+                    },
+                }));
+                owned += 1;
+            }
+            ctx.log(`${owned} rank ownerships, so the upgrade credit has somebody to apply to`);
+        }
+
         // The ranks shelf is a ladder, so it is drawn as one.
         //
         // The switch is the shop's, because the category is the shop's row.

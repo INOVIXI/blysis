@@ -90,8 +90,8 @@ export default async function StorePage({ searchParams }: PageProps) {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {(shelf?.products ?? []).map((product) => (
                 <ProductCard
-                    key={(product as { id: string }).id}
-                    product={product as never}
+                    key={product.id}
+                    product={product}
                     lowStockAt={shelf?.lowStockAt ?? 0}
                     showCategory={Boolean(search)}
                 />

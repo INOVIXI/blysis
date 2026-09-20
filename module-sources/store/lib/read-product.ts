@@ -17,6 +17,9 @@ import { isAdmin, moduleSettings, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { PUBLIC_PRODUCT } from "./public-product";
 import { availabilityFor, type ProductRow } from "./availability-server";
+import { effectivePrice } from "./availability";
+import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
+import { creditingPurchases } from "./upgrade-credit-server";
 
 export type ProductRead = Awaited<ReturnType<typeof readProduct>>;
 
@@ -40,6 +43,37 @@ export async function readProduct(id: string) {
 
     const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
 
+    // What this reader pays rather than what the product costs. Somebody
+    // standing on a lower rung of the same ladder pays the difference, and
+    // until now the only place that was true was the checkout.
+    const ownedIds = await creditingPurchases(session?.user?.id);
+    const ladder = ownedIds.size === 0 || !product.category
+        ? []
+        : (await prisma.product.findMany({
+            where: { categoryId: product.category.id, isActive: true, id: { in: [...ownedIds] } },
+            select: { id: true, categoryId: true, price: true, salePrice: true, saleFrom: true, saleUntil: true },
+            take: 50,
+        })).map((row) => ({
+            id: row.id,
+            categoryId: row.categoryId,
+            // The same price the shelf credits against: a sale on the rung
+            // somebody owns is what they actually paid toward this one.
+            price: effectivePrice(
+                {
+                    price: Number(row.price),
+                    salePrice: row.salePrice === null ? null : Number(row.salePrice),
+                    saleFrom: row.saleFrom,
+                    saleUntil: row.saleUntil,
+                },
+                new Date(),
+            ).price,
+        }));
+    const credit = upgradeCredit(
+        { id: product.id, categoryId: product.category?.id ?? null, price: state.price },
+        ladder,
+        ownedIds,
+    );
+
     return {
         ...product,
         /*
@@ -62,8 +96,12 @@ export async function readProduct(id: string) {
             remainingForPerson: state.remainingForPerson,
             remainingInPeriod: state.remainingInPeriod,
         },
-        price: state.price,
+        price: priceAfterCredit(state.price, credit),
         was: state.was,
         onSale: state.onSale,
+        /** Taken off because a cheaper rung on this ladder is already owned. */
+        upgradeCredit: credit,
+        /** What it costs somebody who owns nothing on this shelf. */
+        fullPrice: state.price,
     };
 }

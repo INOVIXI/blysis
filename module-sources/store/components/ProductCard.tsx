@@ -35,7 +35,12 @@ export interface CardProduct {
     number: number;
     name: string;
     slug: string;
+    /** What this reader pays. The upgrade credit is already off it. */
     price: number;
+    /** Taken off because a cheaper rung on this shelf is already owned. */
+    upgradeCredit?: number;
+    /** What it costs somebody who owns nothing on this shelf. */
+    fullPrice?: number;
     comparePrice?: number | null;
     was?: number | null;
     image: string | null;
@@ -57,7 +62,14 @@ export function ProductCard({ product, lowStockAt = 0, showCategory = false }: P
     const t = useTranslations("store");
     const { format: formatPrice } = useSiteCurrency();
 
-    const was = product.was ?? product.comparePrice ?? null;
+    const credit = Number(product.upgradeCredit ?? 0);
+    const upgrading = credit > 0;
+    // The struck-through figure is the sale's, or - when this reader is
+    // upgrading - what the rung costs somebody starting from nothing. Both
+    // answer the same question: what am I not paying.
+    const was = upgrading
+        ? (product.fullPrice ?? null)
+        : product.was ?? product.comparePrice ?? null;
     const onSale = was !== null && Number(was) > Number(product.price);
     // A product that cannot be bought right now is dimmed rather than
     // captioned twice: the badge says why, the image says at a glance.
@@ -110,6 +122,15 @@ export function ProductCard({ product, lowStockAt = 0, showCategory = false }: P
                         {onSale && (
                             <span className="text-sm text-muted-foreground line-through">
                                 {formatPrice(Number(was))}
+                            </span>
+                        )}
+                        {/* Why it is cheaper for this reader. Without the line
+                            the card shows a lower number than the one beside
+                            it for no visible reason, which reads as a mistake
+                            rather than an offer. */}
+                        {upgrading && (
+                            <span className="w-full text-xs font-medium text-success">
+                                {t("upgradeNote", { amount: credit.toFixed(2) })}
                             </span>
                         )}
                     </div>

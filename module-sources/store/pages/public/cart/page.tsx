@@ -16,6 +16,10 @@ import { writeError, errorMessage } from "@/core/sdk";
 interface CartItem {
     id: string;
     quantity: number;
+    /** What this buyer pays for one of them, credit already off. */
+    payPrice?: number;
+    /** Taken off because a cheaper rung on the same shelf is already owned. */
+    upgradeCredit?: number;
     product: {
         id: string;
         name: string;
@@ -336,9 +340,26 @@ export default function CartPage() {
                                             >
                                                 {item.product.name}
                                             </Link>
+                                            {/* The line has to be the number the
+                                                till takes. It summed list
+                                                prices while the checkout
+                                                charged the upgrade price, so a
+                                                buyer read one figure here and
+                                                was taken a smaller one a click
+                                                later. */}
                                             <p className="text-primary font-bold mt-1">
-                                                {formatPrice(item.product.price)}
+                                                {(item.upgradeCredit ?? 0) > 0 && (
+                                                    <span className="mr-1 text-sm font-normal text-muted-foreground line-through">
+                                                        {formatPrice(item.product.price)}
+                                                    </span>
+                                                )}
+                                                {formatPrice(item.payPrice ?? item.product.price)}
                                             </p>
+                                            {(item.upgradeCredit ?? 0) > 0 && (
+                                                <p className="mt-0.5 text-xs font-medium text-success">
+                                                    {t("upgradeNote", { amount: (item.upgradeCredit as number).toFixed(2) })}
+                                                </p>
+                                            )}
                                         </div>
 
                                         <div className="flex items-center gap-2">
@@ -363,7 +384,7 @@ export default function CartPage() {
 
                                         <div className="text-right">
                                             <p className="font-bold">
-                                                {formatPrice(item.product.price * item.quantity)}
+                                                {formatPrice((item.payPrice ?? item.product.price) * item.quantity)}
                                             </p>
                                             <button
                                                 onClick={() => removeItem(item.product.id)}

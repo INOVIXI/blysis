@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { log, moduleSettings, prisma, rateLimitForRoleAsync, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { availabilityFor, type ProductRow } from "../../lib/availability-server";
+import { priceCartLines } from "../../lib/cart-pricing";
+import { creditingPurchases } from "../../lib/upgrade-credit-server";
 import { z } from "zod";
 
 const cartItemSchema = z.object({
@@ -31,19 +33,42 @@ export async function GET() {
                         image: true,
                         stock: true,
                         isActive: true,
+                        categoryId: true,
                     },
                 },
             },
             orderBy: { createdAt: "desc" },
         });
 
-        const total = cartItems.reduce((sum, item) => {
-            return sum + Number(item.product.price) * item.quantity;
-        }, 0);
+        // What this buyer pays, not what the products cost.
+        //
+        // The cart summed list prices while the checkout charged the upgrade
+        // price, so somebody upgrading a rank read one number on the cart page
+        // and was taken a smaller one a click later. A cart that disagrees with
+        // the till is a cart nobody can trust in either direction.
+        const ownedIds = await creditingPurchases(session.user.id);
+        // The arithmetic lives in `cart-pricing.ts` because the coupon
+        // preview has to reach the same number, and reaching it separately is
+        // how the two came to disagree.
+        const { lines, subtotal: total } = priceCartLines(
+            cartItems.map((item) => ({
+                productId: item.product.id,
+                categoryId: (item.product as unknown as { categoryId: string | null }).categoryId ?? null,
+                price: Number(item.product.price),
+                quantity: item.quantity,
+            })),
+            ownedIds,
+        );
+        const byProduct = new Map(lines.map((line) => [line.productId, line]));
+        const priced = cartItems.map((item) => ({
+            ...item,
+            upgradeCredit: byProduct.get(item.product.id)?.upgradeCredit ?? 0,
+            payPrice: byProduct.get(item.product.id)?.payPrice ?? Number(item.product.price),
+        }));
 
         return NextResponse.json({
-            items: cartItems,
-            itemCount: cartItems.length,
+            items: priced,
+            itemCount: priced.length,
             total,
         });
     } catch (error) {
