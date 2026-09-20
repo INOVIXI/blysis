@@ -193,9 +193,12 @@ describe("the pages this was found on", () => {
         expect(effects.every(cancels)).toBe(true);
     });
 
-    it("cancels in the admin search box, where the debounce timer was not enough", () => {
-        const source = fs.readFileSync(path.join(ROOT, "src/core/components/admin/AdminSearch.tsx"), "utf8");
-        const effects = effectsIn("src/core/components/admin/AdminSearch.tsx", source).filter(races);
+    it("cancels in the panel's palette, where the debounce timer was not enough", () => {
+        // The header used to hold a second search box with a dropdown of its
+        // own; the race it guarded is the same one, and it lives here now.
+        const file = "src/core/components/admin/AdminSpotlight.tsx";
+        const source = fs.readFileSync(path.join(ROOT, file), "utf8");
+        const effects = effectsIn(file, source).filter(races);
         expect(effects).toHaveLength(1);
         expect(cancels(effects[0])).toBe(true);
         // The timer has to survive the fix: without it every keystroke fetches.

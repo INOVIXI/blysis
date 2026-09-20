@@ -4,49 +4,39 @@ import { auth } from "@/core/lib/auth";
 import { prisma } from "@/core/lib/db";
 import { isAdmin } from "@/core/lib/permissions";
 import { applyFiltersAsync } from "@/core/lib/hooks";
-import { ModuleSettingsCards, ModuleRoutes } from "@/core/generated/module-registry";
-import { adminHref } from "@/core/lib/admin-path";
-import { getModuleStates } from "@/core/lib/module-cache";
-import { isEnabledIn } from "@/core/lib/module-enabled";
 
 interface SearchResult {
     type: string;
     id: string;
     title: string;
+    /**
+     * Said in the reader's language by whoever draws this, where there is a
+     * key for it. A module's name has one; a user's name does not.
+     */
+    titleKey?: string;
     subtitle?: string;
     href: string;
     icon?: string;
     score?: number;
 }
 
-// Admin nav items - kept here so search can find them.
-// Mirrors AdminSidebar's coreNavDefs labels but flat.
-const STATIC_ADMIN_PAGES: { title: string; href: string; keywords: string[] }[] = [
-    { title: "Dashboard", href: "/admin", keywords: ["home", "stats"] },
-    { title: "Module Marketplace", href: "/admin/modules", keywords: ["plugins", "extensions", "install"] },
-    { title: "Users", href: "/admin/users", keywords: ["accounts", "members"] },
-    { title: "Roles", href: "/admin/roles", keywords: ["roles", "groups"] },
-    { title: "Permissions", href: "/admin/permissions", keywords: ["permissions", "rbac", "matrix"] },
-    { title: "Activity Log", href: "/admin/activity-log", keywords: ["audit", "history"] },
-    { title: "System Health", href: "/admin/system", keywords: ["health", "monitoring"] },
-    { title: "API Keys", href: "/admin/api-keys", keywords: ["api", "tokens"] },
-    { title: "Media Library", href: "/admin/media", keywords: ["files", "uploads", "images"] },
-    { title: "Settings", href: "/admin/settings/general", keywords: ["config"] },
-    { title: "Appearance", href: "/admin/settings/theme", keywords: ["theme", "library", "modes"] },
-    { title: "Navbar Editor", href: "/admin/settings/navbar", keywords: ["menu", "navigation"] },
-];
-
-function score(text: string, query: string): number {
-    const t = text.toLowerCase();
-    const q = query.toLowerCase();
-    if (t === q) return 100;
-    if (t.startsWith(q)) return 80;
-    if (t.includes(q)) return 60;
-    // Word match
-    const words = t.split(/\s+/);
-    if (words.some((w) => w.startsWith(q))) return 40;
-    return 0;
-}
+/*
+ * No screen is listed here any more.
+ *
+ * Twelve of the panel's own were, with English titles, under a comment saying
+ * the list mirrors the sidebar's labels. It had drifted - the sidebar has four
+ * times as many - and it answered only in English, so on a Turkish panel
+ * "kullan" found nothing and "user" found one thing. Module screens fared
+ * worse: they were scored on their URL and titled with its last segment, so a
+ * search for "settings" answered with a column in which every row was an
+ * identifier written twice, and one for "edit" offered a route pattern with
+ * `[id]` still in it, an address no link can follow.
+ *
+ * Everything that names a screen is in the browser already: the navigation,
+ * translated, and the registry it is built from. The palette reads those. What
+ * is left here is what only the database knows - a member by name - and
+ * whatever a module adds through `admin.search.results`.
+ */
 
 // GET /api/v1/admin/search?q=... - Cross-module spotlight search
 export async function GET(request: NextRequest) {
@@ -60,40 +50,7 @@ export async function GET(request: NextRequest) {
 
     const results: SearchResult[] = [];
 
-    // 1. Static admin pages
-    for (const page of STATIC_ADMIN_PAGES) {
-        const titleScore = score(page.title, q);
-        const keywordScore = page.keywords.reduce((max, k) => Math.max(max, score(k, q)), 0);
-        const s = Math.max(titleScore, keywordScore);
-        if (s > 0) {
-            results.push({ type: "page", id: page.href, title: page.title, href: page.href, score: s });
-        }
-    }
-
-    // A disabled module's admin pages are 404'd by the proxy, so offering
-    // them here handed the admin a search result that could only dead-end.
-    const moduleStates = await getModuleStates();
-
-    // 2. Module settings cards
-    for (const card of ModuleSettingsCards) {
-        if (!isEnabledIn(moduleStates, card.module)) continue;
-        const s = score(card.title, q);
-        if (s > 0) {
-            results.push({ type: "settings", id: card.href, title: card.title, subtitle: card.description, href: adminHref(card.href), score: s });
-        }
-    }
-
-    // 3. Module routes (admin)
-    for (const route of ModuleRoutes) {
-        if (!route.isAdmin) continue;
-        if (!isEnabledIn(moduleStates, route.module)) continue;
-        const s = score(route.path, q);
-        if (s > 0) {
-            results.push({ type: "module-page", id: route.key, title: route.path.split("/").pop() || route.path, subtitle: route.module, href: adminHref(route.path), score: s });
-        }
-    }
-
-    // 4. Users (top 5)
+    // 1. Users (top 5)
     try {
         const users = await prisma.user.findMany({
             where: { OR: [
@@ -115,7 +72,7 @@ export async function GET(request: NextRequest) {
         }
     } catch { /* ignore */ }
 
-    // 5. Modules can extend via hook filter
+    // 2. Modules can extend via hook filter
     const extended = await applyFiltersAsync("admin.search.results", results, { query: q });
 
     // Sort by score, dedupe by href

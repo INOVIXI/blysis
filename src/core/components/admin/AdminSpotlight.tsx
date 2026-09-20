@@ -1,44 +1,164 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { useModalDialog } from "@/core/hooks/useModalDialog";
 import { useRouter } from "@/core/lib/i18n/navigation";
-import { Search, X, FileText, User, Settings as SettingsIcon, Package, Layers } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { ModalLayer } from "@/core/components/ui/modal-layer";
+import { useAdminNav, type AdminNavModule } from "@/core/hooks/useAdminNav";
+import { ModuleRoutes, ModuleSettingsCards } from "@/core/generated/module-registry";
+import { offerableRoutes } from "@/core/lib/admin-search";
+import { adminHref } from "@/core/lib/admin-path";
+import type { NavIconComponent } from "@/core/lib/admin-nav-groups";
+import { Search, X, FileText, User, Settings as SettingsIcon, Package } from "lucide-react";
 
 interface SearchResult {
     type: string;
     id: string;
     title: string;
+    /** Said in the reader's language where the sender had a key for it. */
+    titleKey?: string;
     subtitle?: string;
     href: string;
 }
 
-const TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-    page: FileText,
+/** One row of the palette, whichever side it came from. */
+interface Entry {
+    key: string;
+    href: string;
+    title: string;
+    subtitle?: string;
+    /** The word drawn on the right: a group of things, never a `type`. */
+    kindKey: string | null;
+    Icon: NavIconComponent;
+}
+
+/**
+ * What a kind of result is called. A kind with no entry here draws nothing
+ * rather than its own name: `type` is how the code sorts results, and
+ * "module-page" in the corner of a row is the code talking to itself.
+ */
+const KIND_KEY: Record<string, string> = {
+    settings: "spotlight_settings",
+    "module-page": "spotlight_modules",
+    user: "spotlight_members",
+};
+
+const KIND_ICON: Record<string, NavIconComponent> = {
     settings: SettingsIcon,
     "module-page": Package,
     user: User,
-    module: Layers,
 };
 
 /**
- * Cmd+K / Ctrl+K spotlight search.
- * Mounted in the admin layout - listens globally for the keyboard shortcut.
+ * The panel's search: Cmd+K, or the box in the header.
+ *
+ * It used to be two things reading one endpoint - a box with a dropdown of its
+ * own, and this palette - drawing the same answers two ways. And the answers
+ * were English whatever the panel was in, because the endpoint carried a hand
+ * copy of the sidebar: twelve titles, written in English, under a comment
+ * saying they mirror the sidebar's. Measured on a Turkish panel, "kullan",
+ * "ayar" and "yard" each found nothing, while the sidebar three inches away
+ * said Kullanıcılar, Ayarlar and Yardım Merkezi.
+ *
+ * The navigation is already here, already translated, already knowing what
+ * this installation has: the screens come from it. The endpoint answers for
+ * the things navigation cannot know - a member by name, a module's settings
+ * card, whatever a module adds through `admin.search.results`.
  */
-export function AdminSpotlight() {
+export function AdminSpotlight({
+    modules = [],
+    activeThemeId,
+}: {
+    modules?: AdminNavModule[];
+    activeThemeId?: string;
+}) {
     const router = useRouter();
+    const locale = useLocale();
     const t = useTranslations("common");
-    // The spotlight's own copy lives in the admin namespace; `t` above is the
+    // The palette's own copy lives in the admin namespace; `t` above is the
     // shared one, for the close button.
     const at = useTranslations("admin");
 
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
-    const [results, setResults] = useState<SearchResult[]>([]);
+    const [found, setFound] = useState<SearchResult[]>([]);
     const [loading, setLoading] = useState(false);
-    const [selectedIdx, setSelectedIdx] = useState(0);
+    const [selected, setSelected] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    const groups = useAdminNav(modules, activeThemeId);
+
+    const enabled = useMemo(() => new Set(modules.map((module) => module.id)), [modules]);
+
+    /**
+     * Every screen the panel has, under the name this reader would see.
+     *
+     * All of it is built here rather than asked for, because everything that
+     * names a screen is already in the browser: the navigation, translated,
+     * and the registry the navigation itself is built from. The endpoint has
+     * a module's id and no locale of its own, so it used to score that id
+     * against what was typed - which answers nothing to anyone searching in
+     * a language the id is not written in.
+     */
+    const pages = useMemo(() => {
+        const rows: Entry[] = [];
+        const seen = new Set<string>();
+
+        for (const group of groups) {
+            for (const section of group.sections) {
+                for (const item of section.items) {
+                    seen.add(item.href);
+                    rows.push({
+                        key: `page:${item.href}`,
+                        href: item.href,
+                        title: item.labelKey && at.has(item.labelKey) ? at(item.labelKey) : item.label,
+                        subtitle: group.labelKey && at.has(group.labelKey) ? at(group.labelKey) : group.label,
+                        kindKey: "spotlight_pages",
+                        Icon: item.icon ?? FileText,
+                    });
+                }
+            }
+        }
+
+        // A module's settings screen. Its name comes from the manifest and is
+        // the author's, in one language; see `a-module-names-itself-in-both-
+        // languages` for the half of this that is already gated.
+        for (const card of ModuleSettingsCards) {
+            if (!enabled.has(card.module)) continue;
+            const href = adminHref(card.href);
+            if (seen.has(href)) continue;
+            seen.add(href);
+            rows.push({
+                key: `settings:${href}`,
+                href,
+                title: card.title,
+                subtitle: card.description,
+                kindKey: "spotlight_settings",
+                Icon: SettingsIcon,
+            });
+        }
+
+        // A screen a module ships and lists nowhere. A manifest may declare
+        // an admin route and no menu entry for it, and then this is the only
+        // door to that screen.
+        const routes = ModuleRoutes.map((route) => ({ ...route, path: adminHref(route.path) }));
+        for (const route of offerableRoutes(routes, seen)) {
+            if (!enabled.has(route.module)) continue;
+            seen.add(route.path);
+            const key = `module_${route.module}_name`;
+            rows.push({
+                key: `module-page:${route.key}`,
+                href: route.path,
+                title: at.has(key) ? at(key) : route.module,
+                subtitle: route.path,
+                kindKey: "spotlight_modules",
+                Icon: Package,
+            });
+        }
+
+        return rows;
+    }, [groups, at, enabled]);
 
     // Keyboard shortcut: Cmd+K / Ctrl+K
     useEffect(() => {
@@ -52,28 +172,27 @@ export function AdminSpotlight() {
         };
         window.addEventListener("keydown", handler);
         return () => window.removeEventListener("keydown", handler);
-    }, [open]);
+    }, []);
 
     // autoFocus is off because the palette focuses its own input below on a
     // short delay; the hook still traps Tab, closes on Escape and hands focus
     // back to whatever had it when the palette opened.
     const dialogRef = useModalDialog<HTMLDivElement>(open, () => setOpen(false), { autoFocus: false });
 
-    // Focus input when opened
     useEffect(() => {
         if (open) {
             setTimeout(() => inputRef.current?.focus(), 50);
         } else {
             setQuery("");
-            setResults([]);
-            setSelectedIdx(0);
+            setFound([]);
+            setSelected(0);
         }
     }, [open]);
 
-    // Debounced search
+    // Debounced, and only for what the browser cannot answer itself.
     useEffect(() => {
         if (query.trim().length < 2) {
-            setResults([]);
+            setFound([]);
             return;
         }
         setLoading(true);
@@ -87,8 +206,7 @@ export function AdminSpotlight() {
                 if (res.ok) {
                     const data = await res.json();
                     if (cancelled) return;
-                    setResults(data.results || []);
-                    setSelectedIdx(0);
+                    setFound(data.results || []);
                 }
             } finally {
                 if (!cancelled) setLoading(false);
@@ -100,102 +218,151 @@ export function AdminSpotlight() {
         };
     }, [query]);
 
-    // Arrow navigation
+    /*
+     * Matched in the reader's language, not in the browser's. Turkish maps I
+     * and i differently from English, so a dotted capital in "İşlemler"
+     * lower-cases to something a plain `toLowerCase` never matches.
+     */
+    const rows = useMemo(() => {
+        const needle = query.trim().toLocaleLowerCase(locale);
+        if (needle.length < 2) return [];
+        const local = pages.filter((page) => page.title.toLocaleLowerCase(locale).includes(needle));
+        const remote: Entry[] = found.map((result) => ({
+            key: `${result.type}:${result.id}`,
+            href: result.href,
+            title: result.titleKey && at.has(result.titleKey) ? at(result.titleKey) : result.title,
+            subtitle: result.subtitle,
+            kindKey: KIND_KEY[result.type] ?? null,
+            Icon: KIND_ICON[result.type] ?? FileText,
+        }));
+        const seen = new Set<string>();
+        return [...local, ...remote].filter((row) => {
+            if (seen.has(row.href)) return false;
+            seen.add(row.href);
+            return true;
+        }).slice(0, 20);
+    }, [pages, found, query, locale, at]);
+
+    useEffect(() => { setSelected(0); }, [rows.length]);
+
+    const go = (href: string) => {
+        router.push(href);
+        setOpen(false);
+    };
+
     const onKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "ArrowDown") {
             e.preventDefault();
-            setSelectedIdx((i) => Math.min(i + 1, results.length - 1));
+            setSelected((i) => Math.min(i + 1, rows.length - 1));
         } else if (e.key === "ArrowUp") {
             e.preventDefault();
-            setSelectedIdx((i) => Math.max(i - 1, 0));
+            setSelected((i) => Math.max(i - 1, 0));
         } else if (e.key === "Enter") {
             e.preventDefault();
-            const selected = results[selectedIdx];
-            if (selected) {
-                router.push(selected.href);
-                setOpen(false);
-            }
+            const row = rows[selected];
+            if (row) go(row.href);
         }
     };
 
-    if (!open) return null;
-
     return (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-32 px-4" role="presentation">
-            <div className="fixed inset-0 bg-black/50" onClick={() => setOpen(false)} aria-hidden="true" />
-            <div
-                ref={dialogRef}
-                role="dialog"
-                aria-modal="true"
-                aria-label={at("spotlight_placeholder")}
-                className="relative bg-card rounded-lg shadow-2xl border border-border w-full max-w-xl overflow-hidden"
+        <>
+            {/* The header's box. It used to be a second search with a dropdown
+                of its own reading the same endpoint; it opens the one palette
+                now, and says how to open it without the mouse. */}
+            <button
+                type="button"
+                onClick={() => setOpen(true)}
+                className="flex w-full items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
             >
-                <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
-                    <Search className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                    <input
-                        ref={inputRef}
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        onKeyDown={onKeyDown}
-                        placeholder={at("spotlight_placeholder")}
-                        aria-label={at("spotlight_placeholder")}
-                        className="flex-1 bg-transparent rounded-sm outline-none focus-visible:ring-1 focus-visible:ring-primary/50 text-foreground placeholder:text-muted-foreground"
-                    />
-                    <kbd className="hidden sm:inline px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground bg-muted rounded">ESC</kbd>
-                    <button onClick={() => setOpen(false)} aria-label={t("close")} className="text-muted-foreground hover:text-foreground">
-                        <X className="w-4 h-4" aria-hidden="true" />
-                    </button>
-                </div>
+                <Search className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                <span className="flex-1 truncate text-left">{at("search_placeholder")}</span>
+                <kbd className="hidden lg:inline rounded bg-background px-1.5 py-0.5 font-mono text-[10px]">
+                    {at("spotlight_shortcut")}
+                </kbd>
+            </button>
 
-                <div className="max-h-96 overflow-y-auto">
-                    {loading && results.length === 0 ? (
-                        <div className="p-4 text-center text-sm text-muted-foreground">{at("spotlight_searching")}</div>
-                    ) : query.length < 2 ? (
-                        <div className="p-4 text-center text-sm text-muted-foreground">{at("spotlight_startTyping")}</div>
-                    ) : results.length === 0 ? (
-                        <div className="p-4 text-center text-sm text-muted-foreground">{at("spotlight_noResults")}</div>
-                    ) : (
-                        <div className="py-1">
-                            {results.map((r, i) => {
-                                const Icon = TYPE_ICONS[r.type] || FileText;
-                                return (
-                                    <button
-                                        key={`${r.href}-${i}`}
-                                        type="button"
-                                        onClick={() => { router.push(r.href); setOpen(false); }}
-                                        onMouseEnter={() => setSelectedIdx(i)}
-                                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
-                                            i === selectedIdx ? "bg-muted" : ""
-                                        }`}
-                                    >
-                                        <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                                        <div className="flex-1 min-w-0">
-                                            <div className="text-sm text-foreground truncate">{r.title}</div>
-                                            {r.subtitle && (
-                                                <div className="text-xs text-muted-foreground truncate">{r.subtitle}</div>
-                                            )}
-                                        </div>
-                                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{r.type}</span>
-                                    </button>
-                                );
-                            })}
+            {open && (
+                <ModalLayer>
+                    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-32 px-4" role="presentation">
+                        <div className="fixed inset-0 bg-black/50" onClick={() => setOpen(false)} aria-hidden="true" />
+                        <div
+                            ref={dialogRef}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-label={at("spotlight_placeholder")}
+                            className="relative bg-card rounded-lg shadow-2xl border border-border w-full max-w-xl overflow-hidden"
+                        >
+                            <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
+                                <Search className="w-5 h-5 text-muted-foreground flex-shrink-0" aria-hidden="true" />
+                                <input
+                                    ref={inputRef}
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    onKeyDown={onKeyDown}
+                                    placeholder={at("spotlight_placeholder")}
+                                    aria-label={at("spotlight_placeholder")}
+                                    className="flex-1 bg-transparent rounded-sm outline-none focus-visible:ring-1 focus-visible:ring-primary/50 text-foreground placeholder:text-muted-foreground"
+                                />
+                                <kbd className="hidden sm:inline px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground bg-muted rounded">ESC</kbd>
+                                <button onClick={() => setOpen(false)} aria-label={t("close")} className="text-muted-foreground hover:text-foreground">
+                                    <X className="w-4 h-4" aria-hidden="true" />
+                                </button>
+                            </div>
+
+                            <div className="max-h-96 overflow-y-auto">
+                                {query.trim().length < 2 ? (
+                                    <div className="p-4 text-center text-sm text-muted-foreground">{at("spotlight_startTyping")}</div>
+                                ) : rows.length === 0 ? (
+                                    <div className="p-4 text-center text-sm text-muted-foreground">
+                                        {loading ? at("spotlight_searching") : at("spotlight_noResults")}
+                                    </div>
+                                ) : (
+                                    <div className="py-1">
+                                        {rows.map((row, i) => {
+                                            const Icon = row.Icon;
+                                            return (
+                                                <button
+                                                    key={row.key}
+                                                    type="button"
+                                                    onClick={() => go(row.href)}
+                                                    onMouseEnter={() => setSelected(i)}
+                                                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                                                        i === selected ? "bg-muted" : ""
+                                                    }`}
+                                                >
+                                                    <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="text-sm text-foreground truncate">{row.title}</div>
+                                                        {row.subtitle && (
+                                                            <div className="text-xs text-muted-foreground truncate">{row.subtitle}</div>
+                                                        )}
+                                                    </div>
+                                                    {row.kindKey && (
+                                                        <span className="text-[10px] text-muted-foreground">{at(row.kindKey)}</span>
+                                                    )}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="border-t border-border px-4 py-2 flex items-center justify-between text-xs text-muted-foreground">
+                                <div className="flex items-center gap-2">
+                                    <kbd className="px-1 py-0.5 bg-muted rounded text-[10px]">↑↓</kbd>
+                                    <span>{at("spotlight_navigate")}</span>
+                                    <kbd className="px-1 py-0.5 bg-muted rounded text-[10px]">↵</kbd>
+                                    <span>{at("spotlight_open")}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <kbd className="px-1 py-0.5 bg-muted rounded text-[10px]">{at("spotlight_shortcut")}</kbd>
+                                    <span>{at("spotlight_toggle")}</span>
+                                </div>
+                            </div>
                         </div>
-                    )}
-                </div>
-
-                <div className="border-t border-border px-4 py-2 flex items-center justify-between text-xs text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                        <kbd className="px-1 py-0.5 bg-muted rounded text-[10px]">↑↓</kbd>
-                        <span>{at("spotlight_navigate")}</span>
-                        <kbd className="px-1 py-0.5 bg-muted rounded text-[10px]">↵</kbd>
-                        <span>{at("spotlight_open")}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <kbd className="px-1 py-0.5 bg-muted rounded text-[10px]">⌘K</kbd>
-                        <span>to toggle</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+                </ModalLayer>
+            )}
+        </>
     );
 }

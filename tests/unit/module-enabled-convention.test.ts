@@ -167,11 +167,17 @@ describe("module enabled flag - every registry consumer", () => {
     });
 
     it("the consumers fixed this round now gate", () => {
-        for (const rel of [
-            "src/app/api/v1/admin/search/route.ts",
-            "src/app/api/v1/notification-preferences/route.ts",
-        ]) {
+        for (const rel of ["src/app/api/v1/notification-preferences/route.ts"]) {
             expect(code(join(ROOT, rel))).toContain("isEnabledIn(");
         }
+        /*
+         * The admin search's registry reads moved into the palette, because
+         * everything that names a screen is in the browser already. A client
+         * component is handed the enabled modules by the shell rather than
+         * reading the server's cache, so it gates on that list instead of on
+         * `isEnabledIn`. The endpoint reads no registry at all now, which is
+         * why it is no longer named here.
+         */
+        expect(code(join(ROOT, "src/core/components/admin/AdminSpotlight.tsx"))).toContain("enabled.has(");
     });
 });

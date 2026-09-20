@@ -5,7 +5,6 @@ import { getLocale, getMessages } from "next-intl/server";
 import { getSession } from "@/core/lib/auth";
 import { isAdmin } from "@/core/lib/permissions";
 import { AdminSidebar } from "@/core/components/admin/AdminSidebar";
-import { AdminSearch } from "@/core/components/admin/AdminSearch";
 import { AdminSpotlight } from "@/core/components/admin/AdminSpotlight";
 import { AdminBreadcrumb } from "@/core/components/admin/AdminBreadcrumb";
 import { ModuleUpdateBadge } from "@/core/components/admin/ModuleUpdateBadge";
@@ -66,7 +65,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                         <AdminBreadcrumb modules={modules} activeThemeId={themeId} />
                         <div className="flex items-center gap-3">
                             <div className="hidden md:block w-64">
-                                <AdminSearch />
+                                <AdminSpotlight modules={modules} activeThemeId={themeId} />
                             </div>
                             <ModuleUpdateBadge />
                         </div>
@@ -77,7 +76,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                     {children}
                 </div>
             </main>
-            <AdminSpotlight />
         </div>
         </NextIntlClientProvider>
     );

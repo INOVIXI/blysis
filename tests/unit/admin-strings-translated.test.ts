@@ -167,7 +167,7 @@ describe("keys that were sitting unused", () => {
         ["src/core/components/admin/AdminSpotlight.tsx", "spotlight_navigate"],
         ["src/core/components/admin/AdminSpotlight.tsx", "spotlight_open"],
         ["src/core/components/admin/AdminSpotlight.tsx", "spotlight_placeholder"],
-        ["src/core/components/admin/AdminSearch.tsx", "search_placeholder"],
+        ["src/core/components/admin/AdminSpotlight.tsx", "search_placeholder"],
         ["src/app/[locale]/(admin)/admin/settings/theme/page.tsx", "settings_appearance"],
         ["src/app/[locale]/(admin)/admin/api-docs/page.tsx", "apiDocs_loading"],
     ];

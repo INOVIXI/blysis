@@ -37,18 +37,12 @@ const IDENTIFIERS_BY_DESIGN: Record<string, string> = {
         "A theme's type is its packaging ('installed', 'builtin'), shown beside its version string. It names a thing, not a state.",
     "src/app/[locale]/(admin)/admin/dev/page.tsx::l.type":
         "The developer hook inspector. Its whole subject is the literal hook and listener names, which are code and are the same in every locale.",
-    "src/core/components/admin/AdminSearch.tsx::r.type":
-        "The entity kind behind a search hit ('user', 'product'). It is the developer-facing name of the table the row came from.",
-    "src/core/components/admin/AdminSpotlight.tsx::r.type":
-        "Same search results, same entity kind, rendered in the spotlight overlay.",
     "module-sources/store/pages/admin/products/[id]/edit/page.tsx::v.type":
         "A product variable's input type ('text', 'number'), shown to the admin who typed it into the field editor beside it.",
     "src/app/[locale]/(admin)/admin/roles/page.tsx::role.priority":
         "A role's priority is the integer the admin types into the field above it, and the number is what they need to read back.",
     "src/app/[locale]/(admin)/admin/settings/rate-limits/page.tsx::role.priority":
         "The same integer, shown beside each role so the admin can see which bucket wins when two roles overlap.",
-    "module-sources/changelog/pages/public/page.tsx::entry.type":
-        "The changelog entry's tag is free text the admin writes per entry, not an enum. There is nothing to look up.",
 };
 
 /** A JSX child that is exactly one member expression, optionally .replace()d. */
