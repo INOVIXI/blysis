@@ -173,12 +173,19 @@ export default function CartPage() {
             const res = await fetch("/api/v1/store/coupons/validate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code: couponCode.trim(), subtotal: cart?.total || 0 }),
+                body: JSON.stringify({ code: couponCode.trim() }),
             });
             const data = await res.json();
             if (data.valid) {
                 setCouponApplied(data.coupon.code);
                 setCouponDiscount(data.coupon.discount);
+            } else if (data.code === "coupon_min_purchase" && typeof data.minPurchase === "number") {
+                // The one refusal carrying a number, so it is said here rather
+                // than looked up: the endpoint knows the amount and this page
+                // knows which currency the shop is in. It used to arrive as
+                // "Minimum purchase: $50.00" whatever the shop charged in,
+                // and the page threw it away unread.
+                setCouponError(t("err_couponMinPurchase", { amount: formatPrice(data.minPurchase) }));
             } else {
                 setCouponError(errorMessage(data, t("err_invalidCoupon"), t));
             }

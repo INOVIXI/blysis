@@ -485,4 +485,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.3.0";
+export const CORE_API_VERSION = "5.4.0";

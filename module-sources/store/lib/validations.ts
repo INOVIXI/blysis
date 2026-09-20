@@ -124,6 +124,13 @@ export const couponSchema = z.object({
     usageLimit: z.number().int().min(1).optional().nullable(),
     startsAt: z.string().datetime().optional().nullable(),
     expiresAt: z.string().datetime().optional().nullable(),
+    /**
+     * Where the offer runs. Empty is every product, which is what every
+     * coupon written before there was a way to say otherwise meant. Capped
+     * because this arrives from a form and lands in an array column.
+     */
+    productIds: z.array(z.string().min(1).max(64)).max(200).optional(),
+    categoryIds: z.array(z.string().min(1).max(64)).max(200).optional(),
     isActive: z.boolean().optional(),
 });
 
@@ -167,9 +174,13 @@ export const communityGoalSchema = z.object({
 });
 
 /** Checking a coupon at the basket. */
+/**
+ * Only the code. What the basket is worth used to be sent with it and
+ * believed; the endpoint reads the basket itself now, because a browser
+ * cannot be asked whether a minimum purchase was met.
+ */
 export const couponValidateSchema = z.object({
     code: z.string().trim().min(1, "Code required").max(50),
-    subtotal: z.number().min(0).max(1_000_000_000).optional(),
 });
 
 export const creatorCodeCreateSchema = z.object({

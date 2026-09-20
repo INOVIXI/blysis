@@ -71,8 +71,20 @@ describe("the preview is computed by the function that charges", () => {
     });
 
     it("still says nothing about why a coupon failed, beyond what a shopper can act on", () => {
-        expect(validate).toContain("Invalid or expired coupon code");
-        expect(validate).toContain("Minimum purchase");
+        /*
+         * The refusals are codes now, not English sentences: the page that
+         * asks was throwing the sentences away, because a shopper reading
+         * Turkish cannot be shown them. What the rule protects is unchanged -
+         * a coupon that never existed and one that has run out answer the
+         * same, so the response cannot be used to go looking for codes - and
+         * it is the collapse to `coupon_unknown` that does it.
+         */
+        expect(validate).toContain("coupon_unknown");
+        expect(validate).toContain("coupon_min_purchase");
+        expect(validate).toContain("coupon_not_for_these_items");
+        for (const hidden of ["coupon_expired", "coupon_not_started", "coupon_used_up"]) {
+            expect(validate, `${hidden} must not be told apart`).not.toContain(`"${hidden}"`);
+        }
     });
 });
 

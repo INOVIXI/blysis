@@ -16,6 +16,7 @@ import { billingRefusal, type BillingDetails } from "../../lib/billing";
 import {
     computeOrderPricing,
     computeCouponDiscount,
+    couponEligibleSubtotal,
     computeCreatorDiscount,
     computeCreatorCommission,
     computeTotals,
@@ -244,7 +245,7 @@ export async function POST(request: NextRequest) {
             const { enableCoupons } = await moduleSettings<{ enableCoupons: boolean }>("store");
             if (!enableCoupons) {
                 return NextResponse.json(
-                    { error: "Coupon codes are not accepted", code: "invalid_coupon" },
+                    { error: "Coupon codes are not accepted", code: "coupons_off" },
                     { status: 400 },
                 );
             }
@@ -252,8 +253,21 @@ export async function POST(request: NextRequest) {
                 const coupon = await tx.coupon.findUnique({
                     where: { code: couponCode.toUpperCase() },
                 });
-                const { error, discount } = computeCouponDiscount(coupon, subtotal);
-                if (error) return error;
+                // Only the part of the basket the offer covers. A coupon
+                // naming no product and no category covers all of it, which
+                // is what every coupon written before there was a way to say
+                // otherwise covers.
+                const eligible = couponEligibleSubtotal(
+                    coupon ?? {},
+                    orderItems.map((item) => ({
+                        productId: item.productId,
+                        price: item.price,
+                        quantity: item.quantity,
+                    })),
+                    products.map((product) => ({ id: product.id, categoryId: product.categoryId ?? null })),
+                );
+                const { code, discount } = computeCouponDiscount(coupon, subtotal, new Date(), eligible);
+                if (code) return code;
                 // Claim the use conditionally. The count read above is a
                 // snapshot, so two orders redeeming the last use of a
                 // single-use coupon both passed the check and both got the
@@ -266,12 +280,14 @@ export async function POST(request: NextRequest) {
                     },
                     data: { usageCount: { increment: 1 } },
                 });
-                if (claimed.count === 0) return "Coupon usage limit reached";
+                if (claimed.count === 0) return "coupon_used_up";
                 couponDiscount = discount;
                 return null;
             });
             if (couponError) {
-                return NextResponse.json({ error: couponError, code: "invalid_coupon" }, { status: 400 });
+                // The code is the message: what a shopper reads is chosen
+                // where their language is known, which is not here.
+                return NextResponse.json({ error: couponError, code: couponError }, { status: 400 });
             }
         }
 

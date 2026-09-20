@@ -28,8 +28,20 @@ export async function GET(request: NextRequest) {
         const { page, limit, skip, take } = pageParams(searchParams, { defaultLimit: 20 });
         const category = searchParams.get("category");
         const search = searchParams.get("search") || "";
+        /*
+         * Naming a set of products outright, for a field that holds several
+         * of them: what was chosen last month is not on the first page of a
+         * list ordered by when it was made, and a chip that cannot say its
+         * name is an id on the screen.
+         */
+        const ids = (searchParams.get("ids") || "")
+            .split(",")
+            .map((id) => id.trim())
+            .filter(Boolean)
+            .slice(0, 100);
 
         const where = {
+            ...(ids.length > 0 && { id: { in: ids } }),
             ...(category && { category: { slug: category } }),
             ...(search && {
                 OR: [

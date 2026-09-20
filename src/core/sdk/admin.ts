@@ -28,6 +28,8 @@ export type { BulkBarProps } from "@/core/components/admin/BulkBar";
 // box asking for one can only be filled from the database.
 export { ReferencePicker } from "@/core/components/admin/ReferencePicker";
 export type { ReferencePickerProps } from "@/core/components/admin/ReferencePicker";
+export { ReferenceList } from "@/core/components/admin/ReferenceList";
+export type { ReferenceListProps } from "@/core/components/admin/ReferenceList";
 
 export { RowActions } from "@/core/components/admin/RowActions";
 export type { RowAction, RowActionsProps } from "@/core/components/admin/RowActions";

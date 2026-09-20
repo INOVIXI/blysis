@@ -9,7 +9,7 @@ import { Link } from "@/core/sdk/navigation";
 import { Loader2, Pencil, Plus, ToggleLeft, ToggleRight, Trash2, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { deleteEach, errorMessage, writeError } from "@/core/sdk";
-import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
+import { AdminPageHeader, BulkBar, ReferenceList, RowActions } from "@/core/sdk/admin";
 
 interface Coupon {
     id: string;
@@ -23,6 +23,8 @@ interface Coupon {
     usageCount: number;
     startsAt: string | null;
     expiresAt: string | null;
+    productIds?: string[];
+    categoryIds?: string[];
     isActive: boolean;
 }
 
@@ -58,6 +60,8 @@ export default function AdminCouponsPage() {
         usageLimit: "",
         startsAt: "",
         expiresAt: "",
+        productIds: [] as string[],
+        categoryIds: [] as string[],
         isActive: true,
     });
 
@@ -85,7 +89,7 @@ export default function AdminCouponsPage() {
     useEffect(() => {
         setError(null);
         if (!editingId) {
-            setForm({ code: "", description: "", type: "PERCENTAGE", value: "", minPurchase: "", maxDiscount: "", usageLimit: "", startsAt: "", expiresAt: "", isActive: true });
+            setForm({ code: "", description: "", type: "PERCENTAGE", value: "", minPurchase: "", maxDiscount: "", usageLimit: "", startsAt: "", expiresAt: "", productIds: [], categoryIds: [], isActive: true });
             return;
         }
         const coupon = coupons.find((row) => row.id === editingId);
@@ -100,6 +104,8 @@ export default function AdminCouponsPage() {
             usageLimit: coupon.usageLimit ? String(coupon.usageLimit) : "",
             startsAt: coupon.startsAt ? new Date(coupon.startsAt).toISOString().slice(0, 16) : "",
             expiresAt: coupon.expiresAt ? new Date(coupon.expiresAt).toISOString().slice(0, 16) : "",
+            productIds: coupon.productIds ?? [],
+            categoryIds: coupon.categoryIds ?? [],
             isActive: coupon.isActive,
         });
     }, [editingId, coupons]);
@@ -124,6 +130,8 @@ export default function AdminCouponsPage() {
                     usageLimit: form.usageLimit ? parseInt(form.usageLimit) : null,
                     startsAt: form.startsAt ? new Date(form.startsAt).toISOString() : null,
                     expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
+                    productIds: form.productIds,
+                    categoryIds: form.categoryIds,
                     isActive: form.isActive,
                 }),
             });
@@ -270,6 +278,38 @@ export default function AdminCouponsPage() {
                                     onChange={(e) => setForm({ ...form, description: e.target.value })}
                                     placeholder={t("adm_couponNotePlaceholder")}
                                 />
+                            </div>
+
+                            {/* Where the offer runs. Nothing named is every
+                                product, which is what every coupon written
+                                before this meant, so an existing one keeps
+                                working untouched. */}
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <Label>{t("adm_couponProducts")}</Label>
+                                    <ReferenceList
+                                        value={form.productIds}
+                                        onChange={(ids) => setForm({ ...form, productIds: ids })}
+                                        label={t("adm_couponProducts")}
+                                        endpoint="/api/v1/store/admin/products"
+                                        listKey="products"
+                                        labelField="name"
+                                        hintField="slug"
+                                    />
+                                    <p className="mt-1 text-xs text-muted-foreground">{t("adm_couponScopeHint")}</p>
+                                </div>
+                                <div>
+                                    <Label>{t("adm_couponCategories")}</Label>
+                                    <ReferenceList
+                                        value={form.categoryIds}
+                                        onChange={(ids) => setForm({ ...form, categoryIds: ids })}
+                                        label={t("adm_couponCategories")}
+                                        endpoint="/api/v1/store/categories"
+                                        listKey="categories"
+                                        labelField="name"
+                                        hintField="slug"
+                                    />
+                                </div>
                             </div>
 
                             <div className="grid md:grid-cols-3 gap-4">
@@ -426,6 +466,21 @@ export default function AdminCouponsPage() {
                                                 {coupon.description && (
                                                     <p className="text-xs text-muted-foreground mt-0.5">{coupon.description}</p>
                                                 )}
+                                                {/* Where the offer runs, on the
+                                                    row, because an operator
+                                                    scanning the list for the
+                                                    code that is not working
+                                                    needs to see that it only
+                                                    ever covered one shelf. */}
+                                                <p className="text-xs text-muted-foreground mt-0.5">
+                                                    {t("adm_couponScope")}:{" "}
+                                                    {(coupon.productIds?.length ?? 0) + (coupon.categoryIds?.length ?? 0) === 0
+                                                        ? t("adm_couponScopeEverything")
+                                                        : t("adm_couponScopeCount", {
+                                                            products: coupon.productIds?.length ?? 0,
+                                                            categories: coupon.categoryIds?.length ?? 0,
+                                                        })}
+                                                </p>
                                             </td>
                                             <td className="py-3 px-4">
                                                 <span className="font-medium">

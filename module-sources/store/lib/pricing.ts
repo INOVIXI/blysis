@@ -141,11 +141,66 @@ export interface CouponInput {
     expiresAt?: Date | null;
 }
 
+/**
+ * What a coupon covers. Empty means every product, which is what every coupon
+ * written before there was a way to say otherwise meant.
+ */
+export interface CouponScope {
+    productIds?: readonly string[] | null;
+    categoryIds?: readonly string[] | null;
+}
+
+/**
+ * Why a coupon did nothing, as a code rather than as a sentence.
+ *
+ * It used to answer in English prose, which meant the two screens that ask
+ * threw the answer away and said "invalid coupon" for all six reasons - the
+ * one a shopper can act on included. A code travels; the words are chosen
+ * where the reader's language is known.
+ */
+export type CouponRefusal =
+    | "coupon_unknown"
+    | "coupon_not_started"
+    | "coupon_expired"
+    | "coupon_used_up"
+    | "coupon_min_purchase"
+    | "coupon_not_for_these_items";
+
 export interface CouponResult {
     /** Human-readable rejection reason, or null when the coupon applies. */
     error: string | null;
+    /** Why it was refused, for whoever knows the reader's language. */
+    code: CouponRefusal | null;
     /** Discount amount in currency units (0 when rejected). */
     discount: number;
+}
+
+/**
+ * How much of a basket a coupon covers.
+ *
+ * A coupon naming nothing covers all of it. A coupon naming products or
+ * categories covers the lines that match either - a line matched by both is
+ * still one line, which is why this counts lines rather than summing two
+ * filters.
+ */
+export function couponEligibleSubtotal(
+    scope: CouponScope,
+    items: readonly { productId: string; price: number; quantity: number }[],
+    products: readonly { id: string; categoryId?: string | null }[],
+): number {
+    const productIds = new Set(scope.productIds ?? []);
+    const categoryIds = new Set(scope.categoryIds ?? []);
+    if (productIds.size === 0 && categoryIds.size === 0) {
+        return cents(items.reduce((sum, item) => sum + item.price * item.quantity, 0));
+    }
+
+    const categoryOf = new Map(products.map((product) => [product.id, product.categoryId ?? null]));
+    const covered = items.filter((item) => {
+        if (productIds.has(item.productId)) return true;
+        const category = categoryOf.get(item.productId);
+        return category !== null && category !== undefined && categoryIds.has(category);
+    });
+    return cents(covered.reduce((sum, item) => sum + item.price * item.quantity, 0));
 }
 
 /**
@@ -158,27 +213,42 @@ export interface CouponResult {
 export function computeCouponDiscount(
     coupon: CouponInput | null | undefined,
     subtotal: number,
-    now: Date = new Date()
+    now: Date = new Date(),
+    /**
+     * The part of the basket this coupon covers. Defaults to all of it, which
+     * is what a coupon naming no product and no category covers.
+     *
+     * Separate from `subtotal` because the two answer different questions:
+     * the minimum purchase is about the order - "spend 50" - and the discount
+     * is about the shelf the offer is on. Reading either against the other is
+     * a shop that overcharges or undercharges.
+     */
+    eligibleSubtotal: number = subtotal,
 ): CouponResult {
-    if (!coupon || !coupon.isActive) return { error: "Coupon code not found or inactive", discount: 0 };
+    const no = (code: CouponRefusal, error: string): CouponResult => ({ error, code, discount: 0 });
 
-    if (coupon.startsAt && coupon.startsAt > now) return { error: "Coupon is not yet active", discount: 0 };
-    if (coupon.expiresAt && coupon.expiresAt < now) return { error: "Coupon has expired", discount: 0 };
+    if (!coupon || !coupon.isActive) return no("coupon_unknown", "Coupon code not found or inactive");
+
+    if (coupon.startsAt && coupon.startsAt > now) return no("coupon_not_started", "Coupon is not yet active");
+    if (coupon.expiresAt && coupon.expiresAt < now) return no("coupon_expired", "Coupon has expired");
     if (coupon.usageLimit && (coupon.usageCount ?? 0) >= coupon.usageLimit) {
-        return { error: "Coupon usage limit reached", discount: 0 };
+        return no("coupon_used_up", "Coupon usage limit reached");
     }
     if (coupon.minPurchase && subtotal < Number(coupon.minPurchase)) {
-        return { error: `Coupon requires a minimum purchase of ${Number(coupon.minPurchase)}`, discount: 0 };
+        return no("coupon_min_purchase", `Coupon requires a minimum purchase of ${Number(coupon.minPurchase)}`);
+    }
+    if (eligibleSubtotal <= 0) {
+        return no("coupon_not_for_these_items", "Coupon does not apply to anything in this basket");
     }
 
     let discount: number;
     if (coupon.type === "PERCENTAGE") {
-        discount = subtotal * (Number(coupon.value) / 100);
+        discount = eligibleSubtotal * (Number(coupon.value) / 100);
         if (coupon.maxDiscount) discount = Math.min(discount, Number(coupon.maxDiscount));
     } else {
-        discount = Math.min(Number(coupon.value), subtotal);
+        discount = Math.min(Number(coupon.value), eligibleSubtotal);
     }
-    return { error: null, discount: cents(discount) };
+    return { error: null, code: null, discount: cents(discount) };
 }
 
 /**

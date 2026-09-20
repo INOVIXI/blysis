@@ -263,6 +263,12 @@ model Coupon {
   usageCount    Int         @default(0)
   startsAt      DateTime?
   expiresAt     DateTime?
+  /// Which products the code works on. Empty is every product, which is what
+  /// every coupon written before there was a way to say otherwise meant.
+  productIds    String[]
+  /// Which categories the code works on. Empty is every category. A line
+  /// matching either list is covered once.
+  categoryIds   String[]
   isActive      Boolean     @default(true)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
