@@ -21,8 +21,20 @@ import { readRefusal } from "@/core/lib/login-refusal";
 import { Checkbox } from "@/core/components/ui/checkbox";
 import { safeInternalPath } from "@/core/lib/safe-redirect";
 
-const DEMO_EMAIL = "admin@example.com";
-const DEMO_PASSWORD = "password123";
+/*
+ * The two accounts a public demo hands out, as `scripts/seed-demo.ts` writes
+ * them. Sign-in takes a username or an address; the username is what a
+ * visitor can read off the screen and type without a typo.
+ *
+ * They used to be `admin@example.com` / `password123`, which was neither:
+ * the seed generates a random password unless told otherwise, and
+ * `password123` is on core's own weak-password list, so the button that
+ * offered to fill them in filled in a login that could not work.
+ */
+const DEMO_ACCOUNTS = [
+    { username: "demo", password: "demo1234", isAdmin: true },
+    { username: "member", password: "demo1234", isAdmin: false },
+] as const;
 
 export default function LoginPage() {
     const router = useRouter();
@@ -71,9 +83,9 @@ export default function LoginPage() {
             .catch(() => undefined);
     }, []);
 
-    const fillDemo = () => {
-        setEmail(DEMO_EMAIL);
-        setPassword(DEMO_PASSWORD);
+    const fillDemo = (account: (typeof DEMO_ACCOUNTS)[number]) => {
+        setEmail(account.username);
+        setPassword(account.password);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -178,17 +190,44 @@ export default function LoginPage() {
                             <Sparkles className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                             <div className="flex-1 min-w-0">
                                 <p className="font-medium text-foreground">{t('demoBanner')}</p>
-                                <p className="text-muted-foreground mt-1">
-                                    {t('email')}: <code className="text-foreground font-mono">{DEMO_EMAIL}</code>
-                                    <br />
-                                    {t('password')}: <code className="text-foreground font-mono">{DEMO_PASSWORD}</code>
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-2">
-                                    {t('demoBannerBody')}
-                                </p>
-                                <Button type="button" size="sm" variant="outline" className="mt-3" onClick={fillDemo}>
-                                    {t('demoFillCreds')}
-                                </Button>
+                                <p className="text-muted-foreground mt-1">{t('demoBannerBody')}</p>
+                                {/* Both halves of the product, and which is
+                                    which: somebody looking at a panel they
+                                    did not ask for learns nothing, and
+                                    somebody who wanted the panel and got a
+                                    member's profile learns less. */}
+                                <div className="mt-3 space-y-2">
+                                    {DEMO_ACCOUNTS.map((account) => (
+                                        <div key={account.username} className="flex items-center justify-between gap-3">
+                                            <p className="text-muted-foreground min-w-0">
+                                                <span className="text-foreground font-medium">
+                                                    {account.isAdmin ? t('demoAsAdmin') : t('demoAsMember')}
+                                                </span>
+                                                <br />
+                                                <code className="text-foreground font-mono">{account.username}</code>
+                                                {" / "}
+                                                <code className="text-foreground font-mono">{account.password}</code>
+                                            </p>
+                                            <Button
+                                                type="button"
+                                                size="sm"
+                                                variant="outline"
+                                                className="flex-shrink-0"
+                                                /* Two buttons doing different
+                                                   things read as one repeated
+                                                   twice to anybody who cannot
+                                                   see which row they are on. */
+                                                aria-label={t('demoFillFor', {
+                                                    who: account.isAdmin ? t('demoAsAdmin') : t('demoAsMember'),
+                                                })}
+                                                onClick={() => fillDemo(account)}
+                                            >
+                                                {t('demoFillCreds')}
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-3">{t('demoResetNote')}</p>
                             </div>
                         </div>
                     </div>

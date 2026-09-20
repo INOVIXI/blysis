@@ -38,6 +38,7 @@
     "db:studio": "prisma studio",
     "db:seed": "npx tsx prisma/seed.ts",
     "seed:demo": "npx tsx scripts/seed-demo.ts",
+    "demo:reset": "npx tsx scripts/demo-reset.ts",
     "db:backup": "bash scripts/backup.sh",
     "db:restore": "bash scripts/restore.sh",
     "clean": "rm -rf .next .next-prod node_modules/.cache .tmp",

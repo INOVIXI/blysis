@@ -349,6 +349,44 @@ async function seedUsers(
     const password = await bcrypt.hash(DEMO_PASSWORD, 10);
     const users: SeededUser[] = [];
 
+    /*
+     * A member's roles are the rows in `UserRole`; `roleId` is the one shown
+     * beside their name and nothing reads it to decide what they may do.
+     * Setting only that made seeded staff who hold no permissions at all -
+     * the same way it made an administrator who could not open the panel.
+     */
+    const hold = async (userId: string, roleId: string) => {
+        await prisma.userRole.upsert({
+            where: { userId_roleId: { userId, roleId } },
+            update: {},
+            create: { userId, roleId, source: "seed" },
+        });
+    };
+
+    /*
+     * The two accounts a public demo hands out.
+     *
+     * Named rather than drawn from the list below, because a visitor is told
+     * them on the sign-in screen and they have to be the same tomorrow. One
+     * opens the panel and one is an ordinary member, so both halves of the
+     * product can be looked at without anybody being given the panel who did
+     * not ask for it.
+     */
+    const admin = roles.find((r) => r.name === "admin") ?? staff[0] ?? member;
+    for (const [username, role] of [["demo", admin], ["member", member]] as const) {
+        const email = `${username}@${DEMO_DOMAIN}`;
+        const existing = await prisma.user.findUnique({ where: { email }, select: { id: true } });
+        const user = await prisma.user.upsert({
+            where: { email },
+            update: { roleId: role.id },
+            create: { email, username, password, roleId: role.id, emailVerified: new Date() },
+            select: { id: true, username: true, email: true },
+        });
+        if (!existing) record("user", user.id);
+        await hold(user.id, role.id);
+        users.push({ ...user, rolePriority: role.priority });
+    }
+
     for (let i = 0; i < wanted; i++) {
         const username = NAMES[i];
         const email = `${username}@${DEMO_DOMAIN}`;
@@ -371,6 +409,7 @@ async function seedUsers(
             select: { id: true, username: true, email: true },
         });
         if (!existing) record("user", user.id);
+        await hold(user.id, role.id);
         users.push({ ...user, rolePriority: role.priority });
     }
     return users;

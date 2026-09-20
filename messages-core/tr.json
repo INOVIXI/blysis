@@ -1280,8 +1280,8 @@
     "checkEmail": "E-postanı kontrol et",
     "confirmPassword": "Şifreyi Onayla",
     "creatingAccount": "Hesap oluşturuluyor...",
-    "demoBanner": "Demo hesabı",
-    "demoBannerBody": "Bu herkese açık demoda bazı yıkıcı işlemler devre dışı.",
+    "demoBanner": "Buradan Deneyin",
+    "demoBannerBody": "İki hesaptan biriyle girin ve dilediğinizi değiştirin.",
     "demoFillCreds": "Demo bilgilerini doldur",
     "email": "E-posta",
     "emailChangeBackToProfile": "Profiline dön",
@@ -1380,7 +1380,11 @@
     "verifyMetaDescription": "Hesabını tamamlamak için e-posta adresini doğrula.",
     "verifySuccess": "E-posta doğrulandı!",
     "verifySuccessBody": "E-postan doğrulandı. Artık hesabının tüm özelliklerini kullanabilirsin.",
-    "verifyTitle": "E-postayı Doğrula"
+    "verifyTitle": "E-postayı Doğrula",
+    "demoAsAdmin": "Yönetici olarak",
+    "demoAsMember": "Üye olarak",
+    "demoResetNote": "Buradaki her şey saat başı eski haline döner, yani yaptığınız hiçbir şey bir sonraki ziyaretçinin demosunu bozmaz. Birkaç işlem kapalı: posta göndermek, gerçek ödeme, ve kullandığınız hesabı kilitleyecek olan her şey.",
+    "demoFillFor": "{who} giriş bilgilerini doldur"
   },
   "search": {
     "title": "Arama",

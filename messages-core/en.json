@@ -1280,8 +1280,8 @@
     "checkEmail": "Check your email",
     "confirmPassword": "Confirm Password",
     "creatingAccount": "Creating account...",
-    "demoBanner": "Demo account",
-    "demoBannerBody": "Some destructive actions are disabled in this public demo.",
+    "demoBanner": "Try It Here",
+    "demoBannerBody": "Sign in with either account and change whatever you like.",
     "demoFillCreds": "Fill demo credentials",
     "email": "Email",
     "emailChangeBackToProfile": "Back to your profile",
@@ -1380,7 +1380,11 @@
     "verifyMetaDescription": "Confirm your email address to finish setting up your account.",
     "verifySuccess": "Email verified!",
     "verifySuccessBody": "Your email has been verified. You can now use all features of your account.",
-    "verifyTitle": "Verify Email"
+    "verifyTitle": "Verify Email",
+    "demoAsAdmin": "As an administrator",
+    "demoAsMember": "As a member",
+    "demoResetNote": "Everything here is put back every hour, so nothing you do can spoil it for the next visitor. A few actions are switched off: sending mail, real payments, and anything that would lock the account you are using.",
+    "demoFillFor": "Fill in the details {who}"
   },
   "search": {
     "title": "Search",
