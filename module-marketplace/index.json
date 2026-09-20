@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T13:56:40Z",
+  "updatedAt": "2026-09-20T14:15:02Z",
   "modules": [
     {
       "id": "announcements",
@@ -3107,13 +3107,13 @@
           "description": "Kural tabanlı otomatik ödüllendirme motoruyla başarım rozetleri"
         }
       },
-      "version": "1.7.0",
+      "version": "1.7.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Trophy",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-09-20T14:15:02Z",
       "screenshots": [],
       "tags": [
         "community"

@@ -90,6 +90,11 @@ export default function AdminTrophiesPage() {
     const { confirm } = useConfirm();
     // The kinds are named in the activity namespace, where the feed reads them.
     const activityT = useTranslations("activity");
+    /** What a kind of event is called. Falls back to its own word. */
+    const kindName = (type: string) => {
+        const nameKey = KINDS.find((kind) => kind.type === type)?.nameKey;
+        return nameKey && activityT.has(nameKey) ? activityT(nameKey) : type;
+    };
     const [trophies, setTrophies] = useState<AdminTrophy[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -566,8 +571,10 @@ export default function AdminTrophiesPage() {
                                                         {(row.icon || row.name).slice(0, 2)}
                                                     </div>
                                                     <div>
+                                                        {/* The name, and nothing under it. A cuid said
+                                                            nothing to anybody and took the line where
+                                                            something might have. */}
                                                         <div className="font-medium">{row.name}</div>
-                                                        <div className="text-xs text-muted-foreground">{row.id}</div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -578,7 +585,11 @@ export default function AdminTrophiesPage() {
                                             <td className="py-2 pr-3">
                                                 {row.ruleEvent ? (
                                                     <div className="flex flex-col">
-                                                        <code className="text-xs">{row.ruleEvent}</code>
+                                                        {/* The name of the event, not the event. The
+                                                            form above offers these by name already;
+                                                            the list printed `forum.post.created` in
+                                                            monospace beside it. */}
+                                                        <span className="text-xs">{kindName(row.ruleEvent)}</span>
                                                         <span className="text-xs text-muted-foreground">
                                                             x{row.ruleThreshold ?? 1}
                                                         </span>
