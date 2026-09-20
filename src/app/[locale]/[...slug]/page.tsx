@@ -15,7 +15,7 @@ import { getMessages } from "@/core/lib/i18n/translation-service";
  * Ask the module whether the URL names anything, when it declared a way to ask.
  *
  * A page that looks its subject up in the browser has already answered 200 by
- * the time it finds nothing, so `/player/nobody` was a soft 404: indexable,
+ * the time it finds nothing, so `/u/nobody` was a soft 404: indexable,
  * and invisible to a link checker or a monitor watching for a status. A route
  * with a `resolver` in its manifest gets the question asked here instead,
  * before anything renders.

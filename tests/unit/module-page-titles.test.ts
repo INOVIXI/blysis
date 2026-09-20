@@ -64,7 +64,7 @@ describe("moduleRouteTitle", () => {
     });
 
     it("ignores the URL even when the route ends in a dynamic segment", () => {
-        expect(moduleRouteTitle(["player", "somebody"], "/player/[username]")).toBe("Player");
+        expect(moduleRouteTitle(["u", "somebody"], "/u/[username]")).toBe("U");
     });
 
     it("uses the URL only where the route earned it", () => {

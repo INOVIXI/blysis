@@ -1,7 +1,7 @@
 /**
  * An installation never reads the name of the product it was built from.
  *
- * `SiteName`, `useSiteInitials` and `useSiteLogo` exist because six screens
+ * `SiteName` and `useSiteLogo` exist because six screens
  * had spelled the product's name into their markup. Each time one was found
  * it was fixed, and the next one was found by somebody noticing it on screen
  * - which is not a way to keep a promise. What was missing was a scan.

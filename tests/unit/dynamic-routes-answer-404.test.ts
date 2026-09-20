@@ -7,10 +7,10 @@ import { matchModuleRoute } from "@/core/lib/route-matcher";
  * A URL that names nothing has to say so in the status line.
  *
  * Seven public module pages looked their subject up in the browser, so by the
- * time they knew there was no such player, product, article, form, page or
+ * time they knew there was no such member, product, article, form, page or
  * topic they had already sent 200 and a rendered shell. That is a soft 404:
  * a crawler indexes it, a link checker walks past it, and a monitor watching
- * for a status sees a healthy page. `/player/nobody` and
+ * for a status sees a healthy page. `/u/nobody` and
  * `/store/product/99999` both answered 200 on the demo.
  *
  * Rewriting seven interactive pages as server components would have been a
@@ -162,7 +162,7 @@ describe("the route matcher still hands resolvers what they expect", () => {
     });
 
     it("reports a single segment by name", () => {
-        const match = matchModuleRoute(["player", "someone"]);
+        const match = matchModuleRoute(["u", "someone"]);
         expect(match?.params).toEqual({ username: "someone" });
     });
 });
