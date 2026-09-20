@@ -120,5 +120,9 @@ describe("nobody reads the raw header instead", () => {
         };
         for (const base of ["src", "module-sources"]) walk(path.join(ROOT, base));
         expect(offenders).toEqual([]);
-    });
+        // Reads every TypeScript file under src and module-sources - about
+        // five thousand of them. Vitest's default ceiling is five seconds and
+        // this crossed it on a machine at a load average of 31, which says
+        // nothing about the rule it holds.
+    }, 30_000);
 });

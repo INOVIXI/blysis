@@ -59,20 +59,32 @@ describe("the algorithms on offer", () => {
     });
 });
 
+/**
+ * How long a test that hashes a password three times is given.
+ *
+ * Being slow on purpose is the whole point of a password hash, and these
+ * cases pay for it three times over. Vitest's default ceiling is five
+ * seconds; measured on this machine at a load average of 31, two of them
+ * crossed it and the file went red for a reason that has nothing to do with
+ * hashing. The work factor is the operator's and may be raised, which would
+ * make this slower still.
+ */
+const ROOM_FOR_A_WORK_FACTOR = 30_000;
+
 describe("hashing and reading back", () => {
     for (const algorithm of HASH_ALGORITHMS) {
         it(`round-trips a password through ${algorithm}`, async () => {
             const hash = await hashPassword(PASSWORD, algorithm);
             expect(await verifyPassword(PASSWORD, hash)).toBe(true);
             expect(await verifyPassword(PASSWORD + "x", hash)).toBe(false);
-        });
+        }, ROOM_FOR_A_WORK_FACTOR);
 
         it(`salts every ${algorithm} hash, so two accounts do not share one`, async () => {
             const first = await hashPassword(PASSWORD, algorithm);
             const second = await hashPassword(PASSWORD, algorithm);
             expect(first).not.toBe(second);
             expect(await verifyPassword(PASSWORD, second)).toBe(true);
-        });
+        }, ROOM_FOR_A_WORK_FACTOR);
 
         it(`writes a ${algorithm} hash that says what made it`, async () => {
             const hash = await hashPassword(PASSWORD, algorithm);
