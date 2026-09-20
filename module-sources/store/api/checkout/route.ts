@@ -16,7 +16,7 @@ import { billingRefusal, type BillingDetails } from "../../lib/billing";
 import {
     computeOrderPricing,
     computeCouponDiscount,
-    couponEligibleSubtotal,
+    scopedSubtotal,
     computeCreatorDiscount,
     computeCreatorCommission,
     computeTotals,
@@ -259,7 +259,7 @@ export async function POST(request: NextRequest) {
                 // naming no product and no category covers all of it, which
                 // is what every coupon written before there was a way to say
                 // otherwise covers.
-                const eligible = couponEligibleSubtotal(
+                const eligible = scopedSubtotal(
                     coupon ?? {},
                     orderItems.map((item) => ({
                         productId: item.productId,
@@ -304,13 +304,30 @@ export async function POST(request: NextRequest) {
             // user delete via SetNull); the discount + commission both require
             // a payable creator.
             if (code && code.isActive && code.creatorId && code.creatorId !== session.user.id) {
-                creatorCodeRecord = {
-                    id: code.id,
-                    code: code.code,
-                    creatorId: code.creatorId,
-                    commissionPercent: code.commissionPercent,
-                };
-                creatorDiscount = computeCreatorDiscount(subtotal, couponDiscount, code.discountPercent);
+                // Only the part the code covers. A code naming nothing covers
+                // the basket, which is what every code issued before there
+                // was a way to say otherwise covers.
+                const eligible = scopedSubtotal(
+                    code,
+                    orderItems.map((item) => ({
+                        productId: item.productId,
+                        price: item.price,
+                        quantity: item.quantity,
+                    })),
+                    products.map((product) => ({ id: product.id, categoryId: product.categoryId ?? null })),
+                );
+                creatorDiscount = computeCreatorDiscount(subtotal, couponDiscount, code.discountPercent, eligible);
+                // A code that covered nothing in this basket earns its
+                // creator nothing either: the commission is a share of what
+                // the code actually moved.
+                if (creatorDiscount > 0 || eligible > 0) {
+                    creatorCodeRecord = {
+                        id: code.id,
+                        code: code.code,
+                        creatorId: code.creatorId,
+                        commissionPercent: code.commissionPercent,
+                    };
+                }
             }
         }
 

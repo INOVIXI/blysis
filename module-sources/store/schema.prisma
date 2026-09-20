@@ -430,6 +430,11 @@ model CreatorCode {
   commissionPercent Int    @default(5)
   usageCount      Int      @default(0)
   totalRevenue    Decimal  @default(0) @db.Decimal(10, 2)
+  /// Which products the code works on. Empty is every product, which is what
+  /// every code written before there was a way to say otherwise meant.
+  productIds      String[]
+  /// Which categories the code works on. Empty is every category.
+  categoryIds     String[]
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
 

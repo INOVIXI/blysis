@@ -188,6 +188,14 @@ export const creatorCodeCreateSchema = z.object({
     creatorId: z.string().trim().min(1, "Code and creator required").max(64),
     discountPercent: percent.optional(),
     commissionPercent: percent.optional(),
+    /** Where the code works. Empty is every product. */
+    productIds: z.array(z.string().min(1).max(64)).max(200).optional(),
+    categoryIds: z.array(z.string().min(1).max(64)).max(200).optional(),
+    /**
+     * The form has always drawn this switch and the create never read it, so
+     * a code written switched off arrived switched on.
+     */
+    isActive: z.boolean().optional(),
 });
 
 export const creatorCodeUpdateSchema = z.object({
@@ -195,6 +203,8 @@ export const creatorCodeUpdateSchema = z.object({
     creatorId: z.string().max(64).optional().nullable(),
     discountPercent: percent.optional(),
     commissionPercent: percent.optional(),
+    productIds: z.array(z.string().min(1).max(64)).max(200).optional(),
+    categoryIds: z.array(z.string().min(1).max(64)).max(200).optional(),
     isActive: z.boolean().optional(),
 });
 

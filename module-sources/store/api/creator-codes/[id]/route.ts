@@ -27,6 +27,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.creatorId !== undefined) data.creatorId = fields.creatorId;
     if (fields.discountPercent !== undefined) data.discountPercent = fields.discountPercent;
     if (fields.commissionPercent !== undefined) data.commissionPercent = fields.commissionPercent;
+    if (fields.productIds !== undefined) data.productIds = fields.productIds;
+    if (fields.categoryIds !== undefined) data.categoryIds = fields.categoryIds;
     if (fields.isActive !== undefined) data.isActive = fields.isActive;
 
     const code = await prisma.creatorCode.update({ where: { id }, data });

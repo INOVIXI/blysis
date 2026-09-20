@@ -250,14 +250,17 @@ export interface CouponResult {
 }
 
 /**
- * How much of a basket a coupon covers.
+ * How much of a basket a rule covers.
  *
- * A coupon naming nothing covers all of it. A coupon naming products or
- * categories covers the lines that match either - a line matched by both is
- * still one line, which is why this counts lines rather than summing two
- * filters.
+ * A rule naming nothing covers all of it. One naming products or categories
+ * covers the lines that match either - a line matched by both is still one
+ * line, which is why this counts lines rather than summing two filters.
+ *
+ * Named for the question rather than for the first thing that asked it: the
+ * coupon, the bulk discount and the creator code all ask it now, out of one
+ * function, so none of them can answer it differently.
  */
-export function couponEligibleSubtotal(
+export function scopedSubtotal(
     scope: CouponScope,
     items: readonly { productId: string; price: number; quantity: number }[],
     products: readonly { id: string; categoryId?: string | null }[],
@@ -326,16 +329,25 @@ export function computeCouponDiscount(
 }
 
 /**
- * Creator-code discount: a percentage of the subtotal AFTER the coupon has
- * been applied. Returns 0 for a missing/zero percent.
+ * A creator's code: a percentage of the part of the basket it covers, after
+ * the coupon has taken its share.
+ *
+ * Two clamps, and both were missing. The code took its percentage of the
+ * whole basket whatever it was meant for, so a code written for one
+ * creator's cosmetics came off the ranks and the gift cards as well. And the
+ * part it covers cannot be bigger than what is left after the coupon: a
+ * basket a coupon has emptied has nothing for a code to take, and taking it
+ * anyway wrote a commission against money nobody paid.
  */
 export function computeCreatorDiscount(
     subtotal: number,
     couponDiscount: number,
-    discountPercent: number
+    discountPercent: number,
+    /** The part this code covers. All of it, for a code naming nothing. */
+    eligibleSubtotal: number = subtotal,
 ): number {
-    const afterCoupon = subtotal - couponDiscount;
-    return cents(afterCoupon * (discountPercent / 100));
+    const left = Math.max(0, subtotal - couponDiscount);
+    return cents(Math.min(eligibleSubtotal, left) * (discountPercent / 100));
 }
 
 /**

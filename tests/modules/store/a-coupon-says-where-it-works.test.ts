@@ -28,7 +28,7 @@ import fs from "node:fs";
 import path from "node:path";
 import {
     computeCouponDiscount,
-    couponEligibleSubtotal,
+    scopedSubtotal,
 } from "@/modules/store/lib/pricing";
 
 const PRODUCTS = [
@@ -46,25 +46,25 @@ const LIVE = { isActive: true, type: "PERCENTAGE", value: 50 };
 
 describe("what a coupon covers", () => {
     it("is the whole basket when it names nothing", () => {
-        expect(couponEligibleSubtotal({}, BASKET, PRODUCTS)).toBe(60);
+        expect(scopedSubtotal({}, BASKET, PRODUCTS)).toBe(60);
     });
 
     it("is one category when it names one", () => {
-        expect(couponEligibleSubtotal({ categoryIds: ["ranks"] }, BASKET, PRODUCTS)).toBe(40);
+        expect(scopedSubtotal({ categoryIds: ["ranks"] }, BASKET, PRODUCTS)).toBe(40);
     });
 
     it("is one product when it names one", () => {
-        expect(couponEligibleSubtotal({ productIds: ["hat"] }, BASKET, PRODUCTS)).toBe(20);
+        expect(scopedSubtotal({ productIds: ["hat"] }, BASKET, PRODUCTS)).toBe(20);
     });
 
     it("counts a line that matches either of them once", () => {
         expect(
-            couponEligibleSubtotal({ productIds: ["hat"], categoryIds: ["cosmetics"] }, BASKET, PRODUCTS),
+            scopedSubtotal({ productIds: ["hat"], categoryIds: ["cosmetics"] }, BASKET, PRODUCTS),
         ).toBe(20);
     });
 
     it("is nothing when the basket holds none of what it names", () => {
-        expect(couponEligibleSubtotal({ categoryIds: ["keys"] }, BASKET, PRODUCTS)).toBe(0);
+        expect(scopedSubtotal({ categoryIds: ["keys"] }, BASKET, PRODUCTS)).toBe(0);
     });
 });
 

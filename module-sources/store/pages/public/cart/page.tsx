@@ -71,7 +71,7 @@ export default function CartPage() {
     const [checkoutError, setCheckoutError] = useState<string | null>(null);
     const [playerName, setPlayerName] = useState("");
     const [creatorCodeInput, setCreatorCodeInput] = useState("");
-    const [creatorApplied, setCreatorApplied] = useState<{ code: string; discountPercent: number; creator: string } | null>(null);
+    const [creatorApplied, setCreatorApplied] = useState<{ code: string; discountPercent: number; creator: string; discount: number } | null>(null);
     const [creatorError, setCreatorError] = useState<string | null>(null);
     // The gateway ids come from whichever gateway modules are installed, so
     // this is a plain string rather than a union the store would have to know.
@@ -209,7 +209,7 @@ export default function CartPage() {
             const res = await fetch(`/api/v1/store/creator-codes/validate?code=${encodeURIComponent(creatorCodeInput.trim())}`);
             const data = await res.json();
             if (data.valid) {
-                setCreatorApplied({ code: data.code, discountPercent: data.discountPercent, creator: data.creator });
+                setCreatorApplied({ code: data.code, discountPercent: data.discountPercent, creator: data.creator, discount: Number(data.discount ?? 0) });
             } else {
                 setCreatorError(t("err_invalidCreatorCode"));
             }
@@ -432,7 +432,7 @@ export default function CartPage() {
                                         <div className="flex items-center justify-between bg-primary/10 border border-primary/20 rounded-md px-3 py-2">
                                             <div className="flex items-center gap-2">
                                                 <Check className="w-4 h-4 text-primary" />
-                                                <span className="text-sm font-medium text-primary">{creatorApplied.code} ({creatorApplied.discountPercent}% off)</span>
+                                                <span className="text-sm font-medium text-primary">{t("creatorApplied", { code: creatorApplied.code, percent: creatorApplied.discountPercent })}</span>
                                             </div>
                                             <button onClick={removeCreatorCode} aria-label={commonT('remove')}>
                                                 <X className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
@@ -483,7 +483,11 @@ export default function CartPage() {
                                 {creatorApplied && (
                                     <div className="flex justify-between text-primary">
                                         <span>{t('creatorDiscount', { percent: creatorApplied.discountPercent })}</span>
-                                        <span>-{formatPrice((cart.total - couponDiscount) * creatorApplied.discountPercent / 100)}</span>
+                                        {/* What the endpoint worked out, not
+                                            what this page can guess: a code
+                                            may cover one shelf, and the browser
+                                            does not know which. */}
+                                        <span>-{formatPrice(creatorApplied.discount)}</span>
                                     </div>
                                 )}
 
@@ -492,7 +496,7 @@ export default function CartPage() {
                                 <div className="flex justify-between text-lg font-bold">
                                     <span>{t('total')}</span>
                                     <span className="text-primary">{formatPrice(
-                                        Math.max(0, cart.total - couponDiscount - (creatorApplied ? (cart.total - couponDiscount) * creatorApplied.discountPercent / 100 : 0))
+                                        Math.max(0, cart.total - couponDiscount - (creatorApplied?.discount ?? 0))
                                     )}</span>
                                 </div>
 
@@ -540,7 +544,7 @@ export default function CartPage() {
                                                     <span className="text-sm font-medium">{t('payWithCredits')}</span>
                                                     <p className="text-xs text-muted-foreground">
                                                         {t('balance', { amount: formatPrice(creditBalance) })}
-                                                        {cart && creditBalance < Math.max(0, cart.total - couponDiscount - (creatorApplied ? (cart.total - couponDiscount) * creatorApplied.discountPercent / 100 : 0)) && (
+                                                        {cart && creditBalance < Math.max(0, cart.total - couponDiscount - (creatorApplied?.discount ?? 0)) && (
                                                             <span className="text-destructive">({t('insufficient')})</span>
                                                         )}
                                                     </p>

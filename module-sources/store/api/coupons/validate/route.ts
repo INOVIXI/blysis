@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { couponValidateSchema } from "../../../lib/validations";
-import { computeCouponDiscount, couponEligibleSubtotal } from "../../../lib/pricing";
+import { computeCouponDiscount, scopedSubtotal } from "../../../lib/pricing";
 
 // POST /api/v1/store/coupons/validate - Check coupon validity
 export async function POST(request: NextRequest) {
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     // checkout caps it at the subtotal, so a 50 coupon on a 10 cart promised
     // a shopper 50 off and then took 10. A preview that disagrees with the
     // till is worse than no preview.
-    const eligible = couponEligibleSubtotal(
+    const eligible = scopedSubtotal(
         coupon,
         lines,
         lines.map((line) => ({ id: line.productId, categoryId: line.categoryId })),

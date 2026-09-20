@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T02:00:37Z",
+  "updatedAt": "2026-09-20T02:14:21Z",
   "modules": [
     {
       "id": "announcements",
@@ -2806,13 +2806,13 @@
           "description": "Ürün, kategori, sepet ve siparişleriyle eksiksiz e-ticaret"
         }
       },
-      "version": "2.36.0",
+      "version": "2.37.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T02:00:37Z",
+      "updatedAt": "2026-09-20T02:14:21Z",
       "screenshots": [],
       "tags": [
         "commerce"

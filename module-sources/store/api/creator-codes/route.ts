@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     if (jsonBody instanceof NextResponse) return jsonBody;
     const parsed = creatorCodeCreateSchema.safeParse(jsonBody);
     if (!parsed.success) return NextResponse.json({ error: "Code and creator required" }, { status: 400 });
-    const { code, creatorId, discountPercent, commissionPercent } = parsed.data;
+    const { code, creatorId, discountPercent, commissionPercent, productIds, categoryIds, isActive } = parsed.data;
 
     const existing = await prisma.creatorCode.findUnique({ where: { code: code.toUpperCase() } });
     if (existing) return NextResponse.json({ error: "Code already exists" }, { status: 400 });
@@ -46,6 +46,9 @@ export async function POST(request: NextRequest) {
             creatorId,
             discountPercent: discountPercent || creatorDefaultDiscount,
             commissionPercent: commissionPercent || creatorDefaultCommission,
+            productIds: productIds ?? [],
+            categoryIds: categoryIds ?? [],
+            isActive: isActive ?? true,
         },
     });
     return NextResponse.json({ creatorCode }, { status: 201 });
