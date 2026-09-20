@@ -60,6 +60,14 @@ describe("a command that writes while it runs", () => {
         expect(fs.readFileSync(path.join(ROOT, ".gitignore"), "utf8")).toContain("/.tmp/");
     });
 
+    it("keeps it out of the lint pass, where a copied file is still a file", () => {
+        // A run may leave a copy of a source file here - a backup of something
+        // being edited, a fixture, a whole module - and the linter has no way
+        // to tell a copy from the original. It reported warnings against paths
+        // nobody is going to edit, and `--max-warnings=0` is how CI runs.
+        expect(fs.readFileSync(path.join(ROOT, "eslint.config.mjs"), "utf8")).toContain('".tmp/**"');
+    });
+
     it("is what this very run is using", () => {
         // The suite runs through the wrapper, so its own temp directory is the
         // repository's. A run that is not is a run the wrapper did not reach.

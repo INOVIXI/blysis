@@ -120,6 +120,12 @@ const eslintConfig = defineConfig([
         // eslint-disable directives that trip --max-warnings=0. CI only
         // avoided this because it lints before it runs the suite.
         "coverage/**",
+        // This repository's own scratch directory (see scripts/with-scratch.sh).
+        // A run puts whatever it likes here - a backup of a file being edited,
+        // a fixture, a copy of a module - and a copy of a source file is still
+        // a source file to a linter, so the lint pass started reporting
+        // warnings against paths nobody is going to edit.
+        ".tmp/**",
     ]),
 ]);
 
