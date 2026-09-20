@@ -57,7 +57,7 @@
     "tr": {
       "microsoftAuth": {
         "adm_subtitle": "Siteniz için Microsoft ile OAuth girişini yapılandırın.",
-        "adm_tenantNote": "Tek kiracılı (single-tenant) bir uygulama için ayrıca AUTH_MICROSOFT_ENTRA_ID_ISSUER değişkenini https://login.microsoftonline.com/KIRACI-KIMLIGINIZ/v2.0 olarak ayarlayın. Boş bırakılırsa giriş, her Microsoft veya Xbox hesabını kabul eden ortak /common/ uç noktası üzerinden yapılır.",
+        "adm_tenantNote": "Tek kiracılı (single-tenant) bir uygulama için ayrıca AUTH_MICROSOFT_ENTRA_ID_ISSUER değişkenini https://login.microsoftonline.com/KIRACI-ID/v2.0 olarak ayarlayın. Boş bırakılırsa giriş, her Microsoft veya Xbox hesabını kabul eden ortak /common/ uç noktası üzerinden yapılır.",
         "adm_title": "Microsoft ile Giriş Ayarları",
         "perm_manage": "Yönetebilir"
       },
