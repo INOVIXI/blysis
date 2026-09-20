@@ -52,10 +52,24 @@ vi.mock("@/core/lib/db", () => ({
     },
 }));
 
+/*
+ * Two releases, both far above anything this product will ever be.
+ *
+ * They used to be 0.3.0 and 0.9.0, and the second needed the first before it.
+ * That is the case being tested and it depended on the version in
+ * `package.json` being below both: the day the product reached 0.3.0, the
+ * step this file exists to check stopped being a step, and ten assertions
+ * went red for a reason that had nothing to do with the endpoint.
+ *
+ * A fixture that a release can walk into is a fixture with a date on it.
+ */
+const NEXT = "900.1.0";
+const AFTER_NEXT = "900.2.0";
+
 const FEED = {
     releases: [
-        { version: "0.3.0", tag: "0.3.0", publishedAt: "2026-09-01T00:00:00Z", notes: "Faster.", security: false, channel: "stable" },
-        { version: "0.9.0", tag: "0.9.0", publishedAt: "2026-09-05T00:00:00Z", notes: "Big.", security: false, channel: "stable", minVersion: "0.3.0" },
+        { version: NEXT, tag: NEXT, publishedAt: "2026-09-01T00:00:00Z", notes: "Faster.", security: false, channel: "stable" },
+        { version: AFTER_NEXT, tag: AFTER_NEXT, publishedAt: "2026-09-05T00:00:00Z", notes: "Big.", security: false, channel: "stable", minVersion: NEXT },
     ],
 };
 
@@ -99,13 +113,13 @@ describe("who may look and who may press", () => {
     it("tells a stranger nothing", async () => {
         user = null;
         expect((await GET()).status).toBe(401);
-        expect((await ask({ version: "0.3.0" })).status).toBe(401);
+        expect((await ask({ version: NEXT })).status).toBe(401);
     });
 
     it("tells a signed-in member nothing either", async () => {
         admin = false;
         expect((await GET()).status).toBe(403);
-        expect((await ask({ version: "0.3.0" })).status).toBe(403);
+        expect((await ask({ version: NEXT })).status).toBe(403);
         expect(intentOnDisk()).toBeNull();
     });
 });
@@ -114,8 +128,8 @@ describe("what the screen is told", () => {
     it("names the version running and the one available", async () => {
         const body = await (await GET()).json();
         expect(body.current).toMatch(/^\d+\.\d+\.\d+$/);
-        expect(body.latest.version).toBe("0.3.0");
-        expect(body.latest.tag).toBe("0.3.0");
+        expect(body.latest.version).toBe(NEXT);
+        expect(body.latest.tag).toBe(NEXT);
     });
 
     it("says nothing is available when the feed cannot be read", async () => {
@@ -128,19 +142,19 @@ describe("what the screen is told", () => {
 
 describe("asking for a version", () => {
     it("starts the update and records it", async () => {
-        const res = await ask({ version: "0.3.0" });
+        const res = await ask({ version: NEXT });
         expect(res.status).toBe(202);
 
-        expect(intentOnDisk()).toMatchObject({ tag: "0.3.0", toVersion: "0.3.0", state: "requested", requestedBy: "admin-1" });
+        expect(intentOnDisk()).toMatchObject({ tag: NEXT, toVersion: NEXT, state: "requested", requestedBy: "admin-1" });
         expect(created).toHaveLength(1);
-        expect(created[0]).toMatchObject({ toVersion: "0.3.0", tag: "0.3.0", requestedBy: "admin-1" });
+        expect(created[0]).toMatchObject({ toVersion: NEXT, tag: NEXT, requestedBy: "admin-1" });
         expect(activity.map((a) => a.action)).toContain("core.update.request");
     });
 
     it("ignores a tag the caller supplies", async () => {
         // The one assertion this file exists for.
-        await ask({ version: "0.3.0", tag: "evil:latest" });
-        expect(intentOnDisk()).toMatchObject({ tag: "0.3.0" });
+        await ask({ version: NEXT, tag: "evil:latest" });
+        expect(intentOnDisk()).toMatchObject({ tag: NEXT });
     });
 
     it("refuses a version the feed does not list", async () => {
@@ -158,15 +172,15 @@ describe("asking for a version", () => {
     });
 
     it("refuses a jump the release says needs a step first, and names it", async () => {
-        const res = await ask({ version: "0.9.0" });
+        const res = await ask({ version: AFTER_NEXT });
         expect(res.status).toBe(409);
-        expect((await res.json()).blockedBy).toBe("0.3.0");
+        expect((await res.json()).blockedBy).toBe(NEXT);
         expect(intentOnDisk()).toBeNull();
     });
 
     it("refuses a second update while one is in flight", async () => {
-        expect((await ask({ version: "0.3.0" })).status).toBe(202);
-        const second = await ask({ version: "0.3.0" });
+        expect((await ask({ version: NEXT })).status).toBe(202);
+        const second = await ask({ version: NEXT });
         expect(second.status).toBe(409);
         expect(created).toHaveLength(1);
     });
@@ -174,14 +188,14 @@ describe("asking for a version", () => {
 
 describe("what happens before the image is pulled", () => {
     it("takes a dump first, because that is the part no rollback returns", async () => {
-        await ask({ version: "0.3.0" });
-        expect(backups).toEqual(["Before updating to 0.3.0"]);
+        await ask({ version: NEXT });
+        expect(backups).toEqual([`Before updating to ${NEXT}`]);
     });
 
     it("does not start when the dump fails", async () => {
         backupThrows = new Error("pg_dump was not found on the server.");
 
-        const res = await ask({ version: "0.3.0" });
+        const res = await ask({ version: NEXT });
 
         expect(res.status).toBe(409);
         expect((await res.json()).code).toBe("backup_failed");
@@ -192,14 +206,14 @@ describe("what happens before the image is pulled", () => {
     it("starts anyway when the operator says they back up elsewhere", async () => {
         backupThrows = new Error("pg_dump was not found on the server.");
 
-        const res = await ask({ version: "0.3.0", skipBackup: true });
+        const res = await ask({ version: NEXT, skipBackup: true });
 
         expect(res.status).toBe(202);
         expect(backups).toEqual([]);
     });
 
     it("puts the site into maintenance for the swap", async () => {
-        await ask({ version: "0.3.0" });
+        await ask({ version: NEXT });
         expect(maintenance.enabled).toBe(true);
         expect(intentOnDisk()).toMatchObject({ maintenanceRestore: true });
     });
@@ -209,7 +223,7 @@ describe("what happens before the image is pulled", () => {
         // this to take them out of it.
         maintenance = { enabled: true, message: "Back soon", allowedRoles: ["admin"] };
 
-        await ask({ version: "0.3.0" });
+        await ask({ version: NEXT });
 
         expect(maintenance).toMatchObject({ enabled: true, message: "Back soon" });
         expect(intentOnDisk()).toMatchObject({ maintenanceRestore: false });

@@ -40,6 +40,20 @@ describe("a command that writes while it runs", () => {
         ).toEqual([]);
     });
 
+    it("is POSIX, because the image it runs in has no bash", () => {
+        // node:24-alpine ships busybox ash and no bash. Wrapping `build` in
+        // one turned every image build into `sh: bash: not found` and exit
+        // 127, which says nothing about what was being built.
+        const source = fs.readFileSync(path.join(ROOT, "scripts/with-scratch.sh"), "utf8");
+        expect(source.split("\n")[0]).toBe("#!/bin/sh");
+        // In the prose above it, not in a `set` line.
+        expect(source).not.toMatch(/^\s*set .*pipefail/m);
+        for (const [name, command] of Object.entries(scripts)) {
+            if (!command.includes("with-scratch.sh")) continue;
+            expect(command, `${name} runs the wrapper with bash`).not.toContain("bash ");
+        }
+    });
+
     it("has a wrapper that runs, and hands the command its own arguments", () => {
         const wrapper = path.join(ROOT, "scripts/with-scratch.sh");
         expect(fs.existsSync(wrapper)).toBe(true);

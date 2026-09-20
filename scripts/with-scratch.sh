@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #
 # Run a command with this repository's own scratch directory.
 #
@@ -16,7 +16,13 @@
 # space, and `npm run clean` can take the whole thing back.
 #
 # TMPDIR is what Node's os.tmpdir(), vitest, Next and Playwright all read.
-set -euo pipefail
+#
+# POSIX sh, and invoked as `sh` rather than `bash`. The production image is
+# node:24-alpine, which has no bash: wrapping `build` in one turned every
+# image build into `sh: bash: not found` and an exit code of 127, which says
+# nothing about what was being built. `pipefail` went with it and is not
+# missed - there is no pipeline here.
+set -eu
 
 SCRATCH="${PWD}/.tmp"
 mkdir -p "$SCRATCH"
