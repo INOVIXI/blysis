@@ -99,10 +99,7 @@ export function PrivacyPanel() {
         <>
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Download className="w-5 h-5 text-primary" aria-hidden="true" />
-                        {t("privacy")}
-                    </CardTitle>
+                    <CardTitle>{t("privacy")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-start justify-between gap-4">

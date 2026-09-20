@@ -139,6 +139,22 @@ describe("a notification toggle does something", () => {
         expect(undeliverable, undeliverable.join("\n")).toEqual([]);
     });
 
+    it("shows a person what a row does and not what fires it", () => {
+        // The grid printed the event name under the label, in monospace:
+        // "Credits added to your balance", then "credits.credit.added". That
+        // second line is a hook name. It means something to whoever wrote the
+        // module and nothing to the person deciding whether they want the
+        // email, and it is the reason the label and the description exist.
+        const source = fs.readFileSync(
+            path.join("src", "core", "components", "profile", "NotificationPrefsTab.tsx"),
+            "utf8",
+        );
+        // `key={type.eventType}` is React bookkeeping and never reaches a
+        // reader; a brace that is not an attribute's value is a text node.
+        const rendered = source.match(/(?<!=)\{\s*type\.eventType\s*\}/g) ?? [];
+        expect(rendered, "the raw event name is drawn on the screen").toEqual([]);
+    });
+
     it("is read back by whatever sends the thing it mutes", () => {
         // A preference nothing consults is a switch wired to nothing.
         const listeners = path.join(MODULES, "in-app-notifications", "listeners");

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
-import { Loader2, Bell } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface NotifType {
@@ -25,6 +25,13 @@ const DEFAULT_CHANNELS = ["email", "inapp"];
 /**
  * `blog.article.created` becomes `notificationType_blog_article_created`, so a
  * module translates its rows without core knowing any of their names.
+ *
+ * The event's own name used to be printed under the label as well, in a
+ * monospace line. It is the hook a module fires, which is a name for whoever
+ * wrote the module and nothing at all to the person deciding whether they
+ * want an email: the row said "Credits added to your balance" and then
+ * "credits.credit.added" underneath it. What a row does is the label and the
+ * description; the machine name has no reader here.
  */
 export function notificationTypeKey(eventType: string): string {
     return `notificationType_${eventType.replace(/[.\-]/g, "_")}`;
@@ -52,6 +59,11 @@ export function NotificationPrefsTab() {
         const key = notificationTypeKey(type.eventType);
         return t.has(key) ? t(key) : type.label;
     };
+
+    // "inapp" is a column name in a manifest. The heading already said the
+    // word in the reader's language and the switch's accessible name did not.
+    const channelLabel = (channel: string): string =>
+        t.has(`channel_${channel}`) ? t(`channel_${channel}`) : channel;
 
     const isEnabled = (eventType: string, channel: string): boolean => {
         const p = prefs.find((x) => x.eventType === eventType && x.channel === channel);
@@ -102,10 +114,7 @@ export function NotificationPrefsTab() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <Bell className="w-5 h-5" />
-                    {t("notificationPreferences")}
-                </CardTitle>
+                <CardTitle>{t("notificationPreferences")}</CardTitle>
             </CardHeader>
             <CardContent>
                 {types.length === 0 ? (
@@ -118,7 +127,7 @@ export function NotificationPrefsTab() {
                                     <th className="text-left py-2 pr-4">{t("event")}</th>
                                     {DEFAULT_CHANNELS.map((c) => (
                                         <th key={c} className="text-center py-2 px-3 text-xs uppercase font-medium text-muted-foreground">
-                                            {t.has(`channel_${c}`) ? t(`channel_${c}`) : c}
+                                            {channelLabel(c)}
                                         </th>
                                     ))}
                                 </tr>
@@ -137,7 +146,6 @@ export function NotificationPrefsTab() {
                                                 {type.description && (
                                                     <div className="text-xs text-muted-foreground">{type.description}</div>
                                                 )}
-                                                <div className="text-[10px] text-muted-foreground font-mono mt-0.5">{type.eventType}</div>
                                             </td>
                                             {DEFAULT_CHANNELS.map((channel) => {
                                                 const supported = channels.includes(channel);
@@ -150,7 +158,7 @@ export function NotificationPrefsTab() {
                                                             onClick={() => toggle(type.eventType, channel)}
                                                             role="switch"
                                                             aria-checked={enabled}
-                                                            aria-label={t("toggleChannelAria", { event: type.label, channel })}
+                                                            aria-label={t("toggleChannelAria", { event: labelFor(type), channel: channelLabel(channel) })}
                                                             className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
                                                                 enabled ? "bg-primary" : "bg-muted"
                                                             }`}
