@@ -15,10 +15,10 @@ import { ModuleFooterLinks } from "@/core/generated/module-registry";
 import { useAllModules } from "@/core/providers/module-provider";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
 import { invalidateSettingsCache } from "@/core/hooks/useSiteSettings";
-import { legacyColumns, parseFooterColumns, type FooterColumn } from "@/core/lib/footer-columns";
+import { drawnFooterColumns, legacyColumns, parseFooterColumns, type FooterColumn } from "@/core/lib/footer-columns";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { writeError } from "@/core/lib/write-result";
-import { FooterColumnCard, type DraftColumn } from "./FooterColumnCard";
+import { FooterColumnCard, PlacedLinks, type DraftColumn } from "./FooterColumnCard";
 
 /**
  * The footer, built rather than typed as JSON.
@@ -42,6 +42,26 @@ function toDraft(column: FooterColumn): DraftColumn {
     };
 }
 
+/**
+ * The draft as the footer sees it, so this screen can ask the footer's own
+ * function where a module's links are going to land. `external` decides
+ * nothing here: nothing below renders one of the operator's own links.
+ */
+function toColumn(column: DraftColumn): FooterColumn {
+    return {
+        title: column.title.trim() || null,
+        titleKey: column.title.trim() ? null : column.titleKey || null,
+        section: column.section.trim() || null,
+        links: column.links.map((link) => ({
+            label: link.label,
+            href: link.href,
+            external: false,
+            icon: link.icon.trim() || null,
+            source: "operator" as const,
+        })),
+    };
+}
+
 /** What is saved: empty strings become absent rather than empty values. */
 function toSaved(column: DraftColumn) {
     return {
@@ -61,6 +81,10 @@ function toSaved(column: DraftColumn) {
 export default function FooterSettingsPage() {
     const t = useTranslations("admin");
     const footerT = useTranslations("footer");
+    // The footer's own words for the way home and for a module's link, so
+    // this screen shows what a visitor reads rather than what is stored.
+    const commonT = useTranslations("common");
+    const navT = useTranslations("nav");
     const moduleStatus = useAllModules();
 
     const [columns, setColumns] = useState<DraftColumn[]>([]);
@@ -80,12 +104,26 @@ export default function FooterSettingsPage() {
         );
     });
 
+    const moduleLinks = ModuleFooterLinks.filter((fl) => isEnabledIn(moduleStatus, fl.module));
+
     /** What the installed modules actually declare, offered as suggestions. */
     const sections = [...new Set(
-        ModuleFooterLinks
-            .filter((fl) => isEnabledIn(moduleStatus, fl.module) && fl.section)
-            .map((fl) => fl.section as string),
+        moduleLinks.filter((fl) => fl.section).map((fl) => fl.section as string),
     )].sort();
+
+    /*
+     * The footer these columns produce, asked of the footer's own function.
+     * Editing the saved columns alone showed an operator an empty screen on
+     * an install whose site was drawing nine links, and gave the section box
+     * - which is what decides where a module's links land - nothing to show
+     * for being typed in.
+     */
+    const drawn = drawnFooterColumns(columns.map(toColumn), moduleLinks, {
+        home: commonT("home"),
+        moduleLink: (key) => (navT.has(key) ? navT(key) : null),
+    });
+    const placedIn = (index: number) =>
+        (drawn[index]?.links ?? []).filter((link) => link.source !== "operator");
 
     const save = async () => {
         setSaving(true);
@@ -188,6 +226,7 @@ export default function FooterSettingsPage() {
                                 shippedTitle={column.titleKey && footerT.has(column.titleKey)
                                     ? footerT(column.titleKey)
                                     : t("footer_columnTitlePlaceholder")}
+                                placed={placedIn(index)}
                                 onChange={(next) => setColumns(columns.map((c, i) => (i === index ? next : c)))}
                                 onRemove={() => setColumns(columns.filter((_, i) => i !== index))}
                                 onMove={(direction) => {
@@ -199,6 +238,22 @@ export default function FooterSettingsPage() {
                                 }}
                             />
                         ))
+                    )}
+                    {/* An operator with no columns of their own still has a
+                        footer: core makes one column for the module links and
+                        the way home. It is shown rather than left to be found
+                        on the site. */}
+                    {drawn.length > columns.length && (
+                        <Card>
+                            <CardContent className="p-4 space-y-2">
+                                <p className="font-medium">
+                                    {drawn[drawn.length - 1].titleKey && footerT.has(drawn[drawn.length - 1].titleKey as string)
+                                        ? footerT(drawn[drawn.length - 1].titleKey as string)
+                                        : t("footer_columnTitlePlaceholder")}
+                                </p>
+                                <PlacedLinks links={placedIn(drawn.length - 1)} />
+                            </CardContent>
+                        </Card>
                     )}
                     <Button
                         variant="outline"

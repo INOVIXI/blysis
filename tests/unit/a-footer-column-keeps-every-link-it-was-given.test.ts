@@ -56,7 +56,7 @@ describe("reading the columns an operator saved", () => {
                 title: "Help",
                 titleKey: null,
                 section: "support",
-                links: [{ label: "Contact", href: "/contact", external: false, icon: "mail" }],
+                links: [{ label: "Contact", href: "/contact", external: false, icon: "mail", source: "operator" }],
             },
         ]);
     });
@@ -151,7 +151,7 @@ describe("where a module's link ends up", () => {
 
     it("leaves the operator's own links in front of the module's", () => {
         const withOwn: FooterColumn[] = [
-            { title: "Quick", titleKey: null, section: null, links: [{ label: "Mine", href: "/mine", external: false, icon: null }] },
+            { title: "Quick", titleKey: null, section: null, links: [{ label: "Mine", href: "/mine", external: false, icon: null, source: "operator" }] },
         ];
         const placed = placeModuleLinks(withOwn, [moduleLink("Theirs", null)]);
         expect(placed[0].links.map((l) => l.label)).toEqual(["Mine", "Theirs"]);
@@ -167,7 +167,7 @@ describe("the way home", () => {
     it("is the first link of the catch-all column", () => {
         const columns: FooterColumn[] = [
             { title: "Legal", titleKey: null, section: "legal", links: [] },
-            { title: "Quick", titleKey: null, section: null, links: [{ label: "Store", href: "/store", external: false, icon: null }] },
+            { title: "Quick", titleKey: null, section: null, links: [{ label: "Store", href: "/store", external: false, icon: null, source: "operator" }] },
         ];
         const shown = withHomeLink(columns, "Home");
         expect(columnOf(shown, "Quick")?.links.map((l) => l.href)).toEqual(["/", "/store"]);
@@ -182,7 +182,7 @@ describe("the way home", () => {
 
     it("is not added twice when a column already links to the front page", () => {
         const columns: FooterColumn[] = [
-            { title: "Quick", titleKey: null, section: null, links: [{ label: "Front", href: "/", external: false, icon: null }] },
+            { title: "Quick", titleKey: null, section: null, links: [{ label: "Front", href: "/", external: false, icon: null, source: "operator" }] },
         ];
         expect(withHomeLink(columns, "Home")[0].links.map((l) => l.label)).toEqual(["Front"]);
     });

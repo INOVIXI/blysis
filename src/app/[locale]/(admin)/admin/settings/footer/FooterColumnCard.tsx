@@ -7,6 +7,8 @@ import { Card, CardContent } from "@/core/components/ui/card";
 import { IconPicker } from "@/core/components/ui/icon-picker";
 import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
+import { NavIcon } from "@/core/components/ui/NavIcon";
+import type { FooterColumnLink } from "@/core/lib/footer-columns";
 
 /**
  * One footer column, as an operator edits it.
@@ -39,6 +41,8 @@ interface FooterColumnCardProps {
     sections: string[];
     /** The shipped heading, when this column has never been renamed. */
     shippedTitle: string;
+    /** What the site adds to this column, which is not the operator's to edit. */
+    placed: readonly FooterColumnLink[];
     onChange: (column: DraftColumn) => void;
     onRemove: () => void;
     onMove: (direction: -1 | 1) => void;
@@ -50,6 +54,7 @@ export function FooterColumnCard({
     total,
     sections,
     shippedTitle,
+    placed,
     onChange,
     onRemove,
     onMove,
@@ -161,8 +166,38 @@ export function FooterColumnCard({
                         <Plus className="w-4 h-4" aria-hidden="true" />
                         {t("footer_addLink")}
                     </Button>
+                    <PlacedLinks links={placed} />
                 </div>
             </CardContent>
         </Card>
+    );
+}
+
+/**
+ * What lands in a column without the operator putting it there: the links an
+ * installed module contributes, and the way home.
+ *
+ * Read-only on purpose. They are recomposed on every request from the module
+ * registry, so a copy saved into the operator's own column would be a second
+ * one - drawn twice, and frozen in whichever language the operator was
+ * reading when they pressed Save.
+ */
+export function PlacedLinks({ links }: { links: readonly FooterColumnLink[] }) {
+    const t = useTranslations("admin");
+    if (links.length === 0) return null;
+    return (
+        <div className="border-t border-border pt-3 space-y-1">
+            <p className="text-xs font-medium text-muted-foreground">{t("footer_alsoDrawn")}</p>
+            <ul aria-label={t("footer_alsoDrawn")} className="space-y-1">
+                {links.map((link) => (
+                    <li key={`${link.source}-${link.href}`} className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <NavIcon name={link.icon} className="w-4 h-4 shrink-0" />
+                        <span>{link.label}</span>
+                        <span className="text-xs opacity-70">{link.href}</span>
+                    </li>
+                ))}
+            </ul>
+            <p className="text-xs text-muted-foreground">{t("footer_alsoDrawnHint")}</p>
+        </div>
     );
 }

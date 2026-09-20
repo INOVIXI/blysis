@@ -42,6 +42,8 @@ const BOUNDED: Record<string, string> = {
         "The modules installed and the ones offered. It has its own filters by category and tag, and a redesign of this screen is its own item.",
     "src/app/[locale]/(admin)/admin/theme/appearance/page.tsx":
         "The settings one theme declares. An operator cannot add to it.",
+    "src/app/[locale]/(admin)/admin/settings/footer/page.tsx":
+        "The footer an operator built, plus what the installed modules put in it. Both are as long as the site was configured to be, and a footer is read whole rather than looked one thing up in.",
     "src/app/[locale]/(admin)/admin/updates/page.tsx":
         "The releases behind the version installed, which is a handful.",
     "src/app/[locale]/(admin)/admin/observability/page.tsx":

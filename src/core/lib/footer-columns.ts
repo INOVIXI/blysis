@@ -20,9 +20,20 @@
 
 import { parseFooterLinks, type FooterLink } from "@/core/lib/footer-links";
 
+/**
+ * Who put a link in a column.
+ *
+ * The composed footer holds three kinds at once and a reader of it cannot
+ * otherwise tell them apart. The editor needs to: what a module contributes
+ * is drawn where it will land but is not the operator's to edit, and saving
+ * it would freeze a module's own name into the operator's own footer.
+ */
+export type FooterLinkSource = "operator" | "module" | "home";
+
 /** A link in a column. `icon` is a Lucide name; a bad one renders nothing. */
 export interface FooterColumnLink extends FooterLink {
     icon: string | null;
+    source: FooterLinkSource;
 }
 
 export interface FooterColumn {
@@ -65,7 +76,7 @@ function columnLinks(raw: unknown): FooterColumnLink[] {
             if (typeof href === "string") icons.set(href.trim(), text(icon, MAX_ICON));
         }
     }
-    return links.map((link) => ({ ...link, icon: icons.get(link.href) ?? null }));
+    return links.map((link) => ({ ...link, icon: icons.get(link.href) ?? null, source: "operator" as const }));
 }
 
 /**
@@ -120,10 +131,46 @@ export function legacyColumns(quick: unknown, legal: unknown): FooterColumn[] {
 }
 
 export interface ModuleFooterLink {
+    /** The module's own English name for it, and only ever the fallback. */
     label: string;
+    /** Where that name lives in the `nav` catalogue, where one was declared. */
+    labelKey?: string | null;
     href: string;
     section?: string | null;
     icon?: string | null;
+}
+
+/**
+ * The words the composition needs, which live in the reader's catalogues
+ * rather than here.
+ */
+export interface FooterWords {
+    /** What the way home is called. */
+    home: string;
+    /** A module link's name in the reader's language, or null for none. */
+    moduleLink: (key: string) => string | null;
+}
+
+/**
+ * The footer, composed: the operator's columns, what the installed modules
+ * put in them, and the way home.
+ *
+ * Both the site and the editor ask this. They used not to - the editor read
+ * the saved columns and stopped there - so an install that had never saved a
+ * footer opened the screen to two empty columns while its own site was
+ * drawing nine links, and the section box, which is what decides where a
+ * module's links land, had nothing to show for being typed in.
+ */
+export function drawnFooterColumns(
+    columns: FooterColumn[],
+    moduleLinks: readonly ModuleFooterLink[],
+    words: FooterWords,
+): FooterColumn[] {
+    const named = moduleLinks.map((link) => ({
+        ...link,
+        label: (link.labelKey ? words.moduleLink(link.labelKey) : null) ?? link.label,
+    }));
+    return withHomeLink(placeModuleLinks(columns, named), words.home);
 }
 
 /**
@@ -156,6 +203,7 @@ export function placeModuleLinks(
             href: link.href,
             external: false,
             icon: text(link.icon, MAX_ICON),
+            source: "module",
         });
     }
     return placed;
@@ -178,6 +226,6 @@ export function withHomeLink(columns: FooterColumn[], label: string): FooterColu
     if (base.some((column) => column.links.some((link) => link.href === "/"))) return base;
 
     const home = base.find((column) => column.section === null) ?? base[0];
-    home.links.unshift({ label, href: "/", external: false, icon: null });
+    home.links.unshift({ label, href: "/", external: false, icon: null, source: "home" });
     return base;
 }

@@ -163,8 +163,11 @@ describe("the renderers", () => {
     });
 
     it("resolves the key in the footer", () => {
+        // The resolution moved into `drawnFooterColumns`, which the footer and
+        // its editor both ask, so the screen an operator edits cannot call a
+        // module's link something the site does not.
         const src = read("src/core/components/layout/Footer.tsx");
-        expect(src).toContain("fl.labelKey && navT.has(fl.labelKey) ? navT(fl.labelKey) : fl.label");
+        expect(src).toContain("moduleLink: (key) => (navT.has(key) ? navT(key) : null)");
     });
 
     it("hands the mobile menu labels that are already resolved", () => {

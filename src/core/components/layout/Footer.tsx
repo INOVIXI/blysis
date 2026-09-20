@@ -14,7 +14,7 @@ import { FooterDropdown } from "@/core/components/ui/footer-dropdown";
 import { FooterColumn } from "@/core/components/layout/FooterColumn";
 import { Slot } from "@/core/components/Slot";
 import { NavIcon } from "@/core/components/ui/NavIcon";
-import { legacyColumns, parseFooterColumns, placeModuleLinks, withHomeLink, type FooterColumnLink } from "@/core/lib/footer-columns";
+import { drawnFooterColumns, legacyColumns, parseFooterColumns, type FooterColumnLink } from "@/core/lib/footer-columns";
 import { VENDOR_NAME, VENDOR_URL } from "@/core/config/vendor";
 
 
@@ -103,25 +103,18 @@ function DefaultFooter() {
     // rather than vanishing, which is what filtering on `section === "quick"`
     // silently did to it.
     const enabledFooterLinks = ModuleFooterLinks.filter((fl) => isEnabledIn(moduleStatus, fl.module));
-    // Same as the navbar: the module's own name in the footer follows the
-    // locale when the manifest declares a key, and falls back to the manifest
-    // label when it does not. Links the admin typed have no key and stay put.
-    const named = enabledFooterLinks.map((fl) => ({
-        label: fl.labelKey && navT.has(fl.labelKey) ? navT(fl.labelKey) : fl.label,
-        href: fl.href,
-        section: fl.section ?? null,
-        icon: null,
-    }));
 
     // An install that has never opened the footer editor keeps the two
     // columns it had, read out of the settings that still hold them.
+    //
+    // Same as the navbar: the module's own name in the footer follows the
+    // locale when the manifest declares a key, and falls back to the manifest
+    // label when it does not. Links the admin typed have no key and stay put.
     const saved = parseFooterColumns(settings.footer_columns);
-    const columns = withHomeLink(
-        placeModuleLinks(
-            saved ?? legacyColumns(settings.footer_quick_links, settings.footer_legal_links),
-            named,
-        ),
-        commonT('home'),
+    const columns = drawnFooterColumns(
+        saved ?? legacyColumns(settings.footer_quick_links, settings.footer_legal_links),
+        enabledFooterLinks,
+        { home: commonT('home'), moduleLink: (key) => (navT.has(key) ? navT(key) : null) },
     );
     const filled = columns.filter((column) => column.links.length > 0);
 
