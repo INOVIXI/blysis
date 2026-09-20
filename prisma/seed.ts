@@ -53,6 +53,29 @@ async function main() {
         update: { roleId: adminRole.id },
         create: { email: adminEmail, username: "blysisadmin", password: pw, roleId: adminRole.id },
     });
+    /*
+     * The role as a row, not only as a name beside theirs.
+     *
+     * Since `001_a_member_holds_a_set_of_roles`, a member's roles are the
+     * rows in `UserRole`; `roleId` above is the one shown next to their name
+     * and nothing reads it to decide what they may do. Setting only that made
+     * an administrator who holds no roles: signing in worked and `/admin`
+     * sent them home again.
+     *
+     * The migration back-fills this row on a site being upgraded. A database
+     * made by `prisma db push` never runs migrations, which is how a first
+     * install and CI both get theirs - so the seed writes it.
+     *
+     * Upsert, because some installations run the seed on every deploy and the
+     * pair is unique: a bare create would throw the second time and take the
+     * rest of the seed with it.
+     */
+    await prisma.userRole.upsert({
+        where: { userId_roleId: { userId: admin.id, roleId: adminRole.id } },
+        update: {},
+        create: { userId: admin.id, roleId: adminRole.id, source: "seed" },
+    });
+
     const created = admin.createdAt.getTime() === admin.updatedAt.getTime();
     console.log("[ok]Admin user");
 
