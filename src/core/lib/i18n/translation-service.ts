@@ -52,7 +52,7 @@ export async function getMessages(locale: string): Promise<Record<string, unknow
     }
 
     // 2. Query DB - only core + enabled modules
-    const enabledModuleIds = await getEnabledModuleIds();
+    const silenced = await silencedModuleIds();
     /*
      * The theme the site is wearing, whose settings screens are drawn from
      * its own strings.
@@ -69,12 +69,22 @@ export async function getMessages(locale: string): Promise<Record<string, unknow
      * depend on who is asking.
      */
     const themeId = await activeThemeId();
-    const allowedModules = ["core", ...enabledModuleIds, `theme:${themeId}`];
-
+    // Every theme but the one being worn is excluded by name; everything else
+    // is in unless an admin switched it off. A theme is not a module and has
+    // no `ModuleConfig` row to rule on, so it cannot be covered by the same
+    // question.
     const rows = await prisma.translation.findMany({
         where: {
             locale,
-            module: { in: allowedModules },
+            NOT: [
+                { module: { in: silenced } },
+                {
+                    AND: [
+                        { module: { startsWith: "theme:" } },
+                        { module: { not: `theme:${themeId}` } },
+                    ],
+                },
+            ],
         },
         select: {
             namespace: true,
@@ -215,9 +225,22 @@ export async function invalidateTranslationCache(): Promise<void> {
 // Internals
 // ---------------------------------------------------------------------------
 
-async function getEnabledModuleIds(): Promise<string[]> {
+/**
+ * The modules an admin has switched off.
+ *
+ * Asked this way round on purpose. It used to ask for `enabled: true`, which
+ * reads an absent row as off - and every other reader in the product reads it
+ * as on, because a row only exists once somebody has ruled on the module and
+ * a registry entry only exists once its files are installed. See
+ * `isEnabledIn`, which was written to end exactly this disagreement.
+ *
+ * The cost was a module whose screens render perfectly and whose words do
+ * not: `/admin/settings/smtp` drew a heading that read `smtpProvider.adm_title`
+ * because its module had no row.
+ */
+async function silencedModuleIds(): Promise<string[]> {
     const modules = await prisma.moduleConfig.findMany({
-        where: { enabled: true },
+        where: { enabled: false },
         select: { id: true },
     });
     return modules.map((m) => m.id);
