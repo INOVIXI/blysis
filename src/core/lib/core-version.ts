@@ -12,6 +12,16 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.11.0 - `MemberAvatar`, `MemberLink` and `CountBadge` join `@/core/sdk/ui`.
+ * Five screens drew a member's face and each one disagreed about size, shape
+ * and what to draw for the members who have no picture, which is most of
+ * them: a grey silhouette twenty times over says nothing about who is in the
+ * list. A face is initials on a colour the name itself picks, so the same
+ * person is the same colour everywhere, and `MemberLink` puts the name beside
+ * it pointing at their profile where a module that serves profiles is
+ * installed. `CountBadge` is the number on the corner of the bell and the
+ * cart, which were written twice and identically wrong.
+ *
  * 5.10.0 - `AdminCrudPage` marks a row that is switched off, and takes
  * `activeField` for a screen whose switch is not called `isActive`. Twelve
  * module screens declared such a toggle and not one drew it in the list, so a
@@ -538,4 +548,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.10.0";
+export const CORE_API_VERSION = "5.11.0";
