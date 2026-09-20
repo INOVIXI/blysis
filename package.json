@@ -82,7 +82,7 @@
     "mysql2": "^3.24.4",
     "next": "^16.2.4",
     "next-auth": "5.0.0-beta.32",
-    "next-intl": "^4.9.0",
+    "next-intl": "^4.14.5",
     "nodemailer": "^10.0.10",
     "nprogress": "^0.2.0",
     "otpauth": "^9.5.2",
