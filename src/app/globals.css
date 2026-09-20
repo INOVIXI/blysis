@@ -4,6 +4,31 @@
 
 @layer base {
   /*
+   * A border with no colour named is the theme's border colour.
+   *
+   * Tailwind v3's preflight set every element's `border-color` to the theme's
+   * grey. v4 dropped that and made an uncoloured border `currentColor`, which
+   * means `divide-y` and `border-b` draw in the *text* colour: near black on a
+   * light page. Sixty-four places in this tree write a border that way, and
+   * the member's credit history was the one somebody finally looked at - a
+   * list of black rules between rows that should have been hairlines.
+   *
+   * It was patched once already, in the dark-mode block below, with three
+   * `!important` rules for `.divide-y`, `.border-b` and `.border-t`. That is
+   * the same fix applied to one mode and one selector at a time, which is why
+   * light mode kept the black lines for months. This is the rule those three
+   * were approximating, and it is the whole of it: a class that does name a
+   * colour still wins, because it lands in the utilities layer.
+   */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--blysis-color-border);
+  }
+
+  /*
    * A control that can be pressed says so with the pointer.
    *
    * Tailwind v4's preflight gives `button` a `cursor: default`. That is a
@@ -508,12 +533,8 @@ body {
 }
 /* HTML elements without Tailwind classes */
 [data-mode="dark"] table { color: var(--blysis-color-foreground); }
-[data-mode="dark"] th { color: var(--blysis-color-mutedForeground) !important; border-color: var(--blysis-color-border) !important; }
-[data-mode="dark"] td { border-color: var(--blysis-color-border) !important; }
+[data-mode="dark"] th { color: var(--blysis-color-mutedForeground) !important; }
 [data-mode="dark"] tr:hover { background-color: var(--blysis-color-muted) !important; }
-[data-mode="dark"] .divide-y > * + * { border-color: var(--blysis-color-border) !important; }
-[data-mode="dark"] .border-b { border-color: var(--blysis-color-border) !important; }
-[data-mode="dark"] .border-t { border-color: var(--blysis-color-border) !important; }
 /* Native form elements */
 [data-mode="dark"] input, [data-mode="dark"] textarea, [data-mode="dark"] select:not(.appearance-none) {
   background-color: var(--blysis-color-background) !important;
