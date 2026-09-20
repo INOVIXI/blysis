@@ -79,11 +79,11 @@
     "marked-alert": "^2.1.2",
     "marked-footnote": "^1.4.0",
     "marked-gfm-heading-id": "^4.1.4",
-    "mysql2": "^3.22.0",
+    "mysql2": "^3.24.4",
     "next": "^16.2.4",
     "next-auth": "5.0.0-beta.32",
     "next-intl": "^4.9.0",
-    "nodemailer": "^8.0.11",
+    "nodemailer": "^10.0.10",
     "nprogress": "^0.2.0",
     "otpauth": "^9.5.2",
     "pg": "^8.20.0",
@@ -105,26 +105,10 @@
     "zod": "^4.3.6"
   },
   "overrides": {
-    "react-copy-to-clipboard": {
-      "react": "$react"
-    },
-    "react-debounce-input": {
-      "react": "$react"
-    },
-    "react-inspector": {
-      "react": "$react"
-    },
-    "js-yaml": "^4.3.2",
-    "uuid": "^11.1.1",
-    "@hono/node-server": ">=1.19.13",
-    "fast-uri": ">=3.1.2",
-    "fast-xml-builder": ">=1.1.7",
-    "fast-xml-parser": ">=5.7.0",
-    "hono": ">=4.12.18",
-    "icu-minify": ">=4.9.2",
-    "postcss": ">=8.5.10",
+    "nodemailer": "$nodemailer",
+    "mysql2": "$mysql2",
     "deepmerge-ts": "^8.0.2",
-    "mysql2": "^3.22.0"
+    "js-yaml": "^4.3.2"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
@@ -132,7 +116,7 @@
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^26.5.1",
-    "@types/nodemailer": "^8.0.2",
+    "@types/nodemailer": "^7.0.12",
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "^5.0.1",
     "eslint": "^9.39.5",
