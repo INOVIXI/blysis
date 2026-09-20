@@ -37,6 +37,8 @@ const BOUNDED_BY_DESIGN = new Set([
     "setting",        // core's own configuration
     "cronRun",        // one per registered job
     "blogCategory",   // curated by an editor
+    "forumCategory",  // the sections a board has, curated and ordered by hand
+    "category",       // the shop's shelves, the same: an operator made every one
     "seoPage",        // one per page an editor described
     "licenseProduct", // one per product a licence can be issued for
     "wheel",          // one per wheel an operator set up, and each is a page

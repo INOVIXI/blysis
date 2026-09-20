@@ -53,7 +53,9 @@ export default function ChangelogTypesPage() {
 
     const load = useCallback(async () => {
         try {
-            const res = await fetch("/api/v1/changelog/types");
+            // The operator's answer: a kind they retired is one this screen has
+            // to be able to bring back.
+            const res = await fetch("/api/v1/changelog/types?scope=admin");
             if (!res.ok) throw new Error(String(res.status));
             const body = await res.json();
             setKinds(body.types ?? []);

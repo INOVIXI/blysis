@@ -4,7 +4,25 @@ import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { formCreateSchema } from "../lib/validations";
 
-export async function GET() {
+/**
+ * GET /api/v1/forms - the forms still taking answers, and the panel's list.
+ *
+ * The panel read the reader's answer, so a form an operator closed left the
+ * one screen that could open it again.
+ */
+export async function GET(request: NextRequest) {
+    if (new URL(request.url).searchParams.get("scope") === "admin") {
+        const session = await auth();
+        if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        const all = await prisma.customForm.findMany({
+            select: { id: true, title: true, slug: true, description: true, isActive: true },
+            orderBy: { createdAt: "desc" },
+            take: 500,
+        });
+        return NextResponse.json({ forms: all });
+    }
+
     const forms = await prisma.customForm.findMany({
         where: { isActive: true },
         select: { id: true, title: true, slug: true, description: true },

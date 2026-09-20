@@ -15,7 +15,32 @@ import { stillOwnedWhere } from "../../lib/ownership";
  * pays for it with an answer nothing may keep, because keeping it would serve
  * one member's shelves to the next visitor.
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+    /*
+     * The operator's answer, and it is deliberately not the shopper's with a
+     * flag on it: the shopper's is shaped by who is asking - gated shelves,
+     * live product counts - and an operator managing shelves wants the shelves,
+     * all of them, in the order they are in. It also carries none of the cache
+     * headers below, because it varies by caller.
+     */
+    if (new URL(request.url).searchParams.get("scope") === "admin") {
+        const session = await auth();
+        if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        // The permission the writes below answer to: seeing every shelf and
+        // rearranging them are the same job.
+        if (!(await hasPermission(session.user.id, "store.manage"))) {
+            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
+        const all = await prisma.category.findMany({
+            include: {
+                _count: { select: { products: true } },
+                children: { select: { id: true, name: true, slug: true, image: true, description: true } },
+            },
+            orderBy: { order: "asc" },
+        });
+        return NextResponse.json({ categories: all });
+    }
+
     try {
         const categories = await prisma.category.findMany({
             where: { isActive: true },

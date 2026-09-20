@@ -2,7 +2,7 @@
   "id": "custom-forms",
   "name": "Custom Forms",
   "description": "Dynamic form builder with submissions",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",

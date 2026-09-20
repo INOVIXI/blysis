@@ -48,7 +48,10 @@ export default function AdminStoreCategoriesPage() {
 
     const fetchCategories = async () => {
         try {
-            const res = await fetch("/api/v1/store/categories");
+            // The operator's answer: a shelf they hid is one this screen has to
+            // be able to show again, and the shopper's answer is shaped by
+            // who is asking.
+            const res = await fetch("/api/v1/store/categories?scope=admin");
             if (res.ok) {
                 const data = await res.json();
                 setCategories(data.categories || []);

@@ -7,7 +7,27 @@ import { forumCategorySchema } from "../../lib/validations";
 import { denyGuestView } from "../../lib/guest-view";
 
 // GET /api/v1/forum/categories
-export async function GET() {
+/**
+ * GET /api/v1/forum/categories - the sections a reader may open, and the
+ * panel's list.
+ *
+ * The panel read the reader's answer, so a section an operator switched off
+ * left the one screen that could switch it back on - and the private ones are
+ * filtered by what the *reader* may see, which for an operator managing the
+ * board is the wrong question entirely.
+ */
+export async function GET(request: NextRequest) {
+    if (new URL(request.url).searchParams.get("scope") === "admin") {
+        const session = await auth();
+        if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        const all = await prisma.forumCategory.findMany({
+            orderBy: { order: "asc" },
+            include: { _count: { select: { topics: true } } },
+        });
+        return NextResponse.json({ categories: all });
+    }
+
     const denied = await denyGuestView();
     if (denied) return denied;
 

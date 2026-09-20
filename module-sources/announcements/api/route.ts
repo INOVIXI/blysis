@@ -11,7 +11,17 @@ import { announcementCreateSchema } from "../lib/validations";
  */
 const SHARED_CACHE = { "Cache-Control": "public, max-age=0, s-maxage=30, stale-while-revalidate=60" };
 
-// GET /api/v1/announcements - Public: active announcements
+/**
+ * GET /api/v1/announcements - the live banners, inside their window.
+ *
+ * The panel used to read this, so a notice an operator switched off left the
+ * one screen that could switch it back on, and one written for next week was
+ * invisible until it published itself. The operator's answer is a route of
+ * its own rather than a `scope=admin` branch here, which is what the five
+ * other endpoints in this class use: this one carries a shared-cache header,
+ * and an answer that varies by who asked has no business behind one. The
+ * header's own comment above says so.
+ */
 export async function GET() {
     const now = new Date();
 

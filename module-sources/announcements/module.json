@@ -2,7 +2,7 @@
   "id": "announcements",
   "name": "Announcements",
   "description": "Site-wide announcement banners",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "management",
   "author": "Blysis",
@@ -41,6 +41,12 @@
       "path": "/announcements/[id]",
       "handler": "api/[id]/route.ts",
       "description": "Update or delete a single announcement (admin).",
+      "permission": "announcements.manage"
+    },
+    {
+      "path": "/announcements/admin",
+      "handler": "api/admin/route.ts",
+      "description": "Every announcement, live or not, for the screen that manages them (admin).",
       "permission": "announcements.manage"
     }
   ],

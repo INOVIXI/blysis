@@ -68,7 +68,9 @@ export default function FormsPage() {
     ]);
 
     const fetchForms = useCallback(async () => {
-        const res = await fetch("/api/v1/forms");
+        // The operator's answer: a form they closed is one this screen has to
+        // be able to open again.
+        const res = await fetch("/api/v1/forms?scope=admin");
         if (res.ok) { const data = await res.json(); setForms(data.forms || []); }
         setLoading(false);
     }, []);

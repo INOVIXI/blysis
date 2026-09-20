@@ -41,7 +41,9 @@ export default function CustomPagesAdminPage() {
     const [order, setOrder] = useState(0);
 
     const fetchPages = useCallback(async () => {
-        const res = await fetch("/api/v1/custom-pages");
+        // The operator's answer: a draft is invisible in the published one,
+            // which is what this screen exists to publish.
+            const res = await fetch("/api/v1/custom-pages?scope=admin");
         if (res.ok) { const data = await res.json(); setPages(data.pages || []); }
         setLoading(false);
     }, []);

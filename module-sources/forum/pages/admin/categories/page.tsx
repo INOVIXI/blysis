@@ -41,7 +41,9 @@ export default function AdminForumCategoriesPage() {
 
     const fetchCategories = async () => {
         try {
-            const res = await fetch("/api/v1/forum/categories");
+            // The operator's answer: a section switched off, or private to a
+            // role this operator is not in, is still theirs to manage.
+            const res = await fetch("/api/v1/forum/categories?scope=admin");
             if (res.ok) {
                 const data = await res.json();
                 setCategories(data.categories || []);

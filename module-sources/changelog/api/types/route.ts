@@ -60,14 +60,26 @@ async function ensureSeeded(): Promise<void> {
     });
 }
 
-export async function GET() {
+/**
+ * GET /api/v1/changelog/types - the kinds of release this site publishes.
+ *
+ * Two readers, both operators, and only one of them wants the live list. The
+ * entry form picks a kind to file a new entry under, so a kind that was
+ * retired does not belong there. The screen that manages the kinds has to see
+ * the retired ones, or the switch that retires one removes it from the only
+ * screen that could bring it back.
+ *
+ * Both answers are admin-only either way: this endpoint has never been public.
+ */
+export async function GET(request: NextRequest) {
     const who = await requireAdmin();
     if (who instanceof NextResponse) return who;
     await ensureSeeded();
+    const everything = new URL(request.url).searchParams.get("scope") === "admin";
     const types = await prisma.changelogType.findMany({
-        where: { isActive: true },
+        where: everything ? {} : { isActive: true },
         orderBy: [{ order: "asc" }, { key: "asc" }],
-        select: { id: true, key: true, name: true, nameKey: true, tone: true, order: true },
+        select: { id: true, key: true, name: true, nameKey: true, tone: true, order: true, isActive: true },
     });
     return NextResponse.json({ types });
 }

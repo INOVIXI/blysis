@@ -5,7 +5,26 @@ import { auth } from "@/core/sdk/auth";
 import { customPageCreateSchema } from "../lib/validations";
 
 // GET /api/v1/custom-pages
-export async function GET() {
+/**
+ * GET /api/v1/custom-pages - the published pages, and the panel's list.
+ *
+ * The panel read the published answer while the module shipped "Draft" and
+ * "Published" labels, so a draft was invisible on the only screen that could
+ * publish it and the Draft label could never be drawn at all.
+ */
+export async function GET(request: NextRequest) {
+    if (new URL(request.url).searchParams.get("scope") === "admin") {
+        const session = await auth();
+        if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        const all = await prisma.customPage.findMany({
+            orderBy: { order: "asc" },
+            select: { id: true, title: true, slug: true, isActive: true, order: true, createdAt: true },
+            take: 500,
+        });
+        return NextResponse.json({ pages: all });
+    }
+
     const pages = await prisma.customPage.findMany({
         where: { isActive: true },
         orderBy: { order: "asc" },

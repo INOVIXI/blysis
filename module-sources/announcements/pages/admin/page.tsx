@@ -25,6 +25,9 @@ export default function Page() {
             title={t("adm_title")}
             subtitle={t("adm_subtitle")}
             apiPath="/api/v1/announcements"
+            // The operator's answer, not the reader's: a notice switched off
+            // is a notice this screen has to be able to switch back on.
+            listPath="/api/v1/announcements/admin"
             listKey="announcements"
             displayField="title"
             secondaryField="type"
