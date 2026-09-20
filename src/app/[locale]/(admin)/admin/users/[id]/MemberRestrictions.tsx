@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Plus, ShieldOff, Undo2 } from "lucide-react";
+import { Loader2, Plus, Undo2 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/core/components/ui/button";
@@ -109,10 +109,7 @@ export function MemberRestrictions({ userId, restrictions, scopes, onChange }: M
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <CardTitle className="flex items-center gap-2">
-                        <ShieldOff className="w-4 h-4" aria-hidden="true" />
-                        {t("restrictions_title")}
-                    </CardTitle>
+                    <CardTitle>{t("restrictions_title")}</CardTitle>
                     <Button variant="outline" size="sm" onClick={() => setOpen(!open)}>
                         <Plus className="w-4 h-4" aria-hidden="true" />
                         {t("restrictions_place")}

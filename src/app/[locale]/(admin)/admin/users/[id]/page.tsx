@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useId } from "react";
+import { MemberAvatar } from "@/core/components/ui/MemberAvatar";
 import { useModalDialog } from "@/core/hooks/useModalDialog";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Link } from "@/core/lib/i18n/navigation";
-import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { Button, buttonClassName } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
@@ -279,13 +279,7 @@ export default function AdminUserDetailPage() {
                 title={user.username}
                 description={user.email}
                 actions={
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden">
-                        {user.avatar ? (
-                            <Image src={user.avatar} alt="" width={48} height={48} className="w-full h-full object-cover" unoptimized />
-                        ) : (
-                            user.username[0].toUpperCase()
-                        )}
-                    </div>
+                    <MemberAvatar name={user.username} src={user.avatar} size={48} />
                 }
             />
 
@@ -393,10 +387,7 @@ export default function AdminUserDetailPage() {
                     {/* Ban/Unban */}
                     <Card className={user.isBanned ? "border-destructive/30" : ""}>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                {user.isBanned ? <Ban className="w-4 h-4 text-destructive" /> : <ShieldCheck className="w-4 h-4 text-success" />}
-                                {user.isBanned ? t("users_banned") : t("users_accountActive")}
-                            </CardTitle>
+                            <CardTitle>{user.isBanned ? t("users_banned") : t("users_accountActive")}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             {user.isBanned ? (
@@ -454,10 +445,7 @@ export default function AdminUserDetailPage() {
                     {canImpersonate && (
                         <Card>
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <UserCog className="w-4 h-4 text-warning" />
-                                    {t("users_impersonate")}
-                                </CardTitle>
+                                <CardTitle>{t("users_impersonate")}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-2">
                                 <p className="text-xs text-muted-foreground">
@@ -488,10 +476,7 @@ export default function AdminUserDetailPage() {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Download className="w-4 h-4 text-primary" />
-                                GDPR
-                            </CardTitle>
+                            <CardTitle>GDPR</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
                             <Button
