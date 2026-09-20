@@ -2,7 +2,7 @@
   "id": "member-profiles",
   "name": "Member Profiles",
   "description": "Public profile pages, with what every installed module knows about a member",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "coreVersion": "^5.0.0",
   "category": "gaming",
   "author": "Blysis",

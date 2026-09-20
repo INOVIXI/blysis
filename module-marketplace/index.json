@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T10:51:57Z",
+  "updatedAt": "2026-09-20T11:30:12Z",
   "modules": [
     {
       "id": "announcements",
@@ -1595,13 +1595,13 @@
           "description": "Herkese açık profil sayfaları; kurulu her modülün üye hakkında bildiği ile"
         }
       },
-      "version": "1.6.2",
+      "version": "1.7.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-09-16T19:58:34Z",
+      "updatedAt": "2026-09-20T11:30:12Z",
       "screenshots": [],
       "tags": [
         "gaming"
