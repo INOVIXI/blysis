@@ -293,7 +293,9 @@ export const CORE_NAV_GROUPS: NavGroup[] = [
                 header: "History",
                 headerKey: "sidebar_history",
                 items: [
-                    { href: "/admin/activity-log", label: "Activity Log", labelKey: "sidebar_activityLog", icon: ScrollText },
+                    // One record, one screen. `/admin/activity-log` listed the
+                    // same table with four columns and no filter, and sat
+                    // right here under the same icon.
                     { href: "/admin/audit-log", label: "Audit Log", labelKey: "sidebar_auditLog", icon: ScrollText },
                 ],
             },

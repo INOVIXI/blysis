@@ -57,7 +57,7 @@ describe("a long list has a way through it", () => {
 
     it("is used by the admin lists that page", () => {
         const paged = [
-            "activity-log", "audit-log", "moderation", "revisions", "warnings",
+            "audit-log", "moderation", "revisions", "warnings",
             "users", "email-queue", "media",
             "roles", "api-keys", "ip-blocks", "broadcasts",
         ];
