@@ -10,6 +10,8 @@ export default function Page() {
             title={t("adm_title")}
             subtitle={t("adm_subtitle")}
             apiPath="/api/v1/popups"
+            // The operator's answer, not the visitor's: see the endpoint.
+            listPath="/api/v1/popups?scope=admin"
             listKey="popups"
             displayField="title"
             secondaryField="content"

@@ -41,6 +41,7 @@ const BOUNDED_BY_DESIGN = new Set([
     "licenseProduct", // one per product a licence can be issued for
     "wheel",          // one per wheel an operator set up, and each is a page
     "helpCategory",   // one per section of the help centre, written by hand
+    "gameServer",     // one per machine an operator runs, and each is a host they set up
 ]);
 
 function routeFiles(dir: string, out: string[] = []): string[] {

@@ -3,7 +3,29 @@ import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { popupSchema } from "../lib/validations";
 
-export async function GET() {
+/**
+ * GET /api/v1/popups - what a visitor is shown, and what the panel manages.
+ *
+ * The visitor's answer is one popup: the live one, inside its window. The
+ * panel used to read that same answer, so an operator with three popups saw
+ * one row, a popup scheduled for next week was invisible on the only screen
+ * that could move it, and one that had ended could not be found to be brought
+ * back.
+ *
+ * `scope=admin` is the operator's answer, and it is refused to anybody who
+ * could not open the screen that asks for it: a popup that has not started is
+ * something the site has not said yet.
+ */
+export async function GET(request: NextRequest) {
+    if (new URL(request.url).searchParams.get("scope") === "admin") {
+        const session = await auth();
+        if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+        const popups = await prisma.popup.findMany({ orderBy: { createdAt: "desc" }, take: 200 });
+        return NextResponse.json({ popups });
+    }
+
     const now = new Date();
     const popups = await prisma.popup.findMany({
         where: {

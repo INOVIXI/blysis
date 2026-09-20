@@ -12,6 +12,16 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.5.0 - `AdminCrudPage` takes `listPath`. An endpoint a visitor reads
+ * filters - it hides what is inactive, it takes one - and a panel handed that
+ * same answer cannot see what was hidden, which is the one thing the panel is
+ * for. A module points this at its operator's answer and writes still go to
+ * `apiPath`. An addition: a screen that passes none behaves as it did.
+ *
+ * 5.4.0 - `ReferenceList` and `ReferenceListProps` join `@/core/sdk/admin`.
+ * A field that holds several records showed their ids; this picks them by
+ * name and draws what was picked.
+ *
  * 5.3.0 - `activityKinds` and `activityTypeLabel` join `@/core/sdk/ui`. Every
  * kind of activity anything writes is declared in a manifest and named in
  * both languages, and until now only core could read that list. The trophies
@@ -485,4 +495,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.4.0";
+export const CORE_API_VERSION = "5.5.0";

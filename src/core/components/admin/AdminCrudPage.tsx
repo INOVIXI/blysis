@@ -95,6 +95,18 @@ interface AdminCrudPageProps {
     title: string;
     subtitle: string;
     apiPath: string;
+    /**
+     * Where the rows are read, when that is not where they are written.
+     *
+     * An endpoint a visitor reads filters: it hides what is inactive, it
+     * takes twenty, it takes one. A panel given that same answer cannot see
+     * what was hidden, which is the one thing the panel exists to change -
+     * the switch labelled "Active" removed the row from the screen that
+     * could switch it back on. A module whose list endpoint has a public
+     * reader points this at the operator's answer, and writes still go to
+     * `apiPath`.
+     */
+    listPath?: string;
     fields: CrudField[];
     listKey: string; // key in response JSON for array
     displayField: string; // which field to show as title in list
@@ -128,7 +140,7 @@ interface AdminCrudPageProps {
  * two more files per module. The address changes, the back button works and
  * the form owns the screen, which is what the path segment was for.
  */
-export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displayField, secondaryField, secondaryRender, rowHref, rowActionLabel }: AdminCrudPageProps) {
+export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, listKey, displayField, secondaryField, secondaryRender, rowHref, rowActionLabel }: AdminCrudPageProps) {
     const ct = useTranslations("admin");
     const commonT = useTranslations("common");
     const [items, setItems] = useState<Record<string, unknown>[]>([]);
@@ -144,14 +156,14 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
 
     const fetchItems = useCallback(async () => {
         try {
-            const res = await fetch(apiPath);
+            const res = await fetch(listPath ?? apiPath);
             if (res.ok) {
                 const data = await res.json();
                 setItems(data[listKey] || []);
             }
         } catch (e) { console.error(e); }
         finally { setLoading(false); }
-    }, [apiPath, listKey]);
+    }, [apiPath, listPath, listKey]);
 
     useEffect(() => { fetchItems(); }, [fetchItems]);
 

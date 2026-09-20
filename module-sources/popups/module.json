@@ -2,7 +2,7 @@
   "id": "popups",
   "name": "Popups",
   "description": "Modal popup notifications and promotions",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "category": "management",
   "author": "Blysis",

@@ -10,6 +10,8 @@ export default function Page() {
             title={t("adm_title")}
             subtitle={t("adm_subtitle")}
             apiPath="/api/v1/servers"
+            // The operator's answer, not the visitor's: see the endpoint.
+            listPath="/api/v1/servers?scope=admin"
             listKey="servers"
             displayField="name"
             secondaryField="host"

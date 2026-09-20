@@ -3,7 +3,23 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useModalDialog } from "@/core/sdk/ui";
+import { usePathname } from "@/core/sdk/navigation";
 import { safeUrl } from "../lib/safe-url";
+
+/**
+ * Where a popup is not somebody's idea of a popup.
+ *
+ * The slot this mounts in is in the locale layout, which wraps the panel and
+ * the sign-in pages as well as the site. So an operator's own "Season 4
+ * starts Friday" opened over the panel they wrote it in, and over the sign-in
+ * form - where the scrim takes the clicks, and somebody signing in has to
+ * dismiss a marketing dialog first.
+ *
+ * Nobody meant that: a popup is something the site says to a visitor reading
+ * it. These are core's own path shapes rather than this module's, which is
+ * why they are written here and not guessed at somewhere else.
+ */
+const NOT_A_PAGE_TO_COVER = ["/admin", "/auth"];
 
 interface ActivePopup {
     id: string;
@@ -25,9 +41,16 @@ interface ActivePopup {
  */
 export default function PopupRenderer() {
     const t = useTranslations("popups");
+    const pathname = usePathname();
     const [popup, setPopup] = useState<ActivePopup | null>(null);
+    // `usePathname` is the locale-aware one, so this is the path without the
+    // language in front of it.
+    const covering = NOT_A_PAGE_TO_COVER.some(
+        (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+    );
 
     useEffect(() => {
+        if (covering) return;
         let active = true;
         fetch("/api/v1/popups?active=1&limit=1")
             .then((r) => (r.ok ? r.json() : { popups: [] }))
@@ -43,7 +66,7 @@ export default function PopupRenderer() {
             })
             .catch(() => undefined);
         return () => { active = false; };
-    }, []);
+    }, [covering]);
 
     const dismiss = useCallback(() => {
         if (!popup) return;

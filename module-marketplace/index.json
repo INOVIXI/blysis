@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T03:25:15Z",
+  "updatedAt": "2026-09-20T04:45:04Z",
   "modules": [
     {
       "id": "announcements",
@@ -2249,13 +2249,13 @@
           "description": "Modal açılır pencere bildirimleri ve tanıtımları"
         }
       },
-      "version": "1.3.2",
+      "version": "1.4.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Bell",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T04:45:04Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -2594,13 +2594,13 @@
           "description": "Oyun sunucusu yönetimi, RCON ve durum izleme"
         }
       },
-      "version": "1.3.2",
+      "version": "1.4.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Server",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T04:45:04Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -3177,13 +3177,13 @@
           "description": "Eski bir adresi, sayfanın şimdi bulunduğu yere gönderir"
         }
       },
-      "version": "1.2.2",
+      "version": "1.3.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Signpost",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T04:45:04Z",
       "screenshots": [],
       "tags": [
         "content"
