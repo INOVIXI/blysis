@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Image as ImageIcon } from "lucide-react";
+import { File as FileIcon, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/core/lib/utils";
 
 /**
@@ -51,7 +51,14 @@ export function FilePreview({
                 />
             ) : (
                 <div className="flex h-20 w-20 items-center justify-center rounded border border-border bg-muted text-muted-foreground">
-                    <ImageIcon className="h-6 w-6" aria-hidden="true" />
+                    {/* A field that takes any file drew a picture icon beside
+                        the archive it was holding, which says the field wanted
+                        something else. The picture icon is kept for a field
+                        that does want a picture and has been given an address
+                        that is not one yet. */}
+                    {accept?.startsWith("image/")
+                        ? <ImageIcon className="h-6 w-6" aria-hidden="true" />
+                        : <FileIcon className="h-6 w-6" aria-hidden="true" />}
                 </div>
             )}
             <div className="min-w-0 flex-1">

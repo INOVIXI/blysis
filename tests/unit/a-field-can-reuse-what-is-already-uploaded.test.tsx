@@ -66,9 +66,19 @@ describe("the picker itself", () => {
 
     it("reads the library rather than a list of its own", () => {
         expect(source).toContain("/api/v1/media");
-        // Built with URLSearchParams rather than glued into the string, so
-        // the assertion reads the parameter rather than the spelling.
-        expect(source).toContain('type: "image"');
+    });
+
+    /*
+     * This used to assert the opposite: that the picker always asked for
+     * `type: "image"`. It was written when every field that opened it was an
+     * image field, and it held the defect in place - the downloads module's
+     * file field, whose whole job is to point at an archive, opened a shelf
+     * that could not contain one. What the shelf shows is the field's
+     * business now, and `a-shelf-holds-what-the-field-takes.test.tsx` asks
+     * the rendered picker what it fetched rather than reading the source.
+     */
+    it("narrows to pictures only where the field said pictures", () => {
+        expect(source).toContain("picturesOnly");
     });
 
     it("pages, because a library grows without bound", () => {

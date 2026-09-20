@@ -96,7 +96,7 @@ export function UrlOrFile({
             </div>
 
             {browsing && (
-                <MediaPicker onPick={onChange} onClose={() => setBrowsing(false)} />
+                <MediaPicker accept={accept} onPick={onChange} onClose={() => setBrowsing(false)} />
             )}
 
             {mode === "link" ? (

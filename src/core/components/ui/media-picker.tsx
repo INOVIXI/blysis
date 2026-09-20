@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { X } from "lucide-react";
+import { File as FileIcon, X } from "lucide-react";
 import { useModalDialog } from "@/core/hooks/useModalDialog";
 import { Button } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
@@ -14,7 +14,28 @@ interface MediaItem {
     id: string;
     filename: string;
     url: string;
+    mimeType?: string;
 }
+
+/**
+ * Whether the field that opened this only takes pictures.
+ *
+ * It reads the same `accept` the file input gets, because that is where a
+ * field already says what it takes and there is no second place to keep it in
+ * step. Nothing said means nothing is ruled out: the one field in the panel
+ * that leaves `accept` off is the downloads module's, whose whole job is to
+ * point at an archive.
+ */
+function picturesOnly(accept?: string): boolean {
+    if (!accept) return false;
+    return accept
+        .split(",")
+        .map((clause) => clause.trim().toLowerCase())
+        .filter(Boolean)
+        .every((clause) => clause.startsWith("image/") || IMAGE_SUFFIXES.has(clause));
+}
+
+const IMAGE_SUFFIXES = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"]);
 
 /**
  * The files this site already has, offered back to a field.
@@ -24,16 +45,23 @@ interface MediaItem {
  * a field. So an operator who wanted last month's banner on a second page
  * uploaded it a second time, and the library became a record of duplicates.
  *
- * Images only. A field that takes a picture has no use for the PDFs and ZIPs
- * the library also holds, and a shelf of things that cannot be chosen is
- * worse than a shorter shelf.
+ * It shows what the field takes. A field for a picture has no use for the
+ * PDFs and ZIPs the library also holds, and a shelf of things that cannot be
+ * chosen is worse than a shorter shelf - but it asked for pictures whoever
+ * opened it, so the downloads module's file field, whose entire job is to
+ * point at an archive, opened a shelf that could not contain one. The
+ * operator uploaded the archive a second time through the field, which is the
+ * duplication this was written to stop.
  */
 export function MediaPicker({
     onPick,
     onClose,
+    accept,
 }: {
     onPick: (url: string) => void;
     onClose: () => void;
+    /** What the field takes, in the form a file input reads. */
+    accept?: string;
 }) {
     const t = useTranslations("common");
     const dialogRef = useModalDialog<HTMLDivElement>(true, onClose);
@@ -50,13 +78,18 @@ export function MediaPicker({
     const load = useCallback(async () => {
         setLoading(true);
         try {
-            const params = new URLSearchParams({ type: "image", page: String(page), perPage: "24" });
+            const params = new URLSearchParams({ page: String(page), perPage: "24" });
+            if (picturesOnly(accept)) params.set("type", "image");
             if (query) params.set("search", query);
             const res = await fetch(`/api/v1/media?${params}`);
             if (!res.ok) throw new Error(String(res.status));
-            const data = (await res.json()) as { items?: MediaItem[]; pagination?: { totalPages?: number } };
+            const data = (await res.json()) as { items?: MediaItem[]; totalPages?: number };
             setItems(data.items ?? []);
-            setPages(data.pagination?.totalPages ?? 1);
+            // `/api/v1/media` answers with this at the top of the body. It was
+            // read from a `pagination` object that endpoint has never sent, so
+            // the fallback held and a library of two hundred files showed the
+            // newest twenty-four and no way to the rest.
+            setPages(data.totalPages ?? 1);
             // A read that worked lowers the flag, or the panel outlives the
             // outage and a retry that worked changes nothing.
             setFailed(false);
@@ -67,7 +100,7 @@ export function MediaPicker({
         } finally {
             setLoading(false);
         }
-    }, [page, query]);
+    }, [page, query, accept]);
 
     useEffect(() => { void load(); }, [load, reloadKey]);
 
@@ -134,16 +167,28 @@ export function MediaPicker({
                                             title={item.filename}
                                             className="group w-full rounded-lg border border-border p-1 transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
                                         >
-                                            {/* A plain `img`: the address came from
-                                                whichever storage provider is active,
-                                                and the optimiser would need every
-                                                possible host configured in advance. */}
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img
-                                                src={item.url}
-                                                alt={item.filename}
-                                                className="aspect-square w-full rounded object-contain bg-muted"
-                                            />
+                                            {/* An archive pointed at by an `img` draws
+                                                the browser's broken-picture mark, which
+                                                reads as a file that failed to upload. */}
+                                            {item.mimeType?.startsWith("image/") ? (
+                                                /* A plain `img`: the address came from
+                                                   whichever storage provider is active,
+                                                   and the optimiser would need every
+                                                   possible host configured in advance. */
+                                                /* eslint-disable-next-line @next/next/no-img-element */
+                                                <img
+                                                    src={item.url}
+                                                    alt={item.filename}
+                                                    className="aspect-square w-full rounded object-contain bg-muted"
+                                                />
+                                            ) : (
+                                                <span className="flex aspect-square w-full items-center justify-center rounded bg-muted">
+                                                    <FileIcon className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
+                                                </span>
+                                            )}
+                                            <span className="mt-1 block truncate px-1 text-xs text-muted-foreground">
+                                                {item.filename}
+                                            </span>
                                         </button>
                                     </li>
                                 ))}
