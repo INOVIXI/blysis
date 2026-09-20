@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, moduleSettings, prisma, rateLimitForRole, readJsonBody, getClientIP } from "@/core/sdk/server";
+import { isAdmin, logActivity, moduleSettings, prisma, rateLimitForRole, readJsonBody, getClientIP } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { helpArticleUpdateSchema, helpFeedbackSchema } from "../../../../lib/validations";
 import { countArticleView, readArticle } from "../../../../lib/read-article";
@@ -97,6 +97,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.categoryId !== undefined) data.categoryId = fields.categoryId;
 
     const updated = await prisma.helpArticle.update({ where: { id: existing.id }, data });
+    await logActivity({
+        userId: session.user.id,
+        action: "help_article.update",
+        entity: "HelpArticle",
+        entityId: updated.id,
+        metadata: { slug: updated.slug, fields: Object.keys(data) },
+    });
     return NextResponse.json({ article: updated });
 }
 
@@ -111,5 +118,12 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
     if (!existing) return NextResponse.json({ error: "Article not found" }, { status: 404 });
 
     await prisma.helpArticle.delete({ where: { id: existing.id } });
+    await logActivity({
+        userId: session.user.id,
+        action: "help_article.delete",
+        entity: "HelpArticle",
+        entityId: existing.id,
+        metadata: { slug: existing.slug, title: existing.title },
+    });
     return NextResponse.json({ ok: true });
 }

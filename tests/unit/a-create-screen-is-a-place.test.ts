@@ -177,8 +177,14 @@ describe("a create screen is a place", () => {
         for (const screen of screens) {
             const src = readFileSync(screen, "utf8");
             expect(src, `${screen} does not use useFormRoute`).toContain("useFormRoute");
+            // `showSomethingForm` on the screens that edit one kind of thing,
+            // and the thing itself on the one that edits two: the help centre
+            // opens an article form or a category form from one address, so
+            // its guard holds which and on what rather than a boolean. Either
+            // way the form is returned above the list instead of unfolding
+            // inside it, which is the whole of what this asks.
             expect(src, `${screen} never returns the form as its own screen`).toMatch(
-                /if \(show\w*(?:Form|Create)\) \{/,
+                /if \((?:show\w*(?:Form|Create)|\w*[Tt]arget)\) \{/,
             );
         }
     });

@@ -40,6 +40,7 @@ const BOUNDED_BY_DESIGN = new Set([
     "seoPage",        // one per page an editor described
     "licenseProduct", // one per product a licence can be issued for
     "wheel",          // one per wheel an operator set up, and each is a page
+    "helpCategory",   // one per section of the help centre, written by hand
 ]);
 
 function routeFiles(dir: string, out: string[] = []): string[] {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-09-19",
-  "updatedAt": "2026-09-19T23:52:40Z",
+  "updated": "2026-09-20",
+  "updatedAt": "2026-09-20T00:41:29Z",
   "modules": [
     {
       "id": "announcements",
@@ -1180,13 +1180,13 @@
           "description": "Kategorili ve aranabilir makalelerden oluşan bilgi bankası"
         }
       },
-      "version": "1.8.2",
+      "version": "1.9.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "HelpCircle",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T00:41:29Z",
       "screenshots": [],
       "tags": [
         "management"

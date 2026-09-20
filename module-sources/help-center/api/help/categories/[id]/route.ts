@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { helpCategoryUpdateSchema } from "../../../../lib/validations";
 
@@ -32,6 +32,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.isActive !== undefined) data.isActive = fields.isActive;
 
     const updated = await prisma.helpCategory.update({ where: { id }, data });
+    await logActivity({
+        userId: session.user.id,
+        action: "help_category.update",
+        entity: "HelpCategory",
+        entityId: updated.id,
+        metadata: { name: updated.name, fields: Object.keys(data) },
+    });
     return NextResponse.json({ category: updated });
 }
 
@@ -56,5 +63,12 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
     }
 
     await prisma.helpCategory.delete({ where: { id } });
+    await logActivity({
+        userId: session.user.id,
+        action: "help_category.delete",
+        entity: "HelpCategory",
+        entityId: id,
+        metadata: { name: existing.name },
+    });
     return NextResponse.json({ ok: true });
 }

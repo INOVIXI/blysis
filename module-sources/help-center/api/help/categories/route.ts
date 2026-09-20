@@ -4,8 +4,26 @@ import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { helpCategorySchema } from "../../../lib/validations";
 
-// GET /api/v1/help/categories - List categories
-export async function GET() {
+/**
+ * GET /api/v1/help/categories - the published list, and the operator's list.
+ *
+ * Same split as the articles endpoint, for the same reason: the panel read
+ * the visitor's answer, so a category somebody deactivated left the only
+ * screen that could bring it back or take it away.
+ */
+export async function GET(request: NextRequest) {
+    if (new URL(request.url).searchParams.get("scope") === "admin") {
+        const session = await auth();
+        if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+        const categories = await prisma.helpCategory.findMany({
+            orderBy: { order: "asc" },
+            include: { _count: { select: { articles: true } } },
+        });
+        return NextResponse.json({ categories });
+    }
+
     const categories = await prisma.helpCategory.findMany({
         where: { isActive: true },
         orderBy: { order: "asc" },
@@ -41,7 +59,7 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    const { name, slug, description, icon, image, order } = validation.data;
+    const { name, slug, description, icon, image, order, isActive } = validation.data;
     const categorySlug = slug || slugify(name);
 
     const category = await prisma.helpCategory.create({
@@ -52,6 +70,7 @@ export async function POST(request: NextRequest) {
             icon,
             image,
             order: order || 0,
+            isActive: isActive ?? true,
         },
     });
 

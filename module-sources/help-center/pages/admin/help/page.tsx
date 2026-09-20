@@ -1,36 +1,23 @@
 "use client";
 
-
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useState, useEffect } from "react";
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, ListControls, UrlOrFile, Input, Label, Pagination, RichTextEditor, Textarea, NativeSelect, useFormRoute, useRowList, buttonClassName, type BadgeTone } from "@/core/sdk/ui";
+import { toast } from "sonner";
+import {
+    Badge, Button, Card, CardContent, Checkbox, ListControls, LoadFailed, NavIcon, Pagination,
+    useConfirm, useFormRoute, useRowPicks, buttonClassName, type BadgeTone,
+} from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
-import { ArrowLeft, Loader2, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
-import { writeError } from "@/core/sdk";
+import { Pencil, Plus, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react";
+import { deleteEach } from "@/core/sdk";
 import { helpfulness, type Verdict } from "../../../lib/helpfulness";
-import { AdminPageHeader } from "@/core/sdk/admin";
-
-interface HelpCategory {
-    id: string;
-    name: string;
-    slug: string;
-    description: string | null;
-    icon: string | null;
-    isActive: boolean;
-    _count?: { articles: number };
-}
-
-interface HelpArticle {
-    id: string;
-    title: string;
-    slug: string;
-    content: string;
-    views: number;
-    helpful: number;
-    notHelpful: number;
-    isActive: boolean;
-    category: { id: string; name: string } | null;
-}
+import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
+import { ArticleForm } from "./ArticleForm";
+import { CategoryForm } from "./CategoryForm";
+import {
+    formTargetParam, readFormTarget,
+    type AdminHelpArticle, type AdminHelpCategory,
+} from "./rows";
 
 const VERDICT_TONE: Record<Verdict, BadgeTone> = {
     helping: "success",
@@ -39,12 +26,14 @@ const VERDICT_TONE: Record<Verdict, BadgeTone> = {
     unrated: "neutral",
 };
 
+const PER_PAGE = 25;
+
 /**
  * What the votes on one article say, in the order an operator reads it: the
  * share first, because that is the number they came for, then the verdict,
  * then the counts the share was worked out from.
  */
-function Helpfulness({ article }: { article: HelpArticle }) {
+function Helpfulness({ article }: { article: AdminHelpArticle }) {
     const t = useTranslations("helpCenter");
     const read = helpfulness(article.helpful, article.notHelpful);
 
@@ -66,282 +55,222 @@ function Helpfulness({ article }: { article: HelpArticle }) {
     );
 }
 
+function StatusBadge({ active }: { active: boolean }) {
+    const t = useTranslations("helpCenter");
+    return <Badge tone={active ? "success" : "neutral"}>{active ? t("adm_active") : t("adm_inactive")}</Badge>;
+}
+
+/**
+ * The help centre, as the operator who writes it sees it.
+ *
+ * It could create an article and a category and then nothing at all. Fourteen
+ * rows sat in a table with no control on any of them: no edit, no delete, no
+ * way to tick two, and a typo in a title was permanent. Every endpoint it
+ * needed had been written and none of them was called.
+ *
+ * It also read the visitor's list. `/help/articles` answers a visitor with
+ * the active twenty, most-read first, and blanks the view count when the
+ * operator has hidden it from the public page - so an article somebody
+ * deactivated left the only screen that could bring it back, a help centre
+ * with more than twenty articles showed twenty and said nothing, and the
+ * Views column went empty for a setting about somewhere else. Both lists ask
+ * for `scope=admin` now, which is the operator's answer: everything, paged by
+ * the database.
+ */
 export default function AdminHelpCenterPage() {
     const t = useTranslations("helpCenter");
     const commonT = useTranslations("common");
-    const [categories, setCategories] = useState<HelpCategory[]>([]);
-    const [articles, setArticles] = useState<HelpArticle[]>([]);
+    const { confirm } = useConfirm();
+
+    const [categories, setCategories] = useState<AdminHelpCategory[]>([]);
+    const [articles, setArticles] = useState<AdminHelpArticle[]>([]);
+    const [articleTotal, setArticleTotal] = useState(0);
+    const [articlePages, setArticlePages] = useState(1);
+    const [page, setPage] = useState(1);
+    const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
+    const [failed, setFailed] = useState(false);
+    const [reloadKey, setReloadKey] = useState(0);
     const [activeTab, setActiveTab] = useState<"articles" | "categories">("articles");
     /**
-     * Which end of the helpfulness list is on top. The default is the order
-     * the endpoint sent, because an operator arriving here is usually looking
-     * for one article by name rather than reading a league table.
+     * Which end of the helpfulness list is on top, asked of the database.
+     * It used to sort the rows already in the browser, which answers over one
+     * page of them: "worst first" on a help centre of sixty articles found
+     * the worst of the twenty-five on screen.
      */
     const [byHelpfulness, setByHelpfulness] = useState<"off" | "worst" | "best">("off");
 
-    // Sorted on a copy: `articles` is what the endpoint sent, and reordering
-    // it in place would make "off" unreachable without another request.
-    /*
-     * Searched before it is sorted, so the league table is a league table of
-     * what the reader asked for. The title and the address: the two the row
-     * draws that somebody looking for one article would type.
-     */
-    const found = useRowList(articles, { text: (row) => [row.title, row.slug], pageSize: 25 });
+    const articlePicks = useRowPicks(articles);
+    const categoryPicks = useRowPicks(categories);
 
-    const orderedArticles = byHelpfulness === "off"
-        ? found.rows
-        : [...found.rows].sort((a, b) => {
-            const left = helpfulness(a.helpful, a.notHelpful).score;
-            const right = helpfulness(b.helpful, b.notHelpful).score;
-            return byHelpfulness === "worst" ? left - right : right - left;
-        });
-
-    // Both forms are screens of their own rather than cards above the tab
-    // they belong to. There are two of them here, so the parameter names
-    // which: `?form=article`, `?form=category`.
-    const { formParam, formHref, closeForm } = useFormRoute();
-    const showArticleForm = formParam === "article";
-    const showCategoryForm = formParam === "category";
-
-    // Article form
-    const [articleForm, setArticleForm] = useState({ title: "", content: "", categoryId: "", isActive: true });
-    const [savingArticle, setSavingArticle] = useState(false);
-
-    // Category form
-    const [categoryForm, setCategoryForm] = useState({ name: "", description: "", icon: "", image: "", isActive: true });
-    const [savingCategory, setSavingCategory] = useState(false);
-    const [iconMode, setIconMode] = useState<"icon" | "image">("icon");
-
-    const [error, setError] = useState<string | null>(null);
-
-    const fetchData = async () => {
+    const load = useCallback(async () => {
+        setLoading(true);
         try {
+            const params = new URLSearchParams({
+                scope: "admin",
+                page: String(page),
+                perPage: String(PER_PAGE),
+            });
+            if (search) params.set("search", search);
+            if (byHelpfulness !== "off") params.set("sort", byHelpfulness);
+
             const [catRes, artRes] = await Promise.all([
-                fetch("/api/v1/help/categories"),
-                fetch("/api/v1/help/articles"),
+                fetch("/api/v1/help/categories?scope=admin"),
+                fetch(`/api/v1/help/articles?${params}`),
             ]);
-            if (catRes.ok) {
-                const catData = await catRes.json();
-                setCategories(Array.isArray(catData) ? catData : catData.categories || []);
-            }
-            if (artRes.ok) {
-                const artData = await artRes.json();
-                setArticles(Array.isArray(artData) ? artData : artData.articles || []);
-            }
-        } catch (err) {
-            console.error("Failed to fetch help center data:", err);
+            if (!catRes.ok || !artRes.ok) throw new Error("read failed");
+
+            const catData = await catRes.json();
+            const artData = await artRes.json();
+            setCategories(catData.categories ?? []);
+            setArticles(artData.articles ?? []);
+            setArticleTotal(artData.pagination?.total ?? 0);
+            setArticlePages(artData.pagination?.pages ?? 1);
+            setFailed(false);
+        } catch {
+            // A read that failed and a help centre with nothing in it look the
+            // same on screen, and only one of them is worth retrying.
+            setFailed(true);
         } finally {
             setLoading(false);
         }
+    }, [page, search, byHelpfulness]);
+
+    useEffect(() => { void load(); }, [load, reloadKey]);
+
+    const { formParam, formHref, openForm, closeForm } = useFormRoute();
+    const target = readFormTarget(formParam);
+
+    const afterWrite = () => {
+        articlePicks.clear();
+        categoryPicks.clear();
+        setReloadKey((k) => k + 1);
     };
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const createArticle = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setSavingArticle(true);
-        setError(null);
-        try {
-            const res = await fetch("/api/v1/help/articles", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(articleForm),
-            });
-            const failed = await writeError(res, t("adm_createArticleFailed"), t);
-            if (failed) {
-                setError(failed);
-                return;
-            }
-            setArticleForm({ title: "", content: "", categoryId: "", isActive: true });
-            await fetchData();
-            closeForm();
-        } catch {
-            setError(commonT("somethingWentWrong"));
-        } finally {
-            setSavingArticle(false);
+    const removeArticle = async (article: AdminHelpArticle) => {
+        const ok = await confirm({
+            title: t("adm_deleteArticleTitle"),
+            message: t("adm_deleteArticleConfirm", { title: article.title }),
+            confirmText: commonT("delete"),
+            variant: "danger",
+        });
+        if (!ok) return;
+        const res = await fetch(`/api/v1/help/articles/${article.slug}`, { method: "DELETE" });
+        if (!res.ok) {
+            toast.error(t("adm_deleteFailed"));
+            return;
         }
+        toast.success(t("adm_articleDeleted"));
+        afterWrite();
     };
 
-    const createCategory = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setSavingCategory(true);
-        setError(null);
-        try {
-            const res = await fetch("/api/v1/help/categories", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(categoryForm),
-            });
-            const failed = await writeError(res, t("adm_createCategoryFailed"), t);
-            if (failed) {
-                setError(failed);
-                return;
-            }
-            setCategoryForm({ name: "", description: "", icon: "", image: "", isActive: true });
-            await fetchData();
-            closeForm();
-        } catch {
-            setError(commonT("somethingWentWrong"));
-        } finally {
-            setSavingCategory(false);
+    const removeArticles = async () => {
+        const ids = [...articlePicks.picked];
+        const ok = await confirm({
+            title: t("adm_deleteArticleTitle"),
+            message: t("adm_deleteManyArticlesConfirm", { count: ids.length }),
+            confirmText: commonT("delete"),
+            variant: "danger",
+        });
+        if (!ok) return;
+        const bySlug = new Map(articles.map((row) => [row.id, row.slug]));
+        const { deleted, total } = await deleteEach(ids, async (id) => {
+            const res = await fetch(`/api/v1/help/articles/${bySlug.get(id)}`, { method: "DELETE" });
+            return res.ok;
+        });
+        if (deleted === total) toast.success(t("adm_articleDeleted"));
+        else if (deleted === 0) toast.error(t("adm_deleteFailed"));
+        else toast.error(t("adm_deletedPartly", { deleted, total }));
+        afterWrite();
+    };
+
+    /**
+     * The endpoint refuses a category that still holds articles, and says so
+     * in a sentence of its own in English. What a reader sees is said here,
+     * in their language, from the code it sends alongside.
+     */
+    const categoryRefusal = async (res: Response) => {
+        const said = await res.json().catch(() => null) as { code?: string } | null;
+        return said?.code === "category_has_articles"
+            ? t("adm_categoryHasArticles")
+            : t("adm_deleteFailed");
+    };
+
+    const removeCategory = async (category: AdminHelpCategory) => {
+        const ok = await confirm({
+            title: t("adm_deleteCategoryTitle"),
+            message: t("adm_deleteCategoryConfirm", { name: category.name }),
+            confirmText: commonT("delete"),
+            variant: "danger",
+        });
+        if (!ok) return;
+        const res = await fetch(`/api/v1/help/categories/${category.id}`, { method: "DELETE" });
+        if (!res.ok) {
+            toast.error(await categoryRefusal(res));
+            return;
         }
+        toast.success(t("adm_categoryDeleted"));
+        afterWrite();
     };
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-            </div>
-        );
-    }
+    const removeCategories = async () => {
+        const ids = [...categoryPicks.picked];
+        const ok = await confirm({
+            title: t("adm_deleteCategoryTitle"),
+            message: t("adm_deleteManyCategoriesConfirm", { count: ids.length }),
+            confirmText: commonT("delete"),
+            variant: "danger",
+        });
+        if (!ok) return;
+        const { deleted, total } = await deleteEach(ids, async (id) => {
+            const res = await fetch(`/api/v1/help/categories/${id}`, { method: "DELETE" });
+            return res.ok;
+        });
+        if (deleted === total) toast.success(t("adm_categoryDeleted"));
+        else if (deleted === 0) toast.error(t("adm_categoryHasArticles"));
+        else toast.error(t("adm_deletedPartly", { deleted, total }));
+        afterWrite();
+    };
 
-    if (showArticleForm) {
-        return (
-            <>
-                <AdminPageHeader
-                    title={t("adm_newHelpArticle")}
-                    description={t("adm_manageKnowledgeBase")}
-                    onBack={closeForm}
-                    backLabel={commonT("back")}
-                />
+    /*
+     * A form filled from a row waits for that row.
+     *
+     * The form reads the row once, when it mounts, so rendering it before the
+     * list had arrived gave an empty form that never filled: opening the edit
+     * address directly - a reload, a link somebody kept - showed blank fields
+     * and would have saved them over the article. It waits, and the `key`
+     * makes the arrival a fresh form rather than a stale one.
+     */
+    if (target) {
+        const article = target.kind === "article" && target.key
+            ? articles.find((row) => row.slug === target.key) ?? null
+            : null;
+        const category = target.kind === "category" && target.key
+            ? categories.find((row) => row.id === target.key) ?? null
+            : null;
+        const row = article ?? category;
 
-                {error && (
-                    <div role="alert" className="mb-6 p-4 bg-destructive/10 text-destructive rounded-lg">{error}</div>
-                )}
+        if (target.key && !row) {
+            return loading
+                ? <p className="py-12 text-center text-sm text-muted-foreground">{commonT("loading")}</p>
+                : <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />;
+        }
 
-                <Card>
-                    <CardContent className="p-6">
-                        <form onSubmit={createArticle} className="space-y-4">
-                            <div>
-                                <Label>{`${t("adm_title")} *`}</Label>
-                                <Input
-                                    aria-label={t("adm_title")}
-                                    value={articleForm.title}
-                                    onChange={(e) => setArticleForm({ ...articleForm, title: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <Label>{`${t("adm_category")} *`}</Label>
-                                {categories.length === 0 ? (
-                                    <p className="text-sm text-destructive mt-1">{t("adm_noCategoriesYet")}</p>
-                                ) : (
-                                    <NativeSelect
-                                        aria-label={t("adm_category")}
-                                        value={articleForm.categoryId}
-                                        onChange={(e) => setArticleForm({ ...articleForm, categoryId: e.target.value })} className="w-full"
-                                        required
-                                    >
-                                        <option value="">{t("adm_selectCategory")}</option>
-                                        {categories.map((cat) => (
-                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                        ))}
-                                    </NativeSelect>
-                                )}
-                            </div>
-                            <div>
-                                <Label>{`${t("adm_content")} *`}</Label>
-                                <RichTextEditor
-                                    value={articleForm.content}
-                                    onChange={(value: string) => setArticleForm({ ...articleForm, content: value })}
-                                />
-                            </div>
-                            <Button type="submit" disabled={savingArticle}>
-                                {savingArticle ? <><Loader2 className="w-4 h-4 animate-spin" /> {t("adm_creating")}</> : t("adm_createArticle")}
-                            </Button>
-                        </form>
-                    </CardContent>
-                </Card>
-            </>
-        );
-    }
-
-    if (showCategoryForm) {
-        return (
-            <>
-                <AdminPageHeader
-                    title={t("adm_newHelpCategory")}
-                    description={t("adm_manageKnowledgeBase")}
-                    onBack={closeForm}
-                    backLabel={commonT("back")}
-                />
-
-                {error && (
-                    <div role="alert" className="mb-6 p-4 bg-destructive/10 text-destructive rounded-lg">{error}</div>
-                )}
-
-                <Card>
-                    <CardContent className="p-6">
-                        <form onSubmit={createCategory} className="space-y-4">
-                            <div>
-                                <Label>{`${t("adm_name")} *`}</Label>
-                                <Input
-                                    aria-label={t("adm_name")}
-                                    value={categoryForm.name}
-                                    onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <Label>{t("adm_description")}</Label>
-                                <Textarea
-                                    aria-label={t("adm_description")}
-                                    value={categoryForm.description}
-                                    onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
-                                    rows={3}
-                                />
-                            </div>
-                            <div>
-                                <Label>{t("adm_icon")}</Label>
-                                <div className="flex gap-2 mb-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setIconMode("icon")}
-                                        className={`px-3 py-1.5 rounded-md text-xs border ${
-                                            iconMode === "icon"
-                                                ? "bg-primary text-primary-foreground border-primary"
-                                                : "bg-muted border-border text-muted-foreground hover:text-foreground"
-                                        }`}
-                                    >
-                                        {t("adm_lucideIcon")}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setIconMode("image")}
-                                        className={`px-3 py-1.5 rounded-md text-xs border ${
-                                            iconMode === "image"
-                                                ? "bg-primary text-primary-foreground border-primary"
-                                                : "bg-muted border-border text-muted-foreground hover:text-foreground"
-                                        }`}
-                                    >
-                                        {t("adm_imageUpload")}
-                                    </button>
-                                </div>
-                                {iconMode === "icon" ? (
-                                    <Input
-                                        value={categoryForm.icon}
-                                        onChange={(e) => setCategoryForm({ ...categoryForm, icon: e.target.value, image: "" })}
-                                        placeholder="HelpCircle, BookOpen, Lightbulb..."
-                                        aria-label={t("adm_lucideIcon")}
-                                    />
-                                ) : (
-                                    <UrlOrFile
-                                        value={categoryForm.image || ""}
-                                        onChange={(v) => setCategoryForm({ ...categoryForm, image: v, icon: "" })}
-                                        accept="image/*"
-                                    />
-                                )}
-                            </div>
-                            <Button type="submit" disabled={savingCategory}>
-                                {savingCategory ? <><Loader2 className="w-4 h-4 animate-spin" /> {t("adm_creating")}</> : t("adm_createCategory")}
-                            </Button>
-                        </form>
-                    </CardContent>
-                </Card>
-            </>
+        return target.kind === "article" ? (
+            <ArticleForm
+                key={article?.slug ?? "new"}
+                article={article}
+                categories={categories}
+                onBack={closeForm}
+                onSaved={() => { afterWrite(); closeForm(); }}
+            />
+        ) : (
+            <CategoryForm
+                key={category?.id ?? "new"}
+                category={category}
+                onBack={closeForm}
+                onSaved={() => { afterWrite(); closeForm(); }}
+            />
         );
     }
 
@@ -352,29 +281,25 @@ export default function AdminHelpCenterPage() {
                 description={t("adm_manageKnowledgeBase")}
                 actions={
                     /* The primary action follows the open tab, and it lives
-                       where every other admin screen keeps it: the header. It
-                       used to sit in a right-aligned row of its own under the
-                       tabs, so the same "new X" control was in a different
-                       place here than anywhere else in the panel. */
+                       where every other admin screen keeps it: the header. */
                     activeTab === "articles" ? (
-                        <Link href={formHref("article")} className={buttonClassName("default", "default")}><Plus className="w-4 h-4" /> {t("adm_newArticle")}</Link>
+                        <Link href={formHref(formTargetParam("article"))} className={buttonClassName("default", "default")}>
+                            <Plus className="w-4 h-4" /> {t("adm_newArticle")}
+                        </Link>
                     ) : (
-                        <Link href={formHref("category")} className={buttonClassName("default", "default")}><Plus className="w-4 h-4" /> {t("adm_newCategory")}</Link>
+                        <Link href={formHref(formTargetParam("category"))} className={buttonClassName("default", "default")}>
+                            <Plus className="w-4 h-4" /> {t("adm_newCategory")}
+                        </Link>
                     )
                 }
             />
 
-            {error && (
-                <div role="alert" className="mb-6 p-4 bg-destructive/10 text-destructive rounded-lg">{error}</div>
-            )}
-
-            {/* Tabs */}
             <div className="flex gap-2 mb-6">
                 <Button
                     variant={activeTab === "articles" ? "default" : "outline"}
                     onClick={() => setActiveTab("articles")}
                 >
-                    {t("adm_tabArticles", { count: articles.length })}
+                    {t("adm_tabArticles", { count: articleTotal })}
                 </Button>
                 <Button
                     variant={activeTab === "categories" ? "default" : "outline"}
@@ -384,25 +309,43 @@ export default function AdminHelpCenterPage() {
                 </Button>
             </div>
 
-            {/* Articles Tab */}
-            {activeTab === "articles" && (
+            {failed ? (
+                <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
+            ) : activeTab === "articles" ? (
                 <>
                     <ListControls
                         className="mb-4"
-                        search={{ value: found.search, onChange: found.setSearch }}
+                        search={{ value: search, onChange: (term) => { setPage(1); setSearch(term); } }}
                     />
+
+                    {articlePicks.picked.size > 0 || articles.length > 0 ? (
+                        <BulkBar
+                            className="mb-4 rounded-lg border border-border"
+                            state={articlePicks.headerState}
+                            count={articlePicks.picked.size}
+                            onToggleAll={articlePicks.toggleAll}
+                            actions={
+                                <Button variant="destructive" size="sm" onClick={removeArticles}>
+                                    <Trash2 className="w-4 h-4" /> {commonT("delete")} {articlePicks.picked.size}
+                                </Button>
+                            }
+                        />
+                    ) : null}
 
                     <Card>
                         <CardContent className="p-0">
-                            {articles.length === 0 ? (
-                                <p className="text-muted-foreground text-center py-8">{t("adm_noHelpArticles")}</p>
-                            ) : orderedArticles.length === 0 ? (
-                                <p className="text-muted-foreground text-center py-8">{commonT("noResults")}</p>
+                            {loading && articles.length === 0 ? (
+                                <p className="text-muted-foreground text-center py-8">{commonT("loading")}</p>
+                            ) : articles.length === 0 ? (
+                                <p className="text-muted-foreground text-center py-8">
+                                    {search ? commonT("noResults") : t("adm_noHelpArticles")}
+                                </p>
                             ) : (
                                 <div className="overflow-x-auto">
                                     <table className="w-full">
                                         <thead>
                                             <tr className="border-b">
+                                                <th className="w-10 py-3 px-4" />
                                                 <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_title")}</th>
                                                 <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_category")}</th>
                                                 <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_views")}</th>
@@ -410,20 +353,31 @@ export default function AdminHelpCenterPage() {
                                                     <button
                                                         type="button"
                                                         className="font-medium hover:text-foreground"
-                                                        onClick={() => setByHelpfulness(
-                                                            byHelpfulness === "worst" ? "best" : byHelpfulness === "best" ? "off" : "worst",
-                                                        )}
+                                                        onClick={() => {
+                                                            setPage(1);
+                                                            setByHelpfulness(
+                                                                byHelpfulness === "worst" ? "best" : byHelpfulness === "best" ? "off" : "worst",
+                                                            );
+                                                        }}
                                                     >
                                                         {t("adm_helpfulness")}
-                                                        {byHelpfulness === "worst" ? " \u2193" : byHelpfulness === "best" ? " \u2191" : ""}
+                                                        {byHelpfulness === "worst" ? " ↓" : byHelpfulness === "best" ? " ↑" : ""}
                                                     </button>
                                                 </th>
                                                 <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_status")}</th>
+                                                <th className="w-24 py-3 px-4" />
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {orderedArticles.map((article) => (
+                                            {articles.map((article) => (
                                                 <tr key={article.id} className="hover:bg-muted/50 border-b last:border-0">
+                                                    <td className="py-3 px-4">
+                                                        <Checkbox
+                                                            checked={articlePicks.picked.has(article.id)}
+                                                            onChange={() => articlePicks.toggle(article.id)}
+                                                            aria-label={t("adm_selectRow")}
+                                                        />
+                                                    </td>
                                                     <td className="py-3 px-4">
                                                         <p className="font-medium">{article.title}</p>
                                                         <p className="text-xs text-muted-foreground">/{article.slug}</p>
@@ -431,72 +385,133 @@ export default function AdminHelpCenterPage() {
                                                     <td className="py-3 px-4 text-sm text-muted-foreground">
                                                         {article.category?.name || "-"}
                                                     </td>
-                                                    <td className="py-3 px-4 text-sm">{article.views}</td>
+                                                    <td className="py-3 px-4 text-sm">{article.views ?? 0}</td>
                                                     <td className="py-3 px-4 text-sm">
                                                         <Helpfulness article={article} />
                                                     </td>
                                                     <td className="py-3 px-4">
-                                                        <span className={`text-xs px-2 py-1 rounded ${
-                                                            article.isActive ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"
-                                                        }`}>
-                                                            {article.isActive ? t("adm_active") : t("adm_inactive")}
-                                                        </span>
+                                                        <StatusBadge active={article.isActive} />
+                                                    </td>
+                                                    <td className="py-3 px-4 text-right whitespace-nowrap">
+                                                        <RowActions
+                                                            actions={[
+                                                                {
+                                                                    icon: Pencil,
+                                                                    label: commonT("edit"),
+                                                                    onClick: () => openForm(formTargetParam("article", article.slug)),
+                                                                },
+                                                                {
+                                                                    icon: Trash2,
+                                                                    label: commonT("delete"),
+                                                                    onClick: () => removeArticle(article),
+                                                                    destructive: true,
+                                                                },
+                                                            ]}
+                                                        />
                                                     </td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
                                     <Pagination
-                                        page={found.page}
-                                        pages={found.pages}
-                                        total={found.total}
-                                        onPageChange={found.setPage}
+                                        page={page}
+                                        pages={articlePages}
+                                        total={articleTotal}
+                                        onPageChange={setPage}
                                     />
                                 </div>
                             )}
                         </CardContent>
                     </Card>
                 </>
-            )}
-
-            {/* Categories Tab */}
-            {activeTab === "categories" && (
+            ) : (
                 <>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {categories.length === 0 ? (
-                            <Card className="col-span-full">
-                                <CardContent className="py-8 text-center">
-                                    <p className="text-muted-foreground">{t("adm_noHelpCategories")}</p>
-                                </CardContent>
-                            </Card>
-                        ) : (
-                            categories.map((cat) => (
-                                <Card key={cat.id}>
-                                    <CardHeader>
-                                        <CardTitle className="flex items-center justify-between">
-                                            <span className="flex items-center gap-2">
-                                                {cat.icon && <span>{cat.icon}</span>}
-                                                {cat.name}
-                                            </span>
-                                            <span className={`text-xs px-2 py-1 rounded ${
-                                                cat.isActive ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"
-                                            }`}>
-                                                {cat.isActive ? t("adm_active") : t("adm_inactive")}
-                                            </span>
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <p className="text-sm text-muted-foreground mb-2">
-                                            {cat.description || t("adm_noDescription")}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                            {cat._count?.articles || 0} articles
-                                        </p>
-                                    </CardContent>
-                                </Card>
-                            ))
-                        )}
-                    </div>
+                    {categories.length > 0 ? (
+                        <BulkBar
+                            className="mb-4 rounded-lg border border-border"
+                            state={categoryPicks.headerState}
+                            count={categoryPicks.picked.size}
+                            onToggleAll={categoryPicks.toggleAll}
+                            actions={
+                                <Button variant="destructive" size="sm" onClick={removeCategories}>
+                                    <Trash2 className="w-4 h-4" /> {commonT("delete")} {categoryPicks.picked.size}
+                                </Button>
+                            }
+                        />
+                    ) : null}
+
+                    <Card>
+                        <CardContent className="p-0">
+                            {categories.length === 0 ? (
+                                <p className="text-muted-foreground text-center py-8">{t("adm_noHelpCategories")}</p>
+                            ) : (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead>
+                                            <tr className="border-b">
+                                                <th className="w-10 py-3 px-4" />
+                                                <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_name")}</th>
+                                                <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_description")}</th>
+                                                <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_articleCount")}</th>
+                                                <th className="text-left py-3 px-4 font-medium text-muted-foreground">{t("adm_status")}</th>
+                                                <th className="w-24 py-3 px-4" />
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {categories.map((category) => (
+                                                <tr key={category.id} className="hover:bg-muted/50 border-b last:border-0">
+                                                    <td className="py-3 px-4">
+                                                        <Checkbox
+                                                            checked={categoryPicks.picked.has(category.id)}
+                                                            onChange={() => categoryPicks.toggle(category.id)}
+                                                            aria-label={t("adm_selectRow")}
+                                                        />
+                                                    </td>
+                                                    <td className="py-3 px-4">
+                                                        {/* The mark is stored as a lucide name and was
+                                                            printed as one: four rows read "Rocket Getting
+                                                            started" and "ShoppingBag Purchases", a column
+                                                            of identifiers where names go. */}
+                                                        <p className="font-medium flex items-center gap-2">
+                                                            <NavIcon name={category.icon} className="w-4 h-4 text-muted-foreground" />
+                                                            {category.name}
+                                                        </p>
+                                                        <p className="text-xs text-muted-foreground">/{category.slug}</p>
+                                                    </td>
+                                                    <td className="py-3 px-4 text-sm text-muted-foreground max-w-[20rem] truncate">
+                                                        {category.description || t("adm_noDescription")}
+                                                    </td>
+                                                    <td className="py-3 px-4 text-sm">
+                                                        {t("articles", { count: category._count?.articles ?? 0 })}
+                                                    </td>
+                                                    <td className="py-3 px-4">
+                                                        <StatusBadge active={category.isActive} />
+                                                    </td>
+                                                    <td className="py-3 px-4 text-right whitespace-nowrap">
+                                                        <RowActions
+                                                            actions={[
+                                                                {
+                                                                    icon: Pencil,
+                                                                    label: commonT("edit"),
+                                                                    onClick: () => openForm(formTargetParam("category", category.id)),
+                                                                },
+                                                                {
+                                                                    icon: Trash2,
+                                                                    label: commonT("delete"),
+                                                                    onClick: () => removeCategory(category),
+                                                                    destructive: true,
+                                                                },
+                                                            ]}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
                 </>
             )}
         </>
