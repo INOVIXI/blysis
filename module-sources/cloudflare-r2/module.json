@@ -2,7 +2,7 @@
   "id": "cloudflare-r2",
   "name": "Cloudflare R2 Storage",
   "description": "S3-compatible object storage backed by Cloudflare R2 (zero egress fees)",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "cloudflare_r2_config.secretKey"
@@ -63,10 +63,15 @@
         "accessKey": "Access Key ID",
         "accountId": "Account ID",
         "active": "Set as active storage provider",
+        "backupPrefix": "Folder",
+        "backupPrefixHint": "Where the copies go inside the bucket. Left blank they go under backups/.",
+        "backupsTitle": "Database backups",
         "bucket": "Bucket Name",
         "bucketTitle": "Bucket",
         "credentialsTitle": "Credentials",
         "currentlyActive": "Currently active storage provider",
+        "keepBackups": "Keep a copy of every database backup here",
+        "keepBackupsHint": "A backup that only exists on the machine it was taken on is not a backup. Copies are private: they are never given a public address.",
         "perm_manage": "Manage",
         "publicUrl": "Public URL",
         "publicUrlHint": "Your R2 public bucket URL (e.g. https://pub-xxx.r2.dev)",
@@ -94,10 +99,15 @@
         "accessKey": "Erişim Anahtarı",
         "accountId": "Hesap ID",
         "active": "Aktif depolama sağlayıcısı yap",
+        "backupPrefix": "Klasör",
+        "backupPrefixHint": "Kopyaların bucket içinde nereye gideceği. Boş bırakılırsa backups/ altına gider.",
+        "backupsTitle": "Veritabanı yedekleri",
         "bucket": "Bucket Adı",
         "bucketTitle": "Bucket",
         "credentialsTitle": "Kimlik Bilgileri",
         "currentlyActive": "Şu anki aktif depolama sağlayıcısı",
+        "keepBackups": "Her veritabanı yedeğinin bir kopyasını burada tut",
+        "keepBackupsHint": "Yalnızca alındığı makinede duran bir yedek, yedek değildir. Kopyalar özeldir: hiçbir zaman genel bir adres verilmez.",
         "perm_manage": "Yönetebilir",
         "publicUrl": "Genel URL",
         "publicUrlHint": "R2 genel bucket URL'iniz (örn. https://pub-xxx.r2.dev)",
@@ -120,5 +130,12 @@
         "module_cloudflare-r2_description": "Cloudflare R2 üzerinde çalışan S3 uyumlu nesne depolama (çıkış ücreti yok)"
       }
     }
-  }
+  },
+  "cronJobs": [
+    {
+      "id": "copy-backups",
+      "schedule": "every-hour",
+      "handler": "cron/copy-backups.ts"
+    }
+  ]
 }

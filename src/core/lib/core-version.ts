@@ -12,6 +12,12 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.6.0 - `listBackups`, `getBackupPath` and `BackupMeta` join
+ * `@/core/sdk/server`. Every dump lived on the same disk as the database, so
+ * the box that lost one lost the other; a destination is a module's job
+ * because a module has the credentials and the vendor, and these two are the
+ * half core owes it.
+ *
  * 5.5.0 - `AdminCrudPage` takes `listPath`. An endpoint a visitor reads
  * filters - it hides what is inactive, it takes one - and a panel handed that
  * same answer cannot see what was hidden, which is the one thing the panel is
@@ -495,4 +501,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.5.0";
+export const CORE_API_VERSION = "5.6.0";

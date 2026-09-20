@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T04:45:04Z",
+  "updatedAt": "2026-09-20T05:20:51Z",
   "modules": [
     {
       "id": "announcements",
@@ -248,13 +248,13 @@
           "description": "Cloudflare R2 üzerinde çalışan S3 uyumlu nesne depolama (çıkış ücreti yok)"
         }
       },
-      "version": "1.5.2",
+      "version": "1.6.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Cloud",
       "category": "integration",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T05:20:51Z",
       "screenshots": [],
       "tags": [
         "integration"

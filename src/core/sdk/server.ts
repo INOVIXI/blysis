@@ -153,6 +153,16 @@ export { recordRevision } from "@/core/lib/revisions";
 export { sanitizeFilename } from "@/core/lib/storage";
 export type { StorageProvider, UploadResult } from "@/core/lib/storage";
 
+/**
+ * The backups core has taken, and where each one is on disk.
+ *
+ * For a module that keeps a copy somewhere else. Core takes the dump and
+ * knows nothing about any destination; a module has the credentials and the
+ * vendor, and needs exactly these two things to do its half.
+ */
+export { listBackups, getBackupPath } from "@/core/lib/backup";
+export type { BackupMeta } from "@/core/lib/backup";
+
 // --- TOTP / backup codes ---
 export {
     generateSecret,

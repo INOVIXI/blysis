@@ -14,6 +14,9 @@ interface R2Config {
     accessKey: string;
     secretKey: string;
     publicUrl: string;
+    /** Whether the database backups are copied here, and where in the bucket. */
+    keepBackups: boolean;
+    backupPrefix: string;
 }
 
 export default function CloudflareR2AdminPage() {
@@ -29,6 +32,8 @@ export default function CloudflareR2AdminPage() {
         accessKey: "",
         secretKey: "",
         publicUrl: "",
+        keepBackups: false,
+        backupPrefix: "",
     });
 
     useEffect(() => {
@@ -40,7 +45,13 @@ export default function CloudflareR2AdminPage() {
                 // The secret key is never in this response. It comes back as
                 // "one is stored" or nothing, and the field stays empty so a
                 // save that does not touch it keeps what is there.
-                if (d.config) setConfig({ ...d.config, secretKey: "" });
+                if (d.config) setConfig({
+                    ...config,
+                    ...d.config,
+                    secretKey: "",
+                    keepBackups: d.config.keepBackups === true,
+                    backupPrefix: typeof d.config.backupPrefix === "string" ? d.config.backupPrefix : "",
+                });
                 setSecretStored((d.secretsConfigured ?? []).length > 0);
                 setIsActive(!!d.isActive);
                 setSetActive(!!d.isActive);
@@ -180,6 +191,36 @@ export default function CloudflareR2AdminPage() {
                             onChange={(e) => setSetActive(e.target.checked)}
                             label={t("active")}
                         />
+                    </CardContent>
+                </Card>
+
+                {/* Keeping the backups here is a separate job from serving the
+                    site's uploads, and an operator may want one without the
+                    other: a bucket holding database dumps does not have to be
+                    the bucket a visitor's avatar is served from. */}
+                <Card className="lg:col-span-2">
+                    <CardHeader>
+                        <CardTitle>{t("backupsTitle")}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <CheckboxField
+                            checked={config.keepBackups}
+                            onChange={(e) => setConfig({ ...config, keepBackups: e.target.checked })}
+                            label={t("keepBackups")}
+                        />
+                        <p className="text-xs text-muted-foreground">{t("keepBackupsHint")}</p>
+                        <div>
+                            <Label>{t("backupPrefix")}</Label>
+                            <Input
+                                aria-label={t("backupPrefix")}
+                                className="max-w-sm"
+                                value={config.backupPrefix}
+                                disabled={!config.keepBackups}
+                                onChange={(e) => setConfig({ ...config, backupPrefix: e.target.value })}
+                                placeholder="backups"
+                            />
+                            <p className="text-xs text-muted-foreground mt-1">{t("backupPrefixHint")}</p>
+                        </div>
                     </CardContent>
                 </Card>
             </div>

@@ -15,15 +15,21 @@ const configSchema = z.object({
     secretKey: z.string().default(""),
     publicUrl: z.string().url(),
     setActive: z.boolean().optional(),
+    /*
+     * Whether the database backups are copied here, and where in the bucket
+     * they land. Both optional: a save from a screen that predates them must
+     * not read as "stop keeping backups".
+     */
+    keepBackups: z.boolean().optional(),
+    backupPrefix: z.string().max(120).optional(),
 });
 
-/** The sealed secret key exactly as stored, for a save that is not changing it. */
-async function storedSecretKey(): Promise<string> {
+/** The stored config exactly as it is, for a save that is not changing all of it. */
+async function stored(): Promise<Record<string, unknown>> {
     const row = await prisma.setting.findUnique({ where: { key: SETTING_KEY } });
     const value = row?.value;
-    if (!value || typeof value !== "object" || Array.isArray(value)) return "";
-    const stored = (value as Record<string, unknown>).secretKey;
-    return typeof stored === "string" ? stored : "";
+    if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+    return value as Record<string, unknown>;
 }
 
 export async function GET() {
@@ -71,13 +77,27 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: parsed.error.issues[0]?.message || "Invalid config" }, { status: 400 });
     }
 
-    const { setActive, ...config } = parsed.data;
+    const { setActive, keepBackups, backupPrefix, ...config } = parsed.data;
+    const before = await stored();
 
     // An empty secret key means the admin left the field alone, so the stored
     // one stays. Without this, saving any other field on the screen would
     // erase the credential and every upload would start failing.
-    const kept = config.secretKey === "" ? await storedSecretKey() : config.secretKey;
-    const value = settingsForStorage({ [SETTING_KEY]: { ...config, secretKey: kept } })[SETTING_KEY];
+    const kept = config.secretKey === ""
+        ? (typeof before.secretKey === "string" ? before.secretKey : "")
+        : config.secretKey;
+
+    // A field the request did not mention keeps what it had. A screen from an
+    // older version of this module sends neither of these, and dropping them
+    // would read as "stop keeping backups here" on the first save.
+    const value = settingsForStorage({
+        [SETTING_KEY]: {
+            ...config,
+            secretKey: kept,
+            keepBackups: keepBackups ?? before.keepBackups === true,
+            backupPrefix: backupPrefix ?? (typeof before.backupPrefix === "string" ? before.backupPrefix : ""),
+        },
+    })[SETTING_KEY];
 
     await prisma.setting.upsert({
         where: { key: SETTING_KEY },
