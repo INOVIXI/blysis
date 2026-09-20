@@ -2,7 +2,7 @@
   "id": "epicgames-auth",
   "name": "Epic Games Login",
   "description": "Allow users to sign in with their Epic Games account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -54,7 +54,9 @@
       },
       "admin": {
         "module_epicgames-auth_name": "Epic Games Login",
-        "module_epicgames-auth_description": "Allow users to sign in with their Epic Games account"
+        "module_epicgames-auth_description": "Allow users to sign in with their Epic Games account",
+        "settings_epicgames-auth": "Epic Games OAuth",
+        "settings_epicgames-auth_description": "Epic Games application credentials."
       }
     },
     "tr": {
@@ -67,7 +69,9 @@
       },
       "admin": {
         "module_epicgames-auth_name": "Epic Games ile Giriş",
-        "module_epicgames-auth_description": "Kullanıcıların Epic Games hesabıyla giriş yapmasına izin verin"
+        "module_epicgames-auth_description": "Kullanıcıların Epic Games hesabıyla giriş yapmasına izin verin",
+        "settings_epicgames-auth": "Epic Games OAuth",
+        "settings_epicgames-auth_description": "Epic Games uygulama kimlik bilgileri."
       }
     }
   },

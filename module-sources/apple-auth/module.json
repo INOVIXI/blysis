@@ -2,7 +2,7 @@
   "id": "apple-auth",
   "name": "Apple Login",
   "description": "Allow users to sign in with their Apple account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -56,7 +56,9 @@
       },
       "admin": {
         "module_apple-auth_name": "Apple Login",
-        "module_apple-auth_description": "Allow users to sign in with their Apple account"
+        "module_apple-auth_description": "Allow users to sign in with their Apple account",
+        "settings_apple-auth": "Sign in with Apple",
+        "settings_apple-auth_description": "Apple Services ID and signing key."
       }
     },
     "tr": {
@@ -69,7 +71,9 @@
       },
       "admin": {
         "module_apple-auth_name": "Apple ile Giriş",
-        "module_apple-auth_description": "Kullanıcıların Apple hesabıyla giriş yapmasına izin verin"
+        "module_apple-auth_description": "Kullanıcıların Apple hesabıyla giriş yapmasına izin verin",
+        "settings_apple-auth": "Apple ile Giriş",
+        "settings_apple-auth_description": "Apple Services ID'si ve imzalama anahtarı."
       }
     }
   },

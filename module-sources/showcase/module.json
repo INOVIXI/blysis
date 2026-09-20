@@ -2,7 +2,7 @@
   "id": "showcase",
   "name": "Showcase",
   "description": "A grid of cards: a picture, a heading, a line of text and somewhere to go. What is being shown is the operator's business.",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
@@ -85,7 +85,9 @@
       },
       "admin": {
         "module_showcase_description": "A gallery of what the community has built",
-        "module_showcase_name": "Showcase"
+        "module_showcase_name": "Showcase",
+        "settings_showcase": "Showcase",
+        "settings_showcase_description": "The cards on the showcase page."
       }
     },
     "tr": {
@@ -118,7 +120,9 @@
       },
       "admin": {
         "module_showcase_description": "Topluluğun yaptıklarından bir galeri",
-        "module_showcase_name": "Vitrin"
+        "module_showcase_name": "Vitrin",
+        "settings_showcase": "Vitrin",
+        "settings_showcase_description": "Vitrin sayfasındaki kartlar."
       }
     }
   },

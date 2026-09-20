@@ -2,7 +2,7 @@
   "id": "faceit-auth",
   "name": "FACEIT Login",
   "description": "Allow users to sign in with their FACEIT account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -62,7 +62,9 @@
         "title": "Admin Panel",
         "subtitle": "Manage your platform settings and content",
         "module_faceit-auth_name": "FACEIT Login",
-        "module_faceit-auth_description": "Allow users to sign in with their FACEIT account"
+        "module_faceit-auth_description": "Allow users to sign in with their FACEIT account",
+        "settings_faceit-auth": "FACEIT OAuth",
+        "settings_faceit-auth_description": "FACEIT application credentials."
       }
     },
     "tr": {
@@ -87,7 +89,9 @@
         "title": "Yönetim Paneli",
         "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
         "module_faceit-auth_name": "FACEIT ile Giriş",
-        "module_faceit-auth_description": "Kullanıcıların FACEIT hesabıyla giriş yapmasına izin verin"
+        "module_faceit-auth_description": "Kullanıcıların FACEIT hesabıyla giriş yapmasına izin verin",
+        "settings_faceit-auth": "FACEIT OAuth",
+        "settings_faceit-auth_description": "FACEIT uygulama kimlik bilgileri."
       }
     }
   },

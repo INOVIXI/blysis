@@ -2,7 +2,7 @@
   "id": "discord-auth",
   "name": "Discord Login",
   "description": "Allow users to sign in with their Discord account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -62,7 +62,9 @@
         "title": "Admin Panel",
         "subtitle": "Manage your platform settings and content",
         "module_discord-auth_name": "Discord Login",
-        "module_discord-auth_description": "Allow users to sign in with their Discord account"
+        "module_discord-auth_description": "Allow users to sign in with their Discord account",
+        "settings_discord-auth": "Discord OAuth",
+        "settings_discord-auth_description": "Discord application credentials."
       }
     },
     "tr": {
@@ -87,7 +89,9 @@
         "title": "Yönetim Paneli",
         "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
         "module_discord-auth_name": "Discord ile Giriş",
-        "module_discord-auth_description": "Kullanıcıların Discord hesabıyla giriş yapmasına izin verin"
+        "module_discord-auth_description": "Kullanıcıların Discord hesabıyla giriş yapmasına izin verin",
+        "settings_discord-auth": "Discord OAuth",
+        "settings_discord-auth_description": "Discord uygulama kimlik bilgileri."
       }
     }
   },

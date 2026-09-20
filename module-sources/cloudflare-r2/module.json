@@ -2,7 +2,7 @@
   "id": "cloudflare-r2",
   "name": "Cloudflare R2 Storage",
   "description": "S3-compatible object storage backed by Cloudflare R2 (zero egress fees)",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "cloudflare_r2_config.secretKey"
@@ -91,7 +91,9 @@
         "menu_cloudflare-r2": "Cloudflare R2",
         "menu_cloudflare-r2_cloudflare_r2": "Cloudflare R2",
         "module_cloudflare-r2_name": "Cloudflare R2 Storage",
-        "module_cloudflare-r2_description": "S3-compatible object storage backed by Cloudflare R2 (zero egress fees)"
+        "module_cloudflare-r2_description": "S3-compatible object storage backed by Cloudflare R2 (zero egress fees)",
+        "settings_cloudflare-r2": "Cloudflare R2 Storage",
+        "settings_cloudflare-r2_description": "Configure R2 bucket for file uploads (S3-compatible)"
       }
     },
     "tr": {
@@ -127,7 +129,9 @@
         "menu_cloudflare-r2": "Cloudflare R2",
         "menu_cloudflare-r2_cloudflare_r2": "Cloudflare R2",
         "module_cloudflare-r2_name": "Cloudflare R2 Depolama",
-        "module_cloudflare-r2_description": "Cloudflare R2 üzerinde çalışan S3 uyumlu nesne depolama (çıkış ücreti yok)"
+        "module_cloudflare-r2_description": "Cloudflare R2 üzerinde çalışan S3 uyumlu nesne depolama (çıkış ücreti yok)",
+        "settings_cloudflare-r2": "Cloudflare R2 Depolama",
+        "settings_cloudflare-r2_description": "Dosya yüklemeleri için R2 klasörünü ayarlayın (S3 uyumlu)."
       }
     }
   },

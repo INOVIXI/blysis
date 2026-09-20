@@ -124,9 +124,11 @@ export function AdminSpotlight({
             }
         }
 
-        // A module's settings screen. Its name comes from the manifest and is
-        // the author's, in one language; see `a-module-names-itself-in-both-
-        // languages` for the half of this that is already gated.
+        // A module's settings screen. Most of these are now sidebar links as
+        // well and were caught by the loop above; what is left is a card
+        // whose module chose not to list it, and it is still searchable.
+        // The name is the module's own translation, because a manifest
+        // literal is one language.
         for (const card of ModuleSettingsCards) {
             if (!enabled.has(card.module)) continue;
             const href = adminHref(card.href);
@@ -135,8 +137,10 @@ export function AdminSpotlight({
             rows.push({
                 key: `settings:${href}`,
                 href,
-                title: card.title,
-                subtitle: card.description,
+                title: at.has(`settings_${card.module}`) ? at(`settings_${card.module}`) : card.title,
+                subtitle: at.has(`settings_${card.module}_description`)
+                    ? at(`settings_${card.module}_description`)
+                    : card.description,
                 kindKey: "spotlight_settings",
                 Icon: SettingsIcon,
             });

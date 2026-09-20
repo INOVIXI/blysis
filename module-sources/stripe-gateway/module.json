@@ -2,7 +2,7 @@
   "id": "stripe-gateway",
   "name": "Stripe Payment Gateway",
   "description": "Take card, Apple Pay and Google Pay payments through Stripe, including subscriptions",
-  "version": "2.4.2",
+  "version": "2.5.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "stripe_secret_key",
@@ -79,7 +79,9 @@
         "subtitle": "Manage your platform settings and content",
         "menu_stripe-gateway_stripe_settings": "Stripe Settings",
         "module_stripe-gateway_name": "Stripe Payment Gateway",
-        "module_stripe-gateway_description": "Take card, Apple Pay and Google Pay payments through Stripe, including subscriptions"
+        "module_stripe-gateway_description": "Take card, Apple Pay and Google Pay payments through Stripe, including subscriptions",
+        "settings_stripe-gateway": "Stripe",
+        "settings_stripe-gateway_description": "Stripe API keys and webhook configuration."
       }
     },
     "tr": {
@@ -120,7 +122,9 @@
         "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
         "menu_stripe-gateway_stripe_settings": "Stripe Ayarları",
         "module_stripe-gateway_name": "Stripe Ödeme Altyapısı",
-        "module_stripe-gateway_description": "Stripe üzerinden abonelikler dahil kart, Apple Pay ve Google Pay ödemelerini alın"
+        "module_stripe-gateway_description": "Stripe üzerinden abonelikler dahil kart, Apple Pay ve Google Pay ödemelerini alın",
+        "settings_stripe-gateway": "Stripe",
+        "settings_stripe-gateway_description": "Stripe API anahtarları ve webhook ayarı."
       }
     }
   },

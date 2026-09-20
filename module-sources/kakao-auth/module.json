@@ -2,7 +2,7 @@
   "id": "kakao-auth",
   "name": "Kakao Login",
   "description": "Allow users to sign in with their Kakao account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -49,7 +49,9 @@
       },
       "admin": {
         "module_kakao-auth_name": "Kakao Login",
-        "module_kakao-auth_description": "Allow users to sign in with their Kakao account"
+        "module_kakao-auth_description": "Allow users to sign in with their Kakao account",
+        "settings_kakao-auth": "Kakao OAuth",
+        "settings_kakao-auth_description": "Kakao application credentials."
       }
     },
     "tr": {
@@ -61,7 +63,9 @@
       },
       "admin": {
         "module_kakao-auth_name": "Kakao ile Giriş",
-        "module_kakao-auth_description": "Kullanıcıların Kakao hesabıyla giriş yapmasına izin verin"
+        "module_kakao-auth_description": "Kullanıcıların Kakao hesabıyla giriş yapmasına izin verin",
+        "settings_kakao-auth": "Kakao OAuth",
+        "settings_kakao-auth_description": "Kakao uygulama kimlik bilgileri."
       }
     }
   },

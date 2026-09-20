@@ -2,7 +2,7 @@
   "id": "cloudflare-turnstile",
   "name": "Cloudflare Turnstile",
   "description": "Privacy-focused CAPTCHA alternative powered by Cloudflare",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "cloudflare_turnstile_config.secretKey"
@@ -71,7 +71,9 @@
         "menu_cloudflare-turnstile": "Cloudflare Turnstile",
         "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
         "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
-        "module_cloudflare-turnstile_description": "Privacy-focused CAPTCHA alternative powered by Cloudflare"
+        "module_cloudflare-turnstile_description": "Privacy-focused CAPTCHA alternative powered by Cloudflare",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "Configure Turnstile site key and secret"
       },
       "auth": {
         "err.captcha_failed": "The bot check did not pass. Please try again.",
@@ -98,7 +100,9 @@
         "menu_cloudflare-turnstile": "Cloudflare Turnstile",
         "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
         "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
-        "module_cloudflare-turnstile_description": "Cloudflare tarafından sağlanan, gizliliğe saygılı CAPTCHA alternatifi"
+        "module_cloudflare-turnstile_description": "Cloudflare tarafından sağlanan, gizliliğe saygılı CAPTCHA alternatifi",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "Turnstile site anahtarı ve gizli anahtarı."
       },
       "auth": {
         "err.captcha_failed": "Bot kontrolü geçilemedi. Lütfen tekrar deneyin.",

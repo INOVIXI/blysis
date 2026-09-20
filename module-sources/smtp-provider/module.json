@@ -2,7 +2,7 @@
   "id": "smtp-provider",
   "name": "SMTP Email Provider",
   "description": "Send email through an SMTP relay you run or pay for",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "smtp_password"
@@ -45,7 +45,9 @@
       "admin": {
         "menu_smtp-provider": "SMTP",
         "module_smtp-provider_name": "SMTP Email Provider",
-        "module_smtp-provider_description": "Send email through an SMTP relay you run or pay for"
+        "module_smtp-provider_description": "Send email through an SMTP relay you run or pay for",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "The relay this site hands its mail to."
       },
       "smtpProvider": {
         "adm_activeDesc": "Which of the installed transports this site hands its mail to. With only one installed there is nothing to choose.",
@@ -75,7 +77,9 @@
       "admin": {
         "menu_smtp-provider": "SMTP",
         "module_smtp-provider_name": "SMTP E-posta Sağlayıcısı",
-        "module_smtp-provider_description": "E-postayı kendi kurduğunuz ya da kiraladığınız bir SMTP sunucusundan gönderin"
+        "module_smtp-provider_description": "E-postayı kendi kurduğunuz ya da kiraladığınız bir SMTP sunucusundan gönderin",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "Bu sitenin postasını teslim ettiği aktarıcı."
       },
       "smtpProvider": {
         "adm_activeDesc": "Bu sitenin postasını kurulu taşıyıcılardan hangisine teslim edeceği. Tek bir tane kuruluysa seçilecek bir şey yoktur.",

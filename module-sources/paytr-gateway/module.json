@@ -2,7 +2,7 @@
   "id": "paytr-gateway",
   "name": "PayTR Payment Gateway",
   "description": "Take Turkish card, instalment and bank transfer payments through PayTR",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "paytr_merchant_key",
@@ -90,7 +90,9 @@
         "menu_paytr-gateway": "PayTR Gateway",
         "menu_paytr-gateway_paytr_settings": "PayTR Settings",
         "module_paytr-gateway_name": "PayTR Payment Gateway",
-        "module_paytr-gateway_description": "Take Turkish card, instalment and bank transfer payments through PayTR"
+        "module_paytr-gateway_description": "Take Turkish card, instalment and bank transfer payments through PayTR",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "PayTR merchant credentials and mode."
       }
     },
     "tr": {
@@ -111,7 +113,9 @@
         "menu_paytr-gateway": "PayTR Ödeme",
         "menu_paytr-gateway_paytr_settings": "PayTR Ayarları",
         "module_paytr-gateway_name": "PayTR Ödeme Altyapısı",
-        "module_paytr-gateway_description": "PayTR üzerinden Türk kartı, taksit ve havale ödemelerini alın"
+        "module_paytr-gateway_description": "PayTR üzerinden Türk kartı, taksit ve havale ödemelerini alın",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "PayTR satıcı kimlik bilgileri ve modu."
       }
     }
   },

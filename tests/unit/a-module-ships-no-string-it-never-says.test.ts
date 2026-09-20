@@ -94,6 +94,7 @@ interface Manifest {
     version: string;
     menu?: { label?: string }[];
     navGroups?: { id?: string }[];
+    settingsCards?: unknown[];
     translations?: Record<string, Record<string, Record<string, string>>>;
 }
 
@@ -113,6 +114,12 @@ function derivedKeys(id: string, manifest: Manifest): Set<string> {
     }
     for (const group of manifest.navGroups ?? []) {
         if (group.id) keys.add(`navGroup_${group.id}`);
+    }
+    // A settings card is named and described by the module that ships it; the
+    // sidebar and the palette both look it up under the module's own id.
+    if ((manifest.settingsCards ?? []).length > 0) {
+        keys.add(`settings_${id}`);
+        keys.add(`settings_${id}_description`);
     }
     return keys;
 }

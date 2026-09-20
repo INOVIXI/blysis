@@ -2,7 +2,7 @@
   "id": "vk-auth",
   "name": "VK Login",
   "description": "Allow users to sign in with their VK account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -49,7 +49,9 @@
       },
       "admin": {
         "module_vk-auth_name": "VK Login",
-        "module_vk-auth_description": "Allow users to sign in with their VK account"
+        "module_vk-auth_description": "Allow users to sign in with their VK account",
+        "settings_vk-auth": "VK OAuth",
+        "settings_vk-auth_description": "VK application credentials."
       }
     },
     "tr": {
@@ -61,7 +63,9 @@
       },
       "admin": {
         "module_vk-auth_name": "VK ile Giriş",
-        "module_vk-auth_description": "Kullanıcıların VK hesabıyla giriş yapmasına izin verin"
+        "module_vk-auth_description": "Kullanıcıların VK hesabıyla giriş yapmasına izin verin",
+        "settings_vk-auth": "VK OAuth",
+        "settings_vk-auth_description": "VK uygulama kimlik bilgileri."
       }
     }
   },

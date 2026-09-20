@@ -2,7 +2,7 @@
   "id": "roblox-auth",
   "name": "Roblox Login",
   "description": "Allow users to sign in with their Roblox account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -62,7 +62,9 @@
         "title": "Admin Panel",
         "subtitle": "Manage your platform settings and content",
         "module_roblox-auth_name": "Roblox Login",
-        "module_roblox-auth_description": "Allow users to sign in with their Roblox account"
+        "module_roblox-auth_description": "Allow users to sign in with their Roblox account",
+        "settings_roblox-auth": "Roblox OAuth",
+        "settings_roblox-auth_description": "Roblox application credentials."
       }
     },
     "tr": {
@@ -87,7 +89,9 @@
         "title": "Yönetim Paneli",
         "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
         "module_roblox-auth_name": "Roblox ile Giriş",
-        "module_roblox-auth_description": "Kullanıcıların Roblox hesabıyla giriş yapmasına izin verin"
+        "module_roblox-auth_description": "Kullanıcıların Roblox hesabıyla giriş yapmasına izin verin",
+        "settings_roblox-auth": "Roblox OAuth",
+        "settings_roblox-auth_description": "Roblox uygulama kimlik bilgileri."
       }
     }
   },

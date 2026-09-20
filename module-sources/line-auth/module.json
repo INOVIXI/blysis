@@ -2,7 +2,7 @@
   "id": "line-auth",
   "name": "LINE Login",
   "description": "Allow users to sign in with their LINE account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -49,7 +49,9 @@
       },
       "admin": {
         "module_line-auth_name": "LINE Login",
-        "module_line-auth_description": "Allow users to sign in with their LINE account"
+        "module_line-auth_description": "Allow users to sign in with their LINE account",
+        "settings_line-auth": "LINE OAuth",
+        "settings_line-auth_description": "LINE channel credentials."
       }
     },
     "tr": {
@@ -61,7 +63,9 @@
       },
       "admin": {
         "module_line-auth_name": "LINE ile Giriş",
-        "module_line-auth_description": "Kullanıcıların LINE hesabıyla giriş yapmasına izin verin"
+        "module_line-auth_description": "Kullanıcıların LINE hesabıyla giriş yapmasına izin verin",
+        "settings_line-auth": "LINE OAuth",
+        "settings_line-auth_description": "LINE kanal kimlik bilgileri."
       }
     }
   },

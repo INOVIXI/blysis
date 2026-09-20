@@ -2,7 +2,7 @@
   "id": "tawkto-chat",
   "name": "Tawk.to Chat",
   "description": "A live chat bubble on every page, served by Tawk.to. Nothing is loaded until the visitor has accepted cookies.",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -27,7 +27,7 @@
   ],
   "settingsCards": [
     {
-      "title": "Live chat",
+      "title": "Tawk.to Live Chat",
       "description": "The chat bubble visitors talk to you through.",
       "href": "/settings/tawkto-chat",
       "icon": "MessageCircle",
@@ -55,7 +55,9 @@
       },
       "admin": {
         "module_tawkto-chat_description": "A live chat widget on every page, served by Tawk.to",
-        "module_tawkto-chat_name": "Tawk.to Chat"
+        "module_tawkto-chat_name": "Tawk.to Chat",
+        "settings_tawkto-chat": "Tawk.to Live Chat",
+        "settings_tawkto-chat_description": "The chat bubble visitors talk to you through."
       }
     },
     "tr": {
@@ -70,7 +72,9 @@
       },
       "admin": {
         "module_tawkto-chat_description": "Her sayfada Tawk.to tarafından sunulan bir canlı sohbet aracı",
-        "module_tawkto-chat_name": "Tawk.to Sohbet"
+        "module_tawkto-chat_name": "Tawk.to Sohbet",
+        "settings_tawkto-chat": "Tawk.to Canlı Sohbet",
+        "settings_tawkto-chat_description": "Ziyaretçilerin sizinle konuştuğu sohbet balonu."
       }
     }
   },

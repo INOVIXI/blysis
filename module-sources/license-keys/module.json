@@ -2,7 +2,7 @@
   "id": "license-keys",
   "name": "License Keys",
   "description": "Generate, deliver and activate license keys for digital products, with a machine limit per key",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis",
@@ -165,7 +165,9 @@
         "module_license-keys_description": "Generate, deliver and activate license keys for digital products, with a machine limit per key",
         "menu_license-keys_licence_keys": "Licence Keys",
         "menu_license-keys_licence_settings": "Licence Settings",
-        "menu_license-keys": "Licences"
+        "menu_license-keys": "Licences",
+        "settings_license-keys": "License Keys",
+        "settings_license-keys_description": "Which products hand out a key, and how many."
       }
     },
     "tr": {
@@ -241,7 +243,9 @@
         "module_license-keys_description": "Dijital ürünler için lisans anahtarı üretin, teslim edin ve etkinleştirin; anahtar başına makine sınırı ile",
         "menu_license-keys_licence_keys": "Lisans Anahtarları",
         "menu_license-keys_licence_settings": "Lisans Ayarları",
-        "menu_license-keys": "Lisanslar"
+        "menu_license-keys": "Lisanslar",
+        "settings_license-keys": "Lisans Anahtarları",
+        "settings_license-keys_description": "Hangi ürünler anahtar dağıtır ve kaç tane."
       }
     }
   },

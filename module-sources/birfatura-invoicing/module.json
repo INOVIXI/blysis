@@ -2,7 +2,7 @@
   "id": "birfatura-invoicing",
   "name": "BirFatura Invoicing",
   "description": "Publishes this shop's paid orders for BirFatura to pull and invoice. The integrator calls in with a shared secret; nothing is sent out.",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "birfatura_token"
@@ -91,7 +91,9 @@
       },
       "admin": {
         "module_birfatura-invoicing_description": "Sends this shop's paid orders to BirFatura, which raises the invoice",
-        "module_birfatura-invoicing_name": "BirFatura Invoicing"
+        "module_birfatura-invoicing_name": "BirFatura Invoicing",
+        "settings_birfatura-invoicing": "BirFatura Invoicing",
+        "settings_birfatura-invoicing_description": "The secret BirFatura signs in with to collect your orders."
       }
     },
     "tr": {
@@ -104,7 +106,9 @@
       },
       "admin": {
         "module_birfatura-invoicing_description": "Bu mağazanın ödenmiş siparişlerini faturayı kesen BirFatura'ya gönderir",
-        "module_birfatura-invoicing_name": "BirFatura Faturalama"
+        "module_birfatura-invoicing_name": "BirFatura Faturalama",
+        "settings_birfatura-invoicing": "BirFatura Faturalama",
+        "settings_birfatura-invoicing_description": "BirFatura'nın siparişlerinizi almak için imzaladığı gizli anahtar."
       }
     }
   },

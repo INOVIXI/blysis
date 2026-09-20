@@ -2,7 +2,7 @@
   "id": "mollie-gateway",
   "name": "Mollie Payment Gateway",
   "description": "Take iDEAL, Bancontact, SEPA and card payments through Mollie",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "mollie_api_key"
@@ -87,7 +87,9 @@
         "menu_mollie-gateway": "Mollie Gateway",
         "menu_mollie-gateway_mollie_settings": "Mollie Settings",
         "module_mollie-gateway_name": "Mollie Payment Gateway",
-        "module_mollie-gateway_description": "Take iDEAL, Bancontact, SEPA and card payments through Mollie"
+        "module_mollie-gateway_description": "Take iDEAL, Bancontact, SEPA and card payments through Mollie",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Mollie API key."
       }
     },
     "tr": {
@@ -102,7 +104,9 @@
         "menu_mollie-gateway": "Mollie Ödeme",
         "menu_mollie-gateway_mollie_settings": "Mollie Ayarları",
         "module_mollie-gateway_name": "Mollie Ödeme Altyapısı",
-        "module_mollie-gateway_description": "Mollie üzerinden iDEAL, Bancontact, SEPA ve kart ödemelerini alın"
+        "module_mollie-gateway_description": "Mollie üzerinden iDEAL, Bancontact, SEPA ve kart ödemelerini alın",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Mollie API anahtarı."
       }
     }
   },

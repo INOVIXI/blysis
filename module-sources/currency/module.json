@@ -2,7 +2,7 @@
   "id": "currency",
   "name": "Multi-Currency",
   "description": "Multi-currency support with automatic conversion",
-  "version": "1.5.3",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis",
@@ -89,7 +89,9 @@
         "menu_currency": "Currency",
         "menu_currency_currency": "Currency",
         "module_currency_name": "Multi-Currency",
-        "module_currency_description": "Multi-currency support with automatic conversion"
+        "module_currency_description": "Multi-currency support with automatic conversion",
+        "settings_currency": "Currency Settings",
+        "settings_currency_description": "Manage currencies and exchange rates"
       }
     },
     "tr": {
@@ -126,7 +128,9 @@
         "menu_currency": "Para Birimi",
         "menu_currency_currency": "Para Birimi",
         "module_currency_name": "Çoklu Para Birimi",
-        "module_currency_description": "Otomatik dönüşümle çoklu para birimi desteği"
+        "module_currency_description": "Otomatik dönüşümle çoklu para birimi desteği",
+        "settings_currency": "Para Birimi Ayarları",
+        "settings_currency_description": "Para birimlerini ve kurları yönetin."
       }
     }
   },

@@ -2,7 +2,7 @@
   "id": "instagram-auth",
   "name": "Instagram Login",
   "description": "Allow users to sign in with their Instagram account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -54,7 +54,9 @@
       },
       "admin": {
         "module_instagram-auth_name": "Instagram Login",
-        "module_instagram-auth_description": "Allow users to sign in with their Instagram account"
+        "module_instagram-auth_description": "Allow users to sign in with their Instagram account",
+        "settings_instagram-auth": "Instagram OAuth",
+        "settings_instagram-auth_description": "Instagram application credentials."
       }
     },
     "tr": {
@@ -67,7 +69,9 @@
       },
       "admin": {
         "module_instagram-auth_name": "Instagram ile Giriş",
-        "module_instagram-auth_description": "Kullanıcıların Instagram hesabıyla giriş yapmasına izin verin"
+        "module_instagram-auth_description": "Kullanıcıların Instagram hesabıyla giriş yapmasına izin verin",
+        "settings_instagram-auth": "Instagram OAuth",
+        "settings_instagram-auth_description": "Instagram uygulama kimlik bilgileri."
       }
     }
   },

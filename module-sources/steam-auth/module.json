@@ -2,7 +2,7 @@
   "id": "steam-auth",
   "name": "Steam Login",
   "description": "Allow users to sign in with their Steam account",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -91,7 +91,9 @@
       },
       "admin": {
         "module_steam-auth_name": "Steam Login",
-        "module_steam-auth_description": "Allow users to sign in with their Steam account"
+        "module_steam-auth_description": "Allow users to sign in with their Steam account",
+        "settings_steam-auth": "Steam Login",
+        "settings_steam-auth_description": "Steam sign-in status and setup."
       },
       "pageDescriptions": {
         "steam": "Finish signing in with your Steam account, and you are sent back to where you left off as soon as it is done."
@@ -117,7 +119,9 @@
       },
       "admin": {
         "module_steam-auth_name": "Steam ile Giriş",
-        "module_steam-auth_description": "Kullanıcıların Steam hesabıyla giriş yapmasına izin verin"
+        "module_steam-auth_description": "Kullanıcıların Steam hesabıyla giriş yapmasına izin verin",
+        "settings_steam-auth": "Steam Girişi",
+        "settings_steam-auth_description": "Steam giriş durumu ve kurulumu."
       },
       "pageDescriptions": {
         "steam": "Steam hesabınızla oturum açma işlemini tamamlayın; işlem biter bitmez kaldığınız yere geri dönersiniz."

@@ -2,7 +2,7 @@
   "id": "github-auth",
   "name": "GitHub Login",
   "description": "Allow users to sign in with their GitHub account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -62,7 +62,9 @@
         "title": "Admin Panel",
         "subtitle": "Manage your platform settings and content",
         "module_github-auth_name": "GitHub Login",
-        "module_github-auth_description": "Allow users to sign in with their GitHub account"
+        "module_github-auth_description": "Allow users to sign in with their GitHub account",
+        "settings_github-auth": "GitHub OAuth",
+        "settings_github-auth_description": "GitHub application credentials."
       }
     },
     "tr": {
@@ -87,7 +89,9 @@
         "title": "Yönetim Paneli",
         "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
         "module_github-auth_name": "GitHub ile Giriş",
-        "module_github-auth_description": "Kullanıcıların GitHub hesabıyla giriş yapmasına izin verin"
+        "module_github-auth_description": "Kullanıcıların GitHub hesabıyla giriş yapmasına izin verin",
+        "settings_github-auth": "GitHub OAuth",
+        "settings_github-auth_description": "GitHub uygulama kimlik bilgileri."
       }
     }
   },

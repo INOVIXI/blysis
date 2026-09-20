@@ -2,7 +2,7 @@
   "id": "google-auth",
   "name": "Google Login",
   "description": "Allow users to sign in with their Google account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -62,7 +62,9 @@
         "title": "Admin Panel",
         "subtitle": "Manage your platform settings and content",
         "module_google-auth_name": "Google Login",
-        "module_google-auth_description": "Allow users to sign in with their Google account"
+        "module_google-auth_description": "Allow users to sign in with their Google account",
+        "settings_google-auth": "Google OAuth",
+        "settings_google-auth_description": "Google application credentials."
       }
     },
     "tr": {
@@ -87,7 +89,9 @@
         "title": "Yönetim Paneli",
         "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
         "module_google-auth_name": "Google ile Giriş",
-        "module_google-auth_description": "Kullanıcıların Google hesabıyla giriş yapmasına izin verin"
+        "module_google-auth_description": "Kullanıcıların Google hesabıyla giriş yapmasına izin verin",
+        "settings_google-auth": "Google OAuth",
+        "settings_google-auth_description": "Google uygulama kimlik bilgileri."
       }
     }
   },

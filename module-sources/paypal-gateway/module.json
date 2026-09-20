@@ -2,7 +2,7 @@
   "id": "paypal-gateway",
   "name": "PayPal Payment Gateway",
   "description": "Take payments through PayPal, with a balance or a linked card",
-  "version": "2.3.2",
+  "version": "2.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "paypal_client_secret"
@@ -69,7 +69,9 @@
         "subtitle": "Manage your platform settings and content",
         "menu_paypal-gateway_paypal_settings": "PayPal Settings",
         "module_paypal-gateway_name": "PayPal Payment Gateway",
-        "module_paypal-gateway_description": "Take payments through PayPal, with a balance or a linked card"
+        "module_paypal-gateway_description": "Take payments through PayPal, with a balance or a linked card",
+        "settings_paypal-gateway": "PayPal",
+        "settings_paypal-gateway_description": "PayPal API credentials."
       }
     },
     "tr": {
@@ -101,7 +103,9 @@
         "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
         "menu_paypal-gateway_paypal_settings": "PayPal Ayarları",
         "module_paypal-gateway_name": "PayPal Ödeme Altyapısı",
-        "module_paypal-gateway_description": "PayPal üzerinden bakiye veya bağlı kartla ödeme alın"
+        "module_paypal-gateway_description": "PayPal üzerinden bakiye veya bağlı kartla ödeme alın",
+        "settings_paypal-gateway": "PayPal",
+        "settings_paypal-gateway_description": "PayPal API kimlik bilgileri."
       }
     }
   },

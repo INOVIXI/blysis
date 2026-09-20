@@ -2,7 +2,7 @@
   "id": "minecraft-litebans",
   "name": "Minecraft Punishments (LiteBans)",
   "description": "Reads bans, mutes, warnings and kicks out of a LiteBans database and records them against the member who owns the account",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "coreVersion": "^5.0.0",
   "category": "gaming",
   "author": "Blysis",
@@ -25,7 +25,7 @@
   ],
   "settingsCards": [
     {
-      "title": "Minecraft punishments",
+      "title": "Minecraft Punishments",
       "description": "Read a game server's LiteBans database into the punishment record.",
       "href": "/settings/minecraft-litebans",
       "icon": "Gavel",
@@ -64,7 +64,9 @@
     "en": {
       "admin": {
         "module_minecraft-litebans_name": "Minecraft Punishments (LiteBans)",
-        "module_minecraft-litebans_description": "Reads bans, mutes, warnings and kicks out of a LiteBans database and records them against the member who owns the account"
+        "module_minecraft-litebans_description": "Reads bans, mutes, warnings and kicks out of a LiteBans database and records them against the member who owns the account",
+        "settings_minecraft-litebans": "Minecraft Punishments",
+        "settings_minecraft-litebans_description": "Read a game server's LiteBans database into the punishment record."
       },
       "minecraftLitebans": {
         "perm_manage": "Can manage",
@@ -114,7 +116,9 @@
     "tr": {
       "admin": {
         "module_minecraft-litebans_name": "Minecraft Cezaları (LiteBans)",
-        "module_minecraft-litebans_description": "Bir LiteBans veritabanındaki yasakları, susturmaları, uyarıları ve atmaları okur ve hesabın sahibi olan üyenin kaydına yazar"
+        "module_minecraft-litebans_description": "Bir LiteBans veritabanındaki yasakları, susturmaları, uyarıları ve atmaları okur ve hesabın sahibi olan üyenin kaydına yazar",
+        "settings_minecraft-litebans": "Minecraft Cezaları",
+        "settings_minecraft-litebans_description": "Bir oyun sunucusunun LiteBans veritabanını ceza kaydına okuyun."
       },
       "minecraftLitebans": {
         "perm_manage": "Yönetebilir",

@@ -2,7 +2,7 @@
   "id": "trophies",
   "name": "Trophies",
   "description": "Achievement badges with rule-based auto-award engine",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
@@ -205,7 +205,9 @@
         "menu_trophies_trophies": "Trophies",
         "module_trophies_name": "Trophies",
         "module_trophies_description": "Achievement badges with rule-based auto-award engine",
-        "crumb_trophies": "Trophies"
+        "crumb_trophies": "Trophies",
+        "settings_trophies": "Trophies",
+        "settings_trophies_description": "Manage achievement badges and rules"
       },
       "pageDescriptions": {
         "trophies": "Browse the achievements you can earn across the community and see which of them you have already unlocked."
@@ -287,7 +289,9 @@
         "menu_trophies_trophies": "Kupalar",
         "module_trophies_name": "Kupalar",
         "module_trophies_description": "Kural tabanlı otomatik ödüllendirme motoruyla başarım rozetleri",
-        "crumb_trophies": "Kupalar"
+        "crumb_trophies": "Kupalar",
+        "settings_trophies": "Kupalar",
+        "settings_trophies_description": "Başarı rozetlerini ve kurallarını yönetin."
       },
       "pageDescriptions": {
         "trophies": "Toplulukta kazanabileceğiniz başarımlara göz atın ve bunlardan hangilerini şimdiden açtığınızı görün."

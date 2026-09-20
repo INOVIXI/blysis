@@ -2,7 +2,7 @@
   "id": "midtrans-gateway",
   "name": "Midtrans Gateway",
   "description": "Take bank transfer, e-wallet, convenience store and card payments in Indonesia through Midtrans",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "midtrans_server_key"
@@ -89,7 +89,9 @@
         "menu_midtrans-gateway": "Midtrans Gateway",
         "menu_midtrans-gateway_midtrans_settings": "Midtrans Settings",
         "module_midtrans-gateway_name": "Midtrans Gateway",
-        "module_midtrans-gateway_description": "Take bank transfer, e-wallet, convenience store and card payments in Indonesia through Midtrans"
+        "module_midtrans-gateway_description": "Take bank transfer, e-wallet, convenience store and card payments in Indonesia through Midtrans",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Midtrans server key and environment."
       }
     },
     "tr": {
@@ -106,7 +108,9 @@
         "menu_midtrans-gateway": "Midtrans Ödeme",
         "menu_midtrans-gateway_midtrans_settings": "Midtrans Ayarları",
         "module_midtrans-gateway_name": "Midtrans Altyapısı",
-        "module_midtrans-gateway_description": "Midtrans üzerinden Endonezya'da havale, e-cüzdan, market ve kart ödemelerini alın"
+        "module_midtrans-gateway_description": "Midtrans üzerinden Endonezya'da havale, e-cüzdan, market ve kart ödemelerini alın",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Midtrans sunucu anahtarı ve ortamı."
       }
     }
   },

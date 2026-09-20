@@ -2,7 +2,7 @@
   "id": "credits",
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis",
@@ -117,7 +117,9 @@
       "admin": {
         "module_credits_name": "Credit System",
         "module_credits_description": "Virtual currency wallet for users",
-        "menu_credits_credit_settings": "Credit Settings"
+        "menu_credits_credit_settings": "Credit Settings",
+        "settings_credits": "Credits",
+        "settings_credits_description": "How much of a purchase comes back as credits."
       },
       "profile": {
         "notificationType_credits_credit_added": "Credits Added to Your Balance"
@@ -191,7 +193,9 @@
       "admin": {
         "module_credits_name": "Kredi Sistemi",
         "module_credits_description": "Kullanıcılar için sanal para cüzdanı",
-        "menu_credits_credit_settings": "Kredi Ayarları"
+        "menu_credits_credit_settings": "Kredi Ayarları",
+        "settings_credits": "Krediler",
+        "settings_credits_description": "Bir alışverişin ne kadarı kredi olarak geri döner."
       },
       "profile": {
         "notificationType_credits_credit_added": "Bakiyenize Kredi Eklendi"

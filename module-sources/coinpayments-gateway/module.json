@@ -2,7 +2,7 @@
   "id": "coinpayments-gateway",
   "name": "CoinPayments Gateway",
   "description": "Take Bitcoin, Litecoin, USDT and other crypto payments through CoinPayments",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "coinpayments_ipn_secret"
@@ -85,7 +85,9 @@
         "menu_coinpayments-gateway": "CoinPayments Gateway",
         "menu_coinpayments-gateway_coinpayments_settings": "CoinPayments Settings",
         "module_coinpayments-gateway_name": "CoinPayments Gateway",
-        "module_coinpayments-gateway_description": "Take Bitcoin, Litecoin, USDT and other crypto payments through CoinPayments"
+        "module_coinpayments-gateway_description": "Take Bitcoin, Litecoin, USDT and other crypto payments through CoinPayments",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "CoinPayments merchant id and IPN secret."
       }
     },
     "tr": {
@@ -102,7 +104,9 @@
         "menu_coinpayments-gateway": "CoinPayments Ödeme",
         "menu_coinpayments-gateway_coinpayments_settings": "CoinPayments Ayarları",
         "module_coinpayments-gateway_name": "CoinPayments Altyapısı",
-        "module_coinpayments-gateway_description": "CoinPayments üzerinden Bitcoin, Litecoin, USDT ve diğer kripto ödemelerini alın"
+        "module_coinpayments-gateway_description": "CoinPayments üzerinden Bitcoin, Litecoin, USDT ve diğer kripto ödemelerini alın",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "CoinPayments satıcı kimliği ve IPN parolası."
       }
     }
   },

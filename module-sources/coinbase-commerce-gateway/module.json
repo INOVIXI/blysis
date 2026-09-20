@@ -2,7 +2,7 @@
   "id": "coinbase-commerce-gateway",
   "name": "Coinbase Commerce Gateway",
   "description": "Take Bitcoin, Ethereum, USDC and other crypto payments through Coinbase Commerce",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "coinbase_api_key",
@@ -86,7 +86,9 @@
         "menu_coinbase-commerce-gateway": "Coinbase Commerce Gateway",
         "menu_coinbase-commerce-gateway_coinbase_commerce_settings": "Coinbase Commerce Settings",
         "module_coinbase-commerce-gateway_name": "Coinbase Commerce Gateway",
-        "module_coinbase-commerce-gateway_description": "Take Bitcoin, Ethereum, USDC and other crypto payments through Coinbase Commerce"
+        "module_coinbase-commerce-gateway_description": "Take Bitcoin, Ethereum, USDC and other crypto payments through Coinbase Commerce",
+        "settings_coinbase-commerce-gateway": "Coinbase Commerce",
+        "settings_coinbase-commerce-gateway_description": "Coinbase Commerce API key and webhook secret."
       }
     },
     "tr": {
@@ -103,7 +105,9 @@
         "menu_coinbase-commerce-gateway": "Coinbase Commerce Ödeme",
         "menu_coinbase-commerce-gateway_coinbase_commerce_settings": "Coinbase Commerce Ayarları",
         "module_coinbase-commerce-gateway_name": "Coinbase Commerce Altyapısı",
-        "module_coinbase-commerce-gateway_description": "Coinbase Commerce üzerinden Bitcoin, Ethereum, USDC ve diğer kripto ödemelerini alın"
+        "module_coinbase-commerce-gateway_description": "Coinbase Commerce üzerinden Bitcoin, Ethereum, USDC ve diğer kripto ödemelerini alın",
+        "settings_coinbase-commerce-gateway": "Coinbase Commerce",
+        "settings_coinbase-commerce-gateway_description": "Coinbase Commerce API anahtarı ve webhook parolası."
       }
     }
   },

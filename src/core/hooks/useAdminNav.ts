@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { mayOpenAdminPath } from "@/core/lib/admin-access";
 import { Package } from "lucide-react";
 import { NavIcon } from "@/core/components/ui/NavIcon";
-import { ModuleNavGroups } from "@/core/generated/module-registry";
+import { ModuleNavGroups, ModuleSettingsCards } from "@/core/generated/module-registry";
 import {
     buildNavGroups,
     buildThemeNavGroup,
@@ -96,6 +96,7 @@ export function useAdminNav(
         return buildNavGroups({
             modules,
             navGroups: ModuleNavGroups.filter((g) => enabled.has(g.module)),
+            settingsCards: ModuleSettingsCards.filter((c) => enabled.has(c.module)),
             themeGroup: activeThemeId ? buildThemeNavGroup(activeThemeId) : null,
             translate: (key, fallback) => (t.has(key) ? t(key) : fallback),
             resolveIcon,

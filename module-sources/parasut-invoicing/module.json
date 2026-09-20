@@ -2,7 +2,7 @@
   "id": "parasut-invoicing",
   "name": "Parasut Invoicing",
   "description": "Issues a sales invoice in Parasut for every paid order, using the invoice details the checkout collected.",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "parasut_client_secret",
@@ -90,7 +90,9 @@
       },
       "admin": {
         "module_parasut-invoicing_description": "Sends this shop's paid orders to Parasut, which raises the invoice",
-        "module_parasut-invoicing_name": "Parasut Invoicing"
+        "module_parasut-invoicing_name": "Parasut Invoicing",
+        "settings_parasut-invoicing": "Parasut Invoicing",
+        "settings_parasut-invoicing_description": "Credentials for issuing a sales invoice on every paid order."
       }
     },
     "tr": {
@@ -125,7 +127,9 @@
       },
       "admin": {
         "module_parasut-invoicing_description": "Bu mağazanın ödenmiş siparişlerini faturayı kesen Paraşüt'e gönderir",
-        "module_parasut-invoicing_name": "Paraşüt Faturalama"
+        "module_parasut-invoicing_name": "Paraşüt Faturalama",
+        "settings_parasut-invoicing": "Paraşüt Faturalama",
+        "settings_parasut-invoicing_description": "Her ödenmiş sipariş için satış faturası kesmek üzere kimlik bilgileri."
       }
     }
   },

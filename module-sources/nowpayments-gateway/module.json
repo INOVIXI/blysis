@@ -2,7 +2,7 @@
   "id": "nowpayments-gateway",
   "name": "NOWPayments Gateway",
   "description": "Take payments in 200+ cryptocurrencies through NOWPayments",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "nowpayments_api_key",
@@ -90,7 +90,9 @@
         "menu_nowpayments-gateway": "NOWPayments Gateway",
         "menu_nowpayments-gateway_nowpayments_settings": "NOWPayments Settings",
         "module_nowpayments-gateway_name": "NOWPayments Gateway",
-        "module_nowpayments-gateway_description": "Take payments in 200+ cryptocurrencies through NOWPayments"
+        "module_nowpayments-gateway_description": "Take payments in 200+ cryptocurrencies through NOWPayments",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "NOWPayments API key and IPN secret."
       }
     },
     "tr": {
@@ -107,7 +109,9 @@
         "menu_nowpayments-gateway": "NOWPayments Ödeme",
         "menu_nowpayments-gateway_nowpayments_settings": "NOWPayments Ayarları",
         "module_nowpayments-gateway_name": "NOWPayments Altyapısı",
-        "module_nowpayments-gateway_description": "NOWPayments üzerinden 200'den fazla kripto para ile ödeme alın"
+        "module_nowpayments-gateway_description": "NOWPayments üzerinden 200'den fazla kripto para ile ödeme alın",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "NOWPayments API anahtarı ve IPN parolası."
       }
     }
   },

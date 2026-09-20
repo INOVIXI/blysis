@@ -2,7 +2,7 @@
   "id": "mercadopago-gateway",
   "name": "Mercado Pago Gateway",
   "description": "Take card, Pix, boleto and cash payments across Latin America through Mercado Pago",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "mercadopago_access_token",
@@ -90,7 +90,9 @@
         "menu_mercadopago-gateway": "Mercado Pago Gateway",
         "menu_mercadopago-gateway_mercado_pago_settings": "Mercado Pago Settings",
         "module_mercadopago-gateway_name": "Mercado Pago Gateway",
-        "module_mercadopago-gateway_description": "Take card, Pix, boleto and cash payments across Latin America through Mercado Pago"
+        "module_mercadopago-gateway_description": "Take card, Pix, boleto and cash payments across Latin America through Mercado Pago",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Mercado Pago access token and webhook secret."
       }
     },
     "tr": {
@@ -107,7 +109,9 @@
         "menu_mercadopago-gateway": "Mercado Pago Ödeme",
         "menu_mercadopago-gateway_mercado_pago_settings": "Mercado Pago Ayarları",
         "module_mercadopago-gateway_name": "Mercado Pago Altyapısı",
-        "module_mercadopago-gateway_description": "Mercado Pago üzerinden Latin Amerika genelinde kart, Pix, boleto ve nakit ödemelerini alın"
+        "module_mercadopago-gateway_description": "Mercado Pago üzerinden Latin Amerika genelinde kart, Pix, boleto ve nakit ödemelerini alın",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Mercado Pago erişim anahtarı ve webhook parolası."
       }
     }
   },

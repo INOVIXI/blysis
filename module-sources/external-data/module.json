@@ -2,7 +2,7 @@
   "id": "external-data",
   "name": "External Data",
   "description": "Read a list out of a database this site does not own: a game server, a billing system, an old forum. Read only, one bounded query, and the connection never reaches a page.",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
@@ -16,7 +16,7 @@
   ],
   "settingsCards": [
     {
-      "title": "External data",
+      "title": "External Data",
       "description": "A read-only connection to a database you already have.",
       "href": "/settings/external-data",
       "icon": "Database",
@@ -95,7 +95,9 @@
       },
       "admin": {
         "module_external-data_description": "Reads a figure from somewhere else and shows it on the site",
-        "module_external-data_name": "External Data"
+        "module_external-data_name": "External Data",
+        "settings_external-data": "External Data",
+        "settings_external-data_description": "A read-only connection to a database you already have."
       }
     },
     "tr": {
@@ -155,7 +157,9 @@
       },
       "admin": {
         "module_external-data_description": "Başka bir yerden bir değer okur ve sitede gösterir",
-        "module_external-data_name": "Dış Veri"
+        "module_external-data_name": "Dış Veri",
+        "settings_external-data": "Harici Veri",
+        "settings_external-data_description": "Halihazırda sahip olduğunuz bir veritabanına salt okunur bağlantı."
       }
     }
   },

@@ -2,7 +2,7 @@
   "id": "paymentwall-gateway",
   "name": "Paymentwall Gateway",
   "description": "Take local payments, wallets and mobile billing through Paymentwall",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "paymentwall_secret_key"
@@ -84,7 +84,9 @@
         "menu_paymentwall-gateway": "Paymentwall Gateway",
         "menu_paymentwall-gateway_paymentwall_settings": "Paymentwall Settings",
         "module_paymentwall-gateway_name": "Paymentwall Gateway",
-        "module_paymentwall-gateway_description": "Take local payments, wallets and mobile billing through Paymentwall"
+        "module_paymentwall-gateway_description": "Take local payments, wallets and mobile billing through Paymentwall",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Paymentwall project and secret keys."
       }
     },
     "tr": {
@@ -101,7 +103,9 @@
         "menu_paymentwall-gateway": "Paymentwall Ödeme",
         "menu_paymentwall-gateway_paymentwall_settings": "Paymentwall Ayarları",
         "module_paymentwall-gateway_name": "Paymentwall Altyapısı",
-        "module_paymentwall-gateway_description": "Paymentwall üzerinden yerel ödemeleri, cüzdanları ve mobil faturalandırmayı kullanın"
+        "module_paymentwall-gateway_description": "Paymentwall üzerinden yerel ödemeleri, cüzdanları ve mobil faturalandırmayı kullanın",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Paymentwall proje ve gizli anahtarları."
       }
     }
   },

@@ -2,7 +2,7 @@
   "id": "microsoft-auth",
   "name": "Microsoft and Xbox Login",
   "description": "Allow users to sign in with their Microsoft or Xbox account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -49,7 +49,9 @@
       },
       "admin": {
         "module_microsoft-auth_name": "Microsoft and Xbox Login",
-        "module_microsoft-auth_description": "Allow users to sign in with their Microsoft or Xbox account"
+        "module_microsoft-auth_description": "Allow users to sign in with their Microsoft or Xbox account",
+        "settings_microsoft-auth": "Microsoft OAuth",
+        "settings_microsoft-auth_description": "Microsoft Entra application credentials."
       }
     },
     "tr": {
@@ -61,7 +63,9 @@
       },
       "admin": {
         "module_microsoft-auth_name": "Microsoft ve Xbox ile Giriş",
-        "module_microsoft-auth_description": "Kullanıcıların Microsoft veya Xbox hesabıyla giriş yapmasına izin verin"
+        "module_microsoft-auth_description": "Kullanıcıların Microsoft veya Xbox hesabıyla giriş yapmasına izin verin",
+        "settings_microsoft-auth": "Microsoft OAuth",
+        "settings_microsoft-auth_description": "Microsoft Entra uygulama kimlik bilgileri."
       }
     }
   },

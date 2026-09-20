@@ -2,7 +2,7 @@
   "id": "url-redirects",
   "name": "URL Redirects",
   "description": "A sign on the door of a page that moved, so old links keep working.",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
@@ -75,7 +75,9 @@
       },
       "admin": {
         "module_url-redirects_description": "Sends an old address to wherever the page lives now",
-        "module_url-redirects_name": "URL Redirects"
+        "module_url-redirects_name": "URL Redirects",
+        "settings_url-redirects": "Redirects",
+        "settings_url-redirects_description": "Old addresses that should lead somewhere new."
       }
     },
     "tr": {
@@ -107,7 +109,9 @@
       },
       "admin": {
         "module_url-redirects_description": "Eski bir adresi, sayfanın şimdi bulunduğu yere gönderir",
-        "module_url-redirects_name": "URL Yönlendirmeleri"
+        "module_url-redirects_name": "URL Yönlendirmeleri",
+        "settings_url-redirects": "Yönlendirmeler",
+        "settings_url-redirects_description": "Başka bir yere gitmesi gereken eski adresler."
       }
     }
   },

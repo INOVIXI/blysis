@@ -2,7 +2,7 @@
   "id": "discord-widget",
   "name": "Discord Widget",
   "description": "Discord server widget on homepage sidebar",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -50,7 +50,9 @@
         "menu_discord-widget": "Discord Widget",
         "module_discord-widget_name": "Discord Widget",
         "module_discord-widget_description": "Discord server widget on homepage sidebar",
-        "widget_discordServer": "Discord Server"
+        "widget_discordServer": "Discord Server",
+        "settings_discord-widget": "Discord Widget",
+        "settings_discord-widget_description": "Configure the Discord server widget shown on the homepage sidebar."
       },
       "discordWidget": {
         "adm_error": "Failed to save",
@@ -75,7 +77,9 @@
         "menu_discord-widget": "Discord Widget'ı",
         "module_discord-widget_name": "Discord Bileşeni",
         "module_discord-widget_description": "Ana sayfa kenar çubuğunda Discord sunucu bileşeni",
-        "widget_discordServer": "Discord Sunucusu"
+        "widget_discordServer": "Discord Sunucusu",
+        "settings_discord-widget": "Discord Widget'ı",
+        "settings_discord-widget_description": "Ana sayfa kenar çubuğunda görünen Discord sunucu widget'ı."
       },
       "discordWidget": {
         "adm_error": "Kaydedilemedi",

@@ -2,7 +2,7 @@
   "id": "crisp-chat",
   "name": "Crisp Chat",
   "description": "A live chat bubble on every page, served by Crisp. Nothing is loaded until the visitor has accepted cookies.",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -41,7 +41,7 @@
   ],
   "settingsCards": [
     {
-      "title": "Live chat",
+      "title": "Crisp Live Chat",
       "description": "The chat bubble visitors talk to you through.",
       "href": "/settings/crisp-chat",
       "icon": "MessageCircle",
@@ -67,7 +67,9 @@
       },
       "admin": {
         "module_crisp-chat_description": "A live chat bubble on every page, served by Crisp",
-        "module_crisp-chat_name": "Crisp Chat"
+        "module_crisp-chat_name": "Crisp Chat",
+        "settings_crisp-chat": "Crisp Live Chat",
+        "settings_crisp-chat_description": "The chat bubble visitors talk to you through."
       }
     },
     "tr": {
@@ -80,7 +82,9 @@
       },
       "admin": {
         "module_crisp-chat_description": "Her sayfada Crisp tarafından sunulan bir canlı sohbet balonu",
-        "module_crisp-chat_name": "Crisp Sohbet"
+        "module_crisp-chat_name": "Crisp Sohbet",
+        "settings_crisp-chat": "Crisp Canlı Sohbet",
+        "settings_crisp-chat_description": "Ziyaretçilerin sizinle konuştuğu sohbet balonu."
       }
     }
   },

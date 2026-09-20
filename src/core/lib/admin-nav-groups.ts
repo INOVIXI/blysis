@@ -337,6 +337,23 @@ export const FALLBACK_NAV_GROUP_ID = "modules";
 const FALLBACK_GROUP_ORDER = 8000;
 const THEME_GROUP_ORDER = 9000;
 
+/**
+ * A module saying where its own settings live.
+ *
+ * The other way is a `menu` entry, and a module may do either. Both end up as
+ * a link in the panel: a card that reached only the command palette was a
+ * screen an operator had to already know about, which was the state of most
+ * of the modules that ship one.
+ */
+export interface ModuleSettingsCard {
+    module: string;
+    /** The manifest's own words, and the fallback when nothing is translated. */
+    title: string;
+    /** Under `/admin`, the way a manifest writes it. */
+    href: string;
+    icon?: string;
+}
+
 export interface ModuleMenuContribution {
     id: string;
     menu?: { path: string; label: string; icon?: string; group?: string; section?: string }[];
@@ -351,6 +368,8 @@ export interface BuildNavGroupsOptions {
     coreGroups?: NavGroup[];
     /** Resolves a translation key, returning `fallback` when it is missing. */
     translate?: (key: string, fallback: string) => string;
+    /** Settings screens modules declare as a card. Enabled modules only. */
+    settingsCards?: ModuleSettingsCard[];
     /** Resolves a Lucide icon name from a manifest to a component. */
     resolveIcon?: (name: string | undefined) => NavIconComponent;
     /**
@@ -426,6 +445,7 @@ export function buildNavGroups({
     navGroups = [],
     themeGroup = null,
     coreGroups = CORE_NAV_GROUPS,
+    settingsCards = [],
     translate = (_key, fallback) => fallback,
     resolveIcon = () => Package,
     mayOpen,
@@ -539,6 +559,41 @@ export function buildNavGroups({
                     group.sections.push(section);
                 }
                 section.items.push(item);
+            }
+        }
+    }
+
+    // A module's own settings screen, where its menu did not already name it.
+    //
+    // Deduped against every link built above rather than against that
+    // module's menu alone: two modules may point at one screen, and a
+    // duplicate in the sidebar reads as two screens that disagree.
+    if (settingsCards.length > 0) {
+        const linked = new Set(
+            groups.flatMap((group) => group.sections.flatMap((section) => section.items.map((item) => item.href))),
+        );
+        const settingsGroup = groups.find((group) => group.id === "settings");
+        if (settingsGroup) {
+            const items: NavItem[] = [];
+            for (const card of settingsCards) {
+                const href = `/admin${card.href}`;
+                if (linked.has(href)) continue;
+                linked.add(href);
+                const labelKey = `settings_${card.module}`;
+                items.push({
+                    href,
+                    label: translate(labelKey, card.title),
+                    labelKey,
+                    icon: resolveIcon(card.icon),
+                });
+            }
+            if (items.length > 0) {
+                items.sort((a, b) => a.label.localeCompare(b.label));
+                settingsGroup.sections.push({
+                    header: translate("sidebar_integrations", "Integrations"),
+                    headerKey: "sidebar_integrations",
+                    items,
+                });
             }
         }
     }

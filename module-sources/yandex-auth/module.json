@@ -2,7 +2,7 @@
   "id": "yandex-auth",
   "name": "Yandex Login",
   "description": "Allow users to sign in with their Yandex account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -49,7 +49,9 @@
       },
       "admin": {
         "module_yandex-auth_name": "Yandex Login",
-        "module_yandex-auth_description": "Allow users to sign in with their Yandex account"
+        "module_yandex-auth_description": "Allow users to sign in with their Yandex account",
+        "settings_yandex-auth": "Yandex OAuth",
+        "settings_yandex-auth_description": "Yandex application credentials."
       }
     },
     "tr": {
@@ -61,7 +63,9 @@
       },
       "admin": {
         "module_yandex-auth_name": "Yandex ile Giriş",
-        "module_yandex-auth_description": "Kullanıcıların Yandex hesabıyla giriş yapmasına izin verin"
+        "module_yandex-auth_description": "Kullanıcıların Yandex hesabıyla giriş yapmasına izin verin",
+        "settings_yandex-auth": "Yandex OAuth",
+        "settings_yandex-auth_description": "Yandex uygulama kimlik bilgileri."
       }
     }
   },

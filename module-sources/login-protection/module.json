@@ -2,7 +2,7 @@
   "id": "login-protection",
   "name": "Login Protection",
   "description": "Login throttling: how many failed attempts lock an account, and letting one back in",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "category": "security",
   "author": "Blysis",
@@ -40,7 +40,9 @@
         "menu_login-protection_login_protection": "Login Protection",
         "menu_security": "Login Protection",
         "module_login-protection_description": "Login throttling: how many failed attempts lock an account, and letting one back in",
-        "module_login-protection_name": "Login Protection"
+        "module_login-protection_name": "Login Protection",
+        "settings_login-protection": "Login Protection",
+        "settings_login-protection_description": "How many failed sign-ins lock an account, and letting one back in."
       },
       "loginProtection": {
         "adm_attemptsDesc": "Counted per account, so a campaign spread across thousands of addresses is still stopped. Three at the least: a lock on the first typo is a way to shut anybody out on purpose.",
@@ -67,7 +69,9 @@
         "menu_login-protection_login_protection": "Giriş Koruması",
         "menu_security": "Giriş Koruması",
         "module_login-protection_description": "Giriş sınırlaması: kaç başarısız denemenin hesabı kilitleyeceği ve kilidin nasıl açılacağı",
-        "module_login-protection_name": "Giriş Koruması"
+        "module_login-protection_name": "Giriş Koruması",
+        "settings_login-protection": "Giriş Koruması",
+        "settings_login-protection_description": "Kaç başarısız girişin hesabı kilitlediği ve kilidin nasıl açıldığı."
       },
       "loginProtection": {
         "adm_attemptsDesc": "Hesap başına sayılır; binlerce adrese yayılmış bir saldırı da böylece durur. En az üç: ilk yanlışta kilitlemek, istenen herkesi dışarıda bırakmanın bir yoludur.",

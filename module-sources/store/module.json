@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.43.0",
+  "version": "2.44.0",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -1557,7 +1557,9 @@
         "dashboard_revenue": "Revenue",
         "menu_store_campaigns": "Campaigns",
         "menu_store_credit_packages": "Credit Packages",
-        "menu_store_community_goal": "Community Goal"
+        "menu_store_community_goal": "Community Goal",
+        "settings_store": "Payments",
+        "settings_store_description": "Stripe and PayPal configuration."
       },
       "activity": {
         "kindStoreOrderCompleted": "Order",
@@ -2341,7 +2343,9 @@
         "dashboard_revenue": "Gelir",
         "menu_store_campaigns": "Kampanyalar",
         "menu_store_credit_packages": "Kredi Paketleri",
-        "menu_store_community_goal": "Topluluk Hedefi"
+        "menu_store_community_goal": "Topluluk Hedefi",
+        "settings_store": "Ödemeler",
+        "settings_store_description": "Stripe ve PayPal ayarları."
       },
       "activity": {
         "kindStoreOrderCompleted": "Sipariş",

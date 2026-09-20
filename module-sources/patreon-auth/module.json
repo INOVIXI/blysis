@@ -2,7 +2,7 @@
   "id": "patreon-auth",
   "name": "Patreon Login",
   "description": "Allow users to sign in with their Patreon account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -48,7 +48,9 @@
       },
       "admin": {
         "module_patreon-auth_name": "Patreon Login",
-        "module_patreon-auth_description": "Allow users to sign in with their Patreon account"
+        "module_patreon-auth_description": "Allow users to sign in with their Patreon account",
+        "settings_patreon-auth": "Patreon OAuth",
+        "settings_patreon-auth_description": "Patreon application credentials."
       }
     },
     "tr": {
@@ -59,7 +61,9 @@
       },
       "admin": {
         "module_patreon-auth_name": "Patreon ile Giriş",
-        "module_patreon-auth_description": "Kullanıcıların Patreon hesabıyla giriş yapmasına izin verin"
+        "module_patreon-auth_description": "Kullanıcıların Patreon hesabıyla giriş yapmasına izin verin",
+        "settings_patreon-auth": "Patreon OAuth",
+        "settings_patreon-auth_description": "Patreon uygulama kimlik bilgileri."
       }
     }
   },

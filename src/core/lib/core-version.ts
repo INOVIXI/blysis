@@ -12,6 +12,14 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.15.0 - a module's `settingsCards` entry becomes a link in the panel's
+ * Settings group, named from the module's own translations under
+ * `settings_<id>` with the manifest literal as the fallback. A card used to
+ * reach the command palette and nowhere else, so 37 settings screens - every
+ * OAuth provider among them - could only be opened by somebody who already
+ * knew the address. A card whose screen a `menu` entry already names is not
+ * listed twice.
+ *
  * 5.14.0 - the panel enforces the permission map it has always generated.
  * `admin.*` was decorative: the shell asked `isAdmin` and nothing read the
  * table saying which permission opens which screen, so an operator could
@@ -572,4 +580,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.14.0";
+export const CORE_API_VERSION = "5.15.0";

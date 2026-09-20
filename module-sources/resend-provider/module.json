@@ -2,7 +2,7 @@
   "id": "resend-provider",
   "name": "Resend Email Provider",
   "description": "Send emails via Resend API",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "resend_api_key"
@@ -66,7 +66,9 @@
         "title": "Admin Panel",
         "subtitle": "Manage your platform settings and content",
         "module_resend-provider_name": "Resend Email Provider",
-        "module_resend-provider_description": "Send emails via Resend API"
+        "module_resend-provider_description": "Send emails via Resend API",
+        "settings_resend-provider": "Resend",
+        "settings_resend-provider_description": "Resend API key configuration."
       }
     },
     "tr": {
@@ -99,7 +101,9 @@
         "title": "Yönetim Paneli",
         "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
         "module_resend-provider_name": "Resend E-posta Sağlayıcısı",
-        "module_resend-provider_description": "Resend API üzerinden e-posta gönderin"
+        "module_resend-provider_description": "Resend API üzerinden e-posta gönderin",
+        "settings_resend-provider": "Resend",
+        "settings_resend-provider_description": "Resend API anahtarı ayarı."
       }
     }
   },

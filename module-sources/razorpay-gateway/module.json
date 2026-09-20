@@ -2,7 +2,7 @@
   "id": "razorpay-gateway",
   "name": "Razorpay Gateway",
   "description": "Take UPI, card, netbanking and wallet payments in India through Razorpay",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "razorpay_key_secret",
@@ -92,7 +92,9 @@
         "menu_razorpay-gateway": "Razorpay Gateway",
         "menu_razorpay-gateway_razorpay_settings": "Razorpay Settings",
         "module_razorpay-gateway_name": "Razorpay Gateway",
-        "module_razorpay-gateway_description": "Take UPI, card, netbanking and wallet payments in India through Razorpay"
+        "module_razorpay-gateway_description": "Take UPI, card, netbanking and wallet payments in India through Razorpay",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Razorpay API keys and webhook secret."
       }
     },
     "tr": {
@@ -111,7 +113,9 @@
         "menu_razorpay-gateway": "Razorpay Ödeme",
         "menu_razorpay-gateway_razorpay_settings": "Razorpay Ayarları",
         "module_razorpay-gateway_name": "Razorpay Altyapısı",
-        "module_razorpay-gateway_description": "Razorpay üzerinden Hindistan'da UPI, kart, internet bankacılığı ve cüzdan ödemelerini alın"
+        "module_razorpay-gateway_description": "Razorpay üzerinden Hindistan'da UPI, kart, internet bankacılığı ve cüzdan ödemelerini alın",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Razorpay API anahtarları ve webhook parolası."
       }
     }
   },

@@ -2,7 +2,7 @@
   "id": "minecraft-link",
   "name": "Minecraft Link",
   "description": "Let players prove they own an in-game Minecraft account by reading a code whispered to them on the server",
-  "version": "1.5.4",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "gaming",
   "author": "Blysis",
@@ -103,7 +103,9 @@
       },
       "admin": {
         "module_minecraft-link_name": "Minecraft Link",
-        "module_minecraft-link_description": "Let players prove they own an in-game Minecraft account by reading a code whispered to them on the server"
+        "module_minecraft-link_description": "Let players prove they own an in-game Minecraft account by reading a code whispered to them on the server",
+        "settings_minecraft-link": "Minecraft Link",
+        "settings_minecraft-link_description": "How linking codes reach a player in game."
       }
     },
     "tr": {
@@ -144,7 +146,9 @@
       },
       "admin": {
         "module_minecraft-link_name": "Minecraft Bağlama",
-        "module_minecraft-link_description": "Oyuncuların sunucuda kendilerine fısıldanan bir kodu okuyarak Minecraft hesabının sahibi olduklarını kanıtlamasını sağlayın"
+        "module_minecraft-link_description": "Oyuncuların sunucuda kendilerine fısıldanan bir kodu okuyarak Minecraft hesabının sahibi olduklarını kanıtlamasını sağlayın",
+        "settings_minecraft-link": "Minecraft Bağlantısı",
+        "settings_minecraft-link_description": "Bağlama kodlarının oyundaki oyuncuya nasıl ulaştığı."
       }
     }
   },

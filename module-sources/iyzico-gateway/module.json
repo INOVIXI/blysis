@@ -2,7 +2,7 @@
   "id": "iyzico-gateway",
   "name": "iyzico Payment Gateway",
   "description": "Take Turkish card payments through iyzico, with instalments and 3D Secure",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "iyzico_api_key",
@@ -84,7 +84,9 @@
         "menu_iyzico-gateway": "iyzico Gateway",
         "menu_iyzico-gateway_iyzico_settings": "iyzico Settings",
         "module_iyzico-gateway_name": "iyzico Payment Gateway",
-        "module_iyzico-gateway_description": "Take Turkish card payments through iyzico, with instalments and 3D Secure"
+        "module_iyzico-gateway_description": "Take Turkish card payments through iyzico, with instalments and 3D Secure",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "iyzico API keys and environment."
       }
     },
     "tr": {
@@ -103,7 +105,9 @@
         "menu_iyzico-gateway": "iyzico Ödeme",
         "menu_iyzico-gateway_iyzico_settings": "iyzico Ayarları",
         "module_iyzico-gateway_name": "iyzico Ödeme Altyapısı",
-        "module_iyzico-gateway_description": "iyzico üzerinden taksit ve 3D Secure destekli Türk kartı ödemelerini alın"
+        "module_iyzico-gateway_description": "iyzico üzerinden taksit ve 3D Secure destekli Türk kartı ödemelerini alın",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "iyzico API anahtarları ve ortamı."
       }
     }
   },

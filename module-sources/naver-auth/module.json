@@ -2,7 +2,7 @@
   "id": "naver-auth",
   "name": "Naver Login",
   "description": "Allow users to sign in with their Naver account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -49,7 +49,9 @@
       },
       "admin": {
         "module_naver-auth_name": "Naver Login",
-        "module_naver-auth_description": "Allow users to sign in with their Naver account"
+        "module_naver-auth_description": "Allow users to sign in with their Naver account",
+        "settings_naver-auth": "Naver OAuth",
+        "settings_naver-auth_description": "Naver application credentials."
       }
     },
     "tr": {
@@ -61,7 +63,9 @@
       },
       "admin": {
         "module_naver-auth_name": "Naver ile Giriş",
-        "module_naver-auth_description": "Kullanıcıların Naver hesabıyla giriş yapmasına izin verin"
+        "module_naver-auth_description": "Kullanıcıların Naver hesabıyla giriş yapmasına izin verin",
+        "settings_naver-auth": "Naver OAuth",
+        "settings_naver-auth_description": "Naver uygulama kimlik bilgileri."
       }
     }
   },

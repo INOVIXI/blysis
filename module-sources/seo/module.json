@@ -2,7 +2,7 @@
   "id": "seo",
   "name": "SEO Manager",
   "description": "Advanced SEO management with per-page meta tags, OpenGraph, and structured data",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "content",
   "author": "Blysis",
@@ -168,7 +168,9 @@
         "menu_seo_seo_manager": "SEO Manager",
         "module_seo_name": "SEO Manager",
         "module_seo_description": "Advanced SEO management with per-page meta tags, OpenGraph, and structured data",
-        "crumb_seo": "SEO"
+        "crumb_seo": "SEO",
+        "settings_seo": "SEO Settings",
+        "settings_seo_description": "Configure default meta tags and social sharing"
       }
     },
     "tr": {
@@ -268,7 +270,9 @@
         "menu_seo_seo_manager": "SEO Yöneticisi",
         "module_seo_name": "SEO Yöneticisi",
         "module_seo_description": "Sayfa başına meta etiketleri, OpenGraph ve yapılandırılmış veri ile gelişmiş SEO yönetimi",
-        "crumb_seo": "SEO"
+        "crumb_seo": "SEO",
+        "settings_seo": "SEO Ayarları",
+        "settings_seo_description": "Varsayılan meta etiketlerini ve sosyal paylaşımı ayarlayın."
       }
     }
   },

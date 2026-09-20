@@ -2,7 +2,7 @@
   "id": "battlenet-auth",
   "name": "Battle.net Login",
   "description": "Allow users to sign in with their Battle.net account",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -55,7 +55,9 @@
       },
       "admin": {
         "module_battlenet-auth_name": "Battle.net Login",
-        "module_battlenet-auth_description": "Allow users to sign in with their Battle.net account"
+        "module_battlenet-auth_description": "Allow users to sign in with their Battle.net account",
+        "settings_battlenet-auth": "Battle.net OAuth",
+        "settings_battlenet-auth_description": "Battle.net application credentials and region."
       }
     },
     "tr": {
@@ -68,7 +70,9 @@
       },
       "admin": {
         "module_battlenet-auth_name": "Battle.net ile Giriş",
-        "module_battlenet-auth_description": "Kullanıcıların Battle.net hesabıyla giriş yapmasına izin verin"
+        "module_battlenet-auth_description": "Kullanıcıların Battle.net hesabıyla giriş yapmasına izin verin",
+        "settings_battlenet-auth": "Battle.net OAuth",
+        "settings_battlenet-auth_description": "Battle.net uygulama kimlik bilgileri ve bölge."
       }
     }
   },
