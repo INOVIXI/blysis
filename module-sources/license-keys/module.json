@@ -2,7 +2,7 @@
   "id": "license-keys",
   "name": "License Keys",
   "description": "Generate, deliver and activate license keys for digital products, with a machine limit per key",
-  "version": "1.4.4",
+  "version": "1.5.0",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis",
@@ -162,7 +162,10 @@
       },
       "admin": {
         "module_license-keys_name": "License Keys",
-        "module_license-keys_description": "Generate, deliver and activate license keys for digital products, with a machine limit per key"
+        "module_license-keys_description": "Generate, deliver and activate license keys for digital products, with a machine limit per key",
+        "menu_license-keys_licence_keys": "Licence Keys",
+        "menu_license-keys_licence_settings": "Licence Settings",
+        "menu_license-keys": "Licences"
       }
     },
     "tr": {
@@ -235,7 +238,10 @@
       },
       "admin": {
         "module_license-keys_name": "Lisans Anahtarları",
-        "module_license-keys_description": "Dijital ürünler için lisans anahtarı üretin, teslim edin ve etkinleştirin; anahtar başına makine sınırı ile"
+        "module_license-keys_description": "Dijital ürünler için lisans anahtarı üretin, teslim edin ve etkinleştirin; anahtar başına makine sınırı ile",
+        "menu_license-keys_licence_keys": "Lisans Anahtarları",
+        "menu_license-keys_licence_settings": "Lisans Ayarları",
+        "menu_license-keys": "Lisanslar"
       }
     }
   },
@@ -243,6 +249,22 @@
     {
       "name": "license-keys.manage",
       "labelKey": "licenseKeys.perm_manage"
+    }
+  ],
+  "menu": [
+    {
+      "label": "Licence Keys",
+      "path": "/licenses",
+      "icon": "KeyRound",
+      "group": "commerce",
+      "permission": "license-keys.manage"
+    },
+    {
+      "label": "Licence Settings",
+      "path": "/settings/license-keys",
+      "icon": "Settings",
+      "group": "commerce",
+      "permission": "license-keys.manage"
     }
   ]
 }

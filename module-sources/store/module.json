@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.42.1",
+  "version": "2.43.0",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -248,6 +248,27 @@
       "label": "Gift Codes",
       "path": "/gift-codes",
       "icon": "Gift",
+      "group": "commerce",
+      "permission": "store.manage"
+    },
+    {
+      "label": "Campaigns",
+      "path": "/store-campaigns",
+      "icon": "Megaphone",
+      "group": "commerce",
+      "permission": "store.manage"
+    },
+    {
+      "label": "Credit Packages",
+      "path": "/store/credit-packages",
+      "icon": "Coins",
+      "group": "commerce",
+      "permission": "store.manage"
+    },
+    {
+      "label": "Community Goal",
+      "path": "/settings/goals",
+      "icon": "Target",
       "group": "commerce",
       "permission": "store.manage"
     }
@@ -1382,14 +1403,6 @@
         "analytics_tabSales": "Sales",
         "crumb_store": "Store",
         "menu_store": "Store",
-        "menu_store_0": "Products",
-        "menu_store_1": "Categories",
-        "menu_store_2": "Orders",
-        "menu_store_3": "Coupons",
-        "menu_store_4": "Payment Settings",
-        "menu_store_5": "Bulk Discounts",
-        "menu_store_6": "Creator Codes",
-        "menu_store_7": "Gift Codes",
         "products": "Products",
         "product": "Product",
         "category": "Category",
@@ -1541,7 +1554,10 @@
         "dashboard_orders": "Orders",
         "dashboard_products": "Products",
         "dashboard_recentOrders": "Recent Orders",
-        "dashboard_revenue": "Revenue"
+        "dashboard_revenue": "Revenue",
+        "menu_store_campaigns": "Campaigns",
+        "menu_store_credit_packages": "Credit Packages",
+        "menu_store_community_goal": "Community Goal"
       },
       "activity": {
         "kindStoreOrderCompleted": "Order",
@@ -2171,14 +2187,6 @@
         "analytics_tabSales": "Satışlar",
         "crumb_store": "Mağaza",
         "menu_store": "Mağaza",
-        "menu_store_0": "Ürünler",
-        "menu_store_1": "Kategoriler",
-        "menu_store_2": "Siparişler",
-        "menu_store_3": "Kuponlar",
-        "menu_store_4": "Ödeme Ayarları",
-        "menu_store_5": "Toplu İndirimler",
-        "menu_store_6": "İçerik Üretici Kodları",
-        "menu_store_7": "Hediye Kodları",
         "products": "Ürünler",
         "product": "Ürün",
         "category": "Kategori",
@@ -2330,7 +2338,10 @@
         "dashboard_orders": "Siparişler",
         "dashboard_products": "Ürünler",
         "dashboard_recentOrders": "Son Siparişler",
-        "dashboard_revenue": "Gelir"
+        "dashboard_revenue": "Gelir",
+        "menu_store_campaigns": "Kampanyalar",
+        "menu_store_credit_packages": "Kredi Paketleri",
+        "menu_store_community_goal": "Topluluk Hedefi"
       },
       "activity": {
         "kindStoreOrderCompleted": "Sipariş",

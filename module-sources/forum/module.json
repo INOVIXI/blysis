@@ -2,7 +2,7 @@
   "id": "forum",
   "name": "Forum Module",
   "description": "Community discussion forum with categories, topics, and replies",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis Team",
@@ -68,6 +68,13 @@
       "label": "Forum Categories",
       "path": "/forum/categories",
       "icon": "LayoutList",
+      "group": "community",
+      "permission": "forum.manage"
+    },
+    {
+      "label": "Forum Permissions",
+      "path": "/forum/permissions",
+      "icon": "ShieldCheck",
       "group": "community",
       "permission": "forum.manage"
     }
@@ -358,8 +365,6 @@
         "inactive": "Inactive",
         "locked": "Locked",
         "menu_forum": "Forum",
-        "menu_forum_0": "Forum Categories",
-        "menu_forum_1": "Topics",
         "menu_forum_forum_categories": "Forum Categories",
         "menu_forum_forum_topics": "Forum Topics",
         "moderationSettings_forumReplies": "Forum replies",
@@ -376,7 +381,8 @@
         "pinned": "Pinned",
         "stats": "Stats",
         "status": "Status",
-        "topic": "Topic"
+        "topic": "Topic",
+        "menu_forum_forum_permissions": "Forum Permissions"
       },
       "activity": {
         "forumPostCreated": "replied to:",
@@ -543,8 +549,6 @@
         "inactive": "Pasif",
         "locked": "Kilitli",
         "menu_forum": "Forum",
-        "menu_forum_0": "Forum Kategorileri",
-        "menu_forum_1": "Konular",
         "menu_forum_forum_categories": "Forum Kategorileri",
         "menu_forum_forum_topics": "Forum Konuları",
         "moderationSettings_forumReplies": "Forum yanıtlari",
@@ -561,7 +565,8 @@
         "pinned": "Sabitlenmiş",
         "stats": "İstatistikler",
         "status": "Durum",
-        "topic": "Konu"
+        "topic": "Konu",
+        "menu_forum_forum_permissions": "Forum İzinleri"
       },
       "activity": {
         "forumPostCreated": "yanıt verdi:",

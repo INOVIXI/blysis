@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T11:38:31Z",
+  "updatedAt": "2026-09-20T12:11:23Z",
   "modules": [
     {
       "id": "announcements",
@@ -165,13 +165,13 @@
           "description": "Haber ve duyuru sistemi"
         }
       },
-      "version": "1.8.0",
+      "version": "1.9.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-20T10:48:52Z",
+      "updatedAt": "2026-09-20T12:11:23Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -479,13 +479,13 @@
           "description": "Kullanıcılar için sanal para cüzdanı"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T11:38:31Z",
+      "updatedAt": "2026-09-20T12:11:23Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -1033,13 +1033,13 @@
           "description": "Kategoriler, konular ve yanıtlarla topluluk tartışma forumu"
         }
       },
-      "version": "1.10.0",
+      "version": "1.11.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-20T08:38:05Z",
+      "updatedAt": "2026-09-20T12:11:23Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -1446,13 +1446,13 @@
           "description": "Dijital ürünler için lisans anahtarı üretin, teslim edin ve etkinleştirin; anahtar başına makine sınırı ile"
         }
       },
-      "version": "1.4.4",
+      "version": "1.5.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "KeyRound",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T10:51:57Z",
+      "updatedAt": "2026-09-20T12:11:23Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -2775,13 +2775,13 @@
           "description": "Burayı yönetenler ve onları yöneten ekran."
         }
       },
-      "version": "1.5.2",
+      "version": "1.6.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T12:11:23Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -2845,13 +2845,13 @@
           "description": "Ürün, kategori, sepet ve siparişleriyle eksiksiz e-ticaret"
         }
       },
-      "version": "2.42.1",
+      "version": "2.43.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T10:50:42Z",
+      "updatedAt": "2026-09-20T12:11:23Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -3030,13 +3030,13 @@
           "description": "Departmanlı ve öncelik seviyeli müşteri destek talebi sistemi"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "Ticket",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-09-20T03:25:15Z",
+      "updatedAt": "2026-09-20T12:11:23Z",
       "screenshots": [],
       "tags": [
         "management"

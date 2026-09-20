@@ -2,7 +2,7 @@
   "id": "tickets",
   "name": "Support Tickets",
   "description": "Customer support ticket system with departments and priority levels",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "coreVersion": "^5.0.0",
   "category": "management",
   "author": "Blysis Team",
@@ -355,8 +355,6 @@
       },
       "admin": {
         "menu_tickets": "Tickets",
-        "menu_tickets_0": "Tickets",
-        "menu_tickets_1": "Departments",
         "menu_tickets_ticket_states": "Ticket States",
         "open": "Open",
         "inProgress": "In Progress",
@@ -576,8 +574,6 @@
       },
       "admin": {
         "menu_tickets": "Destek Talepleri",
-        "menu_tickets_0": "Destek Talepleri",
-        "menu_tickets_1": "Departmanlar",
         "menu_tickets_ticket_states": "Talep Durumları",
         "open": "Açık",
         "inProgress": "Devam Ediyor",

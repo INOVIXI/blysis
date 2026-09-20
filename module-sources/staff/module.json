@@ -2,7 +2,7 @@
   "id": "staff",
   "name": "Staff",
   "description": "Staff member listing and applications",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "management",
   "author": "Blysis",
@@ -75,7 +75,6 @@
       },
       "admin": {
         "menu_staff": "Staff",
-        "menu_staff_0": "Staff Members",
         "title": "Admin Panel",
         "subtitle": "Manage your platform settings and content",
         "menu_staff_staff_members": "Staff Members",
@@ -115,7 +114,6 @@
       },
       "admin": {
         "menu_staff": "Personel",
-        "menu_staff_0": "Ekip Üyeleri",
         "title": "Yönetim Paneli",
         "subtitle": "Platform ayarlarınızı ve içeriklerinizi yönetin",
         "menu_staff_staff_members": "Personel Üyeleri",
