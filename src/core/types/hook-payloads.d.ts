@@ -67,6 +67,25 @@ interface BlysisHookPayloads {
      */
     "user.deleted": { userId: string; reason: string | null };
 
+    /**
+     * A webhook this site sent, whether or not it arrived.
+     *
+     * Core makes two of these - the health alert and the panel's test button -
+     * and a module that sends its own announces the same way. Whatever keeps
+     * the log listens; core does not know the table's name.
+     *
+     * `url` is the origin only. A webhook address is a credential, and a log
+     * is listed, searched and kept for a month; `event` is what says which
+     * receiver it was. See `webhook-log.ts`.
+     */
+    "core.webhook.delivered": {
+        event: string;
+        url: string;
+        status: number;
+        ok: boolean;
+        detail: string | null;
+    };
+
     "module.installed": { moduleId: string };
     "module.uninstalled": { moduleId: string };
     "module.enabled": { moduleId: string };

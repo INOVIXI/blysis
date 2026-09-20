@@ -67,7 +67,13 @@ beforeEach(() => {
             return { ok: true, json: async () => healthBody } as unknown as Response;
         }
         if (webhookThrows) throw webhookThrows;
-        return { ok: webhookStatus < 400, status: webhookStatus } as unknown as Response;
+        // `text` because a refusal is read now: what the receiver said is the
+        // only useful thing in the webhook log when a delivery does not land.
+        return {
+            ok: webhookStatus < 400,
+            status: webhookStatus,
+            text: async () => (webhookStatus < 400 ? "" : `refused ${webhookStatus}`),
+        } as unknown as Response;
     }));
 });
 

@@ -13,7 +13,8 @@
  * tables an operator fills by hand - popups, game servers, redirect rules -
  * and every one of their screens was blank on a seeded site. A fourth,
  * webhook deliveries, turned out to have no writer at all, which is the kind
- * of thing counting finds and seeding would have hidden.
+ * of thing counting finds and seeding would have hidden; core announces every
+ * delivery it makes now, so that one is seeded too.
  *
  * Owning a table is the line. A module with no models of its own reads
  * somebody else's rows and has nothing to write; a module with models either
@@ -46,7 +47,6 @@ const NOTHING_TO_SHOW: Record<string, string> = {
     "discord-integration": "Which event goes to which channel, against channel ids that only exist in one Discord server.",
     "external-data": "A source names a table in a database this site does not own. A seeded source is a source that cannot be read.",
     "minecraft-litebans": "What probing one operator's LiteBans database reported.",
-    "webhook-logs": "Nothing in the tree writes this table: the module reads it, searches it and expires it after thirty days, and no code anywhere inserts a row. Seeded deliveries would read as proof that deliveries are being recorded, which is the opposite of true.",
 };
 
 function moduleIds(): string[] {

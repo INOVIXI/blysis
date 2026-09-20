@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T06:52:55Z",
+  "updatedAt": "2026-09-20T07:12:15Z",
   "modules": [
     {
       "id": "announcements",
@@ -742,13 +742,13 @@
           "description": "Discord webhook bildirimleri ve ayarları"
         }
       },
-      "version": "1.5.2",
+      "version": "1.6.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "integration",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T07:12:15Z",
       "screenshots": [],
       "tags": [
         "integration"
@@ -3291,13 +3291,13 @@
           "description": "Webhook teslimat kayıtlarını görüntüleyin ve yönetin"
         }
       },
-      "version": "1.2.2",
+      "version": "1.3.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Webhook",
       "category": "integration",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-09-20T07:12:15Z",
       "screenshots": [],
       "tags": [
         "integration"
@@ -3307,7 +3307,9 @@
       "conflicts": [],
       "hooks": {
         "emits": [],
-        "listens": []
+        "listens": [
+          "core.webhook.delivered"
+        ]
       },
       "stats": {
         "publicRoutes": 0,

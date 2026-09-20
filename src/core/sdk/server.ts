@@ -172,6 +172,14 @@ export type { BackupMeta } from "@/core/lib/backup";
  * installed there are no listeners and it passes, so a module that asks
  * behaves exactly as it did on an install that never wanted one.
  */
+/**
+ * Saying that a webhook went out. For a module that sends one of its own:
+ * whatever keeps the log writes the row, and the address is cut to its origin
+ * on the way - a webhook URL is a credential and a log outlives it.
+ */
+export { recordWebhookDelivery, redactWebhookTarget } from "@/core/lib/webhook-log";
+export type { WebhookDelivery } from "@/core/lib/webhook-log";
+
 export { runChallenge } from "@/core/lib/auth-challenge";
 /**
  * Every form on this site that can ask whether a human is filling it in,

@@ -33,7 +33,9 @@ export async function POST() {
 
     const channel = resolveWebhookChannel(config.channel, await listAlertingChannels());
     const payload = buildTestPayload(channel);
-    const result = await sendHealthWebhook(config, payload, channel);
+    // Named apart from the scheduled alert, because "did the alert go out?"
+    // and "did somebody press Test?" are two questions asked of the same log.
+    const result = await sendHealthWebhook(config, payload, channel, "core.health.test");
 
     if (!result.ok) {
         return NextResponse.json({ error: result.error || "Failed" }, { status: 502 });

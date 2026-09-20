@@ -2,7 +2,7 @@
   "id": "webhook-logs",
   "name": "Webhook Logs",
   "description": "View and manage webhook delivery logs",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -134,5 +134,12 @@
         "module_webhook-logs_description": "Webhook teslimat kayıtlarını görüntüleyin ve yönetin"
       }
     }
-  }
+  },
+  "hookListeners": [
+    {
+      "hook": "core.webhook.delivered",
+      "type": "action",
+      "handler": "hooks/on-webhook-delivered.ts"
+    }
+  ]
 }

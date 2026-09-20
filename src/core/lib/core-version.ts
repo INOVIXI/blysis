@@ -12,6 +12,14 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.8.0 - `recordWebhookDelivery`, `redactWebhookTarget` and the
+ * `WebhookDelivery` type join `@/core/sdk/server`, and core fires
+ * `core.webhook.delivered` after every webhook it sends. The table that keeps
+ * them belongs to a module and had no writer at all: it was read, searched,
+ * paged and expired after thirty days while nothing anywhere inserted a row.
+ * The address is cut to its origin on the way, because a webhook URL is the
+ * key to whatever is behind it and a log outlives the key.
+ *
  * 5.7.0 - a challenge is offered to any form that takes something written.
  * `Challenge` and `useChallenge` join `@/core/sdk/ui`; `runChallenge`,
  * `challengeFieldsFrom`, `CHALLENGE_FIELD`, `challengePoints` and the
@@ -512,4 +520,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.7.0";
+export const CORE_API_VERSION = "5.8.0";

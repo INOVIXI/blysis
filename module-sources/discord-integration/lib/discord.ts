@@ -1,4 +1,4 @@
-import { log, prisma } from "@/core/sdk/server";
+import { log, prisma, recordWebhookDelivery } from "@/core/sdk/server";
 
 interface DiscordEmbed {
     title?: string;
@@ -88,6 +88,11 @@ export async function sendDiscordWebhook(
  * The service refuses a message it cannot take with a status and a body
  * naming the part it did not like, and that body is the only useful thing
  * anybody gets when a message does not arrive.
+ *
+ * Every path out records the attempt, so whatever keeps the webhook log has a
+ * row for a message that never arrived as well as one that did. The address
+ * is cut to its origin on the way: a Discord webhook URL is the key to that
+ * channel.
  */
 export async function postToWebhook(
     url: string,
@@ -99,11 +104,18 @@ export async function postToWebhook(
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...payload, username: payload.username || "Blysis" }),
         });
-        if (res.ok) return { ok: true, status: res.status, detail: null };
+        if (res.ok) {
+            await recordWebhookDelivery({ event: "discord.message", url, status: res.status, ok: true, detail: null });
+            return { ok: true, status: res.status, detail: null };
+        }
         const detail = await res.text().catch(() => "");
+        await recordWebhookDelivery({ event: "discord.message", url, status: res.status, ok: false, detail: detail || null });
         return { ok: false, status: res.status, detail: detail.slice(0, 300) || null };
     } catch (err) {
-        log.error("[Discord Webhook] Failed to send", { error: err instanceof Error ? err.message : String(err) });
+        const message = err instanceof Error ? err.message : String(err);
+        log.error("[Discord Webhook] Failed to send", { error: message });
+        // Status zero: the request never got an answer at all.
+        await recordWebhookDelivery({ event: "discord.message", url, status: 0, ok: false, detail: message });
         return { ok: false, status: 0, detail: null };
     }
 }

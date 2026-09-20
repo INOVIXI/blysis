@@ -11,6 +11,7 @@ import {
     type WebhookAlert,
     type WebhookChannel,
 } from "@/core/lib/webhook-channels";
+import { recordWebhookDelivery } from "./webhook-log";
 
 /**
  * Health alerting.
@@ -200,11 +201,17 @@ export async function sendHealthWebhook(
     config: HealthAlertingConfig,
     payload: Record<string, unknown>,
     channel?: WebhookChannel,
+    event = "core.health",
 ): Promise<{ ok: boolean; error?: string }> {
     const target = channel ?? resolveWebhookChannel(config.channel, await listAlertingChannels());
     const check = validateWebhookUrl(target, config.webhookUrl);
+    // A refusal here is a configuration answer rather than a delivery, so
+    // nothing is recorded: the request was never made.
     if (!check.ok) return { ok: false, error: check.error };
 
+    // Every path out of the try records once, because an alert that was
+    // attempted and never arrived is exactly the row somebody goes looking
+    // for. See webhook-log.ts for why the address is cut to its origin.
     try {
         const res = await fetch(config.webhookUrl, {
             method: "POST",
@@ -221,14 +228,24 @@ export async function sendHealthWebhook(
             redirect: "manual",
         });
         if (res.status >= 300 && res.status < 400) {
-            return { ok: false, error: "Webhook URL redirected, which is not followed" };
+            const error = "Webhook URL redirected, which is not followed";
+            await recordWebhookDelivery({ event, url: config.webhookUrl, status: res.status, ok: false, detail: error });
+            return { ok: false, error };
         }
         if (!res.ok) {
+            // The body, because a receiver that refuses says which part it did
+            // not like and that is the only useful thing anybody gets.
+            const detail = await res.text().catch(() => "");
+            await recordWebhookDelivery({ event, url: config.webhookUrl, status: res.status, ok: false, detail: detail || null });
             return { ok: false, error: `HTTP ${res.status}` };
         }
+        await recordWebhookDelivery({ event, url: config.webhookUrl, status: res.status, ok: true, detail: null });
         return { ok: true };
     } catch (err) {
-        return { ok: false, error: (err as Error).message };
+        const message = (err as Error).message;
+        // Status zero: the request never got an answer at all.
+        await recordWebhookDelivery({ event, url: config.webhookUrl, status: 0, ok: false, detail: message });
+        return { ok: false, error: message };
     }
 }
 
