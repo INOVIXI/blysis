@@ -13,7 +13,7 @@ import {
     type NavSection,
 } from "@/core/lib/admin-nav-groups";
 import { useAdminNav, type AdminNavModule } from "@/core/hooks/useAdminNav";
-import { SiteName, useSiteInitials, useSiteLogo } from "@/core/components/ui/site-name";
+import { SiteMark, SiteName } from "@/core/components/ui/site-name";
 
 interface AdminSidebarProps {
     userName?: string;
@@ -56,8 +56,6 @@ export function AdminSidebar({ modules = [], activeThemeId }: AdminSidebarProps)
     const drawerRef = useModalDialog<HTMLElement>(mobileOpen, () => setMobileOpen(false));
     const { isDark, toggle: toggleDarkMode } = useDarkMode();
     const t = useTranslations("admin");
-    const siteInitials = useSiteInitials();
-    const siteLogo = useSiteLogo();
 
     // The breadcrumb builds the same groups from the same hook, so the two
     // never disagree about what a route is called.
@@ -141,16 +139,21 @@ export function AdminSidebar({ modules = [], activeThemeId }: AdminSidebarProps)
                     className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary/20 transition"
                     aria-label={t("sidebar_adminHome")}
                 >
-                    {/* The operator's mark if they set one, their site's
-                        initials if they did not. A plain `img`: the address is
-                        whatever they uploaded or linked, and which storage
-                        provider answered is not core's business. */}
-                    {siteLogo ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={siteLogo} alt="" className="w-7 h-7 object-contain" />
-                    ) : (
-                        <span className="text-xs font-bold">{siteInitials}</span>
-                    )}
+                    {/* A logo, never letters.
+                     *
+                     * This drew the site's initials until somebody set a logo,
+                     * so an installation that had not opened the settings
+                     * screen wore two letters in the corner of every admin
+                     * page - which reads as a placeholder nobody chose, and is
+                     * one. The fallback is the icon the installation already
+                     * ships and that a browser already shows in the tab, so
+                     * the corner is a mark either way and an operator changes
+                     * it in one place.
+                     *
+                     * A plain `img`: the address is whatever they uploaded or
+                     * linked, and which storage provider answered is not
+                     * core's business. */}
+                    <SiteMark size={28} />
                 </Link>
                 <span
                     role="tooltip"

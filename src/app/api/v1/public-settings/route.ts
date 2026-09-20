@@ -19,7 +19,7 @@ const PUBLIC_KEYS = [
     "site_name",
     // The mark beside the name. Public for the same reason the name is: it is
     // drawn in the admin rail and belongs to what the site looks like, not to
-    // what it keeps. Unset, the rail draws the name's initials.
+    // what it keeps. Unset, the rail draws the icon the installation ships.
     "site_logo",
     "site_description",
     "site_email",

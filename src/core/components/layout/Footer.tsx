@@ -1,6 +1,7 @@
 "use client";
 
 import { Link, usePathname, useRouter } from "@/core/lib/i18n/navigation";
+import { SiteMark } from "@/core/components/ui/site-name";
 import { useLocale, useTranslations } from "next-intl";
 import { Globe, Mail, Users } from "lucide-react";
 import { serverConfig } from "@/core/config/server";
@@ -137,7 +138,12 @@ function DefaultFooter() {
                 <div className={`grid ${columnClass} gap-8`}>
                     {/* Brand */}
                     <div>
+                        {/* The mark beside the name, the same one the bar and
+                            the admin rail draw. A footer that spelled the name
+                            and nothing else was the third place an operator's
+                            logo did not appear. */}
                         <div className="flex items-center gap-3 mb-4">
+                            <SiteMark size={28} />
                             <span className="text-foreground font-bold text-lg">{siteName}</span>
                         </div>
                         {siteDescription && (

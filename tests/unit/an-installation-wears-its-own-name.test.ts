@@ -1,7 +1,7 @@
 /**
  * Nothing on an installation advertises the product it was built from.
  *
- * `SiteName` and `useSiteInitials` fixed six screens that had spelled the
+ * `SiteName` and `useSiteLogo` fixed six screens that had spelled the
  * product's name into their markup, and the admin rail's square has read the
  * operator's `site_name` ever since - "Acme Games" gives AG. Three things
  * were missed, and each is somewhere the operator cannot reach:
@@ -55,15 +55,26 @@ describe("what an installation calls itself", () => {
         expect(screen).toContain("<UrlOrFile");
     });
 
-    it("draws that logo where the initials used to stand alone", () => {
-        const rail = fs.readFileSync(
-            path.join(ROOT, "src/core/components/admin/AdminSidebar.tsx"),
-            "utf8",
-        );
-        expect(rail).toContain("siteLogo");
-        // The initials stay as the fallback: an install with no logo still
-        // has something in the square.
-        expect(rail).toContain("siteInitials");
+    it("draws one mark, in every place a mark belongs", () => {
+        // The rail, the public bar and the footer. The logo was written out
+        // twice with two different fallbacks - initials in the rail, a house
+        // icon and the word "home" in the bar - and the footer had none at
+        // all, so an operator who uploaded a logo saw it in one of the three
+        // places it belongs.
+        const mark = fs.readFileSync(path.join(ROOT, "src/core/components/ui/site-name.tsx"), "utf8");
+        expect(mark).toContain("export function SiteMark");
+        // The fallback is the icon the installation already ships and a
+        // browser already shows in its tab.
+        expect(mark).toContain('"/icon.svg"');
+        expect(mark).not.toContain("useSiteInitials");
+
+        for (const file of [
+            "src/core/components/admin/AdminSidebar.tsx",
+            "src/core/components/layout/Navbar.tsx",
+            "src/core/components/layout/Footer.tsx",
+        ]) {
+            expect(fs.readFileSync(path.join(ROOT, file), "utf8"), file).toContain("<SiteMark");
+        }
     });
 
     it("ships no mark nothing draws", () => {

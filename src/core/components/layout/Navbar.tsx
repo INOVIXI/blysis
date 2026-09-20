@@ -1,14 +1,15 @@
 "use client";
 
 import { Link, usePathname } from "@/core/lib/i18n/navigation";
-import { Home, User, LogOut, Shield, Sun, Moon, ChevronDown } from "lucide-react";
+import { User, LogOut, Shield, Sun, Moon, ChevronDown } from "lucide-react";
 import { NavIcon } from "@/core/components/ui/NavIcon";
 import { buttonClassName } from "@/core/components/ui/button";
 import { useTranslations } from "next-intl";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { useDarkMode } from "@/core/hooks/useDarkMode";
-import Image from "next/image";
+import { MemberAvatar } from "@/core/components/ui/MemberAvatar";
+import { SiteMark, SiteName } from "@/core/components/ui/site-name";
 import { useSiteSettings } from "@/core/hooks/useSiteSettings";
 import { useAllModules } from "@/core/providers/module-provider";
 import { ModuleNavLinks, ModuleRoutes, ModuleNavbarComponents } from "@/core/generated/module-registry";
@@ -155,11 +156,26 @@ function DefaultNavbar() {
                         eight that fit the bar: see MobileMenu. */}
                     <div className="sm:hidden flex items-center gap-1 min-w-0">
                         <MobileMenu links={navLinks} />
+                        {/* The site's own mark, which the public bar did not
+                            carry at all: it drew a house icon and the word
+                            "home", so the only place an operator's logo
+                            appeared was the admin rail. */}
                         <Link href="/" className="flex items-center gap-2 px-1 py-1.5 rounded-md text-sm font-semibold text-foreground hover:bg-muted transition-colors">
-                            <Home className="w-4 h-4" aria-hidden="true" />
-                            <span className="truncate">{t('home')}</span>
+                            <SiteMark size={20} />
+                            <span className="truncate"><SiteName /></span>
                         </Link>
                     </div>
+                    {/* Outside the nav, because a brand is not a navigation
+                        link: it belongs to the page, and counting it among the
+                        links is what made the bar think it had one more than
+                        it does. */}
+                    <Link
+                        href="/"
+                        className="hidden sm:flex items-center gap-2 px-1 py-1.5 mr-1 rounded-md text-sm font-semibold text-foreground hover:bg-muted transition-colors shrink-0"
+                    >
+                        <SiteMark size={22} />
+                        <span className="truncate max-w-[10rem]"><SiteName /></span>
+                    </Link>
                     <nav className="hidden sm:flex items-center gap-1 min-w-0 flex-1 flex-wrap" aria-label={t('primary')}>
                         <Slot name="navbar.start" />
                         {shownLinks.map((link) => {
@@ -265,13 +281,7 @@ function DefaultNavbar() {
                                         aria-haspopup="menu"
                                         aria-expanded={menuOpen}
                                         className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-muted transition-colors">
-                                        {session.user.image ? (
-                                            <Image src={session.user.image} alt="" width={28} height={28} className="w-7 h-7 rounded-full object-cover" />
-                                        ) : (
-                                            <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
-                                                {(session.user.name || "U")[0].toUpperCase()}
-                                            </div>
-                                        )}
+                                        <MemberAvatar name={session.user.name || "?"} src={session.user.image} size={28} />
                                         <span className="text-sm font-medium text-foreground hidden sm:block">{session.user.name}</span>
                                     </button>
 

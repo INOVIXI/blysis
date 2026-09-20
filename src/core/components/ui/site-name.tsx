@@ -27,28 +27,41 @@ export function SiteName({ className }: { className?: string }) {
 }
 
 /**
- * The same name reduced to what fits a 40px square.
- *
- * First letter of each of the first two words, so "Blysis" gives B and
- * "Acme Games" gives AG. A single long word falls back to its first two
- * letters rather than one lonely capital.
- */
-export function useSiteInitials(): string {
-    const t = useTranslations("common");
-    const { settings } = useSiteSettings();
-    const name = (settings.site_name as string)?.trim() || t("appName");
-    const words = name.split(/\s+/).filter(Boolean);
-    if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
-    return name.slice(0, 2).toUpperCase();
-}
-
-/**
  * The mark this installation put on itself, or null.
  *
- * Null is an answer, and the reason `useSiteInitials` stays: a site with no
- * logo draws its name's first letters, which is what the admin rail's square
- * did before there was a logo to draw at all.
+ * Null is an answer: the caller falls back to the icon this installation
+ * already ships and that a browser shows in its tab. The rail used to draw
+ * the site's initials instead, so an installation that had not opened the
+ * settings screen wore two letters in the corner of every admin page.
  */
+/**
+ * The site's mark, wherever one is drawn.
+ *
+ * The logo an operator set, and otherwise the icon this installation already
+ * ships and a browser already shows in its tab. It was written out twice with
+ * two different fallbacks - the admin rail drew the site's initials, and the
+ * public bar drew a house icon and the word "home" - so an operator who
+ * uploaded a logo saw it in one of the two places it belongs.
+ *
+ * A plain `img`: the address is whatever they uploaded or linked, and which
+ * storage provider answered is not core's business to optimise.
+ */
+export function SiteMark({ size = 24, className }: { size?: number; className?: string }) {
+    const logo = useSiteLogo();
+    return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+            src={logo || "/icon.svg"}
+            alt=""
+            aria-hidden="true"
+            width={size}
+            height={size}
+            className={className ?? "object-contain shrink-0"}
+            style={{ width: size, height: size }}
+        />
+    );
+}
+
 export function useSiteLogo(): string | null {
     const { settings } = useSiteSettings();
     return siteLogo(settings[SITE_LOGO_KEY]);
