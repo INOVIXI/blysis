@@ -228,10 +228,10 @@ export default function AuditLogPage() {
                         <div className="flex flex-col gap-1">
                             <label className="text-xs text-muted-foreground flex items-center gap-1">
                                 <FilterIcon className="w-3 h-3" />
-                                {t("auditLog_action")}
+                                {t("auditLog_actionKey")}
                             </label>
                             <NativeSelect
-                                aria-label={t("auditLog_action")}
+                                aria-label={t("auditLog_actionKey")}
                                 value={actionFilter}
                                 onChange={(e) =>
                                     resetPageAndSet(setActionFilter)(e.target.value)
@@ -336,7 +336,7 @@ export default function AuditLogPage() {
                                             {t("auditLog_user")}
                                         </th>
                                         <th className="text-left py-2 px-4 font-medium text-xs text-muted-foreground">
-                                            {t("auditLog_action")}
+                                            {t("auditLog_actionKey")}
                                         </th>
                                         <th className="text-left py-2 px-4 font-medium text-xs text-muted-foreground">
                                             {t("auditLog_target")}

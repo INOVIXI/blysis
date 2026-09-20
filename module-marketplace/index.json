@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T08:38:05Z",
+  "updatedAt": "2026-09-20T08:46:32Z",
   "modules": [
     {
       "id": "announcements",
@@ -3328,13 +3328,13 @@
           "description": "Webhook teslimat kayıtlarını görüntüleyin ve yönetin"
         }
       },
-      "version": "1.3.0",
+      "version": "1.4.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Webhook",
       "category": "integration",
       "verified": true,
-      "updatedAt": "2026-09-20T07:12:15Z",
+      "updatedAt": "2026-09-20T08:46:32Z",
       "screenshots": [],
       "tags": [
         "integration"

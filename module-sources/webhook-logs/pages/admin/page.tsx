@@ -83,7 +83,7 @@ export default function WebhookLogsPage() {
                                 <thead>
                                     <tr className="border-b">
                                         <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">{t("adm_status")}</th>
-                                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">{t("adm_event")}</th>
+                                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">{t("adm_eventKey")}</th>
                                         <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">URL</th>
                                         <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">{t("adm_date")}</th>
                                     </tr>

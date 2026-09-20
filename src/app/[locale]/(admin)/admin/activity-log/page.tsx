@@ -76,7 +76,7 @@ export default function ActivityLogPage() {
                                 <thead>
                                     <tr className="border-b">
                                         <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">{t("activityLog_user")}</th>
-                                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">{t("activityLog_action")}</th>
+                                        <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">{t("activityLog_actionKey")}</th>
                                         <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">{t("activityLog_entity")}</th>
                                         <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">{t("activityLog_date")}</th>
                                     </tr>

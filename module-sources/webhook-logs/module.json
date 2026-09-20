@@ -2,7 +2,7 @@
   "id": "webhook-logs",
   "name": "Webhook Logs",
   "description": "View and manage webhook delivery logs",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -50,7 +50,7 @@
       "webhookLogs": {
         "adm_date": "Date",
         "adm_deliveryHistory": "Delivery History",
-        "adm_event": "Event",
+        "adm_eventKey": "Event Key",
         "adm_noLogsYet": "No webhook logs yet",
         "adm_status": "Status",
         "adm_webhookLogs": "Webhook Logs",
@@ -94,7 +94,7 @@
       "webhookLogs": {
         "adm_date": "Tarih",
         "adm_deliveryHistory": "Teslimat Geçmişi",
-        "adm_event": "Olay",
+        "adm_eventKey": "Olay Anahtarı",
         "adm_noLogsYet": "Henüz webhook günlüğü yok",
         "adm_status": "Durum",
         "adm_webhookLogs": "Webhook Günlükleri",

@@ -133,7 +133,6 @@
   },
   "hero": {},
   "admin": {
-    "activityLog_action": "İşlem",
     "activityLog_date": "Tarih",
     "activityLog_entity": "Varlık",
     "activityLog_noLogs": "Henüz işlem kaydı yok",
@@ -198,7 +197,6 @@
     "apiKeys_noKeys": "API anahtarı yok",
     "apiKeys_subtitle": "Harici entegrasyonlar için API anahtarlarını yönetin",
     "apiKeys_title": "API Anahtarları",
-    "auditLog_action": "Eylem",
     "auditLog_allActions": "Tüm eylemler",
     "auditLog_clear": "Temizle",
     "auditLog_entries": "Kayıtlar",
@@ -1186,7 +1184,9 @@
     "challengePoint_forgotPassword": "Şifre sıfırlama isteme",
     "backup_cannotTitle": "Bu sunucuda yedek alınamıyor",
     "backup_cannotMissing": "pg_dump burada kurulu değil. PostgreSQL istemci araçlarının, yalnızca veritabanı sunucusunda değil, siteyi çalıştıran makinede olması gerekir. Resmî imaj bunları içerir; başka bir yolla kurulmuş bir sitede ayrıca eklenmelidir.",
-    "backup_cannotTooOld": "Buradaki PostgreSQL istemcisi {client} sürümünde, veritabanı ise {server} sürümünde. pg_dump kendisinden yeni bir sunucuyu reddeder; {server} ya da üstü bir istemci gerekir."
+    "backup_cannotTooOld": "Buradaki PostgreSQL istemcisi {client} sürümünde, veritabanı ise {server} sürümünde. pg_dump kendisinden yeni bir sunucuyu reddeder; {server} ya da üstü bir istemci gerekir.",
+    "activityLog_actionKey": "İşlem Anahtarı",
+    "auditLog_actionKey": "Eylem Anahtarı"
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",

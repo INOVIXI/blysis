@@ -133,7 +133,6 @@
   },
   "hero": {},
   "admin": {
-    "activityLog_action": "Action",
     "activityLog_date": "Date",
     "activityLog_entity": "Entity",
     "activityLog_noLogs": "No activity logged yet",
@@ -198,7 +197,6 @@
     "apiKeys_noKeys": "No API keys",
     "apiKeys_subtitle": "Manage API keys for external integrations",
     "apiKeys_title": "API Keys",
-    "auditLog_action": "Action",
     "auditLog_allActions": "All actions",
     "auditLog_clear": "Clear",
     "auditLog_entries": "Entries",
@@ -1186,7 +1184,9 @@
     "challengePoint_forgotPassword": "Asking for a password reset",
     "backup_cannotTitle": "No backup can be taken on this server",
     "backup_cannotMissing": "pg_dump is not installed here. The PostgreSQL client tools have to be on the machine running the site, not only on the database host. The official image ships them; a site installed some other way needs them added.",
-    "backup_cannotTooOld": "The PostgreSQL client here is version {client} and the database is version {server}. pg_dump refuses a server newer than itself, so a client of {server} or above is needed."
+    "backup_cannotTooOld": "The PostgreSQL client here is version {client} and the database is version {server}. pg_dump refuses a server newer than itself, so a client of {server} or above is needed.",
+    "activityLog_actionKey": "Action Key",
+    "auditLog_actionKey": "Action Key"
   },
   "footer": {
     "quickLinks": "Quick Links",
