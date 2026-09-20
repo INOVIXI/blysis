@@ -2,18 +2,35 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP, rateLimits } from "./rate-limit";
 
 /**
- * Canonical API envelope shapes.
+ * What this platform's HTTP answers look like, and what these helpers are for.
  *
- * Every new or migrated endpoint should return one of these via `apiSuccess`,
- * `apiError`, or `apiPaginated` so clients can type-check responses uniformly.
+ * This comment used to say that every endpoint should answer through
+ * `apiSuccess` / `apiError` / `apiPaginated`, and that the ad-hoc shapes were
+ * legacy being migrated incrementally. Measured on 2026-09-20: 3 of 104 core
+ * route files call `apiSuccess` or `apiPaginated`, 2 of 189 module ones do,
+ * and refusals are 416 plain `{ error }` against 19 through `apiError`. A
+ * migration that has moved three percent of the surface is not in progress;
+ * it is a note somebody left. So this describes the contract the code keeps.
  *
- * Success: `{ ok: true, data: <T> }`                        (+ pagination when relevant)
- * Error:   `{ ok: false, error: "human message", code?: "machine_code", details?: unknown }`
+ * **A refusal carries `error`.** Any 4xx or 5xx answers with
+ * `{ error: "<a sentence>", code?: "<machine_code>" }` and the status. This is
+ * the one part that is a real contract: `writeError` and `errorMessage` are
+ * how every screen in the panel turns a failed request into words, and both
+ * read that key. A route answering 4xx with anything else hands the screen a
+ * body it has no branch for. `a-refusal-says-it-refused.test.ts` holds it
+ * across core and every module. Add `code` wherever a caller has to branch,
+ * so it branches on a stable word rather than on an English sentence.
  *
- * Legacy endpoints still return ad-hoc `{ error }` / `{ data }` / `{ message }`
- * shapes - these are being migrated incrementally. New code MUST use these
- * helpers; prefer `apiError(..., { code: "..." })` so clients can branch on
- * the stable `code` instead of string matching on the message.
+ * **A success is the endpoint's own shape.** `{ items, total }`, the row, the
+ * count: there is no envelope, and adding one to an endpoint that already has
+ * callers changes what they read. `/api/v1/` is consumed by the admin panel,
+ * by 89 modules and by whatever an operator has written against it, so the
+ * shape of a success is part of that endpoint rather than a house style.
+ *
+ * The helpers below stay for the endpoints that use them, and `apiPaginated`
+ * is worth reaching for when writing a new list that wants a pagination block
+ * rather than inventing a fourth one. What is not worth doing is converting a
+ * working endpoint to them: that is a wire change dressed as a tidy-up.
  */
 export interface ApiSuccess<T> {
     ok: true;
