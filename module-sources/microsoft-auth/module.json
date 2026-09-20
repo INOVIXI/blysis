@@ -2,7 +2,7 @@
   "id": "microsoft-auth",
   "name": "Microsoft and Xbox Login",
   "description": "Allow users to sign in with their Microsoft or Xbox account",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",
@@ -43,7 +43,7 @@
     "en": {
       "microsoftAuth": {
         "adm_subtitle": "Set up Microsoft OAuth sign-in for your site.",
-        "adm_tenantNote": "A single-tenant application also needs AUTH_MICROSOFT_ENTRA_ID_ISSUER set to https://login.microsoftonline.com/<tenant-id>/v2.0. Left unset, sign-in runs against the shared /common/ endpoint, which accepts any Microsoft or Xbox account.",
+        "adm_tenantNote": "A single-tenant application also needs AUTH_MICROSOFT_ENTRA_ID_ISSUER set to https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0. Left unset, sign-in runs against the shared /common/ endpoint, which accepts any Microsoft or Xbox account.",
         "adm_title": "Microsoft Login Settings",
         "perm_manage": "Manage"
       },
@@ -57,7 +57,7 @@
     "tr": {
       "microsoftAuth": {
         "adm_subtitle": "Siteniz için Microsoft ile OAuth girişini yapılandırın.",
-        "adm_tenantNote": "Tek kiracılı (single-tenant) bir uygulama için ayrıca AUTH_MICROSOFT_ENTRA_ID_ISSUER değişkenini https://login.microsoftonline.com/<tenant-id>/v2.0 olarak ayarlayın. Boş bırakılırsa giriş, her Microsoft veya Xbox hesabını kabul eden ortak /common/ uç noktası üzerinden yapılır.",
+        "adm_tenantNote": "Tek kiracılı (single-tenant) bir uygulama için ayrıca AUTH_MICROSOFT_ENTRA_ID_ISSUER değişkenini https://login.microsoftonline.com/KIRACI-KIMLIGINIZ/v2.0 olarak ayarlayın. Boş bırakılırsa giriş, her Microsoft veya Xbox hesabını kabul eden ortak /common/ uç noktası üzerinden yapılır.",
         "adm_title": "Microsoft ile Giriş Ayarları",
         "perm_manage": "Yönetebilir"
       },
