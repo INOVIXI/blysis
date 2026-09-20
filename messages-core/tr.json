@@ -1183,7 +1183,10 @@
     "backup_keepHint": "Kaç otomatik yedek saklanacak. Her çalışmadan sonra daha eskiler silinir.",
     "challengePoint_login": "Giriş yapma",
     "challengePoint_register": "Hesap oluşturma",
-    "challengePoint_forgotPassword": "Şifre sıfırlama isteme"
+    "challengePoint_forgotPassword": "Şifre sıfırlama isteme",
+    "backup_cannotTitle": "Bu sunucuda yedek alınamıyor",
+    "backup_cannotMissing": "pg_dump burada kurulu değil. PostgreSQL istemci araçlarının, yalnızca veritabanı sunucusunda değil, siteyi çalıştıran makinede olması gerekir. Resmî imaj bunları içerir; başka bir yolla kurulmuş bir sitede ayrıca eklenmelidir.",
+    "backup_cannotTooOld": "Buradaki PostgreSQL istemcisi {client} sürümünde, veritabanı ise {server} sürümünde. pg_dump kendisinden yeni bir sunucuyu reddeder; {server} ya da üstü bir istemci gerekir."
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",

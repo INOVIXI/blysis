@@ -67,6 +67,13 @@ export default function BackupAdminPage() {
     const list = useRowList(backups, { text: (row) => [row.filename, row.notes], pageSize: 20 });
     const [loading, setLoading] = useState(true);
     const [creating, setCreating] = useState(false);
+    /*
+     * Whether a backup can be taken here at all, asked before one is.
+     * `pg_dump` fails in two quiet ways - it is not installed, or it is older
+     * than the server it would dump - and both are found out from a red row
+     * on the jobs screen a day later, or at the moment a backup was wanted.
+     */
+    const [tools, setTools] = useState<{ ok: boolean; reason: string | null; clientMajor: number | null; serverMajor: number | null } | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [restoringId, setRestoringId] = useState<string | null>(null);
     const [automated, setAutomated] = useState(true);
@@ -101,6 +108,7 @@ export default function BackupAdminPage() {
             if (typeof data.automated?.schedule === "string") setSchedule(data.automated.schedule);
             if (typeof data.automated?.keep === "number") setKeep(data.automated.keep);
             if (Array.isArray(data.schedules)) setSchedules(data.schedules);
+            if (data.tools && typeof data.tools === "object") setTools(data.tools);
         } catch {
             toast.error(t("backup_loadFailed"));
         } finally {
@@ -292,13 +300,37 @@ export default function BackupAdminPage() {
                             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
                             {t("common_refresh")}
                         </Button>
-                        <Button onClick={handleCreate} disabled={creating}>
+                        {/* Not offered where it cannot work: a button that
+                            answers with the same error every time is a button
+                            that teaches an operator to distrust the screen. */}
+                        <Button onClick={handleCreate} disabled={creating || tools?.ok === false}>
                             {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                             {t("backup_createNow")}
                         </Button>
                     </div>
                 </>}
             />
+
+            {/* Above the numbers, because none of them mean anything on a
+                server that cannot take a backup. */}
+            {tools && !tools.ok && (
+                <Card className="mb-6 border-destructive/40">
+                    <CardContent className="p-4 flex gap-3">
+                        <AlertTriangle className="w-5 h-5 text-destructive shrink-0" aria-hidden="true" />
+                        <div>
+                            <p className="font-medium">{t("backup_cannotTitle")}</p>
+                            <p className="text-sm text-muted-foreground mt-1">
+                                {tools.reason === "too_old"
+                                    ? t("backup_cannotTooOld", {
+                                        client: tools.clientMajor ?? 0,
+                                        server: tools.serverMajor ?? 0,
+                                    })
+                                    : t("backup_cannotMissing")}
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <Card>

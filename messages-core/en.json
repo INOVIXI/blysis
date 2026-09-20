@@ -1183,7 +1183,10 @@
     "backup_keepHint": "How many automated backups to keep. Older ones are deleted after each run.",
     "challengePoint_login": "Signing in",
     "challengePoint_register": "Creating an account",
-    "challengePoint_forgotPassword": "Asking for a password reset"
+    "challengePoint_forgotPassword": "Asking for a password reset",
+    "backup_cannotTitle": "No backup can be taken on this server",
+    "backup_cannotMissing": "pg_dump is not installed here. The PostgreSQL client tools have to be on the machine running the site, not only on the database host. The official image ships them; a site installed some other way needs them added.",
+    "backup_cannotTooOld": "The PostgreSQL client here is version {client} and the database is version {server}. pg_dump refuses a server newer than itself, so a client of {server} or above is needed."
   },
   "footer": {
     "quickLinks": "Quick Links",

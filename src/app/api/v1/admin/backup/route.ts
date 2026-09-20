@@ -7,6 +7,7 @@ import {
     getAutomatedBackup,
     setAutomatedBackup,
 } from "@/core/lib/backup-schedule";
+import { canTakeABackup, resetBackupToolCheck } from "@/core/lib/backup-tools";
 import { logActivity } from "@/core/lib/activity-log";
 import { readJsonBody } from "@/core/lib/api-body";
 import { z } from "zod";
@@ -69,6 +70,13 @@ export async function GET() {
             // The cadences on offer travel with the answer, so the screen does
             // not keep a second copy of a list core owns.
             schedules: [...AUTOMATED_BACKUP_SCHEDULES],
+            /*
+             * Whether a backup can be taken here at all. Asked before one is
+             * attempted, because the two ways `pg_dump` fails are both quiet
+             * until somebody needs a backup - and finding out then is finding
+             * out too late.
+             */
+            tools: await canTakeABackup(),
         });
     } catch {
         return NextResponse.json({ error: "Failed to list backups" }, { status: 500 });
@@ -93,6 +101,10 @@ export async function POST(request: NextRequest) {
     } catch {
         // empty body → just proceed
     }
+
+    // Asked again, because pressing this is what an operator does straight
+    // after installing the client tools the screen told them were missing.
+    resetBackupToolCheck();
 
     try {
         const meta = await createBackup("manual", notes);
