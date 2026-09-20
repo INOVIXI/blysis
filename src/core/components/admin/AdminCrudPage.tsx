@@ -25,6 +25,7 @@ import { cn } from "@/core/lib/utils";
 import { BulkBar } from "@/core/components/admin/BulkBar";
 import { RowActions } from "@/core/components/admin/RowActions";
 import { ReferencePicker } from "@/core/components/admin/ReferencePicker";
+import { ReferenceList } from "@/core/components/admin/ReferenceList";
 import { deleteEach } from "@/core/lib/bulk-delete";
 import { formSections } from "@/core/lib/form-rows";
 import { headerState, narrowTo, pickAll, pickNone, togglePick, type Selection } from "@/core/lib/bulk-selection";
@@ -45,11 +46,12 @@ export interface CrudField {
      * `urlOrFile` named the control rather than the field, and sat beside an
      * `image` that could only be uploaded to; both now draw `UrlOrFile`.
      */
-    type?: "text" | "password" | "number" | "url" | "select" | "textarea" | "toggle" | "datetime" | "color" | "image" | "file" | "richtext" | "icon" | "reference";
+    type?: "text" | "password" | "number" | "url" | "select" | "textarea" | "toggle" | "datetime" | "color" | "image" | "file" | "richtext" | "icon" | "reference" | "referenceList";
     placeholder?: string;
     options?: { value: string; label: string }[];
     /**
-     * Where the records this field names are listed, for `type: "reference"`.
+     * Where the records this field names are listed, for `type: "reference"`
+     * and `type: "referenceList"`.
      *
      * Nothing in the panel shows a record's id, so a field that holds one has
      * to offer the records instead. `labelFromRow` is how a screen whose
@@ -170,6 +172,18 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
             const v = item[f.key];
             if (f.type === "datetime" && v) {
                 vals[f.key] = new Date(v as string).toISOString().slice(0, 16);
+            } else if (f.type === "referenceList") {
+                /*
+                 * Held as one line of ids, comma separated.
+                 *
+                 * The form behind this shell is `Record<string, string>` and
+                 * every one of the dozen screens built on it reads that. A
+                 * list of ids is the first value that is not a string, and
+                 * widening the map is a change to all of them; an id here is
+                 * a cuid, which never contains a comma, so one line says the
+                 * list exactly.
+                 */
+                vals[f.key] = Array.isArray(v) ? (v as string[]).join(",") : "";
             } else {
                 vals[f.key] = v != null ? String(v) : f.defaultValue || "";
             }
@@ -187,7 +201,8 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
         const payload: Record<string, unknown> = {};
         fields.forEach((f) => {
             const v = form[f.key];
-            if (f.type === "number") payload[f.key] = v ? Number(v) : undefined;
+            if (f.type === "referenceList") payload[f.key] = v ? v.split(",").filter(Boolean) : [];
+            else if (f.type === "number") payload[f.key] = v ? Number(v) : undefined;
             else if (f.type === "toggle") payload[f.key] = v === "true";
             else if (f.type === "datetime") payload[f.key] = v ? new Date(v).toISOString() : null;
             else payload[f.key] = v || undefined;
@@ -281,6 +296,21 @@ export function AdminCrudPage({ title, subtitle, apiPath, fields, listKey, displ
                             label={field.label}
                         />
                     </div>
+                );
+            case "referenceList":
+                if (!field.reference) return null;
+                return (
+                    <ReferenceList
+                        value={val ? val.split(",").filter(Boolean) : []}
+                        onChange={(ids) => onChange(ids.join(","))}
+                        label={field.label}
+                        placeholder={field.placeholder}
+                        endpoint={field.reference.endpoint}
+                        listKey={field.reference.listKey}
+                        labelField={field.reference.labelField}
+                        hintField={field.reference.hintField}
+                        searchParam={field.reference.searchParam}
+                    />
                 );
             case "reference":
                 if (!field.reference) return null;

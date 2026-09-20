@@ -52,7 +52,7 @@ describe("computeOrderPricing", () => {
     it("applies a global bulk discount when minQuantity is met", () => {
         const products = [product({ id: "p1", price: 100 })];
         const bulk: PricingBulkDiscount[] = [
-            { minQuantity: 3, discountPercent: 20, productId: null, categoryId: null },
+            { minQuantity: 3, discountPercent: 20, productIds: [], categoryIds: [] },
         ];
         const { subtotal, orderItems } = computeOrderPricing({
             items: [{ productId: "p1", quantity: 3 }],
@@ -69,7 +69,7 @@ describe("computeOrderPricing", () => {
     it("does NOT apply a bulk discount below minQuantity", () => {
         const products = [product({ id: "p1", price: 100 })];
         const bulk: PricingBulkDiscount[] = [
-            { minQuantity: 5, discountPercent: 20, productId: null, categoryId: null },
+            { minQuantity: 5, discountPercent: 20, productIds: [], categoryIds: [] },
         ];
         const { subtotal, orderItems } = computeOrderPricing({
             items: [{ productId: "p1", quantity: 2 }],
@@ -81,12 +81,14 @@ describe("computeOrderPricing", () => {
         expect(subtotal).toBe(200);
     });
 
-    it("picks the first (most aggressive, desc-ordered) matching bulk tier", () => {
+    it("picks the best matching bulk tier, whatever order the rules arrive in", () => {
         const products = [product({ id: "p1", price: 100 })];
-        // Route fetches orderBy discountPercent desc, so the 30% tier comes first.
+        // The route used to have to fetch these `orderBy discountPercent
+        // desc` because the first match won. The rung is chosen now, so the
+        // weaker rule is listed first here on purpose.
         const bulk: PricingBulkDiscount[] = [
-            { minQuantity: 2, discountPercent: 30, productId: null, categoryId: null },
-            { minQuantity: 2, discountPercent: 10, productId: null, categoryId: null },
+            { minQuantity: 2, discountPercent: 10, productIds: [], categoryIds: [] },
+            { minQuantity: 2, discountPercent: 30, productIds: [], categoryIds: [] },
         ];
         const { orderItems } = computeOrderPricing({
             items: [{ productId: "p1", quantity: 2 }],
@@ -106,7 +108,7 @@ describe("computeOrderPricing", () => {
             product({ id: "p2", price: 50, categoryId: "other" }),
         ];
         const bulk: PricingBulkDiscount[] = [
-            { minQuantity: 1, discountPercent: 50, productId: "p2", categoryId: null },
+            { minQuantity: 1, discountPercent: 50, productIds: ["p2"], categoryIds: [] },
         ];
         const { orderItems } = computeOrderPricing({
             items: [{ productId: "p1", quantity: 1 }, { productId: "p2", quantity: 1 }],
@@ -120,13 +122,21 @@ describe("computeOrderPricing", () => {
         expect(p2.price).toBe(25); // 50% off 50
     });
 
-    it("a productId+categoryId:null bulk discount also matches null-category products (matching quirk preserved)", () => {
-        // Documents the original behaviour: when the targeted product carries
-        // no category, a sibling null-category product matches the SAME tier via
-        // the `bd.categoryId === product.categoryId` (null===null) branch.
+    it("leaves a product the rule does not name alone, category or no category", () => {
+        /*
+         * This used to be written down as a quirk to preserve, and it was a
+         * shop taking money off the wrong things. The matcher asked
+         * `bd.categoryId === product.categoryId`, and on a shop whose
+         * products carry no category that is `null === null`: a rule aimed at
+         * one product discounted every uncategorised product beside it. Half
+         * price on the whole shelf, from a rule naming one thing.
+         *
+         * A rule covers what it names. Naming nothing is the only way to
+         * cover everything, and it is a thing an operator can see they did.
+         */
         const products = [product({ id: "p1", price: 100 }), product({ id: "p2", price: 50 })];
         const bulk: PricingBulkDiscount[] = [
-            { minQuantity: 1, discountPercent: 50, productId: "p2", categoryId: null },
+            { minQuantity: 1, discountPercent: 50, productIds: ["p2"], categoryIds: [] },
         ];
         const { orderItems } = computeOrderPricing({
             items: [{ productId: "p1", quantity: 1 }],
@@ -134,13 +144,13 @@ describe("computeOrderPricing", () => {
             bulkDiscounts: bulk,
             ownedProductIds: noOwned,
         });
-        expect(orderItems[0].price).toBe(50); // null===null category fallthrough applies the 50% tier
+        expect(orderItems[0].price).toBe(100);
     });
 
     it("applies a category-targeted bulk discount", () => {
         const products = [product({ id: "p1", price: 80, categoryId: "ranks" })];
         const bulk: PricingBulkDiscount[] = [
-            { minQuantity: 1, discountPercent: 25, productId: null, categoryId: "ranks" },
+            { minQuantity: 1, discountPercent: 25, productIds: [], categoryIds: ["ranks"] },
         ];
         const { orderItems } = computeOrderPricing({
             items: [{ productId: "p1", quantity: 1 }],
@@ -189,7 +199,7 @@ describe("computeOrderPricing", () => {
             product({ id: "mvp", price: 50, categoryId: "ranks" }),
         ];
         const bulk: PricingBulkDiscount[] = [
-            { minQuantity: 1, discountPercent: 50, productId: null, categoryId: "ranks" },
+            { minQuantity: 1, discountPercent: 50, productIds: [], categoryIds: ["ranks"] },
         ];
         const { orderItems } = computeOrderPricing({
             items: [{ productId: "mvp", quantity: 1 }],

@@ -343,13 +343,14 @@ model BulkDiscount {
   name         String
   minQuantity  Int
   discountPercent Int
-  productId    String?
-  categoryId   String?
+  /// Which products the rule covers. Empty is every product, which is what
+  /// every rule written before there was a way to say otherwise meant.
+  productIds   String[]
+  /// Which categories the rule covers. Empty is every category. A line named
+  /// by either list is covered once.
+  categoryIds  String[]
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
-
-  @@index([productId])
-  @@index([categoryId])
 }
 
 model GiftCode {

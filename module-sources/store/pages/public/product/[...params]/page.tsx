@@ -13,6 +13,7 @@
  */
 import { notFound } from "next/navigation";
 import { readProduct } from "../../../../lib/read-product";
+import { readBulkLadder } from "../../../../lib/read-bulk-rules";
 import { ProductView } from "../../../../components/ProductView";
 
 interface PageProps {
@@ -46,5 +47,9 @@ export default async function ProductPage({ params }: PageProps) {
         },
     };
 
-    return <ProductView product={product} />;
+    // What buying several of them is worth, read here so the page the server
+    // sends already says it. The till charges the rung this quotes.
+    const ladder = await readBulkLadder({ id: read.id, categoryId: read.category?.id ?? null });
+
+    return <ProductView product={product} bulkLadder={ladder} />;
 }

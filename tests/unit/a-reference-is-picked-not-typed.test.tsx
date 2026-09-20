@@ -200,9 +200,11 @@ describe("the fields that name another record", () => {
                 const body = fieldObject(source, m.index ?? 0);
                 if (!body.includes("label:")) continue;
                 const kind = /type:\s*"(\w+)"/.exec(body)?.[1] ?? "text";
-                // A select already offers the records; a reference searches
-                // for them. Anything else is a box asking for an id.
-                if (kind === "select" || kind === "reference") continue;
+                // A select already offers the records and a reference
+                // searches for them; `referenceList` is the same search for a
+                // field that holds several. Anything else is a box asking for
+                // an id.
+                if (kind === "select" || kind === "reference" || kind === "referenceList") continue;
                 typed.push(`${rel}: ${m[1]} is a ${kind} field`);
             }
         }

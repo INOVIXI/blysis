@@ -32,6 +32,36 @@ export interface PricingProduct {
     categoryId?: string | null;
 }
 
+/**
+ * What a rule covers. Empty means everything, which is what every rule
+ * written before there was a way to say otherwise meant.
+ */
+export interface PricingScope {
+    productIds?: readonly string[] | null;
+    categoryIds?: readonly string[] | null;
+}
+
+/**
+ * Whether a rule's shelf holds this line.
+ *
+ * One function for the coupon and for the bulk discount, because they are one
+ * question and they were answered twice. The coupon had no answer at all, and
+ * the bulk discount matched `productId === id || categoryId === category`,
+ * which is a rule that can name one of each and then covers a product in
+ * neither of them.
+ */
+export function scopeCoversLine(
+    scope: PricingScope,
+    productId: string,
+    categoryId: string | null | undefined,
+): boolean {
+    const products = scope.productIds ?? [];
+    const categories = scope.categoryIds ?? [];
+    if (products.length === 0 && categories.length === 0) return true;
+    if (products.includes(productId)) return true;
+    return categoryId != null && categories.includes(categoryId);
+}
+
 export interface PricingItemInput {
     productId: string;
     quantity: number;
@@ -40,8 +70,9 @@ export interface PricingItemInput {
 export interface PricingBulkDiscount {
     minQuantity: number;
     discountPercent: number;
-    productId?: string | null;
-    categoryId?: string | null;
+    productIds?: readonly string[] | null;
+    categoryIds?: readonly string[] | null;
+    isActive?: boolean;
 }
 
 export interface ComputedOrderItem {
@@ -62,9 +93,9 @@ export interface ComputedOrderItem {
  * category) followed by the best matching bulk discount. Returns the line
  * items plus the running subtotal.
  *
- * `bulkDiscounts` must already be ordered most-aggressive-first (the route
- * fetches them `orderBy: { discountPercent: "desc" }`) because we take the
- * first match.
+ * The order `bulkDiscounts` arrives in no longer matters: the rung is chosen
+ * by `bulkDiscountFor`, which takes the best one reached rather than the
+ * first one that matches.
  */
 export function computeOrderPricing(params: {
     items: PricingItemInput[];
@@ -91,15 +122,10 @@ export function computeOrderPricing(params: {
             }
         }
 
-        // Bulk discount: find best matching discount for this item
-        const matchingBulk = bulkDiscounts.find((bd) =>
-            bd.minQuantity <= item.quantity &&
-            (bd.productId === product.id || bd.categoryId === product.categoryId || (!bd.productId && !bd.categoryId))
-        );
-        let bulkDiscountApplied = 0;
-        if (matchingBulk) {
-            bulkDiscountApplied = matchingBulk.discountPercent;
-            price = price * (1 - matchingBulk.discountPercent / 100);
+        // The same rung the product page quoted, from the same function.
+        const bulkDiscountApplied = bulkDiscountFor(bulkDiscounts, product, item.quantity);
+        if (bulkDiscountApplied > 0) {
+            price = price * (1 - bulkDiscountApplied / 100);
         }
 
         // Rounded before the quantity multiplies it: a third of a cent on
@@ -121,6 +147,54 @@ export function computeOrderPricing(params: {
     });
 
     return { subtotal: cents(subtotal), orderItems };
+}
+
+/** One rung: buy this many, take this much off. */
+export interface BulkRung {
+    minQuantity: number;
+    discountPercent: number;
+}
+
+/**
+ * What a shopper can climb on one product, best offer per rung.
+ *
+ * Nothing drew this. The only reader of the table was the till, so the shelf,
+ * the product page and the basket all quoted the list price and the discount
+ * appeared for the first time on the receipt - a discount nobody is told
+ * about sells nothing extra, which is the whole purpose of one.
+ *
+ * Two rules asking for the same quantity leave the better of the two, because
+ * that is the one the till applies and a ladder that disagrees with the till
+ * is worse than no ladder.
+ */
+export function bulkLadder(
+    rules: readonly PricingBulkDiscount[],
+    product: { id: string; categoryId?: string | null },
+): BulkRung[] {
+    const best = new Map<number, number>();
+    for (const rule of rules) {
+        if (rule.isActive === false) continue;
+        if (!scopeCoversLine(rule, product.id, product.categoryId)) continue;
+        const held = best.get(rule.minQuantity) ?? 0;
+        if (rule.discountPercent > held) best.set(rule.minQuantity, rule.discountPercent);
+    }
+    return [...best.entries()]
+        .map(([minQuantity, discountPercent]) => ({ minQuantity, discountPercent }))
+        .sort((a, b) => a.minQuantity - b.minQuantity);
+}
+
+/**
+ * The percentage this quantity of this product earns: the best rung reached,
+ * not the first. The till and every screen ahead of it ask this one function.
+ */
+export function bulkDiscountFor(
+    rules: readonly PricingBulkDiscount[],
+    product: { id: string; categoryId?: string | null },
+    quantity: number,
+): number {
+    return bulkLadder(rules, product)
+        .filter((rung) => rung.minQuantity <= quantity)
+        .reduce((best, rung) => Math.max(best, rung.discountPercent), 0);
 }
 
 // Prisma money columns arrive as Decimal objects, not primitives. Every

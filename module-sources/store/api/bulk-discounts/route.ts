@@ -7,8 +7,18 @@ const bulkDiscountSchema = z.object({
     name: z.string().min(1, "Name is required").max(100),
     minQuantity: z.number().int().min(1, "Min quantity must be at least 1"),
     discountPercent: z.number().min(0, "Discount cannot be negative").max(100, "Discount cannot exceed 100%"),
-    productId: z.string().optional().nullable(),
-    categoryId: z.string().optional().nullable(),
+    /**
+     * Where the rule applies. Empty is every product, which is what every
+     * rule written before there was a way to say otherwise meant. Capped
+     * because this arrives from a form and lands in an array column.
+     */
+    productIds: z.array(z.string().min(1).max(64)).max(200).optional(),
+    categoryIds: z.array(z.string().min(1).max(64)).max(200).optional(),
+    /**
+     * The form has always drawn this switch and the create never read it, so
+     * a rule written switched off arrived switched on.
+     */
+    isActive: z.boolean().optional(),
 });
 
 export async function GET() {
@@ -17,15 +27,15 @@ export async function GET() {
      *
      * This filtered on `isActive` while the screen behind it offers a switch
      * for exactly that column: turning a discount off made its row vanish
-     * from the only screen that could turn it back on. The public side asks
-     * this endpoint too and does its own filtering, which is where the
-     * filtering belongs.
+     * from the only screen that could turn it back on. Whoever reads the
+     * rules decides which of them apply - the till asks for the live ones,
+     * and the ladder a shopper is shown skips a rule that is switched off.
      *
-     * No join for the product or the category: `productId` and `categoryId`
-     * on this model are plain strings with an index, not foreign keys, so
-     * there is no relation to include and nothing stops a rule pointing at a
-     * product that has been deleted. Making them real references is a
-     * migration rather than a line here.
+     * No join for the products or the categories: the two lists hold plain
+     * strings, not foreign keys, so there is no relation to include and
+     * nothing stops a rule naming a product that has been deleted. An id left
+     * behind simply narrows the rule to nothing, which is the behaviour a
+     * delete should have.
      */
     const discounts = await prisma.bulkDiscount.findMany({
         orderBy: { minQuantity: "asc" },
@@ -51,15 +61,16 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: validation.error.issues[0].message }, { status: 400 });
     }
 
-    const { name, minQuantity, discountPercent, productId, categoryId } = validation.data;
+    const { name, minQuantity, discountPercent, productIds, categoryIds, isActive } = validation.data;
 
     const discount = await prisma.bulkDiscount.create({
         data: {
             name,
             minQuantity,
             discountPercent,
-            productId: productId || null,
-            categoryId: categoryId || null,
+            productIds: productIds ?? [],
+            categoryIds: categoryIds ?? [],
+            isActive: isActive ?? true,
         },
     });
     return NextResponse.json({ discount }, { status: 201 });

@@ -15,23 +15,35 @@ export default function Page() {
             secondaryRender={(item) => {
                 const min = Number(item.minQuantity ?? 0);
                 const pct = Number(item.discountPercent ?? 0);
-                return `${min}+ → ${pct}%`;
+                // Where it applies, on the row. Two rules reading "3+ → 10%"
+                // with nothing else between them are two rules an operator
+                // cannot tell apart on the screen that lists them.
+                const products = (item.productIds as string[] | undefined)?.length ?? 0;
+                const categories = (item.categoryIds as string[] | undefined)?.length ?? 0;
+                const where = products + categories === 0
+                    ? t("bd_scopeEverything")
+                    : t("bd_scopeCount", { products, categories });
+                return `${min}+ → ${pct}% · ${where}`;
             }}
             fields={[
                 { key: "name", label: t("bd_nameLabel"), required: true, placeholder: t("bd_namePlaceholder") },
                 { key: "minQuantity", label: t("bd_minQuantityLabel"), type: "number", required: true, placeholder: t("bd_minQuantityPlaceholder") },
                 { key: "discountPercent", label: t("bd_discountPercentLabel"), type: "number", required: true, placeholder: t("bd_discountPercentPlaceholder") },
                 /*
-                 * Picked, not typed. Nothing in the panel shows a product's id
-                 * or a category's, so these two boxes could only be filled
-                 * from the database - and a mistyped id is refused by nothing:
-                 * it makes a discount that never applies to anything.
+                 * Picked, not typed, and as many as the offer covers. Nothing
+                 * in the panel shows a product's id or a category's, so these
+                 * boxes could only be filled from the database - and a
+                 * mistyped id is refused by nothing: it makes a discount that
+                 * never applies to anything. One each was also a wall: "buy
+                 * three of any rank" was sayable and "any of these three
+                 * ranks" was not.
                  */
                 {
-                    key: "productId",
-                    label: t("bd_productIdLabel"),
-                    type: "reference",
-                    placeholder: t("bd_productIdPlaceholder"),
+                    key: "productIds",
+                    label: t("bd_productsLabel"),
+                    type: "referenceList",
+                    placeholder: t("bd_productsPlaceholder"),
+                    description: t("bd_scopeHint"),
                     reference: {
                         endpoint: "/api/v1/store/admin/products",
                         listKey: "products",
@@ -40,10 +52,10 @@ export default function Page() {
                     },
                 },
                 {
-                    key: "categoryId",
-                    label: t("bd_categoryIdLabel"),
-                    type: "reference",
-                    placeholder: t("bd_categoryIdPlaceholder"),
+                    key: "categoryIds",
+                    label: t("bd_categoriesLabel"),
+                    type: "referenceList",
+                    placeholder: t("bd_categoriesPlaceholder"),
                     reference: {
                         endpoint: "/api/v1/store/categories",
                         listKey: "categories",

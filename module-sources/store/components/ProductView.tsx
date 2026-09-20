@@ -12,6 +12,7 @@ import { Minus, Plus, Check, ChevronLeft, ChevronRight, Loader2 } from "lucide-r
 import { useTranslations } from "next-intl";
 import { errorMessage } from "@/core/sdk";
 import { AvailabilityNote, LowStockNote, type AvailabilityInfo } from "./AvailabilityNote";
+import { type BulkRung } from "../lib/pricing";
 
 interface Product {
     id: string;
@@ -54,7 +55,17 @@ interface Product {
  * renders it now; the cart, the quantity and the image gallery are still this
  * component's job.
  */
-export function ProductView({ product: initialProduct }: { product: Product }) {
+export function ProductView({
+    product: initialProduct,
+    bulkLadder = [],
+}: {
+    product: Product;
+    /**
+     * What buying several is worth, worked out on the server from the rules
+     * that cover this product. Empty where none do.
+     */
+    bulkLadder?: BulkRung[];
+}) {
     const router = useRouter();
     const pathname = usePathname();
     const { status: authStatus } = useSession();
@@ -174,7 +185,18 @@ export function ProductView({ product: initialProduct }: { product: Product }) {
     // 404 rather than a page saying so.
 
     const maxStock = product.stock ?? 99;
-    const totalPrice = product.price * quantity;
+    /*
+     * The rung this quantity has reached, and what the line costs with it.
+     *
+     * The till has always taken this off and nothing on the way to it said
+     * so, so the number under the quantity control was one a shopper was
+     * never charged. Both come from `pricing.ts`, which is what the checkout
+     * charges by, so the two cannot disagree.
+     */
+    const bulkPercent = bulkLadder
+        .filter((rung) => rung.minQuantity <= quantity)
+        .reduce((best, rung) => Math.max(best, rung.discountPercent), 0);
+    const totalPrice = Math.round(product.price * quantity * (1 - bulkPercent / 100) * 100) / 100;
     const upgradeCredit = Number(product.upgradeCredit ?? 0);
     const inStock = product.stock === null || product.stock > 0;
     // The window, the per-person limit and today's allowance, answered by the
@@ -371,6 +393,26 @@ export function ProductView({ product: initialProduct }: { product: Product }) {
                                         <Plus className="w-4 h-4" aria-hidden="true" />
                                     </button>
                                 </div>
+                                {bulkPercent > 0 && (
+                                    <p className="mt-2 inline-block rounded bg-success/10 px-2 py-1 text-xs font-medium text-success">
+                                        {t("bulkApplied", { percent: bulkPercent, quantity })}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
+                        {/* What taking more is worth. An offer a shopper is
+                            not told about cannot bring them a second one. */}
+                        {forSale && bulkLadder.length > 0 && (
+                            <div className="mb-4 rounded-lg border border-border bg-muted/30 p-3">
+                                <p className="text-sm font-medium text-foreground">{t("bulkLadderTitle")}</p>
+                                <ul className="mt-1 space-y-0.5">
+                                    {bulkLadder.map((rung) => (
+                                        <li key={rung.minQuantity} className="text-xs text-muted-foreground">
+                                            {t("bulkLadderRung", { quantity: rung.minQuantity, percent: rung.discountPercent })}
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
                         )}
 

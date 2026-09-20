@@ -27,8 +27,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.name !== undefined) data.name = fields.name;
     if (fields.minQuantity !== undefined) data.minQuantity = fields.minQuantity;
     if (fields.discountPercent !== undefined) data.discountPercent = fields.discountPercent;
-    if (fields.productId !== undefined) data.productId = fields.productId;
-    if (fields.categoryId !== undefined) data.categoryId = fields.categoryId;
+    if (fields.productIds !== undefined) data.productIds = fields.productIds;
+    if (fields.categoryIds !== undefined) data.categoryIds = fields.categoryIds;
     if (fields.isActive !== undefined) data.isActive = fields.isActive;
 
     const updated = await prisma.bulkDiscount.update({ where: { id }, data });

@@ -151,8 +151,8 @@ export const bulkDiscountUpdateSchema = z.object({
     name: z.string().trim().min(1).max(100).optional(),
     minQuantity: z.number().int().min(1).max(1_000_000).optional(),
     discountPercent: percent.optional(),
-    productId: z.string().max(64).optional().nullable(),
-    categoryId: z.string().max(64).optional().nullable(),
+    productIds: z.array(z.string().min(1).max(64)).max(200).optional(),
+    categoryIds: z.array(z.string().min(1).max(64)).max(200).optional(),
     isActive: z.boolean().optional(),
 });
 

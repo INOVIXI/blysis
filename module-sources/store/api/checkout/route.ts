@@ -202,9 +202,11 @@ export async function POST(request: NextRequest) {
         }
 
         // ── Fetch bulk discounts ──
+        // No ordering: the rung is the best one the quantity reaches, chosen
+        // by the same function the product page quotes from, so the order
+        // they arrive in stopped mattering.
         const bulkDiscounts = await prisma.bulkDiscount.findMany({
             where: { isActive: true },
-            orderBy: { discountPercent: "desc" },
         });
 
         // ── Cumulative upgrade check ──
