@@ -22,6 +22,17 @@ const { setting, getModuleStates, ModuleWebhookChannels } = vi.hoisted(() => ({
 vi.mock("@/core/lib/db", () => ({ prisma: { setting }, default: { setting } }));
 vi.mock("@/core/lib/module-cache", () => ({ getModuleStates }));
 vi.mock("@/core/generated/module-data", () => ({ ModuleWebhookChannels }));
+/*
+ * Recording a delivery announces it on the hook bus, and filling that bus
+ * means importing every module's listeners. In a test environment they cannot
+ * resolve, so the first webhook here spent two seconds failing to load ninety
+ * of them and printed a line for each - and in the full suite, on a loaded
+ * box, those two seconds crossed vitest's five second ceiling and the file
+ * went red for a reason that had nothing to do with webhooks.
+ *
+ * Nothing in this file is about the bus, so it is not built.
+ */
+vi.mock("@/core/lib/hooks-bootstrap", () => ({ ensureHooks: async () => {} }));
 
 import {
     HEALTH_ALERTING_SETTING_KEY,
