@@ -17,6 +17,10 @@
 /.next-*/
 /out/
 
+# The repository's own scratch space. /tmp on a shared box is somebody else's
+# to fill, and it has been filled; see scripts/with-scratch.sh.
+/.tmp/
+
 # production
 /build
 
