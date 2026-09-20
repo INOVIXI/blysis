@@ -1,0 +1,135 @@
+{
+  "id": "profile-posts",
+  "name": "Profile Posts",
+  "description": "A wall on every member's profile: short notes addressed to the person rather than comments on a thing, with one level of replies.",
+  "version": "1.1.0",
+  "coreVersion": "^5.0.0",
+  "category": "community",
+  "author": "Blysis",
+  "icon": "MessageSquareQuote",
+  "dependencies": [
+    "member-profiles"
+  ],
+  "permissions": [
+    {
+      "name": "profile-posts.moderate",
+      "labelKey": "profilePosts.perm_moderate"
+    }
+  ],
+  "settings": [
+    {
+      "key": "maxLength",
+      "type": "number",
+      "default": 1000,
+      "min": 100,
+      "max": 5000,
+      "label": "Longest a profile post may be",
+      "description": "Characters. A wall is for a note, not an article."
+    }
+  ],
+  "api": [
+    {
+      "path": "/profile-posts",
+      "handler": "api/profile-posts/route.ts",
+      "description": "Read a member's wall, write on it, and open or shut your own.",
+      "openTo": "public"
+    },
+    {
+      "path": "/profile-posts/[id]",
+      "handler": "api/profile-posts/[id]/route.ts",
+      "description": "Reply to a profile post, or take one down.",
+      "openTo": "member"
+    }
+  ],
+  "slotContents": [
+    {
+      "id": "profile-wall",
+      "slot": "memberProfile.below",
+      "component": "slots/ProfileWall",
+      "order": 10
+    }
+  ],
+  "profileTabs": [],
+  "translations": {
+    "en": {
+      "profilePosts": {
+        "title": "Profile Posts",
+        "empty": "Nothing on this wall yet.",
+        "write": "Write something on their profile",
+        "writeOwn": "Write something on your profile",
+        "post": "Post",
+        "reply": "Reply",
+        "replyPlaceholder": "Write a reply",
+        "signIn": "Sign in to write here.",
+        "closed": "This member has turned profile posts off.",
+        "delete": "Delete",
+        "deleteConfirmTitle": "Delete this post?",
+        "deleteConfirmMessage": "It goes, and so do its replies. This cannot be undone.",
+        "showReplies": "{count, plural, one {# reply} other {# replies}}",
+        "perm_moderate": "Take down anyone's profile posts",
+        "setting_open": "Let members write on my profile",
+        "setting_openDesc": "When this is off, nobody can post on your profile and what is there stays hidden.",
+        "err": {
+          "profile_wall_closed": "This member has turned profile posts off.",
+          "profile_post_too_long": "That is longer than this site allows.",
+          "profile_post_empty": "Write something first.",
+          "profile_post_not_yours": "That is not yours to take down."
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "Profile Posts",
+        "module_profile-posts_description": "A wall on every member's profile, with one level of replies"
+      }
+    },
+    "tr": {
+      "profilePosts": {
+        "title": "Profil Gönderileri",
+        "empty": "Bu duvarda henüz bir şey yok.",
+        "write": "Profiline bir şeyler yaz",
+        "writeOwn": "Kendi profiline bir şeyler yaz",
+        "post": "Gönder",
+        "reply": "Yanıtla",
+        "replyPlaceholder": "Bir yanıt yaz",
+        "signIn": "Buraya yazmak için giriş yap.",
+        "closed": "Bu üye profil gönderilerini kapatmış.",
+        "delete": "Sil",
+        "deleteConfirmTitle": "Bu gönderi silinsin mi?",
+        "deleteConfirmMessage": "Gönderi ve yanıtları gider. Geri alınamaz.",
+        "showReplies": "{count, plural, one {# yanıt} other {# yanıt}}",
+        "perm_moderate": "Herkesin profil gönderisini kaldır",
+        "setting_open": "Üyeler profilime yazabilsin",
+        "setting_openDesc": "Kapalıyken kimse profiline gönderi yazamaz ve orada olanlar görünmez.",
+        "err": {
+          "profile_wall_closed": "Bu üye profil gönderilerini kapatmış.",
+          "profile_post_too_long": "Bu, sitenin izin verdiğinden uzun.",
+          "profile_post_empty": "Önce bir şeyler yaz.",
+          "profile_post_not_yours": "Bunu kaldırmak sana ait değil."
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "Profil Gönderileri",
+        "module_profile-posts_description": "Her üyenin profilinde bir duvar, tek seviyeli yanıtlarla"
+      }
+    }
+  },
+  "userDataExport": [
+    {
+      "model": "profilePost",
+      "key": "profile-posts.written",
+      "column": "authorId",
+      "erasure": "purge"
+    },
+    {
+      "model": "profilePost",
+      "key": "profile-posts.wall",
+      "column": "profileUserId",
+      "erasure": "purge"
+    },
+    {
+      "model": "profilePostReply",
+      "key": "profile-posts.replies",
+      "column": "authorId",
+      "erasure": "purge"
+    }
+  ]
+}

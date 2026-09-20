@@ -1,0 +1,57 @@
+// Profile Posts Module - Database Models
+// These models are merged into prisma/schema.prisma by merge-schemas.ts
+
+// A note left on somebody's profile.
+//
+// Not a comment on a thing: a comment hangs off an article or a topic and is
+// about it. This hangs off a person and is addressed to them, which is why it
+// carries two users - whose wall it is on, and who wrote it - and why the two
+// are frequently the same (a member posting on their own profile is how most
+// of these start).
+//
+// Both sides cascade. A member who leaves takes their wall and what they
+// wrote elsewhere with them; a row pointing at a deleted account is a note
+// from nobody.
+model ProfilePost {
+  id            String   @id @default(cuid())
+  /** Whose profile it appears on. */
+  profileUserId String
+  profileUser   User     @relation("ProfileWall", fields: [profileUserId], references: [id], onDelete: Cascade)
+  /** Who wrote it. */
+  authorId      String
+  author        User     @relation("ProfilePostAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  body          String   @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  replies ProfilePostReply[]
+
+  // Read as "this member's wall, newest first, twenty at a time", which is
+  // the only read the public page makes.
+  @@index([profileUserId, createdAt])
+  @@index([authorId])
+}
+
+// A reply under one profile post. One level deep on purpose: a wall is a
+// conversation, not a forum, and a thread of threads on a profile is a forum
+// nobody asked for.
+model ProfilePostReply {
+  id        String      @id @default(cuid())
+  postId    String
+  post      ProfilePost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User        @relation("ProfileReplyAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  body      String      @db.Text
+  createdAt DateTime    @default(now())
+
+  @@index([postId, createdAt])
+  @@index([authorId])
+}
+
+// @@user-relations-start
+//   profileWall        ProfilePost[]      @relation("ProfileWall")
+//   profilePosts       ProfilePost[]      @relation("ProfilePostAuthor")
+//   profilePostReplies ProfilePostReply[] @relation("ProfileReplyAuthor")
+//   /** Whether this member lets anyone write on their profile. */
+//   profileWallOpen    Boolean            @default(true)
+// @@user-relations-end
