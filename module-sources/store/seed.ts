@@ -162,6 +162,12 @@ export const seed: ModuleSeed = {
                     isFeatured: index < 3,
                     createdAt: ctx.daysAgo(365),
                     categoryId: categories.get(category)?.id ?? null,
+                    // A rank is tied to the account that wears it, so it is
+                    // not something to hand to somebody else. Seeded that way
+                    // because a product nobody has marked is a switch nobody
+                    // can see working: every chest row carried a Gift button
+                    // and the demo shop had nothing to refuse.
+                    giftable: category !== "Ranks",
                     ...(SCHEDULES[name] ?? {}),
                     // One product for a rank, so the badge and the refusal
                     // are both visible on a seeded shop.
