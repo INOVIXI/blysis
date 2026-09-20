@@ -50,6 +50,9 @@ vi.mock("@/core/sdk/ui", () => ({
     RichContent: ({ html }: { html: string }) => <div>{html}</div>,
     useSiteCurrency: () => ({ format: (value: number) => `$${value}` }),
     buttonClassName: () => "",
+    // The gallery opens the picture full size. Closed here, so it renders
+    // nothing; what this file is about is the page behind it.
+    ImageLightbox: () => null,
 }));
 
 /**
