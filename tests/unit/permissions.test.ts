@@ -42,6 +42,8 @@ import {
     hasAllPermissions,
     getUserPermissions,
     hasResourcePermission,
+    effectivePermissions,
+    requirePermission,
     isAdmin,
     isStaff,
 } from "@/core/lib/permissions";
@@ -173,6 +175,68 @@ describe("getUserPermissions", () => {
     it("returns [] when user is missing", async () => {
         mockUserRoleFindMany.mockResolvedValue(holdsNothing());
         expect(await getUserPermissions("ghost")).toEqual([]);
+    });
+});
+
+describe("effectivePermissions", () => {
+    it("is the set a caller can ask about without a second query", async () => {
+        mockUserRoleFindMany.mockResolvedValue(memberWith(["blog.manage", "store.view"]));
+        expect(await effectivePermissions("u1")).toEqual(new Set(["blog.manage", "store.view"]));
+    });
+
+    it("is empty for an administrator, who bypasses rather than holds names", async () => {
+        mockUserRoleFindMany.mockResolvedValue(adminUser());
+        expect(await effectivePermissions("u1")).toEqual(new Set());
+    });
+});
+
+describe("two roles that disagree about one entity", () => {
+    it("refuses, because a second role must not lift a refusal written against the first", async () => {
+        mockUserRoleFindMany.mockResolvedValue([
+            { roleId: "role-a", expiresAt: null, role: { name: "editor", priority: 10, rolePermissions: [] } },
+            { roleId: "role-b", expiresAt: null, role: { name: "muted", priority: 5, rolePermissions: [] } },
+        ]);
+        mockResourceFindMany.mockResolvedValue([
+            { principalType: "role", principalId: "role-a", resourceId: null, action: "edit", allow: true },
+            { principalType: "role", principalId: "role-b", resourceId: null, action: "edit", allow: false },
+        ]);
+
+        expect(await hasResourcePermission("u1", "blog.article", "edit")).toBe(false);
+    });
+
+    it("allows when both of them say so", async () => {
+        mockUserRoleFindMany.mockResolvedValue([
+            { roleId: "role-a", expiresAt: null, role: { name: "editor", priority: 10, rolePermissions: [] } },
+            { roleId: "role-b", expiresAt: null, role: { name: "writer", priority: 5, rolePermissions: [] } },
+        ]);
+        mockResourceFindMany.mockResolvedValue([
+            { principalType: "role", principalId: "role-a", resourceId: null, action: "edit", allow: true },
+            { principalType: "role", principalId: "role-b", resourceId: null, action: "*", allow: true },
+        ]);
+
+        expect(await hasResourcePermission("u1", "blog.article", "edit")).toBe(true);
+    });
+});
+
+describe("requirePermission", () => {
+    it("lets a caller through when they hold the name", async () => {
+        mockUserRoleFindMany.mockResolvedValue(memberWith(["blog.manage"]));
+        expect(await requirePermission("blog.manage")("u1")).toEqual({ allowed: true });
+    });
+
+    it("refuses, and says which name was missing", async () => {
+        // The message names the permission because the caller is a route
+        // handler writing a log line, not a person reading a screen: a
+        // refusal that does not say what was refused is a support ticket.
+        mockUserRoleFindMany.mockResolvedValue(memberWith(["store.view"]));
+        const answer = await requirePermission("blog.manage")("u1");
+        expect(answer.allowed).toBe(false);
+        expect(answer.error).toContain("blog.manage");
+    });
+
+    it("lets an administrator through whatever the name is", async () => {
+        mockUserRoleFindMany.mockResolvedValue(adminUser());
+        expect(await requirePermission("anything.at-all")("u1")).toEqual({ allowed: true });
     });
 });
 
