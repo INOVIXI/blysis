@@ -86,8 +86,6 @@
     "en": {
       "discordIntegration": {
         "adm_discordWebhooks": "Discord Webhooks",
-        "adm_events": "Events",
-        "adm_eventsSubtitle": "The message sent for each. An event with nothing written for it keeps the wording this module ships.",
         "adm_evt_blogArticle": "Blog Article",
         "adm_evt_blogArticle_desc": "When a new blog article is published",
         "adm_evt_forumTopic": "Forum Topic",
@@ -131,12 +129,9 @@
         "adm_msgUnknownNames": "This event does not carry {names}. They will appear in the message exactly as written, which is how a misspelling shows itself.",
         "adm_msgWebhook": "Send to",
         "adm_msgWebhookHint": "Leave empty to use the general webhook.",
-        "adm_placeholders": "You can write: {names}",
         "adm_saveWebhooks": "Save Webhooks",
         "adm_saved": "Saved!",
         "adm_saving": "Saving...",
-        "adm_testSend": "Send a test",
-        "adm_testSent": "Sent. Look in the channel.",
         "adm_webhooksSubtitle": "Configure Discord webhook notifications",
         "channelId": "Channel ID",
         "description": "Configure Discord webhooks and bot notifications",
@@ -183,8 +178,6 @@
     "tr": {
       "discordIntegration": {
         "adm_discordWebhooks": "Discord Webhook'ları",
-        "adm_events": "Olaylar",
-        "adm_eventsSubtitle": "Her biri için gönderilen mesaj. Hakkında bir şey yazılmamış olay, modülün getirdiği metni kullanmaya devam eder.",
         "adm_evt_blogArticle": "Blog Yazısı",
         "adm_evt_blogArticle_desc": "Yeni bir blog yazısı yayınlandığında",
         "adm_evt_forumTopic": "Forum Konusu",
@@ -228,12 +221,9 @@
         "adm_msgUnknownNames": "Bu olay {names} taşımıyor. Mesajda yazdığınız gibi görünecekler; yazım hatası kendini böyle gösterir.",
         "adm_msgWebhook": "Nereye gitsin",
         "adm_msgWebhookHint": "Boş bırakırsanız genel webhook kullanılır.",
-        "adm_placeholders": "Yazabilecekleriniz: {names}",
         "adm_saveWebhooks": "Webhook'ları Kaydet",
         "adm_saved": "Kaydedildi!",
         "adm_saving": "Kaydediliyor...",
-        "adm_testSend": "Test gönder",
-        "adm_testSent": "Gönderildi. Kanala bakın.",
         "adm_webhooksSubtitle": "Discord webhook bildirimlerini yapılandırın",
         "channelId": "Kanal Kimliği",
         "description": "Discord webhook ve bot bildirimlerini yapılandırın",

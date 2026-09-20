@@ -74,6 +74,12 @@ interface SectionItem {
     primary: string;
     secondary?: string;
     badge?: string;
+    /**
+     * Said in the reader's language, where the sender has a key for it. The
+     * ticket card sent `t.status` and this drew it, so the first screen an
+     * operator opens said WAITING_REPLY in English capitals.
+     */
+    badgeKey?: string;
     badgeColor?: string;
     value?: string;
 }
@@ -177,12 +183,22 @@ export function DashboardKpiRow({ order, coreSlots }: {
 }) {
     const { cards, stats, loading } = useModuleDashboardData();
     const t = useTranslations("admin");
+    /*
+     * The root of the catalogue, for a key that names its own namespace.
+     *
+     * A module's dashboard keys live in its `admin` block and resolve here
+     * without a prefix. A word a module already has elsewhere does not: the
+     * ticket states are `tickets.open` and the nine of them, and asking a
+     * module to keep a second copy of each under `admin` is the shadow
+     * catalogue that has had to be deleted once already.
+     */
+    const rootT = useTranslations();
     const { format: money } = useSiteCurrency();
 
     const translateLabel = (raw: string, key?: string): string => {
         if (!key) return raw;
         try {
-            const translated = t(key);
+            const translated = key.includes(".") ? rootT(key) : t(key);
             return translated && translated !== key ? translated : raw;
         } catch {
             return raw;
@@ -254,11 +270,15 @@ export function ModuleStatCards() {
 export function ModuleSections() {
     const { sections, loading } = useModuleDashboardData();
     const t = useTranslations("admin");
+    // The root of the catalogue, for a key that names its own namespace. See
+    // `DashboardKpiRow` above: a word a module already has elsewhere should
+    // not need a second copy under `admin`.
+    const rootT = useTranslations();
 
     const translateLabel = (raw: string, key?: string): string => {
         if (!key) return raw;
         try {
-            const translated = t(key);
+            const translated = key.includes(".") ? rootT(key) : t(key);
             return translated && translated !== key ? translated : raw;
         } catch {
             return raw;
@@ -297,7 +317,7 @@ export function ModuleSections() {
                                                 {item.value && <span className="font-bold text-sm">{item.value}</span>}
                                                 {item.badge && (
                                                     <span className={badgeClassName(badgeTones[item.badgeColor || "gray"] ?? "neutral")}>
-                                                        {item.badge}
+                                                        {translateLabel(item.badge, item.badgeKey)}
                                                     </span>
                                                 )}
                                             </div>

@@ -88,7 +88,20 @@ function straysIn(moduleId: string): Stray[] {
     const vocabulary = new Set<string>();
     for (const source of sources.values()) {
         for (const [, , body] of source.matchAll(DECLARES_A_VOCABULARY())) {
-            for (const value of body.matchAll(/"([^"]+)"/g)) vocabulary.add(fold(value[1]));
+            /*
+             * A vocabulary written as rows rather than as a flat list.
+             *
+             * `DEFAULT_STATUSES` is an array of objects now - a key, a
+             * translation key, a tone, two flags - and reading every quoted
+             * string in it put the tones into the column's vocabulary. The
+             * list of tones beside it then overlapped by four of five and the
+             * fifth was reported as a value the column may not hold. The
+             * column's values are the keys.
+             */
+            const rows = body.includes("{")
+                ? [...body.matchAll(/\bkey:\s*"([^"]+)"/g)].map((m) => m[1])
+                : [...body.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+            for (const value of rows) vocabulary.add(fold(value));
         }
     }
     if (vocabulary.size === 0) return [];

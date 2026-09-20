@@ -51,8 +51,11 @@ describe("the ticket sidebar", () => {
     it("names a status rather than printing the column", () => {
         expect(source).not.toContain('{s.replace("_", " ")}');
         expect(source).not.toMatch(/<option key=\{p\} value=\{p\}>\{p\}<\/option>/);
-        expect(source).toContain("labelFor(t, ADMIN_STATUS_KEYS, s)");
-        expect(source).toContain("labelFor(t, PRIORITY_KEYS, p)");
+        // The maps were per-screen and then shared; the states are rows an
+        // operator writes now, so the word comes from the row the ticket
+        // holds rather than from a map of five keys.
+        expect(source).toContain("stateLabel(t, s, states.statuses)");
+        expect(source).toContain("stateLabel(t, p, states.priorities)");
     });
 
     it("says each of those once, not once as a control and again as a badge", () => {

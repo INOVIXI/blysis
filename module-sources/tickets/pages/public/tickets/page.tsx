@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { Badge, LoadFailed, Pagination, buttonClassName, usePagedRows } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
 import { useRelativeTime } from "@/core/sdk/ui";
-import { labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../lib/status-labels";
+import { stateLabel, stateTone, type TicketState } from "../../../lib/ticket-states";
 import { useTranslations } from "next-intl";
 
 interface Ticket {
@@ -24,8 +24,16 @@ export default function SupportPage() {
     const { data: session } = useSession();
     const t = useTranslations('tickets');
     const relativeTime = useRelativeTime();
-    const statusLabel = (status: string) => labelFor(t, STATUS_KEYS, status);
-    const priorityLabel = (priority: string) => labelFor(t, PRIORITY_KEYS, priority);
+    /*
+     * The words come with the tickets. They are rows an operator writes now,
+     * so a state they added has no key in any catalogue - only the row knows
+     * what it is called.
+     */
+    const [states, setStates] = useState<{ statuses: TicketState[]; priorities: TicketState[] }>(
+        { statuses: [], priorities: [] },
+    );
+    const statusLabel = (status: string) => stateLabel(t, status, states.statuses);
+    const priorityLabel = (priority: string) => stateLabel(t, priority, states.priorities);
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
@@ -40,6 +48,7 @@ export default function SupportPage() {
                 .then((data) => {
                     if (cancelled) return;
                     setTickets(data.tickets || []);
+                    if (data.states) setStates(data.states);
                     setFailed(false);
                     setLoading(false);
                 })
@@ -104,10 +113,10 @@ export default function SupportPage() {
                                         {ticket.department.name}
                                     </td>
                                     <td className="px-4 py-4">
-                                        <Badge tone={statusTone(ticket.status)}>{statusLabel(ticket.status)}</Badge>
+                                        <Badge tone={stateTone(ticket.status, states.statuses)}>{statusLabel(ticket.status)}</Badge>
                                     </td>
                                     <td className="px-4 py-4">
-                                        <Badge tone={priorityTone(ticket.priority)}>{priorityLabel(ticket.priority)}</Badge>
+                                        <Badge tone={stateTone(ticket.priority, states.priorities)}>{priorityLabel(ticket.priority)}</Badge>
                                     </td>
                                     <td className="px-4 py-4 text-sm text-muted-foreground">
                                         {relativeTime(ticket.updatedAt)}

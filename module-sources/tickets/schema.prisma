@@ -67,8 +67,11 @@ model TicketDepartmentPermission {
 model Ticket {
   id          String         @id @default(cuid())
   subject     String
-  status      TicketStatus   @default(OPEN)
-  priority    TicketPriority @default(MEDIUM)
+  /// The key of a `TicketStatus` row. A plain string, because which states
+  /// a desk has is the operator's to decide and a database type is not.
+  status      String         @default("OPEN")
+  /// The key of a `TicketPriority` row, for the same reason.
+  priority    String         @default("MEDIUM")
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   closedAt    DateTime?
@@ -94,19 +97,43 @@ model Ticket {
   @@index([createdAt])
 }
 
-enum TicketStatus {
-  OPEN
-  IN_PROGRESS
-  WAITING_REPLY
-  RESOLVED
-  CLOSED
+/**
+ * A state a ticket can be in, as the operator names it.
+ *
+ * `isOpen` is what the dashboard and the counts mean by "open" and
+ * `closesTicket` is what stamps `closedAt`; both were written into three
+ * files as `status === "CLOSED" || status === "RESOLVED"`, which is a rule
+ * that cannot survive an operator renaming anything.
+ */
+model TicketStatus {
+  id           String  @id @default(cuid())
+  key          String  @unique
+  /// The word an operator typed. Null for one this module ships.
+  name         String?
+  /// The key this module translates it under. Null for one an operator added.
+  nameKey      String?
+  tone         String  @default("neutral")
+  isOpen       Boolean @default(true)
+  closesTicket Boolean @default(false)
+  order        Int     @default(0)
+  isActive     Boolean @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([isActive, order])
 }
 
-enum TicketPriority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
+/** How urgent a ticket is, as the operator names it. */
+model TicketPriority {
+  id        String  @id @default(cuid())
+  key       String  @unique
+  name      String?
+  nameKey   String?
+  tone      String  @default("neutral")
+  order     Int     @default(0)
+  isActive  Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([isActive, order])
 }
 
 model TicketMessage {

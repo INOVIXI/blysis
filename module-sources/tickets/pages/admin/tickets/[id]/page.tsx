@@ -6,13 +6,12 @@ import { useState, useEffect, use } from "react";
 import { Link } from "@/core/sdk/navigation";
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, MemberAvatar, RichContent, RichTextEditor, NativeSelect, buttonClassName, useLocalDate, useLocalDateTime } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, Send } from "lucide-react";
-import { adminKeys, labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../../lib/status-labels";
+import { isOpenState, stateLabel, stateTone, type TicketState } from "../../../../lib/ticket-states";
 import { toast } from "sonner";
 import { writeError } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
 
 /** The admin catalogue's copy of the status labels. */
-const ADMIN_STATUS_KEYS = adminKeys(STATUS_KEYS);
 
 interface Message {
     id: string;
@@ -38,8 +37,8 @@ interface Ticket {
     messages: Message[];
 }
 
-const statusOptions = ["OPEN", "IN_PROGRESS", "WAITING_REPLY", "RESOLVED", "CLOSED"];
-const priorityOptions = ["LOW", "MEDIUM", "HIGH", "URGENT"];
+// The two lists are the desk's own now, so a state an operator added is one
+// this screen offers without anybody editing it.
 
 interface PageProps {
     params: Promise<{ id: string; locale: string }>;
@@ -56,6 +55,14 @@ export default function AdminTicketDetailPage(props: PageProps) {
     const ticketId = params.id;
 
     const [ticket, setTicket] = useState<Ticket | null>(null);
+    /*
+     * The words come with the ticket. States are rows an operator writes
+     * now, so one they added has no key in any catalogue - only the row
+     * knows what it is called.
+     */
+    const [states, setStates] = useState<{ statuses: TicketState[]; priorities: TicketState[] }>(
+        { statuses: [], priorities: [] },
+    );
     const [loading, setLoading] = useState(true);
     const [replyContent, setReplyContent] = useState("");
     const [sending, setSending] = useState(false);
@@ -67,6 +74,7 @@ export default function AdminTicketDetailPage(props: PageProps) {
             if (res.ok) {
                 const data = await res.json();
                 setTicket(data);
+                if (data.states) setStates(data.states);
             }
         } catch (err) {
             console.error("Failed to fetch ticket:", err);
@@ -187,7 +195,8 @@ export default function AdminTicketDetailPage(props: PageProps) {
                       * nothing about why: the conversation simply ended and
                       * the page looked like it had lost a control.
                       */}
-                    {ticket.status === "CLOSED" ? (
+                    {/* Finished, by the state rather than by one name. */}
+                    {!isOpenState(ticket.status, states.statuses) ? (
                         <Card>
                             <CardContent className="p-4 text-sm text-muted-foreground">
                                 {t("adm_closedNoReply")}
@@ -240,8 +249,8 @@ export default function AdminTicketDetailPage(props: PageProps) {
                                         CLOSED, ten centimetres apart, and the
                                         helper that names one was already
                                         imported for the other. */}
-                                    {statusOptions.map((s) => (
-                                        <option key={s} value={s}>{labelFor(t, ADMIN_STATUS_KEYS, s)}</option>
+                                    {states.statuses.map(({ key: s }) => (
+                                        <option key={s} value={s}>{stateLabel(t, s, states.statuses)}</option>
                                     ))}
                                 </NativeSelect>
                             </div>
@@ -253,8 +262,8 @@ export default function AdminTicketDetailPage(props: PageProps) {
                                     onChange={(e) => updateTicket("priority", e.target.value)}
                                     disabled={updating} className="w-full"
                                 >
-                                    {priorityOptions.map((p) => (
-                                        <option key={p} value={p}>{labelFor(t, PRIORITY_KEYS, p)}</option>
+                                    {states.priorities.map(({ key: p }) => (
+                                        <option key={p} value={p}>{stateLabel(t, p, states.priorities)}</option>
                                     ))}
                                 </NativeSelect>
                             </div>

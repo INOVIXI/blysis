@@ -114,7 +114,14 @@ describe("what a reader sees is a label, not a column", () => {
                 }
             }
         };
-        expectKeys("tickets", "tickets", ["open", "inProgress", "waitingReply", "resolved", "closed", "low", "medium", "high", "urgent", "adm_open", "adm_inProgress", "adm_waitingReply", "adm_resolved", "adm_closed"]);
+        /*
+         * The nine public words only. A ticket's states are rows now, and a
+         * row's `nameKey` has to resolve on both sides - core strips `adm_`
+         * keys from the catalogue a public page receives - so the five admin
+         * copies stopped being read the day the panel started asking the row
+         * what it is called.
+         */
+        expectKeys("tickets", "tickets", ["open", "inProgress", "waitingReply", "resolved", "closed", "low", "medium", "high", "urgent"]);
         expectKeys("store", "store", ["tab_orders_statusPending", "tab_orders_statusProcessing", "tab_orders_statusCompleted", "tab_orders_statusCancelled", "tab_orders_statusRefunded", "adm_orderStatus_PENDING", "adm_orderStatus_REFUNDED"]);
         expectKeys("punishments", "punishments", ["ban", "mute", "kick", "warning", "console"]);
         expectKeys("referral", "referral", ["pending", "completed", "rewarded", "creditsUnit"]);

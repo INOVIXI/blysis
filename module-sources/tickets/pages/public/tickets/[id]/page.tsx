@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Badge, Button, RichContent, RichTextEditor, buttonClassName } from "@/core/sdk/ui";
 import { PageFrame, StandardSidebarLayout } from "@/core/sdk/layout";
 import { useRelativeTime } from "@/core/sdk/ui";
-import { labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../../lib/status-labels";
+import { FIRST_STATUS, isOpenState, stateLabel, stateTone, type TicketState } from "../../../../lib/ticket-states";
 
 interface Message {
     id: string;
@@ -41,6 +41,14 @@ export default function TicketDetailPage({ params }: PageProps) {
     const t = useTranslations("tickets");
     const relativeTime = useRelativeTime();
     const [ticket, setTicket] = useState<Ticket | null>(null);
+    /*
+     * The words come with the ticket. States are rows an operator writes
+     * now, so one they added has no key in any catalogue - only the row
+     * knows what it is called.
+     */
+    const [states, setStates] = useState<{ statuses: TicketState[]; priorities: TicketState[] }>(
+        { statuses: [], priorities: [] },
+    );
     const [loading, setLoading] = useState(true);
     const [reply, setReply] = useState("");
     const [sending, setSending] = useState(false);
@@ -59,6 +67,7 @@ export default function TicketDetailPage({ params }: PageProps) {
                 .then((data) => {
                     if (cancelled) return;
                     setTicket(data);
+                    if (data.states) setStates(data.states);
                     setLoading(false);
                 })
                 .catch((err) => {
@@ -90,7 +99,7 @@ export default function TicketDetailPage({ params }: PageProps) {
             setTicket((prev) => prev ? {
                 ...prev,
                 messages: [...prev.messages, message],
-                status: "OPEN",
+                status: FIRST_STATUS,
             } : null);
             setReply("");
         } catch (err) {
@@ -123,8 +132,8 @@ export default function TicketDetailPage({ params }: PageProps) {
                own below it. That card held one short line across the full
                measure and nothing else. */
             actions={ticket ? (
-                <Badge tone={statusTone(ticket.status)}>
-                    {labelFor(t, STATUS_KEYS, ticket.status)}
+                <Badge tone={stateTone(ticket.status, states.statuses)}>
+                    {stateLabel(t, ticket.status, states.statuses)}
                 </Badge>
             ) : null}
         >
@@ -145,8 +154,8 @@ export default function TicketDetailPage({ params }: PageProps) {
                                     <div className="space-y-2 text-sm">
                                         <div className="flex justify-between gap-3">
                                             <span className="text-muted-foreground">{t("priority")}</span>
-                                            <Badge tone={priorityTone(ticket.priority)}>
-                                                {labelFor(t, PRIORITY_KEYS, ticket.priority)}
+                                            <Badge tone={stateTone(ticket.priority, states.priorities)}>
+                                                {stateLabel(t, ticket.priority, states.priorities)}
                                             </Badge>
                                         </div>
                                         <div className="flex justify-between gap-3">
@@ -212,7 +221,8 @@ export default function TicketDetailPage({ params }: PageProps) {
                                 </div>
 
                                 {/* Reply Form */}
-                                {ticket.status !== "CLOSED" && (
+                                {/* Still open, by the state rather than by one name. */}
+                                {isOpenState(ticket.status, states.statuses) && (
                                     <div className="bg-card rounded-xl border border-border p-4">
                                         <form onSubmit={handleReply}>
                                             {/* The same editor the staff

@@ -3,9 +3,11 @@ import { Prisma } from "@prisma/client";
 import { answersFor } from "../../lib/fields";
 import { fieldsOf, mayOpenIn } from "../../lib/departments";
 import { isRestrictedFrom } from "@/core/sdk/server";
-import { pageParams, enumParam, hasPermission, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { pageParams, hasPermission, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { TICKET_STATUSES, ticketSchema } from "../../lib/validations";
+import { ticketSchema } from "../../lib/validations";
+import { readTicketStates } from "../../lib/read-states";
+import { DEFAULT_PRIORITY } from "../../lib/ticket-states";
 
 // GET /api/v1/tickets - List tickets
 export async function GET(request: NextRequest) {
@@ -16,10 +18,19 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    // Ticket.status is a Prisma enum, so a value the enum does not have is a
-    // validation error thrown out of findMany - a 500 for what is a bad filter.
-    const status = enumParam(searchParams, "status", TICKET_STATUSES);
-    if (status instanceof NextResponse) return status;
+    /*
+     * The column is a plain string now, so an unknown filter is no longer a
+     * 500 out of `findMany` - it is a search that finds nothing. It is still
+     * checked against the desk's own states, because a filter for a status
+     * this desk does not have is a mistake worth saying out loud rather than
+     * an empty list.
+     */
+    const { statuses, priorities } = await readTicketStates();
+    const asked = searchParams.get("status");
+    if (asked && !statuses.some((state) => state.key === asked)) {
+        return NextResponse.json({ error: "Unknown status", code: "unknown_status" }, { status: 400 });
+    }
+    const status = asked;
     const departmentId = searchParams.get("departmentId");
     const { page, limit, skip, take } = pageParams(searchParams, { defaultLimit: 10 });
 
@@ -59,6 +70,13 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
         tickets,
+        /*
+         * The words a screen needs to draw these, with the tickets rather
+         * than from a second request. A member reading their own tickets
+         * cannot ask the admin endpoint for them, and a state an operator
+         * added has no key in any catalogue - only the row knows its name.
+         */
+        states: { statuses, priorities },
         pagination: {
             page,
             limit,
@@ -97,6 +115,13 @@ export async function POST(request: NextRequest) {
     }
 
     const { subject, message, departmentId, priority } = validation.data;
+
+    // A priority this desk does not have is refused rather than written: the
+    // column is a plain string now, so nothing below would catch it.
+    const { priorities } = await readTicketStates();
+    if (priority && !priorities.some((one) => one.key === priority)) {
+        return NextResponse.json({ error: "Unknown priority", code: "unknown_priority" }, { status: 400 });
+    }
 
     // Verify department exists
     const department = await prisma.ticketDepartment.findUnique({
@@ -151,7 +176,7 @@ export async function POST(request: NextRequest) {
     const ticket = await prisma.ticket.create({
         data: {
             subject,
-            priority: priority || "MEDIUM",
+            priority: priority || DEFAULT_PRIORITY,
             departmentId,
             // With the label each question had when it was asked, so renaming
             // or deleting a field later does not rewrite an old ticket.

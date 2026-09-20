@@ -127,7 +127,15 @@ describe("query parameters reach Prisma in a shape it accepts", () => {
     }));
 
     it("knows which columns are enums and which routes to read", () => {
-        expect(columns.get("ticket")?.has("status")).toBe(true);
+        /*
+         * A ticket's status stopped being a database type: which states a
+         * desk has is the operator's, and adding a value to an enum is a
+         * migration rather than a setting. So the hazard this whole file is
+         * about - a raw query parameter reaching a column Postgres will
+         * refuse - no longer applies to it, and the route checks the value
+         * against the desk's own rows instead.
+         */
+        expect(columns.get("ticket")?.has("status") ?? false).toBe(false);
         expect(columns.get("blogArticle")?.has("status")).toBe(true);
         expect(columns.get("suggestion")?.has("status") ?? false).toBe(false);
         expect(routes.length).toBeGreaterThan(100);
@@ -143,9 +151,8 @@ describe("query parameters reach Prisma in a shape it accepts", () => {
         expect(bad.join("\n")).toBe("");
     });
 
-    it("routes the two enum filters through enumParam", () => {
+    it("routes the enum filter through enumParam", () => {
         for (const file of [
-            "module-sources/tickets/api/tickets/route.ts",
             "module-sources/blog/api/articles/route.ts",
         ]) {
             const source = fs.readFileSync(path.join(ROOT, file), "utf8");
@@ -155,10 +162,15 @@ describe("query parameters reach Prisma in a shape it accepts", () => {
     });
 
     it("keeps each status list in one place", () => {
-        const tickets = fs.readFileSync(path.join(ROOT, "module-sources/tickets/lib/validations.ts"), "utf8");
         const blog = fs.readFileSync(path.join(ROOT, "module-sources/blog/lib/validations.ts"), "utf8");
-        expect(tickets).toContain("z.enum(TICKET_STATUSES)");
         expect(blog).toContain("z.enum(ARTICLE_STATUSES)");
+        // A ticket's states are rows, so the list cannot live in a schema at
+        // all: the route checks what was asked for against what the desk
+        // has, which is the one place it can be checked against.
+        const ticketRoute = fs.readFileSync(
+            path.join(ROOT, "module-sources/tickets/api/tickets/route.ts"), "utf8");
+        expect(ticketRoute).toContain("readTicketStates");
+        expect(ticketRoute).toContain("unknown_status");
     });
 });
 

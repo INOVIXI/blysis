@@ -16,7 +16,7 @@ export const ticketDepartmentUpdateSchema = ticketDepartmentSchema.partial();
 export const ticketSchema = z.object({
     subject: z.string().min(3, "Subject must be at least 3 characters").max(200),
     departmentId: z.string().min(1, "Department is required"),
-    priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).optional(),
+    priority: z.string().trim().min(1).max(32).optional(),
     /**
      * Answers to the extra questions this department asks. Bounded here and
      * matched against the questions themselves in lib/fields.ts: which keys
@@ -33,15 +33,16 @@ export const ticketMessageSchema = z.object({
 });
 
 /**
- * The TicketStatus enum, once. The list is what the write schema accepts and
- * what the list endpoint's `?status=` filter accepts, so the two cannot drift:
- * a status the API will not set is not one it will search for either.
+ * A state is a row now, so the schema bounds the shape and the route checks
+ * the value against the desk's own list. A `z.enum` here would be the list
+ * written down twice, and the second copy is the one that goes stale the
+ * first time an operator adds a status.
  */
-export const TICKET_STATUSES = ["OPEN", "IN_PROGRESS", "WAITING_REPLY", "RESOLVED", "CLOSED"] as const;
+const stateKey = z.string().trim().min(1).max(32);
 
 export const ticketUpdateSchema = z.object({
-    status: z.enum(TICKET_STATUSES).optional(),
-    priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).optional(),
+    status: stateKey.optional(),
+    priority: stateKey.optional(),
     assignedToId: z.string().optional().nullable(),
 });
 

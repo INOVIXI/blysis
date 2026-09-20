@@ -4,6 +4,8 @@ import { auth } from "@/core/sdk/auth";
 import { ticketMessageSchema, ticketUpdateSchema } from "../../../lib/validations";
 import { canAccessTicket } from "../../../lib/can-access-ticket";
 import { ticketFieldsFor } from "../../../lib/ticket-edit-rights";
+import { closesTicket, movedTo } from "../../../lib/ticket-states";
+import { readTicketStates } from "../../../lib/read-states";
 
 interface RouteParams {
     params: Promise<{ id: string }>;
@@ -42,7 +44,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    return NextResponse.json(ticket);
+    /*
+     * The words this ticket's own states are called, with the ticket. A
+     * member cannot ask the admin endpoint for them, and a state an operator
+     * added has no key in any catalogue - only the row knows its name.
+     */
+    const { statuses, priorities } = await readTicketStates();
+    return NextResponse.json({ ...ticket, states: { statuses, priorities } });
 }
 
 // POST /api/v1/tickets/[id] - Add a message/reply to ticket
@@ -107,15 +115,19 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     });
 
     // Update ticket status and timestamp.
-    // Only adjust status when the ticket isn't already closed/resolved -
-    // a reply to a RESOLVED or CLOSED ticket previously auto-reopened
-    // it as OPEN, which surprised admins. Now resolved tickets stay
-    // resolved unless the admin explicitly reopens via PATCH.
-    const isClosed = ticket.status === "RESOLVED" || ticket.status === "CLOSED";
+    /*
+     * Where a reply moves the ticket, asked of the desk's own states. A reply
+     * to a finished ticket leaves it finished - one to a resolved ticket used
+     * to reopen it, which surprised operators - and the two states the flow
+     * names are looked up rather than written, so a desk that has taken
+     * either away simply leaves the status alone.
+     */
+    const { statuses: replyStates } = await readTicketStates();
+    const moved = movedTo(ticket.status, isStaffReply, replyStates);
     await prisma.ticket.update({
         where: { id },
         data: {
-            status: isClosed ? ticket.status : (isStaffReply ? "WAITING_REPLY" : "OPEN"),
+            ...(moved ? { status: moved } : {}),
             updatedAt: new Date(),
         },
     });
@@ -191,6 +203,19 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         (await hasPermission(session.user.id, "tickets.manage"));
     const decision = ticketFieldsFor({ isStaff }, validation.data);
 
+    /*
+     * The desk's own states, asked once. A state this desk does not have is
+     * refused here rather than written: the column is a plain string now, so
+     * nothing below would have caught it.
+     */
+    const { statuses, priorities } = await readTicketStates();
+    if (decision.allowed.status && !statuses.some((one) => one.key === decision.allowed.status)) {
+        return NextResponse.json({ error: "Unknown status", code: "unknown_status" }, { status: 400 });
+    }
+    if (decision.allowed.priority && !priorities.some((one) => one.key === decision.allowed.priority)) {
+        return NextResponse.json({ error: "Unknown priority", code: "unknown_priority" }, { status: 400 });
+    }
+
     // An assignee has to actually be on the team. The column only requires a
     // real user, so a ticket could be handed to somebody with no way to open
     // it and no idea it was theirs.
@@ -223,8 +248,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         updateData.assignedToId = decision.allowed.assignedToId;
     }
 
-    // Set closedAt if closing the ticket
-    if (decision.allowed.status === "CLOSED" || decision.allowed.status === "RESOLVED") {
+    /*
+     * The day it was finished, stamped by the state rather than by two names.
+     * This read `status === "CLOSED" || status === "RESOLVED"`, which is a
+     * rule that cannot survive an operator renaming either, and one a desk
+     * with a third finishing state could not extend.
+     */
+    if (decision.allowed.status && closesTicket(decision.allowed.status, statuses)) {
         updateData.closedAt = new Date();
     }
 
@@ -242,7 +272,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const { doActionAsync } = await import("@/core/sdk");
     await doActionAsync("tickets.ticket.updated", updated);
 
-    if (decision.allowed.status === "CLOSED" || decision.allowed.status === "RESOLVED") {
+    if (decision.allowed.status && closesTicket(decision.allowed.status, statuses)) {
         await doActionAsync("tickets.ticket.closed", updated);
     }
 

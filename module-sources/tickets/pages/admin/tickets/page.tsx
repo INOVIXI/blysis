@@ -6,11 +6,10 @@ import { useState, useEffect } from "react";
 import { Link } from "@/core/sdk/navigation";
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, ListControls, LoadFailed, Pagination, buttonClassName, useRowList } from "@/core/sdk/ui";
 import { useRelativeTime } from "@/core/sdk/ui";
-import { adminKeys, labelFor, priorityTone, PRIORITY_KEYS, statusTone, STATUS_KEYS } from "../../../lib/status-labels";
+import { stateLabel, stateTone, type TicketState } from "../../../lib/ticket-states";
 import { AdminPageHeader, FilterChips } from "@/core/sdk/admin";
 
 /** The admin catalogue's copy of the status labels. */
-const ADMIN_STATUS_KEYS = adminKeys(STATUS_KEYS);
 
 
 interface Ticket {
@@ -31,6 +30,14 @@ export default function AdminTicketsPage() {
     const commonT = useTranslations("common");
     const relativeTime = useRelativeTime();
     const [tickets, setTickets] = useState<Ticket[]>([]);
+    /*
+     * The words come with the ticket. States are rows an operator writes
+     * now, so one they added has no key in any catalogue - only the row
+     * knows what it is called.
+     */
+    const [states, setStates] = useState<{ statuses: TicketState[]; priorities: TicketState[] }>(
+        { statuses: [], priorities: [] },
+    );
     // The lines the row draws. This list grows and paging to a row was the
     // only way to reach one.
     const list = useRowList(tickets, { text: (row) => [row.subject, row.user?.username], pageSize: 20 });
@@ -44,14 +51,8 @@ export default function AdminTicketsPage() {
      * this replaced were written before that status existed and nobody went
      * back. A tab whose count is missing is a tab that reads as empty.
      */
-    const STATUSES = ["OPEN", "IN_PROGRESS", "WAITING_REPLY", "RESOLVED", "CLOSED"] as const;
-    const STATUS_LABEL: Record<(typeof STATUSES)[number], string> = {
-        OPEN: "open",
-        IN_PROGRESS: "inProgress",
-        WAITING_REPLY: "waitingReply",
-        RESOLVED: "resolved",
-        CLOSED: "closed",
-    };
+    // The tabs are the desk's own states, so a status an operator added has
+    // a tab and a count like every other one.
     const [stats, setStats] = useState<Record<string, number>>({});
 
     useEffect(() => {
@@ -65,6 +66,7 @@ export default function AdminTicketsPage() {
             .then((data) => {
                 if (cancelled) return;
                 setTickets(data.tickets || []);
+                if (data.states) setStates(data.states);
                 setFailed(false);
                 setLoading(false);
             })
@@ -78,7 +80,7 @@ export default function AdminTicketsPage() {
 
     useEffect(() => {
         let cancelled = false;
-        Promise.all(STATUSES.map((status) =>
+        Promise.all(states.statuses.map(({ key: status }) =>
             fetch(`/api/v1/tickets?status=${status}`)
                 .then((r) => (r.ok ? r.json() : null))
                 .then((d) => [status, d === null ? null : (d?.pagination?.total ?? 0)] as const),
@@ -97,8 +99,10 @@ export default function AdminTicketsPage() {
             console.error("ticket counts could not be read", err);
         });
         return () => { cancelled = true; };
+        // The counts are one per state, so they are asked again when the
+        // desk's states arrive rather than once on mount.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [states.statuses]);
 
     return (
         <>
@@ -123,10 +127,10 @@ export default function AdminTicketsPage() {
                 onSelect={setStatusFilter}
                 chips={[
                     { id: "", label: t("adm_all") },
-                    ...STATUSES.map((status) => ({
-                        id: status,
-                        label: t(`adm_${STATUS_LABEL[status]}`),
-                        count: stats[status],
+                    ...states.statuses.map((status) => ({
+                        id: status.key,
+                        label: stateLabel(t, status.key, states.statuses),
+                        count: stats[status.key],
                     })),
                 ]}
             />
@@ -177,10 +181,10 @@ export default function AdminTicketsPage() {
                                         {ticket.department.name}
                                     </td>
                                     <td className="px-4 py-4">
-                                        <Badge tone={statusTone(ticket.status)}>{labelFor(t, ADMIN_STATUS_KEYS, ticket.status)}</Badge>
+                                        <Badge tone={stateTone(ticket.status, states.statuses)}>{stateLabel(t, ticket.status, states.statuses)}</Badge>
                                     </td>
                                     <td className="px-4 py-4">
-                                        <Badge tone={priorityTone(ticket.priority)}>{labelFor(t, PRIORITY_KEYS, ticket.priority)}</Badge>
+                                        <Badge tone={stateTone(ticket.priority, states.priorities)}>{stateLabel(t, ticket.priority, states.priorities)}</Badge>
                                     </td>
                                     <td className="px-4 py-4 text-sm text-muted-foreground">
                                         {relativeTime(ticket.updatedAt)}

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readTicketStates } from "../../lib/read-states";
+import { openStatusKeys } from "../../lib/ticket-states";
 import { dailySeries, dayLabels, hasPermission, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 
@@ -24,9 +26,15 @@ export async function GET(request: NextRequest) {
     );
 
     const tickets = await prisma.ticket.count();
+    /*
+     * Which states count as open is the operator's now, so it is asked
+     * rather than named. Three status names were written into this query,
+     * and a desk that renamed any of them got a dashboard counting nothing.
+     */
+    const { statuses } = await readTicketStates();
     const openTickets = await prisma.ticket.findMany({
         take: 5,
-        where: { status: { in: ["OPEN", "IN_PROGRESS", "WAITING_REPLY"] } },
+        where: { status: { in: openStatusKeys(statuses) } },
         orderBy: { createdAt: "desc" },
         include: { user: { select: { username: true } }, department: { select: { name: true } } },
     });
@@ -39,6 +47,20 @@ export async function GET(request: NextRequest) {
     // bucket it here, so the work grew with the site's history to produce one
     // number per day.
     const series = await dailySeries({ table: "Ticket", since: startDate });
+
+    /*
+     * The word, not the column, and said where the reader's language is
+     * known. This route has no locale of its own, so it sends the key the
+     * panel already holds and a readable fallback for a state an operator
+     * added, which has a typed name and no key.
+     */
+    const badgeFor = (key: string) => {
+        const state = statuses.find((one) => one.key === key);
+        return {
+            text: state?.name ?? key.replace(/_/g, " "),
+            key: state?.nameKey ? `tickets.${state.nameKey}` : undefined,
+        };
+    };
 
     const labels = dayLabels(startDate, period);
     const byDay: Record<string, number> = Object.fromEntries(labels.map((k) => [k, 0]));
@@ -67,8 +89,15 @@ export async function GET(request: NextRequest) {
                 id: t.id,
                 href: "/admin/tickets/" + t.id,
                 primary: t.subject,
-                secondary: (t.user?.username ?? "Deleted user") + " · " + (t.department?.name || ""),
-                badge: t.status,
+                secondary: [t.user?.username, t.department?.name].filter(Boolean).join(" · "),
+                /*
+                 * The word, not the column. This sent `t.status` and the
+                 * dashboard drew it, so the first screen an operator opens
+                 * said WAITING_REPLY in English capitals whatever language
+                 * the panel was in.
+                 */
+                badge: badgeFor(t.status).text,
+                badgeKey: badgeFor(t.status).key,
                 badgeColor: "blue",
             }))
         }]
