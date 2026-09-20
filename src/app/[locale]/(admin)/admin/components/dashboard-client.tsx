@@ -8,25 +8,9 @@ import { Package } from "lucide-react";
 import { DynamicIcon, iconNames } from "lucide-react/dynamic";
 import { resolveIconName } from "@/core/lib/icon-names";
 import { useAllModules } from "@/core/providers/module-provider";
-import dynamic from "next/dynamic";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { useSiteCurrency } from "@/core/components/currency/site-currency";
 import { badgeClassName, type BadgeTone } from "@/core/components/ui/badge";
-import { Waiting } from "@/core/components/ui/waiting";
-
-/**
- * The chart's own chunk is fetched on demand, and this holds its place while
- * it arrives. The height is the chart's, so nothing under it moves when it
- * lands. It is rendered inside the tree, so it may translate its own line.
- */
-function ChartWaiting() {
-    const commonT = useTranslations("common");
-    return <Waiting label={commonT("loading")} className="h-[300px]" />;
-}
-
-const DashboardCharts = dynamic(() => import("./dashboard-charts").then(m => ({ default: m.DashboardCharts })), {
-    loading: ChartWaiting,
-});
 
 interface ModuleManifest {
     id: string;
@@ -250,20 +234,6 @@ export function DashboardKpiRow({ order, coreSlots }: {
 }
 
 /**
- * Flat list of module-contributed stat cards, every one of them. Kept for the
- * legacy `DashboardClient` wrapper below.
- */
-export function ModuleStatCards() {
-    const { cards } = useModuleDashboardData();
-    return (
-        <DashboardKpiRow
-            order={cards.map((card) => widgetId("card", card.module, card.id))}
-            coreSlots={{}}
-        />
-    );
-}
-
-/**
  * Module-contributed section panels (e.g. open tickets, latest orders,
  * recent forum topics). Rendered as a 2-col grid of larger Cards.
  */
@@ -338,33 +308,3 @@ export function ModuleSections() {
     );
 }
 
-/**
- * Analytics chart strip, full-width.
- */
-export function DashboardAnalytics() {
-    const t = useTranslations("admin");
-    return (
-        <div>
-            <h2 className="text-lg font-semibold mb-3">{t("dashboard_analytics")}</h2>
-            <DashboardCharts />
-        </div>
-    );
-}
-
-/**
- * Legacy wrapper - still exported for components that import it directly.
- * New dashboard layout composes the three pieces independently.
- */
-export function DashboardClient() {
-    return (
-        <>
-            <ModuleStatCards />
-            <div className="col-span-full mt-4">
-                <ModuleSections />
-            </div>
-            <div className="col-span-full mt-4">
-                <DashboardAnalytics />
-            </div>
-        </>
-    );
-}
