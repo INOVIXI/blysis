@@ -10,7 +10,10 @@
 set -euo pipefail
 
 timeout="${1:-180}"
-url="http://127.0.0.1:3001/api/health"
+# The port is the caller's: this box runs nine other projects and a
+# development server already holds 3001, so a pipeline here publishes the
+# stack somewhere else and says where.
+url="${HEALTH_URL:-http://127.0.0.1:${APP_PORT:-3001}/api/health}"
 deadline=$(( SECONDS + timeout ))
 
 while [ "$SECONDS" -lt "$deadline" ]; do

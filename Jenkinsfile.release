@@ -1,0 +1,132 @@
+/*
+ * What publishing a release does.
+ *
+ * The signal is unchanged: somebody publishes a GitHub release, which creates
+ * the tag, and the tag reaches Jenkins as an ordinary push. No extra plugin
+ * and no second thing to remember - the release notes stay where they are
+ * written and the deploy flow the infrastructure repository documents still
+ * reads "publish a release, then move the tag in `apps/<app>/kustomization`".
+ *
+ * It verifies before it publishes, and it verifies the commit being released
+ * rather than whatever a branch points at by the time the build runs. That is
+ * why the stages are loaded out of this checkout instead of the release job
+ * triggering the branch job.
+ *
+ * `BLYSIS_GHCR` is a username and a personal access token with
+ * `write:packages`. GitHub Actions handed its own token to every job; nothing
+ * does that here, so it is a credential and its absence is the first thing
+ * this fails on rather than the last.
+ */
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+        timeout(time: 120, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '50'))
+    }
+
+    environment {
+        DATABASE_URL = 'postgresql://ci:ci@127.0.0.1:5432/ci'
+        AUTH_SECRET = 'ci-build-secret-key-32-characters!'
+        SECRET_ENCRYPTION_KEY = '0000000000000000000000000000000000000000000000000000000000000000'
+        NEXT_TELEMETRY_DISABLED = '1'
+        // Its own compose project, so the two pipelines never adopt
+        // each other's containers.
+        COMPOSE_PROJECT_NAME = 'blysis-release'
+        // An OCI reference cannot carry an upper case letter and the
+        // repository name does, so this is written out lower rather than
+        // derived from it.
+        IMAGE = 'ghcr.io/inovixi/blysis'
+    }
+
+    stages {
+        stage('This is a tag, and it is a version') {
+            steps {
+                script {
+                    ci = load 'ci/stages.groovy'
+                    // `v1.2.3`, and nothing else. A branch that reached this
+                    // job by mistake would otherwise publish an image called
+                    // after it.
+                    if (!(env.TAG_NAME ==~ /^v\d+\.\d+\.\d+$/)) {
+                        error("This pipeline publishes a version tag. Got: ${env.TAG_NAME ?: env.BRANCH_NAME}")
+                    }
+                    env.VERSION = env.TAG_NAME.substring(1)
+                    echo "Releasing ${env.VERSION}"
+                }
+            }
+        }
+
+        stage('The version is the one in package.json') {
+            steps {
+                // A tag that disagrees with the manifest publishes an image
+                // whose own package says it is something else, and the first
+                // person to notice is whoever reads it months later.
+                sh '''
+                    set -eu
+                    declared=$(node -p "require('./package.json').version")
+                    echo "tag: ${VERSION}  package.json: ${declared}"
+                    test "$declared" = "${VERSION}"
+                '''
+            }
+        }
+
+        stage('Typecheck, lint and unit tests') {
+            steps { script { ci.checks() } }
+        }
+
+        stage('Docker image and module lifecycle') {
+            steps { script { ci.dockerSmoke(10) } }
+            post { always { script { ci.dockerTeardown() } } }
+        }
+
+        stage('End to end') {
+            steps { script { ci.e2e(env.BUILD_TAG, 10) } }
+            post {
+                always {
+                    script { ci.e2eTeardown(env.BUILD_TAG, 10) }
+                    archiveArtifacts artifacts: 'e2e-server.log,playwright-report/**,test-results/**',
+                                     allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('Publish to GHCR') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'BLYSIS_GHCR',
+                    usernameVariable: 'GHCR_USER',
+                    passwordVariable: 'GHCR_TOKEN',
+                )]) {
+                    sh '''
+                        set -eu
+                        echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+                    '''
+                }
+                sh '''
+                    set -eu
+                    major=${VERSION%%.*}
+                    minor=${VERSION%.*}
+                    # The image the smoke test already built and exercised,
+                    # rather than a second build of the same tree: what is
+                    # published is then the thing that was tested.
+                    for t in "${VERSION}" "${minor}" "${major}" "${TAG_NAME}" latest; do
+                        docker tag "blysis:${COMPOSE_PROJECT_NAME}" "${IMAGE}:${t}"
+                        docker push "${IMAGE}:${t}"
+                        echo "pushed ${IMAGE}:${t}"
+                    done
+                '''
+            }
+            post {
+                always { sh 'docker logout ghcr.io || true' }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs(deleteDirs: true, notFailBuild: true)
+        }
+    }
+}

@@ -156,7 +156,7 @@ jobs:
         run: docker compose up -d
 
       - name: Wait for health
-        run: ./.github/scripts/wait-for-health.sh 180
+        run: ./ci/wait-for-health.sh 180
 
       # A path served only by the blog module. Before the module exists the
       # API catch-all has no route for it, so this is a 404 - the baseline the
@@ -183,7 +183,7 @@ jobs:
         run: |
           set -euo pipefail
           docker compose restart app
-          ./.github/scripts/wait-for-health.sh 900
+          ./ci/wait-for-health.sh 900
           # Written to a file, not piped: `grep -q` exits on the first match
           # and the writer dies of SIGPIPE, which `pipefail` then reports as a
           # failed assertion on a log line that was actually present.
@@ -217,7 +217,7 @@ jobs:
           set -euo pipefail
           docker compose down
           docker compose up -d
-          ./.github/scripts/wait-for-health.sh 900
+          ./ci/wait-for-health.sh 900
           code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3001/api/v1/blog/articles)
           echo "post-recreate status: $code"
           [ "$code" = "200" ] || { echo "expected the module API to work, got $code"; docker compose logs --tail=60 app; exit 1; }
