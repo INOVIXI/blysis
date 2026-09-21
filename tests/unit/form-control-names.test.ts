@@ -139,6 +139,10 @@ describe("focus", () => {
         for (const file of files) {
             for (const line of readFileSync(file, "utf8").split("\n")) {
                 if (!/\boutline-none\b/.test(line)) continue;
+                // Prose about the rule is not a breach of it. A comment
+                // explaining why a control keeps its ring named the class it
+                // was talking about and was reported as the offender.
+                if (/^\s*(?:\/\/|\/\*|\*)/.test(line)) continue;
                 if (/focus-visible:|focus:ring|ring-\d|focus-visible/.test(line)) continue;
                 offenders.push(`${file.slice(ROOT.length + 1)} -> ${line.trim().slice(0, 70)}`);
             }

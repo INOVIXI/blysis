@@ -308,7 +308,25 @@ export function AdminSpotlight({
                                     onKeyDown={onKeyDown}
                                     placeholder={at("spotlight_placeholder")}
                                     aria-label={at("spotlight_placeholder")}
-                                    className="flex-1 bg-transparent rounded-sm outline-none focus-visible:ring-1 focus-visible:ring-primary/50 text-foreground placeholder:text-muted-foreground"
+                                    /*
+                                     * `text-sm` because everything else in
+                                     * this dialog is sized and this was not:
+                                     * a form control inherits the base 16px
+                                     * while the results under it are 14px, so
+                                     * the box a reader types into was visibly
+                                     * bigger than the site it was searching.
+                                     *
+                                     * The focus ring stays. Taking it off
+                                     * looked tidier - the dialog puts the
+                                     * caret here on open, so the ring is
+                                     * drawn every time rather than saying
+                                     * anything - but `outline-none` with
+                                     * nothing in its place is what
+                                     * `form-control-names` refuses, and it is
+                                     * right to: the caret is the one focus
+                                     * indicator a reader can miss.
+                                     */
+                                    className="flex-1 bg-transparent text-sm rounded-sm outline-none focus-visible:ring-1 focus-visible:ring-primary/50 text-foreground placeholder:text-muted-foreground"
                                 />
                                 <kbd className="hidden sm:inline px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground bg-muted rounded">ESC</kbd>
                                 <button onClick={() => setOpen(false)} aria-label={t("close")} className="text-muted-foreground hover:text-foreground">
