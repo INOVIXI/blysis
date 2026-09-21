@@ -49,19 +49,57 @@ const columns: HookHandlerFor<"comparison.columns", "filter"> = async (current, 
     // A ladder is exactly where the upgrade credit matters most: the whole
     // point of the table is choosing the next rung up, and the price of that
     // rung is different for somebody already on one.
-    const session = await auth();
+    /*
+     * A session where there is a request to read one from, and nobody where
+     * there is not.
+     *
+     * `auth()` reads the incoming headers and throws when no request is in
+     * scope - synchronously, so a `.catch` on the promise never sees it. This
+     * handler runs from the demo seed as well as from a page, and there it
+     * threw: the bus caught it, so the filter answered with the value it was
+     * handed, the seed read no columns as "this shelf has nothing to compare"
+     * and wrote its table bound to nothing. The shelf then asked for a
+     * subject no table carried and drew five ranks as an empty page.
+     *
+     * Nobody signed in is the right answer outside a request, and it is
+     * already the answer for most callers inside one.
+     */
+    // Typed by what is read rather than by `ReturnType<typeof auth>`: `auth`
+    // is overloaded and the last of its signatures returns a middleware, so
+    // the inferred type is one this has never held.
+    let session: { user?: { id?: string | null } } | null = null;
+    try {
+        session = await auth();
+    } catch {
+        session = null;
+    }
     const ownedIds = await creditingPurchases(session?.user?.id);
     const ladder = visible.map((row) => ({
         id: row.id,
         categoryId,
         price: pricedForCampaign(row.id, effectivePrice(rulesOf(row), now), campaignEntries).price,
     }));
-    // The reader's own language: this runs from an API route with no locale in
-    // its path, so without being told it answers in the default and a Turkish
-    // shopper was shown "19.99 off: you own a lower rank".
-    const t = who?.locale
-        ? await getTranslations({ locale: who.locale, namespace: "store" })
-        : await getTranslations("store");
+    /*
+     * The reader's own language: this runs from an API route with no locale
+     * in its path, so without being told it answers in the default and a
+     * Turkish shopper was shown "19.99 off: you own a lower rank".
+     *
+     * Guarded for the same reason as the session above. `getTranslations`
+     * wants a request as well, and without one it does not answer in the
+     * default - it throws "not supported in Client Components", which is the
+     * wrong sentence for the right problem. The two strings it makes are
+     * notes to a shopper, and where there is no request there is no shopper:
+     * a seed asking what a shelf's columns are wants the products, not the
+     * line underneath them.
+     */
+    let t: Awaited<ReturnType<typeof getTranslations>> | null = null;
+    try {
+        t = who?.locale
+            ? await getTranslations({ locale: who.locale, namespace: "store" })
+            : await getTranslations("store");
+    } catch {
+        t = null;
+    }
 
     // At most one column is emphasised. "Featured" is the operator's existing
     // mark for the one they want chosen, and a shop that has featured three
@@ -104,7 +142,7 @@ const columns: HookHandlerFor<"comparison.columns", "filter"> = async (current, 
                 // left" changes only how fast they decide. Written here rather
                 // than in the table, because the shop is what knows the words
                 // for its own offers.
-                note: credit > 0
+                note: !t ? null : credit > 0
                     ? t("upgradeNote", { amount: credit.toFixed(2) })
                     : low ? t("leftInStock", { count: Number(source.stock) }) : null,
                 href: path,

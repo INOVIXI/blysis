@@ -92,8 +92,12 @@ async function shelfColumns(): Promise<{ subjectRef: string; columns: PlannedCol
     const shelf = subjects.find((subject) => subject.label === SUBJECT_CATEGORY);
     if (!shelf) return null;
 
+    // The columns are the table's contents; the subject is what it is about,
+    // and the second does not depend on the first. Returning null when the
+    // columns did not arrive threw away a subject that had been found, so the
+    // table was written about nothing and the shelf it was written for could
+    // never find it.
     const columns = await applyFiltersAsync("comparison.columns", [], { subjectRef: shelf.ref });
-    if (columns.length === 0) return null;
 
     return {
         subjectRef: shelf.ref,
@@ -110,11 +114,40 @@ export const seed: ModuleSeed = {
     needs: ["store"],
     run: async (ctx) => {
         const slug = "ranks";
-        const existing = await ctx.prisma.comparisonTable.findFirst({ where: { slug } });
-        if (existing) { ctx.log("already there"); return; }
-
         const shelf = await shelfColumns();
-        const planned: PlannedColumn[] = shelf?.columns ?? TYPED_COLUMNS.map((column) => ({
+
+        const existing = await ctx.prisma.comparisonTable.findFirst({ where: { slug } });
+        if (existing) {
+            /*
+             * A table written before the shop's shelf could be found is bound
+             * to nothing, and the shelf it was written for asks for a subject
+             * no table carries. Re-running used to skip it forever, so the
+             * category stayed unbound for the life of the installation: five
+             * active ranks and a page that drew a comparison of none of them.
+             *
+             * Binding is a repair rather than a rewrite. Whatever the operator
+             * has written into the rows since is theirs and is left alone.
+             */
+            if (!existing.subjectRef && shelf) {
+                await ctx.prisma.comparisonTable.update({
+                    where: { id: existing.id },
+                    data: { subjectRef: shelf.subjectRef },
+                });
+                ctx.log(`bound the existing table to ${shelf.subjectRef}`);
+                return;
+            }
+            ctx.log("already there");
+            return;
+        }
+
+        if (!shelf) {
+            // `needs: ["store"]` says the shop is installed, so a shelf that
+            // cannot be found is a broken seam rather than a missing module.
+            // It used to write the table anyway, bound to nothing, and say
+            // nothing about it.
+            ctx.log("the shop named no shelf to compare: writing an unbound table, which no category will draw");
+        }
+        const planned: PlannedColumn[] = shelf?.columns.length ? shelf.columns : TYPED_COLUMNS.map((column) => ({
             label: column.label,
             subtitle: column.subtitle,
             sourceRef: null,

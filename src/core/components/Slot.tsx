@@ -41,7 +41,22 @@ import { isEnabledIn } from "@/core/lib/module-enabled";
 interface SlotProps {
     name: string;
     context?: Record<string, unknown>;
-    /** Render this if no modules contribute to the slot. */
+    /**
+     * Render this if no modules contribute to the slot, and hand it to the
+     * contribution when there is exactly one.
+     *
+     * The second half is what makes a fallback honest. Whether anybody
+     * contributes is a question about the registry, answered before a single
+     * component runs; whether the contribution has anything to say is only
+     * known once it has asked. A module that filled `store.category.shelf`
+     * and then rendered nothing - no comparison table bound to that shelf -
+     * left the shop's whole shelf blank, because the shop had handed the
+     * region over and the fallback had already decided not to fire.
+     *
+     * Only when there is one contribution. A region two modules both claim
+     * has no single answer to "is it empty", and drawing the fallback beside
+     * a contribution that did render would double the page.
+     */
     fallback?: React.ReactNode;
 }
 
@@ -62,7 +77,10 @@ export function Slot({ name, context, fallback = null }: SlotProps) {
                 const Component = (SlotContentRegistry as Record<string, React.ComponentType<Record<string, unknown>>>)[sc.id];
                 return (
                     <ModuleErrorBoundary key={sc.id} componentId={sc.id}>
-                        <Component {...(context || {})} />
+                        <Component
+                            {...(context || {})}
+                            {...(contributions.length === 1 ? { fallback } : {})}
+                        />
                     </ModuleErrorBoundary>
                 );
             })}

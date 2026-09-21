@@ -12,6 +12,19 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.17.0 - a `Slot` hands its `fallback` to the contribution when exactly one
+ * module fills it. Whether anybody contributes is a question about the
+ * registry, answered before a component runs; whether the contribution has
+ * anything to draw is only known after it has asked. The shop gives its whole
+ * category shelf to `store.category.shelf` and passes its own grid as the
+ * fallback, so a comparison module that filled the slot and then found no
+ * table bound to that shelf left a category of five products drawing nothing
+ * at all - the fallback had already decided not to fire. A slot content that
+ * can come up empty now accepts `fallback` and renders it. Additive: a
+ * component that does not declare the prop is handed it and ignores it,
+ * exactly as before, and a slot two modules fill is untouched because a
+ * region with two answers has none to "is it empty".
+ *
  * 5.16.0 - `product.grant` and `grantable.options` join the hook payload
  * registry. A module that gives things away has no vocabulary for what a
  * thing is and must not grow one: the wheel understood credits and discounts,
@@ -589,4 +602,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.16.0";
+export const CORE_API_VERSION = "5.17.0";

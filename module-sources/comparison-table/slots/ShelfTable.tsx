@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Card, CardContent, LoadFailed, Waiting } from "@/core/sdk/ui";
 import { useLocale, useTranslations } from "next-intl";
 import { ComparisonGrid, type GridTable } from "../components/ComparisonGrid";
@@ -27,7 +27,19 @@ import { ComparisonGrid, type GridTable } from "../components/ComparisonGrid";
  * grid behind it - so swallowing a failure leaves a category page with
  * nothing on it at all, which reads as "this shop sells nothing".
  */
-export default function ShelfTable({ subjectRef }: { subjectRef?: string }) {
+export default function ShelfTable({
+    subjectRef,
+    fallback = null,
+}: {
+    subjectRef?: string;
+    /**
+     * What the shop draws when this has nothing: its own grid. Handed over by
+     * the slot, and rendered rather than returning null, because the shop has
+     * already given this component the whole region - returning null leaves a
+     * shelf of five products showing nothing at all.
+     */
+    fallback?: ReactNode;
+}) {
     const t = useTranslations("comparisonTable");
     const locale = useLocale();
     const [table, setTable] = useState<GridTable | null>(null);
@@ -58,8 +70,11 @@ export default function ShelfTable({ subjectRef }: { subjectRef?: string }) {
     }, [subjectRef, locale, reloadKey]);
 
     if (loading) return <Waiting label={t("title")} />;
+    // A failure is not an absence, and gets its own screen rather than the
+    // shop's grid: falling back here would hide a broken endpoint behind a
+    // page that looks perfectly fine.
     if (failed) return <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />;
-    if (!table || table.columns.length === 0) return null;
+    if (!table || table.columns.length === 0) return <>{fallback}</>;
 
     return (
         <>
