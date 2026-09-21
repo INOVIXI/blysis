@@ -21,7 +21,14 @@ interface Order {
     status: string;
     total: number;
     createdAt: string;
-    user: { id: string; username: string; email: string };
+    /*
+     * Nullable, because an order can have no account behind it: an operator
+     * enters one for a sale that happened elsewhere, and a member who deletes
+     * their account does not undo the money. This said it was always there,
+     * so nothing complained about the unguarded read below and the screen
+     * threw on the first such row - twelve of forty-eight on the demo data.
+     */
+    user: { id: string; username: string; email: string } | null;
     items: { id: string }[];
 }
 
@@ -160,8 +167,8 @@ export default function AdminOrdersPage() {
                                                 <p className="font-medium">{order.orderNumber}</p>
                                             </td>
                                             <td className="py-3 px-4">
-                                                <p>{order.user.username}</p>
-                                                <p className="text-xs text-muted-foreground">{order.user.email}</p>
+                                                <p>{order.user?.username ?? t("adm_noAccount")}</p>
+                                                <p className="text-xs text-muted-foreground">{order.user?.email ?? ""}</p>
                                             </td>
                                             <td className="py-3 px-4 text-muted-foreground">
                                                 {formatDate(new Date(order.createdAt), undefined, dateTag)}
