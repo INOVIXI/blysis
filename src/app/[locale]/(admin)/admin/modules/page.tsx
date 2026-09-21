@@ -254,8 +254,12 @@ export default function AdminModulesPage() {
                                             {(mod.settings ?? []).length > 0 && (
                                                 <Link
                                                     href={`/admin/modules/${mod.id}`}
-                                                    aria-label={t("modules_settings")}
-                                                    title={t("modules_settings")}
+                                                    // Named for the module, not for what it
+                                                    // opens: ninety cards each carrying a cog
+                                                    // called "Settings" is ninety controls a
+                                                    // screen reader cannot tell apart.
+                                                    aria-label={t("modules_settingsFor", { name: mod.name })}
+                                                    title={t("modules_settingsFor", { name: mod.name })}
                                                     className={buttonClassName("ghost", "sm")}
                                                 >
                                                     <Cog className="w-3 h-3" />

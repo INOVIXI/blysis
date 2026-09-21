@@ -265,7 +265,18 @@ export function ModuleSections() {
                         <div className="flex justify-between items-center">
                             <CardTitle className="text-base">{translateLabel(section.title, section.titleKey)}</CardTitle>
                             {section.viewAllHref && (
-                                <Link href={section.viewAllHref} className="text-xs text-primary hover:underline">
+                                <Link
+                                    href={section.viewAllHref}
+                                    // The words stay short beside the card's
+                                    // heading, which is where a reader who can
+                                    // see takes the context from. A reader who
+                                    // cannot gets three identical "View all"
+                                    // links without this.
+                                    aria-label={t("dashboard_viewAllOf", {
+                                        what: translateLabel(section.title, section.titleKey),
+                                    })}
+                                    className="text-xs text-primary hover:underline"
+                                >
                                     {t("dashboard_viewAll")}
                                 </Link>
                             )}

@@ -75,7 +75,15 @@ export default async function DownloadsPage({ searchParams }: PageProps) {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {href && (
-                                            <Link href={href} className="text-sm text-primary hover:underline whitespace-nowrap">
+                                            <Link
+                                                href={href}
+                                                // Beside the file it belongs to on screen, and
+                                                // named for it everywhere else: a list of files
+                                                // each offering "How to use it" says nothing
+                                                // about which file.
+                                                aria-label={t("readGuideFor", { title: dl.title })}
+                                                className="text-sm text-primary hover:underline whitespace-nowrap"
+                                            >
                                                 {t("readGuide")}
                                             </Link>
                                         )}

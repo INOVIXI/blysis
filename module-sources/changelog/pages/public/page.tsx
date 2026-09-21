@@ -92,7 +92,16 @@ export default async function ChangelogPage({ searchParams }: PageProps) {
                                                 )}
                                                 <RichContent className="text-sm text-muted-foreground" markdown={entry.content} />
                                                 {href && (
-                                                    <Link href={href} className="mt-3 inline-flex text-sm text-primary hover:underline">
+                                                    <Link
+                                                        href={href}
+                                                        // The words stay short under the note
+                                                        // they belong to. A reader who cannot
+                                                        // see which note that is would get a
+                                                        // page of identical links without the
+                                                        // title in the name.
+                                                        aria-label={t("readMoreOf", { title: entry.title })}
+                                                        className="mt-3 inline-flex text-sm text-primary hover:underline"
+                                                    >
                                                         {t("readMore")}
                                                     </Link>
                                                 )}
