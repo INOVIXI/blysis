@@ -63,6 +63,24 @@ export default defineConfig({
     test: {
         globals: true,
         environment: 'jsdom',
+        /*
+         * Vitest defaults to five seconds, and this suite runs too close to it.
+         *
+         * Measured on 2026-09-21: five different tests tripped the five second
+         * limit across three runs and every one of them passed when run on its
+         * own - a scheduler tick on fake timers, a wheel with no odds, two
+         * censuses that walk the whole tree, and the backup retention test.
+         * The development box shares its CPU with nine other projects and sat
+         * at a load average of sixty; a GitHub runner hit the same wall on the
+         * backup test with nothing else on it.
+         *
+         * None of these asserts a duration. They are correctness tests that
+         * need wall clock on a busy machine, and a limit they can reach by
+         * being unlucky reports a passing product as broken - which is worse
+         * than a genuine hang taking twenty seconds to say so.
+         */
+        testTimeout: 20_000,
+        hookTimeout: 20_000,
         include: [
             'tests/unit/**/*.test.{ts,tsx}',
             'tests/integration/**/*.test.{ts,tsx}',
