@@ -90,6 +90,38 @@ const ROOM_FOR_THE_DEBOUNCE = 15_000;
  */
 const SETTLE_MS = 10_000;
 
+/*
+ * Why these numbers are large, and what was ruled out before enlarging them.
+ *
+ * This file flaked about one run in five on 2026-09-21 at a load average of
+ * sixty, and once on a GitHub runner. The error reads like an assertion -
+ * "expected <span class=\"truncate\"></span> to be null" - which sent two
+ * attempts looking for a race in the component. It is not one: `waitFor`
+ * rethrows its callback's last error when it runs out, so every one of those
+ * failures is this wait timing out, on a search that works.
+ *
+ * Ruled out: the per-test ceiling (raised, then raised globally to twenty
+ * seconds); one assertion racing another, which the waits now take together;
+ * and the mock handing back a fresh `URLSearchParams` each call, which
+ * `useFormRoute` only reads a string out of.
+ *
+ * Tried and worse, recorded rather than repeated: driving the 300ms debounce
+ * with fake timers instead of the clock made all three fail every time. The
+ * strip's timer does not survive that environment, which is worth
+ * understanding before anybody reaches for it again.
+ *
+ * Also tried: twenty seconds for the wait and thirty for the test, on the
+ * theory that this box starves jsdom. It failed again at a load average of
+ * seventeen, so the numbers are back where they were - inflating a limit on a
+ * theory that has not been shown is how they got this large already.
+ *
+ * So the cause is still open. What is known: the row is not removed, it is
+ * emptied - the element the failure prints is a display cell with no text in
+ * it - and that also explains the third test, because a row that stays means
+ * the list is not empty and "No results found" is never drawn. Whatever
+ * leaves a row in the list without its name is the thing to find.
+ */
+
 describe("a list drawn by the crud shell", () => {
     it("offers a box to search it", async () => {
         draw();
@@ -102,9 +134,16 @@ describe("a list drawn by the crud shell", () => {
 
         fireEvent.change(screen.getByRole("searchbox"), { target: { value: "pack" } });
 
-        await waitFor(() => expect(screen.queryByText("Server rules")).toBeNull(), { timeout: SETTLE_MS });
-        expect(screen.getByText("Client pack")).toBeTruthy();
-        expect(screen.getByText("Texture pack")).toBeTruthy();
+        // The settled list in one wait rather than one condition waited for
+        // and the rest asserted after it. The shell reaches the filtered list
+        // over more than one commit, so a wait that watches only the row going
+        // away can return on a frame where the rows that stay are not drawn
+        // yet - which is one of the two ways this file has flaked.
+        await waitFor(() => {
+            expect(screen.queryByText("Server rules")).toBeNull();
+            expect(screen.getByText("Client pack")).toBeTruthy();
+            expect(screen.getByText("Texture pack")).toBeTruthy();
+        }, { timeout: SETTLE_MS });
     }, ROOM_FOR_THE_DEBOUNCE);
 
     it("matches what is under the name as well, because that is on the screen too", async () => {
@@ -113,8 +152,10 @@ describe("a list drawn by the crud shell", () => {
 
         fireEvent.change(screen.getByRole("searchbox"), { target: { value: "PDF" } });
 
-        await waitFor(() => expect(screen.queryByText("Client pack")).toBeNull(), { timeout: SETTLE_MS });
-        expect(screen.getByText("Server rules")).toBeTruthy();
+        await waitFor(() => {
+            expect(screen.queryByText("Client pack")).toBeNull();
+            expect(screen.getByText("Server rules")).toBeTruthy();
+        }, { timeout: SETTLE_MS });
     }, ROOM_FOR_THE_DEBOUNCE);
 
     it("says the search found nothing, not that there is nothing", async () => {
@@ -128,7 +169,9 @@ describe("a list drawn by the crud shell", () => {
         // The strip waits 300ms before it tells anybody, and this box is
         // shared with eight other test files: the default one-second ceiling
         // is not enough room for a debounce under that load.
-        expect(await screen.findByText(MESSAGES.common.noResults, {}, { timeout: SETTLE_MS })).toBeTruthy();
-        expect(screen.queryByText(MESSAGES.admin.crud_noItems)).toBeNull();
+        await waitFor(() => {
+            expect(screen.getByText(MESSAGES.common.noResults)).toBeTruthy();
+            expect(screen.queryByText(MESSAGES.admin.crud_noItems)).toBeNull();
+        }, { timeout: SETTLE_MS });
     }, ROOM_FOR_THE_DEBOUNCE);
 });
