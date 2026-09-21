@@ -1,4 +1,5 @@
 import { resolveLocaleFromRequest, notFoundStrings } from "@/core/lib/i18n/resolve-locale";
+import { buttonClassName } from "@/core/components/ui/button";
 
 /**
  * The 404 for a `notFound()` thrown anywhere under a locale.
@@ -31,7 +32,7 @@ export default async function NotFound() {
                 {t.description && <p className="text-muted-foreground mb-8">{t.description}</p>}
                 <a
                     href={`/${locale}`}
-                    className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white"
+                    className={buttonClassName()}
                 >
                     {t.goHome}
                 </a>

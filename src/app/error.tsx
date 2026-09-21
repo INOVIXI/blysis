@@ -12,7 +12,13 @@
  * Deliberately plain, and in English: no locale is resolved this far out, and
  * a boundary that reaches for the database to translate itself is a boundary
  * that can fail while reporting a failure.
+ *
+ * The one import is `cn` behind `buttonClassName`, which is core and pure.
+ * The retry control used to paint itself and so had no focus ring, on the one
+ * screen where the control is the only thing a visitor can do.
  */
+import { buttonClassName } from "@/core/components/ui/button";
+
 export default function RootError({
     error,
     reset,
@@ -44,7 +50,7 @@ export default function RootError({
                 )}
                 <button
                     onClick={() => reset()}
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
+                    className={buttonClassName()}
                 >
                     Retry
                 </button>

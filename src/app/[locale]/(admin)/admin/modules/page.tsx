@@ -364,6 +364,10 @@ export default function AdminModulesPage() {
                                     <button
                                         key={tag}
                                         type="button"
+                                        // The colour is the only thing that
+                                        // said a tag was selected, which is
+                                        // nothing at all to a screen reader.
+                                        aria-pressed={active}
                                         onClick={() => toggleTag(tag)}
                                         className={`px-2 py-0.5 text-[10px] rounded-full border transition-colors ${
                                             active

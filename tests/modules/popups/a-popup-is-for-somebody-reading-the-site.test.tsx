@@ -26,6 +26,9 @@ vi.mock("@/core/sdk/navigation", () => ({
 
 vi.mock("@/core/sdk/ui", () => ({
     useModalDialog: () => ({ current: null }),
+    // The dialog's two controls are the product's buttons now, so the class
+    // string comes from here rather than from the component.
+    buttonClassName: () => "button",
 }));
 
 beforeEach(() => {

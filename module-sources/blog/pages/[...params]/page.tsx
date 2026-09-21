@@ -1,5 +1,5 @@
 import { formatDate } from "@/core/sdk";
-import { RichContent } from "@/core/sdk/ui";
+import { RichContent, buttonClassName } from "@/core/sdk/ui";
 import { buildArticleJsonLd, moduleSettings, prisma, resolveAppUrl } from "@/core/sdk/server";
 import { Link } from "@/core/sdk/navigation";
 import { PageFrame, Slot } from "@/core/sdk/layout";
@@ -152,7 +152,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                                 href={shareTwitter}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex-1 py-2 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors text-center"
+                                className={buttonClassName("default", "default", "flex-1")}
                             >
                                 Twitter
                             </a>
@@ -160,7 +160,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                                 href={shareFacebook}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex-1 py-2 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors text-center"
+                                className={buttonClassName("default", "default", "flex-1")}
                             >
                                 Facebook
                             </a>

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useModalDialog } from "@/core/sdk/ui";
+import { useModalDialog, buttonClassName } from "@/core/sdk/ui";
 import { usePathname } from "@/core/sdk/navigation";
 import { safeUrl } from "../lib/safe-url";
 
@@ -109,7 +109,7 @@ export default function PopupRenderer() {
                         <button
                             type="button"
                             onClick={dismiss}
-                            className="text-sm text-muted-foreground hover:text-foreground px-3 py-1.5"
+                            className={buttonClassName("outline", "sm")}
                         >
                             {t("close")}
                         </button>
@@ -118,7 +118,7 @@ export default function PopupRenderer() {
                                 href={link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-sm bg-primary text-primary-foreground px-4 py-1.5 rounded hover:opacity-90"
+                                className={buttonClassName("default", "sm")}
                                 onClick={dismiss}
                             >
                                 {popup.linkText || t("learnMore")}
