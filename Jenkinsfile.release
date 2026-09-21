@@ -72,6 +72,45 @@ pipeline {
             }
         }
 
+        stage('This version has not been published already') {
+            /*
+             * Checked here rather than at the end, because it is the guard
+             * against a whole class of accident and it costs a second.
+             *
+             * A multibranch job that discovers tags sees every tag that
+             * already exists the first time it scans, so standing this
+             * pipeline up would otherwise rebuild and republish v0.1.0
+             * through v0.4.0 - and the last one to finish would leave
+             * `latest` pointing at whichever that was. The plugin option
+             * that ignores old tags is not installed here, and an
+             * installation-side setting would not protect a re-run anyway.
+             *
+             * A version is published once. Republishing one is either an
+             * accident or a retag, and a retag of a released version is a
+             * different image under a name somebody has already deployed.
+             */
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'BLYSIS_GHCR',
+                    usernameVariable: 'GHCR_USER',
+                    passwordVariable: 'GHCR_TOKEN',
+                )]) {
+                    sh '''
+                        set -eu
+                        echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+                        if docker manifest inspect "${IMAGE}:${VERSION}" >/dev/null 2>&1; then
+                            docker logout ghcr.io || true
+                            echo "${IMAGE}:${VERSION} is already in the registry."
+                            echo "Publishing it again would move :latest and change an image somebody may have deployed."
+                            exit 1
+                        fi
+                        docker logout ghcr.io || true
+                        echo "${VERSION} is not in the registry yet."
+                    '''
+                }
+            }
+        }
+
         stage('Typecheck, lint and unit tests') {
             steps { script { ci.checks() } }
         }
