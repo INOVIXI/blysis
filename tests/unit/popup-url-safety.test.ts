@@ -74,7 +74,16 @@ describe("the popup renderer", () => {
         // Escape, the Tab trap and returning focus all come from the shared
         // hook now; the popup's job is to use it and hand it `dismiss`.
         expect(source).toContain("useModalDialog");
-        expect(source).toContain("useModalDialog<HTMLDivElement>(popup !== null, dismiss)");
+        // The call read as one literal string, closing bracket included, so
+        // passing the hook an option broke this rather than the behaviour.
+        expect(source).toMatch(/useModalDialog<HTMLDivElement>\(popup !== null, dismiss\b/);
+    });
+
+    it("takes focus itself rather than ringing the button that closes it", () => {
+        // Nobody opened this dialog. Sending focus to its first control means
+        // that control matches `:focus-visible` the instant it appears, so a
+        // visitor who had clicked nothing was shown a ring around "Close".
+        expect(source).toContain('autoFocus: "dialog"');
     });
 
     it("names its dismiss button from the catalogue", () => {
