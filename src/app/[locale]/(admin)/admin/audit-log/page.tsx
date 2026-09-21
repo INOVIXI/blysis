@@ -21,6 +21,7 @@ import { LoadFailed } from "@/core/components/ui/load-failed";
 import { NativeSelect } from "@/core/components/ui/native-select";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { useLocalDateTime } from "@/core/hooks/useLocalDate";
+import { auditActionName } from "@/core/lib/audit-action";
 
 interface AuditLogEntry {
     id: string;
@@ -147,6 +148,9 @@ export default function AuditLogPage() {
     // browser disagree about what day a timestamp near midnight is.
     const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
+    // The names live beside the activity feed's, under `activity`: a module
+    // writes both into the same block of its manifest.
+    const actionT = useTranslations("activity");
     const modules = useAllModules();
     const [failed, setFailed] = useState(false);
 
@@ -377,11 +381,26 @@ export default function AuditLogPage() {
                                                     )}
                                                 </td>
                                                 <td className="py-2 px-4 whitespace-nowrap">
+                                                    {/*
+                                                      * Both, and in this order. The name is what
+                                                      * happened, which is what somebody scrolling
+                                                      * eighty rows is looking for; the key is what
+                                                      * the filter above takes and what two
+                                                      * installations are compared by, so it stays
+                                                      * where it can be read and copied. An action
+                                                      * nothing has named has only the key, which is
+                                                      * what an undeclared one should look like.
+                                                      */}
                                                     <span
-                                                        className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-mono ${color.bg} ${color.text} ${color.border}`}
+                                                        className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs ${color.bg} ${color.text} ${color.border}`}
                                                     >
-                                                        {log.action}
+                                                        {auditActionName(log.action, actionT) ?? log.action}
                                                     </span>
+                                                    {auditActionName(log.action, actionT) && (
+                                                        <span className="mt-0.5 block font-mono text-[10px] text-muted-foreground">
+                                                            {log.action}
+                                                        </span>
+                                                    )}
                                                 </td>
                                                 <td className="py-2 px-4 text-xs text-muted-foreground">
                                                     {log.entity ? (

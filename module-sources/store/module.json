@@ -1574,7 +1574,14 @@
       },
       "activity": {
         "kindStoreOrderCompleted": "Order",
-        "storeOrderCompleted": "purchased:"
+        "storeOrderCompleted": "purchased:",
+        "auditOrderCreated": "Placed an order",
+        "auditOrderEntered": "Entered an order by hand",
+        "auditProductCopied": "Copied a product",
+        "auditCreditPackageCreated": "Added a credit package",
+        "auditCreditPackageUpdated": "Changed a credit package",
+        "auditCreditPackageRetired": "Took a credit package off sale",
+        "auditCreditsTransferred": "Sent credits to a member"
       },
       "pageTitles": {
         "store": "Store",
@@ -2361,7 +2368,14 @@
       },
       "activity": {
         "kindStoreOrderCompleted": "Sipariş",
-        "storeOrderCompleted": "satın aldı:"
+        "storeOrderCompleted": "satın aldı:",
+        "auditOrderCreated": "Sipariş oluşturuldu",
+        "auditOrderEntered": "Sipariş elle girildi",
+        "auditProductCopied": "Ürün kopyalandı",
+        "auditCreditPackageCreated": "Kredi paketi eklendi",
+        "auditCreditPackageUpdated": "Kredi paketi değiştirildi",
+        "auditCreditPackageRetired": "Kredi paketi satıştan kaldırıldı",
+        "auditCreditsTransferred": "Üyeye kredi gönderildi"
       },
       "pageTitles": {
         "store": "Mağaza",
@@ -2532,5 +2546,35 @@
     "store.product",
     "store.order",
     "store.category"
+  ],
+  "auditActions": [
+    {
+      "action": "order.created",
+      "nameKey": "auditOrderCreated"
+    },
+    {
+      "action": "store.order.entered",
+      "nameKey": "auditOrderEntered"
+    },
+    {
+      "action": "store.product.copied",
+      "nameKey": "auditProductCopied"
+    },
+    {
+      "action": "store.credit_package.created",
+      "nameKey": "auditCreditPackageCreated"
+    },
+    {
+      "action": "store.credit_package.updated",
+      "nameKey": "auditCreditPackageUpdated"
+    },
+    {
+      "action": "store.credit_package.retired",
+      "nameKey": "auditCreditPackageRetired"
+    },
+    {
+      "action": "store.credits.transferred",
+      "nameKey": "auditCreditsTransferred"
+    }
   ]
 }

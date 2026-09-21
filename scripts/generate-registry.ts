@@ -203,6 +203,7 @@ function generateRegistry() {
     const allCronJobs: ({ id: string; schedule: string; handler: string; module: string })[] = [];
     const allSearchProviders: ({ id: string; label: string; handler: string; icon?: string; indexes?: { table: string; columns: string[] }[]; module: string })[] = [];
     const allActivityTitles: ({ type: string; nameKey: string; prefix?: string; key?: string; module: string })[] = [];
+    const allAuditActions: ({ action: string; nameKey: string; module: string })[] = [];
     const allPermissionResources: string[] = [];
     const allWebhookReceivers: ({ provider: string; handler: string; signatureHeader?: string; secretEnv?: string; verifiesInHandler?: boolean; timestampHeader?: string; module: string })[] = [];
     const allNotificationTypes: ({ eventType: string; label: string; description?: string; channels?: string[]; module: string })[] = [];
@@ -252,6 +253,7 @@ function generateRegistry() {
         manifest.cronJobs?.forEach((cj) => allCronJobs.push({ ...cj, module: moduleName }));
         manifest.searchProviders?.forEach((sp) => allSearchProviders.push({ ...sp, module: moduleName }));
         manifest.activityTitles?.forEach((at) => allActivityTitles.push({ ...at, module: moduleName }));
+        manifest.auditActions?.forEach((aa) => allAuditActions.push({ ...aa, module: moduleName }));
         manifest.permissionResources?.forEach((r) => allPermissionResources.push(r));
         manifest.webhookReceivers?.forEach((wr) => allWebhookReceivers.push({ ...wr, module: moduleName }));
         manifest.notificationTypes?.forEach((nt) => allNotificationTypes.push({ ...nt, module: moduleName }));
@@ -348,6 +350,7 @@ function generateRegistry() {
     widgetRegistry += `export const ModuleDashboardSections: { id: string; label: string; labelKey?: string; module: string }[] = ${JSON.stringify(allDashboardSections, null, 2)};\n\n`;
     widgetRegistry += `// Activity-feed title localization entries contributed by modules.\n`;
     widgetRegistry += `export const ModuleActivityTitles: { type: string; nameKey: string; prefix?: string; key?: string; module: string }[] = ${JSON.stringify(allActivityTitles, null, 2)};\n\n`;
+    widgetRegistry += `export const ModuleAuditActions: { action: string; nameKey: string; module: string }[] = ${JSON.stringify(allAuditActions, null, 2)};\n\n`;
     widgetRegistry += `// RBAC resource strings modules own - surfaced in the admin permission matrix (flattened + deduped).\n`;
     widgetRegistry += `export const ModulePermissionResources: string[] = ${JSON.stringify([...new Set(allPermissionResources)], null, 2)};\n\n`;
 

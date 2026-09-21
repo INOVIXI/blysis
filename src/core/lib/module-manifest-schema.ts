@@ -620,6 +620,12 @@ const searchProvider = z.object({
  * the middle ("Received 40 credits") or after a clause, and `{ prefix, key }`
  * can only replace a head. Those declare a name and leave the title alone.
  */
+/** What one of this module's audit-log actions is called. */
+const auditAction = z.object({
+    action: z.string().min(1).max(120),
+    nameKey: z.string().min(1).max(120),
+}).strict();
+
 const activityTitle = z.object({
     type: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
     nameKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
@@ -1041,6 +1047,7 @@ export const moduleManifestSchema = z.object({
     cronJobs: z.array(cronJob).max(50).optional(),
     searchProviders: z.array(searchProvider).max(20).optional(),
     activityTitles: z.array(activityTitle).max(50).optional(),
+    auditActions: z.array(auditAction).max(100).optional(),
     permissionResources: z.array(z.string().min(1).max(128).regex(/^[a-z0-9._-]+$/)).max(100).optional(),
     webhookReceivers: z.array(webhookReceiver).max(50).optional(),
     notificationTypes: z.array(notificationType).max(100).optional(),

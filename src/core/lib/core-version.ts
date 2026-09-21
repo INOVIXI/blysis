@@ -12,6 +12,17 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.18.0 - `auditActions` in a manifest says what this module's audit-log
+ * entries are called: `{ action, nameKey }`, with the name under the
+ * `activity` namespace the module already writes its activity kinds into.
+ * `logActivity` files a row under a machine name and the screen printed that
+ * name straight out, so an operator read `ticket_status.update` and
+ * `admin.user.data_exported` to find out who did what. Forty four of the
+ * eighty five actions are a module's and core must not know a module exists,
+ * so the module that files one says what it is called. Additive: a module
+ * that declares nothing has its actions drawn as the key, which is what an
+ * undeclared action should look like.
+ *
  * 5.17.0 - a `Slot` hands its `fallback` to the contribution when exactly one
  * module fills it. Whether anybody contributes is a question about the
  * registry, answered before a component runs; whether the contribution has
@@ -602,4 +613,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.17.0";
+export const CORE_API_VERSION = "5.18.0";

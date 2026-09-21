@@ -114,6 +114,10 @@
         "menu_comparison-table_comparison_tables": "Comparison Tables",
         "module_comparison-table_description": "Compare several things feature by feature, in a table anybody can read",
         "module_comparison-table_name": "Comparison Table"
+      },
+      "activity": {
+        "auditComparisonTableSaved": "Saved a comparison table",
+        "auditComparisonTableDeleted": "Deleted a comparison table"
       }
     },
     "tr": {
@@ -186,6 +190,10 @@
         "menu_comparison-table_comparison_tables": "Karşılaştırma Tabloları",
         "module_comparison-table_description": "Birkaç şeyi özellik özellik karşılaştırın, herkesin okuyabileceği bir tabloda",
         "module_comparison-table_name": "Karşılaştırma Tablosu"
+      },
+      "activity": {
+        "auditComparisonTableSaved": "Karşılaştırma tablosu kaydedildi",
+        "auditComparisonTableDeleted": "Karşılaştırma tablosu silindi"
       }
     }
   },
@@ -220,6 +228,16 @@
       "icon": "Table",
       "group": "commerce",
       "permission": "comparison-table.manage"
+    }
+  ],
+  "auditActions": [
+    {
+      "action": "comparison-table.saved",
+      "nameKey": "auditComparisonTableSaved"
+    },
+    {
+      "action": "comparison-table.deleted",
+      "nameKey": "auditComparisonTableDeleted"
     }
   ]
 }

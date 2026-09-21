@@ -390,7 +390,14 @@
         "kindTicketCreated": "Support Ticket",
         "kindTicketReplyCreated": "Ticket Reply",
         "ticketCreated": "opened a ticket:",
-        "ticketReplyCreated": "replied to ticket:"
+        "ticketReplyCreated": "replied to ticket:",
+        "auditTicketStatusCreate": "Added a ticket status",
+        "auditTicketStatusUpdate": "Changed a ticket status",
+        "auditTicketStatusDelete": "Deleted a ticket status",
+        "auditTicketPriorityCreate": "Added a ticket priority",
+        "auditTicketPriorityUpdate": "Changed a ticket priority",
+        "auditTicketPriorityDelete": "Deleted a ticket priority",
+        "auditTicketDepartmentSetup": "Set up a department"
       },
       "nav": {
         "tickets": "Support"
@@ -609,7 +616,14 @@
         "kindTicketCreated": "Destek Talebi",
         "kindTicketReplyCreated": "Talep Yanıtı",
         "ticketCreated": "bilet açtı:",
-        "ticketReplyCreated": "bilete yanıt verdi:"
+        "ticketReplyCreated": "bilete yanıt verdi:",
+        "auditTicketStatusCreate": "Talep durumu eklendi",
+        "auditTicketStatusUpdate": "Talep durumu değiştirildi",
+        "auditTicketStatusDelete": "Talep durumu silindi",
+        "auditTicketPriorityCreate": "Talep önceliği eklendi",
+        "auditTicketPriorityUpdate": "Talep önceliği değiştirildi",
+        "auditTicketPriorityDelete": "Talep önceliği silindi",
+        "auditTicketDepartmentSetup": "Departman kuruldu"
       },
       "nav": {
         "tickets": "Destek"
@@ -685,5 +699,35 @@
   ],
   "permissionResources": [
     "tickets.ticket"
+  ],
+  "auditActions": [
+    {
+      "action": "ticket_status.create",
+      "nameKey": "auditTicketStatusCreate"
+    },
+    {
+      "action": "ticket_status.update",
+      "nameKey": "auditTicketStatusUpdate"
+    },
+    {
+      "action": "ticket_status.delete",
+      "nameKey": "auditTicketStatusDelete"
+    },
+    {
+      "action": "ticket_priority.create",
+      "nameKey": "auditTicketPriorityCreate"
+    },
+    {
+      "action": "ticket_priority.update",
+      "nameKey": "auditTicketPriorityUpdate"
+    },
+    {
+      "action": "ticket_priority.delete",
+      "nameKey": "auditTicketPriorityDelete"
+    },
+    {
+      "action": "tickets.department.setup",
+      "nameKey": "auditTicketDepartmentSetup"
+    }
   ]
 }

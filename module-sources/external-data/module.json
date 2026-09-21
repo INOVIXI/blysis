@@ -98,6 +98,10 @@
         "module_external-data_name": "External Data",
         "settings_external-data": "External Data",
         "settings_external-data_description": "A read-only connection to a database you already have."
+      },
+      "activity": {
+        "auditExternalSourceSaved": "Saved an external data source",
+        "auditExternalSourceDeleted": "Deleted an external data source"
       }
     },
     "tr": {
@@ -160,6 +164,10 @@
         "module_external-data_name": "Dış Veri",
         "settings_external-data": "Harici Veri",
         "settings_external-data_description": "Halihazırda sahip olduğunuz bir veritabanına salt okunur bağlantı."
+      },
+      "activity": {
+        "auditExternalSourceSaved": "Dış veri kaynağı kaydedildi",
+        "auditExternalSourceDeleted": "Dış veri kaynağı silindi"
       }
     }
   },
@@ -171,5 +179,15 @@
   ],
   "demoUnsafe": [
     "/external-data/admin/sources"
+  ],
+  "auditActions": [
+    {
+      "action": "external-data.source.saved",
+      "nameKey": "auditExternalSourceSaved"
+    },
+    {
+      "action": "external-data.source.deleted",
+      "nameKey": "auditExternalSourceDeleted"
+    }
   ]
 }

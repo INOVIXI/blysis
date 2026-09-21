@@ -226,7 +226,8 @@
       },
       "activity": {
         "formSubmissionCreated": "submitted the form:",
-        "kindFormSubmissionCreated": "Form Submission"
+        "kindFormSubmissionCreated": "Form Submission",
+        "auditFormSubmissionDelete": "Deleted a form submission"
       },
       "pageTitles": {
         "form": "Form"
@@ -366,7 +367,8 @@
       },
       "activity": {
         "formSubmissionCreated": "formu gönderdi:",
-        "kindFormSubmissionCreated": "Form Gönderimi"
+        "kindFormSubmissionCreated": "Form Gönderimi",
+        "auditFormSubmissionDelete": "Form gönderisi silindi"
       },
       "pageTitles": {
         "form": "Form"
@@ -396,6 +398,12 @@
     {
       "id": "forms.submit",
       "labelKey": "customForms.adm_challengePoint"
+    }
+  ],
+  "auditActions": [
+    {
+      "action": "form_submission.delete",
+      "nameKey": "auditFormSubmissionDelete"
     }
   ]
 }

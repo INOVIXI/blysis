@@ -78,6 +78,10 @@
         "module_url-redirects_name": "URL Redirects",
         "settings_url-redirects": "Redirects",
         "settings_url-redirects_description": "Old addresses that should lead somewhere new."
+      },
+      "activity": {
+        "auditRedirectCreated": "Added a redirect",
+        "auditRedirectDeleted": "Deleted a redirect"
       }
     },
     "tr": {
@@ -112,6 +116,10 @@
         "module_url-redirects_name": "URL Yönlendirmeleri",
         "settings_url-redirects": "Yönlendirmeler",
         "settings_url-redirects_description": "Başka bir yere gitmesi gereken eski adresler."
+      },
+      "activity": {
+        "auditRedirectCreated": "Yönlendirme eklendi",
+        "auditRedirectDeleted": "Yönlendirme silindi"
       }
     }
   },
@@ -123,5 +131,15 @@
   ],
   "demoUnsafe": [
     "/url-redirects"
+  ],
+  "auditActions": [
+    {
+      "action": "url_redirects.created",
+      "nameKey": "auditRedirectCreated"
+    },
+    {
+      "action": "url_redirects.deleted",
+      "nameKey": "auditRedirectDeleted"
+    }
   ]
 }

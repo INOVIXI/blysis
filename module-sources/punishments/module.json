@@ -212,7 +212,9 @@
       },
       "activity": {
         "kindPunishmentIssued": "Punishment",
-        "kindPunishmentRevoked": "Punishment Lifted"
+        "kindPunishmentRevoked": "Punishment Lifted",
+        "auditPunishmentScopeSaved": "Saved a punishment place",
+        "auditPunishmentScopeDeleted": "Deleted a punishment place"
       }
     },
     "tr": {
@@ -334,7 +336,9 @@
       },
       "activity": {
         "kindPunishmentIssued": "Ceza",
-        "kindPunishmentRevoked": "Ceza Kaldırma"
+        "kindPunishmentRevoked": "Ceza Kaldırma",
+        "auditPunishmentScopeSaved": "Ceza yeri kaydedildi",
+        "auditPunishmentScopeDeleted": "Ceza yeri silindi"
       }
     }
   },
@@ -380,6 +384,16 @@
     {
       "type": "punishments.punishment.revoked",
       "nameKey": "kindPunishmentRevoked"
+    }
+  ],
+  "auditActions": [
+    {
+      "action": "punishments.scope.saved",
+      "nameKey": "auditPunishmentScopeSaved"
+    },
+    {
+      "action": "punishments.scope.deleted",
+      "nameKey": "auditPunishmentScopeDeleted"
     }
   ]
 }

@@ -127,7 +127,10 @@
       },
       "activity": {
         "announcementCreated": "announced:",
-        "kindAnnouncementCreated": "Announcement"
+        "kindAnnouncementCreated": "Announcement",
+        "auditAnnouncementCreated": "Posted an announcement",
+        "auditAnnouncementUpdated": "Changed an announcement",
+        "auditAnnouncementDeleted": "Deleted an announcement"
       }
     },
     "tr": {
@@ -192,7 +195,10 @@
       },
       "activity": {
         "announcementCreated": "duyuru yaptı:",
-        "kindAnnouncementCreated": "Duyuru"
+        "kindAnnouncementCreated": "Duyuru",
+        "auditAnnouncementCreated": "Duyuru yayımlandı",
+        "auditAnnouncementUpdated": "Duyuru değiştirildi",
+        "auditAnnouncementDeleted": "Duyuru silindi"
       }
     }
   },
@@ -217,6 +223,20 @@
       "nameKey": "kindAnnouncementCreated",
       "prefix": "Announcement: ",
       "key": "announcementCreated"
+    }
+  ],
+  "auditActions": [
+    {
+      "action": "announcement_created",
+      "nameKey": "auditAnnouncementCreated"
+    },
+    {
+      "action": "announcement_updated",
+      "nameKey": "auditAnnouncementUpdated"
+    },
+    {
+      "action": "announcement_deleted",
+      "nameKey": "auditAnnouncementDeleted"
     }
   ]
 }

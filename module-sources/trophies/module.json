@@ -211,6 +211,11 @@
       },
       "pageDescriptions": {
         "trophies": "Browse the achievements you can earn across the community and see which of them you have already unlocked."
+      },
+      "activity": {
+        "auditTrophyCreate": "Added a trophy",
+        "auditTrophyUpdate": "Changed a trophy",
+        "auditTrophyDelete": "Deleted a trophy"
       }
     },
     "tr": {
@@ -295,7 +300,26 @@
       },
       "pageDescriptions": {
         "trophies": "Toplulukta kazanabileceğiniz başarımlara göz atın ve bunlardan hangilerini şimdiden açtığınızı görün."
+      },
+      "activity": {
+        "auditTrophyCreate": "Kupa eklendi",
+        "auditTrophyUpdate": "Kupa değiştirildi",
+        "auditTrophyDelete": "Kupa silindi"
       }
     }
-  }
+  },
+  "auditActions": [
+    {
+      "action": "trophy.create",
+      "nameKey": "auditTrophyCreate"
+    },
+    {
+      "action": "trophy.update",
+      "nameKey": "auditTrophyUpdate"
+    },
+    {
+      "action": "trophy.delete",
+      "nameKey": "auditTrophyDelete"
+    }
+  ]
 }

@@ -168,6 +168,12 @@
         "menu_license-keys": "Licences",
         "settings_license-keys": "License Keys",
         "settings_license-keys_description": "Which products hand out a key, and how many."
+      },
+      "activity": {
+        "auditLicenseIssued": "Issued a licence key",
+        "auditLicenseRevoked": "Revoked a licence key",
+        "auditLicenseRestored": "Restored a licence key",
+        "auditLicenseDeleted": "Deleted a licence key"
       }
     },
     "tr": {
@@ -246,6 +252,12 @@
         "menu_license-keys": "Lisanslar",
         "settings_license-keys": "Lisans Anahtarları",
         "settings_license-keys_description": "Hangi ürünler anahtar dağıtır ve kaç tane."
+      },
+      "activity": {
+        "auditLicenseIssued": "Lisans anahtarı verildi",
+        "auditLicenseRevoked": "Lisans anahtarı iptal edildi",
+        "auditLicenseRestored": "Lisans anahtarı geri verildi",
+        "auditLicenseDeleted": "Lisans anahtarı silindi"
       }
     }
   },
@@ -269,6 +281,24 @@
       "icon": "Settings",
       "group": "commerce",
       "permission": "license-keys.manage"
+    }
+  ],
+  "auditActions": [
+    {
+      "action": "license.issued",
+      "nameKey": "auditLicenseIssued"
+    },
+    {
+      "action": "license.revoked",
+      "nameKey": "auditLicenseRevoked"
+    },
+    {
+      "action": "license.restored",
+      "nameKey": "auditLicenseRestored"
+    },
+    {
+      "action": "license.deleted",
+      "nameKey": "auditLicenseDeleted"
     }
   ]
 }

@@ -1220,6 +1220,30 @@
         ]
       }
     },
+    "auditActions": {
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "nameKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "action",
+          "nameKey"
+        ],
+        "additionalProperties": false
+      }
+    },
     "permissionResources": {
       "maxItems": 100,
       "type": "array",

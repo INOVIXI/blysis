@@ -56,6 +56,9 @@
         "adm_exportUsers": "Members",
         "adm_nothingToExport": "Nothing installed here exports anything yet.",
         "perm_export": "Export data"
+      },
+      "activity": {
+        "auditCsvDataExported": "Exported data as CSV"
       }
     },
     "tr": {
@@ -72,6 +75,9 @@
         "adm_exportUsers": "Üyeler",
         "adm_nothingToExport": "Burada kurulu hiçbir şey henüz bir şey dışa aktarmıyor.",
         "perm_export": "Veri dışa aktarabilir"
+      },
+      "activity": {
+        "auditCsvDataExported": "Veri CSV olarak dışa aktarıldı"
       }
     }
   },
@@ -79,6 +85,12 @@
     {
       "hook": "csv.exports",
       "type": "filter"
+    }
+  ],
+  "auditActions": [
+    {
+      "action": "data_exported",
+      "nameKey": "auditCsvDataExported"
     }
   ]
 }

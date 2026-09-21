@@ -180,7 +180,9 @@
       },
       "activity": {
         "changelogEntryPublished": "changelog",
-        "kindChangelogEntryPublished": "Changelog Entry"
+        "kindChangelogEntryPublished": "Changelog Entry",
+        "auditChangelogTypeCreate": "Added a release kind",
+        "auditChangelogTypeDelete": "Deleted a release kind"
       },
       "pageTitles": {
         "changelog": "Changelog"
@@ -269,7 +271,9 @@
       },
       "activity": {
         "changelogEntryPublished": "değişiklik günlüğü",
-        "kindChangelogEntryPublished": "Değişiklik Kaydı"
+        "kindChangelogEntryPublished": "Değişiklik Kaydı",
+        "auditChangelogTypeCreate": "Sürüm türü eklendi",
+        "auditChangelogTypeDelete": "Sürüm türü silindi"
       },
       "pageTitles": {
         "changelog": "Değişiklikler"
@@ -309,6 +313,16 @@
       "nameKey": "kindChangelogEntryPublished",
       "prefix": "Changelog ",
       "key": "changelogEntryPublished"
+    }
+  ],
+  "auditActions": [
+    {
+      "action": "changelog_type.create",
+      "nameKey": "auditChangelogTypeCreate"
+    },
+    {
+      "action": "changelog_type.delete",
+      "nameKey": "auditChangelogTypeDelete"
     }
   ]
 }

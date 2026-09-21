@@ -226,7 +226,11 @@
       },
       "activity": {
         "helpArticleCreated": "added a help article:",
-        "kindHelpArticleCreated": "Help Article"
+        "kindHelpArticleCreated": "Help Article",
+        "auditHelpArticleUpdate": "Changed a help article",
+        "auditHelpArticleDelete": "Deleted a help article",
+        "auditHelpCategoryUpdate": "Changed a help category",
+        "auditHelpCategoryDelete": "Deleted a help category"
       },
       "pageTitles": {
         "help": "Help Center",
@@ -352,7 +356,11 @@
       },
       "activity": {
         "helpArticleCreated": "yardım makalesi ekledi:",
-        "kindHelpArticleCreated": "Yardım Makalesi"
+        "kindHelpArticleCreated": "Yardım Makalesi",
+        "auditHelpArticleUpdate": "Yardım makalesi değiştirildi",
+        "auditHelpArticleDelete": "Yardım makalesi silindi",
+        "auditHelpCategoryUpdate": "Yardım kategorisi değiştirildi",
+        "auditHelpCategoryDelete": "Yardım kategorisi silindi"
       },
       "pageTitles": {
         "help": "Yardım Merkezi",
@@ -412,6 +420,24 @@
       "nameKey": "kindHelpArticleCreated",
       "prefix": "New help article: ",
       "key": "helpArticleCreated"
+    }
+  ],
+  "auditActions": [
+    {
+      "action": "help_article.update",
+      "nameKey": "auditHelpArticleUpdate"
+    },
+    {
+      "action": "help_article.delete",
+      "nameKey": "auditHelpArticleDelete"
+    },
+    {
+      "action": "help_category.update",
+      "nameKey": "auditHelpCategoryUpdate"
+    },
+    {
+      "action": "help_category.delete",
+      "nameKey": "auditHelpCategoryDelete"
     }
   ]
 }

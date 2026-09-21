@@ -88,6 +88,11 @@
         "module_showcase_name": "Showcase",
         "settings_showcase": "Showcase",
         "settings_showcase_description": "The cards on the showcase page."
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "Added a showcase card",
+        "auditShowcaseCardUpdated": "Changed a showcase card",
+        "auditShowcaseCardDeleted": "Deleted a showcase card"
       }
     },
     "tr": {
@@ -123,6 +128,11 @@
         "module_showcase_name": "Vitrin",
         "settings_showcase": "Vitrin",
         "settings_showcase_description": "Vitrin sayfasındaki kartlar."
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "Vitrin kartı eklendi",
+        "auditShowcaseCardUpdated": "Vitrin kartı değiştirildi",
+        "auditShowcaseCardDeleted": "Vitrin kartı silindi"
       }
     }
   },
@@ -130,6 +140,20 @@
     {
       "name": "showcase.manage",
       "labelKey": "showcase.perm_manage"
+    }
+  ],
+  "auditActions": [
+    {
+      "action": "showcase.card.created",
+      "nameKey": "auditShowcaseCardCreated"
+    },
+    {
+      "action": "showcase.card.updated",
+      "nameKey": "auditShowcaseCardUpdated"
+    },
+    {
+      "action": "showcase.card.deleted",
+      "nameKey": "auditShowcaseCardDeleted"
     }
   ]
 }

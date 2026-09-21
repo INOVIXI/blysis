@@ -264,6 +264,17 @@ export interface ModuleManifest {
         key?: string;         // translation key under "activity", e.g. "forumTopicCreated"
     }[];
 
+    // What this module's audit-log entries are called. `logActivity` files a
+    // row under a machine name and the screen printed that name straight out;
+    // a key is how the code refers to a thing, so the module that writes one
+    // says what it is called. `nameKey` resolves under the `activity`
+    // namespace - the same block `activityTitles` writes into. Keeps core
+    // ignorant of module actions.
+    auditActions?: {
+        action: string;   // the string passed to logActivity, e.g. "trophy.create"
+        nameKey: string;  // what it is called, e.g. "auditTrophyCreate"
+    }[];
+
     // RBAC resource strings the module owns (e.g. "blog.article"). Surfaced
     // in the admin permission matrix so admins can grant/deny per resource.
     permissionResources?: string[];

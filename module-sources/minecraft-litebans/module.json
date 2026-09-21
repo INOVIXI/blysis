@@ -111,6 +111,9 @@
         "err_litebans_failed": "The LiteBans database could not be read.",
         "adm_scope": "Place, when a row does not say",
         "adm_scopeHint": "LiteBans can divide one database between servers or game modes, and a punishment that names one is filed there. This is what to call the rest. Match it to a place under Punishments; leave it empty to file them under no place at all."
+      },
+      "activity": {
+        "auditLitebansConnectionSaved": "Changed the punishment database connection"
       }
     },
     "tr": {
@@ -163,10 +166,19 @@
         "err_litebans_failed": "LiteBans veritabanı okunamadı.",
         "adm_scope": "Satır söylemediğinde yer",
         "adm_scopeHint": "LiteBans tek veritabanını sunucular veya oyun modları arasında bölebilir; kendi yerini söyleyen ceza oraya yazılır. Bu, kalanların adı. Cezalar altındaki bir yerle eşleştir; hiçbir yere yazılmasın istiyorsan boş bırak."
+      },
+      "activity": {
+        "auditLitebansConnectionSaved": "Ceza veritabanı bağlantısı değiştirildi"
       }
     }
   },
   "demoUnsafe": [
     "/minecraft-litebans/admin/connection"
+  ],
+  "auditActions": [
+    {
+      "action": "minecraft-litebans.connection.saved",
+      "nameKey": "auditLitebansConnectionSaved"
+    }
   ]
 }
