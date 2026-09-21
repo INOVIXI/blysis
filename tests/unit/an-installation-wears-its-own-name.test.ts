@@ -84,3 +84,47 @@ describe("what an installation calls itself", () => {
         ).toBe(false);
     });
 });
+
+/**
+ * The name it used to wear does not come back.
+ *
+ * The product was uxwVend until 2026-09-11. The source was swept then, but a
+ * name lives in more places than a rename touches: on 2026-09-21 the demo
+ * database still had seven queued emails subjected "uxwVend: too many failed
+ * sign-in attempts" and a manual payment instruction reading "Account name:
+ * uxwVend Ltd". Neither came from the code - the subject is "{app}: ..."
+ * rendered against the site's own name setting, and the instruction is
+ * something an operator typed - so both were data, and both were corrected.
+ *
+ * This is the half that can be held: nothing in the tree says it again. A
+ * screen, a seed or a sample that reintroduces the old name would put it back
+ * into the next installation's database, where it is hard to find.
+ */
+describe("the name the product used to have", () => {
+    it("is nowhere in the tree", () => {
+        const OLD = /uxwVend|uxw-vend|uxwvend/i;
+        const offenders: string[] = [];
+
+        const walk = (dir: string) => {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
+                const full = path.join(dir, entry.name);
+                if (entry.isDirectory()) { walk(full); continue; }
+                if (!/\.(ts|tsx|json|md|css|sh|sql)$/.test(entry.name)) continue;
+                const text = fs.readFileSync(full, "utf8");
+                for (const [index, line] of text.split("\n").entries()) {
+                    // The test naming itself, and the repository's own path on
+                    // the box it is developed on, are not the product's name.
+                    if (!OLD.test(line)) continue;
+                    if (full.endsWith("an-installation-wears-its-own-name.test.ts")) continue;
+                    offenders.push(`${path.relative(ROOT, full)}:${index + 1}`);
+                }
+            }
+        };
+        for (const dir of ["src", "module-sources", "messages-core", "prisma"]) {
+            walk(path.join(ROOT, dir));
+        }
+
+        expect(offenders).toEqual([]);
+    });
+});
