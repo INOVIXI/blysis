@@ -79,7 +79,18 @@ export default function PopupRenderer() {
     // A modal that only closes by clicking its backdrop cannot be closed with a
     // keyboard at all, and one that does not trap Tab leaves the page behind it
     // reachable under the scrim.
-    const dialogRef = useModalDialog<HTMLDivElement>(popup !== null, dismiss);
+    /*
+     * Focus lands on the box, not on "Close".
+     *
+     * Nobody opened this. It arrives on its own, and sending focus to its
+     * first control means that control matches `:focus-visible` the instant
+     * it appears - so a visitor who has clicked nothing is shown a blue ring
+     * around a button they did not reach for, which reads as a fault rather
+     * than as where the keyboard is. Focus is still inside the dialog, so Tab
+     * stays trapped and Escape still closes it, and the first Tab rings the
+     * control it lands on, which is the moment a ring means something.
+     */
+    const dialogRef = useModalDialog<HTMLDivElement>(popup !== null, dismiss, { autoFocus: "dialog" });
 
     if (!popup) return null;
 

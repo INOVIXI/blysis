@@ -57,8 +57,22 @@ function focusableWithin(container: HTMLElement): HTMLElement[] {
 export interface ModalDialogOptions {
     /** Wrap Tab at the dialog's edges. Off for a non-modal popover. */
     trapFocus?: boolean;
-    /** Move focus into the dialog when it opens. */
-    autoFocus?: boolean;
+    /**
+     * Where focus goes when the dialog opens.
+     *
+     * `true` puts it on the first control, which is right for a dialog
+     * somebody asked for: they pressed a button and the thing they are most
+     * likely to want next is under their hands.
+     *
+     * `"dialog"` puts it on the box. Focus still enters the dialog - that is
+     * what keeps Tab inside it and what a screen reader follows - but no
+     * control matches `:focus-visible`, so nothing wears a ring. That is
+     * right for a dialog that arrives on its own: a marketing popup showed a
+     * visitor who had clicked nothing a blue ring around "Close" on arrival.
+     *
+     * `false` leaves focus alone.
+     */
+    autoFocus?: boolean | "dialog";
 }
 
 export function useModalDialog<T extends HTMLElement = HTMLDivElement>(
@@ -80,12 +94,13 @@ export function useModalDialog<T extends HTMLElement = HTMLDivElement>(
         const container = ref.current;
 
         if (autoFocus && container) {
-            const first = focusableWithin(container)[0];
+            const first = autoFocus === "dialog" ? null : focusableWithin(container)[0];
             if (first) {
                 first.focus();
             } else {
-                // Nothing focusable inside: focus the dialog itself so the
-                // screen reader lands on it and Escape still reaches us.
+                // Asked for, or nothing focusable inside: focus the dialog
+                // itself so the screen reader lands on it, Tab has an edge to
+                // wrap from, and Escape still reaches us.
                 container.tabIndex = -1;
                 container.focus();
             }

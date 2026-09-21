@@ -149,7 +149,32 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: var(--blysis-color-mutedForeground); }
 
 ::selection { background: var(--color-primary); color: white; }
-:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+/*
+ * The focus ring for everything that draws none of its own: a bare link, an
+ * input somebody wrote without reaching for `Input`.
+ *
+ * In `@layer base` rather than loose, because an unlayered rule beats every
+ * layered one however specific. Loose, it meant `focus-visible:outline-none`
+ * - which `buttonClassName` carries so a button can draw its own ring instead
+ * - never applied, and a focused button wore both: this outline at 2px offset
+ * and its own ring at 4px, two blue lines with a white gap between them.
+ */
+@layer base {
+  :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+  /*
+   * A box the keyboard cannot reach does not show where the keyboard is.
+   *
+   * `tabindex="-1"` means exactly that: out of the tab order, focusable only
+   * because something moved focus there. A dialog does, so that Tab has an
+   * edge to wrap from and a screen reader lands on the thing that just
+   * appeared - and the rule above then drew a blue line around the whole
+   * popup on arrival. The controls inside it still ring when tabbed to, which
+   * is the ring that means something.
+   */
+  [tabindex="-1"]:focus-visible { outline: none; }
+}
 
 /**
  * What a person wrote: a blog article, a forum post, a product description.

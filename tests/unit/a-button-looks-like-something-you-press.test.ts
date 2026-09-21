@@ -43,3 +43,53 @@ describe("a control that can be pressed", () => {
         expect(css).toMatch(/\[role="button"\]:not\(\[aria-disabled="true"\]\)/);
     });
 });
+
+/**
+ * One focus indicator, not two.
+ *
+ * `globals.css` draws a focus ring for everything that has none of its own -
+ * a bare link, an input somebody wrote without reaching for `Input`. That is
+ * right, and it should stay.
+ *
+ * It was written outside any layer, and an unlayered rule beats every layered
+ * one however specific the layered one is. So `focus-visible:outline-none`,
+ * which `buttonClassName` carries precisely so a button can draw its own ring
+ * instead, never applied: a focused button wore the global 2px outline at 2px
+ * offset *and* its own ring at 4px, two blue lines with a white gap between
+ * them. Measured on the popup's close button, which a dialog focuses the
+ * moment it opens, so a visitor who had clicked nothing saw it on arrival.
+ *
+ * In `@layer base` it is still the fallback for everything that declares
+ * nothing, and a component that declares its own now replaces it.
+ */
+describe("the focus ring a control has not asked for", () => {
+    const focusRule = /:focus-visible\s*\{[^}]*outline:/;
+
+    it("is drawn, for everything that draws none of its own", () => {
+        expect(css).toMatch(focusRule);
+    });
+
+    it("is not drawn on a box the keyboard cannot reach", () => {
+        // A dialog takes focus itself so Tab has an edge and a screen reader
+        // lands on it. It carries tabindex="-1", so nobody ever tabbed there
+        // and a ring around the whole popup says nothing about where they are.
+        expect(css).toMatch(/\[tabindex="-1"\]:focus-visible\s*\{\s*outline:\s*none/);
+    });
+
+    it("is in a layer, so a control that draws its own replaces it", () => {
+        // Find the rule, then walk back to see which layer block holds it.
+        const at = css.search(focusRule);
+        expect(at, "no global focus rule found at all").toBeGreaterThan(-1);
+
+        const before = css.slice(0, at);
+        const opened = (before.match(/@layer[^{]*\{/g) ?? []).length;
+        const closedBraces = (before.match(/\}/g) ?? []).length;
+        const openedBraces = (before.match(/\{/g) ?? []).length;
+
+        expect(
+            opened > 0 && openedBraces > closedBraces,
+            "the global :focus-visible rule sits outside @layer, so it wins over " +
+            "every utility and a component cannot replace it with its own ring",
+        ).toBe(true);
+    });
+});

@@ -22,16 +22,18 @@ import { useModalDialog } from "@/core/hooks/useModalDialog";
 function Harness({
     onClose,
     trapFocus,
+    autoFocus,
 }: {
     onClose?: () => void;
     trapFocus?: boolean;
+    autoFocus?: boolean | "dialog";
 }) {
     const [open, setOpen] = useState(false);
     const close = () => {
         setOpen(false);
         onClose?.();
     };
-    const dialogRef = useModalDialog<HTMLDivElement>(open, close, { trapFocus });
+    const dialogRef = useModalDialog<HTMLDivElement>(open, close, { trapFocus, autoFocus });
 
     return (
         <div>
@@ -150,5 +152,47 @@ describe("useModalDialog", () => {
         tab();
         expect(onClose).not.toHaveBeenCalled();
         expect(document.activeElement).toBe(behind);
+    });
+});
+
+/**
+ * A dialog nobody opened does not put a ring on anything.
+ *
+ * Focus has to go into the dialog - that is what makes Tab stay inside it and
+ * what a screen reader follows - but it does not have to land on a control.
+ * Sending it to the first one means that control matches `:focus-visible` the
+ * instant the dialog appears, and the product draws a ring for that. On a
+ * marketing popup, which arrives on its own, a visitor who has clicked
+ * nothing is shown a blue ring around "Close" on arrival, and it reads as
+ * something gone wrong rather than as where the keyboard is.
+ *
+ * `autoFocus: "dialog"` puts focus on the box instead. Nothing is ringed
+ * until somebody presses Tab, which is the moment a ring means something.
+ */
+describe("a dialog that arrives on its own", () => {
+    it("takes focus itself rather than ringing its first control", () => {
+        render(<Harness autoFocus="dialog" />);
+        fireEvent.click(screen.getByText("open"));
+
+        const dialog = screen.getByRole("dialog");
+        expect(document.activeElement).toBe(dialog);
+        expect(document.activeElement).not.toBe(screen.getByText("first"));
+    });
+
+    it("is still reachable by keyboard from there", () => {
+        // The trap needs focus inside the dialog to know where the edges are.
+        // The box itself counts, and Tab from it goes to the first control.
+        render(<Harness autoFocus="dialog" />);
+        fireEvent.click(screen.getByText("open"));
+
+        const dialog = screen.getByRole("dialog");
+        expect(dialog.getAttribute("tabindex")).toBe("-1");
+        expect(dialog.contains(document.activeElement)).toBe(true);
+    });
+
+    it("still rings the first control when a dialog somebody opened asks for it", () => {
+        render(<Harness />);
+        fireEvent.click(screen.getByText("open"));
+        expect(document.activeElement).toBe(screen.getByText("first"));
     });
 });
