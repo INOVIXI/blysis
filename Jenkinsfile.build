@@ -10,6 +10,12 @@
  * One build at a time. The stages publish ports and containers on a machine
  * that serves nine other projects, and two builds of the same branch would
  * fight over both.
+ *
+ * Named rather than left as the bare `Jenkinsfile`, and so is the release
+ * one. They are two peers sharing a set of stages, not a default and a
+ * variant, and a job whose Script Path was never filled in then finds nothing
+ * and says so instead of quietly running whichever file Jenkins looks for
+ * first - which for the release job would be the wrong pipeline.
  */
 pipeline {
     agent any

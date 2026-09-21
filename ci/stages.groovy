@@ -8,7 +8,7 @@
  * release job trigger the CI job verifies whatever that job's branch points
  * at rather than the commit being released.
  *
- * So both `Jenkinsfile` and `Jenkinsfile.release` load this out of the
+ * So both `Jenkinsfile.build` and `Jenkinsfile.release` load this out of the
  * checkout they are already building. The stages run against exactly the
  * commit in the workspace, and there is one copy of them.
  *
