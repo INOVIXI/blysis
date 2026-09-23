@@ -1,6 +1,6 @@
 {
   "name": "blysis",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "license": "MIT",
   "description": "Open source game server management platform",
