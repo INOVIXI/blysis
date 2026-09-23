@@ -95,7 +95,7 @@
     "react-chartjs-2": "^5.3.1",
     "react-dom": "19.3.0",
     "redis": "^6.2.1",
-    "resend": "^6.27.0",
+    "resend": "^6.28.1",
     "sonner": "^2.0.7",
     "stripe": "^22.6.2",
     "swagger-ui-react": "^5.32.15",
