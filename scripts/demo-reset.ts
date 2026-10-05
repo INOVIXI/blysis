@@ -33,10 +33,14 @@
 import "dotenv/config";
 import { spawnSync } from "node:child_process";
 
+// `--force` on both seed-demo steps, because a demo host runs the published
+// image and that image sets NODE_ENV=production: seed-demo refuses a
+// production database unless it is told twice, so without it every reset
+// stopped at the first step. DEMO_MODE=1, checked below, is the second time.
 const STEPS: { what: string; args: string[] }[] = [
-    { what: "taking back what the last reset wrote", args: ["scripts/seed-demo.ts", "--clean"] },
+    { what: "taking back what the last reset wrote", args: ["scripts/seed-demo.ts", "--clean", "--force"] },
     { what: "roles, permissions and settings", args: ["prisma/seed.ts"] },
-    { what: "writing the demo back", args: ["scripts/seed-demo.ts"] },
+    { what: "writing the demo back", args: ["scripts/seed-demo.ts", "--force"] },
 ];
 
 function main(): void {
