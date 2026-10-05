@@ -128,6 +128,33 @@ async function tablesPresent(models: string[]): Promise<Set<string>> {
     return new Set(rows.map((r) => r.table_name));
 }
 
+/**
+ * The checksums an applied migration may carry and still count as this file.
+ *
+ * A migration is never edited after it has run anywhere, because the runner
+ * aborts a module whose applied text no longer matches the disk. One kind of
+ * edit has to be allowed anyway: a migration that is correct for the database
+ * it was written for but fails on a fresh install, where the reconcile has
+ * already created the final shape. Every install runs it there, so it cannot
+ * be left as it is, and a new migration cannot help because the broken one
+ * runs first.
+ *
+ * Such a file names the text it replaces, one line per checksum:
+ *
+ *   -- supersedes-checksum: <sha256 of the previous file>
+ *
+ * An install that applied the previous text then skips it instead of
+ * aborting. Only a checksum written here is accepted, so an accidental edit
+ * still fails the way it always did.
+ */
+export function supersededChecksums(content: string): Set<string> {
+    const found = new Set<string>();
+    for (const match of content.matchAll(/^--\s*supersedes-checksum:\s*([0-9a-f]{64})\s*$/gm)) {
+        found.add(match[1]);
+    }
+    return found;
+}
+
 function sha256(content: string): string {
     return crypto.createHash("sha256").update(content).digest("hex");
 }
@@ -229,6 +256,17 @@ async function applyModuleMigrations(
 
         const existingChecksum = appliedMap.get(file);
         if (existingChecksum !== undefined) {
+            if (existingChecksum !== checksum && supersededChecksums(content).has(existingChecksum)) {
+                // The text that ran here is one this file says it replaces.
+                // Nothing to run; the record moves to the current text so the
+                // next comparison is against what is on disk.
+                await prisma.moduleMigration.updateMany({
+                    where: { moduleId, migrationName: file },
+                    data: { checksum },
+                });
+                result.skipped.push(file);
+                continue;
+            }
             if (existingChecksum !== checksum) {
                 result.errors.push({
                     migration: file,

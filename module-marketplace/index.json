@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-09-20",
-  "updatedAt": "2026-09-20T16:38:42Z",
+  "updated": "2026-10-05",
+  "updatedAt": "2026-10-05T19:00:48Z",
   "modules": [
     {
       "id": "announcements",
@@ -1595,13 +1595,13 @@
           "description": "Herkese açık profil sayfaları; kurulu her modülün üye hakkında bildiği ile"
         }
       },
-      "version": "1.7.0",
+      "version": "1.7.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-09-20T11:30:12Z",
+      "updatedAt": "2026-10-05T19:00:48Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -2845,13 +2845,13 @@
           "description": "Ürün, kategori, sepet ve siparişleriyle eksiksiz e-ticaret"
         }
       },
-      "version": "2.46.0",
+      "version": "2.46.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T13:30:08Z",
+      "updatedAt": "2026-10-05T19:00:48Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -3032,13 +3032,13 @@
           "description": "Departmanlı ve öncelik seviyeli müşteri destek talebi sistemi"
         }
       },
-      "version": "1.8.0",
+      "version": "1.8.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "Ticket",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-09-20T12:11:23Z",
+      "updatedAt": "2026-10-05T19:00:48Z",
       "screenshots": [],
       "tags": [
         "management"

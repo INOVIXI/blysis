@@ -1,3 +1,6 @@
+-- supersedes-checksum: 4460ffd0d139ef6f3115e0b21259983d503f99ec561a66726c9233da8d5d872c
+-- (the text with a bare DROP TYPE; see the guard below)
+--
 -- What state a ticket is in becomes the operator's vocabulary.
 --
 -- Five statuses and four priorities were Prisma enums - database types - so
@@ -27,8 +30,21 @@ ALTER TABLE "Ticket" ALTER COLUMN "priority" DROP DEFAULT;
 ALTER TABLE "Ticket" ALTER COLUMN "priority" TYPE TEXT USING "priority"::TEXT;
 ALTER TABLE "Ticket" ALTER COLUMN "priority" SET DEFAULT 'MEDIUM';
 
-DROP TYPE IF EXISTS "TicketStatus";
-DROP TYPE IF EXISTS "TicketPriority";
+-- Only an ENUM by these names is dropped. On a fresh install the merged schema
+-- has already created the two tables, and every Postgres table owns a row
+-- type of its own name, so a bare DROP TYPE IF EXISTS found the table's type
+-- and failed with 2BP01.
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'TicketStatus' AND typtype = 'e'
+               AND typnamespace = current_schema()::regnamespace) THEN
+        DROP TYPE "TicketStatus";
+    END IF;
+    IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'TicketPriority' AND typtype = 'e'
+               AND typnamespace = current_schema()::regnamespace) THEN
+        DROP TYPE "TicketPriority";
+    END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS "TicketStatus" (
     "id"           TEXT PRIMARY KEY,
