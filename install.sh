@@ -2,7 +2,8 @@
 #
 # Blysis one-command installer.
 #
-#   curl -fsSL https://raw.githubusercontent.com/INOVIXI/blysis/main/install.sh | sudo bash
+#   curl -fsSL https://blysis.com/install.sh | sudo bash
+#   (the same script as https://raw.githubusercontent.com/INOVIXI/blysis/main/install.sh)
 #
 # Installs Docker if it is missing, generates every secret, writes .env,
 # pulls the prebuilt image, starts the stack, waits until the app answers,
@@ -383,12 +384,32 @@ if [ "$FROM_SOURCE" -eq 1 ]; then
     compose build || die "The image build failed. The output above says why."
 else
     info "Pulling ${IMAGE_DEFAULT}:${IMAGE_VERSION}"
-    if ! compose pull 2>&1 | sed 's/^/    /'; then
+    pull_log="$(mktemp)"
+    if ! compose pull 2>&1 | tee "$pull_log" | sed 's/^/    /'; then
+        # Say which failure it was. A network blip used to be reported as
+        # "the tag does not exist, or the package is private", which sends the
+        # reader looking for a problem that is not there - when running the
+        # same command again was the whole fix.
+        if grep -qiE 'i/o timeout|timed out|connection (refused|reset)|no such host|TLS handshake|network is unreachable|temporary failure' "$pull_log"; then
+            reason="The registry could not be reached (a network error, above).
+    Run the same command again: it picks up where it stopped, and your
+    .env and secrets are kept."
+        elif grep -qiE 'unauthorized|denied|forbidden' "$pull_log"; then
+            reason="The registry refused the pull: the GHCR package is private,
+    or this host is logged in to ghcr.io with an account that cannot read it."
+        elif grep -qiE 'manifest unknown|not found' "$pull_log"; then
+            reason="There is no image tagged '${IMAGE_VERSION}'. Check the tag, or omit
+    --version to install the latest release."
+        else
+            reason="The output above says why."
+        fi
+        rm -f "$pull_log"
         die "Could not pull ${IMAGE_DEFAULT}:${IMAGE_VERSION}.
-    Either the tag does not exist yet, or the GHCR package is private.
+    ${reason}
     To install from source instead, clone the repository and run:
         ./install.sh --build"
     fi
+    rm -f "$pull_log"
 fi
 
 compose up -d || die "The stack failed to start. Run 'blysis logs' to see why."
