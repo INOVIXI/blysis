@@ -6,8 +6,32 @@
  * the shop's table, its status vocabulary and that `total` is money. It asks
  * now, and this file is the only place any of that is known.
  */
-import type { HookHandlerFor } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
+
+/**
+ * A board and the question asked for it, as this module reads them.
+ *
+ * Stated here rather than taken from `HookHandlerFor<"leaderboard.boards">`:
+ * that shape is declared by the leaderboard module, and a site that installs
+ * this one without it still builds this file. Without the declaration the
+ * hook's types fall back to `unknown` and every read of `context` was a
+ * compile error, which failed the whole site's build. With both installed,
+ * `npm run typecheck:modules` holds these against the declared contract.
+ */
+interface Board {
+    id: string;
+    labelKey: string;
+    icon: string;
+    unit: "currency" | "count";
+    rows: { username: string; avatar: string | null; value: number; rank: number }[];
+}
+
+interface BoardsQuestion {
+    boardId: string | null;
+    limit: number;
+    search?: string;
+    since?: Date | null;
+}
 
 const BOARD = {
     id: "buyers",
@@ -30,7 +54,7 @@ function ranked<T extends { username: string }>(rows: T[], search: string | unde
     return term === "" ? numbered : numbered.filter((row) => row.username.toLowerCase().includes(term));
 }
 
-const topBuyers: HookHandlerFor<"leaderboard.boards", "filter"> = async (current, context) => {
+const topBuyers = async (current: Board[], context: BoardsQuestion): Promise<Board[]> => {
     if (context.boardId && context.boardId !== BOARD.id) return current;
     if (!context.boardId) return [...current, { ...BOARD, rows: [] }];
 

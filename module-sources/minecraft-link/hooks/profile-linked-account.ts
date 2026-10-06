@@ -9,10 +9,25 @@
  * No avatar. A head render is a third party's URL built from a name, and a
  * picture the site did not receive with the identity is not the identity's.
  */
-import type { HookHandlerFor } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
 
-const linkedAccount: HookHandlerFor<"profile.linkedAccounts", "filter"> = async (current, who) => {
+/**
+ * An account a profile shows as proved.
+ *
+ * Stated here rather than taken from `HookHandlerFor<"profile.linkedAccounts">`:
+ * that shape is declared by member-profiles, and a site that installs this module
+ * without it still builds this file. Without the declaration the hook's types
+ * fall back to `unknown`, and the reads below failed the whole site's build.
+ * With both installed, `npm run typecheck:modules` holds these against the
+ * declared contract.
+ */
+interface LinkedAccount {
+    provider: string;
+    username: string | null;
+    avatar: string | null;
+}
+
+const linkedAccount = async (current: LinkedAccount[], who?: { userId: string }): Promise<LinkedAccount[]> => {
     if (!who?.userId) return current;
 
     const account = await prisma.minecraftAccount.findUnique({

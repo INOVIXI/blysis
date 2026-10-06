@@ -11,11 +11,25 @@
  * rate in. Guessing one would charge somebody the wrong amount and mark it
  * paid.
  */
-import type { HookHandlerFor } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
 import { crossRate } from "../lib/rates";
 
-const onCurrencyRate: HookHandlerFor<"currency.rate", "filter"> = async (current, context) => {
+/**
+ * The pair a rate is asked for.
+ *
+ * Stated here rather than taken from `HookHandlerFor<"currency.rate">`:
+ * that shape is declared by the store, and a site that installs this module
+ * without it still builds this file. Without the declaration the hook's types
+ * fall back to `unknown`, and the reads below failed the whole site's build.
+ * With both installed, `npm run typecheck:modules` holds these against the
+ * declared contract.
+ */
+interface RateQuestion {
+    from: string;
+    to: string;
+}
+
+const onCurrencyRate = async (current: number | null, context?: RateQuestion): Promise<number | null> => {
     // Somebody already answered. Two modules quoting rates is a site with two
     // opinions about what a price is; the first one wins, as everywhere else.
     if (current !== null && current !== undefined) return current;

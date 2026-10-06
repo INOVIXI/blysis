@@ -2,7 +2,7 @@
   "id": "currency",
   "name": "Multi-Currency",
   "description": "Multi-currency support with automatic conversion",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis",

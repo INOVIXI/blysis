@@ -11,10 +11,27 @@
  * spreadsheet from running a cell as a command, is done once by the module
  * that writes the file.
  */
-import type { HookHandlerFor } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
 
-const products: CsvExport = {
+/**
+ * One table this shop can hand over, as the export module asks for it.
+ *
+ * Stated here rather than taken from the global `CsvExport`: that type is
+ * declared by csv-import-export, and a shop installed without it still builds
+ * this file. Using the global failed the whole site's build whenever the
+ * export module was absent. With both installed, `npm run typecheck:modules`
+ * holds this against the declared contract.
+ */
+type Cell = string | number | boolean | Date | null;
+
+interface ShopExport {
+    id: string;
+    labelKey: string;
+    header: string[];
+    read(skip: number, take: number): Promise<Cell[][]>;
+}
+
+const products: ShopExport = {
     id: "products",
     labelKey: "store.adm_exportProducts",
     header: ["id", "name", "slug", "price", "stock", "unitsSold", "isActive", "createdAt"],
@@ -44,7 +61,7 @@ const products: CsvExport = {
     },
 };
 
-const orders: CsvExport = {
+const orders: ShopExport = {
     id: "orders",
     labelKey: "store.adm_exportOrders",
     header: ["id", "orderNumber", "status", "total", "currency", "buyer", "email", "createdAt"],
@@ -74,7 +91,7 @@ const orders: CsvExport = {
     },
 };
 
-const offerShopExports: HookHandlerFor<"csv.exports", "filter"> = async (current) => {
+const offerShopExports = async (current: ShopExport[]): Promise<ShopExport[]> => {
     const already = new Set(current.map((one) => one.id));
     return [...current, ...[products, orders].filter((one) => !already.has(one.id))];
 };

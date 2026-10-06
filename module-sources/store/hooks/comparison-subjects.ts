@@ -6,11 +6,26 @@
  * picker that only offers what is already switched on is a picker nobody can
  * get started with.
  */
-import type { HookHandlerFor } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
 import { CATEGORY_SUBJECT } from "../lib/comparison-subject";
 
-const subjects: HookHandlerFor<"comparison.subjects", "filter"> = async (current) => {
+/**
+ * A shelf the comparison table can be asked about.
+ *
+ * Stated here rather than taken from `HookHandlerFor<"comparison.subjects">`:
+ * that shape is declared by comparison-table, and a site that installs this module
+ * without it still builds this file. Without the declaration the hook's types
+ * fall back to `unknown`, and the reads below failed the whole site's build.
+ * With both installed, `npm run typecheck:modules` holds these against the
+ * declared contract.
+ */
+interface Subject {
+    ref: string;
+    label: string;
+    group: string;
+}
+
+const subjects = async (current: Subject[]): Promise<Subject[]> => {
     const categories = await prisma.category.findMany({
         where: { isActive: true },
         orderBy: { order: "asc" },

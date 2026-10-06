@@ -13,7 +13,6 @@
  * column, and one whose window is shut is hidden exactly as it is on the grid.
  * A table is a way of drawing a category, not a way around it.
  */
-import type { HookHandlerFor } from "@/core/sdk";
 import { getTranslations } from "next-intl/server";
 import { moduleSettings, prisma, siteTimeZone } from "@/core/sdk/server";
 import { PUBLIC_PRODUCT } from "../lib/public-product";
@@ -25,10 +24,39 @@ import { priceAfterCredit, upgradeCredit } from "../lib/upgrade-credit";
 import { creditingPurchases } from "../lib/upgrade-credit-server";
 import { auth } from "@/core/sdk/auth";
 
+/**
+ * A column of the comparison table, and the shelf it was asked for.
+ *
+ * Stated here rather than taken from `HookHandlerFor<"comparison.columns">`:
+ * that shape is declared by comparison-table, and a site that installs this module
+ * without it still builds this file. Without the declaration the hook's types
+ * fall back to `unknown`, and the reads below failed the whole site's build.
+ * With both installed, `npm run typecheck:modules` holds these against the
+ * declared contract.
+ */
+interface Column {
+    ref: string;
+    label: string;
+    subtitle?: string | null;
+    image?: string | null;
+    price?: number | null;
+    was?: number | null;
+    fullPrice?: number | null;
+    note?: string | null;
+    href?: string | null;
+    buyHref?: string | null;
+    highlight?: boolean;
+}
+
+interface ColumnsQuestion {
+    subjectRef: string;
+    locale?: string;
+}
+
 /** How many products one shelf may put in a table before it stops being one. */
 const MOST_COLUMNS = 12;
 
-const columns: HookHandlerFor<"comparison.columns", "filter"> = async (current, who) => {
+const columns = async (current: Column[], who?: ColumnsQuestion): Promise<Column[]> => {
     const categoryId = who?.subjectRef ? categoryIdIn(who.subjectRef) : null;
     if (!categoryId) return current;
 

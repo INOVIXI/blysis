@@ -9,13 +9,30 @@
  * an operator marking one paid that a webhook was already settling - awards
  * once.
  */
-import type { HookHandlerFor } from "@/core/sdk";
 import { applyFiltersAsync } from "@/core/sdk";
 import { log } from "@/core/sdk/server";
 import { cashbackFor } from "../lib/cashback";
 import { cashbackPercent } from "../lib/setup";
 
-const onOrderCompleted: HookHandlerFor<"store.order.completed", "action"> = async (order) => {
+/**
+ * The part of a completed order cashback reads.
+ *
+ * Stated here rather than taken from `HookHandlerFor<"store.order.completed">`:
+ * that shape is declared by the store, and a site that installs this module
+ * without it still builds this file. Without the declaration the hook's types
+ * fall back to `unknown`, and the reads below failed the whole site's build.
+ * With both installed, `npm run typecheck:modules` holds these against the
+ * declared contract.
+ */
+interface CompletedOrder {
+    id: string;
+    userId: string | null;
+    orderNumber: string;
+    total: unknown;
+    paymentMethod?: string | null;
+}
+
+const onOrderCompleted = async (order: CompletedOrder): Promise<void> => {
     if (!order.userId) return;
 
     const decision = cashbackFor(

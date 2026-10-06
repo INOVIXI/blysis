@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-10-06",
-  "updatedAt": "2026-10-06T08:16:59Z",
+  "updatedAt": "2026-10-06T09:06:29Z",
   "modules": [
     {
       "id": "announcements",
@@ -479,13 +479,13 @@
           "description": "Kullanıcılar için sanal para cüzdanı"
         }
       },
-      "version": "1.9.0",
+      "version": "1.9.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-10-06T09:06:29Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -595,13 +595,13 @@
           "description": "Otomatik dönüşümle çoklu para birimi desteği"
         }
       },
-      "version": "1.6.0",
+      "version": "1.6.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "DollarSign",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-10-06T09:06:29Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -1033,13 +1033,13 @@
           "description": "Kategoriler, konular ve yanıtlarla topluluk tartışma forumu"
         }
       },
-      "version": "1.12.0",
+      "version": "1.12.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-20T13:25:07Z",
+      "updatedAt": "2026-10-06T09:06:29Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -1755,13 +1755,13 @@
           "description": "Oyuncuların sunucuda kendilerine fısıldanan bir kodu okuyarak Minecraft hesabının sahibi olduklarını kanıtlamasını sağlayın"
         }
       },
-      "version": "1.6.0",
+      "version": "1.6.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Link2",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-10-06T09:06:29Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -2845,13 +2845,13 @@
           "description": "Ürün, kategori, sepet ve siparişleriyle eksiksiz e-ticaret"
         }
       },
-      "version": "2.46.2",
+      "version": "2.46.3",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-06T08:16:59Z",
+      "updatedAt": "2026-10-06T09:06:29Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -3291,13 +3291,13 @@
           "description": "Oyuncuları sıralamada yer aldığınız sunucu listelerine yönlendirin ve kimin oy verdiğini sayın"
         }
       },
-      "version": "1.6.2",
+      "version": "1.6.3",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Vote",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-10-06T09:06:29Z",
       "screenshots": [],
       "tags": [
         "gaming"
