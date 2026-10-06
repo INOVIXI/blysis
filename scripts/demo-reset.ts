@@ -5,7 +5,17 @@
  * where they can is a wasteland by Tuesday unless something puts it back.
  * Every demo worth copying resets on a clock; this is that clock's hands.
  *
- * Three steps, in this order, because each needs the one before it:
+ * First the generated code is brought in line with the modules installed:
+ * the Prisma client and the module registries. A demo host that runs the
+ * reset in a container of its own - a Kubernetes CronJob, `docker compose
+ * run` - starts from the image, where both describe no modules at all. The
+ * client then had no module models (`undefined.findMany`), and the hook
+ * registry had no listeners, so a seed that asks another module a question
+ * got no answer: the comparison table asked the shop which shelves it has and
+ * wrote a table no shelf draws. Inside the app's own container both are
+ * already current and this costs a few seconds.
+ *
+ * Then three steps, in this order, because each needs the one before it:
  *
  *   1. `seed-demo --clean` takes back every row the demo seed wrote. It works
  *      from a ledger and checks each row still exists, so a visitor who
@@ -32,6 +42,7 @@
  */
 import "dotenv/config";
 import { spawnSync } from "node:child_process";
+import { detectSchemaDrift, writeSchemaState } from "../src/core/lib/build-state";
 
 // `--force` on both seed-demo steps, because a demo host runs the published
 // image and that image sets NODE_ENV=production: seed-demo refuses a
@@ -43,6 +54,18 @@ const STEPS: { what: string; args: string[] }[] = [
     { what: "writing the demo back", args: ["scripts/seed-demo.ts", "--force"] },
 ];
 
+/** Run a script through tsx, and stop the reset if it fails. */
+function run(args: string[]): void {
+    const result = spawnSync("npx", ["tsx", ...args], { stdio: "inherit" });
+    if (result.status !== 0) {
+        console.error(`\ndemo-reset stopped: ${args.join(" ")} exited ${result.status}`);
+        // Loudly, and without going on: a half-reset demo is worse than a
+        // stale one, because it looks fine until somebody opens the part
+        // that did not get written.
+        process.exit(result.status ?? 1);
+    }
+}
+
 function main(): void {
     if (process.env.DEMO_MODE !== "1") {
         console.error(
@@ -53,16 +76,19 @@ function main(): void {
     }
 
     const started = Date.now();
+
+    process.stdout.write("\n── the generated code, for the modules installed ──\n");
+    if (detectSchemaDrift()) {
+        run(["scripts/merge-schemas.ts"]);
+        writeSchemaState();
+    }
+    // Every registry, not only the hooks: a seed may reach any of them, and
+    // regenerating is idempotent and quick.
+    run(["scripts/generate-registry.ts"]);
+
     for (const step of STEPS) {
         process.stdout.write(`\n── ${step.what} ──\n`);
-        const run = spawnSync("npx", ["tsx", ...step.args], { stdio: "inherit" });
-        if (run.status !== 0) {
-            console.error(`\ndemo-reset stopped: ${step.args.join(" ")} exited ${run.status}`);
-            // Loudly, and without going on: a half-reset demo is worse than a
-            // stale one, because it looks fine until somebody opens the part
-            // that did not get written.
-            process.exit(run.status ?? 1);
-        }
+        run(step.args);
     }
 
     const seconds = Math.round((Date.now() - started) / 1000);
