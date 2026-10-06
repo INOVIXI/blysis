@@ -19,6 +19,7 @@
     "prebuild": "npm run db:merge && npm run generate:themes && npx tsx scripts/generate-registry.ts && npx tsx scripts/generate-openapi.ts",
     "build": "sh scripts/with-scratch.sh next build",
     "analyze": "ANALYZE=true next build",
+    "prestart": "tsx scripts/promote-staged-build.ts",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",

@@ -61,7 +61,7 @@ export type DriftReason =
     | { kind: "image-changed"; detail: string }
     | { kind: "modules-changed"; detail: string };
 
-const STATE_FILENAME = "blysis-build-state.json";
+export const STATE_FILENAME = "blysis-build-state.json";
 
 /**
  * Marker for the generated Prisma client. Lives in node_modules so it is
@@ -148,14 +148,17 @@ export function readBuildState(root: string = process.cwd()): BuildState | null 
  * Record that the build now on disk was produced from the module set now on
  * disk. Call this only after a build actually succeeded - writing it earlier
  * would tell the next boot that a broken build is current.
+ *
+ * `dir` is the build being described: the live `.next` by default, or a
+ * staged build that will carry the record with it when it is promoted (see
+ * staged-build.ts).
  */
-export function writeBuildState(root: string = process.cwd()): BuildState {
+export function writeBuildState(root: string = process.cwd(), dir: string = nextDir(root)): BuildState {
     const state: BuildState = {
         moduleFingerprint: computeModuleFingerprint(root),
         imageBuildId: readImageBuildId(root),
         builtAt: new Date().toISOString(),
     };
-    const dir = nextDir(root);
     fs.mkdirSync(dir, { recursive: true });
     // Write-then-rename: a container killed mid-write must not leave a
     // truncated state file that parses as "no state" and forces a rebuild.

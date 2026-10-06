@@ -244,6 +244,28 @@ jobs:
           grep -q 'regenerating the Prisma client' /tmp/app-logs.txt \
             || { echo "the Prisma client was not reconciled after recreation"; tail -60 /tmp/app-logs.txt; exit 1; }
 
+      # A rebuild is staged beside the live build (src/core/lib/staged-build.ts).
+      # Before that, `next build` emptied `.next` first, so one module that did
+      # not type-check left no build at all and the site stayed down - the
+      # public demo, 2026-10-05. Here a module is broken in place, and the
+      # restart must fail its rebuild and go on serving the build it had.
+      - name: A build that fails leaves the previous build serving
+        run: |
+          set -euo pipefail
+          docker compose exec -T app sh -c '
+            echo "export const broken: number = \"not a number\";" > src/modules/blog/broken.ts
+            sed -i "s/\"version\": \"\([^\"]*\)\"/\"version\": \"\1-broken\"/" src/modules/blog/module.json'
+          docker compose restart app
+          ./ci/wait-for-health.sh 900
+          docker compose logs app > /tmp/app-logs.txt 2>&1
+          grep -q 'build FAILED. Starting the previous build' /tmp/app-logs.txt \
+            || { echo "the broken build was not reported as failed"; tail -60 /tmp/app-logs.txt; exit 1; }
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3001/api/v1/blog/articles)
+          echo "status with a broken module: $code"
+          [ "$code" = "200" ] || { echo "the previous build is not serving the module it had"; exit 1; }
+          docker compose exec -T app sh -c 'test -f .next/BUILD_ID && test ! -e .next/.staging && test ! -e .next/.previous' \
+            || { echo "the failed build left something behind in .next"; exit 1; }
+
       - name: Dump logs on failure
         if: failure()
         run: docker compose logs --tail=200

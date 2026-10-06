@@ -23,7 +23,8 @@
 import { execFile } from "child_process";
 import { promisify } from "util";
 import { errorText, log } from "./logger";
-import { writeBuildState, writeSchemaState } from "./build-state";
+import { writeSchemaState } from "./build-state";
+import { discardStagedBuild, markStagedBuildReady, prepareStagedBuild } from "./staged-build";
 
 const execFileAsync = promisify(execFile);
 
@@ -61,6 +62,10 @@ let buildScheduled = false;
 let buildRunning = false;
 let buildTimer: ReturnType<typeof setTimeout> | null = null;
 const BUILD_DEBOUNCE_MS = 3000; // Wait 3s after last install before building
+/** A build that has not finished in this long is taken to be hung. */
+const BUILD_TIMEOUT_MS = 45 * 60 * 1000;
+/** `next build` is chatty; execFile kills the child when its output passes this. */
+const BUILD_OUTPUT_BUFFER = 64 * 1024 * 1024;
 const RESTART_GRACE_MS = 2000;  // Let the triggering HTTP response flush first
 
 // Dedicated pg pool with a single connection so the advisory lock acquire
@@ -255,38 +260,56 @@ export function scheduleBuild(): void {
                 });
             }
 
-            // 5. Build
+            // 5. Build, staged (staged-build.ts): beside the live build, which
+            //    this process is serving from and goes on serving until the
+            //    restart below. Building into `.next` itself emptied it under
+            //    the running server, so every visitor during a build got
+            //    pages whose chunks were gone, and a failed build left none.
+            //
+            //    The timeout only bounds a build that hangs. It used to be
+            //    five minutes, which a full module set outgrows on a small
+            //    machine, and a killed build was a lost build; now it costs
+            //    nothing but the wait.
             await execFileAsync("npm", ["run", "build"], {
-                cwd: process.cwd(), timeout: 300000, // 5 min max
+                cwd: process.cwd(),
+                env: prepareStagedBuild(),
+                timeout: BUILD_TIMEOUT_MS,
+                maxBuffer: BUILD_OUTPUT_BUFFER,
             });
 
-            // 6. Record what the fresh build and the regenerated Prisma
-            //    client were made from, so the boot-time reconciler
-            //    recognises both as current and does neither again.
-            writeBuildState();
+            // 6. Record what the build and the regenerated Prisma client were
+            //    made from. The build's record goes into the staged build, so
+            //    it arrives with it, and marks it ready to promote.
+            markStagedBuildReady();
             writeSchemaState();
 
             // 7. Replace the process so the new build is actually served.
             //
-            //    `next start` reads the route + build manifests once, at boot.
-            //    Rebuilding underneath it changes nothing the running process
-            //    can see, so an install is not live until the process is
-            //    replaced. This used to call `npx pm2 restart blysis` inside
-            //    a try/catch - and pm2 is in neither the image nor
-            //    package.json, so the call always threw and was always
-            //    swallowed. Every module install rebuilt and then served the
-            //    old build.
+            //    The staged build is promoted by the reconciler on the way
+            //    back up, before `next start`, while nothing is reading
+            //    `.next` - never under a running server, which holds the old
+            //    build's manifests and would name chunks that had just gone.
+            //
+            //    `next start` reads the route + build manifests once, at boot,
+            //    so an install is not live until the process is replaced. This
+            //    used to call `npx pm2 restart blysis` inside a try/catch -
+            //    and pm2 is in neither the image nor package.json, so the call
+            //    always threw and was always swallowed. Every module install
+            //    rebuilt and then served the old build.
             //
             //    Raising SIGTERM on ourselves is the portable replacement: it
             //    runs the shutdown registry (draining Prisma, clearing the
             //    scheduler interval) and exits, and every supervisor this
             //    project supports treats that as "start me again" -
             //    docker-compose `restart: unless-stopped`, systemd
-            //    `Restart=always`, and pm2 if an operator does use it.
+            //    `Restart=always`, Kubernetes, and pm2 if an operator uses it.
             requestRestart();
         } catch (err) {
-            // Non-fatal: build failed - will need a manual rebuild.
-            log.error("install-lock: build failed", {
+            // The live build was never touched and goes on being served; the
+            // half-made one is thrown away. The modules installed since the
+            // live build stay unusable until a build succeeds.
+            discardStagedBuild();
+            log.error("install-lock: build failed, the previous build stays live", {
                 step: "build",
                 error: errorText(err),
             });

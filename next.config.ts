@@ -74,6 +74,10 @@ const nextConfig: NextConfig = {
   // its way through, so a build under this variable leaves that one line to
   // put back.
   ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
+  // A staged rebuild (src/core/lib/staged-build.ts) type-checks against its
+  // own generated route types rather than the live build's, through a
+  // tsconfig written for it. Unset otherwise.
+  ...(process.env.NEXT_TSCONFIG_PATH ? { typescript: { tsconfigPath: process.env.NEXT_TSCONFIG_PATH } } : {}),
   ...(isDev ? { allowedDevOrigins: devOriginHosts() } : {}),
   serverExternalPackages: ["redis", "net", "fs", "dns", "tls", "pg", "@prisma/adapter-pg", "@aws-sdk/client-s3"],
   images: {

@@ -35,12 +35,27 @@ vi.mock("@/core/lib/logger", () => ({
     errorText: (e: unknown) => (e instanceof Error ? e.message : String(e)),log: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
-const { writeBuildState, writeSchemaState } = vi.hoisted(() => ({
-    writeBuildState: vi.fn(),
+const { writeSchemaState } = vi.hoisted(() => ({
     writeSchemaState: vi.fn(),
 }));
 
-vi.mock("@/core/lib/build-state", () => ({ writeBuildState, writeSchemaState }));
+vi.mock("@/core/lib/build-state", () => ({ writeSchemaState }));
+
+// The build is staged (staged-build.ts has its own tests against a real
+// directory): what matters here is that install-lock builds into the staging
+// environment, marks the result ready only after a build that succeeded, and
+// throws away the result of one that failed.
+const { STAGED_ENV, prepareStagedBuild, markStagedBuildReady, discardStagedBuild } = vi.hoisted(() => {
+    const env = { NEXT_DIST_DIR: ".next/.staging", NEXT_TSCONFIG_PATH: "tsconfig.staging.json" };
+    return {
+        STAGED_ENV: env,
+        prepareStagedBuild: vi.fn(() => env),
+        markStagedBuildReady: vi.fn(),
+        discardStagedBuild: vi.fn(),
+    };
+});
+
+vi.mock("@/core/lib/staged-build", () => ({ prepareStagedBuild, markStagedBuildReady, discardStagedBuild }));
 
 type InstallLock = typeof import("@/core/lib/install-lock");
 
@@ -117,7 +132,9 @@ afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();
     execFileMock.mockClear();
-    writeBuildState.mockClear();
+    markStagedBuildReady.mockClear();
+    discardStagedBuild.mockClear();
+    prepareStagedBuild.mockClear();
     writeSchemaState.mockClear();
 });
 
@@ -311,7 +328,7 @@ describe("scheduleBuild", () => {
             "npx tsx scripts/generate-registry.ts",
             "npm run build",
         ]);
-        expect(writeBuildState).toHaveBeenCalledTimes(1);
+        expect(markStagedBuildReady).toHaveBeenCalledTimes(1);
         expect(writeSchemaState).toHaveBeenCalledTimes(1);
         expect(mod.isBuildPending()).toBe(false);
     });
@@ -365,7 +382,7 @@ describe("scheduleBuild", () => {
 
         // A stale schema or registry is recoverable; refusing to build is not.
         expect(ranCommands()).toContain("npm run build");
-        expect(writeBuildState).toHaveBeenCalledTimes(1);
+        expect(markStagedBuildReady).toHaveBeenCalledTimes(1);
     });
 
     it("skips the schema additions when the schema merge failed", async () => {
@@ -402,7 +419,7 @@ describe("scheduleBuild", () => {
         await drainBuild();
 
         expect(ranCommands()).toContain("npm run build");
-        expect(writeBuildState).toHaveBeenCalledTimes(1);
+        expect(markStagedBuildReady).toHaveBeenCalledTimes(1);
     });
 
     it("does not record state or restart when the build itself fails", async () => {
@@ -419,10 +436,36 @@ describe("scheduleBuild", () => {
 
         // Recording a fingerprint for a build that does not exist would make
         // the boot reconciler skip the rebuild that would have fixed it.
-        expect(writeBuildState).not.toHaveBeenCalled();
+        expect(markStagedBuildReady).not.toHaveBeenCalled();
         expect(writeSchemaState).not.toHaveBeenCalled();
         expect(process.kill).not.toHaveBeenCalled();
         expect(mod.isBuildPending()).toBe(false);
+        // The half-made build goes; the live one was never touched and is
+        // still what the running server serves.
+        expect(discardStagedBuild).toHaveBeenCalledTimes(1);
+    });
+
+    it("builds beside the live build, not into it", async () => {
+        setProduction();
+        execFileMock.mockImplementation(((_file: string, _args: string[], _opts: unknown, cb: ExecFileCb) => {
+            cb(null, "", "");
+        }) as never);
+        const mod = await load();
+
+        mod.scheduleBuild();
+        await drainBuild();
+
+        // Building into `.next` emptied it under the running server: every
+        // visitor during an install got pages whose chunks were gone, and a
+        // failed build left nothing to start.
+        const build = execFileMock.mock.calls.find((c) => c[0] === "npm");
+        const opts = build?.[2] as { env?: NodeJS.ProcessEnv; timeout?: number; maxBuffer?: number };
+        expect(opts.env).toMatchObject(STAGED_ENV);
+        // A full module set outgrew the old five minutes on a small machine,
+        // and the default 1 MB output buffer kills a chatty build outright.
+        expect(opts.timeout).toBeGreaterThanOrEqual(30 * 60 * 1000);
+        expect(opts.maxBuffer).toBeGreaterThanOrEqual(16 * 1024 * 1024);
+        expect(discardStagedBuild).not.toHaveBeenCalled();
     });
 
     it("schedules another build for installs that landed during one", async () => {

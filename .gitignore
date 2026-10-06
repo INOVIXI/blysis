@@ -149,6 +149,8 @@ module-sources/__hook-contracts__.ts
 # Throwaway Prisma client + tsconfig built by scripts/typecheck-modules.ts.
 .typecheck-modules/
 tsconfig.modules.generated.json
+# Written by src/core/lib/staged-build.ts for each in-place rebuild.
+/tsconfig.staging.json
 
 # Local demo runner written by hand; holds a dev DB URL, never committed.
 .run-demo.sh

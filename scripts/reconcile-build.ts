@@ -7,10 +7,18 @@
  * if the build on disk was not produced from the modules on disk, it rebuilds
  * before a single request is served.
  *
+ * Rebuilds are staged (src/core/lib/staged-build.ts): `next build` writes
+ * beside the live build and only a finished one replaces it. This is also
+ * where a build finished by an install is put live, and where a promotion cut
+ * off by a crash is finished or rolled back - all before `next start`, while
+ * nothing is reading `.next`.
+ *
  * Failure policy: a failed rebuild is loud but not fatal as long as *some*
- * build exists. An admin who broke their install with a bad module still needs
- * the admin UI to reach the uninstall button; refusing to start would take
- * that away. Only a completely missing build stops the boot.
+ * build exists, and because the rebuild is staged the previous build is still
+ * there to start. An admin who broke their install with a bad module still
+ * needs the admin UI to reach the uninstall button; refusing to start would
+ * take that away. Only a boot with no build at all and no way to make one
+ * stops.
  */
 
 import { execFileSync } from "child_process";
@@ -23,6 +31,13 @@ import {
     readSchemaState,
     computeModuleFingerprint,
 } from "../src/core/lib/build-state";
+import {
+    discardStagedBuild,
+    markStagedBuildReady,
+    prepareStagedBuild,
+    promoteStagedBuild,
+    settleStagedBuilds,
+} from "../src/core/lib/staged-build";
 
 function log(msg: string): void {
     console.log(`[reconcile] ${msg}`);
@@ -58,6 +73,7 @@ function reconcileSchema(): void {
 function main(): void {
     const started = Date.now();
 
+    settleStagedBuilds(process.cwd(), log);
     reconcileSchema();
 
     const drift = detectDrift();
@@ -76,11 +92,10 @@ function main(): void {
         return;
     }
 
-    if (drift.kind === "no-build") {
-        console.error(`[reconcile] FATAL: ${drift.detail}`);
-        console.error("[reconcile] The image is missing its Next.js build. This is not repairable at boot.");
-        process.exit(1);
-    }
+    // No build at all used to stop here, as unrepairable. It is repairable:
+    // the image carries the source, and a staged build cannot make anything
+    // worse. It is still the one failure that stops the boot, below.
+    const nothingToFallBackTo = drift.kind === "no-build";
 
     log(`rebuild required - ${drift.kind}: ${drift.detail}`);
     log(`installed module fingerprint: ${computeModuleFingerprint().slice(0, 12)}`);
@@ -90,16 +105,22 @@ function main(): void {
         // `prebuild` re-runs merge-schemas, the theme registry, the module
         // registry and the OpenAPI document, so this one command covers every
         // generated artifact the build depends on.
-        execFileSync("npm", ["run", "build"], { stdio: "inherit", cwd: process.cwd() });
+        execFileSync("npm", ["run", "build"], { stdio: "inherit", cwd: process.cwd(), env: prepareStagedBuild() });
+        markStagedBuildReady();
     } catch {
-        console.error("[reconcile] build FAILED. Starting the previous build so the admin UI stays reachable.");
+        discardStagedBuild();
+        if (nothingToFallBackTo) {
+            console.error("[reconcile] FATAL: the build FAILED and there is no previous build to start.");
+            process.exit(1);
+        }
+        console.error("[reconcile] build FAILED. Starting the previous build, untouched, so the admin UI stays reachable.");
         console.error("[reconcile] Modules installed since that build will not work until a build succeeds.");
         return;
     }
 
-    // `prebuild` re-ran merge-schemas as part of the build, so both markers
-    // are current now.
-    writeBuildState();
+    promoteStagedBuild();
+    // `prebuild` re-ran merge-schemas as part of the build, so the client is
+    // current too.
     writeSchemaState();
     log(`rebuild finished in ${Math.round((Date.now() - started) / 1000)}s - starting`);
 }

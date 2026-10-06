@@ -75,25 +75,37 @@ a bulk install of thirty modules produces one build:
 
 ```
 db:merge → apply-schema-additions → apply-migrations → generate-registry
-         → npm run build → record the build fingerprint → SIGTERM
+         → npm run build (staged) → record the build fingerprint → SIGTERM
+         → on the way back up: the staged build replaces the live one
 ```
+
+The build is staged: it is written to `.next/.staging`, beside the live build,
+which the running site keeps serving untouched for as long as the build takes.
+Only a finished build replaces it, and only at the next start, before the
+server reads `.next`. A build that fails is thrown away and the site goes on
+exactly as it was.
 
 Two consequences worth knowing before you deploy:
 
 - **Run the app under a supervisor.** Docker Compose (`restart: unless-stopped`),
   systemd (`Restart=always`) and pm2 all qualify. A bare `npm start` in a
   terminal does not: the process exits after an install and nothing brings it
-  back. The Docker install gets this right with no configuration.
+  back. The Docker install gets this right with no configuration. Outside
+  Docker, start through `npm start`, not `next start`: its `prestart` is what
+  puts an install's build live.
 - **One app process per installation.** Not one per core. Two processes sharing
-  the modules volume would both build into the same `.next` and the loser would
-  serve a half-written build.
+  the modules volume would both build into the same staging directory and
+  replace each other's build.
 
-Expect a gap of seconds to minutes while a build runs, so install modules during
-a quiet window on a busy site. A rebuild that fails is loud in the logs but does
-not stop the boot: the previous build keeps being served, so the admin panel
-stays reachable and the offending module can be removed. On every boot,
+The site stays up while a build runs; the new modules go live with the restart
+that follows it, a gap of seconds. A rebuild that fails is loud in the logs but
+does not stop the boot: the previous build keeps being served, so the admin
+panel stays reachable and the offending module can be removed. On every boot,
 `scripts/reconcile-build.ts` compares a fingerprint of `src/modules/` against
-the one recorded beside the build and rebuilds only when they disagree.
+the one recorded beside the build and rebuilds only when they disagree - staged
+the same way, so a boot-time rebuild that fails starts the previous build. A
+promotion cut off by a crash is finished or rolled back on the next start, so a
+start always serves one whole build.
 
 ---
 
