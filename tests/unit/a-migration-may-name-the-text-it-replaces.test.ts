@@ -5,7 +5,7 @@ import path from "node:path";
 import { supersededChecksums } from "../../scripts/apply-migrations";
 
 /**
- * Three migrations failed every fresh install of their module.
+ * Four migrations failed every fresh install of their module.
  *
  * `member-profiles/001`, `store/014` and `tickets/002` are each correct for
  * the older database they were written for, and each failed on a new one,
@@ -13,7 +13,8 @@ import { supersededChecksums } from "../../scripts/apply-migrations";
  * run: a table 002 drops later, a unique index Prisma names like the
  * constraint the guard looked for, a table whose row type shares its name
  * with the enum being dropped. Installing all thirty modules that ship demo
- * data on 0.4.2 hit all three.
+ * data on 0.4.2 hit all three. `store/018` was behind 014 and only surfaced
+ * once 014 passed: it copied from columns the final shape no longer has.
  *
  * The runner's rule that an applied migration may not change is still right,
  * so the fix cannot be a quiet edit: an install that already ran the old text
@@ -44,11 +45,13 @@ describe("the checksums a migration says it replaces", () => {
     });
 });
 
-describe("the three migrations fixed for fresh installs", () => {
+describe("the migrations fixed for fresh installs", () => {
     const fixed = [
         "module-sources/member-profiles/migrations/001_a_linked_game_account_names_no_game.sql",
         "module-sources/store/migrations/014_an_order_has_a_number_an_integrator_can_hold.sql",
         "module-sources/tickets/migrations/002_a_ticket_state_is_a_row.sql",
+        // Found after the three above: store stopped at 014 and never reached it.
+        "module-sources/store/migrations/018_a_bulk_discount_covers_a_shelf.sql",
     ];
 
     for (const file of fixed) {
