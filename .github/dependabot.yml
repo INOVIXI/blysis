@@ -12,6 +12,10 @@ updates:
       types:
         patterns:
           - "@types/*"
+    ignore:
+      # eslint-config-next's bundled eslint-plugin-react crashes under ESLint 10.
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
     labels:
       - "dependencies"
 
