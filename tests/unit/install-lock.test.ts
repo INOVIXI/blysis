@@ -68,19 +68,29 @@ interface QueryRecord { sql: string; params?: unknown[] }
 class FakeClient {
     queries: QueryRecord[] = [];
     releases = 0;
+    destroyed = 0;
 
     constructor(private readonly behaviour: PgBehaviour) { }
 
     async query<T>(sql: string, params?: unknown[]): Promise<{ rows: T[] }> {
         this.queries.push({ sql, params });
         if (this.behaviour.queryThrows) throw new Error("connection terminated");
-        if (sql.includes("pg_try_advisory_lock")) {
+        if (sql.includes("pg_try_advisory_xact_lock")) {
             return { rows: [{ locked: this.behaviour.grantsLock } as T] };
         }
         return { rows: [] };
     }
 
-    release(): void { this.releases += 1; }
+    release(destroy?: boolean): void {
+        this.releases += 1;
+        if (destroy) this.destroyed += 1;
+    }
+
+    get statements(): string[] { return this.queries.map((q) => q.sql); }
+
+    get lockQuery(): QueryRecord | undefined {
+        return this.queries.find((q) => q.sql.includes("pg_try_advisory_xact_lock"));
+    }
 }
 
 interface PgBehaviour {
@@ -151,14 +161,26 @@ describe("acquireInstallLock", () => {
 
         expect(release).toBeTypeOf("function");
         expect(mod.isInstalling()).toBe(true);
-        expect(pg.clients[0].queries[0].sql).toContain("pg_try_advisory_lock");
+        expect(pg.clients[0].statements[0]).toBe("BEGIN");
+        expect(pg.clients[0].lockQuery).toBeDefined();
+    });
+
+    it("never takes a session-level lock, so PgBouncer in transaction mode cannot strand it", async () => {
+        const mod = await load();
+        const release = await mod.acquireInstallLock();
+        release!();
+        await vi.waitFor(() => expect(pg.clients[0].releases).toBe(1));
+
+        for (const sql of pg.clients[0].statements) {
+            expect(sql).not.toMatch(/pg_(?:try_)?advisory_(?:lock|unlock)\b/);
+        }
     });
 
     it("passes the advisory key as a string so the bigint survives", async () => {
         const mod = await load();
         await mod.acquireInstallLock();
 
-        const [key] = pg.clients[0].queries[0].params as string[];
+        const [key] = pg.clients[0].lockQuery!.params as string[];
         expect(typeof key).toBe("string");
         // 0x626c794d6f64496e - larger than Number.MAX_SAFE_INTEGER, so a
         // float round-trip would produce a different lock id per worker and
@@ -167,17 +189,16 @@ describe("acquireInstallLock", () => {
         expect(Number(key)).toBeGreaterThan(Number.MAX_SAFE_INTEGER);
     });
 
-    it("unlocks on the same client it locked, then returns it to the pool", async () => {
+    it("ends the lock's transaction on the client that took it, then returns it to the pool", async () => {
         const mod = await load();
         const release = await mod.acquireInstallLock();
 
         release!();
         await vi.waitFor(() => expect(pg.clients[0].releases).toBe(1));
 
-        // Same physical connection for both statements: an unlock issued on a
-        // different session is a silent no-op and leaks the lock.
         expect(pg.clients).toHaveLength(1);
-        expect(pg.clients[0].queries.map((q) => q.sql).join(" ")).toContain("pg_advisory_unlock");
+        expect(pg.clients[0].statements.at(-1)).toBe("ROLLBACK");
+        expect(pg.clients[0].destroyed).toBe(0);
         expect(mod.isInstalling()).toBe(false);
     });
 
@@ -190,6 +211,8 @@ describe("acquireInstallLock", () => {
 
         expect(mod.isInstalling()).toBe(false);
         await vi.waitFor(() => expect(pg.clients[0].releases).toBe(1));
+        // A client whose transaction may still hold the lock must not go back to the pool.
+        expect(pg.clients[0].destroyed).toBe(1);
     });
 
     it("rejects a second acquire in this worker without touching Postgres", async () => {
@@ -207,6 +230,7 @@ describe("acquireInstallLock", () => {
 
         expect(await mod.acquireInstallLock()).toBeNull();
         expect(mod.isInstalling()).toBe(false);
+        expect(pg.clients[0].statements.at(-1)).toBe("ROLLBACK");
         // A checked-out client that is never released would exhaust the
         // two-connection pool after two denied installs.
         expect(pg.clients[0].releases).toBe(1);

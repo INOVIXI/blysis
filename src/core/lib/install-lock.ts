@@ -48,8 +48,8 @@ function requestRestart(): void {
     }, RESTART_GRACE_MS).unref();
 }
 
-// Advisory lock key - arbitrary constant. Postgres session-level advisory
-// locks are identified by a bigint; any app-wide constant works as long as
+// Advisory lock key - arbitrary constant. Postgres advisory locks are
+// identified by a bigint; any app-wide constant works as long as
 // nothing else in the schema reuses the same value. Use a BigInt literal:
 // the hex value exceeds Number.MAX_SAFE_INTEGER, so a plain `number` would
 // round, and two PM2 workers could compute different float approximations
@@ -68,15 +68,16 @@ const BUILD_TIMEOUT_MS = 45 * 60 * 1000;
 const BUILD_OUTPUT_BUFFER = 64 * 1024 * 1024;
 const RESTART_GRACE_MS = 2000;  // Let the triggering HTTP response flush first
 
-// Dedicated pg pool with a single connection so the advisory lock acquire
-// and release are guaranteed to execute on the same Postgres session.
-// Prisma's own connection pool can recycle connections between calls, which
-// makes pg_advisory_unlock a no-op when the release lands on a different
-// connection - the lock then leaks until the original session is closed.
+// Dedicated pg pool whose client holds the lock in an open transaction for
+// the length of the install. The lock is transaction-scoped
+// (pg_try_advisory_xact_lock) and ends with that transaction: behind
+// PgBouncer in transaction mode a client keeps its server connection only
+// for the life of a transaction, so a session lock released by a separate
+// pg_advisory_unlock could land on another server connection and leak.
 // Lazily required via eval("require") to keep Turbopack from bundling pg.
 type LockClient = {
     query<T>(sql: string, params?: unknown[]): Promise<{ rows: T[] }>;
-    release(): void;
+    release(destroy?: boolean): void;
 };
 type LockPool = { connect(): Promise<LockClient>; end(): Promise<void> };
 let lockPool: LockPool | null = null;
@@ -91,6 +92,12 @@ function getLockPool(): LockPool {
     return lockPool;
 }
 
+/** Ends the lock's transaction; a client that cannot is destroyed, not pooled. */
+async function endLockTransaction(client: LockClient): Promise<void> {
+    const ended = await client.query("ROLLBACK").then(() => true, () => false);
+    try { client.release(!ended); } catch { /* noop */ }
+}
+
 /** Check if an install is currently running (this worker only) */
 export function isInstalling(): boolean {
     return installing;
@@ -100,11 +107,8 @@ export function isInstalling(): boolean {
  * Acquire install lock - returns release function or null if another
  * install is already running (either in this worker or another one).
  *
- * Holds a dedicated pg client checked out from a single-purpose pool so
- * pg_try_advisory_lock and pg_advisory_unlock run on the same Postgres
- * session. Without this, Prisma's pool may release the unlock on a
- * different physical connection - making it a silent no-op while the
- * lock continues to be held by the original session.
+ * Holds a dedicated pg client checked out from a single-purpose pool, with
+ * the lock taken inside a transaction on it; releasing ends the transaction.
  */
 export async function acquireInstallLock(): Promise<(() => void) | null> {
     // Fast path: another request in this worker already holds the lock.
@@ -113,13 +117,16 @@ export async function acquireInstallLock(): Promise<(() => void) | null> {
     let client: LockClient | null = null;
     try {
         client = await getLockPool().connect();
+        await client.query("BEGIN");
+        // The transaction sits idle for the whole install.
+        await client.query("SET LOCAL idle_in_transaction_session_timeout = 0");
         const result = await client.query<{ locked: boolean }>(
-            "SELECT pg_try_advisory_lock($1::bigint) AS locked",
+            "SELECT pg_try_advisory_xact_lock($1::bigint) AS locked",
             [INSTALL_ADVISORY_LOCK_KEY.toString()],
         );
         const gotLock = result.rows?.[0]?.locked === true;
         if (!gotLock) {
-            client.release();
+            await endLockTransaction(client);
             return null;
         }
 
@@ -127,13 +134,10 @@ export async function acquireInstallLock(): Promise<(() => void) | null> {
         const heldClient = client;
         return () => {
             installing = false;
-            heldClient
-                .query("SELECT pg_advisory_unlock($1::bigint)", [INSTALL_ADVISORY_LOCK_KEY.toString()])
-                .catch(() => { /* already released or connection gone */ })
-                .finally(() => { try { heldClient.release(); } catch { /* noop */ } });
+            void endLockTransaction(heldClient);
         };
     } catch (err) {
-        if (client) { try { client.release(); } catch { /* noop */ } }
+        if (client) await endLockTransaction(client);
         // DB unreachable - fall back to in-process lock so single-worker
         // setups (no Postgres yet, e.g. during initial setup wizard)
         // still get some mutual exclusion.
