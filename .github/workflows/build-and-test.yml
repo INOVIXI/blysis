@@ -20,7 +20,7 @@ env:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v7
@@ -119,7 +119,7 @@ jobs:
 
   docker:
     name: Docker image + module lifecycle smoke test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Boots the real image with the real compose stack and drives the module
     # lifecycle end to end. Every previous gate ran against the source tree,
     # so nothing tested the artifact people actually install - and two release
@@ -276,7 +276,7 @@ jobs:
 
   e2e:
     name: End-to-end (Playwright)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Only worth the ~5 minutes once the cheap gates are green.
     needs: check
 
