@@ -125,9 +125,16 @@ function HeldControls({ search, filters, className }: ListControlsProps) {
 
     // Whatever the caller says the term is wins: a filter reset elsewhere on
     // the screen has to empty the box, and this is the only thing that does.
-    React.useEffect(() => {
+    // Only when it changes, and during render rather than in an effect: the
+    // effect also ran on mount, and when the strip mounted in a commit React
+    // had not flushed effects for yet (a list whose rows had just arrived),
+    // the first keystroke's update was queued ahead of that mount effect and
+    // the box was emptied under the reader's typing.
+    const [lastSettled, setLastSettled] = React.useState(settled);
+    if (settled !== lastSettled) {
+        setLastSettled(settled);
         setDraft(settled);
-    }, [settled]);
+    }
 
     const onChange = search?.onChange;
     React.useEffect(() => {

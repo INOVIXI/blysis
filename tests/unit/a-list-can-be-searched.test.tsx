@@ -91,25 +91,20 @@ const ROOM_FOR_THE_DEBOUNCE = 15_000;
 const SETTLE_MS = 10_000;
 
 /*
- * Why this file flaked, measured rather than guessed.
+ * Why this file flaked, and why the numbers above never fixed it.
  *
- * It failed about one run in five on 2026-09-21 and once on a GitHub runner.
- * The error reads like an assertion - "expected <span class=\"truncate\"></span>
- * to be null" - because `waitFor` rethrows its callback's last error when it
- * runs out, and serialises the element it matched a moment earlier. Two
- * attempts went looking for a product that empties a row rather than removing
- * it. Nothing does. The list was still settling when the clock stopped.
+ * It failed about one run in five on 2026-09-21 and again on a GitHub runner
+ * on 2026-10-07 with "expected <span class=\"truncate\"></span> to be null"
+ * after the full ten second wait. The page dumped with that failure had an
+ * empty search box: nothing was still settling, the typed text was gone.
  *
- * The clock was vitest's, not the numbers below. `testTimeout` and
- * `hookTimeout` sat at their five second default while these waits ask for
- * ten. Raising both to twenty in `vitest.config.mts` is what stopped it, and
- * it was checked in both directions in one sitting at the same load: one
- * failure in fifteen runs at five seconds, none in fifteen at twenty, on top
- * of forty earlier runs that agree and a full suite that now passes twice.
- *
- * Also tried, and written down so it is not tried again: driving the 300ms
- * debounce with fake timers rather than the clock made all three cases fail
- * every time. The strip's timer does not survive that environment.
+ * The strip mounts in the same commit that draws the rows, and that commit
+ * comes from the fetch resolving, so React runs its effects later rather than
+ * at once. `findByText` returns as soon as the rows are in the DOM, which can
+ * be before then. The keystroke queued "pack", React then flushed the mount
+ * effect that copied the caller's empty term into the box, and the empty term
+ * won. Load only widened that window. The strip no longer copies the term on
+ * mount, and the last test below types inside that window on purpose.
  */
 describe("a list drawn by the crud shell", () => {
     it("offers a box to search it", async () => {
@@ -144,6 +139,29 @@ describe("a list drawn by the crud shell", () => {
         await waitFor(() => {
             expect(screen.queryByText("Client pack")).toBeNull();
             expect(screen.getByText("Server rules")).toBeTruthy();
+        }, { timeout: SETTLE_MS });
+    }, ROOM_FOR_THE_DEBOUNCE);
+
+    it("keeps what was typed the moment the list appeared", async () => {
+        // Typed from a MutationObserver, so it lands in the same tick the rows
+        // were drawn and before React has run that commit's effects.
+        const typed = new Promise<void>((resolve) => {
+            const observer = new MutationObserver(() => {
+                const box = document.querySelector<HTMLInputElement>('input[type="search"]');
+                if (!box) return;
+                observer.disconnect();
+                fireEvent.change(box, { target: { value: "pack" } });
+                resolve();
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+        draw();
+        await typed;
+
+        await waitFor(() => {
+            expect((screen.getByRole("searchbox") as HTMLInputElement).value).toBe("pack");
+            expect(screen.queryByText("Server rules")).toBeNull();
+            expect(screen.getByText("Client pack")).toBeTruthy();
         }, { timeout: SETTLE_MS });
     }, ROOM_FOR_THE_DEBOUNCE);
 
