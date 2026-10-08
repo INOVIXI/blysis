@@ -19,6 +19,9 @@ updates:
       # eslint-config-next's bundled eslint-plugin-react crashes under ESLint 10.
       - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
+      # The typescript-eslint inside eslint-config-next refuses to load under TypeScript 7.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     labels:
       - "dependencies"
   - package-ecosystem: github-actions
