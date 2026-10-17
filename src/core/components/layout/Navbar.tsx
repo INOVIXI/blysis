@@ -127,6 +127,44 @@ function DefaultNavbar() {
     // replaces the fold with nine links inline.
     const shownLinks = adminConfigured ? navLinks : foldNavLinks(navLinks, t('more'));
 
+    // The fold is by count, and a count knows nothing about the words: the
+    // Turkish eight plus the fold are about 1000px, and the row wrapped below
+    // 1536 into a bar whose height is fixed, so the second row hung below
+    // the header and over the page. The nav is now one line tall and clips
+    // what wraps, and whatever wrapped is gathered behind a trailing menu.
+    //
+    // This is measured, but nothing on the line moves for it. The server
+    // draws the line with the wrapped entries already clipped away; after
+    // mount the menu appears beside the line and the entries it took become
+    // inert, so a keyboard cannot land on something nobody can see. An entry
+    // vanishing and a trigger appearing are not shifts - nothing that was on
+    // screen changes place.
+    const navRef = useRef<HTMLElement>(null);
+    const [overflowFrom, setOverflowFrom] = useState<number | null>(null);
+    const shownKey = shownLinks.map((link) => link.label).join("\n");
+
+    useEffect(() => {
+        const nav = navRef.current;
+        if (!nav) return;
+        const measure = () => {
+            const items = [...nav.querySelectorAll<HTMLElement>(":scope > [data-nav-item]")];
+            const firstTop = items[0]?.offsetTop ?? 0;
+            const at = items.findIndex((el) => el.offsetTop > firstTop);
+            setOverflowFrom(at === -1 ? null : at);
+        };
+        measure();
+        // Widths change when the webfont arrives, which resizes nothing.
+        document.fonts?.ready.then(measure);
+        if (typeof ResizeObserver === "undefined") return;
+        // Showing the trailing menu narrows the nav, which is observed too,
+        // and can only push more onto the second line - so this settles.
+        const observer = new ResizeObserver(measure);
+        observer.observe(nav);
+        return () => observer.disconnect();
+    }, [shownKey]);
+
+    const overflowLinks = overflowFrom === null ? [] : shownLinks.slice(overflowFrom);
+
     const menuRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -151,7 +189,10 @@ function DefaultNavbar() {
         <>
         <header className="bg-card border-b border-[var(--color-border)] sticky top-0 z-50">
             <div className="container mx-auto px-4">
-                <div className="flex items-center justify-between h-12 gap-2">
+                {/* `relative` is what the nav's dropdowns hang from: the nav
+                    clips its second line, and a panel positioned inside it
+                    would be clipped with it. */}
+                <div className="relative flex items-center justify-between h-12 gap-2">
                     {/* A phone gets the whole list through here, not the
                         eight that fit the bar: see MobileMenu. */}
                     <div className="sm:hidden flex items-center gap-1 min-w-0">
@@ -176,13 +217,20 @@ function DefaultNavbar() {
                         <SiteMark size={22} />
                         <span className="truncate max-w-[10rem]"><SiteName /></span>
                     </Link>
-                    <nav className="hidden sm:flex items-center gap-1 min-w-0 flex-1 flex-wrap" aria-label={t('primary')}>
+                    {/* One line tall: `py-1` leaves room for a focus ring,
+                        and `gap-y-2` starts a wrapped line past the bottom
+                        edge, where `overflow-hidden` takes all of it. */}
+                    <nav ref={navRef} className="hidden sm:flex flex-wrap content-start items-center gap-x-1 gap-y-2 h-10 py-1 min-w-0 flex-1 overflow-hidden" aria-label={t('primary')}>
                         <Slot name="navbar.start" />
-                        {shownLinks.map((link) => {
+                        {shownLinks.map((link, index) => {
+                            const clipped = overflowFrom !== null && index >= overflowFrom;
                             // Dropdown menu
                             if (link.children && link.children.length > 0) {
                                 return (
-                                    <div key={link.label} className="relative"
+                                    // Not `relative`: the panel takes its
+                                    // horizontal place from here and its top
+                                    // from the bar, outside the clip.
+                                    <div key={link.label} data-nav-item inert={clipped}
                                         onMouseEnter={() => setNavDropdown(link.label)}
                                         onMouseLeave={() => setNavDropdown(null)}
                                     >
@@ -209,7 +257,7 @@ function DefaultNavbar() {
                                             <ChevronDown className={`w-3 h-3 transition-transform ${navDropdown === link.label ? "rotate-180" : ""}`} />
                                         </button>
                                         {navDropdown === link.label && (
-                                            <div className="absolute top-full left-0 pt-1 z-50">
+                                            <div className="absolute top-full pt-1 z-50">
                                                 <div className="w-52 bg-card border border-[var(--color-border)] rounded-lg shadow-lg py-1 animate-fade-in">
                                                     {link.children.map((child: { label: string; href: string; icon?: string }) => (
                                                         <Link key={child.href} href={child.href}
@@ -228,7 +276,7 @@ function DefaultNavbar() {
 
                             // Normal link
                             return (
-                                <Link key={link.href} href={link.href}
+                                <Link key={link.href} href={link.href} data-nav-item inert={clipped}
                                     className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${isActive(link.href) ? "text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}>
                                     <NavIcon name={link.icon} className="w-4 h-4" />
                                     {link.label}
@@ -236,6 +284,50 @@ function DefaultNavbar() {
                             );
                         })}
                     </nav>
+
+                    {/* What the line could not hold. When the fold itself is
+                        among it, its links are listed here flat rather than
+                        as a menu inside a menu. */}
+                    {overflowLinks.length > 0 && (
+                        <div data-nav-item className="hidden sm:block relative shrink-0"
+                            onMouseEnter={() => setNavDropdown(OVERFLOW_MENU)}
+                            onMouseLeave={() => setNavDropdown(null)}
+                        >
+                            <button
+                                type="button"
+                                aria-haspopup="menu"
+                                aria-expanded={navDropdown === OVERFLOW_MENU}
+                                onClick={() => setNavDropdown(navDropdown === OVERFLOW_MENU ? null : OVERFLOW_MENU)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        e.preventDefault();
+                                        setNavDropdown(navDropdown === OVERFLOW_MENU ? null : OVERFLOW_MENU);
+                                    } else if (e.key === "Escape") {
+                                        setNavDropdown(null);
+                                    }
+                                }}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${navDropdown === OVERFLOW_MENU ? "text-primary bg-muted" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}
+                            >
+                                <NavIcon name="MoreHorizontal" className="w-4 h-4" />
+                                {t('more')}
+                                <ChevronDown className={`w-3 h-3 transition-transform ${navDropdown === OVERFLOW_MENU ? "rotate-180" : ""}`} />
+                            </button>
+                            {navDropdown === OVERFLOW_MENU && (
+                                <div className="absolute top-full right-0 pt-1 z-50">
+                                    <div className="w-56 max-h-[70vh] overflow-y-auto bg-card border border-[var(--color-border)] rounded-lg shadow-lg py-1 animate-fade-in">
+                                        {overflowLinks.flatMap((link) => link.children && link.children.length > 0 ? link.children : [link]).map((link) => (
+                                            <Link key={link.href} href={link.href}
+                                                onClick={() => setNavDropdown(null)}
+                                                className="flex items-center gap-2.5 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                                                <NavIcon name={(link as { icon?: string }).icon} className="w-4 h-4 text-muted-foreground" />
+                                                {link.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     <div className="flex items-center gap-2">
                         {/* The button holds its place before the theme is
@@ -326,6 +418,9 @@ import { ThemeComponentSlot } from "@/core/components/theme/ThemeComponentSlot";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { foldNavLinks } from "@/core/lib/navbar-links";
 import { STAFF_ROLE_PRIORITY } from "@/core/lib/constants";
+
+/** Dropdown key for the trailing menu, kept out of the space of link labels. */
+const OVERFLOW_MENU = "__overflow__";
 
 export function Navbar() {
     return <ThemeComponentSlot name="Navbar" fallback={DefaultNavbar} />;
