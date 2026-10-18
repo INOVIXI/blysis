@@ -17,6 +17,7 @@ import { CheckCircle, Link2, Loader2 } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { Button, Card, CardContent, Input, Label, buttonClassName } from "@/core/sdk/ui";
 import { PageFrame } from "@/core/sdk/layout";
+import { gameName } from "../../../lib/game-name";
 
 interface Preview {
     platform: string;
@@ -116,7 +117,7 @@ export default function LinkPage() {
                                 </div>
                                 {preview && (
                                     <div className="rounded-lg border border-border p-4 space-y-3">
-                                        <p className="text-sm">{t("link_preview", { name: preview.name, platform: preview.platform })}</p>
+                                        <p className="text-sm">{t("link_preview", { name: preview.name, platform: gameName(preview.platform) })}</p>
                                         <p className="text-xs text-muted-foreground">{t("link_previewWarn")}</p>
                                         <Button className="w-full" disabled={busy} onClick={confirmLink}>
                                             <Link2 className="w-4 h-4" /> {t("link_confirm", { name: preview.name })}
