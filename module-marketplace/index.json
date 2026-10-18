@@ -2276,6 +2276,7 @@
           "server.command",
           "store.order.completed",
           "store.credits.purchased",
+          "store.gift.sent",
           "game-account.resolve",
           "store.orders.delivery"
         ]
@@ -5976,6 +5977,7 @@
           "credit.change",
           "servers.list",
           "store.credits.purchased",
+          "store.gift.sent",
           "store.orders.delivery"
         ],
         "listens": [

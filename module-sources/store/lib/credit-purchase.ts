@@ -11,7 +11,7 @@
  * says so rather than issuing an invoice to nobody.
  */
 import { Prisma } from "@prisma/client";
-import { applyFiltersAsync } from "@/core/sdk";
+import { applyFiltersAsync, doActionAsync } from "@/core/sdk";
 import { log, logActivity, moduleSettings, prisma, siteTimeZone, type PrismaTransaction } from "@/core/sdk/server";
 import { availabilityFor, rulesOf, type ProductRow } from "./availability-server";
 import { effectivePrice } from "./availability";
@@ -199,6 +199,15 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
 
     if (!gift) {
         await deliverPaidOrder(order, { name: request.playerName, id: request.playerId, userId: request.buyerId });
+    } else {
+        await doActionAsync("store.gift.sent", {
+            senderId: request.buyerId,
+            recipientId: ownerId,
+            productName: product.name,
+            quantity,
+        }).catch((error: unknown) =>
+            log.warn("[store] a gift could not be announced", { error: error instanceof Error ? error.message : String(error) }),
+        );
     }
     await announceOrderCreated(order.id);
     await announceOrderCompleted(order.id);

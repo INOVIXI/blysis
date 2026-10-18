@@ -449,10 +449,13 @@ The id is the whole voucher. An item that carries it is only its look.
 | `topup` | `player` (null when anonymous), `amount` |
 | `goal.reached` | `title`, `goal`, `raised`, `month` (said once a month) |
 | `link.confirmed` | `player` (a Player), `member` |
+| `gift.received` | `player` (a Player: the recipient's account), `platform`, `member`, `from` (the sender's account name in the same game, else their username), `product`, `quantity` |
 | `catalog.changed` | `version` |
 
 An event is sent to every server, except `link.confirmed`, which goes to the server the player
-was on when the code was made. Events are kept for a day.
+was on when the code was made. A `gift.received` is sent once for each game account linked to
+the recipient: a server tells the player it finds under `player` and ignores one it does not.
+Events are kept for a day.
 
 ## Conformance
 

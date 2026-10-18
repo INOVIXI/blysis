@@ -65,6 +65,8 @@ declare global {
         "store.product.created": { id: string; name: string; slug: string };
         /** Credits bought with money settled on an account. Gifts, refunds and grants are not this. */
         "store.credits.purchased": { userId: string; amount: number };
+        /** A gift landed pending in a member's chest: bought for them, or handed over from another chest. */
+        "store.gift.sent": { senderId: string; recipientId: string; productName: string; quantity: number };
     }
 
     /**

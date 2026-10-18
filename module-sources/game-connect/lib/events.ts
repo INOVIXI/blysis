@@ -9,7 +9,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/core/sdk/server";
 import { wake } from "./wake";
 
-export type EventType = "purchase" | "topup" | "goal.reached" | "link.confirmed" | "catalog.changed";
+export type EventType = "purchase" | "topup" | "goal.reached" | "link.confirmed" | "gift.received" | "catalog.changed";
 
 export interface ProtocolEvent {
     id: string;

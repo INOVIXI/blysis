@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { doActionAsync } from "@/core/sdk";
+import { log, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { activateGift, cancelGift, claimChestItem, PENDING } from "../../../lib/gifts";
 import { chestRedeemSchema } from "../../../lib/validations";
@@ -112,6 +113,14 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         if (gifted.count === 0) {
             return NextResponse.json({ error: "Already redeemed" }, { status: 400 });
         }
+        await doActionAsync("store.gift.sent", {
+            senderId: userId,
+            recipientId: target.id,
+            productName: item.productName,
+            quantity: item.quantity,
+        }).catch((error: unknown) =>
+            log.warn("[store] a gift could not be announced", { error: error instanceof Error ? error.message : String(error) }),
+        );
 
         return NextResponse.json({ message: `Gifted to ${target.username}` });
     }
