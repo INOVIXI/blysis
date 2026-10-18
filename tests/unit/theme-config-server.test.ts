@@ -1,11 +1,13 @@
 import { describe, it, expect, vi } from "vitest";
 
-const mockCustomization = { overrides: { hero: { headline: "custom" } } };
+const mockCustomization = { mode: "light", overrides: { hero: { headline: "custom" } } };
 
 vi.mock("@/core/lib/db", () => ({
     prisma: {
         themeState: { findFirst: vi.fn(async () => ({ themeId: "flat", mode: "light" })) },
-        themeCustomization: { findUnique: vi.fn(async () => mockCustomization) },
+        // Every mode's row, so the page can carry each mode's colours.
+        themeCustomization: { findMany: vi.fn(async () => [mockCustomization]) },
+        setting: { findUnique: vi.fn(async () => null) },
         themeSetting: { findMany: vi.fn(async () => []) },
     },
 }));

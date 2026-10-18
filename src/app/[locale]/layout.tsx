@@ -117,8 +117,19 @@ export default async function RootLayout({
   // specificity so the later declaration wins. Built by a function rather
   // than here, because this string is rendered as HTML and a token name that
   // is not a token name has no business reaching it.
-  const overrideColors = ((active.tokenOverrides as { tokens?: { colors?: Record<string, unknown> } })?.tokens?.colors) ?? {};
-  const overrideCss = buildTokenOverrideCss(active.themeId, active.mode, overrideColors);
+  //
+  // Every mode's, not only the one this page arrives in: the page can change
+  // mode without a reload - the toggle, the panel set to follow the site, a
+  // reader's system turning dark - and the mode it changes to has to be drawn
+  // in the operator's colours too, not the theme's defaults.
+  const overrideCss = Object.entries(active.overridesByMode)
+    .map(([mode, overrides]) => buildTokenOverrideCss(
+      active.themeId,
+      mode,
+      ((overrides as { tokens?: { colors?: Record<string, unknown> } })?.tokens?.colors) ?? {},
+    ))
+    .filter(Boolean)
+    .join("\n");
 
   return (
     // The font variables belong on `html`, not on `body`: a custom property
@@ -152,7 +163,14 @@ export default async function RootLayout({
       <body className="antialiased bg-background">
         <SessionProvider session={session}>
           <NextIntlClientProvider messages={publicMessages(messages)}>
-              <AppThemeProvider themeId={active.themeId} mode={active.mode} serverConfig={active.settings}>
+              <AppThemeProvider
+                themeId={active.themeId}
+                mode={active.mode}
+                surface={active.surface}
+                siteDefault={active.siteDefault}
+                locked={active.locked}
+                serverConfig={active.settings}
+              >
                 <ModuleProvider moduleStates={moduleStates}>
                 <SiteCurrencyProvider>
                 <ModuleContextProviders>

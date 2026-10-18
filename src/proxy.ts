@@ -1,5 +1,4 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './core/lib/i18n/config';
 import { carriesSessionCookie } from './core/lib/session-cookie';
@@ -24,6 +23,7 @@ import { ensureHooks } from '@/core/lib/hooks-bootstrap';
 import { isBlockedInDemo } from '@/core/lib/demo-guard';
 import { panelReaderFor } from '@/core/lib/permissions';
 import { mayEnterPanel, mayOpenAdminPath } from '@/core/lib/admin-access';
+import { SURFACE_HEADER } from '@/core/lib/color-mode';
 
 const intlMiddleware = createIntlMiddleware({
     locales: locales,
@@ -91,6 +91,39 @@ function resolveIpScope(pathname: string): IpBlockScope {
     if (pathname.startsWith('/api/v1/admin')) return 'admin';
     if (pathname.startsWith('/api/')) return 'api';
     return 'all';
+}
+
+/**
+ * The request, told which surface it is for: the panel or the site.
+ *
+ * The root layout writes `<html data-mode>`, and the panel and the site each
+ * keep their own mode, but a layout is not given the pathname. next-intl
+ * forwards the request's headers to the page, so the answer rides along as
+ * one. It is set rather than appended, so a client cannot send its own.
+ */
+function withSurface(request: NextRequest, pathname: string): NextRequest {
+    const locale = extractLocale(pathname);
+    const adminPrefix = `/${locale}/admin`;
+    const isAdmin = pathname === adminPrefix || pathname.startsWith(`${adminPrefix}/`);
+    const headers = new Headers(request.headers);
+    headers.set(SURFACE_HEADER, isAdmin ? 'admin' : 'site');
+    return new NextRequest(request, { headers });
+}
+
+/**
+ * Ask the browser to say whether its system prefers dark.
+ *
+ * A site set to follow the reader's system has to know which way that is
+ * before it draws the first frame, or the page arrives light and turns dark.
+ * Chromium answers in a request header once asked; `Critical-CH` makes the
+ * first request of all retry with it rather than be drawn without it. Other
+ * browsers ignore all three, and are answered by the page instead - see
+ * `SYSTEM_SCHEME_COOKIE`.
+ */
+function askForColorScheme(response: NextResponse): void {
+    response.headers.set('Accept-CH', 'Sec-CH-Prefers-Color-Scheme');
+    response.headers.set('Critical-CH', 'Sec-CH-Prefers-Color-Scheme');
+    response.headers.append('Vary', 'Sec-CH-Prefers-Color-Scheme');
 }
 
 /** See `carriesSessionCookie`: a question about a cookie's name, not the header's text. */
@@ -421,8 +454,9 @@ async function proxyImpl(request: NextRequest, correlationId: string): Promise<N
     }
 
     if (!pathname.startsWith('/api/')) {
-        const response = intlMiddleware(request);
+        const response = intlMiddleware(withSurface(request, pathname));
         response.headers.set('x-correlation-id', correlationId);
+        askForColorScheme(response);
         return response;
     }
 

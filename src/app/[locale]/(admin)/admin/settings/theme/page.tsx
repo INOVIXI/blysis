@@ -15,14 +15,17 @@ import { writeError, errorMessage } from "@/core/lib/write-result";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { readJson } from "@/core/lib/read-json";
+import { SYSTEM_MODE } from "@/core/lib/theme-mode";
+import { useRouter } from "@/core/lib/i18n/navigation";
+import { CheckboxField } from "@/core/components/ui/checkbox";
 
 export default function ThemeSettingsPage() {
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
-    // currentMode is only used by handleThemeSwitch below; color customization
-    // itself moved to /admin/theme/appearance so this page no longer loads or
-    // mutates ThemeCustomization rows.
-    const { activeTheme, currentThemeId, currentMode, setMode } = useTheme();
+    // Color customization moved to /admin/theme/appearance, so this page no
+    // longer loads or mutates ThemeCustomization rows.
+    const { activeTheme, currentThemeId, siteDefault, locked } = useTheme();
+    const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadMessage, setUploadMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -88,7 +91,10 @@ export default function ThemeSettingsPage() {
         const res = await fetch("/api/v1/themes/state", {
             method: "PUT",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ themeId, mode: currentMode }),
+            // The site's saved mode, not the one this page happens to be
+            // drawn in: that is the panel's own now, and switching themes from
+            // a dark panel used to make the site dark.
+            body: JSON.stringify({ themeId, mode: siteMode }),
         });
         const failed = await writeError(res, t("common_writeFailed"), t);
         // Reloading on a failed switch would repaint the page in the theme it
@@ -200,8 +206,50 @@ export default function ThemeSettingsPage() {
         finally { setInstalling(null); }
     };
 
-    // Mode toggle
+    // The site's mode: what a visitor who has not chosen is shown, and
+    // whether they may choose. These buttons once drew only this page in the
+    // mode and wrote a cookie nothing read; the panel's own mode is the
+    // sidebar's button, and this is the site's.
     const modes = Object.keys(activeTheme?.modes?.available ?? {});
+    const siteModes = "light" in (activeTheme?.modes?.available ?? {}) && "dark" in (activeTheme?.modes?.available ?? {})
+        ? [...modes, SYSTEM_MODE]
+        : modes;
+    const [siteMode, setSiteMode] = useState(siteDefault);
+    const [siteLocked, setSiteLocked] = useState(locked);
+    const [savingMode, setSavingMode] = useState(false);
+    const MODE_LABEL: Record<string, string> = {
+        light: t("theme_mode_light"),
+        dark: t("theme_mode_dark"),
+        [SYSTEM_MODE]: t("theme_mode_system"),
+    };
+    // A theme may name a mode of its own; it is shown as the theme spells it.
+    const modeLabel = (m: string) => MODE_LABEL[m] ?? m;
+
+    const saveSiteMode = async (next: { mode?: string; locked?: boolean }) => {
+        const before = { mode: siteMode, locked: siteLocked };
+        if (next.mode !== undefined) setSiteMode(next.mode);
+        if (next.locked !== undefined) setSiteLocked(next.locked);
+        setSavingMode(true);
+        try {
+            const res = await fetch("/api/v1/themes/state", {
+                method: "PUT",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ themeId: activeTheme?.id, mode: next.mode ?? siteMode, locked: next.locked ?? siteLocked }),
+            });
+            const failed = await writeError(res, t("common_writeFailed"), t);
+            if (failed) {
+                setSiteMode(before.mode);
+                setSiteLocked(before.locked);
+                toast.error(failed);
+                return;
+            }
+            toast.success(t("theme_siteModeSaved"));
+            // A panel that follows the site is drawn again in the new mode.
+            router.refresh();
+        } finally {
+            setSavingMode(false);
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -250,28 +298,37 @@ export default function ThemeSettingsPage() {
                 </div>
             )}
 
-            {/* Mode toggle - only visible when there is more than one mode */}
+            {/* Site mode - only when the theme has more than one */}
             {modes.length > 1 && (
-                <div className="flex gap-2">
-                    {modes.map(m => (
-                        <Button
-                            key={m}
-                            variant={m === currentMode ? "default" : "outline"}
-                            onClick={async () => {
-                                setMode(m);
-                                const res = await fetch("/api/v1/themes/state", {
-                                    method: "PUT",
-                                    headers: { "content-type": "application/json" },
-                                    body: JSON.stringify({ themeId: activeTheme?.id, mode: m }),
-                                });
-                                const failed = await writeError(res, t("common_writeFailed"), t);
-                                if (failed) toast.error(failed);
-                            }}
-                        >
-                            {m}
-                        </Button>
-                    ))}
-                </div>
+                <Card>
+                    <CardHeader className="pb-3">
+                        <CardTitle className="text-base">{t("theme_siteModeTitle")}</CardTitle>
+                        <CardDescription>{t("theme_siteModeHint")}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("theme_siteModeTitle")}>
+                            {siteModes.map(m => (
+                                <Button
+                                    key={m}
+                                    role="radio"
+                                    aria-checked={m === siteMode}
+                                    variant={m === siteMode ? "default" : "outline"}
+                                    disabled={savingMode}
+                                    onClick={() => { if (m !== siteMode) saveSiteMode({ mode: m }); }}
+                                >
+                                    {modeLabel(m)}
+                                </Button>
+                            ))}
+                        </div>
+                        <CheckboxField
+                            checked={siteLocked}
+                            disabled={savingMode}
+                            onChange={(e) => saveSiteMode({ locked: e.target.checked })}
+                            label={t("theme_lockMode")}
+                            description={t("theme_lockModeHint")}
+                        />
+                    </CardContent>
+                </Card>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

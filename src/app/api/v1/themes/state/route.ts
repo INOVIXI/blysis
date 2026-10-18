@@ -4,19 +4,36 @@ import { isAdmin } from "@/core/lib/permissions";
 import { prisma } from "@/core/lib/db";
 import { themeRegistry, defaultThemeId } from "@/core/generated/theme-registry";
 import { setActiveTheme } from "@/core/lib/theme-state";
+import { SYSTEM_MODE } from "@/core/lib/theme-mode";
+import { COLOR_MODE_LOCK_SETTING } from "@/core/lib/color-mode";
 import { logActivity } from "@/core/lib/activity-log";
 import { readJsonBody } from "@/core/lib/api-body";
 import { z } from "zod";
 
-/** Which installed theme is active, and in which of the modes it declares. */
+/**
+ * Which installed theme is active, the mode the site is drawn in for a
+ * visitor who has not chosen - one the theme declares, or `system` to follow
+ * the reader's operating system - and whether visitors may choose at all.
+ */
 const themeStateSchema = z.object({
     themeId: z.string().max(64),
     mode: z.string().max(64).optional(),
+    locked: z.boolean().optional(),
 });
 
+/** `system` means something only for a theme that has both halves of it. */
+function followsSystem(available: Record<string, unknown>): boolean {
+    return "light" in available && "dark" in available;
+}
+
+async function readLocked(): Promise<boolean> {
+    const row = await prisma.setting.findUnique({ where: { key: COLOR_MODE_LOCK_SETTING } }).catch(() => null);
+    return row?.value === true;
+}
+
 export async function GET() {
-    const row = await prisma.themeState.findFirst();
-    if (row) return NextResponse.json(row);
+    const [row, locked] = await Promise.all([prisma.themeState.findFirst(), readLocked()]);
+    if (row) return NextResponse.json({ ...row, locked });
 
     // Fall back to the codegen-derived defaults so the response never
     // references a theme id that isn't actually installed. Hardcoding
@@ -26,6 +43,7 @@ export async function GET() {
     return NextResponse.json({
         themeId: defaultThemeId,
         mode: manifest?.modes.default ?? "light",
+        locked,
     });
 }
 
@@ -46,11 +64,20 @@ export async function PUT(req: NextRequest) {
     if (!manifest || !themeId) return NextResponse.json({ error: "Unknown theme" }, { status: 404 });
 
     const requestedMode = parsed.success ? parsed.data.mode : undefined;
-    const mode = requestedMode && manifest.modes.available[requestedMode]
-        ? requestedMode
-        : manifest.modes.default;
+    const valid = (m: string | undefined): m is string =>
+        !!m && (m in manifest.modes.available || (m === SYSTEM_MODE && followsSystem(manifest.modes.available)));
+    const mode = valid(requestedMode) ? requestedMode : manifest.modes.default;
 
     await setActiveTheme(themeId, mode);
-    await logActivity({ userId: session.user.id, action: "theme.state.update", entity: "theme", entityId: themeId, metadata: { mode } }).catch(() => {});
-    return NextResponse.json({ ok: true, themeId, mode });
+    const requestedLock = parsed.success ? parsed.data.locked : undefined;
+    if (typeof requestedLock === "boolean") {
+        await prisma.setting.upsert({
+            where: { key: COLOR_MODE_LOCK_SETTING },
+            create: { key: COLOR_MODE_LOCK_SETTING, value: requestedLock },
+            update: { value: requestedLock },
+        });
+    }
+    const locked = typeof requestedLock === "boolean" ? requestedLock : await readLocked();
+    await logActivity({ userId: session.user.id, action: "theme.state.update", entity: "theme", entityId: themeId, metadata: { mode, locked } }).catch(() => {});
+    return NextResponse.json({ ok: true, themeId, mode, locked });
 }

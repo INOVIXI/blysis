@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { COLOR_MODE_COOKIE, COLOR_MODE_MAX_AGE } from "@/core/lib/color-mode";
+import { ADMIN_COLOR_MODE_COOKIE, COLOR_MODE_COOKIE, COLOR_MODE_MAX_AGE } from "@/core/lib/color-mode";
+import { FOLLOW_SITE } from "@/core/lib/theme-mode";
+import { useTheme } from "@/core/providers/theme-provider";
 
 /**
- * The light/dark toggle, and the one place the choice is written.
+ * Write one of the mode choices, and tell the site's other open tabs.
  *
  * The choice is a **cookie**, because the server renders `data-mode` from it
  * and a page that arrives in the right mode never flashes into it. See
@@ -14,48 +16,61 @@ import { COLOR_MODE_COOKIE, COLOR_MODE_MAX_AGE } from "@/core/lib/color-mode";
  * `storage` event in the site's other open tabs. Nothing reads it back as a
  * preference, so the two cannot disagree about anything that matters.
  */
+function writeChoice(cookie: string, value: string) {
+    document.cookie = `${cookie}=${value}; path=/; max-age=${COLOR_MODE_MAX_AGE}; samesite=lax`;
+    try { localStorage.setItem(cookie, value); } catch { /* private mode */ }
+}
+
+/**
+ * The site's light/dark toggle.
+ *
+ * It used to be the panel's toggle as well, both writing `color-mode`, so the
+ * panel's moon made the site dark. The panel has its own now - see
+ * `usePanelMode`. A site that holds its mode offers no toggle at all, which
+ * is what `locked` is for.
+ */
 export function useDarkMode() {
-    const [isDark, setIsDark] = useState(false);
-
-    useEffect(() => {
-        // Read initial state from the DOM, which the server wrote.
-        const dark = document.documentElement.getAttribute("data-mode") === "dark";
-         
-        setIsDark(dark);
-
-        // Listen for changes from other components/tabs
-        const handleStorage = (e: StorageEvent) => {
-            if (e.key === COLOR_MODE_COOKIE && e.newValue) {
-                setIsDark(e.newValue === "dark");
-                document.documentElement.setAttribute("data-mode", e.newValue);
-            }
-        };
-
-        // Listen for custom event (same-tab sync)
-        const handleCustom = () => {
-            setIsDark(document.documentElement.getAttribute("data-mode") === "dark");
-        };
-
-        window.addEventListener("storage", handleStorage);
-        window.addEventListener("darkmode-change", handleCustom);
-        return () => {
-            window.removeEventListener("storage", handleStorage);
-            window.removeEventListener("darkmode-change", handleCustom);
-        };
-    }, []);
+    const { currentMode, refreshMode, locked } = useTheme();
+    const isDark = currentMode === "dark";
 
     const toggle = useCallback(() => {
-        const next = isDark ? "light" : "dark";
-        setIsDark(next === "dark");
-        // Removing the attribute is not the same as choosing light: a theme
-        // whose own default is dark would go back to dark on the next paint.
-        document.documentElement.setAttribute("data-mode", next);
-        document.cookie =
-            `${COLOR_MODE_COOKIE}=${next}; path=/; max-age=${COLOR_MODE_MAX_AGE}; samesite=lax`;
-        try { localStorage.setItem(COLOR_MODE_COOKIE, next); } catch { /* private mode */ }
-        // Notify other components in the same tab
-        window.dispatchEvent(new Event("darkmode-change"));
-    }, [isDark]);
+        writeChoice(COLOR_MODE_COOKIE, isDark ? "light" : "dark");
+        refreshMode();
+    }, [isDark, refreshMode]);
 
-    return { isDark, toggle };
+    return { isDark, toggle, locked };
+}
+
+export type PanelChoice = "site" | "light" | "dark";
+
+/** The order the panel's button steps through. */
+const PANEL_CHOICES: PanelChoice[] = [FOLLOW_SITE, "light", "dark"];
+
+/**
+ * The panel's own mode: light, dark, or the same as the site.
+ *
+ * "The same as the site" is the default and the old behaviour - the panel is
+ * drawn in whatever the site would be drawn in for this reader - so nobody
+ * who liked it has anything to undo.
+ */
+export function usePanelMode() {
+    const { currentMode, refreshMode } = useTheme();
+    // The cookie is not readable on the server render of a client component's
+    // first pass, so the choice is learned after mount; the icon follows the
+    // mode, which the server did know.
+    const [choice, setChoice] = useState<PanelChoice>(FOLLOW_SITE);
+
+    useEffect(() => {
+        const stored = document.cookie.match(new RegExp(`(?:^|; )${ADMIN_COLOR_MODE_COOKIE}=([^;]*)`))?.[1];
+        if (stored === "light" || stored === "dark") setChoice(stored);
+    }, []);
+
+    const cycle = useCallback(() => {
+        const next = PANEL_CHOICES[(PANEL_CHOICES.indexOf(choice) + 1) % PANEL_CHOICES.length];
+        writeChoice(ADMIN_COLOR_MODE_COOKIE, next);
+        setChoice(next);
+        refreshMode();
+    }, [choice, refreshMode]);
+
+    return { choice, isDark: currentMode === "dark", cycle };
 }
