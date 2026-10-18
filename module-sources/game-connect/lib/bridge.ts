@@ -54,6 +54,7 @@ export type PurchaseCode =
     | "insufficient_balance"
     | "out_of_stock"
     | "quantity_invalid"
+    | "limit_reached"
     | "field_invalid"
     | "not_giftable"
     | "recipient_refuses_gifts"

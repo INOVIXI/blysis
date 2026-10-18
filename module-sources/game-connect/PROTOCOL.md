@@ -363,8 +363,12 @@ or `{ "active": false }`.
 `{ "orderId": "...", "orderNumber": "...", "total": 100, "balance": 150, "gift": false }`.
 Refusals: `409 not_linked`, `409 not_found`, `409 not_in_game`, `409 insufficient_balance`,
 `409 out_of_stock`, `409 quantity_invalid` (below 1, above the product's `maxQuantity`, or above
-1000), `409 field_invalid` (with `field`),
-`409 recipient_unknown`, `409 not_giftable`, `409 recipient_refuses_gifts`.
+1000), `409 limit_reached` (the member who would own it already has as many as one account may;
+for a gift, that is the recipient), `409 field_invalid` (with `field`),
+`409 recipient_unknown`, `409 not_giftable`, `409 recipient_refuses_gifts`, and
+`409 unavailable` with a `reason` when the product is closed to that member now: `off`,
+`wrong_role`, `needs_product`, `early`, `ended`, `closed` or `billing_required`. A
+`503 unavailable` with no reason means the store could not answer; try again later.
 
 A purchase for oneself goes to delivery at once. A gift lands in the recipient's chest as a
 pending gift.

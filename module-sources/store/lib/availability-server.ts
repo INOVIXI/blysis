@@ -162,15 +162,25 @@ export async function countsFor(
     const personSince = periodStart(rules.perPersonPeriod, now);
     const periodSince = periodStart(rules.periodStockWindow, now);
 
-    const [person, everyone] = await Promise.all([
-        rules.perPersonLimit !== null && userId
-            ? db.orderItem.aggregate({
-                where: {
-                    productId,
-                    order: { ...paid, userId, ...(personSince ? { createdAt: { gte: personSince } } : {}) },
-                },
+    // A gift is an order of the sender's that the recipient owns, so it
+    // counts against the recipient: what a person bought, less what they
+    // gave away, plus what they were given. Three plain sums rather than one
+    // filter with a NOT, which a missing metadata column would turn into
+    // "matches nothing".
+    const personal = (order: Record<string, unknown>) =>
+        db.orderItem
+            .aggregate({
+                where: { productId, order: { ...paid, ...(personSince ? { createdAt: { gte: personSince } } : {}), ...order } },
                 _sum: { quantity: true },
             })
+            .then((sum) => sum._sum.quantity ?? 0);
+    const [person, everyone] = await Promise.all([
+        rules.perPersonLimit !== null && userId
+            ? Promise.all([
+                personal({ userId }),
+                personal({ userId, metadata: { path: ["gift"], equals: true } }),
+                personal({ metadata: { path: ["recipientId"], equals: userId } }),
+            ]).then(([bought, given, received]) => ({ _sum: { quantity: bought - given + received } }))
             : Promise.resolve({ _sum: { quantity: null } }),
         rules.periodStock !== null
             ? db.orderItem.aggregate({

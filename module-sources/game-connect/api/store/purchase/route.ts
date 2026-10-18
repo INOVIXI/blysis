@@ -31,6 +31,7 @@ const MESSAGES: Record<string, string> = {
     insufficient_balance: "Not enough credits.",
     out_of_stock: "Out of stock.",
     quantity_invalid: "That quantity cannot be bought.",
+    limit_reached: "That member already has as many as one account may.",
     field_invalid: "A field is missing or wrong.",
     not_giftable: "That product cannot be given.",
     recipient_refuses_gifts: "That member does not accept gifts.",

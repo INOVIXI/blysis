@@ -95,9 +95,13 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
     const zone = await siteTimeZone();
     const state = await availabilityFor(prisma, product as unknown as ProductRow, ownerId, now, zone);
     if (!state.buyable) {
-        return refuse(state.state === "sold_out" || state.state === "sold_out_for_now" ? "out_of_stock" : "unavailable");
+        if (state.state === "sold_out" || state.state === "sold_out_for_now") return refuse("out_of_stock");
+        if (state.state === "limit_reached") return refuse("limit_reached");
+        // Closed to this member now, for a reason a game can name. Without
+        // one, `unavailable` reads as a site that cannot answer.
+        return refuse("unavailable", { reason: state.state });
     }
-    if (state.remainingForPerson !== null && quantity > state.remainingForPerson) return refuse("quantity_invalid");
+    if (state.remainingForPerson !== null && quantity > state.remainingForPerson) return refuse("limit_reached");
     if (state.remainingInPeriod !== null && quantity > state.remainingInPeriod) return refuse("out_of_stock");
 
     const fields = await prisma.productVariable.findMany({ where: { productId: product.id }, take: 50 });
