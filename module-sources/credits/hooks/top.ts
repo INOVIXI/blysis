@@ -1,5 +1,6 @@
 /**
- * Answers `credits.top`: the members who hold the most, or who bought the most.
+ * Answers `credits.top`: the members who hold the most, who bought the most, or
+ * who bought last.
  *
  * A top-up is a `credit_purchase` row, the one the wallet writes when money
  * buys credits. Gifts, refunds and prizes are not somebody spending, so they do
@@ -30,6 +31,18 @@ const top: HookHandlerFor<"credits.top", "filter"> = async (_current, { kind, pe
     }
 
     const from = since(period, new Date());
+    if (kind === "latest") {
+        // The newest top-ups, one row each, so a member who bought twice is listed twice.
+        const rows = await prisma.creditTransaction.findMany({
+            where: { type: "credit_purchase", userId: { not: null }, ...(from ? { createdAt: { gte: from } } : {}) },
+            orderBy: { createdAt: "desc" },
+            select: { userId: true, amount: true, user: { select: { username: true } } },
+            take,
+        });
+        return rows
+            .filter((row) => row.userId && row.user)
+            .map((row, i) => ({ rank: i + 1, userId: row.userId as string, name: row.user?.username as string, amount: Number(row.amount) }));
+    }
     const grouped = await prisma.creditTransaction.groupBy({
         by: ["userId"],
         where: { type: "credit_purchase", userId: { not: null }, ...(from ? { createdAt: { gte: from } } : {}) },

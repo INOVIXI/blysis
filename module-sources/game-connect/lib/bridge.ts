@@ -165,7 +165,7 @@ export async function balance(userId: string): Promise<number | null> {
     return applyFiltersAsync("credits.balance", null as number | null, { userId });
 }
 
-export async function top(kind: "balance" | "topups", period: "day" | "month" | "year" | "all", limit: number): Promise<TopEntry[]> {
+export async function top(kind: "balance" | "topups" | "latest", period: "day" | "month" | "year" | "all", limit: number): Promise<TopEntry[]> {
     return (await applyFiltersAsync("credits.top", [] as TopEntry[], { kind, period, limit })) ?? [];
 }
 

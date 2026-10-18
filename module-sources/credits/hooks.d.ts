@@ -26,7 +26,7 @@ declare global {
         "credit.change": CreditMoved;
         /** A member's balance, or null when nothing keeps one. */
         "credits.balance": number | null;
-        /** The members with the most credits, or who bought the most. */
+        /** The members with the most credits, who bought the most, or who bought last. */
         "credits.top": CreditTopEntry[];
     }
 
@@ -36,9 +36,10 @@ declare global {
         "credits.balance": { userId: string };
         /**
          * `balance` ranks what members hold now. `topups` ranks what they
-         * bought in the period: `day`, `month`, `year` or `all`.
+         * bought in the period: `day`, `month`, `year` or `all`. `latest` lists
+         * the newest top-ups in the period, newest first.
          */
-        "credits.top": { kind: "balance" | "topups"; period: "day" | "month" | "year" | "all"; limit: number };
+        "credits.top": { kind: "balance" | "topups" | "latest"; period: "day" | "month" | "year" | "all"; limit: number };
     }
 
     interface CreditTopEntry {

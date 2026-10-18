@@ -327,8 +327,9 @@ Needs the server setting `allowCreditAdmin`.
 
 ### `GET credits/top?kind=balance&period=all&limit=10`
 
-`kind` is `balance` or `topups`. `period` is `day`, `month`, `year` or `all` and applies to
-`topups`. Answer `{ "entries": [ { "rank": 1, "name": "notch", "amount": 900 } ] }`. A member who
+`kind` is `balance`, `topups` or `latest`: what members hold, what they bought in the period, or
+the newest top-ups in the period, one row each. `period` is `day`, `month`, `year` or `all` and
+applies to `topups` and `latest`. Answer `{ "entries": [ { "rank": 1, "name": "notch", "amount": 900 } ] }`. A member who
 asked to be anonymous is `null` in `name`.
 
 ### `GET community-goal`
