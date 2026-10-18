@@ -2,14 +2,15 @@
  * GET /api/v1/game-connect/admin/vouchers - every voucher, newest first.
  *
  * Shows who made each one and who redeemed it, by username, and finds one by
- * either name or by the end of its id with `q`. The id is the
- * whole voucher, so the list shows only its last characters: an admin can tell
- * two apart without the screen becoming a sheet of spendable codes.
+ * either name or by the end of its id with `q`. The id is the whole voucher, so
+ * the list shows only its last characters and a search matches no more of it
+ * (lib/voucher-search).
  */
 import { NextRequest, NextResponse } from "next/server";
 import { pageParams, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { requireManager } from "../../../lib/admin";
+import { hintOf, voucherSearch } from "../../../lib/voucher-search";
 
 export async function GET(request: NextRequest) {
     const manager = await requireManager(await auth());
@@ -29,10 +30,7 @@ export async function GET(request: NextRequest) {
     const memberIds = members.map((member) => member.id);
     const where = {
         ...(state === "open" ? { redeemedAt: null } : state === "redeemed" ? { redeemedAt: { not: null } } : {}),
-        // The end of an id is what the screen shows, so it is what an admin types back.
-        ...(term
-            ? { OR: [{ id: { endsWith: term } }, { createdById: { in: memberIds } }, { redeemedById: { in: memberIds } }] }
-            : {}),
+        ...voucherSearch(term, memberIds),
     };
 
     const [vouchers, total] = await Promise.all([
@@ -45,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
         vouchers: vouchers.map((voucher) => ({
-            hint: voucher.id.slice(-6),
+            hint: hintOf(voucher.id),
             amount: Number(voucher.amount),
             origin: voucher.origin,
             createdBy: voucher.createdById ? (names.get(voucher.createdById) ?? null) : null,
