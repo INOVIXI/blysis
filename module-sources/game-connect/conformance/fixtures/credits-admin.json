@@ -1,0 +1,124 @@
+{
+  "scenario": "credits-admin",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "credits/admin",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "actor": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "target": "Ada",
+        "operation": "show",
+        "amount": 0
+      },
+      "status": 200,
+      "response": {
+        "target": "siteadmin",
+        "balance": 185
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/admin",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "actor": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "target": "Ada",
+        "operation": "add",
+        "amount": 30,
+        "idempotencyKey": "conf-24de6de9-add"
+      },
+      "status": 200,
+      "response": {
+        "target": "siteadmin",
+        "balance": 215
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/admin",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "actor": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "target": "Ada",
+        "operation": "add",
+        "amount": 30,
+        "idempotencyKey": "conf-24de6de9-add"
+      },
+      "status": 200,
+      "response": {
+        "target": "siteadmin",
+        "balance": 215
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/admin",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "actor": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "target": "Ada",
+        "operation": "add",
+        "amount": -5,
+        "idempotencyKey": "conf-24de6de9-negative"
+      },
+      "status": 409,
+      "response": {
+        "error": "Name an amount above zero, with two decimals at most.",
+        "code": "amount_invalid"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/admin",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "actor": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "target": "Ada",
+        "operation": "remove",
+        "amount": 1215,
+        "idempotencyKey": "conf-24de6de9-below"
+      },
+      "status": 409,
+      "response": {
+        "error": "That would take the balance below zero.",
+        "code": "insufficient_balance"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/admin",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "actor": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "target": "nobody24de6de9",
+        "operation": "add",
+        "amount": 30,
+        "idempotencyKey": "conf-24de6de9-nobody"
+      },
+      "status": 409,
+      "response": {
+        "error": "Nobody by that name.",
+        "code": "recipient_unknown"
+      }
+    }
+  ]
+}

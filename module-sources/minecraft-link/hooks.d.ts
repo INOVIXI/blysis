@@ -21,8 +21,13 @@ declare global {
     }
 
     interface BlysisFilterContexts {
-        /** Either identifies the account; a UUID survives a rename and a name does not. */
-        "game-account.resolve": { username?: string | null; uuid?: string | null };
+        /**
+         * Either identifies the account; a UUID survives a rename and a name does not.
+         * `platform` is the game the account is on, lower case, when the caller knows it.
+         * A resolver answers only for its own game: an id is a claim about one game's
+         * accounts, and the same string on another game is somebody else.
+         */
+        "game-account.resolve": { username?: string | null; uuid?: string | null; platform?: string | null };
     }
 }
 

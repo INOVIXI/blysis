@@ -1,0 +1,55 @@
+{
+  "scenario": "profile",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "player/profile",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        }
+      },
+      "status": 200,
+      "response": {
+        "linked": true,
+        "member": {
+          "username": "siteadmin",
+          "balance": 185,
+          "receiveGifts": true
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "player/profile",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "39da0e44-bace-4922-9664-1a18e877b275",
+          "name": "Conf24de6d"
+        }
+      },
+      "status": 200,
+      "response": {
+        "linked": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "player/profile",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001"
+        }
+      },
+      "status": 422,
+      "response": {
+        "error": "Invalid input: expected string, received undefined",
+        "code": "invalid_request"
+      }
+    }
+  ]
+}

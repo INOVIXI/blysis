@@ -14,7 +14,7 @@ import { refuse } from "../../../lib/auth";
 import { balance, moveCredits } from "../../../lib/bridge";
 import { onceFor } from "../../../lib/idempotency";
 import { memberNamed } from "../../../lib/players";
-import { instanceField, keyField, playerField } from "../../../lib/schemas";
+import { amountField, amountRefused, instanceField, isAmount, keyField, playerField } from "../../../lib/schemas";
 import { ok, serverPost } from "../../../lib/server-route";
 
 const adminSchema = z.object({
@@ -22,7 +22,7 @@ const adminSchema = z.object({
     actor: playerField,
     target: z.string().min(1).max(64),
     operation: z.enum(["add", "remove", "set", "show"]),
-    amount: z.number().min(0).max(99_999_999).optional(),
+    amount: amountField.optional(),
     idempotencyKey: keyField.optional(),
 });
 
@@ -35,9 +35,8 @@ export const POST = serverPost(adminSchema, async (server, body) => {
     if (body.operation === "show") return ok({ target: target.username, balance: (await balance(target.userId)) ?? 0 });
 
     const amount = body.amount;
-    if (amount === undefined || (body.operation !== "set" && amount <= 0) || Math.round(amount * 100) !== amount * 100) {
-        return refuse(409, "amount_invalid", "Name an amount.");
-    }
+    // Set is the one operation that may name zero.
+    if (amount === undefined || !(isAmount(amount) || (body.operation === "set" && amount === 0))) return amountRefused();
     if (!body.idempotencyKey) return refuse(422, "invalid_request", "A change needs an idempotencyKey.");
 
     return onceFor(server.id, body.idempotencyKey, async () => {

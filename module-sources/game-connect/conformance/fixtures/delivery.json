@@ -1,0 +1,117 @@
+{
+  "scenario": "delivery",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "poll",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "eventCursor": "e-24"
+      },
+      "status": 200,
+      "response": {
+        "jobs": [
+          {
+            "id": "cmve3rrys000ldewrbx0gf9xg",
+            "groupKey": "order:cmve3rrxc000hdewr7jyp377j:cmve3rrxg000idewrswr04wzv:gs_conform",
+            "sequence": 0,
+            "command": "say Ada passed",
+            "player": {
+              "id": "ex-ada-0001",
+              "name": "Ada"
+            },
+            "whenOnline": true,
+            "reference": {
+              "kind": "order",
+              "id": "cmve3rrxc000hdewr7jyp377j",
+              "label": "Conformance token"
+            }
+          }
+        ],
+        "events": [
+          {
+            "id": "e-25",
+            "type": "purchase",
+            "at": "2026-10-18T17:32:03.831Z",
+            "data": {
+              "more": 0,
+              "player": "Ada",
+              "product": "Conformance token",
+              "quantity": 1
+            }
+          }
+        ],
+        "eventCursor": "e-25",
+        "catalogVersion": "c-5e8c58980501f536"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "jobs/report",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "results": [
+          {
+            "id": "cmve3rrys000ldewrbx0gf9xg",
+            "outcome": "done",
+            "detail": null
+          },
+          {
+            "id": "nothing24de6de9",
+            "outcome": "done",
+            "detail": null
+          }
+        ]
+      },
+      "status": 200,
+      "response": {
+        "accepted": [
+          "cmve3rrys000ldewrbx0gf9xg"
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "jobs/report",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "results": [
+          {
+            "id": "cmve3rrys000ldewrbx0gf9xg",
+            "outcome": "done",
+            "detail": null
+          },
+          {
+            "id": "nothing24de6de9",
+            "outcome": "done",
+            "detail": null
+          }
+        ]
+      },
+      "status": 200,
+      "response": {
+        "accepted": [
+          "cmve3rrys000ldewrbx0gf9xg"
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "jobs/report",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "results": [
+          {
+            "id": "cmve3rrys000ldewrbx0gf9xg",
+            "outcome": "maybe"
+          }
+        ]
+      },
+      "status": 422,
+      "response": {
+        "error": "Invalid option: expected one of \"done\"|\"failed\"|\"deferred\"|\"unknown\"",
+        "code": "invalid_request"
+      }
+    }
+  ]
+}

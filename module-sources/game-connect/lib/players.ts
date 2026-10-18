@@ -4,7 +4,9 @@
  * A link is evidence: a member proved the account with a code. The platform
  * is the server's game, so a Minecraft UUID and a SteamID can never meet.
  * Links made by the older Minecraft Link module count too: the first time
- * one is used here it is copied over, so nobody has to link twice.
+ * one is used here it is copied over, so nobody has to link twice. It is asked
+ * about this server's game only, so a link on one game never becomes a link
+ * on another.
  */
 import { applyFiltersAsync } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
@@ -43,12 +45,11 @@ export async function memberOf(server: Pick<ConnectedServer, "game">, player: Pl
     });
     let userId = link?.userId ?? null;
 
-    // An account id is unique to its game's format, so asking with it cannot
-    // find a member of another game.
     if (!link && platform !== "") {
         const older = await applyFiltersAsync("game-account.resolve", { userId: null } as GameAccountMatch, {
             uuid: player.id,
             username: null,
+            platform,
         });
         if (older?.userId) {
             userId = older.userId;

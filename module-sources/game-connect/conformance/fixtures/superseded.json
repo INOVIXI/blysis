@@ -1,0 +1,55 @@
+{
+  "scenario": "superseded",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "hello",
+      "request": {
+        "instance": "abe9e105-fa3b-436e-b9d3-40debc721a0c",
+        "client": {
+          "name": "conformance",
+          "version": "1"
+        },
+        "game": "example",
+        "software": {
+          "name": "Conformance",
+          "version": "24de6de9"
+        },
+        "role": "server"
+      },
+      "status": 200,
+      "response": {
+        "server": {
+          "id": "gs_conform",
+          "name": "Conformance"
+        },
+        "site": {
+          "name": "Connect Lab",
+          "url": "http://localhost:3101"
+        },
+        "settings": {
+          "pollHoldSeconds": 25,
+          "statusIntervalSeconds": 30,
+          "leaseSeconds": 120,
+          "catalogVersion": "c-5e8c58980501f536"
+        },
+        "takeover": {
+          "previousInstance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+          "lastSeen": "2026-10-18T17:32:01.599Z"
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "poll",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29"
+      },
+      "status": 409,
+      "response": {
+        "error": "Another process said hello with this token after this one.",
+        "code": "superseded"
+      }
+    }
+  ]
+}

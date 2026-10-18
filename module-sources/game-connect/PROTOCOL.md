@@ -215,7 +215,8 @@ a player joins or leaves. `performance` is optional.
 
 ### `GET catalog`
 
-`If-None-Match` with the last `version` answers `304`.
+The answer carries an `ETag`, the version in double quotes. `If-None-Match` with that `ETag`, or
+with the bare `version`, answers `304`.
 
 ```json
 {
@@ -294,7 +295,8 @@ Refusals: `409 already_linked`.
 
 The code was made on the site by a signed-in member. Answer `{ "linked": true, "member":
 { "username": "notch" } }`. Refusals: `409 code_invalid` (wrong, expired or used; five wrong
-tries spend the code), `409 already_linked`.
+tries spend the code), `409 already_linked`. The code is read first, so a wrong code is
+`code_invalid` whoever sends it.
 
 Codes for both directions are single use and live for ten minutes.
 
@@ -312,6 +314,10 @@ nobody, and the call is refused as `recipient_unknown`; money never follows a gu
 `{ "sent": 50, "to": "someplayer", "balance": 200 }`. Refusals: `409 not_linked`,
 `409 recipient_unknown`, `409 insufficient_balance`, `409 amount_invalid`, `409 same_account`.
 
+An amount is above zero, has at most two decimals and is at most 99999999. Any other number is
+refused as `409 amount_invalid`, on every call that takes an amount, so a client can tell the
+player. A value that is not a number is `422 invalid_request`.
+
 ### `POST credits/admin`
 
 Needs the server setting `allowCreditAdmin`.
@@ -321,7 +327,7 @@ Needs the server setting `allowCreditAdmin`.
   "amount": 100, "idempotencyKey": "..." }
 ```
 
-`operation` is `add`, `remove`, `set` or `show`. `show` needs no key. Answer
+`operation` is `add`, `remove`, `set` or `show`. `show` needs no key. `set` may name `0`. Answer
 `{ "target": "someplayer", "balance": 300 }`. Refusals: `403 not_allowed`,
 `409 recipient_unknown`, `409 amount_invalid`, `409 insufficient_balance` (a remove below zero).
 
@@ -329,7 +335,8 @@ Needs the server setting `allowCreditAdmin`.
 
 `kind` is `balance`, `topups` or `latest`: what members hold, what they bought in the period, or
 the newest top-ups in the period, one row each. `period` is `day`, `month`, `year` or `all` and
-applies to `topups` and `latest`. Answer `{ "entries": [ { "rank": 1, "name": "notch", "amount": 900 } ] }`. A member who
+applies to `topups` and `latest`. Left out, `kind` is `balance` and `period` is `all`; a value
+not on this list is `422 invalid_request`. Answer `{ "entries": [ { "rank": 1, "name": "notch", "amount": 900 } ] }`. A member who
 asked to be anonymous is `null` in `name`.
 
 ### `GET community-goal`
@@ -355,7 +362,8 @@ or `{ "active": false }`.
 `recipient` is optional and means a gift. Answer
 `{ "orderId": "...", "orderNumber": "...", "total": 100, "balance": 150, "gift": false }`.
 Refusals: `409 not_linked`, `409 not_found`, `409 not_in_game`, `409 insufficient_balance`,
-`409 out_of_stock`, `409 quantity_invalid`, `409 field_invalid` (with `field`),
+`409 out_of_stock`, `409 quantity_invalid` (below 1, above the product's `maxQuantity`, or above
+1000), `409 field_invalid` (with `field`),
 `409 recipient_unknown`, `409 not_giftable`, `409 recipient_refuses_gifts`.
 
 A purchase for oneself goes to delivery at once. A gift lands in the recipient's chest as a
@@ -398,8 +406,8 @@ Answer `{ "ok": true }`. Refusals: `409 not_found`, `409 already_claimed`, `409 
 ### `POST gifts/cancel`
 
 `{ "player": {...}, "itemId": "...", "idempotencyKey": "..." }` answers
-`{ "refunded": 100, "balance": 250 }`. Refusals: `409 not_pending` (already activated or
-cancelled).
+`{ "refunded": 100, "balance": 250 }`. Refusals: `409 not_pending` (the recipient accepted it),
+`409 not_found` (no such gift, or it was already taken back).
 
 ### `POST gifts/receive`
 
@@ -410,7 +418,8 @@ cancelled).
 ### `POST vouchers/create`
 
 `{ "player": {...}, "amount": 50, "idempotencyKey": "..." }` takes 50 from the player and answers
-`{ "voucherId": "gv_...", "amount": 50, "balance": 200 }`.
+`{ "voucherId": "gv_...", "amount": 50, "balance": 200 }`. Refusals: `409 not_linked`,
+`409 insufficient_balance`, `409 amount_invalid`.
 
 ### `POST vouchers/give`
 
@@ -440,6 +449,14 @@ The id is the whole voucher. An item that carries it is only its look.
 
 An event is sent to every server, except `link.confirmed`, which goes to the server the player
 was on when the code was made. Events are kept for a day.
+
+## Conformance
+
+`conformance/run.ts` drives a site through every call on this page and prints `PASS` or `FAIL`
+for each check. The head of the file names what it needs: a test site, a token made for the run
+and two linked players. With `GC_RECORD` set it writes every exchange it made, one JSON file per
+scenario, and `conformance/fixtures/` holds the last such recording. A client replays those
+files as its fake site, so its tests read what a real site answers.
 
 ## Versioning
 

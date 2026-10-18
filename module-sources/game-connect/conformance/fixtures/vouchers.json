@@ -1,0 +1,129 @@
+{
+  "scenario": "vouchers",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "vouchers/create",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "amount": 2,
+        "idempotencyKey": "conf-24de6de9-voucher"
+      },
+      "status": 200,
+      "response": {
+        "voucherId": "gv_xIfNt8NaSaQH9n5Xc45s58TB",
+        "amount": 2,
+        "balance": 210
+      }
+    },
+    {
+      "method": "POST",
+      "path": "vouchers/redeem",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        },
+        "voucherId": "gv_xIfNt8NaSaQH9n5Xc45s58TB"
+      },
+      "status": 200,
+      "response": {
+        "amount": 2,
+        "balance": 18
+      }
+    },
+    {
+      "method": "POST",
+      "path": "vouchers/redeem",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        },
+        "voucherId": "gv_xIfNt8NaSaQH9n5Xc45s58TB"
+      },
+      "status": 409,
+      "response": {
+        "error": "That voucher was already used.",
+        "code": "voucher_used",
+        "usedAt": "2026-10-18T17:32:06.998Z"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "vouchers/redeem",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        },
+        "voucherId": "gv_nothing24de6de9"
+      },
+      "status": 409,
+      "response": {
+        "error": "No such voucher.",
+        "code": "not_found"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "vouchers/redeem",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "39da0e44-bace-4922-9664-1a18e877b275",
+          "name": "Conf24de6d"
+        },
+        "voucherId": "gv_xIfNt8NaSaQH9n5Xc45s58TB"
+      },
+      "status": 409,
+      "response": {
+        "error": "This player has no account on the site.",
+        "code": "not_linked"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "vouchers/create",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "amount": 0,
+        "idempotencyKey": "conf-24de6de9-voucher-zero"
+      },
+      "status": 409,
+      "response": {
+        "error": "Name an amount above zero, with two decimals at most.",
+        "code": "amount_invalid"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "vouchers/give",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "actor": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "amount": 3,
+        "idempotencyKey": "conf-24de6de9-give"
+      },
+      "status": 200,
+      "response": {
+        "voucherId": "gv_6aCFZsVRsOyUuHwe_bgHRrir",
+        "amount": 3
+      }
+    }
+  ]
+}

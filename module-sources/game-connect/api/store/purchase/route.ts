@@ -19,7 +19,7 @@ const purchaseSchema = z.object({
     instance: instanceField,
     player: playerField,
     productId: z.string().min(1).max(64),
-    quantity: z.number().int().min(1).max(1000),
+    quantity: z.number().int(),
     fields: z.record(z.string().max(64), z.string().max(200)).default({}),
     recipient: z.string().min(1).max(64).nullish(),
     idempotencyKey: keyField,
@@ -37,8 +37,13 @@ const MESSAGES: Record<string, string> = {
     unavailable: "The store cannot sell that right now.",
 };
 
+/** The most of one product a single purchase may name, whatever the product allows. */
+const MOST = 1000;
+
 export const POST = serverPost(purchaseSchema, async (server, body) =>
-    onceFor(server.id, body.idempotencyKey, async () => {
+    body.quantity < 1 || body.quantity > MOST
+        ? refuse(409, "quantity_invalid", MESSAGES.quantity_invalid)
+        : onceFor(server.id, body.idempotencyKey, async () => {
         const buyer = await memberOf(server, body.player);
         if (!buyer) return refuse(409, "not_linked", "This player has no account on the site.");
         let recipientId: string | null = null;

@@ -12,7 +12,9 @@ export const GET = serverGet(async (_server, request) => {
     const catalog = await readCatalog();
     const version = versionOf(catalog);
     const etag = `"${version}"`;
-    if (request.headers.get("if-none-match") === etag) {
+    // The ETag is the version in quotes. A client that sends the bare version it read from the body means the same.
+    const held = request.headers.get("if-none-match");
+    if (held === etag || held === version) {
         return new NextResponse(null, { status: 304, headers: { ETag: etag } });
     }
     return NextResponse.json({ version, ...catalog }, { headers: { ETag: etag, "Cache-Control": "no-store" } });

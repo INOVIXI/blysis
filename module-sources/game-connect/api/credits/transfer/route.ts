@@ -13,7 +13,7 @@ import { refuse } from "../../../lib/auth";
 import { balance, moveCredits } from "../../../lib/bridge";
 import { onceFor } from "../../../lib/idempotency";
 import { memberNamed, memberOf } from "../../../lib/players";
-import { amountField, instanceField, keyField, playerField } from "../../../lib/schemas";
+import { amountField, amountRefused, instanceField, isAmount, keyField, playerField } from "../../../lib/schemas";
 import { ok, serverPost } from "../../../lib/server-route";
 
 const transferSchema = z.object({
@@ -25,7 +25,7 @@ const transferSchema = z.object({
 });
 
 export const POST = serverPost(transferSchema, async (server, body) =>
-    onceFor(server.id, body.idempotencyKey, async () => {
+    !isAmount(body.amount) ? amountRefused() : onceFor(server.id, body.idempotencyKey, async () => {
         const from = await memberOf(server, body.player);
         if (!from) return refuse(409, "not_linked", "This player has no account on the site.");
         const to = await memberNamed(server, body.to);

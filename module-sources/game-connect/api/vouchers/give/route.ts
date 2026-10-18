@@ -9,7 +9,7 @@ import { z } from "zod";
 import { logActivity } from "@/core/sdk/server";
 import { refuse } from "../../../lib/auth";
 import { onceFor } from "../../../lib/idempotency";
-import { amountField, instanceField, keyField, playerField } from "../../../lib/schemas";
+import { amountField, amountRefused, instanceField, isAmount, keyField, playerField } from "../../../lib/schemas";
 import { ok, serverPost } from "../../../lib/server-route";
 import { mintVoucher } from "../../../lib/vouchers";
 
@@ -19,6 +19,7 @@ export const POST = serverPost(giveSchema, async (server, body) => {
     if (!server.allowVoucherGive) {
         return refuse(403, "not_allowed", "This server may not mint vouchers.", { setting: "allowVoucherGive" });
     }
+    if (!isAmount(body.amount)) return amountRefused();
     return onceFor(server.id, body.idempotencyKey, async () => {
         const minted = await mintVoucher(body.amount, server.gameServerId);
         logActivity({

@@ -1,0 +1,40 @@
+{
+  "scenario": "status",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "status",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "online": 1,
+        "max": 20,
+        "players": [
+          {
+            "id": "ex-ada-0001",
+            "name": "Ada"
+          }
+        ],
+        "version": "conformance",
+        "performance": {
+          "tps": 20,
+          "mspt": 1
+        }
+      },
+      "status": 204,
+      "response": null
+    },
+    {
+      "method": "POST",
+      "path": "status",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "online": "many"
+      },
+      "status": 422,
+      "response": {
+        "error": "Invalid input: expected number, received string",
+        "code": "invalid_request"
+      }
+    }
+  ]
+}

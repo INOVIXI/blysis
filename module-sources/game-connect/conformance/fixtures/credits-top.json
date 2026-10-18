@@ -1,0 +1,53 @@
+{
+  "scenario": "credits-top",
+  "exchanges": [
+    {
+      "method": "GET",
+      "path": "credits/top?kind=balance&period=all&limit=10",
+      "request": null,
+      "status": 200,
+      "response": {
+        "entries": [
+          {
+            "rank": 1,
+            "name": "siteadmin",
+            "amount": 214
+          },
+          {
+            "rank": 2,
+            "name": "alex",
+            "amount": 16
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "credits/top?kind=topups&period=month&limit=10",
+      "request": null,
+      "status": 200,
+      "response": {
+        "entries": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "credits/top?kind=latest&period=all&limit=10",
+      "request": null,
+      "status": 200,
+      "response": {
+        "entries": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "credits/top?kind=wealth&period=all&limit=10",
+      "request": null,
+      "status": 422,
+      "response": {
+        "error": "kind is one of balance, topups, latest; period one of day, month, year, all.",
+        "code": "invalid_request"
+      }
+    }
+  ]
+}

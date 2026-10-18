@@ -1,0 +1,58 @@
+{
+  "scenario": "gifts-receive",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "gifts/receive",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        },
+        "receive": false
+      },
+      "status": 200,
+      "response": {
+        "receiveGifts": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "store/purchase",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "productId": "p_conform",
+        "quantity": 1,
+        "fields": {},
+        "recipient": "Bo",
+        "idempotencyKey": "conf-24de6de9-refused-gift"
+      },
+      "status": 409,
+      "response": {
+        "error": "That member does not accept gifts.",
+        "code": "recipient_refuses_gifts"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "gifts/receive",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        },
+        "receive": true
+      },
+      "status": 200,
+      "response": {
+        "receiveGifts": true
+      }
+    }
+  ]
+}
