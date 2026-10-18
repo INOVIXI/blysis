@@ -4,6 +4,9 @@
  * A recipient who is in game when it arrives is told, on whichever server
  * they are: the event names each game account linked to them, and a server
  * says it to the player it finds under that account.
+ *
+ * Each event goes only to the servers of that account's game. Sent to every
+ * server, a server of one game would read the recipient's account in another.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
@@ -18,6 +21,13 @@ const emitted: Array<{ type: string; data: Record<string, unknown>; server: stri
 vi.mock("@/core/sdk/server", () => ({
     prisma: {
         user: { findUnique: vi.fn(async ({ where }: { where: { id: string } }) => users[where.id] ?? null) },
+        gameConnectServer: {
+            findMany: vi.fn(async () => [
+                { gameServerId: "gs_survival", game: "Minecraft" },
+                { gameServerId: "gs_lobby", game: "minecraft" },
+                { gameServerId: "gs_example", game: "example" },
+            ]),
+        },
         gameConnectLink: {
             findMany: vi.fn(async ({ where }: { where: { userId: { in: string[] } } }) =>
                 links.filter((link) => where.userId.in.includes(link.userId)),
@@ -39,20 +49,26 @@ beforeEach(() => {
 });
 
 describe("a gift sent", () => {
-    it("is told to every game account of the member who gets it, on every server, naming the sender in that game", async () => {
+    it("is told to every game account of the member who gets it, on the servers of that game, naming the sender there", async () => {
         await onGiftSent({ senderId: "u_ada", recipientId: "u_bo", productName: "Hero rank", quantity: 2 });
 
-        expect(emitted).toHaveLength(2);
-        expect(emitted.every((event) => event.type === "gift.received" && event.server === null)).toBe(true);
-        expect(emitted[0].data).toEqual({
-            player: { id: "uuid-bo", name: "BoInGame" },
-            platform: "minecraft",
-            member: "bo",
-            from: "AdaInGame",
-            product: "Hero rank",
-            quantity: 2,
+        expect(emitted.every((event) => event.type === "gift.received")).toBe(true);
+        expect(emitted.map((event) => event.server).sort()).toEqual(["gs_example", "gs_lobby", "gs_survival"]);
+        const minecraft = emitted.filter((event) => event.server !== "gs_example");
+        for (const event of minecraft) {
+            expect(event.data).toEqual({
+                player: { id: "uuid-bo", name: "BoInGame" },
+                platform: "minecraft",
+                from: "AdaInGame",
+                product: "Hero rank",
+                quantity: 2,
+            });
+        }
+        expect(emitted.find((event) => event.server === "gs_example")?.data).toMatchObject({
+            player: { id: "ex-bo", name: "Bo" },
+            platform: "example",
+            from: "ada",
         });
-        expect(emitted[1].data).toMatchObject({ player: { id: "ex-bo", name: "Bo" }, platform: "example", from: "ada" });
     });
 
     it("says nothing for a member with no game account", async () => {
