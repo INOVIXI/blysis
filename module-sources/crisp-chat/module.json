@@ -86,6 +86,156 @@
         "settings_crisp-chat": "Crisp Canlı Sohbet",
         "settings_crisp-chat_description": "Ziyaretçilerin sizinle konuştuğu sohbet balonu."
       }
+    },
+    "az": {
+      "crispChat": {
+        "adm_subtitle": "Ziyarətçilərin sizinlə danışdığı çat balonu.",
+        "adm_title": "Crisp Chat",
+        "adm_websiteId": "Sayt ID-si",
+        "adm_websiteIdDesc": "Provayderin panelində, Parametrlər altında. Bu UUID-dir; başqa hər şey rədd olunur və balon görünməz qalır. Ziyarətçi çərəzləri qəbul edənə qədər heç nə yüklənmir.",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_crisp-chat_description": "Hər səhifədə canlı çat balonu, Crisp tərəfindən təqdim olunur",
+        "module_crisp-chat_name": "Crisp Chat",
+        "settings_crisp-chat": "Crisp Canlı Çat",
+        "settings_crisp-chat_description": "Ziyarətçilərin sizinlə danışdığı çat balonu."
+      }
+    },
+    "de": {
+      "crispChat": {
+        "adm_subtitle": "Die Chat-Blase, über die Besucher mit dir sprechen.",
+        "adm_title": "Crisp Chat",
+        "adm_websiteId": "Website-ID",
+        "adm_websiteIdDesc": "Im Dashboard des Anbieters unter Einstellungen zu finden. Sie ist eine UUID; alles andere wird abgelehnt, und die Blase bleibt weg. Nichts wird geladen, bis ein Besucher Cookies akzeptiert hat.",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_crisp-chat_description": "Eine Live-Chat-Blase auf jeder Seite, bereitgestellt von Crisp",
+        "module_crisp-chat_name": "Crisp Chat",
+        "settings_crisp-chat": "Crisp Live Chat",
+        "settings_crisp-chat_description": "Die Chat-Blase, über die Besucher mit dir sprechen."
+      }
+    },
+    "es": {
+      "crispChat": {
+        "adm_subtitle": "La burbuja de chat a través de la cual los visitantes hablan contigo.",
+        "adm_title": "Crisp Chat",
+        "adm_websiteId": "ID del sitio web",
+        "adm_websiteIdDesc": "Desde el panel del proveedor, en Ajustes. Es un UUID; cualquier otra cosa se rechaza y la burbuja no aparece. Nada se carga hasta que un visitante haya aceptado las cookies.",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_crisp-chat_description": "Una burbuja de chat en directo en cada página, servida por Crisp",
+        "module_crisp-chat_name": "Crisp Chat",
+        "settings_crisp-chat": "Chat en directo de Crisp",
+        "settings_crisp-chat_description": "La burbuja de chat a través de la cual los visitantes hablan contigo."
+      }
+    },
+    "et": {
+      "crispChat": {
+        "adm_subtitle": "Vestlusmull, mille kaudu külastajad sinuga räägivad.",
+        "adm_title": "Crisp Chat",
+        "adm_websiteId": "Veebisaidi ID",
+        "adm_websiteIdDesc": "Teenusepakkuja juhtpaneelist, jaotisest Seaded. See on UUID; kõik muu lükatakse tagasi ja mull jääb ära. Midagi ei laadita enne, kui külastaja on küpsised heaks kiitnud.",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_crisp-chat_description": "Vestlusmull igal lehel, mida pakub Crisp",
+        "module_crisp-chat_name": "Crisp Chat",
+        "settings_crisp-chat": "Crisp Live Chat",
+        "settings_crisp-chat_description": "Vestlusmull, mille kaudu külastajad sinuga räägivad."
+      }
+    },
+    "fr": {
+      "crispChat": {
+        "adm_subtitle": "La bulle de chat grâce à laquelle les visiteurs vous parlent.",
+        "adm_title": "Crisp Chat",
+        "adm_websiteId": "ID du site",
+        "adm_websiteIdDesc": "Depuis le tableau de bord du fournisseur, dans Paramètres. C’est un UUID ; toute autre valeur est refusée et la bulle reste masquée. Rien ne se charge tant qu’un visiteur n’a pas accepté les cookies.",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_crisp-chat_description": "Une bulle de chat en direct sur chaque page, fournie par Crisp",
+        "module_crisp-chat_name": "Crisp Chat",
+        "settings_crisp-chat": "Chat en direct Crisp",
+        "settings_crisp-chat_description": "La bulle de chat grâce à laquelle les visiteurs vous parlent."
+      }
+    },
+    "it": {
+      "crispChat": {
+        "adm_subtitle": "La bolla di chat con cui i visitatori ti scrivono.",
+        "adm_title": "Crisp Chat",
+        "adm_websiteId": "ID del sito",
+        "adm_websiteIdDesc": "Dalla dashboard del provider, alla voce Impostazioni. È un UUID: qualsiasi altro valore viene rifiutato e la bolla non compare. Nulla viene caricato finché un visitatore non ha accettato i cookie.",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_crisp-chat_description": "Una bolla di chat dal vivo su ogni pagina, fornita da Crisp",
+        "module_crisp-chat_name": "Crisp Chat",
+        "settings_crisp-chat": "Crisp Live Chat",
+        "settings_crisp-chat_description": "La bolla di chat con cui i visitatori ti scrivono."
+      }
+    },
+    "pl": {
+      "crispChat": {
+        "adm_subtitle": "Dymek czatu, przez który odwiedzający z Tobą rozmawiają.",
+        "adm_title": "Crisp Chat",
+        "adm_websiteId": "Identyfikator witryny",
+        "adm_websiteIdDesc": "Znajdziesz go w panelu dostawcy, w sekcji Ustawienia. To UUID; cokolwiek innego zostanie odrzucone, a dymek się nie pojawi. Nic się nie wczyta, dopóki odwiedzający nie zaakceptuje plików cookie.",
+        "perm_manage": "Zarządzanie"
+      },
+      "admin": {
+        "module_crisp-chat_description": "Dymek czatu na żywo na każdej stronie, obsługiwany przez Crisp",
+        "module_crisp-chat_name": "Crisp Chat",
+        "settings_crisp-chat": "Crisp Live Chat",
+        "settings_crisp-chat_description": "Dymek czatu, przez który odwiedzający z Tobą rozmawiają."
+      }
+    },
+    "pt": {
+      "crispChat": {
+        "adm_subtitle": "A bolha de chat por onde os visitantes falam com você.",
+        "adm_title": "Crisp Chat",
+        "adm_websiteId": "ID do site",
+        "adm_websiteIdDesc": "Obtido no painel do provedor, em Configurações. É um UUID; qualquer outra coisa é recusada e a bolha não aparece. Nada é carregado até que um visitante tenha aceitado os cookies.",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_crisp-chat_description": "Uma bolha de chat ao vivo em todas as páginas, servida pelo Crisp",
+        "module_crisp-chat_name": "Crisp Chat",
+        "settings_crisp-chat": "Chat ao vivo do Crisp",
+        "settings_crisp-chat_description": "A bolha de chat por onde os visitantes falam com você."
+      }
+    },
+    "ru": {
+      "crispChat": {
+        "adm_subtitle": "Окно чата, через которое посетители пишут вам.",
+        "adm_title": "Crisp Chat",
+        "adm_websiteId": "ID сайта",
+        "adm_websiteIdDesc": "Возьмите в панели провайдера, в разделе Settings. Это UUID; любое другое значение отклоняется, и окно чата не появляется. Ничего не загружается, пока посетитель не принял cookie.",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_crisp-chat_description": "Окно живого чата на каждой странице, работает на Crisp",
+        "module_crisp-chat_name": "Crisp Chat",
+        "settings_crisp-chat": "Crisp Live Chat",
+        "settings_crisp-chat_description": "Окно чата, через которое посетители пишут вам."
+      }
+    },
+    "zh": {
+      "crispChat": {
+        "adm_subtitle": "访客与你对话所用的聊天气泡。",
+        "adm_title": "Crisp 聊天",
+        "adm_websiteId": "网站 ID",
+        "adm_websiteIdDesc": "来自服务商控制台的“设置”页面。它是一个 UUID，其他格式都会被拒绝，此时聊天气泡不会显示。访客接受 Cookie 之前，不会加载任何内容。",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_crisp-chat_description": "每个页面上由 Crisp 提供的实时聊天气泡",
+        "module_crisp-chat_name": "Crisp 聊天",
+        "settings_crisp-chat": "Crisp 实时聊天",
+        "settings_crisp-chat_description": "访客与你对话所用的聊天气泡。"
+      }
     }
   },
   "permissions": [

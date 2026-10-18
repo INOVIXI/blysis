@@ -107,6 +107,196 @@
         "settings_paymentwall-gateway": "Paymentwall",
         "settings_paymentwall-gateway_description": "Paymentwall proje ve gizli anahtarları."
       }
+    },
+    "az": {
+      "paymentwallGateway": {
+        "adm_projectKey": "Layihə açarı",
+        "adm_projectKeyDesc": "Paymentwall idarə panelindən.",
+        "adm_secretKey": "Gizli açar",
+        "adm_secretKeyDesc": "Paymentwall idarə panelindən. Paymentwall bildiriş ünvanını /api/v1/paymentwall/pingback yönləndirin.",
+        "adm_subtitle": "Paymentwall ilə ödənişləri qəbul etmək üçün açarlar.",
+        "adm_title": "Paymentwall parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "menu_paymentwall-gateway": "Paymentwall şlüzü",
+        "menu_paymentwall-gateway_paymentwall_settings": "Paymentwall parametrləri",
+        "module_paymentwall-gateway_name": "Paymentwall şlüzü",
+        "module_paymentwall-gateway_description": "Paymentwall vasitəsilə yerli ödənişləri, pul kisələrini və mobil hesablaşmanı qəbul edin",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Paymentwall layihə və gizli açarları."
+      }
+    },
+    "de": {
+      "paymentwallGateway": {
+        "adm_projectKey": "Projektschlüssel",
+        "adm_projectKeyDesc": "Aus deinem Paymentwall-Dashboard.",
+        "adm_secretKey": "Geheimer Schlüssel",
+        "adm_secretKeyDesc": "Aus deinem Paymentwall-Dashboard. Trage für die Paymentwall-Benachrichtigungs-URL /api/v1/paymentwall/pingback ein.",
+        "adm_subtitle": "Schlüssel für Zahlungen über Paymentwall.",
+        "adm_title": "Paymentwall-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "menu_paymentwall-gateway": "Paymentwall-Gateway",
+        "menu_paymentwall-gateway_paymentwall_settings": "Paymentwall-Einstellungen",
+        "module_paymentwall-gateway_name": "Paymentwall-Gateway",
+        "module_paymentwall-gateway_description": "Lokale Zahlungen, Wallets und Mobilfunkabrechnung über Paymentwall annehmen",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Projekt- und geheime Schlüssel von Paymentwall."
+      }
+    },
+    "es": {
+      "paymentwallGateway": {
+        "adm_projectKey": "Clave del proyecto",
+        "adm_projectKeyDesc": "Desde tu panel de Paymentwall.",
+        "adm_secretKey": "Clave secreta",
+        "adm_secretKeyDesc": "Desde tu panel de Paymentwall. Apunta la URL de notificación de Paymentwall a /api/v1/paymentwall/pingback.",
+        "adm_subtitle": "Claves para cobrar pagos a través de Paymentwall.",
+        "adm_title": "Ajustes de Paymentwall",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "menu_paymentwall-gateway": "Pasarela de Paymentwall",
+        "menu_paymentwall-gateway_paymentwall_settings": "Ajustes de Paymentwall",
+        "module_paymentwall-gateway_name": "Pasarela de Paymentwall",
+        "module_paymentwall-gateway_description": "Acepta pagos locales, monederos y facturación móvil a través de Paymentwall",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Claves del proyecto y secreta de Paymentwall."
+      }
+    },
+    "et": {
+      "paymentwallGateway": {
+        "adm_projectKey": "Projekti võti",
+        "adm_projectKeyDesc": "Leiad selle oma Paymentwalli töölaualt.",
+        "adm_secretKey": "Salajane võti",
+        "adm_secretKeyDesc": "Leiad selle oma Paymentwalli töölaualt. Suuna Paymentwalli teavituse URL aadressile /api/v1/paymentwall/pingback.",
+        "adm_subtitle": "Võtmed maksete vastuvõtmiseks Paymentwalli kaudu.",
+        "adm_title": "Paymentwalli seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "menu_paymentwall-gateway": "Paymentwalli värav",
+        "menu_paymentwall-gateway_paymentwall_settings": "Paymentwalli seaded",
+        "module_paymentwall-gateway_name": "Paymentwalli värav",
+        "module_paymentwall-gateway_description": "Võta vastu kohalikke makseid, rahakotte ja mobiilarveid Paymentwalli kaudu",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Paymentwalli projekti- ja salajased võtmed."
+      }
+    },
+    "fr": {
+      "paymentwallGateway": {
+        "adm_projectKey": "Clé du projet",
+        "adm_projectKeyDesc": "Depuis votre tableau de bord Paymentwall.",
+        "adm_secretKey": "Clé secrète",
+        "adm_secretKeyDesc": "Depuis votre tableau de bord Paymentwall. Renseignez l’URL de notification Paymentwall sur /api/v1/paymentwall/pingback.",
+        "adm_subtitle": "Clés pour encaisser les paiements via Paymentwall.",
+        "adm_title": "Paramètres Paymentwall",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "menu_paymentwall-gateway": "Passerelle Paymentwall",
+        "menu_paymentwall-gateway_paymentwall_settings": "Paramètres Paymentwall",
+        "module_paymentwall-gateway_name": "Passerelle Paymentwall",
+        "module_paymentwall-gateway_description": "Acceptez les paiements locaux, portefeuilles et facturation mobile via Paymentwall",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Clés projet et clés secrètes Paymentwall."
+      }
+    },
+    "it": {
+      "paymentwallGateway": {
+        "adm_projectKey": "Chiave del progetto",
+        "adm_projectKeyDesc": "Dalla tua dashboard Paymentwall.",
+        "adm_secretKey": "Chiave segreta",
+        "adm_secretKeyDesc": "Dalla tua dashboard Paymentwall. Imposta l’URL di notifica Paymentwall su /api/v1/paymentwall/pingback.",
+        "adm_subtitle": "Chiavi per accettare pagamenti tramite Paymentwall.",
+        "adm_title": "Impostazioni Paymentwall",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "menu_paymentwall-gateway": "Gateway Paymentwall",
+        "menu_paymentwall-gateway_paymentwall_settings": "Impostazioni Paymentwall",
+        "module_paymentwall-gateway_name": "Gateway Paymentwall",
+        "module_paymentwall-gateway_description": "Accetta pagamenti locali, wallet e addebiti mobili tramite Paymentwall",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Chiavi del progetto e chiavi segrete Paymentwall."
+      }
+    },
+    "pl": {
+      "paymentwallGateway": {
+        "adm_projectKey": "Klucz projektu",
+        "adm_projectKeyDesc": "Z panelu Paymentwall.",
+        "adm_secretKey": "Klucz tajny",
+        "adm_secretKeyDesc": "Z panelu Paymentwall. Ustaw adres powiadomień Paymentwall na /api/v1/paymentwall/pingback.",
+        "adm_subtitle": "Klucze do przyjmowania płatności przez Paymentwall.",
+        "adm_title": "Ustawienia Paymentwall",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "menu_paymentwall-gateway": "Bramka Paymentwall",
+        "menu_paymentwall-gateway_paymentwall_settings": "Ustawienia Paymentwall",
+        "module_paymentwall-gateway_name": "Bramka Paymentwall",
+        "module_paymentwall-gateway_description": "Przyjmuj lokalne płatności, portfele i płatności mobilne przez Paymentwall",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Klucze projektu i klucze tajne Paymentwall."
+      }
+    },
+    "pt": {
+      "paymentwallGateway": {
+        "adm_projectKey": "Chave do projeto",
+        "adm_projectKeyDesc": "Do seu painel do Paymentwall.",
+        "adm_secretKey": "Chave secreta",
+        "adm_secretKeyDesc": "Do seu painel do Paymentwall. Aponte a URL de notificação do Paymentwall para /api/v1/paymentwall/pingback.",
+        "adm_subtitle": "Chaves para receber pagamentos pelo Paymentwall.",
+        "adm_title": "Configurações do Paymentwall",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "menu_paymentwall-gateway": "Gateway Paymentwall",
+        "menu_paymentwall-gateway_paymentwall_settings": "Configurações do Paymentwall",
+        "module_paymentwall-gateway_name": "Gateway Paymentwall",
+        "module_paymentwall-gateway_description": "Receba pagamentos locais, carteiras digitais e cobranças no celular pelo Paymentwall",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Chaves do projeto e secreta do Paymentwall."
+      }
+    },
+    "ru": {
+      "paymentwallGateway": {
+        "adm_projectKey": "Ключ проекта",
+        "adm_projectKeyDesc": "Из панели управления Paymentwall.",
+        "adm_secretKey": "Секретный ключ",
+        "adm_secretKeyDesc": "Из панели управления Paymentwall. Укажите в качестве URL уведомлений Paymentwall адрес /api/v1/paymentwall/pingback.",
+        "adm_subtitle": "Ключи для приема платежей через Paymentwall.",
+        "adm_title": "Настройки Paymentwall",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "menu_paymentwall-gateway": "Шлюз Paymentwall",
+        "menu_paymentwall-gateway_paymentwall_settings": "Настройки Paymentwall",
+        "module_paymentwall-gateway_name": "Шлюз Paymentwall",
+        "module_paymentwall-gateway_description": "Принимайте локальные платежи, электронные кошельки и мобильные платежи через Paymentwall",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Ключи проекта и секретный ключ Paymentwall."
+      }
+    },
+    "zh": {
+      "paymentwallGateway": {
+        "adm_projectKey": "项目密钥",
+        "adm_projectKeyDesc": "来自你的 Paymentwall 控制台。",
+        "adm_secretKey": "私钥",
+        "adm_secretKeyDesc": "来自你的 Paymentwall 控制台。请将 Paymentwall 通知 URL 设置为 /api/v1/paymentwall/pingback。",
+        "adm_subtitle": "用于通过 Paymentwall 收款的密钥。",
+        "adm_title": "Paymentwall 设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "menu_paymentwall-gateway": "Paymentwall 支付网关",
+        "menu_paymentwall-gateway_paymentwall_settings": "Paymentwall 设置",
+        "module_paymentwall-gateway_name": "Paymentwall 支付网关",
+        "module_paymentwall-gateway_description": "通过 Paymentwall 接受本地支付、电子钱包和移动话费支付",
+        "settings_paymentwall-gateway": "Paymentwall",
+        "settings_paymentwall-gateway_description": "Paymentwall 项目密钥和私钥。"
+      }
     }
   },
   "permissions": [

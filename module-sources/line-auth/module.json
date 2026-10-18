@@ -67,6 +67,146 @@
         "settings_line-auth": "LINE OAuth",
         "settings_line-auth_description": "LINE kanal kimlik bilgileri."
       }
+    },
+    "az": {
+      "lineAuth": {
+        "adm_emailNote": "E-poçt ünvanını oxumaq LINE kanalında ayrıca icazədir və LINE-ın təsdiqini tələb edir. Onsuz hesablara heç vaxt məktub ala bilməyən müvəqqəti ünvan verilir.",
+        "adm_subtitle": "Saytınız üçün LINE OAuth ilə daxil olmanı quraşdırın.",
+        "adm_title": "LINE Login parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_line-auth_name": "LINE Login",
+        "module_line-auth_description": "İstifadəçilərə LINE hesabları ilə daxil olmağa icazə verin",
+        "settings_line-auth": "LINE OAuth",
+        "settings_line-auth_description": "LINE kanalının etimadnaməsi."
+      }
+    },
+    "de": {
+      "lineAuth": {
+        "adm_emailNote": "Die E-Mail-Adresse auszulesen ist eine eigene Berechtigung auf dem LINE-Kanal und braucht die Freigabe durch LINE. Ohne sie erhalten Konten eine Platzhalteradresse, die niemals E-Mails empfangen kann.",
+        "adm_subtitle": "Richte die Anmeldung per LINE-OAuth für deine Seite ein.",
+        "adm_title": "LINE-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_line-auth_name": "LINE-Login",
+        "module_line-auth_description": "Mitglieder können sich mit ihrem LINE-Konto anmelden",
+        "settings_line-auth": "LINE-OAuth",
+        "settings_line-auth_description": "Zugangsdaten des LINE-Kanals."
+      }
+    },
+    "es": {
+      "lineAuth": {
+        "adm_emailNote": "Leer la dirección de correo es un permiso aparte en el canal de LINE y necesita la aprobación de LINE. Sin él, las cuentas reciben una dirección provisional que nunca puede recibir correos.",
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de LINE en tu sitio.",
+        "adm_title": "Ajustes de inicio de sesión con LINE",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_line-auth_name": "Inicio de sesión con LINE",
+        "module_line-auth_description": "Permite que los usuarios inicien sesión con su cuenta de LINE",
+        "settings_line-auth": "OAuth de LINE",
+        "settings_line-auth_description": "Credenciales del canal de LINE."
+      }
+    },
+    "et": {
+      "lineAuth": {
+        "adm_emailNote": "E-posti aadressi lugemine on LINE'i kanalil eraldi luba ja nõuab LINE'i heakskiitu. Ilma selleta saavad kontod kohatäite aadressi, millele ei saa kunagi kirju saata.",
+        "adm_subtitle": "Seadista oma saidile LINE OAuth-sisselogimine.",
+        "adm_title": "LINE sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_line-auth_name": "LINE sisselogimine",
+        "module_line-auth_description": "Luba kasutajatel sisse logida oma LINE'i kontoga",
+        "settings_line-auth": "LINE OAuth",
+        "settings_line-auth_description": "LINE kanali mandaadid."
+      }
+    },
+    "fr": {
+      "lineAuth": {
+        "adm_emailNote": "La lecture de l’adresse e-mail est une autorisation distincte sur le canal LINE et nécessite l’approbation de LINE. Sans elle, les comptes reçoivent une adresse fictive qui ne peut jamais recevoir de courrier.",
+        "adm_subtitle": "Configurez la connexion OAuth LINE pour votre site.",
+        "adm_title": "Paramètres de connexion LINE",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_line-auth_name": "Connexion LINE",
+        "module_line-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte LINE",
+        "settings_line-auth": "OAuth LINE",
+        "settings_line-auth_description": "Identifiants du canal LINE."
+      }
+    },
+    "it": {
+      "lineAuth": {
+        "adm_emailNote": "Leggere l’indirizzo email è un permesso separato sul canale LINE e richiede l’approvazione di LINE. Senza di esso, gli account ricevono un indirizzo segnaposto che non può ricevere posta.",
+        "adm_subtitle": "Configura l’accesso con LINE OAuth per il tuo sito.",
+        "adm_title": "Impostazioni di accesso con LINE",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_line-auth_name": "Accesso con LINE",
+        "module_line-auth_description": "Consenti agli utenti di accedere con il proprio account LINE",
+        "settings_line-auth": "LINE OAuth",
+        "settings_line-auth_description": "Credenziali del canale LINE."
+      }
+    },
+    "pl": {
+      "lineAuth": {
+        "adm_emailNote": "Odczyt adresu e-mail to osobne uprawnienie kanału LINE i wymaga zatwierdzenia przez LINE. Bez niego konta dostają zastępczy adres, na który nigdy nie dotrze poczta.",
+        "adm_subtitle": "Skonfiguruj logowanie przez LINE (OAuth) na swojej stronie.",
+        "adm_title": "Ustawienia logowania przez LINE",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_line-auth_name": "Logowanie przez LINE",
+        "module_line-auth_description": "Pozwól członkom logować się przez konto LINE",
+        "settings_line-auth": "LINE OAuth",
+        "settings_line-auth_description": "Dane kanału LINE."
+      }
+    },
+    "pt": {
+      "lineAuth": {
+        "adm_emailNote": "Ler o endereço de e-mail é uma permissão separada no canal da LINE e precisa da aprovação da LINE. Sem ela, as contas recebem um endereço provisório que nunca pode receber e-mails.",
+        "adm_subtitle": "Configure o login com OAuth da LINE para o seu site.",
+        "adm_title": "Configurações do login com LINE",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_line-auth_name": "Login com LINE",
+        "module_line-auth_description": "Permite que membros entrem com a conta da LINE",
+        "settings_line-auth": "OAuth da LINE",
+        "settings_line-auth_description": "Credenciais do canal da LINE."
+      }
+    },
+    "ru": {
+      "lineAuth": {
+        "adm_emailNote": "Чтение адреса e-mail - отдельное разрешение для канала LINE, которое требует одобрения LINE. Без него учетные записи получают заглушку, на которую письма не приходят.",
+        "adm_subtitle": "Настройте вход через OAuth LINE на вашем сайте.",
+        "adm_title": "Настройки входа через LINE",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_line-auth_name": "Вход через LINE",
+        "module_line-auth_description": "Разрешить пользователям входить через свою учетную запись LINE",
+        "settings_line-auth": "LINE OAuth",
+        "settings_line-auth_description": "Учетные данные канала LINE."
+      }
+    },
+    "zh": {
+      "lineAuth": {
+        "adm_emailNote": "读取邮箱地址是 LINE 频道的一项单独权限，需要 LINE 批准。在此之前，账户会获得一个无法接收邮件的占位地址。",
+        "adm_subtitle": "为你的站点设置 LINE OAuth 登录。",
+        "adm_title": "LINE 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_line-auth_name": "LINE 登录",
+        "module_line-auth_description": "允许用户使用其 LINE 账户登录",
+        "settings_line-auth": "LINE OAuth",
+        "settings_line-auth_description": "LINE 频道凭据。"
+      }
     }
   },
   "permissions": [

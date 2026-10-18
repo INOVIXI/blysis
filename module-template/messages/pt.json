@@ -1,0 +1,13 @@
+{
+  "myModule": {
+    "title": "Meu módulo",
+    "description": "Módulo de exemplo para o Blysis",
+    "items": "Itens",
+    "noItems": "Nenhum item encontrado.",
+    "createItem": "Criar item",
+    "editItem": "Editar item",
+    "deleteItem": "Excluir item",
+    "itemTitle": "Título",
+    "itemDescription": "Descrição"
+  }
+}

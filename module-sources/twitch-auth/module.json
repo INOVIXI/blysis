@@ -93,6 +93,276 @@
         "settings_twitch-auth": "Twitch OAuth",
         "settings_twitch-auth_description": "Twitch uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "twitchAuth": {
+        "adm_subtitle": "Saytınız üçün Twitch OAuth2 ilə daxil olmanı konfiqurasiya edin",
+        "adm_title": "Twitch giriş parametrləri",
+        "clientId": "Müştəri ID-si",
+        "clientSecret": "Müştəri sirri",
+        "description": "İstifadəçi girişi üçün Twitch OAuth etimadnamələrini konfiqurasiya edin",
+        "disabled": "Twitch ilə giriş söndürülüb",
+        "enable": "Twitch ilə girişi aktivləşdir",
+        "enabled": "Twitch ilə giriş aktivdir",
+        "linkAccount": "Twitch hesabını əlaqələndir",
+        "perm_manage": "İdarə et",
+        "save": "Parametrləri yadda saxla",
+        "saveError": "Twitch OAuth parametrlərini yadda saxlamaq alınmadı",
+        "saved": "Twitch OAuth parametrləri uğurla yadda saxlanıldı",
+        "settings": "Twitch OAuth parametrləri",
+        "title": "Twitch ilə giriş"
+      },
+      "admin": {
+        "title": "Admin paneli",
+        "subtitle": "Platforma parametrlərinizi və məzmununuzu idarə edin",
+        "module_twitch-auth_name": "Twitch ilə giriş",
+        "module_twitch-auth_description": "İstifadəçilərin Twitch hesabı ilə daxil olmasına icazə verin",
+        "settings_twitch-auth": "Twitch OAuth",
+        "settings_twitch-auth_description": "Twitch tətbiq etimadnamələri."
+      }
+    },
+    "de": {
+      "twitchAuth": {
+        "adm_subtitle": "Konfiguriere die Twitch-OAuth2-Anmeldung für deine Seite",
+        "adm_title": "Twitch-Auth-Einstellungen",
+        "clientId": "Client-ID",
+        "clientSecret": "Client-Geheimnis",
+        "description": "Twitch-OAuth-Zugangsdaten für die Nutzeranmeldung konfigurieren",
+        "disabled": "Twitch-Login deaktiviert",
+        "enable": "Twitch-Login aktivieren",
+        "enabled": "Twitch-Login aktiviert",
+        "linkAccount": "Twitch-Konto verknüpfen",
+        "perm_manage": "Verwalten",
+        "save": "Einstellungen speichern",
+        "saveError": "Twitch-OAuth-Einstellungen konnten nicht gespeichert werden",
+        "saved": "Twitch-OAuth-Einstellungen erfolgreich gespeichert",
+        "settings": "Twitch-OAuth-Einstellungen",
+        "title": "Twitch-Login"
+      },
+      "admin": {
+        "title": "Admin-Bereich",
+        "subtitle": "Verwalte die Einstellungen und Inhalte deiner Plattform",
+        "module_twitch-auth_name": "Twitch-Login",
+        "module_twitch-auth_description": "Nutzern erlauben, sich mit ihrem Twitch-Konto anzumelden",
+        "settings_twitch-auth": "Twitch OAuth",
+        "settings_twitch-auth_description": "Zugangsdaten der Twitch-Anwendung."
+      }
+    },
+    "es": {
+      "twitchAuth": {
+        "adm_subtitle": "Configura el inicio de sesión con OAuth2 de Twitch para tu sitio",
+        "adm_title": "Ajustes de inicio de sesión con Twitch",
+        "clientId": "ID de cliente",
+        "clientSecret": "Secreto de cliente",
+        "description": "Configura las credenciales OAuth de Twitch para el inicio de sesión de usuarios",
+        "disabled": "Inicio de sesión con Twitch desactivado",
+        "enable": "Activar el inicio de sesión con Twitch",
+        "enabled": "Inicio de sesión con Twitch activado",
+        "linkAccount": "Vincular cuenta de Twitch",
+        "perm_manage": "Gestionar",
+        "save": "Guardar ajustes",
+        "saveError": "No se pudieron guardar los ajustes OAuth de Twitch",
+        "saved": "Ajustes OAuth de Twitch guardados correctamente",
+        "settings": "Ajustes OAuth de Twitch",
+        "title": "Inicio de sesión con Twitch"
+      },
+      "admin": {
+        "title": "Panel de administración",
+        "subtitle": "Gestiona los ajustes y el contenido de tu plataforma",
+        "module_twitch-auth_name": "Inicio de sesión con Twitch",
+        "module_twitch-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de Twitch",
+        "settings_twitch-auth": "OAuth de Twitch",
+        "settings_twitch-auth_description": "Credenciales de la aplicación de Twitch."
+      }
+    },
+    "et": {
+      "twitchAuth": {
+        "adm_subtitle": "Seadista oma saidile Twitchi OAuth2-sisselogimine",
+        "adm_title": "Twitchi sisselogimise seaded",
+        "clientId": "Kliendi ID",
+        "clientSecret": "Kliendi salajane võti",
+        "description": "Seadista Twitchi OAuth-andmed kasutajate sisselogimiseks",
+        "disabled": "Twitchi sisselogimine on keelatud",
+        "enable": "Luba Twitchi sisselogimine",
+        "enabled": "Twitchi sisselogimine on lubatud",
+        "linkAccount": "Seo Twitchi konto",
+        "perm_manage": "Halda",
+        "save": "Salvesta seaded",
+        "saveError": "Twitchi OAuthi seadete salvestamine ebaõnnestus",
+        "saved": "Twitchi OAuthi seaded salvestatud",
+        "settings": "Twitchi OAuthi seaded",
+        "title": "Twitchi sisselogimine"
+      },
+      "admin": {
+        "title": "Halduspaneel",
+        "subtitle": "Halda oma platvormi seadeid ja sisu",
+        "module_twitch-auth_name": "Twitchi sisselogimine",
+        "module_twitch-auth_description": "Luba kasutajatel sisse logida oma Twitchi kontoga",
+        "settings_twitch-auth": "Twitch OAuth",
+        "settings_twitch-auth_description": "Twitchi rakenduse andmed."
+      }
+    },
+    "fr": {
+      "twitchAuth": {
+        "adm_subtitle": "Configurer la connexion OAuth2 Twitch pour votre site",
+        "adm_title": "Paramètres de connexion Twitch",
+        "clientId": "ID client",
+        "clientSecret": "Secret client",
+        "description": "Configurer les identifiants OAuth Twitch pour la connexion des membres",
+        "disabled": "Connexion Twitch désactivée",
+        "enable": "Activer la connexion Twitch",
+        "enabled": "Connexion Twitch activée",
+        "linkAccount": "Lier le compte Twitch",
+        "perm_manage": "Gérer",
+        "save": "Enregistrer les paramètres",
+        "saveError": "Échec de l’enregistrement des paramètres OAuth Twitch",
+        "saved": "Paramètres OAuth Twitch enregistrés",
+        "settings": "Paramètres OAuth Twitch",
+        "title": "Connexion Twitch"
+      },
+      "admin": {
+        "title": "Panneau d’administration",
+        "subtitle": "Gérez les paramètres et le contenu de votre plateforme",
+        "module_twitch-auth_name": "Connexion Twitch",
+        "module_twitch-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Twitch",
+        "settings_twitch-auth": "OAuth Twitch",
+        "settings_twitch-auth_description": "Identifiants de l’application Twitch."
+      }
+    },
+    "it": {
+      "twitchAuth": {
+        "adm_subtitle": "Configura l’accesso OAuth2 con Twitch per il tuo sito",
+        "adm_title": "Impostazioni accesso Twitch",
+        "clientId": "ID client",
+        "clientSecret": "Segreto client",
+        "description": "Configura le credenziali OAuth di Twitch per l’accesso degli utenti",
+        "disabled": "Accesso con Twitch disattivato",
+        "enable": "Attiva l’accesso con Twitch",
+        "enabled": "Accesso con Twitch attivo",
+        "linkAccount": "Collega account Twitch",
+        "perm_manage": "Gestisci",
+        "save": "Salva impostazioni",
+        "saveError": "Salvataggio delle impostazioni OAuth di Twitch non riuscito",
+        "saved": "Impostazioni OAuth di Twitch salvate correttamente",
+        "settings": "Impostazioni OAuth di Twitch",
+        "title": "Accesso con Twitch"
+      },
+      "admin": {
+        "title": "Pannello di amministrazione",
+        "subtitle": "Gestisci le impostazioni e i contenuti della piattaforma",
+        "module_twitch-auth_name": "Accesso con Twitch",
+        "module_twitch-auth_description": "Consenti agli utenti di accedere con il proprio account Twitch",
+        "settings_twitch-auth": "OAuth Twitch",
+        "settings_twitch-auth_description": "Credenziali dell’applicazione Twitch."
+      }
+    },
+    "pl": {
+      "twitchAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie Twitch OAuth2 dla swojej strony",
+        "adm_title": "Ustawienia logowania Twitch",
+        "clientId": "ID klienta",
+        "clientSecret": "Sekret klienta",
+        "description": "Skonfiguruj dane OAuth Twitch do logowania użytkowników",
+        "disabled": "Logowanie Twitch wyłączone",
+        "enable": "Włącz logowanie Twitch",
+        "enabled": "Logowanie Twitch włączone",
+        "linkAccount": "Połącz konto Twitch",
+        "perm_manage": "Zarządzanie",
+        "save": "Zapisz ustawienia",
+        "saveError": "Nie udało się zapisać ustawień Twitch OAuth",
+        "saved": "Ustawienia Twitch OAuth zostały zapisane",
+        "settings": "Ustawienia Twitch OAuth",
+        "title": "Logowanie Twitch"
+      },
+      "admin": {
+        "title": "Panel administratora",
+        "subtitle": "Zarządzaj ustawieniami i treściami platformy",
+        "module_twitch-auth_name": "Logowanie Twitch",
+        "module_twitch-auth_description": "Pozwól użytkownikom logować się kontem Twitch",
+        "settings_twitch-auth": "Twitch OAuth",
+        "settings_twitch-auth_description": "Dane aplikacji Twitch."
+      }
+    },
+    "pt": {
+      "twitchAuth": {
+        "adm_subtitle": "Configure o login OAuth2 da Twitch para o seu site",
+        "adm_title": "Configurações de login da Twitch",
+        "clientId": "ID do cliente",
+        "clientSecret": "Segredo do cliente",
+        "description": "Configure as credenciais OAuth da Twitch para o login dos usuários",
+        "disabled": "Login com Twitch desativado",
+        "enable": "Ativar login com Twitch",
+        "enabled": "Login com Twitch ativado",
+        "linkAccount": "Vincular conta da Twitch",
+        "perm_manage": "Gerenciar",
+        "save": "Salvar configurações",
+        "saveError": "Não foi possível salvar as configurações OAuth da Twitch",
+        "saved": "Configurações OAuth da Twitch salvas com sucesso",
+        "settings": "Configurações OAuth da Twitch",
+        "title": "Login com Twitch"
+      },
+      "admin": {
+        "title": "Painel administrativo",
+        "subtitle": "Gerencie as configurações e o conteúdo da plataforma",
+        "module_twitch-auth_name": "Login com Twitch",
+        "module_twitch-auth_description": "Permita que os usuários entrem com a conta da Twitch",
+        "settings_twitch-auth": "OAuth da Twitch",
+        "settings_twitch-auth_description": "Credenciais do aplicativo da Twitch."
+      }
+    },
+    "ru": {
+      "twitchAuth": {
+        "adm_subtitle": "Настройте вход через Twitch OAuth2 на вашем сайте",
+        "adm_title": "Настройки входа через Twitch",
+        "clientId": "ID клиента",
+        "clientSecret": "Секрет клиента",
+        "description": "Настройте учетные данные OAuth Twitch для входа участников",
+        "disabled": "Вход через Twitch отключен",
+        "enable": "Включить вход через Twitch",
+        "enabled": "Вход через Twitch включен",
+        "linkAccount": "Привязать аккаунт Twitch",
+        "perm_manage": "Управление",
+        "save": "Сохранить настройки",
+        "saveError": "Не удалось сохранить настройки OAuth Twitch",
+        "saved": "Настройки OAuth Twitch сохранены",
+        "settings": "Настройки OAuth Twitch",
+        "title": "Вход через Twitch"
+      },
+      "admin": {
+        "title": "Панель администратора",
+        "subtitle": "Управляйте настройками и содержимым платформы",
+        "module_twitch-auth_name": "Вход через Twitch",
+        "module_twitch-auth_description": "Разрешите пользователям входить с помощью аккаунта Twitch",
+        "settings_twitch-auth": "Twitch OAuth",
+        "settings_twitch-auth_description": "Учетные данные приложения Twitch."
+      }
+    },
+    "zh": {
+      "twitchAuth": {
+        "adm_subtitle": "为你的站点配置 Twitch OAuth2 登录",
+        "adm_title": "Twitch 登录设置",
+        "clientId": "客户端 ID",
+        "clientSecret": "客户端密钥",
+        "description": "配置用于用户登录的 Twitch OAuth 凭据",
+        "disabled": "Twitch 登录已禁用",
+        "enable": "启用 Twitch 登录",
+        "enabled": "Twitch 登录已启用",
+        "linkAccount": "关联 Twitch 账户",
+        "perm_manage": "管理",
+        "save": "保存设置",
+        "saveError": "保存 Twitch OAuth 设置失败",
+        "saved": "Twitch OAuth 设置已成功保存",
+        "settings": "Twitch OAuth 设置",
+        "title": "Twitch 登录"
+      },
+      "admin": {
+        "title": "管理后台",
+        "subtitle": "管理你的平台设置和内容",
+        "module_twitch-auth_name": "Twitch 登录",
+        "module_twitch-auth_description": "允许用户使用其 Twitch 账户登录",
+        "settings_twitch-auth": "Twitch OAuth",
+        "settings_twitch-auth_description": "Twitch 应用凭据。"
+      }
     }
   },
   "permissions": [

@@ -8,9 +8,49 @@
       "name": "Announcements",
       "description": "Site-wide announcement banners",
       "i18n": {
+        "az": {
+          "name": "Elanlar",
+          "description": "Bütün saytı əhatə edən elan bannerləri"
+        },
+        "de": {
+          "name": "Ankündigungen",
+          "description": "Seitenweite Ankündigungsbanner"
+        },
+        "es": {
+          "name": "Anuncios",
+          "description": "Banners de anuncios para todo el sitio"
+        },
+        "et": {
+          "name": "Teadaanded",
+          "description": "Kogu saidi teadaannete bännerid"
+        },
+        "fr": {
+          "name": "Annonces",
+          "description": "Bannières d’annonces à l’échelle du site"
+        },
+        "it": {
+          "name": "Annunci",
+          "description": "Banner di annunci per tutto il sito"
+        },
+        "pl": {
+          "name": "Ogłoszenia",
+          "description": "Banery ogłoszeń dla całej strony"
+        },
+        "pt": {
+          "name": "Anúncios",
+          "description": "Banners de anúncio para todo o site"
+        },
+        "ru": {
+          "name": "Объявления",
+          "description": "Баннеры объявлений для всего сайта"
+        },
         "tr": {
           "name": "Duyurular",
           "description": "Site genelinde duyuru bantları"
+        },
+        "zh": {
+          "name": "公告",
+          "description": "全站公告横幅"
         }
       },
       "version": "1.3.0",
@@ -47,9 +87,49 @@
       "name": "Apple Login",
       "description": "Allow users to sign in with their Apple account",
       "i18n": {
+        "az": {
+          "name": "Apple ilə giriş",
+          "description": "İstifadəçilərə Apple hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Apple-Login",
+          "description": "Benutzern erlauben, sich mit ihrem Apple-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Apple",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Apple"
+        },
+        "et": {
+          "name": "Apple Login",
+          "description": "Luba kasutajatel sisse logida oma Apple'i kontoga"
+        },
+        "fr": {
+          "name": "Connexion Apple",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Apple"
+        },
+        "it": {
+          "name": "Accesso Apple",
+          "description": "Consenti agli utenti di accedere con il proprio account Apple"
+        },
+        "pl": {
+          "name": "Logowanie przez Apple",
+          "description": "Pozwól użytkownikom logować się kontem Apple"
+        },
+        "pt": {
+          "name": "Login da Apple",
+          "description": "Permite que os usuários entrem com a conta Apple"
+        },
+        "ru": {
+          "name": "Вход через Apple",
+          "description": "Разрешить пользователям входить с помощью учетной записи Apple"
+        },
         "tr": {
           "name": "Apple ile Giriş",
           "description": "Kullanıcıların Apple hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Apple 登录",
+          "description": "允许用户使用其 Apple 账户登录"
         }
       },
       "version": "1.3.0",
@@ -82,9 +162,49 @@
       "name": "Battle.net Login",
       "description": "Allow users to sign in with their Battle.net account",
       "i18n": {
+        "az": {
+          "name": "Battle.net ilə giriş",
+          "description": "İstifadəçilərə Battle.net hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Battle.net-Login",
+          "description": "Benutzern erlauben, sich mit ihrem Battle.net-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Battle.net",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Battle.net"
+        },
+        "et": {
+          "name": "Battle.net Login",
+          "description": "Luba kasutajatel sisse logida oma Battle.neti kontoga"
+        },
+        "fr": {
+          "name": "Connexion Battle.net",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Battle.net"
+        },
+        "it": {
+          "name": "Accesso Battle.net",
+          "description": "Consenti agli utenti di accedere con il proprio account Battle.net"
+        },
+        "pl": {
+          "name": "Logowanie przez Battle.net",
+          "description": "Pozwól użytkownikom logować się kontem Battle.net"
+        },
+        "pt": {
+          "name": "Login da Battle.net",
+          "description": "Permite que os usuários entrem com a conta Battle.net"
+        },
+        "ru": {
+          "name": "Вход через Battle.net",
+          "description": "Разрешить пользователям входить с помощью учетной записи Battle.net"
+        },
         "tr": {
           "name": "Battle.net ile Giriş",
           "description": "Kullanıcıların Battle.net hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Battle.net 登录",
+          "description": "允许用户使用其 Battle.net 账户登录"
         }
       },
       "version": "1.3.0",
@@ -117,9 +237,49 @@
       "name": "BirFatura Invoicing",
       "description": "Publishes this shop's paid orders for BirFatura to pull and invoice. The integrator calls in with a shared secret; nothing is sent out.",
       "i18n": {
+        "az": {
+          "name": "BirFatura faktura",
+          "description": "Bu mağazanın ödənilmiş sifarişlərini BirFatura-ya göndərir, o da fakturanı yaradır"
+        },
+        "de": {
+          "name": "BirFatura-Rechnungsstellung",
+          "description": "Sendet die bezahlten Bestellungen dieses Shops an BirFatura, das die Rechnung erstellt"
+        },
+        "es": {
+          "name": "Facturación con BirFatura",
+          "description": "Envía los pedidos pagados de esta tienda a BirFatura, que emite la factura"
+        },
+        "et": {
+          "name": "BirFatura arved",
+          "description": "Saadab selle poe makstud tellimused BirFaturale, mis koostab arve"
+        },
+        "fr": {
+          "name": "Facturation BirFatura",
+          "description": "Envoie les commandes payées de cette boutique à BirFatura, qui émet la facture"
+        },
+        "it": {
+          "name": "Fatturazione BirFatura",
+          "description": "Invia a BirFatura gli ordini pagati di questo negozio, che emette la fattura"
+        },
+        "pl": {
+          "name": "Fakturowanie BirFatura",
+          "description": "Wysyła opłacone zamówienia tego sklepu do BirFatury, która wystawia fakturę"
+        },
+        "pt": {
+          "name": "Emissão de notas BirFatura",
+          "description": "Envia os pedidos pagos desta loja para a BirFatura, que emite a nota fiscal"
+        },
+        "ru": {
+          "name": "Выставление счетов BirFatura",
+          "description": "Отправляет оплаченные заказы этого магазина в BirFatura, который выставляет счёт"
+        },
         "tr": {
           "name": "BirFatura Faturalama",
           "description": "Bu mağazanın ödenmiş siparişlerini faturayı kesen BirFatura'ya gönderir"
+        },
+        "zh": {
+          "name": "BirFatura 开票",
+          "description": "将此商店已付款的订单发送至 BirFatura，由其开具发票"
         }
       },
       "version": "1.8.0",
@@ -160,9 +320,49 @@
       "name": "Blog Module",
       "description": "News and announcements system",
       "i18n": {
+        "az": {
+          "name": "Bloq modulu",
+          "description": "Xəbər və elanlar sistemi"
+        },
+        "de": {
+          "name": "Blog-Modul",
+          "description": "System für Neuigkeiten und Ankündigungen"
+        },
+        "es": {
+          "name": "Módulo de blog",
+          "description": "Sistema de noticias y anuncios"
+        },
+        "et": {
+          "name": "Blogi moodul",
+          "description": "Uudiste ja teadaannete süsteem"
+        },
+        "fr": {
+          "name": "Module Blog",
+          "description": "Système d’actualités et d’annonces"
+        },
+        "it": {
+          "name": "Modulo Blog",
+          "description": "Sistema di notizie e annunci"
+        },
+        "pl": {
+          "name": "Moduł bloga",
+          "description": "System aktualności i ogłoszeń"
+        },
+        "pt": {
+          "name": "Módulo de blog",
+          "description": "Sistema de notícias e anúncios"
+        },
+        "ru": {
+          "name": "Модуль блога",
+          "description": "Система новостей и объявлений"
+        },
         "tr": {
           "name": "Blog Modülü",
           "description": "Haber ve duyuru sistemi"
+        },
+        "zh": {
+          "name": "博客模块",
+          "description": "新闻与公告系统"
         }
       },
       "version": "1.10.0",
@@ -204,9 +404,49 @@
       "name": "Changelog",
       "description": "Release notes and update history",
       "i18n": {
+        "az": {
+          "name": "Dəyişiklik qeydləri",
+          "description": "Buraxılış qeydləri və yenilənmə tarixçəsi"
+        },
+        "de": {
+          "name": "Changelog",
+          "description": "Release-Notizen und Update-Verlauf"
+        },
+        "es": {
+          "name": "Registro de cambios",
+          "description": "Notas de versión e historial de actualizaciones"
+        },
+        "et": {
+          "name": "Muudatuste logi",
+          "description": "Väljaannete märkmed ja uuenduste ajalugu"
+        },
+        "fr": {
+          "name": "Journal des modifications",
+          "description": "Notes de version et historique des mises à jour"
+        },
+        "it": {
+          "name": "Cronologia",
+          "description": "Note di rilascio e cronologia degli aggiornamenti"
+        },
+        "pl": {
+          "name": "Dziennik zmian",
+          "description": "Notatki o wydaniach i historia aktualizacji"
+        },
+        "pt": {
+          "name": "Changelog",
+          "description": "Notas de versão e histórico de atualizações"
+        },
+        "ru": {
+          "name": "Журнал изменений",
+          "description": "Примечания к выпускам и история обновлений"
+        },
         "tr": {
           "name": "Değişiklik Günlüğü",
           "description": "Sürüm notları ve güncelleme geçmişi"
+        },
+        "zh": {
+          "name": "更新日志",
+          "description": "版本说明与更新历史"
         }
       },
       "version": "1.8.0",
@@ -243,9 +483,49 @@
       "name": "Cloudflare R2 Storage",
       "description": "S3-compatible object storage backed by Cloudflare R2 (zero egress fees)",
       "i18n": {
+        "az": {
+          "name": "Cloudflare R2 yaddaşı",
+          "description": "Cloudflare R2 ilə işləyən S3 uyğun obyekt yaddaşı (sıfır çıxış haqqı)"
+        },
+        "de": {
+          "name": "Cloudflare R2 Storage",
+          "description": "S3-kompatibler Objektspeicher mit Cloudflare R2 (ohne Egress-Gebühren)"
+        },
+        "es": {
+          "name": "Almacenamiento Cloudflare R2",
+          "description": "Almacenamiento de objetos compatible con S3, con Cloudflare R2 (sin tarifas de salida)"
+        },
+        "et": {
+          "name": "Cloudflare R2 salvestus",
+          "description": "S3-ga ühilduv objektisalvestus, mida toetab Cloudflare R2 (ilma väljaminekutasudeta)"
+        },
+        "fr": {
+          "name": "Stockage Cloudflare R2",
+          "description": "Stockage d’objets compatible S3, assuré par Cloudflare R2 (sans frais de sortie)"
+        },
+        "it": {
+          "name": "Storage Cloudflare R2",
+          "description": "Storage di oggetti compatibile S3 basato su Cloudflare R2 (senza costi di uscita)"
+        },
+        "pl": {
+          "name": "Magazyn Cloudflare R2",
+          "description": "Zgodne z S3 magazynowanie obiektów oparte na Cloudflare R2 (bez opłat za transfer wychodzący)"
+        },
+        "pt": {
+          "name": "Armazenamento Cloudflare R2",
+          "description": "Armazenamento de objetos compatível com S3, baseado no Cloudflare R2 (sem taxas de saída)"
+        },
+        "ru": {
+          "name": "Хранилище Cloudflare R2",
+          "description": "Совместимое с S3 объектное хранилище на базе Cloudflare R2 (без платы за исходящий трафик)"
+        },
         "tr": {
           "name": "Cloudflare R2 Depolama",
           "description": "Cloudflare R2 üzerinde çalışan S3 uyumlu nesne depolama (çıkış ücreti yok)"
+        },
+        "zh": {
+          "name": "Cloudflare R2 存储",
+          "description": "由 Cloudflare R2 提供支持的兼容 S3 对象存储（零出口费用）"
         }
       },
       "version": "1.7.0",
@@ -278,9 +558,49 @@
       "name": "Cloudflare Turnstile",
       "description": "Privacy-focused CAPTCHA alternative powered by Cloudflare",
       "i18n": {
+        "az": {
+          "name": "Cloudflare Turnstile",
+          "description": "Cloudflare tərəfindən işləyən, məxfiliyə önəm verən CAPTCHA alternativi"
+        },
+        "de": {
+          "name": "Cloudflare Turnstile",
+          "description": "Datenschutzfreundliche CAPTCHA-Alternative von Cloudflare"
+        },
+        "es": {
+          "name": "Cloudflare Turnstile",
+          "description": "Alternativa a CAPTCHA centrada en la privacidad, con tecnología de Cloudflare"
+        },
+        "et": {
+          "name": "Cloudflare Turnstile",
+          "description": "Privaatsusele keskendunud CAPTCHA alternatiiv, mida toetab Cloudflare"
+        },
+        "fr": {
+          "name": "Cloudflare Turnstile",
+          "description": "Alternative au CAPTCHA respectueuse de la vie privée, propulsée par Cloudflare"
+        },
+        "it": {
+          "name": "Cloudflare Turnstile",
+          "description": "Alternativa ai CAPTCHA che rispetta la privacy, basata su Cloudflare"
+        },
+        "pl": {
+          "name": "Cloudflare Turnstile",
+          "description": "CAPTCHA zorientowana na prywatność, oparta na Cloudflare"
+        },
+        "pt": {
+          "name": "Cloudflare Turnstile",
+          "description": "Alternativa de CAPTCHA focada em privacidade, oferecida pela Cloudflare"
+        },
+        "ru": {
+          "name": "Cloudflare Turnstile",
+          "description": "CAPTCHA, бережно относящаяся к приватности, на базе Cloudflare"
+        },
         "tr": {
           "name": "Cloudflare Turnstile",
           "description": "Cloudflare tarafından sağlanan, gizliliğe saygılı CAPTCHA alternatifi"
+        },
+        "zh": {
+          "name": "Cloudflare Turnstile",
+          "description": "由 Cloudflare 提供支持、注重隐私的验证码替代方案"
         }
       },
       "version": "1.9.0",
@@ -315,9 +635,49 @@
       "name": "Coinbase Commerce Gateway",
       "description": "Take Bitcoin, Ethereum, USDC and other crypto payments through Coinbase Commerce",
       "i18n": {
+        "az": {
+          "name": "Coinbase Commerce şlüzü",
+          "description": "Coinbase Commerce vasitəsilə Bitcoin, Ethereum, USDC və digər kriptovalyuta ödənişləri qəbul edin"
+        },
+        "de": {
+          "name": "Coinbase Commerce Gateway",
+          "description": "Bitcoin, Ethereum, USDC und andere Krypto-Zahlungen über Coinbase Commerce annehmen"
+        },
+        "es": {
+          "name": "Pasarela de Coinbase Commerce",
+          "description": "Acepta pagos en Bitcoin, Ethereum, USDC y otras criptomonedas a través de Coinbase Commerce"
+        },
+        "et": {
+          "name": "Coinbase Commerce'i lüüs",
+          "description": "Võta vastu bitcoini, ethereumi, USDC-d ja muid krüptomakseid Coinbase Commerce'i kaudu"
+        },
+        "fr": {
+          "name": "Passerelle Coinbase Commerce",
+          "description": "Acceptez les paiements en Bitcoin, Ethereum, USDC et autres cryptomonnaies via Coinbase Commerce"
+        },
+        "it": {
+          "name": "Gateway Coinbase Commerce",
+          "description": "Accetta pagamenti in Bitcoin, Ethereum, USDC e altre criptovalute tramite Coinbase Commerce"
+        },
+        "pl": {
+          "name": "Bramka Coinbase Commerce",
+          "description": "Przyjmuj płatności w Bitcoin, Ethereum, USDC i innych kryptowalutach przez Coinbase Commerce"
+        },
+        "pt": {
+          "name": "Gateway Coinbase Commerce",
+          "description": "Receba pagamentos em Bitcoin, Ethereum, USDC e outras criptomoedas pelo Coinbase Commerce"
+        },
+        "ru": {
+          "name": "Шлюз Coinbase Commerce",
+          "description": "Принимайте Bitcoin, Ethereum, USDC и другие криптоплатежи через Coinbase Commerce"
+        },
         "tr": {
           "name": "Coinbase Commerce Altyapısı",
           "description": "Coinbase Commerce üzerinden Bitcoin, Ethereum, USDC ve diğer kripto ödemelerini alın"
+        },
+        "zh": {
+          "name": "Coinbase Commerce 网关",
+          "description": "通过 Coinbase Commerce 接收比特币、以太坊、USDC 等加密货币付款"
         }
       },
       "version": "1.4.0",
@@ -358,9 +718,49 @@
       "name": "CoinPayments Gateway",
       "description": "Take Bitcoin, Litecoin, USDT and other crypto payments through CoinPayments",
       "i18n": {
+        "az": {
+          "name": "CoinPayments şlüzü",
+          "description": "CoinPayments vasitəsilə Bitcoin, Litecoin, USDT və digər kriptovalyuta ödənişləri qəbul edin"
+        },
+        "de": {
+          "name": "CoinPayments Gateway",
+          "description": "Bitcoin, Litecoin, USDT und andere Krypto-Zahlungen über CoinPayments annehmen"
+        },
+        "es": {
+          "name": "Pasarela de CoinPayments",
+          "description": "Acepta pagos en Bitcoin, Litecoin, USDT y otras criptomonedas a través de CoinPayments"
+        },
+        "et": {
+          "name": "CoinPaymentsi lüüs",
+          "description": "Võta vastu bitcoini, litecoini, USDT-d ja muid krüptomakseid CoinPaymentsi kaudu"
+        },
+        "fr": {
+          "name": "Passerelle CoinPayments",
+          "description": "Acceptez les paiements en Bitcoin, Litecoin, USDT et autres cryptomonnaies via CoinPayments"
+        },
+        "it": {
+          "name": "Gateway CoinPayments",
+          "description": "Accetta pagamenti in Bitcoin, Litecoin, USDT e altre criptovalute tramite CoinPayments"
+        },
+        "pl": {
+          "name": "Bramka CoinPayments",
+          "description": "Przyjmuj płatności w Bitcoin, Litecoin, USDT i innych kryptowalutach przez CoinPayments"
+        },
+        "pt": {
+          "name": "Gateway CoinPayments",
+          "description": "Receba pagamentos em Bitcoin, Litecoin, USDT e outras criptomoedas pelo CoinPayments"
+        },
+        "ru": {
+          "name": "Шлюз CoinPayments",
+          "description": "Принимайте Bitcoin, Litecoin, USDT и другие криптоплатежи через CoinPayments"
+        },
         "tr": {
           "name": "CoinPayments Altyapısı",
           "description": "CoinPayments üzerinden Bitcoin, Litecoin, USDT ve diğer kripto ödemelerini alın"
+        },
+        "zh": {
+          "name": "CoinPayments 网关",
+          "description": "通过 CoinPayments 接收比特币、莱特币、USDT 等加密货币付款"
         }
       },
       "version": "1.4.0",
@@ -401,9 +801,49 @@
       "name": "Comparison Table",
       "description": "Compare several things feature by feature. A cell nobody filled in is left blank rather than marked as a no.",
       "i18n": {
+        "az": {
+          "name": "Müqayisə cədvəli",
+          "description": "Bir neçə şeyi xüsusiyyət-xüsusiyyət, hər kəsin oxuya biləcəyi cədvəldə müqayisə edin"
+        },
+        "de": {
+          "name": "Vergleichstabelle",
+          "description": "Mehrere Dinge Merkmal für Merkmal in einer Tabelle vergleichen, die jeder lesen kann"
+        },
+        "es": {
+          "name": "Tabla comparativa",
+          "description": "Compara varias cosas característica por característica, en una tabla que cualquiera pueda leer"
+        },
+        "et": {
+          "name": "Võrdlustabel",
+          "description": "Võrdle mitut asja omaduste kaupa tabelis, mida igaüks saab lugeda"
+        },
+        "fr": {
+          "name": "Tableau comparatif",
+          "description": "Comparez plusieurs éléments caractéristique par caractéristique, dans un tableau lisible par tous"
+        },
+        "it": {
+          "name": "Tabella di confronto",
+          "description": "Confronta più elementi caratteristica per caratteristica, in una tabella leggibile da tutti"
+        },
+        "pl": {
+          "name": "Tabela porównawcza",
+          "description": "Porównuj kilka rzeczy cecha po cesze, w tabeli, którą każdy może przeczytać"
+        },
+        "pt": {
+          "name": "Tabela de comparação",
+          "description": "Compare várias coisas recurso por recurso, em uma tabela que qualquer pessoa consegue ler"
+        },
+        "ru": {
+          "name": "Таблица сравнения",
+          "description": "Сравнение нескольких вариантов по характеристикам в таблице, понятной каждому"
+        },
         "tr": {
           "name": "Karşılaştırma Tablosu",
           "description": "Birkaç şeyi özellik özellik karşılaştırın, herkesin okuyabileceği bir tabloda"
+        },
+        "zh": {
+          "name": "对比表格",
+          "description": "以任何人都能阅读的表格，逐项对比多个对象"
         }
       },
       "version": "1.6.0",
@@ -439,9 +879,49 @@
       "name": "Cookie Consent",
       "description": "GDPR cookie consent banner",
       "i18n": {
+        "az": {
+          "name": "Çərəz razılığı",
+          "description": "GDPR çərəz razılığı bannerı"
+        },
+        "de": {
+          "name": "Cookie-Einwilligung",
+          "description": "DSGVO-Cookie-Banner"
+        },
+        "es": {
+          "name": "Consentimiento de cookies",
+          "description": "Banner de consentimiento de cookies conforme al RGPD"
+        },
+        "et": {
+          "name": "Küpsiste nõusolek",
+          "description": "GDPR-i küpsiste nõusoleku bänner"
+        },
+        "fr": {
+          "name": "Consentement aux cookies",
+          "description": "Bandeau de consentement aux cookies (RGPD)"
+        },
+        "it": {
+          "name": "Consenso ai cookie",
+          "description": "Banner per il consenso ai cookie conforme al GDPR"
+        },
+        "pl": {
+          "name": "Zgoda na pliki cookie",
+          "description": "Baner zgody na pliki cookie zgodny z RODO"
+        },
+        "pt": {
+          "name": "Consentimento de cookies",
+          "description": "Banner de consentimento de cookies (GDPR)"
+        },
+        "ru": {
+          "name": "Согласие на cookie",
+          "description": "Баннер согласия на cookie по GDPR"
+        },
         "tr": {
           "name": "Çerez Onayı",
           "description": "KVKK ve GDPR uyumlu çerez onay bandı"
+        },
+        "zh": {
+          "name": "Cookie 同意",
+          "description": "GDPR Cookie 同意横幅"
         }
       },
       "version": "1.2.2",
@@ -474,9 +954,49 @@
       "name": "Credit System",
       "description": "Virtual currency wallet for users",
       "i18n": {
+        "az": {
+          "name": "Kredit sistemi",
+          "description": "İstifadəçilər üçün virtual valyuta pul kisəsi"
+        },
+        "de": {
+          "name": "Credit-System",
+          "description": "Virtuelles Guthabenkonto für Mitglieder"
+        },
+        "es": {
+          "name": "Sistema de créditos",
+          "description": "Monedero de moneda virtual para los usuarios"
+        },
+        "et": {
+          "name": "Krediidisüsteem",
+          "description": "Kasutajate virtuaalse valuuta rahakott"
+        },
+        "fr": {
+          "name": "Système de crédits",
+          "description": "Portefeuille de monnaie virtuelle pour les utilisateurs"
+        },
+        "it": {
+          "name": "Sistema di crediti",
+          "description": "Portafoglio di valuta virtuale per gli utenti"
+        },
+        "pl": {
+          "name": "System kredytów",
+          "description": "Wirtualny portfel walutowy dla użytkowników"
+        },
+        "pt": {
+          "name": "Sistema de créditos",
+          "description": "Carteira de moeda virtual para os usuários"
+        },
+        "ru": {
+          "name": "Система кредитов",
+          "description": "Кошелек виртуальной валюты для участников"
+        },
         "tr": {
           "name": "Kredi Sistemi",
           "description": "Kullanıcılar için sanal para cüzdanı"
+        },
+        "zh": {
+          "name": "积分系统",
+          "description": "为用户提供的虚拟货币钱包"
         }
       },
       "version": "1.10.0",
@@ -518,9 +1038,49 @@
       "name": "Crisp Chat",
       "description": "A live chat bubble on every page, served by Crisp. Nothing is loaded until the visitor has accepted cookies.",
       "i18n": {
+        "az": {
+          "name": "Crisp Chat",
+          "description": "Hər səhifədə canlı çat balonu, Crisp tərəfindən təqdim olunur"
+        },
+        "de": {
+          "name": "Crisp Chat",
+          "description": "Eine Live-Chat-Blase auf jeder Seite, bereitgestellt von Crisp"
+        },
+        "es": {
+          "name": "Crisp Chat",
+          "description": "Una burbuja de chat en directo en cada página, servida por Crisp"
+        },
+        "et": {
+          "name": "Crisp Chat",
+          "description": "Vestlusmull igal lehel, mida pakub Crisp"
+        },
+        "fr": {
+          "name": "Crisp Chat",
+          "description": "Une bulle de chat en direct sur chaque page, fournie par Crisp"
+        },
+        "it": {
+          "name": "Crisp Chat",
+          "description": "Una bolla di chat dal vivo su ogni pagina, fornita da Crisp"
+        },
+        "pl": {
+          "name": "Crisp Chat",
+          "description": "Dymek czatu na żywo na każdej stronie, obsługiwany przez Crisp"
+        },
+        "pt": {
+          "name": "Crisp Chat",
+          "description": "Uma bolha de chat ao vivo em todas as páginas, servida pelo Crisp"
+        },
+        "ru": {
+          "name": "Crisp Chat",
+          "description": "Окно живого чата на каждой странице, работает на Crisp"
+        },
         "tr": {
           "name": "Crisp Sohbet",
           "description": "Her sayfada Crisp tarafından sunulan bir canlı sohbet balonu"
+        },
+        "zh": {
+          "name": "Crisp 聊天",
+          "description": "每个页面上由 Crisp 提供的实时聊天气泡"
         }
       },
       "version": "1.3.0",
@@ -553,9 +1113,49 @@
       "name": "CSV Export",
       "description": "Export the site's tables as CSV",
       "i18n": {
+        "az": {
+          "name": "CSV ixracı",
+          "description": "Saytın cədvəllərini CSV kimi ixrac edin"
+        },
+        "de": {
+          "name": "CSV-Export",
+          "description": "Tabellen der Seite als CSV exportieren"
+        },
+        "es": {
+          "name": "Exportación CSV",
+          "description": "Exporta las tablas del sitio como CSV"
+        },
+        "et": {
+          "name": "CSV eksport",
+          "description": "Ekspordi saidi tabelid CSV-na"
+        },
+        "fr": {
+          "name": "Export CSV",
+          "description": "Exporter les tableaux du site au format CSV"
+        },
+        "it": {
+          "name": "Esportazione CSV",
+          "description": "Esporta le tabelle del sito in CSV"
+        },
+        "pl": {
+          "name": "Eksport CSV",
+          "description": "Eksportuj tabele strony jako CSV"
+        },
+        "pt": {
+          "name": "Exportação CSV",
+          "description": "Exporte as tabelas do site como CSV"
+        },
+        "ru": {
+          "name": "Экспорт CSV",
+          "description": "Экспорт таблиц сайта в CSV"
+        },
         "tr": {
           "name": "CSV Dışa Aktarma",
           "description": "Sitenin tablolarını CSV olarak dışa aktarın"
+        },
+        "zh": {
+          "name": "CSV 导出",
+          "description": "将站点的数据表导出为 CSV"
         }
       },
       "version": "1.3.0",
@@ -592,9 +1192,49 @@
       "name": "Multi-Currency",
       "description": "Multi-currency support with automatic conversion",
       "i18n": {
+        "az": {
+          "name": "Çoxvalyutalı",
+          "description": "Avtomatik çevrilmə ilə çoxvalyutalı dəstək"
+        },
+        "de": {
+          "name": "Mehrwährung",
+          "description": "Mehrwährungsunterstützung mit automatischer Umrechnung"
+        },
+        "es": {
+          "name": "Multimoneda",
+          "description": "Compatibilidad con varias monedas y conversión automática"
+        },
+        "et": {
+          "name": "Mitme valuuta tugi",
+          "description": "Mitme valuuta tugi automaatse teisendusega"
+        },
+        "fr": {
+          "name": "Multidevise",
+          "description": "Prise en charge de plusieurs devises avec conversion automatique"
+        },
+        "it": {
+          "name": "Multi-valuta",
+          "description": "Supporto multi-valuta con conversione automatica"
+        },
+        "pl": {
+          "name": "Wiele walut",
+          "description": "Obsługa wielu walut z automatycznym przeliczaniem"
+        },
+        "pt": {
+          "name": "Multimoeda",
+          "description": "Suporte a várias moedas com conversão automática"
+        },
+        "ru": {
+          "name": "Несколько валют",
+          "description": "Поддержка нескольких валют с автоматической конвертацией"
+        },
         "tr": {
           "name": "Çoklu Para Birimi",
           "description": "Otomatik dönüşümle çoklu para birimi desteği"
+        },
+        "zh": {
+          "name": "多货币",
+          "description": "支持多货币并自动换算"
         }
       },
       "version": "1.6.1",
@@ -629,9 +1269,49 @@
       "name": "Custom Forms",
       "description": "Dynamic form builder with submissions",
       "i18n": {
+        "az": {
+          "name": "Fərdi formalar",
+          "description": "Cavabları olan dinamik forma qurucusu"
+        },
+        "de": {
+          "name": "Eigene Formulare",
+          "description": "Dynamischer Formulareditor mit Einsendungen"
+        },
+        "es": {
+          "name": "Formularios personalizados",
+          "description": "Creador de formularios dinámicos con envíos"
+        },
+        "et": {
+          "name": "Kohandatud vormid",
+          "description": "Dünaamiline vormiehitaja vastustega"
+        },
+        "fr": {
+          "name": "Formulaires personnalisés",
+          "description": "Créateur de formulaires dynamiques avec réponses"
+        },
+        "it": {
+          "name": "Moduli personalizzati",
+          "description": "Creatore di moduli dinamici con invii"
+        },
+        "pl": {
+          "name": "Formularze własne",
+          "description": "Kreator formularzy dynamicznych ze zgłoszeniami"
+        },
+        "pt": {
+          "name": "Formulários personalizados",
+          "description": "Criador de formulários dinâmicos com envios"
+        },
+        "ru": {
+          "name": "Пользовательские формы",
+          "description": "Конструктор форм с ответами"
+        },
         "tr": {
           "name": "Özel Formlar",
           "description": "Gönderim takipli dinamik form oluşturucu"
+        },
+        "zh": {
+          "name": "自定义表单",
+          "description": "带提交记录的动态表单构建器"
         }
       },
       "version": "1.6.0",
@@ -669,9 +1349,49 @@
       "name": "Custom Pages",
       "description": "Pages the team writes, at an address of their own",
       "i18n": {
+        "az": {
+          "name": "Fərdi səhifələr",
+          "description": "Komandanın yazdığı, öz ünvanı olan səhifələr"
+        },
+        "de": {
+          "name": "Eigene Seiten",
+          "description": "Seiten, die das Team schreibt, unter einer eigenen Adresse"
+        },
+        "es": {
+          "name": "Páginas personalizadas",
+          "description": "Páginas que escribe el equipo, con una dirección propia"
+        },
+        "et": {
+          "name": "Kohandatud lehed",
+          "description": "Lehed, mida meeskond kirjutab, oma aadressil"
+        },
+        "fr": {
+          "name": "Pages personnalisées",
+          "description": "Pages rédigées par l’équipe, à une adresse qui lui est propre"
+        },
+        "it": {
+          "name": "Pagine personalizzate",
+          "description": "Pagine scritte dal team, con un indirizzo proprio"
+        },
+        "pl": {
+          "name": "Strony własne",
+          "description": "Strony pisane przez zespół, pod własnym adresem"
+        },
+        "pt": {
+          "name": "Páginas personalizadas",
+          "description": "Páginas que a equipe escreve, em um endereço próprio"
+        },
+        "ru": {
+          "name": "Пользовательские страницы",
+          "description": "Страницы, которые пишет команда, по собственному адресу"
+        },
         "tr": {
           "name": "Özel Sayfalar",
           "description": "Ekibin yazdığı, kendi adresi olan sayfalar"
+        },
+        "zh": {
+          "name": "自定义页面",
+          "description": "团队撰写、拥有独立地址的页面"
         }
       },
       "version": "1.5.0",
@@ -704,9 +1424,49 @@
       "name": "Discord Login",
       "description": "Allow users to sign in with their Discord account",
       "i18n": {
+        "az": {
+          "name": "Discord ilə giriş",
+          "description": "İstifadəçilərin Discord hesabları ilə daxil olmasına icazə verin"
+        },
+        "de": {
+          "name": "Discord-Anmeldung",
+          "description": "Mitgliedern erlauben, sich mit ihrem Discord-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Discord",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Discord"
+        },
+        "et": {
+          "name": "Discordi sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Discordi kontoga"
+        },
+        "fr": {
+          "name": "Connexion Discord",
+          "description": "Permettre aux membres de se connecter avec leur compte Discord"
+        },
+        "it": {
+          "name": "Accesso con Discord",
+          "description": "Consenti ai membri di accedere con il proprio account Discord"
+        },
+        "pl": {
+          "name": "Logowanie przez Discord",
+          "description": "Pozwól użytkownikom logować się kontem Discord"
+        },
+        "pt": {
+          "name": "Login com Discord",
+          "description": "Permita que os usuários entrem com a conta do Discord"
+        },
+        "ru": {
+          "name": "Вход через Discord",
+          "description": "Позвольте участникам входить через свою учетную запись Discord"
+        },
         "tr": {
           "name": "Discord ile Giriş",
           "description": "Kullanıcıların Discord hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Discord 登录",
+          "description": "允许用户使用 Discord 账户登录"
         }
       },
       "version": "1.3.0",
@@ -739,9 +1499,49 @@
       "name": "Discord Integration",
       "description": "Discord webhook notifications and settings",
       "i18n": {
+        "az": {
+          "name": "Discord inteqrasiyası",
+          "description": "Discord webhook bildirişləri və parametrləri"
+        },
+        "de": {
+          "name": "Discord-Integration",
+          "description": "Discord-Webhook-Benachrichtigungen und Einstellungen"
+        },
+        "es": {
+          "name": "Integración con Discord",
+          "description": "Notificaciones por webhook de Discord y sus ajustes"
+        },
+        "et": {
+          "name": "Discordi integratsioon",
+          "description": "Discordi webhooki teavitused ja seaded"
+        },
+        "fr": {
+          "name": "Intégration Discord",
+          "description": "Notifications par webhook Discord et paramètres"
+        },
+        "it": {
+          "name": "Integrazione Discord",
+          "description": "Notifiche webhook e impostazioni di Discord"
+        },
+        "pl": {
+          "name": "Integracja z Discordem",
+          "description": "Powiadomienia webhook Discorda i ustawienia"
+        },
+        "pt": {
+          "name": "Integração com o Discord",
+          "description": "Notificações por webhook e configurações do Discord"
+        },
+        "ru": {
+          "name": "Интеграция с Discord",
+          "description": "Уведомления через вебхуки Discord и настройки"
+        },
         "tr": {
           "name": "Discord Entegrasyonu",
           "description": "Discord webhook bildirimleri ve ayarları"
+        },
+        "zh": {
+          "name": "Discord 整合",
+          "description": "Discord Webhook 通知和设置"
         }
       },
       "version": "1.8.0",
@@ -781,9 +1581,49 @@
       "name": "Discord Widget",
       "description": "Discord server widget on homepage sidebar",
       "i18n": {
+        "az": {
+          "name": "Discord vidjeti",
+          "description": "Ana səhifənin yan panelində Discord server vidjeti"
+        },
+        "de": {
+          "name": "Discord-Widget",
+          "description": "Discord-Server-Widget in der Seitenleiste der Startseite"
+        },
+        "es": {
+          "name": "Widget de Discord",
+          "description": "Widget del servidor de Discord en la barra lateral de la página de inicio"
+        },
+        "et": {
+          "name": "Discordi vidin",
+          "description": "Discordi serveri vidin avalehe külgribal"
+        },
+        "fr": {
+          "name": "Widget Discord",
+          "description": "Widget du serveur Discord dans la colonne latérale de l’accueil"
+        },
+        "it": {
+          "name": "Widget Discord",
+          "description": "Widget del server Discord nella barra laterale della home"
+        },
+        "pl": {
+          "name": "Widżet Discorda",
+          "description": "Widżet serwera Discorda w pasku bocznym strony głównej"
+        },
+        "pt": {
+          "name": "Widget do Discord",
+          "description": "Widget do servidor do Discord na barra lateral da página inicial"
+        },
+        "ru": {
+          "name": "Виджет Discord",
+          "description": "Виджет сервера Discord в боковой панели главной страницы"
+        },
         "tr": {
           "name": "Discord Bileşeni",
           "description": "Ana sayfa kenar çubuğunda Discord sunucu bileşeni"
+        },
+        "zh": {
+          "name": "Discord 小组件",
+          "description": "首页侧边栏的 Discord 服务器小组件"
         }
       },
       "version": "1.4.0",
@@ -818,9 +1658,49 @@
       "name": "Downloads",
       "description": "A file library: releases, guides and anything else worth handing out",
       "i18n": {
+        "az": {
+          "name": "Endirmələr",
+          "description": "Fayl kitabxanası: buraxılışlar, təlimatlar və paylanmağa dəyər olan hər şey"
+        },
+        "de": {
+          "name": "Downloads",
+          "description": "Eine Dateibibliothek für Releases, Anleitungen und alles andere, was es wert ist, weitergegeben zu werden"
+        },
+        "es": {
+          "name": "Descargas",
+          "description": "Una biblioteca de archivos: versiones, guías y todo lo que merezca la pena compartir"
+        },
+        "et": {
+          "name": "Allalaadimised",
+          "description": "Failiraamatukogu: väljalasked, juhendid ja muu, mida on väärt jagada"
+        },
+        "fr": {
+          "name": "Téléchargements",
+          "description": "Une bibliothèque de fichiers : versions, guides et tout ce qui mérite d’être partagé"
+        },
+        "it": {
+          "name": "Download",
+          "description": "Una libreria di file: release, guide e tutto ciò che vale la pena condividere"
+        },
+        "pl": {
+          "name": "Pliki do pobrania",
+          "description": "Biblioteka plików: wydania, poradniki i wszystko inne, co warto udostępnić"
+        },
+        "pt": {
+          "name": "Downloads",
+          "description": "Uma biblioteca de arquivos: versões, guias e tudo mais que valha a pena distribuir"
+        },
+        "ru": {
+          "name": "Загрузки",
+          "description": "Библиотека файлов: релизы, инструкции и все, что стоит раздать"
+        },
         "tr": {
           "name": "İndirmeler",
           "description": "Dosya kitaplığı: sürümler, rehberler ve paylaşmaya değer her şey"
+        },
+        "zh": {
+          "name": "下载",
+          "description": "文件库：版本发布、指南以及其他值得分享的内容"
         }
       },
       "version": "1.6.0",
@@ -855,9 +1735,49 @@
       "name": "Email Templates",
       "description": "Email service configuration and templates",
       "i18n": {
+        "az": {
+          "name": "E-poçt şablonları",
+          "description": "E-poçt xidmətinin konfiqurasiyası və şablonlar"
+        },
+        "de": {
+          "name": "E-Mail-Vorlagen",
+          "description": "E-Mail-Versand-Konfiguration und Vorlagen"
+        },
+        "es": {
+          "name": "Plantillas de correo",
+          "description": "Configuración del servicio de correo y plantillas"
+        },
+        "et": {
+          "name": "E-kirjade mallid",
+          "description": "E-posti teenuse seadistus ja mallid"
+        },
+        "fr": {
+          "name": "Modèles d’e-mails",
+          "description": "Configuration du service d’envoi d’e-mails et modèles"
+        },
+        "it": {
+          "name": "Modelli email",
+          "description": "Configurazione del servizio email e modelli"
+        },
+        "pl": {
+          "name": "Szablony e-mail",
+          "description": "Konfiguracja usługi e-mail i szablony"
+        },
+        "pt": {
+          "name": "Modelos de e-mail",
+          "description": "Configuração do serviço de e-mail e dos modelos"
+        },
+        "ru": {
+          "name": "Шаблоны писем",
+          "description": "Настройка почтовой службы и шаблонов писем"
+        },
         "tr": {
           "name": "E-posta Şablonları",
           "description": "E-posta servisi yapılandırması ve şablonları"
+        },
+        "zh": {
+          "name": "邮件模板",
+          "description": "邮件服务配置和模板"
         }
       },
       "version": "1.3.2",
@@ -890,9 +1810,49 @@
       "name": "Epic Games Login",
       "description": "Allow users to sign in with their Epic Games account",
       "i18n": {
+        "az": {
+          "name": "Epic Games ilə giriş",
+          "description": "İstifadəçilərin Epic Games hesabları ilə daxil olmasına icazə verin"
+        },
+        "de": {
+          "name": "Epic-Games-Anmeldung",
+          "description": "Mitgliedern erlauben, sich mit ihrem Epic-Games-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Epic Games",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Epic Games"
+        },
+        "et": {
+          "name": "Epic Gamesi sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Epic Gamesi kontoga"
+        },
+        "fr": {
+          "name": "Connexion Epic Games",
+          "description": "Permettre aux membres de se connecter avec leur compte Epic Games"
+        },
+        "it": {
+          "name": "Accesso con Epic Games",
+          "description": "Consenti ai membri di accedere con il proprio account Epic Games"
+        },
+        "pl": {
+          "name": "Logowanie przez Epic Games",
+          "description": "Pozwól użytkownikom logować się kontem Epic Games"
+        },
+        "pt": {
+          "name": "Login da Epic Games",
+          "description": "Permita que os usuários entrem com a conta da Epic Games"
+        },
+        "ru": {
+          "name": "Вход через Epic Games",
+          "description": "Позвольте участникам входить через свою учетную запись Epic Games"
+        },
         "tr": {
           "name": "Epic Games ile Giriş",
           "description": "Kullanıcıların Epic Games hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Epic Games 登录",
+          "description": "允许用户使用 Epic Games 账户登录"
         }
       },
       "version": "1.3.0",
@@ -925,9 +1885,49 @@
       "name": "External Data",
       "description": "Read a list out of a database this site does not own: a game server, a billing system, an old forum. Read only, one bounded query, and the connection never reaches a page.",
       "i18n": {
+        "az": {
+          "name": "Xarici məlumat",
+          "description": "Başqa yerdən rəqəm oxuyur və saytda göstərir"
+        },
+        "de": {
+          "name": "Externe Daten",
+          "description": "Liest einen Wert von woanders und zeigt ihn auf der Seite an"
+        },
+        "es": {
+          "name": "Datos externos",
+          "description": "Lee una cifra de otro lugar y la muestra en el sitio"
+        },
+        "et": {
+          "name": "Välised andmed",
+          "description": "Loeb arvu mujalt ja kuvab selle saidil"
+        },
+        "fr": {
+          "name": "Données externes",
+          "description": "Lit une valeur ailleurs et l’affiche sur le site"
+        },
+        "it": {
+          "name": "Dati esterni",
+          "description": "Legge un dato da un’altra fonte e lo mostra sul sito"
+        },
+        "pl": {
+          "name": "Dane zewnętrzne",
+          "description": "Odczytuje wartość z innego miejsca i pokazuje ją na stronie"
+        },
+        "pt": {
+          "name": "Dados externos",
+          "description": "Lê um número de outro lugar e o exibe no site"
+        },
+        "ru": {
+          "name": "Внешние данные",
+          "description": "Берет значение из другого места и показывает его на сайте"
+        },
         "tr": {
           "name": "Dış Veri",
           "description": "Başka bir yerden bir değer okur ve sitede gösterir"
+        },
+        "zh": {
+          "name": "外部数据",
+          "description": "从其他地方读取数据并显示在站点上"
         }
       },
       "version": "1.6.0",
@@ -960,9 +1960,49 @@
       "name": "Facebook Login",
       "description": "Allow users to sign in with their Facebook account",
       "i18n": {
+        "az": {
+          "name": "Facebook ilə giriş",
+          "description": "İstifadəçilərin Facebook hesabları ilə daxil olmasına icazə verin"
+        },
+        "de": {
+          "name": "Facebook-Anmeldung",
+          "description": "Mitgliedern erlauben, sich mit ihrem Facebook-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Facebook",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Facebook"
+        },
+        "et": {
+          "name": "Facebooki sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Facebooki kontoga"
+        },
+        "fr": {
+          "name": "Connexion Facebook",
+          "description": "Permettre aux membres de se connecter avec leur compte Facebook"
+        },
+        "it": {
+          "name": "Accesso con Facebook",
+          "description": "Consenti ai membri di accedere con il proprio account Facebook"
+        },
+        "pl": {
+          "name": "Logowanie przez Facebook",
+          "description": "Pozwól użytkownikom logować się kontem Facebook"
+        },
+        "pt": {
+          "name": "Login com Facebook",
+          "description": "Permita que os usuários entrem com a conta do Facebook"
+        },
+        "ru": {
+          "name": "Вход через Facebook",
+          "description": "Позвольте участникам входить через свою учетную запись Facebook"
+        },
         "tr": {
           "name": "Facebook ile Giriş",
           "description": "Kullanıcıların Facebook hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Facebook 登录",
+          "description": "允许用户使用 Facebook 账户登录"
         }
       },
       "version": "1.3.0",
@@ -995,9 +2035,49 @@
       "name": "FACEIT Login",
       "description": "Allow users to sign in with their FACEIT account",
       "i18n": {
+        "az": {
+          "name": "FACEIT ilə giriş",
+          "description": "İstifadəçilərin FACEIT hesabları ilə daxil olmasına icazə verin"
+        },
+        "de": {
+          "name": "FACEIT-Anmeldung",
+          "description": "Mitgliedern erlauben, sich mit ihrem FACEIT-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con FACEIT",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de FACEIT"
+        },
+        "et": {
+          "name": "FACEITi sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma FACEITi kontoga"
+        },
+        "fr": {
+          "name": "Connexion FACEIT",
+          "description": "Permettre aux membres de se connecter avec leur compte FACEIT"
+        },
+        "it": {
+          "name": "Accesso con FACEIT",
+          "description": "Consenti ai membri di accedere con il proprio account FACEIT"
+        },
+        "pl": {
+          "name": "Logowanie przez FACEIT",
+          "description": "Pozwól użytkownikom logować się kontem FACEIT"
+        },
+        "pt": {
+          "name": "Login com FACEIT",
+          "description": "Permita que os usuários entrem com a conta da FACEIT"
+        },
+        "ru": {
+          "name": "Вход через FACEIT",
+          "description": "Позвольте участникам входить через свою учетную запись FACEIT"
+        },
         "tr": {
           "name": "FACEIT ile Giriş",
           "description": "Kullanıcıların FACEIT hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "FACEIT 登录",
+          "description": "允许用户使用 FACEIT 账户登录"
         }
       },
       "version": "1.3.0",
@@ -1030,9 +2110,49 @@
       "name": "Forum Module",
       "description": "Community discussion forum with categories, topics, and replies",
       "i18n": {
+        "az": {
+          "name": "Forum modulu",
+          "description": "Kateqoriyalar, mövzular və cavablarla icma müzakirə forumu"
+        },
+        "de": {
+          "name": "Forum-Modul",
+          "description": "Community-Diskussionsforum mit Kategorien, Themen und Antworten"
+        },
+        "es": {
+          "name": "Módulo de foro",
+          "description": "Foro de debate de la comunidad con categorías, temas y respuestas"
+        },
+        "et": {
+          "name": "Foorumi moodul",
+          "description": "Kogukonna foorum kategooriate, teemade ja vastustega"
+        },
+        "fr": {
+          "name": "Module Forum",
+          "description": "Forum de discussion avec catégories, sujets et réponses"
+        },
+        "it": {
+          "name": "Modulo forum",
+          "description": "Forum della community con categorie, discussioni e risposte"
+        },
+        "pl": {
+          "name": "Moduł forum",
+          "description": "Forum dyskusyjne społeczności z kategoriami, tematami i odpowiedziami"
+        },
+        "pt": {
+          "name": "Módulo do fórum",
+          "description": "Fórum de discussão da comunidade com categorias, tópicos e respostas"
+        },
+        "ru": {
+          "name": "Модуль форума",
+          "description": "Форум сообщества с категориями, темами и ответами"
+        },
         "tr": {
           "name": "Forum Modülü",
           "description": "Kategoriler, konular ve yanıtlarla topluluk tartışma forumu"
+        },
+        "zh": {
+          "name": "论坛模块",
+          "description": "带分类、主题和回复的社区讨论论坛"
         }
       },
       "version": "1.12.1",
@@ -1074,9 +2194,49 @@
       "name": "Game Connect",
       "description": "Let game servers connect to this site themselves: queued delivery that survives a restart, live status, the store and credits in game, and account linking, for any game with a client",
       "i18n": {
+        "az": {
+          "name": "Game Connect",
+          "description": "Oyun serverlərinin bu sayta özləri qoşulmasına imkan verin: yenidən başlatmaya davam gətirən çatdırılma növbəsi, canlı vəziyyət, oyunda mağaza və kreditlər və hesab bağlama, klienti olan istənilən oyun üçün"
+        },
+        "de": {
+          "name": "Game Connect",
+          "description": "Lass Spielserver sich selbst mit dieser Seite verbinden: eine Lieferwarteschlange, die einen Neustart übersteht, Live-Status, der Shop und Credits im Spiel und Kontoverknüpfung, für jedes Spiel mit einem Client"
+        },
+        "es": {
+          "name": "Game Connect",
+          "description": "Deja que los servidores de juego se conecten solos a este sitio: entregas en cola que sobreviven a un reinicio, estado en vivo, la tienda y los créditos en el juego, y vinculación de cuentas, para cualquier juego con un cliente"
+        },
+        "et": {
+          "name": "Game Connect",
+          "description": "Lase mänguserveritel ise selle saidiga ühenduda: tarnejärjekord, mis elab üle taaskäivituse, reaalajas olek, pood ja krediidid mängus ning kontode sidumine, iga kliendiga mängu jaoks"
+        },
+        "fr": {
+          "name": "Game Connect",
+          "description": "Laissez les serveurs de jeu se connecter eux-mêmes à ce site : une livraison en file qui survit à un redémarrage, l’état en direct, la boutique et les crédits en jeu, et la liaison de comptes, pour tout jeu doté d’un client"
+        },
+        "it": {
+          "name": "Game Connect",
+          "description": "Lascia che i server di gioco si colleghino da soli a questo sito: consegne in coda che sopravvivono a un riavvio, stato in tempo reale, il negozio e i crediti nel gioco e il collegamento degli account, per ogni gioco con un client"
+        },
+        "pl": {
+          "name": "Game Connect",
+          "description": "Pozwól serwerom gier same łączyć się z tą stroną: kolejka dostaw, która przetrwa restart, stan na żywo, sklep i kredyty w grze oraz łączenie kont, dla każdej gry z klientem"
+        },
+        "pt": {
+          "name": "Game Connect",
+          "description": "Deixe os servidores de jogo se conectarem sozinhos a este site: entregas em fila que sobrevivem a um reinício, status ao vivo, a loja e os créditos no jogo e vínculo de contas, para qualquer jogo com um cliente"
+        },
+        "ru": {
+          "name": "Game Connect",
+          "description": "Пусть игровые серверы сами подключаются к этому сайту: очередь доставок, которая переживает перезапуск, состояние в реальном времени, магазин и кредиты в игре и привязка аккаунтов, для любой игры с клиентом"
+        },
         "tr": {
           "name": "Oyun Bağlantısı",
           "description": "Oyun sunucuları siteye kendileri bağlansın: yeniden başlatmadan etkilenmeyen sıralı teslimat, canlı durum, oyunda mağaza ve kredi, hesap eşleme. İstemcisi olan her oyun için."
+        },
+        "zh": {
+          "name": "Game Connect",
+          "description": "让游戏服务器自行连接到本站：重启后依然保留的发货队列、实时状态、游戏内商店与积分，以及账户绑定，适用于任何有客户端的游戏"
         }
       },
       "version": "1.0.0",
@@ -1132,9 +2292,49 @@
       "name": "GitHub Login",
       "description": "Allow users to sign in with their GitHub account",
       "i18n": {
+        "az": {
+          "name": "GitHub ilə giriş",
+          "description": "İstifadəçilərin GitHub hesabları ilə daxil olmasına icazə verin"
+        },
+        "de": {
+          "name": "GitHub-Anmeldung",
+          "description": "Mitgliedern erlauben, sich mit ihrem GitHub-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con GitHub",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de GitHub"
+        },
+        "et": {
+          "name": "GitHubi sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma GitHubi kontoga"
+        },
+        "fr": {
+          "name": "Connexion GitHub",
+          "description": "Permettre aux membres de se connecter avec leur compte GitHub"
+        },
+        "it": {
+          "name": "Accesso con GitHub",
+          "description": "Consenti ai membri di accedere con il proprio account GitHub"
+        },
+        "pl": {
+          "name": "Logowanie przez GitHub",
+          "description": "Pozwól użytkownikom logować się kontem GitHub"
+        },
+        "pt": {
+          "name": "Login com GitHub",
+          "description": "Permita que os usuários entrem com a conta do GitHub"
+        },
+        "ru": {
+          "name": "Вход через GitHub",
+          "description": "Позвольте участникам входить через свою учетную запись GitHub"
+        },
         "tr": {
           "name": "GitHub ile Giriş",
           "description": "Kullanıcıların GitHub hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "GitHub 登录",
+          "description": "允许用户使用 GitHub 账户登录"
         }
       },
       "version": "1.3.0",
@@ -1167,9 +2367,49 @@
       "name": "Google Analytics",
       "description": "Google Analytics tracking integration",
       "i18n": {
+        "az": {
+          "name": "Google Analytics",
+          "description": "Google Analytics izləmə inteqrasiyası"
+        },
+        "de": {
+          "name": "Google Analytics",
+          "description": "Einbindung des Google-Analytics-Trackings"
+        },
+        "es": {
+          "name": "Google Analytics",
+          "description": "Integración de seguimiento de Google Analytics"
+        },
+        "et": {
+          "name": "Google Analytics",
+          "description": "Google Analyticsi jälgimise integratsioon"
+        },
+        "fr": {
+          "name": "Google Analytics",
+          "description": "Intégration du suivi Google Analytics"
+        },
+        "it": {
+          "name": "Google Analytics",
+          "description": "Integrazione del tracciamento con Google Analytics"
+        },
+        "pl": {
+          "name": "Google Analytics",
+          "description": "Integracja śledzenia Google Analytics"
+        },
+        "pt": {
+          "name": "Google Analytics",
+          "description": "Integração de rastreamento do Google Analytics"
+        },
+        "ru": {
+          "name": "Google Analytics",
+          "description": "Интеграция отслеживания Google Analytics"
+        },
         "tr": {
           "name": "Google Analytics",
           "description": "Google Analytics takip entegrasyonu"
+        },
+        "zh": {
+          "name": "Google Analytics",
+          "description": "Google Analytics 跟踪集成"
         }
       },
       "version": "1.3.0",
@@ -1202,9 +2442,49 @@
       "name": "Google Login",
       "description": "Allow users to sign in with their Google account",
       "i18n": {
+        "az": {
+          "name": "Google ilə giriş",
+          "description": "İstifadəçilərin Google hesabları ilə daxil olmasına icazə verin"
+        },
+        "de": {
+          "name": "Google-Anmeldung",
+          "description": "Mitgliedern erlauben, sich mit ihrem Google-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Google",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Google"
+        },
+        "et": {
+          "name": "Google'i sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Google'i kontoga"
+        },
+        "fr": {
+          "name": "Connexion Google",
+          "description": "Permettre aux membres de se connecter avec leur compte Google"
+        },
+        "it": {
+          "name": "Accesso con Google",
+          "description": "Consenti ai membri di accedere con il proprio account Google"
+        },
+        "pl": {
+          "name": "Logowanie przez Google",
+          "description": "Pozwól użytkownikom logować się kontem Google"
+        },
+        "pt": {
+          "name": "Login com Google",
+          "description": "Permita que os usuários entrem com a conta do Google"
+        },
+        "ru": {
+          "name": "Вход через Google",
+          "description": "Позвольте участникам входить через свою учетную запись Google"
+        },
         "tr": {
           "name": "Google ile Giriş",
           "description": "Kullanıcıların Google hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Google 登录",
+          "description": "允许用户使用 Google 账户登录"
         }
       },
       "version": "1.3.0",
@@ -1237,9 +2517,49 @@
       "name": "Help Center",
       "description": "Knowledge base with categories and searchable articles",
       "i18n": {
+        "az": {
+          "name": "Yardım mərkəzi",
+          "description": "Kateqoriyaları və axtarıla bilən məqalələri olan bilik bazası"
+        },
+        "de": {
+          "name": "Hilfe-Center",
+          "description": "Wissensdatenbank mit Kategorien und durchsuchbaren Artikeln"
+        },
+        "es": {
+          "name": "Centro de ayuda",
+          "description": "Base de conocimiento con categorías y artículos que se pueden buscar"
+        },
+        "et": {
+          "name": "Abikeskus",
+          "description": "Teadmusbaas kategooriate ja otsitavate artiklitega"
+        },
+        "fr": {
+          "name": "Centre d’aide",
+          "description": "Base de connaissances avec catégories et articles consultables"
+        },
+        "it": {
+          "name": "Centro assistenza",
+          "description": "Base di conoscenza con categorie e articoli ricercabili"
+        },
+        "pl": {
+          "name": "Centrum pomocy",
+          "description": "Baza wiedzy z kategoriami i przeszukiwanymi artykułami"
+        },
+        "pt": {
+          "name": "Central de ajuda",
+          "description": "Base de conhecimento com categorias e artigos pesquisáveis"
+        },
+        "ru": {
+          "name": "Центр справки",
+          "description": "База знаний с категориями и поиском по статьям"
+        },
         "tr": {
           "name": "Yardım Merkezi",
           "description": "Kategorili ve aranabilir makalelerden oluşan bilgi bankası"
+        },
+        "zh": {
+          "name": "帮助中心",
+          "description": "带分类和可搜索文章的知识库"
         }
       },
       "version": "1.9.0",
@@ -1274,9 +2594,49 @@
       "name": "In-App Notifications",
       "description": "In-app notification system with bell icon",
       "i18n": {
+        "az": {
+          "name": "Tətbiq daxili bildirişlər",
+          "description": "Zəng ikonu olan tətbiq daxili bildiriş sistemi"
+        },
+        "de": {
+          "name": "In-App-Benachrichtigungen",
+          "description": "Benachrichtigungssystem in der App mit Glockensymbol"
+        },
+        "es": {
+          "name": "Notificaciones en la aplicación",
+          "description": "Sistema de notificaciones dentro de la aplicación, con icono de campana"
+        },
+        "et": {
+          "name": "Rakenduse sisesed teavitused",
+          "description": "Rakendusesisene teavitussüsteem kellaikooniga"
+        },
+        "fr": {
+          "name": "Notifications intégrées",
+          "description": "Système de notifications intégrées avec icône de cloche"
+        },
+        "it": {
+          "name": "Notifiche in-app",
+          "description": "Sistema di notifiche in-app con icona a campanella"
+        },
+        "pl": {
+          "name": "Powiadomienia w aplikacji",
+          "description": "System powiadomień w aplikacji z ikoną dzwonka"
+        },
+        "pt": {
+          "name": "Notificações no app",
+          "description": "Sistema de notificações no app, com ícone de sino"
+        },
+        "ru": {
+          "name": "Уведомления в приложении",
+          "description": "Система уведомлений в приложении со значком колокольчика"
+        },
         "tr": {
           "name": "Uygulama İçi Bildirimler",
           "description": "Zil simgeli uygulama içi bildirim sistemi"
+        },
+        "zh": {
+          "name": "站内通知",
+          "description": "带铃铛图标的站内通知系统"
         }
       },
       "version": "1.6.0",
@@ -1317,9 +2677,49 @@
       "name": "Instagram Login",
       "description": "Allow users to sign in with their Instagram account",
       "i18n": {
+        "az": {
+          "name": "Instagram Login",
+          "description": "İstifadəçilərə Instagram hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Instagram-Login",
+          "description": "Mitglieder können sich mit ihrem Instagram-Konto anmelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Instagram",
+          "description": "Permite que los usuarios inicien sesión con su cuenta de Instagram"
+        },
+        "et": {
+          "name": "Instagrami sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Instagrami kontoga"
+        },
+        "fr": {
+          "name": "Connexion Instagram",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Instagram"
+        },
+        "it": {
+          "name": "Accesso con Instagram",
+          "description": "Consenti agli utenti di accedere con il proprio account Instagram"
+        },
+        "pl": {
+          "name": "Logowanie przez Instagram",
+          "description": "Pozwól członkom logować się przez konto Instagram"
+        },
+        "pt": {
+          "name": "Login com Instagram",
+          "description": "Permite que membros entrem com a conta do Instagram"
+        },
+        "ru": {
+          "name": "Вход через Instagram",
+          "description": "Разрешить пользователям входить через свою учетную запись Instagram"
+        },
         "tr": {
           "name": "Instagram ile Giriş",
           "description": "Kullanıcıların Instagram hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Instagram 登录",
+          "description": "允许用户使用其 Instagram 账户登录"
         }
       },
       "version": "1.3.0",
@@ -1352,9 +2752,49 @@
       "name": "iyzico Payment Gateway",
       "description": "Take Turkish card payments through iyzico, with instalments and 3D Secure",
       "i18n": {
+        "az": {
+          "name": "iyzico ödəniş şlüzü",
+          "description": "iyzico vasitəsilə taksitli və 3D Secure ilə Türkiyə kart ödənişlərini qəbul edin"
+        },
+        "de": {
+          "name": "iyzico-Zahlungsgateway",
+          "description": "Türkische Kartenzahlungen über iyzico annehmen, mit Ratenzahlung und 3D Secure"
+        },
+        "es": {
+          "name": "Pasarela de pago iyzico",
+          "description": "Acepta pagos con tarjeta turca, con pagos a plazos y 3D Secure a través de iyzico"
+        },
+        "et": {
+          "name": "iyzico maksevärav",
+          "description": "Võta vastu Türgi kaardimakseid iyzico kaudu, koos osamaksete ja 3D Secure'iga"
+        },
+        "fr": {
+          "name": "Passerelle de paiement iyzico",
+          "description": "Encaisser des paiements par carte turque via iyzico, avec paiement en plusieurs fois et 3D Secure"
+        },
+        "it": {
+          "name": "Gateway di pagamento iyzico",
+          "description": "Accetta pagamenti con carta turchi tramite iyzico, con rate e 3D Secure"
+        },
+        "pl": {
+          "name": "Bramka płatności iyzico",
+          "description": "Przyjmuj tureckie płatności kartą przez iyzico, z ratami i 3D Secure"
+        },
+        "pt": {
+          "name": "Gateway de pagamento iyzico",
+          "description": "Receba pagamentos com cartão turco, com parcelamento e 3D Secure"
+        },
+        "ru": {
+          "name": "Платежный шлюз iyzico",
+          "description": "Прием карточных платежей в Турции с рассрочкой и 3D Secure через iyzico"
+        },
         "tr": {
           "name": "iyzico Ödeme Altyapısı",
           "description": "iyzico üzerinden taksit ve 3D Secure destekli Türk kartı ödemelerini alın"
+        },
+        "zh": {
+          "name": "iyzico 支付网关",
+          "description": "通过 iyzico 接受土耳其银行卡付款，支持分期付款和 3D Secure"
         }
       },
       "version": "1.4.0",
@@ -1394,9 +2834,49 @@
       "name": "Kakao Login",
       "description": "Allow users to sign in with their Kakao account",
       "i18n": {
+        "az": {
+          "name": "Kakao Login",
+          "description": "İstifadəçilərə Kakao hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Kakao-Login",
+          "description": "Mitglieder können sich mit ihrem Kakao-Konto anmelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Kakao",
+          "description": "Permite que los usuarios inicien sesión con su cuenta de Kakao"
+        },
+        "et": {
+          "name": "Kakao sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Kakao kontoga"
+        },
+        "fr": {
+          "name": "Connexion Kakao",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Kakao"
+        },
+        "it": {
+          "name": "Accesso con Kakao",
+          "description": "Consenti agli utenti di accedere con il proprio account Kakao"
+        },
+        "pl": {
+          "name": "Logowanie przez Kakao",
+          "description": "Pozwól członkom logować się przez konto Kakao"
+        },
+        "pt": {
+          "name": "Login com Kakao",
+          "description": "Permite que membros entrem com a conta do Kakao"
+        },
+        "ru": {
+          "name": "Вход через Kakao",
+          "description": "Разрешить пользователям входить через свою учетную запись Kakao"
+        },
         "tr": {
           "name": "Kakao ile Giriş",
           "description": "Kullanıcıların Kakao hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Kakao 登录",
+          "description": "允许用户使用其 Kakao 账户登录"
         }
       },
       "version": "1.3.0",
@@ -1429,9 +2909,49 @@
       "name": "Kick Login",
       "description": "Allow users to sign in with their Kick account",
       "i18n": {
+        "az": {
+          "name": "Kick Login",
+          "description": "İstifadəçilərə Kick hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Kick-Login",
+          "description": "Mitglieder können sich mit ihrem Kick-Konto anmelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Kick",
+          "description": "Permite que los usuarios inicien sesión con su cuenta de Kick"
+        },
+        "et": {
+          "name": "Kicki sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Kicki kontoga"
+        },
+        "fr": {
+          "name": "Connexion Kick",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Kick"
+        },
+        "it": {
+          "name": "Accesso con Kick",
+          "description": "Consenti agli utenti di accedere con il proprio account Kick"
+        },
+        "pl": {
+          "name": "Logowanie przez Kick",
+          "description": "Pozwól członkom logować się przez konto Kick"
+        },
+        "pt": {
+          "name": "Login com Kick",
+          "description": "Permite que membros entrem com a conta da Kick"
+        },
+        "ru": {
+          "name": "Вход через Kick",
+          "description": "Разрешить пользователям входить через свою учетную запись Kick"
+        },
         "tr": {
           "name": "Kick ile Giriş",
           "description": "Kullanıcıların Kick hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Kick 登录",
+          "description": "允许用户使用其 Kick 账户登录"
         }
       },
       "version": "1.3.0",
@@ -1464,9 +2984,49 @@
       "name": "Leaderboard",
       "description": "Member rankings by purchases, votes and activity",
       "i18n": {
+        "az": {
+          "name": "Liderlər cədvəli",
+          "description": "Alışlara, səslərə və fəaliyyətə görə üzv reytinqləri"
+        },
+        "de": {
+          "name": "Rangliste",
+          "description": "Mitgliederrangliste nach Käufen, Stimmen und Aktivität"
+        },
+        "es": {
+          "name": "Clasificación",
+          "description": "Clasificación de miembros por compras, votos y actividad"
+        },
+        "et": {
+          "name": "Edetabel",
+          "description": "Liikmete järjestus ostude, häälte ja tegevuse järgi"
+        },
+        "fr": {
+          "name": "Classement",
+          "description": "Classement des membres par achats, votes et activité"
+        },
+        "it": {
+          "name": "Classifica",
+          "description": "Classifiche dei membri per acquisti, voti e attività"
+        },
+        "pl": {
+          "name": "Ranking",
+          "description": "Ranking członków według zakupów, głosów i aktywności"
+        },
+        "pt": {
+          "name": "Ranking",
+          "description": "Classificação de membros por compras, votos e atividade"
+        },
+        "ru": {
+          "name": "Рейтинг",
+          "description": "Места участников по покупкам, голосам и активности"
+        },
         "tr": {
           "name": "Liderlik Tablosu",
           "description": "Satın alma, oy ve etkinliğe göre üye sıralamaları"
+        },
+        "zh": {
+          "name": "排行榜",
+          "description": "按购买、投票和活跃度排列的成员排名"
         }
       },
       "version": "1.5.2",
@@ -1501,9 +3061,49 @@
       "name": "License Keys",
       "description": "Generate, deliver and activate license keys for digital products, with a machine limit per key",
       "i18n": {
+        "az": {
+          "name": "Lisenziya açarları",
+          "description": "Rəqəmsal məhsullar üçün lisenziya açarları yaradın, çatdırın və aktivləşdirin; hər açar üçün maşın limiti ilə"
+        },
+        "de": {
+          "name": "Lizenzschlüssel",
+          "description": "Lizenzschlüssel für digitale Produkte erzeugen, ausliefern und aktivieren, mit einem Geräte-Limit pro Schlüssel"
+        },
+        "es": {
+          "name": "Claves de licencia",
+          "description": "Genera, entrega y activa claves de licencia para productos digitales, con un límite de equipos por clave"
+        },
+        "et": {
+          "name": "Litsentsivõtmed",
+          "description": "Genereeri, edasta ja aktiveeri digitoodete litsentsivõtmed, igal võtmel masinapiiranguga"
+        },
+        "fr": {
+          "name": "Clés de licence",
+          "description": "Générer, livrer et activer des clés de licence pour les produits numériques, avec une limite d’appareils par clé"
+        },
+        "it": {
+          "name": "Chiavi di licenza",
+          "description": "Genera, consegna e attiva chiavi di licenza per prodotti digitali, con un limite di macchine per chiave"
+        },
+        "pl": {
+          "name": "Klucze licencyjne",
+          "description": "Generuj, dostarczaj i aktywuj klucze licencyjne do produktów cyfrowych, z limitem urządzeń na klucz"
+        },
+        "pt": {
+          "name": "Chaves de licença",
+          "description": "Gere, entregue e ative chaves de licença para produtos digitais, com limite de máquinas por chave"
+        },
+        "ru": {
+          "name": "Лицензионные ключи",
+          "description": "Создание, выдача и активация лицензионных ключей для цифровых товаров с лимитом устройств на каждый ключ"
+        },
         "tr": {
           "name": "Lisans Anahtarları",
           "description": "Dijital ürünler için lisans anahtarı üretin, teslim edin ve etkinleştirin; anahtar başına makine sınırı ile"
+        },
+        "zh": {
+          "name": "授权密钥",
+          "description": "为数字商品生成、发放和激活授权密钥，并限制每个密钥的设备数"
         }
       },
       "version": "1.6.0",
@@ -1540,9 +3140,49 @@
       "name": "LINE Login",
       "description": "Allow users to sign in with their LINE account",
       "i18n": {
+        "az": {
+          "name": "LINE Login",
+          "description": "İstifadəçilərə LINE hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "LINE-Login",
+          "description": "Mitglieder können sich mit ihrem LINE-Konto anmelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con LINE",
+          "description": "Permite que los usuarios inicien sesión con su cuenta de LINE"
+        },
+        "et": {
+          "name": "LINE sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma LINE'i kontoga"
+        },
+        "fr": {
+          "name": "Connexion LINE",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte LINE"
+        },
+        "it": {
+          "name": "Accesso con LINE",
+          "description": "Consenti agli utenti di accedere con il proprio account LINE"
+        },
+        "pl": {
+          "name": "Logowanie przez LINE",
+          "description": "Pozwól członkom logować się przez konto LINE"
+        },
+        "pt": {
+          "name": "Login com LINE",
+          "description": "Permite que membros entrem com a conta da LINE"
+        },
+        "ru": {
+          "name": "Вход через LINE",
+          "description": "Разрешить пользователям входить через свою учетную запись LINE"
+        },
         "tr": {
           "name": "LINE ile Giriş",
           "description": "Kullanıcıların LINE hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "LINE 登录",
+          "description": "允许用户使用其 LINE 账户登录"
         }
       },
       "version": "1.3.0",
@@ -1575,9 +3215,49 @@
       "name": "Login Protection",
       "description": "Login throttling: how many failed attempts lock an account, and letting one back in",
       "i18n": {
+        "az": {
+          "name": "Girişin qorunması",
+          "description": "Girişin məhdudlaşdırılması: neçə uğursuz cəhd hesabı bağlayır və onu necə yenidən açmaq"
+        },
+        "de": {
+          "name": "Anmeldeschutz",
+          "description": "Begrenzung von Anmeldeversuchen: wie viele Fehlversuche ein Konto sperren und wie es wieder freigegeben wird"
+        },
+        "es": {
+          "name": "Protección de inicio de sesión",
+          "description": "Limitación de inicios de sesión: cuántos intentos fallidos bloquean una cuenta y cómo volver a dejarla entrar"
+        },
+        "et": {
+          "name": "Sisselogimise kaitse",
+          "description": "Sisselogimise piiramine: mitu ebaõnnestunud katset konto lukustab ja kuidas konto uuesti avada"
+        },
+        "fr": {
+          "name": "Protection de connexion",
+          "description": "Limitation des connexions : nombre d’échecs qui verrouillent un compte, et réactivation de ce compte"
+        },
+        "it": {
+          "name": "Protezione accessi",
+          "description": "Limitazione dei tentativi di accesso: quanti tentativi falliti bloccano un account, e come riattivarlo"
+        },
+        "pl": {
+          "name": "Ochrona logowania",
+          "description": "Ograniczanie logowań: ile nieudanych prób blokuje konto i jak je odblokować"
+        },
+        "pt": {
+          "name": "Proteção de login",
+          "description": "Limitação de logins: quantas tentativas falhas bloqueiam uma conta e como liberá-la"
+        },
+        "ru": {
+          "name": "Защита входа",
+          "description": "Ограничение попыток входа: сколько неудачных попыток блокируют учетную запись и как вернуть в нее участника"
+        },
         "tr": {
           "name": "Giriş Koruması",
           "description": "Giriş sınırlaması: kaç başarısız denemenin hesabı kilitleyeceği ve kilidin nasıl açılacağı"
+        },
+        "zh": {
+          "name": "登录保护",
+          "description": "登录限流：多少次失败尝试会锁定账户，以及如何解除锁定"
         }
       },
       "version": "1.4.0",
@@ -1610,9 +3290,49 @@
       "name": "Pay by Hand",
       "description": "Take a payment nobody processes: a bank transfer, cash at the counter, an invoice settled later. The order waits unpaid until an operator confirms the money arrived.",
       "i18n": {
+        "az": {
+          "name": "Əllə ödəniş",
+          "description": "Sifarişi qəbul edir və pulun başqa yolla gəlməsini gözləyir"
+        },
+        "de": {
+          "name": "Manuelle Zahlung",
+          "description": "Nimmt eine Bestellung an und wartet, bis das Geld auf anderem Weg eingeht"
+        },
+        "es": {
+          "name": "Pago manual",
+          "description": "Acepta un pedido y espera a que el dinero llegue por otra vía"
+        },
+        "et": {
+          "name": "Käsitsi makse",
+          "description": "Võtab tellimuse vastu ja ootab raha saabumist mõnda muud teed pidi"
+        },
+        "fr": {
+          "name": "Paiement manuel",
+          "description": "Enregistre une commande et attend l’arrivée du paiement par un autre moyen"
+        },
+        "it": {
+          "name": "Pagamento manuale",
+          "description": "Accetta un ordine e attende che il denaro arrivi per un’altra via"
+        },
+        "pl": {
+          "name": "Płatność ręczna",
+          "description": "Przyjmuje zamówienie i czeka, aż pieniądze dotrą inną drogą"
+        },
+        "pt": {
+          "name": "Pagamento manual",
+          "description": "Recebe um pedido e espera o dinheiro chegar por outra via"
+        },
+        "ru": {
+          "name": "Оплата вручную",
+          "description": "Принимает заказ и ждет поступления денег другим способом"
+        },
         "tr": {
           "name": "Manuel Ödeme",
           "description": "Siparişi alır ve paranın başka bir yoldan gelmesini bekler"
+        },
+        "zh": {
+          "name": "人工付款",
+          "description": "接收订单，并等待款项通过其他途径到账"
         }
       },
       "version": "1.4.0",
@@ -1650,9 +3370,49 @@
       "name": "Member Profiles",
       "description": "Public profile pages, with what every installed module knows about a member",
       "i18n": {
+        "az": {
+          "name": "Üzv profilləri",
+          "description": "Ümumi profil səhifələri, quraşdırılmış hər modulun üzv haqqında bildiyi məlumatlarla"
+        },
+        "de": {
+          "name": "Mitgliederprofile",
+          "description": "Öffentliche Profilseiten mit allem, was jedes installierte Modul über ein Mitglied weiß"
+        },
+        "es": {
+          "name": "Perfiles de miembros",
+          "description": "Páginas de perfil públicas, con todo lo que cada módulo instalado sabe de un miembro"
+        },
+        "et": {
+          "name": "Liikmete profiilid",
+          "description": "Avalikud profiilileheküljed koos sellega, mida iga paigaldatud moodul liikme kohta teab"
+        },
+        "fr": {
+          "name": "Profils des membres",
+          "description": "Pages de profil publiques, avec ce que chaque module installé sait d’un membre"
+        },
+        "it": {
+          "name": "Profili dei membri",
+          "description": "Pagine profilo pubbliche, con ciò che ogni modulo installato sa di un membro"
+        },
+        "pl": {
+          "name": "Profile członków",
+          "description": "Publiczne strony profili z tym, co każdy zainstalowany moduł wie o członku"
+        },
+        "pt": {
+          "name": "Perfis de membros",
+          "description": "Páginas de perfil público, com o que cada módulo instalado sabe sobre um membro"
+        },
+        "ru": {
+          "name": "Профили участников",
+          "description": "Публичные страницы профилей с данными, которые каждый установленный модуль знает об участнике"
+        },
         "tr": {
           "name": "Üye Profilleri",
           "description": "Herkese açık profil sayfaları; kurulu her modülün üye hakkında bildiği ile"
+        },
+        "zh": {
+          "name": "成员资料",
+          "description": "公开的成员资料页，展示每个已安装模块所了解的成员信息"
         }
       },
       "version": "1.7.1",
@@ -1687,9 +3447,49 @@
       "name": "Mercado Pago Gateway",
       "description": "Take card, Pix, boleto and cash payments across Latin America through Mercado Pago",
       "i18n": {
+        "az": {
+          "name": "Mercado Pago şlüzü",
+          "description": "Mercado Pago vasitəsilə Latın Amerikasında kart, Pix, boleto və nağd ödənişləri qəbul edin"
+        },
+        "de": {
+          "name": "Mercado-Pago-Gateway",
+          "description": "Karten-, Pix-, Boleto- und Barzahlungen in ganz Lateinamerika über Mercado Pago annehmen"
+        },
+        "es": {
+          "name": "Pasarela Mercado Pago",
+          "description": "Acepta pagos con tarjeta, Pix, boleto y efectivo en toda Latinoamérica a través de Mercado Pago"
+        },
+        "et": {
+          "name": "Mercado Pago maksevärav",
+          "description": "Võta Ladina-Ameerikas vastu kaardi-, Pix-, boleto- ja sularahamakseid Mercado Pago kaudu"
+        },
+        "fr": {
+          "name": "Passerelle Mercado Pago",
+          "description": "Encaisser des paiements par carte, Pix, boleto et espèces en Amérique latine via Mercado Pago"
+        },
+        "it": {
+          "name": "Gateway Mercado Pago",
+          "description": "Accetta pagamenti con carta, Pix, boleto e contanti in tutta l’America Latina tramite Mercado Pago"
+        },
+        "pl": {
+          "name": "Bramka Mercado Pago",
+          "description": "Przyjmuj płatności kartą, Pix, boleto i gotówką w Ameryce Łacińskiej przez Mercado Pago"
+        },
+        "pt": {
+          "name": "Gateway Mercado Pago",
+          "description": "Receba pagamentos com cartão, Pix, boleto e dinheiro em espécie na América Latina pelo Mercado Pago"
+        },
+        "ru": {
+          "name": "Шлюз Mercado Pago",
+          "description": "Прием платежей картой, Pix, boleto и наличными по всей Латинской Америке через Mercado Pago"
+        },
         "tr": {
           "name": "Mercado Pago Altyapısı",
           "description": "Mercado Pago üzerinden Latin Amerika genelinde kart, Pix, boleto ve nakit ödemelerini alın"
+        },
+        "zh": {
+          "name": "Mercado Pago 网关",
+          "description": "通过 Mercado Pago 接受拉丁美洲的银行卡、Pix、boleto 和现金付款"
         }
       },
       "version": "1.4.0",
@@ -1731,9 +3531,49 @@
       "name": "Microsoft and Xbox Login",
       "description": "Allow users to sign in with their Microsoft or Xbox account",
       "i18n": {
+        "az": {
+          "name": "Microsoft və Xbox Login",
+          "description": "İstifadəçilərə Microsoft və ya Xbox hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Microsoft- und Xbox-Login",
+          "description": "Mitglieder können sich mit ihrem Microsoft- oder Xbox-Konto anmelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Microsoft y Xbox",
+          "description": "Permite que los usuarios inicien sesión con su cuenta de Microsoft o Xbox"
+        },
+        "et": {
+          "name": "Microsofti ja Xboxi sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Microsofti või Xboxi kontoga"
+        },
+        "fr": {
+          "name": "Connexion Microsoft et Xbox",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Microsoft ou Xbox"
+        },
+        "it": {
+          "name": "Accesso con Microsoft e Xbox",
+          "description": "Consenti agli utenti di accedere con il proprio account Microsoft o Xbox"
+        },
+        "pl": {
+          "name": "Logowanie przez Microsoft i Xbox",
+          "description": "Pozwól członkom logować się przez konto Microsoft lub Xbox"
+        },
+        "pt": {
+          "name": "Login Microsoft e Xbox",
+          "description": "Permite que membros entrem com a conta Microsoft ou Xbox"
+        },
+        "ru": {
+          "name": "Вход через Microsoft и Xbox",
+          "description": "Разрешить пользователям входить через свою учетную запись Microsoft или Xbox"
+        },
         "tr": {
           "name": "Microsoft ve Xbox ile Giriş",
           "description": "Kullanıcıların Microsoft veya Xbox hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Microsoft 与 Xbox 登录",
+          "description": "允许用户使用其 Microsoft 或 Xbox 账户登录"
         }
       },
       "version": "1.3.1",
@@ -1766,9 +3606,49 @@
       "name": "Midtrans Gateway",
       "description": "Take bank transfer, e-wallet, convenience store and card payments in Indonesia through Midtrans",
       "i18n": {
+        "az": {
+          "name": "Midtrans şlüzü",
+          "description": "Midtrans vasitəsilə İndoneziyada bank köçürməsi, elektron pul kisəsi, rahat mağaza və kart ödənişlərini qəbul edin"
+        },
+        "de": {
+          "name": "Midtrans-Gateway",
+          "description": "Banküberweisungen, E-Wallets, Zahlungen im Convenience-Store und Kartenzahlungen in Indonesien über Midtrans annehmen"
+        },
+        "es": {
+          "name": "Pasarela Midtrans",
+          "description": "Acepta transferencias bancarias, monederos electrónicos, pagos en tiendas de conveniencia y con tarjeta en Indonesia a través de Midtrans"
+        },
+        "et": {
+          "name": "Midtrans maksevärav",
+          "description": "Võta Indoneesias vastu pangaülekandeid, e-rahakotte, kauplustes tehtavaid makseid ja kaardimakseid Midtrans kaudu"
+        },
+        "fr": {
+          "name": "Passerelle Midtrans",
+          "description": "Encaisser des virements bancaires, portefeuilles électroniques, paiements en supérette et par carte en Indonésie via Midtrans"
+        },
+        "it": {
+          "name": "Gateway Midtrans",
+          "description": "Accetta bonifici, e-wallet, pagamenti nei minimarket e con carta in Indonesia tramite Midtrans"
+        },
+        "pl": {
+          "name": "Bramka Midtrans",
+          "description": "Przyjmuj przelewy bankowe, portfele elektroniczne, płatności w sklepach i kartą w Indonezji przez Midtrans"
+        },
+        "pt": {
+          "name": "Gateway Midtrans",
+          "description": "Receba transferência bancária, carteira digital, loja de conveniência e pagamentos com cartão na Indonésia pelo Midtrans"
+        },
+        "ru": {
+          "name": "Шлюз Midtrans",
+          "description": "Прием банковских переводов, электронных кошельков, платежей в магазинах и картой в Индонезии через Midtrans"
+        },
         "tr": {
           "name": "Midtrans Altyapısı",
           "description": "Midtrans üzerinden Endonezya'da havale, e-cüzdan, market ve kart ödemelerini alın"
+        },
+        "zh": {
+          "name": "Midtrans 网关",
+          "description": "通过 Midtrans 接受印度尼西亚的银行转账、电子钱包、便利店和银行卡付款"
         }
       },
       "version": "1.4.0",
@@ -1810,9 +3690,49 @@
       "name": "Minecraft Link",
       "description": "Let players prove they own an in-game Minecraft account by reading a code whispered to them on the server",
       "i18n": {
+        "az": {
+          "name": "Minecraft bağlantısı",
+          "description": "Oyunçuların serverdə onlara şəxsi mesajla göndərilən kodu oxuyaraq oyun daxili Minecraft hesabına sahib olduqlarını sübut etməsinə icazə verin"
+        },
+        "de": {
+          "name": "Minecraft-Verknüpfung",
+          "description": "Lass Spieler beweisen, dass ihnen ein Minecraft-Konto im Spiel gehört, indem sie einen Code lesen, der ihnen auf dem Server zugeflüstert wird"
+        },
+        "es": {
+          "name": "Vinculación de Minecraft",
+          "description": "Permite que los jugadores demuestren que tienen una cuenta de Minecraft leyendo un código que se les envía en susurro en el servidor"
+        },
+        "et": {
+          "name": "Minecrafti sidumine",
+          "description": "Luba mängijatel tõendada, et neil on mängus Minecrafti konto, lugedes serveris neile privaatsõnumina saadetud koodi"
+        },
+        "fr": {
+          "name": "Liaison Minecraft",
+          "description": "Permettre aux joueurs de prouver qu’ils possèdent un compte Minecraft en lisant un code qui leur est envoyé en message privé sur le serveur"
+        },
+        "it": {
+          "name": "Collegamento Minecraft",
+          "description": "Permetti ai giocatori di dimostrare di possedere un account Minecraft in gioco, leggendo un codice che viene sussurrato loro sul server"
+        },
+        "pl": {
+          "name": "Połączenie z Minecraftem",
+          "description": "Pozwól graczom udowodnić, że posiadają konto Minecraft w grze, odczytując kod szeptany im na serwerze"
+        },
+        "pt": {
+          "name": "Vínculo com o Minecraft",
+          "description": "Permite que jogadores provem que são donos de uma conta do Minecraft lendo um código sussurrado para eles no servidor"
+        },
+        "ru": {
+          "name": "Привязка Minecraft",
+          "description": "Позволяет игрокам подтвердить владение игровой учетной записью Minecraft, прочитав код, который им отправили на сервере"
+        },
         "tr": {
           "name": "Minecraft Bağlama",
           "description": "Oyuncuların sunucuda kendilerine fısıldanan bir kodu okuyarak Minecraft hesabının sahibi olduklarını kanıtlamasını sağlayın"
+        },
+        "zh": {
+          "name": "Minecraft 绑定",
+          "description": "让玩家通过读取服务器私信发给其的验证码，证明自己拥有某个游戏内 Minecraft 账户"
         }
       },
       "version": "1.6.1",
@@ -1854,9 +3774,49 @@
       "name": "Minecraft Punishments (LiteBans)",
       "description": "Reads bans, mutes, warnings and kicks out of a LiteBans database and records them against the member who owns the account",
       "i18n": {
+        "az": {
+          "name": "Minecraft cəzaları (LiteBans)",
+          "description": "LiteBans verilənlər bazasından banları, səssizləşdirmələri, xəbərdarlıqları və kikləri oxuyur və hesabın sahibi olan üzvə yazır"
+        },
+        "de": {
+          "name": "Minecraft-Strafen (LiteBans)",
+          "description": "Liest Sperren, Stummschaltungen, Verwarnungen und Kicks aus einer LiteBans-Datenbank aus und erfasst sie beim Mitglied, dem das Konto gehört"
+        },
+        "es": {
+          "name": "Sanciones de Minecraft (LiteBans)",
+          "description": "Lee baneos, silenciamientos, advertencias y expulsiones de una base de datos de LiteBans y los registra a nombre del miembro que es dueño de la cuenta"
+        },
+        "et": {
+          "name": "Minecrafti karistused (LiteBans)",
+          "description": "Loeb keelud, vaigistused, hoiatused ja väljaheitmised LiteBansi andmebaasist ning salvestab need konto omava liikme kohta"
+        },
+        "fr": {
+          "name": "Sanctions Minecraft (LiteBans)",
+          "description": "Lit les bannissements, mises en sourdine, avertissements et expulsions d’une base LiteBans et les enregistre pour le membre qui possède le compte"
+        },
+        "it": {
+          "name": "Sanzioni Minecraft (LiteBans)",
+          "description": "Legge ban, mute, avvisi ed espulsioni da un database LiteBans e li registra a carico del membro che possiede l’account"
+        },
+        "pl": {
+          "name": "Kary w Minecraft (LiteBans)",
+          "description": "Odczytuje bany, wyciszenia, ostrzeżenia i wyrzucenia z bazy LiteBans i zapisuje je na koncie członka, który jest właścicielem konta"
+        },
+        "pt": {
+          "name": "Punições do Minecraft (LiteBans)",
+          "description": "Lê banimentos, silenciamentos, avisos e expulsões de um banco de dados LiteBans e os registra no membro dono da conta"
+        },
+        "ru": {
+          "name": "Наказания Minecraft (LiteBans)",
+          "description": "Читает баны, муты, предупреждения и кики из базы данных LiteBans и записывает их на участника, которому принадлежит учетная запись"
+        },
         "tr": {
           "name": "Minecraft Cezaları (LiteBans)",
           "description": "Bir LiteBans veritabanındaki yasakları, susturmaları, uyarıları ve atmaları okur ve hesabın sahibi olan üyenin kaydına yazar"
+        },
+        "zh": {
+          "name": "Minecraft 处罚（LiteBans）",
+          "description": "从 LiteBans 数据库读取封禁、禁言、警告和踢出记录，并将其记入拥有该账户的成员名下"
         }
       },
       "version": "2.2.0",
@@ -1894,9 +3854,49 @@
       "name": "Mollie Payment Gateway",
       "description": "Take iDEAL, Bancontact, SEPA and card payments through Mollie",
       "i18n": {
+        "az": {
+          "name": "Mollie ödəniş şlüzü",
+          "description": "Mollie vasitəsilə iDEAL, Bancontact, SEPA və kart ödənişlərini qəbul edin"
+        },
+        "de": {
+          "name": "Mollie-Zahlungsgateway",
+          "description": "iDEAL-, Bancontact-, SEPA- und Kartenzahlungen über Mollie annehmen"
+        },
+        "es": {
+          "name": "Pasarela de pago Mollie",
+          "description": "Acepta pagos con iDEAL, Bancontact, SEPA y tarjeta a través de Mollie"
+        },
+        "et": {
+          "name": "Mollie maksevärav",
+          "description": "Võta iDEAL-, Bancontacti, SEPA- ja kaardimakseid Mollie kaudu"
+        },
+        "fr": {
+          "name": "Passerelle de paiement Mollie",
+          "description": "Encaisser des paiements par iDEAL, Bancontact, SEPA et carte via Mollie"
+        },
+        "it": {
+          "name": "Gateway di pagamento Mollie",
+          "description": "Accetta pagamenti con iDEAL, Bancontact, SEPA e carta tramite Mollie"
+        },
+        "pl": {
+          "name": "Bramka płatności Mollie",
+          "description": "Przyjmuj płatności iDEAL, Bancontact, SEPA i kartą przez Mollie"
+        },
+        "pt": {
+          "name": "Gateway de pagamento Mollie",
+          "description": "Receba pagamentos com iDEAL, Bancontact, SEPA e cartão pelo Mollie"
+        },
+        "ru": {
+          "name": "Платежный шлюз Mollie",
+          "description": "Прием платежей через iDEAL, Bancontact, SEPA и картой через Mollie"
+        },
         "tr": {
           "name": "Mollie Ödeme Altyapısı",
           "description": "Mollie üzerinden iDEAL, Bancontact, SEPA ve kart ödemelerini alın"
+        },
+        "zh": {
+          "name": "Mollie 支付网关",
+          "description": "通过 Mollie 接受 iDEAL、Bancontact、SEPA 和银行卡付款"
         }
       },
       "version": "1.4.0",
@@ -1938,9 +3938,49 @@
       "name": "Naver Login",
       "description": "Allow users to sign in with their Naver account",
       "i18n": {
+        "az": {
+          "name": "Naver Login",
+          "description": "İstifadəçilərə Naver hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Naver-Login",
+          "description": "Mitglieder können sich mit ihrem Naver-Konto anmelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Naver",
+          "description": "Permite que los usuarios inicien sesión con su cuenta de Naver"
+        },
+        "et": {
+          "name": "Naveri sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Naveri kontoga"
+        },
+        "fr": {
+          "name": "Connexion Naver",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Naver"
+        },
+        "it": {
+          "name": "Accesso con Naver",
+          "description": "Consenti agli utenti di accedere con il proprio account Naver"
+        },
+        "pl": {
+          "name": "Logowanie przez Naver",
+          "description": "Pozwól członkom logować się przez konto Naver"
+        },
+        "pt": {
+          "name": "Login com Naver",
+          "description": "Permite que membros entrem com a conta da Naver"
+        },
+        "ru": {
+          "name": "Вход через Naver",
+          "description": "Разрешить пользователям входить через свою учетную запись Naver"
+        },
         "tr": {
           "name": "Naver ile Giriş",
           "description": "Kullanıcıların Naver hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Naver 登录",
+          "description": "允许用户使用其 Naver 账户登录"
         }
       },
       "version": "1.3.0",
@@ -1973,9 +4013,49 @@
       "name": "NOWPayments Gateway",
       "description": "Take payments in 200+ cryptocurrencies through NOWPayments",
       "i18n": {
+        "az": {
+          "name": "NOWPayments şlüzü",
+          "description": "NOWPayments vasitəsilə 200-dən çox kriptovalyutada ödənişlər qəbul edin"
+        },
+        "de": {
+          "name": "NOWPayments-Gateway",
+          "description": "Zahlungen in über 200 Kryptowährungen über NOWPayments annehmen"
+        },
+        "es": {
+          "name": "Pasarela NOWPayments",
+          "description": "Acepta pagos en más de 200 criptomonedas a través de NOWPayments"
+        },
+        "et": {
+          "name": "NOWPaymentsi maksevärav",
+          "description": "Võta vastu makseid enam kui 200 krüptovaluutas NOWPaymentsi kaudu"
+        },
+        "fr": {
+          "name": "Passerelle NOWPayments",
+          "description": "Encaisser des paiements en plus de 200 cryptomonnaies via NOWPayments"
+        },
+        "it": {
+          "name": "Gateway NOWPayments",
+          "description": "Accetta pagamenti in oltre 200 criptovalute tramite NOWPayments"
+        },
+        "pl": {
+          "name": "Bramka NOWPayments",
+          "description": "Przyjmuj płatności w ponad 200 kryptowalutach przez NOWPayments"
+        },
+        "pt": {
+          "name": "Gateway NOWPayments",
+          "description": "Receba pagamentos em mais de 200 criptomoedas pelo NOWPayments"
+        },
+        "ru": {
+          "name": "Шлюз NOWPayments",
+          "description": "Прием платежей в более чем 200 криптовалютах через NOWPayments"
+        },
         "tr": {
           "name": "NOWPayments Altyapısı",
           "description": "NOWPayments üzerinden 200'den fazla kripto para ile ödeme alın"
+        },
+        "zh": {
+          "name": "NOWPayments 网关",
+          "description": "通过 NOWPayments 接受 200 多种加密货币付款"
         }
       },
       "version": "1.4.0",
@@ -2017,9 +4097,49 @@
       "name": "Param Payment Gateway",
       "description": "Take Turkish card and instalment payments through Param (TurkPos)",
       "i18n": {
+        "az": {
+          "name": "Param ödəniş şlüzü",
+          "description": "Param (TurkPos) vasitəsilə Türkiyə kart və taksit ödənişlərini qəbul edin"
+        },
+        "de": {
+          "name": "Param-Zahlungsgateway",
+          "description": "Türkische Karten- und Ratenzahlungen über Param (TurkPos) annehmen"
+        },
+        "es": {
+          "name": "Pasarela de pago Param",
+          "description": "Acepta pagos con tarjeta turca y a plazos a través de Param (TurkPos)"
+        },
+        "et": {
+          "name": "Parami maksevärav",
+          "description": "Võta vastu Türgi kaardi- ja osamaksemakseid Parami (TurkPos) kaudu"
+        },
+        "fr": {
+          "name": "Passerelle de paiement Param",
+          "description": "Encaisser des paiements par carte turque et en plusieurs fois via Param (TurkPos)"
+        },
+        "it": {
+          "name": "Gateway di pagamento Param",
+          "description": "Accetta pagamenti con carta e a rate di emittenti turche tramite Param (TurkPos)"
+        },
+        "pl": {
+          "name": "Bramka płatności Param",
+          "description": "Przyjmuj tureckie płatności kartą i ratalne przez Param (TurkPos)"
+        },
+        "pt": {
+          "name": "Gateway de pagamento Param",
+          "description": "Receba pagamentos com cartão turco e parcelados pelo Param (TurkPos)"
+        },
+        "ru": {
+          "name": "Платежный шлюз Param",
+          "description": "Прием турецких карточных платежей и платежей в рассрочку через Param (TurkPos)"
+        },
         "tr": {
           "name": "Param Ödeme Altyapısı",
           "description": "Param (TurkPos) üzerinden Türk kartı ve taksitli ödemeleri alın"
+        },
+        "zh": {
+          "name": "Param 支付网关",
+          "description": "通过 Param（TurkPos）接受土耳其银行卡和分期付款"
         }
       },
       "version": "1.4.0",
@@ -2060,9 +4180,49 @@
       "name": "Parasut Invoicing",
       "description": "Issues a sales invoice in Parasut for every paid order, using the invoice details the checkout collected.",
       "i18n": {
+        "az": {
+          "name": "Parasut fakturalaşdırma",
+          "description": "Bu mağazanın ödənilmiş sifarişlərini Parasut-a göndərir və o, faktura yaradır"
+        },
+        "de": {
+          "name": "Parasut-Rechnungsstellung",
+          "description": "Sendet die bezahlten Bestellungen dieses Shops an Parasut, das die Rechnung erstellt"
+        },
+        "es": {
+          "name": "Facturación con Parasut",
+          "description": "Envía los pedidos pagados de esta tienda a Parasut, que emite la factura"
+        },
+        "et": {
+          "name": "Parasut-arved",
+          "description": "Saadab selle poe makstud tellimused Parasutile, mis koostab arve"
+        },
+        "fr": {
+          "name": "Facturation Parasut",
+          "description": "Envoie les commandes payées de cette boutique à Parasut, qui émet la facture"
+        },
+        "it": {
+          "name": "Fatturazione Parasut",
+          "description": "Invia a Parasut gli ordini pagati di questo negozio, che emette la fattura"
+        },
+        "pl": {
+          "name": "Fakturowanie Parasut",
+          "description": "Wysyła opłacone zamówienia tego sklepu do Parasut, który wystawia fakturę"
+        },
+        "pt": {
+          "name": "Emissão de faturas Parasut",
+          "description": "Envia os pedidos pagos desta loja para o Parasut, que emite a fatura"
+        },
+        "ru": {
+          "name": "Выставление счетов Parasut",
+          "description": "Отправляет оплаченные заказы этого магазина в Parasut, который выставляет счет"
+        },
         "tr": {
           "name": "Paraşüt Faturalama",
           "description": "Bu mağazanın ödenmiş siparişlerini faturayı kesen Paraşüt'e gönderir"
+        },
+        "zh": {
+          "name": "Parasut 开票",
+          "description": "将本店铺已付款的订单发送至 Parasut，由其开具发票"
         }
       },
       "version": "1.6.0",
@@ -2100,9 +4260,49 @@
       "name": "Patreon Login",
       "description": "Allow users to sign in with their Patreon account",
       "i18n": {
+        "az": {
+          "name": "Patreon ilə daxil olma",
+          "description": "İstifadəçilərə Patreon hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Patreon-Login",
+          "description": "Mitgliedern erlauben, sich mit ihrem Patreon-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Patreon",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Patreon"
+        },
+        "et": {
+          "name": "Patreoni sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Patreoni kontoga"
+        },
+        "fr": {
+          "name": "Connexion Patreon",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Patreon"
+        },
+        "it": {
+          "name": "Accesso con Patreon",
+          "description": "Consenti ai membri di accedere con il proprio account Patreon"
+        },
+        "pl": {
+          "name": "Logowanie przez Patreon",
+          "description": "Pozwól użytkownikom logować się przy użyciu konta Patreon"
+        },
+        "pt": {
+          "name": "Login com Patreon",
+          "description": "Permite que usuários entrem com a conta do Patreon"
+        },
+        "ru": {
+          "name": "Вход через Patreon",
+          "description": "Разрешить пользователям входить с помощью аккаунта Patreon"
+        },
         "tr": {
           "name": "Patreon ile Giriş",
           "description": "Kullanıcıların Patreon hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Patreon 登录",
+          "description": "允许用户使用其 Patreon 账户登录"
         }
       },
       "version": "1.3.0",
@@ -2135,9 +4335,49 @@
       "name": "Paymentwall Gateway",
       "description": "Take local payments, wallets and mobile billing through Paymentwall",
       "i18n": {
+        "az": {
+          "name": "Paymentwall şlüzü",
+          "description": "Paymentwall vasitəsilə yerli ödənişləri, pul kisələrini və mobil hesablaşmanı qəbul edin"
+        },
+        "de": {
+          "name": "Paymentwall-Gateway",
+          "description": "Lokale Zahlungen, Wallets und Mobilfunkabrechnung über Paymentwall annehmen"
+        },
+        "es": {
+          "name": "Pasarela de Paymentwall",
+          "description": "Acepta pagos locales, monederos y facturación móvil a través de Paymentwall"
+        },
+        "et": {
+          "name": "Paymentwalli värav",
+          "description": "Võta vastu kohalikke makseid, rahakotte ja mobiilarveid Paymentwalli kaudu"
+        },
+        "fr": {
+          "name": "Passerelle Paymentwall",
+          "description": "Acceptez les paiements locaux, portefeuilles et facturation mobile via Paymentwall"
+        },
+        "it": {
+          "name": "Gateway Paymentwall",
+          "description": "Accetta pagamenti locali, wallet e addebiti mobili tramite Paymentwall"
+        },
+        "pl": {
+          "name": "Bramka Paymentwall",
+          "description": "Przyjmuj lokalne płatności, portfele i płatności mobilne przez Paymentwall"
+        },
+        "pt": {
+          "name": "Gateway Paymentwall",
+          "description": "Receba pagamentos locais, carteiras digitais e cobranças no celular pelo Paymentwall"
+        },
+        "ru": {
+          "name": "Шлюз Paymentwall",
+          "description": "Принимайте локальные платежи, электронные кошельки и мобильные платежи через Paymentwall"
+        },
         "tr": {
           "name": "Paymentwall Altyapısı",
           "description": "Paymentwall üzerinden yerel ödemeleri, cüzdanları ve mobil faturalandırmayı kullanın"
+        },
+        "zh": {
+          "name": "Paymentwall 支付网关",
+          "description": "通过 Paymentwall 接受本地支付、电子钱包和移动话费支付"
         }
       },
       "version": "1.4.0",
@@ -2178,9 +4418,49 @@
       "name": "PayPal Payment Gateway",
       "description": "Take payments through PayPal, with a balance or a linked card",
       "i18n": {
+        "az": {
+          "name": "PayPal ödəniş şlüzü",
+          "description": "PayPal vasitəsilə balansla və ya bağlı kartla ödənişləri qəbul edin"
+        },
+        "de": {
+          "name": "PayPal-Zahlungs-Gateway",
+          "description": "Zahlungen über PayPal annehmen, mit Guthaben oder einer verknüpften Karte"
+        },
+        "es": {
+          "name": "Pasarela de pago de PayPal",
+          "description": "Acepta pagos a través de PayPal, con saldo o con una tarjeta vinculada"
+        },
+        "et": {
+          "name": "PayPali maksevärav",
+          "description": "Võta makseid vastu PayPali kaudu, saldo või seotud kaardiga"
+        },
+        "fr": {
+          "name": "Passerelle de paiement PayPal",
+          "description": "Acceptez les paiements via PayPal, avec un solde ou une carte liée"
+        },
+        "it": {
+          "name": "Gateway di pagamento PayPal",
+          "description": "Accetta pagamenti tramite PayPal, con saldo o carta collegata"
+        },
+        "pl": {
+          "name": "Bramka płatności PayPal",
+          "description": "Przyjmuj płatności przez PayPal, z saldem lub połączoną kartą"
+        },
+        "pt": {
+          "name": "Gateway de pagamento PayPal",
+          "description": "Receba pagamentos pelo PayPal, com saldo ou cartão vinculado"
+        },
+        "ru": {
+          "name": "Платежный шлюз PayPal",
+          "description": "Принимайте платежи через PayPal с баланса или привязанной карты"
+        },
         "tr": {
           "name": "PayPal Ödeme Altyapısı",
           "description": "PayPal üzerinden bakiye veya bağlı kartla ödeme alın"
+        },
+        "zh": {
+          "name": "PayPal 支付网关",
+          "description": "通过 PayPal 收款，支持余额或绑定的银行卡"
         }
       },
       "version": "2.4.0",
@@ -2220,9 +4500,49 @@
       "name": "paysafecard Gateway",
       "description": "Take prepaid voucher payments through paysafecard, for buyers with no card or bank account",
       "i18n": {
+        "az": {
+          "name": "paysafecard şlüzü",
+          "description": "Kartı və ya bank hesabı olmayan alıcılar üçün paysafecard ilə ön ödənişli kupon ödənişlərini qəbul edin"
+        },
+        "de": {
+          "name": "paysafecard-Gateway",
+          "description": "Prepaid-Gutschein-Zahlungen über paysafecard annehmen, für Käufer ohne Karte oder Bankkonto"
+        },
+        "es": {
+          "name": "Pasarela de paysafecard",
+          "description": "Acepta pagos con vales prepagados de paysafecard, para compradores sin tarjeta ni cuenta bancaria"
+        },
+        "et": {
+          "name": "paysafecardi värav",
+          "description": "Võta vastu eelmakstud kupongimakseid paysafecardi kaudu ostjatelt, kellel pole kaarti ega pangakontot"
+        },
+        "fr": {
+          "name": "Passerelle paysafecard",
+          "description": "Acceptez les paiements par bon prépayé paysafecard, pour les acheteurs sans carte ni compte bancaire"
+        },
+        "it": {
+          "name": "Gateway paysafecard",
+          "description": "Accetta pagamenti con voucher prepagati paysafecard, per chi non ha carta o conto bancario"
+        },
+        "pl": {
+          "name": "Bramka paysafecard",
+          "description": "Przyjmuj płatności bonami przedpłaconymi paysafecard, dla kupujących bez karty ani konta bankowego"
+        },
+        "pt": {
+          "name": "Gateway paysafecard",
+          "description": "Receba pagamentos com cartões pré-pagos do paysafecard, para compradores sem cartão ou conta bancária"
+        },
+        "ru": {
+          "name": "Шлюз paysafecard",
+          "description": "Принимайте платежи предоплаченными ваучерами paysafecard от покупателей без карты или банковского счета"
+        },
         "tr": {
           "name": "paysafecard Altyapısı",
           "description": "Kartı ya da banka hesabı olmayan alıcılar için paysafecard ön ödemeli kupon ödemelerini alın"
+        },
+        "zh": {
+          "name": "paysafecard 支付网关",
+          "description": "面向没有银行卡或银行账户的买家，通过 paysafecard 预付码收款"
         }
       },
       "version": "1.4.0",
@@ -2263,9 +4583,49 @@
       "name": "PayTR Payment Gateway",
       "description": "Take Turkish card, instalment and bank transfer payments through PayTR",
       "i18n": {
+        "az": {
+          "name": "PayTR ödəniş şlüzü",
+          "description": "PayTR vasitəsilə Türkiyə kartları, taksit və bank köçürməsi ilə ödənişləri qəbul edin"
+        },
+        "de": {
+          "name": "PayTR-Zahlungs-Gateway",
+          "description": "Türkische Karten-, Ratenzahlungs- und Überweisungszahlungen über PayTR annehmen"
+        },
+        "es": {
+          "name": "Pasarela de pago de PayTR",
+          "description": "Acepta pagos turcos con tarjeta, a plazos y por transferencia bancaria a través de PayTR"
+        },
+        "et": {
+          "name": "PayTRi maksevärav",
+          "description": "Võta vastu Türgi kaardi-, osamakse- ja pangaülekandemakseid PayTRi kaudu"
+        },
+        "fr": {
+          "name": "Passerelle de paiement PayTR",
+          "description": "Acceptez les paiements par carte turque, en plusieurs fois et par virement via PayTR"
+        },
+        "it": {
+          "name": "Gateway di pagamento PayTR",
+          "description": "Accetta pagamenti con carte turche, rate e bonifico tramite PayTR"
+        },
+        "pl": {
+          "name": "Bramka płatności PayTR",
+          "description": "Przyjmuj tureckie płatności kartą, ratalne i przelewy bankowe przez PayTR"
+        },
+        "pt": {
+          "name": "Gateway de pagamento PayTR",
+          "description": "Receba pagamentos turcos com cartão, parcelado e transferência bancária pelo PayTR"
+        },
+        "ru": {
+          "name": "Платежный шлюз PayTR",
+          "description": "Принимайте через PayTR турецкие карты, платежи в рассрочку и банковские переводы"
+        },
         "tr": {
           "name": "PayTR Ödeme Altyapısı",
           "description": "PayTR üzerinden Türk kartı, taksit ve havale ödemelerini alın"
+        },
+        "zh": {
+          "name": "PayTR 支付网关",
+          "description": "通过 PayTR 接受土耳其银行卡、分期付款和银行转账"
         }
       },
       "version": "1.4.0",
@@ -2306,9 +4666,49 @@
       "name": "Popups",
       "description": "Modal popup notifications and promotions",
       "i18n": {
+        "az": {
+          "name": "Açılan pəncərələr",
+          "description": "Modal açılan pəncərə bildirişləri və kampaniyalar"
+        },
+        "de": {
+          "name": "Popups",
+          "description": "Modale Popup-Benachrichtigungen und Aktionen"
+        },
+        "es": {
+          "name": "Ventanas emergentes",
+          "description": "Ventanas emergentes modales y promociones"
+        },
+        "et": {
+          "name": "Hüpikaknad",
+          "description": "Modaalsed hüpikteavitused ja reklaamid"
+        },
+        "fr": {
+          "name": "Fenêtres contextuelles",
+          "description": "Fenêtres modales de notification et de promotion"
+        },
+        "it": {
+          "name": "Popup",
+          "description": "Notifiche popup modali e promozioni"
+        },
+        "pl": {
+          "name": "Wyskakujące okna",
+          "description": "Modalne powiadomienia i promocje"
+        },
+        "pt": {
+          "name": "Pop-ups",
+          "description": "Notificações modais em pop-up e promoções"
+        },
+        "ru": {
+          "name": "Всплывающие окна",
+          "description": "Модальные всплывающие уведомления и акции"
+        },
         "tr": {
           "name": "Açılır Pencereler",
           "description": "Modal açılır pencere bildirimleri ve tanıtımları"
+        },
+        "zh": {
+          "name": "弹窗",
+          "description": "模态弹窗通知和促销活动"
         }
       },
       "version": "1.4.0",
@@ -2341,9 +4741,49 @@
       "name": "Profile Posts",
       "description": "A wall on every member's profile: short notes addressed to the person rather than comments on a thing, with one level of replies.",
       "i18n": {
+        "az": {
+          "name": "Profil yazıları",
+          "description": "Hər üzvün profilində bir divar və bir səviyyə cavab"
+        },
+        "de": {
+          "name": "Profil-Beiträge",
+          "description": "Eine Pinnwand auf jedem Mitgliedsprofil, mit einer Ebene von Antworten"
+        },
+        "es": {
+          "name": "Publicaciones del perfil",
+          "description": "Un muro en el perfil de cada miembro, con un nivel de respuestas"
+        },
+        "et": {
+          "name": "Profiilipostitused",
+          "description": "Sein iga liikme profiilil, ühe vastusetasemega"
+        },
+        "fr": {
+          "name": "Messages du profil",
+          "description": "Un mur sur le profil de chaque membre, avec un niveau de réponses"
+        },
+        "it": {
+          "name": "Post del profilo",
+          "description": "Una bacheca sul profilo di ogni membro, con un livello di risposte"
+        },
+        "pl": {
+          "name": "Wpisy na profilach",
+          "description": "Ściana na profilu każdego członka, z jednym poziomem odpowiedzi"
+        },
+        "pt": {
+          "name": "Publicações no perfil",
+          "description": "Um mural no perfil de todos os membros, com um nível de respostas"
+        },
+        "ru": {
+          "name": "Записи на профиле",
+          "description": "Стена на профиле каждого участника с одним уровнем ответов"
+        },
         "tr": {
           "name": "Profil Gönderileri",
           "description": "Her üyenin profilinde bir duvar, tek seviyeli yanıtlarla"
+        },
+        "zh": {
+          "name": "个人资料留言",
+          "description": "每位成员的个人资料上都有一块留言板，支持一层回复"
         }
       },
       "version": "1.1.0",
@@ -2378,9 +4818,49 @@
       "name": "Punishments",
       "description": "Bans, mutes and warnings against members, issued here or reported by a module that watches somewhere else",
       "i18n": {
+        "az": {
+          "name": "Cəzalar",
+          "description": "Üzvlərə qarşı qadağalar, susdurmalar və xəbərdarlıqlar, burada verilən və ya başqa yerdə izləyən modul tərəfindən bildirilən"
+        },
+        "de": {
+          "name": "Strafen",
+          "description": "Sperren, Stummschaltungen und Verwarnungen gegen Mitglieder, hier ausgesprochen oder von einem Modul gemeldet, das woanders überwacht"
+        },
+        "es": {
+          "name": "Sanciones",
+          "description": "Bans, silencios y advertencias contra miembros, emitidos aquí o reportados por un módulo que vigila en otro lugar"
+        },
+        "et": {
+          "name": "Karistused",
+          "description": "Liikmetele antud keelud, vaigistused ja hoiatused, mis on välja antud siin või mõne mujal jälgiva mooduli poolt teatatud"
+        },
+        "fr": {
+          "name": "Sanctions",
+          "description": "Bannissements, mises en sourdine et avertissements contre les membres, émis ici ou signalés par un module qui surveille ailleurs"
+        },
+        "it": {
+          "name": "Sanzioni",
+          "description": "Ban, mute e ammonimenti contro i membri, emessi qui o segnalati da un modulo che controlla altrove"
+        },
+        "pl": {
+          "name": "Kary",
+          "description": "Bany, wyciszenia i ostrzeżenia dla członków, wystawiane tutaj albo zgłaszane przez moduł, który działa gdzie indziej"
+        },
+        "pt": {
+          "name": "Punições",
+          "description": "Banimentos, silenciamentos e avisos contra membros, emitidos aqui ou reportados por um módulo que monitora outro lugar"
+        },
+        "ru": {
+          "name": "Наказания",
+          "description": "Баны, муты и предупреждения для участников: выданные здесь или переданные модулем, который отслеживает наказания в другом месте"
+        },
         "tr": {
           "name": "Cezalar",
           "description": "Üyelere verilen yasak, susturma ve uyarılar; burada verilenler ve başka bir yeri izleyen modülün bildirdikleri"
+        },
+        "zh": {
+          "name": "处罚",
+          "description": "针对成员的封禁、禁言和警告，可在此发出，也可由其他位置的模块上报"
         }
       },
       "version": "1.7.2",
@@ -2421,9 +4901,49 @@
       "name": "Razorpay Gateway",
       "description": "Take UPI, card, netbanking and wallet payments in India through Razorpay",
       "i18n": {
+        "az": {
+          "name": "Razorpay şlüzü",
+          "description": "Razorpay vasitəsilə Hindistanda UPI, kart, internet bankinqi və pul kisəsi ilə ödənişləri qəbul edin"
+        },
+        "de": {
+          "name": "Razorpay-Gateway",
+          "description": "UPI-, Karten-, Netbanking- und Wallet-Zahlungen in Indien über Razorpay annehmen"
+        },
+        "es": {
+          "name": "Pasarela de Razorpay",
+          "description": "Acepta pagos con UPI, tarjeta, banca en línea y monederos en India a través de Razorpay"
+        },
+        "et": {
+          "name": "Razorpayi värav",
+          "description": "Võta Indias vastu UPI-, kaardi-, internetipanga- ja rahakotimakseid Razorpayi kaudu"
+        },
+        "fr": {
+          "name": "Passerelle Razorpay",
+          "description": "Acceptez les paiements UPI, par carte, banque en ligne et portefeuille en Inde via Razorpay"
+        },
+        "it": {
+          "name": "Gateway Razorpay",
+          "description": "Accetta pagamenti UPI, con carta, netbanking e wallet in India tramite Razorpay"
+        },
+        "pl": {
+          "name": "Bramka Razorpay",
+          "description": "Przyjmuj płatności UPI, kartą, przez bankowość internetową i portfele w Indiach przez Razorpay"
+        },
+        "pt": {
+          "name": "Gateway Razorpay",
+          "description": "Receba pagamentos por UPI, cartão, netbanking e carteira na Índia pelo Razorpay"
+        },
+        "ru": {
+          "name": "Шлюз Razorpay",
+          "description": "Принимайте в Индии платежи через Razorpay: UPI, картами, интернет-банкингом и электронными кошельками"
+        },
         "tr": {
           "name": "Razorpay Altyapısı",
           "description": "Razorpay üzerinden Hindistan'da UPI, kart, internet bankacılığı ve cüzdan ödemelerini alın"
+        },
+        "zh": {
+          "name": "Razorpay 支付网关",
+          "description": "在印度通过 Razorpay 接受 UPI、银行卡、网银和电子钱包付款"
         }
       },
       "version": "1.4.0",
@@ -2465,9 +4985,49 @@
       "name": "Reddit Login",
       "description": "Allow users to sign in with their Reddit account",
       "i18n": {
+        "az": {
+          "name": "Reddit ilə daxil olma",
+          "description": "İstifadəçilərə Reddit hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Reddit-Login",
+          "description": "Mitgliedern erlauben, sich mit ihrem Reddit-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Reddit",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Reddit"
+        },
+        "et": {
+          "name": "Redditi sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Redditi kontoga"
+        },
+        "fr": {
+          "name": "Connexion Reddit",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Reddit"
+        },
+        "it": {
+          "name": "Accesso con Reddit",
+          "description": "Consenti ai membri di accedere con il proprio account Reddit"
+        },
+        "pl": {
+          "name": "Logowanie przez Reddit",
+          "description": "Pozwól użytkownikom logować się przy użyciu konta Reddit"
+        },
+        "pt": {
+          "name": "Login com Reddit",
+          "description": "Permite que usuários entrem com a conta do Reddit"
+        },
+        "ru": {
+          "name": "Вход через Reddit",
+          "description": "Разрешить пользователям входить с помощью аккаунта Reddit"
+        },
         "tr": {
           "name": "Reddit ile Giriş",
           "description": "Kullanıcıların Reddit hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Reddit 登录",
+          "description": "允许用户使用其 Reddit 账户登录"
         }
       },
       "version": "1.3.0",
@@ -2500,9 +5060,49 @@
       "name": "Referral System",
       "description": "Earn credits by referring new users",
       "i18n": {
+        "az": {
+          "name": "Referal sistemi",
+          "description": "Yeni istifadəçiləri dəvət edərək kredit qazanın"
+        },
+        "de": {
+          "name": "Empfehlungssystem",
+          "description": "Credits verdienen, indem neue Benutzer geworben werden"
+        },
+        "es": {
+          "name": "Sistema de referidos",
+          "description": "Gana créditos refiriendo a nuevos usuarios"
+        },
+        "et": {
+          "name": "Viitamissüsteem",
+          "description": "Teeni krediite, suunates uusi kasutajaid"
+        },
+        "fr": {
+          "name": "Système de parrainage",
+          "description": "Gagnez des crédits en parrainant de nouveaux utilisateurs"
+        },
+        "it": {
+          "name": "Sistema referral",
+          "description": "Guadagna crediti segnalando nuovi utenti"
+        },
+        "pl": {
+          "name": "System poleceń",
+          "description": "Zdobywaj kredyty, polecając nowych użytkowników"
+        },
+        "pt": {
+          "name": "Sistema de indicação",
+          "description": "Ganhe créditos indicando novos usuários"
+        },
+        "ru": {
+          "name": "Реферальная система",
+          "description": "Зарабатывайте кредиты, приглашая новых пользователей"
+        },
         "tr": {
           "name": "Referans Sistemi",
           "description": "Yeni kullanıcı davet ederek kredi kazanın"
+        },
+        "zh": {
+          "name": "推荐系统",
+          "description": "通过推荐新用户赚取积分"
         }
       },
       "version": "1.6.3",
@@ -2541,9 +5141,49 @@
       "name": "Resend Email Provider",
       "description": "Send emails via Resend API",
       "i18n": {
+        "az": {
+          "name": "Resend e-poçt provayderi",
+          "description": "E-poçtları Resend API ilə göndərin"
+        },
+        "de": {
+          "name": "Resend-E-Mail-Anbieter",
+          "description": "E-Mails über die Resend-API versenden"
+        },
+        "es": {
+          "name": "Proveedor de correo Resend",
+          "description": "Envía correos a través de la API de Resend"
+        },
+        "et": {
+          "name": "Resendi e-posti teenusepakkuja",
+          "description": "Saada e-kirju Resendi API kaudu"
+        },
+        "fr": {
+          "name": "Fournisseur d’e-mails Resend",
+          "description": "Envoyer des e-mails via l’API Resend"
+        },
+        "it": {
+          "name": "Provider email Resend",
+          "description": "Invia email tramite API Resend"
+        },
+        "pl": {
+          "name": "Dostawca e-maili Resend",
+          "description": "Wysyłaj e-maile przez API Resend"
+        },
+        "pt": {
+          "name": "Provedor de e-mail Resend",
+          "description": "Envie e-mails pela API do Resend"
+        },
+        "ru": {
+          "name": "Провайдер e-mail Resend",
+          "description": "Отправка писем через API Resend"
+        },
         "tr": {
           "name": "Resend E-posta Sağlayıcısı",
           "description": "Resend API üzerinden e-posta gönderin"
+        },
+        "zh": {
+          "name": "Resend 邮件服务商",
+          "description": "通过 Resend API 发送邮件"
         }
       },
       "version": "1.5.0",
@@ -2578,9 +5218,49 @@
       "name": "Roblox Login",
       "description": "Allow users to sign in with their Roblox account",
       "i18n": {
+        "az": {
+          "name": "Roblox ilə daxil olma",
+          "description": "İstifadəçilərə Roblox hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Roblox-Login",
+          "description": "Benutzern erlauben, sich mit ihrem Roblox-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Roblox",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Roblox"
+        },
+        "et": {
+          "name": "Robloxi sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Robloxi kontoga"
+        },
+        "fr": {
+          "name": "Connexion Roblox",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Roblox"
+        },
+        "it": {
+          "name": "Accesso Roblox",
+          "description": "Consenti agli utenti di accedere con il proprio account Roblox"
+        },
+        "pl": {
+          "name": "Logowanie Roblox",
+          "description": "Pozwól użytkownikom logować się przy użyciu konta Roblox"
+        },
+        "pt": {
+          "name": "Login com Roblox",
+          "description": "Permite que usuários entrem com a conta do Roblox"
+        },
+        "ru": {
+          "name": "Вход через Roblox",
+          "description": "Разрешить пользователям входить с помощью аккаунта Roblox"
+        },
         "tr": {
           "name": "Roblox ile Giriş",
           "description": "Kullanıcıların Roblox hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Roblox 登录",
+          "description": "允许用户使用其 Roblox 账户登录"
         }
       },
       "version": "1.3.0",
@@ -2613,9 +5293,49 @@
       "name": "SEO Manager",
       "description": "Advanced SEO management with per-page meta tags, OpenGraph, and structured data",
       "i18n": {
+        "az": {
+          "name": "SEO meneceri",
+          "description": "Hər səhifə üzrə meta etiketlər, OpenGraph və strukturlaşdırılmış məlumatla təkmil SEO idarəetməsi"
+        },
+        "de": {
+          "name": "SEO-Manager",
+          "description": "Erweiterte SEO-Verwaltung mit Meta-Tags pro Seite, OpenGraph und strukturierten Daten"
+        },
+        "es": {
+          "name": "Gestor de SEO",
+          "description": "Gestión avanzada de SEO con meta etiquetas por página, OpenGraph y datos estructurados"
+        },
+        "et": {
+          "name": "SEO haldur",
+          "description": "Täpsem SEO haldus lehekülgede kaupa metamärgendite, OpenGraphi ja struktureeritud andmetega"
+        },
+        "fr": {
+          "name": "Gestionnaire SEO",
+          "description": "Gestion SEO avancée avec balises meta par page, OpenGraph et données structurées"
+        },
+        "it": {
+          "name": "Gestione SEO",
+          "description": "Gestione SEO avanzata con meta tag per pagina, OpenGraph e dati strutturati"
+        },
+        "pl": {
+          "name": "Menedżer SEO",
+          "description": "Zaawansowane zarządzanie SEO: meta tagi dla każdej strony, OpenGraph i dane strukturalne"
+        },
+        "pt": {
+          "name": "Gerenciador de SEO",
+          "description": "Gestão avançada de SEO com meta tags por página, OpenGraph e dados estruturados"
+        },
+        "ru": {
+          "name": "Управление SEO",
+          "description": "Расширенное управление SEO: мета-теги для каждой страницы, OpenGraph и структурированные данные"
+        },
         "tr": {
           "name": "SEO Yöneticisi",
           "description": "Sayfa başına meta etiketleri, OpenGraph ve yapılandırılmış veri ile gelişmiş SEO yönetimi"
+        },
+        "zh": {
+          "name": "SEO 管理器",
+          "description": "高级 SEO 管理，支持按页面设置 meta 标签、OpenGraph 和结构化数据"
         }
       },
       "version": "1.6.0",
@@ -2651,9 +5371,49 @@
       "name": "Game Servers",
       "description": "Game server management, RCON, and status monitoring",
       "i18n": {
+        "az": {
+          "name": "Oyun serverləri",
+          "description": "Oyun serveri idarəetməsi, RCON və status monitorinqi"
+        },
+        "de": {
+          "name": "Spielserver",
+          "description": "Verwaltung von Spielservern, RCON und Statusüberwachung"
+        },
+        "es": {
+          "name": "Servidores de juego",
+          "description": "Gestión de servidores de juego, RCON y supervisión del estado"
+        },
+        "et": {
+          "name": "Mängaserverid",
+          "description": "Mänguserverite haldus, RCON ja staatuse jälgimine"
+        },
+        "fr": {
+          "name": "Serveurs de jeu",
+          "description": "Gestion des serveurs de jeu, RCON et suivi de l’état"
+        },
+        "it": {
+          "name": "Server di gioco",
+          "description": "Gestione dei server di gioco, RCON e monitoraggio dello stato"
+        },
+        "pl": {
+          "name": "Serwery gier",
+          "description": "Zarządzanie serwerami gier, RCON i monitorowanie statusu"
+        },
+        "pt": {
+          "name": "Servidores de jogos",
+          "description": "Gerenciamento de servidores de jogos, RCON e monitoramento de status"
+        },
+        "ru": {
+          "name": "Игровые серверы",
+          "description": "Управление игровыми серверами, RCON и мониторинг статуса"
+        },
         "tr": {
           "name": "Oyun Sunucuları",
           "description": "Oyun sunucusu yönetimi, RCON ve durum izleme"
+        },
+        "zh": {
+          "name": "游戏服务器",
+          "description": "游戏服务器管理、RCON 和状态监控"
         }
       },
       "version": "1.5.0",
@@ -2689,9 +5449,49 @@
       "name": "Showcase",
       "description": "A grid of cards: a picture, a heading, a line of text and somewhere to go. What is being shown is the operator's business.",
       "i18n": {
+        "az": {
+          "name": "Vitrin",
+          "description": "İcmanın yaratdıqlarının qalereyası"
+        },
+        "de": {
+          "name": "Showcase",
+          "description": "Eine Galerie dessen, was die Community gebaut hat"
+        },
+        "es": {
+          "name": "Escaparate",
+          "description": "Una galería de lo que ha creado la comunidad"
+        },
+        "et": {
+          "name": "Tutvustus",
+          "description": "Galerii sellest, mida kogukond on loonud"
+        },
+        "fr": {
+          "name": "Vitrine",
+          "description": "Une galerie de ce que la communauté a créé"
+        },
+        "it": {
+          "name": "Vetrina",
+          "description": "Una galleria di ciò che la community ha creato"
+        },
+        "pl": {
+          "name": "Prezentacja",
+          "description": "Galeria tego, co zbudowała społeczność"
+        },
+        "pt": {
+          "name": "Vitrine",
+          "description": "Uma galeria do que a comunidade criou"
+        },
+        "ru": {
+          "name": "Витрина",
+          "description": "Галерея того, что создало сообщество"
+        },
         "tr": {
           "name": "Vitrin",
           "description": "Topluluğun yaptıklarından bir galeri"
+        },
+        "zh": {
+          "name": "展示",
+          "description": "社区作品的展示库"
         }
       },
       "version": "1.7.0",
@@ -2724,9 +5524,49 @@
       "name": "Slider",
       "description": "Homepage image carousel and banners",
       "i18n": {
+        "az": {
+          "name": "Slayder",
+          "description": "Ana səhifə şəkil karuseli və banerlər"
+        },
+        "de": {
+          "name": "Slider",
+          "description": "Bilder-Karussell und Banner der Startseite"
+        },
+        "es": {
+          "name": "Carrusel",
+          "description": "Carrusel de imágenes y banners de la página de inicio"
+        },
+        "et": {
+          "name": "Slaider",
+          "description": "Avalehe pildikarusell ja bännerid"
+        },
+        "fr": {
+          "name": "Diaporama",
+          "description": "Carrousel d’images et bannières de l’accueil"
+        },
+        "it": {
+          "name": "Slider",
+          "description": "Carosello di immagini e banner in homepage"
+        },
+        "pl": {
+          "name": "Slider",
+          "description": "Karuzela obrazów i banery na stronie głównej"
+        },
+        "pt": {
+          "name": "Slider",
+          "description": "Carrossel de imagens e banners da página inicial"
+        },
+        "ru": {
+          "name": "Слайдер",
+          "description": "Карусель изображений и баннеры на главной странице"
+        },
         "tr": {
           "name": "Slayt Gösterisi",
           "description": "Ana sayfa görsel galerisi ve bantları"
+        },
+        "zh": {
+          "name": "轮播图",
+          "description": "首页图片轮播和横幅"
         }
       },
       "version": "1.2.2",
@@ -2759,9 +5599,49 @@
       "name": "SMTP Email Provider",
       "description": "Send email through an SMTP relay you run or pay for",
       "i18n": {
+        "az": {
+          "name": "SMTP e-poçt provayderi",
+          "description": "E-poçtu işlətdiyiniz və ya ödədiyiniz SMTP rele vasitəsilə göndərin"
+        },
+        "de": {
+          "name": "SMTP-E-Mail-Anbieter",
+          "description": "E-Mails über einen SMTP-Relay versenden, den du betreibst oder bezahlst"
+        },
+        "es": {
+          "name": "Proveedor de correo SMTP",
+          "description": "Envía correo a través de un relé SMTP que tú gestionas o pagas"
+        },
+        "et": {
+          "name": "SMTP e-posti teenusepakkuja",
+          "description": "Saada e-kirju SMTP-releed kaudu, mida sa ise käitad või eest maksad"
+        },
+        "fr": {
+          "name": "Fournisseur d’e-mails SMTP",
+          "description": "Envoyer des e-mails via un relais SMTP que vous exploitez ou payez"
+        },
+        "it": {
+          "name": "Provider email SMTP",
+          "description": "Invia email tramite un relay SMTP che gestisci o per cui paghi"
+        },
+        "pl": {
+          "name": "Dostawca e-maili SMTP",
+          "description": "Wysyłaj e-maile przez przekaźnik SMTP, który sam prowadzisz albo za który płacisz"
+        },
+        "pt": {
+          "name": "Provedor de e-mail SMTP",
+          "description": "Envie e-mails por um servidor SMTP que você mantém ou paga"
+        },
+        "ru": {
+          "name": "Провайдер e-mail SMTP",
+          "description": "Отправка писем через SMTP-ретранслятор, который вы развертываете или оплачиваете"
+        },
         "tr": {
           "name": "SMTP E-posta Sağlayıcısı",
           "description": "E-postayı kendi kurduğunuz ya da kiraladığınız bir SMTP sunucusundan gönderin"
+        },
+        "zh": {
+          "name": "SMTP 邮件服务商",
+          "description": "通过你自行运营或付费使用的 SMTP 中继发送邮件"
         }
       },
       "version": "1.1.0",
@@ -2796,9 +5676,49 @@
       "name": "Spotify Login",
       "description": "Allow users to sign in with their Spotify account",
       "i18n": {
+        "az": {
+          "name": "Spotify ilə daxil olma",
+          "description": "İstifadəçilərə Spotify hesabları ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Spotify-Login",
+          "description": "Benutzern erlauben, sich mit ihrem Spotify-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Spotify",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Spotify"
+        },
+        "et": {
+          "name": "Spotify sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Spotify kontoga"
+        },
+        "fr": {
+          "name": "Connexion Spotify",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Spotify"
+        },
+        "it": {
+          "name": "Accesso con Spotify",
+          "description": "Consenti ai membri di accedere con il proprio account Spotify"
+        },
+        "pl": {
+          "name": "Logowanie przez Spotify",
+          "description": "Pozwól użytkownikom logować się przy użyciu konta Spotify"
+        },
+        "pt": {
+          "name": "Login com Spotify",
+          "description": "Permite que usuários entrem com a conta do Spotify"
+        },
+        "ru": {
+          "name": "Вход через Spotify",
+          "description": "Разрешить пользователям входить с помощью аккаунта Spotify"
+        },
         "tr": {
           "name": "Spotify ile Giriş",
           "description": "Kullanıcıların Spotify hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Spotify 登录",
+          "description": "允许用户使用其 Spotify 账户登录"
         }
       },
       "version": "1.3.0",
@@ -2831,9 +5751,49 @@
       "name": "Staff",
       "description": "Staff member listing and applications",
       "i18n": {
+        "az": {
+          "name": "Heyət",
+          "description": "Bu məkanı idarə edən insanlar və onları idarə edən ekran."
+        },
+        "de": {
+          "name": "Team",
+          "description": "Die Menschen, die diesen Ort führen, und die Oberfläche, die sie verwaltet."
+        },
+        "es": {
+          "name": "Equipo",
+          "description": "Las personas que dirigen este lugar, y la pantalla que las gestiona."
+        },
+        "et": {
+          "name": "Personal",
+          "description": "Inimesed, kes seda kohta juhivad, ja ekraan, mis neid haldab."
+        },
+        "fr": {
+          "name": "Équipe",
+          "description": "Les personnes qui dirigent ce lieu, et l’écran qui les gère."
+        },
+        "it": {
+          "name": "Staff",
+          "description": "Le persone che gestiscono questo posto, e la schermata che le gestisce."
+        },
+        "pl": {
+          "name": "Zespół",
+          "description": "Osoby, które prowadzą to miejsce, i ekran, na którym się nimi zarządza."
+        },
+        "pt": {
+          "name": "Equipe",
+          "description": "As pessoas que administram este espaço, e a tela que as gerencia."
+        },
+        "ru": {
+          "name": "Сотрудники",
+          "description": "Люди, которые управляют этим местом, и экран для управления ими."
+        },
         "tr": {
           "name": "Ekip",
           "description": "Burayı yönetenler ve onları yöneten ekran."
+        },
+        "zh": {
+          "name": "员工",
+          "description": "运营这里的人，以及管理他们的界面。"
         }
       },
       "version": "1.6.0",
@@ -2866,9 +5826,49 @@
       "name": "Steam Login",
       "description": "Allow users to sign in with their Steam account",
       "i18n": {
+        "az": {
+          "name": "Steam ilə giriş",
+          "description": "İstifadəçilərin Steam hesabları ilə daxil olmasına icazə verin"
+        },
+        "de": {
+          "name": "Steam-Anmeldung",
+          "description": "Benutzern erlauben, sich mit ihrem Steam-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Steam",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Steam"
+        },
+        "et": {
+          "name": "Steami sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Steami kontoga"
+        },
+        "fr": {
+          "name": "Connexion Steam",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Steam"
+        },
+        "it": {
+          "name": "Accesso con Steam",
+          "description": "Consenti agli utenti di accedere con il proprio account Steam"
+        },
+        "pl": {
+          "name": "Logowanie przez Steam",
+          "description": "Pozwól użytkownikom logować się kontem Steam"
+        },
+        "pt": {
+          "name": "Login com Steam",
+          "description": "Permita que usuários entrem com a própria conta Steam"
+        },
+        "ru": {
+          "name": "Вход через Steam",
+          "description": "Позволяет пользователям входить с помощью учетной записи Steam"
+        },
         "tr": {
           "name": "Steam ile Giriş",
           "description": "Kullanıcıların Steam hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Steam 登录",
+          "description": "允许用户使用其 Steam 账户登录"
         }
       },
       "version": "1.4.0",
@@ -2901,9 +5901,49 @@
       "name": "Store Module",
       "description": "Complete e-commerce functionality with products, categories, cart and orders",
       "i18n": {
+        "az": {
+          "name": "Mağaza modulu",
+          "description": "Məhsullar, kateqoriyalar, səbət və sifarişlərlə tam e-ticarət funksionallığı"
+        },
+        "de": {
+          "name": "Shop-Modul",
+          "description": "Vollständige E-Commerce-Funktionen mit Produkten, Kategorien, Warenkorb und Bestellungen"
+        },
+        "es": {
+          "name": "Módulo de tienda",
+          "description": "Funcionalidad completa de comercio electrónico con productos, categorías, carrito y pedidos"
+        },
+        "et": {
+          "name": "Poe moodul",
+          "description": "Täielik e-kaubanduse funktsioon toodete, kategooriate, ostukorvi ja tellimustega"
+        },
+        "fr": {
+          "name": "Module boutique",
+          "description": "Fonctionnalités e-commerce complètes : produits, catégories, panier et commandes"
+        },
+        "it": {
+          "name": "Modulo Store",
+          "description": "Funzioni di e-commerce complete con prodotti, categorie, carrello e ordini"
+        },
+        "pl": {
+          "name": "Moduł sklepu",
+          "description": "Pełny sklep internetowy z produktami, kategoriami, koszykiem i zamówieniami"
+        },
+        "pt": {
+          "name": "Módulo de loja",
+          "description": "Funcionalidade completa de e-commerce com produtos, categorias, carrinho e pedidos"
+        },
+        "ru": {
+          "name": "Модуль магазина",
+          "description": "Полный функционал интернет-магазина: товары, категории, корзина и заказы"
+        },
         "tr": {
           "name": "Mağaza Modülü",
           "description": "Ürün, kategori, sepet ve siparişleriyle eksiksiz e-ticaret"
+        },
+        "zh": {
+          "name": "商店模块",
+          "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
       "version": "2.47.0",
@@ -2978,9 +6018,49 @@
       "name": "Stripe Payment Gateway",
       "description": "Take card, Apple Pay and Google Pay payments through Stripe, including subscriptions",
       "i18n": {
+        "az": {
+          "name": "Stripe ödəniş şlüzü",
+          "description": "Stripe vasitəsilə kartla, Apple Pay və Google Pay ödənişlərini qəbul edin, abunəliklər daxil"
+        },
+        "de": {
+          "name": "Stripe-Zahlungsgateway",
+          "description": "Zahlungen per Karte, Apple Pay und Google Pay über Stripe annehmen, inklusive Abos"
+        },
+        "es": {
+          "name": "Pasarela de pago Stripe",
+          "description": "Acepta pagos con tarjeta, Apple Pay y Google Pay a través de Stripe, incluidas las suscripciones"
+        },
+        "et": {
+          "name": "Stripe'i makseteenus",
+          "description": "Võta kaardi-, Apple Pay- ja Google Pay-makseid vastu Stripe'i kaudu, sh tellimusi"
+        },
+        "fr": {
+          "name": "Passerelle de paiement Stripe",
+          "description": "Acceptez les paiements par carte, Apple Pay et Google Pay via Stripe, y compris les abonnements"
+        },
+        "it": {
+          "name": "Gateway di pagamento Stripe",
+          "description": "Accetta pagamenti con carta, Apple Pay e Google Pay tramite Stripe, abbonamenti inclusi"
+        },
+        "pl": {
+          "name": "Bramka płatności Stripe",
+          "description": "Przyjmuj płatności kartą, Apple Pay i Google Pay przez Stripe, także subskrypcje"
+        },
+        "pt": {
+          "name": "Gateway de pagamento Stripe",
+          "description": "Aceite pagamentos com cartão, Apple Pay e Google Pay pelo Stripe, incluindo assinaturas"
+        },
+        "ru": {
+          "name": "Платежный шлюз Stripe",
+          "description": "Принимайте платежи картами, Apple Pay и Google Pay через Stripe, включая подписки"
+        },
         "tr": {
           "name": "Stripe Ödeme Altyapısı",
           "description": "Stripe üzerinden abonelikler dahil kart, Apple Pay ve Google Pay ödemelerini alın"
+        },
+        "zh": {
+          "name": "Stripe 支付网关",
+          "description": "通过 Stripe 接受银行卡、Apple Pay 和 Google Pay 付款，包括订阅"
         }
       },
       "version": "2.5.0",
@@ -3023,9 +6103,49 @@
       "name": "Suggestions",
       "description": "Community feature suggestions with voting",
       "i18n": {
+        "az": {
+          "name": "Təkliflər",
+          "description": "Səs verilən icma funksiyası təklifləri"
+        },
+        "de": {
+          "name": "Vorschläge",
+          "description": "Funktionswünsche aus der Community mit Abstimmung"
+        },
+        "es": {
+          "name": "Sugerencias",
+          "description": "Sugerencias de funciones de la comunidad con votación"
+        },
+        "et": {
+          "name": "Ettepanekud",
+          "description": "Kogukonna funktsiooniettepanekud hääletamisega"
+        },
+        "fr": {
+          "name": "Suggestions",
+          "description": "Suggestions de fonctionnalités de la communauté, avec vote"
+        },
+        "it": {
+          "name": "Suggerimenti",
+          "description": "Suggerimenti di funzioni per la community, con votazione"
+        },
+        "pl": {
+          "name": "Sugestie",
+          "description": "Społecznościowe propozycje funkcji z głosowaniem"
+        },
+        "pt": {
+          "name": "Sugestões",
+          "description": "Sugestões de recursos da comunidade, com votação"
+        },
+        "ru": {
+          "name": "Предложения",
+          "description": "Предложения сообщества о новых функциях с голосованием"
+        },
         "tr": {
           "name": "Öneriler",
           "description": "Oylamalı topluluk özellik önerileri"
+        },
+        "zh": {
+          "name": "建议",
+          "description": "带投票功能的社区功能建议"
         }
       },
       "version": "1.8.0",
@@ -3065,9 +6185,49 @@
       "name": "Tawk.to Chat",
       "description": "A live chat bubble on every page, served by Tawk.to. Nothing is loaded until the visitor has accepted cookies.",
       "i18n": {
+        "az": {
+          "name": "Tawk.to çatı",
+          "description": "Hər səhifədə canlı çat vidjeti, Tawk.to tərəfindən təqdim olunur"
+        },
+        "de": {
+          "name": "Tawk.to-Chat",
+          "description": "Ein Live-Chat-Widget auf jeder Seite, bereitgestellt von Tawk.to"
+        },
+        "es": {
+          "name": "Chat de Tawk.to",
+          "description": "Un widget de chat en vivo en todas las páginas, servido por Tawk.to"
+        },
+        "et": {
+          "name": "Tawk.to vestlus",
+          "description": "Live-vestlusvidin igal lehel, mida pakub Tawk.to"
+        },
+        "fr": {
+          "name": "Chat Tawk.to",
+          "description": "Un widget de chat en direct sur chaque page, fourni par Tawk.to"
+        },
+        "it": {
+          "name": "Tawk.to Chat",
+          "description": "Un widget di chat dal vivo su ogni pagina, fornito da Tawk.to"
+        },
+        "pl": {
+          "name": "Tawk.to Chat",
+          "description": "Czat na żywo na każdej stronie, obsługiwany przez Tawk.to"
+        },
+        "pt": {
+          "name": "Tawk.to Chat",
+          "description": "Um widget de chat ao vivo em todas as páginas, fornecido pelo Tawk.to"
+        },
+        "ru": {
+          "name": "Чат Tawk.to",
+          "description": "Виджет живого чата на каждой странице, работающий на Tawk.to"
+        },
         "tr": {
           "name": "Tawk.to Sohbet",
           "description": "Her sayfada Tawk.to tarafından sunulan bir canlı sohbet aracı"
+        },
+        "zh": {
+          "name": "Tawk.to 在线聊天",
+          "description": "每个页面上的在线聊天小部件，由 Tawk.to 提供"
         }
       },
       "version": "1.3.0",
@@ -3100,9 +6260,49 @@
       "name": "Support Tickets",
       "description": "Customer support ticket system with departments and priority levels",
       "i18n": {
+        "az": {
+          "name": "Dəstək biletləri",
+          "description": "Şöbələr və prioritet səviyyələri olan müştəri dəstək bilet sistemi"
+        },
+        "de": {
+          "name": "Support-Tickets",
+          "description": "Support-Ticket-System mit Abteilungen und Prioritätsstufen"
+        },
+        "es": {
+          "name": "Tickets de soporte",
+          "description": "Sistema de tickets de atención al cliente con departamentos y niveles de prioridad"
+        },
+        "et": {
+          "name": "Tugipiletid",
+          "description": "Klienditoe piletisüsteem osakondade ja prioriteetidega"
+        },
+        "fr": {
+          "name": "Tickets d’assistance",
+          "description": "Système de tickets d’assistance client, avec services et niveaux de priorité"
+        },
+        "it": {
+          "name": "Ticket di supporto",
+          "description": "Sistema di ticket di assistenza clienti con reparti e livelli di priorità"
+        },
+        "pl": {
+          "name": "Zgłoszenia wsparcia",
+          "description": "System zgłoszeń wsparcia z działami i poziomami priorytetu"
+        },
+        "pt": {
+          "name": "Tickets de suporte",
+          "description": "Sistema de tickets de suporte ao cliente, com departamentos e níveis de prioridade"
+        },
+        "ru": {
+          "name": "Обращения в поддержку",
+          "description": "Система обращений в поддержку с отделами и уровнями приоритета"
+        },
         "tr": {
           "name": "Destek Talepleri",
           "description": "Departmanlı ve öncelik seviyeli müşteri destek talebi sistemi"
+        },
+        "zh": {
+          "name": "支持工单",
+          "description": "带部门和优先级的客户支持工单系统"
         }
       },
       "version": "1.8.1",
@@ -3140,9 +6340,49 @@
       "name": "TikTok Login",
       "description": "Allow users to sign in with their TikTok account",
       "i18n": {
+        "az": {
+          "name": "TikTok ilə giriş",
+          "description": "İstifadəçilərin TikTok hesabı ilə daxil olmasına icazə verin"
+        },
+        "de": {
+          "name": "TikTok-Login",
+          "description": "Nutzern erlauben, sich mit ihrem TikTok-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con TikTok",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de TikTok"
+        },
+        "et": {
+          "name": "TikToki sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma TikToki kontoga"
+        },
+        "fr": {
+          "name": "Connexion TikTok",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte TikTok"
+        },
+        "it": {
+          "name": "Accesso con TikTok",
+          "description": "Consenti agli utenti di accedere con il proprio account TikTok"
+        },
+        "pl": {
+          "name": "Logowanie TikTok",
+          "description": "Pozwól użytkownikom logować się kontem TikTok"
+        },
+        "pt": {
+          "name": "Login com TikTok",
+          "description": "Permita que os usuários entrem com a conta do TikTok"
+        },
+        "ru": {
+          "name": "Вход через TikTok",
+          "description": "Разрешите пользователям входить с помощью аккаунта TikTok"
+        },
         "tr": {
           "name": "TikTok ile Giriş",
           "description": "Kullanıcıların TikTok hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "TikTok 登录",
+          "description": "允许用户使用其 TikTok 账户登录"
         }
       },
       "version": "1.3.0",
@@ -3175,9 +6415,49 @@
       "name": "Trophies",
       "description": "Achievement badges with rule-based auto-award engine",
       "i18n": {
+        "az": {
+          "name": "Trofeylər",
+          "description": "Qaydalar əsasında avtomatik verilən nailiyyət nişanları"
+        },
+        "de": {
+          "name": "Trophäen",
+          "description": "Erfolgsabzeichen mit regelbasierter automatischer Vergabe"
+        },
+        "es": {
+          "name": "Trofeos",
+          "description": "Insignias de logros con un motor de concesión automática basado en reglas"
+        },
+        "et": {
+          "name": "Trofeed",
+          "description": "Saavutusmärgid reeglipõhise automaatse määramise mootoriga"
+        },
+        "fr": {
+          "name": "Trophées",
+          "description": "Badges de succès avec moteur d’attribution automatique selon des règles"
+        },
+        "it": {
+          "name": "Trofei",
+          "description": "Distintivi di traguardo con motore di assegnazione automatica basato su regole"
+        },
+        "pl": {
+          "name": "Trofea",
+          "description": "Odznaki osiągnięć z silnikiem automatycznego przyznawania według reguł"
+        },
+        "pt": {
+          "name": "Troféus",
+          "description": "Insígnias de conquista com motor de concessão automática baseado em regras"
+        },
+        "ru": {
+          "name": "Трофеи",
+          "description": "Значки достижений с автоматической выдачей по правилам"
+        },
         "tr": {
           "name": "Kupalar",
           "description": "Kural tabanlı otomatik ödüllendirme motoruyla başarım rozetleri"
+        },
+        "zh": {
+          "name": "奖杯",
+          "description": "基于规则自动颁发的成就徽章"
         }
       },
       "version": "1.7.1",
@@ -3212,9 +6492,49 @@
       "name": "Twitch Login",
       "description": "Allow users to sign in with their Twitch account",
       "i18n": {
+        "az": {
+          "name": "Twitch ilə giriş",
+          "description": "İstifadəçilərin Twitch hesabı ilə daxil olmasına icazə verin"
+        },
+        "de": {
+          "name": "Twitch-Login",
+          "description": "Nutzern erlauben, sich mit ihrem Twitch-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Twitch",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de Twitch"
+        },
+        "et": {
+          "name": "Twitchi sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Twitchi kontoga"
+        },
+        "fr": {
+          "name": "Connexion Twitch",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte Twitch"
+        },
+        "it": {
+          "name": "Accesso con Twitch",
+          "description": "Consenti agli utenti di accedere con il proprio account Twitch"
+        },
+        "pl": {
+          "name": "Logowanie Twitch",
+          "description": "Pozwól użytkownikom logować się kontem Twitch"
+        },
+        "pt": {
+          "name": "Login com Twitch",
+          "description": "Permita que os usuários entrem com a conta da Twitch"
+        },
+        "ru": {
+          "name": "Вход через Twitch",
+          "description": "Разрешите пользователям входить с помощью аккаунта Twitch"
+        },
         "tr": {
           "name": "Twitch ile Giriş",
           "description": "Kullanıcıların Twitch hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Twitch 登录",
+          "description": "允许用户使用其 Twitch 账户登录"
         }
       },
       "version": "1.3.0",
@@ -3247,9 +6567,49 @@
       "name": "Two-Factor Authentication",
       "description": "TOTP-based 2FA with backup codes for enhanced account security",
       "i18n": {
+        "az": {
+          "name": "İki addımlı doğrulama",
+          "description": "Hesab təhlükəsizliyini artırmaq üçün ehtiyat kodları ilə TOTP əsaslı 2FA"
+        },
+        "de": {
+          "name": "Zwei-Faktor-Authentifizierung",
+          "description": "TOTP-basierte 2FA mit Backup-Codes für mehr Kontosicherheit"
+        },
+        "es": {
+          "name": "Verificación en dos pasos",
+          "description": "2FA basado en TOTP con códigos de recuperación para reforzar la seguridad de la cuenta"
+        },
+        "et": {
+          "name": "Kaksikautentimine",
+          "description": "Ajapõhine kaksikautentimine varukoodidega konto turvalisuse tugevdamiseks"
+        },
+        "fr": {
+          "name": "Authentification à deux facteurs",
+          "description": "Authentification 2FA par TOTP avec codes de secours pour renforcer la sécurité des comptes"
+        },
+        "it": {
+          "name": "Autenticazione a due fattori",
+          "description": "2FA basata su TOTP con codici di backup per una maggiore sicurezza dell’account"
+        },
+        "pl": {
+          "name": "Uwierzytelnianie dwuskładnikowe",
+          "description": "2FA oparte na TOTP z kodami zapasowymi dla lepszego bezpieczeństwa konta"
+        },
+        "pt": {
+          "name": "Verificação em duas etapas",
+          "description": "Verificação em duas etapas baseada em TOTP, com códigos de backup, para mais segurança da conta"
+        },
+        "ru": {
+          "name": "Двухфакторная аутентификация",
+          "description": "Двухфакторная защита на основе TOTP с резервными кодами для повышения безопасности учетной записи"
+        },
         "tr": {
           "name": "İki Adımlı Doğrulama",
           "description": "Hesap güvenliğini artırmak için yedek kodlu, TOTP tabanlı iki adımlı doğrulama"
+        },
+        "zh": {
+          "name": "两步验证",
+          "description": "基于 TOTP 的两步验证，附带备用码，增强账户安全"
         }
       },
       "version": "1.4.2",
@@ -3287,9 +6647,49 @@
       "name": "URL Redirects",
       "description": "A sign on the door of a page that moved, so old links keep working.",
       "i18n": {
+        "az": {
+          "name": "URL yönləndirmələri",
+          "description": "Köhnə ünvanı səhifənin indi yerləşdiyi yerə yönləndirir"
+        },
+        "de": {
+          "name": "URL-Weiterleitungen",
+          "description": "Leitet eine alte Adresse dorthin weiter, wo die Seite jetzt liegt"
+        },
+        "es": {
+          "name": "Redirecciones de URL",
+          "description": "Envía una dirección antigua a donde esté la página ahora"
+        },
+        "et": {
+          "name": "URL-i ümbersuunamised",
+          "description": "Suunab vana aadressi sinna, kus leht praegu asub"
+        },
+        "fr": {
+          "name": "Redirections d’URL",
+          "description": "Envoie une ancienne adresse vers l’emplacement actuel de la page"
+        },
+        "it": {
+          "name": "Reindirizzamenti URL",
+          "description": "Invia un vecchio indirizzo a dove si trova ora la pagina"
+        },
+        "pl": {
+          "name": "Przekierowania URL",
+          "description": "Kieruje stary adres tam, gdzie strona znajduje się teraz"
+        },
+        "pt": {
+          "name": "Redirecionamentos de URL",
+          "description": "Envia um endereço antigo para onde a página está agora"
+        },
+        "ru": {
+          "name": "Перенаправления URL",
+          "description": "Отправляет старый адрес туда, где страница находится сейчас"
+        },
         "tr": {
           "name": "URL Yönlendirmeleri",
           "description": "Eski bir adresi, sayfanın şimdi bulunduğu yere gönderir"
+        },
+        "zh": {
+          "name": "URL 重定向",
+          "description": "将旧地址指向页面现在所在的位置"
         }
       },
       "version": "1.5.0",
@@ -3324,9 +6724,49 @@
       "name": "VK Login",
       "description": "Allow users to sign in with their VK account",
       "i18n": {
+        "az": {
+          "name": "VK ilə giriş",
+          "description": "İstifadəçilərin VK hesabı ilə daxil olmasına icazə verin"
+        },
+        "de": {
+          "name": "VK-Login",
+          "description": "Nutzern erlauben, sich mit ihrem VK-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con VK",
+          "description": "Permite a los usuarios iniciar sesión con su cuenta de VK"
+        },
+        "et": {
+          "name": "VK-ga sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma VK kontoga"
+        },
+        "fr": {
+          "name": "Connexion VK",
+          "description": "Permettre aux utilisateurs de se connecter avec leur compte VK"
+        },
+        "it": {
+          "name": "Accesso con VK",
+          "description": "Consenti agli utenti di accedere con il proprio account VK"
+        },
+        "pl": {
+          "name": "Logowanie VK",
+          "description": "Pozwól użytkownikom logować się kontem VK"
+        },
+        "pt": {
+          "name": "Login com VK",
+          "description": "Permita que os usuários entrem com a conta do VK"
+        },
+        "ru": {
+          "name": "Вход через VK",
+          "description": "Разрешите пользователям входить с помощью аккаунта VK"
+        },
         "tr": {
           "name": "VK ile Giriş",
           "description": "Kullanıcıların VK hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "VK 登录",
+          "description": "允许用户使用其 VK 账户登录"
         }
       },
       "version": "1.3.0",
@@ -3359,9 +6799,49 @@
       "name": "Vote Sites",
       "description": "Send players to the server listings you are ranked on, and count how often they go",
       "i18n": {
+        "az": {
+          "name": "Səs saytları",
+          "description": "Oyunçuları sıralamada olduğunuz server siyahılarına göndərin və kimin səs verdiyini sayın"
+        },
+        "de": {
+          "name": "Vote-Seiten",
+          "description": "Schicke Spieler zu den Serverlisten, auf denen du gelistet bist, und zähle, wer gevotet hat"
+        },
+        "es": {
+          "name": "Sitios de votación",
+          "description": "Envía a los jugadores a los listados del servidor en los que estás clasificado y cuenta quién ha votado"
+        },
+        "et": {
+          "name": "Hääletussaidid",
+          "description": "Suuna mängijad nimekirjasaitidele, kus oled edetabelis, ja loe, kes hääletas"
+        },
+        "fr": {
+          "name": "Sites de vote",
+          "description": "Envoyez les joueurs vers les classements de serveurs où vous figurez, et comptez qui a voté"
+        },
+        "it": {
+          "name": "Siti di voto",
+          "description": "Manda i giocatori alle classifiche in cui sei posizionato e conta chi ha votato"
+        },
+        "pl": {
+          "name": "Strony głosowania",
+          "description": "Kieruj graczy na listy serwerów, na których jesteś notowany, i licz, kto zagłosował"
+        },
+        "pt": {
+          "name": "Sites de votação",
+          "description": "Envie os jogadores para as listagens de servidores em que você está ranqueado e conte quem votou"
+        },
+        "ru": {
+          "name": "Сайты для голосования",
+          "description": "Направляйте игроков на рейтинги, в которых вы участвуете, и считайте проголосовавших"
+        },
         "tr": {
           "name": "Oy Siteleri",
           "description": "Oyuncuları sıralamada yer aldığınız sunucu listelerine yönlendirin ve kimin oy verdiğini sayın"
+        },
+        "zh": {
+          "name": "投票站点",
+          "description": "将玩家引导至你所在的服务器列表，并统计投票人数"
         }
       },
       "version": "1.6.3",
@@ -3398,9 +6878,49 @@
       "name": "Webhook Logs",
       "description": "View and manage webhook delivery logs",
       "i18n": {
+        "az": {
+          "name": "Webhook jurnalları",
+          "description": "Webhook çatdırılma jurnallarına baxın və idarə edin"
+        },
+        "de": {
+          "name": "Webhook-Protokolle",
+          "description": "Webhook-Zustellprotokolle ansehen und verwalten"
+        },
+        "es": {
+          "name": "Registros de webhooks",
+          "description": "Ver y gestionar los registros de envíos de webhooks"
+        },
+        "et": {
+          "name": "Webhooki logid",
+          "description": "Vaata ja halda webhooki edastuste logisid"
+        },
+        "fr": {
+          "name": "Journaux des webhooks",
+          "description": "Consulter et gérer les journaux d’envoi des webhooks"
+        },
+        "it": {
+          "name": "Log dei webhook",
+          "description": "Visualizza e gestisci i log degli invii dei webhook"
+        },
+        "pl": {
+          "name": "Logi webhooków",
+          "description": "Przeglądaj i zarządzaj logami dostaw webhooków"
+        },
+        "pt": {
+          "name": "Logs de webhook",
+          "description": "Veja e gerencie os logs de entrega de webhook"
+        },
+        "ru": {
+          "name": "Журналы вебхуков",
+          "description": "Просмотр и управление журналами доставки вебхуков"
+        },
         "tr": {
           "name": "Webhook Kayıtları",
           "description": "Webhook teslimat kayıtlarını görüntüleyin ve yönetin"
+        },
+        "zh": {
+          "name": "Webhook 日志",
+          "description": "查看和管理 Webhook 投递日志"
         }
       },
       "version": "1.4.0",
@@ -3435,9 +6955,49 @@
       "name": "Wheel of Fortune",
       "description": "Spin-to-win game with configurable prizes and cooldowns",
       "i18n": {
+        "az": {
+          "name": "Şans çarxı",
+          "description": "Konfiqurasiya edilə bilən mükafatlar və gözləmə müddətləri olan udmaq üçün fırlatma oyunu"
+        },
+        "de": {
+          "name": "Glücksrad",
+          "description": "Drehspiel mit konfigurierbaren Gewinnen und Wartezeiten"
+        },
+        "es": {
+          "name": "Rueda de la fortuna",
+          "description": "Juego de girar para ganar, con premios y esperas configurables"
+        },
+        "et": {
+          "name": "Õnnerattas",
+          "description": "Keeramismäng seadistatavate auhindade ja ooteaegadega"
+        },
+        "fr": {
+          "name": "Roue de la fortune",
+          "description": "Jeu de type « tentez de gagner » avec lots et délais configurables"
+        },
+        "it": {
+          "name": "Ruota della fortuna",
+          "description": "Gioco a premi con gira-e-vinci, premi e attese configurabili"
+        },
+        "pl": {
+          "name": "Koło fortuny",
+          "description": "Gra w zakręcanie kołem z konfigurowalnymi nagrodami i przerwami"
+        },
+        "pt": {
+          "name": "Roleta da fortuna",
+          "description": "Jogo de girar para ganhar, com prêmios e intervalos configuráveis"
+        },
+        "ru": {
+          "name": "Колесо фортуны",
+          "description": "Игра «выиграй на колесе» с настраиваемыми призами и паузами между прокрутками"
+        },
         "tr": {
           "name": "Şans Çarkı",
           "description": "Yapılandırılabilir ödüller ve bekleme süreleriyle çevir-kazan oyunu"
+        },
+        "zh": {
+          "name": "幸运转盘",
+          "description": "可配置奖品和冷却时间的转动赢奖游戏"
         }
       },
       "version": "1.10.0",
@@ -3480,9 +7040,49 @@
       "name": "X Login",
       "description": "Allow users to sign in with their X (Twitter) account",
       "i18n": {
+        "az": {
+          "name": "X ilə daxil olma",
+          "description": "İstifadəçilərə öz X (Twitter) hesabı ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "X-Anmeldung",
+          "description": "Mitgliedern erlauben, sich mit ihrem X-(Twitter-)Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con X",
+          "description": "Permite que los usuarios inicien sesión con su cuenta de X (Twitter)"
+        },
+        "et": {
+          "name": "X sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma X (Twitter) kontoga"
+        },
+        "fr": {
+          "name": "Connexion X",
+          "description": "Permettre aux membres de se connecter avec leur compte X (Twitter)"
+        },
+        "it": {
+          "name": "Accesso con X",
+          "description": "Consenti agli utenti di accedere con il loro account X (Twitter)"
+        },
+        "pl": {
+          "name": "Logowanie przez X",
+          "description": "Pozwól użytkownikom logować się przez konto X (Twitter)"
+        },
+        "pt": {
+          "name": "Login com X",
+          "description": "Permite que os membros entrem com a conta do X (Twitter)"
+        },
+        "ru": {
+          "name": "Вход через X",
+          "description": "Позвольте участникам входить через свою учетную запись X (Twitter)"
+        },
         "tr": {
           "name": "X ile Giriş",
           "description": "Kullanıcıların X (Twitter) hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "X 登录",
+          "description": "允许用户使用其 X（Twitter）账户登录"
         }
       },
       "version": "1.3.0",
@@ -3515,9 +7115,49 @@
       "name": "Yandex Login",
       "description": "Allow users to sign in with their Yandex account",
       "i18n": {
+        "az": {
+          "name": "Yandex ilə daxil olma",
+          "description": "İstifadəçilərə öz Yandex hesabı ilə daxil olmağa icazə verin"
+        },
+        "de": {
+          "name": "Yandex-Anmeldung",
+          "description": "Mitgliedern erlauben, sich mit ihrem Yandex-Konto anzumelden"
+        },
+        "es": {
+          "name": "Inicio de sesión con Yandex",
+          "description": "Permite que los usuarios inicien sesión con su cuenta de Yandex"
+        },
+        "et": {
+          "name": "Yandexi sisselogimine",
+          "description": "Luba kasutajatel sisse logida oma Yandexi kontoga"
+        },
+        "fr": {
+          "name": "Connexion Yandex",
+          "description": "Permettre aux membres de se connecter avec leur compte Yandex"
+        },
+        "it": {
+          "name": "Accesso con Yandex",
+          "description": "Consenti agli utenti di accedere con il loro account Yandex"
+        },
+        "pl": {
+          "name": "Logowanie przez Yandex",
+          "description": "Pozwól użytkownikom logować się przez konto Yandex"
+        },
+        "pt": {
+          "name": "Login com Yandex",
+          "description": "Permite que os membros entrem com a conta do Yandex"
+        },
+        "ru": {
+          "name": "Вход через Yandex",
+          "description": "Позвольте участникам входить через свою учетную запись Yandex"
+        },
         "tr": {
           "name": "Yandex ile Giriş",
           "description": "Kullanıcıların Yandex hesabıyla giriş yapmasına izin verin"
+        },
+        "zh": {
+          "name": "Yandex 登录",
+          "description": "允许用户使用其 Yandex 账户登录"
         }
       },
       "version": "1.3.0",

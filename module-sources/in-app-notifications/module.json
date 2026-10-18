@@ -124,6 +124,476 @@
       "pageDescriptions": {
         "notifications": "Size gönderilen tüm bildirimleri görün, okundu olarak işaretleyin ve her birinin işaret ettiği sayfayı açın."
       }
+    },
+    "az": {
+      "inAppNotifications": {
+        "title": "Bildirişlər",
+        "titleUnread": "Bildirişlər, {count} oxunmamış",
+        "noNotifications": "Bildiriş yoxdur",
+        "markAllRead": "Hamısını oxunmuş kimi işarələ",
+        "markRead": "Oxunmuş kimi işarələ",
+        "delete": "Sil",
+        "unread": "Oxunmamış",
+        "all": "Hamısı",
+        "new": "Yeni",
+        "earlier": "Daha əvvəl",
+        "viewAll": "Bütün bildirişlərə baxın",
+        "unreadCount": "{count, plural, one {# oxunmamış} other {# oxunmamış}}",
+        "loginRequired": "Bildirişlərinizə baxmaq üçün daxil olun.",
+        "markFailed": "Bildirişi yeniləmək alınmadı",
+        "settings": "Bildiriş parametrləri",
+        "saved": "Bildiriş parametrləri yadda saxlandı",
+        "saveError": "Bildiriş parametrlərini yadda saxlamaq alınmadı",
+        "notif_orderCompleteTitle": "Sifariş tamamlandı",
+        "notif_orderCompleteMessage": "{orderNumber} nömrəli sifariş tamamlandı.",
+        "notif_creditsAddedTitle": "Kreditlər əlavə edildi",
+        "notif_creditsAddedMessage": "Balansınıza {amount} kredit əlavə edildi.",
+        "notif_punishmentTitle": "Cəza tətbiq edildi",
+        "notif_punishmentMessage": "Hesabınıza qarşı {type} tətbiq edildi.",
+        "notif_punishmentWithReason": "{type}: {reason}",
+        "notif_prizeWonTitle": "Mükafat qazandınız",
+        "notif_prizeWonMessage": "Çarxda {prize} qazandınız.",
+        "notif_referralUsedTitle": "Referans kodunuz istifadə olundu",
+        "notif_referralUsedMessage": "Kimsə referans kodunuzla qoşuldu.",
+        "notif_referralUsedReward": "Kimsə kodunuzla qoşuldu. {reward} kredit qazandınız.",
+        "notif_ticketRepliedTitle": "Sorğunuza yeni cavab",
+        "notif_ticketRepliedMessage": "Dəstək «{subject}» sorğusuna cavab verdi.",
+        "notif_forumReplyTitle": "Mövzunuza yeni cavab",
+        "notif_forumReplyMessage": "Kimsə «{title}» mövzusuna cavab yazdı."
+      },
+      "pageTitles": {
+        "notifications": "Bildirişlər"
+      },
+      "admin": {
+        "module_in-app-notifications_name": "Tətbiq daxili bildirişlər",
+        "module_in-app-notifications_description": "Zəng ikonu olan tətbiq daxili bildiriş sistemi"
+      },
+      "pageDescriptions": {
+        "notifications": "Sizə göndərilmiş bütün bildirişlərə baxın, onları oxunmuş kimi işarələyin və hər birinin göstərdiyi səhifəni açın."
+      }
+    },
+    "de": {
+      "inAppNotifications": {
+        "title": "Benachrichtigungen",
+        "titleUnread": "Benachrichtigungen, {count} ungelesen",
+        "noNotifications": "Keine Benachrichtigungen",
+        "markAllRead": "Alle als gelesen markieren",
+        "markRead": "Als gelesen markieren",
+        "delete": "Löschen",
+        "unread": "Ungelesen",
+        "all": "Alle",
+        "new": "Neu",
+        "earlier": "Früher",
+        "viewAll": "Alle Benachrichtigungen ansehen",
+        "unreadCount": "{count, plural, one {# ungelesen} other {# ungelesen}}",
+        "loginRequired": "Bitte melde dich an, um deine Benachrichtigungen zu sehen.",
+        "markFailed": "Benachrichtigung konnte nicht aktualisiert werden",
+        "settings": "Benachrichtigungseinstellungen",
+        "saved": "Benachrichtigungseinstellungen gespeichert",
+        "saveError": "Benachrichtigungseinstellungen konnten nicht gespeichert werden",
+        "notif_orderCompleteTitle": "Bestellung abgeschlossen",
+        "notif_orderCompleteMessage": "Bestellung {orderNumber} ist abgeschlossen.",
+        "notif_creditsAddedTitle": "Guthaben gutgeschrieben",
+        "notif_creditsAddedMessage": "{amount} Credits wurden deinem Guthaben hinzugefügt.",
+        "notif_punishmentTitle": "Eine Sanktion wurde verhängt",
+        "notif_punishmentMessage": "Gegen dein Konto wurde eine {type} verhängt.",
+        "notif_punishmentWithReason": "{type}: {reason}",
+        "notif_prizeWonTitle": "Du hast einen Preis gewonnen",
+        "notif_prizeWonMessage": "Du hast am Glücksrad {prize} gewonnen.",
+        "notif_referralUsedTitle": "Dein Empfehlungscode wurde genutzt",
+        "notif_referralUsedMessage": "Jemand ist mit deinem Empfehlungscode beigetreten.",
+        "notif_referralUsedReward": "Jemand ist mit deinem Code beigetreten. Du hast {reward} Credits verdient.",
+        "notif_ticketRepliedTitle": "Neue Antwort auf dein Ticket",
+        "notif_ticketRepliedMessage": "Der Support hat auf „{subject}“ geantwortet.",
+        "notif_forumReplyTitle": "Neue Antwort in deinem Thema",
+        "notif_forumReplyMessage": "Jemand hat auf „{title}“ geantwortet."
+      },
+      "pageTitles": {
+        "notifications": "Benachrichtigungen"
+      },
+      "admin": {
+        "module_in-app-notifications_name": "In-App-Benachrichtigungen",
+        "module_in-app-notifications_description": "Benachrichtigungssystem in der App mit Glockensymbol"
+      },
+      "pageDescriptions": {
+        "notifications": "Sieh dir jede Benachrichtigung an, die dir gesendet wurde, markiere sie als gelesen und öffne die Seite, auf die sie verweist."
+      }
+    },
+    "es": {
+      "inAppNotifications": {
+        "title": "Notificaciones",
+        "titleUnread": "Notificaciones, {count} sin leer",
+        "noNotifications": "No tienes notificaciones",
+        "markAllRead": "Marcar todas como leídas",
+        "markRead": "Marcar como leída",
+        "delete": "Eliminar",
+        "unread": "Sin leer",
+        "all": "Todas",
+        "new": "Nuevas",
+        "earlier": "Anteriores",
+        "viewAll": "Ver todas las notificaciones",
+        "unreadCount": "{count, plural, one {# sin leer} other {# sin leer}}",
+        "loginRequired": "Inicia sesión para ver tus notificaciones.",
+        "markFailed": "No se pudo actualizar la notificación",
+        "settings": "Ajustes de notificaciones",
+        "saved": "Ajustes de notificaciones guardados",
+        "saveError": "No se pudieron guardar los ajustes de notificaciones",
+        "notif_orderCompleteTitle": "Pedido completado",
+        "notif_orderCompleteMessage": "El pedido {orderNumber} se ha completado.",
+        "notif_creditsAddedTitle": "Créditos añadidos",
+        "notif_creditsAddedMessage": "Se han añadido {amount} créditos a tu saldo.",
+        "notif_punishmentTitle": "Se te ha aplicado una sanción",
+        "notif_punishmentMessage": "Se ha emitido una sanción de tipo {type} contra tu cuenta.",
+        "notif_punishmentWithReason": "{type}: {reason}",
+        "notif_prizeWonTitle": "Has ganado un premio",
+        "notif_prizeWonMessage": "Has ganado {prize} en la ruleta.",
+        "notif_referralUsedTitle": "Han usado tu código de referido",
+        "notif_referralUsedMessage": "Alguien se ha unido con tu código de referido.",
+        "notif_referralUsedReward": "Alguien se ha unido con tu código. Has ganado {reward} créditos.",
+        "notif_ticketRepliedTitle": "Nueva respuesta en tu ticket",
+        "notif_ticketRepliedMessage": "Soporte ha respondido a «{subject}».",
+        "notif_forumReplyTitle": "Nueva respuesta en tu tema",
+        "notif_forumReplyMessage": "Alguien ha respondido a «{title}»."
+      },
+      "pageTitles": {
+        "notifications": "Notificaciones"
+      },
+      "admin": {
+        "module_in-app-notifications_name": "Notificaciones en la aplicación",
+        "module_in-app-notifications_description": "Sistema de notificaciones dentro de la aplicación, con icono de campana"
+      },
+      "pageDescriptions": {
+        "notifications": "Consulta todas las notificaciones que te han enviado, márcalas como leídas y abre la página a la que apunta cada una."
+      }
+    },
+    "et": {
+      "inAppNotifications": {
+        "title": "Teavitused",
+        "titleUnread": "Teavitused, {count} lugemata",
+        "noNotifications": "Teavitusi pole",
+        "markAllRead": "Märgi kõik loetuks",
+        "markRead": "Märgi loetuks",
+        "delete": "Kustuta",
+        "unread": "Lugemata",
+        "all": "Kõik",
+        "new": "Uus",
+        "earlier": "Varasemad",
+        "viewAll": "Vaata kõiki teavitusi",
+        "unreadCount": "{count, plural, one {# lugemata} other {# lugemata}}",
+        "loginRequired": "Teavituste vaatamiseks logi sisse.",
+        "markFailed": "Teavituse uuendamine ebaõnnestus",
+        "settings": "Teavituste seaded",
+        "saved": "Teavituste seaded salvestatud",
+        "saveError": "Teavituste seadete salvestamine ebaõnnestus",
+        "notif_orderCompleteTitle": "Tellimus valmis",
+        "notif_orderCompleteMessage": "Tellimus {orderNumber} on valmis.",
+        "notif_creditsAddedTitle": "Krediidid lisatud",
+        "notif_creditsAddedMessage": "Sinu saldole lisati {amount} krediiti.",
+        "notif_punishmentTitle": "Sulle määrati karistus",
+        "notif_punishmentMessage": "Sinu kontole määrati karistus: {type}.",
+        "notif_punishmentWithReason": "{type}: {reason}",
+        "notif_prizeWonTitle": "Võitsid auhinna",
+        "notif_prizeWonMessage": "Võitsid õnneratta pealt: {prize}.",
+        "notif_referralUsedTitle": "Sinu soovituskoodi kasutati",
+        "notif_referralUsedMessage": "Keegi liitus sinu soovituskoodiga.",
+        "notif_referralUsedReward": "Keegi liitus sinu koodiga. Teenisid {reward} krediiti.",
+        "notif_ticketRepliedTitle": "Uus vastus sinu pileti all",
+        "notif_ticketRepliedMessage": "Tugi vastas teemale „{subject}“.",
+        "notif_forumReplyTitle": "Uus vastus sinu teemale",
+        "notif_forumReplyMessage": "Keegi vastas teemale „{title}“."
+      },
+      "pageTitles": {
+        "notifications": "Teavitused"
+      },
+      "admin": {
+        "module_in-app-notifications_name": "Rakenduse sisesed teavitused",
+        "module_in-app-notifications_description": "Rakendusesisene teavitussüsteem kellaikooniga"
+      },
+      "pageDescriptions": {
+        "notifications": "Vaata kõiki sulle saadetud teavitusi, märgi need loetuks ja ava leht, millele iga teavitus viitab."
+      }
+    },
+    "fr": {
+      "inAppNotifications": {
+        "title": "Notifications",
+        "titleUnread": "Notifications, {count} non lue(s)",
+        "noNotifications": "Aucune notification",
+        "markAllRead": "Tout marquer comme lu",
+        "markRead": "Marquer comme lu",
+        "delete": "Supprimer",
+        "unread": "Non lues",
+        "all": "Toutes",
+        "new": "Nouvelles",
+        "earlier": "Plus anciennes",
+        "viewAll": "Voir toutes les notifications",
+        "unreadCount": "{count, plural, one {# non lue} other {# non lues}}",
+        "loginRequired": "Veuillez vous connecter pour voir vos notifications.",
+        "markFailed": "Échec de la mise à jour de la notification",
+        "settings": "Paramètres de notification",
+        "saved": "Paramètres de notification enregistrés",
+        "saveError": "Échec de l’enregistrement des paramètres de notification",
+        "notif_orderCompleteTitle": "Commande terminée",
+        "notif_orderCompleteMessage": "La commande {orderNumber} est terminée.",
+        "notif_creditsAddedTitle": "Crédits ajoutés",
+        "notif_creditsAddedMessage": "{amount} crédits ont été ajoutés à votre solde.",
+        "notif_punishmentTitle": "Une sanction a été prononcée",
+        "notif_punishmentMessage": "Une sanction de type {type} a été prononcée contre votre compte.",
+        "notif_punishmentWithReason": "{type} : {reason}",
+        "notif_prizeWonTitle": "Vous avez gagné un lot",
+        "notif_prizeWonMessage": "Vous avez gagné {prize} à la roue.",
+        "notif_referralUsedTitle": "Votre code de parrainage a été utilisé",
+        "notif_referralUsedMessage": "Quelqu’un a rejoint le site avec votre code de parrainage.",
+        "notif_referralUsedReward": "Quelqu’un a rejoint le site avec votre code. Vous avez gagné {reward} crédits.",
+        "notif_ticketRepliedTitle": "Nouvelle réponse à votre demande",
+        "notif_ticketRepliedMessage": "Le support a répondu à « {subject} ».",
+        "notif_forumReplyTitle": "Nouvelle réponse à votre sujet",
+        "notif_forumReplyMessage": "Quelqu’un a répondu à « {title} »."
+      },
+      "pageTitles": {
+        "notifications": "Notifications"
+      },
+      "admin": {
+        "module_in-app-notifications_name": "Notifications intégrées",
+        "module_in-app-notifications_description": "Système de notifications intégrées avec icône de cloche"
+      },
+      "pageDescriptions": {
+        "notifications": "Consultez toutes les notifications qui vous ont été envoyées, marquez-les comme lues et ouvrez la page vers laquelle chacune renvoie."
+      }
+    },
+    "it": {
+      "inAppNotifications": {
+        "title": "Notifiche",
+        "titleUnread": "Notifiche, {count} non lette",
+        "noNotifications": "Nessuna notifica",
+        "markAllRead": "Segna tutte come lette",
+        "markRead": "Segna come letta",
+        "delete": "Elimina",
+        "unread": "Non lette",
+        "all": "Tutte",
+        "new": "Nuove",
+        "earlier": "Precedenti",
+        "viewAll": "Vedi tutte le notifiche",
+        "unreadCount": "{count, plural, one {# non letta} other {# non lette}}",
+        "loginRequired": "Accedi per vedere le tue notifiche.",
+        "markFailed": "Aggiornamento della notifica non riuscito",
+        "settings": "Impostazioni delle notifiche",
+        "saved": "Impostazioni delle notifiche salvate",
+        "saveError": "Salvataggio delle impostazioni delle notifiche non riuscito",
+        "notif_orderCompleteTitle": "Ordine completato",
+        "notif_orderCompleteMessage": "L’ordine {orderNumber} è completato.",
+        "notif_creditsAddedTitle": "Crediti aggiunti",
+        "notif_creditsAddedMessage": "{amount} crediti sono stati aggiunti al tuo saldo.",
+        "notif_punishmentTitle": "È stata emessa una sanzione",
+        "notif_punishmentMessage": "È stata emessa una sanzione di tipo {type} sul tuo account.",
+        "notif_punishmentWithReason": "{type}: {reason}",
+        "notif_prizeWonTitle": "Hai vinto un premio",
+        "notif_prizeWonMessage": "Hai vinto {prize} alla ruota.",
+        "notif_referralUsedTitle": "Il tuo codice invito è stato usato",
+        "notif_referralUsedMessage": "Qualcuno si è unito con il tuo codice invito.",
+        "notif_referralUsedReward": "Qualcuno si è unito con il tuo codice. Hai guadagnato {reward} crediti.",
+        "notif_ticketRepliedTitle": "Nuova risposta al tuo ticket",
+        "notif_ticketRepliedMessage": "Il supporto ha risposto a «{subject}».",
+        "notif_forumReplyTitle": "Nuova risposta al tuo argomento",
+        "notif_forumReplyMessage": "Qualcuno ha risposto a «{title}»."
+      },
+      "pageTitles": {
+        "notifications": "Notifiche"
+      },
+      "admin": {
+        "module_in-app-notifications_name": "Notifiche in-app",
+        "module_in-app-notifications_description": "Sistema di notifiche in-app con icona a campanella"
+      },
+      "pageDescriptions": {
+        "notifications": "Vedi ogni notifica che ti è stata inviata, segna come letta e apri la pagina a cui ciascuna rimanda."
+      }
+    },
+    "pl": {
+      "inAppNotifications": {
+        "title": "Powiadomienia",
+        "titleUnread": "Powiadomienia, nieprzeczytane: {count}",
+        "noNotifications": "Brak powiadomień",
+        "markAllRead": "Oznacz wszystkie jako przeczytane",
+        "markRead": "Oznacz jako przeczytane",
+        "delete": "Usuń",
+        "unread": "Nieprzeczytane",
+        "all": "Wszystkie",
+        "new": "Nowe",
+        "earlier": "Wcześniej",
+        "viewAll": "Zobacz wszystkie powiadomienia",
+        "unreadCount": "{count, plural, one {# nieprzeczytane powiadomienie} few {# nieprzeczytane powiadomienia} many {# nieprzeczytanych powiadomień} other {# nieprzeczytanego powiadomienia}}",
+        "loginRequired": "Zaloguj się, aby zobaczyć swoje powiadomienia.",
+        "markFailed": "Nie udało się zaktualizować powiadomienia",
+        "settings": "Ustawienia powiadomień",
+        "saved": "Zapisano ustawienia powiadomień",
+        "saveError": "Nie udało się zapisać ustawień powiadomień",
+        "notif_orderCompleteTitle": "Zamówienie zrealizowane",
+        "notif_orderCompleteMessage": "Zamówienie {orderNumber} zostało zrealizowane.",
+        "notif_creditsAddedTitle": "Dodano kredyty",
+        "notif_creditsAddedMessage": "Na Twoje saldo dodano: {amount}.",
+        "notif_punishmentTitle": "Nałożono karę",
+        "notif_punishmentMessage": "Na Twoje konto nałożono: {type}.",
+        "notif_punishmentWithReason": "{type}: {reason}",
+        "notif_prizeWonTitle": "Masz nową nagrodę",
+        "notif_prizeWonMessage": "Na kole fortuny wygrano: {prize}.",
+        "notif_referralUsedTitle": "Użyto Twojego kodu polecającego",
+        "notif_referralUsedMessage": "Ktoś dołączył z Twoim kodem polecającym.",
+        "notif_referralUsedReward": "Ktoś dołączył z Twoim kodem. Zdobyto: {reward}.",
+        "notif_ticketRepliedTitle": "Nowa odpowiedź w Twoim zgłoszeniu",
+        "notif_ticketRepliedMessage": "Support odpowiedział na „{subject}”.",
+        "notif_forumReplyTitle": "Nowa odpowiedź w Twoim temacie",
+        "notif_forumReplyMessage": "Ktoś odpowiedział w temacie „{title}”."
+      },
+      "pageTitles": {
+        "notifications": "Powiadomienia"
+      },
+      "admin": {
+        "module_in-app-notifications_name": "Powiadomienia w aplikacji",
+        "module_in-app-notifications_description": "System powiadomień w aplikacji z ikoną dzwonka"
+      },
+      "pageDescriptions": {
+        "notifications": "Zobacz wszystkie powiadomienia, jakie do Ciebie trafiły, oznacz je jako przeczytane i otwórz stronę, na którą każde z nich prowadzi."
+      }
+    },
+    "pt": {
+      "inAppNotifications": {
+        "title": "Notificações",
+        "titleUnread": "Notificações, {count} não lidas",
+        "noNotifications": "Nenhuma notificação",
+        "markAllRead": "Marcar tudo como lido",
+        "markRead": "Marcar como lida",
+        "delete": "Excluir",
+        "unread": "Não lidas",
+        "all": "Todas",
+        "new": "Novas",
+        "earlier": "Anteriores",
+        "viewAll": "Ver todas as notificações",
+        "unreadCount": "{count, plural, one {# não lida} other {# não lidas}}",
+        "loginRequired": "Entre para ver suas notificações.",
+        "markFailed": "Não foi possível atualizar a notificação",
+        "settings": "Configurações de notificações",
+        "saved": "Configurações de notificações salvas",
+        "saveError": "Não foi possível salvar as configurações de notificações",
+        "notif_orderCompleteTitle": "Pedido concluído",
+        "notif_orderCompleteMessage": "O pedido {orderNumber} foi concluído.",
+        "notif_creditsAddedTitle": "Créditos adicionados",
+        "notif_creditsAddedMessage": "{amount} créditos foram adicionados ao seu saldo.",
+        "notif_punishmentTitle": "Uma punição foi aplicada",
+        "notif_punishmentMessage": "Uma {type} foi aplicada à sua conta.",
+        "notif_punishmentWithReason": "{type}: {reason}",
+        "notif_prizeWonTitle": "Você ganhou um prêmio",
+        "notif_prizeWonMessage": "Você ganhou {prize} na roleta.",
+        "notif_referralUsedTitle": "Seu código de indicação foi usado",
+        "notif_referralUsedMessage": "Alguém entrou com o seu código de indicação.",
+        "notif_referralUsedReward": "Alguém entrou com o seu código. Você ganhou {reward} créditos.",
+        "notif_ticketRepliedTitle": "Nova resposta no seu ticket",
+        "notif_ticketRepliedMessage": "O suporte respondeu a “{subject}”.",
+        "notif_forumReplyTitle": "Nova resposta no seu tópico",
+        "notif_forumReplyMessage": "Alguém respondeu a “{title}”."
+      },
+      "pageTitles": {
+        "notifications": "Notificações"
+      },
+      "admin": {
+        "module_in-app-notifications_name": "Notificações no app",
+        "module_in-app-notifications_description": "Sistema de notificações no app, com ícone de sino"
+      },
+      "pageDescriptions": {
+        "notifications": "Veja todas as notificações que você recebeu, marque-as como lidas e abra a página para a qual cada uma aponta."
+      }
+    },
+    "ru": {
+      "inAppNotifications": {
+        "title": "Уведомления",
+        "titleUnread": "Уведомления, {count, plural, one {# непрочитанное} few {# непрочитанных} many {# непрочитанных} other {# непрочитанных}}",
+        "noNotifications": "Уведомлений нет",
+        "markAllRead": "Отметить все как прочитанные",
+        "markRead": "Отметить как прочитанное",
+        "delete": "Удалить",
+        "unread": "Непрочитанные",
+        "all": "Все",
+        "new": "Новые",
+        "earlier": "Ранее",
+        "viewAll": "Все уведомления",
+        "unreadCount": "{count, plural, one {# непрочитанное} few {# непрочитанных} many {# непрочитанных} other {# непрочитанных}}",
+        "loginRequired": "Войдите, чтобы просматривать уведомления.",
+        "markFailed": "Не удалось обновить уведомление",
+        "settings": "Настройки уведомлений",
+        "saved": "Настройки уведомлений сохранены",
+        "saveError": "Не удалось сохранить настройки уведомлений",
+        "notif_orderCompleteTitle": "Заказ выполнен",
+        "notif_orderCompleteMessage": "Заказ {orderNumber} выполнен.",
+        "notif_creditsAddedTitle": "Кредиты начислены",
+        "notif_creditsAddedMessage": "На ваш баланс начислены кредиты: {amount}.",
+        "notif_punishmentTitle": "Вынесено наказание",
+        "notif_punishmentMessage": "На вашу учетную запись вынесено наказание: {type}.",
+        "notif_punishmentWithReason": "{type}: {reason}",
+        "notif_prizeWonTitle": "Вы выиграли приз",
+        "notif_prizeWonMessage": "Вы выиграли на колесе: {prize}.",
+        "notif_referralUsedTitle": "Ваш реферальный код использован",
+        "notif_referralUsedMessage": "По вашему реферальному коду зарегистрировался новый участник.",
+        "notif_referralUsedReward": "По вашему коду зарегистрировался новый участник. Вы получили кредиты: {reward}.",
+        "notif_ticketRepliedTitle": "Новый ответ в обращении",
+        "notif_ticketRepliedMessage": "Поддержка ответила в обращении «{subject}».",
+        "notif_forumReplyTitle": "Новый ответ в вашей теме",
+        "notif_forumReplyMessage": "Кто-то ответил в теме «{title}»."
+      },
+      "pageTitles": {
+        "notifications": "Уведомления"
+      },
+      "admin": {
+        "module_in-app-notifications_name": "Уведомления в приложении",
+        "module_in-app-notifications_description": "Система уведомлений в приложении со значком колокольчика"
+      },
+      "pageDescriptions": {
+        "notifications": "Все уведомления, которые вам отправили: отмечайте их как прочитанные и открывайте страницу, на которую ведет каждое из них."
+      }
+    },
+    "zh": {
+      "inAppNotifications": {
+        "title": "通知",
+        "titleUnread": "通知，{count} 条未读",
+        "noNotifications": "暂无通知",
+        "markAllRead": "全部标为已读",
+        "markRead": "标为已读",
+        "delete": "删除",
+        "unread": "未读",
+        "all": "全部",
+        "new": "新",
+        "earlier": "更早",
+        "viewAll": "查看全部通知",
+        "unreadCount": "{count, plural, one {# 条未读} other {# 条未读}}",
+        "loginRequired": "请登录以查看你的通知。",
+        "markFailed": "无法更新通知",
+        "settings": "通知设置",
+        "saved": "通知设置已保存",
+        "saveError": "无法保存通知设置",
+        "notif_orderCompleteTitle": "订单已完成",
+        "notif_orderCompleteMessage": "订单 {orderNumber} 已完成。",
+        "notif_creditsAddedTitle": "已到账积分",
+        "notif_creditsAddedMessage": "已向你的余额添加 {amount} 积分。",
+        "notif_punishmentTitle": "你收到了一项处罚",
+        "notif_punishmentMessage": "你的账户已被施加{type}。",
+        "notif_punishmentWithReason": "{type}：{reason}",
+        "notif_prizeWonTitle": "你赢得了奖品",
+        "notif_prizeWonMessage": "你在转盘上赢得了{prize}。",
+        "notif_referralUsedTitle": "你的推荐码已被使用",
+        "notif_referralUsedMessage": "有人使用你的推荐码加入了。",
+        "notif_referralUsedReward": "有人使用你的推荐码加入了，你获得了 {reward} 积分。",
+        "notif_ticketRepliedTitle": "你的工单有新回复",
+        "notif_ticketRepliedMessage": "客服回复了“{subject}”。",
+        "notif_forumReplyTitle": "你的主题有新回复",
+        "notif_forumReplyMessage": "有人回复了“{title}”。"
+      },
+      "pageTitles": {
+        "notifications": "通知"
+      },
+      "admin": {
+        "module_in-app-notifications_name": "站内通知",
+        "module_in-app-notifications_description": "带铃铛图标的站内通知系统"
+      },
+      "pageDescriptions": {
+        "notifications": "查看所有发送给你的通知，将它们标为已读，并打开每条通知指向的页面。"
+      }
     }
   },
   "userDataExport": [

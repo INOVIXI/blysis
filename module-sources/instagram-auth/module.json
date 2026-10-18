@@ -73,6 +73,156 @@
         "settings_instagram-auth": "Instagram OAuth",
         "settings_instagram-auth_description": "Instagram uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "instagramAuth": {
+        "adm_accountNote": "Yalnız peşəkar hesablar (biznes və ya kontent yaradıcısı) bu üsulla daxil ola bilər. Instagram e-poçt ünvanı paylaşmadığı üçün bu hesablara heç vaxt məktub göndərilə bilməyən müvəqqəti ünvan verilir.",
+        "adm_apiNote": "Instagram-ın köhnə Basic Display API-si 2024-cü ilin dekabrında dayandırıldığı üçün bu, Instagram Login ilə Instagram API-dən istifadə edir. Meta developer konsolunda həmin tipdə tətbiq yaradın və yuxarıdakı yönləndirmə URL-ni ona əlavə edin.",
+        "adm_subtitle": "Saytınız üçün Instagram OAuth ilə daxil olmanı quraşdırın.",
+        "adm_title": "Instagram Login parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_instagram-auth_name": "Instagram Login",
+        "module_instagram-auth_description": "İstifadəçilərə Instagram hesabları ilə daxil olmağa icazə verin",
+        "settings_instagram-auth": "Instagram OAuth",
+        "settings_instagram-auth_description": "Instagram tətbiqinin etimadnaməsi."
+      }
+    },
+    "de": {
+      "instagramAuth": {
+        "adm_accountNote": "Nur professionelle Konten (Business oder Creator) können sich auf diesem Weg anmelden. Instagram teilt keine E-Mail-Adresse, daher bekommen diese Konten eine Platzhalteradresse, die niemals E-Mails empfangen kann.",
+        "adm_apiNote": "Instagrams alte Basic Display API wurde im Dezember 2024 abgeschaltet. Deshalb wird hier die Instagram API mit Instagram-Login verwendet. Erstelle eine App dieses Typs in der Meta-Entwicklerkonsole und trage die oben angegebene Weiterleitungs-URL darin ein.",
+        "adm_subtitle": "Richte die Anmeldung per Instagram-OAuth für deine Seite ein.",
+        "adm_title": "Instagram-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_instagram-auth_name": "Instagram-Login",
+        "module_instagram-auth_description": "Mitglieder können sich mit ihrem Instagram-Konto anmelden",
+        "settings_instagram-auth": "Instagram-OAuth",
+        "settings_instagram-auth_description": "Zugangsdaten der Instagram-Anwendung."
+      }
+    },
+    "es": {
+      "instagramAuth": {
+        "adm_accountNote": "Solo pueden iniciar sesión así las cuentas profesionales (de empresa o de creador). Instagram no comparte ninguna dirección de correo, así que estas cuentas reciben una dirección provisional que nunca puede recibir correos.",
+        "adm_apiNote": "La antigua API Basic Display de Instagram se cerró en diciembre de 2024, así que esto usa la API de Instagram con inicio de sesión de Instagram. Crea una aplicación de ese tipo en la consola de desarrolladores de Meta y registra en ella la URL de redirección indicada arriba.",
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de Instagram en tu sitio.",
+        "adm_title": "Ajustes de inicio de sesión con Instagram",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_instagram-auth_name": "Inicio de sesión con Instagram",
+        "module_instagram-auth_description": "Permite que los usuarios inicien sesión con su cuenta de Instagram",
+        "settings_instagram-auth": "OAuth de Instagram",
+        "settings_instagram-auth_description": "Credenciales de la aplicación de Instagram."
+      }
+    },
+    "et": {
+      "instagramAuth": {
+        "adm_accountNote": "Sisse saavad logida ainult professionaalsed kontod (äri- või loojakontod). Instagram ei jaga e-posti aadressi, seega saavad need kontod kohatäite aadressi, millele ei saa kunagi kirju saata.",
+        "adm_apiNote": "Instagrami vana Basic Display API lülitati välja 2024. aasta detsembris, seega kasutatakse siin Instagram API-d koos Instagram Loginiga. Loo Meta arendajakonsoolis selle tüübi rakendus ja registreeri sellele ülal olev tagasisuunamise URL.",
+        "adm_subtitle": "Seadista oma saidile Instagrami OAuth-sisselogimine.",
+        "adm_title": "Instagrami sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_instagram-auth_name": "Instagrami sisselogimine",
+        "module_instagram-auth_description": "Luba kasutajatel sisse logida oma Instagrami kontoga",
+        "settings_instagram-auth": "Instagram OAuth",
+        "settings_instagram-auth_description": "Instagrami rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "instagramAuth": {
+        "adm_accountNote": "Seuls les comptes professionnels (entreprise ou créateur) peuvent se connecter de cette façon. Instagram ne partageant aucune adresse e-mail, ces comptes reçoivent une adresse fictive qui ne peut jamais recevoir de courrier.",
+        "adm_apiNote": "L’ancienne API Basic Display d’Instagram a été arrêtée en décembre 2024 : ceci utilise donc l’API Instagram avec connexion Instagram. Créez une application de ce type dans la console pour développeurs Meta et enregistrez-y l’URL de redirection indiquée ci-dessus.",
+        "adm_subtitle": "Configurez la connexion OAuth Instagram pour votre site.",
+        "adm_title": "Paramètres de connexion Instagram",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_instagram-auth_name": "Connexion Instagram",
+        "module_instagram-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Instagram",
+        "settings_instagram-auth": "OAuth Instagram",
+        "settings_instagram-auth_description": "Identifiants de l’application Instagram."
+      }
+    },
+    "it": {
+      "instagramAuth": {
+        "adm_accountNote": "Solo gli account professionali (business o creator) possono accedere in questo modo, e Instagram non condivide alcun indirizzo email: per questi account viene quindi creato un indirizzo segnaposto che non può ricevere posta.",
+        "adm_apiNote": "La vecchia Basic Display API di Instagram è stata dismessa a dicembre 2024, quindi qui si usa Instagram API con Instagram Login. Crea un’app di questo tipo nella console per sviluppatori di Meta e registra su di essa l’URL di reindirizzamento indicato sopra.",
+        "adm_subtitle": "Configura l’accesso con Instagram OAuth per il tuo sito.",
+        "adm_title": "Impostazioni di accesso con Instagram",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_instagram-auth_name": "Accesso con Instagram",
+        "module_instagram-auth_description": "Consenti agli utenti di accedere con il proprio account Instagram",
+        "settings_instagram-auth": "Instagram OAuth",
+        "settings_instagram-auth_description": "Credenziali dell’applicazione Instagram."
+      }
+    },
+    "pl": {
+      "instagramAuth": {
+        "adm_accountNote": "Logować się tą drogą mogą tylko konta profesjonalne (biznesowe lub twórców). Instagram nie udostępnia adresu e-mail, więc takie konta dostają zastępczy adres, na który nigdy nie dotrze poczta.",
+        "adm_apiNote": "Stare Basic Display API Instagrama wyłączono w grudniu 2024, dlatego ta integracja korzysta z Instagram API z logowaniem Instagram. Utwórz aplikację tego typu w konsoli deweloperskiej Meta i zarejestruj w niej adres przekierowania podany powyżej.",
+        "adm_subtitle": "Skonfiguruj logowanie przez Instagram (OAuth) na swojej stronie.",
+        "adm_title": "Ustawienia logowania przez Instagram",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_instagram-auth_name": "Logowanie przez Instagram",
+        "module_instagram-auth_description": "Pozwól członkom logować się przez konto Instagram",
+        "settings_instagram-auth": "Instagram OAuth",
+        "settings_instagram-auth_description": "Dane aplikacji Instagram."
+      }
+    },
+    "pt": {
+      "instagramAuth": {
+        "adm_accountNote": "Só contas profissionais (comerciais ou de criador) podem entrar desta forma. Como o Instagram não compartilha endereço de e-mail, essas contas recebem um endereço provisório que nunca pode receber e-mails.",
+        "adm_apiNote": "A antiga Basic Display API do Instagram foi desativada em dezembro de 2024, por isso isto usa a Instagram API com Instagram Login. Crie um app desse tipo no console de desenvolvedores da Meta e registre nele a URL de redirecionamento acima.",
+        "adm_subtitle": "Configure o login com OAuth do Instagram para o seu site.",
+        "adm_title": "Configurações do login com Instagram",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_instagram-auth_name": "Login com Instagram",
+        "module_instagram-auth_description": "Permite que membros entrem com a conta do Instagram",
+        "settings_instagram-auth": "OAuth do Instagram",
+        "settings_instagram-auth_description": "Credenciais do aplicativo do Instagram."
+      }
+    },
+    "ru": {
+      "instagramAuth": {
+        "adm_accountNote": "Войти таким образом могут только профессиональные учетные записи (бизнес или автор контента). Instagram не передает адрес e-mail, поэтому таким учетным записям назначается заглушка, на которую письма не приходят.",
+        "adm_apiNote": "Старый Basic Display API Instagram отключен в декабре 2024 года, поэтому здесь используется Instagram API с входом через Instagram. Создайте приложение этого типа в консоли разработчика Meta и укажите в нем адрес перенаправления, приведенный выше.",
+        "adm_subtitle": "Настройте вход через OAuth Instagram на вашем сайте.",
+        "adm_title": "Настройки входа через Instagram",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_instagram-auth_name": "Вход через Instagram",
+        "module_instagram-auth_description": "Разрешить пользователям входить через свою учетную запись Instagram",
+        "settings_instagram-auth": "Instagram OAuth",
+        "settings_instagram-auth_description": "Учетные данные приложения Instagram."
+      }
+    },
+    "zh": {
+      "instagramAuth": {
+        "adm_accountNote": "只有专业账户（商业账户或创作者账户）可以这样登录。Instagram 不提供邮箱地址，因此这些账户会获得一个无法接收邮件的占位地址。",
+        "adm_apiNote": "Instagram 旧版 Basic Display API 已于 2024 年 12 月关闭，因此这里使用 Instagram API with Instagram Login。请在 Meta 开发者控制台中创建此类型的应用，并在其中注册上方的重定向 URL。",
+        "adm_subtitle": "为你的站点设置 Instagram OAuth 登录。",
+        "adm_title": "Instagram 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_instagram-auth_name": "Instagram 登录",
+        "module_instagram-auth_description": "允许用户使用其 Instagram 账户登录",
+        "settings_instagram-auth": "Instagram OAuth",
+        "settings_instagram-auth_description": "Instagram 应用凭据。"
+      }
     }
   },
   "permissions": [

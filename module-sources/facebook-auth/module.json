@@ -65,6 +65,136 @@
         "settings_facebook-auth": "Facebook OAuth",
         "settings_facebook-auth_description": "Facebook uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "facebookAuth": {
+        "adm_subtitle": "Saytınız üçün Facebook OAuth ilə daxil olmanı qurun.",
+        "adm_title": "Facebook ilə giriş parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_facebook-auth_name": "Facebook ilə giriş",
+        "module_facebook-auth_description": "İstifadəçilərin Facebook hesabları ilə daxil olmasına icazə verin",
+        "settings_facebook-auth": "Facebook OAuth",
+        "settings_facebook-auth_description": "Facebook tətbiqinin etimadnamələri."
+      }
+    },
+    "de": {
+      "facebookAuth": {
+        "adm_subtitle": "Richte die Anmeldung per Facebook-OAuth für deine Seite ein.",
+        "adm_title": "Einstellungen der Facebook-Anmeldung",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_facebook-auth_name": "Facebook-Anmeldung",
+        "module_facebook-auth_description": "Mitgliedern erlauben, sich mit ihrem Facebook-Konto anzumelden",
+        "settings_facebook-auth": "Facebook OAuth",
+        "settings_facebook-auth_description": "Zugangsdaten der Facebook-Anwendung."
+      }
+    },
+    "es": {
+      "facebookAuth": {
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de Facebook para tu sitio.",
+        "adm_title": "Ajustes del inicio de sesión con Facebook",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_facebook-auth_name": "Inicio de sesión con Facebook",
+        "module_facebook-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de Facebook",
+        "settings_facebook-auth": "OAuth de Facebook",
+        "settings_facebook-auth_description": "Credenciales de la aplicación de Facebook."
+      }
+    },
+    "et": {
+      "facebookAuth": {
+        "adm_subtitle": "Seadista saidi jaoks Facebooki OAuth-sisselogimine.",
+        "adm_title": "Facebooki sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_facebook-auth_name": "Facebooki sisselogimine",
+        "module_facebook-auth_description": "Luba kasutajatel sisse logida oma Facebooki kontoga",
+        "settings_facebook-auth": "Facebooki OAuth",
+        "settings_facebook-auth_description": "Facebooki rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "facebookAuth": {
+        "adm_subtitle": "Configurer la connexion OAuth Facebook pour votre site.",
+        "adm_title": "Paramètres de connexion Facebook",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_facebook-auth_name": "Connexion Facebook",
+        "module_facebook-auth_description": "Permettre aux membres de se connecter avec leur compte Facebook",
+        "settings_facebook-auth": "OAuth Facebook",
+        "settings_facebook-auth_description": "Identifiants de l’application Facebook."
+      }
+    },
+    "it": {
+      "facebookAuth": {
+        "adm_subtitle": "Configura l’accesso OAuth con Facebook per il tuo sito.",
+        "adm_title": "Impostazioni accesso con Facebook",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_facebook-auth_name": "Accesso con Facebook",
+        "module_facebook-auth_description": "Consenti ai membri di accedere con il proprio account Facebook",
+        "settings_facebook-auth": "OAuth di Facebook",
+        "settings_facebook-auth_description": "Credenziali dell’applicazione Facebook."
+      }
+    },
+    "pl": {
+      "facebookAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie przez Facebook OAuth na swojej stronie.",
+        "adm_title": "Ustawienia logowania przez Facebook",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_facebook-auth_name": "Logowanie przez Facebook",
+        "module_facebook-auth_description": "Pozwól użytkownikom logować się kontem Facebook",
+        "settings_facebook-auth": "OAuth Facebooka",
+        "settings_facebook-auth_description": "Dane aplikacji Facebook."
+      }
+    },
+    "pt": {
+      "facebookAuth": {
+        "adm_subtitle": "Configure o login OAuth do Facebook no seu site.",
+        "adm_title": "Configurações do login com Facebook",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_facebook-auth_name": "Login com Facebook",
+        "module_facebook-auth_description": "Permita que os usuários entrem com a conta do Facebook",
+        "settings_facebook-auth": "OAuth do Facebook",
+        "settings_facebook-auth_description": "Credenciais do aplicativo do Facebook."
+      }
+    },
+    "ru": {
+      "facebookAuth": {
+        "adm_subtitle": "Настройте вход через OAuth Facebook для вашего сайта.",
+        "adm_title": "Настройки входа через Facebook",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_facebook-auth_name": "Вход через Facebook",
+        "module_facebook-auth_description": "Позвольте участникам входить через свою учетную запись Facebook",
+        "settings_facebook-auth": "OAuth Facebook",
+        "settings_facebook-auth_description": "Учетные данные приложения Facebook."
+      }
+    },
+    "zh": {
+      "facebookAuth": {
+        "adm_subtitle": "为你的站点设置 Facebook OAuth 登录。",
+        "adm_title": "Facebook 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_facebook-auth_name": "Facebook 登录",
+        "module_facebook-auth_description": "允许用户使用 Facebook 账户登录",
+        "settings_facebook-auth": "Facebook OAuth",
+        "settings_facebook-auth_description": "Facebook 应用凭据。"
+      }
     }
   },
   "permissions": [

@@ -1,40 +1,91 @@
 import { cache } from "react";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { prisma } from "./db";
-import { resolveMode } from "./theme-mode";
-import { COLOR_MODE_COOKIE } from "./color-mode";
+import { resolvePageMode, type Surface } from "./theme-mode";
+import {
+    ADMIN_COLOR_MODE_COOKIE,
+    COLOR_MODE_COOKIE,
+    COLOR_MODE_LOCK_SETTING,
+    SURFACE_HEADER,
+    SYSTEM_SCHEME_COOKIE,
+    SYSTEM_SCHEME_HINT,
+} from "./color-mode";
 import { themeRegistry, defaultThemeId } from "@/core/generated/theme-registry";
 import type { ThemeManifest } from "./theme-manifest-schema";
 
+interface RequestSignals {
+    surface: Surface;
+    siteCookie: string | null;
+    adminCookie: string | null;
+    systemScheme: "light" | "dark" | null;
+}
+
+const NO_REQUEST: RequestSignals = { surface: "site", siteCookie: null, adminCookie: null, systemScheme: null };
+
 /**
- * The visitor's own mode, or null where there is no visitor.
+ * What this request says about the mode: which surface it is, what the
+ * visitor chose for the site and for the panel, and what their system
+ * prefers.
  *
- * `cookies()` throws rather than rejects when it is called with no request
- * around it, so the guard has to be a `try` and not a `.catch` on the
- * promise. A cron, a script and a test all reach this function and none of
- * them is a person with a preference; they get the site's mode.
+ * `cookies()` and `headers()` throw rather than reject when they are called
+ * with no request around them, so the guard has to be a `try` and not a
+ * `.catch` on the promise. A cron, a script and a test all reach this
+ * function and none of them is a person with a preference; they get the
+ * site's mode.
  */
-async function visitorMode(): Promise<string | null> {
+async function requestSignals(): Promise<RequestSignals> {
     try {
-        return (await cookies()).get(COLOR_MODE_COOKIE)?.value ?? null;
+        const [jar, head] = await Promise.all([cookies(), headers()]);
+        // The hint is fresh on every Chromium request; the cookie is what the
+        // page last saw in a browser that sends no hint.
+        const scheme = head.get(SYSTEM_SCHEME_HINT) ?? jar.get(SYSTEM_SCHEME_COOKIE)?.value ?? null;
+        return {
+            surface: head.get(SURFACE_HEADER) === "admin" ? "admin" : "site",
+            siteCookie: jar.get(COLOR_MODE_COOKIE)?.value ?? null,
+            adminCookie: jar.get(ADMIN_COLOR_MODE_COOKIE)?.value ?? null,
+            systemScheme: scheme === "dark" || scheme === "light" ? scheme : null,
+        };
     } catch {
-        return null;
+        return NO_REQUEST;
+    }
+}
+
+/** A query that fails, or a client that lacks the model, reads as no rows. */
+async function soft<T>(query: () => Promise<T>, fallback: T): Promise<T> {
+    try {
+        return await query();
+    } catch {
+        return fallback;
     }
 }
 
 export interface ActiveTheme {
     themeId: string;
+    /** The mode this page is drawn in: the panel's or the site's, as resolved. */
     mode: string;
     manifest: ThemeManifest;
+    /** The operator's colour customization for `mode`. */
     tokenOverrides: Record<string, unknown>;
+    /**
+     * Every mode's customization, so a page that changes mode without a
+     * reload - the toggle, the panel following the site, the reader's system
+     * changing - is drawn in that mode's colours and not the theme's defaults.
+     */
+    overridesByMode: Record<string, Record<string, unknown>>;
     settings: Record<string, Record<string, unknown>>;
+    /** Which surface this request is: the public site or the admin panel. */
+    surface: Surface;
+    /** `ThemeState.mode`: a mode of the theme, or `system`. */
+    siteDefault: string;
+    /** The site holds its mode: no visitor toggle, and an old choice ignored. */
+    locked: boolean;
 }
 
 /**
  * Resolve the active theme + mode from DB, merged with any customization
  * overrides and theme-owned settings.
  *
- * Three queries, and the layout is not the only caller: an admin page asks
+ * Four queries, and the layout is not the only caller: an admin page asks
  * again inside the layout that already asked, which made it six. `cache`
  * deduplicates for one render, which is the window where the answer cannot
  * change; a theme switch is a mutation, so the next request reads it fresh.
@@ -44,7 +95,8 @@ export const getActiveTheme = cache(async function getActiveTheme(): Promise<Act
     const themeId = state?.themeId && themeRegistry[state.themeId] ? state.themeId : defaultThemeId;
     const manifest = themeRegistry[themeId] ?? themeRegistry[defaultThemeId];
     /*
-     * The visitor's own choice, over the site's, over the theme's.
+     * The visitor's own choice, over the site's, over the theme's - and on
+     * the panel, the panel's own choice first.
      *
      * Read here rather than in the layout so every caller in one request gets
      * the same answer, and so the customization below is fetched for the mode
@@ -52,13 +104,15 @@ export const getActiveTheme = cache(async function getActiveTheme(): Promise<Act
      * site's while rendering the visitor's handed a dark page the light
      * theme's colour overrides.
      */
-    const chosen = await visitorMode();
-    const mode = resolveMode({ manifest, cookie: chosen, siteDefault: state?.mode ?? null });
-
-    const [customization, settingRows] = await Promise.all([
-        prisma.themeCustomization.findUnique({ where: { themeId_mode: { themeId, mode } } }).catch(() => null),
-        prisma.themeSetting.findMany({ where: { themeId } }).catch(() => []),
+    const [signals, lockRow, customizations, settingRows] = await Promise.all([
+        requestSignals(),
+        soft(() => prisma.setting.findUnique({ where: { key: COLOR_MODE_LOCK_SETTING } }), null),
+        soft(() => prisma.themeCustomization.findMany({ where: { themeId } }), []),
+        soft(() => prisma.themeSetting.findMany({ where: { themeId } }), []),
     ]);
+    const siteDefault = state?.mode ?? manifest.modes.default;
+    const locked = lockRow?.value === true;
+    const mode = resolvePageMode({ manifest, siteDefault, locked, ...signals });
 
     // Start every declared settings group + field at its manifest-level
     // `default`. DB rows then override - so a theme that ships with field
@@ -81,11 +135,18 @@ export const getActiveTheme = cache(async function getActiveTheme(): Promise<Act
         settings[row.groupKey][row.key] = row.value;
     }
 
-    const tokenOverrides = (customization?.overrides && typeof customization.overrides === "object"
-        ? (customization.overrides as Record<string, unknown>)
-        : {});
+    const overridesByMode: Record<string, Record<string, unknown>> = {};
+    for (const row of customizations) {
+        if (row.overrides && typeof row.overrides === "object") {
+            overridesByMode[row.mode] = row.overrides as Record<string, unknown>;
+        }
+    }
+    const tokenOverrides = overridesByMode[mode] ?? {};
 
-    return { themeId, mode, manifest, tokenOverrides, settings };
+    return {
+        themeId, mode, manifest, tokenOverrides, overridesByMode, settings,
+        surface: signals.surface, siteDefault, locked,
+    };
 });
 
 export async function setActiveTheme(themeId: string, mode: string): Promise<void> {

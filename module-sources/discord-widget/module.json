@@ -98,6 +98,276 @@
         "perm_manage": "Yönetebilir",
         "title": "Discord Sunucusu"
       }
+    },
+    "az": {
+      "admin": {
+        "menu_discord-widget": "Discord vidjeti",
+        "module_discord-widget_name": "Discord vidjeti",
+        "module_discord-widget_description": "Ana səhifənin yan panelində Discord server vidjeti",
+        "widget_discordServer": "Discord serveri",
+        "settings_discord-widget": "Discord vidjeti",
+        "settings_discord-widget_description": "Ana səhifənin yan panelində göstərilən Discord server vidjetini konfiqurasiya edin."
+      },
+      "discordWidget": {
+        "adm_error": "Yadda saxlamaq alınmadı",
+        "adm_save": "Yadda saxla",
+        "adm_saved": "Discord vidjeti parametrləri yadda saxlanıldı",
+        "adm_saving": "Saxlanılır…",
+        "adm_serverIdHelp": "Discord-u açın, serverinizə sağ klikləyin → Server parametrləri → Vidjet → vidjeti aktivləşdirin → Server ID-ni kopyalayın. Vidjeti gizlətmək üçün boş buraxın.",
+        "adm_serverIdLabel": "Discord Server ID-si",
+        "adm_serverIdPlaceholder": "məs. 123456789012345678",
+        "adm_subtitle": "Ana səhifədə göstərilən Discord vidjetini konfiqurasiya edin. Discord-da Server parametrləri → Vidjet bölməsində vidjeti aktivləşdirilmiş server ID-si lazımdır.",
+        "adm_title": "Discord vidjeti parametrləri",
+        "error": "Discord vidjetini yükləmək alınmadı",
+        "loading": "Discord vidjeti yüklənir...",
+        "offline": "Oflayn",
+        "online": "Onlayn",
+        "perm_manage": "İdarə et",
+        "title": "Discord serveri"
+      }
+    },
+    "de": {
+      "admin": {
+        "menu_discord-widget": "Discord-Widget",
+        "module_discord-widget_name": "Discord-Widget",
+        "module_discord-widget_description": "Discord-Server-Widget in der Seitenleiste der Startseite",
+        "widget_discordServer": "Discord-Server",
+        "settings_discord-widget": "Discord-Widget",
+        "settings_discord-widget_description": "Richte das Discord-Server-Widget ein, das in der Seitenleiste der Startseite angezeigt wird."
+      },
+      "discordWidget": {
+        "adm_error": "Speichern fehlgeschlagen",
+        "adm_save": "Speichern",
+        "adm_saved": "Discord-Widget-Einstellungen gespeichert",
+        "adm_saving": "Wird gespeichert…",
+        "adm_serverIdHelp": "Öffne Discord, klicke mit der rechten Maustaste auf deinen Server → Servereinstellungen → Widget → Widget aktivieren → Server-ID kopieren. Leer lassen, um das Widget zu verbergen.",
+        "adm_serverIdLabel": "Discord-Server-ID",
+        "adm_serverIdPlaceholder": "z. B. 123456789012345678",
+        "adm_subtitle": "Richte das Discord-Widget ein, das auf der Startseite angezeigt wird. Du brauchst die Server-ID, bei aktiviertem Widget unter Discord → Servereinstellungen → Widget.",
+        "adm_title": "Discord-Widget-Einstellungen",
+        "error": "Discord-Widget konnte nicht geladen werden",
+        "loading": "Discord-Widget wird geladen...",
+        "offline": "Offline",
+        "online": "Online",
+        "perm_manage": "Verwalten",
+        "title": "Discord-Server"
+      }
+    },
+    "es": {
+      "admin": {
+        "menu_discord-widget": "Widget de Discord",
+        "module_discord-widget_name": "Widget de Discord",
+        "module_discord-widget_description": "Widget del servidor de Discord en la barra lateral de la página de inicio",
+        "widget_discordServer": "Servidor de Discord",
+        "settings_discord-widget": "Widget de Discord",
+        "settings_discord-widget_description": "Configura el widget del servidor de Discord que se muestra en la barra lateral de la página de inicio."
+      },
+      "discordWidget": {
+        "adm_error": "No se pudo guardar",
+        "adm_save": "Guardar",
+        "adm_saved": "Ajustes del widget de Discord guardados",
+        "adm_saving": "Guardando…",
+        "adm_serverIdHelp": "Abre Discord, haz clic derecho en tu servidor → Ajustes del servidor → Widget → activa el widget → copia el ID del servidor. Déjalo vacío para ocultar el widget.",
+        "adm_serverIdLabel": "ID del servidor de Discord",
+        "adm_serverIdPlaceholder": "p. ej. 123456789012345678",
+        "adm_subtitle": "Configura el widget de Discord que se muestra en la página de inicio. Necesitas el ID del servidor con el widget activado en Discord → Ajustes del servidor → Widget.",
+        "adm_title": "Ajustes del widget de Discord",
+        "error": "No se pudo cargar el widget de Discord",
+        "loading": "Cargando widget de Discord...",
+        "offline": "Sin conexión",
+        "online": "En línea",
+        "perm_manage": "Gestionar",
+        "title": "Servidor de Discord"
+      }
+    },
+    "et": {
+      "admin": {
+        "menu_discord-widget": "Discordi vidin",
+        "module_discord-widget_name": "Discordi vidin",
+        "module_discord-widget_description": "Discordi serveri vidin avalehe külgribal",
+        "widget_discordServer": "Discordi server",
+        "settings_discord-widget": "Discordi vidin",
+        "settings_discord-widget_description": "Seadista avalehe külgribal kuvatav Discordi serveri vidin."
+      },
+      "discordWidget": {
+        "adm_error": "Salvestamine ebaõnnestus",
+        "adm_save": "Salvesta",
+        "adm_saved": "Discordi vidina seaded salvestati",
+        "adm_saving": "Salvestan…",
+        "adm_serverIdHelp": "Ava Discord, klõpsa oma serveril paremklõpsuga → Serveri seaded → Vidin → luba vidin → kopeeri serveri ID. Vidina peitmiseks jäta tühjaks.",
+        "adm_serverIdLabel": "Discordi serveri ID",
+        "adm_serverIdPlaceholder": "nt 123456789012345678",
+        "adm_subtitle": "Seadista avalehel kuvatav Discordi vidin. Vajad serveri ID-d, mille puhul vidin on Discordis lubatud: Serveri seaded → Vidin.",
+        "adm_title": "Discordi vidina seaded",
+        "error": "Discordi vidina laadimine ebaõnnestus",
+        "loading": "Laadin Discordi vidinat...",
+        "offline": "Võrgust väljas",
+        "online": "Võrgus",
+        "perm_manage": "Halda",
+        "title": "Discordi server"
+      }
+    },
+    "fr": {
+      "admin": {
+        "menu_discord-widget": "Widget Discord",
+        "module_discord-widget_name": "Widget Discord",
+        "module_discord-widget_description": "Widget du serveur Discord dans la colonne latérale de l’accueil",
+        "widget_discordServer": "Serveur Discord",
+        "settings_discord-widget": "Widget Discord",
+        "settings_discord-widget_description": "Configurer le widget du serveur Discord affiché dans la colonne latérale de l’accueil."
+      },
+      "discordWidget": {
+        "adm_error": "Échec de l’enregistrement",
+        "adm_save": "Enregistrer",
+        "adm_saved": "Paramètres du widget Discord enregistrés",
+        "adm_saving": "Enregistrement…",
+        "adm_serverIdHelp": "Ouvrez Discord, faites un clic droit sur votre serveur → Paramètres du serveur → Widget → activez le widget → copiez l’ID du serveur. Laisser vide pour masquer le widget.",
+        "adm_serverIdLabel": "ID du serveur Discord",
+        "adm_serverIdPlaceholder": "ex. 123456789012345678",
+        "adm_subtitle": "Configurer le widget Discord affiché sur l’accueil. Il faut l’ID du serveur, avec le widget activé dans Discord → Paramètres du serveur → Widget.",
+        "adm_title": "Paramètres du widget Discord",
+        "error": "Échec du chargement du widget Discord",
+        "loading": "Chargement du widget Discord…",
+        "offline": "Hors ligne",
+        "online": "En ligne",
+        "perm_manage": "Gérer",
+        "title": "Serveur Discord"
+      }
+    },
+    "it": {
+      "admin": {
+        "menu_discord-widget": "Widget Discord",
+        "module_discord-widget_name": "Widget Discord",
+        "module_discord-widget_description": "Widget del server Discord nella barra laterale della home",
+        "widget_discordServer": "Server Discord",
+        "settings_discord-widget": "Widget Discord",
+        "settings_discord-widget_description": "Configura il widget del server Discord mostrato nella barra laterale della home."
+      },
+      "discordWidget": {
+        "adm_error": "Salvataggio non riuscito",
+        "adm_save": "Salva",
+        "adm_saved": "Impostazioni del widget Discord salvate",
+        "adm_saving": "Salvataggio…",
+        "adm_serverIdHelp": "Apri Discord, fai clic destro sul server → Impostazioni server → Widget → attiva il widget → copia l’ID server. Lascia vuoto per nascondere il widget.",
+        "adm_serverIdLabel": "ID server Discord",
+        "adm_serverIdPlaceholder": "es. 123456789012345678",
+        "adm_subtitle": "Configura il widget Discord mostrato in home. Ti serve l’ID del server con il widget attivo in Discord → Impostazioni server → Widget.",
+        "adm_title": "Impostazioni widget Discord",
+        "error": "Caricamento del widget Discord non riuscito",
+        "loading": "Caricamento del widget Discord...",
+        "offline": "Offline",
+        "online": "Online",
+        "perm_manage": "Gestisci",
+        "title": "Server Discord"
+      }
+    },
+    "pl": {
+      "admin": {
+        "menu_discord-widget": "Widżet Discorda",
+        "module_discord-widget_name": "Widżet Discorda",
+        "module_discord-widget_description": "Widżet serwera Discorda w pasku bocznym strony głównej",
+        "widget_discordServer": "Serwer Discord",
+        "settings_discord-widget": "Widżet Discorda",
+        "settings_discord-widget_description": "Skonfiguruj widżet serwera Discord wyświetlany w pasku bocznym strony głównej."
+      },
+      "discordWidget": {
+        "adm_error": "Nie udało się zapisać",
+        "adm_save": "Zapisz",
+        "adm_saved": "Zapisano ustawienia widżetu Discorda",
+        "adm_saving": "Zapisywanie…",
+        "adm_serverIdHelp": "Otwórz Discorda, kliknij prawym przyciskiem serwer → Ustawienia serwera → Widżet → włącz widżet → skopiuj ID serwera. Zostaw puste, aby ukryć widżet.",
+        "adm_serverIdLabel": "ID serwera Discord",
+        "adm_serverIdPlaceholder": "np. 123456789012345678",
+        "adm_subtitle": "Skonfiguruj widżet Discorda wyświetlany na stronie głównej. Potrzebujesz ID serwera z włączonym widżetem w Discord → Ustawienia serwera → Widżet.",
+        "adm_title": "Ustawienia widżetu Discorda",
+        "error": "Nie udało się wczytać widżetu Discorda",
+        "loading": "Wczytywanie widżetu Discorda...",
+        "offline": "Offline",
+        "online": "Online",
+        "perm_manage": "Zarządzaj",
+        "title": "Serwer Discord"
+      }
+    },
+    "pt": {
+      "admin": {
+        "menu_discord-widget": "Widget do Discord",
+        "module_discord-widget_name": "Widget do Discord",
+        "module_discord-widget_description": "Widget do servidor do Discord na barra lateral da página inicial",
+        "widget_discordServer": "Servidor do Discord",
+        "settings_discord-widget": "Widget do Discord",
+        "settings_discord-widget_description": "Configure o widget do servidor do Discord exibido na barra lateral da página inicial."
+      },
+      "discordWidget": {
+        "adm_error": "Falha ao salvar",
+        "adm_save": "Salvar",
+        "adm_saved": "Configurações do widget do Discord salvas",
+        "adm_saving": "Salvando…",
+        "adm_serverIdHelp": "Abra o Discord, clique com o botão direito no seu servidor → Configurações do servidor → Widget → ative o widget → copie o ID do servidor. Deixe em branco para ocultar o widget.",
+        "adm_serverIdLabel": "ID do servidor do Discord",
+        "adm_serverIdPlaceholder": "ex.: 123456789012345678",
+        "adm_subtitle": "Configure o widget do Discord exibido na página inicial. Você precisa do ID do servidor com o widget ativado em Discord → Configurações do servidor → Widget.",
+        "adm_title": "Configurações do widget do Discord",
+        "error": "Falha ao carregar o widget do Discord",
+        "loading": "Carregando widget do Discord...",
+        "offline": "Offline",
+        "online": "Online",
+        "perm_manage": "Gerenciar",
+        "title": "Servidor do Discord"
+      }
+    },
+    "ru": {
+      "admin": {
+        "menu_discord-widget": "Виджет Discord",
+        "module_discord-widget_name": "Виджет Discord",
+        "module_discord-widget_description": "Виджет сервера Discord в боковой панели главной страницы",
+        "widget_discordServer": "Сервер Discord",
+        "settings_discord-widget": "Виджет Discord",
+        "settings_discord-widget_description": "Настройте виджет сервера Discord в боковой панели главной страницы."
+      },
+      "discordWidget": {
+        "adm_error": "Не удалось сохранить",
+        "adm_save": "Сохранить",
+        "adm_saved": "Настройки виджета Discord сохранены",
+        "adm_saving": "Сохранение…",
+        "adm_serverIdHelp": "Откройте Discord, щелкните правой кнопкой мыши по серверу → «Настройки сервера» → «Виджет» → включите виджет → скопируйте ID сервера. Оставьте поле пустым, чтобы скрыть виджет.",
+        "adm_serverIdLabel": "ID сервера Discord",
+        "adm_serverIdPlaceholder": "например, 123456789012345678",
+        "adm_subtitle": "Настройте виджет Discord, который показывается на главной странице. Нужен ID сервера с включенным виджетом: Discord → «Настройки сервера» → «Виджет».",
+        "adm_title": "Настройки виджета Discord",
+        "error": "Не удалось загрузить виджет Discord",
+        "loading": "Загрузка виджета Discord...",
+        "offline": "Не в сети",
+        "online": "В сети",
+        "perm_manage": "Управление",
+        "title": "Сервер Discord"
+      }
+    },
+    "zh": {
+      "admin": {
+        "menu_discord-widget": "Discord 小组件",
+        "module_discord-widget_name": "Discord 小组件",
+        "module_discord-widget_description": "首页侧边栏的 Discord 服务器小组件",
+        "widget_discordServer": "Discord 服务器",
+        "settings_discord-widget": "Discord 小组件",
+        "settings_discord-widget_description": "配置首页侧边栏显示的 Discord 服务器小组件。"
+      },
+      "discordWidget": {
+        "adm_error": "保存失败",
+        "adm_save": "保存",
+        "adm_saved": "Discord 小组件设置已保存",
+        "adm_saving": "保存中…",
+        "adm_serverIdHelp": "打开 Discord，右键点击你的服务器 → 服务器设置 → 小组件 → 启用小组件 → 复制服务器 ID。留空则隐藏小组件。",
+        "adm_serverIdLabel": "Discord 服务器 ID",
+        "adm_serverIdPlaceholder": "例如 123456789012345678",
+        "adm_subtitle": "配置首页显示的 Discord 小组件。需要在 Discord 的服务器设置 → 小组件中启用小组件，并使用其中的服务器 ID。",
+        "adm_title": "Discord 小组件设置",
+        "error": "无法加载 Discord 小组件",
+        "loading": "正在加载 Discord 小组件…",
+        "offline": "离线",
+        "online": "在线",
+        "perm_manage": "管理",
+        "title": "Discord 服务器"
+      }
     }
   },
   "csp": {

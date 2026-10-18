@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useModalDialog } from "@/core/hooks/useModalDialog";
 import { Link, usePathname, useRouter } from "@/core/lib/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useDarkMode } from "@/core/hooks/useDarkMode";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { usePanelMode } from "@/core/hooks/useDarkMode";
+import { Menu, X, Sun, Moon, SunMoon } from "lucide-react";
 import {
     findActiveGroupId,
     type NavGroup,
@@ -47,6 +47,13 @@ interface AdminSidebarProps {
  *
  * Mobile: both rails collapse into a single overlay sheet.
  */
+/** Written out, so a search for the key finds where it is said. */
+const PANEL_MODE_LABEL = {
+    site: "sidebar_panelMode_site",
+    light: "sidebar_panelMode_light",
+    dark: "sidebar_panelMode_dark",
+} as const;
+
 export function AdminSidebar({ modules = [], activeThemeId, reader }: AdminSidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
@@ -56,8 +63,12 @@ export function AdminSidebar({ modules = [], activeThemeId, reader }: AdminSideb
     // it owes a keyboard user the same exit every dialog here owes: Escape, a
     // Tab that stays inside, and focus back on the button that opened it.
     const drawerRef = useModalDialog<HTMLElement>(mobileOpen, () => setMobileOpen(false));
-    const { isDark, toggle: toggleDarkMode } = useDarkMode();
+    // The panel's own mode, apart from the site's: this button used to write
+    // the visitor's choice, so a dark panel made the site dark as well.
+    const { choice: panelMode, cycle: cyclePanelMode } = usePanelMode();
+    const PanelModeIcon = panelMode === "dark" ? Moon : panelMode === "light" ? Sun : SunMoon;
     const t = useTranslations("admin");
+    const panelModeLabel = t(PANEL_MODE_LABEL[panelMode]);
 
     // The breadcrumb builds the same groups from the same hook, so the two
     // never disagree about what a route is called.
@@ -201,17 +212,17 @@ export function AdminSidebar({ modules = [], activeThemeId, reader }: AdminSideb
                 <div className="relative group/rail">
                     <button
                         type="button"
-                        onClick={toggleDarkMode}
-                        aria-label={isDark ? t("sidebar_lightMode") : t("sidebar_darkMode")}
+                        onClick={cyclePanelMode}
+                        aria-label={panelModeLabel}
                         className="w-10 h-10 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition"
                     >
-                        {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                        <PanelModeIcon size={18} />
                     </button>
                     <span
                         role="tooltip"
                         className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded-md bg-foreground text-background text-xs font-medium whitespace-nowrap shadow-lg opacity-0 group-hover/rail:opacity-100 transition-opacity duration-150 z-50"
                     >
-                        {isDark ? t("sidebar_lightMode") : t("sidebar_darkMode")}
+                        {panelModeLabel}
                     </span>
                 </div>
             </div>

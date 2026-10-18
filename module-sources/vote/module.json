@@ -176,6 +176,546 @@
       "activity": {
         "kindVoteCast": "Oy"
       }
+    },
+    "az": {
+      "vote": {
+        "adm_field1Label": "Ad",
+        "adm_field1Placeholder": "Sayt adı",
+        "adm_field2Label": "URL",
+        "adm_field2Placeholder": "https://vote-site.com/vote/123",
+        "adm_field3Label": "İkon",
+        "adm_field3Placeholder": "İkon seçin",
+        "adm_field4Label": "Aktiv",
+        "adm_subtitle": "Oyunçuların səs verməyə göndərildiyi siyahı saytları",
+        "adm_title": "Səs saytları",
+        "available": "Mövcuddur",
+        "cooldown": "Gözləmə",
+        "cooldownHours": "{hours, plural, one {Növbəti dəfə # saatdan sonra səs verə bilərsiniz} other {Növbəti dəfə # saatdan sonra səs verə bilərsiniz}}",
+        "deleted": "Səs saytı uğurla silindi",
+        "description": "Aşağıdakı siyahılarda server üçün səs verin. Klikləri biz sayırıq; səsi siyahı sayır.",
+        "disabled": "Söndürülüb",
+        "enabled": "Aktivdir",
+        "leaderboardVoters": "Ən çox səs klikləri",
+        "loginToVote": "Kliklərinizin sayılması üçün daxil olun.",
+        "noSites": "Mövcud səs saytı yoxdur",
+        "perm_manage": "İdarə et",
+        "saveError": "Səs saytını yadda saxlamaq alınmadı",
+        "saved": "Səs saytı uğurla yadda saxlanıldı",
+        "siteName": "Sayt adı",
+        "siteUrl": "Səs URL-i",
+        "title": "Server üçün səs verin",
+        "totalVotes": "klik",
+        "voteFailed": "Bu klik qeydə alınmadı. Yenidən cəhd edin.",
+        "voteInFlight": "Başqa klik hələ qeydə alınır. Bir az sonra yenidən cəhd edin.",
+        "voteNow": "İndi səs verin",
+        "voteRecorded": "Siyahı açıqdır. Səsinizi orada tamamlayın."
+      },
+      "admin": {
+        "menu_vote": "Səs",
+        "title": "Admin paneli",
+        "subtitle": "Platforma parametrlərinizi və məzmununuzu idarə edin",
+        "menu_vote_vote_sites": "Səs saytları",
+        "module_vote_name": "Səs saytları",
+        "module_vote_description": "Oyunçuları sıralamada olduğunuz server siyahılarına göndərin və kimin səs verdiyini sayın"
+      },
+      "pageTitles": {
+        "vote": "Səs"
+      },
+      "nav": {
+        "vote": "Səs"
+      },
+      "pageDescriptions": {
+        "vote": "Aşağıdakı siyahı saytlarında server üçün səs verin, onu reytinqdə yuxarı qaldırın və hər səs üçün mükafat toplayın."
+      },
+      "activity": {
+        "kindVoteCast": "Səs"
+      }
+    },
+    "de": {
+      "vote": {
+        "adm_field1Label": "Name",
+        "adm_field1Placeholder": "Name der Seite",
+        "adm_field2Label": "URL",
+        "adm_field2Placeholder": "https://vote-site.com/vote/123",
+        "adm_field3Label": "Icon",
+        "adm_field3Placeholder": "Icon auswählen",
+        "adm_field4Label": "Aktiv",
+        "adm_subtitle": "Die Listen-Seiten, auf denen Spieler voten sollen",
+        "adm_title": "Vote-Seiten",
+        "available": "Verfügbar",
+        "cooldown": "Wartezeit",
+        "cooldownHours": "{hours, plural, one {Du kannst in # Stunde erneut voten} other {Du kannst in # Stunden erneut voten}}",
+        "deleted": "Vote-Seite erfolgreich gelöscht",
+        "description": "Vote für den Server auf den Listen unten. Wir zählen den Klick; die Liste zählt den Vote.",
+        "disabled": "Deaktiviert",
+        "enabled": "Aktiviert",
+        "leaderboardVoters": "Meiste Vote-Klicks",
+        "loginToVote": "Melde dich an, damit deine Klicks gezählt werden.",
+        "noSites": "Keine Vote-Seiten verfügbar",
+        "perm_manage": "Verwalten",
+        "saveError": "Vote-Seite konnte nicht gespeichert werden",
+        "saved": "Vote-Seite erfolgreich gespeichert",
+        "siteName": "Name der Seite",
+        "siteUrl": "Vote-URL",
+        "title": "Für den Server voten",
+        "totalVotes": "Klicks",
+        "voteFailed": "Dein Klick konnte nicht erfasst werden. Versuch es erneut.",
+        "voteInFlight": "Ein anderer Klick wird noch erfasst. Versuch es gleich noch einmal.",
+        "voteNow": "Jetzt voten",
+        "voteRecorded": "Die Seite ist geöffnet. Schließe deinen Vote dort ab."
+      },
+      "admin": {
+        "menu_vote": "Vote",
+        "title": "Admin-Bereich",
+        "subtitle": "Verwalte die Einstellungen und Inhalte deiner Plattform",
+        "menu_vote_vote_sites": "Vote-Seiten",
+        "module_vote_name": "Vote-Seiten",
+        "module_vote_description": "Schicke Spieler zu den Serverlisten, auf denen du gelistet bist, und zähle, wer gevotet hat"
+      },
+      "pageTitles": {
+        "vote": "Vote"
+      },
+      "nav": {
+        "vote": "Vote"
+      },
+      "pageDescriptions": {
+        "vote": "Vote für den Server auf den Listen-Seiten unten, bring ihn in der Rangliste nach oben und sammle für jeden Vote eine Belohnung."
+      },
+      "activity": {
+        "kindVoteCast": "Vote"
+      }
+    },
+    "es": {
+      "vote": {
+        "adm_field1Label": "Nombre",
+        "adm_field1Placeholder": "Nombre del sitio",
+        "adm_field2Label": "URL",
+        "adm_field2Placeholder": "https://vote-site.com/vote/123",
+        "adm_field3Label": "Icono",
+        "adm_field3Placeholder": "Elige un icono",
+        "adm_field4Label": "Activo",
+        "adm_subtitle": "Los sitios de listado a los que se envía a los jugadores para votar",
+        "adm_title": "Sitios de votación",
+        "available": "Disponible",
+        "cooldown": "Espera",
+        "cooldownHours": "{hours, plural, one {Puedes volver a votar en # hora} other {Puedes volver a votar en # horas}}",
+        "deleted": "Sitio de votación eliminado correctamente",
+        "description": "Vota por el servidor en los listados de abajo. Nosotros contamos el clic; el listado cuenta el voto.",
+        "disabled": "Desactivado",
+        "enabled": "Activado",
+        "leaderboardVoters": "Más clics de voto",
+        "loginToVote": "Inicia sesión para que se cuenten tus clics.",
+        "noSites": "No hay sitios de votación disponibles",
+        "perm_manage": "Gestionar",
+        "saveError": "No se pudo guardar el sitio de votación",
+        "saved": "Sitio de votación guardado correctamente",
+        "siteName": "Nombre del sitio",
+        "siteUrl": "URL de votación",
+        "title": "Vota por el servidor",
+        "totalVotes": "clics",
+        "voteFailed": "No se pudo registrar ese clic. Inténtalo de nuevo.",
+        "voteInFlight": "Otro clic todavía se está registrando. Inténtalo de nuevo en un momento.",
+        "voteNow": "Votar ahora",
+        "voteRecorded": "El listado está abierto. Termina tu voto allí."
+      },
+      "admin": {
+        "menu_vote": "Votos",
+        "title": "Panel de administración",
+        "subtitle": "Gestiona los ajustes y el contenido de tu plataforma",
+        "menu_vote_vote_sites": "Sitios de votación",
+        "module_vote_name": "Sitios de votación",
+        "module_vote_description": "Envía a los jugadores a los listados del servidor en los que estás clasificado y cuenta quién ha votado"
+      },
+      "pageTitles": {
+        "vote": "Votar"
+      },
+      "nav": {
+        "vote": "Votar"
+      },
+      "pageDescriptions": {
+        "vote": "Vota por el servidor en los sitios de listado de abajo, súbelo en las clasificaciones y consigue una recompensa por cada voto."
+      },
+      "activity": {
+        "kindVoteCast": "Voto"
+      }
+    },
+    "et": {
+      "vote": {
+        "adm_field1Label": "Nimi",
+        "adm_field1Placeholder": "Saidi nimi",
+        "adm_field2Label": "URL",
+        "adm_field2Placeholder": "https://vote-site.com/vote/123",
+        "adm_field3Label": "Ikoon",
+        "adm_field3Placeholder": "Vali ikoon",
+        "adm_field4Label": "Aktiivne",
+        "adm_subtitle": "Nimekirjasaidid, kuhu mängijad hääletama suunatakse",
+        "adm_title": "Hääletussaidid",
+        "available": "Saadaval",
+        "cooldown": "Ooteaeg",
+        "cooldownHours": "{hours, plural, one {Saad uuesti hääletada # tunni pärast} other {Saad uuesti hääletada # tunni pärast}}",
+        "deleted": "Hääletussait on edukalt kustutatud",
+        "description": "Hääleta serveri poolt allolevates nimekirjades. Meie loeme klikid, nimekiri loeb hääled.",
+        "disabled": "Keelatud",
+        "enabled": "Lubatud",
+        "leaderboardVoters": "Enim hääleklikke",
+        "loginToVote": "Logi sisse, et sinu klikid loetaks.",
+        "noSites": "Hääletussaite pole saadaval",
+        "perm_manage": "Halda",
+        "saveError": "Hääletussaidi salvestamine ebaõnnestus",
+        "saved": "Hääletussait on edukalt salvestatud",
+        "siteName": "Saidi nimi",
+        "siteUrl": "Hääletamise URL",
+        "title": "Hääleta serveri poolt",
+        "totalVotes": "klikki",
+        "voteFailed": "Seda klikki ei õnnestunud salvestada. Proovi uuesti.",
+        "voteInFlight": "Teist klikki salvestatakse veel. Proovi hetke pärast uuesti.",
+        "voteNow": "Hääleta kohe",
+        "voteRecorded": "Nimekiri on avatud. Lõpeta hääletamine seal."
+      },
+      "admin": {
+        "menu_vote": "Hääletamine",
+        "title": "Halduspaneel",
+        "subtitle": "Halda oma platvormi seadeid ja sisu",
+        "menu_vote_vote_sites": "Hääletussaidid",
+        "module_vote_name": "Hääletussaidid",
+        "module_vote_description": "Suuna mängijad nimekirjasaitidele, kus oled edetabelis, ja loe, kes hääletas"
+      },
+      "pageTitles": {
+        "vote": "Hääletamine"
+      },
+      "nav": {
+        "vote": "Hääleta"
+      },
+      "pageDescriptions": {
+        "vote": "Hääleta serveri poolt allolevatel nimekirjasaitidel, tõsta teda edetabelis ja saa iga hääle eest preemia."
+      },
+      "activity": {
+        "kindVoteCast": "Hääl"
+      }
+    },
+    "fr": {
+      "vote": {
+        "adm_field1Label": "Nom",
+        "adm_field1Placeholder": "Nom du site",
+        "adm_field2Label": "URL",
+        "adm_field2Placeholder": "https://vote-site.com/vote/123",
+        "adm_field3Label": "Icône",
+        "adm_field3Placeholder": "Choisissez une icône",
+        "adm_field4Label": "Actif",
+        "adm_subtitle": "Les sites de classement vers lesquels les joueurs sont envoyés pour voter",
+        "adm_title": "Sites de vote",
+        "available": "Disponible",
+        "cooldown": "Délai d’attente",
+        "cooldownHours": "{hours, plural, one {Vous pourrez recommencer dans # heure} other {Vous pourrez recommencer dans # heures}}",
+        "deleted": "Site de vote supprimé avec succès",
+        "description": "Votez pour le serveur sur les sites de classement ci-dessous. Nous comptons le clic ; le classement compte le vote.",
+        "disabled": "Désactivé",
+        "enabled": "Activé",
+        "leaderboardVoters": "Plus de clics de vote",
+        "loginToVote": "Connectez-vous pour que vos clics soient comptés.",
+        "noSites": "Aucun site de vote disponible",
+        "perm_manage": "Gérer",
+        "saveError": "Échec de l’enregistrement du site de vote",
+        "saved": "Site de vote enregistré avec succès",
+        "siteName": "Nom du site",
+        "siteUrl": "URL de vote",
+        "title": "Votez pour le serveur",
+        "totalVotes": "clics",
+        "voteFailed": "Ce clic n’a pas pu être enregistré. Réessayez.",
+        "voteInFlight": "Un autre clic est encore en cours d’enregistrement. Réessayez dans un instant.",
+        "voteNow": "Voter maintenant",
+        "voteRecorded": "Le classement est ouvert. Terminez votre vote là-bas."
+      },
+      "admin": {
+        "menu_vote": "Vote",
+        "title": "Panneau d’administration",
+        "subtitle": "Gérez les paramètres et le contenu de votre plateforme",
+        "menu_vote_vote_sites": "Sites de vote",
+        "module_vote_name": "Sites de vote",
+        "module_vote_description": "Envoyez les joueurs vers les classements de serveurs où vous figurez, et comptez qui a voté"
+      },
+      "pageTitles": {
+        "vote": "Vote"
+      },
+      "nav": {
+        "vote": "Vote"
+      },
+      "pageDescriptions": {
+        "vote": "Votez pour le serveur sur les sites de classement ci-dessous, faites-le monter dans les classements et recevez une récompense pour chaque vote."
+      },
+      "activity": {
+        "kindVoteCast": "Vote"
+      }
+    },
+    "it": {
+      "vote": {
+        "adm_field1Label": "Nome",
+        "adm_field1Placeholder": "Nome del sito",
+        "adm_field2Label": "URL",
+        "adm_field2Placeholder": "https://vote-site.com/vote/123",
+        "adm_field3Label": "Icona",
+        "adm_field3Placeholder": "Scegli un’icona",
+        "adm_field4Label": "Attivo",
+        "adm_subtitle": "I siti di classifica a cui vengono inviati i giocatori per votare",
+        "adm_title": "Siti di voto",
+        "available": "Disponibile",
+        "cooldown": "Attesa",
+        "cooldownHours": "{hours, plural, one {Puoi ripetere tra # ora} other {Puoi ripetere tra # ore}}",
+        "deleted": "Sito di voto eliminato correttamente",
+        "description": "Vota il server nelle classifiche qui sotto. Conteggiamo il clic; la classifica conta il voto.",
+        "disabled": "Disattivato",
+        "enabled": "Attivo",
+        "leaderboardVoters": "Più clic di voto",
+        "loginToVote": "Accedi perché i tuoi clic vengano conteggiati.",
+        "noSites": "Nessun sito di voto disponibile",
+        "perm_manage": "Gestisci",
+        "saveError": "Salvataggio del sito di voto non riuscito",
+        "saved": "Sito di voto salvato correttamente",
+        "siteName": "Nome del sito",
+        "siteUrl": "URL di voto",
+        "title": "Vota il server",
+        "totalVotes": "clic",
+        "voteFailed": "Impossibile registrare questo clic. Riprova.",
+        "voteInFlight": "Un altro clic è ancora in registrazione. Riprova tra un momento.",
+        "voteNow": "Vota ora",
+        "voteRecorded": "La classifica è aperta. Completa il tuo voto lì."
+      },
+      "admin": {
+        "menu_vote": "Voto",
+        "title": "Pannello di amministrazione",
+        "subtitle": "Gestisci le impostazioni e i contenuti della piattaforma",
+        "menu_vote_vote_sites": "Siti di voto",
+        "module_vote_name": "Siti di voto",
+        "module_vote_description": "Manda i giocatori alle classifiche in cui sei posizionato e conta chi ha votato"
+      },
+      "pageTitles": {
+        "vote": "Voto"
+      },
+      "nav": {
+        "vote": "Voto"
+      },
+      "pageDescriptions": {
+        "vote": "Vota il server nei siti di classifica qui sotto, spingilo più in alto e ricevi una ricompensa per ogni voto."
+      },
+      "activity": {
+        "kindVoteCast": "Voto"
+      }
+    },
+    "pl": {
+      "vote": {
+        "adm_field1Label": "Nazwa",
+        "adm_field1Placeholder": "Nazwa strony",
+        "adm_field2Label": "URL",
+        "adm_field2Placeholder": "https://vote-site.com/vote/123",
+        "adm_field3Label": "Ikona",
+        "adm_field3Placeholder": "Wybierz ikonę",
+        "adm_field4Label": "Aktywne",
+        "adm_subtitle": "Serwisy z listami, na których gracze głosują",
+        "adm_title": "Strony głosowania",
+        "available": "Dostępne",
+        "cooldown": "Odczekaj",
+        "cooldownHours": "{hours, plural, one {Możesz zagłosować ponownie za # godzinę} few {Możesz zagłosować ponownie za # godziny} many {Możesz zagłosować ponownie za # godzin} other {Możesz zagłosować ponownie za # godziny}}",
+        "deleted": "Strona głosowania usunięta pomyślnie",
+        "description": "Głosuj na serwer na listach poniżej. Liczymy kliknięcie; głos liczy już lista.",
+        "disabled": "Wyłączone",
+        "enabled": "Włączone",
+        "leaderboardVoters": "Najwięcej kliknięć głosowania",
+        "loginToVote": "Zaloguj się, aby Twoje kliknięcia były liczone.",
+        "noSites": "Brak dostępnych stron głosowania",
+        "perm_manage": "Zarządzanie",
+        "saveError": "Nie udało się zapisać strony głosowania",
+        "saved": "Strona głosowania zapisana pomyślnie",
+        "siteName": "Nazwa strony",
+        "siteUrl": "Adres do głosowania",
+        "title": "Zagłosuj na serwer",
+        "totalVotes": "kliknięć",
+        "voteFailed": "Nie udało się zapisać tego kliknięcia. Spróbuj ponownie.",
+        "voteInFlight": "Inne kliknięcie wciąż jest zapisywane. Spróbuj ponownie za chwilę.",
+        "voteNow": "Zagłosuj teraz",
+        "voteRecorded": "Lista jest otwarta. Dokończ głos tam."
+      },
+      "admin": {
+        "menu_vote": "Głosowanie",
+        "title": "Panel administratora",
+        "subtitle": "Zarządzaj ustawieniami i treściami platformy",
+        "menu_vote_vote_sites": "Strony głosowania",
+        "module_vote_name": "Strony głosowania",
+        "module_vote_description": "Kieruj graczy na listy serwerów, na których jesteś notowany, i licz, kto zagłosował"
+      },
+      "pageTitles": {
+        "vote": "Głosowanie"
+      },
+      "nav": {
+        "vote": "Głosowanie"
+      },
+      "pageDescriptions": {
+        "vote": "Zagłosuj na serwer na listach poniżej, pnij się w rankingach i odbieraj nagrodę za każdy głos."
+      },
+      "activity": {
+        "kindVoteCast": "Głos"
+      }
+    },
+    "pt": {
+      "vote": {
+        "adm_field1Label": "Nome",
+        "adm_field1Placeholder": "Nome do site",
+        "adm_field2Label": "URL",
+        "adm_field2Placeholder": "https://vote-site.com/vote/123",
+        "adm_field3Label": "Ícone",
+        "adm_field3Placeholder": "Escolha um ícone",
+        "adm_field4Label": "Ativo",
+        "adm_subtitle": "Os sites de listagem para onde os jogadores são enviados para votar",
+        "adm_title": "Sites de votação",
+        "available": "Disponível",
+        "cooldown": "Intervalo de espera",
+        "cooldownHours": "{hours, plural, one {Você pode votar de novo em # hora} other {Você pode votar de novo em # horas}}",
+        "deleted": "Site de votação excluído com sucesso",
+        "description": "Vote no servidor nas listagens abaixo. Nós contamos o clique; a listagem conta o voto.",
+        "disabled": "Desativado",
+        "enabled": "Ativado",
+        "leaderboardVoters": "Mais cliques de voto",
+        "loginToVote": "Entre para que seus cliques sejam contados.",
+        "noSites": "Nenhum site de votação disponível",
+        "perm_manage": "Gerenciar",
+        "saveError": "Não foi possível salvar o site de votação",
+        "saved": "Site de votação salvo com sucesso",
+        "siteName": "Nome do site",
+        "siteUrl": "URL de votação",
+        "title": "Vote no servidor",
+        "totalVotes": "cliques",
+        "voteFailed": "Não foi possível registrar este clique. Tente novamente.",
+        "voteInFlight": "Outro clique ainda está sendo registrado. Tente novamente em instantes.",
+        "voteNow": "Votar agora",
+        "voteRecorded": "A listagem foi aberta. Conclua seu voto lá."
+      },
+      "admin": {
+        "menu_vote": "Votação",
+        "title": "Painel administrativo",
+        "subtitle": "Gerencie as configurações e o conteúdo da plataforma",
+        "menu_vote_vote_sites": "Sites de votação",
+        "module_vote_name": "Sites de votação",
+        "module_vote_description": "Envie os jogadores para as listagens de servidores em que você está ranqueado e conte quem votou"
+      },
+      "pageTitles": {
+        "vote": "Votação"
+      },
+      "nav": {
+        "vote": "Votação"
+      },
+      "pageDescriptions": {
+        "vote": "Vote no servidor nos sites de listagem abaixo, suba no ranking e receba uma recompensa a cada voto."
+      },
+      "activity": {
+        "kindVoteCast": "Voto"
+      }
+    },
+    "ru": {
+      "vote": {
+        "adm_field1Label": "Название",
+        "adm_field1Placeholder": "Название сайта",
+        "adm_field2Label": "URL",
+        "adm_field2Placeholder": "https://vote-site.com/vote/123",
+        "adm_field3Label": "Значок",
+        "adm_field3Placeholder": "Выберите значок",
+        "adm_field4Label": "Активен",
+        "adm_subtitle": "Сайты-рейтинги, на которые игроки переходят для голосования",
+        "adm_title": "Сайты для голосования",
+        "available": "Доступно",
+        "cooldown": "Ожидание",
+        "cooldownHours": "{hours, plural, one {Повторно голосовать можно через # час} few {Повторно голосовать можно через # часа} many {Повторно голосовать можно через # часов} other {Повторно голосовать можно через # часа}}",
+        "deleted": "Сайт для голосования удален",
+        "description": "Голосуйте за сервер на сайтах-рейтингах ниже. Мы считаем переходы, а голос считает рейтинг.",
+        "disabled": "Отключено",
+        "enabled": "Включено",
+        "leaderboardVoters": "Больше всего переходов для голосования",
+        "loginToVote": "Войдите, чтобы ваши переходы учитывались.",
+        "noSites": "Нет доступных сайтов для голосования",
+        "perm_manage": "Управление",
+        "saveError": "Не удалось сохранить сайт для голосования",
+        "saved": "Сайт для голосования сохранен",
+        "siteName": "Название сайта",
+        "siteUrl": "URL для голосования",
+        "title": "Голосуйте за сервер",
+        "totalVotes": "переходов",
+        "voteFailed": "Не удалось зафиксировать переход. Попробуйте еще раз.",
+        "voteInFlight": "Другой переход еще фиксируется. Попробуйте через минуту.",
+        "voteNow": "Голосовать",
+        "voteRecorded": "Страница рейтинга открыта. Завершите голосование там."
+      },
+      "admin": {
+        "menu_vote": "Голосование",
+        "title": "Панель администратора",
+        "subtitle": "Управляйте настройками и содержимым платформы",
+        "menu_vote_vote_sites": "Сайты для голосования",
+        "module_vote_name": "Сайты для голосования",
+        "module_vote_description": "Направляйте игроков на рейтинги, в которых вы участвуете, и считайте проголосовавших"
+      },
+      "pageTitles": {
+        "vote": "Голосование"
+      },
+      "nav": {
+        "vote": "Голосование"
+      },
+      "pageDescriptions": {
+        "vote": "Голосуйте за сервер на сайтах-рейтингах ниже, поднимайте его в списках и получайте награду за каждый голос."
+      },
+      "activity": {
+        "kindVoteCast": "Голос"
+      }
+    },
+    "zh": {
+      "vote": {
+        "adm_field1Label": "名称",
+        "adm_field1Placeholder": "站点名称",
+        "adm_field2Label": "URL",
+        "adm_field2Placeholder": "https://vote-site.com/vote/123",
+        "adm_field3Label": "图标",
+        "adm_field3Placeholder": "选择图标",
+        "adm_field4Label": "已启用",
+        "adm_subtitle": "玩家将被引导前往投票的列表站点",
+        "adm_title": "投票站点",
+        "available": "可用",
+        "cooldown": "冷却中",
+        "cooldownHours": "{hours, plural, one {# 小时后可再次投票} other {# 小时后可再次投票}}",
+        "deleted": "投票站点已成功删除",
+        "description": "在下方的列表中为服务器投票。我们统计点击，列表统计投票。",
+        "disabled": "已禁用",
+        "enabled": "已启用",
+        "leaderboardVoters": "投票点击最多",
+        "loginToVote": "请登录，以便统计你的点击。",
+        "noSites": "暂无可用的投票站点",
+        "perm_manage": "管理",
+        "saveError": "保存投票站点失败",
+        "saved": "投票站点已成功保存",
+        "siteName": "站点名称",
+        "siteUrl": "投票 URL",
+        "title": "为服务器投票",
+        "totalVotes": "次点击",
+        "voteFailed": "无法记录此次点击，请重试。",
+        "voteInFlight": "另一次点击仍在记录中，请稍后再试。",
+        "voteNow": "立即投票",
+        "voteRecorded": "列表页面已打开，请在那里完成投票。"
+      },
+      "admin": {
+        "menu_vote": "投票",
+        "title": "管理后台",
+        "subtitle": "管理你的平台设置和内容",
+        "menu_vote_vote_sites": "投票站点",
+        "module_vote_name": "投票站点",
+        "module_vote_description": "将玩家引导至你所在的服务器列表，并统计投票人数"
+      },
+      "pageTitles": {
+        "vote": "投票"
+      },
+      "nav": {
+        "vote": "投票"
+      },
+      "pageDescriptions": {
+        "vote": "在下方的列表站点为服务器投票，提升其排名，每投一票都可获得奖励。"
+      },
+      "activity": {
+        "kindVoteCast": "投票"
+      }
     }
   },
   "userDataExport": [

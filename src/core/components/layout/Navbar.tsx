@@ -33,7 +33,7 @@ function DefaultNavbar() {
     const { settings } = useSiteSettings();
     const moduleStatus = useAllModules();
     const [mounted, setMounted] = useState(false);
-    const { isDark, toggle: toggleDarkMode } = useDarkMode();
+    const { isDark, toggle: toggleDarkMode, locked: modeLocked } = useDarkMode();
 
      
     useEffect(() => { setMounted(true); }, []);
@@ -343,13 +343,18 @@ function DefaultNavbar() {
                             hydration mismatch it would not patch up. It was
                             buying nothing either way: a button that has not
                             hydrated has no handler to run. */}
-                        <button onClick={toggleDarkMode}
-                            aria-label={isDark ? t('switchToLight') : t('switchToDark')}
-                            className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                            {mounted
-                                ? (isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />)
-                                : <span className="block w-4 h-4" aria-hidden="true" />}
-                        </button>
+                        {/* A site that holds its mode has nothing to offer here.
+                            The lock is known on the server, so the button is
+                            absent from the first paint, not removed after it. */}
+                        {!modeLocked && (
+                            <button onClick={toggleDarkMode}
+                                aria-label={isDark ? t('switchToLight') : t('switchToDark')}
+                                className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                                {mounted
+                                    ? (isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />)
+                                    : <span className="block w-4 h-4" aria-hidden="true" />}
+                            </button>
+                        )}
 
                         {session?.user ? (
                             <>

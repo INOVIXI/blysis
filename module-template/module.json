@@ -150,12 +150,84 @@
         "title": "Modulom"
       }
     },
+    "az": {
+      "myModule": {
+        "description": "Blysis üçün nümunə modul",
+        "perm_manage": "İdarə et",
+        "perm_view": "Bax",
+        "title": "Mənim modulum"
+      }
+    },
     "de": {
       "myModule": {
         "description": "Beispielmodul fuer Blysis",
         "perm_manage": "Verwalten",
         "perm_view": "Ansehen",
         "title": "Mein Modul"
+      }
+    },
+    "es": {
+      "myModule": {
+        "description": "Módulo de ejemplo para Blysis",
+        "perm_manage": "Gestionar",
+        "perm_view": "Ver",
+        "title": "Mi módulo"
+      }
+    },
+    "et": {
+      "myModule": {
+        "description": "Blysise näidismoodul",
+        "perm_manage": "Halda",
+        "perm_view": "Vaata",
+        "title": "Minu moodul"
+      }
+    },
+    "fr": {
+      "myModule": {
+        "description": "Module d’exemple pour Blysis",
+        "perm_manage": "Gérer",
+        "perm_view": "Voir",
+        "title": "Mon module"
+      }
+    },
+    "it": {
+      "myModule": {
+        "description": "Modulo di esempio per Blysis",
+        "perm_manage": "Gestisci",
+        "perm_view": "Visualizza",
+        "title": "Il mio modulo"
+      }
+    },
+    "pl": {
+      "myModule": {
+        "description": "Przykładowy moduł dla Blysis",
+        "perm_manage": "Zarządzaj",
+        "perm_view": "Wyświetlanie",
+        "title": "Mój moduł"
+      }
+    },
+    "pt": {
+      "myModule": {
+        "description": "Módulo de exemplo para o Blysis",
+        "perm_manage": "Gerenciar",
+        "perm_view": "Visualizar",
+        "title": "Meu módulo"
+      }
+    },
+    "ru": {
+      "myModule": {
+        "description": "Пример модуля для Blysis",
+        "perm_manage": "Управление",
+        "perm_view": "Просмотр",
+        "title": "Мой модуль"
+      }
+    },
+    "zh": {
+      "myModule": {
+        "description": "Blysis 示例模块",
+        "perm_manage": "管理",
+        "perm_view": "查看",
+        "title": "我的模块"
       }
     }
   }

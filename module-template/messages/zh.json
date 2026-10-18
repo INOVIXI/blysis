@@ -1,0 +1,13 @@
+{
+  "myModule": {
+    "title": "我的模块",
+    "description": "Blysis 示例模块",
+    "items": "项目",
+    "noItems": "未找到项目。",
+    "createItem": "创建项目",
+    "editItem": "编辑项目",
+    "deleteItem": "删除项目",
+    "itemTitle": "标题",
+    "itemDescription": "描述"
+  }
+}

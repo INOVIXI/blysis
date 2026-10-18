@@ -67,6 +67,146 @@
         "settings_yandex-auth": "Yandex OAuth",
         "settings_yandex-auth_description": "Yandex uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "yandexAuth": {
+        "adm_scopeNote": "Yandex tətbiqinə login:info, login:email və login:avatar icazələri lazımdır. login:email olmadan hesab ünvansız gəlir və ona yer tutan bir ünvan verilir.",
+        "adm_subtitle": "Saytınız üçün Yandex OAuth ilə daxil olmanı qurun.",
+        "adm_title": "Yandex ilə daxil olma parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_yandex-auth_name": "Yandex ilə daxil olma",
+        "module_yandex-auth_description": "İstifadəçilərə öz Yandex hesabı ilə daxil olmağa icazə verin",
+        "settings_yandex-auth": "Yandex OAuth",
+        "settings_yandex-auth_description": "Yandex tətbiqinin etimadnamələri."
+      }
+    },
+    "de": {
+      "yandexAuth": {
+        "adm_scopeNote": "Die Yandex-Anwendung braucht die Berechtigungen login:info, login:email und login:avatar. Ohne login:email kommt das Konto ohne Adresse an und erhält eine Platzhalteradresse.",
+        "adm_subtitle": "Richte die Anmeldung per Yandex-OAuth für deine Seite ein.",
+        "adm_title": "Einstellungen für die Yandex-Anmeldung",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_yandex-auth_name": "Yandex-Anmeldung",
+        "module_yandex-auth_description": "Mitgliedern erlauben, sich mit ihrem Yandex-Konto anzumelden",
+        "settings_yandex-auth": "Yandex-OAuth",
+        "settings_yandex-auth_description": "Zugangsdaten der Yandex-Anwendung."
+      }
+    },
+    "es": {
+      "yandexAuth": {
+        "adm_scopeNote": "La aplicación de Yandex necesita los permisos login:info, login:email y login:avatar. Sin login:email, la cuenta llega sin dirección de correo y recibe una provisional.",
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de Yandex para tu sitio.",
+        "adm_title": "Ajustes de inicio de sesión con Yandex",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_yandex-auth_name": "Inicio de sesión con Yandex",
+        "module_yandex-auth_description": "Permite que los usuarios inicien sesión con su cuenta de Yandex",
+        "settings_yandex-auth": "OAuth de Yandex",
+        "settings_yandex-auth_description": "Credenciales de la aplicación de Yandex."
+      }
+    },
+    "et": {
+      "yandexAuth": {
+        "adm_scopeNote": "Yandexi rakendus vajab õigusi login:info, login:email ja login:avatar. Ilma login:email-ita saabub konto ilma aadressita ja saab kohatäite.",
+        "adm_subtitle": "Seadista oma saidile Yandexi OAuth-sisselogimine.",
+        "adm_title": "Yandex Logini seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_yandex-auth_name": "Yandexi sisselogimine",
+        "module_yandex-auth_description": "Luba kasutajatel sisse logida oma Yandexi kontoga",
+        "settings_yandex-auth": "Yandex OAuth",
+        "settings_yandex-auth_description": "Yandexi rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "yandexAuth": {
+        "adm_scopeNote": "L’application Yandex a besoin des autorisations login:info, login:email et login:avatar. Sans login:email, le compte est créé sans adresse et reçoit une adresse provisoire.",
+        "adm_subtitle": "Configurez la connexion OAuth Yandex pour votre site.",
+        "adm_title": "Paramètres de connexion Yandex",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_yandex-auth_name": "Connexion Yandex",
+        "module_yandex-auth_description": "Permettre aux membres de se connecter avec leur compte Yandex",
+        "settings_yandex-auth": "OAuth Yandex",
+        "settings_yandex-auth_description": "Identifiants de l’application Yandex."
+      }
+    },
+    "it": {
+      "yandexAuth": {
+        "adm_scopeNote": "L’applicazione Yandex ha bisogno dei permessi login:info, login:email e login:avatar. Senza login:email, l’account viene creato senza indirizzo e riceve un indirizzo segnaposto.",
+        "adm_subtitle": "Configura l’accesso con OAuth di Yandex per il tuo sito.",
+        "adm_title": "Impostazioni accesso con Yandex",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_yandex-auth_name": "Accesso con Yandex",
+        "module_yandex-auth_description": "Consenti agli utenti di accedere con il loro account Yandex",
+        "settings_yandex-auth": "OAuth di Yandex",
+        "settings_yandex-auth_description": "Credenziali dell’applicazione Yandex."
+      }
+    },
+    "pl": {
+      "yandexAuth": {
+        "adm_scopeNote": "Aplikacja Yandex potrzebuje uprawnień login:info, login:email i login:avatar. Bez login:email konto trafi bez adresu i dostanie zastępczy.",
+        "adm_subtitle": "Skonfiguruj logowanie przez Yandex OAuth na swojej stronie.",
+        "adm_title": "Ustawienia logowania przez Yandex",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_yandex-auth_name": "Logowanie przez Yandex",
+        "module_yandex-auth_description": "Pozwól użytkownikom logować się przez konto Yandex",
+        "settings_yandex-auth": "Yandex OAuth",
+        "settings_yandex-auth_description": "Dane aplikacji Yandex."
+      }
+    },
+    "pt": {
+      "yandexAuth": {
+        "adm_scopeNote": "O aplicativo do Yandex precisa das permissões login:info, login:email e login:avatar. Sem login:email, a conta chega sem endereço e recebe um endereço provisório.",
+        "adm_subtitle": "Configure o login com OAuth do Yandex para o seu site.",
+        "adm_title": "Configurações do login com Yandex",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_yandex-auth_name": "Login com Yandex",
+        "module_yandex-auth_description": "Permite que os membros entrem com a conta do Yandex",
+        "settings_yandex-auth": "OAuth do Yandex",
+        "settings_yandex-auth_description": "Credenciais do aplicativo do Yandex."
+      }
+    },
+    "ru": {
+      "yandexAuth": {
+        "adm_scopeNote": "Приложению Yandex нужны разрешения login:info, login:email и login:avatar. Без login:email учетная запись создается без адреса и получает заглушку.",
+        "adm_subtitle": "Настройте вход через OAuth Yandex для вашего сайта.",
+        "adm_title": "Настройки входа через Yandex",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_yandex-auth_name": "Вход через Yandex",
+        "module_yandex-auth_description": "Позвольте участникам входить через свою учетную запись Yandex",
+        "settings_yandex-auth": "OAuth Yandex",
+        "settings_yandex-auth_description": "Учетные данные приложения Yandex."
+      }
+    },
+    "zh": {
+      "yandexAuth": {
+        "adm_scopeNote": "Yandex 应用需要 login:info、login:email 和 login:avatar 权限。若未授予 login:email，账户将没有邮箱地址，系统会为其分配一个占位地址。",
+        "adm_subtitle": "为你的站点设置 Yandex OAuth 登录。",
+        "adm_title": "Yandex 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_yandex-auth_name": "Yandex 登录",
+        "module_yandex-auth_description": "允许用户使用其 Yandex 账户登录",
+        "settings_yandex-auth": "Yandex OAuth",
+        "settings_yandex-auth_description": "Yandex 应用凭据。"
+      }
     }
   },
   "permissions": [

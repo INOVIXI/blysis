@@ -111,6 +111,326 @@
         "settingsSaved": "Analitik ayarları başarıyla kaydedildi",
         "title": "Google Analytics"
       }
+    },
+    "az": {
+      "admin": {
+        "menu_analytics": "Google Analytics",
+        "title": "Admin paneli",
+        "subtitle": "Platforma parametrlərinizi və məzmununuzu idarə edin",
+        "menu_google-analytics": "Google Analytics",
+        "menu_google-analytics_google_analytics": "Google Analytics",
+        "module_google-analytics_name": "Google Analytics",
+        "module_google-analytics_description": "Google Analytics izləmə inteqrasiyası",
+        "settings_google-analytics": "Google Analytics",
+        "settings_google-analytics_description": "Google Analytics izləmə."
+      },
+      "googleAnalytics": {
+        "adm_field1Desc": "Google Analytics ölçmə ID-niz (məs. G-XXXXXXXXXX)",
+        "adm_field1Label": "Google Analytics ID",
+        "adm_field2Desc": "İzləmə skriptinin saytınızda yüklənib-yüklənməməsi",
+        "adm_field2Label": "Analitikanı aktivləşdir",
+        "adm_field2Off": "Söndürülüb",
+        "adm_field2On": "Aktiv",
+        "adm_subtitle": "Saytınız üçün Google Analytics izləməsini konfiqurasiya edin",
+        "adm_title": "Google Analytics",
+        "description": "Saytınız üçün Google Analytics izləməsini konfiqurasiya edin",
+        "disabled": "Analitika söndürülüb",
+        "enabled": "Analitika aktivdir",
+        "perm_manage": "İdarə et",
+        "saveSettings": "Parametrləri yadda saxla",
+        "settings": "Google Analytics parametrləri",
+        "settingsError": "Analitika parametrlərini yadda saxlamaq alınmadı",
+        "settingsSaved": "Analitika parametrləri uğurla yadda saxlanıldı",
+        "title": "Google Analytics"
+      }
+    },
+    "de": {
+      "admin": {
+        "menu_analytics": "Google Analytics",
+        "title": "Admin-Bereich",
+        "subtitle": "Verwalte die Einstellungen und Inhalte deiner Plattform",
+        "menu_google-analytics": "Google Analytics",
+        "menu_google-analytics_google_analytics": "Google Analytics",
+        "module_google-analytics_name": "Google Analytics",
+        "module_google-analytics_description": "Einbindung des Google-Analytics-Trackings",
+        "settings_google-analytics": "Google Analytics",
+        "settings_google-analytics_description": "Google-Analytics-Tracking."
+      },
+      "googleAnalytics": {
+        "adm_field1Desc": "Deine Google-Analytics-Mess-ID (z. B. G-XXXXXXXXXX)",
+        "adm_field1Label": "Google-Analytics-ID",
+        "adm_field2Desc": "Ob das Tracking-Skript auf deiner Seite geladen wird",
+        "adm_field2Label": "Analytics aktivieren",
+        "adm_field2Off": "Aus",
+        "adm_field2On": "An",
+        "adm_subtitle": "Google-Analytics-Tracking für deine Seite einrichten",
+        "adm_title": "Google Analytics",
+        "description": "Google-Analytics-Tracking für deine Seite einrichten",
+        "disabled": "Analytics deaktiviert",
+        "enabled": "Analytics aktiviert",
+        "perm_manage": "Verwalten",
+        "saveSettings": "Einstellungen speichern",
+        "settings": "Google-Analytics-Einstellungen",
+        "settingsError": "Analytics-Einstellungen konnten nicht gespeichert werden",
+        "settingsSaved": "Analytics-Einstellungen erfolgreich gespeichert",
+        "title": "Google Analytics"
+      }
+    },
+    "es": {
+      "admin": {
+        "menu_analytics": "Google Analytics",
+        "title": "Panel de administración",
+        "subtitle": "Gestiona los ajustes y el contenido de tu plataforma",
+        "menu_google-analytics": "Google Analytics",
+        "menu_google-analytics_google_analytics": "Google Analytics",
+        "module_google-analytics_name": "Google Analytics",
+        "module_google-analytics_description": "Integración de seguimiento de Google Analytics",
+        "settings_google-analytics": "Google Analytics",
+        "settings_google-analytics_description": "Seguimiento de Google Analytics."
+      },
+      "googleAnalytics": {
+        "adm_field1Desc": "Tu ID de medición de Google Analytics (p. ej. G-XXXXXXXXXX)",
+        "adm_field1Label": "ID de Google Analytics",
+        "adm_field2Desc": "Si el script de seguimiento se carga en tu sitio",
+        "adm_field2Label": "Activar analítica",
+        "adm_field2Off": "Desactivado",
+        "adm_field2On": "Activado",
+        "adm_subtitle": "Configura el seguimiento de Google Analytics para tu sitio",
+        "adm_title": "Google Analytics",
+        "description": "Configura el seguimiento de Google Analytics para tu sitio",
+        "disabled": "Analítica desactivada",
+        "enabled": "Analítica activada",
+        "perm_manage": "Gestionar",
+        "saveSettings": "Guardar ajustes",
+        "settings": "Ajustes de Google Analytics",
+        "settingsError": "No se pudieron guardar los ajustes de analítica",
+        "settingsSaved": "Ajustes de analítica guardados correctamente",
+        "title": "Google Analytics"
+      }
+    },
+    "et": {
+      "admin": {
+        "menu_analytics": "Google Analytics",
+        "title": "Halduspaneel",
+        "subtitle": "Halda oma platvormi seadeid ja sisu",
+        "menu_google-analytics": "Google Analytics",
+        "menu_google-analytics_google_analytics": "Google Analytics",
+        "module_google-analytics_name": "Google Analytics",
+        "module_google-analytics_description": "Google Analyticsi jälgimise integratsioon",
+        "settings_google-analytics": "Google Analytics",
+        "settings_google-analytics_description": "Google Analyticsi jälgimine."
+      },
+      "googleAnalytics": {
+        "adm_field1Desc": "Sinu Google Analyticsi mõõtmise ID (nt G-XXXXXXXXXX)",
+        "adm_field1Label": "Google Analyticsi ID",
+        "adm_field2Desc": "Kas jälgimisskript laaditakse sinu saidile",
+        "adm_field2Label": "Luba analüütika",
+        "adm_field2Off": "Väljas",
+        "adm_field2On": "Sees",
+        "adm_subtitle": "Seadista saidi Google Analyticsi jälgimine",
+        "adm_title": "Google Analytics",
+        "description": "Seadista saidi Google Analyticsi jälgimine",
+        "disabled": "Analüütika on keelatud",
+        "enabled": "Analüütika on lubatud",
+        "perm_manage": "Halda",
+        "saveSettings": "Salvesta seaded",
+        "settings": "Google Analyticsi seaded",
+        "settingsError": "Analüütika seadete salvestamine ebaõnnestus",
+        "settingsSaved": "Analüütika seaded salvestati",
+        "title": "Google Analytics"
+      }
+    },
+    "fr": {
+      "admin": {
+        "menu_analytics": "Google Analytics",
+        "title": "Panneau d’administration",
+        "subtitle": "Gérez les paramètres et le contenu de votre plateforme",
+        "menu_google-analytics": "Google Analytics",
+        "menu_google-analytics_google_analytics": "Google Analytics",
+        "module_google-analytics_name": "Google Analytics",
+        "module_google-analytics_description": "Intégration du suivi Google Analytics",
+        "settings_google-analytics": "Google Analytics",
+        "settings_google-analytics_description": "Suivi Google Analytics."
+      },
+      "googleAnalytics": {
+        "adm_field1Desc": "Votre identifiant de mesure Google Analytics (ex. G-XXXXXXXXXX)",
+        "adm_field1Label": "Identifiant Google Analytics",
+        "adm_field2Desc": "Indique si le script de suivi se charge sur votre site",
+        "adm_field2Label": "Activer Analytics",
+        "adm_field2Off": "Désactivé",
+        "adm_field2On": "Activé",
+        "adm_subtitle": "Configurer le suivi Google Analytics pour votre site",
+        "adm_title": "Google Analytics",
+        "description": "Configurer le suivi Google Analytics pour votre site",
+        "disabled": "Analytics désactivé",
+        "enabled": "Analytics activé",
+        "perm_manage": "Gérer",
+        "saveSettings": "Enregistrer les paramètres",
+        "settings": "Paramètres Google Analytics",
+        "settingsError": "Échec de l’enregistrement des paramètres d’analyse",
+        "settingsSaved": "Paramètres d’analyse enregistrés",
+        "title": "Google Analytics"
+      }
+    },
+    "it": {
+      "admin": {
+        "menu_analytics": "Google Analytics",
+        "title": "Pannello di amministrazione",
+        "subtitle": "Gestisci le impostazioni e i contenuti della piattaforma",
+        "menu_google-analytics": "Google Analytics",
+        "menu_google-analytics_google_analytics": "Google Analytics",
+        "module_google-analytics_name": "Google Analytics",
+        "module_google-analytics_description": "Integrazione del tracciamento con Google Analytics",
+        "settings_google-analytics": "Google Analytics",
+        "settings_google-analytics_description": "Tracciamento con Google Analytics."
+      },
+      "googleAnalytics": {
+        "adm_field1Desc": "Il tuo ID di misurazione Google Analytics (es. G-XXXXXXXXXX)",
+        "adm_field1Label": "ID Google Analytics",
+        "adm_field2Desc": "Se lo script di tracciamento viene caricato sul tuo sito",
+        "adm_field2Label": "Attiva Analytics",
+        "adm_field2Off": "Disattivato",
+        "adm_field2On": "Attivo",
+        "adm_subtitle": "Configura il tracciamento Google Analytics per il tuo sito",
+        "adm_title": "Google Analytics",
+        "description": "Configura il tracciamento Google Analytics per il tuo sito",
+        "disabled": "Analytics disattivato",
+        "enabled": "Analytics attivato",
+        "perm_manage": "Gestisci",
+        "saveSettings": "Salva impostazioni",
+        "settings": "Impostazioni Google Analytics",
+        "settingsError": "Salvataggio delle impostazioni di analytics non riuscito",
+        "settingsSaved": "Impostazioni di analytics salvate con successo",
+        "title": "Google Analytics"
+      }
+    },
+    "pl": {
+      "admin": {
+        "menu_analytics": "Google Analytics",
+        "title": "Panel administratora",
+        "subtitle": "Zarządzaj ustawieniami i treściami swojej platformy",
+        "menu_google-analytics": "Google Analytics",
+        "menu_google-analytics_google_analytics": "Google Analytics",
+        "module_google-analytics_name": "Google Analytics",
+        "module_google-analytics_description": "Integracja śledzenia Google Analytics",
+        "settings_google-analytics": "Google Analytics",
+        "settings_google-analytics_description": "Śledzenie Google Analytics."
+      },
+      "googleAnalytics": {
+        "adm_field1Desc": "Twój identyfikator pomiaru Google Analytics (np. G-XXXXXXXXXX)",
+        "adm_field1Label": "Identyfikator Google Analytics",
+        "adm_field2Desc": "Czy skrypt śledzenia ładuje się na Twojej stronie",
+        "adm_field2Label": "Włącz analitykę",
+        "adm_field2Off": "Wyłączone",
+        "adm_field2On": "Włączone",
+        "adm_subtitle": "Skonfiguruj śledzenie Google Analytics na swojej stronie",
+        "adm_title": "Google Analytics",
+        "description": "Skonfiguruj śledzenie Google Analytics na swojej stronie",
+        "disabled": "Analityka wyłączona",
+        "enabled": "Analityka włączona",
+        "perm_manage": "Zarządzaj",
+        "saveSettings": "Zapisz ustawienia",
+        "settings": "Ustawienia Google Analytics",
+        "settingsError": "Nie udało się zapisać ustawień analityki",
+        "settingsSaved": "Ustawienia analityki zapisano pomyślnie",
+        "title": "Google Analytics"
+      }
+    },
+    "pt": {
+      "admin": {
+        "menu_analytics": "Google Analytics",
+        "title": "Painel administrativo",
+        "subtitle": "Gerencie as configurações e o conteúdo da sua plataforma",
+        "menu_google-analytics": "Google Analytics",
+        "menu_google-analytics_google_analytics": "Google Analytics",
+        "module_google-analytics_name": "Google Analytics",
+        "module_google-analytics_description": "Integração de rastreamento do Google Analytics",
+        "settings_google-analytics": "Google Analytics",
+        "settings_google-analytics_description": "Rastreamento do Google Analytics."
+      },
+      "googleAnalytics": {
+        "adm_field1Desc": "Seu ID de medição do Google Analytics (ex.: G-XXXXXXXXXX)",
+        "adm_field1Label": "ID do Google Analytics",
+        "adm_field2Desc": "Se o script de rastreamento é carregado no seu site",
+        "adm_field2Label": "Ativar análises",
+        "adm_field2Off": "Desligado",
+        "adm_field2On": "Ligado",
+        "adm_subtitle": "Configure o rastreamento do Google Analytics no seu site",
+        "adm_title": "Google Analytics",
+        "description": "Configure o rastreamento do Google Analytics no seu site",
+        "disabled": "Análises desativadas",
+        "enabled": "Análises ativadas",
+        "perm_manage": "Gerenciar",
+        "saveSettings": "Salvar configurações",
+        "settings": "Configurações do Google Analytics",
+        "settingsError": "Falha ao salvar as configurações de análise",
+        "settingsSaved": "Configurações de análise salvas com sucesso",
+        "title": "Google Analytics"
+      }
+    },
+    "ru": {
+      "admin": {
+        "menu_analytics": "Google Analytics",
+        "title": "Панель администратора",
+        "subtitle": "Управляйте настройками и содержимым платформы",
+        "menu_google-analytics": "Google Analytics",
+        "menu_google-analytics_google_analytics": "Google Analytics",
+        "module_google-analytics_name": "Google Analytics",
+        "module_google-analytics_description": "Интеграция отслеживания Google Analytics",
+        "settings_google-analytics": "Google Analytics",
+        "settings_google-analytics_description": "Отслеживание Google Analytics."
+      },
+      "googleAnalytics": {
+        "adm_field1Desc": "Идентификатор измерения Google Analytics (например, G-XXXXXXXXXX)",
+        "adm_field1Label": "ID Google Analytics",
+        "adm_field2Desc": "Загружается ли скрипт отслеживания на вашем сайте",
+        "adm_field2Label": "Включить аналитику",
+        "adm_field2Off": "Выкл.",
+        "adm_field2On": "Вкл.",
+        "adm_subtitle": "Настройте отслеживание Google Analytics для вашего сайта",
+        "adm_title": "Google Analytics",
+        "description": "Настройте отслеживание Google Analytics для вашего сайта",
+        "disabled": "Аналитика отключена",
+        "enabled": "Аналитика включена",
+        "perm_manage": "Управление",
+        "saveSettings": "Сохранить настройки",
+        "settings": "Настройки Google Analytics",
+        "settingsError": "Не удалось сохранить настройки аналитики",
+        "settingsSaved": "Настройки аналитики успешно сохранены",
+        "title": "Google Analytics"
+      }
+    },
+    "zh": {
+      "admin": {
+        "menu_analytics": "Google Analytics",
+        "title": "管理后台",
+        "subtitle": "管理你的平台设置和内容",
+        "menu_google-analytics": "Google Analytics",
+        "menu_google-analytics_google_analytics": "Google Analytics",
+        "module_google-analytics_name": "Google Analytics",
+        "module_google-analytics_description": "Google Analytics 跟踪集成",
+        "settings_google-analytics": "Google Analytics",
+        "settings_google-analytics_description": "Google Analytics 跟踪。"
+      },
+      "googleAnalytics": {
+        "adm_field1Desc": "你的 Google Analytics 衡量 ID（例如 G-XXXXXXXXXX）",
+        "adm_field1Label": "Google Analytics ID",
+        "adm_field2Desc": "跟踪脚本是否在你的站点上加载",
+        "adm_field2Label": "启用分析",
+        "adm_field2Off": "关",
+        "adm_field2On": "开",
+        "adm_subtitle": "为你的站点配置 Google Analytics 跟踪",
+        "adm_title": "Google Analytics",
+        "description": "为你的站点配置 Google Analytics 跟踪",
+        "disabled": "分析已禁用",
+        "enabled": "分析已启用",
+        "perm_manage": "管理",
+        "saveSettings": "保存设置",
+        "settings": "Google Analytics 设置",
+        "settingsError": "无法保存分析设置",
+        "settingsSaved": "分析设置已成功保存",
+        "title": "Google Analytics"
+      }
     }
   },
   "csp": {

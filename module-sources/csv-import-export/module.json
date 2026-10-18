@@ -79,6 +79,196 @@
       "activity": {
         "auditCsvDataExported": "Veri CSV olarak dışa aktarıldı"
       }
+    },
+    "az": {
+      "admin": {
+        "menu_csv-import-export": "CSV ixracı",
+        "menu_csv-import-export_export": "İxrac",
+        "module_csv-import-export_description": "Saytın cədvəllərini CSV kimi ixrac edin",
+        "module_csv-import-export_name": "CSV ixracı"
+      },
+      "csvImportExport": {
+        "adm_export": "İxrac",
+        "adm_exportSubtitle": "Bunların hər hansı birini CSV faylı kimi təqdim edin",
+        "adm_exportTitle": "İxrac",
+        "adm_exportUsers": "Üzvlər",
+        "adm_nothingToExport": "Burada quraşdırılmış heç nə hələ ixrac etmir.",
+        "perm_export": "Məlumatları ixrac edin"
+      },
+      "activity": {
+        "auditCsvDataExported": "Məlumatları CSV kimi ixrac etdi"
+      }
+    },
+    "de": {
+      "admin": {
+        "menu_csv-import-export": "CSV-Export",
+        "menu_csv-import-export_export": "Export",
+        "module_csv-import-export_description": "Tabellen der Seite als CSV exportieren",
+        "module_csv-import-export_name": "CSV-Export"
+      },
+      "csvImportExport": {
+        "adm_export": "Exportieren",
+        "adm_exportSubtitle": "Gib eine dieser Tabellen als CSV-Datei weiter",
+        "adm_exportTitle": "Export",
+        "adm_exportUsers": "Mitglieder",
+        "adm_nothingToExport": "Hier installierte Module exportieren bisher nichts.",
+        "perm_export": "Daten exportieren"
+      },
+      "activity": {
+        "auditCsvDataExported": "Daten als CSV exportiert"
+      }
+    },
+    "es": {
+      "admin": {
+        "menu_csv-import-export": "Exportar CSV",
+        "menu_csv-import-export_export": "Exportar",
+        "module_csv-import-export_description": "Exporta las tablas del sitio como CSV",
+        "module_csv-import-export_name": "Exportación CSV"
+      },
+      "csvImportExport": {
+        "adm_export": "Exportar",
+        "adm_exportSubtitle": "Entrega cualquiera de estos datos como archivo CSV",
+        "adm_exportTitle": "Exportar",
+        "adm_exportUsers": "Miembros",
+        "adm_nothingToExport": "Nada de lo instalado aquí exporta datos todavía.",
+        "perm_export": "Exportar datos"
+      },
+      "activity": {
+        "auditCsvDataExported": "Exportó datos en CSV"
+      }
+    },
+    "et": {
+      "admin": {
+        "menu_csv-import-export": "CSV eksport",
+        "menu_csv-import-export_export": "Eksport",
+        "module_csv-import-export_description": "Ekspordi saidi tabelid CSV-na",
+        "module_csv-import-export_name": "CSV eksport"
+      },
+      "csvImportExport": {
+        "adm_export": "Ekspordi",
+        "adm_exportSubtitle": "Anna mõni neist üle CSV-failina",
+        "adm_exportTitle": "Eksport",
+        "adm_exportUsers": "Liikmed",
+        "adm_nothingToExport": "Siin paigaldatud midagi ei ekspordi veel.",
+        "perm_export": "Ekspordi andmeid"
+      },
+      "activity": {
+        "auditCsvDataExported": "Eksportis andmed CSV-na"
+      }
+    },
+    "fr": {
+      "admin": {
+        "menu_csv-import-export": "Export CSV",
+        "menu_csv-import-export_export": "Exporter",
+        "module_csv-import-export_description": "Exporter les tableaux du site au format CSV",
+        "module_csv-import-export_name": "Export CSV"
+      },
+      "csvImportExport": {
+        "adm_export": "Exporter",
+        "adm_exportSubtitle": "Exportez l’une de ces données au format CSV",
+        "adm_exportTitle": "Exporter",
+        "adm_exportUsers": "Membres",
+        "adm_nothingToExport": "Aucun module installé ici n’exporte encore de données.",
+        "perm_export": "Exporter les données"
+      },
+      "activity": {
+        "auditCsvDataExported": "A exporté des données au format CSV"
+      }
+    },
+    "it": {
+      "admin": {
+        "menu_csv-import-export": "Esportazione CSV",
+        "menu_csv-import-export_export": "Esporta",
+        "module_csv-import-export_description": "Esporta le tabelle del sito in CSV",
+        "module_csv-import-export_name": "Esportazione CSV"
+      },
+      "csvImportExport": {
+        "adm_export": "Esporta",
+        "adm_exportSubtitle": "Scarica una qualsiasi di queste voci come file CSV",
+        "adm_exportTitle": "Esporta",
+        "adm_exportUsers": "Membri",
+        "adm_nothingToExport": "Nessuno dei moduli installati qui esporta ancora qualcosa.",
+        "perm_export": "Esporta dati"
+      },
+      "activity": {
+        "auditCsvDataExported": "Ha esportato dati in CSV"
+      }
+    },
+    "pl": {
+      "admin": {
+        "menu_csv-import-export": "Eksport CSV",
+        "menu_csv-import-export_export": "Eksport",
+        "module_csv-import-export_description": "Eksportuj tabele strony jako CSV",
+        "module_csv-import-export_name": "Eksport CSV"
+      },
+      "csvImportExport": {
+        "adm_export": "Eksport",
+        "adm_exportSubtitle": "Pobierz dowolną z tych tabel jako plik CSV",
+        "adm_exportTitle": "Eksport",
+        "adm_exportUsers": "Członkowie",
+        "adm_nothingToExport": "Nic z zainstalowanych tutaj nie eksportuje jeszcze danych.",
+        "perm_export": "Eksportuj dane"
+      },
+      "activity": {
+        "auditCsvDataExported": "Wyeksportowano dane do CSV"
+      }
+    },
+    "pt": {
+      "admin": {
+        "menu_csv-import-export": "Exportação CSV",
+        "menu_csv-import-export_export": "Exportar",
+        "module_csv-import-export_description": "Exporte as tabelas do site como CSV",
+        "module_csv-import-export_name": "Exportação CSV"
+      },
+      "csvImportExport": {
+        "adm_export": "Exportar",
+        "adm_exportSubtitle": "Entregue qualquer um destes como um arquivo CSV",
+        "adm_exportTitle": "Exportar",
+        "adm_exportUsers": "Membros",
+        "adm_nothingToExport": "Nada instalado aqui exporta nada ainda.",
+        "perm_export": "Exportar dados"
+      },
+      "activity": {
+        "auditCsvDataExported": "Exportou dados em CSV"
+      }
+    },
+    "ru": {
+      "admin": {
+        "menu_csv-import-export": "Экспорт CSV",
+        "menu_csv-import-export_export": "Экспорт",
+        "module_csv-import-export_description": "Экспорт таблиц сайта в CSV",
+        "module_csv-import-export_name": "Экспорт CSV"
+      },
+      "csvImportExport": {
+        "adm_export": "Экспорт",
+        "adm_exportSubtitle": "Выгрузите любую из этих таблиц в виде файла CSV",
+        "adm_exportTitle": "Экспорт",
+        "adm_exportUsers": "Участники",
+        "adm_nothingToExport": "Ничего из установленного здесь пока не экспортируется.",
+        "perm_export": "Экспорт данных"
+      },
+      "activity": {
+        "auditCsvDataExported": "Данные экспортированы в CSV"
+      }
+    },
+    "zh": {
+      "admin": {
+        "menu_csv-import-export": "CSV 导出",
+        "menu_csv-import-export_export": "导出",
+        "module_csv-import-export_description": "将站点的数据表导出为 CSV",
+        "module_csv-import-export_name": "CSV 导出"
+      },
+      "csvImportExport": {
+        "adm_export": "导出",
+        "adm_exportSubtitle": "将以下任意内容导出为 CSV 文件",
+        "adm_exportTitle": "导出",
+        "adm_exportUsers": "会员",
+        "adm_nothingToExport": "此处安装的模块暂无可导出的内容。",
+        "perm_export": "导出数据"
+      },
+      "activity": {
+        "auditCsvDataExported": "已将数据导出为 CSV"
+      }
     }
   },
   "hooksEmitted": [

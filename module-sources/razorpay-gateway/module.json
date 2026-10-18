@@ -117,6 +117,216 @@
         "settings_razorpay-gateway": "Razorpay",
         "settings_razorpay-gateway_description": "Razorpay API anahtarları ve webhook parolası."
       }
+    },
+    "az": {
+      "razorpayGateway": {
+        "adm_keyId": "Açar ID-si",
+        "adm_keyIdDesc": "Razorpay idarə panelindən.",
+        "adm_keySecret": "Gizli açar",
+        "adm_keySecretDesc": "Razorpay idarə panelindən.",
+        "adm_subtitle": "Razorpay ilə ödənişləri qəbul etmək üçün açarlar.",
+        "adm_title": "Razorpay parametrləri",
+        "adm_webhookSecret": "Webhook gizli açarı",
+        "adm_webhookSecretDesc": "Razorpay idarə panelindən. Razorpay bildiriş ünvanını /api/v1/razorpay/webhook yönləndirin.",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "menu_razorpay-gateway": "Razorpay şlüzü",
+        "menu_razorpay-gateway_razorpay_settings": "Razorpay parametrləri",
+        "module_razorpay-gateway_name": "Razorpay şlüzü",
+        "module_razorpay-gateway_description": "Razorpay vasitəsilə Hindistanda UPI, kart, internet bankinqi və pul kisəsi ilə ödənişləri qəbul edin",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Razorpay API açarları və webhook gizli açarı."
+      }
+    },
+    "de": {
+      "razorpayGateway": {
+        "adm_keyId": "Schlüssel-ID",
+        "adm_keyIdDesc": "Aus deinem Razorpay-Dashboard.",
+        "adm_keySecret": "Geheimer Schlüssel",
+        "adm_keySecretDesc": "Aus deinem Razorpay-Dashboard.",
+        "adm_subtitle": "Schlüssel für Zahlungen über Razorpay.",
+        "adm_title": "Razorpay-Einstellungen",
+        "adm_webhookSecret": "Webhook-Geheimnis",
+        "adm_webhookSecretDesc": "Aus deinem Razorpay-Dashboard. Trage für die Razorpay-Benachrichtigungs-URL /api/v1/razorpay/webhook ein.",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "menu_razorpay-gateway": "Razorpay-Gateway",
+        "menu_razorpay-gateway_razorpay_settings": "Razorpay-Einstellungen",
+        "module_razorpay-gateway_name": "Razorpay-Gateway",
+        "module_razorpay-gateway_description": "UPI-, Karten-, Netbanking- und Wallet-Zahlungen in Indien über Razorpay annehmen",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Razorpay-API-Schlüssel und Webhook-Geheimnis."
+      }
+    },
+    "es": {
+      "razorpayGateway": {
+        "adm_keyId": "ID de clave",
+        "adm_keyIdDesc": "Desde tu panel de Razorpay.",
+        "adm_keySecret": "Secreto de clave",
+        "adm_keySecretDesc": "Desde tu panel de Razorpay.",
+        "adm_subtitle": "Claves para cobrar pagos a través de Razorpay.",
+        "adm_title": "Ajustes de Razorpay",
+        "adm_webhookSecret": "Secreto del webhook",
+        "adm_webhookSecretDesc": "Desde tu panel de Razorpay. Apunta la URL de notificación de Razorpay a /api/v1/razorpay/webhook.",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "menu_razorpay-gateway": "Pasarela de Razorpay",
+        "menu_razorpay-gateway_razorpay_settings": "Ajustes de Razorpay",
+        "module_razorpay-gateway_name": "Pasarela de Razorpay",
+        "module_razorpay-gateway_description": "Acepta pagos con UPI, tarjeta, banca en línea y monederos en India a través de Razorpay",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Claves de la API de Razorpay y secreto del webhook."
+      }
+    },
+    "et": {
+      "razorpayGateway": {
+        "adm_keyId": "Võtme ID",
+        "adm_keyIdDesc": "Leiad selle oma Razorpayi töölaualt.",
+        "adm_keySecret": "Võtme saladus",
+        "adm_keySecretDesc": "Leiad selle oma Razorpayi töölaualt.",
+        "adm_subtitle": "Võtmed maksete vastuvõtmiseks Razorpayga.",
+        "adm_title": "Razorpayi seaded",
+        "adm_webhookSecret": "Webhooki saladus",
+        "adm_webhookSecretDesc": "Leiad selle oma Razorpayi töölaualt. Suuna Razorpayi teavituse URL aadressile /api/v1/razorpay/webhook.",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "menu_razorpay-gateway": "Razorpayi värav",
+        "menu_razorpay-gateway_razorpay_settings": "Razorpayi seaded",
+        "module_razorpay-gateway_name": "Razorpayi värav",
+        "module_razorpay-gateway_description": "Võta Indias vastu UPI-, kaardi-, internetipanga- ja rahakotimakseid Razorpayi kaudu",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Razorpayi API võtmed ja webhooki saladus."
+      }
+    },
+    "fr": {
+      "razorpayGateway": {
+        "adm_keyId": "ID de clé",
+        "adm_keyIdDesc": "Depuis votre tableau de bord Razorpay.",
+        "adm_keySecret": "Clé secrète",
+        "adm_keySecretDesc": "Depuis votre tableau de bord Razorpay.",
+        "adm_subtitle": "Clés pour encaisser les paiements via Razorpay.",
+        "adm_title": "Paramètres Razorpay",
+        "adm_webhookSecret": "Secret du webhook",
+        "adm_webhookSecretDesc": "Depuis votre tableau de bord Razorpay. Renseignez l’URL de notification Razorpay sur /api/v1/razorpay/webhook.",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "menu_razorpay-gateway": "Passerelle Razorpay",
+        "menu_razorpay-gateway_razorpay_settings": "Paramètres Razorpay",
+        "module_razorpay-gateway_name": "Passerelle Razorpay",
+        "module_razorpay-gateway_description": "Acceptez les paiements UPI, par carte, banque en ligne et portefeuille en Inde via Razorpay",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Clés d’API Razorpay et secret du webhook."
+      }
+    },
+    "it": {
+      "razorpayGateway": {
+        "adm_keyId": "ID chiave",
+        "adm_keyIdDesc": "Dalla tua dashboard Razorpay.",
+        "adm_keySecret": "Segreto della chiave",
+        "adm_keySecretDesc": "Dalla tua dashboard Razorpay.",
+        "adm_subtitle": "Chiavi per accettare pagamenti tramite Razorpay.",
+        "adm_title": "Impostazioni Razorpay",
+        "adm_webhookSecret": "Segreto webhook",
+        "adm_webhookSecretDesc": "Dalla tua dashboard Razorpay. Imposta l’URL di notifica Razorpay su /api/v1/razorpay/webhook.",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "menu_razorpay-gateway": "Gateway Razorpay",
+        "menu_razorpay-gateway_razorpay_settings": "Impostazioni Razorpay",
+        "module_razorpay-gateway_name": "Gateway Razorpay",
+        "module_razorpay-gateway_description": "Accetta pagamenti UPI, con carta, netbanking e wallet in India tramite Razorpay",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Chiavi API di Razorpay e segreto del webhook."
+      }
+    },
+    "pl": {
+      "razorpayGateway": {
+        "adm_keyId": "ID klucza",
+        "adm_keyIdDesc": "Z panelu Razorpay.",
+        "adm_keySecret": "Tajny klucz",
+        "adm_keySecretDesc": "Z panelu Razorpay.",
+        "adm_subtitle": "Klucze do przyjmowania płatności przez Razorpay.",
+        "adm_title": "Ustawienia Razorpay",
+        "adm_webhookSecret": "Tajny klucz webhooka",
+        "adm_webhookSecretDesc": "Z panelu Razorpay. Ustaw adres powiadomień Razorpay na /api/v1/razorpay/webhook.",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "menu_razorpay-gateway": "Bramka Razorpay",
+        "menu_razorpay-gateway_razorpay_settings": "Ustawienia Razorpay",
+        "module_razorpay-gateway_name": "Bramka Razorpay",
+        "module_razorpay-gateway_description": "Przyjmuj płatności UPI, kartą, przez bankowość internetową i portfele w Indiach przez Razorpay",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Klucze API Razorpay i tajny klucz webhooka."
+      }
+    },
+    "pt": {
+      "razorpayGateway": {
+        "adm_keyId": "ID da chave",
+        "adm_keyIdDesc": "Do seu painel do Razorpay.",
+        "adm_keySecret": "Segredo da chave",
+        "adm_keySecretDesc": "Do seu painel do Razorpay.",
+        "adm_subtitle": "Chaves para receber pagamentos pelo Razorpay.",
+        "adm_title": "Configurações do Razorpay",
+        "adm_webhookSecret": "Segredo do webhook",
+        "adm_webhookSecretDesc": "Do seu painel do Razorpay. Aponte a URL de notificação do Razorpay para /api/v1/razorpay/webhook.",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "menu_razorpay-gateway": "Gateway Razorpay",
+        "menu_razorpay-gateway_razorpay_settings": "Configurações do Razorpay",
+        "module_razorpay-gateway_name": "Gateway Razorpay",
+        "module_razorpay-gateway_description": "Receba pagamentos por UPI, cartão, netbanking e carteira na Índia pelo Razorpay",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Chaves da API e segredo do webhook do Razorpay."
+      }
+    },
+    "ru": {
+      "razorpayGateway": {
+        "adm_keyId": "ID ключа",
+        "adm_keyIdDesc": "Из панели управления Razorpay.",
+        "adm_keySecret": "Секретный ключ",
+        "adm_keySecretDesc": "Из панели управления Razorpay.",
+        "adm_subtitle": "Ключи для приема платежей через Razorpay.",
+        "adm_title": "Настройки Razorpay",
+        "adm_webhookSecret": "Секрет вебхука",
+        "adm_webhookSecretDesc": "Из панели управления Razorpay. Укажите в качестве URL уведомлений Razorpay адрес /api/v1/razorpay/webhook.",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "menu_razorpay-gateway": "Шлюз Razorpay",
+        "menu_razorpay-gateway_razorpay_settings": "Настройки Razorpay",
+        "module_razorpay-gateway_name": "Шлюз Razorpay",
+        "module_razorpay-gateway_description": "Принимайте в Индии платежи через Razorpay: UPI, картами, интернет-банкингом и электронными кошельками",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Ключи API Razorpay и секрет вебхука."
+      }
+    },
+    "zh": {
+      "razorpayGateway": {
+        "adm_keyId": "密钥 ID",
+        "adm_keyIdDesc": "来自你的 Razorpay 控制台。",
+        "adm_keySecret": "密钥",
+        "adm_keySecretDesc": "来自你的 Razorpay 控制台。",
+        "adm_subtitle": "用于通过 Razorpay 收款的密钥。",
+        "adm_title": "Razorpay 设置",
+        "adm_webhookSecret": "Webhook 密钥",
+        "adm_webhookSecretDesc": "来自你的 Razorpay 控制台。请将 Razorpay 通知 URL 设置为 /api/v1/razorpay/webhook。",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "menu_razorpay-gateway": "Razorpay 支付网关",
+        "menu_razorpay-gateway_razorpay_settings": "Razorpay 设置",
+        "module_razorpay-gateway_name": "Razorpay 支付网关",
+        "module_razorpay-gateway_description": "在印度通过 Razorpay 接受 UPI、银行卡、网银和电子钱包付款",
+        "settings_razorpay-gateway": "Razorpay",
+        "settings_razorpay-gateway_description": "Razorpay API 密钥和 Webhook 密钥。"
+      }
     }
   },
   "permissions": [

@@ -113,6 +113,296 @@
         "settings_manual-payment-gateway": "Elden Ödeme",
         "settings_manual-payment-gateway_description": "Paranın nereye gönderileceği ve hangi para birimlerini kabul ettiğiniz."
       }
+    },
+    "az": {
+      "pageTitles": {
+        "paymentInstructions": "Necə ödəmək olar"
+      },
+      "manualPaymentGateway": {
+        "adm_currencies": "Qəbul etdiyiniz valyutalar",
+        "adm_currenciesDesc": "Üç hərfli kodlar, istənilən şəkildə ayrılmış. Mağaza nə ilə qiymətləndirirsə onu qəbul etmək üçün boş buraxın.",
+        "adm_instructions": "Necə ödəmək olar",
+        "adm_instructionsDesc": "Ödənişdən sonra alıcıya göstərilir. Boş buraxsanız, bu ödəniş üsulu heç təklif olunmayacaq.",
+        "adm_instructionsPlaceholder": "Hesab adı, IBAN və alıcının köçürmədə yazmalı olduğu hər şey.",
+        "adm_subtitle": "Ödəniş prosessorundan kənar gələn pullar üçün: bank köçürməsi, nağd pul, sonradan ödənilən faktura.",
+        "adm_title": "Əllə ödəniş",
+        "myOrders": "Sifarişlərim",
+        "perm_manage": "İdarə et",
+        "quoteThis": "Köçürmədə bunu yazın",
+        "subtitle": "Sifarişiniz gözləyir. Pulu gördüyümüz anda o, sizindir.",
+        "thenWhat": "Ödənişi əl ilə təsdiqləyirik, ona görə növbəti iş gününə qədər çəkə bilər.",
+        "title": "Necə ödəmək olar"
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "Sifarişiniz üçün ödəniş təlimatlarını izləyin: nə göndərmək, hara göndərmək və pul çatdıqdan sonra nə baş verəcək."
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "Sifarişi qəbul edir və pulun başqa yolla gəlməsini gözləyir",
+        "module_manual-payment-gateway_name": "Əllə ödəniş",
+        "settings_manual-payment-gateway": "Əllə ödəniş",
+        "settings_manual-payment-gateway_description": "Pulun hara göndəriləcəyi və hansı valyutaların qəbul olunduğu."
+      }
+    },
+    "de": {
+      "pageTitles": {
+        "paymentInstructions": "So bezahlst du"
+      },
+      "manualPaymentGateway": {
+        "adm_currencies": "Währungen, die du annimmst",
+        "adm_currenciesDesc": "Drei-Buchstaben-Codes, beliebig getrennt. Leer lassen, um alle Währungen anzunehmen, in denen der Shop Preise hat.",
+        "adm_instructions": "So bezahlst du",
+        "adm_instructionsDesc": "Wird dem Käufer nach dem Checkout angezeigt. Leer lassen, und diese Zahlungsart wird gar nicht angeboten.",
+        "adm_instructionsPlaceholder": "Kontoinhaber, IBAN und alles, was der Käufer bei der Überweisung angeben soll.",
+        "adm_subtitle": "Für Geld, das außerhalb eines Zahlungsdienstleisters eingeht: Banküberweisung, Bargeld oder eine Rechnung, die später beglichen wird.",
+        "adm_title": "Manuell bezahlen",
+        "myOrders": "Meine Bestellungen",
+        "perm_manage": "Verwalten",
+        "quoteThis": "Schreibe dies auf die Überweisung",
+        "subtitle": "Deine Bestellung wartet. Sie gehört dir, sobald wir das Geld sehen.",
+        "thenWhat": "Wir bestätigen manuell, daher kann es bis zum nächsten Werktag dauern.",
+        "title": "So bezahlst du"
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "Folge den Zahlungshinweisen zu deiner Bestellung: was du senden sollst, wohin und was passiert, sobald es ankommt."
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "Nimmt eine Bestellung an und wartet, bis das Geld auf anderem Weg eingeht",
+        "module_manual-payment-gateway_name": "Manuelle Zahlung",
+        "settings_manual-payment-gateway": "Manuell bezahlen",
+        "settings_manual-payment-gateway_description": "Wohin das Geld gesendet werden soll und welche Währungen du annimmst."
+      }
+    },
+    "es": {
+      "pageTitles": {
+        "paymentInstructions": "Cómo pagar"
+      },
+      "manualPaymentGateway": {
+        "adm_currencies": "Monedas que aceptas",
+        "adm_currenciesDesc": "Códigos de tres letras, separados como quieras. Déjalo vacío para aceptar cualquier moneda en la que la tienda ponga sus precios.",
+        "adm_instructions": "Cómo pagar",
+        "adm_instructionsDesc": "Se muestra al comprador después de la compra. Si lo dejas vacío, esta forma de pago no se ofrece en absoluto.",
+        "adm_instructionsPlaceholder": "Nombre de la cuenta, IBAN y todo lo que el comprador deba escribir en la transferencia.",
+        "adm_subtitle": "Para dinero que llega fuera de un procesador: una transferencia bancaria, efectivo o una factura que se liquida más tarde.",
+        "adm_title": "Pago manual",
+        "myOrders": "Mis pedidos",
+        "perm_manage": "Gestionar",
+        "quoteThis": "Escribe esto en la transferencia",
+        "subtitle": "Tu pedido está en espera. Será tuyo en cuanto veamos el dinero.",
+        "thenWhat": "Confirmamos los pagos a mano, así que puede tardar hasta el siguiente día laborable.",
+        "title": "Cómo pagar"
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "Sigue las instrucciones de pago de tu pedido: qué enviar, adónde enviarlo y qué ocurre cuando llegue."
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "Acepta un pedido y espera a que el dinero llegue por otra vía",
+        "module_manual-payment-gateway_name": "Pago manual",
+        "settings_manual-payment-gateway": "Pago manual",
+        "settings_manual-payment-gateway_description": "Dónde enviar el dinero y qué monedas aceptas."
+      }
+    },
+    "et": {
+      "pageTitles": {
+        "paymentInstructions": "Kuidas maksta"
+      },
+      "manualPaymentGateway": {
+        "adm_currencies": "Valuutad, mida vastu võtad",
+        "adm_currenciesDesc": "Kolmetähelised koodid, eraldatud suvaliselt. Jäta tühjaks, et võtta vastu kõike, milles pood hindu näitab.",
+        "adm_instructions": "Kuidas maksta",
+        "adm_instructionsDesc": "Kuvatakse ostjale pärast ostu vormistamist. Kui jätad tühjaks, ei pakuta seda makseviisi üldse.",
+        "adm_instructionsPlaceholder": "Konto omaniku nimi, IBAN ja kõik, mida ostja peaks ülekandele kirjutama.",
+        "adm_subtitle": "Rahale, mis saabub väljaspool makseteenust: pangaülekanne, sularaha, hiljem tasutud arve.",
+        "adm_title": "Maksa käsitsi",
+        "myOrders": "Minu tellimused",
+        "perm_manage": "Halda",
+        "quoteThis": "Kirjuta see ülekandele",
+        "subtitle": "Sinu tellimus ootab. See on sinu, kui näeme raha.",
+        "thenWhat": "Kinnitame käsitsi, seega võib see võtta kuni järgmise tööpäevani.",
+        "title": "Kuidas maksta"
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "Järgi oma tellimuse maksejuhiseid: mida saata, kuhu saata ja mis juhtub, kui see saabub."
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "Võtab tellimuse vastu ja ootab raha saabumist mõnda muud teed pidi",
+        "module_manual-payment-gateway_name": "Käsitsi makse",
+        "settings_manual-payment-gateway": "Maksa käsitsi",
+        "settings_manual-payment-gateway_description": "Kuhu raha saata ja milliseid valuutasid vastu võtad."
+      }
+    },
+    "fr": {
+      "pageTitles": {
+        "paymentInstructions": "Comment payer"
+      },
+      "manualPaymentGateway": {
+        "adm_currencies": "Devises acceptées",
+        "adm_currenciesDesc": "Codes à trois lettres, séparés comme vous le souhaitez. Laissez vide pour accepter la devise dans laquelle la boutique affiche ses prix.",
+        "adm_instructions": "Comment payer",
+        "adm_instructionsDesc": "Affiché à l’acheteur après la commande. Laissez vide pour que ce mode de paiement ne soit pas proposé du tout.",
+        "adm_instructionsPlaceholder": "Nom du titulaire, IBAN et tout ce que l’acheteur doit indiquer sur le virement.",
+        "adm_subtitle": "Pour les paiements qui arrivent hors d’un prestataire : virement bancaire, espèces, facture réglée plus tard.",
+        "adm_title": "Paiement manuel",
+        "myOrders": "Mes commandes",
+        "perm_manage": "Gérer",
+        "quoteThis": "Indiquez ceci sur le virement",
+        "subtitle": "Votre commande est en attente. Elle vous est attribuée dès que nous recevons le paiement.",
+        "thenWhat": "Nous confirmons manuellement, cela peut prendre jusqu’au prochain jour ouvré.",
+        "title": "Comment payer"
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "Suivez les instructions de paiement de votre commande : quoi envoyer, où l’envoyer et ce qui se passe à réception."
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "Enregistre une commande et attend l’arrivée du paiement par un autre moyen",
+        "module_manual-payment-gateway_name": "Paiement manuel",
+        "settings_manual-payment-gateway": "Paiement manuel",
+        "settings_manual-payment-gateway_description": "Où envoyer l’argent, et quelles devises sont acceptées."
+      }
+    },
+    "it": {
+      "pageTitles": {
+        "paymentInstructions": "Come pagare"
+      },
+      "manualPaymentGateway": {
+        "adm_currencies": "Valute accettate",
+        "adm_currenciesDesc": "Codici a tre lettere, separati come preferisci. Lascia vuoto per accettare qualsiasi valuta in cui lo shop imposta i prezzi.",
+        "adm_instructions": "Come pagare",
+        "adm_instructionsDesc": "Mostrate all’acquirente dopo il checkout. Se lasci vuoto, questo metodo di pagamento non viene offerto affatto.",
+        "adm_instructionsPlaceholder": "Intestatario del conto, IBAN e tutto ciò che l’acquirente deve scrivere nel bonifico.",
+        "adm_subtitle": "Per il denaro che arriva fuori da un processore: bonifico bancario, contanti, una fattura saldata in seguito.",
+        "adm_title": "Pagamento manuale",
+        "myOrders": "I miei ordini",
+        "perm_manage": "Gestisci",
+        "quoteThis": "Scrivi questo nel bonifico",
+        "subtitle": "Il tuo ordine è in attesa. È tuo non appena vediamo il denaro.",
+        "thenWhat": "Confermiamo a mano, quindi può richiedere fino al giorno lavorativo successivo.",
+        "title": "Come pagare"
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "Segui le istruzioni di pagamento per il tuo ordine: cosa inviare, dove inviarlo e cosa succede una volta arrivato."
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "Accetta un ordine e attende che il denaro arrivi per un’altra via",
+        "module_manual-payment-gateway_name": "Pagamento manuale",
+        "settings_manual-payment-gateway": "Pagamento manuale",
+        "settings_manual-payment-gateway_description": "Dove inviare il denaro e quali valute accetti."
+      }
+    },
+    "pl": {
+      "pageTitles": {
+        "paymentInstructions": "Jak zapłacić"
+      },
+      "manualPaymentGateway": {
+        "adm_currencies": "Przyjmowane waluty",
+        "adm_currenciesDesc": "Trzyliterowe kody, oddzielone dowolnie. Zostaw puste, aby przyjmować to, w czym sklep wycenia produkty.",
+        "adm_instructions": "Jak zapłacić",
+        "adm_instructionsDesc": "Pokazywane kupującemu po zakupie. Zostaw puste, a ten sposób płatności nie będzie w ogóle oferowany.",
+        "adm_instructionsPlaceholder": "Nazwa odbiorcy, IBAN i wszystko, co kupujący powinien wpisać w przelewie.",
+        "adm_subtitle": "Dla pieniędzy, które docierają poza bramką płatności: przelew, gotówka, faktura opłacona później.",
+        "adm_title": "Płatność ręczna",
+        "myOrders": "Moje zamówienia",
+        "perm_manage": "Zarządzaj",
+        "quoteThis": "Wpisz to w tytule przelewu",
+        "subtitle": "Twoje zamówienie czeka. Jest Twoje, gdy tylko zobaczymy pieniądze.",
+        "thenWhat": "Potwierdzamy ręcznie, więc może to potrwać do następnego dnia roboczego.",
+        "title": "Jak zapłacić"
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "Postępuj zgodnie z instrukcjami płatności dla swojego zamówienia: co wysłać, dokąd to wysłać i co się dzieje, gdy pieniądze dotrą."
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "Przyjmuje zamówienie i czeka, aż pieniądze dotrą inną drogą",
+        "module_manual-payment-gateway_name": "Płatność ręczna",
+        "settings_manual-payment-gateway": "Płatność ręczna",
+        "settings_manual-payment-gateway_description": "Dokąd wysłać pieniądze i jakie waluty przyjmujesz."
+      }
+    },
+    "pt": {
+      "pageTitles": {
+        "paymentInstructions": "Como pagar"
+      },
+      "manualPaymentGateway": {
+        "adm_currencies": "Moedas aceitas",
+        "adm_currenciesDesc": "Códigos de três letras, separados como preferir. Deixe vazio para aceitar qualquer moeda em que a loja define os preços.",
+        "adm_instructions": "Como pagar",
+        "adm_instructionsDesc": "Mostrado ao comprador depois do checkout. Se ficar vazio, esta forma de pagamento não é oferecida.",
+        "adm_instructionsPlaceholder": "Nome do titular, IBAN e qualquer informação que o comprador deva escrever na transferência.",
+        "adm_subtitle": "Para dinheiro que chega fora de um processador: transferência bancária, dinheiro em espécie, fatura paga depois.",
+        "adm_title": "Pagar manualmente",
+        "myOrders": "Meus pedidos",
+        "perm_manage": "Gerenciar",
+        "quoteThis": "Escreva isto na transferência",
+        "subtitle": "Seu pedido está aguardando. Ele é seu assim que identificarmos o pagamento.",
+        "thenWhat": "Confirmamos manualmente, então pode levar até o próximo dia útil.",
+        "title": "Como pagar"
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "Siga as instruções de pagamento do seu pedido: o que enviar, para onde enviar e o que acontece quando o pagamento chegar."
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "Recebe um pedido e espera o dinheiro chegar por outra via",
+        "module_manual-payment-gateway_name": "Pagamento manual",
+        "settings_manual-payment-gateway": "Pagar manualmente",
+        "settings_manual-payment-gateway_description": "Para onde enviar o dinheiro e quais moedas você aceita."
+      }
+    },
+    "ru": {
+      "pageTitles": {
+        "paymentInstructions": "Как оплатить"
+      },
+      "manualPaymentGateway": {
+        "adm_currencies": "Принимаемые валюты",
+        "adm_currenciesDesc": "Трехбуквенные коды, разделенные любым способом. Оставьте поле пустым, чтобы принимать ту валюту, в которой магазин указывает цены.",
+        "adm_instructions": "Как оплатить",
+        "adm_instructionsDesc": "Показывается покупателю после оформления заказа. Если оставить поле пустым, этот способ оплаты не предлагается.",
+        "adm_instructionsPlaceholder": "Название счета, IBAN и все, что покупатель должен указать в переводе.",
+        "adm_subtitle": "Для денег, которые поступают не через платежный процессор: банковский перевод, наличные, счет, оплаченный позже.",
+        "adm_title": "Оплата вручную",
+        "myOrders": "Мои заказы",
+        "perm_manage": "Управление",
+        "quoteThis": "Укажите это в переводе",
+        "subtitle": "Ваш заказ ожидает оплаты. Он станет вашим, как только мы увидим деньги.",
+        "thenWhat": "Мы подтверждаем платежи вручную, поэтому это может занять до следующего рабочего дня.",
+        "title": "Как оплатить"
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "Следуйте инструкциям по оплате заказа: что отправить, куда и что произойдет после поступления средств."
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "Принимает заказ и ждет поступления денег другим способом",
+        "module_manual-payment-gateway_name": "Оплата вручную",
+        "settings_manual-payment-gateway": "Оплата вручную",
+        "settings_manual-payment-gateway_description": "Куда отправлять деньги и какие валюты вы принимаете."
+      }
+    },
+    "zh": {
+      "pageTitles": {
+        "paymentInstructions": "付款方式"
+      },
+      "manualPaymentGateway": {
+        "adm_currencies": "接受的货币",
+        "adm_currenciesDesc": "使用三位货币代码，分隔符不限。留空则接受店铺定价所用的任何货币。",
+        "adm_instructions": "付款方式",
+        "adm_instructionsDesc": "在结账后展示给买家。留空则不提供这种付款方式。",
+        "adm_instructionsPlaceholder": "账户名称、IBAN，以及买家在转账时应填写的任何内容。",
+        "adm_subtitle": "适用于通过支付处理商以外途径到账的款项：银行转账、现金、稍后结清的发票。",
+        "adm_title": "人工付款",
+        "myOrders": "我的订单",
+        "perm_manage": "管理",
+        "quoteThis": "请在转账备注中填写",
+        "subtitle": "你的订单正在等待。我们确认到账后，订单即归你所有。",
+        "thenWhat": "我们需要人工确认，最长可能需要到下一个工作日。",
+        "title": "付款方式"
+      },
+      "pageDescriptions": {
+        "paymentInstructions": "按照你的订单付款说明操作：付什么、付到哪里，以及到账后会发生什么。"
+      },
+      "admin": {
+        "module_manual-payment-gateway_description": "接收订单，并等待款项通过其他途径到账",
+        "module_manual-payment-gateway_name": "人工付款",
+        "settings_manual-payment-gateway": "人工付款",
+        "settings_manual-payment-gateway_description": "款项收取的位置，以及接受的货币。"
+      }
     }
   },
   "permissions": [

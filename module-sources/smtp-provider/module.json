@@ -104,6 +104,326 @@
         "adm_userLabel": "Kullanıcı adı",
         "perm_manage": "Yönetebilir"
       }
+    },
+    "az": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "SMTP e-poçt provayderi",
+        "module_smtp-provider_description": "E-poçtu işlətdiyiniz və ya ödədiyiniz SMTP rele vasitəsilə göndərin",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "Bu saytın poçtunu təhvil verdiyi rele."
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "Quraşdırılmış poçt göndərmə üsullarından hansı ilə bu sayt e-poçtlarını göndərir. Yalnız biri quraşdırılıbsa seçmək üçün heç nə yoxdur.",
+        "adm_activeLabel": "Vasitəsilə göndər",
+        "adm_fromDesc": "Cavab hara gedir. Bu rele adından göndərməyə icazəsi olan ünvan olmalıdır.",
+        "adm_fromLabel": "Qaytarma ünvanı",
+        "adm_fromNameDesc": "Poçt qutusunda ünvanın yanındakı ad.",
+        "adm_fromNameLabel": "Qaytarma adı",
+        "adm_hostDesc": "Relenin ünvanı, port olmadan.",
+        "adm_hostLabel": "Server",
+        "adm_passwordDesc": "Şifrələnmiş saxlanılır. Artıq saxlanılanı qorumaq üçün boş buraxın.",
+        "adm_passwordLabel": "Parol",
+        "adm_portDesc": "Bağlantını yeniləyən rele üçün 587, ilk baytdan şifrələnmiş olan üçün 465.",
+        "adm_portLabel": "Port",
+        "adm_secureDesc": "Hər ikisi göndərilməzdən əvvəl parolu şifrələyir. Hansının lazım olduğunu relenin dinlədiyi port müəyyən edir.",
+        "adm_secureLabel": "Bağlantı",
+        "adm_secureOff": "Qoşulduqdan sonra yenilənir (port 587)",
+        "adm_secureOn": "İlk baytdan şifrələnmiş (port 465)",
+        "adm_subtitle": "Bu saytın poçtunu təhvil verdiyi rele",
+        "adm_title": "SMTP",
+        "adm_userDesc": "Boş buraxıldıqda rele autentifikasiya olmadan istifadə olunur, bunu əksəriyyəti rədd edəcək.",
+        "adm_userLabel": "İstifadəçi adı",
+        "perm_manage": "İdarə et"
+      }
+    },
+    "de": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "SMTP-E-Mail-Anbieter",
+        "module_smtp-provider_description": "E-Mails über einen SMTP-Relay versenden, den du betreibst oder bezahlst",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "Der Relay, an den diese Seite ihre E-Mails übergibt."
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "Über welchen der installierten Übertragungswege diese Seite ihre E-Mails übergibt. Ist nur einer installiert, gibt es nichts auszuwählen.",
+        "adm_activeLabel": "Senden über",
+        "adm_fromDesc": "Wohin eine Antwort geht. Es muss eine Adresse sein, in deren Namen dieser Relay senden darf.",
+        "adm_fromLabel": "Rücksendeadresse",
+        "adm_fromNameDesc": "Der Name neben der Adresse in einem Postfach.",
+        "adm_fromNameLabel": "Rücksendename",
+        "adm_hostDesc": "Die Adresse des Relays, ohne Port.",
+        "adm_hostLabel": "Server",
+        "adm_passwordDesc": "Verschlüsselt gespeichert. Leer lassen, um das bereits gespeicherte Passwort zu behalten.",
+        "adm_passwordLabel": "Passwort",
+        "adm_portDesc": "587 für einen Relay, der die Verbindung hochstuft, 465 für einen, der ab dem ersten Byte verschlüsselt ist.",
+        "adm_portLabel": "Port",
+        "adm_secureDesc": "Beide verschlüsseln das Passwort, bevor es übertragen wird. Welchen ein Relay verlangt, bestimmt der Port, auf dem er lauscht.",
+        "adm_secureLabel": "Verbindung",
+        "adm_secureOff": "Nach dem Verbinden hochgestuft (Port 587)",
+        "adm_secureOn": "Ab dem ersten Byte verschlüsselt (Port 465)",
+        "adm_subtitle": "Der Relay, an den diese Seite ihre E-Mails übergibt",
+        "adm_title": "SMTP",
+        "adm_userDesc": "Bleibt es leer, wird der Relay ohne Authentifizierung verwendet, was die meisten ablehnen werden.",
+        "adm_userLabel": "Benutzername",
+        "perm_manage": "Verwalten"
+      }
+    },
+    "es": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "Proveedor de correo SMTP",
+        "module_smtp-provider_description": "Envía correo a través de un relé SMTP que tú gestionas o pagas",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "El relé al que este sitio entrega su correo."
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "Cuál de los transportes instalados usa este sitio para enviar su correo. Si solo hay uno instalado, no hay nada que elegir.",
+        "adm_activeLabel": "Enviar a través de",
+        "adm_fromDesc": "Adónde van las respuestas. Tiene que ser una dirección desde la que este relé pueda enviar.",
+        "adm_fromLabel": "Dirección de respuesta",
+        "adm_fromNameDesc": "El nombre que aparece junto a la dirección en el buzón.",
+        "adm_fromNameLabel": "Nombre de respuesta",
+        "adm_hostDesc": "La dirección del relé, sin puerto.",
+        "adm_hostLabel": "Servidor",
+        "adm_passwordDesc": "Se guarda cifrada. Déjalo vacío para conservar la que ya está guardada.",
+        "adm_passwordLabel": "Contraseña",
+        "adm_portDesc": "587 para un relé que mejora la conexión, 465 para uno cifrado desde el primer byte.",
+        "adm_portLabel": "Puerto",
+        "adm_secureDesc": "Ambos cifran la contraseña antes de enviarla. Qué opción quiere un relé lo decide el puerto en el que escucha.",
+        "adm_secureLabel": "Conexión",
+        "adm_secureOff": "Mejorada tras conectar (puerto 587)",
+        "adm_secureOn": "Cifrada desde el primer byte (puerto 465)",
+        "adm_subtitle": "El relé al que este sitio entrega su correo",
+        "adm_title": "SMTP",
+        "adm_userDesc": "Si lo dejas en blanco, el relé se usa sin autenticarse, algo que la mayoría rechazará.",
+        "adm_userLabel": "Usuario",
+        "perm_manage": "Gestionar"
+      }
+    },
+    "et": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "SMTP e-posti teenusepakkuja",
+        "module_smtp-provider_description": "Saada e-kirju SMTP-releed kaudu, mida sa ise käitad või eest maksad",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "Relee, kuhu see sait oma kirjad saadab."
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "Millist paigaldatud edastusteed see sait oma kirjadega kasutab. Kui on paigaldatud ainult üks, pole valida midagi.",
+        "adm_activeLabel": "Saada läbi",
+        "adm_fromDesc": "Kuhu vastus läheb. See peab olema aadress, mille nimel see relee tohib saata.",
+        "adm_fromLabel": "Tagasisaatmise aadress",
+        "adm_fromNameDesc": "Nimi, mis kuvatakse aadressi kõrval postkastis.",
+        "adm_fromNameLabel": "Tagasisaatmise nimi",
+        "adm_hostDesc": "Relee aadress ilma pordita.",
+        "adm_hostLabel": "Server",
+        "adm_passwordDesc": "Salvestatakse krüpteeritult. Jäta tühjaks, et säilitada juba salvestatud parool.",
+        "adm_passwordLabel": "Parool",
+        "adm_portDesc": "587 releele, mis uuendab ühenduse, 465 releele, mis on krüpteeritud esimesest baidist alates.",
+        "adm_portLabel": "Port",
+        "adm_secureDesc": "Mõlemad krüpteerivad parooli enne edastamist. Millist neist relee nõuab, otsustab port, millel see kuulab.",
+        "adm_secureLabel": "Ühendus",
+        "adm_secureOff": "Uuendatakse pärast ühendamist (port 587)",
+        "adm_secureOn": "Krüpteeritud esimesest baidist alates (port 465)",
+        "adm_subtitle": "Relee, kuhu see sait oma kirjad saadab",
+        "adm_title": "SMTP",
+        "adm_userDesc": "Kui jätta tühjaks, kasutatakse releed autentimata, mida enamik keeldub vastu võtmast.",
+        "adm_userLabel": "Kasutajanimi",
+        "perm_manage": "Halda"
+      }
+    },
+    "fr": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "Fournisseur d’e-mails SMTP",
+        "module_smtp-provider_description": "Envoyer des e-mails via un relais SMTP que vous exploitez ou payez",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "Le relais auquel ce site confie son courrier."
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "Le ou les transports installés auxquels ce site confie son courrier. Si un seul est installé, il n’y a rien à choisir.",
+        "adm_activeLabel": "Envoyer via",
+        "adm_fromDesc": "Destinataire des réponses. Il doit s’agir d’une adresse que ce relais est autorisé à utiliser comme expéditeur.",
+        "adm_fromLabel": "Adresse de réponse",
+        "adm_fromNameDesc": "Le nom affiché à côté de l’adresse dans une boîte de réception.",
+        "adm_fromNameLabel": "Nom de réponse",
+        "adm_hostDesc": "L’adresse du relais, sans port.",
+        "adm_hostLabel": "Serveur",
+        "adm_passwordDesc": "Stocké chiffré. Laissez vide pour conserver celui déjà enregistré.",
+        "adm_passwordLabel": "Mot de passe",
+        "adm_portDesc": "587 pour un relais qui active le chiffrement après la connexion, 465 pour un relais chiffré dès le premier octet.",
+        "adm_portLabel": "Port",
+        "adm_secureDesc": "Les deux chiffrent le mot de passe avant sa transmission. Le choix dépend du port sur lequel écoute le relais.",
+        "adm_secureLabel": "Connexion",
+        "adm_secureOff": "Chiffrée après la connexion (port 587)",
+        "adm_secureOn": "Chiffrée dès le premier octet (port 465)",
+        "adm_subtitle": "Le relais auquel ce site confie son courrier",
+        "adm_title": "SMTP",
+        "adm_userDesc": "Laissé vide, le relais est utilisé sans authentification, ce que la plupart refuseront.",
+        "adm_userLabel": "Nom d’utilisateur",
+        "perm_manage": "Gérer"
+      }
+    },
+    "it": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "Provider email SMTP",
+        "module_smtp-provider_description": "Invia email tramite un relay SMTP che gestisci o per cui paghi",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "Il relay a cui questo sito affida la posta."
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "Quali dei trasporti installati questo sito usa per inviare la posta. Con uno solo installato non c’è nulla da scegliere.",
+        "adm_activeLabel": "Invia tramite",
+        "adm_fromDesc": "Dove va una risposta. Deve essere un indirizzo che questo relay può usare come mittente.",
+        "adm_fromLabel": "Indirizzo di risposta",
+        "adm_fromNameDesc": "Il nome accanto all’indirizzo in una casella di posta.",
+        "adm_fromNameLabel": "Nome di risposta",
+        "adm_hostDesc": "L’indirizzo del relay, senza porta.",
+        "adm_hostLabel": "Server",
+        "adm_passwordDesc": "Memorizzata cifrata. Lascia vuoto per mantenere quella già salvata.",
+        "adm_passwordLabel": "Password",
+        "adm_portDesc": "587 per un relay che aggiorna la connessione, 465 per uno cifrato dal primo byte.",
+        "adm_portLabel": "Porta",
+        "adm_secureDesc": "Entrambi cifrano la password prima che passi. Quale vuole un relay è deciso dalla porta su cui è in ascolto.",
+        "adm_secureLabel": "Connessione",
+        "adm_secureOff": "Aggiornata dopo la connessione (porta 587)",
+        "adm_secureOn": "Cifrata dal primo byte (porta 465)",
+        "adm_subtitle": "Il relay a cui questo sito affida la sua posta",
+        "adm_title": "SMTP",
+        "adm_userDesc": "Se lasciato vuoto, il relay viene usato senza autenticazione, cosa che la maggior parte rifiuterà.",
+        "adm_userLabel": "Nome utente",
+        "perm_manage": "Gestisci"
+      }
+    },
+    "pl": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "Dostawca e-maili SMTP",
+        "module_smtp-provider_description": "Wysyłaj e-maile przez przekaźnik SMTP, który sam prowadzisz albo za który płacisz",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "Przekaźnik, któremu ta strona przekazuje pocztę."
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "Przez które z zainstalowanych kanałów ta strona wysyła pocztę. Gdy zainstalowany jest tylko jeden, nie ma czego wybierać.",
+        "adm_activeLabel": "Wysyłaj przez",
+        "adm_fromDesc": "Tu trafiają odpowiedzi. Musi to być adres, jako który ten przekaźnik może wysyłać.",
+        "adm_fromLabel": "Adres zwrotny",
+        "adm_fromNameDesc": "Nazwa wyświetlana obok adresu w skrzynce odbiorczej.",
+        "adm_fromNameLabel": "Nazwa zwrotna",
+        "adm_hostDesc": "Adres przekaźnika, bez portu.",
+        "adm_hostLabel": "Serwer",
+        "adm_passwordDesc": "Przechowywane zaszyfrowane. Zostaw puste, aby zachować już zapisane.",
+        "adm_passwordLabel": "Hasło",
+        "adm_portDesc": "587 dla przekaźnika, który ulepsza połączenie, 465 dla szyfrowanego od pierwszego bajtu.",
+        "adm_portLabel": "Port",
+        "adm_secureDesc": "Oba szyfrują hasło, zanim zostanie wysłane. Którego chce przekaźnik, decyduje port, na którym nasłuchuje.",
+        "adm_secureLabel": "Połączenie",
+        "adm_secureOff": "Ulepszane po połączeniu (port 587)",
+        "adm_secureOn": "Szyfrowane od pierwszego bajtu (port 465)",
+        "adm_subtitle": "Przekaźnik, któremu ta strona przekazuje pocztę",
+        "adm_title": "SMTP",
+        "adm_userDesc": "Gdy pole jest puste, przekaźnik jest używany bez uwierzytelniania, co większość odrzuci.",
+        "adm_userLabel": "Nazwa użytkownika",
+        "perm_manage": "Zarządzaj"
+      }
+    },
+    "pt": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "Provedor de e-mail SMTP",
+        "module_smtp-provider_description": "Envie e-mails por um servidor SMTP que você mantém ou paga",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "O servidor para o qual este site envia seus e-mails."
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "Qual dos transportes instalados este site usa para enviar os e-mails. Com apenas um instalado, não há o que escolher.",
+        "adm_activeLabel": "Enviar por",
+        "adm_fromDesc": "Para onde vai uma resposta. Precisa ser um endereço que este servidor tem permissão para usar como remetente.",
+        "adm_fromLabel": "Endereço de resposta",
+        "adm_fromNameDesc": "O nome exibido ao lado do endereço na caixa de entrada.",
+        "adm_fromNameLabel": "Nome de resposta",
+        "adm_hostDesc": "O endereço do servidor, sem a porta.",
+        "adm_hostLabel": "Servidor",
+        "adm_passwordDesc": "Armazenada criptografada. Deixe em branco para manter a que já está salva.",
+        "adm_passwordLabel": "Senha",
+        "adm_portDesc": "587 para um servidor que atualiza a conexão, 465 para um que criptografa desde o primeiro byte.",
+        "adm_portLabel": "Porta",
+        "adm_secureDesc": "Ambos criptografam a senha antes do envio. Qual deles o servidor usa é definido pela porta em que ele escuta.",
+        "adm_secureLabel": "Conexão",
+        "adm_secureOff": "Atualizada após conectar (porta 587)",
+        "adm_secureOn": "Criptografada desde o primeiro byte (porta 465)",
+        "adm_subtitle": "O servidor para o qual este site envia seus e-mails",
+        "adm_title": "SMTP",
+        "adm_userDesc": "Se deixado em branco, o servidor é usado sem autenticação, o que a maioria recusará.",
+        "adm_userLabel": "Nome de usuário",
+        "perm_manage": "Gerenciar"
+      }
+    },
+    "ru": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "Провайдер e-mail SMTP",
+        "module_smtp-provider_description": "Отправка писем через SMTP-ретранслятор, который вы развертываете или оплачиваете",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "Ретранслятор, через который сайт отправляет свою почту."
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "Какой из установленных транспортов получает письма сайта. Если установлен только один, выбирать не из чего.",
+        "adm_activeLabel": "Отправлять через",
+        "adm_fromDesc": "Куда направляются ответы. Это должен быть адрес, от имени которого ретранслятору разрешено отправлять.",
+        "adm_fromLabel": "Адрес для ответов",
+        "adm_fromNameDesc": "Имя, которое отображается рядом с адресом в почтовом ящике.",
+        "adm_fromNameLabel": "Имя для ответов",
+        "adm_hostDesc": "Адрес ретранслятора без порта.",
+        "adm_hostLabel": "Сервер",
+        "adm_passwordDesc": "Хранится в зашифрованном виде. Оставьте пустым, чтобы сохранить уже сохраненный пароль.",
+        "adm_passwordLabel": "Пароль",
+        "adm_portDesc": "587 для ретранслятора, который обновляет соединение, 465 для шифрования с первого байта.",
+        "adm_portLabel": "Порт",
+        "adm_secureDesc": "Оба варианта шифруют пароль перед отправкой. Какой нужен ретранслятору, определяется портом, который он слушает.",
+        "adm_secureLabel": "Соединение",
+        "adm_secureOff": "Обновляется после подключения (порт 587)",
+        "adm_secureOn": "Шифруется с первого байта (порт 465)",
+        "adm_subtitle": "Ретранслятор, через который сайт отправляет свою почту",
+        "adm_title": "SMTP",
+        "adm_userDesc": "Если оставить пустым, ретранслятор будет использоваться без аутентификации, что большинство из них отклонит.",
+        "adm_userLabel": "Имя пользователя",
+        "perm_manage": "Управление"
+      }
+    },
+    "zh": {
+      "admin": {
+        "menu_smtp-provider": "SMTP",
+        "module_smtp-provider_name": "SMTP 邮件服务商",
+        "module_smtp-provider_description": "通过你自行运营或付费使用的 SMTP 中继发送邮件",
+        "settings_smtp-provider": "SMTP",
+        "settings_smtp-provider_description": "本站交付邮件所使用的中继服务器。"
+      },
+      "smtpProvider": {
+        "adm_activeDesc": "本站会将邮件交给哪一种已安装的发送方式。只安装了一种时无需选择。",
+        "adm_activeLabel": "发送方式",
+        "adm_fromDesc": "回复将发往此处。必须是该中继允许以其身份发件的地址。",
+        "adm_fromLabel": "回复地址",
+        "adm_fromNameDesc": "邮箱中显示在地址旁边的名称。",
+        "adm_fromNameLabel": "回复名称",
+        "adm_hostDesc": "中继服务器的地址，不含端口。",
+        "adm_hostLabel": "服务器",
+        "adm_passwordDesc": "加密存储。留空则保留已保存的密码。",
+        "adm_passwordLabel": "密码",
+        "adm_portDesc": "587 适用于连接后升级加密的中继，465 适用于从第一个字节起即加密的中继。",
+        "adm_portLabel": "端口",
+        "adm_secureDesc": "两者都会在传输前加密密码。中继需要哪种方式，由其监听的端口决定。",
+        "adm_secureLabel": "连接方式",
+        "adm_secureOff": "连接后升级（端口 587）",
+        "adm_secureOn": "从第一个字节起加密（端口 465）",
+        "adm_subtitle": "本站交付邮件所使用的中继服务器",
+        "adm_title": "SMTP",
+        "adm_userDesc": "留空则在未经身份验证的情况下使用中继，多数中继会拒绝此方式。",
+        "adm_userLabel": "用户名",
+        "perm_manage": "管理"
+      }
     }
   }
 }

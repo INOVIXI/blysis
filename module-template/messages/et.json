@@ -1,0 +1,13 @@
+{
+  "myModule": {
+    "title": "Minu moodul",
+    "description": "Blysise näidismoodul",
+    "items": "Kirjed",
+    "noItems": "Kirjeid ei leitud.",
+    "createItem": "Loo kirje",
+    "editItem": "Muuda kirjet",
+    "deleteItem": "Kustuta kirje",
+    "itemTitle": "Pealkiri",
+    "itemDescription": "Kirjeldus"
+  }
+}

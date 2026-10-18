@@ -126,6 +126,286 @@
       "pageDescriptions": {
         "steam": "Steam hesabınızla oturum açma işlemini tamamlayın; işlem biter bitmez kaldığınız yere geri dönersiniz."
       }
+    },
+    "az": {
+      "steamAuth": {
+        "adm_emailNote": "Steam heç vaxt e-poçt ünvanını paylaşmır, ona görə bu üsulla yaradılan hesaba poçt ala bilməyən müvəqqəti ünvan verilir. Bu istifadəçilərdən profillərində real ünvan təyin etmələrini xahiş edin.",
+        "adm_realmHelp": "Steam-in təsdiq ekranında göstərdiyi sayt adı. Bu, API açarını qeydiyyatdan keçirdiyiniz domendir.",
+        "adm_realmLabel": "Domen",
+        "adm_returnToHelp": "Steam girişi təsdiqlədikdən sonra istifadəçiləri bura qaytarır. Ünvan AUTH_URL-dən götürülür, ona görə həmin dəyişən ziyarətçilərin real istifadə etdiyi ünvanla üst-üstə düşməlidir.",
+        "adm_returnToLabel": "Geri qayıtma URL-i",
+        "adm_subtitle": "Ziyarətçilərin Steam hesabları ilə daxil olmasına icazə verin.",
+        "adm_title": "Steam ilə giriş",
+        "backToLogin": "Girişə qayıt",
+        "perm_manage": "İdarə et",
+        "signInFailed": "Steam ilə giriş tamamlanmadı. Bağlantının müddəti bitmiş ola bilər.",
+        "signingIn": "Steam ilə daxil olunur...",
+        "title": "Steam ilə giriş"
+      },
+      "pageTitles": {
+        "steam": "Steam ilə giriş"
+      },
+      "admin": {
+        "module_steam-auth_name": "Steam ilə giriş",
+        "module_steam-auth_description": "İstifadəçilərin Steam hesabları ilə daxil olmasına icazə verin",
+        "settings_steam-auth": "Steam ilə giriş",
+        "settings_steam-auth_description": "Steam girişinin vəziyyəti və quraşdırılması."
+      },
+      "pageDescriptions": {
+        "steam": "Steam hesabınızla girişi tamamlayın; bitən kimi qaldığınız yerə qaytarılacaqsınız."
+      }
+    },
+    "de": {
+      "steamAuth": {
+        "adm_emailNote": "Steam teilt nie eine E-Mail-Adresse, daher bekommt ein so erstelltes Konto eine Platzhalter-Adresse, die niemals Post erhalten kann. Bitte diese Benutzer, in ihrem Profil eine echte Adresse festzulegen.",
+        "adm_realmHelp": "Der Seitenname, den Steam auf seinem Freigabebildschirm anzeigt. Dies ist die Domain, für die du den API-Schlüssel registrierst.",
+        "adm_realmLabel": "Domain",
+        "adm_returnToHelp": "Steam schickt die Leute nach der Bestätigung der Anmeldung hierher zurück. Die Adresse wird aus AUTH_URL abgeleitet, daher muss diese Variable mit der Adresse übereinstimmen, über die Besucher die Seite tatsächlich aufrufen.",
+        "adm_returnToLabel": "Rücksprung-URL",
+        "adm_subtitle": "Lass Besucher sich mit ihrem Steam-Konto anmelden.",
+        "adm_title": "Steam-Anmeldung",
+        "backToLogin": "Zurück zur Anmeldung",
+        "perm_manage": "Verwalten",
+        "signInFailed": "Die Anmeldung mit Steam wurde nicht abgeschlossen. Der Link ist möglicherweise abgelaufen.",
+        "signingIn": "Du wirst mit Steam angemeldet...",
+        "title": "Steam-Anmeldung"
+      },
+      "pageTitles": {
+        "steam": "Steam-Anmeldung"
+      },
+      "admin": {
+        "module_steam-auth_name": "Steam-Anmeldung",
+        "module_steam-auth_description": "Benutzern erlauben, sich mit ihrem Steam-Konto anzumelden",
+        "settings_steam-auth": "Steam-Anmeldung",
+        "settings_steam-auth_description": "Status und Einrichtung der Steam-Anmeldung."
+      },
+      "pageDescriptions": {
+        "steam": "Schließe die Anmeldung mit deinem Steam-Konto ab. Danach kommst du direkt dorthin zurück, wo du aufgehört hast."
+      }
+    },
+    "es": {
+      "steamAuth": {
+        "adm_emailNote": "Steam nunca comparte una dirección de correo, así que una cuenta creada de este modo recibe una provisional que nunca puede recibir correo. Pide a estos usuarios que pongan una dirección real en su perfil.",
+        "adm_realmHelp": "El nombre del sitio que Steam muestra en su pantalla de autorización. Es el dominio con el que registras la clave de API.",
+        "adm_realmLabel": "Dominio",
+        "adm_returnToHelp": "Steam devuelve aquí a las personas después de aprobar el inicio de sesión. Se deriva de AUTH_URL, así que esa variable debe coincidir con la dirección que usan realmente los visitantes.",
+        "adm_returnToLabel": "URL de retorno",
+        "adm_subtitle": "Permite a los visitantes iniciar sesión con su cuenta de Steam.",
+        "adm_title": "Inicio de sesión con Steam",
+        "backToLogin": "Volver al inicio de sesión",
+        "perm_manage": "Gestionar",
+        "signInFailed": "El inicio de sesión con Steam no se completó. Es posible que el enlace haya caducado.",
+        "signingIn": "Iniciando sesión con Steam...",
+        "title": "Inicio de sesión con Steam"
+      },
+      "pageTitles": {
+        "steam": "Inicio de sesión con Steam"
+      },
+      "admin": {
+        "module_steam-auth_name": "Inicio de sesión con Steam",
+        "module_steam-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de Steam",
+        "settings_steam-auth": "Inicio de sesión con Steam",
+        "settings_steam-auth_description": "Estado y configuración del inicio de sesión con Steam."
+      },
+      "pageDescriptions": {
+        "steam": "Termina de iniciar sesión con tu cuenta de Steam y, en cuanto acabe, volverás a donde lo dejaste."
+      }
+    },
+    "et": {
+      "steamAuth": {
+        "adm_emailNote": "Steam ei jaga kunagi e-posti aadressi, seega sel viisil loodud konto saab kohatäitja aadressi, mis ei saa kunagi kirju vastu võtta. Palu neil kasutajatel määrata oma profiilis päris aadress.",
+        "adm_realmHelp": "Saidi nimi, mida Steam oma kinnitusekraanil näitab. See on domeen, millele API võti registreeritakse.",
+        "adm_realmLabel": "Domeen",
+        "adm_returnToHelp": "Pärast sisselogimise kinnitamist suunab Steam inimesed siia tagasi. Aadress tuleneb muutujast AUTH_URL, seega peab see muutuja vastama aadressile, mida külastajad tegelikult kasutavad.",
+        "adm_returnToLabel": "Tagasisuunamise URL",
+        "adm_subtitle": "Lase külastajatel sisse logida oma Steami kontoga.",
+        "adm_title": "Steami sisselogimine",
+        "backToLogin": "Tagasi sisselogimise juurde",
+        "perm_manage": "Halda",
+        "signInFailed": "Steami sisselogimine ei lõppenud. Link on ehk aegunud.",
+        "signingIn": "Logime sind Steamiga sisse...",
+        "title": "Steami sisselogimine"
+      },
+      "pageTitles": {
+        "steam": "Steami sisselogimine"
+      },
+      "admin": {
+        "module_steam-auth_name": "Steami sisselogimine",
+        "module_steam-auth_description": "Luba kasutajatel sisse logida oma Steami kontoga",
+        "settings_steam-auth": "Steami sisselogimine",
+        "settings_steam-auth_description": "Steami sisselogimise olek ja seadistus."
+      },
+      "pageDescriptions": {
+        "steam": "Lõpeta sisselogimine oma Steami kontoga ja sind suunatakse kohe tagasi sinna, kust pooleli jäid."
+      }
+    },
+    "fr": {
+      "steamAuth": {
+        "adm_emailNote": "Steam ne partage jamais d’adresse e-mail : un compte créé ainsi reçoit une adresse factice qui ne peut recevoir aucun courrier. Demandez à ces utilisateurs de renseigner une adresse réelle dans leur profil.",
+        "adm_realmHelp": "Le nom du site que Steam affiche sur son écran d’approbation. C’est le domaine pour lequel vous enregistrez la clé d’API.",
+        "adm_realmLabel": "Domaine",
+        "adm_returnToHelp": "Steam renvoie les personnes ici une fois qu’elles ont approuvé la connexion. Cette adresse est dérivée de AUTH_URL : cette variable doit donc correspondre à l’adresse que les visiteurs utilisent réellement.",
+        "adm_returnToLabel": "URL de retour",
+        "adm_subtitle": "Permettez aux visiteurs de se connecter avec leur compte Steam.",
+        "adm_title": "Connexion Steam",
+        "backToLogin": "Retour à la connexion",
+        "perm_manage": "Gérer",
+        "signInFailed": "La connexion avec Steam n’a pas abouti. Le lien a peut-être expiré.",
+        "signingIn": "Connexion à votre compte Steam en cours…",
+        "title": "Connexion Steam"
+      },
+      "pageTitles": {
+        "steam": "Connexion Steam"
+      },
+      "admin": {
+        "module_steam-auth_name": "Connexion Steam",
+        "module_steam-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Steam",
+        "settings_steam-auth": "Connexion Steam",
+        "settings_steam-auth_description": "Statut et configuration de la connexion Steam."
+      },
+      "pageDescriptions": {
+        "steam": "Terminez la connexion avec votre compte Steam : vous revenez là où vous étiez dès qu’elle est terminée."
+      }
+    },
+    "it": {
+      "steamAuth": {
+        "adm_emailNote": "Steam non condivide mai un indirizzo email, quindi un account creato così riceve un indirizzo segnaposto che non può ricevere posta. Chiedi a questi utenti di impostare un indirizzo reale nel loro profilo.",
+        "adm_realmHelp": "Il nome del sito che Steam mostra nella sua schermata di approvazione. È il dominio per cui registri la chiave API.",
+        "adm_realmLabel": "Dominio",
+        "adm_returnToHelp": "Dopo aver approvato l’accesso, Steam riporta le persone a questo indirizzo. Viene ricavato da AUTH_URL, quindi quella variabile deve corrispondere all’indirizzo che i visitatori usano davvero.",
+        "adm_returnToLabel": "URL di ritorno",
+        "adm_subtitle": "Consenti ai visitatori di accedere con il proprio account Steam.",
+        "adm_title": "Accesso con Steam",
+        "backToLogin": "Torna all’accesso",
+        "perm_manage": "Gestisci",
+        "signInFailed": "L’accesso con Steam non è andato a buon fine. Il link potrebbe essere scaduto.",
+        "signingIn": "Accesso con Steam in corso...",
+        "title": "Accesso con Steam"
+      },
+      "pageTitles": {
+        "steam": "Accesso con Steam"
+      },
+      "admin": {
+        "module_steam-auth_name": "Accesso con Steam",
+        "module_steam-auth_description": "Consenti agli utenti di accedere con il proprio account Steam",
+        "settings_steam-auth": "Accesso con Steam",
+        "settings_steam-auth_description": "Stato e configurazione dell’accesso con Steam."
+      },
+      "pageDescriptions": {
+        "steam": "Completa l’accesso con il tuo account Steam: appena finito, torni dove eri rimasto."
+      }
+    },
+    "pl": {
+      "steamAuth": {
+        "adm_emailNote": "Steam nigdy nie udostępnia adresu e-mail, więc konto utworzone w ten sposób dostaje zastępczy adres, który nigdy nie może odbierać poczty. Poproś tych użytkowników, aby ustawili prawdziwy adres w swoim profilu.",
+        "adm_realmHelp": "Nazwa strony, którą Steam pokazuje na ekranie zatwierdzenia. To domena, pod którą rejestrujesz klucz API.",
+        "adm_realmLabel": "Domena",
+        "adm_returnToHelp": "Steam odsyła tu osoby po zatwierdzeniu logowania. Adres jest pobierany z AUTH_URL, więc ta zmienna musi być zgodna z adresem, którego faktycznie używają odwiedzający.",
+        "adm_returnToLabel": "Adres powrotu",
+        "adm_subtitle": "Pozwól odwiedzającym logować się kontem Steam.",
+        "adm_title": "Logowanie przez Steam",
+        "backToLogin": "Wróć do logowania",
+        "perm_manage": "Zarządzaj",
+        "signInFailed": "Logowanie przez Steam nie zostało ukończone. Link mógł wygasnąć.",
+        "signingIn": "Logowanie przez Steam...",
+        "title": "Logowanie przez Steam"
+      },
+      "pageTitles": {
+        "steam": "Logowanie przez Steam"
+      },
+      "admin": {
+        "module_steam-auth_name": "Logowanie przez Steam",
+        "module_steam-auth_description": "Pozwól użytkownikom logować się kontem Steam",
+        "settings_steam-auth": "Logowanie przez Steam",
+        "settings_steam-auth_description": "Stan i konfiguracja logowania przez Steam."
+      },
+      "pageDescriptions": {
+        "steam": "Dokończ logowanie kontem Steam, a po zakończeniu wrócisz tam, gdzie skończyłeś."
+      }
+    },
+    "pt": {
+      "steamAuth": {
+        "adm_emailNote": "A Steam nunca compartilha um endereço de e-mail, então uma conta criada desta forma recebe um e-mail provisório que nunca poderá receber mensagens. Peça a esses usuários que definam um endereço real no perfil.",
+        "adm_realmHelp": "O nome do site que a Steam exibe na tela de aprovação. É o domínio em que você registra a chave de API.",
+        "adm_realmLabel": "Domínio",
+        "adm_returnToHelp": "A Steam envia as pessoas de volta para cá depois que elas aprovam o login. O endereço é derivado de AUTH_URL, então essa variável precisa corresponder ao endereço que os visitantes realmente usam.",
+        "adm_returnToLabel": "URL de retorno",
+        "adm_subtitle": "Permita que os visitantes entrem com a própria conta Steam.",
+        "adm_title": "Login com Steam",
+        "backToLogin": "Voltar ao login",
+        "perm_manage": "Gerenciar",
+        "signInFailed": "O login com Steam não foi concluído. O link pode ter expirado.",
+        "signingIn": "Entrando com Steam...",
+        "title": "Login com Steam"
+      },
+      "pageTitles": {
+        "steam": "Login com Steam"
+      },
+      "admin": {
+        "module_steam-auth_name": "Login com Steam",
+        "module_steam-auth_description": "Permita que usuários entrem com a própria conta Steam",
+        "settings_steam-auth": "Login com Steam",
+        "settings_steam-auth_description": "Status e configuração do login com Steam."
+      },
+      "pageDescriptions": {
+        "steam": "Conclua o login com sua conta Steam e você volta para onde estava assim que terminar."
+      }
+    },
+    "ru": {
+      "steamAuth": {
+        "adm_emailNote": "Steam никогда не передает адрес e-mail, поэтому аккаунт, созданный таким способом, получает заглушку, на которую нельзя получить письма. Попросите этих пользователей указать настоящий адрес в профиле.",
+        "adm_realmHelp": "Название сайта, которое Steam показывает на экране подтверждения. Это домен, для которого вы регистрируете ключ API.",
+        "adm_realmLabel": "Домен",
+        "adm_returnToHelp": "Steam возвращает сюда людей после того, как они подтвердят вход. Адрес берется из AUTH_URL, поэтому эта переменная должна совпадать с адресом, которым пользуются посетители.",
+        "adm_returnToLabel": "Адрес возврата",
+        "adm_subtitle": "Позвольте посетителям входить с помощью их учетной записи Steam.",
+        "adm_title": "Вход через Steam",
+        "backToLogin": "Назад ко входу",
+        "perm_manage": "Управление",
+        "signInFailed": "Вход через Steam не завершен. Возможно, ссылка устарела.",
+        "signingIn": "Выполняется вход через Steam...",
+        "title": "Вход через Steam"
+      },
+      "pageTitles": {
+        "steam": "Вход через Steam"
+      },
+      "admin": {
+        "module_steam-auth_name": "Вход через Steam",
+        "module_steam-auth_description": "Позволяет пользователям входить с помощью учетной записи Steam",
+        "settings_steam-auth": "Вход через Steam",
+        "settings_steam-auth_description": "Состояние и настройка входа через Steam."
+      },
+      "pageDescriptions": {
+        "steam": "Завершите вход с помощью учетной записи Steam, и сразу после этого вы вернетесь туда, где остановились."
+      }
+    },
+    "zh": {
+      "steamAuth": {
+        "adm_emailNote": "Steam 从不分享邮箱地址，因此以此方式创建的账户会获得一个无法接收邮件的占位地址。请让这些用户在其个人资料中设置真实的邮箱地址。",
+        "adm_realmHelp": "Steam 在其授权页面上显示的站点名称。这是你注册 API 密钥时所用的域名。",
+        "adm_realmLabel": "域名",
+        "adm_returnToHelp": "用户批准登录后，Steam 会将其带回此地址。该地址由 AUTH_URL 派生，因此该变量必须与访客实际使用的地址一致。",
+        "adm_returnToLabel": "返回 URL",
+        "adm_subtitle": "允许访客使用其 Steam 账户登录。",
+        "adm_title": "Steam 登录",
+        "backToLogin": "返回登录",
+        "perm_manage": "管理",
+        "signInFailed": "Steam 登录未完成，链接可能已过期。",
+        "signingIn": "正在通过 Steam 为你登录…",
+        "title": "Steam 登录"
+      },
+      "pageTitles": {
+        "steam": "Steam 登录"
+      },
+      "admin": {
+        "module_steam-auth_name": "Steam 登录",
+        "module_steam-auth_description": "允许用户使用其 Steam 账户登录",
+        "settings_steam-auth": "Steam 登录",
+        "settings_steam-auth_description": "Steam 登录状态与设置。"
+      },
+      "pageDescriptions": {
+        "steam": "完成 Steam 账户登录后，即可立即返回你之前的位置。"
+      }
     }
   },
   "permissions": [

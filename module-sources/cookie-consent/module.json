@@ -38,6 +38,116 @@
         "module_cookie-consent_name": "Çerez Onayı",
         "module_cookie-consent_description": "KVKK ve GDPR uyumlu çerez onay bandı"
       }
+    },
+    "az": {
+      "cookie": {
+        "message": "Təcrübənizi yaxşılaşdırmaq üçün çərəzlərdən istifadə edirik. Bu saytdan istifadəni davam etdirməklə çərəzlərdən istifadəmizlə razılaşırsınız.",
+        "accept": "Qəbul et",
+        "reject": "Rədd et"
+      },
+      "admin": {
+        "module_cookie-consent_name": "Çərəz razılığı",
+        "module_cookie-consent_description": "GDPR çərəz razılığı bannerı"
+      }
+    },
+    "de": {
+      "cookie": {
+        "message": "Wir verwenden Cookies, um dein Erlebnis zu verbessern. Wenn du diese Seite weiter nutzt, stimmst du unserer Verwendung von Cookies zu.",
+        "accept": "Akzeptieren",
+        "reject": "Ablehnen"
+      },
+      "admin": {
+        "module_cookie-consent_name": "Cookie-Einwilligung",
+        "module_cookie-consent_description": "DSGVO-Cookie-Banner"
+      }
+    },
+    "es": {
+      "cookie": {
+        "message": "Usamos cookies para mejorar tu experiencia. Al seguir usando este sitio, aceptas nuestro uso de cookies.",
+        "accept": "Aceptar",
+        "reject": "Rechazar"
+      },
+      "admin": {
+        "module_cookie-consent_name": "Consentimiento de cookies",
+        "module_cookie-consent_description": "Banner de consentimiento de cookies conforme al RGPD"
+      }
+    },
+    "et": {
+      "cookie": {
+        "message": "Kasutame küpsiseid, et parandada sinu kogemust. Selle saidi kasutamise jätkamisega nõustud meie küpsiste kasutamisega.",
+        "accept": "Nõustun",
+        "reject": "Keeldu"
+      },
+      "admin": {
+        "module_cookie-consent_name": "Küpsiste nõusolek",
+        "module_cookie-consent_description": "GDPR-i küpsiste nõusoleku bänner"
+      }
+    },
+    "fr": {
+      "cookie": {
+        "message": "Nous utilisons des cookies pour améliorer votre expérience. En continuant à utiliser ce site, vous acceptez notre utilisation des cookies.",
+        "accept": "Accepter",
+        "reject": "Refuser"
+      },
+      "admin": {
+        "module_cookie-consent_name": "Consentement aux cookies",
+        "module_cookie-consent_description": "Bandeau de consentement aux cookies (RGPD)"
+      }
+    },
+    "it": {
+      "cookie": {
+        "message": "Usiamo i cookie per migliorare la tua esperienza. Continuando a usare questo sito accetti il nostro utilizzo dei cookie.",
+        "accept": "Accetta",
+        "reject": "Rifiuta"
+      },
+      "admin": {
+        "module_cookie-consent_name": "Consenso ai cookie",
+        "module_cookie-consent_description": "Banner per il consenso ai cookie conforme al GDPR"
+      }
+    },
+    "pl": {
+      "cookie": {
+        "message": "Używamy plików cookie, aby ulepszać Twoje wrażenia. Dalsze korzystanie z tej strony oznacza zgodę na ich używanie.",
+        "accept": "Akceptuj",
+        "reject": "Odrzuć"
+      },
+      "admin": {
+        "module_cookie-consent_name": "Zgoda na pliki cookie",
+        "module_cookie-consent_description": "Baner zgody na pliki cookie zgodny z RODO"
+      }
+    },
+    "pt": {
+      "cookie": {
+        "message": "Usamos cookies para melhorar sua experiência. Ao continuar usando este site, você concorda com o uso de cookies.",
+        "accept": "Aceitar",
+        "reject": "Recusar"
+      },
+      "admin": {
+        "module_cookie-consent_name": "Consentimento de cookies",
+        "module_cookie-consent_description": "Banner de consentimento de cookies (GDPR)"
+      }
+    },
+    "ru": {
+      "cookie": {
+        "message": "Мы используем cookie, чтобы улучшить ваш опыт. Продолжая пользоваться сайтом, вы соглашаетесь на использование cookie.",
+        "accept": "Принять",
+        "reject": "Отклонить"
+      },
+      "admin": {
+        "module_cookie-consent_name": "Согласие на cookie",
+        "module_cookie-consent_description": "Баннер согласия на cookie по GDPR"
+      }
+    },
+    "zh": {
+      "cookie": {
+        "message": "我们使用 Cookie 来改善你的体验。继续使用本站即表示你同意我们使用 Cookie。",
+        "accept": "接受",
+        "reject": "拒绝"
+      },
+      "admin": {
+        "module_cookie-consent_name": "Cookie 同意",
+        "module_cookie-consent_description": "GDPR Cookie 同意横幅"
+      }
     }
   }
 }

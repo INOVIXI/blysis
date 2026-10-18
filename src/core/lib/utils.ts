@@ -69,6 +69,10 @@ export function stripHtmlTags(html: string): string {
 const DATE_LOCALE_TAGS: Record<string, string> = {
     en: "en-US",
     tr: "tr-TR",
+    // The two whose route segment names a language with more than one
+    // written standard: the catalogues are Brazilian and Simplified.
+    pt: "pt-BR",
+    zh: "zh-CN",
 };
 
 export function dateLocaleTag(locale: string): string {

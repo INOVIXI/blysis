@@ -108,6 +108,296 @@
         "err.captcha_failed": "Bot kontrolü geçilemedi. Lütfen tekrar deneyin.",
         "err.captcha_missing": "Devam etmeden önce bot kontrolünü tamamlayın."
       }
+    },
+    "az": {
+      "cloudflareTurnstile": {
+        "challengeSubtitle": "Bu saytdakı hər forma burada qorunur. Forma, ona sahib olan modul quraşdırılan kimi burada görünür.",
+        "challengeTitle": "Yoxlama",
+        "keysTitle": "Açarlar",
+        "perm_manage": "İdarə et",
+        "save": "Yadda saxla",
+        "saveError": "Parametrləri yadda saxlamaq alınmadı",
+        "saved": "Parametrlər yadda saxlanıldı",
+        "secretKey": "Gizli açar",
+        "secretKeyNotSet": "Təyin edilməyib",
+        "secretKeyStored": "Yadda saxlanıldı. Əvəz etmək üçün yeni dəyər yazın.",
+        "siteKey": "Sayt açarı",
+        "subtitle": "Məxfiliyə önəm verən CAPTCHA",
+        "title": "Cloudflare Turnstile"
+      },
+      "admin": {
+        "menu_cloudflare-turnstile": "Cloudflare Turnstile",
+        "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_description": "Cloudflare tərəfindən işləyən, məxfiliyə önəm verən CAPTCHA alternativi",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "Turnstile sayt açarını və gizli açarını konfiqurasiya edin"
+      },
+      "auth": {
+        "err.captcha_failed": "Bot yoxlaması keçilmədi. Zəhmət olmasa yenidən cəhd edin.",
+        "err.captcha_missing": "Davam etməzdən əvvəl bot yoxlamasını tamamlayın."
+      }
+    },
+    "de": {
+      "cloudflareTurnstile": {
+        "challengeSubtitle": "Jedes Formular dieser Seite nimmt etwas Geschriebenes entgegen. Ein Formular erscheint hier, sobald das Modul installiert ist, dem es gehört.",
+        "challengeTitle": "Prüfung",
+        "keysTitle": "Schlüssel",
+        "perm_manage": "Verwalten",
+        "save": "Speichern",
+        "saveError": "Einstellungen konnten nicht gespeichert werden",
+        "saved": "Einstellungen gespeichert",
+        "secretKey": "Geheimer Schlüssel",
+        "secretKeyNotSet": "Nicht gesetzt",
+        "secretKeyStored": "Gespeichert. Gib einen neuen Wert ein, um ihn zu ersetzen.",
+        "siteKey": "Site-Key",
+        "subtitle": "Datenschutzfreundliches CAPTCHA",
+        "title": "Cloudflare Turnstile"
+      },
+      "admin": {
+        "menu_cloudflare-turnstile": "Cloudflare Turnstile",
+        "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_description": "Datenschutzfreundliche CAPTCHA-Alternative von Cloudflare",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "Turnstile-Site-Key und geheimen Schlüssel konfigurieren"
+      },
+      "auth": {
+        "err.captcha_failed": "Die Bot-Prüfung wurde nicht bestanden. Bitte versuche es erneut.",
+        "err.captcha_missing": "Bitte schließe die Bot-Prüfung ab, bevor du weitermachst."
+      }
+    },
+    "es": {
+      "cloudflareTurnstile": {
+        "challengeSubtitle": "Todos los formularios de este sitio reciben algo escrito. Un formulario aparece aquí en cuanto se instala el módulo que lo gestiona.",
+        "challengeTitle": "Desafío",
+        "keysTitle": "Claves",
+        "perm_manage": "Gestionar",
+        "save": "Guardar",
+        "saveError": "No se pudieron guardar los ajustes",
+        "saved": "Ajustes guardados",
+        "secretKey": "Clave secreta",
+        "secretKeyNotSet": "Sin definir",
+        "secretKeyStored": "Guardada. Escribe un valor nuevo para reemplazarla.",
+        "siteKey": "Clave del sitio",
+        "subtitle": "CAPTCHA centrado en la privacidad",
+        "title": "Cloudflare Turnstile"
+      },
+      "admin": {
+        "menu_cloudflare-turnstile": "Cloudflare Turnstile",
+        "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_description": "Alternativa a CAPTCHA centrada en la privacidad, con tecnología de Cloudflare",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "Configura la clave del sitio y la clave secreta de Turnstile"
+      },
+      "auth": {
+        "err.captcha_failed": "La comprobación antibots no se ha superado. Inténtalo de nuevo.",
+        "err.captcha_missing": "Completa la comprobación antibots antes de continuar."
+      }
+    },
+    "et": {
+      "cloudflareTurnstile": {
+        "challengeSubtitle": "Iga sellel saidil olev vorm võtab vastu kirjutatud sisu. Vorm ilmub siia kohe, kui vormi omav moodul on paigaldatud.",
+        "challengeTitle": "Väljakutse",
+        "keysTitle": "Võtmed",
+        "perm_manage": "Halda",
+        "save": "Salvesta",
+        "saveError": "Seadete salvestamine ebaõnnestus",
+        "saved": "Seaded salvestatud",
+        "secretKey": "Salajane võti",
+        "secretKeyNotSet": "Pole määratud",
+        "secretKeyStored": "Salvestatud. Sisesta uus väärtus, et see asendada.",
+        "siteKey": "Saidi võti",
+        "subtitle": "Privaatsusele keskendunud CAPTCHA",
+        "title": "Cloudflare Turnstile"
+      },
+      "admin": {
+        "menu_cloudflare-turnstile": "Cloudflare Turnstile",
+        "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_description": "Privaatsusele keskendunud CAPTCHA alternatiiv, mida toetab Cloudflare",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "Seadista Turnstile saidi võti ja salajane võti"
+      },
+      "auth": {
+        "err.captcha_failed": "Robotikontroll ei läbinud. Palun proovi uuesti.",
+        "err.captcha_missing": "Palun tee enne jätkamist robotikontroll."
+      }
+    },
+    "fr": {
+      "cloudflareTurnstile": {
+        "challengeSubtitle": "Chaque formulaire du site demande une saisie. Un formulaire apparaît ici dès que le module auquel il appartient est installé.",
+        "challengeTitle": "Vérification",
+        "keysTitle": "Clés",
+        "perm_manage": "Gérer",
+        "save": "Enregistrer",
+        "saveError": "Échec de l’enregistrement des paramètres",
+        "saved": "Paramètres enregistrés",
+        "secretKey": "Clé secrète",
+        "secretKeyNotSet": "Non défini",
+        "secretKeyStored": "Enregistré. Saisissez une nouvelle valeur pour le remplacer.",
+        "siteKey": "Clé du site",
+        "subtitle": "CAPTCHA respectueux de la vie privée",
+        "title": "Cloudflare Turnstile"
+      },
+      "admin": {
+        "menu_cloudflare-turnstile": "Cloudflare Turnstile",
+        "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_description": "Alternative au CAPTCHA respectueuse de la vie privée, propulsée par Cloudflare",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "Configurer la clé du site et la clé secrète Turnstile"
+      },
+      "auth": {
+        "err.captcha_failed": "La vérification anti-robot n’a pas abouti. Veuillez réessayer.",
+        "err.captcha_missing": "Veuillez réussir la vérification anti-robot avant de continuer."
+      }
+    },
+    "it": {
+      "cloudflareTurnstile": {
+        "challengeSubtitle": "Ogni modulo di questo sito passa da un controllo. Un modulo compare qui non appena viene installato il modulo che lo gestisce.",
+        "challengeTitle": "Verifica",
+        "keysTitle": "Chiavi",
+        "perm_manage": "Gestisci",
+        "save": "Salva",
+        "saveError": "Salvataggio delle impostazioni non riuscito",
+        "saved": "Impostazioni salvate",
+        "secretKey": "Chiave segreta",
+        "secretKeyNotSet": "Non impostata",
+        "secretKeyStored": "Salvata. Scrivi un nuovo valore per sostituirla.",
+        "siteKey": "Chiave del sito",
+        "subtitle": "CAPTCHA che rispetta la privacy",
+        "title": "Cloudflare Turnstile"
+      },
+      "admin": {
+        "menu_cloudflare-turnstile": "Cloudflare Turnstile",
+        "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_description": "Alternativa ai CAPTCHA che rispetta la privacy, basata su Cloudflare",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "Configura la chiave del sito e la chiave segreta di Turnstile"
+      },
+      "auth": {
+        "err.captcha_failed": "Il controllo anti-bot non è stato superato. Riprova.",
+        "err.captcha_missing": "Completa il controllo anti-bot prima di continuare."
+      }
+    },
+    "pl": {
+      "cloudflareTurnstile": {
+        "challengeSubtitle": "Każdy formularz na tej stronie wymaga czegoś wpisanego. Formularz pojawi się tutaj, gdy tylko zainstalujesz moduł, do którego należy.",
+        "challengeTitle": "Weryfikacja",
+        "keysTitle": "Klucze",
+        "perm_manage": "Zarządzanie",
+        "save": "Zapisz",
+        "saveError": "Nie udało się zapisać ustawień",
+        "saved": "Ustawienia zapisane",
+        "secretKey": "Tajny klucz",
+        "secretKeyNotSet": "Nie ustawiono",
+        "secretKeyStored": "Zapisano. Wpisz nową wartość, aby ją zastąpić.",
+        "siteKey": "Klucz witryny",
+        "subtitle": "CAPTCHA zorientowana na prywatność",
+        "title": "Cloudflare Turnstile"
+      },
+      "admin": {
+        "menu_cloudflare-turnstile": "Cloudflare Turnstile",
+        "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_description": "CAPTCHA zorientowana na prywatność, oparta na Cloudflare",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "Skonfiguruj klucz witryny i tajny klucz Turnstile"
+      },
+      "auth": {
+        "err.captcha_failed": "Weryfikacja antybotowa nie przeszła. Spróbuj ponownie.",
+        "err.captcha_missing": "Przed kontynuowaniem wykonaj weryfikację antybotową."
+      }
+    },
+    "pt": {
+      "cloudflareTurnstile": {
+        "challengeSubtitle": "Todo formulário deste site recebe algo escrito por alguém. Um formulário aparece aqui assim que o módulo responsável por ele for instalado.",
+        "challengeTitle": "Desafio",
+        "keysTitle": "Chaves",
+        "perm_manage": "Gerenciar",
+        "save": "Salvar",
+        "saveError": "Falha ao salvar as configurações",
+        "saved": "Configurações salvas",
+        "secretKey": "Chave secreta",
+        "secretKeyNotSet": "Não definida",
+        "secretKeyStored": "Salva. Digite um novo valor para substituí-la.",
+        "siteKey": "Chave do site",
+        "subtitle": "CAPTCHA focado em privacidade",
+        "title": "Cloudflare Turnstile"
+      },
+      "admin": {
+        "menu_cloudflare-turnstile": "Cloudflare Turnstile",
+        "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_description": "Alternativa de CAPTCHA focada em privacidade, oferecida pela Cloudflare",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "Configure a chave do site e a chave secreta do Turnstile"
+      },
+      "auth": {
+        "err.captcha_failed": "A verificação anti-robô não foi concluída. Tente novamente.",
+        "err.captcha_missing": "Conclua a verificação anti-robô antes de continuar."
+      }
+    },
+    "ru": {
+      "cloudflareTurnstile": {
+        "challengeSubtitle": "Через каждую форму на сайте что-то вводится. Форма появится здесь, как только установится модуль, которому она принадлежит.",
+        "challengeTitle": "Проверка",
+        "keysTitle": "Ключи",
+        "perm_manage": "Управление",
+        "save": "Сохранить",
+        "saveError": "Не удалось сохранить настройки",
+        "saved": "Настройки сохранены",
+        "secretKey": "Секретный ключ",
+        "secretKeyNotSet": "Не задан",
+        "secretKeyStored": "Сохранено. Введите новое значение, чтобы заменить его.",
+        "siteKey": "Ключ сайта",
+        "subtitle": "CAPTCHA, которая бережно относится к приватности",
+        "title": "Cloudflare Turnstile"
+      },
+      "admin": {
+        "menu_cloudflare-turnstile": "Cloudflare Turnstile",
+        "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_description": "CAPTCHA, бережно относящаяся к приватности, на базе Cloudflare",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "Настройте ключ сайта и секрет Turnstile"
+      },
+      "auth": {
+        "err.captcha_failed": "Проверка на бота не пройдена. Попробуйте еще раз.",
+        "err.captcha_missing": "Пройдите проверку на бота, прежде чем продолжить."
+      }
+    },
+    "zh": {
+      "cloudflareTurnstile": {
+        "challengeSubtitle": "本站的每个表单都会接收用户填写的内容。表单会在拥有它的模块安装后自动出现在此处。",
+        "challengeTitle": "验证挑战",
+        "keysTitle": "密钥",
+        "perm_manage": "管理",
+        "save": "保存",
+        "saveError": "保存设置失败",
+        "saved": "设置已保存",
+        "secretKey": "私钥",
+        "secretKeyNotSet": "未设置",
+        "secretKeyStored": "已保存。输入新值即可替换。",
+        "siteKey": "站点密钥",
+        "subtitle": "注重隐私的验证码",
+        "title": "Cloudflare Turnstile"
+      },
+      "admin": {
+        "menu_cloudflare-turnstile": "Cloudflare Turnstile",
+        "menu_cloudflare-turnstile_cloudflare_turnstile": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_name": "Cloudflare Turnstile",
+        "module_cloudflare-turnstile_description": "由 Cloudflare 提供支持、注重隐私的验证码替代方案",
+        "settings_cloudflare-turnstile": "Cloudflare Turnstile",
+        "settings_cloudflare-turnstile_description": "配置 Turnstile 站点密钥和私钥"
+      },
+      "auth": {
+        "err.captcha_failed": "机器人验证未通过，请重试。",
+        "err.captcha_missing": "继续之前，请先完成机器人验证。"
+      }
     }
   },
   "slotContents": [

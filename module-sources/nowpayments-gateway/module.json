@@ -113,6 +113,196 @@
         "settings_nowpayments-gateway": "NOWPayments",
         "settings_nowpayments-gateway_description": "NOWPayments API anahtarı ve IPN parolası."
       }
+    },
+    "az": {
+      "nowpaymentsGateway": {
+        "adm_apiKey": "API açarı",
+        "adm_apiKeyDesc": "NOWPayments panelinizdən.",
+        "adm_ipnSecret": "IPN gizli açarı",
+        "adm_ipnSecretDesc": "NOWPayments panelinizdən. NOWPayments bildiriş URL-ni /api/v1/nowpayments/ipn ünvanına yönləndirin.",
+        "adm_subtitle": "NOWPayments vasitəsilə ödənişlər qəbul etmək üçün açarlar.",
+        "adm_title": "NOWPayments parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "menu_nowpayments-gateway": "NOWPayments şlüzü",
+        "menu_nowpayments-gateway_nowpayments_settings": "NOWPayments parametrləri",
+        "module_nowpayments-gateway_name": "NOWPayments şlüzü",
+        "module_nowpayments-gateway_description": "NOWPayments vasitəsilə 200-dən çox kriptovalyutada ödənişlər qəbul edin",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "NOWPayments API açarı və IPN gizli açarı."
+      }
+    },
+    "de": {
+      "nowpaymentsGateway": {
+        "adm_apiKey": "API-Schlüssel",
+        "adm_apiKeyDesc": "Aus deinem NOWPayments-Dashboard.",
+        "adm_ipnSecret": "IPN-Geheimschlüssel",
+        "adm_ipnSecretDesc": "Aus deinem NOWPayments-Dashboard. Trage die Benachrichtigungs-URL von NOWPayments auf /api/v1/nowpayments/ipn ein.",
+        "adm_subtitle": "Schlüssel, um Zahlungen über NOWPayments anzunehmen.",
+        "adm_title": "NOWPayments-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "menu_nowpayments-gateway": "NOWPayments-Gateway",
+        "menu_nowpayments-gateway_nowpayments_settings": "NOWPayments-Einstellungen",
+        "module_nowpayments-gateway_name": "NOWPayments-Gateway",
+        "module_nowpayments-gateway_description": "Zahlungen in über 200 Kryptowährungen über NOWPayments annehmen",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "NOWPayments-API-Schlüssel und IPN-Geheimschlüssel."
+      }
+    },
+    "es": {
+      "nowpaymentsGateway": {
+        "adm_apiKey": "Clave de API",
+        "adm_apiKeyDesc": "Desde tu panel de NOWPayments.",
+        "adm_ipnSecret": "Secreto IPN",
+        "adm_ipnSecretDesc": "Desde tu panel de NOWPayments. Apunta la URL de notificaciones de NOWPayments a /api/v1/nowpayments/ipn.",
+        "adm_subtitle": "Claves para cobrar pagos a través de NOWPayments.",
+        "adm_title": "Ajustes de NOWPayments",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "menu_nowpayments-gateway": "Pasarela NOWPayments",
+        "menu_nowpayments-gateway_nowpayments_settings": "Ajustes de NOWPayments",
+        "module_nowpayments-gateway_name": "Pasarela NOWPayments",
+        "module_nowpayments-gateway_description": "Acepta pagos en más de 200 criptomonedas a través de NOWPayments",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "Clave de API y secreto IPN de NOWPayments."
+      }
+    },
+    "et": {
+      "nowpaymentsGateway": {
+        "adm_apiKey": "API võti",
+        "adm_apiKeyDesc": "Leiad oma NOWPayments töölaualt.",
+        "adm_ipnSecret": "IPN-i saladus",
+        "adm_ipnSecretDesc": "Leiad oma NOWPayments töölaualt. Suuna NOWPaymentsi teavituse URL aadressile /api/v1/nowpayments/ipn.",
+        "adm_subtitle": "Võtmed maksete vastuvõtmiseks NOWPaymentsi kaudu.",
+        "adm_title": "NOWPaymentsi seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "menu_nowpayments-gateway": "NOWPaymentsi maksevärav",
+        "menu_nowpayments-gateway_nowpayments_settings": "NOWPaymentsi seaded",
+        "module_nowpayments-gateway_name": "NOWPaymentsi maksevärav",
+        "module_nowpayments-gateway_description": "Võta vastu makseid enam kui 200 krüptovaluutas NOWPaymentsi kaudu",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "NOWPaymentsi API võti ja IPN-i saladus."
+      }
+    },
+    "fr": {
+      "nowpaymentsGateway": {
+        "adm_apiKey": "Clé d’API",
+        "adm_apiKeyDesc": "Depuis votre tableau de bord NOWPayments.",
+        "adm_ipnSecret": "Secret IPN",
+        "adm_ipnSecretDesc": "Depuis votre tableau de bord NOWPayments. Pointez l’URL de notification NOWPayments vers /api/v1/nowpayments/ipn.",
+        "adm_subtitle": "Clés pour encaisser les paiements via NOWPayments.",
+        "adm_title": "Paramètres NOWPayments",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "menu_nowpayments-gateway": "Passerelle NOWPayments",
+        "menu_nowpayments-gateway_nowpayments_settings": "Paramètres NOWPayments",
+        "module_nowpayments-gateway_name": "Passerelle NOWPayments",
+        "module_nowpayments-gateway_description": "Encaisser des paiements en plus de 200 cryptomonnaies via NOWPayments",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "Clé d’API et secret IPN de NOWPayments."
+      }
+    },
+    "it": {
+      "nowpaymentsGateway": {
+        "adm_apiKey": "Chiave API",
+        "adm_apiKeyDesc": "Dalla tua dashboard di NOWPayments.",
+        "adm_ipnSecret": "Segreto IPN",
+        "adm_ipnSecretDesc": "Dalla tua dashboard di NOWPayments. Punta l’URL di notifica di NOWPayments a /api/v1/nowpayments/ipn.",
+        "adm_subtitle": "Chiavi per accettare pagamenti tramite NOWPayments.",
+        "adm_title": "Impostazioni di NOWPayments",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "menu_nowpayments-gateway": "Gateway NOWPayments",
+        "menu_nowpayments-gateway_nowpayments_settings": "Impostazioni di NOWPayments",
+        "module_nowpayments-gateway_name": "Gateway NOWPayments",
+        "module_nowpayments-gateway_description": "Accetta pagamenti in oltre 200 criptovalute tramite NOWPayments",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "Chiave API e segreto IPN di NOWPayments."
+      }
+    },
+    "pl": {
+      "nowpaymentsGateway": {
+        "adm_apiKey": "Klucz API",
+        "adm_apiKeyDesc": "Znajdziesz go w panelu NOWPayments.",
+        "adm_ipnSecret": "Sekret IPN",
+        "adm_ipnSecretDesc": "Znajdziesz go w panelu NOWPayments. Ustaw adres powiadomień NOWPayments na /api/v1/nowpayments/ipn.",
+        "adm_subtitle": "Klucze do przyjmowania płatności przez NOWPayments.",
+        "adm_title": "Ustawienia NOWPayments",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "menu_nowpayments-gateway": "Bramka NOWPayments",
+        "menu_nowpayments-gateway_nowpayments_settings": "Ustawienia NOWPayments",
+        "module_nowpayments-gateway_name": "Bramka NOWPayments",
+        "module_nowpayments-gateway_description": "Przyjmuj płatności w ponad 200 kryptowalutach przez NOWPayments",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "Klucz API i sekret IPN NOWPayments."
+      }
+    },
+    "pt": {
+      "nowpaymentsGateway": {
+        "adm_apiKey": "Chave de API",
+        "adm_apiKeyDesc": "Obtida no seu painel do NOWPayments.",
+        "adm_ipnSecret": "Segredo do IPN",
+        "adm_ipnSecretDesc": "Obtido no seu painel do NOWPayments. Aponte a URL de notificação do NOWPayments para /api/v1/nowpayments/ipn.",
+        "adm_subtitle": "Chaves para receber pagamentos pelo NOWPayments.",
+        "adm_title": "Configurações do NOWPayments",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "menu_nowpayments-gateway": "Gateway NOWPayments",
+        "menu_nowpayments-gateway_nowpayments_settings": "Configurações do NOWPayments",
+        "module_nowpayments-gateway_name": "Gateway NOWPayments",
+        "module_nowpayments-gateway_description": "Receba pagamentos em mais de 200 criptomoedas pelo NOWPayments",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "Chave de API e segredo do IPN do NOWPayments."
+      }
+    },
+    "ru": {
+      "nowpaymentsGateway": {
+        "adm_apiKey": "Ключ API",
+        "adm_apiKeyDesc": "Из панели управления NOWPayments.",
+        "adm_ipnSecret": "Секрет IPN",
+        "adm_ipnSecretDesc": "Из панели управления NOWPayments. Укажите для уведомлений NOWPayments адрес /api/v1/nowpayments/ipn.",
+        "adm_subtitle": "Ключи для приема платежей через NOWPayments.",
+        "adm_title": "Настройки NOWPayments",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "menu_nowpayments-gateway": "Шлюз NOWPayments",
+        "menu_nowpayments-gateway_nowpayments_settings": "Настройки NOWPayments",
+        "module_nowpayments-gateway_name": "Шлюз NOWPayments",
+        "module_nowpayments-gateway_description": "Прием платежей в более чем 200 криптовалютах через NOWPayments",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "Ключ API и секрет IPN NOWPayments."
+      }
+    },
+    "zh": {
+      "nowpaymentsGateway": {
+        "adm_apiKey": "API 密钥",
+        "adm_apiKeyDesc": "来自你的 NOWPayments 控制台。",
+        "adm_ipnSecret": "IPN 密钥",
+        "adm_ipnSecretDesc": "来自你的 NOWPayments 控制台。将 NOWPayments 通知 URL 指向 /api/v1/nowpayments/ipn。",
+        "adm_subtitle": "通过 NOWPayments 收款所需的密钥。",
+        "adm_title": "NOWPayments 设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "menu_nowpayments-gateway": "NOWPayments 网关",
+        "menu_nowpayments-gateway_nowpayments_settings": "NOWPayments 设置",
+        "module_nowpayments-gateway_name": "NOWPayments 网关",
+        "module_nowpayments-gateway_description": "通过 NOWPayments 接受 200 多种加密货币付款",
+        "settings_nowpayments-gateway": "NOWPayments",
+        "settings_nowpayments-gateway_description": "NOWPayments API 密钥和 IPN 密钥。"
+      }
     }
   },
   "permissions": [

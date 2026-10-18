@@ -62,6 +62,8 @@ describe("the page the server sends", () => {
         // page is actually drawn in.
         const state = fs.readFileSync(path.join(ROOT, "src/core/lib/theme-state.ts"), "utf8");
         expect(state).toContain("COLOR_MODE_COOKIE");
-        expect(state).toContain("resolveMode(");
+        // Through the page's own resolution, which tells the panel from the
+        // site and keeps each one's choice apart.
+        expect(state).toContain("resolvePageMode(");
     });
 });

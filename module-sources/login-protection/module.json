@@ -91,6 +91,296 @@
         "adm_windowLabel": "Sayılma süresi (dakika)",
         "perm_manage": "Yönetebilir"
       }
+    },
+    "az": {
+      "admin": {
+        "menu_login-protection": "Girişin qorunması",
+        "menu_login-protection_login_protection": "Girişin qorunması",
+        "menu_security": "Girişin qorunması",
+        "module_login-protection_description": "Girişin məhdudlaşdırılması: neçə uğursuz cəhd hesabı bağlayır və onu necə yenidən açmaq",
+        "module_login-protection_name": "Girişin qorunması",
+        "settings_login-protection": "Girişin qorunması",
+        "settings_login-protection_description": "Neçə uğursuz giriş hesabı bağlayır və onu necə yenidən açmaq."
+      },
+      "loginProtection": {
+        "adm_attemptsDesc": "Hər hesab üzrə hesablanır, ona görə minlərlə ünvana yayılmış kampaniya da dayandırılır. Ən azı üç: ilk səhvdə kilidləmək istənilən şəxsi qəsdən kənarda qoymaq deməkdir.",
+        "adm_attemptsLabel": "Hesab kilidlənənə qədər səhv parollar",
+        "adm_lockDesc": "Hesab bağlandıqdan sonra nə qədər bağlı qalacaq. Üzvə bu baş verəndə e-poçt göndərilir.",
+        "adm_lockLabel": "Bağlanma müddəti (dəqiqə)",
+        "adm_lockedNone": "Heç kəs kilidlənməyib.",
+        "adm_lockedSubtitle": "Kimisə yenidən içəri buraxmaq, onun hesabını yadda qalmış parolun olduğu yerə qoyur.",
+        "adm_lockedTitle": "İndi kilidlənmiş hesablar",
+        "adm_lockedUntil": "{until} tarixinə qədər - {attempts} səhv parol",
+        "adm_subtitle": "Neçə səhv parol hesabı bağlayır, nə qədər müddətə və indi kim kənarda qalır",
+        "adm_title": "Girişin qorunması",
+        "adm_unlock": "Yenidən içəri buraxın",
+        "adm_unlockFailed": "Bu hesabın kilidi açıla bilmədi.",
+        "adm_unlocked": "{username} yenidən daxil ola bilər",
+        "adm_windowDesc": "Bundan köhnə səhv parollar unudulur; beləliklə bir-birindən bir ay aralı üç səhv giriş heç kəsi kilidləmir.",
+        "adm_windowLabel": "Hesablanma müddəti (dəqiqə)",
+        "perm_manage": "İdarə et"
+      }
+    },
+    "de": {
+      "admin": {
+        "menu_login-protection": "Anmeldeschutz",
+        "menu_login-protection_login_protection": "Anmeldeschutz",
+        "menu_security": "Anmeldeschutz",
+        "module_login-protection_description": "Begrenzung von Anmeldeversuchen: wie viele Fehlversuche ein Konto sperren und wie es wieder freigegeben wird",
+        "module_login-protection_name": "Anmeldeschutz",
+        "settings_login-protection": "Anmeldeschutz",
+        "settings_login-protection_description": "Wie viele fehlgeschlagene Anmeldungen ein Konto sperren und wie es wieder freigegeben wird."
+      },
+      "loginProtection": {
+        "adm_attemptsDesc": "Die Zählung erfolgt pro Konto, sodass auch eine Kampagne über Tausende Adressen gestoppt wird. Mindestens drei: Eine Sperre schon beim ersten Tippfehler wäre ein Weg, jemanden absichtlich auszusperren.",
+        "adm_attemptsLabel": "Falsche Passwörter, bevor das Konto gesperrt wird",
+        "adm_lockDesc": "Wie lange das Konto gesperrt bleibt, sobald es gesperrt wurde. Das Mitglied wird dann per E-Mail benachrichtigt.",
+        "adm_lockLabel": "Gesperrt für (Minuten)",
+        "adm_lockedNone": "Niemand ist gesperrt.",
+        "adm_lockedSubtitle": "Jemanden wieder einzulassen stellt sein Konto so her, als wäre das Passwort in Ordnung gewesen.",
+        "adm_lockedTitle": "Gerade gesperrt",
+        "adm_lockedUntil": "Bis {until} - {attempts} falsche Passwörter",
+        "adm_subtitle": "Wie viele falsche Passwörter ein Konto sperren, wie lange, und wer gerade ausgesperrt ist",
+        "adm_title": "Anmeldeschutz",
+        "adm_unlock": "Wieder einlassen",
+        "adm_unlockFailed": "Dieses Konto konnte nicht entsperrt werden.",
+        "adm_unlocked": "{username} kann sich wieder anmelden",
+        "adm_windowDesc": "Falsche Passwörter, die älter als dieser Zeitraum sind, werden vergessen. So sperrt eine Serie von drei verpatzten Anmeldungen im Abstand von einem Monat niemanden aus.",
+        "adm_windowLabel": "Gezählt über (Minuten)",
+        "perm_manage": "Verwalten"
+      }
+    },
+    "es": {
+      "admin": {
+        "menu_login-protection": "Protección de inicio de sesión",
+        "menu_login-protection_login_protection": "Protección de inicio de sesión",
+        "menu_security": "Protección de inicio de sesión",
+        "module_login-protection_description": "Limitación de inicios de sesión: cuántos intentos fallidos bloquean una cuenta y cómo volver a dejarla entrar",
+        "module_login-protection_name": "Protección de inicio de sesión",
+        "settings_login-protection": "Protección de inicio de sesión",
+        "settings_login-protection_description": "Cuántos inicios de sesión fallidos bloquean una cuenta y cómo volver a dejarla entrar."
+      },
+      "loginProtection": {
+        "adm_attemptsDesc": "Se cuenta por cuenta, así que una campaña repartida entre miles de direcciones también se detiene. Como mínimo tres: bloquear al primer error de escritura es una forma de dejar fuera a cualquiera a propósito.",
+        "adm_attemptsLabel": "Contraseñas incorrectas antes de bloquear la cuenta",
+        "adm_lockDesc": "Cuánto tiempo permanece cerrada la cuenta una vez bloqueada. Se envía un correo al miembro cuando ocurre.",
+        "adm_lockLabel": "Bloqueada durante (minutos)",
+        "adm_lockedNone": "Nadie está bloqueado.",
+        "adm_lockedSubtitle": "Permitir que alguien vuelva a entrar devuelve su cuenta al estado en que estaría con una contraseña recordada.",
+        "adm_lockedTitle": "Bloqueados en este momento",
+        "adm_lockedUntil": "Hasta {until} - {attempts} contraseñas incorrectas",
+        "adm_subtitle": "Cuántas contraseñas incorrectas bloquean una cuenta, durante cuánto tiempo y quién está bloqueado ahora",
+        "adm_title": "Protección de inicio de sesión",
+        "adm_unlock": "Permitir entrar de nuevo",
+        "adm_unlockFailed": "No se pudo desbloquear esa cuenta.",
+        "adm_unlocked": "{username} ya puede volver a iniciar sesión",
+        "adm_windowDesc": "Las contraseñas incorrectas más antiguas que este plazo se olvidan, así que tres errores al iniciar sesión con un mes de diferencia nunca bloquean a nadie.",
+        "adm_windowLabel": "Contadas durante (minutos)",
+        "perm_manage": "Gestionar"
+      }
+    },
+    "et": {
+      "admin": {
+        "menu_login-protection": "Sisselogimise kaitse",
+        "menu_login-protection_login_protection": "Sisselogimise kaitse",
+        "menu_security": "Sisselogimise kaitse",
+        "module_login-protection_description": "Sisselogimise piiramine: mitu ebaõnnestunud katset konto lukustab ja kuidas konto uuesti avada",
+        "module_login-protection_name": "Sisselogimise kaitse",
+        "settings_login-protection": "Sisselogimise kaitse",
+        "settings_login-protection_description": "Mitu ebaõnnestunud sisselogimist konto lukustab ja kuidas konto uuesti avada."
+      },
+      "loginProtection": {
+        "adm_attemptsDesc": "Loetakse konto kaupa, nii et tuhandetest aadressidest tehtud rünnak peatatakse ikka. Vähemalt kolm: esimese kirjavea peale lukustamine oleks lihtne viis kedagi tahtlikult välja lukustada.",
+        "adm_attemptsLabel": "Valed paroolid enne konto lukustamist",
+        "adm_lockDesc": "Kui kaua konto pärast lukustamist suletuna püsib. Liikmele saadetakse sel hetkel e-kiri.",
+        "adm_lockLabel": "Lukustatud (minutit)",
+        "adm_lockedNone": "Keegi pole välja lukustatud.",
+        "adm_lockedSubtitle": "Kellegi uuesti sisselaskmine annab tema kontole sama seisu, mis oleks meeldejäänud parooli korral.",
+        "adm_lockedTitle": "Praegu välja lukustatud",
+        "adm_lockedUntil": "Kuni {until} – {attempts} valet parooli",
+        "adm_subtitle": "Mitu valet parooli konto lukustab, kui kauaks, ja kes on praegu välja lukustatud",
+        "adm_title": "Sisselogimise kaitse",
+        "adm_unlock": "Lase uuesti sisse",
+        "adm_unlockFailed": "Seda kontot ei õnnestunud avada.",
+        "adm_unlocked": "{username} saab uuesti sisse logida",
+        "adm_windowDesc": "Sellest vanemad valed paroolid unustatakse, nii et kolm eksitud sisselogimist kuu vahega ei lukusta kedagi välja.",
+        "adm_windowLabel": "Arvestatakse ajavahemikus (minutit)",
+        "perm_manage": "Halda"
+      }
+    },
+    "fr": {
+      "admin": {
+        "menu_login-protection": "Protection de connexion",
+        "menu_login-protection_login_protection": "Protection de connexion",
+        "menu_security": "Protection de connexion",
+        "module_login-protection_description": "Limitation des connexions : nombre d’échecs qui verrouillent un compte, et réactivation de ce compte",
+        "module_login-protection_name": "Protection de connexion",
+        "settings_login-protection": "Protection de connexion",
+        "settings_login-protection_description": "Nombre d’échecs de connexion qui verrouillent un compte, et réactivation de ce compte."
+      },
+      "loginProtection": {
+        "adm_attemptsDesc": "Compté par compte, pour stopper aussi une campagne répartie sur des milliers d’adresses. Trois au minimum : un verrouillage dès la première faute de frappe permettrait d’exclure n’importe qui volontairement.",
+        "adm_attemptsLabel": "Mots de passe erronés avant le verrouillage du compte",
+        "adm_lockDesc": "Durée pendant laquelle le compte reste fermé une fois verrouillé. Le membre reçoit un e-mail lorsque cela se produit.",
+        "adm_lockLabel": "Verrouillé pendant (minutes)",
+        "adm_lockedNone": "Personne n’est verrouillé.",
+        "adm_lockedSubtitle": "Réactiver un membre rétablit son accès, comme s’il s’était connecté correctement.",
+        "adm_lockedTitle": "Actuellement verrouillés",
+        "adm_lockedUntil": "Jusqu’au {until} : {attempts} mots de passe erronés",
+        "adm_subtitle": "Nombre de mots de passe erronés qui verrouillent un compte, pendant combien de temps, et qui est actuellement exclu",
+        "adm_title": "Protection de connexion",
+        "adm_unlock": "Réactiver",
+        "adm_unlockFailed": "Ce compte n’a pas pu être déverrouillé.",
+        "adm_unlocked": "{username} peut de nouveau se connecter",
+        "adm_windowDesc": "Les mots de passe erronés plus anciens que cette durée sont oubliés : trois échecs à un mois d’écart ne verrouillent donc jamais personne.",
+        "adm_windowLabel": "Compté sur (minutes)",
+        "perm_manage": "Gérer"
+      }
+    },
+    "it": {
+      "admin": {
+        "menu_login-protection": "Protezione accessi",
+        "menu_login-protection_login_protection": "Protezione accessi",
+        "menu_security": "Protezione accessi",
+        "module_login-protection_description": "Limitazione dei tentativi di accesso: quanti tentativi falliti bloccano un account, e come riattivarlo",
+        "module_login-protection_name": "Protezione accessi",
+        "settings_login-protection": "Protezione accessi",
+        "settings_login-protection_description": "Quanti accessi falliti bloccano un account, e come riattivarlo."
+      },
+      "loginProtection": {
+        "adm_attemptsDesc": "Conteggio per account, così una campagna distribuita su migliaia di indirizzi viene comunque fermata. Tre come minimo: un blocco al primo errore di battitura permetterebbe di escludere chiunque di proposito.",
+        "adm_attemptsLabel": "Password errate prima del blocco dell’account",
+        "adm_lockDesc": "Per quanto tempo l’account resta chiuso una volta bloccato. Il membro riceve un’email quando succede.",
+        "adm_lockLabel": "Bloccato per (minuti)",
+        "adm_lockedNone": "Nessuno è bloccato fuori.",
+        "adm_lockedSubtitle": "Riammettere qualcuno riporta il suo account nella condizione in cui sarebbe con una password ricordata.",
+        "adm_lockedTitle": "Bloccati fuori in questo momento",
+        "adm_lockedUntil": "Fino a {until} - {attempts} password errate",
+        "adm_subtitle": "Quante password errate chiudono un account, per quanto tempo, e chi è escluso ora",
+        "adm_title": "Protezione accessi",
+        "adm_unlock": "Riammetti",
+        "adm_unlockFailed": "Impossibile sbloccare quell’account.",
+        "adm_unlocked": "{username} può di nuovo accedere",
+        "adm_windowDesc": "Le password errate più vecchie di questo vengono dimenticate, così tre accessi sbagliati a distanza di un mese non bloccano nessuno.",
+        "adm_windowLabel": "Conteggio su (minuti)",
+        "perm_manage": "Gestisci"
+      }
+    },
+    "pl": {
+      "admin": {
+        "menu_login-protection": "Ochrona logowania",
+        "menu_login-protection_login_protection": "Ochrona logowania",
+        "menu_security": "Ochrona logowania",
+        "module_login-protection_description": "Ograniczanie logowań: ile nieudanych prób blokuje konto i jak je odblokować",
+        "module_login-protection_name": "Ochrona logowania",
+        "settings_login-protection": "Ochrona logowania",
+        "settings_login-protection_description": "Ile nieudanych logowań blokuje konto i jak je odblokować."
+      },
+      "loginProtection": {
+        "adm_attemptsDesc": "Liczone na konto, więc kampania rozłożona na tysiące adresów i tak zostanie zatrzymana. Co najmniej trzy: blokada po pierwszej literówce to sposób na celowe odcięcie kogokolwiek.",
+        "adm_attemptsLabel": "Błędne hasła, zanim konto się zablokuje",
+        "adm_lockDesc": "Jak długo konto pozostaje zamknięte po zablokowaniu. Członek dostaje wtedy e-mail.",
+        "adm_lockLabel": "Zablokowane na (minuty)",
+        "adm_lockedNone": "Nikt nie jest zablokowany.",
+        "adm_lockedSubtitle": "Odblokowanie kogoś przywraca jego konto do stanu sprzed błędnych prób.",
+        "adm_lockedTitle": "Zablokowani w tej chwili",
+        "adm_lockedUntil": "Do {until}, błędnych haseł: {attempts}",
+        "adm_subtitle": "Ile błędnych haseł blokuje konto, na jak długo i kto jest teraz zablokowany",
+        "adm_title": "Ochrona logowania",
+        "adm_unlock": "Odblokuj",
+        "adm_unlockFailed": "Nie udało się odblokować tego konta.",
+        "adm_unlocked": "{username} może znowu się zalogować",
+        "adm_windowDesc": "Błędne hasła starsze niż to są zapominane, więc trzy pomyłki w odstępie miesiąca nigdy nikogo nie zablokują.",
+        "adm_windowLabel": "Liczone w ciągu (minuty)",
+        "perm_manage": "Zarządzaj"
+      }
+    },
+    "pt": {
+      "admin": {
+        "menu_login-protection": "Proteção de login",
+        "menu_login-protection_login_protection": "Proteção de login",
+        "menu_security": "Proteção de login",
+        "module_login-protection_description": "Limitação de logins: quantas tentativas falhas bloqueiam uma conta e como liberá-la",
+        "module_login-protection_name": "Proteção de login",
+        "settings_login-protection": "Proteção de login",
+        "settings_login-protection_description": "Quantas tentativas de entrada falhas bloqueiam uma conta e como liberá-la."
+      },
+      "loginProtection": {
+        "adm_attemptsDesc": "Contadas por conta, então uma campanha espalhada por milhares de endereços ainda é barrada. No mínimo três: bloquear já no primeiro erro de digitação é uma forma de trancar alguém do lado de fora de propósito.",
+        "adm_attemptsLabel": "Senhas erradas antes do bloqueio",
+        "adm_lockDesc": "Por quanto tempo a conta fica fechada depois de bloqueada. O membro recebe um e-mail quando isso acontece.",
+        "adm_lockLabel": "Bloqueada por (minutos)",
+        "adm_lockedNone": "Ninguém está bloqueado.",
+        "adm_lockedSubtitle": "Liberar alguém devolve a conta dessa pessoa ao estado de uma senha aceita.",
+        "adm_lockedTitle": "Bloqueados agora",
+        "adm_lockedUntil": "Até {until} - {attempts} senhas erradas",
+        "adm_subtitle": "Quantas senhas erradas bloqueiam uma conta, por quanto tempo e quem está bloqueado agora",
+        "adm_title": "Proteção de login",
+        "adm_unlock": "Liberar",
+        "adm_unlockFailed": "Não foi possível desbloquear esta conta.",
+        "adm_unlocked": "{username} já pode entrar novamente",
+        "adm_windowDesc": "Senhas erradas mais antigas que isto são esquecidas, então três erros espaçados por um mês nunca bloqueiam ninguém.",
+        "adm_windowLabel": "Contadas em (minutos)",
+        "perm_manage": "Gerenciar"
+      }
+    },
+    "ru": {
+      "admin": {
+        "menu_login-protection": "Защита входа",
+        "menu_login-protection_login_protection": "Защита входа",
+        "menu_security": "Защита входа",
+        "module_login-protection_description": "Ограничение попыток входа: сколько неудачных попыток блокируют учетную запись и как вернуть в нее участника",
+        "module_login-protection_name": "Защита входа",
+        "settings_login-protection": "Защита входа",
+        "settings_login-protection_description": "Сколько неудачных входов блокируют учетную запись и как вернуть участника."
+      },
+      "loginProtection": {
+        "adm_attemptsDesc": "Считается отдельно для каждой учетной записи, поэтому кампания, распределенная по тысячам адресов, все равно будет остановлена. Не меньше трех: блокировка после первой опечатки позволяет намеренно закрыть доступ кому угодно.",
+        "adm_attemptsLabel": "Неверных паролей до блокировки учетной записи",
+        "adm_lockDesc": "Как долго учетная запись остается закрытой после блокировки. Участнику в этом случае отправляется письмо.",
+        "adm_lockLabel": "Блокировка на (минут)",
+        "adm_lockedNone": "Никто не заблокирован.",
+        "adm_lockedSubtitle": "Возврат участника в систему сбрасывает счетчик его неудачных входов, как будто их не было.",
+        "adm_lockedTitle": "Сейчас заблокированы",
+        "adm_lockedUntil": "До {until}, неверных паролей: {attempts}",
+        "adm_subtitle": "Сколько неверных паролей блокируют учетную запись, на какое время и кто заблокирован сейчас",
+        "adm_title": "Защита входа",
+        "adm_unlock": "Вернуть в систему",
+        "adm_unlockFailed": "Не удалось разблокировать эту учетную запись.",
+        "adm_unlocked": "{username} снова может войти",
+        "adm_windowDesc": "Неверные пароли старше этого срока забываются, поэтому три ошибки при входе с интервалом в месяц никого не блокируют.",
+        "adm_windowLabel": "Считать за (минут)",
+        "perm_manage": "Управление"
+      }
+    },
+    "zh": {
+      "admin": {
+        "menu_login-protection": "登录保护",
+        "menu_login-protection_login_protection": "登录保护",
+        "menu_security": "登录保护",
+        "module_login-protection_description": "登录限流：多少次失败尝试会锁定账户，以及如何解除锁定",
+        "module_login-protection_name": "登录保护",
+        "settings_login-protection": "登录保护",
+        "settings_login-protection_description": "多少次登录失败会锁定账户，以及如何解除锁定。"
+      },
+      "loginProtection": {
+        "adm_attemptsDesc": "按账户计数，因此分散在数千个地址上的攻击仍会被阻止。至少为三次：第一次输错就锁定，等于有意把任何人拒之门外。",
+        "adm_attemptsLabel": "账户锁定前的错误密码次数",
+        "adm_lockDesc": "账户锁定后将保持锁定的时长。锁定时会向成员发送邮件。",
+        "adm_lockLabel": "锁定时长（分钟）",
+        "adm_lockedNone": "目前没有人被锁定。",
+        "adm_lockedSubtitle": "解除某人的锁定，即让其账户回到如同记住了密码时的状态。",
+        "adm_lockedTitle": "当前被锁定的账户",
+        "adm_lockedUntil": "直至 {until}，错误密码 {attempts} 次",
+        "adm_subtitle": "多少次错误密码会锁定账户、锁定多久，以及当前有谁被拒之门外",
+        "adm_title": "登录保护",
+        "adm_unlock": "解除锁定",
+        "adm_unlockFailed": "无法解除该账户的锁定。",
+        "adm_unlocked": "{username} 现在可以再次登录",
+        "adm_windowDesc": "超过此时间的错误密码将被忘记，因此相隔一个月的三次输错不会锁定任何人。",
+        "adm_windowLabel": "统计时间范围（分钟）",
+        "perm_manage": "管理"
+      }
     }
   },
   "permissions": [

@@ -67,6 +67,146 @@
         "settings_vk-auth": "VK OAuth",
         "settings_vk-auth_description": "VK uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "vkAuth": {
+        "adm_emailNote": "VK yalnız hesabda təsdiqlənmiş e-poçt varsa və şəxs icazə verərsə, e-poçt ünvanını ötürür. Onsuz hesaba heç vaxt poçt ala bilməyən müvəqqəti ünvan verilir və istifadəçi profilində real ünvan təyin edə bilər.",
+        "adm_subtitle": "Saytınız üçün VK OAuth ilə daxil olmanı quraşdırın.",
+        "adm_title": "VK giriş parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_vk-auth_name": "VK ilə giriş",
+        "module_vk-auth_description": "İstifadəçilərin VK hesabı ilə daxil olmasına icazə verin",
+        "settings_vk-auth": "VK OAuth",
+        "settings_vk-auth_description": "VK tətbiq etimadnamələri."
+      }
+    },
+    "de": {
+      "vkAuth": {
+        "adm_emailNote": "VK gibt eine E-Mail-Adresse nur weiter, wenn das Konto eine bestätigte hat und die Person es erlaubt. Ohne sie erhält das Konto eine Platzhalteradresse, die nie Post empfangen kann; der Nutzer kann in seinem Profil eine echte festlegen.",
+        "adm_subtitle": "Richte die VK-OAuth-Anmeldung für deine Seite ein.",
+        "adm_title": "VK-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_vk-auth_name": "VK-Login",
+        "module_vk-auth_description": "Nutzern erlauben, sich mit ihrem VK-Konto anzumelden",
+        "settings_vk-auth": "VK OAuth",
+        "settings_vk-auth_description": "Zugangsdaten der VK-Anwendung."
+      }
+    },
+    "es": {
+      "vkAuth": {
+        "adm_emailNote": "VK solo comparte una dirección de correo cuando la cuenta tiene una confirmada y la persona lo permite. Sin ella, la cuenta recibe una dirección provisional que nunca puede recibir correo, y el usuario puede poner una real en su perfil.",
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de VK en tu sitio.",
+        "adm_title": "Ajustes de inicio de sesión con VK",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_vk-auth_name": "Inicio de sesión con VK",
+        "module_vk-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de VK",
+        "settings_vk-auth": "OAuth de VK",
+        "settings_vk-auth_description": "Credenciales de la aplicación de VK."
+      }
+    },
+    "et": {
+      "vkAuth": {
+        "adm_emailNote": "VK edastab e-posti aadressi ainult siis, kui kontol on kinnitatud aadress ja inimene seda lubab. Ilma selleta saab konto kohatäite aadressi, millele ei saa kunagi kirju, ja kasutaja saab oma profiilis seada päris aadressi.",
+        "adm_subtitle": "Seadista oma saidile VK OAuth-sisselogimine.",
+        "adm_title": "VK sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_vk-auth_name": "VK-ga sisselogimine",
+        "module_vk-auth_description": "Luba kasutajatel sisse logida oma VK kontoga",
+        "settings_vk-auth": "VK OAuth",
+        "settings_vk-auth_description": "VK rakenduse andmed."
+      }
+    },
+    "fr": {
+      "vkAuth": {
+        "adm_emailNote": "VK ne transmet une adresse e-mail que si le compte en a une confirmée et si la personne l’autorise. Sinon, le compte reçoit une adresse provisoire qui ne peut jamais recevoir de courriels, et l’utilisateur peut en définir une véritable dans son profil.",
+        "adm_subtitle": "Configurez la connexion OAuth VK pour votre site.",
+        "adm_title": "Paramètres de connexion VK",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_vk-auth_name": "Connexion VK",
+        "module_vk-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte VK",
+        "settings_vk-auth": "OAuth VK",
+        "settings_vk-auth_description": "Identifiants de l’application VK."
+      }
+    },
+    "it": {
+      "vkAuth": {
+        "adm_emailNote": "VK passa un indirizzo email solo se l’account ne ha uno confermato e la persona lo consente. Senza, l’account riceve un indirizzo segnaposto che non può mai ricevere posta, e l’utente può impostarne uno reale nel proprio profilo.",
+        "adm_subtitle": "Configura l’accesso OAuth con VK per il tuo sito.",
+        "adm_title": "Impostazioni accesso VK",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_vk-auth_name": "Accesso con VK",
+        "module_vk-auth_description": "Consenti agli utenti di accedere con il proprio account VK",
+        "settings_vk-auth": "OAuth VK",
+        "settings_vk-auth_description": "Credenziali dell’applicazione VK."
+      }
+    },
+    "pl": {
+      "vkAuth": {
+        "adm_emailNote": "VK przekazuje adres e-mail tylko wtedy, gdy konto ma potwierdzony adres i użytkownik na to pozwala. Bez tego konto dostaje zastępczy adres, który nigdy nie odbierze poczty, a użytkownik może ustawić prawdziwy w swoim profilu.",
+        "adm_subtitle": "Skonfiguruj logowanie przez VK OAuth dla swojej strony.",
+        "adm_title": "Ustawienia logowania VK",
+        "perm_manage": "Zarządzanie"
+      },
+      "admin": {
+        "module_vk-auth_name": "Logowanie VK",
+        "module_vk-auth_description": "Pozwól użytkownikom logować się kontem VK",
+        "settings_vk-auth": "VK OAuth",
+        "settings_vk-auth_description": "Dane aplikacji VK."
+      }
+    },
+    "pt": {
+      "vkAuth": {
+        "adm_emailNote": "O VK só repassa um endereço de e-mail quando a conta tem um confirmado e a pessoa permite. Sem ele, a conta recebe um endereço provisório que nunca pode receber e-mails, e o usuário pode definir um endereço real no perfil.",
+        "adm_subtitle": "Configure o login com VK OAuth para o seu site.",
+        "adm_title": "Configurações de login com VK",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_vk-auth_name": "Login com VK",
+        "module_vk-auth_description": "Permita que os usuários entrem com a conta do VK",
+        "settings_vk-auth": "VK OAuth",
+        "settings_vk-auth_description": "Credenciais do aplicativo do VK."
+      }
+    },
+    "ru": {
+      "vkAuth": {
+        "adm_emailNote": "VK передает адрес почты, только если у аккаунта подтвержден адрес и пользователь разрешил передачу. Без этого аккаунт получает заглушку-адрес, на который не может прийти письмо, и пользователь может указать настоящий адрес в своем профиле.",
+        "adm_subtitle": "Настройте вход через VK OAuth на вашем сайте.",
+        "adm_title": "Настройки входа через VK",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_vk-auth_name": "Вход через VK",
+        "module_vk-auth_description": "Разрешите пользователям входить с помощью аккаунта VK",
+        "settings_vk-auth": "VK OAuth",
+        "settings_vk-auth_description": "Учетные данные приложения VK."
+      }
+    },
+    "zh": {
+      "vkAuth": {
+        "adm_emailNote": "只有当 VK 账户已确认邮箱且用户允许时，VK 才会提供邮箱地址。否则账户将获得一个无法接收邮件的占位地址，用户可在个人资料中设置真实邮箱。",
+        "adm_subtitle": "为你的站点设置 VK OAuth 登录。",
+        "adm_title": "VK 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_vk-auth_name": "VK 登录",
+        "module_vk-auth_description": "允许用户使用其 VK 账户登录",
+        "settings_vk-auth": "VK OAuth",
+        "settings_vk-auth_description": "VK 应用凭据。"
+      }
     }
   },
   "permissions": [

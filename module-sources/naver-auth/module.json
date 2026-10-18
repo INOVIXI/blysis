@@ -67,6 +67,146 @@
         "settings_naver-auth": "Naver OAuth",
         "settings_naver-auth_description": "Naver uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "naverAuth": {
+        "adm_reviewNote": "Naver tətbiqi hazırlayanın öz hesabından kənar istifadəçilərə xidmət etməzdən əvvəl müraciəti nəzərdən keçirir, ona görə yeni inteqrasiya sizin üçün dərhal, digərləri üçün isə təsdiqləndikdən sonra işləyir.",
+        "adm_subtitle": "Saytınız üçün Naver OAuth ilə daxil olmanı quraşdırın.",
+        "adm_title": "Naver Login parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_naver-auth_name": "Naver Login",
+        "module_naver-auth_description": "İstifadəçilərə Naver hesabları ilə daxil olmağa icazə verin",
+        "settings_naver-auth": "Naver OAuth",
+        "settings_naver-auth_description": "Naver tətbiqinin etimadnaməsi."
+      }
+    },
+    "de": {
+      "naverAuth": {
+        "adm_reviewNote": "Naver prüft eine Anwendung, bevor sie Nutzer außerhalb des eigenen Entwicklerkontos bedienen darf. Eine neue Integration funktioniert daher sofort für dich und für alle anderen erst, nachdem sie freigegeben wurde.",
+        "adm_subtitle": "Richte die Anmeldung per Naver-OAuth für deine Seite ein.",
+        "adm_title": "Naver-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_naver-auth_name": "Naver-Login",
+        "module_naver-auth_description": "Mitglieder können sich mit ihrem Naver-Konto anmelden",
+        "settings_naver-auth": "Naver-OAuth",
+        "settings_naver-auth_description": "Zugangsdaten der Naver-Anwendung."
+      }
+    },
+    "es": {
+      "naverAuth": {
+        "adm_reviewNote": "Naver revisa una solicitud antes de que pueda atender a usuarios ajenos a la cuenta del desarrollador, así que una integración nueva funciona de inmediato para ti y, para los demás, en cuanto se aprueba.",
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de Naver en tu sitio.",
+        "adm_title": "Ajustes de inicio de sesión con Naver",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_naver-auth_name": "Inicio de sesión con Naver",
+        "module_naver-auth_description": "Permite que los usuarios inicien sesión con su cuenta de Naver",
+        "settings_naver-auth": "OAuth de Naver",
+        "settings_naver-auth_description": "Credenciales de la aplicación de Naver."
+      }
+    },
+    "et": {
+      "naverAuth": {
+        "adm_reviewNote": "Naver kontrollib rakenduse taotlust enne, kui see tohib teenindada kasutajaid väljaspool arendaja enda kontot, seega töötab uus integratsioon sulle kohe ja kõigile teistele pärast heakskiitmist.",
+        "adm_subtitle": "Seadista oma saidile Naveri OAuth-sisselogimine.",
+        "adm_title": "Naveri sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_naver-auth_name": "Naveri sisselogimine",
+        "module_naver-auth_description": "Luba kasutajatel sisse logida oma Naveri kontoga",
+        "settings_naver-auth": "Naver OAuth",
+        "settings_naver-auth_description": "Naveri rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "naverAuth": {
+        "adm_reviewNote": "Naver examine une demande avant qu’elle puisse servir des utilisateurs en dehors du compte du développeur : une nouvelle intégration fonctionne donc immédiatement pour vous, et pour tous les autres une fois approuvée.",
+        "adm_subtitle": "Configurez la connexion OAuth Naver pour votre site.",
+        "adm_title": "Paramètres de connexion Naver",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_naver-auth_name": "Connexion Naver",
+        "module_naver-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Naver",
+        "settings_naver-auth": "OAuth Naver",
+        "settings_naver-auth_description": "Identifiants de l’application Naver."
+      }
+    },
+    "it": {
+      "naverAuth": {
+        "adm_reviewNote": "Naver esamina una richiesta prima che possa servire utenti al di fuori dell’account dello sviluppatore: quindi una nuova integrazione funziona subito per te, e per tutti gli altri solo dopo l’approvazione.",
+        "adm_subtitle": "Configura l’accesso con Naver OAuth per il tuo sito.",
+        "adm_title": "Impostazioni di accesso con Naver",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_naver-auth_name": "Accesso con Naver",
+        "module_naver-auth_description": "Consenti agli utenti di accedere con il proprio account Naver",
+        "settings_naver-auth": "Naver OAuth",
+        "settings_naver-auth_description": "Credenziali dell’applicazione Naver."
+      }
+    },
+    "pl": {
+      "naverAuth": {
+        "adm_reviewNote": "Naver sprawdza zgłoszenie, zanim pozwoli obsługiwać użytkowników spoza konta dewelopera, więc nowa integracja działa od razu dla Ciebie, a dla wszystkich pozostałych po zatwierdzeniu.",
+        "adm_subtitle": "Skonfiguruj logowanie przez Naver (OAuth) na swojej stronie.",
+        "adm_title": "Ustawienia logowania przez Naver",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_naver-auth_name": "Logowanie przez Naver",
+        "module_naver-auth_description": "Pozwól członkom logować się przez konto Naver",
+        "settings_naver-auth": "Naver OAuth",
+        "settings_naver-auth_description": "Dane aplikacji Naver."
+      }
+    },
+    "pt": {
+      "naverAuth": {
+        "adm_reviewNote": "A Naver analisa um pedido antes de ele poder atender usuários fora da conta do próprio desenvolvedor, então uma nova integração funciona para você imediatamente e para todos os outros depois de aprovada.",
+        "adm_subtitle": "Configure o login com OAuth da Naver para o seu site.",
+        "adm_title": "Configurações do login Naver",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_naver-auth_name": "Login com Naver",
+        "module_naver-auth_description": "Permite que membros entrem com a conta da Naver",
+        "settings_naver-auth": "OAuth da Naver",
+        "settings_naver-auth_description": "Credenciais do aplicativo da Naver."
+      }
+    },
+    "ru": {
+      "naverAuth": {
+        "adm_reviewNote": "Naver проверяет заявку, прежде чем разрешить ей работать с пользователями за пределами аккаунта разработчика. Поэтому новая интеграция сразу работает для вас, а для всех остальных - после одобрения.",
+        "adm_subtitle": "Настройте вход через OAuth Naver на вашем сайте.",
+        "adm_title": "Настройки входа через Naver",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_naver-auth_name": "Вход через Naver",
+        "module_naver-auth_description": "Разрешить пользователям входить через свою учетную запись Naver",
+        "settings_naver-auth": "Naver OAuth",
+        "settings_naver-auth_description": "Учетные данные приложения Naver."
+      }
+    },
+    "zh": {
+      "naverAuth": {
+        "adm_reviewNote": "Naver 会先审核应用，之后才能向开发者自己的账户以外的用户提供服务，因此新集成对你立即可用，对其他人则需待审核通过后才行。",
+        "adm_subtitle": "为你的站点设置 Naver OAuth 登录。",
+        "adm_title": "Naver 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_naver-auth_name": "Naver 登录",
+        "module_naver-auth_description": "允许用户使用其 Naver 账户登录",
+        "settings_naver-auth": "Naver OAuth",
+        "settings_naver-auth_description": "Naver 应用凭据。"
+      }
     }
   },
   "permissions": [

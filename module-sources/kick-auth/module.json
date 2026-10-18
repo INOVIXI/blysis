@@ -71,6 +71,146 @@
         "settings_kick-auth": "Kick OAuth",
         "settings_kick-auth_description": "Kick uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "kickAuth": {
+        "adm_scopeNote": "Kick tətbiqinə user:read icazəsi lazımdır. Kick-in OAuth-u PKCE tələb edir; bu modul onu aktivləşdirir, ona görə əlavə heç nə konfiqurasiya etmək lazım deyil.",
+        "adm_subtitle": "Saytınız üçün Kick OAuth ilə daxil olmanı quraşdırın.",
+        "adm_title": "Kick Login parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_kick-auth_name": "Kick Login",
+        "module_kick-auth_description": "İstifadəçilərə Kick hesabları ilə daxil olmağa icazə verin",
+        "settings_kick-auth": "Kick OAuth",
+        "settings_kick-auth_description": "Kick tətbiqinin etimadnaməsi."
+      }
+    },
+    "de": {
+      "kickAuth": {
+        "adm_scopeNote": "Die Kick-Anwendung braucht den Bereich user:read. Kicks OAuth verlangt PKCE, das dieses Modul aktiviert, daher muss dafür nichts weiter eingerichtet werden.",
+        "adm_subtitle": "Richte die Anmeldung per Kick-OAuth für deine Seite ein.",
+        "adm_title": "Kick-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_kick-auth_name": "Kick-Login",
+        "module_kick-auth_description": "Mitglieder können sich mit ihrem Kick-Konto anmelden",
+        "settings_kick-auth": "Kick-OAuth",
+        "settings_kick-auth_description": "Zugangsdaten der Kick-Anwendung."
+      }
+    },
+    "es": {
+      "kickAuth": {
+        "adm_scopeNote": "La aplicación de Kick necesita el permiso user:read. El OAuth de Kick exige PKCE, que este módulo activa, así que no hay que configurar nada más.",
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de Kick en tu sitio.",
+        "adm_title": "Ajustes de inicio de sesión con Kick",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_kick-auth_name": "Inicio de sesión con Kick",
+        "module_kick-auth_description": "Permite que los usuarios inicien sesión con su cuenta de Kick",
+        "settings_kick-auth": "OAuth de Kick",
+        "settings_kick-auth_description": "Credenciales de la aplicación de Kick."
+      }
+    },
+    "et": {
+      "kickAuth": {
+        "adm_scopeNote": "Kicki rakendus vajab user:read õigusulatust. Kicki OAuth nõuab PKCE-d, mille see moodul sisse lülitab, nii et selle jaoks pole midagi lisaks seadistada.",
+        "adm_subtitle": "Seadista oma saidile Kicki OAuth-sisselogimine.",
+        "adm_title": "Kicki sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_kick-auth_name": "Kicki sisselogimine",
+        "module_kick-auth_description": "Luba kasutajatel sisse logida oma Kicki kontoga",
+        "settings_kick-auth": "Kick OAuth",
+        "settings_kick-auth_description": "Kicki rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "kickAuth": {
+        "adm_scopeNote": "L’application Kick a besoin de la portée user:read. L’OAuth de Kick exige PKCE, que ce module active : rien d’autre n’est à configurer.",
+        "adm_subtitle": "Configurez la connexion OAuth Kick pour votre site.",
+        "adm_title": "Paramètres de connexion Kick",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_kick-auth_name": "Connexion Kick",
+        "module_kick-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Kick",
+        "settings_kick-auth": "OAuth Kick",
+        "settings_kick-auth_description": "Identifiants de l’application Kick."
+      }
+    },
+    "it": {
+      "kickAuth": {
+        "adm_scopeNote": "L’applicazione Kick ha bisogno dell’ambito user:read. L’OAuth di Kick richiede PKCE, che questo modulo attiva, quindi non serve configurare nient’altro.",
+        "adm_subtitle": "Configura l’accesso con Kick OAuth per il tuo sito.",
+        "adm_title": "Impostazioni di accesso con Kick",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_kick-auth_name": "Accesso con Kick",
+        "module_kick-auth_description": "Consenti agli utenti di accedere con il proprio account Kick",
+        "settings_kick-auth": "Kick OAuth",
+        "settings_kick-auth_description": "Credenziali dell’applicazione Kick."
+      }
+    },
+    "pl": {
+      "kickAuth": {
+        "adm_scopeNote": "Aplikacja Kick potrzebuje zakresu user:read. OAuth Kicka wymaga PKCE, które ten moduł włącza, więc nie trzeba nic dodatkowo konfigurować.",
+        "adm_subtitle": "Skonfiguruj logowanie przez Kick (OAuth) na swojej stronie.",
+        "adm_title": "Ustawienia logowania przez Kick",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_kick-auth_name": "Logowanie przez Kick",
+        "module_kick-auth_description": "Pozwól członkom logować się przez konto Kick",
+        "settings_kick-auth": "Kick OAuth",
+        "settings_kick-auth_description": "Dane aplikacji Kick."
+      }
+    },
+    "pt": {
+      "kickAuth": {
+        "adm_scopeNote": "O aplicativo da Kick precisa do escopo user:read. O OAuth da Kick exige PKCE, que este módulo ativa, então nada mais precisa ser configurado para isso.",
+        "adm_subtitle": "Configure o login com OAuth da Kick para o seu site.",
+        "adm_title": "Configurações do login com Kick",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_kick-auth_name": "Login com Kick",
+        "module_kick-auth_description": "Permite que membros entrem com a conta da Kick",
+        "settings_kick-auth": "OAuth da Kick",
+        "settings_kick-auth_description": "Credenciais do aplicativo da Kick."
+      }
+    },
+    "ru": {
+      "kickAuth": {
+        "adm_scopeNote": "Приложению Kick нужна область доступа user:read. OAuth Kick требует PKCE, который этот модуль включает, поэтому дополнительно ничего настраивать не нужно.",
+        "adm_subtitle": "Настройте вход через OAuth Kick на вашем сайте.",
+        "adm_title": "Настройки входа через Kick",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_kick-auth_name": "Вход через Kick",
+        "module_kick-auth_description": "Разрешить пользователям входить через свою учетную запись Kick",
+        "settings_kick-auth": "Kick OAuth",
+        "settings_kick-auth_description": "Учетные данные приложения Kick."
+      }
+    },
+    "zh": {
+      "kickAuth": {
+        "adm_scopeNote": "Kick 应用需要 user:read 权限范围。Kick 的 OAuth 要求使用 PKCE，本模块已开启该功能，因此无需为其额外配置。",
+        "adm_subtitle": "为你的站点设置 Kick OAuth 登录。",
+        "adm_title": "Kick 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_kick-auth_name": "Kick 登录",
+        "module_kick-auth_description": "允许用户使用其 Kick 账户登录",
+        "settings_kick-auth": "Kick OAuth",
+        "settings_kick-auth_description": "Kick 应用凭据。"
+      }
     }
   },
   "permissions": [

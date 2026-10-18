@@ -76,6 +76,176 @@
         "settings_tawkto-chat": "Tawk.to Canlı Sohbet",
         "settings_tawkto-chat_description": "Ziyaretçilerin sizinle konuştuğu sohbet balonu."
       }
+    },
+    "az": {
+      "tawktoChat": {
+        "adm_propertyId": "Property ID",
+        "adm_propertyIdDesc": "Panelinizdəki vidjet kodundan: skript ünvanındakı iki ID-dən birincisi.",
+        "adm_subtitle": "Hər səhifədə olan çat balonu. Ziyarətçi çərəzləri qəbul etdikdən sonra yüklənir, çünki o öz çərəzini qoyur.",
+        "adm_title": "Canlı çat",
+        "adm_widgetId": "Vidjet ID-si",
+        "adm_widgetIdDesc": "İkinci ID. Hər hansı birini boş buraxsanız, heç bir çat yüklənməyəcək.",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "Hər səhifədə canlı çat vidjeti, Tawk.to tərəfindən təqdim olunur",
+        "module_tawkto-chat_name": "Tawk.to çatı",
+        "settings_tawkto-chat": "Tawk.to canlı çat",
+        "settings_tawkto-chat_description": "Ziyarətçilərin sizinlə danışdığı çat balonu."
+      }
+    },
+    "de": {
+      "tawktoChat": {
+        "adm_propertyId": "Property-ID",
+        "adm_propertyIdDesc": "Aus dem Widget-Code in deinem Dashboard: die erste der beiden IDs in der Skriptadresse.",
+        "adm_subtitle": "Die Chat-Blase auf jeder Seite. Sie wird erst geladen, nachdem ein Besucher Cookies akzeptiert hat, weil sie selbst welche setzt.",
+        "adm_title": "Live-Chat",
+        "adm_widgetId": "Widget-ID",
+        "adm_widgetIdDesc": "Die zweite. Ist eine der beiden IDs leer, wird gar kein Chat geladen.",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "Ein Live-Chat-Widget auf jeder Seite, bereitgestellt von Tawk.to",
+        "module_tawkto-chat_name": "Tawk.to-Chat",
+        "settings_tawkto-chat": "Tawk.to Live-Chat",
+        "settings_tawkto-chat_description": "Die Chat-Blase, über die Besucher mit dir sprechen."
+      }
+    },
+    "es": {
+      "tawktoChat": {
+        "adm_propertyId": "ID de propiedad",
+        "adm_propertyIdDesc": "Del código del widget de tu panel: el primero de los dos ID de la dirección del script.",
+        "adm_subtitle": "La burbuja de chat en todas las páginas. Solo se carga cuando un visitante acepta las cookies, porque el chat instala las suyas.",
+        "adm_title": "Chat en vivo",
+        "adm_widgetId": "ID del widget",
+        "adm_widgetIdDesc": "El segundo. Si dejas cualquiera de los dos vacío, no se carga ningún chat.",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "Un widget de chat en vivo en todas las páginas, servido por Tawk.to",
+        "module_tawkto-chat_name": "Chat de Tawk.to",
+        "settings_tawkto-chat": "Chat en vivo de Tawk.to",
+        "settings_tawkto-chat_description": "La burbuja de chat con la que los visitantes te escriben."
+      }
+    },
+    "et": {
+      "tawktoChat": {
+        "adm_propertyId": "Property ID",
+        "adm_propertyIdDesc": "Vidinakoodist sinu töölaual: kahest ID-st esimene, see, mis on skripti aadressis.",
+        "adm_subtitle": "Vestlusmull igal lehel. See laadib ennast alles pärast seda, kui külastaja on küpsised nõustunud, sest see seab oma küpsised.",
+        "adm_title": "Live-vestlus",
+        "adm_widgetId": "Vidina ID",
+        "adm_widgetIdDesc": "Teine ID. Kui jätad kumbki tühjaks, ei laadita vestlust üldse.",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "Live-vestlusvidin igal lehel, mida pakub Tawk.to",
+        "module_tawkto-chat_name": "Tawk.to vestlus",
+        "settings_tawkto-chat": "Tawk.to live-vestlus",
+        "settings_tawkto-chat_description": "Vestlusmull, mille kaudu külastajad sinuga suhtlevad."
+      }
+    },
+    "fr": {
+      "tawktoChat": {
+        "adm_propertyId": "ID de propriété",
+        "adm_propertyIdDesc": "À trouver dans le code du widget sur votre tableau de bord : le premier des deux identifiants dans l’adresse du script.",
+        "adm_subtitle": "La bulle de chat présente sur chaque page. Elle ne se charge qu’une fois que le visiteur a accepté les cookies, car elle en dépose elle-même.",
+        "adm_title": "Chat en direct",
+        "adm_widgetId": "ID du widget",
+        "adm_widgetIdDesc": "Le second. Si l’un des deux reste vide, aucun chat n’est chargé.",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "Un widget de chat en direct sur chaque page, fourni par Tawk.to",
+        "module_tawkto-chat_name": "Chat Tawk.to",
+        "settings_tawkto-chat": "Chat en direct Tawk.to",
+        "settings_tawkto-chat_description": "La bulle de chat grâce à laquelle les visiteurs vous écrivent."
+      }
+    },
+    "it": {
+      "tawktoChat": {
+        "adm_propertyId": "ID proprietà",
+        "adm_propertyIdDesc": "Dal codice del widget nella tua dashboard: il primo dei due ID nell’indirizzo dello script.",
+        "adm_subtitle": "La bolla di chat presente su ogni pagina. Si carica solo dopo che il visitatore accetta i cookie, perché ne imposta uno proprio.",
+        "adm_title": "Chat dal vivo",
+        "adm_widgetId": "ID widget",
+        "adm_widgetIdDesc": "Il secondo. Se ne lasci vuoto uno, non viene caricata alcuna chat.",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "Un widget di chat dal vivo su ogni pagina, fornito da Tawk.to",
+        "module_tawkto-chat_name": "Tawk.to Chat",
+        "settings_tawkto-chat": "Tawk.to Chat dal vivo",
+        "settings_tawkto-chat_description": "La bolla di chat con cui i visitatori ti scrivono."
+      }
+    },
+    "pl": {
+      "tawktoChat": {
+        "adm_propertyId": "ID właściwości",
+        "adm_propertyIdDesc": "Z kodu widżetu na Twoim panelu: pierwsze z dwóch ID w adresie skryptu.",
+        "adm_subtitle": "Dymek czatu na każdej stronie. Ładuje się dopiero wtedy, gdy odwiedzający zaakceptuje pliki cookies, bo sam ustawia własne.",
+        "adm_title": "Czat na żywo",
+        "adm_widgetId": "ID widżetu",
+        "adm_widgetIdDesc": "Drugie ID. Jeśli którekolwiek z pól zostanie puste, czat w ogóle się nie załaduje.",
+        "perm_manage": "Zarządzanie"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "Czat na żywo na każdej stronie, obsługiwany przez Tawk.to",
+        "module_tawkto-chat_name": "Tawk.to Chat",
+        "settings_tawkto-chat": "Czat na żywo Tawk.to",
+        "settings_tawkto-chat_description": "Dymek czatu, przez który odwiedzający rozmawiają z Tobą."
+      }
+    },
+    "pt": {
+      "tawktoChat": {
+        "adm_propertyId": "ID da propriedade",
+        "adm_propertyIdDesc": "Do código do widget no seu painel: o primeiro dos dois IDs no endereço do script.",
+        "adm_subtitle": "O balão de chat em todas as páginas. Ele só é carregado depois que o visitante aceita os cookies, porque define cookies próprios.",
+        "adm_title": "Chat ao vivo",
+        "adm_widgetId": "ID do widget",
+        "adm_widgetIdDesc": "O segundo. Se deixar qualquer um dos dois vazio, nenhum chat é carregado.",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "Um widget de chat ao vivo em todas as páginas, fornecido pelo Tawk.to",
+        "module_tawkto-chat_name": "Tawk.to Chat",
+        "settings_tawkto-chat": "Chat ao vivo Tawk.to",
+        "settings_tawkto-chat_description": "O balão de chat por meio do qual os visitantes falam com você."
+      }
+    },
+    "ru": {
+      "tawktoChat": {
+        "adm_propertyId": "ID ресурса",
+        "adm_propertyIdDesc": "Из кода виджета на вашей панели: первый из двух ID в адресе скрипта.",
+        "adm_subtitle": "Чат-кнопка на каждой странице. Она загружается, только когда посетитель принимает cookie, так как сама устанавливает свои.",
+        "adm_title": "Живой чат",
+        "adm_widgetId": "ID виджета",
+        "adm_widgetIdDesc": "Второй ID. Если оставить любое из полей пустым, чат не загружается вовсе.",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "Виджет живого чата на каждой странице, работающий на Tawk.to",
+        "module_tawkto-chat_name": "Чат Tawk.to",
+        "settings_tawkto-chat": "Живой чат Tawk.to",
+        "settings_tawkto-chat_description": "Кнопка чата, через которую посетители пишут вам."
+      }
+    },
+    "zh": {
+      "tawktoChat": {
+        "adm_propertyId": "Property ID",
+        "adm_propertyIdDesc": "来自仪表盘上小部件代码：脚本地址中前面的那个 ID。",
+        "adm_subtitle": "每个页面上的聊天气泡。访客接受 Cookie 后才会加载，因为它会设置自己的 Cookie。",
+        "adm_title": "在线聊天",
+        "adm_widgetId": "Widget ID",
+        "adm_widgetIdDesc": "后面的那个 ID。任一项留空，都不会加载任何聊天。",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_tawkto-chat_description": "每个页面上的在线聊天小部件，由 Tawk.to 提供",
+        "module_tawkto-chat_name": "Tawk.to 在线聊天",
+        "settings_tawkto-chat": "Tawk.to 在线聊天",
+        "settings_tawkto-chat_description": "访客与你交谈所用的聊天气泡。"
+      }
     }
   },
   "permissions": [

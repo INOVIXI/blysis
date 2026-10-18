@@ -229,7 +229,7 @@ describe("the canonical tag", () => {
     });
 
     it("says nothing for a locale this site does not serve", async () => {
-        expect((await buildPageMeta({ title: "Store", url: "/store", locale: "de" })).alternates).toBeUndefined();
+        expect((await buildPageMeta({ title: "Store", url: "/store", locale: "ja" })).alternates).toBeUndefined();
         expect((await buildPageMeta({ title: "Store", url: "/store", locale: "" })).alternates).toBeUndefined();
     });
 
