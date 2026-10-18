@@ -682,7 +682,7 @@ describe("password reset mail", () => {
     it("falls back to English for an unknown locale", async () => {
         const { sendPasswordResetEmail } = await loadWithProvider({ SITE_NAME: "Acme" });
 
-        await sendPasswordResetEmail("user@example.com", "https://app.test/r?t=1", "de");
+        await sendPasswordResetEmail("user@example.com", "https://app.test/r?t=1", "ja");
 
         expect(lastSend().subject).toBe("Reset your Acme password");
     });

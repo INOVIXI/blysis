@@ -117,6 +117,236 @@
         "settings_paytr-gateway": "PayTR",
         "settings_paytr-gateway_description": "PayTR satıcı kimlik bilgileri ve modu."
       }
+    },
+    "az": {
+      "paytrGateway": {
+        "adm_merchantId": "Merchant ID",
+        "adm_merchantIdDesc": "PayTR idarə panelindən.",
+        "adm_merchantKey": "Merchant Key",
+        "adm_merchantKeyDesc": "PayTR idarə panelindən.",
+        "adm_merchantSalt": "Merchant Salt",
+        "adm_merchantSaltDesc": "PayTR idarə panelindən. PayTR bildiriş ünvanını /api/v1/paytr/callback yönləndirin.",
+        "adm_sandbox": "Sınaq rejimi",
+        "adm_sandboxDesc": "PayTR sınaq mühitindən istifadə etmək üçün true təyin edin.",
+        "adm_subtitle": "PayTR ilə ödənişləri qəbul etmək üçün açarlar.",
+        "adm_title": "PayTR parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "menu_paytr-gateway": "PayTR şlüzü",
+        "menu_paytr-gateway_paytr_settings": "PayTR parametrləri",
+        "module_paytr-gateway_name": "PayTR ödəniş şlüzü",
+        "module_paytr-gateway_description": "PayTR vasitəsilə Türkiyə kartları, taksit və bank köçürməsi ilə ödənişləri qəbul edin",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "PayTR merchant etimadnamələri və rejimi."
+      }
+    },
+    "de": {
+      "paytrGateway": {
+        "adm_merchantId": "Händler-ID",
+        "adm_merchantIdDesc": "Aus deinem PayTR-Dashboard.",
+        "adm_merchantKey": "Händlerschlüssel",
+        "adm_merchantKeyDesc": "Aus deinem PayTR-Dashboard.",
+        "adm_merchantSalt": "Händler-Salt",
+        "adm_merchantSaltDesc": "Aus deinem PayTR-Dashboard. Trage für die PayTR-Benachrichtigungs-URL /api/v1/paytr/callback ein.",
+        "adm_sandbox": "Sandbox-Modus",
+        "adm_sandboxDesc": "Auf true setzen, um die PayTR-Testumgebung zu nutzen.",
+        "adm_subtitle": "Schlüssel für Zahlungen über PayTR.",
+        "adm_title": "PayTR-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "menu_paytr-gateway": "PayTR-Gateway",
+        "menu_paytr-gateway_paytr_settings": "PayTR-Einstellungen",
+        "module_paytr-gateway_name": "PayTR-Zahlungs-Gateway",
+        "module_paytr-gateway_description": "Türkische Karten-, Ratenzahlungs- und Überweisungszahlungen über PayTR annehmen",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "PayTR-Händlerdaten und Modus."
+      }
+    },
+    "es": {
+      "paytrGateway": {
+        "adm_merchantId": "ID de comerciante",
+        "adm_merchantIdDesc": "Desde tu panel de PayTR.",
+        "adm_merchantKey": "Clave de comerciante",
+        "adm_merchantKeyDesc": "Desde tu panel de PayTR.",
+        "adm_merchantSalt": "Salt de comerciante",
+        "adm_merchantSaltDesc": "Desde tu panel de PayTR. Apunta la URL de notificación de PayTR a /api/v1/paytr/callback.",
+        "adm_sandbox": "Modo sandbox",
+        "adm_sandboxDesc": "Ponlo en true para usar el entorno de pruebas de PayTR.",
+        "adm_subtitle": "Claves para cobrar pagos a través de PayTR.",
+        "adm_title": "Ajustes de PayTR",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "menu_paytr-gateway": "Pasarela de PayTR",
+        "menu_paytr-gateway_paytr_settings": "Ajustes de PayTR",
+        "module_paytr-gateway_name": "Pasarela de pago de PayTR",
+        "module_paytr-gateway_description": "Acepta pagos turcos con tarjeta, a plazos y por transferencia bancaria a través de PayTR",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "Credenciales de comerciante y modo de PayTR."
+      }
+    },
+    "et": {
+      "paytrGateway": {
+        "adm_merchantId": "Kaupmehe ID",
+        "adm_merchantIdDesc": "Leiad selle oma PayTRi töölaualt.",
+        "adm_merchantKey": "Kaupmehe võti",
+        "adm_merchantKeyDesc": "Leiad selle oma PayTRi töölaualt.",
+        "adm_merchantSalt": "Kaupmehe sool",
+        "adm_merchantSaltDesc": "Leiad selle oma PayTRi töölaualt. Suuna PayTRi teavituse URL aadressile /api/v1/paytr/callback.",
+        "adm_sandbox": "Testirežiim",
+        "adm_sandboxDesc": "Määra väärtuseks true, et kasutada PayTRi testkeskkonda.",
+        "adm_subtitle": "Võtmed maksete vastuvõtmiseks PayTRi kaudu.",
+        "adm_title": "PayTRi seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "menu_paytr-gateway": "PayTRi värav",
+        "menu_paytr-gateway_paytr_settings": "PayTRi seaded",
+        "module_paytr-gateway_name": "PayTRi maksevärav",
+        "module_paytr-gateway_description": "Võta vastu Türgi kaardi-, osamakse- ja pangaülekandemakseid PayTRi kaudu",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "PayTRi kaupmehe volitused ja režiim."
+      }
+    },
+    "fr": {
+      "paytrGateway": {
+        "adm_merchantId": "ID marchand",
+        "adm_merchantIdDesc": "Depuis votre tableau de bord PayTR.",
+        "adm_merchantKey": "Clé marchande",
+        "adm_merchantKeyDesc": "Depuis votre tableau de bord PayTR.",
+        "adm_merchantSalt": "Sel marchand",
+        "adm_merchantSaltDesc": "Depuis votre tableau de bord PayTR. Renseignez l’URL de notification PayTR sur /api/v1/paytr/callback.",
+        "adm_sandbox": "Mode bac à sable",
+        "adm_sandboxDesc": "Mettre sur true pour utiliser l’environnement de test PayTR.",
+        "adm_subtitle": "Clés pour encaisser les paiements via PayTR.",
+        "adm_title": "Paramètres PayTR",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "menu_paytr-gateway": "Passerelle PayTR",
+        "menu_paytr-gateway_paytr_settings": "Paramètres PayTR",
+        "module_paytr-gateway_name": "Passerelle de paiement PayTR",
+        "module_paytr-gateway_description": "Acceptez les paiements par carte turque, en plusieurs fois et par virement via PayTR",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "Identifiants marchands et mode PayTR."
+      }
+    },
+    "it": {
+      "paytrGateway": {
+        "adm_merchantId": "ID esercente",
+        "adm_merchantIdDesc": "Dalla tua dashboard PayTR.",
+        "adm_merchantKey": "Chiave esercente",
+        "adm_merchantKeyDesc": "Dalla tua dashboard PayTR.",
+        "adm_merchantSalt": "Salt esercente",
+        "adm_merchantSaltDesc": "Dalla tua dashboard PayTR. Imposta l’URL di notifica PayTR su /api/v1/paytr/callback.",
+        "adm_sandbox": "Modalità sandbox",
+        "adm_sandboxDesc": "Imposta su true per usare l’ambiente di test PayTR.",
+        "adm_subtitle": "Chiavi per accettare pagamenti tramite PayTR.",
+        "adm_title": "Impostazioni PayTR",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "menu_paytr-gateway": "Gateway PayTR",
+        "menu_paytr-gateway_paytr_settings": "Impostazioni PayTR",
+        "module_paytr-gateway_name": "Gateway di pagamento PayTR",
+        "module_paytr-gateway_description": "Accetta pagamenti con carte turche, rate e bonifico tramite PayTR",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "Credenziali esercente e modalità di PayTR."
+      }
+    },
+    "pl": {
+      "paytrGateway": {
+        "adm_merchantId": "ID sprzedawcy",
+        "adm_merchantIdDesc": "Z panelu PayTR.",
+        "adm_merchantKey": "Klucz sprzedawcy",
+        "adm_merchantKeyDesc": "Z panelu PayTR.",
+        "adm_merchantSalt": "Sól sprzedawcy",
+        "adm_merchantSaltDesc": "Z panelu PayTR. Ustaw adres powiadomień PayTR na /api/v1/paytr/callback.",
+        "adm_sandbox": "Tryb testowy",
+        "adm_sandboxDesc": "Ustaw na true, aby używać środowiska testowego PayTR.",
+        "adm_subtitle": "Klucze do przyjmowania płatności przez PayTR.",
+        "adm_title": "Ustawienia PayTR",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "menu_paytr-gateway": "Bramka PayTR",
+        "menu_paytr-gateway_paytr_settings": "Ustawienia PayTR",
+        "module_paytr-gateway_name": "Bramka płatności PayTR",
+        "module_paytr-gateway_description": "Przyjmuj tureckie płatności kartą, ratalne i przelewy bankowe przez PayTR",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "Dane sprzedawcy PayTR i tryb pracy."
+      }
+    },
+    "pt": {
+      "paytrGateway": {
+        "adm_merchantId": "ID do lojista",
+        "adm_merchantIdDesc": "Do seu painel do PayTR.",
+        "adm_merchantKey": "Chave do lojista",
+        "adm_merchantKeyDesc": "Do seu painel do PayTR.",
+        "adm_merchantSalt": "Salt do lojista",
+        "adm_merchantSaltDesc": "Do seu painel do PayTR. Aponte a URL de notificação do PayTR para /api/v1/paytr/callback.",
+        "adm_sandbox": "Modo sandbox",
+        "adm_sandboxDesc": "Defina como true para usar o ambiente de testes do PayTR.",
+        "adm_subtitle": "Chaves para receber pagamentos pelo PayTR.",
+        "adm_title": "Configurações do PayTR",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "menu_paytr-gateway": "Gateway PayTR",
+        "menu_paytr-gateway_paytr_settings": "Configurações do PayTR",
+        "module_paytr-gateway_name": "Gateway de pagamento PayTR",
+        "module_paytr-gateway_description": "Receba pagamentos turcos com cartão, parcelado e transferência bancária pelo PayTR",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "Credenciais e modo do lojista no PayTR."
+      }
+    },
+    "ru": {
+      "paytrGateway": {
+        "adm_merchantId": "ID мерчанта",
+        "adm_merchantIdDesc": "Из панели управления PayTR.",
+        "adm_merchantKey": "Merchant Key",
+        "adm_merchantKeyDesc": "Из панели управления PayTR.",
+        "adm_merchantSalt": "Merchant Salt",
+        "adm_merchantSaltDesc": "Из панели управления PayTR. Укажите в качестве URL уведомлений PayTR адрес /api/v1/paytr/callback.",
+        "adm_sandbox": "Режим песочницы",
+        "adm_sandboxDesc": "Укажите true, чтобы использовать тестовую среду PayTR.",
+        "adm_subtitle": "Ключи для приема платежей через PayTR.",
+        "adm_title": "Настройки PayTR",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "menu_paytr-gateway": "Шлюз PayTR",
+        "menu_paytr-gateway_paytr_settings": "Настройки PayTR",
+        "module_paytr-gateway_name": "Платежный шлюз PayTR",
+        "module_paytr-gateway_description": "Принимайте через PayTR турецкие карты, платежи в рассрочку и банковские переводы",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "Учетные данные мерчанта PayTR и режим."
+      }
+    },
+    "zh": {
+      "paytrGateway": {
+        "adm_merchantId": "商户 ID",
+        "adm_merchantIdDesc": "来自你的 PayTR 控制台。",
+        "adm_merchantKey": "商户密钥",
+        "adm_merchantKeyDesc": "来自你的 PayTR 控制台。",
+        "adm_merchantSalt": "商户盐值",
+        "adm_merchantSaltDesc": "来自你的 PayTR 控制台。请将 PayTR 通知 URL 设置为 /api/v1/paytr/callback。",
+        "adm_sandbox": "沙盒模式",
+        "adm_sandboxDesc": "设置为 true 以使用 PayTR 测试环境。",
+        "adm_subtitle": "用于通过 PayTR 收款的密钥。",
+        "adm_title": "PayTR 设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "menu_paytr-gateway": "PayTR 支付网关",
+        "menu_paytr-gateway_paytr_settings": "PayTR 设置",
+        "module_paytr-gateway_name": "PayTR 支付网关",
+        "module_paytr-gateway_description": "通过 PayTR 接受土耳其银行卡、分期付款和银行转账",
+        "settings_paytr-gateway": "PayTR",
+        "settings_paytr-gateway_description": "PayTR 商户凭据和模式。"
+      }
     }
   },
   "permissions": [

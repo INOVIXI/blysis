@@ -1,0 +1,13 @@
+{
+  "myModule": {
+    "title": "Mənim modulum",
+    "description": "Blysis üçün nümunə modul",
+    "items": "Elementlər",
+    "noItems": "Element tapılmadı.",
+    "createItem": "Element yarat",
+    "editItem": "Elementi redaktə et",
+    "deleteItem": "Elementi sil",
+    "itemTitle": "Başlıq",
+    "itemDescription": "Təsvir"
+  }
+}

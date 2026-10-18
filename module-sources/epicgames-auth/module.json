@@ -73,6 +73,156 @@
         "settings_epicgames-auth": "Epic Games OAuth",
         "settings_epicgames-auth_description": "Epic Games uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "epicgamesAuth": {
+        "adm_emailNote": "Epic Games e-poçt ünvanı paylaşmır, ona görə bu üsulla yaradılan hesab heç vaxt məktub ala bilməyən müvəqqəti ünvan alır. Bu istifadəçilərdən profillərində real ünvan təyin etmələrini xahiş edin.",
+        "adm_scopeNote": "Epic Games məhsulu basic_profile icazəsinə ehtiyac duyur və yuxarıdakı yönləndirmə URL-i eyni məhsul üzrə Developer Portal-da qeydiyyatdan keçməlidir.",
+        "adm_subtitle": "Saytınız üçün Epic Games OAuth ilə daxil olmanı qurun.",
+        "adm_title": "Epic Games ilə giriş parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_epicgames-auth_name": "Epic Games ilə giriş",
+        "module_epicgames-auth_description": "İstifadəçilərin Epic Games hesabları ilə daxil olmasına icazə verin",
+        "settings_epicgames-auth": "Epic Games OAuth",
+        "settings_epicgames-auth_description": "Epic Games tətbiqinin etimadnamələri."
+      }
+    },
+    "de": {
+      "epicgamesAuth": {
+        "adm_emailNote": "Epic Games teilt keine E-Mail-Adresse. Ein so erstelltes Konto bekommt daher eine Platzhalteradresse, die nie Post erhalten kann. Bitte diese Mitglieder, in ihrem Profil eine echte Adresse festzulegen.",
+        "adm_scopeNote": "Das Epic-Games-Produkt braucht den Scope basic_profile, und die oben angegebene Weiterleitungs-URL muss im Developer Portal beim selben Produkt eingetragen sein.",
+        "adm_subtitle": "Richte die Anmeldung per Epic-Games-OAuth für deine Seite ein.",
+        "adm_title": "Einstellungen der Epic-Games-Anmeldung",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_epicgames-auth_name": "Epic-Games-Anmeldung",
+        "module_epicgames-auth_description": "Mitgliedern erlauben, sich mit ihrem Epic-Games-Konto anzumelden",
+        "settings_epicgames-auth": "Epic Games OAuth",
+        "settings_epicgames-auth_description": "Zugangsdaten der Epic-Games-Anwendung."
+      }
+    },
+    "es": {
+      "epicgamesAuth": {
+        "adm_emailNote": "Epic Games no comparte una dirección de correo, así que una cuenta creada de este modo recibe una dirección provisional que nunca puede recibir correos. Pide a estos usuarios que pongan una dirección real en su perfil.",
+        "adm_scopeNote": "El producto de Epic Games necesita el ámbito basic_profile, y la URL de redirección indicada arriba debe estar registrada en el mismo producto en el Portal para desarrolladores.",
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de Epic Games para tu sitio.",
+        "adm_title": "Ajustes del inicio de sesión con Epic Games",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_epicgames-auth_name": "Inicio de sesión con Epic Games",
+        "module_epicgames-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de Epic Games",
+        "settings_epicgames-auth": "OAuth de Epic Games",
+        "settings_epicgames-auth_description": "Credenciales de la aplicación de Epic Games."
+      }
+    },
+    "et": {
+      "epicgamesAuth": {
+        "adm_emailNote": "Epic Games ei jaga e-posti aadressi, seega saab sel viisil loodud konto kohatäite aadressi, mis ei saa kunagi kirju vastu võtta. Palu neil kasutajatel määrata oma profiilis päris aadress.",
+        "adm_scopeNote": "Epic Gamesi toode vajab basic_profile-ulatust ja ülal olev suunamisaadress tuleb registreerida samal tootel arendajaportaalis.",
+        "adm_subtitle": "Seadista saidi jaoks Epic Gamesi OAuth-sisselogimine.",
+        "adm_title": "Epic Gamesi sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_epicgames-auth_name": "Epic Gamesi sisselogimine",
+        "module_epicgames-auth_description": "Luba kasutajatel sisse logida oma Epic Gamesi kontoga",
+        "settings_epicgames-auth": "Epic Gamesi OAuth",
+        "settings_epicgames-auth_description": "Epic Gamesi rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "epicgamesAuth": {
+        "adm_emailNote": "Epic Games ne transmet aucune adresse e-mail : un compte créé ainsi reçoit une adresse provisoire qui ne peut jamais recevoir de messages. Demandez à ces membres d’indiquer une adresse réelle dans leur profil.",
+        "adm_scopeNote": "Le produit Epic Games doit disposer de la permission basic_profile, et l’URL de redirection ci-dessus doit être enregistrée sur ce même produit dans le Developer Portal.",
+        "adm_subtitle": "Configurer la connexion OAuth Epic Games pour votre site.",
+        "adm_title": "Paramètres de connexion Epic Games",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_epicgames-auth_name": "Connexion Epic Games",
+        "module_epicgames-auth_description": "Permettre aux membres de se connecter avec leur compte Epic Games",
+        "settings_epicgames-auth": "OAuth Epic Games",
+        "settings_epicgames-auth_description": "Identifiants de l’application Epic Games."
+      }
+    },
+    "it": {
+      "epicgamesAuth": {
+        "adm_emailNote": "Epic Games non condivide un indirizzo email, quindi un account creato in questo modo riceve un indirizzo segnaposto che non può ricevere posta. Chiedi a questi membri di impostare un indirizzo reale nel proprio profilo.",
+        "adm_scopeNote": "Il prodotto Epic Games richiede lo scope basic_profile, e l’URL di reindirizzamento qui sopra deve essere registrato sullo stesso prodotto nel Developer Portal.",
+        "adm_subtitle": "Configura l’accesso OAuth con Epic Games per il tuo sito.",
+        "adm_title": "Impostazioni accesso con Epic Games",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_epicgames-auth_name": "Accesso con Epic Games",
+        "module_epicgames-auth_description": "Consenti ai membri di accedere con il proprio account Epic Games",
+        "settings_epicgames-auth": "OAuth di Epic Games",
+        "settings_epicgames-auth_description": "Credenziali dell’applicazione Epic Games."
+      }
+    },
+    "pl": {
+      "epicgamesAuth": {
+        "adm_emailNote": "Epic Games nie udostępnia adresu e-mail, więc konto założone tą drogą dostaje zastępczy adres, który nigdy nie odbierze poczty. Poproś tych użytkowników, aby ustawili prawdziwy adres w swoim profilu.",
+        "adm_scopeNote": "Produkt Epic Games potrzebuje zakresu basic_profile, a adres przekierowania podany powyżej musi być zarejestrowany dla tego samego produktu w Developer Portal.",
+        "adm_subtitle": "Skonfiguruj logowanie przez Epic Games OAuth na swojej stronie.",
+        "adm_title": "Ustawienia logowania przez Epic Games",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_epicgames-auth_name": "Logowanie przez Epic Games",
+        "module_epicgames-auth_description": "Pozwól użytkownikom logować się kontem Epic Games",
+        "settings_epicgames-auth": "OAuth Epic Games",
+        "settings_epicgames-auth_description": "Dane aplikacji Epic Games."
+      }
+    },
+    "pt": {
+      "epicgamesAuth": {
+        "adm_emailNote": "A Epic Games não compartilha endereço de e-mail, então uma conta criada dessa forma recebe um endereço provisório que nunca recebe mensagens. Peça a esses usuários que definam um endereço real no perfil.",
+        "adm_scopeNote": "O produto da Epic Games precisa do escopo basic_profile, e a URL de redirecionamento acima precisa estar registrada no mesmo produto no Developer Portal.",
+        "adm_subtitle": "Configure o login OAuth da Epic Games no seu site.",
+        "adm_title": "Configurações do login da Epic Games",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_epicgames-auth_name": "Login da Epic Games",
+        "module_epicgames-auth_description": "Permita que os usuários entrem com a conta da Epic Games",
+        "settings_epicgames-auth": "OAuth da Epic Games",
+        "settings_epicgames-auth_description": "Credenciais do aplicativo da Epic Games."
+      }
+    },
+    "ru": {
+      "epicgamesAuth": {
+        "adm_emailNote": "Epic Games не передает адрес электронной почты, поэтому учетная запись, созданная таким способом, получает заглушку, на которую письма не придут. Попросите этих участников указать настоящий адрес в профиле.",
+        "adm_scopeNote": "Продукту Epic Games нужна область доступа basic_profile, а адрес перенаправления выше должен быть зарегистрирован для того же продукта в Developer Portal.",
+        "adm_subtitle": "Настройте вход через OAuth Epic Games для вашего сайта.",
+        "adm_title": "Настройки входа через Epic Games",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_epicgames-auth_name": "Вход через Epic Games",
+        "module_epicgames-auth_description": "Позвольте участникам входить через свою учетную запись Epic Games",
+        "settings_epicgames-auth": "OAuth Epic Games",
+        "settings_epicgames-auth_description": "Учетные данные приложения Epic Games."
+      }
+    },
+    "zh": {
+      "epicgamesAuth": {
+        "adm_emailNote": "Epic Games 不提供邮箱地址，因此以此方式创建的账户会获得一个无法接收邮件的占位地址。请让这些用户在个人资料中设置真实的邮箱地址。",
+        "adm_scopeNote": "Epic Games 产品需要 basic_profile 权限范围，并且上方的重定向 URL 必须在开发者门户中登记到同一个产品上。",
+        "adm_subtitle": "为你的站点设置 Epic Games OAuth 登录。",
+        "adm_title": "Epic Games 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_epicgames-auth_name": "Epic Games 登录",
+        "module_epicgames-auth_description": "允许用户使用 Epic Games 账户登录",
+        "settings_epicgames-auth": "Epic Games OAuth",
+        "settings_epicgames-auth_description": "Epic Games 应用凭据。"
+      }
     }
   },
   "permissions": [

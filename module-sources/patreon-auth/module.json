@@ -65,6 +65,136 @@
         "settings_patreon-auth": "Patreon OAuth",
         "settings_patreon-auth_description": "Patreon uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "patreonAuth": {
+        "adm_subtitle": "Saytınız üçün Patreon OAuth ilə daxil olmanı quraşdırın.",
+        "adm_title": "Patreon ilə daxil olma parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_patreon-auth_name": "Patreon ilə daxil olma",
+        "module_patreon-auth_description": "İstifadəçilərə Patreon hesabları ilə daxil olmağa icazə verin",
+        "settings_patreon-auth": "Patreon OAuth",
+        "settings_patreon-auth_description": "Patreon tətbiq etimadnamələri."
+      }
+    },
+    "de": {
+      "patreonAuth": {
+        "adm_subtitle": "Richte die Patreon-OAuth-Anmeldung für deine Seite ein.",
+        "adm_title": "Patreon-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_patreon-auth_name": "Patreon-Login",
+        "module_patreon-auth_description": "Mitgliedern erlauben, sich mit ihrem Patreon-Konto anzumelden",
+        "settings_patreon-auth": "Patreon OAuth",
+        "settings_patreon-auth_description": "Zugangsdaten der Patreon-Anwendung."
+      }
+    },
+    "es": {
+      "patreonAuth": {
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de Patreon en tu sitio.",
+        "adm_title": "Ajustes del inicio de sesión con Patreon",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_patreon-auth_name": "Inicio de sesión con Patreon",
+        "module_patreon-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de Patreon",
+        "settings_patreon-auth": "OAuth de Patreon",
+        "settings_patreon-auth_description": "Credenciales de la aplicación de Patreon."
+      }
+    },
+    "et": {
+      "patreonAuth": {
+        "adm_subtitle": "Seadista oma saidi jaoks Patreoni OAuth-sisselogimine.",
+        "adm_title": "Patreoni sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_patreon-auth_name": "Patreoni sisselogimine",
+        "module_patreon-auth_description": "Luba kasutajatel sisse logida oma Patreoni kontoga",
+        "settings_patreon-auth": "Patreoni OAuth",
+        "settings_patreon-auth_description": "Patreoni rakenduse volitused."
+      }
+    },
+    "fr": {
+      "patreonAuth": {
+        "adm_subtitle": "Configurez la connexion OAuth Patreon pour votre site.",
+        "adm_title": "Paramètres de connexion Patreon",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_patreon-auth_name": "Connexion Patreon",
+        "module_patreon-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Patreon",
+        "settings_patreon-auth": "OAuth Patreon",
+        "settings_patreon-auth_description": "Identifiants de l’application Patreon."
+      }
+    },
+    "it": {
+      "patreonAuth": {
+        "adm_subtitle": "Configura l’accesso con Patreon OAuth per il tuo sito.",
+        "adm_title": "Impostazioni accesso Patreon",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_patreon-auth_name": "Accesso con Patreon",
+        "module_patreon-auth_description": "Consenti ai membri di accedere con il proprio account Patreon",
+        "settings_patreon-auth": "Patreon OAuth",
+        "settings_patreon-auth_description": "Credenziali dell’applicazione Patreon."
+      }
+    },
+    "pl": {
+      "patreonAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie przez OAuth Patreon dla swojej strony.",
+        "adm_title": "Ustawienia logowania Patreon",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_patreon-auth_name": "Logowanie przez Patreon",
+        "module_patreon-auth_description": "Pozwól użytkownikom logować się przy użyciu konta Patreon",
+        "settings_patreon-auth": "Patreon OAuth",
+        "settings_patreon-auth_description": "Dane aplikacji Patreon."
+      }
+    },
+    "pt": {
+      "patreonAuth": {
+        "adm_subtitle": "Configure o login com OAuth do Patreon para o seu site.",
+        "adm_title": "Configurações de login do Patreon",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_patreon-auth_name": "Login com Patreon",
+        "module_patreon-auth_description": "Permite que usuários entrem com a conta do Patreon",
+        "settings_patreon-auth": "Patreon OAuth",
+        "settings_patreon-auth_description": "Credenciais do aplicativo do Patreon."
+      }
+    },
+    "ru": {
+      "patreonAuth": {
+        "adm_subtitle": "Настройте вход на сайт через OAuth Patreon.",
+        "adm_title": "Настройки входа через Patreon",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_patreon-auth_name": "Вход через Patreon",
+        "module_patreon-auth_description": "Разрешить пользователям входить с помощью аккаунта Patreon",
+        "settings_patreon-auth": "OAuth Patreon",
+        "settings_patreon-auth_description": "Учетные данные приложения Patreon."
+      }
+    },
+    "zh": {
+      "patreonAuth": {
+        "adm_subtitle": "为你的网站设置 Patreon OAuth 登录。",
+        "adm_title": "Patreon 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_patreon-auth_name": "Patreon 登录",
+        "module_patreon-auth_description": "允许用户使用其 Patreon 账户登录",
+        "settings_patreon-auth": "Patreon OAuth",
+        "settings_patreon-auth_description": "Patreon 应用凭据。"
+      }
     }
   },
   "permissions": [

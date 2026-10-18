@@ -113,6 +113,196 @@
         "settings_mercadopago-gateway": "Mercado Pago",
         "settings_mercadopago-gateway_description": "Mercado Pago erişim anahtarı ve webhook parolası."
       }
+    },
+    "az": {
+      "mercadopagoGateway": {
+        "adm_accessToken": "Giriş tokeni",
+        "adm_accessTokenDesc": "Mercado Pago panelinizdən.",
+        "adm_subtitle": "Mercado Pago vasitəsilə ödənişlər qəbul etmək üçün açarlar.",
+        "adm_title": "Mercado Pago parametrləri",
+        "adm_webhookSecret": "Webhook gizli açarı",
+        "adm_webhookSecretDesc": "Mercado Pago panelinizdən. Mercado Pago bildiriş URL-ni /api/v1/mercadopago/webhook ünvanına yönləndirin.",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "menu_mercadopago-gateway": "Mercado Pago şlüzü",
+        "menu_mercadopago-gateway_mercado_pago_settings": "Mercado Pago parametrləri",
+        "module_mercadopago-gateway_name": "Mercado Pago şlüzü",
+        "module_mercadopago-gateway_description": "Mercado Pago vasitəsilə Latın Amerikasında kart, Pix, boleto və nağd ödənişləri qəbul edin",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Mercado Pago giriş tokeni və webhook gizli açarı."
+      }
+    },
+    "de": {
+      "mercadopagoGateway": {
+        "adm_accessToken": "Access Token",
+        "adm_accessTokenDesc": "Aus deinem Mercado-Pago-Dashboard.",
+        "adm_subtitle": "Schlüssel, um Zahlungen über Mercado Pago anzunehmen.",
+        "adm_title": "Mercado-Pago-Einstellungen",
+        "adm_webhookSecret": "Webhook-Geheimschlüssel",
+        "adm_webhookSecretDesc": "Aus deinem Mercado-Pago-Dashboard. Trage die Benachrichtigungs-URL von Mercado Pago auf /api/v1/mercadopago/webhook ein.",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "menu_mercadopago-gateway": "Mercado-Pago-Gateway",
+        "menu_mercadopago-gateway_mercado_pago_settings": "Mercado-Pago-Einstellungen",
+        "module_mercadopago-gateway_name": "Mercado-Pago-Gateway",
+        "module_mercadopago-gateway_description": "Karten-, Pix-, Boleto- und Barzahlungen in ganz Lateinamerika über Mercado Pago annehmen",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Access Token und Webhook-Geheimschlüssel von Mercado Pago."
+      }
+    },
+    "es": {
+      "mercadopagoGateway": {
+        "adm_accessToken": "Token de acceso",
+        "adm_accessTokenDesc": "Desde tu panel de Mercado Pago.",
+        "adm_subtitle": "Claves para cobrar pagos a través de Mercado Pago.",
+        "adm_title": "Ajustes de Mercado Pago",
+        "adm_webhookSecret": "Secreto del webhook",
+        "adm_webhookSecretDesc": "Desde tu panel de Mercado Pago. Apunta la URL de notificaciones de Mercado Pago a /api/v1/mercadopago/webhook.",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "menu_mercadopago-gateway": "Pasarela Mercado Pago",
+        "menu_mercadopago-gateway_mercado_pago_settings": "Ajustes de Mercado Pago",
+        "module_mercadopago-gateway_name": "Pasarela Mercado Pago",
+        "module_mercadopago-gateway_description": "Acepta pagos con tarjeta, Pix, boleto y efectivo en toda Latinoamérica a través de Mercado Pago",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Token de acceso y secreto del webhook de Mercado Pago."
+      }
+    },
+    "et": {
+      "mercadopagoGateway": {
+        "adm_accessToken": "Juurdepääsužeton",
+        "adm_accessTokenDesc": "Leiad oma Mercado Pago töölaualt.",
+        "adm_subtitle": "Võtmed maksete vastuvõtmiseks Mercado Pago kaudu.",
+        "adm_title": "Mercado Pago seaded",
+        "adm_webhookSecret": "Webhooki saladus",
+        "adm_webhookSecretDesc": "Leiad oma Mercado Pago töölaualt. Suuna Mercado Pago teavituste URL aadressile /api/v1/mercadopago/webhook.",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "menu_mercadopago-gateway": "Mercado Pago maksevärav",
+        "menu_mercadopago-gateway_mercado_pago_settings": "Mercado Pago seaded",
+        "module_mercadopago-gateway_name": "Mercado Pago maksevärav",
+        "module_mercadopago-gateway_description": "Võta Ladina-Ameerikas vastu kaardi-, Pix-, boleto- ja sularahamakseid Mercado Pago kaudu",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Mercado Pago juurdepääsužeton ja webhooki saladus."
+      }
+    },
+    "fr": {
+      "mercadopagoGateway": {
+        "adm_accessToken": "Jeton d’accès",
+        "adm_accessTokenDesc": "Depuis votre tableau de bord Mercado Pago.",
+        "adm_subtitle": "Clés pour encaisser les paiements via Mercado Pago.",
+        "adm_title": "Paramètres Mercado Pago",
+        "adm_webhookSecret": "Secret du webhook",
+        "adm_webhookSecretDesc": "Depuis votre tableau de bord Mercado Pago. Pointez l’URL de notification Mercado Pago vers /api/v1/mercadopago/webhook.",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "menu_mercadopago-gateway": "Passerelle Mercado Pago",
+        "menu_mercadopago-gateway_mercado_pago_settings": "Paramètres Mercado Pago",
+        "module_mercadopago-gateway_name": "Passerelle Mercado Pago",
+        "module_mercadopago-gateway_description": "Encaisser des paiements par carte, Pix, boleto et espèces en Amérique latine via Mercado Pago",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Jeton d’accès Mercado Pago et secret du webhook."
+      }
+    },
+    "it": {
+      "mercadopagoGateway": {
+        "adm_accessToken": "Token di accesso",
+        "adm_accessTokenDesc": "Dalla tua dashboard di Mercado Pago.",
+        "adm_subtitle": "Chiavi per accettare pagamenti tramite Mercado Pago.",
+        "adm_title": "Impostazioni di Mercado Pago",
+        "adm_webhookSecret": "Segreto del webhook",
+        "adm_webhookSecretDesc": "Dalla tua dashboard di Mercado Pago. Punta l’URL di notifica di Mercado Pago a /api/v1/mercadopago/webhook.",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "menu_mercadopago-gateway": "Gateway Mercado Pago",
+        "menu_mercadopago-gateway_mercado_pago_settings": "Impostazioni di Mercado Pago",
+        "module_mercadopago-gateway_name": "Gateway Mercado Pago",
+        "module_mercadopago-gateway_description": "Accetta pagamenti con carta, Pix, boleto e contanti in tutta l’America Latina tramite Mercado Pago",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Token di accesso e segreto del webhook di Mercado Pago."
+      }
+    },
+    "pl": {
+      "mercadopagoGateway": {
+        "adm_accessToken": "Token dostępu",
+        "adm_accessTokenDesc": "Znajdziesz go w panelu Mercado Pago.",
+        "adm_subtitle": "Klucze do przyjmowania płatności przez Mercado Pago.",
+        "adm_title": "Ustawienia Mercado Pago",
+        "adm_webhookSecret": "Sekret webhooka",
+        "adm_webhookSecretDesc": "Znajdziesz go w panelu Mercado Pago. Ustaw adres powiadomień Mercado Pago na /api/v1/mercadopago/webhook.",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "menu_mercadopago-gateway": "Bramka Mercado Pago",
+        "menu_mercadopago-gateway_mercado_pago_settings": "Ustawienia Mercado Pago",
+        "module_mercadopago-gateway_name": "Bramka Mercado Pago",
+        "module_mercadopago-gateway_description": "Przyjmuj płatności kartą, Pix, boleto i gotówką w Ameryce Łacińskiej przez Mercado Pago",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Token dostępu i sekret webhooka Mercado Pago."
+      }
+    },
+    "pt": {
+      "mercadopagoGateway": {
+        "adm_accessToken": "Access Token",
+        "adm_accessTokenDesc": "Obtido no seu painel do Mercado Pago.",
+        "adm_subtitle": "Chaves para receber pagamentos pelo Mercado Pago.",
+        "adm_title": "Configurações do Mercado Pago",
+        "adm_webhookSecret": "Segredo do webhook",
+        "adm_webhookSecretDesc": "Obtido no seu painel do Mercado Pago. Aponte a URL de notificação do Mercado Pago para /api/v1/mercadopago/webhook.",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "menu_mercadopago-gateway": "Gateway Mercado Pago",
+        "menu_mercadopago-gateway_mercado_pago_settings": "Configurações do Mercado Pago",
+        "module_mercadopago-gateway_name": "Gateway Mercado Pago",
+        "module_mercadopago-gateway_description": "Receba pagamentos com cartão, Pix, boleto e dinheiro em espécie na América Latina pelo Mercado Pago",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Access token e segredo do webhook do Mercado Pago."
+      }
+    },
+    "ru": {
+      "mercadopagoGateway": {
+        "adm_accessToken": "Токен доступа",
+        "adm_accessTokenDesc": "Из панели управления Mercado Pago.",
+        "adm_subtitle": "Ключи для приема платежей через Mercado Pago.",
+        "adm_title": "Настройки Mercado Pago",
+        "adm_webhookSecret": "Секрет вебхука",
+        "adm_webhookSecretDesc": "Из панели управления Mercado Pago. Укажите для уведомлений Mercado Pago адрес /api/v1/mercadopago/webhook.",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "menu_mercadopago-gateway": "Шлюз Mercado Pago",
+        "menu_mercadopago-gateway_mercado_pago_settings": "Настройки Mercado Pago",
+        "module_mercadopago-gateway_name": "Шлюз Mercado Pago",
+        "module_mercadopago-gateway_description": "Прием платежей картой, Pix, boleto и наличными по всей Латинской Америке через Mercado Pago",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Токен доступа и секрет вебхука Mercado Pago."
+      }
+    },
+    "zh": {
+      "mercadopagoGateway": {
+        "adm_accessToken": "访问令牌",
+        "adm_accessTokenDesc": "来自你的 Mercado Pago 控制台。",
+        "adm_subtitle": "通过 Mercado Pago 收款所需的密钥。",
+        "adm_title": "Mercado Pago 设置",
+        "adm_webhookSecret": "Webhook 密钥",
+        "adm_webhookSecretDesc": "来自你的 Mercado Pago 控制台。将 Mercado Pago 通知 URL 指向 /api/v1/mercadopago/webhook。",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "menu_mercadopago-gateway": "Mercado Pago 网关",
+        "menu_mercadopago-gateway_mercado_pago_settings": "Mercado Pago 设置",
+        "module_mercadopago-gateway_name": "Mercado Pago 网关",
+        "module_mercadopago-gateway_description": "通过 Mercado Pago 接受拉丁美洲的银行卡、Pix、boleto 和现金付款",
+        "settings_mercadopago-gateway": "Mercado Pago",
+        "settings_mercadopago-gateway_description": "Mercado Pago 访问令牌和 Webhook 密钥。"
+      }
     }
   },
   "permissions": [

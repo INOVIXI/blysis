@@ -93,6 +93,276 @@
         "settings_discord-auth": "Discord OAuth",
         "settings_discord-auth_description": "Discord uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "discordAuth": {
+        "adm_subtitle": "Saytınız üçün Discord OAuth2 ilə daxil olmanı konfiqurasiya edin",
+        "adm_title": "Discord Auth parametrləri",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "İstifadəçi girişi üçün Discord OAuth məlumatlarını konfiqurasiya edin",
+        "disabled": "Discord ilə giriş söndürülüb",
+        "enable": "Discord ilə girişi aktivləşdir",
+        "enabled": "Discord ilə giriş aktivdir",
+        "linkAccount": "Discord hesabını bağla",
+        "perm_manage": "İdarə et",
+        "save": "Parametrləri yadda saxla",
+        "saveError": "Discord OAuth parametrlərini yadda saxlamaq alınmadı",
+        "saved": "Discord OAuth parametrləri uğurla yadda saxlanıldı",
+        "settings": "Discord OAuth parametrləri",
+        "title": "Discord ilə giriş"
+      },
+      "admin": {
+        "title": "Admin paneli",
+        "subtitle": "Platforma parametrlərinizi və məzmununuzu idarə edin",
+        "module_discord-auth_name": "Discord ilə giriş",
+        "module_discord-auth_description": "İstifadəçilərin Discord hesabları ilə daxil olmasına icazə verin",
+        "settings_discord-auth": "Discord OAuth",
+        "settings_discord-auth_description": "Discord tətbiqinin etimadnamələri."
+      }
+    },
+    "de": {
+      "discordAuth": {
+        "adm_subtitle": "Discord-OAuth2-Anmeldung für deine Seite einrichten",
+        "adm_title": "Discord-Auth-Einstellungen",
+        "clientId": "Client-ID",
+        "clientSecret": "Client-Secret",
+        "description": "Discord-OAuth-Zugangsdaten für die Anmeldung von Mitgliedern einrichten",
+        "disabled": "Discord-Anmeldung deaktiviert",
+        "enable": "Discord-Anmeldung aktivieren",
+        "enabled": "Discord-Anmeldung aktiviert",
+        "linkAccount": "Discord-Konto verknüpfen",
+        "perm_manage": "Verwalten",
+        "save": "Einstellungen speichern",
+        "saveError": "Discord-OAuth-Einstellungen konnten nicht gespeichert werden",
+        "saved": "Discord-OAuth-Einstellungen erfolgreich gespeichert",
+        "settings": "Discord-OAuth-Einstellungen",
+        "title": "Discord-Anmeldung"
+      },
+      "admin": {
+        "title": "Admin-Bereich",
+        "subtitle": "Verwalte die Einstellungen und Inhalte deiner Plattform",
+        "module_discord-auth_name": "Discord-Anmeldung",
+        "module_discord-auth_description": "Mitgliedern erlauben, sich mit ihrem Discord-Konto anzumelden",
+        "settings_discord-auth": "Discord OAuth",
+        "settings_discord-auth_description": "Zugangsdaten der Discord-Anwendung."
+      }
+    },
+    "es": {
+      "discordAuth": {
+        "adm_subtitle": "Configura el inicio de sesión con Discord (OAuth2) para tu sitio",
+        "adm_title": "Ajustes de autenticación con Discord",
+        "clientId": "ID de cliente",
+        "clientSecret": "Secreto de cliente",
+        "description": "Configura las credenciales OAuth de Discord para el inicio de sesión de los usuarios",
+        "disabled": "Inicio de sesión con Discord desactivado",
+        "enable": "Activar inicio de sesión con Discord",
+        "enabled": "Inicio de sesión con Discord activado",
+        "linkAccount": "Vincular cuenta de Discord",
+        "perm_manage": "Gestionar",
+        "save": "Guardar ajustes",
+        "saveError": "No se pudieron guardar los ajustes de OAuth de Discord",
+        "saved": "Ajustes de OAuth de Discord guardados correctamente",
+        "settings": "Ajustes de OAuth de Discord",
+        "title": "Inicio de sesión con Discord"
+      },
+      "admin": {
+        "title": "Panel de administración",
+        "subtitle": "Gestiona los ajustes y el contenido de tu plataforma",
+        "module_discord-auth_name": "Inicio de sesión con Discord",
+        "module_discord-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de Discord",
+        "settings_discord-auth": "OAuth de Discord",
+        "settings_discord-auth_description": "Credenciales de la aplicación de Discord."
+      }
+    },
+    "et": {
+      "discordAuth": {
+        "adm_subtitle": "Seadista saidi jaoks Discordi OAuth2 sisselogimine",
+        "adm_title": "Discordi autentimise seaded",
+        "clientId": "Kliendi ID",
+        "clientSecret": "Kliendi saladus",
+        "description": "Seadista kasutajate sisselogimiseks Discordi OAuth-mandaadid",
+        "disabled": "Discordi sisselogimine on keelatud",
+        "enable": "Luba Discordi sisselogimine",
+        "enabled": "Discordi sisselogimine on lubatud",
+        "linkAccount": "Seo Discordi konto",
+        "perm_manage": "Halda",
+        "save": "Salvesta seaded",
+        "saveError": "Discordi OAuth-seadete salvestamine ebaõnnestus",
+        "saved": "Discordi OAuth-seaded salvestati",
+        "settings": "Discordi OAuth-seaded",
+        "title": "Discordi sisselogimine"
+      },
+      "admin": {
+        "title": "Halduspaneel",
+        "subtitle": "Halda oma platvormi seadeid ja sisu",
+        "module_discord-auth_name": "Discordi sisselogimine",
+        "module_discord-auth_description": "Luba kasutajatel sisse logida oma Discordi kontoga",
+        "settings_discord-auth": "Discordi OAuth",
+        "settings_discord-auth_description": "Discordi rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "discordAuth": {
+        "adm_subtitle": "Configurer la connexion OAuth2 avec Discord pour votre site",
+        "adm_title": "Paramètres d’authentification Discord",
+        "clientId": "ID client",
+        "clientSecret": "Secret client",
+        "description": "Configurer les identifiants OAuth Discord pour la connexion des membres",
+        "disabled": "Connexion Discord désactivée",
+        "enable": "Activer la connexion Discord",
+        "enabled": "Connexion Discord activée",
+        "linkAccount": "Lier le compte Discord",
+        "perm_manage": "Gérer",
+        "save": "Enregistrer les paramètres",
+        "saveError": "Échec de l’enregistrement des paramètres OAuth Discord",
+        "saved": "Paramètres OAuth Discord enregistrés",
+        "settings": "Paramètres OAuth Discord",
+        "title": "Connexion Discord"
+      },
+      "admin": {
+        "title": "Panneau d’administration",
+        "subtitle": "Gérez les paramètres et le contenu de votre plateforme",
+        "module_discord-auth_name": "Connexion Discord",
+        "module_discord-auth_description": "Permettre aux membres de se connecter avec leur compte Discord",
+        "settings_discord-auth": "OAuth Discord",
+        "settings_discord-auth_description": "Identifiants de l’application Discord."
+      }
+    },
+    "it": {
+      "discordAuth": {
+        "adm_subtitle": "Configura l’accesso OAuth2 con Discord per il tuo sito",
+        "adm_title": "Impostazioni autenticazione Discord",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "Configura le credenziali OAuth di Discord per l’accesso dei membri",
+        "disabled": "Accesso con Discord disattivato",
+        "enable": "Attiva accesso con Discord",
+        "enabled": "Accesso con Discord attivato",
+        "linkAccount": "Collega account Discord",
+        "perm_manage": "Gestisci",
+        "save": "Salva impostazioni",
+        "saveError": "Salvataggio delle impostazioni OAuth di Discord non riuscito",
+        "saved": "Impostazioni OAuth di Discord salvate con successo",
+        "settings": "Impostazioni OAuth di Discord",
+        "title": "Accesso con Discord"
+      },
+      "admin": {
+        "title": "Pannello di amministrazione",
+        "subtitle": "Gestisci le impostazioni e i contenuti della piattaforma",
+        "module_discord-auth_name": "Accesso con Discord",
+        "module_discord-auth_description": "Consenti ai membri di accedere con il proprio account Discord",
+        "settings_discord-auth": "OAuth di Discord",
+        "settings_discord-auth_description": "Credenziali dell’applicazione Discord."
+      }
+    },
+    "pl": {
+      "discordAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie przez Discord OAuth2 na swojej stronie",
+        "adm_title": "Ustawienia logowania przez Discord",
+        "clientId": "ID klienta",
+        "clientSecret": "Sekret klienta",
+        "description": "Skonfiguruj dane OAuth Discorda do logowania użytkowników",
+        "disabled": "Logowanie przez Discord wyłączone",
+        "enable": "Włącz logowanie przez Discord",
+        "enabled": "Logowanie przez Discord włączone",
+        "linkAccount": "Połącz konto Discord",
+        "perm_manage": "Zarządzaj",
+        "save": "Zapisz ustawienia",
+        "saveError": "Nie udało się zapisać ustawień OAuth Discorda",
+        "saved": "Ustawienia OAuth Discorda zapisano pomyślnie",
+        "settings": "Ustawienia OAuth Discorda",
+        "title": "Logowanie przez Discord"
+      },
+      "admin": {
+        "title": "Panel administratora",
+        "subtitle": "Zarządzaj ustawieniami i treściami swojej platformy",
+        "module_discord-auth_name": "Logowanie przez Discord",
+        "module_discord-auth_description": "Pozwól użytkownikom logować się kontem Discord",
+        "settings_discord-auth": "OAuth Discorda",
+        "settings_discord-auth_description": "Dane aplikacji Discord."
+      }
+    },
+    "pt": {
+      "discordAuth": {
+        "adm_subtitle": "Configure o login OAuth2 do Discord no seu site",
+        "adm_title": "Configurações de autenticação do Discord",
+        "clientId": "ID do cliente",
+        "clientSecret": "Segredo do cliente",
+        "description": "Configure as credenciais OAuth do Discord para o login dos usuários",
+        "disabled": "Login com Discord desativado",
+        "enable": "Ativar login com Discord",
+        "enabled": "Login com Discord ativado",
+        "linkAccount": "Vincular conta do Discord",
+        "perm_manage": "Gerenciar",
+        "save": "Salvar configurações",
+        "saveError": "Falha ao salvar as configurações OAuth do Discord",
+        "saved": "Configurações OAuth do Discord salvas com sucesso",
+        "settings": "Configurações OAuth do Discord",
+        "title": "Login com Discord"
+      },
+      "admin": {
+        "title": "Painel administrativo",
+        "subtitle": "Gerencie as configurações e o conteúdo da sua plataforma",
+        "module_discord-auth_name": "Login com Discord",
+        "module_discord-auth_description": "Permita que os usuários entrem com a conta do Discord",
+        "settings_discord-auth": "OAuth do Discord",
+        "settings_discord-auth_description": "Credenciais do aplicativo do Discord."
+      }
+    },
+    "ru": {
+      "discordAuth": {
+        "adm_subtitle": "Настройте вход через OAuth2 Discord для вашего сайта",
+        "adm_title": "Настройки авторизации Discord",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "Настройте учетные данные OAuth Discord для входа участников",
+        "disabled": "Вход через Discord отключен",
+        "enable": "Включить вход через Discord",
+        "enabled": "Вход через Discord включен",
+        "linkAccount": "Привязать учетную запись Discord",
+        "perm_manage": "Управление",
+        "save": "Сохранить настройки",
+        "saveError": "Не удалось сохранить настройки OAuth Discord",
+        "saved": "Настройки OAuth Discord успешно сохранены",
+        "settings": "Настройки OAuth Discord",
+        "title": "Вход через Discord"
+      },
+      "admin": {
+        "title": "Панель администратора",
+        "subtitle": "Управляйте настройками и содержимым платформы",
+        "module_discord-auth_name": "Вход через Discord",
+        "module_discord-auth_description": "Позвольте участникам входить через свою учетную запись Discord",
+        "settings_discord-auth": "OAuth Discord",
+        "settings_discord-auth_description": "Учетные данные приложения Discord."
+      }
+    },
+    "zh": {
+      "discordAuth": {
+        "adm_subtitle": "为你的站点配置 Discord OAuth2 登录",
+        "adm_title": "Discord 登录设置",
+        "clientId": "客户端 ID",
+        "clientSecret": "客户端密钥",
+        "description": "配置用于用户登录的 Discord OAuth 凭据",
+        "disabled": "Discord 登录已禁用",
+        "enable": "启用 Discord 登录",
+        "enabled": "Discord 登录已启用",
+        "linkAccount": "关联 Discord 账户",
+        "perm_manage": "管理",
+        "save": "保存设置",
+        "saveError": "无法保存 Discord OAuth 设置",
+        "saved": "Discord OAuth 设置已成功保存",
+        "settings": "Discord OAuth 设置",
+        "title": "Discord 登录"
+      },
+      "admin": {
+        "title": "管理后台",
+        "subtitle": "管理你的平台设置和内容",
+        "module_discord-auth_name": "Discord 登录",
+        "module_discord-auth_description": "允许用户使用 Discord 账户登录",
+        "settings_discord-auth": "Discord OAuth",
+        "settings_discord-auth_description": "Discord 应用凭据。"
+      }
     }
   },
   "permissions": [

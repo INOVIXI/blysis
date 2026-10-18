@@ -121,6 +121,386 @@
         "auditRedirectCreated": "Yönlendirme eklendi",
         "auditRedirectDeleted": "Yönlendirme silindi"
       }
+    },
+    "az": {
+      "urlRedirects": {
+        "adm_add": "Əlavə et",
+        "adm_addFailed": "Bu yönləndirmə əlavə edilə bilmədi.",
+        "adm_added": "Yönləndirmə quruldu.",
+        "adm_from": "Köhnə ünvan",
+        "adm_fromHint": "Yol, dil olmadan: /old-pricing, /en/old-pricing yox.",
+        "adm_none": "Hələ heç nə köçürülməyib.",
+        "adm_permanent": "Daimi",
+        "adm_permanentHint": "Açıq olduqda, axtarış sistemi köhnə ünvanı unudur. Bağlı olduqda, geri qaytara biləcəyiniz köçürmə üçündür.",
+        "adm_removeConfirm": "Bu saxlanılan kimi ünvanlar artıq yönləndirilmir.",
+        "adm_removeFailed": "Silmək alınmadı.",
+        "adm_removeTitle": "Bu yönləndirmələri sil",
+        "adm_removed": "Silindi.",
+        "adm_removedPartly": "{deleted} / {total} silindi.",
+        "adm_selectRow": "Bu yönləndirməni seçin",
+        "adm_subtitle": "Səhifə köçəndə köhnə ünvana olan hər keçid ona işarə etməyə davam edir. Yönləndirmə köhnə qapıdakı lövhədir.",
+        "adm_title": "Yönləndirmələr",
+        "adm_to": "Yeni ünvan",
+        "adm_toHint": "Bu saytda yol, ya da tam https ünvanı.",
+        "err": {
+          "redirect_bad_target": "Yeni ünvan bu saytda yol və ya tam https ünvanı olmalıdır.",
+          "redirect_loop": "Bu, ziyarətçiləri dairəyə salacaq.",
+          "redirect_exists": "Həmin qapıda artıq lövhə var."
+        },
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_url-redirects_description": "Köhnə ünvanı səhifənin indi yerləşdiyi yerə yönləndirir",
+        "module_url-redirects_name": "URL yönləndirmələri",
+        "settings_url-redirects": "Yönləndirmələr",
+        "settings_url-redirects_description": "Yeni yerə aparmalı olan köhnə ünvanlar."
+      },
+      "activity": {
+        "auditRedirectCreated": "Yönləndirmə əlavə etdi",
+        "auditRedirectDeleted": "Yönləndirməni sildi"
+      }
+    },
+    "de": {
+      "urlRedirects": {
+        "adm_add": "Hinzufügen",
+        "adm_addFailed": "Diese Weiterleitung konnte nicht hinzugefügt werden.",
+        "adm_added": "Die Weiterleitung ist gesetzt.",
+        "adm_from": "Alte Adresse",
+        "adm_fromHint": "Ein Pfad ohne Sprache: /alte-preise, nicht /en/alte-preise.",
+        "adm_none": "Noch nichts wurde verschoben.",
+        "adm_permanent": "Dauerhaft",
+        "adm_permanentHint": "An: Eine Suchmaschine vergisst die alte Adresse. Aus: für einen Umzug, den du eventuell rückgängig machst.",
+        "adm_removeConfirm": "Die Adressen werden nicht mehr weitergeleitet, sobald dies gespeichert ist.",
+        "adm_removeFailed": "Konnte nicht entfernt werden.",
+        "adm_removeTitle": "Diese Weiterleitungen entfernen",
+        "adm_removed": "Entfernt.",
+        "adm_removedPartly": "{deleted} von {total} entfernt.",
+        "adm_selectRow": "Diese Weiterleitung auswählen",
+        "adm_subtitle": "Wenn eine Seite umzieht, zeigt jeder Link auf die alte Adresse weiterhin auf sie. Eine Weiterleitung ist das Schild an der alten Tür.",
+        "adm_title": "Weiterleitungen",
+        "adm_to": "Neue Adresse",
+        "adm_toHint": "Ein Pfad auf dieser Seite oder eine vollständige https-Adresse, um woanders hinzuleiten.",
+        "err": {
+          "redirect_bad_target": "Eine neue Adresse muss ein Pfad auf dieser Seite oder eine vollständige https-Adresse sein.",
+          "redirect_loop": "Das würde Besucher im Kreis schicken.",
+          "redirect_exists": "Für diese alte Adresse gibt es bereits eine Weiterleitung."
+        },
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_url-redirects_description": "Leitet eine alte Adresse dorthin weiter, wo die Seite jetzt liegt",
+        "module_url-redirects_name": "URL-Weiterleitungen",
+        "settings_url-redirects": "Weiterleitungen",
+        "settings_url-redirects_description": "Alte Adressen, die auf etwas Neues verweisen sollen."
+      },
+      "activity": {
+        "auditRedirectCreated": "Weiterleitung hinzugefügt",
+        "auditRedirectDeleted": "Weiterleitung gelöscht"
+      }
+    },
+    "es": {
+      "urlRedirects": {
+        "adm_add": "Añadir",
+        "adm_addFailed": "No se pudo añadir esa redirección.",
+        "adm_added": "Redirección añadida.",
+        "adm_from": "Dirección antigua",
+        "adm_fromHint": "Una ruta, sin el idioma: /precios-antiguos, no /es/precios-antiguos.",
+        "adm_none": "Todavía no se ha movido nada.",
+        "adm_permanent": "Permanente",
+        "adm_permanentHint": "Activado, un buscador olvida la dirección antigua. Desactivado sirve para un cambio que quizá deshagas.",
+        "adm_removeConfirm": "Las direcciones dejan de redirigirse en cuanto se guarde esto.",
+        "adm_removeFailed": "No se pudieron eliminar.",
+        "adm_removeTitle": "Eliminar estas redirecciones",
+        "adm_removed": "Eliminadas.",
+        "adm_removedPartly": "{deleted} de {total} eliminadas.",
+        "adm_selectRow": "Selecciona esta redirección",
+        "adm_subtitle": "Cuando una página se mueve, todos los enlaces a la dirección antigua siguen llevando a ella. Una redirección es el cartel de la puerta antigua.",
+        "adm_title": "Redirecciones",
+        "adm_to": "Nueva dirección",
+        "adm_toHint": "Una ruta de este sitio, o una dirección https completa a la que salir.",
+        "err": {
+          "redirect_bad_target": "La nueva dirección tiene que ser una ruta de este sitio o una dirección https completa.",
+          "redirect_loop": "Eso enviaría a los visitantes en círculo.",
+          "redirect_exists": "Ya hay un cartel en esa puerta."
+        },
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_url-redirects_description": "Envía una dirección antigua a donde esté la página ahora",
+        "module_url-redirects_name": "Redirecciones de URL",
+        "settings_url-redirects": "Redirecciones",
+        "settings_url-redirects_description": "Direcciones antiguas que deberían llevar a un lugar nuevo."
+      },
+      "activity": {
+        "auditRedirectCreated": "Añadió una redirección",
+        "auditRedirectDeleted": "Eliminó una redirección"
+      }
+    },
+    "et": {
+      "urlRedirects": {
+        "adm_add": "Lisa",
+        "adm_addFailed": "Seda ümbersuunamist ei õnnestunud lisada.",
+        "adm_added": "Silt on paigas.",
+        "adm_from": "Vana aadress",
+        "adm_fromHint": "Tee ilma keeleta: /vana-hind, mitte /en/vana-hind.",
+        "adm_none": "Midagi pole veel liikunud.",
+        "adm_permanent": "Püsiv",
+        "adm_permanentHint": "Kui sees, unustab otsingumootor vana aadressi. Väljas sobib liikumiseks, mille võid hiljem tagasi võtta.",
+        "adm_removeConfirm": "Aadressid lakkavad ümbersuunamast kohe, kui see salvestatakse.",
+        "adm_removeFailed": "Neid ei õnnestunud eemaldada.",
+        "adm_removeTitle": "Eemalda need ümbersuunamised",
+        "adm_removed": "Eemaldatud.",
+        "adm_removedPartly": "{deleted} / {total} eemaldatud.",
+        "adm_selectRow": "Vali see ümbersuunamine",
+        "adm_subtitle": "Kui leht liigub, suunatakse iga link vana aadressi ümber. Ümbersuunamine on silt vanal uksel.",
+        "adm_title": "Ümbersuunamised",
+        "adm_to": "Uus aadress",
+        "adm_toHint": "Tee sellel saidil või täielik https-aadress, kui soovid siit lahkuda.",
+        "err": {
+          "redirect_bad_target": "Uus aadress peab olema tee sellel saidil või täielik https-aadress.",
+          "redirect_loop": "See saadaks külastajad ringi.",
+          "redirect_exists": "Sellel uksel on juba silt."
+        },
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_url-redirects_description": "Suunab vana aadressi sinna, kus leht praegu asub",
+        "module_url-redirects_name": "URL-i ümbersuunamised",
+        "settings_url-redirects": "Ümbersuunamised",
+        "settings_url-redirects_description": "Vanad aadressid, mis peaksid viima uude kohta."
+      },
+      "activity": {
+        "auditRedirectCreated": "Lisas ümbersuunamise",
+        "auditRedirectDeleted": "Kustutas ümbersuunamise"
+      }
+    },
+    "fr": {
+      "urlRedirects": {
+        "adm_add": "Ajouter",
+        "adm_addFailed": "Cette redirection n’a pas pu être ajoutée.",
+        "adm_added": "La redirection est en place.",
+        "adm_from": "Ancienne adresse",
+        "adm_fromHint": "Un chemin, sans la langue : /ancien-tarifs, et non /fr/ancien-tarifs.",
+        "adm_none": "Rien n’a encore été déplacé.",
+        "adm_permanent": "Permanente",
+        "adm_permanentHint": "Activée, un moteur de recherche oublie l’ancienne adresse. Désactivée, c’est pour un déplacement que vous pourrez annuler.",
+        "adm_removeConfirm": "Les adresses cessent d’être redirigées dès l’enregistrement.",
+        "adm_removeFailed": "Impossible de les supprimer.",
+        "adm_removeTitle": "Supprimer ces redirections",
+        "adm_removed": "Supprimées.",
+        "adm_removedPartly": "{deleted} sur {total} supprimées.",
+        "adm_selectRow": "Sélectionner cette redirection",
+        "adm_subtitle": "Lorsqu’une page change d’adresse, tous les liens vers l’ancienne continuent d’y mener. Une redirection fait office de panneau sur l’ancienne porte.",
+        "adm_title": "Redirections",
+        "adm_to": "Nouvelle adresse",
+        "adm_toHint": "Un chemin de ce site, ou une adresse https complète pour en sortir.",
+        "err": {
+          "redirect_bad_target": "La nouvelle adresse doit être un chemin de ce site ou une adresse https complète.",
+          "redirect_loop": "Cela enverrait les visiteurs en boucle.",
+          "redirect_exists": "Une redirection existe déjà pour cette adresse."
+        },
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_url-redirects_description": "Envoie une ancienne adresse vers l’emplacement actuel de la page",
+        "module_url-redirects_name": "Redirections d’URL",
+        "settings_url-redirects": "Redirections",
+        "settings_url-redirects_description": "Anciennes adresses qui doivent mener vers une nouvelle destination."
+      },
+      "activity": {
+        "auditRedirectCreated": "A ajouté une redirection",
+        "auditRedirectDeleted": "A supprimé une redirection"
+      }
+    },
+    "it": {
+      "urlRedirects": {
+        "adm_add": "Aggiungi",
+        "adm_addFailed": "Non è stato possibile aggiungere questo reindirizzamento.",
+        "adm_added": "Cartello affisso.",
+        "adm_from": "Vecchio indirizzo",
+        "adm_fromHint": "Un percorso, senza la lingua: /old-pricing, non /en/old-pricing.",
+        "adm_none": "Non è ancora stato spostato nulla.",
+        "adm_permanent": "Permanente",
+        "adm_permanentHint": "Attivo: il motore di ricerca dimentica il vecchio indirizzo. Disattivo: per uno spostamento che potresti annullare.",
+        "adm_removeConfirm": "Gli indirizzi smettono di essere reindirizzati non appena salvi.",
+        "adm_removeFailed": "Impossibile rimuoverli.",
+        "adm_removeTitle": "Rimuovi questi reindirizzamenti",
+        "adm_removed": "Rimossi.",
+        "adm_removedPartly": "{deleted} di {total} rimossi.",
+        "adm_selectRow": "Seleziona questo reindirizzamento",
+        "adm_subtitle": "Quando una pagina si sposta, ogni link al vecchio indirizzo continua a puntarci. Un reindirizzamento è il cartello sulla vecchia porta.",
+        "adm_title": "Reindirizzamenti",
+        "adm_to": "Nuovo indirizzo",
+        "adm_toHint": "Un percorso di questo sito, oppure un indirizzo https completo per uscirne.",
+        "err": {
+          "redirect_bad_target": "Il nuovo indirizzo deve essere un percorso di questo sito o un indirizzo https completo.",
+          "redirect_loop": "In questo modo i visitatori finirebbero in un giro senza fine.",
+          "redirect_exists": "C’è già un cartello su quella porta."
+        },
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_url-redirects_description": "Invia un vecchio indirizzo a dove si trova ora la pagina",
+        "module_url-redirects_name": "Reindirizzamenti URL",
+        "settings_url-redirects": "Reindirizzamenti",
+        "settings_url-redirects_description": "Vecchi indirizzi che dovrebbero portare a una nuova destinazione."
+      },
+      "activity": {
+        "auditRedirectCreated": "Ha aggiunto un reindirizzamento",
+        "auditRedirectDeleted": "Ha eliminato un reindirizzamento"
+      }
+    },
+    "pl": {
+      "urlRedirects": {
+        "adm_add": "Dodaj",
+        "adm_addFailed": "Nie udało się dodać przekierowania.",
+        "adm_added": "Przekierowanie dodane.",
+        "adm_from": "Stary adres",
+        "adm_fromHint": "Ścieżka bez języka: /stara-cena, a nie /pl/stara-cena.",
+        "adm_none": "Nic jeszcze nie zostało przeniesione.",
+        "adm_permanent": "Stałe",
+        "adm_permanentHint": "Włączone: wyszukiwarka zapomina stary adres. Wyłączone: dla przeniesienia, które być może cofniesz.",
+        "adm_removeConfirm": "Adresy przestaną być przekierowywane natychmiast po zapisaniu.",
+        "adm_removeFailed": "Nie udało się ich usunąć.",
+        "adm_removeTitle": "Usuń te przekierowania",
+        "adm_removed": "Usunięto.",
+        "adm_removedPartly": "Usunięto {deleted} z {total}.",
+        "adm_selectRow": "Zaznacz to przekierowanie",
+        "adm_subtitle": "Gdy strona się przenosi, każdy link do starego adresu nadal prowadzi dalej. Przekierowanie to tabliczka na starych drzwiach.",
+        "adm_title": "Przekierowania",
+        "adm_to": "Nowy adres",
+        "adm_toHint": "Ścieżka na tej stronie albo pełny adres https, jeśli chcesz wyjść poza nią.",
+        "err": {
+          "redirect_bad_target": "Nowy adres musi być ścieżką na tej stronie albo pełnym adresem https.",
+          "redirect_loop": "To wysłałoby odwiedzających w kółko.",
+          "redirect_exists": "Dla tego adresu przekierowanie już istnieje."
+        },
+        "perm_manage": "Zarządzanie"
+      },
+      "admin": {
+        "module_url-redirects_description": "Kieruje stary adres tam, gdzie strona znajduje się teraz",
+        "module_url-redirects_name": "Przekierowania URL",
+        "settings_url-redirects": "Przekierowania",
+        "settings_url-redirects_description": "Stare adresy, które powinny prowadzić w nowe miejsce."
+      },
+      "activity": {
+        "auditRedirectCreated": "Dodano przekierowanie",
+        "auditRedirectDeleted": "Usunięto przekierowanie"
+      }
+    },
+    "pt": {
+      "urlRedirects": {
+        "adm_add": "Adicionar",
+        "adm_addFailed": "Não foi possível adicionar este redirecionamento.",
+        "adm_added": "Redirecionamento criado.",
+        "adm_from": "Endereço antigo",
+        "adm_fromHint": "Um caminho, sem o idioma: /preco-antigo, e não /pt/preco-antigo.",
+        "adm_none": "Nada foi movido ainda.",
+        "adm_permanent": "Permanente",
+        "adm_permanentHint": "Ligado: o buscador esquece o endereço antigo. Desligado: para uma mudança que você ainda pode desfazer.",
+        "adm_removeConfirm": "Os endereços deixam de ser redirecionados assim que isto for salvo.",
+        "adm_removeFailed": "Não foi possível removê-los.",
+        "adm_removeTitle": "Remover estes redirecionamentos",
+        "adm_removed": "Removidos.",
+        "adm_removedPartly": "{deleted} de {total} removidos.",
+        "adm_selectRow": "Selecionar este redirecionamento",
+        "adm_subtitle": "Quando uma página muda de lugar, todo link para o endereço antigo continua apontando para ela. Um redirecionamento é a placa colocada na porta antiga.",
+        "adm_title": "Redirecionamentos",
+        "adm_to": "Novo endereço",
+        "adm_toHint": "Um caminho neste site, ou um endereço https completo para sair dele.",
+        "err": {
+          "redirect_bad_target": "O novo endereço precisa ser um caminho deste site ou um endereço https completo.",
+          "redirect_loop": "Isso faria os visitantes girarem em círculo.",
+          "redirect_exists": "Já existe um redirecionamento para este endereço."
+        },
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_url-redirects_description": "Envia um endereço antigo para onde a página está agora",
+        "module_url-redirects_name": "Redirecionamentos de URL",
+        "settings_url-redirects": "Redirecionamentos",
+        "settings_url-redirects_description": "Endereços antigos que devem levar a um novo destino."
+      },
+      "activity": {
+        "auditRedirectCreated": "Adicionou um redirecionamento",
+        "auditRedirectDeleted": "Excluiu um redirecionamento"
+      }
+    },
+    "ru": {
+      "urlRedirects": {
+        "adm_add": "Добавить",
+        "adm_addFailed": "Не удалось добавить перенаправление.",
+        "adm_added": "Перенаправление установлено.",
+        "adm_from": "Старый адрес",
+        "adm_fromHint": "Путь без языка: /old-pricing, а не /en/old-pricing.",
+        "adm_none": "Пока ничего не перенесено.",
+        "adm_permanent": "Постоянное",
+        "adm_permanentHint": "Включено: поисковые системы забудут старый адрес. Выключено: для переноса, который, возможно, придется отменить.",
+        "adm_removeConfirm": "Адреса перестанут перенаправляться сразу после сохранения.",
+        "adm_removeFailed": "Не удалось снять перенаправления.",
+        "adm_removeTitle": "Снять эти перенаправления",
+        "adm_removed": "Перенаправления сняты.",
+        "adm_removedPartly": "Снято: {deleted} из {total}.",
+        "adm_selectRow": "Выбрать это перенаправление",
+        "adm_subtitle": "Когда страница переезжает, все ссылки на старый адрес продолжают вести на нее. Перенаправление - это указатель на старой двери.",
+        "adm_title": "Перенаправления",
+        "adm_to": "Новый адрес",
+        "adm_toHint": "Путь на этом сайте или полный адрес https, чтобы уйти с сайта.",
+        "err": {
+          "redirect_bad_target": "Новый адрес должен быть путем на этом сайте или полным адресом https.",
+          "redirect_loop": "Это отправит посетителей по кругу.",
+          "redirect_exists": "Для этого адреса уже есть перенаправление."
+        },
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_url-redirects_description": "Отправляет старый адрес туда, где страница находится сейчас",
+        "module_url-redirects_name": "Перенаправления URL",
+        "settings_url-redirects": "Перенаправления",
+        "settings_url-redirects_description": "Старые адреса, которые должны вести на новое место."
+      },
+      "activity": {
+        "auditRedirectCreated": "Добавлено перенаправление",
+        "auditRedirectDeleted": "Удалено перенаправление"
+      }
+    },
+    "zh": {
+      "urlRedirects": {
+        "adm_add": "添加",
+        "adm_addFailed": "无法添加该重定向。",
+        "adm_added": "重定向已添加。",
+        "adm_from": "旧地址",
+        "adm_fromHint": "路径，不含语言部分：/old-pricing，而不是 /en/old-pricing。",
+        "adm_none": "尚无页面迁移。",
+        "adm_permanent": "永久",
+        "adm_permanentHint": "开启时，搜索引擎会忘记旧地址。关闭适用于可能撤销的迁移。",
+        "adm_removeConfirm": "保存后，这些地址将立即停止重定向。",
+        "adm_removeFailed": "无法移除这些重定向。",
+        "adm_removeTitle": "移除这些重定向",
+        "adm_removed": "已移除。",
+        "adm_removedPartly": "已移除 {deleted}/{total}。",
+        "adm_selectRow": "选择此重定向",
+        "adm_subtitle": "页面迁移后，所有指向旧地址的链接仍会指向新位置。重定向就像旧大门上的指示牌。",
+        "adm_title": "重定向",
+        "adm_to": "新地址",
+        "adm_toHint": "本站的路径，或要跳转到的完整 https 地址。",
+        "err": {
+          "redirect_bad_target": "新地址必须是本站的路径或完整的 https 地址。",
+          "redirect_loop": "这会使访客陷入循环。",
+          "redirect_exists": "该地址已有重定向。"
+        },
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_url-redirects_description": "将旧地址指向页面现在所在的位置",
+        "module_url-redirects_name": "URL 重定向",
+        "settings_url-redirects": "重定向",
+        "settings_url-redirects_description": "应指向新位置的旧地址。"
+      },
+      "activity": {
+        "auditRedirectCreated": "添加了一个重定向",
+        "auditRedirectDeleted": "删除了一个重定向"
+      }
     }
   },
   "permissions": [

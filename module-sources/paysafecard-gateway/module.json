@@ -107,6 +107,196 @@
         "settings_paysafecard-gateway": "paysafecard",
         "settings_paysafecard-gateway_description": "paysafecard API anahtarı ve ortamı."
       }
+    },
+    "az": {
+      "paysafecardGateway": {
+        "adm_apiKey": "API açarı",
+        "adm_apiKeyDesc": "paysafecard idarə panelindən. paysafecard bildiriş ünvanını /api/v1/paysafecard/notify yönləndirin.",
+        "adm_sandbox": "Sınaq rejimi",
+        "adm_sandboxDesc": "paysafecard sınaq mühitindən istifadə etmək üçün true təyin edin.",
+        "adm_subtitle": "paysafecard ilə ödənişləri qəbul etmək üçün açarlar.",
+        "adm_title": "paysafecard parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "menu_paysafecard-gateway": "paysafecard şlüzü",
+        "menu_paysafecard-gateway_paysafecard_settings": "paysafecard parametrləri",
+        "module_paysafecard-gateway_name": "paysafecard şlüzü",
+        "module_paysafecard-gateway_description": "Kartı və ya bank hesabı olmayan alıcılar üçün paysafecard ilə ön ödənişli kupon ödənişlərini qəbul edin",
+        "settings_paysafecard-gateway": "paysafecard",
+        "settings_paysafecard-gateway_description": "paysafecard API açarı və mühiti."
+      }
+    },
+    "de": {
+      "paysafecardGateway": {
+        "adm_apiKey": "API-Schlüssel",
+        "adm_apiKeyDesc": "Aus deinem paysafecard-Dashboard. Trage für die paysafecard-Benachrichtigungs-URL /api/v1/paysafecard/notify ein.",
+        "adm_sandbox": "Sandbox-Modus",
+        "adm_sandboxDesc": "Auf true setzen, um die paysafecard-Testumgebung zu nutzen.",
+        "adm_subtitle": "Schlüssel für Zahlungen über paysafecard.",
+        "adm_title": "paysafecard-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "menu_paysafecard-gateway": "paysafecard-Gateway",
+        "menu_paysafecard-gateway_paysafecard_settings": "paysafecard-Einstellungen",
+        "module_paysafecard-gateway_name": "paysafecard-Gateway",
+        "module_paysafecard-gateway_description": "Prepaid-Gutschein-Zahlungen über paysafecard annehmen, für Käufer ohne Karte oder Bankkonto",
+        "settings_paysafecard-gateway": "paysafecard",
+        "settings_paysafecard-gateway_description": "paysafecard-API-Schlüssel und Umgebung."
+      }
+    },
+    "es": {
+      "paysafecardGateway": {
+        "adm_apiKey": "Clave de API",
+        "adm_apiKeyDesc": "Desde tu panel de paysafecard. Apunta la URL de notificación de paysafecard a /api/v1/paysafecard/notify.",
+        "adm_sandbox": "Modo sandbox",
+        "adm_sandboxDesc": "Ponlo en true para usar el entorno de pruebas de paysafecard.",
+        "adm_subtitle": "Claves para cobrar pagos a través de paysafecard.",
+        "adm_title": "Ajustes de paysafecard",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "menu_paysafecard-gateway": "Pasarela de paysafecard",
+        "menu_paysafecard-gateway_paysafecard_settings": "Ajustes de paysafecard",
+        "module_paysafecard-gateway_name": "Pasarela de paysafecard",
+        "module_paysafecard-gateway_description": "Acepta pagos con vales prepagados de paysafecard, para compradores sin tarjeta ni cuenta bancaria",
+        "settings_paysafecard-gateway": "paysafecard",
+        "settings_paysafecard-gateway_description": "Clave de API y entorno de paysafecard."
+      }
+    },
+    "et": {
+      "paysafecardGateway": {
+        "adm_apiKey": "API võti",
+        "adm_apiKeyDesc": "Leiad selle oma paysafecardi töölaualt. Suuna paysafecardi teavituse URL aadressile /api/v1/paysafecard/notify.",
+        "adm_sandbox": "Testirežiim",
+        "adm_sandboxDesc": "Määra väärtuseks true, et kasutada paysafecardi testkeskkonda.",
+        "adm_subtitle": "Võtmed maksete vastuvõtmiseks paysafecardi kaudu.",
+        "adm_title": "paysafecardi seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "menu_paysafecard-gateway": "paysafecardi värav",
+        "menu_paysafecard-gateway_paysafecard_settings": "paysafecardi seaded",
+        "module_paysafecard-gateway_name": "paysafecardi värav",
+        "module_paysafecard-gateway_description": "Võta vastu eelmakstud kupongimakseid paysafecardi kaudu ostjatelt, kellel pole kaarti ega pangakontot",
+        "settings_paysafecard-gateway": "paysafecard",
+        "settings_paysafecard-gateway_description": "paysafecardi API võti ja keskkond."
+      }
+    },
+    "fr": {
+      "paysafecardGateway": {
+        "adm_apiKey": "Clé d’API",
+        "adm_apiKeyDesc": "Depuis votre tableau de bord paysafecard. Renseignez l’URL de notification paysafecard sur /api/v1/paysafecard/notify.",
+        "adm_sandbox": "Mode bac à sable",
+        "adm_sandboxDesc": "Mettre sur true pour utiliser l’environnement de test paysafecard.",
+        "adm_subtitle": "Clés pour encaisser les paiements via paysafecard.",
+        "adm_title": "Paramètres paysafecard",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "menu_paysafecard-gateway": "Passerelle paysafecard",
+        "menu_paysafecard-gateway_paysafecard_settings": "Paramètres paysafecard",
+        "module_paysafecard-gateway_name": "Passerelle paysafecard",
+        "module_paysafecard-gateway_description": "Acceptez les paiements par bon prépayé paysafecard, pour les acheteurs sans carte ni compte bancaire",
+        "settings_paysafecard-gateway": "paysafecard",
+        "settings_paysafecard-gateway_description": "Clé d’API et environnement paysafecard."
+      }
+    },
+    "it": {
+      "paysafecardGateway": {
+        "adm_apiKey": "Chiave API",
+        "adm_apiKeyDesc": "Dalla tua dashboard paysafecard. Imposta l’URL di notifica paysafecard su /api/v1/paysafecard/notify.",
+        "adm_sandbox": "Modalità sandbox",
+        "adm_sandboxDesc": "Imposta su true per usare l’ambiente di test paysafecard.",
+        "adm_subtitle": "Chiavi per accettare pagamenti tramite paysafecard.",
+        "adm_title": "Impostazioni paysafecard",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "menu_paysafecard-gateway": "Gateway paysafecard",
+        "menu_paysafecard-gateway_paysafecard_settings": "Impostazioni paysafecard",
+        "module_paysafecard-gateway_name": "Gateway paysafecard",
+        "module_paysafecard-gateway_description": "Accetta pagamenti con voucher prepagati paysafecard, per chi non ha carta o conto bancario",
+        "settings_paysafecard-gateway": "paysafecard",
+        "settings_paysafecard-gateway_description": "Chiave API e ambiente di paysafecard."
+      }
+    },
+    "pl": {
+      "paysafecardGateway": {
+        "adm_apiKey": "Klucz API",
+        "adm_apiKeyDesc": "Z panelu paysafecard. Ustaw adres powiadomień paysafecard na /api/v1/paysafecard/notify.",
+        "adm_sandbox": "Tryb testowy",
+        "adm_sandboxDesc": "Ustaw na true, aby używać środowiska testowego paysafecard.",
+        "adm_subtitle": "Klucze do przyjmowania płatności przez paysafecard.",
+        "adm_title": "Ustawienia paysafecard",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "menu_paysafecard-gateway": "Bramka paysafecard",
+        "menu_paysafecard-gateway_paysafecard_settings": "Ustawienia paysafecard",
+        "module_paysafecard-gateway_name": "Bramka paysafecard",
+        "module_paysafecard-gateway_description": "Przyjmuj płatności bonami przedpłaconymi paysafecard, dla kupujących bez karty ani konta bankowego",
+        "settings_paysafecard-gateway": "paysafecard",
+        "settings_paysafecard-gateway_description": "Klucz API i środowisko paysafecard."
+      }
+    },
+    "pt": {
+      "paysafecardGateway": {
+        "adm_apiKey": "Chave de API",
+        "adm_apiKeyDesc": "Do seu painel do paysafecard. Aponte a URL de notificação do paysafecard para /api/v1/paysafecard/notify.",
+        "adm_sandbox": "Modo sandbox",
+        "adm_sandboxDesc": "Defina como true para usar o ambiente de testes do paysafecard.",
+        "adm_subtitle": "Chaves para receber pagamentos pelo paysafecard.",
+        "adm_title": "Configurações do paysafecard",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "menu_paysafecard-gateway": "Gateway paysafecard",
+        "menu_paysafecard-gateway_paysafecard_settings": "Configurações do paysafecard",
+        "module_paysafecard-gateway_name": "Gateway paysafecard",
+        "module_paysafecard-gateway_description": "Receba pagamentos com cartões pré-pagos do paysafecard, para compradores sem cartão ou conta bancária",
+        "settings_paysafecard-gateway": "paysafecard",
+        "settings_paysafecard-gateway_description": "Chave de API e ambiente do paysafecard."
+      }
+    },
+    "ru": {
+      "paysafecardGateway": {
+        "adm_apiKey": "Ключ API",
+        "adm_apiKeyDesc": "Из панели управления paysafecard. Укажите в качестве URL уведомлений paysafecard адрес /api/v1/paysafecard/notify.",
+        "adm_sandbox": "Режим песочницы",
+        "adm_sandboxDesc": "Укажите true, чтобы использовать тестовую среду paysafecard.",
+        "adm_subtitle": "Ключи для приема платежей через paysafecard.",
+        "adm_title": "Настройки paysafecard",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "menu_paysafecard-gateway": "Шлюз paysafecard",
+        "menu_paysafecard-gateway_paysafecard_settings": "Настройки paysafecard",
+        "module_paysafecard-gateway_name": "Шлюз paysafecard",
+        "module_paysafecard-gateway_description": "Принимайте платежи предоплаченными ваучерами paysafecard от покупателей без карты или банковского счета",
+        "settings_paysafecard-gateway": "paysafecard",
+        "settings_paysafecard-gateway_description": "Ключ API и среда paysafecard."
+      }
+    },
+    "zh": {
+      "paysafecardGateway": {
+        "adm_apiKey": "API 密钥",
+        "adm_apiKeyDesc": "来自你的 paysafecard 控制台。请将 paysafecard 通知 URL 设置为 /api/v1/paysafecard/notify。",
+        "adm_sandbox": "沙盒模式",
+        "adm_sandboxDesc": "设置为 true 以使用 paysafecard 测试环境。",
+        "adm_subtitle": "用于通过 paysafecard 收款的密钥。",
+        "adm_title": "paysafecard 设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "menu_paysafecard-gateway": "paysafecard 支付网关",
+        "menu_paysafecard-gateway_paysafecard_settings": "paysafecard 设置",
+        "module_paysafecard-gateway_name": "paysafecard 支付网关",
+        "module_paysafecard-gateway_description": "面向没有银行卡或银行账户的买家，通过 paysafecard 预付码收款",
+        "settings_paysafecard-gateway": "paysafecard",
+        "settings_paysafecard-gateway_description": "paysafecard API 密钥和环境。"
+      }
     }
   },
   "permissions": [

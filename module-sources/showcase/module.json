@@ -134,6 +134,406 @@
         "auditShowcaseCardUpdated": "Vitrin kartı değiştirildi",
         "auditShowcaseCardDeleted": "Vitrin kartı silindi"
       }
+    },
+    "az": {
+      "nav": {
+        "showcase": "Vitrin"
+      },
+      "pageTitles": {
+        "showcase": "Vitrin"
+      },
+      "showcase": {
+        "adm_cardBody": "Bu barədə bir cümlə",
+        "adm_cardHref": "Hara aparır",
+        "adm_cardImage": "Şəkil",
+        "adm_cardOrder": "Sıra",
+        "adm_cardTitle": "Başlıq",
+        "adm_subtitle": "Vitrin səhifəsindəki kartlar, göstərildiyi sırada.",
+        "adm_subtitleWithHint": "Vitrin səhifəsindəki kartlar, göstərildiyi sırada. Şəkil və keçid hər biri bu saytda yol kimi olmalıdır, məsələn /store, ya da tam https ünvanı; başqa hər şey rədd olunur.",
+        "adm_title": "Vitrin",
+        "empty": "Hələ heç nə nümayiş olunmur.",
+        "err": {
+          "showcase_bad_link": "Keçid bu saytda yol və ya tam https ünvanı olmalıdır.",
+          "showcase_bad_image": "Şəkil bu saytda yol və ya tam https ünvanı olmalıdır."
+        },
+        "perm_manage": "İdarə et",
+        "subtitle": "Baxmağa dəyər bir neçə şey.",
+        "title": "Vitrin"
+      },
+      "pageDescriptions": {
+        "showcase": "Seçilmiş, baxmağa dəyər şeylərə nəzər salın; hər kart onun arxasındakı səhifəyə aparır."
+      },
+      "admin": {
+        "module_showcase_description": "İcmanın yaratdıqlarının qalereyası",
+        "module_showcase_name": "Vitrin",
+        "settings_showcase": "Vitrin",
+        "settings_showcase_description": "Vitrin səhifəsindəki kartlar."
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "Vitrin kartı əlavə etdi",
+        "auditShowcaseCardUpdated": "Vitrin kartını dəyişdi",
+        "auditShowcaseCardDeleted": "Vitrin kartını sildi"
+      }
+    },
+    "de": {
+      "nav": {
+        "showcase": "Showcase"
+      },
+      "pageTitles": {
+        "showcase": "Showcase"
+      },
+      "showcase": {
+        "adm_cardBody": "Ein paar Worte dazu",
+        "adm_cardHref": "Wohin es führt",
+        "adm_cardImage": "Bild",
+        "adm_cardOrder": "Reihenfolge",
+        "adm_cardTitle": "Überschrift",
+        "adm_subtitle": "Die Karten der Showcase-Seite, in der Reihenfolge, in der sie angezeigt werden.",
+        "adm_subtitleWithHint": "Die Karten der Showcase-Seite, in der Reihenfolge, in der sie angezeigt werden. Bild und Link sind jeweils ein Pfad auf dieser Seite, etwa /store, oder eine vollständige https-Adresse; alles andere wird abgelehnt.",
+        "adm_title": "Showcase",
+        "empty": "Noch nichts ausgestellt.",
+        "err": {
+          "showcase_bad_link": "Ein Link muss ein Pfad auf dieser Seite oder eine vollständige https-Adresse sein.",
+          "showcase_bad_image": "Ein Bild muss ein Pfad auf dieser Seite oder eine vollständige https-Adresse sein."
+        },
+        "perm_manage": "Verwalten",
+        "subtitle": "Ein paar Dinge, die einen Blick wert sind.",
+        "title": "Showcase"
+      },
+      "pageDescriptions": {
+        "showcase": "Stöbere in einer handverlesenen Auswahl sehenswerter Dinge. Jede Karte führt zur dahinterliegenden Seite."
+      },
+      "admin": {
+        "module_showcase_description": "Eine Galerie dessen, was die Community gebaut hat",
+        "module_showcase_name": "Showcase",
+        "settings_showcase": "Showcase",
+        "settings_showcase_description": "Die Karten der Showcase-Seite."
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "Eine Showcase-Karte hinzugefügt",
+        "auditShowcaseCardUpdated": "Eine Showcase-Karte geändert",
+        "auditShowcaseCardDeleted": "Eine Showcase-Karte gelöscht"
+      }
+    },
+    "es": {
+      "nav": {
+        "showcase": "Escaparate"
+      },
+      "pageTitles": {
+        "showcase": "Escaparate"
+      },
+      "showcase": {
+        "adm_cardBody": "Una línea sobre ello",
+        "adm_cardHref": "Adónde lleva",
+        "adm_cardImage": "Imagen",
+        "adm_cardOrder": "Orden",
+        "adm_cardTitle": "Título",
+        "adm_subtitle": "Las tarjetas de la página de escaparate, en el orden en que se muestran.",
+        "adm_subtitleWithHint": "Las tarjetas de la página de escaparate, en el orden en que se muestran. Una imagen y un enlace son cada uno una ruta de este sitio, como /store, o una dirección https completa; cualquier otra cosa se rechaza.",
+        "adm_title": "Escaparate",
+        "empty": "Todavía no hay nada expuesto.",
+        "err": {
+          "showcase_bad_link": "Un enlace debe ser una ruta de este sitio o una dirección https completa.",
+          "showcase_bad_image": "Una imagen debe ser una ruta de este sitio o una dirección https completa."
+        },
+        "perm_manage": "Gestionar",
+        "subtitle": "Algunas cosas que merece la pena ver.",
+        "title": "Escaparate"
+      },
+      "pageDescriptions": {
+        "showcase": "Explora una selección de cosas que merecen un vistazo, donde cada tarjeta lleva a la página que hay detrás."
+      },
+      "admin": {
+        "module_showcase_description": "Una galería de lo que ha creado la comunidad",
+        "module_showcase_name": "Escaparate",
+        "settings_showcase": "Escaparate",
+        "settings_showcase_description": "Las tarjetas de la página de escaparate."
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "Añadió una tarjeta al escaparate",
+        "auditShowcaseCardUpdated": "Cambió una tarjeta del escaparate",
+        "auditShowcaseCardDeleted": "Eliminó una tarjeta del escaparate"
+      }
+    },
+    "et": {
+      "nav": {
+        "showcase": "Tutvustus"
+      },
+      "pageTitles": {
+        "showcase": "Tutvustus"
+      },
+      "showcase": {
+        "adm_cardBody": "Lühike kirjeldus",
+        "adm_cardHref": "Kuhu see viib",
+        "adm_cardImage": "Pilt",
+        "adm_cardOrder": "Järjekord",
+        "adm_cardTitle": "Pealkiri",
+        "adm_subtitle": "Tutvustuslehe kaardid selles järjekorras, nagu need kuvatakse.",
+        "adm_subtitleWithHint": "Tutvustuslehe kaardid selles järjekorras, nagu need kuvatakse. Pilt ja link on kumbki selle saidi tee, näiteks /store, või täielik https-aadress; muu lükatakse tagasi.",
+        "adm_title": "Tutvustus",
+        "empty": "Midagi pole veel väljas.",
+        "err": {
+          "showcase_bad_link": "Link peab olema selle saidi tee või täielik https-aadress.",
+          "showcase_bad_image": "Pilt peab olema selle saidi tee või täielik https-aadress."
+        },
+        "perm_manage": "Halda",
+        "subtitle": "Mõned asjad, mida tasub vaadata.",
+        "title": "Tutvustus"
+      },
+      "pageDescriptions": {
+        "showcase": "Sirvi käsitsi valitud huvitavaid asju, kus iga kaart viib selle taga olevale lehele."
+      },
+      "admin": {
+        "module_showcase_description": "Galerii sellest, mida kogukond on loonud",
+        "module_showcase_name": "Tutvustus",
+        "settings_showcase": "Tutvustus",
+        "settings_showcase_description": "Tutvustuslehe kaardid."
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "Lisas tutvustuskaardi",
+        "auditShowcaseCardUpdated": "Muutis tutvustuskaarti",
+        "auditShowcaseCardDeleted": "Kustutas tutvustuskaardi"
+      }
+    },
+    "fr": {
+      "nav": {
+        "showcase": "Vitrine"
+      },
+      "pageTitles": {
+        "showcase": "Vitrine"
+      },
+      "showcase": {
+        "adm_cardBody": "Une ligne à ce sujet",
+        "adm_cardHref": "Destination",
+        "adm_cardImage": "Image",
+        "adm_cardOrder": "Ordre",
+        "adm_cardTitle": "Titre",
+        "adm_subtitle": "Les cartes de la page vitrine, dans l’ordre d’affichage.",
+        "adm_subtitleWithHint": "Les cartes de la page vitrine, dans l’ordre d’affichage. Une image et un lien sont chacun un chemin de ce site, comme /boutique, ou une adresse https complète ; tout le reste est refusé.",
+        "adm_title": "Vitrine",
+        "empty": "Rien n’est encore exposé.",
+        "err": {
+          "showcase_bad_link": "Un lien doit être un chemin de ce site ou une adresse https complète.",
+          "showcase_bad_image": "Une image doit être un chemin de ce site ou une adresse https complète."
+        },
+        "perm_manage": "Gérer",
+        "subtitle": "Quelques éléments qui valent le détour.",
+        "title": "Vitrine"
+      },
+      "pageDescriptions": {
+        "showcase": "Parcourez une sélection soignée de créations qui valent le détour : chaque carte mène à la page correspondante."
+      },
+      "admin": {
+        "module_showcase_description": "Une galerie de ce que la communauté a créé",
+        "module_showcase_name": "Vitrine",
+        "settings_showcase": "Vitrine",
+        "settings_showcase_description": "Les cartes de la page vitrine."
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "A ajouté une carte à la vitrine",
+        "auditShowcaseCardUpdated": "A modifié une carte de la vitrine",
+        "auditShowcaseCardDeleted": "A supprimé une carte de la vitrine"
+      }
+    },
+    "it": {
+      "nav": {
+        "showcase": "Vetrina"
+      },
+      "pageTitles": {
+        "showcase": "Vetrina"
+      },
+      "showcase": {
+        "adm_cardBody": "Una riga di descrizione",
+        "adm_cardHref": "Dove porta",
+        "adm_cardImage": "Immagine",
+        "adm_cardOrder": "Ordine",
+        "adm_cardTitle": "Titolo",
+        "adm_subtitle": "Le card della pagina vetrina, nell’ordine in cui vengono mostrate.",
+        "adm_subtitleWithHint": "Le card della pagina vetrina, nell’ordine in cui vengono mostrate. Un’immagine e un link sono ciascuno un percorso di questo sito, come /store, oppure un indirizzo https completo; tutto il resto viene rifiutato.",
+        "adm_title": "Vetrina",
+        "empty": "Ancora nulla in mostra.",
+        "err": {
+          "showcase_bad_link": "Un link deve essere un percorso di questo sito o un indirizzo https completo.",
+          "showcase_bad_image": "Un’immagine deve essere un percorso di questo sito o un indirizzo https completo."
+        },
+        "perm_manage": "Gestisci",
+        "subtitle": "Alcune cose che vale la pena guardare.",
+        "title": "Vetrina"
+      },
+      "pageDescriptions": {
+        "showcase": "Sfoglia una selezione di cose che vale la pena guardare: ogni card porta alla pagina che c’è dietro."
+      },
+      "admin": {
+        "module_showcase_description": "Una galleria di ciò che la community ha creato",
+        "module_showcase_name": "Vetrina",
+        "settings_showcase": "Vetrina",
+        "settings_showcase_description": "Le card della pagina vetrina."
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "Ha aggiunto una card alla vetrina",
+        "auditShowcaseCardUpdated": "Ha modificato una card della vetrina",
+        "auditShowcaseCardDeleted": "Ha eliminato una card della vetrina"
+      }
+    },
+    "pl": {
+      "nav": {
+        "showcase": "Prezentacja"
+      },
+      "pageTitles": {
+        "showcase": "Prezentacja"
+      },
+      "showcase": {
+        "adm_cardBody": "Zdanie o tym",
+        "adm_cardHref": "Dokąd prowadzi",
+        "adm_cardImage": "Obrazek",
+        "adm_cardOrder": "Kolejność",
+        "adm_cardTitle": "Nagłówek",
+        "adm_subtitle": "Karty na stronie prezentacji, w kolejności, w jakiej są pokazywane.",
+        "adm_subtitleWithHint": "Karty na stronie prezentacji, w kolejności, w jakiej są pokazywane. Obrazek i link to ścieżka na tej stronie, na przykład /sklep, albo pełny adres https; cokolwiek innego zostanie odrzucone.",
+        "adm_title": "Prezentacja",
+        "empty": "Nic jeszcze nie jest pokazane.",
+        "err": {
+          "showcase_bad_link": "Link musi być ścieżką na tej stronie albo pełnym adresem https.",
+          "showcase_bad_image": "Obrazek musi być ścieżką na tej stronie albo pełnym adresem https."
+        },
+        "perm_manage": "Zarządzaj",
+        "subtitle": "Kilka rzeczy wartych uwagi.",
+        "title": "Prezentacja"
+      },
+      "pageDescriptions": {
+        "showcase": "Przeglądaj starannie wybrany zbiór rzeczy wartych uwagi. Każda karta prowadzi do strony, której dotyczy."
+      },
+      "admin": {
+        "module_showcase_description": "Galeria tego, co zbudowała społeczność",
+        "module_showcase_name": "Prezentacja",
+        "settings_showcase": "Prezentacja",
+        "settings_showcase_description": "Karty na stronie prezentacji."
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "Dodano kartę prezentacji",
+        "auditShowcaseCardUpdated": "Zmieniono kartę prezentacji",
+        "auditShowcaseCardDeleted": "Usunięto kartę prezentacji"
+      }
+    },
+    "pt": {
+      "nav": {
+        "showcase": "Vitrine"
+      },
+      "pageTitles": {
+        "showcase": "Vitrine"
+      },
+      "showcase": {
+        "adm_cardBody": "Uma linha sobre isso",
+        "adm_cardHref": "Para onde leva",
+        "adm_cardImage": "Imagem",
+        "adm_cardOrder": "Ordem",
+        "adm_cardTitle": "Título",
+        "adm_subtitle": "Os cartões da página da vitrine, na ordem em que aparecem.",
+        "adm_subtitleWithHint": "Os cartões da página da vitrine, na ordem em que aparecem. Uma imagem e um link são, cada um, um caminho deste site, como /store, ou um endereço https completo; qualquer outra coisa é recusada.",
+        "adm_title": "Vitrine",
+        "empty": "Nada está em exibição ainda.",
+        "err": {
+          "showcase_bad_link": "Um link precisa ser um caminho deste site ou um endereço https completo.",
+          "showcase_bad_image": "Uma imagem precisa ser um caminho deste site ou um endereço https completo."
+        },
+        "perm_manage": "Gerenciar",
+        "subtitle": "Algumas coisas que valem a pena conhecer.",
+        "title": "Vitrine"
+      },
+      "pageDescriptions": {
+        "showcase": "Navegue por uma seleção escolhida a dedo de coisas que valem a pena ver, em que cada cartão leva à página correspondente."
+      },
+      "admin": {
+        "module_showcase_description": "Uma galeria do que a comunidade criou",
+        "module_showcase_name": "Vitrine",
+        "settings_showcase": "Vitrine",
+        "settings_showcase_description": "Os cartões da página da vitrine."
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "Adicionou um cartão à vitrine",
+        "auditShowcaseCardUpdated": "Alterou um cartão da vitrine",
+        "auditShowcaseCardDeleted": "Excluiu um cartão da vitrine"
+      }
+    },
+    "ru": {
+      "nav": {
+        "showcase": "Витрина"
+      },
+      "pageTitles": {
+        "showcase": "Витрина"
+      },
+      "showcase": {
+        "adm_cardBody": "Строка описания",
+        "adm_cardHref": "Куда ведет",
+        "adm_cardImage": "Изображение",
+        "adm_cardOrder": "Порядок",
+        "adm_cardTitle": "Заголовок",
+        "adm_subtitle": "Карточки на странице витрины в порядке показа.",
+        "adm_subtitleWithHint": "Карточки на странице витрины в порядке показа. Изображение и ссылка - это путь на этом сайте, например /store, или полный адрес https; всё остальное отклоняется.",
+        "adm_title": "Витрина",
+        "empty": "Пока ничего не выставлено.",
+        "err": {
+          "showcase_bad_link": "Ссылка должна быть путем на этом сайте или полным адресом https.",
+          "showcase_bad_image": "Изображение должно быть путем на этом сайте или полным адресом https."
+        },
+        "perm_manage": "Управление",
+        "subtitle": "Несколько вещей, которые стоит посмотреть.",
+        "title": "Витрина"
+      },
+      "pageDescriptions": {
+        "showcase": "Просматривайте отобранную подборку того, что стоит увидеть. Каждая карточка ведет на страницу, которую она описывает."
+      },
+      "admin": {
+        "module_showcase_description": "Галерея того, что создало сообщество",
+        "module_showcase_name": "Витрина",
+        "settings_showcase": "Витрина",
+        "settings_showcase_description": "Карточки на странице витрины."
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "Добавлена карточка витрины",
+        "auditShowcaseCardUpdated": "Изменена карточка витрины",
+        "auditShowcaseCardDeleted": "Удалена карточка витрины"
+      }
+    },
+    "zh": {
+      "nav": {
+        "showcase": "展示"
+      },
+      "pageTitles": {
+        "showcase": "展示"
+      },
+      "showcase": {
+        "adm_cardBody": "关于它的一句话",
+        "adm_cardHref": "跳转到何处",
+        "adm_cardImage": "图片",
+        "adm_cardOrder": "排序",
+        "adm_cardTitle": "标题",
+        "adm_subtitle": "展示页面上的卡片，按显示顺序排列。",
+        "adm_subtitleWithHint": "展示页面上的卡片，按显示顺序排列。图片和链接都须是本站路径（如 /store）或完整的 https 地址，其他形式将被拒绝。",
+        "adm_title": "展示",
+        "empty": "暂时还没有展示内容。",
+        "err": {
+          "showcase_bad_link": "链接必须是本站路径或完整的 https 地址。",
+          "showcase_bad_image": "图片必须是本站路径或完整的 https 地址。"
+        },
+        "perm_manage": "管理",
+        "subtitle": "几件值得一看的作品。",
+        "title": "展示"
+      },
+      "pageDescriptions": {
+        "showcase": "浏览精选的值得一看的作品，每张卡片都会链接到对应的页面。"
+      },
+      "admin": {
+        "module_showcase_description": "社区作品的展示库",
+        "module_showcase_name": "展示",
+        "settings_showcase": "展示",
+        "settings_showcase_description": "展示页面上的卡片。"
+      },
+      "activity": {
+        "auditShowcaseCardCreated": "添加了一张展示卡片",
+        "auditShowcaseCardUpdated": "修改了一张展示卡片",
+        "auditShowcaseCardDeleted": "删除了一张展示卡片"
+      }
     }
   },
   "permissions": [

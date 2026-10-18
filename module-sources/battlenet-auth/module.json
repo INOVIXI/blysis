@@ -74,6 +74,156 @@
         "settings_battlenet-auth": "Battle.net OAuth",
         "settings_battlenet-auth_description": "Battle.net uygulama kimlik bilgileri ve bölge."
       }
+    },
+    "az": {
+      "battlenetAuth": {
+        "adm_emailNote": "Battle.net e-poçt ünvanını paylaşmır, ona görə bu yolla yaradılan hesaba heç vaxt məktub ala bilməyən müvəqqəti ünvan verilir. Bu istifadəçilərdən profillərində real ünvan təyin etmələrini istəyin.",
+        "adm_issuerNote": "AUTH_BATTLENET_ISSUER regionu seçir və bunlardan biri olmalıdır: https://oauth.battle.net, https://eu.battle.net/oauth, https://us.battle.net/oauth, https://kr.battle.net/oauth, https://tw.battle.net/oauth, https://oauth.battlenet.com.cn və ya https://www.battlenet.com.cn/oauth. Bunlardan birini saxlamayana qədər daxil olma söndürülü qalacaq.",
+        "adm_subtitle": "Saytınız üçün Battle.net OAuth ilə daxil olmanı qurun.",
+        "adm_title": "Battle.net girişi parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_battlenet-auth_name": "Battle.net ilə giriş",
+        "module_battlenet-auth_description": "İstifadəçilərə Battle.net hesabları ilə daxil olmağa icazə verin",
+        "settings_battlenet-auth": "Battle.net OAuth",
+        "settings_battlenet-auth_description": "Battle.net tətbiq etimadnamələri və region."
+      }
+    },
+    "de": {
+      "battlenetAuth": {
+        "adm_emailNote": "Battle.net teilt keine E-Mail-Adresse, daher bekommt ein so erstelltes Konto eine Platzhalter-Adresse, die nie Mails empfangen kann. Bitte diese Benutzer, in ihrem Profil eine echte Adresse einzutragen.",
+        "adm_issuerNote": "AUTH_BATTLENET_ISSUER legt die Region fest und muss eine dieser Adressen sein: https://oauth.battle.net, https://eu.battle.net/oauth, https://us.battle.net/oauth, https://kr.battle.net/oauth, https://tw.battle.net/oauth, https://oauth.battlenet.com.cn oder https://www.battlenet.com.cn/oauth. Die Anmeldung bleibt aus, bis eine davon eingetragen ist.",
+        "adm_subtitle": "Richte die Anmeldung per Battle.net OAuth für deine Seite ein.",
+        "adm_title": "Battle.net-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_battlenet-auth_name": "Battle.net-Login",
+        "module_battlenet-auth_description": "Benutzern erlauben, sich mit ihrem Battle.net-Konto anzumelden",
+        "settings_battlenet-auth": "Battle.net OAuth",
+        "settings_battlenet-auth_description": "Anwendungsdaten und Region für Battle.net."
+      }
+    },
+    "es": {
+      "battlenetAuth": {
+        "adm_emailNote": "Battle.net no comparte una dirección de correo, así que una cuenta creada así recibe una provisional que nunca podrá recibir correos. Pide a estos usuarios que pongan una dirección real en su perfil.",
+        "adm_issuerNote": "AUTH_BATTLENET_ISSUER elige la región y debe ser una de estas: https://oauth.battle.net, https://eu.battle.net/oauth, https://us.battle.net/oauth, https://kr.battle.net/oauth, https://tw.battle.net/oauth, https://oauth.battlenet.com.cn o https://www.battlenet.com.cn/oauth. El inicio de sesión seguirá desactivado hasta que contenga una de ellas.",
+        "adm_subtitle": "Configura el inicio de sesión OAuth con Battle.net para tu sitio.",
+        "adm_title": "Ajustes de inicio de sesión con Battle.net",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_battlenet-auth_name": "Inicio de sesión con Battle.net",
+        "module_battlenet-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de Battle.net",
+        "settings_battlenet-auth": "OAuth de Battle.net",
+        "settings_battlenet-auth_description": "Credenciales de la aplicación de Battle.net y región."
+      }
+    },
+    "et": {
+      "battlenetAuth": {
+        "adm_emailNote": "Battle.net ei jaga e-posti aadressi, seega sellisel viisil loodud konto saab kohatäite, mis ei saa kunagi kirju vastu võtta. Palu neil kasutajail määrata oma profiilis päris aadress.",
+        "adm_issuerNote": "AUTH_BATTLENET_ISSUER määrab piirkonna ning peab olema üks järgmistest: https://oauth.battle.net, https://eu.battle.net/oauth, https://us.battle.net/oauth, https://kr.battle.net/oauth, https://tw.battle.net/oauth, https://oauth.battlenet.com.cn või https://www.battlenet.com.cn/oauth. Sisselogimine jääb välja lülitatuks, kuni see sisaldab ühte neist.",
+        "adm_subtitle": "Seadista oma saidile Battle.net OAuth-sisselogimine.",
+        "adm_title": "Battle.net Logini seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_battlenet-auth_name": "Battle.net Login",
+        "module_battlenet-auth_description": "Luba kasutajatel sisse logida oma Battle.neti kontoga",
+        "settings_battlenet-auth": "Battle.net OAuth",
+        "settings_battlenet-auth_description": "Battle.neti rakenduse mandaadid ja piirkond."
+      }
+    },
+    "fr": {
+      "battlenetAuth": {
+        "adm_emailNote": "Battle.net ne partage pas d’adresse e-mail : un compte créé ainsi reçoit une adresse provisoire qui ne peut jamais recevoir de courrier. Demandez à ces utilisateurs de renseigner une adresse réelle dans leur profil.",
+        "adm_issuerNote": "AUTH_BATTLENET_ISSUER détermine la région et doit être l’une des valeurs suivantes : https://oauth.battle.net, https://eu.battle.net/oauth, https://us.battle.net/oauth, https://kr.battle.net/oauth, https://tw.battle.net/oauth, https://oauth.battlenet.com.cn ou https://www.battlenet.com.cn/oauth. La connexion reste désactivée tant qu’elle n’en contient pas une.",
+        "adm_subtitle": "Configurez la connexion OAuth Battle.net pour votre site.",
+        "adm_title": "Paramètres de connexion Battle.net",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_battlenet-auth_name": "Connexion Battle.net",
+        "module_battlenet-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Battle.net",
+        "settings_battlenet-auth": "OAuth Battle.net",
+        "settings_battlenet-auth_description": "Identifiants de l’application Battle.net et région."
+      }
+    },
+    "it": {
+      "battlenetAuth": {
+        "adm_emailNote": "Battle.net non condivide un indirizzo email, quindi un account creato in questo modo riceve un indirizzo segnaposto che non può ricevere email. Chiedi a questi utenti di impostare un indirizzo reale nel proprio profilo.",
+        "adm_issuerNote": "AUTH_BATTLENET_ISSUER sceglie la regione e deve essere uno tra https://oauth.battle.net, https://eu.battle.net/oauth, https://us.battle.net/oauth, https://kr.battle.net/oauth, https://tw.battle.net/oauth, https://oauth.battlenet.com.cn o https://www.battlenet.com.cn/oauth. L’accesso resta disattivato finché non ne contiene uno.",
+        "adm_subtitle": "Configura l’accesso OAuth con Battle.net per il tuo sito.",
+        "adm_title": "Impostazioni accesso Battle.net",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_battlenet-auth_name": "Accesso Battle.net",
+        "module_battlenet-auth_description": "Consenti agli utenti di accedere con il proprio account Battle.net",
+        "settings_battlenet-auth": "OAuth Battle.net",
+        "settings_battlenet-auth_description": "Credenziali dell’applicazione Battle.net e regione."
+      }
+    },
+    "pl": {
+      "battlenetAuth": {
+        "adm_emailNote": "Battle.net nie udostępnia adresu e-mail, więc konto utworzone w ten sposób dostaje zastępczy adres, który nigdy nie odbierze poczty. Poproś tych użytkowników, by w swoim profilu ustawili prawdziwy adres.",
+        "adm_issuerNote": "AUTH_BATTLENET_ISSUER wybiera region i musi być jednym z adresów: https://oauth.battle.net, https://eu.battle.net/oauth, https://us.battle.net/oauth, https://kr.battle.net/oauth, https://tw.battle.net/oauth, https://oauth.battlenet.com.cn lub https://www.battlenet.com.cn/oauth. Logowanie pozostaje wyłączone, dopóki nie zawiera jednego z nich.",
+        "adm_subtitle": "Skonfiguruj logowanie przez Battle.net OAuth dla swojej strony.",
+        "adm_title": "Ustawienia logowania przez Battle.net",
+        "perm_manage": "Zarządzanie"
+      },
+      "admin": {
+        "module_battlenet-auth_name": "Logowanie przez Battle.net",
+        "module_battlenet-auth_description": "Pozwól użytkownikom logować się kontem Battle.net",
+        "settings_battlenet-auth": "Battle.net OAuth",
+        "settings_battlenet-auth_description": "Dane aplikacji Battle.net i region."
+      }
+    },
+    "pt": {
+      "battlenetAuth": {
+        "adm_emailNote": "A Battle.net não compartilha endereço de e-mail, então uma conta criada assim recebe um e-mail provisório que nunca poderá receber mensagens. Peça a esses usuários que definam um endereço real no perfil.",
+        "adm_issuerNote": "AUTH_BATTLENET_ISSUER define a região e precisa ser um destes: https://oauth.battle.net, https://eu.battle.net/oauth, https://us.battle.net/oauth, https://kr.battle.net/oauth, https://tw.battle.net/oauth, https://oauth.battlenet.com.cn ou https://www.battlenet.com.cn/oauth. O login continua desativado até que ele tenha um deles.",
+        "adm_subtitle": "Configure o login OAuth da Battle.net para o seu site.",
+        "adm_title": "Configurações de login da Battle.net",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_battlenet-auth_name": "Login da Battle.net",
+        "module_battlenet-auth_description": "Permite que os usuários entrem com a conta Battle.net",
+        "settings_battlenet-auth": "OAuth da Battle.net",
+        "settings_battlenet-auth_description": "Credenciais do aplicativo Battle.net e região."
+      }
+    },
+    "ru": {
+      "battlenetAuth": {
+        "adm_emailNote": "Battle.net не передаёт адрес e-mail, поэтому учетная запись, созданная таким способом, получает временный адрес, на который не может прийти почта. Попросите этих пользователей указать настоящий адрес в профиле.",
+        "adm_issuerNote": "AUTH_BATTLENET_ISSUER определяет регион и должен быть одним из следующих адресов: https://oauth.battle.net, https://eu.battle.net/oauth, https://us.battle.net/oauth, https://kr.battle.net/oauth, https://tw.battle.net/oauth, https://oauth.battlenet.com.cn или https://www.battlenet.com.cn/oauth. Вход остаётся выключенным, пока там не указан один из них.",
+        "adm_subtitle": "Настройте вход через Battle.net OAuth для вашего сайта.",
+        "adm_title": "Настройки входа через Battle.net",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_battlenet-auth_name": "Вход через Battle.net",
+        "module_battlenet-auth_description": "Разрешить пользователям входить с помощью учетной записи Battle.net",
+        "settings_battlenet-auth": "Battle.net OAuth",
+        "settings_battlenet-auth_description": "Учетные данные приложения Battle.net и регион."
+      }
+    },
+    "zh": {
+      "battlenetAuth": {
+        "adm_emailNote": "Battle.net 不会共享邮箱地址，因此以此方式创建的账户会获得一个无法接收邮件的占位地址。请让这些用户在个人资料中设置真实地址。",
+        "adm_issuerNote": "AUTH_BATTLENET_ISSUER 用于选择地区，必须为以下之一：https://oauth.battle.net、https://eu.battle.net/oauth、https://us.battle.net/oauth、https://kr.battle.net/oauth、https://tw.battle.net/oauth、https://oauth.battlenet.com.cn 或 https://www.battlenet.com.cn/oauth。在其值符合要求之前，登录功能将保持关闭。",
+        "adm_subtitle": "为你的站点设置 Battle.net OAuth 登录。",
+        "adm_title": "Battle.net 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_battlenet-auth_name": "Battle.net 登录",
+        "module_battlenet-auth_description": "允许用户使用其 Battle.net 账户登录",
+        "settings_battlenet-auth": "Battle.net OAuth",
+        "settings_battlenet-auth_description": "Battle.net 应用凭据和地区。"
+      }
     }
   },
   "permissions": [

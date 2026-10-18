@@ -93,6 +93,276 @@
         "settings_github-auth": "GitHub OAuth",
         "settings_github-auth_description": "GitHub uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "githubAuth": {
+        "adm_subtitle": "Saytınız üçün GitHub OAuth2 ilə daxil olmanı konfiqurasiya edin",
+        "adm_title": "GitHub Auth parametrləri",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "İstifadəçi girişi üçün GitHub OAuth məlumatlarını konfiqurasiya edin",
+        "disabled": "GitHub ilə giriş söndürülüb",
+        "enable": "GitHub ilə girişi aktivləşdir",
+        "enabled": "GitHub ilə giriş aktivdir",
+        "linkAccount": "GitHub hesabını bağla",
+        "perm_manage": "İdarə et",
+        "save": "Parametrləri yadda saxla",
+        "saveError": "GitHub OAuth parametrlərini yadda saxlamaq alınmadı",
+        "saved": "GitHub OAuth parametrləri uğurla yadda saxlanıldı",
+        "settings": "GitHub OAuth parametrləri",
+        "title": "GitHub ilə giriş"
+      },
+      "admin": {
+        "title": "Admin paneli",
+        "subtitle": "Platforma parametrlərinizi və məzmununuzu idarə edin",
+        "module_github-auth_name": "GitHub ilə giriş",
+        "module_github-auth_description": "İstifadəçilərin GitHub hesabları ilə daxil olmasına icazə verin",
+        "settings_github-auth": "GitHub OAuth",
+        "settings_github-auth_description": "GitHub tətbiqinin etimadnamələri."
+      }
+    },
+    "de": {
+      "githubAuth": {
+        "adm_subtitle": "OAuth2-Anmeldung über GitHub für deine Seite einrichten",
+        "adm_title": "GitHub-Auth-Einstellungen",
+        "clientId": "Client-ID",
+        "clientSecret": "Client-Secret",
+        "description": "GitHub-OAuth-Zugangsdaten für die Anmeldung von Mitgliedern einrichten",
+        "disabled": "GitHub-Anmeldung deaktiviert",
+        "enable": "GitHub-Anmeldung aktivieren",
+        "enabled": "GitHub-Anmeldung aktiviert",
+        "linkAccount": "GitHub-Konto verknüpfen",
+        "perm_manage": "Verwalten",
+        "save": "Einstellungen speichern",
+        "saveError": "GitHub-OAuth-Einstellungen konnten nicht gespeichert werden",
+        "saved": "GitHub-OAuth-Einstellungen erfolgreich gespeichert",
+        "settings": "GitHub-OAuth-Einstellungen",
+        "title": "GitHub-Anmeldung"
+      },
+      "admin": {
+        "title": "Admin-Bereich",
+        "subtitle": "Verwalte die Einstellungen und Inhalte deiner Plattform",
+        "module_github-auth_name": "GitHub-Anmeldung",
+        "module_github-auth_description": "Mitgliedern erlauben, sich mit ihrem GitHub-Konto anzumelden",
+        "settings_github-auth": "GitHub OAuth",
+        "settings_github-auth_description": "Zugangsdaten der GitHub-Anwendung."
+      }
+    },
+    "es": {
+      "githubAuth": {
+        "adm_subtitle": "Configura el inicio de sesión con OAuth2 de GitHub para tu sitio",
+        "adm_title": "Ajustes de autenticación con GitHub",
+        "clientId": "ID de cliente",
+        "clientSecret": "Secreto de cliente",
+        "description": "Configura las credenciales OAuth de GitHub para el inicio de sesión de los usuarios",
+        "disabled": "Inicio de sesión con GitHub desactivado",
+        "enable": "Activar inicio de sesión con GitHub",
+        "enabled": "Inicio de sesión con GitHub activado",
+        "linkAccount": "Vincular cuenta de GitHub",
+        "perm_manage": "Gestionar",
+        "save": "Guardar ajustes",
+        "saveError": "No se pudieron guardar los ajustes de OAuth de GitHub",
+        "saved": "Ajustes de OAuth de GitHub guardados correctamente",
+        "settings": "Ajustes de OAuth de GitHub",
+        "title": "Inicio de sesión con GitHub"
+      },
+      "admin": {
+        "title": "Panel de administración",
+        "subtitle": "Gestiona los ajustes y el contenido de tu plataforma",
+        "module_github-auth_name": "Inicio de sesión con GitHub",
+        "module_github-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de GitHub",
+        "settings_github-auth": "OAuth de GitHub",
+        "settings_github-auth_description": "Credenciales de la aplicación de GitHub."
+      }
+    },
+    "et": {
+      "githubAuth": {
+        "adm_subtitle": "Seadista saidi jaoks GitHubi OAuth2 sisselogimine",
+        "adm_title": "GitHubi autentimise seaded",
+        "clientId": "Kliendi ID",
+        "clientSecret": "Kliendi saladus",
+        "description": "Seadista kasutajate sisselogimiseks GitHubi OAuth-mandaadid",
+        "disabled": "GitHubi sisselogimine on keelatud",
+        "enable": "Luba GitHubi sisselogimine",
+        "enabled": "GitHubi sisselogimine on lubatud",
+        "linkAccount": "Seo GitHubi konto",
+        "perm_manage": "Halda",
+        "save": "Salvesta seaded",
+        "saveError": "GitHubi OAuth-seadete salvestamine ebaõnnestus",
+        "saved": "GitHubi OAuth-seaded salvestati",
+        "settings": "GitHubi OAuth-seaded",
+        "title": "GitHubi sisselogimine"
+      },
+      "admin": {
+        "title": "Halduspaneel",
+        "subtitle": "Halda oma platvormi seadeid ja sisu",
+        "module_github-auth_name": "GitHubi sisselogimine",
+        "module_github-auth_description": "Luba kasutajatel sisse logida oma GitHubi kontoga",
+        "settings_github-auth": "GitHubi OAuth",
+        "settings_github-auth_description": "GitHubi rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "githubAuth": {
+        "adm_subtitle": "Configurer la connexion OAuth2 avec GitHub pour votre site",
+        "adm_title": "Paramètres d’authentification GitHub",
+        "clientId": "ID client",
+        "clientSecret": "Secret client",
+        "description": "Configurer les identifiants OAuth GitHub pour la connexion des membres",
+        "disabled": "Connexion GitHub désactivée",
+        "enable": "Activer la connexion GitHub",
+        "enabled": "Connexion GitHub activée",
+        "linkAccount": "Lier le compte GitHub",
+        "perm_manage": "Gérer",
+        "save": "Enregistrer les paramètres",
+        "saveError": "Échec de l’enregistrement des paramètres OAuth GitHub",
+        "saved": "Paramètres OAuth GitHub enregistrés",
+        "settings": "Paramètres OAuth GitHub",
+        "title": "Connexion GitHub"
+      },
+      "admin": {
+        "title": "Panneau d’administration",
+        "subtitle": "Gérez les paramètres et le contenu de votre plateforme",
+        "module_github-auth_name": "Connexion GitHub",
+        "module_github-auth_description": "Permettre aux membres de se connecter avec leur compte GitHub",
+        "settings_github-auth": "OAuth GitHub",
+        "settings_github-auth_description": "Identifiants de l’application GitHub."
+      }
+    },
+    "it": {
+      "githubAuth": {
+        "adm_subtitle": "Configura l’accesso OAuth2 con GitHub per il tuo sito",
+        "adm_title": "Impostazioni autenticazione GitHub",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "Configura le credenziali OAuth di GitHub per l’accesso dei membri",
+        "disabled": "Accesso con GitHub disattivato",
+        "enable": "Attiva accesso con GitHub",
+        "enabled": "Accesso con GitHub attivato",
+        "linkAccount": "Collega account GitHub",
+        "perm_manage": "Gestisci",
+        "save": "Salva impostazioni",
+        "saveError": "Salvataggio delle impostazioni OAuth di GitHub non riuscito",
+        "saved": "Impostazioni OAuth di GitHub salvate con successo",
+        "settings": "Impostazioni OAuth di GitHub",
+        "title": "Accesso con GitHub"
+      },
+      "admin": {
+        "title": "Pannello di amministrazione",
+        "subtitle": "Gestisci le impostazioni e i contenuti della piattaforma",
+        "module_github-auth_name": "Accesso con GitHub",
+        "module_github-auth_description": "Consenti ai membri di accedere con il proprio account GitHub",
+        "settings_github-auth": "OAuth di GitHub",
+        "settings_github-auth_description": "Credenziali dell’applicazione GitHub."
+      }
+    },
+    "pl": {
+      "githubAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie przez GitHub OAuth2 na swojej stronie",
+        "adm_title": "Ustawienia logowania przez GitHub",
+        "clientId": "ID klienta",
+        "clientSecret": "Sekret klienta",
+        "description": "Skonfiguruj dane OAuth GitHuba do logowania użytkowników",
+        "disabled": "Logowanie przez GitHub wyłączone",
+        "enable": "Włącz logowanie przez GitHub",
+        "enabled": "Logowanie przez GitHub włączone",
+        "linkAccount": "Połącz konto GitHub",
+        "perm_manage": "Zarządzaj",
+        "save": "Zapisz ustawienia",
+        "saveError": "Nie udało się zapisać ustawień OAuth GitHuba",
+        "saved": "Ustawienia OAuth GitHuba zapisano pomyślnie",
+        "settings": "Ustawienia OAuth GitHuba",
+        "title": "Logowanie przez GitHub"
+      },
+      "admin": {
+        "title": "Panel administratora",
+        "subtitle": "Zarządzaj ustawieniami i treściami swojej platformy",
+        "module_github-auth_name": "Logowanie przez GitHub",
+        "module_github-auth_description": "Pozwól użytkownikom logować się kontem GitHub",
+        "settings_github-auth": "OAuth GitHuba",
+        "settings_github-auth_description": "Dane aplikacji GitHub."
+      }
+    },
+    "pt": {
+      "githubAuth": {
+        "adm_subtitle": "Configure o login OAuth2 do GitHub no seu site",
+        "adm_title": "Configurações de autenticação do GitHub",
+        "clientId": "ID do cliente",
+        "clientSecret": "Segredo do cliente",
+        "description": "Configure as credenciais OAuth do GitHub para o login dos usuários",
+        "disabled": "Login com GitHub desativado",
+        "enable": "Ativar login com GitHub",
+        "enabled": "Login com GitHub ativado",
+        "linkAccount": "Vincular conta do GitHub",
+        "perm_manage": "Gerenciar",
+        "save": "Salvar configurações",
+        "saveError": "Falha ao salvar as configurações OAuth do GitHub",
+        "saved": "Configurações OAuth do GitHub salvas com sucesso",
+        "settings": "Configurações OAuth do GitHub",
+        "title": "Login com GitHub"
+      },
+      "admin": {
+        "title": "Painel administrativo",
+        "subtitle": "Gerencie as configurações e o conteúdo da sua plataforma",
+        "module_github-auth_name": "Login com GitHub",
+        "module_github-auth_description": "Permita que os usuários entrem com a conta do GitHub",
+        "settings_github-auth": "OAuth do GitHub",
+        "settings_github-auth_description": "Credenciais do aplicativo do GitHub."
+      }
+    },
+    "ru": {
+      "githubAuth": {
+        "adm_subtitle": "Настройте вход через OAuth2 GitHub для вашего сайта",
+        "adm_title": "Настройки авторизации GitHub",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "Настройте учетные данные OAuth GitHub для входа участников",
+        "disabled": "Вход через GitHub отключен",
+        "enable": "Включить вход через GitHub",
+        "enabled": "Вход через GitHub включен",
+        "linkAccount": "Привязать учетную запись GitHub",
+        "perm_manage": "Управление",
+        "save": "Сохранить настройки",
+        "saveError": "Не удалось сохранить настройки OAuth GitHub",
+        "saved": "Настройки OAuth GitHub успешно сохранены",
+        "settings": "Настройки OAuth GitHub",
+        "title": "Вход через GitHub"
+      },
+      "admin": {
+        "title": "Панель администратора",
+        "subtitle": "Управляйте настройками и содержимым платформы",
+        "module_github-auth_name": "Вход через GitHub",
+        "module_github-auth_description": "Позвольте участникам входить через свою учетную запись GitHub",
+        "settings_github-auth": "OAuth GitHub",
+        "settings_github-auth_description": "Учетные данные приложения GitHub."
+      }
+    },
+    "zh": {
+      "githubAuth": {
+        "adm_subtitle": "为你的站点配置 GitHub OAuth2 登录",
+        "adm_title": "GitHub 登录设置",
+        "clientId": "客户端 ID",
+        "clientSecret": "客户端密钥",
+        "description": "配置用于用户登录的 GitHub OAuth 凭据",
+        "disabled": "GitHub 登录已禁用",
+        "enable": "启用 GitHub 登录",
+        "enabled": "GitHub 登录已启用",
+        "linkAccount": "关联 GitHub 账户",
+        "perm_manage": "管理",
+        "save": "保存设置",
+        "saveError": "无法保存 GitHub OAuth 设置",
+        "saved": "GitHub OAuth 设置已成功保存",
+        "settings": "GitHub OAuth 设置",
+        "title": "GitHub 登录"
+      },
+      "admin": {
+        "title": "管理后台",
+        "subtitle": "管理你的平台设置和内容",
+        "module_github-auth_name": "GitHub 登录",
+        "module_github-auth_description": "允许用户使用 GitHub 账户登录",
+        "settings_github-auth": "GitHub OAuth",
+        "settings_github-auth_description": "GitHub 应用凭据。"
+      }
     }
   },
   "permissions": [

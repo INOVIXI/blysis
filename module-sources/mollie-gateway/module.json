@@ -108,6 +108,176 @@
         "settings_mollie-gateway": "Mollie",
         "settings_mollie-gateway_description": "Mollie API anahtarı."
       }
+    },
+    "az": {
+      "mollieGateway": {
+        "adm_apiKey": "API açarı",
+        "adm_apiKeyDesc": "Mollie panelinizdən. Mollie bildiriş URL-ni /api/v1/mollie/webhook ünvanına yönləndirin.",
+        "adm_subtitle": "Mollie vasitəsilə ödənişlər qəbul etmək üçün açarlar.",
+        "adm_title": "Mollie parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "menu_mollie-gateway": "Mollie şlüzü",
+        "menu_mollie-gateway_mollie_settings": "Mollie parametrləri",
+        "module_mollie-gateway_name": "Mollie ödəniş şlüzü",
+        "module_mollie-gateway_description": "Mollie vasitəsilə iDEAL, Bancontact, SEPA və kart ödənişlərini qəbul edin",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Mollie API açarı."
+      }
+    },
+    "de": {
+      "mollieGateway": {
+        "adm_apiKey": "API-Schlüssel",
+        "adm_apiKeyDesc": "Aus deinem Mollie-Dashboard. Trage die Benachrichtigungs-URL von Mollie auf /api/v1/mollie/webhook ein.",
+        "adm_subtitle": "Schlüssel, um Zahlungen über Mollie anzunehmen.",
+        "adm_title": "Mollie-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "menu_mollie-gateway": "Mollie-Gateway",
+        "menu_mollie-gateway_mollie_settings": "Mollie-Einstellungen",
+        "module_mollie-gateway_name": "Mollie-Zahlungsgateway",
+        "module_mollie-gateway_description": "iDEAL-, Bancontact-, SEPA- und Kartenzahlungen über Mollie annehmen",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Mollie-API-Schlüssel."
+      }
+    },
+    "es": {
+      "mollieGateway": {
+        "adm_apiKey": "Clave de API",
+        "adm_apiKeyDesc": "Desde tu panel de Mollie. Apunta la URL de notificaciones de Mollie a /api/v1/mollie/webhook.",
+        "adm_subtitle": "Claves para cobrar pagos a través de Mollie.",
+        "adm_title": "Ajustes de Mollie",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "menu_mollie-gateway": "Pasarela Mollie",
+        "menu_mollie-gateway_mollie_settings": "Ajustes de Mollie",
+        "module_mollie-gateway_name": "Pasarela de pago Mollie",
+        "module_mollie-gateway_description": "Acepta pagos con iDEAL, Bancontact, SEPA y tarjeta a través de Mollie",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Clave de API de Mollie."
+      }
+    },
+    "et": {
+      "mollieGateway": {
+        "adm_apiKey": "API võti",
+        "adm_apiKeyDesc": "Leiad oma Mollie töölaualt. Suuna Mollie teavituste URL aadressile /api/v1/mollie/webhook.",
+        "adm_subtitle": "Võtmed maksete vastuvõtmiseks Mollie kaudu.",
+        "adm_title": "Mollie seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "menu_mollie-gateway": "Mollie maksevärav",
+        "menu_mollie-gateway_mollie_settings": "Mollie seaded",
+        "module_mollie-gateway_name": "Mollie maksevärav",
+        "module_mollie-gateway_description": "Võta iDEAL-, Bancontacti, SEPA- ja kaardimakseid Mollie kaudu",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Mollie API võti."
+      }
+    },
+    "fr": {
+      "mollieGateway": {
+        "adm_apiKey": "Clé d’API",
+        "adm_apiKeyDesc": "Depuis votre tableau de bord Mollie. Pointez l’URL de notification Mollie vers /api/v1/mollie/webhook.",
+        "adm_subtitle": "Clés pour encaisser les paiements via Mollie.",
+        "adm_title": "Paramètres Mollie",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "menu_mollie-gateway": "Passerelle Mollie",
+        "menu_mollie-gateway_mollie_settings": "Paramètres Mollie",
+        "module_mollie-gateway_name": "Passerelle de paiement Mollie",
+        "module_mollie-gateway_description": "Encaisser des paiements par iDEAL, Bancontact, SEPA et carte via Mollie",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Clé d’API Mollie."
+      }
+    },
+    "it": {
+      "mollieGateway": {
+        "adm_apiKey": "Chiave API",
+        "adm_apiKeyDesc": "Dalla tua dashboard di Mollie. Punta l’URL di notifica di Mollie a /api/v1/mollie/webhook.",
+        "adm_subtitle": "Chiavi per accettare pagamenti tramite Mollie.",
+        "adm_title": "Impostazioni di Mollie",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "menu_mollie-gateway": "Gateway Mollie",
+        "menu_mollie-gateway_mollie_settings": "Impostazioni di Mollie",
+        "module_mollie-gateway_name": "Gateway di pagamento Mollie",
+        "module_mollie-gateway_description": "Accetta pagamenti con iDEAL, Bancontact, SEPA e carta tramite Mollie",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Chiave API di Mollie."
+      }
+    },
+    "pl": {
+      "mollieGateway": {
+        "adm_apiKey": "Klucz API",
+        "adm_apiKeyDesc": "Znajdziesz go w panelu Mollie. Ustaw adres powiadomień Mollie na /api/v1/mollie/webhook.",
+        "adm_subtitle": "Klucze do przyjmowania płatności przez Mollie.",
+        "adm_title": "Ustawienia Mollie",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "menu_mollie-gateway": "Bramka Mollie",
+        "menu_mollie-gateway_mollie_settings": "Ustawienia Mollie",
+        "module_mollie-gateway_name": "Bramka płatności Mollie",
+        "module_mollie-gateway_description": "Przyjmuj płatności iDEAL, Bancontact, SEPA i kartą przez Mollie",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Klucz API Mollie."
+      }
+    },
+    "pt": {
+      "mollieGateway": {
+        "adm_apiKey": "Chave de API",
+        "adm_apiKeyDesc": "Obtida no seu painel do Mollie. Aponte a URL de notificação do Mollie para /api/v1/mollie/webhook.",
+        "adm_subtitle": "Chaves para receber pagamentos pelo Mollie.",
+        "adm_title": "Configurações do Mollie",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "menu_mollie-gateway": "Gateway Mollie",
+        "menu_mollie-gateway_mollie_settings": "Configurações do Mollie",
+        "module_mollie-gateway_name": "Gateway de pagamento Mollie",
+        "module_mollie-gateway_description": "Receba pagamentos com iDEAL, Bancontact, SEPA e cartão pelo Mollie",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Chave de API do Mollie."
+      }
+    },
+    "ru": {
+      "mollieGateway": {
+        "adm_apiKey": "Ключ API",
+        "adm_apiKeyDesc": "Из панели управления Mollie. Укажите для уведомлений Mollie адрес /api/v1/mollie/webhook.",
+        "adm_subtitle": "Ключи для приема платежей через Mollie.",
+        "adm_title": "Настройки Mollie",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "menu_mollie-gateway": "Шлюз Mollie",
+        "menu_mollie-gateway_mollie_settings": "Настройки Mollie",
+        "module_mollie-gateway_name": "Платежный шлюз Mollie",
+        "module_mollie-gateway_description": "Прием платежей через iDEAL, Bancontact, SEPA и картой через Mollie",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Ключ API Mollie."
+      }
+    },
+    "zh": {
+      "mollieGateway": {
+        "adm_apiKey": "API 密钥",
+        "adm_apiKeyDesc": "来自你的 Mollie 控制台。将 Mollie 通知 URL 指向 /api/v1/mollie/webhook。",
+        "adm_subtitle": "通过 Mollie 收款所需的密钥。",
+        "adm_title": "Mollie 设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "menu_mollie-gateway": "Mollie 网关",
+        "menu_mollie-gateway_mollie_settings": "Mollie 设置",
+        "module_mollie-gateway_name": "Mollie 支付网关",
+        "module_mollie-gateway_description": "通过 Mollie 接受 iDEAL、Bancontact、SEPA 和银行卡付款",
+        "settings_mollie-gateway": "Mollie",
+        "settings_mollie-gateway_description": "Mollie API 密钥。"
+      }
     }
   },
   "permissions": [

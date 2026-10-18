@@ -18,8 +18,9 @@ import { runChallenge } from "@/core/lib/auth-challenge";
 import { challengeFieldsFrom } from "@/core/lib/auth-challenge-shared";
 import { readJsonBody } from "@/core/lib/api-body";
 import { log } from "@/core/lib/logger";
+import { locales } from "@/core/lib/i18n/config";
 
-// Derive a locale code ("en"/"tr") from the request URL. Falls back to "en".
+// Derive the locale code from the request URL. Falls back to "en".
 // Used at signup so the welcome email goes out in the language the visitor
 // was actually browsing in (instead of always English).
 function detectLocale(request: NextRequest): string {
@@ -28,7 +29,7 @@ function detectLocale(request: NextRequest): string {
         try { return new URL(referer).pathname; } catch { return ""; }
     })();
     const seg = path.split("/").filter(Boolean)[0];
-    if (seg === "tr" || seg === "en") return seg;
+    if (seg && (locales as readonly string[]).includes(seg)) return seg;
     return "en";
 }
 

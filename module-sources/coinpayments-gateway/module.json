@@ -108,6 +108,196 @@
         "settings_coinpayments-gateway": "CoinPayments",
         "settings_coinpayments-gateway_description": "CoinPayments satıcı kimliği ve IPN parolası."
       }
+    },
+    "az": {
+      "coinpaymentsGateway": {
+        "adm_ipnSecret": "IPN gizli açarı",
+        "adm_ipnSecretDesc": "CoinPayments panelinizdən götürün. CoinPayments bildiriş URL-ini /api/v1/coinpayments/ipn ünvanına yönəldin.",
+        "adm_merchantId": "Satıcı ID-si",
+        "adm_merchantIdDesc": "CoinPayments panelinizdən götürün.",
+        "adm_subtitle": "CoinPayments vasitəsilə ödənişlər qəbul etmək üçün açarlar.",
+        "adm_title": "CoinPayments parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "menu_coinpayments-gateway": "CoinPayments şlüzü",
+        "menu_coinpayments-gateway_coinpayments_settings": "CoinPayments parametrləri",
+        "module_coinpayments-gateway_name": "CoinPayments şlüzü",
+        "module_coinpayments-gateway_description": "CoinPayments vasitəsilə Bitcoin, Litecoin, USDT və digər kriptovalyuta ödənişləri qəbul edin",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "CoinPayments satıcı ID-si və IPN gizli açarı."
+      }
+    },
+    "de": {
+      "coinpaymentsGateway": {
+        "adm_ipnSecret": "IPN-Secret",
+        "adm_ipnSecretDesc": "Aus deinem CoinPayments-Dashboard. Trage /api/v1/coinpayments/ipn als Benachrichtigungs-URL bei CoinPayments ein.",
+        "adm_merchantId": "Händler-ID",
+        "adm_merchantIdDesc": "Aus deinem CoinPayments-Dashboard.",
+        "adm_subtitle": "Schlüssel für Zahlungen über CoinPayments.",
+        "adm_title": "CoinPayments-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "menu_coinpayments-gateway": "CoinPayments Gateway",
+        "menu_coinpayments-gateway_coinpayments_settings": "CoinPayments-Einstellungen",
+        "module_coinpayments-gateway_name": "CoinPayments Gateway",
+        "module_coinpayments-gateway_description": "Bitcoin, Litecoin, USDT und andere Krypto-Zahlungen über CoinPayments annehmen",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "Händler-ID und IPN-Secret von CoinPayments."
+      }
+    },
+    "es": {
+      "coinpaymentsGateway": {
+        "adm_ipnSecret": "Secreto de IPN",
+        "adm_ipnSecretDesc": "Desde tu panel de CoinPayments. Apunta la URL de notificación de CoinPayments a /api/v1/coinpayments/ipn.",
+        "adm_merchantId": "ID de comerciante",
+        "adm_merchantIdDesc": "Desde tu panel de CoinPayments.",
+        "adm_subtitle": "Claves para cobrar pagos a través de CoinPayments.",
+        "adm_title": "Ajustes de CoinPayments",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "menu_coinpayments-gateway": "Pasarela de CoinPayments",
+        "menu_coinpayments-gateway_coinpayments_settings": "Ajustes de CoinPayments",
+        "module_coinpayments-gateway_name": "Pasarela de CoinPayments",
+        "module_coinpayments-gateway_description": "Acepta pagos en Bitcoin, Litecoin, USDT y otras criptomonedas a través de CoinPayments",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "ID de comerciante y secreto de IPN de CoinPayments."
+      }
+    },
+    "et": {
+      "coinpaymentsGateway": {
+        "adm_ipnSecret": "IPN-i saladus",
+        "adm_ipnSecretDesc": "Sinu CoinPaymentsi juhtpaneelist. Suuna CoinPaymentsi teavituste URL aadressile /api/v1/coinpayments/ipn.",
+        "adm_merchantId": "Kaupmehe ID",
+        "adm_merchantIdDesc": "Sinu CoinPaymentsi juhtpaneelist.",
+        "adm_subtitle": "Võtmed maksete vastuvõtmiseks CoinPaymentsi kaudu.",
+        "adm_title": "CoinPaymentsi seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "menu_coinpayments-gateway": "CoinPaymentsi lüüs",
+        "menu_coinpayments-gateway_coinpayments_settings": "CoinPaymentsi seaded",
+        "module_coinpayments-gateway_name": "CoinPaymentsi lüüs",
+        "module_coinpayments-gateway_description": "Võta vastu bitcoini, litecoini, USDT-d ja muid krüptomakseid CoinPaymentsi kaudu",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "CoinPaymentsi kaupmehe ID ja IPN-i saladus."
+      }
+    },
+    "fr": {
+      "coinpaymentsGateway": {
+        "adm_ipnSecret": "Secret IPN",
+        "adm_ipnSecretDesc": "Depuis votre tableau de bord CoinPayments. Renseignez /api/v1/coinpayments/ipn comme URL de notification CoinPayments.",
+        "adm_merchantId": "ID marchand",
+        "adm_merchantIdDesc": "Depuis votre tableau de bord CoinPayments.",
+        "adm_subtitle": "Clés pour encaisser des paiements via CoinPayments.",
+        "adm_title": "Paramètres CoinPayments",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "menu_coinpayments-gateway": "Passerelle CoinPayments",
+        "menu_coinpayments-gateway_coinpayments_settings": "Paramètres CoinPayments",
+        "module_coinpayments-gateway_name": "Passerelle CoinPayments",
+        "module_coinpayments-gateway_description": "Acceptez les paiements en Bitcoin, Litecoin, USDT et autres cryptomonnaies via CoinPayments",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "ID marchand et secret IPN CoinPayments."
+      }
+    },
+    "it": {
+      "coinpaymentsGateway": {
+        "adm_ipnSecret": "Segreto IPN",
+        "adm_ipnSecretDesc": "Dalla dashboard di CoinPayments. Imposta l’URL di notifica di CoinPayments su /api/v1/coinpayments/ipn.",
+        "adm_merchantId": "ID merchant",
+        "adm_merchantIdDesc": "Dalla dashboard di CoinPayments.",
+        "adm_subtitle": "Chiavi per accettare pagamenti tramite CoinPayments.",
+        "adm_title": "Impostazioni di CoinPayments",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "menu_coinpayments-gateway": "Gateway CoinPayments",
+        "menu_coinpayments-gateway_coinpayments_settings": "Impostazioni di CoinPayments",
+        "module_coinpayments-gateway_name": "Gateway CoinPayments",
+        "module_coinpayments-gateway_description": "Accetta pagamenti in Bitcoin, Litecoin, USDT e altre criptovalute tramite CoinPayments",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "ID merchant e segreto IPN di CoinPayments."
+      }
+    },
+    "pl": {
+      "coinpaymentsGateway": {
+        "adm_ipnSecret": "Sekret IPN",
+        "adm_ipnSecretDesc": "Znajdziesz go w panelu CoinPayments. Ustaw w CoinPayments adres powiadomień na /api/v1/coinpayments/ipn.",
+        "adm_merchantId": "Identyfikator sprzedawcy",
+        "adm_merchantIdDesc": "Znajdziesz go w panelu CoinPayments.",
+        "adm_subtitle": "Klucze do przyjmowania płatności przez CoinPayments.",
+        "adm_title": "Ustawienia CoinPayments",
+        "perm_manage": "Zarządzanie"
+      },
+      "admin": {
+        "menu_coinpayments-gateway": "Bramka CoinPayments",
+        "menu_coinpayments-gateway_coinpayments_settings": "Ustawienia CoinPayments",
+        "module_coinpayments-gateway_name": "Bramka CoinPayments",
+        "module_coinpayments-gateway_description": "Przyjmuj płatności w Bitcoin, Litecoin, USDT i innych kryptowalutach przez CoinPayments",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "Identyfikator sprzedawcy i sekret IPN CoinPayments."
+      }
+    },
+    "pt": {
+      "coinpaymentsGateway": {
+        "adm_ipnSecret": "Segredo do IPN",
+        "adm_ipnSecretDesc": "Obtido no seu painel do CoinPayments. Aponte a URL de notificação do CoinPayments para /api/v1/coinpayments/ipn.",
+        "adm_merchantId": "ID do lojista",
+        "adm_merchantIdDesc": "Obtido no seu painel do CoinPayments.",
+        "adm_subtitle": "Chaves para receber pagamentos pelo CoinPayments.",
+        "adm_title": "Configurações do CoinPayments",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "menu_coinpayments-gateway": "Gateway CoinPayments",
+        "menu_coinpayments-gateway_coinpayments_settings": "Configurações do CoinPayments",
+        "module_coinpayments-gateway_name": "Gateway CoinPayments",
+        "module_coinpayments-gateway_description": "Receba pagamentos em Bitcoin, Litecoin, USDT e outras criptomoedas pelo CoinPayments",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "ID do lojista e segredo do IPN do CoinPayments."
+      }
+    },
+    "ru": {
+      "coinpaymentsGateway": {
+        "adm_ipnSecret": "Секрет IPN",
+        "adm_ipnSecretDesc": "Из панели управления CoinPayments. Укажите в URL уведомлений CoinPayments адрес /api/v1/coinpayments/ipn.",
+        "adm_merchantId": "ID мерчанта",
+        "adm_merchantIdDesc": "Из панели управления CoinPayments.",
+        "adm_subtitle": "Ключи для приема платежей через CoinPayments.",
+        "adm_title": "Настройки CoinPayments",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "menu_coinpayments-gateway": "CoinPayments",
+        "menu_coinpayments-gateway_coinpayments_settings": "Настройки CoinPayments",
+        "module_coinpayments-gateway_name": "Шлюз CoinPayments",
+        "module_coinpayments-gateway_description": "Принимайте Bitcoin, Litecoin, USDT и другие криптоплатежи через CoinPayments",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "ID мерчанта и секрет IPN CoinPayments."
+      }
+    },
+    "zh": {
+      "coinpaymentsGateway": {
+        "adm_ipnSecret": "IPN 密钥",
+        "adm_ipnSecretDesc": "来自你的 CoinPayments 控制台。请将 CoinPayments 通知网址指向 /api/v1/coinpayments/ipn。",
+        "adm_merchantId": "商户 ID",
+        "adm_merchantIdDesc": "来自你的 CoinPayments 控制台。",
+        "adm_subtitle": "通过 CoinPayments 收款所需的密钥。",
+        "adm_title": "CoinPayments 设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "menu_coinpayments-gateway": "CoinPayments 网关",
+        "menu_coinpayments-gateway_coinpayments_settings": "CoinPayments 设置",
+        "module_coinpayments-gateway_name": "CoinPayments 网关",
+        "module_coinpayments-gateway_description": "通过 CoinPayments 接收比特币、莱特币、USDT 等加密货币付款",
+        "settings_coinpayments-gateway": "CoinPayments",
+        "settings_coinpayments-gateway_description": "CoinPayments 商户 ID 和 IPN 密钥。"
+      }
     }
   },
   "permissions": [

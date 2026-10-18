@@ -142,6 +142,416 @@
         "member": "Bir üyenin herkese açık profilini görün: ne zaman katıldığı, hangi rütbede olduğu ve toplulukta neler paylaştığı.",
         "memberContent": "Bir üyenin yazdığı bütün konular, yanıtlar, yorumlar ve öneriler, en yenisi önce."
       }
+    },
+    "az": {
+      "memberProfiles": {
+        "accounts": "Hesablar",
+        "activity": "Fəaliyyət",
+        "backToProfile": "Profilə qayıt",
+        "badges": "Nişanlar",
+        "contentKind": "Nə göstərilsin",
+        "joinDate": "Qoşulma tarixi",
+        "linkedAccounts": "Bağlı hesablar",
+        "linksAreManagedByTheirModule": "Hər bağlantı yarandığı yerdə, həmin oyunun öz bölməsində idarə olunur.",
+        "memberNotFound": "Üzv tapılmadı",
+        "noLinkedAccounts": "Bağlı hesab yoxdur",
+        "nothingOfThisKind": "Hələ bu növdən heç nə yoxdur.",
+        "offline": "Oflayn",
+        "online": "Onlayn",
+        "profileTab": "Bağlı hesablar",
+        "rank": "Yer",
+        "searchPlaceholder": "İstifadəçi adını daxil edin...",
+        "stat_comments": "Şərhlər",
+        "stat_orders": "Sifarişlər",
+        "stat_posts": "Paylaşımlar",
+        "stat_suggestions": "Təkliflər",
+        "stat_topics": "Mövzular",
+        "statistics": "Statistika",
+        "title": "Üzv profili",
+        "untitled": "Adsız",
+        "username": "İstifadəçi adı"
+      },
+      "pageTitles": {
+        "member": "Üzv profili",
+        "memberContent": "Yazdıqları"
+      },
+      "admin": {
+        "module_member-profiles_name": "Üzv profilləri",
+        "module_member-profiles_description": "Ümumi profil səhifələri, quraşdırılmış hər modulun üzv haqqında bildiyi məlumatlarla"
+      },
+      "pageDescriptions": {
+        "member": "Üzvün ictimai profilinə baxın: nə vaxt qoşulub, hansı yeri tutur və icmada nə paylaşıb.",
+        "memberContent": "Bir üzvün yazdığı bütün mövzular, cavablar, şərhlər və təkliflər, ən yenisi birinci."
+      }
+    },
+    "de": {
+      "memberProfiles": {
+        "accounts": "Konten",
+        "activity": "Aktivität",
+        "backToProfile": "Zurück zum Profil",
+        "badges": "Abzeichen",
+        "contentKind": "Was angezeigt werden soll",
+        "joinDate": "Beitrittsdatum",
+        "linkedAccounts": "Verknüpfte Konten",
+        "linksAreManagedByTheirModule": "Jede Verknüpfung wird dort verwaltet, wo sie erstellt wurde, im Bereich des jeweiligen Spiels.",
+        "memberNotFound": "Mitglied nicht gefunden",
+        "noLinkedAccounts": "Keine verknüpften Konten",
+        "nothingOfThisKind": "Noch nichts dieser Art.",
+        "offline": "Offline",
+        "online": "Online",
+        "profileTab": "Verknüpfte Konten",
+        "rank": "Rang",
+        "searchPlaceholder": "Benutzernamen eingeben...",
+        "stat_comments": "Kommentare",
+        "stat_orders": "Bestellungen",
+        "stat_posts": "Beiträge",
+        "stat_suggestions": "Vorschläge",
+        "stat_topics": "Themen",
+        "statistics": "Statistiken",
+        "title": "Mitgliederprofil",
+        "untitled": "Ohne Titel",
+        "username": "Benutzername"
+      },
+      "pageTitles": {
+        "member": "Mitgliederprofil",
+        "memberContent": "Was sie geschrieben haben"
+      },
+      "admin": {
+        "module_member-profiles_name": "Mitgliederprofile",
+        "module_member-profiles_description": "Öffentliche Profilseiten mit allem, was jedes installierte Modul über ein Mitglied weiß"
+      },
+      "pageDescriptions": {
+        "member": "Sieh das öffentliche Profil eines Mitglieds: wann es beigetreten ist, welchen Rang es hat und was es in der Community geschrieben hat.",
+        "memberContent": "Jedes Thema, jede Antwort, jeden Kommentar und jeden Vorschlag, die ein Mitglied geschrieben hat, neueste zuerst."
+      }
+    },
+    "es": {
+      "memberProfiles": {
+        "accounts": "Cuentas",
+        "activity": "Actividad",
+        "backToProfile": "Volver al perfil",
+        "badges": "Insignias",
+        "contentKind": "Qué mostrar",
+        "joinDate": "Fecha de ingreso",
+        "linkedAccounts": "Cuentas vinculadas",
+        "linksAreManagedByTheirModule": "Cada vínculo se gestiona donde se creó, en la sección de ese juego.",
+        "memberNotFound": "Miembro no encontrado",
+        "noLinkedAccounts": "No hay cuentas vinculadas",
+        "nothingOfThisKind": "Todavía no hay nada de este tipo.",
+        "offline": "Desconectado",
+        "online": "Conectado",
+        "profileTab": "Cuentas vinculadas",
+        "rank": "Puesto",
+        "searchPlaceholder": "Escribe el nombre de usuario...",
+        "stat_comments": "Comentarios",
+        "stat_orders": "Pedidos",
+        "stat_posts": "Publicaciones",
+        "stat_suggestions": "Sugerencias",
+        "stat_topics": "Temas",
+        "statistics": "Estadísticas",
+        "title": "Perfil de miembro",
+        "untitled": "Sin título",
+        "username": "Nombre de usuario"
+      },
+      "pageTitles": {
+        "member": "Perfil de miembro",
+        "memberContent": "Lo que ha escrito"
+      },
+      "admin": {
+        "module_member-profiles_name": "Perfiles de miembros",
+        "module_member-profiles_description": "Páginas de perfil públicas, con todo lo que cada módulo instalado sabe de un miembro"
+      },
+      "pageDescriptions": {
+        "member": "Consulta el perfil público de un miembro: cuándo se unió, qué puesto ocupa y lo que ha publicado en la comunidad.",
+        "memberContent": "Todos los temas, respuestas, comentarios y sugerencias que ha escrito un miembro, del más reciente al más antiguo."
+      }
+    },
+    "et": {
+      "memberProfiles": {
+        "accounts": "Kontod",
+        "activity": "Tegevus",
+        "backToProfile": "Tagasi profiili",
+        "badges": "Märgid",
+        "contentKind": "Mida näidata",
+        "joinDate": "Liitumise kuupäev",
+        "linkedAccounts": "Seotud kontod",
+        "linksAreManagedByTheirModule": "Iga link luuakse seal, kus see tehti, selle mängu enda jaotises.",
+        "memberNotFound": "Liiget ei leitud",
+        "noLinkedAccounts": "Seotud kontosid pole",
+        "nothingOfThisKind": "Seda liiki sisu pole veel.",
+        "offline": "Pole võrgus",
+        "online": "Võrgus",
+        "profileTab": "Seotud kontod",
+        "rank": "Koht",
+        "searchPlaceholder": "Sisesta kasutajanimi...",
+        "stat_comments": "Kommentaarid",
+        "stat_orders": "Tellimused",
+        "stat_posts": "Postitused",
+        "stat_suggestions": "Ettepanekud",
+        "stat_topics": "Teemad",
+        "statistics": "Statistika",
+        "title": "Liikme profiil",
+        "untitled": "Pealkirjata",
+        "username": "Kasutajanimi"
+      },
+      "pageTitles": {
+        "member": "Liikme profiil",
+        "memberContent": "Mida nad on kirjutanud"
+      },
+      "admin": {
+        "module_member-profiles_name": "Liikmete profiilid",
+        "module_member-profiles_description": "Avalikud profiilileheküljed koos sellega, mida iga paigaldatud moodul liikme kohta teab"
+      },
+      "pageDescriptions": {
+        "member": "Vaata liikme avalikku profiili: millal ta liitus, millise koha ta omab ja mida on kogukonnas postitanud.",
+        "memberContent": "Kõik teemad, vastused, kommentaarid ja ettepanekud, mille üks liige on kirjutanud, uusimad ees."
+      }
+    },
+    "fr": {
+      "memberProfiles": {
+        "accounts": "Comptes",
+        "activity": "Activité",
+        "backToProfile": "Retour au profil",
+        "badges": "Badges",
+        "contentKind": "Quoi afficher",
+        "joinDate": "Date d’inscription",
+        "linkedAccounts": "Comptes liés",
+        "linksAreManagedByTheirModule": "Chaque lien est géré là où il a été créé, dans la section propre à ce jeu.",
+        "memberNotFound": "Membre introuvable",
+        "noLinkedAccounts": "Aucun compte lié",
+        "nothingOfThisKind": "Rien de ce type pour le moment.",
+        "offline": "Hors ligne",
+        "online": "En ligne",
+        "profileTab": "Comptes liés",
+        "rank": "Rang",
+        "searchPlaceholder": "Saisissez un nom d’utilisateur…",
+        "stat_comments": "Commentaires",
+        "stat_orders": "Commandes",
+        "stat_posts": "Publications",
+        "stat_suggestions": "Suggestions",
+        "stat_topics": "Sujets",
+        "statistics": "Statistiques",
+        "title": "Profil du membre",
+        "untitled": "Sans titre",
+        "username": "Nom d’utilisateur"
+      },
+      "pageTitles": {
+        "member": "Profil du membre",
+        "memberContent": "Ce qu’il a écrit"
+      },
+      "admin": {
+        "module_member-profiles_name": "Profils des membres",
+        "module_member-profiles_description": "Pages de profil publiques, avec ce que chaque module installé sait d’un membre"
+      },
+      "pageDescriptions": {
+        "member": "Consultez le profil public d’un membre : date d’inscription, rang et ce qu’il a publié dans la communauté.",
+        "memberContent": "Tous les sujets, réponses, commentaires et suggestions rédigés par un membre, du plus récent au plus ancien."
+      }
+    },
+    "it": {
+      "memberProfiles": {
+        "accounts": "Account",
+        "activity": "Attività",
+        "backToProfile": "Torna al profilo",
+        "badges": "Badge",
+        "contentKind": "Cosa mostrare",
+        "joinDate": "Data di iscrizione",
+        "linkedAccounts": "Account collegati",
+        "linksAreManagedByTheirModule": "Ogni collegamento si gestisce dove è stato creato, nella sezione di quel gioco.",
+        "memberNotFound": "Membro non trovato",
+        "noLinkedAccounts": "Nessun account collegato",
+        "nothingOfThisKind": "Niente di questo tipo per ora.",
+        "offline": "Offline",
+        "online": "Online",
+        "profileTab": "Account collegati",
+        "rank": "Posizione",
+        "searchPlaceholder": "Inserisci il nome utente...",
+        "stat_comments": "Commenti",
+        "stat_orders": "Ordini",
+        "stat_posts": "Post",
+        "stat_suggestions": "Suggerimenti",
+        "stat_topics": "Argomenti",
+        "statistics": "Statistiche",
+        "title": "Profilo del membro",
+        "untitled": "Senza titolo",
+        "username": "Nome utente"
+      },
+      "pageTitles": {
+        "member": "Profilo del membro",
+        "memberContent": "Cosa ha scritto"
+      },
+      "admin": {
+        "module_member-profiles_name": "Profili dei membri",
+        "module_member-profiles_description": "Pagine profilo pubbliche, con ciò che ogni modulo installato sa di un membro"
+      },
+      "pageDescriptions": {
+        "member": "Vedi il profilo pubblico di un membro: quando si è iscritto, la posizione che ha e ciò che ha pubblicato nella community.",
+        "memberContent": "Ogni argomento, risposta, commento e suggerimento scritto da un membro, dal più recente."
+      }
+    },
+    "pl": {
+      "memberProfiles": {
+        "accounts": "Konta",
+        "activity": "Aktywność",
+        "backToProfile": "Wróć do profilu",
+        "badges": "Odznaki",
+        "contentKind": "Co pokazać",
+        "joinDate": "Data dołączenia",
+        "linkedAccounts": "Powiązane konta",
+        "linksAreManagedByTheirModule": "Każde powiązanie zarządzane jest tam, gdzie zostało utworzone, w sekcji danej gry.",
+        "memberNotFound": "Nie znaleziono członka",
+        "noLinkedAccounts": "Brak powiązanych kont",
+        "nothingOfThisKind": "Nie ma jeszcze nic tego rodzaju.",
+        "offline": "Offline",
+        "online": "Online",
+        "profileTab": "Powiązane konta",
+        "rank": "Miejsce",
+        "searchPlaceholder": "Wpisz nazwę użytkownika...",
+        "stat_comments": "Komentarze",
+        "stat_orders": "Zamówienia",
+        "stat_posts": "Posty",
+        "stat_suggestions": "Sugestie",
+        "stat_topics": "Tematy",
+        "statistics": "Statystyki",
+        "title": "Profil członka",
+        "untitled": "Bez tytułu",
+        "username": "Nazwa użytkownika"
+      },
+      "pageTitles": {
+        "member": "Profil członka",
+        "memberContent": "Napisane treści"
+      },
+      "admin": {
+        "module_member-profiles_name": "Profile członków",
+        "module_member-profiles_description": "Publiczne strony profili z tym, co każdy zainstalowany moduł wie o członku"
+      },
+      "pageDescriptions": {
+        "member": "Zobacz publiczny profil członka: kiedy dołączył, jaką ma pozycję i co opublikował we wspólnocie.",
+        "memberContent": "Każdy temat, odpowiedź, komentarz i sugestia napisane przez tego członka, od najnowszych."
+      }
+    },
+    "pt": {
+      "memberProfiles": {
+        "accounts": "Contas",
+        "activity": "Atividade",
+        "backToProfile": "Voltar ao perfil",
+        "badges": "Distintivos",
+        "contentKind": "O que mostrar",
+        "joinDate": "Data de entrada",
+        "linkedAccounts": "Contas vinculadas",
+        "linksAreManagedByTheirModule": "Cada vínculo é gerenciado onde foi feito, na seção do respectivo jogo.",
+        "memberNotFound": "Membro não encontrado",
+        "noLinkedAccounts": "Nenhuma conta vinculada",
+        "nothingOfThisKind": "Nada deste tipo ainda.",
+        "offline": "Offline",
+        "online": "Online",
+        "profileTab": "Contas vinculadas",
+        "rank": "Posição",
+        "searchPlaceholder": "Digite o nome de usuário...",
+        "stat_comments": "Comentários",
+        "stat_orders": "Pedidos",
+        "stat_posts": "Publicações",
+        "stat_suggestions": "Sugestões",
+        "stat_topics": "Tópicos",
+        "statistics": "Estatísticas",
+        "title": "Perfil do membro",
+        "untitled": "Sem título",
+        "username": "Nome de usuário"
+      },
+      "pageTitles": {
+        "member": "Perfil do membro",
+        "memberContent": "O que escreveram"
+      },
+      "admin": {
+        "module_member-profiles_name": "Perfis de membros",
+        "module_member-profiles_description": "Páginas de perfil público, com o que cada módulo instalado sabe sobre um membro"
+      },
+      "pageDescriptions": {
+        "member": "Veja o perfil público de um membro: quando entrou, a posição que ocupa e o que publicou na comunidade.",
+        "memberContent": "Todo tópico, resposta, comentário e sugestão escrito por um membro, do mais recente para o mais antigo."
+      }
+    },
+    "ru": {
+      "memberProfiles": {
+        "accounts": "Учетные записи",
+        "activity": "Активность",
+        "backToProfile": "Назад к профилю",
+        "badges": "Значки",
+        "contentKind": "Что показывать",
+        "joinDate": "Дата регистрации",
+        "linkedAccounts": "Связанные учетные записи",
+        "linksAreManagedByTheirModule": "Каждая связь управляется там, где она была создана, в разделе этой игры.",
+        "memberNotFound": "Участник не найден",
+        "noLinkedAccounts": "Связанных учетных записей нет",
+        "nothingOfThisKind": "Пока ничего такого нет.",
+        "offline": "Не в сети",
+        "online": "В сети",
+        "profileTab": "Связанные учетные записи",
+        "rank": "Место",
+        "searchPlaceholder": "Введите имя пользователя...",
+        "stat_comments": "Комментарии",
+        "stat_orders": "Заказы",
+        "stat_posts": "Сообщения",
+        "stat_suggestions": "Предложения",
+        "stat_topics": "Темы",
+        "statistics": "Статистика",
+        "title": "Профиль участника",
+        "untitled": "Без названия",
+        "username": "Имя пользователя"
+      },
+      "pageTitles": {
+        "member": "Профиль участника",
+        "memberContent": "Что написал участник"
+      },
+      "admin": {
+        "module_member-profiles_name": "Профили участников",
+        "module_member-profiles_description": "Публичные страницы профилей с данными, которые каждый установленный модуль знает об участнике"
+      },
+      "pageDescriptions": {
+        "member": "Публичный профиль участника: когда он зарегистрировался, какое место занимает и что опубликовал в сообществе.",
+        "memberContent": "Все темы, ответы, комментарии и предложения участника, сначала новые."
+      }
+    },
+    "zh": {
+      "memberProfiles": {
+        "accounts": "账户",
+        "activity": "动态",
+        "backToProfile": "返回个人资料",
+        "badges": "徽章",
+        "contentKind": "显示内容",
+        "joinDate": "加入日期",
+        "linkedAccounts": "已关联账户",
+        "linksAreManagedByTheirModule": "每个关联都在其所属的游戏板块中管理。",
+        "memberNotFound": "未找到该成员",
+        "noLinkedAccounts": "暂无已关联账户",
+        "nothingOfThisKind": "这类内容暂时还没有。",
+        "offline": "离线",
+        "online": "在线",
+        "profileTab": "已关联账户",
+        "rank": "排名",
+        "searchPlaceholder": "输入用户名……",
+        "stat_comments": "评论",
+        "stat_orders": "订单",
+        "stat_posts": "帖子",
+        "stat_suggestions": "建议",
+        "stat_topics": "主题",
+        "statistics": "统计",
+        "title": "成员资料",
+        "untitled": "无标题",
+        "username": "用户名"
+      },
+      "pageTitles": {
+        "member": "成员资料",
+        "memberContent": "他们发布的内容"
+      },
+      "admin": {
+        "module_member-profiles_name": "成员资料",
+        "module_member-profiles_description": "公开的成员资料页，展示每个已安装模块所了解的成员信息"
+      },
+      "pageDescriptions": {
+        "member": "查看成员的公开资料：加入时间、其所获得的等级，以及其在社区中发布的内容。",
+        "memberContent": "按最新排序，显示某位成员写过的每个主题、回复、评论和建议。"
+      }
     }
   },
   "hooksEmitted": [

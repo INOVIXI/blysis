@@ -109,6 +109,216 @@
         "settings_iyzico-gateway": "iyzico",
         "settings_iyzico-gateway_description": "iyzico API anahtarları ve ortamı."
       }
+    },
+    "az": {
+      "iyzicoGateway": {
+        "adm_apiKey": "API açarı",
+        "adm_apiKeyDesc": "iyzico panelinizdən.",
+        "adm_sandbox": "Sınaq rejimi",
+        "adm_sandboxDesc": "iyzico test mühitindən istifadə etmək üçün true təyin edin.",
+        "adm_secretKey": "Gizli açar",
+        "adm_secretKeyDesc": "iyzico panelinizdən.",
+        "adm_subtitle": "iyzico vasitəsilə ödənişlər qəbul etmək üçün açarlar.",
+        "adm_title": "iyzico parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "menu_iyzico-gateway": "iyzico şlüzü",
+        "menu_iyzico-gateway_iyzico_settings": "iyzico parametrləri",
+        "module_iyzico-gateway_name": "iyzico ödəniş şlüzü",
+        "module_iyzico-gateway_description": "iyzico vasitəsilə taksitli və 3D Secure ilə Türkiyə kart ödənişlərini qəbul edin",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "iyzico API açarları və mühit."
+      }
+    },
+    "de": {
+      "iyzicoGateway": {
+        "adm_apiKey": "API-Schlüssel",
+        "adm_apiKeyDesc": "Aus deinem iyzico-Dashboard.",
+        "adm_sandbox": "Sandbox-Modus",
+        "adm_sandboxDesc": "Auf true setzen, um die Testumgebung von iyzico zu verwenden.",
+        "adm_secretKey": "Geheimer Schlüssel",
+        "adm_secretKeyDesc": "Aus deinem iyzico-Dashboard.",
+        "adm_subtitle": "Schlüssel, um Zahlungen über iyzico anzunehmen.",
+        "adm_title": "iyzico-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "menu_iyzico-gateway": "iyzico-Gateway",
+        "menu_iyzico-gateway_iyzico_settings": "iyzico-Einstellungen",
+        "module_iyzico-gateway_name": "iyzico-Zahlungsgateway",
+        "module_iyzico-gateway_description": "Türkische Kartenzahlungen über iyzico annehmen, mit Ratenzahlung und 3D Secure",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "API-Schlüssel und Umgebung von iyzico."
+      }
+    },
+    "es": {
+      "iyzicoGateway": {
+        "adm_apiKey": "Clave de API",
+        "adm_apiKeyDesc": "Desde tu panel de iyzico.",
+        "adm_sandbox": "Modo de pruebas",
+        "adm_sandboxDesc": "Actívalo para usar el entorno de pruebas de iyzico.",
+        "adm_secretKey": "Clave secreta",
+        "adm_secretKeyDesc": "Desde tu panel de iyzico.",
+        "adm_subtitle": "Claves para cobrar pagos a través de iyzico.",
+        "adm_title": "Ajustes de iyzico",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "menu_iyzico-gateway": "Pasarela iyzico",
+        "menu_iyzico-gateway_iyzico_settings": "Ajustes de iyzico",
+        "module_iyzico-gateway_name": "Pasarela de pago iyzico",
+        "module_iyzico-gateway_description": "Acepta pagos con tarjeta turca, con pagos a plazos y 3D Secure a través de iyzico",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "Claves de API de iyzico y entorno."
+      }
+    },
+    "et": {
+      "iyzicoGateway": {
+        "adm_apiKey": "API võti",
+        "adm_apiKeyDesc": "Leiad oma iyzico töölaualt.",
+        "adm_sandbox": "Testrežiim",
+        "adm_sandboxDesc": "Määra väärtuseks true, et kasutada iyzico testkeskkonda.",
+        "adm_secretKey": "Salajane võti",
+        "adm_secretKeyDesc": "Leiad oma iyzico töölaualt.",
+        "adm_subtitle": "Võtmed maksete vastuvõtmiseks iyzico kaudu.",
+        "adm_title": "iyzico seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "menu_iyzico-gateway": "iyzico maksevärav",
+        "menu_iyzico-gateway_iyzico_settings": "iyzico seaded",
+        "module_iyzico-gateway_name": "iyzico maksevärav",
+        "module_iyzico-gateway_description": "Võta vastu Türgi kaardimakseid iyzico kaudu, koos osamaksete ja 3D Secure'iga",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "iyzico API võtmed ja keskkond."
+      }
+    },
+    "fr": {
+      "iyzicoGateway": {
+        "adm_apiKey": "Clé d’API",
+        "adm_apiKeyDesc": "Depuis votre tableau de bord iyzico.",
+        "adm_sandbox": "Mode test",
+        "adm_sandboxDesc": "Définissez sur true pour utiliser l’environnement de test iyzico.",
+        "adm_secretKey": "Clé secrète",
+        "adm_secretKeyDesc": "Depuis votre tableau de bord iyzico.",
+        "adm_subtitle": "Clés pour encaisser les paiements via iyzico.",
+        "adm_title": "Paramètres iyzico",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "menu_iyzico-gateway": "Passerelle iyzico",
+        "menu_iyzico-gateway_iyzico_settings": "Paramètres iyzico",
+        "module_iyzico-gateway_name": "Passerelle de paiement iyzico",
+        "module_iyzico-gateway_description": "Encaisser des paiements par carte turque via iyzico, avec paiement en plusieurs fois et 3D Secure",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "Clés API et environnement iyzico."
+      }
+    },
+    "it": {
+      "iyzicoGateway": {
+        "adm_apiKey": "Chiave API",
+        "adm_apiKeyDesc": "Dalla tua dashboard di iyzico.",
+        "adm_sandbox": "Modalità sandbox",
+        "adm_sandboxDesc": "Imposta su true per usare l’ambiente di test di iyzico.",
+        "adm_secretKey": "Chiave segreta",
+        "adm_secretKeyDesc": "Dalla tua dashboard di iyzico.",
+        "adm_subtitle": "Chiavi per accettare pagamenti tramite iyzico.",
+        "adm_title": "Impostazioni di iyzico",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "menu_iyzico-gateway": "Gateway iyzico",
+        "menu_iyzico-gateway_iyzico_settings": "Impostazioni di iyzico",
+        "module_iyzico-gateway_name": "Gateway di pagamento iyzico",
+        "module_iyzico-gateway_description": "Accetta pagamenti con carta turchi tramite iyzico, con rate e 3D Secure",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "Chiavi API e ambiente di iyzico."
+      }
+    },
+    "pl": {
+      "iyzicoGateway": {
+        "adm_apiKey": "Klucz API",
+        "adm_apiKeyDesc": "Znajdziesz go w panelu iyzico.",
+        "adm_sandbox": "Tryb testowy",
+        "adm_sandboxDesc": "Ustaw na true, aby używać testowego środowiska iyzico.",
+        "adm_secretKey": "Klucz tajny",
+        "adm_secretKeyDesc": "Znajdziesz go w panelu iyzico.",
+        "adm_subtitle": "Klucze do przyjmowania płatności przez iyzico.",
+        "adm_title": "Ustawienia iyzico",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "menu_iyzico-gateway": "Bramka iyzico",
+        "menu_iyzico-gateway_iyzico_settings": "Ustawienia iyzico",
+        "module_iyzico-gateway_name": "Bramka płatności iyzico",
+        "module_iyzico-gateway_description": "Przyjmuj tureckie płatności kartą przez iyzico, z ratami i 3D Secure",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "Klucze API i środowisko iyzico."
+      }
+    },
+    "pt": {
+      "iyzicoGateway": {
+        "adm_apiKey": "Chave de API",
+        "adm_apiKeyDesc": "Obtida no seu painel do iyzico.",
+        "adm_sandbox": "Modo sandbox",
+        "adm_sandboxDesc": "Defina como true para usar o ambiente de testes do iyzico.",
+        "adm_secretKey": "Chave secreta",
+        "adm_secretKeyDesc": "Obtida no seu painel do iyzico.",
+        "adm_subtitle": "Chaves para receber pagamentos pelo iyzico.",
+        "adm_title": "Configurações do iyzico",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "menu_iyzico-gateway": "Gateway iyzico",
+        "menu_iyzico-gateway_iyzico_settings": "Configurações do iyzico",
+        "module_iyzico-gateway_name": "Gateway de pagamento iyzico",
+        "module_iyzico-gateway_description": "Receba pagamentos com cartão turco, com parcelamento e 3D Secure",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "Chaves da API e ambiente do iyzico."
+      }
+    },
+    "ru": {
+      "iyzicoGateway": {
+        "adm_apiKey": "Ключ API",
+        "adm_apiKeyDesc": "Из панели управления iyzico.",
+        "adm_sandbox": "Режим песочницы",
+        "adm_sandboxDesc": "Укажите true, чтобы использовать тестовую среду iyzico.",
+        "adm_secretKey": "Секретный ключ",
+        "adm_secretKeyDesc": "Из панели управления iyzico.",
+        "adm_subtitle": "Ключи для приема платежей через iyzico.",
+        "adm_title": "Настройки iyzico",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "menu_iyzico-gateway": "Шлюз iyzico",
+        "menu_iyzico-gateway_iyzico_settings": "Настройки iyzico",
+        "module_iyzico-gateway_name": "Платежный шлюз iyzico",
+        "module_iyzico-gateway_description": "Прием карточных платежей в Турции с рассрочкой и 3D Secure через iyzico",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "Ключи API и среда iyzico."
+      }
+    },
+    "zh": {
+      "iyzicoGateway": {
+        "adm_apiKey": "API 密钥",
+        "adm_apiKeyDesc": "来自你的 iyzico 控制台。",
+        "adm_sandbox": "沙盒模式",
+        "adm_sandboxDesc": "设为 true 以使用 iyzico 测试环境。",
+        "adm_secretKey": "私有密钥",
+        "adm_secretKeyDesc": "来自你的 iyzico 控制台。",
+        "adm_subtitle": "通过 iyzico 收款所需的密钥。",
+        "adm_title": "iyzico 设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "menu_iyzico-gateway": "iyzico 网关",
+        "menu_iyzico-gateway_iyzico_settings": "iyzico 设置",
+        "module_iyzico-gateway_name": "iyzico 支付网关",
+        "module_iyzico-gateway_description": "通过 iyzico 接受土耳其银行卡付款，支持分期付款和 3D Secure",
+        "settings_iyzico-gateway": "iyzico",
+        "settings_iyzico-gateway_description": "iyzico API 密钥和环境。"
+      }
     }
   },
   "permissions": [

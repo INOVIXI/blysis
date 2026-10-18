@@ -121,6 +121,256 @@
         "settings_param-gateway": "Param",
         "settings_param-gateway_description": "Param terminal kimlik bilgileri ve modu."
       }
+    },
+    "az": {
+      "paramGateway": {
+        "adm_clientCode": "Müştəri kodu",
+        "adm_clientCodeDesc": "Param panelinizdən.",
+        "adm_clientPass": "Müştəri parolu",
+        "adm_clientPassDesc": "Param panelinizdən.",
+        "adm_clientUser": "Müştəri istifadəçi adı",
+        "adm_clientUserDesc": "Param panelinizdən.",
+        "adm_guid": "Terminal GUID",
+        "adm_guidDesc": "Param panelinizdən.",
+        "adm_sandbox": "Sınaq rejimi",
+        "adm_sandboxDesc": "Param test mühitindən istifadə etmək üçün true təyin edin.",
+        "adm_subtitle": "Param vasitəsilə ödənişlər qəbul etmək üçün açarlar.",
+        "adm_title": "Param parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "menu_param-gateway": "Param şlüzü",
+        "menu_param-gateway_param_settings": "Param parametrləri",
+        "module_param-gateway_name": "Param ödəniş şlüzü",
+        "module_param-gateway_description": "Param (TurkPos) vasitəsilə Türkiyə kart və taksit ödənişlərini qəbul edin",
+        "settings_param-gateway": "Param",
+        "settings_param-gateway_description": "Param terminal etimadnaməsi və rejim."
+      }
+    },
+    "de": {
+      "paramGateway": {
+        "adm_clientCode": "Kundencode",
+        "adm_clientCodeDesc": "Aus deinem Param-Dashboard.",
+        "adm_clientPass": "Kundenpasswort",
+        "adm_clientPassDesc": "Aus deinem Param-Dashboard.",
+        "adm_clientUser": "Kundenbenutzername",
+        "adm_clientUserDesc": "Aus deinem Param-Dashboard.",
+        "adm_guid": "Terminal-GUID",
+        "adm_guidDesc": "Aus deinem Param-Dashboard.",
+        "adm_sandbox": "Sandbox-Modus",
+        "adm_sandboxDesc": "Auf true setzen, um die Testumgebung von Param zu verwenden.",
+        "adm_subtitle": "Schlüssel, um Zahlungen über Param anzunehmen.",
+        "adm_title": "Param-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "menu_param-gateway": "Param-Gateway",
+        "menu_param-gateway_param_settings": "Param-Einstellungen",
+        "module_param-gateway_name": "Param-Zahlungsgateway",
+        "module_param-gateway_description": "Türkische Karten- und Ratenzahlungen über Param (TurkPos) annehmen",
+        "settings_param-gateway": "Param",
+        "settings_param-gateway_description": "Param-Terminal-Zugangsdaten und Modus."
+      }
+    },
+    "es": {
+      "paramGateway": {
+        "adm_clientCode": "Código de cliente",
+        "adm_clientCodeDesc": "Desde tu panel de Param.",
+        "adm_clientPass": "Contraseña de cliente",
+        "adm_clientPassDesc": "Desde tu panel de Param.",
+        "adm_clientUser": "Nombre de usuario del cliente",
+        "adm_clientUserDesc": "Desde tu panel de Param.",
+        "adm_guid": "GUID del terminal",
+        "adm_guidDesc": "Desde tu panel de Param.",
+        "adm_sandbox": "Modo de pruebas",
+        "adm_sandboxDesc": "Actívalo para usar el entorno de pruebas de Param.",
+        "adm_subtitle": "Claves para cobrar pagos a través de Param.",
+        "adm_title": "Ajustes de Param",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "menu_param-gateway": "Pasarela Param",
+        "menu_param-gateway_param_settings": "Ajustes de Param",
+        "module_param-gateway_name": "Pasarela de pago Param",
+        "module_param-gateway_description": "Acepta pagos con tarjeta turca y a plazos a través de Param (TurkPos)",
+        "settings_param-gateway": "Param",
+        "settings_param-gateway_description": "Credenciales y modo del terminal de Param."
+      }
+    },
+    "et": {
+      "paramGateway": {
+        "adm_clientCode": "Kliendikood",
+        "adm_clientCodeDesc": "Leiad oma Param töölaualt.",
+        "adm_clientPass": "Kliendi parool",
+        "adm_clientPassDesc": "Leiad oma Param töölaualt.",
+        "adm_clientUser": "Kliendi kasutajanimi",
+        "adm_clientUserDesc": "Leiad oma Param töölaualt.",
+        "adm_guid": "Terminali GUID",
+        "adm_guidDesc": "Leiad oma Param töölaualt.",
+        "adm_sandbox": "Testrežiim",
+        "adm_sandboxDesc": "Määra väärtuseks true, et kasutada Parami testkeskkonda.",
+        "adm_subtitle": "Võtmed maksete vastuvõtmiseks Parami kaudu.",
+        "adm_title": "Parami seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "menu_param-gateway": "Parami maksevärav",
+        "menu_param-gateway_param_settings": "Parami seaded",
+        "module_param-gateway_name": "Parami maksevärav",
+        "module_param-gateway_description": "Võta vastu Türgi kaardi- ja osamaksemakseid Parami (TurkPos) kaudu",
+        "settings_param-gateway": "Param",
+        "settings_param-gateway_description": "Parami terminali mandaadid ja režiim."
+      }
+    },
+    "fr": {
+      "paramGateway": {
+        "adm_clientCode": "Code client",
+        "adm_clientCodeDesc": "Depuis votre tableau de bord Param.",
+        "adm_clientPass": "Mot de passe client",
+        "adm_clientPassDesc": "Depuis votre tableau de bord Param.",
+        "adm_clientUser": "Nom d’utilisateur client",
+        "adm_clientUserDesc": "Depuis votre tableau de bord Param.",
+        "adm_guid": "GUID du terminal",
+        "adm_guidDesc": "Depuis votre tableau de bord Param.",
+        "adm_sandbox": "Mode test",
+        "adm_sandboxDesc": "Définissez sur true pour utiliser l’environnement de test Param.",
+        "adm_subtitle": "Clés pour encaisser les paiements via Param.",
+        "adm_title": "Paramètres Param",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "menu_param-gateway": "Passerelle Param",
+        "menu_param-gateway_param_settings": "Paramètres Param",
+        "module_param-gateway_name": "Passerelle de paiement Param",
+        "module_param-gateway_description": "Encaisser des paiements par carte turque et en plusieurs fois via Param (TurkPos)",
+        "settings_param-gateway": "Param",
+        "settings_param-gateway_description": "Identifiants du terminal Param et mode."
+      }
+    },
+    "it": {
+      "paramGateway": {
+        "adm_clientCode": "Codice cliente",
+        "adm_clientCodeDesc": "Dalla tua dashboard di Param.",
+        "adm_clientPass": "Password cliente",
+        "adm_clientPassDesc": "Dalla tua dashboard di Param.",
+        "adm_clientUser": "Nome utente cliente",
+        "adm_clientUserDesc": "Dalla tua dashboard di Param.",
+        "adm_guid": "GUID del terminale",
+        "adm_guidDesc": "Dalla tua dashboard di Param.",
+        "adm_sandbox": "Modalità sandbox",
+        "adm_sandboxDesc": "Imposta su true per usare l’ambiente di test di Param.",
+        "adm_subtitle": "Chiavi per accettare pagamenti tramite Param.",
+        "adm_title": "Impostazioni di Param",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "menu_param-gateway": "Gateway Param",
+        "menu_param-gateway_param_settings": "Impostazioni di Param",
+        "module_param-gateway_name": "Gateway di pagamento Param",
+        "module_param-gateway_description": "Accetta pagamenti con carta e a rate di emittenti turche tramite Param (TurkPos)",
+        "settings_param-gateway": "Param",
+        "settings_param-gateway_description": "Credenziali del terminale Param e modalità."
+      }
+    },
+    "pl": {
+      "paramGateway": {
+        "adm_clientCode": "Kod klienta",
+        "adm_clientCodeDesc": "Znajdziesz go w panelu Param.",
+        "adm_clientPass": "Hasło klienta",
+        "adm_clientPassDesc": "Znajdziesz go w panelu Param.",
+        "adm_clientUser": "Nazwa użytkownika klienta",
+        "adm_clientUserDesc": "Znajdziesz go w panelu Param.",
+        "adm_guid": "GUID terminala",
+        "adm_guidDesc": "Znajdziesz go w panelu Param.",
+        "adm_sandbox": "Tryb testowy",
+        "adm_sandboxDesc": "Ustaw na true, aby używać testowego środowiska Param.",
+        "adm_subtitle": "Klucze do przyjmowania płatności przez Param.",
+        "adm_title": "Ustawienia Param",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "menu_param-gateway": "Bramka Param",
+        "menu_param-gateway_param_settings": "Ustawienia Param",
+        "module_param-gateway_name": "Bramka płatności Param",
+        "module_param-gateway_description": "Przyjmuj tureckie płatności kartą i ratalne przez Param (TurkPos)",
+        "settings_param-gateway": "Param",
+        "settings_param-gateway_description": "Dane terminala Param i tryb."
+      }
+    },
+    "pt": {
+      "paramGateway": {
+        "adm_clientCode": "Código do cliente",
+        "adm_clientCodeDesc": "Obtido no seu painel do Param.",
+        "adm_clientPass": "Senha do cliente",
+        "adm_clientPassDesc": "Obtida no seu painel do Param.",
+        "adm_clientUser": "Usuário do cliente",
+        "adm_clientUserDesc": "Obtido no seu painel do Param.",
+        "adm_guid": "GUID do terminal",
+        "adm_guidDesc": "Obtido no seu painel do Param.",
+        "adm_sandbox": "Modo sandbox",
+        "adm_sandboxDesc": "Defina como true para usar o ambiente de testes do Param.",
+        "adm_subtitle": "Chaves para receber pagamentos pelo Param.",
+        "adm_title": "Configurações do Param",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "menu_param-gateway": "Gateway Param",
+        "menu_param-gateway_param_settings": "Configurações do Param",
+        "module_param-gateway_name": "Gateway de pagamento Param",
+        "module_param-gateway_description": "Receba pagamentos com cartão turco e parcelados pelo Param (TurkPos)",
+        "settings_param-gateway": "Param",
+        "settings_param-gateway_description": "Credenciais do terminal Param e modo de operação."
+      }
+    },
+    "ru": {
+      "paramGateway": {
+        "adm_clientCode": "Код клиента",
+        "adm_clientCodeDesc": "Из панели управления Param.",
+        "adm_clientPass": "Пароль клиента",
+        "adm_clientPassDesc": "Из панели управления Param.",
+        "adm_clientUser": "Имя пользователя клиента",
+        "adm_clientUserDesc": "Из панели управления Param.",
+        "adm_guid": "GUID терминала",
+        "adm_guidDesc": "Из панели управления Param.",
+        "adm_sandbox": "Режим песочницы",
+        "adm_sandboxDesc": "Укажите true, чтобы использовать тестовую среду Param.",
+        "adm_subtitle": "Ключи для приема платежей через Param.",
+        "adm_title": "Настройки Param",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "menu_param-gateway": "Шлюз Param",
+        "menu_param-gateway_param_settings": "Настройки Param",
+        "module_param-gateway_name": "Платежный шлюз Param",
+        "module_param-gateway_description": "Прием турецких карточных платежей и платежей в рассрочку через Param (TurkPos)",
+        "settings_param-gateway": "Param",
+        "settings_param-gateway_description": "Учетные данные терминала Param и режим работы."
+      }
+    },
+    "zh": {
+      "paramGateway": {
+        "adm_clientCode": "客户代码",
+        "adm_clientCodeDesc": "来自你的 Param 控制台。",
+        "adm_clientPass": "客户密码",
+        "adm_clientPassDesc": "来自你的 Param 控制台。",
+        "adm_clientUser": "客户用户名",
+        "adm_clientUserDesc": "来自你的 Param 控制台。",
+        "adm_guid": "终端 GUID",
+        "adm_guidDesc": "来自你的 Param 控制台。",
+        "adm_sandbox": "沙盒模式",
+        "adm_sandboxDesc": "设为 true 以使用 Param 测试环境。",
+        "adm_subtitle": "通过 Param 收款所需的密钥。",
+        "adm_title": "Param 设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "menu_param-gateway": "Param 网关",
+        "menu_param-gateway_param_settings": "Param 设置",
+        "module_param-gateway_name": "Param 支付网关",
+        "module_param-gateway_description": "通过 Param（TurkPos）接受土耳其银行卡和分期付款",
+        "settings_param-gateway": "Param",
+        "settings_param-gateway_description": "Param 终端凭据和模式。"
+      }
     }
   },
   "permissions": [

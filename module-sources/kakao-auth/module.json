@@ -67,6 +67,146 @@
         "settings_kakao-auth": "Kakao OAuth",
         "settings_kakao-auth_description": "Kakao uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "kakaoAuth": {
+        "adm_emailNote": "E-poçt ünvanı Kakao-nun tətbiqiniz üçün təsdiq etməli olduğu isteğe bağlı razılıq elementidir. Təsdiq olunana qədər hesablar onsuz gəlir və heç vaxt məktub ala bilməyən müvəqqəti ünvan alır.",
+        "adm_subtitle": "Saytınız üçün Kakao OAuth ilə daxil olmanı quraşdırın.",
+        "adm_title": "Kakao Login parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_kakao-auth_name": "Kakao Login",
+        "module_kakao-auth_description": "İstifadəçilərə Kakao hesabları ilə daxil olmağa icazə verin",
+        "settings_kakao-auth": "Kakao OAuth",
+        "settings_kakao-auth_description": "Kakao tətbiqinin etimadnaməsi."
+      }
+    },
+    "de": {
+      "kakaoAuth": {
+        "adm_emailNote": "Die E-Mail-Adresse ist ein optionaler Zustimmungspunkt, den Kakao für deine App freigeben muss. Bis dahin entstehen Konten ohne Adresse und erhalten eine Platzhalteradresse, die niemals E-Mails empfangen kann.",
+        "adm_subtitle": "Richte die Anmeldung per Kakao-OAuth für deine Seite ein.",
+        "adm_title": "Kakao-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_kakao-auth_name": "Kakao-Login",
+        "module_kakao-auth_description": "Mitglieder können sich mit ihrem Kakao-Konto anmelden",
+        "settings_kakao-auth": "Kakao-OAuth",
+        "settings_kakao-auth_description": "Zugangsdaten der Kakao-Anwendung."
+      }
+    },
+    "es": {
+      "kakaoAuth": {
+        "adm_emailNote": "La dirección de correo es un elemento de consentimiento opcional que Kakao debe aprobar para tu aplicación. Hasta que lo apruebe, las cuentas llegan sin ella y reciben una dirección provisional que nunca puede recibir correos.",
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de Kakao en tu sitio.",
+        "adm_title": "Ajustes de inicio de sesión con Kakao",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_kakao-auth_name": "Inicio de sesión con Kakao",
+        "module_kakao-auth_description": "Permite que los usuarios inicien sesión con su cuenta de Kakao",
+        "settings_kakao-auth": "OAuth de Kakao",
+        "settings_kakao-auth_description": "Credenciales de la aplicación de Kakao."
+      }
+    },
+    "et": {
+      "kakaoAuth": {
+        "adm_emailNote": "E-posti aadress on valikuline nõusolekuüksus, mille Kakao peab sinu rakendusele heaks kiitma. Kuni see on tehtud, tulevad kontod ilma aadressita ja saavad kohatäite aadressi, millele ei saa kunagi kirju saata.",
+        "adm_subtitle": "Seadista oma saidile Kakao OAuth-sisselogimine.",
+        "adm_title": "Kakao sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_kakao-auth_name": "Kakao sisselogimine",
+        "module_kakao-auth_description": "Luba kasutajatel sisse logida oma Kakao kontoga",
+        "settings_kakao-auth": "Kakao OAuth",
+        "settings_kakao-auth_description": "Kakao rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "kakaoAuth": {
+        "adm_emailNote": "L’adresse e-mail est un élément de consentement facultatif que Kakao doit approuver pour votre application. Tant que ce n’est pas fait, les comptes arrivent sans adresse et reçoivent une adresse fictive qui ne peut jamais recevoir de courrier.",
+        "adm_subtitle": "Configurez la connexion OAuth Kakao pour votre site.",
+        "adm_title": "Paramètres de connexion Kakao",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_kakao-auth_name": "Connexion Kakao",
+        "module_kakao-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Kakao",
+        "settings_kakao-auth": "OAuth Kakao",
+        "settings_kakao-auth_description": "Identifiants de l’application Kakao."
+      }
+    },
+    "it": {
+      "kakaoAuth": {
+        "adm_emailNote": "L’indirizzo email è un consenso facoltativo che Kakao deve approvare per la tua app. Finché non viene approvato, gli account arrivano senza e ricevono un indirizzo segnaposto che non può ricevere posta.",
+        "adm_subtitle": "Configura l’accesso con Kakao OAuth per il tuo sito.",
+        "adm_title": "Impostazioni di accesso con Kakao",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_kakao-auth_name": "Accesso con Kakao",
+        "module_kakao-auth_description": "Consenti agli utenti di accedere con il proprio account Kakao",
+        "settings_kakao-auth": "Kakao OAuth",
+        "settings_kakao-auth_description": "Credenziali dell’applicazione Kakao."
+      }
+    },
+    "pl": {
+      "kakaoAuth": {
+        "adm_emailNote": "Adres e-mail to opcjonalna zgoda, którą Kakao musi zatwierdzić dla Twojej aplikacji. Do tego czasu konta trafiają bez adresu i dostają zastępczy, na który nigdy nie dotrze poczta.",
+        "adm_subtitle": "Skonfiguruj logowanie przez Kakao (OAuth) na swojej stronie.",
+        "adm_title": "Ustawienia logowania przez Kakao",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_kakao-auth_name": "Logowanie przez Kakao",
+        "module_kakao-auth_description": "Pozwól członkom logować się przez konto Kakao",
+        "settings_kakao-auth": "Kakao OAuth",
+        "settings_kakao-auth_description": "Dane aplikacji Kakao."
+      }
+    },
+    "pt": {
+      "kakaoAuth": {
+        "adm_emailNote": "O endereço de e-mail é um item de consentimento opcional que o Kakao precisa aprovar para o seu app. Até lá, as contas chegam sem ele e recebem um endereço provisório que nunca pode receber e-mails.",
+        "adm_subtitle": "Configure o login com OAuth do Kakao para o seu site.",
+        "adm_title": "Configurações do login com Kakao",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_kakao-auth_name": "Login com Kakao",
+        "module_kakao-auth_description": "Permite que membros entrem com a conta do Kakao",
+        "settings_kakao-auth": "OAuth do Kakao",
+        "settings_kakao-auth_description": "Credenciais do aplicativo do Kakao."
+      }
+    },
+    "ru": {
+      "kakaoAuth": {
+        "adm_emailNote": "Адрес e-mail - необязательное согласие, которое Kakao должен одобрить для вашего приложения. Пока он не одобрен, учетные записи создаются без адреса и получают заглушку, на которую письма не приходят.",
+        "adm_subtitle": "Настройте вход через OAuth Kakao на вашем сайте.",
+        "adm_title": "Настройки входа через Kakao",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_kakao-auth_name": "Вход через Kakao",
+        "module_kakao-auth_description": "Разрешить пользователям входить через свою учетную запись Kakao",
+        "settings_kakao-auth": "Kakao OAuth",
+        "settings_kakao-auth_description": "Учетные данные приложения Kakao."
+      }
+    },
+    "zh": {
+      "kakaoAuth": {
+        "adm_emailNote": "邮箱地址是 Kakao 需要为你的应用批准的可选同意项。在获得批准之前，账户将不含邮箱，并获得一个无法接收邮件的占位地址。",
+        "adm_subtitle": "为你的站点设置 Kakao OAuth 登录。",
+        "adm_title": "Kakao 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_kakao-auth_name": "Kakao 登录",
+        "module_kakao-auth_description": "允许用户使用其 Kakao 账户登录",
+        "settings_kakao-auth": "Kakao OAuth",
+        "settings_kakao-auth_description": "Kakao 应用凭据。"
+      }
     }
   },
   "permissions": [

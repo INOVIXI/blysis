@@ -67,6 +67,146 @@
         "settings_microsoft-auth": "Microsoft OAuth",
         "settings_microsoft-auth_description": "Microsoft Entra uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "microsoftAuth": {
+        "adm_subtitle": "Saytınız üçün Microsoft OAuth ilə daxil olmanı quraşdırın.",
+        "adm_tenantNote": "Tək tenantlı tətbiq üçün həmçinin AUTH_MICROSOFT_ENTRA_ID_ISSUER dəyişəni https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0 ünvanına təyin edilməlidir. Təyin edilməsə, giriş hər hansı Microsoft və ya Xbox hesabını qəbul edən ümumi /common/ ünvanı üzərindən aparılır.",
+        "adm_title": "Microsoft Login parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_microsoft-auth_name": "Microsoft və Xbox Login",
+        "module_microsoft-auth_description": "İstifadəçilərə Microsoft və ya Xbox hesabları ilə daxil olmağa icazə verin",
+        "settings_microsoft-auth": "Microsoft OAuth",
+        "settings_microsoft-auth_description": "Microsoft Entra tətbiqinin etimadnaməsi."
+      }
+    },
+    "de": {
+      "microsoftAuth": {
+        "adm_subtitle": "Richte die Anmeldung per Microsoft-OAuth für deine Seite ein.",
+        "adm_tenantNote": "Eine Anwendung für einen einzelnen Mandanten braucht außerdem AUTH_MICROSOFT_ENTRA_ID_ISSUER, gesetzt auf https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0. Ohne diese Angabe läuft die Anmeldung über den gemeinsamen Endpunkt /common/, der jedes Microsoft- oder Xbox-Konto akzeptiert.",
+        "adm_title": "Microsoft-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_microsoft-auth_name": "Microsoft- und Xbox-Login",
+        "module_microsoft-auth_description": "Mitglieder können sich mit ihrem Microsoft- oder Xbox-Konto anmelden",
+        "settings_microsoft-auth": "Microsoft-OAuth",
+        "settings_microsoft-auth_description": "Zugangsdaten der Microsoft-Entra-Anwendung."
+      }
+    },
+    "es": {
+      "microsoftAuth": {
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de Microsoft en tu sitio.",
+        "adm_tenantNote": "Una aplicación de un solo inquilino también necesita AUTH_MICROSOFT_ENTRA_ID_ISSUER con el valor https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0. Si no se define, el inicio de sesión usa el endpoint compartido /common/, que acepta cualquier cuenta de Microsoft o Xbox.",
+        "adm_title": "Ajustes de inicio de sesión con Microsoft",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_microsoft-auth_name": "Inicio de sesión con Microsoft y Xbox",
+        "module_microsoft-auth_description": "Permite que los usuarios inicien sesión con su cuenta de Microsoft o Xbox",
+        "settings_microsoft-auth": "OAuth de Microsoft",
+        "settings_microsoft-auth_description": "Credenciales de la aplicación de Microsoft Entra."
+      }
+    },
+    "et": {
+      "microsoftAuth": {
+        "adm_subtitle": "Seadista oma saidile Microsofti OAuth-sisselogimine.",
+        "adm_tenantNote": "Ühe organisatsiooni (single-tenant) rakendus vajab veel AUTH_MICROSOFT_ENTRA_ID_ISSUER seadistamist väärtusele https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0. Kui see on määramata, toimub sisselogimine jagatud lõpp-punkti /common/ kaudu, mis aktsepteerib mis tahes Microsofti või Xboxi kontot.",
+        "adm_title": "Microsofti sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_microsoft-auth_name": "Microsofti ja Xboxi sisselogimine",
+        "module_microsoft-auth_description": "Luba kasutajatel sisse logida oma Microsofti või Xboxi kontoga",
+        "settings_microsoft-auth": "Microsoft OAuth",
+        "settings_microsoft-auth_description": "Microsoft Entra rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "microsoftAuth": {
+        "adm_subtitle": "Configurez la connexion OAuth Microsoft pour votre site.",
+        "adm_tenantNote": "Une application mono-locataire doit aussi définir AUTH_MICROSOFT_ENTRA_ID_ISSUER sur https://login.microsoftonline.com/VOTRE-ID-LOCATAIRE/v2.0. Si elle n’est pas définie, la connexion passe par le point de terminaison commun /common/, qui accepte n’importe quel compte Microsoft ou Xbox.",
+        "adm_title": "Paramètres de connexion Microsoft",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_microsoft-auth_name": "Connexion Microsoft et Xbox",
+        "module_microsoft-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Microsoft ou Xbox",
+        "settings_microsoft-auth": "OAuth Microsoft",
+        "settings_microsoft-auth_description": "Identifiants de l’application Microsoft Entra."
+      }
+    },
+    "it": {
+      "microsoftAuth": {
+        "adm_subtitle": "Configura l’accesso con Microsoft OAuth per il tuo sito.",
+        "adm_tenantNote": "Un’applicazione single-tenant richiede anche AUTH_MICROSOFT_ENTRA_ID_ISSUER impostato su https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0. Se non è impostata, l’accesso passa dall’endpoint condiviso /common/, che accetta qualsiasi account Microsoft o Xbox.",
+        "adm_title": "Impostazioni di accesso con Microsoft",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_microsoft-auth_name": "Accesso con Microsoft e Xbox",
+        "module_microsoft-auth_description": "Consenti agli utenti di accedere con il proprio account Microsoft o Xbox",
+        "settings_microsoft-auth": "Microsoft OAuth",
+        "settings_microsoft-auth_description": "Credenziali dell’applicazione Microsoft Entra."
+      }
+    },
+    "pl": {
+      "microsoftAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie przez Microsoft (OAuth) na swojej stronie.",
+        "adm_tenantNote": "Aplikacja jednodostępowa (single-tenant) wymaga też ustawienia AUTH_MICROSOFT_ENTRA_ID_ISSUER na https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0. Jeśli nie jest ustawiona, logowanie działa przez wspólny punkt /common/, który przyjmuje dowolne konto Microsoft lub Xbox.",
+        "adm_title": "Ustawienia logowania przez Microsoft",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_microsoft-auth_name": "Logowanie przez Microsoft i Xbox",
+        "module_microsoft-auth_description": "Pozwól członkom logować się przez konto Microsoft lub Xbox",
+        "settings_microsoft-auth": "Microsoft OAuth",
+        "settings_microsoft-auth_description": "Dane aplikacji Microsoft Entra."
+      }
+    },
+    "pt": {
+      "microsoftAuth": {
+        "adm_subtitle": "Configure o login com OAuth da Microsoft para o seu site.",
+        "adm_tenantNote": "Um aplicativo de locatário único também precisa de AUTH_MICROSOFT_ENTRA_ID_ISSUER definido como https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0. Se ficar sem valor, o login usa o endpoint compartilhado /common/, que aceita qualquer conta Microsoft ou Xbox.",
+        "adm_title": "Configurações do login Microsoft",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_microsoft-auth_name": "Login Microsoft e Xbox",
+        "module_microsoft-auth_description": "Permite que membros entrem com a conta Microsoft ou Xbox",
+        "settings_microsoft-auth": "OAuth da Microsoft",
+        "settings_microsoft-auth_description": "Credenciais do aplicativo Microsoft Entra."
+      }
+    },
+    "ru": {
+      "microsoftAuth": {
+        "adm_subtitle": "Настройте вход через OAuth Microsoft на вашем сайте.",
+        "adm_tenantNote": "Приложению с одним арендатором также нужно задать AUTH_MICROSOFT_ENTRA_ID_ISSUER со значением https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0. Если его не задать, вход выполняется через общую конечную точку /common/, которая принимает любую учетную запись Microsoft или Xbox.",
+        "adm_title": "Настройки входа через Microsoft",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_microsoft-auth_name": "Вход через Microsoft и Xbox",
+        "module_microsoft-auth_description": "Разрешить пользователям входить через свою учетную запись Microsoft или Xbox",
+        "settings_microsoft-auth": "Microsoft OAuth",
+        "settings_microsoft-auth_description": "Учетные данные приложения Microsoft Entra."
+      }
+    },
+    "zh": {
+      "microsoftAuth": {
+        "adm_subtitle": "为你的站点设置 Microsoft OAuth 登录。",
+        "adm_tenantNote": "单租户应用还需要将 AUTH_MICROSOFT_ENTRA_ID_ISSUER 设置为 https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0。若未设置，登录将使用共享的 /common/ 端点，该端点接受任何 Microsoft 或 Xbox 账户。",
+        "adm_title": "Microsoft 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_microsoft-auth_name": "Microsoft 与 Xbox 登录",
+        "module_microsoft-auth_description": "允许用户使用其 Microsoft 或 Xbox 账户登录",
+        "settings_microsoft-auth": "Microsoft OAuth",
+        "settings_microsoft-auth_description": "Microsoft Entra 应用凭据。"
+      }
     }
   },
   "permissions": [

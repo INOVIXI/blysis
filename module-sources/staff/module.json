@@ -129,6 +129,396 @@
       "pageDescriptions": {
         "staff": "Topluluğu yöneten kişilerle tanışın, her birinin hangi görevi üstlendiğini ve onlara nasıl ulaşabileceğinizi görün."
       }
+    },
+    "az": {
+      "staff": {
+        "adm_members_field1Label": "Ad",
+        "adm_members_field1Placeholder": "Heyət üzvünün adı",
+        "adm_members_field2Label": "Vəzifə",
+        "adm_members_field2Placeholder": "məs. Moderator",
+        "adm_members_field3Label": "Avatar",
+        "adm_members_field3Placeholder": "https://example.com/avatar.png",
+        "adm_members_field4Label": "Sıra",
+        "adm_members_field4Placeholder": "0",
+        "adm_members_field5Label": "Aktiv",
+        "adm_members_subtitle": "Heyət üzvlərini idarə edin",
+        "adm_members_title": "Heyət üzvləri",
+        "description": "Heyətimizlə tanış olun",
+        "empty": "Hələ heyət üzvü siyahıda yoxdur",
+        "members": "Heyət üzvləri",
+        "perm_manage": "İdarə et",
+        "role": "Vəzifə",
+        "subtitle": "İcmanın arxasında duran insanlar",
+        "title": "Komandamız"
+      },
+      "admin": {
+        "menu_staff": "Heyət",
+        "title": "Admin paneli",
+        "subtitle": "Platformanızın parametrlərini və məzmununu idarə edin",
+        "menu_staff_staff_members": "Heyət üzvləri",
+        "module_staff_name": "Heyət",
+        "module_staff_description": "Bu məkanı idarə edən insanlar və onları idarə edən ekran."
+      },
+      "pageTitles": {
+        "staff": "Heyət"
+      },
+      "nav": {
+        "staff": "Heyət"
+      },
+      "pageDescriptions": {
+        "staff": "İcmanı idarə edən insanlarla tanış olun, hər birinin vəzifəsini görün və onlarla necə əlaqə saxlamaq olduğunu öyrənin."
+      }
+    },
+    "de": {
+      "staff": {
+        "adm_members_field1Label": "Name",
+        "adm_members_field1Placeholder": "Name des Teammitglieds",
+        "adm_members_field2Label": "Rolle",
+        "adm_members_field2Placeholder": "z. B. Moderator",
+        "adm_members_field3Label": "Avatar",
+        "adm_members_field3Placeholder": "https://example.com/avatar.png",
+        "adm_members_field4Label": "Reihenfolge",
+        "adm_members_field4Placeholder": "0",
+        "adm_members_field5Label": "Aktiv",
+        "adm_members_subtitle": "Teammitglieder verwalten",
+        "adm_members_title": "Teammitglieder",
+        "description": "Lerne unser Team kennen",
+        "empty": "Noch keine Teammitglieder aufgelistet",
+        "members": "Teammitglieder",
+        "perm_manage": "Verwalten",
+        "role": "Rolle",
+        "subtitle": "Die Menschen hinter der Community",
+        "title": "Unser Team"
+      },
+      "admin": {
+        "menu_staff": "Team",
+        "title": "Admin-Bereich",
+        "subtitle": "Verwalte die Einstellungen und Inhalte deiner Plattform",
+        "menu_staff_staff_members": "Teammitglieder",
+        "module_staff_name": "Team",
+        "module_staff_description": "Die Menschen, die diesen Ort führen, und die Oberfläche, die sie verwaltet."
+      },
+      "pageTitles": {
+        "staff": "Team"
+      },
+      "nav": {
+        "staff": "Team"
+      },
+      "pageDescriptions": {
+        "staff": "Lerne die Menschen kennen, die die Community leiten, sieh die Rolle jedes Einzelnen und erfahre, wie du sie erreichen kannst."
+      }
+    },
+    "es": {
+      "staff": {
+        "adm_members_field1Label": "Nombre",
+        "adm_members_field1Placeholder": "Nombre del miembro del equipo",
+        "adm_members_field2Label": "Cargo",
+        "adm_members_field2Placeholder": "p. ej. Moderador",
+        "adm_members_field3Label": "Avatar",
+        "adm_members_field3Placeholder": "https://example.com/avatar.png",
+        "adm_members_field4Label": "Orden",
+        "adm_members_field4Placeholder": "0",
+        "adm_members_field5Label": "Activo",
+        "adm_members_subtitle": "Gestiona los miembros del equipo",
+        "adm_members_title": "Miembros del equipo",
+        "description": "Conoce a nuestro equipo",
+        "empty": "Todavía no hay miembros del equipo",
+        "members": "Miembros del equipo",
+        "perm_manage": "Gestionar",
+        "role": "Cargo",
+        "subtitle": "Las personas detrás de la comunidad",
+        "title": "Nuestro equipo"
+      },
+      "admin": {
+        "menu_staff": "Equipo",
+        "title": "Panel de administración",
+        "subtitle": "Gestiona los ajustes y el contenido de tu plataforma",
+        "menu_staff_staff_members": "Miembros del equipo",
+        "module_staff_name": "Equipo",
+        "module_staff_description": "Las personas que dirigen este lugar, y la pantalla que las gestiona."
+      },
+      "pageTitles": {
+        "staff": "Equipo"
+      },
+      "nav": {
+        "staff": "Equipo"
+      },
+      "pageDescriptions": {
+        "staff": "Conoce a las personas que dirigen la comunidad, el cargo de cada una y cómo contactarlas."
+      }
+    },
+    "et": {
+      "staff": {
+        "adm_members_field1Label": "Nimi",
+        "adm_members_field1Placeholder": "Personali liikme nimi",
+        "adm_members_field2Label": "Roll",
+        "adm_members_field2Placeholder": "nt Moderaator",
+        "adm_members_field3Label": "Avatar",
+        "adm_members_field3Placeholder": "https://example.com/avatar.png",
+        "adm_members_field4Label": "Järjekord",
+        "adm_members_field4Placeholder": "0",
+        "adm_members_field5Label": "Aktiivne",
+        "adm_members_subtitle": "Halda personali liikmeid",
+        "adm_members_title": "Personali liikmed",
+        "description": "Tutvu meie personaliga",
+        "empty": "Personali liikmeid pole veel nimekirjas",
+        "members": "Personali liikmed",
+        "perm_manage": "Halda",
+        "role": "Roll",
+        "subtitle": "Inimesed, kes kogukonna taga on",
+        "title": "Meie meeskond"
+      },
+      "admin": {
+        "menu_staff": "Personal",
+        "title": "Halduspaneel",
+        "subtitle": "Halda oma platvormi seadeid ja sisu",
+        "menu_staff_staff_members": "Personali liikmed",
+        "module_staff_name": "Personal",
+        "module_staff_description": "Inimesed, kes seda kohta juhivad, ja ekraan, mis neid haldab."
+      },
+      "pageTitles": {
+        "staff": "Personal"
+      },
+      "nav": {
+        "staff": "Personal"
+      },
+      "pageDescriptions": {
+        "staff": "Tutvu inimestega, kes kogukonda juhivad, vaata, millise rolli keegi täidab, ja leia, kuidas nendega ühendust saada."
+      }
+    },
+    "fr": {
+      "staff": {
+        "adm_members_field1Label": "Nom",
+        "adm_members_field1Placeholder": "Nom du membre de l’équipe",
+        "adm_members_field2Label": "Rôle",
+        "adm_members_field2Placeholder": "ex. Modérateur",
+        "adm_members_field3Label": "Avatar",
+        "adm_members_field3Placeholder": "https://exemple.com/avatar.png",
+        "adm_members_field4Label": "Ordre",
+        "adm_members_field4Placeholder": "0",
+        "adm_members_field5Label": "Actif",
+        "adm_members_subtitle": "Gérer les membres de l’équipe",
+        "adm_members_title": "Membres de l’équipe",
+        "description": "Découvrez notre équipe",
+        "empty": "Aucun membre de l’équipe pour le moment",
+        "members": "Membres de l’équipe",
+        "perm_manage": "Gérer",
+        "role": "Rôle",
+        "subtitle": "Les personnes qui animent la communauté",
+        "title": "Notre équipe"
+      },
+      "admin": {
+        "menu_staff": "Équipe",
+        "title": "Panneau d’administration",
+        "subtitle": "Gérez les paramètres et le contenu de votre plateforme",
+        "menu_staff_staff_members": "Membres de l’équipe",
+        "module_staff_name": "Équipe",
+        "module_staff_description": "Les personnes qui dirigent ce lieu, et l’écran qui les gère."
+      },
+      "pageTitles": {
+        "staff": "Équipe"
+      },
+      "nav": {
+        "staff": "Équipe"
+      },
+      "pageDescriptions": {
+        "staff": "Découvrez les personnes qui animent la communauté, le rôle de chacune et comment les joindre."
+      }
+    },
+    "it": {
+      "staff": {
+        "adm_members_field1Label": "Nome",
+        "adm_members_field1Placeholder": "Nome del membro dello staff",
+        "adm_members_field2Label": "Ruolo",
+        "adm_members_field2Placeholder": "es. Moderatore",
+        "adm_members_field3Label": "Avatar",
+        "adm_members_field3Placeholder": "https://example.com/avatar.png",
+        "adm_members_field4Label": "Ordine",
+        "adm_members_field4Placeholder": "0",
+        "adm_members_field5Label": "Attivo",
+        "adm_members_subtitle": "Gestisci i membri dello staff",
+        "adm_members_title": "Membri dello staff",
+        "description": "Conosci i membri del nostro staff",
+        "empty": "Nessun membro dello staff elencato ancora",
+        "members": "Membri dello staff",
+        "perm_manage": "Gestisci",
+        "role": "Ruolo",
+        "subtitle": "Le persone dietro la community",
+        "title": "Il nostro team"
+      },
+      "admin": {
+        "menu_staff": "Staff",
+        "title": "Pannello di amministrazione",
+        "subtitle": "Gestisci le impostazioni e i contenuti della piattaforma",
+        "menu_staff_staff_members": "Membri dello staff",
+        "module_staff_name": "Staff",
+        "module_staff_description": "Le persone che gestiscono questo posto, e la schermata che le gestisce."
+      },
+      "pageTitles": {
+        "staff": "Staff"
+      },
+      "nav": {
+        "staff": "Staff"
+      },
+      "pageDescriptions": {
+        "staff": "Conosci le persone che mandano avanti la community, vedi il ruolo di ciascuna e scopri come contattarle."
+      }
+    },
+    "pl": {
+      "staff": {
+        "adm_members_field1Label": "Nazwa",
+        "adm_members_field1Placeholder": "Imię członka zespołu",
+        "adm_members_field2Label": "Rola",
+        "adm_members_field2Placeholder": "np. Moderator",
+        "adm_members_field3Label": "Awatar",
+        "adm_members_field3Placeholder": "https://example.com/avatar.png",
+        "adm_members_field4Label": "Kolejność",
+        "adm_members_field4Placeholder": "0",
+        "adm_members_field5Label": "Aktywny",
+        "adm_members_subtitle": "Zarządzaj członkami zespołu",
+        "adm_members_title": "Członkowie zespołu",
+        "description": "Poznaj członków naszego zespołu",
+        "empty": "Nie ma jeszcze żadnych członków zespołu",
+        "members": "Członkowie zespołu",
+        "perm_manage": "Zarządzaj",
+        "role": "Rola",
+        "subtitle": "Ludzie stojący za społecznością",
+        "title": "Nasz zespół"
+      },
+      "admin": {
+        "menu_staff": "Zespół",
+        "title": "Panel administratora",
+        "subtitle": "Zarządzaj ustawieniami i treścią swojej platformy",
+        "menu_staff_staff_members": "Członkowie zespołu",
+        "module_staff_name": "Zespół",
+        "module_staff_description": "Osoby, które prowadzą to miejsce, i ekran, na którym się nimi zarządza."
+      },
+      "pageTitles": {
+        "staff": "Zespół"
+      },
+      "nav": {
+        "staff": "Zespół"
+      },
+      "pageDescriptions": {
+        "staff": "Poznaj osoby prowadzące społeczność, zobacz rolę każdej z nich i dowiedz się, jak się z nimi skontaktować."
+      }
+    },
+    "pt": {
+      "staff": {
+        "adm_members_field1Label": "Nome",
+        "adm_members_field1Placeholder": "Nome do membro da equipe",
+        "adm_members_field2Label": "Cargo",
+        "adm_members_field2Placeholder": "ex.: Moderador",
+        "adm_members_field3Label": "Avatar",
+        "adm_members_field3Placeholder": "https://example.com/avatar.png",
+        "adm_members_field4Label": "Ordem",
+        "adm_members_field4Placeholder": "0",
+        "adm_members_field5Label": "Ativo",
+        "adm_members_subtitle": "Gerencie os membros da equipe",
+        "adm_members_title": "Membros da equipe",
+        "description": "Conheça nossa equipe",
+        "empty": "Nenhum membro da equipe listado ainda",
+        "members": "Membros da equipe",
+        "perm_manage": "Gerenciar",
+        "role": "Cargo",
+        "subtitle": "As pessoas por trás da comunidade",
+        "title": "Nossa equipe"
+      },
+      "admin": {
+        "menu_staff": "Equipe",
+        "title": "Painel administrativo",
+        "subtitle": "Gerencie as configurações e o conteúdo da plataforma",
+        "menu_staff_staff_members": "Membros da equipe",
+        "module_staff_name": "Equipe",
+        "module_staff_description": "As pessoas que administram este espaço, e a tela que as gerencia."
+      },
+      "pageTitles": {
+        "staff": "Equipe"
+      },
+      "nav": {
+        "staff": "Equipe"
+      },
+      "pageDescriptions": {
+        "staff": "Conheça as pessoas que administram a comunidade, veja o cargo de cada uma e descubra como entrar em contato."
+      }
+    },
+    "ru": {
+      "staff": {
+        "adm_members_field1Label": "Имя",
+        "adm_members_field1Placeholder": "Имя сотрудника",
+        "adm_members_field2Label": "Роль",
+        "adm_members_field2Placeholder": "например, Модератор",
+        "adm_members_field3Label": "Аватар",
+        "adm_members_field3Placeholder": "https://example.com/avatar.png",
+        "adm_members_field4Label": "Порядок",
+        "adm_members_field4Placeholder": "0",
+        "adm_members_field5Label": "Активен",
+        "adm_members_subtitle": "Управление сотрудниками",
+        "adm_members_title": "Сотрудники",
+        "description": "Познакомьтесь с нашими сотрудниками",
+        "empty": "Сотрудники пока не добавлены",
+        "members": "Сотрудники",
+        "perm_manage": "Управление",
+        "role": "Роль",
+        "subtitle": "Люди, которые стоят за сообществом",
+        "title": "Наша команда"
+      },
+      "admin": {
+        "menu_staff": "Сотрудники",
+        "title": "Панель администратора",
+        "subtitle": "Управляйте настройками и содержимым платформы",
+        "menu_staff_staff_members": "Сотрудники",
+        "module_staff_name": "Сотрудники",
+        "module_staff_description": "Люди, которые управляют этим местом, и экран для управления ими."
+      },
+      "pageTitles": {
+        "staff": "Сотрудники"
+      },
+      "nav": {
+        "staff": "Сотрудники"
+      },
+      "pageDescriptions": {
+        "staff": "Познакомьтесь с людьми, которые управляют сообществом, узнайте роль каждого и как с ними связаться."
+      }
+    },
+    "zh": {
+      "staff": {
+        "adm_members_field1Label": "名称",
+        "adm_members_field1Placeholder": "员工姓名",
+        "adm_members_field2Label": "职位",
+        "adm_members_field2Placeholder": "例如：版主",
+        "adm_members_field3Label": "头像",
+        "adm_members_field3Placeholder": "https://example.com/avatar.png",
+        "adm_members_field4Label": "排序",
+        "adm_members_field4Placeholder": "0",
+        "adm_members_field5Label": "已启用",
+        "adm_members_subtitle": "管理员工成员",
+        "adm_members_title": "员工成员",
+        "description": "认识我们的员工",
+        "empty": "暂无员工列表",
+        "members": "员工成员",
+        "perm_manage": "管理",
+        "role": "职位",
+        "subtitle": "社区背后的人",
+        "title": "我们的团队"
+      },
+      "admin": {
+        "menu_staff": "员工",
+        "title": "管理后台",
+        "subtitle": "管理你的平台设置和内容",
+        "menu_staff_staff_members": "员工成员",
+        "module_staff_name": "员工",
+        "module_staff_description": "运营这里的人，以及管理他们的界面。"
+      },
+      "pageTitles": {
+        "staff": "员工"
+      },
+      "nav": {
+        "staff": "员工"
+      },
+      "pageDescriptions": {
+        "staff": "认识运营社区的人，了解每个人担任的职位，并找到联系他们的方式。"
+      }
     }
   },
   "slotContents": [

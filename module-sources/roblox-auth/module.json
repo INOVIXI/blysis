@@ -93,6 +93,276 @@
         "settings_roblox-auth": "Roblox OAuth",
         "settings_roblox-auth_description": "Roblox uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "robloxAuth": {
+        "adm_subtitle": "Saytınız üçün Roblox OAuth2 ilə daxil olmanı konfiqurasiya edin",
+        "adm_title": "Roblox autentifikasiya parametrləri",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "İstifadəçi girişi üçün Roblox OAuth etimadnamələrini konfiqurasiya edin",
+        "disabled": "Roblox ilə daxil olma söndürülüb",
+        "enable": "Roblox ilə daxil olmanı aktivləşdir",
+        "enabled": "Roblox ilə daxil olma aktivdir",
+        "linkAccount": "Roblox hesabını bağla",
+        "perm_manage": "İdarə et",
+        "save": "Parametrləri yadda saxla",
+        "saveError": "Roblox OAuth parametrlərini yadda saxlamaq alınmadı",
+        "saved": "Roblox OAuth parametrləri uğurla yadda saxlanıldı",
+        "settings": "Roblox OAuth parametrləri",
+        "title": "Roblox ilə daxil olma"
+      },
+      "admin": {
+        "title": "Admin paneli",
+        "subtitle": "Platformanızın parametrlərini və məzmununu idarə edin",
+        "module_roblox-auth_name": "Roblox ilə daxil olma",
+        "module_roblox-auth_description": "İstifadəçilərə Roblox hesabları ilə daxil olmağa icazə verin",
+        "settings_roblox-auth": "Roblox OAuth",
+        "settings_roblox-auth_description": "Roblox tətbiq etimadnamələri."
+      }
+    },
+    "de": {
+      "robloxAuth": {
+        "adm_subtitle": "Konfiguriere den Roblox-OAuth2-Login für deine Seite",
+        "adm_title": "Roblox-Auth-Einstellungen",
+        "clientId": "Client-ID",
+        "clientSecret": "Client-Secret",
+        "description": "Roblox-OAuth-Zugangsdaten für den Benutzerlogin konfigurieren",
+        "disabled": "Roblox-Login deaktiviert",
+        "enable": "Roblox-Login aktivieren",
+        "enabled": "Roblox-Login aktiviert",
+        "linkAccount": "Roblox-Konto verknüpfen",
+        "perm_manage": "Verwalten",
+        "save": "Einstellungen speichern",
+        "saveError": "Roblox-OAuth-Einstellungen konnten nicht gespeichert werden",
+        "saved": "Roblox-OAuth-Einstellungen erfolgreich gespeichert",
+        "settings": "Roblox-OAuth-Einstellungen",
+        "title": "Roblox-Login"
+      },
+      "admin": {
+        "title": "Admin-Bereich",
+        "subtitle": "Verwalte die Einstellungen und Inhalte deiner Plattform",
+        "module_roblox-auth_name": "Roblox-Login",
+        "module_roblox-auth_description": "Benutzern erlauben, sich mit ihrem Roblox-Konto anzumelden",
+        "settings_roblox-auth": "Roblox OAuth",
+        "settings_roblox-auth_description": "Zugangsdaten der Roblox-Anwendung."
+      }
+    },
+    "es": {
+      "robloxAuth": {
+        "adm_subtitle": "Configura el inicio de sesión OAuth2 de Roblox en tu sitio",
+        "adm_title": "Ajustes de autenticación de Roblox",
+        "clientId": "ID de cliente",
+        "clientSecret": "Secreto de cliente",
+        "description": "Configura las credenciales OAuth de Roblox para el inicio de sesión de usuarios",
+        "disabled": "Inicio de sesión con Roblox desactivado",
+        "enable": "Activar inicio de sesión con Roblox",
+        "enabled": "Inicio de sesión con Roblox activado",
+        "linkAccount": "Vincular cuenta de Roblox",
+        "perm_manage": "Gestionar",
+        "save": "Guardar ajustes",
+        "saveError": "No se pudieron guardar los ajustes OAuth de Roblox",
+        "saved": "Ajustes OAuth de Roblox guardados correctamente",
+        "settings": "Ajustes OAuth de Roblox",
+        "title": "Inicio de sesión con Roblox"
+      },
+      "admin": {
+        "title": "Panel de administración",
+        "subtitle": "Gestiona los ajustes y el contenido de tu plataforma",
+        "module_roblox-auth_name": "Inicio de sesión con Roblox",
+        "module_roblox-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de Roblox",
+        "settings_roblox-auth": "OAuth de Roblox",
+        "settings_roblox-auth_description": "Credenciales de la aplicación de Roblox."
+      }
+    },
+    "et": {
+      "robloxAuth": {
+        "adm_subtitle": "Seadista oma saidi jaoks Robloxi OAuth2-sisselogimine",
+        "adm_title": "Robloxi autentimise seaded",
+        "clientId": "Kliendi ID",
+        "clientSecret": "Kliendi saladus",
+        "description": "Seadista Robloxi OAuth-volitused kasutajate sisselogimiseks",
+        "disabled": "Robloxi sisselogimine on keelatud",
+        "enable": "Luba Robloxi sisselogimine",
+        "enabled": "Robloxi sisselogimine on lubatud",
+        "linkAccount": "Seosta Robloxi konto",
+        "perm_manage": "Halda",
+        "save": "Salvesta seaded",
+        "saveError": "Robloxi OAuth-seadete salvestamine ebaõnnestus",
+        "saved": "Robloxi OAuth-seaded on edukalt salvestatud",
+        "settings": "Robloxi OAuth-seaded",
+        "title": "Robloxi sisselogimine"
+      },
+      "admin": {
+        "title": "Halduspaneel",
+        "subtitle": "Halda oma platvormi seadeid ja sisu",
+        "module_roblox-auth_name": "Robloxi sisselogimine",
+        "module_roblox-auth_description": "Luba kasutajatel sisse logida oma Robloxi kontoga",
+        "settings_roblox-auth": "Robloxi OAuth",
+        "settings_roblox-auth_description": "Robloxi rakenduse volitused."
+      }
+    },
+    "fr": {
+      "robloxAuth": {
+        "adm_subtitle": "Configurer la connexion OAuth2 Roblox pour votre site",
+        "adm_title": "Paramètres de connexion Roblox",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "Configurer les identifiants OAuth Roblox pour la connexion des utilisateurs",
+        "disabled": "Connexion Roblox désactivée",
+        "enable": "Activer la connexion Roblox",
+        "enabled": "Connexion Roblox activée",
+        "linkAccount": "Lier un compte Roblox",
+        "perm_manage": "Gérer",
+        "save": "Enregistrer les paramètres",
+        "saveError": "Échec de l’enregistrement des paramètres OAuth Roblox",
+        "saved": "Paramètres OAuth Roblox enregistrés",
+        "settings": "Paramètres OAuth Roblox",
+        "title": "Connexion Roblox"
+      },
+      "admin": {
+        "title": "Panneau d’administration",
+        "subtitle": "Gérez les paramètres et le contenu de votre plateforme",
+        "module_roblox-auth_name": "Connexion Roblox",
+        "module_roblox-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Roblox",
+        "settings_roblox-auth": "OAuth Roblox",
+        "settings_roblox-auth_description": "Identifiants de l’application Roblox."
+      }
+    },
+    "it": {
+      "robloxAuth": {
+        "adm_subtitle": "Configura l’accesso Roblox OAuth2 per il tuo sito",
+        "adm_title": "Impostazioni accesso Roblox",
+        "clientId": "ID client",
+        "clientSecret": "Segreto client",
+        "description": "Configura le credenziali OAuth di Roblox per l’accesso degli utenti",
+        "disabled": "Accesso Roblox disattivato",
+        "enable": "Attiva l’accesso Roblox",
+        "enabled": "Accesso Roblox attivato",
+        "linkAccount": "Collega account Roblox",
+        "perm_manage": "Gestisci",
+        "save": "Salva impostazioni",
+        "saveError": "Salvataggio delle impostazioni OAuth di Roblox non riuscito",
+        "saved": "Impostazioni OAuth di Roblox salvate con successo",
+        "settings": "Impostazioni OAuth di Roblox",
+        "title": "Accesso Roblox"
+      },
+      "admin": {
+        "title": "Pannello di amministrazione",
+        "subtitle": "Gestisci le impostazioni e i contenuti della piattaforma",
+        "module_roblox-auth_name": "Accesso Roblox",
+        "module_roblox-auth_description": "Consenti agli utenti di accedere con il proprio account Roblox",
+        "settings_roblox-auth": "OAuth Roblox",
+        "settings_roblox-auth_description": "Credenziali dell’applicazione Roblox."
+      }
+    },
+    "pl": {
+      "robloxAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie Roblox OAuth2 dla swojej strony",
+        "adm_title": "Ustawienia logowania Roblox",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "Skonfiguruj dane OAuth Roblox do logowania użytkowników",
+        "disabled": "Logowanie Roblox wyłączone",
+        "enable": "Włącz logowanie Roblox",
+        "enabled": "Logowanie Roblox włączone",
+        "linkAccount": "Połącz konto Roblox",
+        "perm_manage": "Zarządzaj",
+        "save": "Zapisz ustawienia",
+        "saveError": "Nie udało się zapisać ustawień OAuth Roblox",
+        "saved": "Ustawienia OAuth Roblox zapisano pomyślnie",
+        "settings": "Ustawienia OAuth Roblox",
+        "title": "Logowanie Roblox"
+      },
+      "admin": {
+        "title": "Panel administratora",
+        "subtitle": "Zarządzaj ustawieniami i treścią swojej platformy",
+        "module_roblox-auth_name": "Logowanie Roblox",
+        "module_roblox-auth_description": "Pozwól użytkownikom logować się przy użyciu konta Roblox",
+        "settings_roblox-auth": "Roblox OAuth",
+        "settings_roblox-auth_description": "Dane aplikacji Roblox."
+      }
+    },
+    "pt": {
+      "robloxAuth": {
+        "adm_subtitle": "Configure o login OAuth2 do Roblox para o seu site",
+        "adm_title": "Configurações de autenticação do Roblox",
+        "clientId": "ID do cliente",
+        "clientSecret": "Segredo do cliente",
+        "description": "Configure as credenciais OAuth do Roblox para o login de usuários",
+        "disabled": "Login do Roblox desativado",
+        "enable": "Ativar login do Roblox",
+        "enabled": "Login do Roblox ativado",
+        "linkAccount": "Vincular conta do Roblox",
+        "perm_manage": "Gerenciar",
+        "save": "Salvar configurações",
+        "saveError": "Falha ao salvar as configurações OAuth do Roblox",
+        "saved": "Configurações OAuth do Roblox salvas com sucesso",
+        "settings": "Configurações OAuth do Roblox",
+        "title": "Login com Roblox"
+      },
+      "admin": {
+        "title": "Painel administrativo",
+        "subtitle": "Gerencie as configurações e o conteúdo da plataforma",
+        "module_roblox-auth_name": "Login com Roblox",
+        "module_roblox-auth_description": "Permite que usuários entrem com a conta do Roblox",
+        "settings_roblox-auth": "Roblox OAuth",
+        "settings_roblox-auth_description": "Credenciais do aplicativo do Roblox."
+      }
+    },
+    "ru": {
+      "robloxAuth": {
+        "adm_subtitle": "Настройте вход через OAuth2 Roblox для вашего сайта",
+        "adm_title": "Настройки входа через Roblox",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "Настройте учетные данные OAuth Roblox для входа пользователей",
+        "disabled": "Вход через Roblox отключен",
+        "enable": "Включить вход через Roblox",
+        "enabled": "Вход через Roblox включен",
+        "linkAccount": "Привязать аккаунт Roblox",
+        "perm_manage": "Управление",
+        "save": "Сохранить настройки",
+        "saveError": "Не удалось сохранить настройки OAuth Roblox",
+        "saved": "Настройки OAuth Roblox успешно сохранены",
+        "settings": "Настройки OAuth Roblox",
+        "title": "Вход через Roblox"
+      },
+      "admin": {
+        "title": "Панель администратора",
+        "subtitle": "Управляйте настройками и содержимым платформы",
+        "module_roblox-auth_name": "Вход через Roblox",
+        "module_roblox-auth_description": "Разрешить пользователям входить с помощью аккаунта Roblox",
+        "settings_roblox-auth": "OAuth Roblox",
+        "settings_roblox-auth_description": "Учетные данные приложения Roblox."
+      }
+    },
+    "zh": {
+      "robloxAuth": {
+        "adm_subtitle": "为你的网站配置 Roblox OAuth2 登录",
+        "adm_title": "Roblox 登录设置",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "配置用于用户登录的 Roblox OAuth 凭据",
+        "disabled": "Roblox 登录已禁用",
+        "enable": "启用 Roblox 登录",
+        "enabled": "Roblox 登录已启用",
+        "linkAccount": "绑定 Roblox 账户",
+        "perm_manage": "管理",
+        "save": "保存设置",
+        "saveError": "保存 Roblox OAuth 设置失败",
+        "saved": "Roblox OAuth 设置已成功保存",
+        "settings": "Roblox OAuth 设置",
+        "title": "Roblox 登录"
+      },
+      "admin": {
+        "title": "管理后台",
+        "subtitle": "管理你的平台设置和内容",
+        "module_roblox-auth_name": "Roblox 登录",
+        "module_roblox-auth_description": "允许用户使用其 Roblox 账户登录",
+        "settings_roblox-auth": "Roblox OAuth",
+        "settings_roblox-auth_description": "Roblox 应用凭据。"
+      }
     }
   },
   "permissions": [

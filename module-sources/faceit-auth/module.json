@@ -93,6 +93,276 @@
         "settings_faceit-auth": "FACEIT OAuth",
         "settings_faceit-auth_description": "FACEIT uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "faceitAuth": {
+        "adm_subtitle": "Saytınız üçün FACEIT OAuth2 ilə daxil olmanı konfiqurasiya edin",
+        "adm_title": "FACEIT Auth parametrləri",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "İstifadəçi girişi üçün FACEIT OAuth məlumatlarını konfiqurasiya edin",
+        "disabled": "FACEIT ilə giriş söndürülüb",
+        "enable": "FACEIT ilə girişi aktivləşdir",
+        "enabled": "FACEIT ilə giriş aktivdir",
+        "linkAccount": "FACEIT hesabını bağla",
+        "perm_manage": "İdarə et",
+        "save": "Parametrləri yadda saxla",
+        "saveError": "FACEIT OAuth parametrlərini yadda saxlamaq alınmadı",
+        "saved": "FACEIT OAuth parametrləri uğurla yadda saxlanıldı",
+        "settings": "FACEIT OAuth parametrləri",
+        "title": "FACEIT ilə giriş"
+      },
+      "admin": {
+        "title": "Admin paneli",
+        "subtitle": "Platforma parametrlərinizi və məzmununuzu idarə edin",
+        "module_faceit-auth_name": "FACEIT ilə giriş",
+        "module_faceit-auth_description": "İstifadəçilərin FACEIT hesabları ilə daxil olmasına icazə verin",
+        "settings_faceit-auth": "FACEIT OAuth",
+        "settings_faceit-auth_description": "FACEIT tətbiqinin etimadnamələri."
+      }
+    },
+    "de": {
+      "faceitAuth": {
+        "adm_subtitle": "FACEIT-OAuth2-Anmeldung für deine Seite einrichten",
+        "adm_title": "FACEIT-Auth-Einstellungen",
+        "clientId": "Client-ID",
+        "clientSecret": "Client-Secret",
+        "description": "FACEIT-OAuth-Zugangsdaten für die Anmeldung von Mitgliedern einrichten",
+        "disabled": "FACEIT-Anmeldung deaktiviert",
+        "enable": "FACEIT-Anmeldung aktivieren",
+        "enabled": "FACEIT-Anmeldung aktiviert",
+        "linkAccount": "FACEIT-Konto verknüpfen",
+        "perm_manage": "Verwalten",
+        "save": "Einstellungen speichern",
+        "saveError": "FACEIT-OAuth-Einstellungen konnten nicht gespeichert werden",
+        "saved": "FACEIT-OAuth-Einstellungen erfolgreich gespeichert",
+        "settings": "FACEIT-OAuth-Einstellungen",
+        "title": "FACEIT-Anmeldung"
+      },
+      "admin": {
+        "title": "Admin-Bereich",
+        "subtitle": "Verwalte die Einstellungen und Inhalte deiner Plattform",
+        "module_faceit-auth_name": "FACEIT-Anmeldung",
+        "module_faceit-auth_description": "Mitgliedern erlauben, sich mit ihrem FACEIT-Konto anzumelden",
+        "settings_faceit-auth": "FACEIT OAuth",
+        "settings_faceit-auth_description": "Zugangsdaten der FACEIT-Anwendung."
+      }
+    },
+    "es": {
+      "faceitAuth": {
+        "adm_subtitle": "Configura el inicio de sesión con OAuth2 de FACEIT para tu sitio",
+        "adm_title": "Ajustes de autenticación con FACEIT",
+        "clientId": "ID de cliente",
+        "clientSecret": "Secreto de cliente",
+        "description": "Configura las credenciales OAuth de FACEIT para el inicio de sesión de los usuarios",
+        "disabled": "Inicio de sesión con FACEIT desactivado",
+        "enable": "Activar inicio de sesión con FACEIT",
+        "enabled": "Inicio de sesión con FACEIT activado",
+        "linkAccount": "Vincular cuenta de FACEIT",
+        "perm_manage": "Gestionar",
+        "save": "Guardar ajustes",
+        "saveError": "No se pudieron guardar los ajustes de OAuth de FACEIT",
+        "saved": "Ajustes de OAuth de FACEIT guardados correctamente",
+        "settings": "Ajustes de OAuth de FACEIT",
+        "title": "Inicio de sesión con FACEIT"
+      },
+      "admin": {
+        "title": "Panel de administración",
+        "subtitle": "Gestiona los ajustes y el contenido de tu plataforma",
+        "module_faceit-auth_name": "Inicio de sesión con FACEIT",
+        "module_faceit-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de FACEIT",
+        "settings_faceit-auth": "OAuth de FACEIT",
+        "settings_faceit-auth_description": "Credenciales de la aplicación de FACEIT."
+      }
+    },
+    "et": {
+      "faceitAuth": {
+        "adm_subtitle": "Seadista saidi jaoks FACEITi OAuth2 sisselogimine",
+        "adm_title": "FACEITi autentimise seaded",
+        "clientId": "Kliendi ID",
+        "clientSecret": "Kliendi saladus",
+        "description": "Seadista kasutajate sisselogimiseks FACEITi OAuth-mandaadid",
+        "disabled": "FACEITi sisselogimine on keelatud",
+        "enable": "Luba FACEITi sisselogimine",
+        "enabled": "FACEITi sisselogimine on lubatud",
+        "linkAccount": "Seo FACEITi konto",
+        "perm_manage": "Halda",
+        "save": "Salvesta seaded",
+        "saveError": "FACEITi OAuth-seadete salvestamine ebaõnnestus",
+        "saved": "FACEITi OAuth-seaded salvestati",
+        "settings": "FACEITi OAuth-seaded",
+        "title": "FACEITi sisselogimine"
+      },
+      "admin": {
+        "title": "Halduspaneel",
+        "subtitle": "Halda oma platvormi seadeid ja sisu",
+        "module_faceit-auth_name": "FACEITi sisselogimine",
+        "module_faceit-auth_description": "Luba kasutajatel sisse logida oma FACEITi kontoga",
+        "settings_faceit-auth": "FACEITi OAuth",
+        "settings_faceit-auth_description": "FACEITi rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "faceitAuth": {
+        "adm_subtitle": "Configurer la connexion OAuth2 avec FACEIT pour votre site",
+        "adm_title": "Paramètres d’authentification FACEIT",
+        "clientId": "ID client",
+        "clientSecret": "Secret client",
+        "description": "Configurer les identifiants OAuth FACEIT pour la connexion des membres",
+        "disabled": "Connexion FACEIT désactivée",
+        "enable": "Activer la connexion FACEIT",
+        "enabled": "Connexion FACEIT activée",
+        "linkAccount": "Lier le compte FACEIT",
+        "perm_manage": "Gérer",
+        "save": "Enregistrer les paramètres",
+        "saveError": "Échec de l’enregistrement des paramètres OAuth FACEIT",
+        "saved": "Paramètres OAuth FACEIT enregistrés",
+        "settings": "Paramètres OAuth FACEIT",
+        "title": "Connexion FACEIT"
+      },
+      "admin": {
+        "title": "Panneau d’administration",
+        "subtitle": "Gérez les paramètres et le contenu de votre plateforme",
+        "module_faceit-auth_name": "Connexion FACEIT",
+        "module_faceit-auth_description": "Permettre aux membres de se connecter avec leur compte FACEIT",
+        "settings_faceit-auth": "OAuth FACEIT",
+        "settings_faceit-auth_description": "Identifiants de l’application FACEIT."
+      }
+    },
+    "it": {
+      "faceitAuth": {
+        "adm_subtitle": "Configura l’accesso OAuth2 con FACEIT per il tuo sito",
+        "adm_title": "Impostazioni autenticazione FACEIT",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "Configura le credenziali OAuth di FACEIT per l’accesso dei membri",
+        "disabled": "Accesso con FACEIT disattivato",
+        "enable": "Attiva accesso con FACEIT",
+        "enabled": "Accesso con FACEIT attivato",
+        "linkAccount": "Collega account FACEIT",
+        "perm_manage": "Gestisci",
+        "save": "Salva impostazioni",
+        "saveError": "Salvataggio delle impostazioni OAuth di FACEIT non riuscito",
+        "saved": "Impostazioni OAuth di FACEIT salvate con successo",
+        "settings": "Impostazioni OAuth di FACEIT",
+        "title": "Accesso con FACEIT"
+      },
+      "admin": {
+        "title": "Pannello di amministrazione",
+        "subtitle": "Gestisci le impostazioni e i contenuti della piattaforma",
+        "module_faceit-auth_name": "Accesso con FACEIT",
+        "module_faceit-auth_description": "Consenti ai membri di accedere con il proprio account FACEIT",
+        "settings_faceit-auth": "OAuth di FACEIT",
+        "settings_faceit-auth_description": "Credenziali dell’applicazione FACEIT."
+      }
+    },
+    "pl": {
+      "faceitAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie OAuth2 przez FACEIT na swojej stronie",
+        "adm_title": "Ustawienia logowania przez FACEIT",
+        "clientId": "ID klienta",
+        "clientSecret": "Sekret klienta",
+        "description": "Skonfiguruj dane OAuth FACEIT do logowania użytkowników",
+        "disabled": "Logowanie przez FACEIT wyłączone",
+        "enable": "Włącz logowanie przez FACEIT",
+        "enabled": "Logowanie przez FACEIT włączone",
+        "linkAccount": "Połącz konto FACEIT",
+        "perm_manage": "Zarządzaj",
+        "save": "Zapisz ustawienia",
+        "saveError": "Nie udało się zapisać ustawień OAuth FACEIT",
+        "saved": "Ustawienia OAuth FACEIT zapisano pomyślnie",
+        "settings": "Ustawienia OAuth FACEIT",
+        "title": "Logowanie przez FACEIT"
+      },
+      "admin": {
+        "title": "Panel administratora",
+        "subtitle": "Zarządzaj ustawieniami i treściami swojej platformy",
+        "module_faceit-auth_name": "Logowanie przez FACEIT",
+        "module_faceit-auth_description": "Pozwól użytkownikom logować się kontem FACEIT",
+        "settings_faceit-auth": "OAuth FACEIT",
+        "settings_faceit-auth_description": "Dane aplikacji FACEIT."
+      }
+    },
+    "pt": {
+      "faceitAuth": {
+        "adm_subtitle": "Configure o login OAuth2 da FACEIT no seu site",
+        "adm_title": "Configurações de autenticação da FACEIT",
+        "clientId": "ID do cliente",
+        "clientSecret": "Segredo do cliente",
+        "description": "Configure as credenciais OAuth da FACEIT para o login dos usuários",
+        "disabled": "Login com FACEIT desativado",
+        "enable": "Ativar login com FACEIT",
+        "enabled": "Login com FACEIT ativado",
+        "linkAccount": "Vincular conta da FACEIT",
+        "perm_manage": "Gerenciar",
+        "save": "Salvar configurações",
+        "saveError": "Falha ao salvar as configurações OAuth da FACEIT",
+        "saved": "Configurações OAuth da FACEIT salvas com sucesso",
+        "settings": "Configurações OAuth da FACEIT",
+        "title": "Login com FACEIT"
+      },
+      "admin": {
+        "title": "Painel administrativo",
+        "subtitle": "Gerencie as configurações e o conteúdo da sua plataforma",
+        "module_faceit-auth_name": "Login com FACEIT",
+        "module_faceit-auth_description": "Permita que os usuários entrem com a conta da FACEIT",
+        "settings_faceit-auth": "OAuth da FACEIT",
+        "settings_faceit-auth_description": "Credenciais do aplicativo da FACEIT."
+      }
+    },
+    "ru": {
+      "faceitAuth": {
+        "adm_subtitle": "Настройте вход через OAuth2 FACEIT для вашего сайта",
+        "adm_title": "Настройки авторизации FACEIT",
+        "clientId": "Client ID",
+        "clientSecret": "Client Secret",
+        "description": "Настройте учетные данные OAuth FACEIT для входа участников",
+        "disabled": "Вход через FACEIT отключен",
+        "enable": "Включить вход через FACEIT",
+        "enabled": "Вход через FACEIT включен",
+        "linkAccount": "Привязать учетную запись FACEIT",
+        "perm_manage": "Управление",
+        "save": "Сохранить настройки",
+        "saveError": "Не удалось сохранить настройки OAuth FACEIT",
+        "saved": "Настройки OAuth FACEIT успешно сохранены",
+        "settings": "Настройки OAuth FACEIT",
+        "title": "Вход через FACEIT"
+      },
+      "admin": {
+        "title": "Панель администратора",
+        "subtitle": "Управляйте настройками и содержимым платформы",
+        "module_faceit-auth_name": "Вход через FACEIT",
+        "module_faceit-auth_description": "Позвольте участникам входить через свою учетную запись FACEIT",
+        "settings_faceit-auth": "OAuth FACEIT",
+        "settings_faceit-auth_description": "Учетные данные приложения FACEIT."
+      }
+    },
+    "zh": {
+      "faceitAuth": {
+        "adm_subtitle": "为你的站点配置 FACEIT OAuth2 登录",
+        "adm_title": "FACEIT 登录设置",
+        "clientId": "客户端 ID",
+        "clientSecret": "客户端密钥",
+        "description": "配置用于用户登录的 FACEIT OAuth 凭据",
+        "disabled": "FACEIT 登录已禁用",
+        "enable": "启用 FACEIT 登录",
+        "enabled": "FACEIT 登录已启用",
+        "linkAccount": "关联 FACEIT 账户",
+        "perm_manage": "管理",
+        "save": "保存设置",
+        "saveError": "无法保存 FACEIT OAuth 设置",
+        "saved": "FACEIT OAuth 设置已成功保存",
+        "settings": "FACEIT OAuth 设置",
+        "title": "FACEIT 登录"
+      },
+      "admin": {
+        "title": "管理后台",
+        "subtitle": "管理你的平台设置和内容",
+        "module_faceit-auth_name": "FACEIT 登录",
+        "module_faceit-auth_description": "允许用户使用 FACEIT 账户登录",
+        "settings_faceit-auth": "FACEIT OAuth",
+        "settings_faceit-auth_description": "FACEIT 应用凭据。"
+      }
     }
   },
   "permissions": [

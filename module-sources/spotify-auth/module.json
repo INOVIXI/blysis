@@ -65,6 +65,136 @@
         "settings_spotify-auth": "Spotify OAuth",
         "settings_spotify-auth_description": "Spotify uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "spotifyAuth": {
+        "adm_subtitle": "Saytınız üçün Spotify OAuth ilə daxil olmanı quraşdırın.",
+        "adm_title": "Spotify ilə daxil olma parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_spotify-auth_name": "Spotify ilə daxil olma",
+        "module_spotify-auth_description": "İstifadəçilərə Spotify hesabları ilə daxil olmağa icazə verin",
+        "settings_spotify-auth": "Spotify OAuth",
+        "settings_spotify-auth_description": "Spotify tətbiq etimadnamələri."
+      }
+    },
+    "de": {
+      "spotifyAuth": {
+        "adm_subtitle": "Richte die Spotify-OAuth-Anmeldung für deine Seite ein.",
+        "adm_title": "Spotify-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_spotify-auth_name": "Spotify-Login",
+        "module_spotify-auth_description": "Benutzern erlauben, sich mit ihrem Spotify-Konto anzumelden",
+        "settings_spotify-auth": "Spotify OAuth",
+        "settings_spotify-auth_description": "Zugangsdaten der Spotify-Anwendung."
+      }
+    },
+    "es": {
+      "spotifyAuth": {
+        "adm_subtitle": "Configura el inicio de sesión OAuth de Spotify en tu sitio.",
+        "adm_title": "Ajustes del inicio de sesión con Spotify",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_spotify-auth_name": "Inicio de sesión con Spotify",
+        "module_spotify-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de Spotify",
+        "settings_spotify-auth": "OAuth de Spotify",
+        "settings_spotify-auth_description": "Credenciales de la aplicación de Spotify."
+      }
+    },
+    "et": {
+      "spotifyAuth": {
+        "adm_subtitle": "Seadista oma saidi jaoks Spotify OAuth-sisselogimine.",
+        "adm_title": "Spotify sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_spotify-auth_name": "Spotify sisselogimine",
+        "module_spotify-auth_description": "Luba kasutajatel sisse logida oma Spotify kontoga",
+        "settings_spotify-auth": "Spotify OAuth",
+        "settings_spotify-auth_description": "Spotify rakenduse volitused."
+      }
+    },
+    "fr": {
+      "spotifyAuth": {
+        "adm_subtitle": "Configurez la connexion OAuth Spotify pour votre site.",
+        "adm_title": "Paramètres de connexion Spotify",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_spotify-auth_name": "Connexion Spotify",
+        "module_spotify-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Spotify",
+        "settings_spotify-auth": "OAuth Spotify",
+        "settings_spotify-auth_description": "Identifiants de l’application Spotify."
+      }
+    },
+    "it": {
+      "spotifyAuth": {
+        "adm_subtitle": "Configura l’accesso con Spotify OAuth per il tuo sito.",
+        "adm_title": "Impostazioni accesso Spotify",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_spotify-auth_name": "Accesso con Spotify",
+        "module_spotify-auth_description": "Consenti ai membri di accedere con il proprio account Spotify",
+        "settings_spotify-auth": "Spotify OAuth",
+        "settings_spotify-auth_description": "Credenziali dell’applicazione Spotify."
+      }
+    },
+    "pl": {
+      "spotifyAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie przez Spotify OAuth dla swojej strony.",
+        "adm_title": "Ustawienia logowania Spotify",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_spotify-auth_name": "Logowanie przez Spotify",
+        "module_spotify-auth_description": "Pozwól użytkownikom logować się przy użyciu konta Spotify",
+        "settings_spotify-auth": "Spotify OAuth",
+        "settings_spotify-auth_description": "Dane aplikacji Spotify."
+      }
+    },
+    "pt": {
+      "spotifyAuth": {
+        "adm_subtitle": "Configure o login com OAuth do Spotify para o seu site.",
+        "adm_title": "Configurações de login do Spotify",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_spotify-auth_name": "Login com Spotify",
+        "module_spotify-auth_description": "Permite que usuários entrem com a conta do Spotify",
+        "settings_spotify-auth": "Spotify OAuth",
+        "settings_spotify-auth_description": "Credenciais do aplicativo do Spotify."
+      }
+    },
+    "ru": {
+      "spotifyAuth": {
+        "adm_subtitle": "Настройте вход на сайт через OAuth Spotify.",
+        "adm_title": "Настройки входа через Spotify",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_spotify-auth_name": "Вход через Spotify",
+        "module_spotify-auth_description": "Разрешить пользователям входить с помощью аккаунта Spotify",
+        "settings_spotify-auth": "OAuth Spotify",
+        "settings_spotify-auth_description": "Учетные данные приложения Spotify."
+      }
+    },
+    "zh": {
+      "spotifyAuth": {
+        "adm_subtitle": "为你的网站设置 Spotify OAuth 登录。",
+        "adm_title": "Spotify 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_spotify-auth_name": "Spotify 登录",
+        "module_spotify-auth_description": "允许用户使用其 Spotify 账户登录",
+        "settings_spotify-auth": "Spotify OAuth",
+        "settings_spotify-auth_description": "Spotify 应用凭据。"
+      }
     }
   },
   "permissions": [

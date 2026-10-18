@@ -110,6 +110,156 @@
         "settings_birfatura-invoicing": "BirFatura Faturalama",
         "settings_birfatura-invoicing_description": "BirFatura'nın siparişlerinizi almak için imzaladığı gizli anahtar."
       }
+    },
+    "az": {
+      "birfaturaInvoicing": {
+        "adm_subtitle": "Bu xidmət sifarişlərinizi sizə göndərilmək əvəzinə toplayır. Burada bir gizli açar verin və eyni açarı onun öz mağaza parametrlərində də yazın.",
+        "adm_title": "BirFatura faktura",
+        "adm_token": "Ümumi gizli açar",
+        "adm_tokenDesc": "Özünüz seçdiyiniz uzun təsadüfi sətir. Müştərilərinizin ünvanlarını və vergi nömrələrini qoruyan yeganə şeydir, ona görə parol kimi saxlayın. Boş buraxılsa, heç kim daxil ola bilməz.",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "Bu mağazanın ödənilmiş sifarişlərini BirFatura-ya göndərir, o da fakturanı yaradır",
+        "module_birfatura-invoicing_name": "BirFatura faktura",
+        "settings_birfatura-invoicing": "BirFatura faktura",
+        "settings_birfatura-invoicing_description": "BirFatura-nın sifarişlərinizi toplamaq üçün daxil olduğu məxfi açar."
+      }
+    },
+    "de": {
+      "birfaturaInvoicing": {
+        "adm_subtitle": "Dieser Dienst holt deine Bestellungen selbst ab, statt dass sie ihm zugeschickt werden. Hinterlege hier ein Geheimnis und dasselbe in den Shop-Einstellungen des Dienstes.",
+        "adm_title": "BirFatura-Rechnungsstellung",
+        "adm_token": "Gemeinsames Geheimnis",
+        "adm_tokenDesc": "Eine lange zufällige Zeichenfolge deiner Wahl. Sie ist das Einzige, was die Adressen und Steuernummern deiner Kunden schützt, also behandle sie wie ein Passwort. Leer bedeutet, dass niemand Zugang bekommt.",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "Sendet die bezahlten Bestellungen dieses Shops an BirFatura, das die Rechnung erstellt",
+        "module_birfatura-invoicing_name": "BirFatura-Rechnungsstellung",
+        "settings_birfatura-invoicing": "BirFatura-Rechnungsstellung",
+        "settings_birfatura-invoicing_description": "Der Geheimschlüssel, mit dem sich BirFatura anmeldet, um deine Bestellungen abzurufen."
+      }
+    },
+    "es": {
+      "birfaturaInvoicing": {
+        "adm_subtitle": "Este servicio recoge tus pedidos en lugar de recibirlos. Define aquí un secreto y el mismo en los ajustes de su propia tienda.",
+        "adm_title": "Facturación con BirFatura",
+        "adm_token": "Secreto compartido",
+        "adm_tokenDesc": "Una cadena larga y aleatoria que elijas tú. Es lo único que protege las direcciones y los números fiscales de tus clientes, así que trátala como una contraseña. Si está vacía, nadie puede entrar.",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "Envía los pedidos pagados de esta tienda a BirFatura, que emite la factura",
+        "module_birfatura-invoicing_name": "Facturación con BirFatura",
+        "settings_birfatura-invoicing": "Facturación con BirFatura",
+        "settings_birfatura-invoicing_description": "La clave secreta con la que BirFatura inicia sesión para recoger tus pedidos."
+      }
+    },
+    "et": {
+      "birfaturaInvoicing": {
+        "adm_subtitle": "See teenus kogub sinu tellimused ise, selle asemel et need talle saadetaks. Määra siia salajane võti ja sama võti selle enda poe seadetes.",
+        "adm_title": "BirFatura arveldus",
+        "adm_token": "Jagatud salajane võti",
+        "adm_tokenDesc": "Pikk juhuslik string, mille ise valid. See on ainus, mis kaitseb sinu klientide aadresse ja maksunumbreid, seega käsitle seda parooli moodi. Tühi väli tähendab, et sisse ei pääse keegi.",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "Saadab selle poe makstud tellimused BirFaturale, mis koostab arve",
+        "module_birfatura-invoicing_name": "BirFatura arved",
+        "settings_birfatura-invoicing": "BirFatura arved",
+        "settings_birfatura-invoicing_description": "Saladus, millega BirFatura sinu tellimuste kogumiseks sisse logib."
+      }
+    },
+    "fr": {
+      "birfaturaInvoicing": {
+        "adm_subtitle": "Ce service récupère vos commandes au lieu de les recevoir. Indiquez ici un secret, le même que dans les paramètres de sa boutique.",
+        "adm_title": "Facturation BirFatura",
+        "adm_token": "Secret partagé",
+        "adm_tokenDesc": "Une longue chaîne aléatoire de votre choix. C’est la seule protection des adresses et numéros fiscaux de vos clients : traitez-la comme un mot de passe. Vide signifie que personne ne peut accéder.",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "Envoie les commandes payées de cette boutique à BirFatura, qui émet la facture",
+        "module_birfatura-invoicing_name": "Facturation BirFatura",
+        "settings_birfatura-invoicing": "Facturation BirFatura",
+        "settings_birfatura-invoicing_description": "Le secret avec lequel BirFatura s’authentifie pour récupérer vos commandes."
+      }
+    },
+    "it": {
+      "birfaturaInvoicing": {
+        "adm_subtitle": "Questo servizio raccoglie i tuoi ordini invece di riceverli. Inserisci qui un segreto e lo stesso nelle impostazioni del suo store.",
+        "adm_title": "Fatturazione BirFatura",
+        "adm_token": "Segreto condiviso",
+        "adm_tokenDesc": "Una lunga stringa casuale a tua scelta. È l’unica cosa che protegge gli indirizzi e i codici fiscali dei tuoi clienti, quindi trattala come una password. Se lasciato vuoto, nessuno può accedere.",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "Invia a BirFatura gli ordini pagati di questo negozio, che emette la fattura",
+        "module_birfatura-invoicing_name": "Fatturazione BirFatura",
+        "settings_birfatura-invoicing": "Fatturazione BirFatura",
+        "settings_birfatura-invoicing_description": "Il segreto con cui BirFatura accede per raccogliere i tuoi ordini."
+      }
+    },
+    "pl": {
+      "birfaturaInvoicing": {
+        "adm_subtitle": "Ta usługa pobiera Twoje zamówienia, zamiast otrzymywać je wysyłane. Ustaw tutaj sekret i ten sam w jej ustawieniach sklepu.",
+        "adm_title": "Fakturowanie BirFatura",
+        "adm_token": "Wspólny sekret",
+        "adm_tokenDesc": "Długi, losowy ciąg wybrany przez Ciebie. To jedyna rzecz chroniąca adresy i numery podatkowe klientów, więc traktuj go jak hasło. Puste pole oznacza, że nikt nie ma dostępu.",
+        "perm_manage": "Zarządzanie"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "Wysyła opłacone zamówienia tego sklepu do BirFatury, która wystawia fakturę",
+        "module_birfatura-invoicing_name": "Fakturowanie BirFatura",
+        "settings_birfatura-invoicing": "Fakturowanie BirFatura",
+        "settings_birfatura-invoicing_description": "Tajny klucz, którym BirFatura loguje się, aby pobierać Twoje zamówienia."
+      }
+    },
+    "pt": {
+      "birfaturaInvoicing": {
+        "adm_subtitle": "Este serviço coleta seus pedidos em vez de recebê-los enviados. Defina aqui um segredo e o mesmo nas configurações da própria loja.",
+        "adm_title": "Emissão de notas com a BirFatura",
+        "adm_token": "Segredo compartilhado",
+        "adm_tokenDesc": "Uma longa sequência aleatória escolhida por você. É a única coisa que protege os endereços e os números fiscais dos seus clientes, então trate-a como uma senha. Em branco, ninguém consegue entrar.",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "Envia os pedidos pagos desta loja para a BirFatura, que emite a nota fiscal",
+        "module_birfatura-invoicing_name": "Emissão de notas BirFatura",
+        "settings_birfatura-invoicing": "BirFatura",
+        "settings_birfatura-invoicing_description": "Chave secreta com que o BirFatura se conecta para coletar seus pedidos."
+      }
+    },
+    "ru": {
+      "birfaturaInvoicing": {
+        "adm_subtitle": "Этот сервис сам забирает ваши заказы, а не получает их по отправке. Укажите здесь секрет и тот же секрет в его собственных настройках магазина.",
+        "adm_title": "Выставление счетов BirFatura",
+        "adm_token": "Общий секрет",
+        "adm_tokenDesc": "Длинная случайная строка, которую вы придумаете сами. Это единственная защита адресов и налоговых номеров ваших клиентов, поэтому относитесь к ней как к паролю. Пустое значение означает, что доступ закрыт для всех.",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "Отправляет оплаченные заказы этого магазина в BirFatura, который выставляет счёт",
+        "module_birfatura-invoicing_name": "Выставление счетов BirFatura",
+        "settings_birfatura-invoicing": "Выставление счетов BirFatura",
+        "settings_birfatura-invoicing_description": "Секрет, с которым BirFatura входит в систему, чтобы получать ваши заказы."
+      }
+    },
+    "zh": {
+      "birfaturaInvoicing": {
+        "adm_subtitle": "此服务会主动收集你的订单，而不是等待接收。请在此处设置一个密钥，并在其自身的商店设置中填入相同的密钥。",
+        "adm_title": "BirFatura 开票",
+        "adm_token": "共享密钥",
+        "adm_tokenDesc": "由你自行设定的一长串随机字符。它是保护客户地址和税号的唯一屏障，请像对待密码一样对待它。留空则表示任何人都无法进入。",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_birfatura-invoicing_description": "将此商店已付款的订单发送至 BirFatura，由其开具发票",
+        "module_birfatura-invoicing_name": "BirFatura 开票",
+        "settings_birfatura-invoicing": "BirFatura 开票",
+        "settings_birfatura-invoicing_description": "BirFatura 用于登录并收取你订单的密钥。"
+      }
     }
   },
   "userDataExport": [],

@@ -91,6 +91,346 @@
       "pageDescriptions": {
         "leaderboard": "Alışveriş, oy ve gönderi sıralamasında hangi üyelerin önde olduğunu bugün, bu hafta ya da tüm zamanlar için görün."
       }
+    },
+    "az": {
+      "leaderboard": {
+        "allTime": "Bütün vaxtlar",
+        "loading": "Liderlər cədvəli yüklənir...",
+        "noData": "Liderlər cədvəli üçün məlumat yoxdur",
+        "period": "Dövr",
+        "player": "Üzv",
+        "purchases": "Alışlar",
+        "rank": "Yer",
+        "score": "Xal",
+        "thisWeek": "Bu həftə",
+        "title": "Liderlər cədvəli",
+        "today": "Bu gün",
+        "subtitle": "Ən çox alış edən, səs verən və paylaşım yazan üzvlər.",
+        "searchMembers": "Ada görə axtarın...",
+        "periodAll": "Bütün vaxt",
+        "periodWeek": "Son 7 gün",
+        "periodMonth": "Son 30 gün",
+        "periodYear": "Son il"
+      },
+      "pageTitles": {
+        "leaderboard": "Liderlər cədvəli"
+      },
+      "admin": {
+        "module_leaderboard_name": "Liderlər cədvəli",
+        "module_leaderboard_description": "Alışlara, səslərə və fəaliyyətə görə üzv reytinqləri"
+      },
+      "nav": {
+        "leaderboard": "Liderlər cədvəli"
+      },
+      "pageDescriptions": {
+        "leaderboard": "Bu gün, bu həftə və ya bütün vaxt üzrə alış, səs və paylaşımlara görə ən yüksək yerdə olan üzvlərə baxın."
+      }
+    },
+    "de": {
+      "leaderboard": {
+        "allTime": "Gesamt",
+        "loading": "Rangliste wird geladen...",
+        "noData": "Keine Daten für die Rangliste verfügbar",
+        "period": "Zeitraum",
+        "player": "Mitglied",
+        "purchases": "Käufe",
+        "rank": "Rang",
+        "score": "Punkte",
+        "thisWeek": "Diese Woche",
+        "title": "Rangliste",
+        "today": "Heute",
+        "subtitle": "Die Mitglieder, die am meisten kaufen, abstimmen und posten.",
+        "searchMembers": "Nach Name suchen...",
+        "periodAll": "Gesamt",
+        "periodWeek": "Letzte 7 Tage",
+        "periodMonth": "Letzte 30 Tage",
+        "periodYear": "Letztes Jahr"
+      },
+      "pageTitles": {
+        "leaderboard": "Rangliste"
+      },
+      "admin": {
+        "module_leaderboard_name": "Rangliste",
+        "module_leaderboard_description": "Mitgliederrangliste nach Käufen, Stimmen und Aktivität"
+      },
+      "nav": {
+        "leaderboard": "Rangliste"
+      },
+      "pageDescriptions": {
+        "leaderboard": "Sieh, welche Mitglieder bei Käufen, Stimmen und Beiträgen ganz vorne liegen, heute, diese Woche oder insgesamt."
+      }
+    },
+    "es": {
+      "leaderboard": {
+        "allTime": "Todo el tiempo",
+        "loading": "Cargando clasificación...",
+        "noData": "No hay datos de clasificación disponibles",
+        "period": "Periodo",
+        "player": "Miembro",
+        "purchases": "Compras",
+        "rank": "Puesto",
+        "score": "Puntuación",
+        "thisWeek": "Esta semana",
+        "title": "Clasificación",
+        "today": "Hoy",
+        "subtitle": "Los miembros que más compran, votan y publican.",
+        "searchMembers": "Buscar por nombre...",
+        "periodAll": "Todo el tiempo",
+        "periodWeek": "Últimos 7 días",
+        "periodMonth": "Últimos 30 días",
+        "periodYear": "Último año"
+      },
+      "pageTitles": {
+        "leaderboard": "Clasificación"
+      },
+      "admin": {
+        "module_leaderboard_name": "Clasificación",
+        "module_leaderboard_description": "Clasificación de miembros por compras, votos y actividad"
+      },
+      "nav": {
+        "leaderboard": "Clasificación"
+      },
+      "pageDescriptions": {
+        "leaderboard": "Consulta qué miembros lideran en compras, votos y publicaciones, de hoy, de esta semana o de todo el tiempo."
+      }
+    },
+    "et": {
+      "leaderboard": {
+        "allTime": "Kõigi aegade",
+        "loading": "Edetabelit laaditakse...",
+        "noData": "Edetabeli andmed puuduvad",
+        "period": "Periood",
+        "player": "Liige",
+        "purchases": "Ostud",
+        "rank": "Koht",
+        "score": "Skoor",
+        "thisWeek": "Sel nädalal",
+        "title": "Edetabel",
+        "today": "Täna",
+        "subtitle": "Liikmed, kes ostavad, hääletavad ja postitavad kõige rohkem.",
+        "searchMembers": "Otsi nime järgi...",
+        "periodAll": "Kõik ajad",
+        "periodWeek": "Viimased 7 päeva",
+        "periodMonth": "Viimased 30 päeva",
+        "periodYear": "Viimane aasta"
+      },
+      "pageTitles": {
+        "leaderboard": "Edetabel"
+      },
+      "admin": {
+        "module_leaderboard_name": "Edetabel",
+        "module_leaderboard_description": "Liikmete järjestus ostude, häälte ja tegevuse järgi"
+      },
+      "nav": {
+        "leaderboard": "Edetabel"
+      },
+      "pageDescriptions": {
+        "leaderboard": "Vaata, millised liikmed on ostude, häälte ja postituste poolest kõige kõrgemal, kas täna, sel nädalal või kõigi aegade kohta."
+      }
+    },
+    "fr": {
+      "leaderboard": {
+        "allTime": "Depuis toujours",
+        "loading": "Chargement du classement…",
+        "noData": "Aucune donnée de classement disponible",
+        "period": "Période",
+        "player": "Membre",
+        "purchases": "Achats",
+        "rank": "Rang",
+        "score": "Score",
+        "thisWeek": "Cette semaine",
+        "title": "Classement",
+        "today": "Aujourd’hui",
+        "subtitle": "Les membres qui achètent, votent et publient le plus.",
+        "searchMembers": "Rechercher par nom…",
+        "periodAll": "Depuis toujours",
+        "periodWeek": "7 derniers jours",
+        "periodMonth": "30 derniers jours",
+        "periodYear": "Dernière année"
+      },
+      "pageTitles": {
+        "leaderboard": "Classement"
+      },
+      "admin": {
+        "module_leaderboard_name": "Classement",
+        "module_leaderboard_description": "Classement des membres par achats, votes et activité"
+      },
+      "nav": {
+        "leaderboard": "Classement"
+      },
+      "pageDescriptions": {
+        "leaderboard": "Découvrez quels membres sont en tête pour les achats, les votes et les publications, aujourd’hui, cette semaine ou depuis toujours."
+      }
+    },
+    "it": {
+      "leaderboard": {
+        "allTime": "Di sempre",
+        "loading": "Caricamento della classifica...",
+        "noData": "Nessun dato disponibile per la classifica",
+        "period": "Periodo",
+        "player": "Membro",
+        "purchases": "Acquisti",
+        "rank": "Posizione",
+        "score": "Punteggio",
+        "thisWeek": "Questa settimana",
+        "title": "Classifica",
+        "today": "Oggi",
+        "subtitle": "I membri che comprano, votano e scrivono di più.",
+        "searchMembers": "Cerca per nome...",
+        "periodAll": "Di sempre",
+        "periodWeek": "Ultimi 7 giorni",
+        "periodMonth": "Ultimi 30 giorni",
+        "periodYear": "Ultimo anno"
+      },
+      "pageTitles": {
+        "leaderboard": "Classifica"
+      },
+      "admin": {
+        "module_leaderboard_name": "Classifica",
+        "module_leaderboard_description": "Classifiche dei membri per acquisti, voti e attività"
+      },
+      "nav": {
+        "leaderboard": "Classifica"
+      },
+      "pageDescriptions": {
+        "leaderboard": "Vedi quali membri sono in cima per acquisti, voti e post, oggi, questa settimana o di sempre."
+      }
+    },
+    "pl": {
+      "leaderboard": {
+        "allTime": "Cały czas",
+        "loading": "Wczytywanie rankingu...",
+        "noData": "Brak danych rankingu",
+        "period": "Okres",
+        "player": "Członek",
+        "purchases": "Zakupy",
+        "rank": "Miejsce",
+        "score": "Wynik",
+        "thisWeek": "Ten tydzień",
+        "title": "Ranking",
+        "today": "Dzisiaj",
+        "subtitle": "Członkowie, którzy kupują, głosują i piszą najczęściej.",
+        "searchMembers": "Szukaj po nazwie...",
+        "periodAll": "Cały czas",
+        "periodWeek": "Ostatnie 7 dni",
+        "periodMonth": "Ostatnie 30 dni",
+        "periodYear": "Ostatni rok"
+      },
+      "pageTitles": {
+        "leaderboard": "Ranking"
+      },
+      "admin": {
+        "module_leaderboard_name": "Ranking",
+        "module_leaderboard_description": "Ranking członków według zakupów, głosów i aktywności"
+      },
+      "nav": {
+        "leaderboard": "Ranking"
+      },
+      "pageDescriptions": {
+        "leaderboard": "Zobacz, którzy członkowie są na czele pod względem zakupów, głosów i postów, dziś, w tym tygodniu lub od początku."
+      }
+    },
+    "pt": {
+      "leaderboard": {
+        "allTime": "Todos os tempos",
+        "loading": "Carregando ranking...",
+        "noData": "Não há dados de ranking disponíveis",
+        "period": "Período",
+        "player": "Membro",
+        "purchases": "Compras",
+        "rank": "Posição",
+        "score": "Pontuação",
+        "thisWeek": "Esta semana",
+        "title": "Ranking",
+        "today": "Hoje",
+        "subtitle": "Os membros que mais compram, votam e publicam.",
+        "searchMembers": "Pesquisar por nome...",
+        "periodAll": "Todo o período",
+        "periodWeek": "Últimos 7 dias",
+        "periodMonth": "Últimos 30 dias",
+        "periodYear": "Último ano"
+      },
+      "pageTitles": {
+        "leaderboard": "Ranking"
+      },
+      "admin": {
+        "module_leaderboard_name": "Ranking",
+        "module_leaderboard_description": "Classificação de membros por compras, votos e atividade"
+      },
+      "nav": {
+        "leaderboard": "Ranking"
+      },
+      "pageDescriptions": {
+        "leaderboard": "Veja quais membros estão no topo em compras, votos e publicações, de hoje, desta semana ou de todos os tempos."
+      }
+    },
+    "ru": {
+      "leaderboard": {
+        "allTime": "За всё время",
+        "loading": "Загрузка рейтинга...",
+        "noData": "Данных для рейтинга пока нет",
+        "period": "Период",
+        "player": "Участник",
+        "purchases": "Покупки",
+        "rank": "Место",
+        "score": "Счет",
+        "thisWeek": "За эту неделю",
+        "title": "Рейтинг",
+        "today": "Сегодня",
+        "subtitle": "Участники, которые покупают, голосуют и пишут больше всех.",
+        "searchMembers": "Поиск по имени...",
+        "periodAll": "За всё время",
+        "periodWeek": "Последние 7 дней",
+        "periodMonth": "Последние 30 дней",
+        "periodYear": "Последний год"
+      },
+      "pageTitles": {
+        "leaderboard": "Рейтинг"
+      },
+      "admin": {
+        "module_leaderboard_name": "Рейтинг",
+        "module_leaderboard_description": "Места участников по покупкам, голосам и активности"
+      },
+      "nav": {
+        "leaderboard": "Рейтинг"
+      },
+      "pageDescriptions": {
+        "leaderboard": "Смотрите, какие участники лидируют по покупкам, голосам и сообщениям за сегодня, эту неделю или за всё время."
+      }
+    },
+    "zh": {
+      "leaderboard": {
+        "allTime": "全部时间",
+        "loading": "正在加载排行榜…",
+        "noData": "暂无排行榜数据",
+        "period": "时间段",
+        "player": "成员",
+        "purchases": "购买",
+        "rank": "排名",
+        "score": "分数",
+        "thisWeek": "本周",
+        "title": "排行榜",
+        "today": "今天",
+        "subtitle": "购买、投票和发帖最多的成员。",
+        "searchMembers": "按名称搜索……",
+        "periodAll": "全部时间",
+        "periodWeek": "最近 7 天",
+        "periodMonth": "最近 30 天",
+        "periodYear": "最近一年"
+      },
+      "pageTitles": {
+        "leaderboard": "排行榜"
+      },
+      "admin": {
+        "module_leaderboard_name": "排行榜",
+        "module_leaderboard_description": "按购买、投票和活跃度排列的成员排名"
+      },
+      "nav": {
+        "leaderboard": "排行榜"
+      },
+      "pageDescriptions": {
+        "leaderboard": "查看在今天、本周或全部时间内，购买、投票和发帖排名最高的成员。"
+      }
     }
   },
   "navLinks": [

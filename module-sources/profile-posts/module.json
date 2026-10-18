@@ -110,6 +110,306 @@
         "module_profile-posts_name": "Profil Gönderileri",
         "module_profile-posts_description": "Her üyenin profilinde bir duvar, tek seviyeli yanıtlarla"
       }
+    },
+    "az": {
+      "profilePosts": {
+        "title": "Profil yazıları",
+        "empty": "Bu divarda hələ heç nə yoxdur.",
+        "write": "Onların profilinə bir şey yazın",
+        "writeOwn": "Profilinizə bir şey yazın",
+        "post": "Paylaş",
+        "reply": "Cavab ver",
+        "replyPlaceholder": "Cavab yazın",
+        "signIn": "Burada yazmaq üçün daxil olun.",
+        "closed": "Bu üzv profil yazılarını söndürüb.",
+        "delete": "Sil",
+        "deleteConfirmTitle": "Bu yazı silinsin?",
+        "deleteConfirmMessage": "Yazı silinəcək, cavabları da onunla birlikdə silinəcək. Bunu geri qaytarmaq olmaz.",
+        "showReplies": "{count, plural, one {# cavab} other {# cavab}}",
+        "perm_moderate": "İstənilən profil yazısını silmək",
+        "setting_open": "Üzvlərin profilimə yazmasına icazə ver",
+        "setting_openDesc": "Bu söndürüldükdə heç kim profilinizə yaza bilməz və orada olanlar gizli qalır.",
+        "err": {
+          "profile_wall_closed": "Bu üzv profil yazılarını söndürüb.",
+          "profile_post_too_long": "Bu, saytda icazə verilən uzunluqdan çoxdur.",
+          "profile_post_empty": "Əvvəlcə bir şey yazın.",
+          "profile_post_not_yours": "Bu sizin silə biləcəyiniz yazı deyil."
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "Profil yazıları",
+        "module_profile-posts_description": "Hər üzvün profilində bir divar və bir səviyyə cavab"
+      }
+    },
+    "de": {
+      "profilePosts": {
+        "title": "Profil-Beiträge",
+        "empty": "Auf dieser Pinnwand steht noch nichts.",
+        "write": "Etwas auf das Profil schreiben",
+        "writeOwn": "Etwas auf dein Profil schreiben",
+        "post": "Veröffentlichen",
+        "reply": "Antworten",
+        "replyPlaceholder": "Schreibe eine Antwort",
+        "signIn": "Melde dich an, um hier zu schreiben.",
+        "closed": "Dieses Mitglied hat Profil-Beiträge deaktiviert.",
+        "delete": "Löschen",
+        "deleteConfirmTitle": "Diesen Beitrag löschen?",
+        "deleteConfirmMessage": "Er wird entfernt, und mit ihm seine Antworten. Dies kann nicht rückgängig gemacht werden.",
+        "showReplies": "{count, plural, one {# Antwort} other {# Antworten}}",
+        "perm_moderate": "Profil-Beiträge aller Mitglieder entfernen",
+        "setting_open": "Mitgliedern erlauben, auf meinem Profil zu schreiben",
+        "setting_openDesc": "Wenn dies aus ist, kann niemand auf deinem Profil posten, und was dort steht, bleibt verborgen.",
+        "err": {
+          "profile_wall_closed": "Dieses Mitglied hat Profil-Beiträge deaktiviert.",
+          "profile_post_too_long": "Das ist länger, als diese Seite erlaubt.",
+          "profile_post_empty": "Schreibe zuerst etwas.",
+          "profile_post_not_yours": "Das gehört nicht dir und darf von dir nicht entfernt werden."
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "Profil-Beiträge",
+        "module_profile-posts_description": "Eine Pinnwand auf jedem Mitgliedsprofil, mit einer Ebene von Antworten"
+      }
+    },
+    "es": {
+      "profilePosts": {
+        "title": "Publicaciones del perfil",
+        "empty": "Todavía no hay nada en este muro.",
+        "write": "Escribe algo en su perfil",
+        "writeOwn": "Escribe algo en tu perfil",
+        "post": "Publicar",
+        "reply": "Responder",
+        "replyPlaceholder": "Escribe una respuesta",
+        "signIn": "Inicia sesión para escribir aquí.",
+        "closed": "Este miembro ha desactivado las publicaciones en su perfil.",
+        "delete": "Eliminar",
+        "deleteConfirmTitle": "¿Eliminar esta publicación?",
+        "deleteConfirmMessage": "Se borra, y también sus respuestas. Esto no se puede deshacer.",
+        "showReplies": "{count, plural, one {# respuesta} other {# respuestas}}",
+        "perm_moderate": "Retirar las publicaciones del perfil de cualquiera",
+        "setting_open": "Permitir que los miembros escriban en mi perfil",
+        "setting_openDesc": "Si está desactivado, nadie puede publicar en tu perfil y lo que ya hay queda oculto.",
+        "err": {
+          "profile_wall_closed": "Este miembro ha desactivado las publicaciones en su perfil.",
+          "profile_post_too_long": "Es más largo de lo que permite este sitio.",
+          "profile_post_empty": "Escribe algo primero.",
+          "profile_post_not_yours": "No puedes retirar esa publicación."
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "Publicaciones del perfil",
+        "module_profile-posts_description": "Un muro en el perfil de cada miembro, con un nivel de respuestas"
+      }
+    },
+    "et": {
+      "profilePosts": {
+        "title": "Profiilipostitused",
+        "empty": "Selles seinas pole veel midagi.",
+        "write": "Kirjuta midagi selle liikme profiilile",
+        "writeOwn": "Kirjuta midagi oma profiilile",
+        "post": "Postita",
+        "reply": "Vasta",
+        "replyPlaceholder": "Kirjuta vastus",
+        "signIn": "Logi sisse, et siia kirjutada.",
+        "closed": "See liige on profiilipostitused välja lülitanud.",
+        "delete": "Kustuta",
+        "deleteConfirmTitle": "Kas kustutada see postitus?",
+        "deleteConfirmMessage": "See kaob koos oma vastustega. Seda ei saa tagasi võtta.",
+        "showReplies": "{count, plural, one {# vastus} other {# vastust}}",
+        "perm_moderate": "Eemalda kõigi profiilipostitused",
+        "setting_open": "Luba liikmetel minu profiilile kirjutada",
+        "setting_openDesc": "Kui see on välja lülitatud, ei saa keegi sinu profiilile postitada ja seal olev sisu jääb peidetuks.",
+        "err": {
+          "profile_wall_closed": "See liige on profiilipostitused välja lülitanud.",
+          "profile_post_too_long": "See on pikem, kui sait lubab.",
+          "profile_post_empty": "Kirjuta esmalt midagi.",
+          "profile_post_not_yours": "Seda ei ole sul õigust eemaldada."
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "Profiilipostitused",
+        "module_profile-posts_description": "Sein iga liikme profiilil, ühe vastusetasemega"
+      }
+    },
+    "fr": {
+      "profilePosts": {
+        "title": "Messages du profil",
+        "empty": "Rien sur ce mur pour le moment.",
+        "write": "Écrire quelque chose sur son profil",
+        "writeOwn": "Écrire quelque chose sur votre profil",
+        "post": "Publier",
+        "reply": "Répondre",
+        "replyPlaceholder": "Écrivez une réponse",
+        "signIn": "Connectez-vous pour écrire ici.",
+        "closed": "Ce membre a désactivé les messages sur son profil.",
+        "delete": "Supprimer",
+        "deleteConfirmTitle": "Supprimer ce message ?",
+        "deleteConfirmMessage": "Il disparaît, ainsi que ses réponses. Cette action est irréversible.",
+        "showReplies": "{count, plural, one {# réponse} other {# réponses}}",
+        "perm_moderate": "Retirer les messages de profil de tous les membres",
+        "setting_open": "Autoriser les membres à écrire sur mon profil",
+        "setting_openDesc": "Lorsque cette option est désactivée, personne ne peut publier sur votre profil et ce qui s’y trouve reste masqué.",
+        "err": {
+          "profile_wall_closed": "Ce membre a désactivé les messages sur son profil.",
+          "profile_post_too_long": "C’est plus long que ce que ce site autorise.",
+          "profile_post_empty": "Écrivez d’abord quelque chose.",
+          "profile_post_not_yours": "Vous ne pouvez pas retirer ce message."
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "Messages du profil",
+        "module_profile-posts_description": "Un mur sur le profil de chaque membre, avec un niveau de réponses"
+      }
+    },
+    "it": {
+      "profilePosts": {
+        "title": "Post del profilo",
+        "empty": "Nessun messaggio su questa bacheca ancora.",
+        "write": "Scrivi qualcosa sul suo profilo",
+        "writeOwn": "Scrivi qualcosa sul tuo profilo",
+        "post": "Pubblica",
+        "reply": "Rispondi",
+        "replyPlaceholder": "Scrivi una risposta",
+        "signIn": "Accedi per scrivere qui.",
+        "closed": "Questo membro ha disattivato i post sul profilo.",
+        "delete": "Elimina",
+        "deleteConfirmTitle": "Eliminare questo post?",
+        "deleteConfirmMessage": "Va via insieme alle sue risposte. Non si può annullare.",
+        "showReplies": "{count, plural, one {# risposta} other {# risposte}}",
+        "perm_moderate": "Rimuovere i post sul profilo di chiunque",
+        "setting_open": "Consenti ai membri di scrivere sul mio profilo",
+        "setting_openDesc": "Quando è disattivata, nessuno può pubblicare sul tuo profilo e ciò che c’è resta nascosto.",
+        "err": {
+          "profile_wall_closed": "Questo membro ha disattivato i post sul profilo.",
+          "profile_post_too_long": "È più lungo di quanto consente questo sito.",
+          "profile_post_empty": "Scrivi prima qualcosa.",
+          "profile_post_not_yours": "Non puoi rimuoverlo: non è tuo."
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "Post del profilo",
+        "module_profile-posts_description": "Una bacheca sul profilo di ogni membro, con un livello di risposte"
+      }
+    },
+    "pl": {
+      "profilePosts": {
+        "title": "Wpisy na profilu",
+        "empty": "Na tej ścianie nie ma jeszcze nic.",
+        "write": "Napisz coś na jego profilu",
+        "writeOwn": "Napisz coś na swoim profilu",
+        "post": "Opublikuj",
+        "reply": "Odpowiedz",
+        "replyPlaceholder": "Napisz odpowiedź",
+        "signIn": "Zaloguj się, aby pisać tutaj.",
+        "closed": "Ten członek wyłączył wpisy na profilu.",
+        "delete": "Usuń",
+        "deleteConfirmTitle": "Usunąć ten wpis?",
+        "deleteConfirmMessage": "Zniknie razem ze swoimi odpowiedziami. Tej operacji nie można cofnąć.",
+        "showReplies": "{count, plural, one {# odpowiedź} few {# odpowiedzi} many {# odpowiedzi} other {# odpowiedzi}}",
+        "perm_moderate": "Usuwaj wpisy na profilach wszystkich członków",
+        "setting_open": "Pozwól członkom pisać na moim profilu",
+        "setting_openDesc": "Gdy to jest wyłączone, nikt nie może pisać na Twoim profilu, a to, co na nim jest, pozostaje ukryte.",
+        "err": {
+          "profile_wall_closed": "Ten członek wyłączył wpisy na profilu.",
+          "profile_post_too_long": "Ten wpis jest dłuższy, niż pozwala ta strona.",
+          "profile_post_empty": "Najpierw napisz coś.",
+          "profile_post_not_yours": "Tego wpisu nie możesz usunąć."
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "Wpisy na profilach",
+        "module_profile-posts_description": "Ściana na profilu każdego członka, z jednym poziomem odpowiedzi"
+      }
+    },
+    "pt": {
+      "profilePosts": {
+        "title": "Publicações no perfil",
+        "empty": "Nada no mural ainda.",
+        "write": "Escreva algo no perfil dele",
+        "writeOwn": "Escreva algo no seu perfil",
+        "post": "Publicar",
+        "reply": "Responder",
+        "replyPlaceholder": "Escreva uma resposta",
+        "signIn": "Entre para escrever aqui.",
+        "closed": "Este membro desativou as publicações no perfil.",
+        "delete": "Excluir",
+        "deleteConfirmTitle": "Excluir esta publicação?",
+        "deleteConfirmMessage": "Ela será removida, junto com as respostas. Esta ação não pode ser desfeita.",
+        "showReplies": "{count, plural, one {# resposta} other {# respostas}}",
+        "perm_moderate": "Remover publicações do perfil de qualquer pessoa",
+        "setting_open": "Permitir que membros escrevam no meu perfil",
+        "setting_openDesc": "Quando isso estiver desativado, ninguém pode publicar no seu perfil, e o que já está lá fica oculto.",
+        "err": {
+          "profile_wall_closed": "Este membro desativou as publicações no perfil.",
+          "profile_post_too_long": "Isso é maior do que este site permite.",
+          "profile_post_empty": "Escreva algo primeiro.",
+          "profile_post_not_yours": "Essa publicação não é sua para remover."
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "Publicações no perfil",
+        "module_profile-posts_description": "Um mural no perfil de todos os membros, com um nível de respostas"
+      }
+    },
+    "ru": {
+      "profilePosts": {
+        "title": "Записи на профиле",
+        "empty": "На этой стене пока пусто.",
+        "write": "Напишите что-нибудь на их профиле",
+        "writeOwn": "Напишите что-нибудь на своем профиле",
+        "post": "Опубликовать",
+        "reply": "Ответить",
+        "replyPlaceholder": "Напишите ответ",
+        "signIn": "Войдите, чтобы писать здесь.",
+        "closed": "Этот участник отключил записи на профиле.",
+        "delete": "Удалить",
+        "deleteConfirmTitle": "Удалить эту запись?",
+        "deleteConfirmMessage": "Запись будет удалена вместе со всеми ответами. Это действие нельзя отменить.",
+        "showReplies": "{count, plural, one {# ответ} few {# ответа} many {# ответов} other {# ответа}}",
+        "perm_moderate": "Удалять записи на любых профилях",
+        "setting_open": "Разрешить участникам писать на моем профиле",
+        "setting_openDesc": "Если выключено, никто не сможет писать на вашем профиле, а уже оставленные записи будут скрыты.",
+        "err": {
+          "profile_wall_closed": "Этот участник отключил записи на профиле.",
+          "profile_post_too_long": "Текст длиннее допустимого на этом сайте.",
+          "profile_post_empty": "Сначала напишите что-нибудь.",
+          "profile_post_not_yours": "Эта запись не принадлежит вам, поэтому удалить ее нельзя."
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "Записи на профиле",
+        "module_profile-posts_description": "Стена на профиле каждого участника с одним уровнем ответов"
+      }
+    },
+    "zh": {
+      "profilePosts": {
+        "title": "个人资料留言",
+        "empty": "这块留言板上还没有内容。",
+        "write": "在对方的个人资料上留言",
+        "writeOwn": "在你的个人资料上留言",
+        "post": "发布",
+        "reply": "回复",
+        "replyPlaceholder": "写下回复",
+        "signIn": "登录后即可在此留言。",
+        "closed": "该成员已关闭个人资料留言。",
+        "delete": "删除",
+        "deleteConfirmTitle": "删除此留言？",
+        "deleteConfirmMessage": "留言及其回复都会被删除，且无法撤销。",
+        "showReplies": "{count, plural, one {# 条回复} other {# 条回复}}",
+        "perm_moderate": "删除任何人的个人资料留言",
+        "setting_open": "允许成员在我的个人资料上留言",
+        "setting_openDesc": "关闭后，任何人都无法在你的个人资料上留言，已有的内容也会被隐藏。",
+        "err": {
+          "profile_wall_closed": "该成员已关闭个人资料留言。",
+          "profile_post_too_long": "超出了本站允许的长度。",
+          "profile_post_empty": "请先写点内容。",
+          "profile_post_not_yours": "你无权删除这条留言。"
+        }
+      },
+      "admin": {
+        "module_profile-posts_name": "个人资料留言",
+        "module_profile-posts_description": "每位成员的个人资料上都有一块留言板，支持一层回复"
+      }
     }
   },
   "userDataExport": [

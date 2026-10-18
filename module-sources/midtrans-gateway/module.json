@@ -112,6 +112,196 @@
         "settings_midtrans-gateway": "Midtrans",
         "settings_midtrans-gateway_description": "Midtrans sunucu anahtarı ve ortamı."
       }
+    },
+    "az": {
+      "midtransGateway": {
+        "adm_sandbox": "Sınaq rejimi",
+        "adm_sandboxDesc": "Midtrans test mühitindən istifadə etmək üçün true təyin edin.",
+        "adm_serverKey": "Server açarı",
+        "adm_serverKeyDesc": "Midtrans panelinizdən. Midtrans bildiriş URL-ni /api/v1/midtrans/notify ünvanına yönləndirin.",
+        "adm_subtitle": "Midtrans vasitəsilə ödənişlər qəbul etmək üçün açarlar.",
+        "adm_title": "Midtrans parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "menu_midtrans-gateway": "Midtrans şlüzü",
+        "menu_midtrans-gateway_midtrans_settings": "Midtrans parametrləri",
+        "module_midtrans-gateway_name": "Midtrans şlüzü",
+        "module_midtrans-gateway_description": "Midtrans vasitəsilə İndoneziyada bank köçürməsi, elektron pul kisəsi, rahat mağaza və kart ödənişlərini qəbul edin",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Midtrans server açarı və mühit."
+      }
+    },
+    "de": {
+      "midtransGateway": {
+        "adm_sandbox": "Sandbox-Modus",
+        "adm_sandboxDesc": "Auf true setzen, um die Testumgebung von Midtrans zu verwenden.",
+        "adm_serverKey": "Server-Schlüssel",
+        "adm_serverKeyDesc": "Aus deinem Midtrans-Dashboard. Trage die Benachrichtigungs-URL von Midtrans auf /api/v1/midtrans/notify ein.",
+        "adm_subtitle": "Schlüssel, um Zahlungen über Midtrans anzunehmen.",
+        "adm_title": "Midtrans-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "menu_midtrans-gateway": "Midtrans-Gateway",
+        "menu_midtrans-gateway_midtrans_settings": "Midtrans-Einstellungen",
+        "module_midtrans-gateway_name": "Midtrans-Gateway",
+        "module_midtrans-gateway_description": "Banküberweisungen, E-Wallets, Zahlungen im Convenience-Store und Kartenzahlungen in Indonesien über Midtrans annehmen",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Server-Schlüssel und Umgebung von Midtrans."
+      }
+    },
+    "es": {
+      "midtransGateway": {
+        "adm_sandbox": "Modo de pruebas",
+        "adm_sandboxDesc": "Actívalo para usar el entorno de pruebas de Midtrans.",
+        "adm_serverKey": "Clave del servidor",
+        "adm_serverKeyDesc": "Desde tu panel de Midtrans. Apunta la URL de notificaciones de Midtrans a /api/v1/midtrans/notify.",
+        "adm_subtitle": "Claves para cobrar pagos a través de Midtrans.",
+        "adm_title": "Ajustes de Midtrans",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "menu_midtrans-gateway": "Pasarela Midtrans",
+        "menu_midtrans-gateway_midtrans_settings": "Ajustes de Midtrans",
+        "module_midtrans-gateway_name": "Pasarela Midtrans",
+        "module_midtrans-gateway_description": "Acepta transferencias bancarias, monederos electrónicos, pagos en tiendas de conveniencia y con tarjeta en Indonesia a través de Midtrans",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Clave del servidor y entorno de Midtrans."
+      }
+    },
+    "et": {
+      "midtransGateway": {
+        "adm_sandbox": "Testrežiim",
+        "adm_sandboxDesc": "Määra väärtuseks true, et kasutada Midtrans testkeskkonda.",
+        "adm_serverKey": "Serveri võti",
+        "adm_serverKeyDesc": "Leiad oma Midtrans töölaualt. Suuna Midtransi teavituse URL aadressile /api/v1/midtrans/notify.",
+        "adm_subtitle": "Võtmed maksete vastuvõtmiseks Midtrans kaudu.",
+        "adm_title": "Midtrans seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "menu_midtrans-gateway": "Midtrans maksevärav",
+        "menu_midtrans-gateway_midtrans_settings": "Midtrans seaded",
+        "module_midtrans-gateway_name": "Midtrans maksevärav",
+        "module_midtrans-gateway_description": "Võta Indoneesias vastu pangaülekandeid, e-rahakotte, kauplustes tehtavaid makseid ja kaardimakseid Midtrans kaudu",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Midtransi serveri võti ja keskkond."
+      }
+    },
+    "fr": {
+      "midtransGateway": {
+        "adm_sandbox": "Mode test",
+        "adm_sandboxDesc": "Définissez sur true pour utiliser l’environnement de test Midtrans.",
+        "adm_serverKey": "Clé serveur",
+        "adm_serverKeyDesc": "Depuis votre tableau de bord Midtrans. Pointez l’URL de notification Midtrans vers /api/v1/midtrans/notify.",
+        "adm_subtitle": "Clés pour encaisser les paiements via Midtrans.",
+        "adm_title": "Paramètres Midtrans",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "menu_midtrans-gateway": "Passerelle Midtrans",
+        "menu_midtrans-gateway_midtrans_settings": "Paramètres Midtrans",
+        "module_midtrans-gateway_name": "Passerelle Midtrans",
+        "module_midtrans-gateway_description": "Encaisser des virements bancaires, portefeuilles électroniques, paiements en supérette et par carte en Indonésie via Midtrans",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Clé serveur et environnement Midtrans."
+      }
+    },
+    "it": {
+      "midtransGateway": {
+        "adm_sandbox": "Modalità sandbox",
+        "adm_sandboxDesc": "Imposta su true per usare l’ambiente di test di Midtrans.",
+        "adm_serverKey": "Chiave server",
+        "adm_serverKeyDesc": "Dalla tua dashboard di Midtrans. Punta l’URL di notifica di Midtrans a /api/v1/midtrans/notify.",
+        "adm_subtitle": "Chiavi per accettare pagamenti tramite Midtrans.",
+        "adm_title": "Impostazioni di Midtrans",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "menu_midtrans-gateway": "Gateway Midtrans",
+        "menu_midtrans-gateway_midtrans_settings": "Impostazioni di Midtrans",
+        "module_midtrans-gateway_name": "Gateway Midtrans",
+        "module_midtrans-gateway_description": "Accetta bonifici, e-wallet, pagamenti nei minimarket e con carta in Indonesia tramite Midtrans",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Chiave server e ambiente di Midtrans."
+      }
+    },
+    "pl": {
+      "midtransGateway": {
+        "adm_sandbox": "Tryb testowy",
+        "adm_sandboxDesc": "Ustaw na true, aby używać testowego środowiska Midtrans.",
+        "adm_serverKey": "Klucz serwera",
+        "adm_serverKeyDesc": "Znajdziesz go w panelu Midtrans. Ustaw adres powiadomień Midtrans na /api/v1/midtrans/notify.",
+        "adm_subtitle": "Klucze do przyjmowania płatności przez Midtrans.",
+        "adm_title": "Ustawienia Midtrans",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "menu_midtrans-gateway": "Bramka Midtrans",
+        "menu_midtrans-gateway_midtrans_settings": "Ustawienia Midtrans",
+        "module_midtrans-gateway_name": "Bramka Midtrans",
+        "module_midtrans-gateway_description": "Przyjmuj przelewy bankowe, portfele elektroniczne, płatności w sklepach i kartą w Indonezji przez Midtrans",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Klucz serwera Midtrans i środowisko."
+      }
+    },
+    "pt": {
+      "midtransGateway": {
+        "adm_sandbox": "Modo sandbox",
+        "adm_sandboxDesc": "Defina como true para usar o ambiente de testes do Midtrans.",
+        "adm_serverKey": "Chave do servidor",
+        "adm_serverKeyDesc": "Obtida no seu painel do Midtrans. Aponte a URL de notificação do Midtrans para /api/v1/midtrans/notify.",
+        "adm_subtitle": "Chaves para receber pagamentos pelo Midtrans.",
+        "adm_title": "Configurações do Midtrans",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "menu_midtrans-gateway": "Gateway Midtrans",
+        "menu_midtrans-gateway_midtrans_settings": "Configurações do Midtrans",
+        "module_midtrans-gateway_name": "Gateway Midtrans",
+        "module_midtrans-gateway_description": "Receba transferência bancária, carteira digital, loja de conveniência e pagamentos com cartão na Indonésia pelo Midtrans",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Chave do servidor e ambiente do Midtrans."
+      }
+    },
+    "ru": {
+      "midtransGateway": {
+        "adm_sandbox": "Режим песочницы",
+        "adm_sandboxDesc": "Укажите true, чтобы использовать тестовую среду Midtrans.",
+        "adm_serverKey": "Серверный ключ",
+        "adm_serverKeyDesc": "Из панели управления Midtrans. Укажите для уведомлений Midtrans адрес /api/v1/midtrans/notify.",
+        "adm_subtitle": "Ключи для приема платежей через Midtrans.",
+        "adm_title": "Настройки Midtrans",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "menu_midtrans-gateway": "Шлюз Midtrans",
+        "menu_midtrans-gateway_midtrans_settings": "Настройки Midtrans",
+        "module_midtrans-gateway_name": "Шлюз Midtrans",
+        "module_midtrans-gateway_description": "Прием банковских переводов, электронных кошельков, платежей в магазинах и картой в Индонезии через Midtrans",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Серверный ключ и среда Midtrans."
+      }
+    },
+    "zh": {
+      "midtransGateway": {
+        "adm_sandbox": "沙盒模式",
+        "adm_sandboxDesc": "设为 true 以使用 Midtrans 测试环境。",
+        "adm_serverKey": "服务器密钥",
+        "adm_serverKeyDesc": "来自你的 Midtrans 控制台。将 Midtrans 通知 URL 指向 /api/v1/midtrans/notify。",
+        "adm_subtitle": "通过 Midtrans 收款所需的密钥。",
+        "adm_title": "Midtrans 设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "menu_midtrans-gateway": "Midtrans 网关",
+        "menu_midtrans-gateway_midtrans_settings": "Midtrans 设置",
+        "module_midtrans-gateway_name": "Midtrans 网关",
+        "module_midtrans-gateway_description": "通过 Midtrans 接受印度尼西亚的银行转账、电子钱包、便利店和银行卡付款",
+        "settings_midtrans-gateway": "Midtrans",
+        "settings_midtrans-gateway_description": "Midtrans 服务器密钥和环境。"
+      }
     }
   },
   "permissions": [

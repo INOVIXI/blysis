@@ -65,6 +65,136 @@
         "settings_reddit-auth": "Reddit OAuth",
         "settings_reddit-auth_description": "Reddit uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "redditAuth": {
+        "adm_subtitle": "Saytınız üçün Reddit OAuth ilə daxil olmanı quraşdırın.",
+        "adm_title": "Reddit ilə daxil olma parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_reddit-auth_name": "Reddit ilə daxil olma",
+        "module_reddit-auth_description": "İstifadəçilərə Reddit hesabları ilə daxil olmağa icazə verin",
+        "settings_reddit-auth": "Reddit OAuth",
+        "settings_reddit-auth_description": "Reddit tətbiq etimadnamələri."
+      }
+    },
+    "de": {
+      "redditAuth": {
+        "adm_subtitle": "Richte die Reddit-OAuth-Anmeldung für deine Seite ein.",
+        "adm_title": "Reddit-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_reddit-auth_name": "Reddit-Login",
+        "module_reddit-auth_description": "Mitgliedern erlauben, sich mit ihrem Reddit-Konto anzumelden",
+        "settings_reddit-auth": "Reddit OAuth",
+        "settings_reddit-auth_description": "Zugangsdaten der Reddit-Anwendung."
+      }
+    },
+    "es": {
+      "redditAuth": {
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de Reddit en tu sitio.",
+        "adm_title": "Ajustes del inicio de sesión con Reddit",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_reddit-auth_name": "Inicio de sesión con Reddit",
+        "module_reddit-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de Reddit",
+        "settings_reddit-auth": "OAuth de Reddit",
+        "settings_reddit-auth_description": "Credenciales de la aplicación de Reddit."
+      }
+    },
+    "et": {
+      "redditAuth": {
+        "adm_subtitle": "Seadista oma saidi jaoks Redditi OAuth-sisselogimine.",
+        "adm_title": "Redditi sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_reddit-auth_name": "Redditi sisselogimine",
+        "module_reddit-auth_description": "Luba kasutajatel sisse logida oma Redditi kontoga",
+        "settings_reddit-auth": "Reddit OAuth",
+        "settings_reddit-auth_description": "Redditi rakenduse volitused."
+      }
+    },
+    "fr": {
+      "redditAuth": {
+        "adm_subtitle": "Configurez la connexion OAuth Reddit pour votre site.",
+        "adm_title": "Paramètres de connexion Reddit",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_reddit-auth_name": "Connexion Reddit",
+        "module_reddit-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte Reddit",
+        "settings_reddit-auth": "OAuth Reddit",
+        "settings_reddit-auth_description": "Identifiants de l’application Reddit."
+      }
+    },
+    "it": {
+      "redditAuth": {
+        "adm_subtitle": "Configura l’accesso con Reddit OAuth per il tuo sito.",
+        "adm_title": "Impostazioni accesso Reddit",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_reddit-auth_name": "Accesso con Reddit",
+        "module_reddit-auth_description": "Consenti ai membri di accedere con il proprio account Reddit",
+        "settings_reddit-auth": "Reddit OAuth",
+        "settings_reddit-auth_description": "Credenziali dell’applicazione Reddit."
+      }
+    },
+    "pl": {
+      "redditAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie przez Reddit OAuth dla swojej strony.",
+        "adm_title": "Ustawienia logowania Reddit",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_reddit-auth_name": "Logowanie przez Reddit",
+        "module_reddit-auth_description": "Pozwól użytkownikom logować się przy użyciu konta Reddit",
+        "settings_reddit-auth": "Reddit OAuth",
+        "settings_reddit-auth_description": "Dane aplikacji Reddit."
+      }
+    },
+    "pt": {
+      "redditAuth": {
+        "adm_subtitle": "Configure o login com OAuth do Reddit para o seu site.",
+        "adm_title": "Configurações de login do Reddit",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_reddit-auth_name": "Login com Reddit",
+        "module_reddit-auth_description": "Permite que usuários entrem com a conta do Reddit",
+        "settings_reddit-auth": "Reddit OAuth",
+        "settings_reddit-auth_description": "Credenciais do aplicativo do Reddit."
+      }
+    },
+    "ru": {
+      "redditAuth": {
+        "adm_subtitle": "Настройте вход на сайт через OAuth Reddit.",
+        "adm_title": "Настройки входа через Reddit",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_reddit-auth_name": "Вход через Reddit",
+        "module_reddit-auth_description": "Разрешить пользователям входить с помощью аккаунта Reddit",
+        "settings_reddit-auth": "OAuth Reddit",
+        "settings_reddit-auth_description": "Учетные данные приложения Reddit."
+      }
+    },
+    "zh": {
+      "redditAuth": {
+        "adm_subtitle": "为你的网站设置 Reddit OAuth 登录。",
+        "adm_title": "Reddit 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_reddit-auth_name": "Reddit 登录",
+        "module_reddit-auth_description": "允许用户使用其 Reddit 账户登录",
+        "settings_reddit-auth": "Reddit OAuth",
+        "settings_reddit-auth_description": "Reddit 应用凭据。"
+      }
     }
   },
   "permissions": [

@@ -1,0 +1,13 @@
+{
+  "myModule": {
+    "title": "Мой модуль",
+    "description": "Пример модуля для Blysis",
+    "items": "Элементы",
+    "noItems": "Элементы не найдены.",
+    "createItem": "Создать элемент",
+    "editItem": "Редактировать элемент",
+    "deleteItem": "Удалить элемент",
+    "itemTitle": "Заголовок",
+    "itemDescription": "Описание"
+  }
+}

@@ -224,6 +224,116 @@
         "theme_flat_hero_ctaHref": "Düğmenin gittiği yer",
         "theme_flat_hero_backgroundImage": "Arka plan görseli"
       }
+    },
+    "az": {
+      "admin": {
+        "theme_flat_hero": "Əsas banner",
+        "theme_flat_hero_enabled": "Əsas səhifədə əsas banneri göstər",
+        "theme_flat_hero_title": "Başlıq",
+        "theme_flat_hero_subtitle": "Başlığın altındakı sətir",
+        "theme_flat_hero_ctaText": "Düymənin mətni",
+        "theme_flat_hero_ctaHref": "Düymənin apardığı yer",
+        "theme_flat_hero_backgroundImage": "Fon şəkli"
+      }
+    },
+    "de": {
+      "admin": {
+        "theme_flat_hero": "Hero-Banner",
+        "theme_flat_hero_enabled": "Hero-Banner auf der Startseite anzeigen",
+        "theme_flat_hero_title": "Überschrift",
+        "theme_flat_hero_subtitle": "Zeile unter der Überschrift",
+        "theme_flat_hero_ctaText": "Button-Text",
+        "theme_flat_hero_ctaHref": "Wohin der Button führt",
+        "theme_flat_hero_backgroundImage": "Hintergrundbild"
+      }
+    },
+    "es": {
+      "admin": {
+        "theme_flat_hero": "Banner principal",
+        "theme_flat_hero_enabled": "Mostrar el banner principal en la página de inicio",
+        "theme_flat_hero_title": "Título",
+        "theme_flat_hero_subtitle": "Línea debajo del título",
+        "theme_flat_hero_ctaText": "Texto del botón",
+        "theme_flat_hero_ctaHref": "Adónde lleva el botón",
+        "theme_flat_hero_backgroundImage": "Imagen de fondo"
+      }
+    },
+    "et": {
+      "admin": {
+        "theme_flat_hero": "Bänner",
+        "theme_flat_hero_enabled": "Näita esilehel bännerit",
+        "theme_flat_hero_title": "Pealkiri",
+        "theme_flat_hero_subtitle": "Pealkirja all olev rida",
+        "theme_flat_hero_ctaText": "Nupu tekst",
+        "theme_flat_hero_ctaHref": "Kuhu nupp viib",
+        "theme_flat_hero_backgroundImage": "Taustapilt"
+      }
+    },
+    "fr": {
+      "admin": {
+        "theme_flat_hero": "Bannière d’accueil",
+        "theme_flat_hero_enabled": "Afficher la bannière sur la page d’accueil",
+        "theme_flat_hero_title": "Titre",
+        "theme_flat_hero_subtitle": "Ligne sous le titre",
+        "theme_flat_hero_ctaText": "Texte du bouton",
+        "theme_flat_hero_ctaHref": "Destination du bouton",
+        "theme_flat_hero_backgroundImage": "Image de fond"
+      }
+    },
+    "it": {
+      "admin": {
+        "theme_flat_hero": "Banner principale",
+        "theme_flat_hero_enabled": "Mostra il banner principale in home",
+        "theme_flat_hero_title": "Titolo",
+        "theme_flat_hero_subtitle": "Riga sotto il titolo",
+        "theme_flat_hero_ctaText": "Testo del pulsante",
+        "theme_flat_hero_ctaHref": "Dove porta il pulsante",
+        "theme_flat_hero_backgroundImage": "Immagine di sfondo"
+      }
+    },
+    "pl": {
+      "admin": {
+        "theme_flat_hero": "Baner główny",
+        "theme_flat_hero_enabled": "Pokazuj baner główny na stronie głównej",
+        "theme_flat_hero_title": "Nagłówek",
+        "theme_flat_hero_subtitle": "Linia pod nagłówkiem",
+        "theme_flat_hero_ctaText": "Tekst przycisku",
+        "theme_flat_hero_ctaHref": "Dokąd prowadzi przycisk",
+        "theme_flat_hero_backgroundImage": "Obraz tła"
+      }
+    },
+    "pt": {
+      "admin": {
+        "theme_flat_hero": "Banner principal",
+        "theme_flat_hero_enabled": "Mostrar o banner principal na página inicial",
+        "theme_flat_hero_title": "Título",
+        "theme_flat_hero_subtitle": "Linha abaixo do título",
+        "theme_flat_hero_ctaText": "Texto do botão",
+        "theme_flat_hero_ctaHref": "Para onde o botão leva",
+        "theme_flat_hero_backgroundImage": "Imagem de fundo"
+      }
+    },
+    "ru": {
+      "admin": {
+        "theme_flat_hero": "Главный баннер",
+        "theme_flat_hero_enabled": "Показывать главный баннер на главной странице",
+        "theme_flat_hero_title": "Заголовок",
+        "theme_flat_hero_subtitle": "Строка под заголовком",
+        "theme_flat_hero_ctaText": "Текст кнопки",
+        "theme_flat_hero_ctaHref": "Куда ведет кнопка",
+        "theme_flat_hero_backgroundImage": "Фоновое изображение"
+      }
+    },
+    "zh": {
+      "admin": {
+        "theme_flat_hero": "首页横幅",
+        "theme_flat_hero_enabled": "在首页显示横幅",
+        "theme_flat_hero_title": "标题",
+        "theme_flat_hero_subtitle": "标题下方的文字",
+        "theme_flat_hero_ctaText": "按钮文字",
+        "theme_flat_hero_ctaHref": "按钮的跳转位置",
+        "theme_flat_hero_backgroundImage": "背景图片"
+      }
     }
   }
 }

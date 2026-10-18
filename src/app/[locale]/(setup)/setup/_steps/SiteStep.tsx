@@ -3,17 +3,16 @@
 import { useTranslations } from "next-intl";
 import { Input } from "@/core/components/ui/input";
 import { NativeSelect } from "@/core/components/ui/native-select";
+import { localeNames, locales } from "@/core/lib/i18n/config";
 
-/** Locales the wizard offers. Must stay a subset of `src/core/lib/i18n/config`. */
-const LOCALE_OPTIONS = [
-    { code: "en", label: "English" },
-    { code: "tr", label: "Türkçe" },
-    { code: "de", label: "Deutsch" },
-    { code: "es", label: "Español" },
-    { code: "fr", label: "Français" },
-    { code: "ru", label: "Русский" },
-    { code: "pt", label: "Português" },
-];
+/**
+ * Locales the wizard offers: every one the site ships, named in itself.
+ *
+ * This was a hand-written list, and it offered German, Spanish, French,
+ * Russian and Portuguese while the site shipped only English and Turkish -
+ * picking one saved a default locale the router then refused.
+ */
+const LOCALE_OPTIONS = locales.map((code) => ({ code, label: localeNames[code] }));
 
 interface SiteStepProps {
     siteName: string;

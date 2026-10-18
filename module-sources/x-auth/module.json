@@ -65,6 +65,136 @@
         "settings_x-auth": "X OAuth",
         "settings_x-auth_description": "X (Twitter) uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "xAuth": {
+        "adm_subtitle": "Saytınız üçün X OAuth ilə daxil olmanı qurun.",
+        "adm_title": "X ilə daxil olma parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_x-auth_name": "X ilə daxil olma",
+        "module_x-auth_description": "İstifadəçilərə öz X (Twitter) hesabı ilə daxil olmağa icazə verin",
+        "settings_x-auth": "X OAuth",
+        "settings_x-auth_description": "X (Twitter) tətbiqinin etimadnamələri."
+      }
+    },
+    "de": {
+      "xAuth": {
+        "adm_subtitle": "Richte die Anmeldung per X-OAuth für deine Seite ein.",
+        "adm_title": "Einstellungen für die X-Anmeldung",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_x-auth_name": "X-Anmeldung",
+        "module_x-auth_description": "Mitgliedern erlauben, sich mit ihrem X-(Twitter-)Konto anzumelden",
+        "settings_x-auth": "X-OAuth",
+        "settings_x-auth_description": "Zugangsdaten der X-(Twitter-)Anwendung."
+      }
+    },
+    "es": {
+      "xAuth": {
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de X para tu sitio.",
+        "adm_title": "Ajustes de inicio de sesión con X",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_x-auth_name": "Inicio de sesión con X",
+        "module_x-auth_description": "Permite que los usuarios inicien sesión con su cuenta de X (Twitter)",
+        "settings_x-auth": "OAuth de X",
+        "settings_x-auth_description": "Credenciales de la aplicación de X (Twitter)."
+      }
+    },
+    "et": {
+      "xAuth": {
+        "adm_subtitle": "Seadista oma saidile X OAuth-sisselogimine.",
+        "adm_title": "X Logini seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_x-auth_name": "X sisselogimine",
+        "module_x-auth_description": "Luba kasutajatel sisse logida oma X (Twitter) kontoga",
+        "settings_x-auth": "X OAuth",
+        "settings_x-auth_description": "X (Twitter) rakenduse mandaadid."
+      }
+    },
+    "fr": {
+      "xAuth": {
+        "adm_subtitle": "Configurez la connexion OAuth X pour votre site.",
+        "adm_title": "Paramètres de connexion X",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_x-auth_name": "Connexion X",
+        "module_x-auth_description": "Permettre aux membres de se connecter avec leur compte X (Twitter)",
+        "settings_x-auth": "OAuth X",
+        "settings_x-auth_description": "Identifiants de l’application X (Twitter)."
+      }
+    },
+    "it": {
+      "xAuth": {
+        "adm_subtitle": "Configura l’accesso con OAuth di X per il tuo sito.",
+        "adm_title": "Impostazioni accesso con X",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_x-auth_name": "Accesso con X",
+        "module_x-auth_description": "Consenti agli utenti di accedere con il loro account X (Twitter)",
+        "settings_x-auth": "OAuth di X",
+        "settings_x-auth_description": "Credenziali dell’applicazione X (Twitter)."
+      }
+    },
+    "pl": {
+      "xAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie przez X OAuth na swojej stronie.",
+        "adm_title": "Ustawienia logowania przez X",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_x-auth_name": "Logowanie przez X",
+        "module_x-auth_description": "Pozwól użytkownikom logować się przez konto X (Twitter)",
+        "settings_x-auth": "X OAuth",
+        "settings_x-auth_description": "Dane aplikacji X (Twitter)."
+      }
+    },
+    "pt": {
+      "xAuth": {
+        "adm_subtitle": "Configure o login com OAuth do X para o seu site.",
+        "adm_title": "Configurações do login com X",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_x-auth_name": "Login com X",
+        "module_x-auth_description": "Permite que os membros entrem com a conta do X (Twitter)",
+        "settings_x-auth": "OAuth do X",
+        "settings_x-auth_description": "Credenciais do aplicativo do X (Twitter)."
+      }
+    },
+    "ru": {
+      "xAuth": {
+        "adm_subtitle": "Настройте вход через OAuth X для вашего сайта.",
+        "adm_title": "Настройки входа через X",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_x-auth_name": "Вход через X",
+        "module_x-auth_description": "Позвольте участникам входить через свою учетную запись X (Twitter)",
+        "settings_x-auth": "OAuth X",
+        "settings_x-auth_description": "Учетные данные приложения X (Twitter)."
+      }
+    },
+    "zh": {
+      "xAuth": {
+        "adm_subtitle": "为你的站点设置 X OAuth 登录。",
+        "adm_title": "X 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_x-auth_name": "X 登录",
+        "module_x-auth_description": "允许用户使用其 X（Twitter）账户登录",
+        "settings_x-auth": "X OAuth",
+        "settings_x-auth_description": "X（Twitter）应用凭据。"
+      }
     }
   },
   "permissions": [

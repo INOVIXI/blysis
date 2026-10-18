@@ -65,6 +65,136 @@
         "settings_tiktok-auth": "TikTok OAuth",
         "settings_tiktok-auth_description": "TikTok uygulama kimlik bilgileri."
       }
+    },
+    "az": {
+      "tiktokAuth": {
+        "adm_subtitle": "Saytınız üçün TikTok OAuth ilə daxil olmanı quraşdırın.",
+        "adm_title": "TikTok giriş parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_tiktok-auth_name": "TikTok ilə giriş",
+        "module_tiktok-auth_description": "İstifadəçilərin TikTok hesabı ilə daxil olmasına icazə verin",
+        "settings_tiktok-auth": "TikTok OAuth",
+        "settings_tiktok-auth_description": "TikTok tətbiq etimadnamələri."
+      }
+    },
+    "de": {
+      "tiktokAuth": {
+        "adm_subtitle": "Richte die TikTok-OAuth-Anmeldung für deine Seite ein.",
+        "adm_title": "TikTok-Login-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_tiktok-auth_name": "TikTok-Login",
+        "module_tiktok-auth_description": "Nutzern erlauben, sich mit ihrem TikTok-Konto anzumelden",
+        "settings_tiktok-auth": "TikTok OAuth",
+        "settings_tiktok-auth_description": "Zugangsdaten der TikTok-Anwendung."
+      }
+    },
+    "es": {
+      "tiktokAuth": {
+        "adm_subtitle": "Configura el inicio de sesión con OAuth de TikTok en tu sitio.",
+        "adm_title": "Ajustes de inicio de sesión con TikTok",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_tiktok-auth_name": "Inicio de sesión con TikTok",
+        "module_tiktok-auth_description": "Permite a los usuarios iniciar sesión con su cuenta de TikTok",
+        "settings_tiktok-auth": "OAuth de TikTok",
+        "settings_tiktok-auth_description": "Credenciales de la aplicación de TikTok."
+      }
+    },
+    "et": {
+      "tiktokAuth": {
+        "adm_subtitle": "Seadista oma saidile TikToki OAuth-sisselogimine.",
+        "adm_title": "TikToki sisselogimise seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_tiktok-auth_name": "TikToki sisselogimine",
+        "module_tiktok-auth_description": "Luba kasutajatel sisse logida oma TikToki kontoga",
+        "settings_tiktok-auth": "TikTok OAuth",
+        "settings_tiktok-auth_description": "TikToki rakenduse andmed."
+      }
+    },
+    "fr": {
+      "tiktokAuth": {
+        "adm_subtitle": "Configurez la connexion OAuth TikTok pour votre site.",
+        "adm_title": "Paramètres de connexion TikTok",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_tiktok-auth_name": "Connexion TikTok",
+        "module_tiktok-auth_description": "Permettre aux utilisateurs de se connecter avec leur compte TikTok",
+        "settings_tiktok-auth": "OAuth TikTok",
+        "settings_tiktok-auth_description": "Identifiants de l’application TikTok."
+      }
+    },
+    "it": {
+      "tiktokAuth": {
+        "adm_subtitle": "Configura l’accesso OAuth con TikTok per il tuo sito.",
+        "adm_title": "Impostazioni accesso TikTok",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_tiktok-auth_name": "Accesso con TikTok",
+        "module_tiktok-auth_description": "Consenti agli utenti di accedere con il proprio account TikTok",
+        "settings_tiktok-auth": "OAuth TikTok",
+        "settings_tiktok-auth_description": "Credenziali dell’applicazione TikTok."
+      }
+    },
+    "pl": {
+      "tiktokAuth": {
+        "adm_subtitle": "Skonfiguruj logowanie przez TikTok OAuth dla swojej strony.",
+        "adm_title": "Ustawienia logowania TikTok",
+        "perm_manage": "Zarządzanie"
+      },
+      "admin": {
+        "module_tiktok-auth_name": "Logowanie TikTok",
+        "module_tiktok-auth_description": "Pozwól użytkownikom logować się kontem TikTok",
+        "settings_tiktok-auth": "TikTok OAuth",
+        "settings_tiktok-auth_description": "Dane aplikacji TikTok."
+      }
+    },
+    "pt": {
+      "tiktokAuth": {
+        "adm_subtitle": "Configure o login com TikTok OAuth para o seu site.",
+        "adm_title": "Configurações de login com TikTok",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_tiktok-auth_name": "Login com TikTok",
+        "module_tiktok-auth_description": "Permita que os usuários entrem com a conta do TikTok",
+        "settings_tiktok-auth": "TikTok OAuth",
+        "settings_tiktok-auth_description": "Credenciais do aplicativo no TikTok."
+      }
+    },
+    "ru": {
+      "tiktokAuth": {
+        "adm_subtitle": "Настройте вход через TikTok OAuth на вашем сайте.",
+        "adm_title": "Настройки входа через TikTok",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_tiktok-auth_name": "Вход через TikTok",
+        "module_tiktok-auth_description": "Разрешите пользователям входить с помощью аккаунта TikTok",
+        "settings_tiktok-auth": "TikTok OAuth",
+        "settings_tiktok-auth_description": "Учетные данные приложения TikTok."
+      }
+    },
+    "zh": {
+      "tiktokAuth": {
+        "adm_subtitle": "为你的站点设置 TikTok OAuth 登录。",
+        "adm_title": "TikTok 登录设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_tiktok-auth_name": "TikTok 登录",
+        "module_tiktok-auth_description": "允许用户使用其 TikTok 账户登录",
+        "settings_tiktok-auth": "TikTok OAuth",
+        "settings_tiktok-auth_description": "TikTok 应用凭据。"
+      }
     }
   },
   "permissions": [

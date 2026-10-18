@@ -123,8 +123,8 @@ function literalGuards(files: string[]): { file: string; key: string }[] {
 }
 
 describe("a guard is not a translation", () => {
-    it("reads both locales of the core catalogue", () => {
-        expect(locales.sort()).toEqual(["en", "tr"]);
+    it("reads every locale of the core catalogue", () => {
+        expect([...locales].sort()).toEqual(["az", "de", "en", "es", "et", "fr", "it", "pl", "pt", "ru", "tr", "zh"]);
         for (const locale of locales) {
             expect(coreCatalogue.get(locale)!.size).toBeGreaterThan(10);
         }

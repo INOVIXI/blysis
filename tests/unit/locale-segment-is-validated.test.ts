@@ -79,14 +79,14 @@ describe("resolving a locale with no segment to read", () => {
     });
 
     it("ignores a cookie naming a locale the site does not serve", async () => {
-        mockCookieGet.mockReturnValue({ value: "de" });
+        mockCookieGet.mockReturnValue({ value: "ja" });
         mockHeaderGet.mockReturnValue("tr");
         expect(await resolveLocaleFromRequest()).toBe("tr");
     });
 
     it("falls back to the site default", async () => {
         expect(await resolveLocaleFromRequest()).toBe(defaultLocale);
-        mockHeaderGet.mockReturnValue("de-DE,fr;q=0.9");
+        mockHeaderGet.mockReturnValue("ja-JP,ko;q=0.9");
         expect(await resolveLocaleFromRequest()).toBe(defaultLocale);
     });
 });

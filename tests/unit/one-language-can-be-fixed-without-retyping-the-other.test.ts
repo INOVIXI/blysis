@@ -99,7 +99,7 @@ describe("saving one string", () => {
     });
 
     it("refuses a locale the site does not serve", async () => {
-        const answer = await save({ de: "{count} Bestellungen" });
+        const answer = await save({ ja: "{count} 件の注文" });
         expect(answer.status).toBe(400);
     });
 });
