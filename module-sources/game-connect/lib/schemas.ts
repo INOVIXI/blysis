@@ -12,9 +12,14 @@ export const keyField = z.string().min(8).max(80);
  */
 export const amountField = z.number().finite();
 
-/** Positive, two decimals at most, and not more than a ledger column holds. */
+/**
+ * Positive, two decimals at most, and not more than a ledger column holds.
+ *
+ * Read as the decimal a client wrote: 1.1 times 100 is not 110 in binary
+ * arithmetic, so the cents are compared through the two-decimal form.
+ */
 export function isAmount(n: number): boolean {
-    return n > 0 && n <= 99_999_999 && Math.round(n * 100) === n * 100;
+    return n > 0 && n <= 99_999_999 && Number(n.toFixed(2)) === n;
 }
 
 export function amountRefused() {
