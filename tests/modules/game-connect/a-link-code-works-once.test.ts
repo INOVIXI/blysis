@@ -42,6 +42,18 @@ describe("a link code", () => {
         for (let i = 0; i < 50; i++) expect(generateCode()).toMatch(/^[A-HJKMNP-Z2-9]{4}-[A-HJKMNP-Z2-9]{4}$/);
     });
 
+    it("draws every character of the alphabet as often as any other", () => {
+        // A byte taken modulo 31 makes the first eight characters an eighth more likely, which is what a
+        // guesser would try first. Over 320,000 characters a fair draw stays well inside 8%.
+        const counts = new Map<string, number>();
+        for (let i = 0; i < 40_000; i++) {
+            for (const c of generateCode().replace("-", "")) counts.set(c, (counts.get(c) ?? 0) + 1);
+        }
+        const seen = [...counts.values()];
+        expect(seen).toHaveLength(31);
+        expect(Math.max(...seen) / Math.min(...seen)).toBeLessThan(1.08);
+    });
+
     it("is stored as a hash that ignores case and the dash", () => {
         expect(hashCode("abcd-efgh")).toBe(hashCode("ABCDEFGH"));
         expect(hashCode("ABCD-EFGH")).not.toContain("ABCD");

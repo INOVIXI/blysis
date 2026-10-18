@@ -13,9 +13,9 @@ export const CODE_TTL_MS = 10 * 60 * 1000;
 /** No 0/O, 1/I/L: the pairs people misread from a chat line. */
 const ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
+/** Each character drawn on its own from the whole alphabet: a byte taken modulo 31 favours the first letters. */
 export function generateCode(): string {
-    const bytes = crypto.randomBytes(8);
-    const chars = [...bytes].map((b) => ALPHABET[b % ALPHABET.length]);
+    const chars = Array.from({ length: 8 }, () => ALPHABET[crypto.randomInt(ALPHABET.length)]);
     return `${chars.slice(0, 4).join("")}-${chars.slice(4).join("")}`;
 }
 
