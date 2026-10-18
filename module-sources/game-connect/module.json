@@ -286,6 +286,11 @@
       "handler": "hooks/on-credits-purchased.ts"
     },
     {
+      "hook": "store.gift.sent",
+      "type": "action",
+      "handler": "hooks/on-gift-sent.ts"
+    },
+    {
       "hook": "game-account.resolve",
       "type": "filter",
       "handler": "hooks/resolve-account.ts",

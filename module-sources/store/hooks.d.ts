@@ -65,6 +65,8 @@ declare global {
         "store.product.created": { id: string; name: string; slug: string };
         /** Credits bought with money settled on an account. Gifts, refunds and grants are not this. */
         "store.credits.purchased": { userId: string; amount: number };
+        /** A gift landed pending in a member's chest: bought for them, or handed over from another chest. */
+        "store.gift.sent": { senderId: string; recipientId: string; productName: string; quantity: number };
     }
 
     /**
@@ -442,13 +444,18 @@ declare global {
                   | "insufficient_balance"
                   | "out_of_stock"
                   | "quantity_invalid"
+                  | "limit_reached"
                   | "field_invalid"
                   | "not_giftable"
                   | "recipient_refuses_gifts"
                   | "unavailable";
               /** The field that failed, for `field_invalid`. */
               field?: string;
-              /** A finer reason, for `unavailable`: `billing_required` is the one a game can name. */
+              /**
+               * A finer reason, for `unavailable`: `billing_required`, or the state that closes the
+               * product to this member now (`off`, `wrong_role`, `needs_product`, `early`, `ended`,
+               * `closed`).
+               */
               reason?: string;
           };
 

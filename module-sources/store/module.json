@@ -859,6 +859,10 @@
       "type": "action"
     },
     {
+      "hook": "store.gift.sent",
+      "type": "action"
+    },
+    {
       "hook": "store.orders.delivery",
       "type": "filter"
     }

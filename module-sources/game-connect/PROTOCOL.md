@@ -363,8 +363,12 @@ or `{ "active": false }`.
 `{ "orderId": "...", "orderNumber": "...", "total": 100, "balance": 150, "gift": false }`.
 Refusals: `409 not_linked`, `409 not_found`, `409 not_in_game`, `409 insufficient_balance`,
 `409 out_of_stock`, `409 quantity_invalid` (below 1, above the product's `maxQuantity`, or above
-1000), `409 field_invalid` (with `field`),
-`409 recipient_unknown`, `409 not_giftable`, `409 recipient_refuses_gifts`.
+1000), `409 limit_reached` (the member who would own it already has as many as one account may;
+for a gift, that is the recipient), `409 field_invalid` (with `field`),
+`409 recipient_unknown`, `409 not_giftable`, `409 recipient_refuses_gifts`, and
+`409 unavailable` with a `reason` when the product is closed to that member now: `off`,
+`wrong_role`, `needs_product`, `early`, `ended`, `closed` or `billing_required`. A
+`503 unavailable` with no reason means the store could not answer; try again later.
 
 A purchase for oneself goes to delivery at once. A gift lands in the recipient's chest as a
 pending gift.
@@ -445,10 +449,14 @@ The id is the whole voucher. An item that carries it is only its look.
 | `topup` | `player` (null when anonymous), `amount` |
 | `goal.reached` | `title`, `goal`, `raised`, `month` (said once a month) |
 | `link.confirmed` | `player` (a Player), `member` |
+| `gift.received` | `player` (a Player: the recipient's account), `platform`, `from` (the sender's account name in the same game, else their username), `product`, `quantity` |
 | `catalog.changed` | `version` |
 
 An event is sent to every server, except `link.confirmed`, which goes to the server the player
-was on when the code was made. Events are kept for a day.
+was on when the code was made, and `gift.received`, which goes to the servers of the game the
+named account plays, once for each game account linked to the recipient: a server tells the
+player it finds under `player`.
+Events are kept for a day.
 
 ## Conformance
 

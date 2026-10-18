@@ -44,6 +44,13 @@ vi.mock("@/core/sdk/auth", () => ({
     auth: vi.fn(async () => ({ user: { id: "member-1", name: "steve", role: "member" } })),
 }));
 vi.mock("@/modules/store/lib/delivery", () => ({ deliverProduct: vi.fn(async () => ({ ok: true })) }));
+const actions: Array<{ hook: string; payload: unknown }> = [];
+vi.mock("@/core/sdk", async (importOriginal) => ({
+    ...(await importOriginal<Record<string, unknown>>()),
+    doActionAsync: vi.fn(async (hook: string, payload: unknown) => {
+        actions.push({ hook, payload });
+    }),
+}));
 
 const { POST } = await import("@/modules/store/api/chest/[id]/route");
 const { GET } = await import("@/modules/store/api/chest/route");
@@ -73,6 +80,7 @@ const giveAway = () =>
 
 beforeEach(() => {
     vi.clearAllMocks();
+    actions.length = 0;
     settings = {};
     db.chestItem.findUnique.mockResolvedValue(unclaimed);
     db.chestItem.findMany.mockResolvedValue([unclaimed]);
@@ -88,6 +96,23 @@ describe("giving away something from the chest", () => {
 
         expect(res.status).toBe(200);
         expect(db.chestItem.updateMany).toHaveBeenCalled();
+    });
+
+    it("says a gift was sent, so the recipient can be told in game", async () => {
+        await giveAway();
+
+        expect(actions).toContainEqual({
+            hook: "store.gift.sent",
+            payload: { senderId: "member-1", recipientId: "member-2", productName: "VIP", quantity: 1 },
+        });
+    });
+
+    it("says nothing when it was refused", async () => {
+        db.product.findUnique.mockResolvedValue({ giftable: false });
+
+        await giveAway();
+
+        expect(actions).toHaveLength(0);
     });
 
     it("is refused when the product says it does not travel", async () => {

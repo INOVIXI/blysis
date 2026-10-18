@@ -22,6 +22,18 @@ describe("an amount of credits", () => {
         expect(isAmount(100_000_000)).toBe(false);
     });
 
+    it("is any whole number of cents, including those a binary fraction cannot hold exactly", () => {
+        expect(isAmount(1.1)).toBe(true);
+        expect(isAmount(0.29)).toBe(true);
+        expect(isAmount(1.13)).toBe(true);
+        for (let cents = 1; cents <= 100_000; cents++) {
+            const typed = Number((cents / 100).toFixed(2));
+            if (!isAmount(typed)) throw new Error(`${typed} was refused`);
+        }
+        expect(isAmount(1.005)).toBe(false);
+        expect(isAmount(0.015)).toBe(false);
+    });
+
     it("that is no amount still reads as a body, so the refusal can be the one a game shows", async () => {
         expect(amountField.safeParse(0.001).success).toBe(true);
         expect(amountField.safeParse("ten").success).toBe(false);

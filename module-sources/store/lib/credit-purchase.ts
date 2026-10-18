@@ -11,8 +11,8 @@
  * says so rather than issuing an invoice to nobody.
  */
 import { Prisma } from "@prisma/client";
-import { applyFiltersAsync } from "@/core/sdk";
-import { log, logActivity, moduleSettings, prisma, siteTimeZone } from "@/core/sdk/server";
+import { applyFiltersAsync, doActionAsync } from "@/core/sdk";
+import { log, logActivity, moduleSettings, prisma, siteTimeZone, type PrismaTransaction } from "@/core/sdk/server";
 import { availabilityFor, rulesOf, type ProductRow } from "./availability-server";
 import { effectivePrice } from "./availability";
 import { computeOrderPricing, computeTotals } from "./pricing";
@@ -21,6 +21,9 @@ import { resolveCurrency } from "./currency";
 import { createCreditOrder, deliverPaidOrder, INSUFFICIENT_CREDITS, OUT_OF_STOCK } from "./credit-order";
 import { announceOrderCompleted, announceOrderCreated } from "./order-events";
 import { receivesGifts, siteAllowsGifting } from "./gifts";
+
+/** Thrown inside the transaction when the limit filled while this purchase waited for it. */
+export const LIMIT_REACHED = "LIMIT_REACHED";
 
 /** One purchase in a game buys at most this many of one product. */
 export const MAX_GAME_QUANTITY = 64;
@@ -70,6 +73,22 @@ export function invalidField(fields: FieldRow[], answers: Record<string, string>
     return null;
 }
 
+/**
+ * Counts the member's allowance again, alone, inside the purchase's transaction.
+ *
+ * The count before the transaction is a snapshot: ten purchases sent together
+ * all read "none bought yet", and four of ten got through a limit of one. A
+ * transaction lock on the member and the product makes the next purchase wait
+ * until this one commits, and its count then sees this order.
+ */
+async function holdTheLimit(tx: PrismaTransaction, product: ProductRow, ownerId: string, quantity: number, now: Date, zone: string) {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`store-limit:${ownerId}:${product.id}`}))`;
+    const again = await availabilityFor(tx, product, ownerId, now, zone);
+    if (again.state === "limit_reached" || (again.remainingForPerson !== null && quantity > again.remainingForPerson)) {
+        throw new Error(LIMIT_REACHED);
+    }
+}
+
 export async function purchaseWithCredits(request: CreditPurchaseRequest): Promise<CreditPurchaseResult> {
     const now = new Date();
     const product = await prisma.product.findFirst({
@@ -95,9 +114,13 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
     const zone = await siteTimeZone();
     const state = await availabilityFor(prisma, product as unknown as ProductRow, ownerId, now, zone);
     if (!state.buyable) {
-        return refuse(state.state === "sold_out" || state.state === "sold_out_for_now" ? "out_of_stock" : "unavailable");
+        if (state.state === "sold_out" || state.state === "sold_out_for_now") return refuse("out_of_stock");
+        if (state.state === "limit_reached") return refuse("limit_reached");
+        // Closed to this member now, for a reason a game can name. Without
+        // one, `unavailable` reads as a site that cannot answer.
+        return refuse("unavailable", { reason: state.state });
     }
-    if (state.remainingForPerson !== null && quantity > state.remainingForPerson) return refuse("quantity_invalid");
+    if (state.remainingForPerson !== null && quantity > state.remainingForPerson) return refuse("limit_reached");
     if (state.remainingInPeriod !== null && quantity > state.remainingInPeriod) return refuse("out_of_stock");
 
     const fields = await prisma.productVariable.findMany({ where: { productId: product.id }, take: 50 });
@@ -135,8 +158,9 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
 
     let order;
     try {
-        order = await prisma.$transaction((tx) =>
-            createCreditOrder(tx, {
+        order = await prisma.$transaction(async (tx) => {
+            if (product.perPersonLimit !== null) await holdTheLimit(tx, product as unknown as ProductRow, ownerId, quantity, now, zone);
+            return createCreditOrder(tx, {
                 buyerId: request.buyerId,
                 ownerId,
                 gift,
@@ -162,11 +186,12 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
                 },
                 playerName: request.playerName,
                 description: `${gift ? "Gift" : "Purchase"} in game (${product.name} x${quantity})`,
-            }),
-        );
+            });
+        });
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (message === INSUFFICIENT_CREDITS) return refuse("insufficient_balance");
+        if (message === LIMIT_REACHED) return refuse("limit_reached");
         if (message === OUT_OF_STOCK) return refuse("out_of_stock");
         log.error("[store] a purchase in game failed", { productId: product.id, error: message });
         return refuse("unavailable");
@@ -174,6 +199,15 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
 
     if (!gift) {
         await deliverPaidOrder(order, { name: request.playerName, id: request.playerId, userId: request.buyerId });
+    } else {
+        await doActionAsync("store.gift.sent", {
+            senderId: request.buyerId,
+            recipientId: ownerId,
+            productName: product.name,
+            quantity,
+        }).catch((error: unknown) =>
+            log.warn("[store] a gift could not be announced", { error: error instanceof Error ? error.message : String(error) }),
+        );
     }
     await announceOrderCreated(order.id);
     await announceOrderCompleted(order.id);
