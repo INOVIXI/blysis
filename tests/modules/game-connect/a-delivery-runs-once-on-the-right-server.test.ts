@@ -52,8 +52,8 @@ const { default: onServerCommand } = await import("@/modules/game-connect/hooks/
 
 const LEASE = 120;
 const INTERVAL = 30;
-const survival = { gameServerId: "g-survival", instance: "inst-survival" };
-const lobby = { gameServerId: "g-lobby", instance: "inst-lobby" };
+const survival = { gameServerId: "g-survival", instance: "inst-survival", acceptFollowPlayer: false };
+const lobby = { gameServerId: "g-lobby", instance: "inst-lobby", acceptFollowPlayer: true };
 
 function job(over: Partial<Parameters<typeof queue.enqueue>[0]> = {}) {
     return {
@@ -92,7 +92,7 @@ beforeEach(() => {
     presence.table.rows = [];
     servers.table.rows = [
         { id: "row-g-survival", gameServerId: "g-survival", enabled: true },
-        { id: "row-g-lobby", gameServerId: "g-lobby", enabled: true },
+        { id: "row-g-lobby", gameServerId: "g-lobby", enabled: true, acceptFollowPlayer: true },
     ];
     gameServers.table.rows = [
         { id: "g-survival", isActive: true, isDefault: true, order: 0 },
@@ -123,6 +123,14 @@ describe("which server takes a job", () => {
         await online(lobby, [{ id: "uuid-notch", name: "Notch" }]);
         expect(await claim(survival)).toEqual([]);
         expect(await claim(lobby)).toHaveLength(1);
+    });
+
+    it("goes only to a server an admin trusts to follow players", async () => {
+        await queue.enqueue(job({ gameServerId: null, targetCurrent: true, groupKey: "order:o1:current" }));
+        // Survival says the player is on it, but nobody trusted it to say so.
+        await online(survival, [{ id: "uuid-notch", name: "Notch" }]);
+        expect(await claim(survival)).toEqual([]);
+        expect(jobs.table.rows[0].state).toBe("PENDING");
     });
 
     it("counts a player online only while their server keeps reporting", async () => {
@@ -323,6 +331,22 @@ describe("server.command", () => {
         const taken = { handled: true, ok: true, output: "x", error: null };
         expect(await onServerCommand(taken, { command: "say hi", serverId: "g-survival" })).toBe(taken);
         expect(jobs.table.rows).toHaveLength(0);
+    });
+
+    it("leaves a follow-the-player command alone when no server is trusted with one", async () => {
+        servers.table.rows[1].acceptFollowPlayer = false;
+        const answer = await onServerCommand(empty, {
+            command: "say hi",
+            delivery: {
+                target: "player",
+                whenOnline: true,
+                player: { name: "Notch", id: null, userId: "u1" },
+                groupKey: "order:o2:current",
+                sequence: 0,
+                reference: { kind: "order", id: "o2", label: null },
+            },
+        });
+        expect(answer).toEqual(empty);
     });
 
     it("carries who and why when the caller says", async () => {

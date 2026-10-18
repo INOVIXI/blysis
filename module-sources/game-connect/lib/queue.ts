@@ -48,6 +48,8 @@ export interface ReportResult {
 export interface QueueServer {
     gameServerId: string;
     instance: string;
+    /** Whether an admin trusts this server with jobs that follow the player. */
+    acceptFollowPlayer: boolean;
 }
 
 export interface OnlinePlayers {
@@ -125,10 +127,11 @@ function playerOnline(job: Pick<GameConnectJob, "playerId" | "playerNameLower">,
 /** Whether this server may run this job now. */
 export function eligible(
     job: Pick<GameConnectJob, "gameServerId" | "targetCurrent" | "whenOnline" | "playerId" | "playerNameLower">,
-    gameServerId: string,
+    server: Pick<QueueServer, "gameServerId" | "acceptFollowPlayer">,
     online: OnlinePlayers,
 ): boolean {
-    if (job.targetCurrent) return playerOnline(job, online);
+    const gameServerId = server.gameServerId;
+    if (job.targetCurrent) return server.acceptFollowPlayer && playerOnline(job, online);
     if (job.gameServerId !== gameServerId) return false;
     return job.whenOnline ? playerOnline(job, online) : true;
 }
@@ -141,7 +144,7 @@ export function eligible(
  */
 export function eligibleGroups(
     pending: GameConnectJob[],
-    gameServerId: string,
+    server: Pick<QueueServer, "gameServerId" | "acceptFollowPlayer">,
     online: OnlinePlayers,
 ): GameConnectJob[][] {
     const groups = new Map<string, GameConnectJob[]>();
@@ -152,7 +155,7 @@ export function eligibleGroups(
     }
     const out: GameConnectJob[][] = [];
     for (const jobs of groups.values()) {
-        if (jobs.every((job) => eligible(job, gameServerId, online))) {
+        if (jobs.every((job) => eligible(job, server, online))) {
             out.push([...jobs].sort((a, b) => a.sequence - b.sequence));
         }
     }
@@ -191,8 +194,10 @@ export async function claimFor(
     leaseSeconds: number,
     now: Date = new Date(),
 ): Promise<ProtocolJob[]> {
-    const ids = [...online.ids];
-    const names = [...online.names.keys()];
+    // Presence is what a server says about itself. Only a server an admin
+    // trusts with it may use it to take jobs that follow a player.
+    const ids = server.acceptFollowPlayer ? [...online.ids] : [];
+    const names = server.acceptFollowPlayer ? [...online.names.keys()] : [];
     const candidates = await prisma.gameConnectJob.findMany({
         where: {
             state: "PENDING",
@@ -215,7 +220,7 @@ export async function claimFor(
 
     const leaseUntil = new Date(now.getTime() + leaseSeconds * 1000);
     const claimed: GameConnectJob[] = [];
-    for (const group of eligibleGroups(pending, server.gameServerId, online)) {
+    for (const group of eligibleGroups(pending, server, online)) {
         try {
             const taken = await prisma.$transaction(async (tx) => {
                 const result = await tx.gameConnectJob.updateMany({

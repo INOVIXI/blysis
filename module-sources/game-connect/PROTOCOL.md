@@ -132,12 +132,16 @@ events for this server, or at the end with empty lists:
 ```
 
 - Every returned job is already `CLAIMED` by this server, with a lease of `leaseSeconds`.
+- While the request is held, a token revoked, a server switched off, or a process superseded ends
+  it with `401`, `403` or `409` before anything else is claimed.
 - A poll also returns jobs this server claimed at least 15 seconds earlier and has not reported,
   while their lease lasts. An answer lost on the way back is recovered that way. A client skips
   every job id its journal already holds, so a job it is running or has run is never run again.
 - Jobs with the same `groupKey` come back together, ordered by `sequence`.
 - A job is returned to a server when its target is that server, or when its target is the
-  player's current server and the player is on that server. A `whenOnline` job is returned only
+  player's current server, the player is on that server, and an admin allowed that server to
+  take such jobs (`acceptFollowPlayer`, off by default, because the server's own status push is
+  the only evidence of who is on it). A `whenOnline` job is returned only
   while the player is online there. Online means present in that server's last status push, and
   seen within two status intervals.
 - `eventCursor` starts at the value returned by the first `poll` without one: a client that has

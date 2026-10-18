@@ -18,6 +18,9 @@ model GameConnectServer {
   /// Off by default: a token that may add credits can mint money.
   allowCreditAdmin Boolean   @default(false)
   allowVoucherGive Boolean   @default(false)
+  /// Off by default: a server that may take "wherever the player is" jobs is
+  /// trusted to say truthfully who is on it, for every purchase on the site.
+  acceptFollowPlayer Boolean @default(false)
 
   /// The process that said hello last. Calls from any other are superseded.
   instance         String?

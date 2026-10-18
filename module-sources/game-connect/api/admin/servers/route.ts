@@ -21,6 +21,7 @@ const CONNECTED_FIELDS = {
     enabled: true,
     allowCreditAdmin: true,
     allowVoucherGive: true,
+    acceptFollowPlayer: true,
     instanceSeenAt: true,
     previousInstance: true,
     previousSeenAt: true,

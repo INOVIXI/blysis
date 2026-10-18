@@ -57,6 +57,32 @@ export async function authenticateServer(request: Request): Promise<ConnectedSer
 }
 
 /**
+ * Whether a server authenticated earlier in this request still holds the same
+ * token, is still switched on and still names this process as its own.
+ *
+ * A long-poll lives for half a minute. A token an admin revoked, a server an
+ * admin switched off, or a process another one superseded in that time must
+ * not claim anything in the rest of it.
+ */
+export async function stillCurrent(
+    server: ConnectedServer,
+    instance: string,
+): Promise<NextResponse | { acceptFollowPlayer: boolean }> {
+    const fresh = await prisma.gameConnectServer.findUnique({
+        where: { id: server.id },
+        select: { tokenHash: true, enabled: true, instance: true, acceptFollowPlayer: true },
+    });
+    if (!fresh || !sameHash(fresh.tokenHash, server.tokenHash)) {
+        return refuse(401, "token_invalid", "No server holds that token.");
+    }
+    if (!fresh.enabled) return refuse(403, "server_disabled", "An administrator switched this server off.");
+    if (fresh.instance !== instance) {
+        return refuse(409, "superseded", "Another process said hello with this token after this one.");
+    }
+    return { acceptFollowPlayer: fresh.acceptFollowPlayer };
+}
+
+/**
  * Turns away a process that is no longer the token's current one, and keeps
  * the current one's heartbeat fresh without writing on every call.
  */

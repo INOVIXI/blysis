@@ -13,7 +13,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { cached, readJsonBody } from "@/core/sdk/server";
-import { authenticateServer, refuse, requireCurrentInstance } from "../../lib/auth";
+import { authenticateServer, refuse, requireCurrentInstance, stillCurrent } from "../../lib/auth";
 import { connectSettings } from "../../lib/settings";
 import { claimFor, expireLeases } from "../../lib/queue";
 import { onlineOn } from "../../lib/presence";
@@ -44,10 +44,24 @@ export async function POST(request: NextRequest) {
 
     const settings = await connectSettings();
     const deadline = Date.now() + settings.pollHoldSeconds * 1000;
-    const queueServer = { gameServerId: server.gameServerId, instance: parsed.data.instance };
+    const queueServer = {
+        gameServerId: server.gameServerId,
+        instance: parsed.data.instance,
+        acceptFollowPlayer: server.acceptFollowPlayer,
+    };
     let cursor = seqOf(parsed.data.eventCursor) === null ? await latestCursor() : (parsed.data.eventCursor as string);
 
+    let first = true;
     for (;;) {
+        // The first round was just authenticated. Every later one checks
+        // again, so a revoke, a switch-off or a takeover during the hold
+        // stops this request before it claims anything.
+        if (!first) {
+            const fresh = await stillCurrent(server, parsed.data.instance);
+            if (fresh instanceof NextResponse) return fresh;
+            queueServer.acceptFollowPlayer = fresh.acceptFollowPlayer;
+        }
+        first = false;
         const now = new Date();
         await expireLeases(now);
         const online = await onlineOn(server.gameServerId, settings.statusIntervalSeconds, now);

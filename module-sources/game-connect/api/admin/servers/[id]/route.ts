@@ -18,6 +18,7 @@ const patchSchema = z
         enabled: z.boolean().optional(),
         allowCreditAdmin: z.boolean().optional(),
         allowVoucherGive: z.boolean().optional(),
+        acceptFollowPlayer: z.boolean().optional(),
     })
     .strict();
 

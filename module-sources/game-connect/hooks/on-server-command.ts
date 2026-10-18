@@ -26,7 +26,9 @@ const onServerCommand: HookHandlerFor<"server.command", "filter"> = async (curre
 
     let gameServerId: string | null = null;
     if (targetCurrent) {
-        const any = await prisma.gameConnectServer.count({ where: { enabled: true } });
+        // Only a server an admin trusts to follow players may take this. With
+        // none, it falls through to whatever runs commands on the default server.
+        const any = await prisma.gameConnectServer.count({ where: { enabled: true, acceptFollowPlayer: true } });
         if (any === 0) return current;
     } else {
         gameServerId = request.serverId ?? (await defaultServerId());

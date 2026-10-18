@@ -57,7 +57,7 @@ vi.mock("@/core/sdk", () => ({
 }));
 
 const { issueToken, hashToken, bearerToken } = await import("@/modules/game-connect/lib/token");
-const { authenticateServer, requireCurrentInstance } = await import("@/modules/game-connect/lib/auth");
+const { authenticateServer, requireCurrentInstance, stillCurrent } = await import("@/modules/game-connect/lib/auth");
 const { POST: hello } = await import("@/modules/game-connect/api/hello/route");
 
 function addServer(token: string, extra: Partial<ServerRow> = {}): ServerRow {
@@ -200,5 +200,25 @@ describe("a superseded process", () => {
         expect(answer?.status).toBe(409);
         await expect(answer?.json()).resolves.toMatchObject({ code: "superseded" });
         await expect(requireCurrentInstance(row as never, "instance-b")).resolves.toBeNull();
+    });
+});
+
+describe("a long-poll held while things change", () => {
+    it("stops when the token is replaced, the server switched off, or the process superseded", async () => {
+        const { token } = issueToken();
+        const row = addServer(token, { instance: "instance-a", acceptFollowPlayer: false });
+        const held = { ...row } as never;
+        await expect(stillCurrent(held, "instance-a")).resolves.toEqual({ acceptFollowPlayer: false });
+
+        row.instance = "instance-b";
+        expect(((await stillCurrent(held, "instance-a")) as Response).status).toBe(409);
+
+        row.instance = "instance-a";
+        row.enabled = false;
+        expect(((await stillCurrent(held, "instance-a")) as Response).status).toBe(403);
+
+        row.enabled = true;
+        row.tokenHash = hashToken(issueToken().token);
+        expect(((await stillCurrent(held, "instance-a")) as Response).status).toBe(401);
     });
 });
