@@ -32,6 +32,14 @@ function compare(value: unknown, condition: unknown): boolean {
     return true;
 }
 
+const OPERATORS = new Set(["in", "lt", "lte", "gt", "gte", "not", "equals", "mode"]);
+
+/** `serverId_key: { serverId, key }`: a compound unique key, read as its fields. */
+function compound(row: Row, key: string, condition: unknown): boolean {
+    if (key in row || !key.includes("_") || condition === null || typeof condition !== "object" || condition instanceof Date) return false;
+    return Object.keys(condition).every((field) => !OPERATORS.has(field));
+}
+
 export function matches(row: Row, where: Where | undefined): boolean {
     if (!where) return true;
     for (const [key, condition] of Object.entries(where)) {
@@ -39,6 +47,8 @@ export function matches(row: Row, where: Where | undefined): boolean {
             if (!(condition as Where[]).some((w) => matches(row, w))) return false;
         } else if (key === "AND") {
             if (!(condition as Where[]).every((w) => matches(row, w))) return false;
+        } else if (compound(row, key, condition)) {
+            if (!matches(row, condition as Where)) return false;
         } else if (!compare(row[key], condition)) {
             return false;
         }
@@ -73,13 +83,22 @@ export interface FakeTable {
 
 let counter = 0;
 
-export function fakeTable(defaults: () => Row = () => ({}), idField = "id") {
+/**
+ * A table. `unique` lists the column sets Postgres would refuse a duplicate
+ * of, so a create that races another fails here the way it would there.
+ */
+export function fakeTable(defaults: () => Row = () => ({}), idField = "id", unique: string[][] = []) {
     const table: FakeTable = { rows: [] };
     const api = {
         table,
         create: vi.fn(async ({ data }: { data: Row }) => {
             const row: Row = { ...defaults(), ...data };
             if (row[idField] === undefined) row[idField] = idField === "seq" ? ++counter : `id${++counter}`;
+            for (const columns of [[idField], ...unique]) {
+                if (table.rows.some((other) => columns.every((c) => other[c] === row[c]))) {
+                    throw Object.assign(new Error(`Unique constraint failed on ${columns.join(", ")}`), { code: "P2002" });
+                }
+            }
             table.rows.push(row);
             return { ...row };
         }),

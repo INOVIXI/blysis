@@ -1,6 +1,8 @@
-import { NextResponse } from "next/server";
-import { moduleSettings, prisma } from "@/core/sdk/server";
+import { NextRequest, NextResponse } from "next/server";
+import { moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
+import { PENDING, receivesGifts, sentGifts, setReceivesGifts } from "../../lib/gifts";
+import { chestSettingsSchema } from "../../lib/validations";
 
 /**
  * GET /api/v1/chest - what a member has bought and not yet claimed.
@@ -40,11 +42,50 @@ export async function GET() {
         for (const product of giftable) travels.add(product.id);
     }
 
+    const senderIds = [...new Set(items.map((item) => item.giftedById).filter((v): v is string => Boolean(v)))];
+    const senders = senderIds.length
+        ? new Map(
+              (
+                  await prisma.user.findMany({
+                      where: { id: { in: senderIds } },
+                      select: { id: true, username: true },
+                      take: senderIds.length,
+                  })
+              ).map((u) => [u.id, u.username]),
+          )
+        : new Map<string, string>();
+
+    const [sent, receiveGifts] = await Promise.all([sentGifts(session.user.id, { inGame: false }), receivesGifts(session.user.id)]);
+
     return NextResponse.json({
         // A row whose product has since been deleted is not giftable. Nothing
         // is left to ask, and refusing is the answer that cannot move
-        // something an operator meant to keep in one place.
-        items: items.map((item) => ({ ...item, canGift: travels.has(item.productId) })),
+        // something an operator meant to keep in one place. A gift that is
+        // still waiting cannot be passed on before it is accepted.
+        items: items.map((item) => ({
+            ...item,
+            pendingGift: item.giftState === PENDING,
+            from: item.giftedById ? (senders.get(item.giftedById) ?? null) : null,
+            canGift: item.giftState !== PENDING && travels.has(item.productId),
+        })),
+        sent,
+        receiveGifts,
         giftingEnabled: siteAllowsGifting,
     });
+}
+
+/** PATCH /api/v1/chest - whether this member takes gifts at all. */
+export async function PATCH(request: NextRequest) {
+    const session = await auth();
+    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const rl = await rateLimitForRole(`chest-settings:${session.user.id}`, { maxRequests: 20, windowMs: 60_000 }, session.user.role);
+    if (!rl.success) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+
+    const body = await readJsonBody(request);
+    if (body instanceof NextResponse) return body;
+    const parsed = chestSettingsSchema.safeParse(body);
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
+
+    const receiveGifts = await setReceivesGifts(session.user.id, parsed.data.receiveGifts);
+    return NextResponse.json({ receiveGifts });
 }

@@ -3,11 +3,10 @@ import { Prisma } from "@prisma/client";
 import { generateOrderNumber, applyFiltersAsync } from "@/core/sdk";
 import { log, logActivity, moduleSettings, prisma, rateLimitForRole, readJsonBody, siteTimeZone } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { deliverProduct } from "../../lib/delivery";
-import { claimStock, shortOfStock, stockClaims } from "../../lib/stock";
+import { shortOfStock, stockClaims } from "../../lib/stock";
+import { createCreditOrder, deliverPaidOrder } from "../../lib/credit-order";
 import { effectivePrice } from "../../lib/availability";
 import { availabilityFor, rulesOf, type ProductRow } from "../../lib/availability-server";
-import { countSales } from "../../lib/popularity";
 import { convertedCharge, resolveCurrency } from "../../lib/currency";
 import { startPaymentSession, listPaymentProviders } from "../../lib/payments";
 import { announceOrderCreated, announceOrderCompleted } from "../../lib/order-events";
@@ -387,122 +386,42 @@ export async function POST(request: NextRequest) {
                 }, { status: 400 });
             }
 
-            // Atomic transaction: deduct credits, create order, grant ownership
+            // The money, the shelf, the order and what it grants, in one
+            // transaction: `createCreditOrder` is shared with the game
+            // servers that sell on the site's behalf, so both take a credit
+            // payment the same way.
             const buyerId = session.user.id;
-            const order = await prisma.$transaction(async (tx) => {
-                // Deduct credits, conditional on the balance still covering
-                // it, and on this transaction.
-                //
-                // The read above is a snapshot: two checkouts submitted
-                // together both saw the same balance, both passed the check,
-                // and both got their goods while the balance went negative.
-                // A transaction alone does not close that - under read
-                // committed both decrements apply. The condition is what makes
-                // the second one find nothing to update, and it lives with the
-                // wallet now: every debit is conditional there, written once
-                // by the module that owns the balance rather than three times
-                // by the modules that spend it.
-                const debited = await applyFiltersAsync("credit.change", { applied: false }, {
-                    tx,
-                    userId: buyerId,
-                    amount: -total,
-                    type: "purchase",
-                    description: `Store purchase (${orderItems.map((i) => i.name).join(", ")})`,
-                });
-                if (!debited.applied) {
-                    throw new Error("INSUFFICIENT_CREDITS");
-                }
-
-                // The shelf and the money move together or neither does. A
-                // failure here rolls the debit back, which is why this is the
-                // one path that can refuse: nothing has left the buyer's
-                // account until this transaction commits.
-                const claims = stockClaims(orderItems);
-                const short = await claimStock(tx, claims);
-                if (short.length > 0) {
-                    throw new Error("OUT_OF_STOCK");
-                }
-                // This path completes the order here rather than at a
-                // gateway's word, so the sale is counted here too.
-                await countSales(tx, claims);
-
-                // Create order
-                const ord = await tx.order.create({
-                    data: {
-                        orderNumber: generateOrderNumber(),
-                        userId: session.user.id,
-                        status: "COMPLETED",
-                        subtotal,
-                        discount: totalDiscount,
-                        billingDetails,
-                        tax,
-                        total,
-                        currency: currency.toUpperCase(),
-                        notes,
-                        paymentMethod: "credits",
-                        metadata: { playerName, variables: variables || {}, creatorCode: creatorCodeRecord?.code || null },
-                        items: { create: orderItems },
-                    },
-                });
-
-                // Grant ownership. Two statements rather than two per item:
-                // a twelve-item order held the transaction - and the row lock
-                // on the buyer's balance - open for twenty-four round trips.
-                await tx.chestItem.createMany({
-                    data: orderItems.map((item) => ({
-                        userId: buyerId,
+            const order = await prisma.$transaction((tx) =>
+                createCreditOrder(tx, {
+                    buyerId,
+                    ownerId: buyerId,
+                    gift: false,
+                    lines: orderItems.map((item) => ({
                         productId: item.productId,
-                        productName: item.name,
+                        name: item.name,
+                        price: item.price,
                         quantity: item.quantity,
-                        orderId: ord.id,
-                        // Claiming this later has no form to read from, and
-                        // the account's username is the one name the buyer
-                        // was deliberately not asked for.
-                        playerName,
-                        variables: recordedVariables(item.metadata) ?? Prisma.JsonNull,
+                        metadata: item.metadata as unknown as Prisma.InputJsonValue,
                     })),
-                });
-                await tx.ownedProduct.createMany({
-                    data: [...new Set(orderItems.map((item) => item.productId))].map((productId) => ({
-                        userId: buyerId,
-                        productId,
-                        orderId: ord.id,
-                    })),
-                    skipDuplicates: true,
-                });
+                    subtotal,
+                    discount: totalDiscount,
+                    tax,
+                    total,
+                    currency,
+                    notes,
+                    billingDetails,
+                    metadata: { playerName, variables: variables || {}, creatorCode: creatorCodeRecord?.code || null },
+                    playerName,
+                    description: `Store purchase (${orderItems.map((i) => i.name).join(", ")})`,
+                }),
+            );
 
-                return ord;
-            });
-
-            // ── RCON delivery for credits payment ──
-            // One query for every product in the order, not one per item.
-            const deliverable = orderItems.filter((item) => item.productId);
-            const commandRows = deliverable.length
-                ? await prisma.productCommand.findMany({
-                      where: { productId: { in: [...new Set(deliverable.map((i) => i.productId))] } },
-                      orderBy: { order: "asc" },
-                  })
-                : [];
-            const commandsByProduct = new Map<string, typeof commandRows>();
-            for (const row of commandRows) {
-                const list = commandsByProduct.get(row.productId);
-                if (list) list.push(row);
-                else commandsByProduct.set(row.productId, [row]);
-            }
-
-            for (const item of deliverable) {
-                const commands = commandsByProduct.get(item.productId);
-                if (commands && commands.length > 0) {
-                    const itemVars = (item.metadata as Record<string, unknown>)?.variables as Record<string, string> | undefined;
-                    deliverProduct({
-                        playerName,
-                        productName: item.name,
-                        commands: commands.map((c) => ({ command: c.command, serverId: c.serverId })),
-                        quantity: item.quantity,
-                        variables: itemVars,
-                    }).catch((err: unknown) => log.error("[store] a checkout side effect failed", { error: err instanceof Error ? err.message : String(err) }));
-                }
-            }
+            // Delivery runs after the commit: a game server that is down must
+            // not roll back an order somebody paid for. Not awaited, as
+            // before, so a slow RCON does not hold the buyer's page.
+            deliverPaidOrder(order, { name: playerName, id: null, userId: buyerId }).catch((err: unknown) =>
+                log.error("[store] a checkout side effect failed", { error: err instanceof Error ? err.message : String(err) }),
+            );
 
             // ── Update creator code stats ──
             if (creatorCodeRecord) {

@@ -24,11 +24,28 @@ declare global {
         "credits.award": CreditAwardOutcome;
         /** Whether the movement was made. */
         "credit.change": CreditMoved;
+        /** A member's balance, or null when nothing keeps one. */
+        "credits.balance": number | null;
+        /** The members with the most credits, or who bought the most. */
+        "credits.top": CreditTopEntry[];
     }
 
     interface BlysisFilterContexts {
         "credits.award": CreditAwardRequest;
         "credit.change": CreditMovement;
+        "credits.balance": { userId: string };
+        /**
+         * `balance` ranks what members hold now. `topups` ranks what they
+         * bought in the period: `day`, `month`, `year` or `all`.
+         */
+        "credits.top": { kind: "balance" | "topups"; period: "day" | "month" | "year" | "all"; limit: number };
+    }
+
+    interface CreditTopEntry {
+        rank: number;
+        userId: string;
+        name: string;
+        amount: number;
     }
 
     /**

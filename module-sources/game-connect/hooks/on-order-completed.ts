@@ -5,7 +5,8 @@
  * same name the store's own recent-purchases widget shows, so nothing is said
  * in game that the site does not already say in public.
  */
-import { log } from "@/core/sdk/server";
+import { log, prisma } from "@/core/sdk/server";
+import { communityGoal } from "../lib/bridge";
 import { emitEvent } from "../lib/events";
 
 function playerOf(metadata: unknown): string | null {
@@ -23,7 +24,28 @@ function playerOf(metadata: unknown): string | null {
  */
 interface CompletedOrder {
     metadata?: unknown;
+    total?: unknown;
     items?: { name: string; quantity: number }[];
+}
+
+/**
+ * The goal is reached by the order that crosses it, and said once a month.
+ * Two orders crossing it together both see it crossed, so the month's
+ * announcement is looked for before another is written.
+ */
+async function announceGoal(order: CompletedOrder, now: Date): Promise<void> {
+    const goal = await communityGoal();
+    if (!goal || goal.target <= 0 || goal.current < goal.target) return;
+    const total = Number(order.total) || 0;
+    if (goal.current - total >= goal.target) return;
+
+    const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const said = await prisma.gameConnectEvent.findFirst({
+        where: { type: "goal.reached", data: { path: ["month"], equals: month } },
+        select: { seq: true },
+    });
+    if (said) return;
+    await emitEvent("goal.reached", { title: goal.title, target: goal.target, current: goal.current, month });
 }
 
 const onOrderCompleted = async (order: CompletedOrder): Promise<void> => {
@@ -37,6 +59,7 @@ const onOrderCompleted = async (order: CompletedOrder): Promise<void> => {
             quantity: first.quantity,
             more: items.length - 1,
         });
+        await announceGoal(order, new Date());
     } catch (error) {
         log.warn("[game-connect] a purchase could not be announced", {
             error: error instanceof Error ? error.message : String(error),

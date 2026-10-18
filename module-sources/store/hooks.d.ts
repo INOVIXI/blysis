@@ -63,6 +63,8 @@ declare global {
         "store.order.created": StoreOrderHookPayload;
         "store.order.completed": StoreOrderHookPayload;
         "store.product.created": { id: string; name: string; slug: string };
+        /** Credits bought with money settled on an account. Gifts, refunds and grants are not this. */
+        "store.credits.purchased": { userId: string; amount: number };
     }
 
     /**
@@ -444,7 +446,10 @@ declare global {
                   | "not_giftable"
                   | "recipient_refuses_gifts"
                   | "unavailable";
+              /** The field that failed, for `field_invalid`. */
               field?: string;
+              /** A finer reason, for `unavailable`: `billing_required` is the one a game can name. */
+              reason?: string;
           };
 
     interface ChestEntry {
@@ -494,6 +499,8 @@ declare global {
         "store.gifts.sent": SentGift[];
         /** Whether a member takes gifts, after the change if one was asked for. */
         "store.gifts.receive": boolean;
+        /** The community goal and what has been raised toward it this month. */
+        "store.community-goal": { target: number; current: number; title: string; endDate: string | null } | null;
     }
 
     interface BlysisFilterContexts {
@@ -506,6 +513,7 @@ declare global {
         "store.gifts.sent": { userId: string };
         /** `receive` null reads the switch without changing it. */
         "store.gifts.receive": { userId: string; receive: boolean | null };
+        "store.community-goal": Record<string, never>;
     }
 }
 

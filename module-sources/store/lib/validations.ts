@@ -55,6 +55,12 @@ export const productSchema = z.object({
     salePrice: z.number().min(0).optional().nullable(),
     saleFrom: z.string().max(32).optional().nullable(),
     saleUntil: z.string().max(32).optional().nullable(),
+    /** Whether a connected game sells it, and how it is drawn there. */
+    showInGame: z.boolean().optional(),
+    gameTitle: z.string().trim().max(100).optional().nullable(),
+    gameDescription: z.string().trim().max(500).optional().nullable(),
+    /** Free text each game reads its own way: a material, an item model, a sprite. */
+    gameIcon: z.string().trim().max(100).optional().nullable(),
 });
 
 export const categorySchema = z.object({
@@ -69,6 +75,12 @@ export const categorySchema = z.object({
     isActive: z.boolean().optional(),
     /** How the shelf is drawn. Anything else is a shape nothing can render. */
     layout: z.enum(["grid", "table"]).optional(),
+    /** Whether a connected game shows this shelf, and how it is drawn there. */
+    showInGame: z.boolean().optional(),
+    gameTitle: z.string().trim().max(100).optional().nullable(),
+    gameDescription: z.string().trim().max(500).optional().nullable(),
+    /** Free text each game reads its own way: a material, an item model, a sprite. */
+    gameIcon: z.string().trim().max(100).optional().nullable(),
 });
 
 export const manualOrderSchema = z.object({
@@ -168,6 +180,12 @@ export const bulkDiscountUpdateSchema = z.object({
 export const chestRedeemSchema = z.object({
     giftTo: z.string().trim().max(64).optional().nullable(),
     playerName: z.string().trim().max(64).optional().nullable(),
+    /** `activate` accepts a gift waiting for the caller; `cancel` takes back one the caller sent. */
+    action: z.enum(["activate", "cancel"]).optional().nullable(),
+});
+
+export const chestSettingsSchema = z.object({
+    receiveGifts: z.boolean(),
 });
 
 /** The community goal banner: a target, a title, and when it ends. */
@@ -228,6 +246,10 @@ export const productCommandSchema = z.object({
     command: z.string().trim().min(1, "productId and command required").max(1_000),
     serverId: z.string().max(64).optional().nullable(),
     order: z.number().int().min(0).max(10_000).optional(),
+    /** `player` runs wherever the buyer is; read only by a game server that queues. */
+    target: z.enum(["server", "player"]).optional(),
+    /** Wait until the player is on the target server; read only by a game server that queues. */
+    whenOnline: z.boolean().optional(),
 });
 
 export const productVariableSchema = z.object({

@@ -24,4 +24,7 @@ model CreditTransaction {
   // leading column still answers a plain userId lookup, so this replaces the
   // single column index rather than joining it.
   @@index([userId, createdAt])
+  // Read as "who bought the most credits this month": one kind of entry over
+  // a window of time, across every member.
+  @@index([type, createdAt])
 }

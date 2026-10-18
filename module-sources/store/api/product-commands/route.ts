@@ -31,10 +31,17 @@ export async function POST(request: NextRequest) {
     if (jsonBody instanceof NextResponse) return jsonBody;
     const parsed = productCommandSchema.safeParse(jsonBody);
     if (!parsed.success) return NextResponse.json({ error: "productId and command required" }, { status: 400 });
-    const { productId, command, order, serverId } = parsed.data;
+    const { productId, command, order, serverId, target, whenOnline } = parsed.data;
 
     const cmd = await prisma.productCommand.create({
-        data: { productId, command, serverId: serverId || null, order: order || 0 },
+        data: {
+            productId,
+            command,
+            serverId: serverId || null,
+            order: order || 0,
+            target: target ?? "server",
+            whenOnline: whenOnline ?? true,
+        },
     });
     return NextResponse.json({ command: cmd }, { status: 201 });
 }

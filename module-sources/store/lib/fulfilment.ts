@@ -10,8 +10,8 @@
 import { Prisma } from "@prisma/client";
 import { prisma, log, grantRole } from "@/core/sdk/server";
 import { sendOrderConfirmationEmail } from "./order-email";
-import { applyFiltersAsync } from "@/core/sdk";
-import { deliverProduct } from "./delivery";
+import { applyFiltersAsync, doActionAsync } from "@/core/sdk";
+import { deliverPaidOrder } from "./credit-order";
 import { announceOrderCompleted } from "./order-events";
 import { claimStock, releaseStock, stockClaims } from "./stock";
 import { countSales, uncountSales } from "./popularity";
@@ -308,38 +308,12 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
         buyer.username ||
         "Player";
 
-    // One query for every product's commands rather than one per item: an
-    // order of twelve things was twelve round trips before the buyer got a
-    // reply, and a gateway webhook has a timeout.
-    const commandRows = productIds.length
-        ? await prisma.productCommand.findMany({
-              where: { productId: { in: productIds } },
-              orderBy: { order: "asc" },
-          })
-        : [];
-    const commandsByProduct = new Map<string, typeof commandRows>();
-    for (const row of commandRows) {
-        const list = commandsByProduct.get(row.productId);
-        if (list) list.push(row);
-        else commandsByProduct.set(row.productId, [row]);
-    }
-
-    for (const item of granted) {
-        const commands = commandsByProduct.get(item.productId as string);
-        if (!commands || commands.length === 0) continue;
-
-        const itemVars = (item.metadata as Record<string, unknown>)?.variables as
-            | Record<string, string>
-            | undefined;
-
-        deliverProduct({
-            playerName,
-            productName: item.name,
-            commands: commands.map((c) => ({ command: c.command, serverId: c.serverId })),
-            quantity: item.quantity,
-            variables: itemVars,
-        }).catch((error) => log.error("[store] delivery failed", { orderId: order.id, error: String(error) }));
-    }
+    // Not awaited: a gateway's webhook has a timeout, and a slow game server
+    // must not make the provider think the payment went unrecorded.
+    deliverPaidOrder(
+        { id: order.id, items: granted },
+        { name: playerName, id: null, userId: buyerId },
+    ).catch((error) => log.error("[store] delivery failed", { orderId: order.id, error: String(error) }));
 
     await announceOrderCompleted(order.id);
     return OK;
@@ -393,6 +367,13 @@ export async function settleCredits(settlement: PaymentSettlement): Promise<Paym
         throw error;
     }
 
+    // Told once, after the money is on the account: a retry that lost the
+    // race above returned already and says nothing.
+    await doActionAsync("store.credits.purchased", { userId, amount: credits }).catch((error: unknown) => {
+        log.warn("[store] a credit purchase could not be announced", {
+            error: error instanceof Error ? error.message : String(error),
+        });
+    });
     return OK;
 }
 

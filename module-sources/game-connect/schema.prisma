@@ -133,6 +133,8 @@ model GameConnectLink {
   @@unique([platform, externalId])
   @@unique([platform, userId])
   @@index([userId])
+  // Another module asks with an account id alone, not knowing the game.
+  @@index([externalId])
 }
 
 /// A short code that proves the other side. `direction` says which side made

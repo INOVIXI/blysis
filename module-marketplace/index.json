@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-10-18",
-  "updatedAt": "2026-10-18T12:07:10Z",
+  "updatedAt": "2026-10-18T13:16:38Z",
   "modules": [
     {
       "id": "announcements",
@@ -479,13 +479,13 @@
           "description": "Kullanıcılar için sanal para cüzdanı"
         }
       },
-      "version": "1.9.1",
+      "version": "1.10.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-06T09:06:29Z",
+      "updatedAt": "2026-10-18T13:16:38Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -501,7 +501,9 @@
         "listens": [
           "credits.award",
           "store.order.completed",
-          "credit.change"
+          "credit.change",
+          "credits.balance",
+          "credits.top"
         ]
       },
       "stats": {
@@ -1096,17 +1098,31 @@
       "hooks": {
         "emits": [
           "store.catalog.ingame",
-          "servers.list"
+          "servers.list",
+          "store.purchase.credits",
+          "store.chest.list",
+          "store.chest.claim",
+          "store.gift.activate",
+          "store.gift.cancel",
+          "store.gifts.sent",
+          "store.gifts.receive",
+          "store.community-goal",
+          "credits.balance",
+          "credits.top",
+          "credit.change",
+          "game-account.resolve"
         ],
         "listens": [
           "server.command",
-          "store.order.completed"
+          "store.order.completed",
+          "store.credits.purchased",
+          "game-account.resolve"
         ]
       },
       "stats": {
         "publicRoutes": 0,
         "adminRoutes": 0,
-        "apiRoutes": 8,
+        "apiRoutes": 29,
         "widgets": 0
       }
     },
@@ -2889,13 +2905,13 @@
           "description": "Ürün, kategori, sepet ve siparişleriyle eksiksiz e-ticaret"
         }
       },
-      "version": "2.46.3",
+      "version": "2.47.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-06T09:06:29Z",
+      "updatedAt": "2026-10-18T13:16:38Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -2916,7 +2932,9 @@
           "payment.session",
           "currency.rate",
           "store.billing.required",
-          "credit.change"
+          "credit.change",
+          "servers.list",
+          "store.credits.purchased"
         ],
         "listens": [
           "user.registered",
@@ -2934,7 +2952,16 @@
           "comparison.columns",
           "csv.exports",
           "product.grant",
-          "grantable.options"
+          "grantable.options",
+          "store.catalog.ingame",
+          "store.purchase.credits",
+          "store.chest.list",
+          "store.chest.claim",
+          "store.gift.activate",
+          "store.gift.cancel",
+          "store.gifts.sent",
+          "store.gifts.receive",
+          "store.community-goal"
         ]
       },
       "stats": {

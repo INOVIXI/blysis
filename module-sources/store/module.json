@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.46.3",
+  "version": "2.47.0",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -101,6 +101,51 @@
       "hook": "grantable.options",
       "type": "filter",
       "handler": "hooks/grantable-products.ts"
+    },
+    {
+      "hook": "store.catalog.ingame",
+      "type": "filter",
+      "handler": "hooks/ingame-catalog.ts"
+    },
+    {
+      "hook": "store.purchase.credits",
+      "type": "filter",
+      "handler": "hooks/purchase-credits.ts"
+    },
+    {
+      "hook": "store.chest.list",
+      "type": "filter",
+      "handler": "hooks/chest-list.ts"
+    },
+    {
+      "hook": "store.chest.claim",
+      "type": "filter",
+      "handler": "hooks/chest-claim.ts"
+    },
+    {
+      "hook": "store.gift.activate",
+      "type": "filter",
+      "handler": "hooks/gift-activate.ts"
+    },
+    {
+      "hook": "store.gift.cancel",
+      "type": "filter",
+      "handler": "hooks/gift-cancel.ts"
+    },
+    {
+      "hook": "store.gifts.sent",
+      "type": "filter",
+      "handler": "hooks/gifts-sent.ts"
+    },
+    {
+      "hook": "store.gifts.receive",
+      "type": "filter",
+      "handler": "hooks/gifts-receive.ts"
+    },
+    {
+      "hook": "store.community-goal",
+      "type": "filter",
+      "handler": "hooks/community-goal.ts"
     }
   ],
   "settings": [
@@ -804,6 +849,14 @@
     {
       "hook": "credit.change",
       "type": "filter"
+    },
+    {
+      "hook": "servers.list",
+      "type": "filter"
+    },
+    {
+      "hook": "store.credits.purchased",
+      "type": "action"
     }
   ],
   "translations": {
@@ -1237,7 +1290,11 @@
           "coupons_off": "Coupon codes are not being accepted right now.",
           "creator_not_for_these_items": "That code does not cover anything in your basket.",
           "manual_order_bad_line": "One of the lines has a price or a quantity that cannot be used.",
-          "order_no_payment": "That order has no payment to refund. Cancel it instead."
+          "order_no_payment": "That order has no payment to refund. Cancel it instead.",
+          "chest_gift_pending": "Accept the gift first.",
+          "chest_gift_not_pending": "That gift is no longer waiting.",
+          "chest_recipient_refuses_gifts": "That member does not accept gifts.",
+          "chest_gift_to_self": "That is your own chest."
         },
         "err_checkoutFailed": "Checkout failed",
         "err_couponMinPurchase": "Spend at least {amount} to use this code.",
@@ -1369,7 +1426,32 @@
         "vip_subtitle": "Compare what each rank unlocks",
         "vip_title": "VIP Ranks",
         "adm_exportProducts": "Products",
-        "adm_exportOrders": "Orders"
+        "adm_exportOrders": "Orders",
+        "adm_inGame": "In game",
+        "adm_inGameHintProduct": "A game server connected to this site sells it in game. It shows only when its category is shown in game too.",
+        "adm_inGameHintCategory": "A game server connected to this site shows this category in game, with the products on it that are shown in game.",
+        "adm_showInGame": "Show in game",
+        "adm_gameTitle": "Title in game",
+        "adm_gameTitleHint": "Empty uses the name on the site",
+        "adm_gameDescription": "Description in game",
+        "adm_gameDescriptionHint": "Empty uses the short description",
+        "adm_gameIcon": "Icon in game",
+        "adm_gameIconHint": "Each game reads it its own way: an item such as diamond_sword, or a namespaced item model.",
+        "adm_cmdTarget": "Where it runs",
+        "adm_cmdOnServer": "On a server",
+        "adm_cmdPlayersServer": "Wherever the buyer is",
+        "adm_cmdWhenOnline": "Wait for the buyer to be online",
+        "adm_cmdWaits": "waits for the buyer",
+        "tab_chest_from": "from {name}",
+        "tab_chest_to": "to {name}",
+        "tab_chest_accept": "Accept",
+        "tab_chest_accepted": "Gift accepted. You can claim it now.",
+        "tab_chest_takeBack": "Take back",
+        "tab_chest_takenBack": "Gift taken back.",
+        "tab_chest_acceptedState": "Accepted",
+        "tab_chest_sentTitle": "Gifts you sent",
+        "tab_chest_receiveGifts": "Accept gifts",
+        "tab_chest_receiveGiftsHint": "When this is off, nobody can buy you a gift or pass you an item."
       },
       "cart": {
         "title": "Shopping Cart",
@@ -2030,7 +2112,11 @@
           "coupons_off": "Şu anda kupon kodu kabul edilmiyor.",
           "creator_not_for_these_items": "Bu kod sepetinizdeki hiçbir şeyi kapsamıyor.",
           "manual_order_bad_line": "Satırlardan birinin fiyatı veya adedi kullanılamıyor.",
-          "order_no_payment": "Bu siparişin iade edilecek bir ödemesi yok. Bunun yerine iptal edin."
+          "order_no_payment": "Bu siparişin iade edilecek bir ödemesi yok. Bunun yerine iptal edin.",
+          "chest_gift_pending": "Önce hediyeyi kabul et.",
+          "chest_gift_not_pending": "Bu hediye artık beklemiyor.",
+          "chest_recipient_refuses_gifts": "Bu üye hediye kabul etmiyor.",
+          "chest_gift_to_self": "Bu senin kendi sandığın."
         },
         "err_checkoutFailed": "Ödeme tamamlanamadı",
         "err_couponMinPurchase": "Bu kodu kullanmak için en az {amount} harcayın.",
@@ -2162,7 +2248,32 @@
         "vip_subtitle": "Her rütbenin neler açtığını karşılaştırın",
         "vip_title": "VIP Rütbeleri",
         "adm_exportProducts": "Ürünler",
-        "adm_exportOrders": "Siparişler"
+        "adm_exportOrders": "Siparişler",
+        "adm_inGame": "Oyunda",
+        "adm_inGameHintProduct": "Bu siteye bağlı bir oyun sunucusu bunu oyunda satar. Kategorisi de oyunda gösteriliyorsa görünür.",
+        "adm_inGameHintCategory": "Bu siteye bağlı bir oyun sunucusu bu kategoriyi, oyunda gösterilen ürünleriyle birlikte oyunda gösterir.",
+        "adm_showInGame": "Oyunda göster",
+        "adm_gameTitle": "Oyundaki başlık",
+        "adm_gameTitleHint": "Boş bırakılırsa sitedeki ad kullanılır",
+        "adm_gameDescription": "Oyundaki açıklama",
+        "adm_gameDescriptionHint": "Boş bırakılırsa kısa açıklama kullanılır",
+        "adm_gameIcon": "Oyundaki simge",
+        "adm_gameIconHint": "Her oyun kendi şekilde okur: diamond_sword gibi bir eşya ya da ad alanlı bir item model.",
+        "adm_cmdTarget": "Nerede çalışır",
+        "adm_cmdOnServer": "Bir sunucuda",
+        "adm_cmdPlayersServer": "Alıcı neredeyse",
+        "adm_cmdWhenOnline": "Alıcının girmesini bekle",
+        "adm_cmdWaits": "alıcıyı bekler",
+        "tab_chest_from": "gönderen: {name}",
+        "tab_chest_to": "alıcı: {name}",
+        "tab_chest_accept": "Kabul et",
+        "tab_chest_accepted": "Hediye kabul edildi. Artık teslim alabilirsin.",
+        "tab_chest_takeBack": "Geri al",
+        "tab_chest_takenBack": "Hediye geri alındı.",
+        "tab_chest_acceptedState": "Kabul edildi",
+        "tab_chest_sentTitle": "Gönderdiğin hediyeler",
+        "tab_chest_receiveGifts": "Hediye kabul et",
+        "tab_chest_receiveGiftsHint": "Kapalıyken kimse sana hediye alamaz ya da eşya gönderemez."
       },
       "cart": {
         "title": "Alışveriş Sepeti",

@@ -69,6 +69,152 @@
       "description": "A game server reports who is online on it."
     },
     {
+      "path": "/game-connect/catalog",
+      "handler": "api/catalog/route.ts",
+      "method": "GET",
+      "providerCallback": true,
+      "description": "What a game may show and sell: the shelves and products an admin marked for games."
+    },
+    {
+      "path": "/game-connect/player/profile",
+      "handler": "api/player/profile/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "Whether a player has an account here, with its balance and gift switch."
+    },
+    {
+      "path": "/game-connect/link/start",
+      "handler": "api/link/start/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "A player asks for a code to confirm on the site."
+    },
+    {
+      "path": "/game-connect/link/verify",
+      "handler": "api/link/verify/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "A player types a code a member made on the site."
+    },
+    {
+      "path": "/game-connect/credits/transfer",
+      "handler": "api/credits/transfer/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "A player sends credits to another player or member."
+    },
+    {
+      "path": "/game-connect/credits/admin",
+      "handler": "api/credits/admin/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "Staff in game add, remove, set or read a balance, on a server allowed to."
+    },
+    {
+      "path": "/game-connect/credits/top",
+      "handler": "api/credits/top/route.ts",
+      "method": "GET",
+      "providerCallback": true,
+      "description": "The members who hold the most credits, or bought the most."
+    },
+    {
+      "path": "/game-connect/community-goal",
+      "handler": "api/community-goal/route.ts",
+      "method": "GET",
+      "providerCallback": true,
+      "description": "The community goal and how far this month has come."
+    },
+    {
+      "path": "/game-connect/store/purchase",
+      "handler": "api/store/purchase/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "A player buys with credits, for themselves or as a gift."
+    },
+    {
+      "path": "/game-connect/chest/list",
+      "handler": "api/chest/list/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "What a player has not claimed, gifts waiting included."
+    },
+    {
+      "path": "/game-connect/chest/claim",
+      "handler": "api/chest/claim/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "Send a ready chest item to delivery."
+    },
+    {
+      "path": "/game-connect/chest/activate",
+      "handler": "api/chest/activate/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "The recipient accepts a gift waiting in their chest."
+    },
+    {
+      "path": "/game-connect/gifts/sent",
+      "handler": "api/gifts/sent/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "The gifts a player sent, waiting or accepted."
+    },
+    {
+      "path": "/game-connect/gifts/cancel",
+      "handler": "api/gifts/cancel/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "The sender takes back a gift nobody accepted, and the money with it."
+    },
+    {
+      "path": "/game-connect/gifts/receive",
+      "handler": "api/gifts/receive/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "Whether a player takes gifts."
+    },
+    {
+      "path": "/game-connect/vouchers/create",
+      "handler": "api/vouchers/create/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "A player turns credits into a voucher."
+    },
+    {
+      "path": "/game-connect/vouchers/give",
+      "handler": "api/vouchers/give/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "Staff mint a voucher nobody paid for, on a server allowed to."
+    },
+    {
+      "path": "/game-connect/vouchers/redeem",
+      "handler": "api/vouchers/redeem/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "A player cashes a voucher in, once."
+    },
+    {
+      "path": "/game-connect/link/confirm",
+      "handler": "api/link/confirm/route.ts",
+      "method": "POST",
+      "openTo": "member",
+      "description": "A signed-in member confirms a code a player made in game."
+    },
+    {
+      "path": "/game-connect/link/code",
+      "handler": "api/link/code/route.ts",
+      "method": "POST",
+      "openTo": "member",
+      "description": "A signed-in member asks for a code to type in game."
+    },
+    {
+      "path": "/game-connect/links",
+      "handler": "api/links/route.ts",
+      "openTo": "member",
+      "description": "The game accounts the signed-in member linked, and letting one go."
+    },
+    {
       "path": "/game-connect/admin/servers",
       "handler": "api/admin/servers/route.ts",
       "permission": "game-connect.manage",
@@ -113,6 +259,17 @@
       "hook": "store.order.completed",
       "type": "action",
       "handler": "hooks/on-order-completed.ts"
+    },
+    {
+      "hook": "store.credits.purchased",
+      "type": "action",
+      "handler": "hooks/on-credits-purchased.ts"
+    },
+    {
+      "hook": "game-account.resolve",
+      "type": "filter",
+      "handler": "hooks/resolve-account.ts",
+      "priority": 20
     }
   ],
   "hooksEmitted": [
@@ -122,6 +279,54 @@
     },
     {
       "hook": "servers.list",
+      "type": "filter"
+    },
+    {
+      "hook": "store.purchase.credits",
+      "type": "filter"
+    },
+    {
+      "hook": "store.chest.list",
+      "type": "filter"
+    },
+    {
+      "hook": "store.chest.claim",
+      "type": "filter"
+    },
+    {
+      "hook": "store.gift.activate",
+      "type": "filter"
+    },
+    {
+      "hook": "store.gift.cancel",
+      "type": "filter"
+    },
+    {
+      "hook": "store.gifts.sent",
+      "type": "filter"
+    },
+    {
+      "hook": "store.gifts.receive",
+      "type": "filter"
+    },
+    {
+      "hook": "store.community-goal",
+      "type": "filter"
+    },
+    {
+      "hook": "credits.balance",
+      "type": "filter"
+    },
+    {
+      "hook": "credits.top",
+      "type": "filter"
+    },
+    {
+      "hook": "credit.change",
+      "type": "filter"
+    },
+    {
+      "hook": "game-account.resolve",
       "type": "filter"
     }
   ],
@@ -146,7 +351,9 @@
         "auditServerUpdated": "Changed what a connected game server may do",
         "auditJobMarkedDone": "Marked a delivery done",
         "auditJobSentAgain": "Sent a delivery again",
-        "auditJobCancelled": "Cancelled a delivery"
+        "auditJobCancelled": "Cancelled a delivery",
+        "auditCreditsChanged": "Changed a balance from a game server",
+        "auditVoucherMinted": "Minted a voucher from a game server"
       }
     },
     "tr": {
@@ -163,12 +370,17 @@
         "auditServerUpdated": "Bağlı bir oyun sunucusunun yetkileri değiştirildi",
         "auditJobMarkedDone": "Bir teslimat tamamlandı olarak işaretlendi",
         "auditJobSentAgain": "Bir teslimat yeniden gönderildi",
-        "auditJobCancelled": "Bir teslimat iptal edildi"
+        "auditJobCancelled": "Bir teslimat iptal edildi",
+        "auditCreditsChanged": "Bir oyun sunucusundan bakiye değiştirildi",
+        "auditVoucherMinted": "Bir oyun sunucusundan kupon basıldı"
       }
     }
   },
   "demoUnsafe": [
-    "/game-connect/admin"
+    "/game-connect/admin",
+    "/game-connect/link/confirm",
+    "/game-connect/link/code",
+    "/game-connect/links"
   ],
   "auditActions": [
     {
@@ -194,6 +406,14 @@
     {
       "action": "game-connect.job.cancel",
       "nameKey": "auditJobCancelled"
+    },
+    {
+      "action": "game-connect.credits.changed",
+      "nameKey": "auditCreditsChanged"
+    },
+    {
+      "action": "game-connect.voucher.minted",
+      "nameKey": "auditVoucherMinted"
     }
   ]
 }

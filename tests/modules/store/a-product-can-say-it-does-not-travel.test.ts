@@ -23,7 +23,11 @@ const db = {
     },
     product: { findUnique: vi.fn(), findMany: vi.fn(async () => [] as unknown[]) },
     productCommand: { findMany: vi.fn(async () => []) },
-    user: { findFirst: vi.fn(async () => ({ id: "member-2", username: "alex" })) },
+    user: {
+        findFirst: vi.fn(async () => ({ id: "member-2", username: "alex" })),
+        findUnique: vi.fn(async () => ({ receiveGifts: true })),
+        findMany: vi.fn(async () => [] as unknown[]),
+    },
 };
 
 /** What the operator has said about gifting. Absent means never asked. */
@@ -54,6 +58,7 @@ const unclaimed = {
     playerName: "steve",
     variables: null,
     isRedeemed: false,
+    createdAt: new Date("2026-10-01T12:00:00Z"),
 };
 
 const giveAway = () =>

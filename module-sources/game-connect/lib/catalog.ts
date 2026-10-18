@@ -7,17 +7,12 @@
  * catalogue, which a client shows as an empty menu rather than an error.
  */
 import crypto from "crypto";
-import { applyFiltersAsync } from "@/core/sdk";
+import { readCatalog, type Catalog } from "./bridge";
 
-export const EMPTY_CATALOG: InGameCatalog = { currency: "credits", categories: [] };
-
-export async function readCatalog(): Promise<InGameCatalog> {
-    const catalog = await applyFiltersAsync("store.catalog.ingame", EMPTY_CATALOG, {});
-    return catalog ?? EMPTY_CATALOG;
-}
+export { readCatalog };
 
 /** A short digest of what a client would draw. Equal content, equal version. */
-export function versionOf(catalog: InGameCatalog): string {
+export function versionOf(catalog: Catalog): string {
     const digest = crypto.createHash("sha256").update(JSON.stringify(catalog)).digest("hex");
     return `c-${digest.slice(0, 16)}`;
 }

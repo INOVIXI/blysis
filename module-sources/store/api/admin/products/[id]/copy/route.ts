@@ -82,6 +82,8 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
                         command: row.command,
                         serverId: row.serverId,
                         order: row.order,
+                        target: row.target,
+                        whenOnline: row.whenOnline,
                     })),
                 });
             }

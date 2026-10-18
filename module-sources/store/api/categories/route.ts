@@ -150,6 +150,10 @@ export async function POST(request: NextRequest) {
                 isActive: data.isActive ?? true,
                 layout: data.layout ?? "grid",
                 visibleAfterProductIds: data.visibleAfterProductIds ?? [],
+                showInGame: data.showInGame ?? false,
+                gameTitle: data.gameTitle || null,
+                gameDescription: data.gameDescription || null,
+                gameIcon: data.gameIcon || null,
             },
         });
 

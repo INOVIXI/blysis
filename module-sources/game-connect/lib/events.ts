@@ -67,9 +67,20 @@ export async function eventsAfter(
     };
 }
 
+/**
+ * A goal announcement is kept past the month it names, because it is how the
+ * next order of that month knows the goal was already said.
+ */
+const GOAL_RETENTION_MS = 40 * 24 * 60 * 60 * 1000;
+
 export async function sweepEvents(now: Date = new Date()): Promise<number> {
     const result = await prisma.gameConnectEvent.deleteMany({
-        where: { createdAt: { lt: new Date(now.getTime() - EVENT_RETENTION_MS) } },
+        where: {
+            OR: [
+                { type: { not: "goal.reached" }, createdAt: { lt: new Date(now.getTime() - EVENT_RETENTION_MS) } },
+                { type: "goal.reached", createdAt: { lt: new Date(now.getTime() - GOAL_RETENTION_MS) } },
+            ],
+        },
     });
     return result.count;
 }
