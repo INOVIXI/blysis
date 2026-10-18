@@ -333,8 +333,8 @@ asked to be anonymous is `null` in `name`.
 
 ### `GET community-goal`
 
-`{ "active": true, "title": "...", "raised": 420, "goal": 1000, "percent": 42 }`, or
-`{ "active": false }`.
+`{ "active": true, "title": "...", "raised": 420, "goal": 1000, "percent": 42, "endDate": null }`,
+or `{ "active": false }`.
 
 ## Buying
 
@@ -433,7 +433,7 @@ The id is the whole voucher. An item that carries it is only its look.
 |---|---|
 | `purchase` | `player` (null when anonymous), `product`, `quantity` |
 | `topup` | `player` (null when anonymous), `amount` |
-| `goal.reached` | `title`, `goal` |
+| `goal.reached` | `title`, `goal`, `raised`, `month` (said once a month) |
 | `link.confirmed` | `player` (a Player), `member` |
 | `catalog.changed` | `version` |
 

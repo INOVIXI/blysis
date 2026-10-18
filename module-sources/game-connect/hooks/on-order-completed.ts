@@ -45,7 +45,7 @@ async function announceGoal(order: CompletedOrder, now: Date): Promise<void> {
         select: { seq: true },
     });
     if (said) return;
-    await emitEvent("goal.reached", { title: goal.title, target: goal.target, current: goal.current, month });
+    await emitEvent("goal.reached", { title: goal.title, goal: goal.target, raised: goal.current, month });
 }
 
 const onOrderCompleted = async (order: CompletedOrder): Promise<void> => {
