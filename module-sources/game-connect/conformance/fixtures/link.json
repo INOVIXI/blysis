@@ -1,0 +1,55 @@
+{
+  "scenario": "link",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "link/start",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "39da0e44-bace-4922-9664-1a18e877b275",
+          "name": "Conf24de6d"
+        }
+      },
+      "status": 200,
+      "response": {
+        "code": "DRG4-FK9W",
+        "url": "http://localhost:3101/link?code=DRG4-FK9W",
+        "expiresAt": "2026-10-18T17:42:01.856Z"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "link/start",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        }
+      },
+      "status": 409,
+      "response": {
+        "error": "This account is already linked.",
+        "code": "already_linked"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "link/verify",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "39da0e44-bace-4922-9664-1a18e877b275",
+          "name": "Conf24de6d"
+        },
+        "code": "AAAA-AAAA"
+      },
+      "status": 409,
+      "response": {
+        "error": "That code is wrong, used or expired.",
+        "code": "code_invalid"
+      }
+    }
+  ]
+}

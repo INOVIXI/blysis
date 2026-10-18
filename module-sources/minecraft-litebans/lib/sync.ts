@@ -96,7 +96,7 @@ async function record(
         const match = await applyFiltersAsync(
             "game-account.resolve",
             { userId: null },
-            { uuid: report.playerUuid, username: report.playerName },
+            { uuid: report.playerUuid, username: report.playerName, platform: "minecraft" },
         );
 
         const outcome = await applyFiltersAsync(

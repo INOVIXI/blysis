@@ -1,0 +1,189 @@
+// Game Connect Module - Database Models
+// These models are merged into prisma/schema.prisma by merge-schemas.ts
+
+// ==================== CONNECTED SERVERS ====================
+
+/// A game server that holds a token and talks to this site itself.
+///
+/// It hangs off the servers module's `GameServer` by id rather than by a
+/// relation, so there is one server list and this module only adds what a
+/// connected client needs. The token is never stored: its SHA-256 is, and the
+/// hint is the last four characters, enough for an admin to tell two apart.
+model GameConnectServer {
+  id               String    @id @default(cuid())
+  gameServerId     String    @unique
+  tokenHash        String    @unique
+  tokenHint        String
+  enabled          Boolean   @default(true)
+  /// Off by default: a token that may add credits can mint money.
+  allowCreditAdmin Boolean   @default(false)
+  allowVoucherGive Boolean   @default(false)
+  /// Off by default: a server that may take "wherever the player is" jobs is
+  /// trusted to say truthfully who is on it, for every purchase on the site.
+  acceptFollowPlayer Boolean @default(false)
+
+  /// The process that said hello last. Calls from any other are superseded.
+  instance         String?
+  instanceSeenAt   DateTime?
+  previousInstance String?
+  previousSeenAt   DateTime?
+
+  game             String?
+  role             String?
+  clientName       String?
+  clientVersion    String?
+  softwareName     String?
+  softwareVersion  String?
+
+  lastStatusAt     DateTime?
+  online           Int       @default(0)
+  maxPlayers       Int       @default(0)
+  version          String?
+  tps              Float?
+  mspt             Float?
+
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+/// Who a server said was on it, at its last status push.
+model GameConnectPresence {
+  id           String   @id @default(cuid())
+  /// The `GameServer` id, the same id a job targets.
+  gameServerId String
+  externalId   String?
+  name         String
+  nameLower    String
+  seenAt       DateTime @default(now())
+
+  @@index([gameServerId])
+  @@index([externalId])
+  @@index([nameLower])
+}
+
+// ==================== DELIVERY ====================
+
+/// One command line waiting for, held by, or finished on a game server.
+///
+/// `state` moves PENDING -> CLAIMED -> DONE or FAILED. A lease that runs out
+/// leaves NEEDS_REVIEW, which nothing hands out again on its own: the command
+/// may have run, and running it twice is the one outcome this table exists to
+/// prevent.
+model GameConnectJob {
+  id                String    @id @default(cuid())
+  /// The `GameServer` id to run on. Null when the target is the player's
+  /// current server.
+  gameServerId      String?
+  targetCurrent     Boolean   @default(false)
+  whenOnline        Boolean   @default(true)
+  command           String
+  playerName        String
+  playerNameLower   String
+  /// Null until the site sees the player and pins the id.
+  playerId          String?
+  userId            String?
+  groupKey          String
+  sequence          Int       @default(0)
+  state             String    @default("PENDING")
+  claimedServerId   String?
+  claimedInstance   String?
+  claimedAt         DateTime?
+  leaseUntil        DateTime?
+  detail            String?
+  referenceKind     String    @default("manual")
+  referenceId       String?
+  referenceLabel    String?
+  /// Every state change, oldest first, so a review has the whole story.
+  history           Json      @default("[]")
+  settledAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([state, gameServerId])
+  @@index([state, targetCurrent])
+  @@index([groupKey])
+  @@index([state, leaseUntil])
+  @@index([referenceKind, referenceId])
+}
+
+/// Something every connected server may want to say in game.
+model GameConnectEvent {
+  seq          Int      @id @default(autoincrement())
+  type         String
+  data         Json
+  /// Null for every server, otherwise the one `GameServer` it is for.
+  gameServerId String?
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// ==================== ACCOUNTS ====================
+
+/// A game account a member proved is theirs. One per platform per member.
+model GameConnectLink {
+  id         String   @id @default(cuid())
+  platform   String
+  externalId String
+  name       String
+  userId     String
+  linkedAt   DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([platform, externalId])
+  @@unique([platform, userId])
+  @@index([userId])
+  // Another module asks with an account id alone, not knowing the game.
+  @@index([externalId])
+}
+
+/// A short code that proves the other side. `direction` says which side made
+/// it: "game" when a player asked in game, "site" when a member asked here.
+model GameConnectLinkCode {
+  id           String   @id @default(cuid())
+  direction    String
+  codeHash     String   @unique
+  platform     String
+  externalId   String?
+  name         String?
+  userId       String?
+  gameServerId String?
+  attempts     Int      @default(0)
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ==================== MONEY ====================
+
+/// Credits turned into something a player can hand over. The id is the
+/// voucher: an item in game only carries it.
+model GameConnectVoucher {
+  id              String    @id
+  amount          Decimal   @db.Decimal(10, 2)
+  /// "player" when a member paid for it, "admin" when a server minted it.
+  origin          String
+  createdById     String?
+  createdOnServer String?
+  redeemedById    String?
+  redeemedAt      DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([createdById])
+  @@index([redeemedById])
+}
+
+/// The first answer to a money call, kept so a retry gets the same one.
+model GameConnectIdempotency {
+  id        String   @id @default(cuid())
+  serverId  String
+  key       String
+  status    Int
+  response  Json
+  createdAt DateTime @default(now())
+
+  @@unique([serverId, key])
+  @@index([createdAt])
+}

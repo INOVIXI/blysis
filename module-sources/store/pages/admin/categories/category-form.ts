@@ -11,6 +11,7 @@
  * until somebody counts them; the wrong verb sends a partial row to a route
  * that wanted a whole one.
  */
+import { EMPTY_IN_GAME, inGamePayload, type InGameValue } from "../products/_fields/in-game-payload";
 
 export interface CategoryFormValue {
     name: string;
@@ -24,6 +25,8 @@ export interface CategoryFormValue {
     visibleAfterProductIds: string[];
     /** `grid` or `table`: cards to browse, or a ladder to compare. */
     layout: string;
+    /** How a connected game shows the shelf. */
+    inGame: InGameValue;
 }
 
 export const EMPTY_CATEGORY: CategoryFormValue = {
@@ -35,6 +38,7 @@ export const EMPTY_CATEGORY: CategoryFormValue = {
     isActive: true,
     visibleAfterProductIds: [],
     layout: "grid",
+    inGame: EMPTY_IN_GAME,
 };
 
 /** The address and verb for saving, given what is being edited. */
@@ -58,5 +62,6 @@ export function categoryPayload(value: CategoryFormValue) {
         isActive: value.isActive,
         visibleAfterProductIds: value.visibleAfterProductIds,
         layout: value.layout,
+        ...inGamePayload(value.inGame),
     };
 }

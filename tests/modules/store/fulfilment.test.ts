@@ -35,7 +35,12 @@ const db = {
         update: vi.fn(async () => ({})),
         updateMany: vi.fn(async () => ({ count: 1 })),
     },
-    chestItem: { create: vi.fn(async () => ({})), createMany: vi.fn(async () => ({ count: 1 })) },
+    chestItem: {
+        create: vi.fn(async () => ({})),
+        createMany: vi.fn(async () => ({ count: 1 })),
+        findMany: vi.fn(async () => [] as unknown[]),
+        updateMany: vi.fn(async () => ({ count: 0 })),
+    },
     ownedProduct: {
         upsert: vi.fn(async () => ({})),
         createMany: vi.fn(async () => ({ count: 1 })),
@@ -336,7 +341,9 @@ describe("settleOrder", () => {
         const outcome = await settleOrder(settlement);
 
         expect(outcome.handled).toBe(true);
-        expect(deliverProduct).toHaveBeenCalledWith(expect.objectContaining({ playerName: "Steve" }));
+        // Started, not awaited: the delivery claims its chest rows first, so
+        // it reaches the commands a few turns after the gateway's answer.
+        await vi.waitFor(() => expect(deliverProduct).toHaveBeenCalledWith(expect.objectContaining({ playerName: "Steve" })));
     });
 });
 

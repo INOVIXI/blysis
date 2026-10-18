@@ -1,0 +1,14 @@
+{
+  "scenario": "community-goal",
+  "exchanges": [
+    {
+      "method": "GET",
+      "path": "community-goal",
+      "request": null,
+      "status": 200,
+      "response": {
+        "active": false
+      }
+    }
+  ]
+}

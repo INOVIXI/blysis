@@ -1,0 +1,85 @@
+{
+  "scenario": "catalog",
+  "exchanges": [
+    {
+      "method": "GET",
+      "path": "catalog",
+      "request": null,
+      "status": 200,
+      "response": {
+        "version": "c-5e8c58980501f536",
+        "currency": "credits",
+        "categories": [
+          {
+            "id": "cat_items",
+            "parentId": null,
+            "title": "Items",
+            "description": "",
+            "icon": null,
+            "order": 0,
+            "products": [
+              {
+                "id": "p_conform",
+                "title": "Conformance token",
+                "description": "Shiny.",
+                "icon": "DIAMOND",
+                "price": 1,
+                "giftable": true,
+                "maxQuantity": 64,
+                "stock": null,
+                "servers": [
+                  "Conformance"
+                ],
+                "fields": []
+              },
+              {
+                "id": "p_diamond",
+                "title": "Ten diamonds",
+                "description": "Shiny.",
+                "icon": "DIAMOND",
+                "price": 5,
+                "giftable": true,
+                "maxQuantity": 64,
+                "stock": 45,
+                "servers": [
+                  "Network",
+                  "Survival"
+                ],
+                "fields": []
+              }
+            ]
+          },
+          {
+            "id": "cat_ranks",
+            "parentId": null,
+            "title": "Ranks",
+            "description": "",
+            "icon": null,
+            "order": 0,
+            "products": [
+              {
+                "id": "p_vip",
+                "title": "Hero",
+                "description": "A month as a hero.",
+                "icon": "GOLDEN_HELMET",
+                "price": 20,
+                "giftable": true,
+                "maxQuantity": 64,
+                "stock": null,
+                "servers": [],
+                "fields": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "catalog",
+      "request": null,
+      "status": 304,
+      "response": null
+    }
+  ]
+}

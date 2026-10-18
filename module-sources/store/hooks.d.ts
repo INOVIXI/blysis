@@ -63,6 +63,8 @@ declare global {
         "store.order.created": StoreOrderHookPayload;
         "store.order.completed": StoreOrderHookPayload;
         "store.product.created": { id: string; name: string; slug: string };
+        /** Credits bought with money settled on an account. Gifts, refunds and grants are not this. */
+        "store.credits.purchased": { userId: string; amount: number };
     }
 
     /**
@@ -360,6 +362,175 @@ interface StoreOrderHookPayload {
      * same way, through lib/order-events.ts.
      */
     items: StoreOrderItemHookPayload[];
+}
+
+
+/**
+ * The store, as a game sees it.
+ *
+ * A module that connects game servers asks these questions instead of reading
+ * this module's tables. The store answers them because only the store knows
+ * what a price is, what a gift is, and what a chest row means; the asker only
+ * carries the answers to a game and back.
+ *
+ * A member is always named by id. The asker resolves a player to a member
+ * through its own links first, so nothing here knows what a game account is.
+ */
+declare global {
+    interface InGameField {
+        name: string;
+        label: string;
+        type: "text" | "number" | "select";
+        required: boolean;
+        placeholder: string | null;
+        options: string[];
+    }
+
+    interface InGameProduct {
+        id: string;
+        title: string;
+        description: string;
+        icon: string | null;
+        price: number;
+        giftable: boolean;
+        maxQuantity: number;
+        /** Null when unlimited. */
+        stock: number | null;
+        /** The names of the servers its commands run on. */
+        servers: string[];
+        fields: InGameField[];
+    }
+
+    interface InGameCategory {
+        id: string;
+        parentId: string | null;
+        title: string;
+        description: string;
+        icon: string | null;
+        order: number;
+        products: InGameProduct[];
+    }
+
+    interface InGameCatalog {
+        currency: "credits";
+        categories: InGameCategory[];
+    }
+
+    /** A purchase paid in credits, made somewhere other than the checkout page. */
+    interface CreditPurchaseRequest {
+        buyerId: string;
+        productId: string;
+        quantity: number;
+        fields: Record<string, string>;
+        /** The member the purchase is a gift to, or null for the buyer. */
+        recipientId: string | null;
+        /** The name delivery runs for when it is not a gift. */
+        playerName: string;
+        /** The game account id behind that name, when the asker knows it. */
+        playerId: string | null;
+        /** Where it was bought, for the order's notes. */
+        channel: string;
+    }
+
+    type CreditPurchaseResult =
+        | { ok: true; orderId: string; orderNumber: string; total: number; balance: number; gift: boolean }
+        | {
+              ok: false;
+              code:
+                  | "not_found"
+                  | "not_in_game"
+                  | "insufficient_balance"
+                  | "out_of_stock"
+                  | "quantity_invalid"
+                  | "field_invalid"
+                  | "not_giftable"
+                  | "recipient_refuses_gifts"
+                  | "unavailable";
+              /** The field that failed, for `field_invalid`. */
+              field?: string;
+              /** A finer reason, for `unavailable`: `billing_required` is the one a game can name. */
+              reason?: string;
+          };
+
+    interface ChestEntry {
+        id: string;
+        productId: string;
+        title: string;
+        icon: string | null;
+        quantity: number;
+        state: "ready" | "pending_gift";
+        /** The sender's username, for a gift. */
+        from: string | null;
+        createdAt: string;
+    }
+
+    interface SentGift {
+        id: string;
+        title: string;
+        icon: string | null;
+        quantity: number;
+        to: string;
+        state: "pending_gift" | "accepted";
+        createdAt: string;
+    }
+
+    type ChestActionResult =
+        | { ok: true }
+        | { ok: false; code: "not_found" | "already_claimed" | "not_pending" | "needs_player_name" | "unavailable" };
+
+    /** Where a delivery stands, in the words a buyer is shown. */
+    type DeliveryState = "waiting" | "delivered" | "failed" | "review" | "cancelled";
+
+    /** One order's delivery: the whole of it, and each line by order item id. */
+    interface OrderDelivery {
+        state: DeliveryState;
+        lines: Record<string, DeliveryState>;
+    }
+
+    type GiftCancelResult =
+        | { ok: true; refunded: number; balance: number }
+        | { ok: false; code: "not_found" | "not_pending" | "unavailable" };
+
+    interface BlysisFilterPayloads {
+        /** What a game may show and sell. Empty when nothing is marked for games. */
+        "store.catalog.ingame": InGameCatalog;
+        /** The outcome of a purchase paid in credits. */
+        "store.purchase.credits": CreditPurchaseResult;
+        /** A member's chest, pending gifts included, and whether they take gifts. */
+        "store.chest.list": { items: ChestEntry[]; receiveGifts: boolean };
+        /** Send a ready chest item to delivery. */
+        "store.chest.claim": ChestActionResult;
+        /** Turn a pending gift into a ready chest item. */
+        "store.gift.activate": ChestActionResult;
+        /** Take back a gift nobody activated, and the money with it. */
+        "store.gift.cancel": GiftCancelResult;
+        /** The gifts a member sent. */
+        "store.gifts.sent": SentGift[];
+        /** Whether a member takes gifts, after the change if one was asked for. */
+        "store.gifts.receive": boolean;
+        /** The community goal and what has been raised toward it this month. */
+        "store.community-goal": { target: number; current: number; title: string; endDate: string | null } | null;
+        /**
+         * Where each order's delivery stands, by order id, when a module queues
+         * deliveries rather than running them at once. An order nobody answers
+         * for is absent, and the screens say nothing about it.
+         */
+        "store.orders.delivery": Record<string, OrderDelivery>;
+    }
+
+    interface BlysisFilterContexts {
+        "store.catalog.ingame": Record<string, never>;
+        "store.purchase.credits": CreditPurchaseRequest;
+        "store.chest.list": { userId: string };
+        "store.chest.claim": { userId: string; itemId: string; playerName: string; playerId: string | null };
+        "store.gift.activate": { userId: string; itemId: string };
+        "store.gift.cancel": { userId: string; itemId: string };
+        "store.gifts.sent": { userId: string };
+        /** `receive` null reads the switch without changing it. */
+        "store.gifts.receive": { userId: string; receive: boolean | null };
+        "store.community-goal": Record<string, never>;
+        "store.orders.delivery": { orderIds: string[] };
+    }
 }
 
 export {};

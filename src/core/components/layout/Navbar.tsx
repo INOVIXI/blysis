@@ -164,6 +164,7 @@ function DefaultNavbar() {
     }, [shownKey]);
 
     const overflowLinks = overflowFrom === null ? [] : shownLinks.slice(overflowFrom);
+    const overflowEntries = overflowLinks.flatMap((link) => (link.children && link.children.length > 0 ? link.children : [link]));
 
     const menuRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -314,8 +315,12 @@ function DefaultNavbar() {
                             </button>
                             {navDropdown === OVERFLOW_MENU && (
                                 <div className="absolute top-full right-0 pt-1 z-50">
-                                    <div className="w-56 max-h-[70vh] overflow-y-auto bg-card border border-[var(--color-border)] rounded-lg shadow-lg py-1 animate-fade-in">
-                                        {overflowLinks.flatMap((link) => link.children && link.children.length > 0 ? link.children : [link]).map((link) => (
+                                    {/* One column holds about eight entries before the list runs past a
+                                        laptop's window and the last ones need a scroll nobody thinks to
+                                        try. A narrow bar folds most of the site in here, so a long list
+                                        takes two columns and stays whole on the screen. */}
+                                    <div className={`${overflowEntries.length > 8 ? "w-[28rem] grid grid-cols-2" : "w-56"} max-h-[70vh] overflow-y-auto bg-card border border-[var(--color-border)] rounded-lg shadow-lg py-1 animate-fade-in`}>
+                                        {overflowEntries.map((link) => (
                                             <Link key={link.href} href={link.href}
                                                 onClick={() => setNavDropdown(null)}
                                                 className="flex items-center gap-2.5 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">

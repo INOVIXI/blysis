@@ -1,0 +1,55 @@
+{
+  "scenario": "refusals",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "hello",
+      "request": {},
+      "status": 401,
+      "response": {
+        "error": "No server holds that token.",
+        "code": "token_invalid"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "hello",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29"
+      },
+      "status": 401,
+      "response": {
+        "error": "No server holds that token.",
+        "code": "token_invalid"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "hello",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29"
+      },
+      "status": 426,
+      "response": {
+        "error": "This site does not speak that protocol version.",
+        "code": "protocol_unsupported",
+        "supported": [
+          1
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "hello",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "role": "emperor"
+      },
+      "status": 422,
+      "response": {
+        "error": "Invalid input: expected object, received undefined",
+        "code": "invalid_request"
+      }
+    }
+  ]
+}

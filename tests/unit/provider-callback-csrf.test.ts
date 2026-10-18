@@ -162,6 +162,12 @@ describe("every gateway callback", () => {
         // The sixteenth is the invoice the same integrator sends back once it
         // has issued one.
         //
+        // The other twenty-two are a game server's own calls to game-connect:
+        // hello, the poll, the report and the status, and the eighteen a
+        // player's menus make through it, from the catalogue to a voucher. A
+        // game server has no browser and sends no Origin, and each call
+        // proves itself with the server's token before it reads anything.
+        //
         // There used to be a seventeenth: a game server's ban plugin posting
         // what it had punished somebody for, in a JSON shape this repo made
         // up. LiteBans does send HTTP - 2.19.0 ships `webhooks.yml` - but it
@@ -172,11 +178,12 @@ describe("every gateway callback", () => {
         // punishments are read out of its database on the scheduler instead.
         // A door into the CSRF gate is worth closing the moment nothing needs
         // it.
-        expect(declared.length).toBe(16);
+        expect(declared.length).toBe(38);
         expect(declared).toContain("stripe-gateway");
         expect(declared).toContain("mollie-gateway");
         expect(declared.filter((name) => name === "birfatura-invoicing")).toHaveLength(4);
         expect(declared).not.toContain("minecraft-litebans");
+        expect(declared.filter((name) => name === "game-connect")).toHaveLength(22);
     });
 });
 

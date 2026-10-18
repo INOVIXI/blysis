@@ -103,8 +103,10 @@ describe("spending a credit balance", () => {
         const wallet = fs.readFileSync(path.join(ROOT, "module-sources/credits/hooks/change.ts"), "utf8");
         expect(wallet, "the wallet must check whether the debit landed").toMatch(/\.count === 0/);
 
+        // Checkout's debit lives in lib/credit-order.ts, shared with a
+        // purchase made in game, so that is where its answer is read.
         for (const name of [
-            "module-sources/store/api/checkout/route.ts",
+            "module-sources/store/lib/credit-order.ts",
             "module-sources/store/api/credits/transfer/route.ts",
             "module-sources/wheel/api/spin/route.ts",
         ]) {

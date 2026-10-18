@@ -1,0 +1,178 @@
+{
+  "scenario": "credits-transfer",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "credits/transfer",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "to": "Bo",
+        "amount": 1,
+        "idempotencyKey": "conf-24de6de9-send"
+      },
+      "status": 200,
+      "response": {
+        "sent": 1,
+        "to": "alex",
+        "balance": 214
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/transfer",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "to": "Bo",
+        "amount": 1,
+        "idempotencyKey": "conf-24de6de9-send"
+      },
+      "status": 200,
+      "response": {
+        "to": "alex",
+        "sent": 1,
+        "balance": 214
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/transfer",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "to": "Ada",
+        "amount": 1,
+        "idempotencyKey": "conf-24de6de9-self"
+      },
+      "status": 409,
+      "response": {
+        "error": "That is the same account.",
+        "code": "same_account"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/transfer",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "to": "Bo",
+        "amount": 0,
+        "idempotencyKey": "conf-24de6de9-zero"
+      },
+      "status": 409,
+      "response": {
+        "error": "Name an amount above zero, with two decimals at most.",
+        "code": "amount_invalid"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/transfer",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "to": "Bo",
+        "amount": 0.001,
+        "idempotencyKey": "conf-24de6de9-fraction"
+      },
+      "status": 409,
+      "response": {
+        "error": "Name an amount above zero, with two decimals at most.",
+        "code": "amount_invalid"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/transfer",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "to": "Bo",
+        "amount": 1214,
+        "idempotencyKey": "conf-24de6de9-broke"
+      },
+      "status": 409,
+      "response": {
+        "error": "Not enough credits.",
+        "code": "insufficient_balance"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/transfer",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "to": "nobody24de6de9",
+        "amount": 1,
+        "idempotencyKey": "conf-24de6de9-nobody"
+      },
+      "status": 409,
+      "response": {
+        "error": "Nobody by that name.",
+        "code": "recipient_unknown"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/transfer",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "39da0e44-bace-4922-9664-1a18e877b275",
+          "name": "Conf24de6d"
+        },
+        "to": "Bo",
+        "amount": 1,
+        "idempotencyKey": "conf-24de6de9-stranger"
+      },
+      "status": 409,
+      "response": {
+        "error": "This player has no account on the site.",
+        "code": "not_linked"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "credits/transfer",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "to": "Bo",
+        "amount": 1,
+        "idempotencyKey": "short"
+      },
+      "status": 422,
+      "response": {
+        "error": "Too small: expected string to have >=8 characters",
+        "code": "invalid_request"
+      }
+    }
+  ]
+}

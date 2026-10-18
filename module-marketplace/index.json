@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-06",
-  "updatedAt": "2026-10-06T09:06:29Z",
+  "updated": "2026-10-18",
+  "updatedAt": "2026-10-18T13:16:38Z",
   "modules": [
     {
       "id": "announcements",
@@ -999,13 +999,13 @@
           "description": "为用户提供的虚拟货币钱包"
         }
       },
-      "version": "1.9.1",
+      "version": "1.10.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-06T09:06:29Z",
+      "updatedAt": "2026-10-18T13:16:38Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -1021,7 +1021,9 @@
         "listens": [
           "credits.award",
           "store.order.completed",
-          "credit.change"
+          "credit.change",
+          "credits.balance",
+          "credits.top"
         ]
       },
       "stats": {
@@ -2184,6 +2186,104 @@
         "publicRoutes": 3,
         "adminRoutes": 3,
         "apiRoutes": 9,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "game-connect",
+      "name": "Game Connect",
+      "description": "Let game servers connect to this site themselves: queued delivery that survives a restart, live status, the store and credits in game, and account linking, for any game with a client",
+      "i18n": {
+        "az": {
+          "name": "Game Connect",
+          "description": "Oyun serverlərinin bu sayta özləri qoşulmasına imkan verin: yenidən başlatmaya davam gətirən çatdırılma növbəsi, canlı vəziyyət, oyunda mağaza və kreditlər və hesab bağlama, klienti olan istənilən oyun üçün"
+        },
+        "de": {
+          "name": "Game Connect",
+          "description": "Lass Spielserver sich selbst mit dieser Seite verbinden: eine Lieferwarteschlange, die einen Neustart übersteht, Live-Status, der Shop und Credits im Spiel und Kontoverknüpfung, für jedes Spiel mit einem Client"
+        },
+        "es": {
+          "name": "Game Connect",
+          "description": "Deja que los servidores de juego se conecten solos a este sitio: entregas en cola que sobreviven a un reinicio, estado en vivo, la tienda y los créditos en el juego, y vinculación de cuentas, para cualquier juego con un cliente"
+        },
+        "et": {
+          "name": "Game Connect",
+          "description": "Lase mänguserveritel ise selle saidiga ühenduda: tarnejärjekord, mis elab üle taaskäivituse, reaalajas olek, pood ja krediidid mängus ning kontode sidumine, iga kliendiga mängu jaoks"
+        },
+        "fr": {
+          "name": "Game Connect",
+          "description": "Laissez les serveurs de jeu se connecter eux-mêmes à ce site : une livraison en file qui survit à un redémarrage, l’état en direct, la boutique et les crédits en jeu, et la liaison de comptes, pour tout jeu doté d’un client"
+        },
+        "it": {
+          "name": "Game Connect",
+          "description": "Lascia che i server di gioco si colleghino da soli a questo sito: consegne in coda che sopravvivono a un riavvio, stato in tempo reale, il negozio e i crediti nel gioco e il collegamento degli account, per ogni gioco con un client"
+        },
+        "pl": {
+          "name": "Game Connect",
+          "description": "Pozwól serwerom gier same łączyć się z tą stroną: kolejka dostaw, która przetrwa restart, stan na żywo, sklep i kredyty w grze oraz łączenie kont, dla każdej gry z klientem"
+        },
+        "pt": {
+          "name": "Game Connect",
+          "description": "Deixe os servidores de jogo se conectarem sozinhos a este site: entregas em fila que sobrevivem a um reinício, status ao vivo, a loja e os créditos no jogo e vínculo de contas, para qualquer jogo com um cliente"
+        },
+        "ru": {
+          "name": "Game Connect",
+          "description": "Пусть игровые серверы сами подключаются к этому сайту: очередь доставок, которая переживает перезапуск, состояние в реальном времени, магазин и кредиты в игре и привязка аккаунтов, для любой игры с клиентом"
+        },
+        "tr": {
+          "name": "Oyun Bağlantısı",
+          "description": "Oyun sunucuları siteye kendileri bağlansın: yeniden başlatmadan etkilenmeyen sıralı teslimat, canlı durum, oyunda mağaza ve kredi, hesap eşleme. İstemcisi olan her oyun için."
+        },
+        "zh": {
+          "name": "Game Connect",
+          "description": "让游戏服务器自行连接到本站：重启后依然保留的发货队列、实时状态、游戏内商店与积分，以及账户绑定，适用于任何有客户端的游戏"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.0.0",
+      "author": "Blysis",
+      "icon": "Cable",
+      "category": "gaming",
+      "verified": true,
+      "updatedAt": "2026-10-18T12:07:10Z",
+      "screenshots": [],
+      "tags": [
+        "gaming"
+      ],
+      "zip": "game-connect.zip",
+      "dependencies": [
+        "servers"
+      ],
+      "conflicts": [],
+      "hooks": {
+        "emits": [
+          "store.catalog.ingame",
+          "servers.list",
+          "store.purchase.credits",
+          "store.chest.list",
+          "store.chest.claim",
+          "store.gift.activate",
+          "store.gift.cancel",
+          "store.gifts.sent",
+          "store.gifts.receive",
+          "store.community-goal",
+          "credits.balance",
+          "credits.top",
+          "credit.change",
+          "game-account.resolve"
+        ],
+        "listens": [
+          "server.command",
+          "store.order.completed",
+          "store.credits.purchased",
+          "game-account.resolve",
+          "store.orders.delivery"
+        ]
+      },
+      "stats": {
+        "publicRoutes": 1,
+        "adminRoutes": 4,
+        "apiRoutes": 32,
         "widgets": 0
       }
     },
@@ -5316,13 +5416,13 @@
           "description": "游戏服务器管理、RCON 和状态监控"
         }
       },
-      "version": "1.4.0",
+      "version": "1.5.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Server",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-09-20T04:45:04Z",
+      "updatedAt": "2026-10-18T12:07:10Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -5333,7 +5433,8 @@
       "hooks": {
         "emits": [],
         "listens": [
-          "server.command"
+          "server.command",
+          "servers.list"
         ]
       },
       "stats": {
@@ -5845,13 +5946,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.46.3",
+      "version": "2.47.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-06T09:06:29Z",
+      "updatedAt": "2026-10-18T13:16:38Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -5872,7 +5973,10 @@
           "payment.session",
           "currency.rate",
           "store.billing.required",
-          "credit.change"
+          "credit.change",
+          "servers.list",
+          "store.credits.purchased",
+          "store.orders.delivery"
         ],
         "listens": [
           "user.registered",
@@ -5890,7 +5994,16 @@
           "comparison.columns",
           "csv.exports",
           "product.grant",
-          "grantable.options"
+          "grantable.options",
+          "store.catalog.ingame",
+          "store.purchase.credits",
+          "store.chest.list",
+          "store.chest.claim",
+          "store.gift.activate",
+          "store.gift.cancel",
+          "store.gifts.sent",
+          "store.gifts.receive",
+          "store.community-goal"
         ]
       },
       "stats": {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { hasPermission, log, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { communityGoalSchema } from "../../lib/validations";
+import { readCommunityGoal } from "../../lib/community-goal";
 
 /**
  * This answer is the same whoever asked, so a proxy in front of the site may
@@ -14,37 +15,7 @@ const SHARED_CACHE = { "Cache-Control": "public, max-age=0, s-maxage=30, stale-w
 // GET /api/v1/community-goal - Public endpoint
 export async function GET() {
     try {
-        const settings = await prisma.setting.findMany({
-            where: { key: { startsWith: "community_goal_" } },
-        });
-
-        const settingsMap: Record<string, unknown> = {};
-        for (const s of settings) {
-            settingsMap[s.key] = s.value;
-        }
-
-        const target = Number(settingsMap.community_goal_target) || 0;
-        const title = (settingsMap.community_goal_title as string) || "Monthly Goal";
-        const endDate = (settingsMap.community_goal_end_date as string) || null;
-
-        if (target <= 0) {
-            return NextResponse.json({ target: 0, current: 0, title, endDate: null }, { headers: SHARED_CACHE });
-        }
-
-        // Calculate current from completed orders this month (or since goal start)
-        const now = new Date();
-        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-        const result = await prisma.order.aggregate({
-            _sum: { total: true },
-            where: {
-                status: "COMPLETED",
-                createdAt: { gte: monthStart },
-            },
-        });
-
-        const current = Number(result._sum.total) || 0;
-
+        const { target, current, title, endDate } = await readCommunityGoal();
         return NextResponse.json({ target, current, title, endDate }, { headers: SHARED_CACHE });
     } catch (error) {
         log.error("Community goal error", { error: error instanceof Error ? error.message : String(error) });

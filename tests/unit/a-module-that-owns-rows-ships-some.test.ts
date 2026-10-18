@@ -47,6 +47,7 @@ const NOTHING_TO_SHOW: Record<string, string> = {
     "discord-integration": "Which event goes to which channel, against channel ids that only exist in one Discord server.",
     "external-data": "A source names a table in a database this site does not own. A seeded source is a source that cannot be read.",
     "minecraft-litebans": "What probing one operator's LiteBans database reported.",
+    "game-connect": "Tokens, claims and presence that a running game server writes. A seeded token is a credential nobody holds, and a seeded delivery is a command that never ran.",
 };
 
 function moduleIds(): string[] {

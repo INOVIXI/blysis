@@ -17,6 +17,8 @@ import {
     type CategoryFormValue,
 } from "./category-form";
 import { RequirementFields } from "../products/_fields/RequirementFields";
+import { InGameFields } from "../products/_fields/InGameFields";
+import { inGameFrom } from "../products/_fields/in-game-payload";
 
 interface Category {
     id: string;
@@ -29,6 +31,10 @@ interface Category {
     order: number;
     visibleAfterProductIds?: string[];
     layout?: string;
+    showInGame?: boolean;
+    gameTitle?: string | null;
+    gameDescription?: string | null;
+    gameIcon?: string | null;
     children?: Category[];
     _count?: { products: number };
 }
@@ -87,6 +93,7 @@ export default function AdminStoreCategoriesPage() {
             isActive: row.isActive,
             visibleAfterProductIds: row.visibleAfterProductIds ?? [],
             layout: row.layout ?? "grid",
+            inGame: inGameFrom(row),
         });
     }, [editingId, categories]);
 
@@ -283,6 +290,8 @@ export default function AdminStoreCategoriesPage() {
                                 title={t("adm_shelfGate")}
                                 hint={t("adm_shelfGateHint")}
                             />
+
+                            <InGameFields value={form.inGame} onChange={(inGame) => setForm({ ...form, inGame })} kind="category" />
 
                             <div className="flex gap-2">
                                 <Button type="submit" disabled={saving}>

@@ -68,6 +68,7 @@ const SAFE_FAMILIES: { pattern: RegExp; why: string }[] = [
     { pattern: /^\/api\/v1\/(?:error-report|notification-preferences)$/, why: "a browser reporting its own trouble, and a member's own switches" },
     { pattern: /^\/api\/v1\/downloads/, why: "content the demo exists to show somebody managing" },
     { pattern: /^\/api\/v1\/admin\/trophies/, why: "the same, and reloading them only re-reads rows the reset puts back" },
+    { pattern: /^\/api\/v1\/game-connect\/(?:hello|poll|jobs\/report|status)$/, why: "a game server's own calls, each refused without the token that only a connected server holds" },
 ];
 
 /** Every path in the tree that answers a mutating verb. */

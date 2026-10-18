@@ -1,0 +1,43 @@
+{
+  "scenario": "hello",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "hello",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "client": {
+          "name": "conformance",
+          "version": "1"
+        },
+        "game": "example",
+        "software": {
+          "name": "Conformance",
+          "version": "24de6de9"
+        },
+        "role": "server"
+      },
+      "status": 200,
+      "response": {
+        "server": {
+          "id": "gs_conform",
+          "name": "Conformance"
+        },
+        "site": {
+          "name": "Connect Lab",
+          "url": "http://localhost:3101"
+        },
+        "settings": {
+          "pollHoldSeconds": 25,
+          "statusIntervalSeconds": 30,
+          "leaseSeconds": 120,
+          "catalogVersion": "c-5e8c58980501f536"
+        },
+        "takeover": {
+          "previousInstance": "456b76ee-625d-4706-b2ae-74dcfbaf85a6",
+          "lastSeen": "2026-10-18T17:30:57.318Z"
+        }
+      }
+    }
+  ]
+}

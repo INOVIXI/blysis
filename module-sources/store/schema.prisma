@@ -10,6 +10,7 @@
 //   chestItems       ChestItem[]        @relation("ChestItems")
 //   stripeCustomerId String?
 //   subscriptions    Subscription[]
+//   receiveGifts     Boolean            @default(true)
 // @@user-relations-end
 // NOTE: User FK fields below are nullable + onDelete: SetNull so that
 // deleting a user preserves their order/credit/subscription history for
@@ -50,6 +51,12 @@ model Category {
    * The shop keeps the switch because the shelf is the shop's.
    */
   layout      String    @default("grid")
+  /** Whether a connected game shows this shelf, and how it is named there. */
+  showInGame      Boolean @default(false)
+  gameTitle       String?
+  gameDescription String?
+  /** Free text each game reads its own way: a material, an item model, a sprite. */
+  gameIcon        String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -143,6 +150,16 @@ model Product {
   salePrice            Decimal?  @db.Decimal(10, 2)
   saleFrom             DateTime?
   saleUntil            DateTime?
+
+  /**
+   * Whether a connected game sells this, and how it is drawn there. Shown
+   * only when its shelf is shown too. The icon is free text each game reads
+   * its own way: a material, an item model, a sprite name.
+   */
+  showInGame           Boolean   @default(false)
+  gameTitle            String?
+  gameDescription      String?
+  gameIcon             String?
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -415,6 +432,14 @@ model ProductCommand {
   command   String
   serverId  String?
   order     Int     @default(0)
+  /**
+   * `server` runs on `serverId`; `player` runs on whichever server the buyer
+   * is on. Read only by a game server that collects deliveries itself: RCON
+   * runs the line on `serverId` at once and ignores both of these.
+   */
+  target     String  @default("server")
+  /** Wait until the player is on the target server. */
+  whenOnline Boolean @default(true)
 
   @@index([productId])
 }
@@ -441,10 +466,19 @@ model ChestItem {
   isRedeemed  Boolean  @default(false)
   redeemedAt  DateTime?
   giftedToId  String?
+  /**
+   * `pending` while a gift waits for the recipient to accept it; null for an
+   * item that is simply theirs. A pending gift cannot be claimed, and its
+   * sender can still take it back.
+   */
+  giftState   String?
+  /** Who sent it, for a gift. */
+  giftedById  String?
   orderId     String?
   createdAt   DateTime @default(now())
 
   @@index([userId])
+  @@index([giftedById])
 }
 
 model CreatorCode {

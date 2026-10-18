@@ -2,7 +2,7 @@
   "id": "credits",
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis",
@@ -65,7 +65,6 @@
         "buy_buy": "Buy",
         "buy_failed": "That purchase could not be started.",
         "buy_title": "Buy credits",
-        "deduct": "Deduct Credits",
         "err": {
           "credits_no_recipient": "No account by that name.",
           "credits_same_account": "That is your own account.",
@@ -96,12 +95,14 @@
         "title": "Credits",
         "transfer": "Transfer Credits",
         "typeAdmin_grant": "Granted by an Admin",
+        "typeAdmin_remove": "Removed by Staff",
         "typeCashback": "Cashback",
         "typeCreator_commission": "Creator Commission",
         "typeCredit": "Credit",
         "typeCredit_purchase": "Bought",
         "typeDebit": "Debit",
         "typeGift_redeem": "Gift Code",
+        "typeGift_refund": "Gift Taken Back",
         "typeMarket_commission": "Marketplace Commission",
         "typeMarket_purchase": "Bought from a Member",
         "typeMarket_sale": "Sold to a Member",
@@ -111,6 +112,8 @@
         "typeTransfer_in": "Received",
         "typeTransfer_out": "Sent",
         "typeUnknown": "Adjustment",
+        "typeVoucher_create": "Voucher Made",
+        "typeVoucher_redeem": "Voucher Redeemed",
         "typeWheel_prize": "Wheel Prize",
         "typeWheel_spin": "Wheel Spin"
       },
@@ -141,7 +144,6 @@
         "buy_buy": "Satın al",
         "buy_failed": "Satın alma başlatılamadı.",
         "buy_title": "Kredi satın al",
-        "deduct": "Kredi Düş",
         "err": {
           "credits_no_recipient": "Bu adda bir hesap yok.",
           "credits_same_account": "Burası kendi hesabınız.",
@@ -172,12 +174,14 @@
         "title": "Krediler",
         "transfer": "Kredi Transfer Et",
         "typeAdmin_grant": "Yönetici Tarafından Verildi",
+        "typeAdmin_remove": "Yetkili Tarafından Düşüldü",
         "typeCashback": "İade",
         "typeCreator_commission": "Üretici Komisyonu",
         "typeCredit": "Alacak",
         "typeCredit_purchase": "Satın Alındı",
         "typeDebit": "Borç",
         "typeGift_redeem": "Hediye Kodu",
+        "typeGift_refund": "Hediye Geri Alındı",
         "typeMarket_commission": "Pazar Komisyonu",
         "typeMarket_purchase": "Üyeden Satın Alındı",
         "typeMarket_sale": "Üyeye Satıldı",
@@ -187,6 +191,8 @@
         "typeTransfer_in": "Alındı",
         "typeTransfer_out": "Gönderildi",
         "typeUnknown": "Düzeltme",
+        "typeVoucher_create": "Kupon Oluşturuldu",
+        "typeVoucher_redeem": "Kupon Bozduruldu",
         "typeWheel_prize": "Çark Ödülü",
         "typeWheel_spin": "Çark Çevirme"
       },
@@ -217,7 +223,6 @@
         "buy_buy": "Al",
         "buy_failed": "Bu alış başladıla bilmədi.",
         "buy_title": "Kredit alın",
-        "deduct": "Kreditləri çıx",
         "err": {
           "credits_no_recipient": "Bu adda hesab yoxdur.",
           "credits_same_account": "Bu sizin öz hesabınızdır.",
@@ -264,7 +269,11 @@
         "typeTransfer_out": "Göndərilib",
         "typeUnknown": "Düzəliş",
         "typeWheel_prize": "Çarx mükafatı",
-        "typeWheel_spin": "Çarxın fırlanması"
+        "typeWheel_spin": "Çarxın fırlanması",
+        "typeAdmin_remove": "Heyət tərəfindən silinib",
+        "typeGift_refund": "Hədiyyə geri alındı",
+        "typeVoucher_create": "Kupon yaradıldı",
+        "typeVoucher_redeem": "Kupon istifadə edildi"
       },
       "admin": {
         "module_credits_name": "Kredit sistemi",
@@ -293,7 +302,6 @@
         "buy_buy": "Kaufen",
         "buy_failed": "Dieser Kauf konnte nicht gestartet werden.",
         "buy_title": "Credits kaufen",
-        "deduct": "Credits abziehen",
         "err": {
           "credits_no_recipient": "Kein Konto mit diesem Namen.",
           "credits_same_account": "Das ist dein eigenes Konto.",
@@ -340,7 +348,11 @@
         "typeTransfer_out": "Gesendet",
         "typeUnknown": "Anpassung",
         "typeWheel_prize": "Glücksrad-Gewinn",
-        "typeWheel_spin": "Glücksrad-Dreh"
+        "typeWheel_spin": "Glücksrad-Dreh",
+        "typeAdmin_remove": "Von Mitarbeitern entfernt",
+        "typeGift_refund": "Geschenk zurückgenommen",
+        "typeVoucher_create": "Gutschein erstellt",
+        "typeVoucher_redeem": "Gutschein eingelöst"
       },
       "admin": {
         "module_credits_name": "Credit-System",
@@ -369,7 +381,6 @@
         "buy_buy": "Comprar",
         "buy_failed": "No se pudo iniciar esa compra.",
         "buy_title": "Comprar créditos",
-        "deduct": "Descontar créditos",
         "err": {
           "credits_no_recipient": "No hay ninguna cuenta con ese nombre.",
           "credits_same_account": "Esa es tu propia cuenta.",
@@ -416,7 +427,11 @@
         "typeTransfer_out": "Enviado",
         "typeUnknown": "Ajuste",
         "typeWheel_prize": "Premio de la ruleta",
-        "typeWheel_spin": "Giro de la ruleta"
+        "typeWheel_spin": "Giro de la ruleta",
+        "typeAdmin_remove": "Retirado por el equipo",
+        "typeGift_refund": "Regalo recuperado",
+        "typeVoucher_create": "Vale creado",
+        "typeVoucher_redeem": "Vale canjeado"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -445,7 +460,6 @@
         "buy_buy": "Osta",
         "buy_failed": "Seda ostu ei õnnestunud alustada.",
         "buy_title": "Osta krediite",
-        "deduct": "Arva krediidid maha",
         "err": {
           "credits_no_recipient": "Sellise nimega kontot pole.",
           "credits_same_account": "See on sinu enda konto.",
@@ -492,7 +506,11 @@
         "typeTransfer_out": "Saadetud",
         "typeUnknown": "Korrigeerimine",
         "typeWheel_prize": "Õnnerattaauhind",
-        "typeWheel_spin": "Õnnerattakeeramine"
+        "typeWheel_spin": "Õnnerattakeeramine",
+        "typeAdmin_remove": "Meeskonna eemaldatud",
+        "typeGift_refund": "Kingitus võeti tagasi",
+        "typeVoucher_create": "Kupong loodud",
+        "typeVoucher_redeem": "Kupong lunastatud"
       },
       "admin": {
         "module_credits_name": "Krediidisüsteem",
@@ -521,7 +539,6 @@
         "buy_buy": "Acheter",
         "buy_failed": "Cet achat n’a pas pu être lancé.",
         "buy_title": "Acheter des crédits",
-        "deduct": "Déduire des crédits",
         "err": {
           "credits_no_recipient": "Aucun compte ne porte ce nom.",
           "credits_same_account": "C’est votre propre compte.",
@@ -568,7 +585,11 @@
         "typeTransfer_out": "Envoyé",
         "typeUnknown": "Ajustement",
         "typeWheel_prize": "Gain de la roue",
-        "typeWheel_spin": "Tour de roue"
+        "typeWheel_spin": "Tour de roue",
+        "typeAdmin_remove": "Retiré par l’équipe",
+        "typeGift_refund": "Cadeau repris",
+        "typeVoucher_create": "Bon créé",
+        "typeVoucher_redeem": "Bon utilisé"
       },
       "admin": {
         "module_credits_name": "Système de crédits",
@@ -597,7 +618,6 @@
         "buy_buy": "Acquista",
         "buy_failed": "Non è stato possibile avviare questo acquisto.",
         "buy_title": "Acquista crediti",
-        "deduct": "Sottrai crediti",
         "err": {
           "credits_no_recipient": "Nessun account con questo nome.",
           "credits_same_account": "Questo è il tuo account.",
@@ -644,7 +664,11 @@
         "typeTransfer_out": "Inviato",
         "typeUnknown": "Rettifica",
         "typeWheel_prize": "Premio della ruota",
-        "typeWheel_spin": "Giro della ruota"
+        "typeWheel_spin": "Giro della ruota",
+        "typeAdmin_remove": "Rimosso dallo staff",
+        "typeGift_refund": "Regalo ripreso",
+        "typeVoucher_create": "Buono creato",
+        "typeVoucher_redeem": "Buono riscattato"
       },
       "admin": {
         "module_credits_name": "Sistema di crediti",
@@ -673,7 +697,6 @@
         "buy_buy": "Kup",
         "buy_failed": "Nie udało się rozpocząć tego zakupu.",
         "buy_title": "Kup kredyty",
-        "deduct": "Odejmij kredyty",
         "err": {
           "credits_no_recipient": "Nie ma konta o tej nazwie.",
           "credits_same_account": "To Twoje własne konto.",
@@ -720,7 +743,11 @@
         "typeTransfer_out": "Wysłano",
         "typeUnknown": "Korekta",
         "typeWheel_prize": "Nagroda z koła",
-        "typeWheel_spin": "Obrót koła"
+        "typeWheel_spin": "Obrót koła",
+        "typeAdmin_remove": "Usunięte przez obsługę",
+        "typeGift_refund": "Prezent cofnięty",
+        "typeVoucher_create": "Utworzono bon",
+        "typeVoucher_redeem": "Wykorzystano bon"
       },
       "admin": {
         "module_credits_name": "System kredytów",
@@ -749,7 +776,6 @@
         "buy_buy": "Comprar",
         "buy_failed": "Não foi possível iniciar esta compra.",
         "buy_title": "Comprar créditos",
-        "deduct": "Descontar créditos",
         "err": {
           "credits_no_recipient": "Não existe conta com esse nome.",
           "credits_same_account": "Essa é a sua própria conta.",
@@ -796,7 +822,11 @@
         "typeTransfer_out": "Enviado",
         "typeUnknown": "Ajuste",
         "typeWheel_prize": "Prêmio da roleta",
-        "typeWheel_spin": "Giro da roleta"
+        "typeWheel_spin": "Giro da roleta",
+        "typeAdmin_remove": "Removido pela equipe",
+        "typeGift_refund": "Presente recuperado",
+        "typeVoucher_create": "Vale criado",
+        "typeVoucher_redeem": "Vale resgatado"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -825,7 +855,6 @@
         "buy_buy": "Купить",
         "buy_failed": "Не удалось начать покупку.",
         "buy_title": "Купить кредиты",
-        "deduct": "Списать кредиты",
         "err": {
           "credits_no_recipient": "Нет участника с таким именем.",
           "credits_same_account": "Это ваша собственная учетная запись.",
@@ -872,7 +901,11 @@
         "typeTransfer_out": "Отправлено",
         "typeUnknown": "Корректировка",
         "typeWheel_prize": "Приз колеса",
-        "typeWheel_spin": "Вращение колеса"
+        "typeWheel_spin": "Вращение колеса",
+        "typeAdmin_remove": "Списано персоналом",
+        "typeGift_refund": "Подарок отозван",
+        "typeVoucher_create": "Ваучер создан",
+        "typeVoucher_redeem": "Ваучер погашен"
       },
       "admin": {
         "module_credits_name": "Система кредитов",
@@ -901,7 +934,6 @@
         "buy_buy": "购买",
         "buy_failed": "无法开始此次购买。",
         "buy_title": "购买积分",
-        "deduct": "扣除积分",
         "err": {
           "credits_no_recipient": "没有该名称的账户。",
           "credits_same_account": "这是你自己的账户。",
@@ -948,7 +980,11 @@
         "typeTransfer_out": "已发送",
         "typeUnknown": "调整",
         "typeWheel_prize": "转盘奖励",
-        "typeWheel_spin": "转盘抽奖"
+        "typeWheel_spin": "转盘抽奖",
+        "typeAdmin_remove": "由工作人员扣除",
+        "typeGift_refund": "礼物已收回",
+        "typeVoucher_create": "已创建兑换券",
+        "typeVoucher_redeem": "已兑换兑换券"
       },
       "admin": {
         "module_credits_name": "积分系统",
@@ -989,6 +1025,16 @@
       "hook": "credit.change",
       "type": "filter",
       "handler": "hooks/change.ts"
+    },
+    {
+      "hook": "credits.balance",
+      "type": "filter",
+      "handler": "hooks/balance.ts"
+    },
+    {
+      "hook": "credits.top",
+      "type": "filter",
+      "handler": "hooks/top.ts"
     }
   ],
   "adminRoutes": [

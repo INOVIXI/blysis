@@ -10,6 +10,8 @@ import {
 } from "../../_fields/AvailabilityFields";
 import { timeFromMinutes } from "../../_fields/time-of-day";
 import { GrantFields } from "../../_fields/GrantFields";
+import { InGameFields } from "../../_fields/InGameFields";
+import { EMPTY_IN_GAME, inGameFrom, inGamePayload, type InGameValue } from "../../_fields/in-game-payload";
 import { EMPTY_GRANT, grantPayload, type GrantValue } from "../../_fields/grant-payload";
 import { RequirementFields } from "../../_fields/RequirementFields";
 import { EMPTY_REQUIREMENT, requirementPayload, type RequirementValue } from "../../_fields/requirement-payload";
@@ -54,6 +56,7 @@ export default function EditProductPage(props: PageProps) {
     const timeZone = (settings.site_timezone as string) || "UTC";
     const { confirm } = useConfirm();
 
+    const [inGame, setInGame] = useState<InGameValue>(EMPTY_IN_GAME);
     const [form, setForm] = useState({
         name: "",
         description: "",
@@ -106,6 +109,7 @@ export default function EditProductPage(props: PageProps) {
                     subscriptionInterval: p.subscriptionInterval || "month",
                     subscriptionIntervalCount: p.subscriptionIntervalCount ? String(p.subscriptionIntervalCount) : "1",
                 });
+                setInGame(inGameFrom(p));
             }
             setCategories(catData.categories || []);
             const where = timeZone;
@@ -171,6 +175,7 @@ export default function EditProductPage(props: PageProps) {
                 ...availabilityPayload(availability),
                 ...grantPayload(grant),
                 ...requirementPayload(requires),
+                ...inGamePayload(inGame),
             };
 
             const res = await fetch(`/api/v1/store/products/${productId}`, {
@@ -468,7 +473,9 @@ export default function EditProductPage(props: PageProps) {
                             </CardContent>
                         </Card>
 
-                        {/* RCON Commands */}
+                        <InGameFields value={inGame} onChange={setInGame} kind="product" />
+
+                        {/* Delivery commands */}
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-sm">{t("adm_deliveryCommands")}</CardTitle>
@@ -507,10 +514,14 @@ export default function EditProductPage(props: PageProps) {
 // Sub-component: RCON commands editor with per-server targeting
 function ProductCommandsEditor({ productId }: { productId: string }) {
     const t = useTranslations("store");
-    const [commands, setCommands] = useState<{ id: string; command: string; serverId?: string | null }[]>([]);
+    const [commands, setCommands] = useState<{ id: string; command: string; serverId?: string | null; target?: string; whenOnline?: boolean }[]>([]);
     const [servers, setServers] = useState<{ id: string; name: string }[]>([]);
     const [newCmd, setNewCmd] = useState("");
     const [newServerId, setNewServerId] = useState("");
+    // Read only by a game server that collects its deliveries itself. RCON
+    // runs every line at once, on its server, whatever these say.
+    const [newTarget, setNewTarget] = useState<"server" | "player">("server");
+    const [newWhenOnline, setNewWhenOnline] = useState(true);
 
     useEffect(() => {
         let cancelled = false;
@@ -537,19 +548,28 @@ function ProductCommandsEditor({ productId }: { productId: string }) {
         const res = await fetch("/api/v1/product-commands", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productId, command: newCmd, serverId: newServerId || null }),
+            body: JSON.stringify({
+                productId,
+                command: newCmd,
+                serverId: newTarget === "player" ? null : newServerId || null,
+                target: newTarget,
+                whenOnline: newTarget === "player" ? true : newWhenOnline,
+            }),
         });
         if (res.ok) {
             const data = await res.json();
             setCommands([...commands, data.command]);
             setNewCmd("");
             setNewServerId("");
+            setNewTarget("server");
+            setNewWhenOnline(true);
         }
     };
 
-    const getServerName = (serverId?: string | null) => {
-        if (!serverId) return "Default";
-        return servers.find((s) => s.id === serverId)?.name || "Unknown";
+    const getServerName = (cmd: { serverId?: string | null; target?: string }) => {
+        if (cmd.target === "player") return t("adm_cmdPlayersServer");
+        if (!cmd.serverId) return t("adm_defaultServer");
+        return servers.find((s) => s.id === cmd.serverId)?.name || "Unknown";
     };
 
     return (
@@ -557,13 +577,26 @@ function ProductCommandsEditor({ productId }: { productId: string }) {
             {commands.map((cmd) => (
                 <div key={cmd.id} className="flex items-center gap-2">
                     <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium whitespace-nowrap">
-                        {getServerName(cmd.serverId)}
+                        {getServerName(cmd)}
                     </span>
+                    {(cmd.whenOnline ?? true) && (
+                        <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded whitespace-nowrap">
+                            {t("adm_cmdWaits")}
+                        </span>
+                    )}
                     <code className="flex-1 text-xs bg-muted px-2 py-1 rounded font-mono truncate">{cmd.command}</code>
                 </div>
             ))}
-            <div className="flex gap-2">
-                {servers.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+                <NativeSelect
+                    value={newTarget}
+                    onChange={(e) => setNewTarget(e.target.value === "player" ? "player" : "server")}
+                    aria-label={t("adm_cmdTarget")} className="w-40" inputSize="sm"
+                >
+                    <option value="server">{t("adm_cmdOnServer")}</option>
+                    <option value="player">{t("adm_cmdPlayersServer")}</option>
+                </NativeSelect>
+                {servers.length > 0 && newTarget === "server" && (
                     <NativeSelect
                         value={newServerId}
                         onChange={(e) => setNewServerId(e.target.value)}
@@ -575,7 +608,14 @@ function ProductCommandsEditor({ productId }: { productId: string }) {
                         ))}
                     </NativeSelect>
                 )}
-                <Input value={newCmd} onChange={(e) => setNewCmd(e.target.value)} placeholder='give {player} diamond 64' aria-label={t("adm_deliveryCommands")} className="font-mono text-xs flex-1" />
+                {newTarget === "server" && (
+                    <CheckboxField
+                        checked={newWhenOnline}
+                        onChange={(e) => setNewWhenOnline(e.target.checked)}
+                        label={t("adm_cmdWhenOnline")}
+                    />
+                )}
+                <Input value={newCmd} onChange={(e) => setNewCmd(e.target.value)} placeholder='give {player} diamond 64' aria-label={t("adm_deliveryCommands")} className="font-mono text-xs flex-1 min-w-[12rem]" />
                 <Button type="button" variant="outline" size="sm" onClick={addCmd}><Plus className="w-3.5 h-3.5" /> {t("adm_add")}</Button>
             </div>
         </div>

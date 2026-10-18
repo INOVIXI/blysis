@@ -2,7 +2,7 @@
   "id": "servers",
   "name": "Game Servers",
   "description": "Game server management, RCON, and status monitoring",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "coreVersion": "^5.0.0",
   "category": "gaming",
   "author": "Blysis",
@@ -722,6 +722,11 @@
       "hook": "server.command",
       "type": "filter",
       "handler": "hooks/run-command.ts"
+    },
+    {
+      "hook": "servers.list",
+      "type": "filter",
+      "handler": "hooks/list-servers.ts"
     }
   ],
   "navGroups": [

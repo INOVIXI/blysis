@@ -1,0 +1,355 @@
+{
+  "scenario": "gifts",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "gifts/receive",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        },
+        "receive": true
+      },
+      "status": 200,
+      "response": {
+        "receiveGifts": true
+      }
+    },
+    {
+      "method": "POST",
+      "path": "store/purchase",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "productId": "p_conform",
+        "quantity": 1,
+        "fields": {},
+        "recipient": "Bo",
+        "idempotencyKey": "conf-24de6de9-gift-1"
+      },
+      "status": 200,
+      "response": {
+        "orderId": "cmve3rsuv000vdewrnk62fjqk",
+        "orderNumber": "ORD-MVE3RSUU-I9US",
+        "total": 1,
+        "balance": 212,
+        "gift": true
+      }
+    },
+    {
+      "method": "POST",
+      "path": "chest/list",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        }
+      },
+      "status": 200,
+      "response": {
+        "receiveGifts": true,
+        "items": [
+          {
+            "id": "cmve3rsv3000xdewrlxn4zb5x",
+            "productId": "p_conform",
+            "title": "Conformance token",
+            "icon": "DIAMOND",
+            "quantity": 1,
+            "state": "pending_gift",
+            "from": "siteadmin",
+            "createdAt": "2026-10-18T17:32:04.959Z"
+          },
+          {
+            "id": "cmve08iwl01vn7pwrbyf2aeop",
+            "productId": "p_diamond",
+            "title": "Ten diamonds",
+            "icon": "DIAMOND",
+            "quantity": 1,
+            "state": "pending_gift",
+            "from": "siteadmin",
+            "createdAt": "2026-10-18T15:53:06.741Z"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "gifts/sent",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        }
+      },
+      "status": 200,
+      "response": {
+        "items": [
+          {
+            "id": "cmve3rsv3000xdewrlxn4zb5x",
+            "title": "Conformance token",
+            "icon": "DIAMOND",
+            "quantity": 1,
+            "to": "alex",
+            "state": "pending_gift",
+            "createdAt": "2026-10-18T17:32:04.959Z"
+          },
+          {
+            "id": "cmve3qbng00cwx5wr7z6k052y",
+            "title": "Conformance token",
+            "icon": "DIAMOND",
+            "quantity": 1,
+            "to": "alex",
+            "state": "accepted",
+            "createdAt": "2026-10-18T17:30:55.996Z"
+          },
+          {
+            "id": "cmve3mzji006kx5wrjq6nv3z6",
+            "title": "Conformance token",
+            "icon": "DIAMOND",
+            "quantity": 1,
+            "to": "alex",
+            "state": "accepted",
+            "createdAt": "2026-10-18T17:28:20.334Z"
+          },
+          {
+            "id": "cmve33uu9004ux5wrx91x48kq",
+            "title": "Conformance token",
+            "icon": "DIAMOND",
+            "quantity": 1,
+            "to": "alex",
+            "state": "accepted",
+            "createdAt": "2026-10-18T17:13:27.777Z"
+          },
+          {
+            "id": "cmve32tar0034x5wrtobh62bf",
+            "title": "Conformance token",
+            "icon": "DIAMOND",
+            "quantity": 1,
+            "to": "alex",
+            "state": "accepted",
+            "createdAt": "2026-10-18T17:12:39.123Z"
+          },
+          {
+            "id": "cmve2yzfl001ex5wrxv974yh8",
+            "title": "Conformance token",
+            "icon": "DIAMOND",
+            "quantity": 1,
+            "to": "alex",
+            "state": "accepted",
+            "createdAt": "2026-10-18T17:09:40.449Z"
+          },
+          {
+            "id": "cmve08iwl01vn7pwrbyf2aeop",
+            "title": "Ten diamonds",
+            "icon": "DIAMOND",
+            "quantity": 1,
+            "to": "alex",
+            "state": "pending_gift",
+            "createdAt": "2026-10-18T15:53:06.741Z"
+          },
+          {
+            "id": "cmvdz90qx01pf7pwrjswdate3",
+            "title": "Hero",
+            "icon": "GOLDEN_HELMET",
+            "quantity": 1,
+            "to": "alex",
+            "state": "accepted",
+            "createdAt": "2026-10-18T15:25:30.249Z"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "gifts/cancel",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "itemId": "cmve3rsv3000xdewrlxn4zb5x",
+        "idempotencyKey": "conf-24de6de9-cancel"
+      },
+      "status": 200,
+      "response": {
+        "refunded": 1,
+        "balance": 213
+      }
+    },
+    {
+      "method": "POST",
+      "path": "gifts/cancel",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "itemId": "cmve3rsv3000xdewrlxn4zb5x",
+        "idempotencyKey": "conf-24de6de9-cancel-again"
+      },
+      "status": 409,
+      "response": {
+        "error": "No such item.",
+        "code": "not_found"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "store/purchase",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "productId": "p_conform",
+        "quantity": 1,
+        "fields": {},
+        "recipient": "Bo",
+        "idempotencyKey": "conf-24de6de9-gift-2"
+      },
+      "status": 200,
+      "response": {
+        "orderId": "cmve3rtd50017dewrg8zi16bd",
+        "orderNumber": "ORD-MVE3RTD4-OGTS",
+        "total": 1,
+        "balance": 212,
+        "gift": true
+      }
+    },
+    {
+      "method": "POST",
+      "path": "chest/list",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        }
+      },
+      "status": 200,
+      "response": {
+        "receiveGifts": true,
+        "items": [
+          {
+            "id": "cmve3rtdd0019dewreot672av",
+            "productId": "p_conform",
+            "title": "Conformance token",
+            "icon": "DIAMOND",
+            "quantity": 1,
+            "state": "pending_gift",
+            "from": "siteadmin",
+            "createdAt": "2026-10-18T17:32:05.617Z"
+          },
+          {
+            "id": "cmve08iwl01vn7pwrbyf2aeop",
+            "productId": "p_diamond",
+            "title": "Ten diamonds",
+            "icon": "DIAMOND",
+            "quantity": 1,
+            "state": "pending_gift",
+            "from": "siteadmin",
+            "createdAt": "2026-10-18T15:53:06.741Z"
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "chest/activate",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        },
+        "itemId": "cmve3rtdd0019dewreot672av",
+        "idempotencyKey": "conf-24de6de9-activate"
+      },
+      "status": 200,
+      "response": {
+        "ok": true
+      }
+    },
+    {
+      "method": "POST",
+      "path": "chest/activate",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        },
+        "itemId": "cmve3rtdd0019dewreot672av",
+        "idempotencyKey": "conf-24de6de9-activate-again"
+      },
+      "status": 409,
+      "response": {
+        "error": "That gift is not waiting any more.",
+        "code": "not_pending"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "gifts/cancel",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "itemId": "cmve3rtdd0019dewreot672av",
+        "idempotencyKey": "conf-24de6de9-too-late"
+      },
+      "status": 409,
+      "response": {
+        "error": "That gift is not waiting any more.",
+        "code": "not_pending"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "chest/claim",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        },
+        "itemId": "cmve3rtdd0019dewreot672av",
+        "idempotencyKey": "conf-24de6de9-claim"
+      },
+      "status": 200,
+      "response": {
+        "ok": true
+      }
+    },
+    {
+      "method": "POST",
+      "path": "chest/claim",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-bo-0002",
+          "name": "Bo"
+        },
+        "itemId": "cmve3rtdd0019dewreot672av",
+        "idempotencyKey": "conf-24de6de9-claim-again"
+      },
+      "status": 409,
+      "response": {
+        "error": "That item was already claimed.",
+        "code": "already_claimed"
+      }
+    }
+  ]
+}

@@ -3,6 +3,7 @@ import { hasPermission, log, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { settleOrder, voidOrder, refundPayment } from "../../../lib/fulfilment";
+import { deliveryOf } from "../../../lib/order-delivery";
 
 const orderUpdateSchema = z.object({
     status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"]).optional(),
@@ -73,7 +74,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
             },
         });
 
-        return NextResponse.json({ order });
+        const delivery = order ? (await deliveryOf([order.id]))[order.id] ?? null : null;
+        return NextResponse.json({ order: order ? { ...order, delivery } : order });
     } catch (error) {
         log.error("Get order error", { error: error instanceof Error ? error.message : String(error) });
         return NextResponse.json(

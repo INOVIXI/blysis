@@ -29,6 +29,30 @@ declare global {
         output: string | null;
         /** Why it failed, when it did. */
         error: string | null;
+        /**
+         * True when the command was not run but put in a queue a game server
+         * will collect. `ok` then means "accepted", not "ran".
+         */
+        queued?: boolean;
+    }
+
+    /**
+     * What a caller knows about a delivery beyond the command line.
+     *
+     * RCON ignores all of it: it runs the line now or fails. A module that
+     * queues for a game server uses it to wait for the right player on the
+     * right server and to keep one purchase's lines in order.
+     */
+    interface ServerCommandDelivery {
+        /** "server" runs on `serverId`; "player" runs wherever the player is. */
+        target: "server" | "player";
+        /** Wait until the player is on the target server. */
+        whenOnline: boolean;
+        player: { name: string; id: string | null; userId: string | null };
+        /** Lines that must run together and in order share a key. */
+        groupKey: string;
+        sequence: number;
+        reference: { kind: "order" | "chest" | "gift" | "manual"; id: string | null; label: string | null };
     }
 
     interface ServerCommandRequest {
@@ -36,15 +60,30 @@ declare global {
         command: string;
         /** Which server to run it on. Omitted means the install's default server. */
         serverId?: string | null;
+        /** Optional. A caller that knows who and why says so here. */
+        delivery?: ServerCommandDelivery;
+    }
+
+    /** A game server as another module may see it. */
+    interface GameServerSummary {
+        id: string;
+        name: string;
+        type: string;
+        isDefault: boolean;
+        isActive: boolean;
+        order: number;
     }
 
     interface BlysisFilterPayloads {
         "server.command": ServerCommandResult;
+        /** Every game server, in the order an admin arranged them. */
+        "servers.list": GameServerSummary[];
     }
 
     /** The question, as opposed to the answer above. */
     interface BlysisFilterContexts {
         "server.command": ServerCommandRequest;
+        "servers.list": Record<string, never>;
     }
 }
 

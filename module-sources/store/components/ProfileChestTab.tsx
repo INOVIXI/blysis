@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Button, Card, CardContent, CardHeader, CardTitle, LoadFailed, usePrompt, useLocalDate } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, LoadFailed, usePrompt, useLocalDate } from "@/core/sdk/ui";
 import { errorMessage } from "@/core/sdk";
 import { Gift, Package, Loader2 } from "lucide-react";
 
@@ -20,6 +20,19 @@ interface ChestItem {
      * used to be drawn on everything and the refusal arrived after the click.
      */
     canGift: boolean;
+    /** A gift waiting for this member to accept it. */
+    pendingGift: boolean;
+    /** Who sent it, for a gift. */
+    from: string | null;
+}
+
+interface SentGift {
+    id: string;
+    title: string;
+    quantity: number;
+    to: string;
+    state: "pending_gift" | "accepted";
+    createdAt: string;
 }
 
 export function ProfileChestTab() {
@@ -31,6 +44,8 @@ export function ProfileChestTab() {
     const commonT = useTranslations("common");
     const ask = usePrompt();
     const [chestItems, setChestItems] = useState<ChestItem[]>([]);
+    const [sent, setSent] = useState<SentGift[]>([]);
+    const [receiveGifts, setReceiveGifts] = useState(true);
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
@@ -39,7 +54,13 @@ export function ProfileChestTab() {
         let cancelled = false;
         fetch("/api/v1/chest")
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
-            .then(data => { if (cancelled) return; setChestItems(data.items || []); setFailed(false); })
+            .then(data => {
+                if (cancelled) return;
+                setChestItems(data.items || []);
+                setSent(data.sent || []);
+                setReceiveGifts(data.receiveGifts ?? true);
+                setFailed(false);
+            })
             .catch(() => { if (cancelled) return; setFailed(true); })
             .finally(() => { if (cancelled) return; setLoading(false); });
         return () => { cancelled = true; };
@@ -114,6 +135,41 @@ export function ProfileChestTab() {
         }
     };
 
+    /** Accepting a gift makes it an ordinary item; taking one back undoes it, money and all. */
+    const settle = async (id: string, action: "activate" | "cancel") => {
+        try {
+            const answer = await claim(id, { action });
+            if (!answer.ok) {
+                toast.error(errorMessage(answer.body, t("tab_chest_giftError"), t));
+                return;
+            }
+            if (action === "activate") {
+                setChestItems(prev => prev.map((c) => (c.id === id ? { ...c, pendingGift: false } : c)));
+                toast.success(t("tab_chest_accepted"));
+            } else {
+                setSent(prev => prev.filter((g) => g.id !== id));
+                toast.success(t("tab_chest_takenBack"));
+            }
+        } catch {
+            toast.error(commonT("somethingWentWrong"));
+        }
+    };
+
+    const toggleGifts = async (next: boolean) => {
+        setReceiveGifts(next);
+        try {
+            const res = await fetch("/api/v1/chest", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ receiveGifts: next }),
+            });
+            if (!res.ok) throw new Error(`PATCH /api/v1/chest answered ${res.status}`);
+        } catch {
+            setReceiveGifts(!next);
+            toast.error(commonT("somethingWentWrong"));
+        }
+    };
+
     if (loading) {
         return (
             <Card>
@@ -141,8 +197,14 @@ export function ProfileChestTab() {
                             <div key={item.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                                 <div>
                                     <p className="font-medium">{item.productName}</p>
-                                    <p className="text-xs text-muted-foreground">{t("tab_chest_qty")}: {item.quantity} · {formatDate(item.createdAt)}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t("tab_chest_qty")}: {item.quantity} · {formatDate(item.createdAt)}
+                                        {item.from ? ` · ${t("tab_chest_from", { name: item.from })}` : ""}
+                                    </p>
                                 </div>
+                                {item.pendingGift ? (
+                                    <Button size="sm" onClick={() => settle(item.id, "activate")}>{t("tab_chest_accept")}</Button>
+                                ) : (
                                 <div className="flex gap-2">
                                     {item.canGift && (
                                         <Button
@@ -156,8 +218,39 @@ export function ProfileChestTab() {
                                     )}
                                     <Button size="sm" onClick={() => redeem(item.id)}>{t("tab_chest_redeem")}</Button>
                                 </div>
+                                )}
                             </div>
                         ))}
+                    </div>
+                )}
+                {!failed && (
+                    <div className="mt-6 space-y-3">
+                        <CheckboxField
+                            checked={receiveGifts}
+                            onChange={(e) => toggleGifts(e.target.checked)}
+                            label={t("tab_chest_receiveGifts")}
+                            description={t("tab_chest_receiveGiftsHint")}
+                        />
+                        {sent.length > 0 && (
+                            <div className="space-y-2">
+                                <p className="text-sm font-medium">{t("tab_chest_sentTitle")}</p>
+                                {sent.map((gift) => (
+                                    <div key={gift.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                        <div>
+                                            <p className="font-medium">{gift.title}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {t("tab_chest_to", { name: gift.to })} · {gift.quantity} · {formatDate(gift.createdAt)}
+                                            </p>
+                                        </div>
+                                        {gift.state === "pending_gift" ? (
+                                            <Button size="sm" variant="outline" onClick={() => settle(gift.id, "cancel")}>{t("tab_chest_takeBack")}</Button>
+                                        ) : (
+                                            <span className="text-xs text-muted-foreground">{t("tab_chest_acceptedState")}</span>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
             </CardContent>

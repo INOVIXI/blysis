@@ -1,19 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { log, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { deliverProduct } from "../../../lib/delivery";
-import { deliveryFor } from "../../../lib/chest";
+import { activateGift, cancelGift, claimChestItem, PENDING } from "../../../lib/gifts";
 import { chestRedeemSchema } from "../../../lib/validations";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
-// POST /api/v1/chest/[id] - Redeem chest item (deliver to game)
+/**
+ * POST /api/v1/chest/[id] - claim a chest item, give it away, or settle a gift.
+ *
+ * With no action and no recipient the item is claimed and sent to the game.
+ * `giftTo` hands it to another member, where it waits as a pending gift until
+ * they accept it. `action: "activate"` is the recipient accepting one, and
+ * `action: "cancel"` is the sender taking one back. The rules for all of it
+ * live in `lib/gifts.ts`, which a game server asks too.
+ */
 export async function POST(request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = session.user.id;
 
     const rl = await rateLimitForRole(
-        `chest-redeem:${session.user.id}`,
+        `chest-redeem:${userId}`,
         { maxRequests: 30, windowMs: 15 * 60 * 1000 },
         session.user.role,
     );
@@ -31,9 +39,30 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
     const fields = parsed.data;
 
+    if (fields.action === "activate") {
+        const result = await activateGift(userId, id);
+        if (result.ok) return NextResponse.json({ message: "Gift accepted" });
+        return result.code === "not_found"
+            ? NextResponse.json({ error: "Not found" }, { status: 404 })
+            : NextResponse.json({ error: "That gift is no longer waiting", code: "chest_gift_not_pending" }, { status: 409 });
+    }
+
+    if (fields.action === "cancel") {
+        const result = await cancelGift(userId, id);
+        if (result.ok) return NextResponse.json({ message: "Gift taken back", refunded: result.refunded, balance: result.balance });
+        if (result.code === "not_found") return NextResponse.json({ error: "Not found" }, { status: 404 });
+        if (result.code === "not_pending") {
+            return NextResponse.json({ error: "That gift was already accepted", code: "chest_gift_not_pending" }, { status: 409 });
+        }
+        return NextResponse.json({ error: "The gift could not be taken back" }, { status: 500 });
+    }
+
     const item = await prisma.chestItem.findUnique({ where: { id } });
-    if (!item || item.userId !== session.user.id) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!item || item.userId !== userId) return NextResponse.json({ error: "Not found" }, { status: 404 });
     if (item.isRedeemed) return NextResponse.json({ error: "Already redeemed" }, { status: 400 });
+    if (item.giftState === PENDING) {
+        return NextResponse.json({ error: "Accept the gift first", code: "chest_gift_pending" }, { status: 409 });
+    }
 
     // Gift to another user
     if (fields.giftTo) {
@@ -60,14 +89,25 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
         const target = await prisma.user.findFirst({
             where: { OR: [{ username: fields.giftTo }, { id: fields.giftTo }] },
+            select: { id: true, username: true, receiveGifts: true },
         });
         if (!target) return NextResponse.json({ error: "User not found" }, { status: 404 });
+        if (target.id === userId) {
+            return NextResponse.json({ error: "That is your own chest", code: "chest_gift_to_self" }, { status: 400 });
+        }
+        // Absent reads as the column's default: a member takes gifts until
+        // they say otherwise.
+        if (target.receiveGifts === false) {
+            return NextResponse.json({ error: "That member takes no gifts", code: "chest_recipient_refuses_gifts" }, { status: 409 });
+        }
 
         // Conditional on the row still being this user's and unredeemed, so a
-        // gift racing a redeem cannot both win.
+        // gift racing a redeem cannot both win. It lands pending: the
+        // recipient accepts it, and until then it is still the sender's to
+        // take back.
         const gifted = await prisma.chestItem.updateMany({
-            where: { id, userId: session.user.id, isRedeemed: false },
-            data: { userId: target.id, giftedToId: target.id },
+            where: { id, userId, isRedeemed: false, giftState: null },
+            data: { userId: target.id, giftedToId: target.id, giftedById: userId, giftState: PENDING },
         });
         if (gifted.count === 0) {
             return NextResponse.json({ error: "Already redeemed" }, { status: 400 });
@@ -76,56 +116,22 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ message: `Gifted to ${target.username}` });
     }
 
-    const commands = await prisma.productCommand.findMany({
-        where: { productId: item.productId },
-        orderBy: { order: "asc" },
-    });
-
-    // Everything the request can be turned away for is settled before the
-    // claim, because a refusal after it spends the item: the screen asks for
-    // a name, the answer comes back, and the second attempt is told the item
-    // was already redeemed. It was, to nobody.
-    const delivery = commands.length > 0
-        ? deliveryFor(item, { playerName: fields.playerName })
-        : null;
-    if (delivery && "needsPlayerName" in delivery) {
-        // Nothing was recorded and nothing was typed. This used to fall back
-        // to the account's username, which is the one name checkout
-        // deliberately does not use, so the commands ran for the wrong person.
-        return NextResponse.json(
-            { error: "Tell us which player to deliver to", code: "chest_needs_player_name" },
-            { status: 400 },
-        );
+    const claimed = await claimChestItem(userId, id, { name: fields.playerName ?? null, id: null });
+    if (claimed.ok) return NextResponse.json({ message: "Item redeemed" });
+    switch (claimed.code) {
+        case "needs_player_name":
+            // Nothing was recorded and nothing was typed. This used to fall back
+            // to the account's username, which is the one name checkout
+            // deliberately does not use, so the commands ran for the wrong person.
+            return NextResponse.json(
+                { error: "Tell us which player to deliver to", code: "chest_needs_player_name" },
+                { status: 400 },
+            );
+        case "not_found":
+            return NextResponse.json({ error: "Not found" }, { status: 404 });
+        case "not_pending":
+            return NextResponse.json({ error: "Accept the gift first", code: "chest_gift_pending" }, { status: 409 });
+        default:
+            return NextResponse.json({ error: "Already redeemed" }, { status: 400 });
     }
-
-    // Claim the item before delivering it, not after.
-    //
-    // The read above and the write below used to sit on either side of the
-    // RCON delivery: two requests that arrived together both read
-    // `isRedeemed: false`, both ran the commands, and the player received the
-    // item twice. The gift-code route has always claimed with a conditional
-    // updateMany for exactly this reason; this one did not.
-    //
-    // Delivery failure does not hand the item back, which is what the old code
-    // did too - it delivered with `.catch(console.error)` and marked the item
-    // redeemed regardless.
-    const claimed = await prisma.chestItem.updateMany({
-        where: { id, userId: session.user.id, isRedeemed: false },
-        data: { isRedeemed: true, redeemedAt: new Date() },
-    });
-    if (claimed.count === 0) {
-        return NextResponse.json({ error: "Already redeemed" }, { status: 400 });
-    }
-
-    if (delivery && !("needsPlayerName" in delivery)) {
-        await deliverProduct({
-            playerName: delivery.playerName,
-            productName: delivery.productName,
-            commands: commands.map((c) => ({ command: c.command, serverId: c.serverId })),
-            quantity: delivery.quantity,
-            variables: delivery.variables,
-        }).catch((err: unknown) => log.error("[store] delivering a chest reward failed", { error: err instanceof Error ? err.message : String(err) }));
-    }
-
-    return NextResponse.json({ message: "Item redeemed" });
 }

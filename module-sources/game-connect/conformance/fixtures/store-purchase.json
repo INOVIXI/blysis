@@ -1,0 +1,132 @@
+{
+  "scenario": "store-purchase",
+  "exchanges": [
+    {
+      "method": "POST",
+      "path": "store/purchase",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "productId": "p_conform",
+        "quantity": 1,
+        "fields": {},
+        "idempotencyKey": "conf-24de6de9-buy"
+      },
+      "status": 200,
+      "response": {
+        "orderId": "cmve3rrxc000hdewr7jyp377j",
+        "orderNumber": "ORD-MVE3RRWW-AWY4",
+        "total": 1,
+        "balance": 213,
+        "gift": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "store/purchase",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "productId": "p_conform",
+        "quantity": 1,
+        "fields": {},
+        "idempotencyKey": "conf-24de6de9-buy"
+      },
+      "status": 200,
+      "response": {
+        "gift": false,
+        "total": 1,
+        "balance": 213,
+        "orderId": "cmve3rrxc000hdewr7jyp377j",
+        "orderNumber": "ORD-MVE3RRWW-AWY4"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "store/purchase",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "productId": "p_conform",
+        "quantity": 0,
+        "fields": {},
+        "idempotencyKey": "conf-24de6de9-none"
+      },
+      "status": 409,
+      "response": {
+        "error": "That quantity cannot be bought.",
+        "code": "quantity_invalid"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "store/purchase",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "productId": "nothing24de6de9",
+        "quantity": 1,
+        "fields": {},
+        "idempotencyKey": "conf-24de6de9-nothing"
+      },
+      "status": 409,
+      "response": {
+        "error": "No such product.",
+        "code": "not_found"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "store/purchase",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "39da0e44-bace-4922-9664-1a18e877b275",
+          "name": "Conf24de6d"
+        },
+        "productId": "p_conform",
+        "quantity": 1,
+        "fields": {},
+        "idempotencyKey": "conf-24de6de9-stranger"
+      },
+      "status": 409,
+      "response": {
+        "code": "not_linked",
+        "error": "This player has no account on the site."
+      }
+    },
+    {
+      "method": "POST",
+      "path": "store/purchase",
+      "request": {
+        "instance": "2a8e1c5d-7227-4dcb-aaa9-30fe9469ca29",
+        "player": {
+          "id": "ex-ada-0001",
+          "name": "Ada"
+        },
+        "productId": "p_conform",
+        "quantity": 1,
+        "fields": {},
+        "idempotencyKey": "conf-24de6de9-nobody",
+        "recipient": "nobody24de6de9"
+      },
+      "status": 409,
+      "response": {
+        "code": "recipient_unknown",
+        "error": "Nobody by that name."
+      }
+    }
+  ]
+}
