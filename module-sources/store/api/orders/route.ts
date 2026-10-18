@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { hasPermission, log, pageParams, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { ORDER_STATUSES } from "../../lib/order-status";
+import { deliveryOf } from "../../lib/order-delivery";
 
 /**
  * Orders are listed here and made at `/store/checkout`.
@@ -100,8 +101,10 @@ export async function GET(request: NextRequest) {
         const counts: Record<string, number> = {};
         for (const row of byStatus) counts[row.status] = row._count;
 
+        const delivery = await deliveryOf(orders.map((order) => order.id));
+
         return NextResponse.json({
-            orders,
+            orders: orders.map((order) => ({ ...order, delivery: delivery[order.id] ?? null })),
             counts,
             pagination: { page, limit, total, pages: Math.ceil(total / limit) },
         });

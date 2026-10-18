@@ -238,6 +238,27 @@
       "method": "POST",
       "permission": "game-connect.manage",
       "description": "Mark a job done, send it again or cancel it, alone or with the rest of its purchase."
+    },
+    {
+      "path": "/game-connect/admin/vouchers",
+      "handler": "api/admin/vouchers/route.ts",
+      "method": "GET",
+      "permission": "game-connect.manage",
+      "description": "Every voucher made in game, open or redeemed, with who made and who redeemed it."
+    },
+    {
+      "path": "/game-connect/admin/links",
+      "handler": "api/admin/links/route.ts",
+      "method": "GET",
+      "permission": "game-connect.manage",
+      "description": "Every game account linked to a member, searchable by either name."
+    },
+    {
+      "path": "/game-connect/admin/links/[id]",
+      "handler": "api/admin/links/[id]/route.ts",
+      "method": "DELETE",
+      "permission": "game-connect.manage",
+      "description": "Unlink a game account from its member."
     }
   ],
   "cronJobs": [
@@ -269,6 +290,11 @@
       "type": "filter",
       "handler": "hooks/resolve-account.ts",
       "priority": 20
+    },
+    {
+      "hook": "store.orders.delivery",
+      "type": "filter",
+      "handler": "hooks/order-delivery.ts"
     }
   ],
   "hooksEmitted": [
@@ -338,11 +364,127 @@
   "translations": {
     "en": {
       "gameConnect": {
-        "perm_manage": "Manage"
+        "perm_manage": "Manage",
+        "srv_title": "Connected Servers",
+        "srv_subtitle": "Give a game server a token, and choose what it may do. A token is shown once.",
+        "srv_loadFailed": "Could not load the servers",
+        "srv_saveFailed": "Could not save that",
+        "srv_tokenFailed": "Could not make a token",
+        "srv_none": "No game servers yet. Add one under Game Servers first.",
+        "srv_makeToken": "Make a token",
+        "srv_newToken": "Make a new token",
+        "srv_newTokenTitle": "Make a new token?",
+        "srv_newTokenConfirm": "The token {server} uses now stops working at once. Put the new one in its config before it can connect again.",
+        "srv_revoke": "Revoke",
+        "srv_revokeTitle": "Revoke the token?",
+        "srv_revokeConfirm": "{server} can no longer connect. Its queued deliveries stay where they are.",
+        "srv_revoked": "Token revoked",
+        "srv_tokenFor": "The token for {server}",
+        "srv_tokenOnce": "Copy it now: this page will not show it again. Write it as site.token in the plugin's config.",
+        "srv_copy": "Copy",
+        "srv_notConnected": "No token yet",
+        "srv_neverSeen": "Token ending {hint}, never connected",
+        "srv_lastSeen": "Last heard from {when}",
+        "srv_live": "{online} of {max} online, {software}",
+        "srv_online": "Online",
+        "srv_offline": "Offline",
+        "srv_networkRoot": "Network root",
+        "srv_waiting": "{count} waiting",
+        "srv_review": "{count} to check",
+        "srv_power_enabled": "Connected",
+        "srv_power_enabled_hint": "Off stops this server receiving deliveries without revoking its token.",
+        "srv_power_allowCreditAdmin": "Staff may change credits",
+        "srv_power_allowCreditAdmin_hint": "Lets staff on this server add, remove and set a member's credits.",
+        "srv_power_allowVoucherGive": "Staff may mint vouchers",
+        "srv_power_allowVoucherGive_hint": "Lets staff on this server give vouchers nobody paid for.",
+        "srv_power_acceptFollowPlayer": "Takes deliveries that follow the buyer",
+        "srv_power_acceptFollowPlayer_hint": "Runs a delivery meant for whichever server the buyer is on, when they are here.",
+        "q_title": "Delivery Queue",
+        "q_subtitle": "Every command a purchase sent to a game server, and where it stands.",
+        "q_loadFailed": "Could not load the queue",
+        "q_state": "State",
+        "q_empty": "Nothing in this state.",
+        "q_command": "Command",
+        "q_player": "In game",
+        "q_for": "For",
+        "q_actions": "Actions",
+        "q_state_NEEDS_REVIEW": "To check",
+        "q_state_PENDING": "Waiting",
+        "q_state_CLAIMED": "Running",
+        "q_state_FAILED": "Failed",
+        "q_state_DONE": "Done",
+        "q_state_CANCELLED": "Cancelled",
+        "q_cancel": "Cancel",
+        "q_wrongState": "That job is no longer in a state this applies to",
+        "v_title": "Game Vouchers",
+        "v_subtitle": "Credits turned into an item in game, and who redeemed them.",
+        "v_loadFailed": "Could not load the vouchers",
+        "v_filter": "Show",
+        "v_filter_all": "All",
+        "v_filter_open": "Open",
+        "v_filter_redeemed": "Redeemed",
+        "v_empty": "No vouchers yet.",
+        "v_id": "Voucher",
+        "v_amount": "Amount",
+        "v_madeBy": "Made by",
+        "v_redeemedBy": "Redeemed by",
+        "v_credits": "{amount} credits",
+        "v_minted": "Minted by staff",
+        "v_open": "Open",
+        "l_title": "Linked Accounts",
+        "l_subtitle": "Game accounts linked to members.",
+        "l_loadFailed": "Could not load the links",
+        "l_empty": "No linked accounts.",
+        "l_player": "Game account",
+        "l_member": "Member",
+        "l_linkedAt": "Linked",
+        "l_actions": "Actions",
+        "l_unlink": "Unlink",
+        "l_unlinkTitle": "Unlink this account?",
+        "l_unlinkConfirm": "{player} is no longer linked to {member}. Neither account loses anything.",
+        "l_unlinked": "Unlinked",
+        "l_unlinkFailed": "Could not unlink",
+        "link_title": "Link your game account",
+        "link_intro": "Link the account you play with to this site, to buy in game and keep your credits in one place.",
+        "link_signIn": "Sign in to link",
+        "link_codeFromGame": "The code the game gave you",
+        "link_look": "Look it up",
+        "link_preview": "This code links the {platform} account {name} to you.",
+        "link_previewWarn": "If that is not your account, stop here: somebody may have sent you their code.",
+        "link_confirm": "Link {name}",
+        "link_done": "{name} is linked to your account.",
+        "link_otherWay": "Or make a code here and type it in game:",
+        "link_makeCode": "Make a code",
+        "link_wrongCode": "That code is wrong, used or expired. Make a new one in game.",
+        "link_already": "That account or yours is already linked. Unlink it first.",
+        "link_tooMany": "Too many tries. Wait a few minutes.",
+        "link_failed": "Could not make a code. Try again.",
+        "q_sendAgain": "Send again",
+        "q_sendAgainTitle": "Send it again?",
+        "q_sendAgainConfirm": "{command} runs again, with the rest of its purchase. Do this only if it did not run.",
+        "q_sendAgainDone": "Sent again",
+        "q_markDone": "Mark done",
+        "q_markDoneTitle": "Mark it done?",
+        "q_markDoneConfirm": "{command} is closed without running again. Do this when it did run.",
+        "q_markDoneDone": "Marked done",
+        "q_cancelTitle": "Cancel it?",
+        "q_cancelConfirm": "{command} and the rest of its purchase will not run.",
+        "q_cancelDone": "Cancelled",
+        "l_pick": "Pick this account",
+        "l_unlinkManyConfirm": "{count} game accounts are no longer linked. Neither side loses anything.",
+        "l_unlinkedPartly": "Unlinked {deleted} of {total}",
+        "srv_pick": "Pick this server",
+        "srv_revokeManyConfirm": "{count} servers can no longer connect. Their queued deliveries stay where they are.",
+        "srv_revokedPartly": "Revoked {deleted} of {total}"
       },
       "admin": {
         "module_game-connect_name": "Game Connect",
-        "module_game-connect_description": "Let game servers connect to this site themselves: queued delivery that survives a restart, live status, the store and credits in game, and account linking, for any game with a client"
+        "module_game-connect_description": "Let game servers connect to this site themselves: queued delivery that survives a restart, live status, the store and credits in game, and account linking, for any game with a client",
+        "menu_game-connect": "Game Connect",
+        "menu_game-connect_connected_servers": "Connected Servers",
+        "menu_game-connect_delivery_queue": "Delivery Queue",
+        "menu_game-connect_game_vouchers": "Game Vouchers",
+        "menu_game-connect_linked_accounts": "Linked Accounts"
       },
       "activity": {
         "auditTokenIssued": "Gave a game server a new token",
@@ -352,16 +494,142 @@
         "auditJobSentAgain": "Sent a delivery again",
         "auditJobCancelled": "Cancelled a delivery",
         "auditCreditsChanged": "Changed a balance from a game server",
-        "auditVoucherMinted": "Minted a voucher from a game server"
+        "auditVoucherMinted": "Minted a voucher from a game server",
+        "auditLinkRemoved": "Unlinked a game account"
+      },
+      "pageTitles": {
+        "gameLink": "Link Your Game Account"
+      },
+      "pageDescriptions": {
+        "gameLink": "Link the account you play with to this site."
+      },
+      "nav": {
+        "gameLink": "Link Account"
       }
     },
     "tr": {
       "gameConnect": {
-        "perm_manage": "Yönetebilir"
+        "perm_manage": "Yönetebilir",
+        "srv_title": "Bağlı Sunucular",
+        "srv_subtitle": "Bir oyun sunucusuna token ver ve neler yapabileceğini seç. Token yalnızca bir kez gösterilir.",
+        "srv_loadFailed": "Sunucular yüklenemedi",
+        "srv_saveFailed": "Kaydedilemedi",
+        "srv_tokenFailed": "Token oluşturulamadı",
+        "srv_none": "Henüz oyun sunucusu yok. Önce Oyun Sunucuları altında bir tane ekle.",
+        "srv_makeToken": "Token oluştur",
+        "srv_newToken": "Yeni token oluştur",
+        "srv_newTokenTitle": "Yeni token oluşturulsun mu?",
+        "srv_newTokenConfirm": "{server} sunucusunun şu anki tokeni hemen çalışmaz olur. Yeniden bağlanabilmesi için yenisini ayarlarına yaz.",
+        "srv_revoke": "İptal et",
+        "srv_revokeTitle": "Token iptal edilsin mi?",
+        "srv_revokeConfirm": "{server} artık bağlanamaz. Sıradaki teslimatları olduğu yerde kalır.",
+        "srv_revoked": "Token iptal edildi",
+        "srv_tokenFor": "{server} için token",
+        "srv_tokenOnce": "Şimdi kopyala: bu sayfa onu bir daha göstermez. Eklentinin ayarlarına site.token olarak yaz.",
+        "srv_copy": "Kopyala",
+        "srv_notConnected": "Henüz token yok",
+        "srv_neverSeen": "Sonu {hint} olan token, hiç bağlanmadı",
+        "srv_lastSeen": "Son haber {when}",
+        "srv_live": "{max} kişiden {online} çevrimiçi, {software}",
+        "srv_online": "Çevrimiçi",
+        "srv_offline": "Çevrimdışı",
+        "srv_networkRoot": "Ağ kökü",
+        "srv_waiting": "{count} bekliyor",
+        "srv_review": "{count} incelenecek",
+        "srv_power_enabled": "Bağlı",
+        "srv_power_enabled_hint": "Kapalıyken bu sunucu, tokeni iptal edilmeden teslimat almaz.",
+        "srv_power_allowCreditAdmin": "Yetkililer kredi değiştirebilir",
+        "srv_power_allowCreditAdmin_hint": "Bu sunucudaki yetkililer bir üyenin kredisini ekleyip çıkarabilir ve ayarlayabilir.",
+        "srv_power_allowVoucherGive": "Yetkililer kupon basabilir",
+        "srv_power_allowVoucherGive_hint": "Bu sunucudaki yetkililer kimsenin ödemediği kuponlar verebilir.",
+        "srv_power_acceptFollowPlayer": "Alıcıyı izleyen teslimatları alır",
+        "srv_power_acceptFollowPlayer_hint": "Alıcının bulunduğu sunucuya giden teslimatı, alıcı buradayken çalıştırır.",
+        "q_title": "Teslimat Sırası",
+        "q_subtitle": "Bir satın almanın oyun sunucusuna gönderdiği her komut ve durumu.",
+        "q_loadFailed": "Sıra yüklenemedi",
+        "q_state": "Durum",
+        "q_empty": "Bu durumda hiçbir şey yok.",
+        "q_command": "Komut",
+        "q_player": "Oyunda",
+        "q_for": "Ne için",
+        "q_actions": "İşlemler",
+        "q_state_NEEDS_REVIEW": "İncelenecek",
+        "q_state_PENDING": "Bekliyor",
+        "q_state_CLAIMED": "Çalışıyor",
+        "q_state_FAILED": "Başarısız",
+        "q_state_DONE": "Tamam",
+        "q_state_CANCELLED": "İptal",
+        "q_cancel": "İptal et",
+        "q_wrongState": "Bu iş artık bunun uygulanabileceği bir durumda değil",
+        "v_title": "Oyun Kuponları",
+        "v_subtitle": "Oyunda eşyaya dönüştürülen krediler ve onları kimin kullandığı.",
+        "v_loadFailed": "Kuponlar yüklenemedi",
+        "v_filter": "Göster",
+        "v_filter_all": "Tümü",
+        "v_filter_open": "Açık",
+        "v_filter_redeemed": "Kullanılmış",
+        "v_empty": "Henüz kupon yok.",
+        "v_id": "Kupon",
+        "v_amount": "Miktar",
+        "v_madeBy": "Yapan",
+        "v_redeemedBy": "Kullanan",
+        "v_credits": "{amount} kredi",
+        "v_minted": "Yetkili bastı",
+        "v_open": "Açık",
+        "l_title": "Bağlı Hesaplar",
+        "l_subtitle": "Üyelere bağlı oyun hesapları.",
+        "l_loadFailed": "Bağlantılar yüklenemedi",
+        "l_empty": "Bağlı hesap yok.",
+        "l_player": "Oyun hesabı",
+        "l_member": "Üye",
+        "l_linkedAt": "Bağlandı",
+        "l_actions": "İşlemler",
+        "l_unlink": "Bağlantıyı kaldır",
+        "l_unlinkTitle": "Bu hesabın bağlantısı kaldırılsın mı?",
+        "l_unlinkConfirm": "{player} artık {member} üyesine bağlı değil. İki hesap da hiçbir şey kaybetmez.",
+        "l_unlinked": "Bağlantı kaldırıldı",
+        "l_unlinkFailed": "Bağlantı kaldırılamadı",
+        "link_title": "Oyun hesabını bağla",
+        "link_intro": "Oynadığın hesabı bu siteye bağla; oyunda alışveriş yap, kredilerin tek yerde dursun.",
+        "link_signIn": "Bağlamak için giriş yap",
+        "link_codeFromGame": "Oyunun verdiği kod",
+        "link_look": "Bak",
+        "link_preview": "Bu kod, {platform} hesabı {name} adını sana bağlar.",
+        "link_previewWarn": "Bu senin hesabın değilse burada dur: biri sana kendi kodunu göndermiş olabilir.",
+        "link_confirm": "{name} hesabını bağla",
+        "link_done": "{name} hesabına bağlandı.",
+        "link_otherWay": "Ya da burada bir kod üret ve oyunda yaz:",
+        "link_makeCode": "Kod üret",
+        "link_wrongCode": "Bu kod yanlış, kullanılmış ya da süresi dolmuş. Oyunda yenisini üret.",
+        "link_already": "Bu hesap ya da seninki zaten bağlı. Önce bağlantıyı kaldır.",
+        "link_tooMany": "Çok fazla deneme. Birkaç dakika bekle.",
+        "link_failed": "Kod üretilemedi. Yeniden dene.",
+        "q_sendAgain": "Yeniden gönder",
+        "q_sendAgainTitle": "Yeniden gönderilsin mi?",
+        "q_sendAgainConfirm": "{command} satın almanın geri kalanıyla birlikte yeniden çalışır. Yalnızca çalışmadıysa yap.",
+        "q_sendAgainDone": "Yeniden gönderildi",
+        "q_markDone": "Tamam say",
+        "q_markDoneTitle": "Tamam sayılsın mı?",
+        "q_markDoneConfirm": "{command} yeniden çalışmadan kapanır. Çalıştıysa yap.",
+        "q_markDoneDone": "Tamam sayıldı",
+        "q_cancelTitle": "İptal edilsin mi?",
+        "q_cancelConfirm": "{command} ve satın almanın geri kalanı çalışmayacak.",
+        "q_cancelDone": "İptal edildi",
+        "l_pick": "Bu hesabı seç",
+        "l_unlinkManyConfirm": "{count} oyun hesabının bağlantısı kalkar. İki taraf da hiçbir şey kaybetmez.",
+        "l_unlinkedPartly": "{total} bağlantıdan {deleted} tanesi kaldırıldı",
+        "srv_pick": "Bu sunucuyu seç",
+        "srv_revokeManyConfirm": "{count} sunucu artık bağlanamaz. Sıradaki teslimatları olduğu yerde kalır.",
+        "srv_revokedPartly": "{total} tokenden {deleted} tanesi iptal edildi"
       },
       "admin": {
         "module_game-connect_name": "Oyun Bağlantısı",
-        "module_game-connect_description": "Oyun sunucuları siteye kendileri bağlansın: yeniden başlatmadan etkilenmeyen sıralı teslimat, canlı durum, oyunda mağaza ve kredi, hesap eşleme. İstemcisi olan her oyun için."
+        "module_game-connect_description": "Oyun sunucuları siteye kendileri bağlansın: yeniden başlatmadan etkilenmeyen sıralı teslimat, canlı durum, oyunda mağaza ve kredi, hesap eşleme. İstemcisi olan her oyun için.",
+        "menu_game-connect": "Oyun Bağlantısı",
+        "menu_game-connect_connected_servers": "Bağlı Sunucular",
+        "menu_game-connect_delivery_queue": "Teslimat Sırası",
+        "menu_game-connect_game_vouchers": "Oyun Kuponları",
+        "menu_game-connect_linked_accounts": "Bağlı Hesaplar"
       },
       "activity": {
         "auditTokenIssued": "Bir oyun sunucusuna yeni token verildi",
@@ -371,7 +639,17 @@
         "auditJobSentAgain": "Bir teslimat yeniden gönderildi",
         "auditJobCancelled": "Bir teslimat iptal edildi",
         "auditCreditsChanged": "Bir oyun sunucusundan bakiye değiştirildi",
-        "auditVoucherMinted": "Bir oyun sunucusundan kupon basıldı"
+        "auditVoucherMinted": "Bir oyun sunucusundan kupon basıldı",
+        "auditLinkRemoved": "Bir oyun hesabının bağlantısını kaldırdı"
+      },
+      "pageTitles": {
+        "gameLink": "Oyun Hesabını Bağla"
+      },
+      "pageDescriptions": {
+        "gameLink": "Oynadığın hesabı bu siteye bağla."
+      },
+      "nav": {
+        "gameLink": "Hesap Bağla"
       }
     }
   },
@@ -413,6 +691,80 @@
     {
       "action": "game-connect.voucher.minted",
       "nameKey": "auditVoucherMinted"
+    },
+    {
+      "action": "game-connect.link.removed",
+      "nameKey": "auditLinkRemoved"
+    }
+  ],
+  "adminRoutes": [
+    {
+      "path": "/game-connect/servers",
+      "component": "pages/admin/servers/page.tsx",
+      "permission": "game-connect.manage"
+    },
+    {
+      "path": "/game-connect/queue",
+      "component": "pages/admin/queue/page.tsx",
+      "permission": "game-connect.manage"
+    },
+    {
+      "path": "/game-connect/vouchers",
+      "component": "pages/admin/vouchers/page.tsx",
+      "permission": "game-connect.manage"
+    },
+    {
+      "path": "/game-connect/links",
+      "component": "pages/admin/links/page.tsx",
+      "permission": "game-connect.manage"
+    }
+  ],
+  "menu": [
+    {
+      "label": "Connected Servers",
+      "path": "/game-connect/servers",
+      "icon": "Cable",
+      "group": "gaming",
+      "permission": "game-connect.manage"
+    },
+    {
+      "label": "Delivery Queue",
+      "path": "/game-connect/queue",
+      "icon": "ListOrdered",
+      "group": "gaming",
+      "permission": "game-connect.manage"
+    },
+    {
+      "label": "Game Vouchers",
+      "path": "/game-connect/vouchers",
+      "icon": "Ticket",
+      "group": "gaming",
+      "permission": "game-connect.manage"
+    },
+    {
+      "label": "Linked Accounts",
+      "path": "/game-connect/links",
+      "icon": "Link2",
+      "group": "gaming",
+      "permission": "game-connect.manage"
+    }
+  ],
+  "routes": [
+    {
+      "path": "/link",
+      "component": "pages/public/link/page.tsx",
+      "noindex": true,
+      "titleKey": "pageTitles.gameLink",
+      "descriptionKey": "pageDescriptions.gameLink"
+    }
+  ],
+  "navLinks": [
+    {
+      "label": "Link Account",
+      "labelKey": "gameLink",
+      "href": "/link",
+      "icon": "Link2",
+      "position": 80
     }
   ]
 }

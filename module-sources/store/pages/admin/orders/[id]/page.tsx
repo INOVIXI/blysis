@@ -8,6 +8,8 @@ import { auth } from "@/core/sdk/auth";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@/core/sdk/ui";
 import { ArrowLeft, Package } from "lucide-react";
 import { OrderStatusSelect } from "./status-select";
+import { DeliveryBadge } from "../../../../components/DeliveryBadge";
+import { deliveryOf } from "../../../../lib/order-delivery";
 import { adminOrderStatusKeys, orderStatusLabel } from "../../../../lib/order-status";
 
 /** The admin catalogue's copy of the order status labels. */
@@ -53,6 +55,8 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
     });
 
     if (!order) notFound();
+    const delivery = (await deliveryOf([order.id]))[order.id] ?? null;
+    const deliveryLabel = (state: DeliveryState) => t(`dlv_${state}`);
 
     return (
         <>
@@ -89,6 +93,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                                             <p className="text-sm text-muted-foreground">
                                                 {money(Number(item.price))} x {item.quantity}
                                             </p>
+                                            <DeliveryBadge state={delivery?.lines[item.id]} label={deliveryLabel} />
                                         </div>
                                         <p className="font-medium">
                                             {money(Number(item.price) * item.quantity)}
@@ -153,6 +158,12 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                                 <span className="text-muted-foreground">{t("adm_status")}: </span>
                                 <span className="font-medium">{orderStatusLabel(t, ADMIN_ORDER_STATUS_KEYS, order.status)}</span>
                             </p>
+                            {delivery && (
+                                <p className="text-sm mt-1">
+                                    <span className="text-muted-foreground">{t("dlv_label")}: </span>
+                                    <DeliveryBadge state={delivery.state} label={deliveryLabel} />
+                                </p>
+                            )}
                         </CardContent>
                     </Card>
 

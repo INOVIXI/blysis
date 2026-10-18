@@ -1,7 +1,7 @@
 /**
  * GET /api/v1/game-connect/admin/jobs - the delivery queue, newest first.
  *
- * Filters by state and server. Review is the state an admin comes here for:
+ * Filters by state and server, and finds a player or a command by `q`. Review is the state an admin comes here for:
  * every job in it may or may not have run, and only a person can say which.
  */
 import { NextRequest, NextResponse } from "next/server";
@@ -20,7 +20,11 @@ export async function GET(request: NextRequest) {
     const state = url.searchParams.get("state");
     const server = url.searchParams.get("server");
     const reference = url.searchParams.get("reference");
+    const term = (url.searchParams.get("q") ?? "").trim().toLowerCase().slice(0, 64);
     const where = {
+        ...(term
+            ? { OR: [{ playerNameLower: { contains: term } }, { command: { contains: term, mode: "insensitive" as const } }] }
+            : {}),
         ...(state && STATES.includes(state) ? { state } : {}),
         ...(server ? { OR: [{ gameServerId: server }, { claimedServerId: server }] } : {}),
         ...(reference ? { referenceId: reference } : {}),

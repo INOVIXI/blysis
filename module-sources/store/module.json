@@ -857,6 +857,10 @@
     {
       "hook": "store.credits.purchased",
       "type": "action"
+    },
+    {
+      "hook": "store.orders.delivery",
+      "type": "filter"
     }
   ],
   "translations": {
@@ -1451,7 +1455,13 @@
         "tab_chest_acceptedState": "Accepted",
         "tab_chest_sentTitle": "Gifts you sent",
         "tab_chest_receiveGifts": "Accept gifts",
-        "tab_chest_receiveGiftsHint": "When this is off, nobody can buy you a gift or pass you an item."
+        "tab_chest_receiveGiftsHint": "When this is off, nobody can buy you a gift or pass you an item.",
+        "dlv_label": "Delivery",
+        "dlv_waiting": "Waiting for you in game",
+        "dlv_delivered": "Delivered",
+        "dlv_failed": "Not delivered",
+        "dlv_review": "Being checked",
+        "dlv_cancelled": "Cancelled"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -2273,7 +2283,13 @@
         "tab_chest_acceptedState": "Kabul edildi",
         "tab_chest_sentTitle": "Gönderdiğin hediyeler",
         "tab_chest_receiveGifts": "Hediye kabul et",
-        "tab_chest_receiveGiftsHint": "Kapalıyken kimse sana hediye alamaz ya da eşya gönderemez."
+        "tab_chest_receiveGiftsHint": "Kapalıyken kimse sana hediye alamaz ya da eşya gönderemez.",
+        "dlv_label": "Teslimat",
+        "dlv_waiting": "Oyunda seni bekliyor",
+        "dlv_delivered": "Teslim edildi",
+        "dlv_failed": "Teslim edilemedi",
+        "dlv_review": "İnceleniyor",
+        "dlv_cancelled": "İptal edildi"
       },
       "cart": {
         "title": "Alışveriş Sepeti",

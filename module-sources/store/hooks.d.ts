@@ -478,6 +478,15 @@ declare global {
         | { ok: true }
         | { ok: false; code: "not_found" | "already_claimed" | "not_pending" | "needs_player_name" | "unavailable" };
 
+    /** Where a delivery stands, in the words a buyer is shown. */
+    type DeliveryState = "waiting" | "delivered" | "failed" | "review" | "cancelled";
+
+    /** One order's delivery: the whole of it, and each line by order item id. */
+    interface OrderDelivery {
+        state: DeliveryState;
+        lines: Record<string, DeliveryState>;
+    }
+
     type GiftCancelResult =
         | { ok: true; refunded: number; balance: number }
         | { ok: false; code: "not_found" | "not_pending" | "unavailable" };
@@ -501,6 +510,12 @@ declare global {
         "store.gifts.receive": boolean;
         /** The community goal and what has been raised toward it this month. */
         "store.community-goal": { target: number; current: number; title: string; endDate: string | null } | null;
+        /**
+         * Where each order's delivery stands, by order id, when a module queues
+         * deliveries rather than running them at once. An order nobody answers
+         * for is absent, and the screens say nothing about it.
+         */
+        "store.orders.delivery": Record<string, OrderDelivery>;
     }
 
     interface BlysisFilterContexts {
@@ -514,6 +529,7 @@ declare global {
         /** `receive` null reads the switch without changing it. */
         "store.gifts.receive": { userId: string; receive: boolean | null };
         "store.community-goal": Record<string, never>;
+        "store.orders.delivery": { orderIds: string[] };
     }
 }
 

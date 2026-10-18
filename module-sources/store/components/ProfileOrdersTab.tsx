@@ -9,6 +9,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, ListControls, LoadFai
 import { ChevronDown, ChevronUp, Package, Receipt, ShoppingCart, Loader2 } from "lucide-react";
 import { dateLocaleTag } from "@/core/sdk";
 import { ORDER_STATUSES, ORDER_STATUS_KEYS, orderStatusLabel } from "../lib/order-status";
+import { DeliveryBadge } from "./DeliveryBadge";
 
 interface Order {
     id: string;
@@ -25,6 +26,8 @@ interface Order {
         quantity: number;
         product: { id: string; name: string; image: string | null } | null;
     }[];
+    /** Where the delivery stands, when a module queues it. */
+    delivery: OrderDelivery | null;
 }
 
 interface Page {
@@ -49,6 +52,7 @@ const statusColor = (status: string) => {
 export function ProfileOrdersTab() {
     const { format: money } = useSiteCurrency();
     const t = useTranslations("store");
+    const deliveryLabel = (state: DeliveryState) => t(`dlv_${state}`);
     const dateTag = dateLocaleTag(useLocale());
     const [orders, setOrders] = useState<Order[]>([]);
     const [paging, setPaging] = useState<Page>({ page: 1, pages: 1, total: 0 });
@@ -157,6 +161,7 @@ export function ProfileOrdersTab() {
                                             <span className={`text-xs px-2 py-0.5 rounded ${statusColor(order.status)}`}>
                                                 {statusLabel(order.status)}
                                             </span>
+                                            <DeliveryBadge state={order.delivery?.state} label={deliveryLabel} />
                                         </div>
                                         {expandedOrder === order.id
                                             ? <ChevronUp className="w-4 h-4 text-muted-foreground" />
@@ -181,6 +186,7 @@ export function ProfileOrdersTab() {
                                                         <p className="text-xs text-muted-foreground">
                                                             {money(Number(item.price))} × {item.quantity}
                                                         </p>
+                                                        <DeliveryBadge state={order.delivery?.lines[item.id]} label={deliveryLabel} />
                                                     </div>
                                                     <p className="text-sm font-medium">
                                                         {money(Number(item.price) * item.quantity)}

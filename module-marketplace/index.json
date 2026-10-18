@@ -1116,13 +1116,14 @@
           "server.command",
           "store.order.completed",
           "store.credits.purchased",
-          "game-account.resolve"
+          "game-account.resolve",
+          "store.orders.delivery"
         ]
       },
       "stats": {
-        "publicRoutes": 0,
-        "adminRoutes": 0,
-        "apiRoutes": 29,
+        "publicRoutes": 1,
+        "adminRoutes": 4,
+        "apiRoutes": 32,
         "widgets": 0
       }
     },
@@ -2934,7 +2935,8 @@
           "store.billing.required",
           "credit.change",
           "servers.list",
-          "store.credits.purchased"
+          "store.credits.purchased",
+          "store.orders.delivery"
         ],
         "listens": [
           "user.registered",
