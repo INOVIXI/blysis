@@ -279,7 +279,11 @@ when unlimited. `type` is `text`, `number` or `select`.
 { "code": "K7Q2-M9XD", "url": "https://example.com/en/link?code=K7Q2-M9XD", "expiresAt": "..." }
 ```
 
-The member opens the url signed in and confirms. The site then sends a `link.confirmed` event.
+The member opens the url signed in. The page shows which account the code would link (`GET
+link/confirm?code=`, a member route) and links it only when the member confirms that account
+by name (`POST link/confirm` with `code` and `account`). A code somebody else made and sent
+with a link therefore shows the member a stranger's name before anything is linked. The site
+then sends a `link.confirmed` event.
 Refusals: `409 already_linked`.
 
 ### `POST link/verify`
@@ -302,7 +306,9 @@ Codes for both directions are single use and live for ten minutes.
 { "player": { "...": "..." }, "to": "SomePlayer", "amount": 50, "idempotencyKey": "..." }
 ```
 
-`to` is a player name, which the site resolves through links, then a member's username. Answer
+`to` is a player name or a member's username. A name that could mean two members (a player
+name and a username of different members, or two links that still carry one name) means
+nobody, and the call is refused as `recipient_unknown`; money never follows a guess. Answer
 `{ "sent": 50, "to": "someplayer", "balance": 200 }`. Refusals: `409 not_linked`,
 `409 recipient_unknown`, `409 insufficient_balance`, `409 amount_invalid`, `409 same_account`.
 

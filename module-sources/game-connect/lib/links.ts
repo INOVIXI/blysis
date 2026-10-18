@@ -63,3 +63,13 @@ export async function spend(code: string, direction: "game" | "site", now: Date 
     if (taken.count === 0) return null;
     return row.expiresAt.getTime() >= now.getTime() ? row : null;
 }
+
+/**
+ * Reads a code without spending it, so the site can show which account it
+ * would link before the member agrees. Null when it is wrong, used or old.
+ */
+export async function peek(code: string, direction: "game" | "site", now: Date = new Date()) {
+    const row = await prisma.gameConnectLinkCode.findUnique({ where: { codeHash: hashCode(code) } });
+    if (!row || row.direction !== direction || row.expiresAt.getTime() < now.getTime()) return null;
+    return row;
+}

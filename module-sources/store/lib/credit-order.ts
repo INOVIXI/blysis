@@ -147,7 +147,30 @@ export async function deliverPaidOrder(
     for (const line of lines) {
         const commands = byProduct.get(line.productId);
         if (!commands || commands.length === 0) continue;
+
+        // The line's chest rows are claimed before its commands run, and put
+        // back if nothing could take them. Closing them only afterwards left
+        // them claimable for as long as delivery took, so a chest claim in
+        // that window delivered the same goods a second time. A row that was
+        // already claimed means the chest delivered it: this does not.
+        const rows = await prisma.chestItem.findMany({
+            where: { orderId: order.id, productId: line.productId, giftState: null },
+            select: { id: true, isRedeemed: true },
+            take: 100,
+        });
+        const open = rows.filter((row) => !row.isRedeemed).map((row) => row.id);
+        if (rows.length > 0 && open.length === 0) continue;
+        const claimedAt = new Date();
+        if (open.length > 0) {
+            const claimed = await prisma.chestItem.updateMany({
+                where: { id: { in: open }, isRedeemed: false, giftState: null },
+                data: { isRedeemed: true, redeemedAt: claimedAt },
+            });
+            if (claimed.count === 0) continue;
+        }
+
         const variables = (line.metadata as Record<string, unknown> | null)?.variables as Record<string, string> | undefined;
+        let delivered = false;
         try {
             const result = await deliverProduct({
                 playerName: player.name,
@@ -160,14 +183,15 @@ export async function deliverPaidOrder(
                 reference: { kind: "order", id: order.id, label: line.name },
                 line: line.id,
             });
-            if (result.success) {
-                await prisma.chestItem.updateMany({
-                    where: { orderId: order.id, productId: line.productId, isRedeemed: false, giftState: null },
-                    data: { isRedeemed: true, redeemedAt: new Date() },
-                });
-            }
+            delivered = result.success;
         } catch (error) {
             log.error("[store] delivery failed", { orderId: order.id, error: error instanceof Error ? error.message : String(error) });
+        }
+        if (!delivered && open.length > 0) {
+            await prisma.chestItem.updateMany({
+                where: { id: { in: open }, isRedeemed: true, redeemedAt: claimedAt },
+                data: { isRedeemed: false, redeemedAt: null },
+            });
         }
     }
 }

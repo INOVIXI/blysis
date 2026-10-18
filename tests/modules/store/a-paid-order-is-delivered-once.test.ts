@@ -91,6 +91,27 @@ describe("a paid order", () => {
         expect(chestItems.table.rows[0]).toMatchObject({ isRedeemed: false });
     });
 
+    it("delivers nothing when the chest already took the line", async () => {
+        chestItems.table.rows.push({ id: "c1", orderId: "o1", productId: "p1", userId: "u1", isRedeemed: true, giftState: null });
+
+        await deliverPaidOrder({ id: "o1", items: [line] }, buyer);
+
+        expect(deliverProduct).not.toHaveBeenCalled();
+    });
+
+    it("holds the row while its commands run, so the chest cannot take it then", async () => {
+        chestItems.table.rows.push({ id: "c1", orderId: "o1", productId: "p1", userId: "u1", isRedeemed: false, giftState: null });
+        let seen: unknown;
+        deliverProduct.mockImplementation(async () => {
+            seen = chestItems.table.rows[0].isRedeemed;
+            return { success: true, results: ["Done"] };
+        });
+
+        await deliverPaidOrder({ id: "o1", items: [line] }, buyer);
+
+        expect(seen).toBe(true);
+    });
+
     it("does not close a gift that waits for its recipient", async () => {
         chestItems.table.rows.push({ id: "c1", orderId: "o1", productId: "p1", userId: "u2", isRedeemed: false, giftState: PENDING });
 

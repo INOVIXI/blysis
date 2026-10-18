@@ -66,19 +66,32 @@ export async function memberOf(server: Pick<ConnectedServer, "game">, player: Pl
 }
 
 /**
- * A member named by somebody in game: a player name first, through the
- * links, then a site username. Case does not matter for either.
+ * A member named by somebody in game: a player name through the links, or a
+ * site username. Case does not matter for either.
+ *
+ * Money follows the answer, so a name that could mean two members means
+ * none: two links that still carry one name (a rename the site has not seen
+ * yet), or a player name and a username that belong to different members.
+ * The caller then says it found nobody, and the sender names them another way.
  */
 export async function memberNamed(server: Pick<ConnectedServer, "game">, name: string): Promise<LinkedMember | null> {
     const trimmed = name.trim();
     if (trimmed === "") return null;
-    const link = await prisma.gameConnectLink.findFirst({
-        where: { platform: platformOf(server), name: { equals: trimmed, mode: "insensitive" } },
-        select: { userId: true },
-    });
-    const user = await prisma.user.findFirst({
-        where: link ? { id: link.userId } : { username: { equals: trimmed, mode: "insensitive" } },
-        select: { id: true, username: true },
-    });
+    const [links, users] = await Promise.all([
+        prisma.gameConnectLink.findMany({
+            where: { platform: platformOf(server), name: { equals: trimmed, mode: "insensitive" } },
+            select: { userId: true },
+            take: 2,
+        }),
+        prisma.user.findMany({
+            where: { username: { equals: trimmed, mode: "insensitive" } },
+            select: { id: true },
+            take: 2,
+        }),
+    ]);
+    const candidates = new Set([...links.map((link) => link.userId), ...users.map((user) => user.id)]);
+    if (candidates.size !== 1 || links.length > 1 || users.length > 1) return null;
+    const [userId] = candidates;
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, username: true } });
     return user ? { userId: user.id, username: user.username } : null;
 }

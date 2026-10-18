@@ -197,9 +197,8 @@
     {
       "path": "/game-connect/link/confirm",
       "handler": "api/link/confirm/route.ts",
-      "method": "POST",
       "openTo": "member",
-      "description": "A signed-in member confirms a code a player made in game."
+      "description": "Which game account a code made in game would link, and the signed-in member's agreement to link that account."
     },
     {
       "path": "/game-connect/link/code",
