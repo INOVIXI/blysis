@@ -36,9 +36,6 @@ const prismaMock = {
             return row;
         }),
     },
-    gameServer: {
-        findUnique: vi.fn(async () => ({ name: "Survival" })),
-    },
 };
 
 vi.mock("@/core/sdk/server", () => ({
@@ -52,7 +49,11 @@ vi.mock("@/core/sdk/server", () => ({
 }));
 
 vi.mock("@/core/sdk", () => ({
-    applyFiltersAsync: vi.fn(async (_hook: string, value: unknown) => value),
+    applyFiltersAsync: vi.fn(async (hook: string, value: unknown) =>
+        hook === "servers.list"
+            ? db.servers.map((s) => ({ id: s.gameServerId, name: "Survival", type: "minecraft", isDefault: true, isActive: true, order: 0 }))
+            : value,
+    ),
 }));
 
 const { issueToken, hashToken, bearerToken } = await import("@/modules/game-connect/lib/token");

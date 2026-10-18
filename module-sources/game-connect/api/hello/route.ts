@@ -16,6 +16,7 @@ import { prisma, readJsonBody, readSettingStrings, resolveAppName, resolveAppUrl
 import { authenticateServer, refuse } from "../../lib/auth";
 import { connectSettings } from "../../lib/settings";
 import { catalogVersion } from "../../lib/catalog";
+import { serverNames } from "../../lib/servers";
 
 /** A previous process seen this recently was alive when it lost the token. */
 const TAKEOVER_WINDOW_MS = 90_000;
@@ -66,8 +67,8 @@ export async function POST(request: NextRequest) {
         },
     });
 
-    const [gameServer, settings, siteSettings, version] = await Promise.all([
-        prisma.gameServer.findUnique({ where: { id: server.gameServerId }, select: { name: true } }),
+    const [names, settings, siteSettings, version] = await Promise.all([
+        serverNames(),
         connectSettings(),
         readSettingStrings(["site_name"]).catch(() => ({}) as Record<string, string | null>),
         catalogVersion(),
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
         {
-            server: { id: server.gameServerId, name: gameServer?.name ?? "" },
+            server: { id: server.gameServerId, name: names.get(server.gameServerId) ?? "" },
             site: { name: siteSettings.site_name || resolveAppName(), url: resolveAppUrl() },
             settings: { ...settings, catalogVersion: version },
             takeover: previousLive

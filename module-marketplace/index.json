@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-06",
-  "updatedAt": "2026-10-06T09:06:29Z",
+  "updated": "2026-10-18",
+  "updatedAt": "2026-10-18T12:07:10Z",
   "modules": [
     {
       "id": "announcements",
@@ -1064,6 +1064,49 @@
         "publicRoutes": 3,
         "adminRoutes": 3,
         "apiRoutes": 9,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "game-connect",
+      "name": "Game Connect",
+      "description": "Let game servers connect to this site themselves: queued delivery that survives a restart, live status, the store and credits in game, and account linking, for any game with a client",
+      "i18n": {
+        "tr": {
+          "name": "Oyun Bağlantısı",
+          "description": "Oyun sunucuları siteye kendileri bağlansın: yeniden başlatmadan etkilenmeyen sıralı teslimat, canlı durum, oyunda mağaza ve kredi, hesap eşleme. İstemcisi olan her oyun için."
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.0.0",
+      "author": "Blysis",
+      "icon": "Cable",
+      "category": "gaming",
+      "verified": true,
+      "updatedAt": "2026-10-18T12:07:10Z",
+      "screenshots": [],
+      "tags": [
+        "gaming"
+      ],
+      "zip": "game-connect.zip",
+      "dependencies": [
+        "servers"
+      ],
+      "conflicts": [],
+      "hooks": {
+        "emits": [
+          "store.catalog.ingame",
+          "servers.list"
+        ],
+        "listens": [
+          "server.command",
+          "store.order.completed"
+        ]
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 0,
+        "apiRoutes": 8,
         "widgets": 0
       }
     },
@@ -2596,13 +2639,13 @@
           "description": "Oyun sunucusu yönetimi, RCON ve durum izleme"
         }
       },
-      "version": "1.4.0",
+      "version": "1.5.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Server",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-09-20T04:45:04Z",
+      "updatedAt": "2026-10-18T12:07:10Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -2613,7 +2656,8 @@
       "hooks": {
         "emits": [],
         "listens": [
-          "server.command"
+          "server.command",
+          "servers.list"
         ]
       },
       "stats": {

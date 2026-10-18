@@ -132,6 +132,9 @@ events for this server, or at the end with empty lists:
 ```
 
 - Every returned job is already `CLAIMED` by this server, with a lease of `leaseSeconds`.
+- A poll also returns jobs this server claimed at least 15 seconds earlier and has not reported,
+  while their lease lasts. An answer lost on the way back is recovered that way. A client skips
+  every job id its journal already holds, so a job it is running or has run is never run again.
 - Jobs with the same `groupKey` come back together, ordered by `sequence`.
 - A job is returned to a server when its target is that server, or when its target is the
   player's current server and the player is on that server. A `whenOnline` job is returned only
@@ -143,7 +146,8 @@ events for this server, or at the end with empty lists:
 
 ### What a client does with a job
 
-1. Write `started` for the job id to a local journal.
+1. If the journal already holds the job id, skip it: it was offered again. Otherwise write
+   `started` for the job id to the journal.
 2. If the player left since the claim and the job is `whenOnline`, report `deferred` and do not
    run it.
 3. Strip one leading `/` and any `namespace:` from the first word. If that word is blocked, report

@@ -46,11 +46,82 @@
       "method": "POST",
       "providerCallback": true,
       "description": "A game server process introduces itself with its token and becomes the token's current process."
+    },
+    {
+      "path": "/game-connect/poll",
+      "handler": "api/poll/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "The long-poll a game server holds open; whatever it returns is already claimed by that server."
+    },
+    {
+      "path": "/game-connect/jobs/report",
+      "handler": "api/jobs/report/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "A game server reports what happened to the deliveries it claimed."
+    },
+    {
+      "path": "/game-connect/status",
+      "handler": "api/status/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "A game server reports who is online on it."
+    },
+    {
+      "path": "/game-connect/admin/servers",
+      "handler": "api/admin/servers/route.ts",
+      "permission": "game-connect.manage",
+      "description": "List every game server with its connection, or give one a new token (shown once)."
+    },
+    {
+      "path": "/game-connect/admin/servers/[id]",
+      "handler": "api/admin/servers/[id]/route.ts",
+      "permission": "game-connect.manage",
+      "description": "Switch a connection on or off, change what it may do, or revoke its token."
+    },
+    {
+      "path": "/game-connect/admin/jobs",
+      "handler": "api/admin/jobs/route.ts",
+      "method": "GET",
+      "permission": "game-connect.manage",
+      "description": "The delivery queue, filtered by state, server or purchase."
+    },
+    {
+      "path": "/game-connect/admin/jobs/[id]",
+      "handler": "api/admin/jobs/[id]/route.ts",
+      "method": "POST",
+      "permission": "game-connect.manage",
+      "description": "Mark a job done, send it again or cancel it, alone or with the rest of its purchase."
+    }
+  ],
+  "cronJobs": [
+    {
+      "id": "sweep",
+      "schedule": "every-minute",
+      "handler": "cron/sweep.ts"
+    }
+  ],
+  "hookListeners": [
+    {
+      "hook": "server.command",
+      "type": "filter",
+      "handler": "hooks/on-server-command.ts",
+      "priority": 5
+    },
+    {
+      "hook": "store.order.completed",
+      "type": "action",
+      "handler": "hooks/on-order-completed.ts"
     }
   ],
   "hooksEmitted": [
     {
       "hook": "store.catalog.ingame",
+      "type": "filter"
+    },
+    {
+      "hook": "servers.list",
       "type": "filter"
     }
   ],
@@ -68,6 +139,14 @@
       "admin": {
         "module_game-connect_name": "Game Connect",
         "module_game-connect_description": "Let game servers connect to this site themselves: queued delivery that survives a restart, live status, the store and credits in game, and account linking, for any game with a client"
+      },
+      "activity": {
+        "auditTokenIssued": "Gave a game server a new token",
+        "auditTokenRevoked": "Revoked a game server's token",
+        "auditServerUpdated": "Changed what a connected game server may do",
+        "auditJobMarkedDone": "Marked a delivery done",
+        "auditJobSentAgain": "Sent a delivery again",
+        "auditJobCancelled": "Cancelled a delivery"
       }
     },
     "tr": {
@@ -77,7 +156,44 @@
       "admin": {
         "module_game-connect_name": "Oyun Bağlantısı",
         "module_game-connect_description": "Oyun sunucuları siteye kendileri bağlansın: yeniden başlatmadan etkilenmeyen sıralı teslimat, canlı durum, oyunda mağaza ve kredi, hesap eşleme. İstemcisi olan her oyun için."
+      },
+      "activity": {
+        "auditTokenIssued": "Bir oyun sunucusuna yeni token verildi",
+        "auditTokenRevoked": "Bir oyun sunucusunun tokeni iptal edildi",
+        "auditServerUpdated": "Bağlı bir oyun sunucusunun yetkileri değiştirildi",
+        "auditJobMarkedDone": "Bir teslimat tamamlandı olarak işaretlendi",
+        "auditJobSentAgain": "Bir teslimat yeniden gönderildi",
+        "auditJobCancelled": "Bir teslimat iptal edildi"
       }
     }
-  }
+  },
+  "demoUnsafe": [
+    "/game-connect/admin"
+  ],
+  "auditActions": [
+    {
+      "action": "game-connect.token.issued",
+      "nameKey": "auditTokenIssued"
+    },
+    {
+      "action": "game-connect.token.revoked",
+      "nameKey": "auditTokenRevoked"
+    },
+    {
+      "action": "game-connect.server.updated",
+      "nameKey": "auditServerUpdated"
+    },
+    {
+      "action": "game-connect.job.mark-done",
+      "nameKey": "auditJobMarkedDone"
+    },
+    {
+      "action": "game-connect.job.send-again",
+      "nameKey": "auditJobSentAgain"
+    },
+    {
+      "action": "game-connect.job.cancel",
+      "nameKey": "auditJobCancelled"
+    }
+  ]
 }

@@ -11,7 +11,11 @@ import type { HookHandlerFor } from "@/core/sdk";
 import { log } from "@/core/sdk/server";
 import { sendRconCommand } from "../lib/rcon";
 
-const runServerCommand: HookHandlerFor<"server.command", "filter"> = async (_current, request) => {
+const runServerCommand: HookHandlerFor<"server.command", "filter"> = async (current, request) => {
+    // Another module took it first, for example one that queues for a game
+    // server that connects to the site itself. Running it here as well would
+    // deliver it twice.
+    if (current?.handled) return current;
     if (!request?.command) {
         return { handled: false, ok: false, output: null, error: "No command given" };
     }
