@@ -1,0 +1,83 @@
+{
+  "id": "game-connect",
+  "name": "Game Connect",
+  "description": "Let game servers connect to this site themselves: queued delivery that survives a restart, live status, the store and credits in game, and account linking, for any game with a client",
+  "version": "1.0.0",
+  "coreVersion": "^5.0.0",
+  "category": "gaming",
+  "author": "Blysis",
+  "icon": "Cable",
+  "dependencies": [
+    "servers"
+  ],
+  "settings": [
+    {
+      "key": "pollHoldSeconds",
+      "type": "number",
+      "default": 25,
+      "min": 5,
+      "max": 55,
+      "label": "Long-poll hold (seconds)",
+      "description": "How long the site keeps a server's request open waiting for work. Keep it under your proxy's idle timeout."
+    },
+    {
+      "key": "statusIntervalSeconds",
+      "type": "number",
+      "default": 30,
+      "min": 5,
+      "max": 300,
+      "label": "Status interval (seconds)",
+      "description": "How often a server reports who is online. A player counts as online for two intervals after the last report."
+    },
+    {
+      "key": "leaseSeconds",
+      "type": "number",
+      "default": 120,
+      "min": 30,
+      "max": 3600,
+      "label": "Delivery lease (seconds)",
+      "description": "How long a server may hold a delivery without answering before it is set aside for review."
+    }
+  ],
+  "api": [
+    {
+      "path": "/game-connect/hello",
+      "handler": "api/hello/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "A game server process introduces itself with its token and becomes the token's current process."
+    }
+  ],
+  "hooksEmitted": [
+    {
+      "hook": "store.catalog.ingame",
+      "type": "filter"
+    }
+  ],
+  "permissions": [
+    {
+      "name": "game-connect.manage",
+      "labelKey": "gameConnect.perm_manage"
+    }
+  ],
+  "translations": {
+    "en": {
+      "gameConnect": {
+        "perm_manage": "Manage"
+      },
+      "admin": {
+        "module_game-connect_name": "Game Connect",
+        "module_game-connect_description": "Let game servers connect to this site themselves: queued delivery that survives a restart, live status, the store and credits in game, and account linking, for any game with a client"
+      }
+    },
+    "tr": {
+      "gameConnect": {
+        "perm_manage": "Yönetebilir"
+      },
+      "admin": {
+        "module_game-connect_name": "Oyun Bağlantısı",
+        "module_game-connect_description": "Oyun sunucuları siteye kendileri bağlansın: yeniden başlatmadan etkilenmeyen sıralı teslimat, canlı durum, oyunda mağaza ve kredi, hesap eşleme. İstemcisi olan her oyun için."
+      }
+    }
+  }
+}

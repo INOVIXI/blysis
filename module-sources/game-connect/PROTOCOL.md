@@ -81,7 +81,7 @@ after a timeout never charges twice.
 ```json
 {
   "server": { "id": "clx...", "name": "Survival" },
-  "site": { "name": "Example", "url": "https://example.com", "locales": ["en", "tr"], "defaultLocale": "en" },
+  "site": { "name": "Example", "url": "https://example.com" },
   "settings": { "pollHoldSeconds": 25, "statusIntervalSeconds": 30, "leaseSeconds": 120, "catalogVersion": "c-1734" },
   "takeover": null
 }
@@ -205,7 +205,7 @@ a player joins or leaves. `performance` is optional.
 
 ## Catalogue
 
-### `GET catalog?locale=tr`
+### `GET catalog`
 
 `If-None-Match` with the last `version` answers `304`.
 
