@@ -12,6 +12,7 @@ import { NavIcon } from "@/core/sdk/ui";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { writeError, errorMessage } from "@/core/sdk";
+import { isPlayerName } from "../../../lib/player-name";
 
 interface CartItem {
     id: string;
@@ -231,6 +232,7 @@ export default function CartPage() {
     const handleCheckout = async () => {
         if (!cart || cart.items.length === 0) return;
         if (!playerName.trim()) { setCheckoutError(t('playerNameRequired')); return; }
+        if (!isPlayerName(playerName)) { setCheckoutError(t('playerNameInvalid')); return; }
 
         setCheckingOut(true);
         setCheckoutError(null);
