@@ -305,8 +305,6 @@ export default function NewProductPage() {
 
                         <RequirementFields value={requires} onChange={setRequires} />
 
-                    <AvailabilityFields value={availability} onChange={setAvailability} timeZone={timeZone} />
-
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t("adm_status")}</CardTitle>
