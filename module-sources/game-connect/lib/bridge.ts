@@ -125,6 +125,15 @@ export async function purchase(request: {
     return applyFiltersAsync("store.purchase.credits", UNAVAILABLE as PurchaseResult, request);
 }
 
+export type QuoteResult =
+    | { ok: true; each: number; total: number }
+    | { ok: false; code: "not_found" | "not_in_game" | "quantity_invalid" | "unavailable" };
+
+/** What a purchase would take from this member, or unavailable when no store answers. */
+export async function quote(request: { buyerId: string; productId: string; quantity: number; recipientId: string | null }): Promise<QuoteResult> {
+    return applyFiltersAsync("store.quote.credits", UNAVAILABLE as QuoteResult, request);
+}
+
 /** An empty chest that takes no gifts when no store answers. */
 export async function chestOf(userId: string): Promise<{ items: ChestEntryShape[]; receiveGifts: boolean }> {
     const empty: { items: ChestEntryShape[]; receiveGifts: boolean } = { items: [], receiveGifts: false };

@@ -89,19 +89,83 @@ async function holdTheLimit(tx: PrismaTransaction, product: ProductRow, ownerId:
     }
 }
 
-export async function purchaseWithCredits(request: CreditPurchaseRequest): Promise<CreditPurchaseResult> {
-    const now = new Date();
+interface PricedProduct {
+    id: string;
+    name: string;
+    type: string;
+    categoryId: string | null;
+}
+
+/**
+ * What this member pays for this many, with every rule checkout applies that a
+ * game can meet: the sale window, an upgrade credit for a lower rung they own,
+ * a bulk discount for the quantity, tax. One function, so the price a game
+ * quotes and the price a purchase takes cannot drift apart.
+ */
+async function priceInGame(product: PricedProduct, quantity: number, ownerId: string, answers: Record<string, string>, now: Date) {
+    const ownedIds = await creditingPurchases(ownerId);
+    const { subtotal, orderItems } = computeOrderPricing({
+        items: [{ productId: product.id, quantity }],
+        products: [
+            {
+                id: product.id,
+                name: product.name,
+                type: product.type,
+                price: effectivePrice(rulesOf(product as unknown as ProductRow), now).price,
+                categoryId: product.categoryId,
+            },
+        ],
+        bulkDiscounts: await prisma.bulkDiscount.findMany({ where: { isActive: true }, take: 500 }),
+        ownedProductIds: ownedIds,
+        ownedRungs: await ownedRungsOn([product.categoryId], ownedIds, now),
+        variables: { [product.id]: answers },
+    });
+
+    const { taxRate, taxIncluded } = await moduleSettings<{ taxRate: number; taxIncluded: boolean }>("store");
+    const { totalDiscount, tax, total } = computeTotals({ subtotal, couponDiscount: 0, creatorDiscount: 0, taxRate, taxIncluded });
+    return { subtotal, orderItems, totalDiscount, tax, total };
+}
+
+type NotSellable = { ok: false; code: "not_found" | "not_in_game" | "quantity_invalid" };
+
+const notSellable = (code: NotSellable["code"]): NotSellable => ({ ok: false, code });
+
+/** A product a game may sell, or why not: the first checks a purchase makes, before any money. */
+async function sellableInGame(productId: string, quantity: number) {
     const product = await prisma.product.findFirst({
-        where: { id: request.productId, isActive: true },
+        where: { id: productId, isActive: true },
         include: { category: { select: { id: true, showInGame: true } } },
     });
-    if (!product) return refuse("not_found");
-    if (!product.showInGame || !product.category?.showInGame) return refuse("not_in_game");
+    if (!product) return notSellable("not_found");
+    if (!product.showInGame || !product.category?.showInGame) return notSellable("not_in_game");
     // A subscription renews through a gateway; credits cannot carry one.
-    if (product.type === "SUBSCRIPTION") return refuse("not_in_game");
+    if (product.type === "SUBSCRIPTION") return notSellable("not_in_game");
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_GAME_QUANTITY) return notSellable("quantity_invalid");
+    return product;
+}
 
+/**
+ * What a purchase in game would take, before the player confirms it.
+ *
+ * The catalogue a game draws is the same for every player, so it carries the
+ * product's price and nothing a member's own purchases or the quantity take
+ * off it. Measured live: the confirm button said 5 and the purchase took 4
+ * from a member who owned a cheaper product on the same shelf. A game asks
+ * this for the basket on its screen and shows the answer.
+ */
+export async function quoteWithCredits(request: CreditQuoteRequest): Promise<CreditQuoteResult> {
+    const product = await sellableInGame(request.productId, request.quantity);
+    if ("ok" in product) return product;
+    const ownerId = request.recipientId ?? request.buyerId;
+    const { orderItems, total } = await priceInGame(product, request.quantity, ownerId, {}, new Date());
+    return { ok: true, each: orderItems[0]?.price ?? 0, total };
+}
+
+export async function purchaseWithCredits(request: CreditPurchaseRequest): Promise<CreditPurchaseResult> {
+    const now = new Date();
+    const product = await sellableInGame(request.productId, request.quantity);
+    if ("ok" in product) return product;
     const quantity = request.quantity;
-    if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_GAME_QUANTITY) return refuse("quantity_invalid");
 
     const gift = request.recipientId !== null && request.recipientId !== request.buyerId;
     const ownerId = gift ? (request.recipientId as string) : request.buyerId;
@@ -130,26 +194,7 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
         fields.map((field) => [field.name, (request.fields[field.name] ?? "").trim()]).filter(([, value]) => value !== ""),
     );
 
-    const ownedIds = await creditingPurchases(ownerId);
-    const { subtotal, orderItems } = computeOrderPricing({
-        items: [{ productId: product.id, quantity }],
-        products: [
-            {
-                id: product.id,
-                name: product.name,
-                type: product.type,
-                price: effectivePrice(rulesOf(product as unknown as ProductRow), now).price,
-                categoryId: product.categoryId,
-            },
-        ],
-        bulkDiscounts: await prisma.bulkDiscount.findMany({ where: { isActive: true }, take: 500 }),
-        ownedProductIds: ownedIds,
-        ownedRungs: await ownedRungsOn([product.categoryId], ownedIds, now),
-        variables: { [product.id]: answers },
-    });
-
-    const { taxRate, taxIncluded } = await moduleSettings<{ taxRate: number; taxIncluded: boolean }>("store");
-    const { totalDiscount, tax, total } = computeTotals({ subtotal, couponDiscount: 0, creatorDiscount: 0, taxRate, taxIncluded });
+    const { subtotal, orderItems, totalDiscount, tax, total } = await priceInGame(product, quantity, ownerId, answers, now);
     const currSetting = await prisma.setting.findUnique({ where: { key: "default_currency" } });
     const currency = resolveCurrency(currSetting?.value as string);
 

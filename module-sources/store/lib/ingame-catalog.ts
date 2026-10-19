@@ -3,9 +3,9 @@
  *
  * Only shelves and products an admin marked for games, and a product only on
  * a shelf that is shown too, so hiding a shelf hides everything on it. The
- * price is the one the site would charge now, sale included; what an upgrade
- * credit or a bulk discount takes off is worked out at purchase, for the
- * member buying, as checkout does.
+ * price is the one the site would charge now, sale included. The list is one
+ * for every player, so what an upgrade credit or a bulk discount takes off is
+ * not in it: a game asks `quoteWithCredits` for the basket on its screen.
  */
 import { applyFiltersAsync } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";

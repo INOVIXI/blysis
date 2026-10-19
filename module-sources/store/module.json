@@ -113,6 +113,11 @@
       "handler": "hooks/purchase-credits.ts"
     },
     {
+      "hook": "store.quote.credits",
+      "type": "filter",
+      "handler": "hooks/quote-credits.ts"
+    },
+    {
       "hook": "store.chest.list",
       "type": "filter",
       "handler": "hooks/chest-list.ts"

@@ -376,6 +376,20 @@ for a gift, that is the recipient), `409 field_invalid` (with `field`),
 A purchase for oneself goes to delivery at once. A gift lands in the recipient's chest as a
 pending gift.
 
+### `POST store/quote`
+
+```json
+{ "player": { "...": "..." }, "productId": "clp...", "quantity": 3, "recipient": "AnotherPlayer" }
+```
+
+What `store/purchase` would take for the same basket, before the player confirms it. The catalogue
+is the same for every player, so its `price` is the product's own; a member who owns a cheaper
+product on the same shelf, or buys enough for a bulk discount, pays less. Answer
+`{ "each": 4, "total": 12 }`. `recipient` is optional: for a gift, the recipient's purchases decide
+the price. It moves no money and takes no idempotency key. Refusals: `409 not_linked`,
+`409 recipient_unknown`, `409 not_found`, `409 not_in_game`, `409 quantity_invalid`; a
+`503 unavailable` means no store answers, and a game shows the catalogue price instead.
+
 ## Chest and gifts
 
 ### `POST chest/list`
