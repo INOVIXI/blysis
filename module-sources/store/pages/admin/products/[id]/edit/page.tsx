@@ -373,10 +373,10 @@ export default function EditProductPage(props: PageProps) {
                         {/* Delivery commands */}
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-sm">{t("adm_deliveryCommands")}</CardTitle>
+                                <CardTitle>{t("adm_deliveryCommands")}</CardTitle>
+                                <p className="text-sm text-muted-foreground">{t("adm_deliveryCommandsHelp")}</p>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-xs text-muted-foreground mb-2">{t("adm_deliveryCommandsHelp")}</p>
                                 <ProductCommandsEditor productId={productId} />
                             </CardContent>
                         </Card>
@@ -384,10 +384,10 @@ export default function EditProductPage(props: PageProps) {
                         {/* Custom Variables */}
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-sm">{t("adm_customVariables")}</CardTitle>
+                                <CardTitle>{t("adm_customVariables")}</CardTitle>
+                                <p className="text-sm text-muted-foreground">{t("adm_customVariablesHelp")}</p>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-xs text-muted-foreground mb-2">{t("adm_customVariablesHelp")}</p>
                                 <ProductVariablesEditor productId={productId} />
                             </CardContent>
                         </Card>
@@ -587,7 +587,7 @@ function ProductCommandsEditor({ productId }: { productId: string }) {
                     <code className="flex-1 text-xs bg-muted px-2 py-1 rounded font-mono truncate">{cmd.command}</code>
                 </div>
             ))}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
                 <NativeSelect
                     value={newTarget}
                     onChange={(e) => setNewTarget(e.target.value === "player" ? "player" : "server")}
@@ -600,7 +600,7 @@ function ProductCommandsEditor({ productId }: { productId: string }) {
                     <NativeSelect
                         value={newServerId}
                         onChange={(e) => setNewServerId(e.target.value)}
-                        aria-label={t("adm_defaultServer")} className="w-32" inputSize="sm"
+                        aria-label={t("adm_defaultServer")} className="w-44" inputSize="sm"
                     >
                         <option value="">{t("adm_defaultServer")}</option>
                         {servers.map((s) => (
