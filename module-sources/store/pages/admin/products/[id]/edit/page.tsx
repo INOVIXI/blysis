@@ -365,6 +365,32 @@ export default function EditProductPage(props: PageProps) {
                                 </div>
                             </CardContent>
                         </Card>
+
+                        <AvailabilityFields value={availability} onChange={setAvailability} timeZone={timeZone} />
+
+                        <InGameFields value={inGame} onChange={setInGame} kind="product" />
+
+                        {/* Delivery commands */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-sm">{t("adm_deliveryCommands")}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-xs text-muted-foreground mb-2">{t("adm_deliveryCommandsHelp")}</p>
+                                <ProductCommandsEditor productId={productId} />
+                            </CardContent>
+                        </Card>
+
+                        {/* Custom Variables */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-sm">{t("adm_customVariables")}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-xs text-muted-foreground mb-2">{t("adm_customVariablesHelp")}</p>
+                                <ProductVariablesEditor productId={productId} />
+                            </CardContent>
+                        </Card>
                     </div>
 
                     <div className="space-y-6">
@@ -447,8 +473,6 @@ export default function EditProductPage(props: PageProps) {
 
                         <RequirementFields value={requires} onChange={setRequires} selfId={productId} />
 
-                    <AvailabilityFields value={availability} onChange={setAvailability} timeZone={timeZone} />
-
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t("adm_status")}</CardTitle>
@@ -470,30 +494,6 @@ export default function EditProductPage(props: PageProps) {
                                     label={t("adm_giftable")}
                                     description={t("adm_giftableHint")}
                                 />
-                            </CardContent>
-                        </Card>
-
-                        <InGameFields value={inGame} onChange={setInGame} kind="product" />
-
-                        {/* Delivery commands */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-sm">{t("adm_deliveryCommands")}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-xs text-muted-foreground mb-2">{t("adm_deliveryCommandsHelp")}</p>
-                                <ProductCommandsEditor productId={productId} />
-                            </CardContent>
-                        </Card>
-
-                        {/* Custom Variables */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-sm">{t("adm_customVariables")}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-xs text-muted-foreground mb-2">{t("adm_customVariablesHelp")}</p>
-                                <ProductVariablesEditor productId={productId} />
                             </CardContent>
                         </Card>
 
