@@ -4,6 +4,7 @@ import { log, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/c
 import { auth } from "@/core/sdk/auth";
 import { activateGift, cancelGift, claimChestItem, PENDING } from "../../../lib/gifts";
 import { chestRedeemSchema } from "../../../lib/validations";
+import { isPlayerName } from "../../../lib/player-name";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -39,6 +40,13 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
     const fields = parsed.data;
+    // A typed name goes into the delivery's commands: held to the till's rule.
+    if (fields.playerName && !isPlayerName(fields.playerName)) {
+        return NextResponse.json(
+            { error: "A player name has only the letters a to z, digits and _ . -", code: "chest_player_name_invalid" },
+            { status: 400 },
+        );
+    }
 
     if (fields.action === "activate") {
         const result = await activateGift(userId, id);
