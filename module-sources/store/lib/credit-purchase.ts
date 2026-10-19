@@ -177,8 +177,44 @@ export async function quoteWithCredits(request: CreditQuoteRequest): Promise<Cre
     return { ok: true, each: orderItems[0]?.price ?? 0, total };
 }
 
+interface KeptOrder {
+    id: string;
+    orderNumber: string;
+    total: unknown;
+    metadata: unknown;
+}
+
+/** The order a game's key already made for this buyer, if there is one. */
+async function madeWith(client: Pick<PrismaTransaction, "order">, buyerId: string, key: string): Promise<KeptOrder | null> {
+    return client.order.findFirst({
+        where: { userId: buyerId, metadata: { path: ["gameKey"], equals: key } },
+        select: { id: true, orderNumber: true, total: true, metadata: true },
+    });
+}
+
+/** The answer the first attempt gave, for a retry with its key: the same order, the balance as it is now. */
+async function answeredBefore(order: KeptOrder, buyerId: string): Promise<CreditPurchaseResult> {
+    const after = await prisma.user.findUnique({ where: { id: buyerId }, select: { creditBalance: true } });
+    const metadata = (order.metadata ?? {}) as { gift?: unknown };
+    return {
+        ok: true,
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        total: Number(order.total),
+        balance: Number(after?.creditBalance ?? 0),
+        gift: metadata.gift === true,
+    };
+}
+
 export async function purchaseWithCredits(request: CreditPurchaseRequest): Promise<CreditPurchaseResult> {
     const now = new Date();
+    // A retry of a purchase that went through while its caller was told it had not. Asked first, so the retry
+    // is not refused for a limit or a stock its own first attempt used up.
+    const key = request.idempotencyKey ?? null;
+    if (key !== null) {
+        const before = await madeWith(prisma, request.buyerId, key);
+        if (before) return answeredBefore(before, request.buyerId);
+    }
     const product = await sellableInGame(request.productId, request.quantity);
     if ("ok" in product) return product;
     const quantity = request.quantity;
@@ -216,7 +252,13 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
 
     let order;
     try {
-        order = await prisma.$transaction(async (tx) => {
+        const made = await prisma.$transaction(async (tx) => {
+            // The first attempt may still be running when its retry gets here: one key, one order.
+            if (key !== null) {
+                await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`store-purchase:${key}`}))`;
+                const before = await madeWith(tx, request.buyerId, key);
+                if (before) return { before };
+            }
             if (product.perPersonLimit !== null) await holdTheLimit(tx, product as unknown as ProductRow, ownerId, quantity, now, zone);
             return createCreditOrder(tx, {
                 buyerId: request.buyerId,
@@ -240,12 +282,15 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
                     playerName: gift ? null : request.playerName,
                     variables: { [product.id]: answers },
                     channel: request.channel,
+                    ...(key !== null ? { gameKey: key } : {}),
                     ...(gift ? { gift: true, recipientId: ownerId } : {}),
                 },
                 playerName: request.playerName,
                 description: `${gift ? "Gift" : "Purchase"} in game (${product.name} x${quantity})`,
             });
         });
+        if ("before" in made) return answeredBefore(made.before, request.buyerId);
+        order = made;
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (message === INSUFFICIENT_CREDITS) return refuse("insufficient_balance");

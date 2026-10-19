@@ -63,6 +63,9 @@ export const POST = serverPost(purchaseSchema, async (server, body) =>
             playerName: body.player.name,
             playerId: body.player.id,
             channel: `game:${server.gameServerId}`,
+            // The store keeps the key on the order, so a retry after a purchase that went through while this
+            // route was told it had not (the hook gave up waiting) gets that order back, not a second one.
+            idempotencyKey: `${server.id}:${body.idempotencyKey}`,
         });
         if (!result.ok) {
             const status = result.code === "unavailable" && !result.reason ? 503 : 409;

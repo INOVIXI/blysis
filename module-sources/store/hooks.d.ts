@@ -432,6 +432,11 @@ declare global {
         playerId: string | null;
         /** Where it was bought, for the order's notes. */
         channel: string;
+        /**
+         * The caller's key for this one purchase. A retry with the same key is answered with the order the key
+         * already made, never a second one, even while the first attempt is still running.
+         */
+        idempotencyKey?: string | null;
     }
 
     interface CreditQuoteRequest {

@@ -121,6 +121,7 @@ export async function purchase(request: {
     playerName: string;
     playerId: string | null;
     channel: string;
+    idempotencyKey: string;
 }): Promise<PurchaseResult> {
     return applyFiltersAsync("store.purchase.credits", UNAVAILABLE as PurchaseResult, request);
 }
