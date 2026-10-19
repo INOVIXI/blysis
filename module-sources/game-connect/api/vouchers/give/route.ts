@@ -9,11 +9,11 @@ import { z } from "zod";
 import { logActivity } from "@/core/sdk/server";
 import { refuse } from "../../../lib/auth";
 import { onceFor } from "../../../lib/idempotency";
-import { amountField, amountRefused, instanceField, isAmount, keyField, playerField } from "../../../lib/schemas";
+import { actorField, amountField, amountRefused, instanceField, isAmount, keyField } from "../../../lib/schemas";
 import { ok, serverPost } from "../../../lib/server-route";
 import { mintVoucher } from "../../../lib/vouchers";
 
-const giveSchema = z.object({ instance: instanceField, actor: playerField, amount: amountField, idempotencyKey: keyField });
+const giveSchema = z.object({ instance: instanceField, actor: actorField, amount: amountField, idempotencyKey: keyField });
 
 export const POST = serverPost(giveSchema, async (server, body) => {
     if (!server.allowVoucherGive) {

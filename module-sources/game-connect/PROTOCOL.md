@@ -331,6 +331,9 @@ Needs the server setting `allowCreditAdmin`.
 `{ "target": "someplayer", "balance": 300 }`. Refusals: `403 not_allowed`,
 `409 recipient_unknown`, `409 amount_invalid`, `409 insufficient_balance` (a remove below zero).
 
+The actor of a staff change is the player who typed it, or a console. A console has a name and no game
+id, so its `id` may be left out or `null`; the site reads only the name.
+
 ### `GET credits/top?kind=balance&period=all&limit=10`
 
 `kind` is `balance`, `topups` or `latest`: what members hold, what they bought in the period, or

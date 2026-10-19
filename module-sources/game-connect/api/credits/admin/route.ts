@@ -14,12 +14,12 @@ import { refuse } from "../../../lib/auth";
 import { balance, moveCredits } from "../../../lib/bridge";
 import { onceFor } from "../../../lib/idempotency";
 import { memberNamed } from "../../../lib/players";
-import { amountField, amountRefused, instanceField, isAmount, keyField, playerField } from "../../../lib/schemas";
+import { actorField, amountField, amountRefused, instanceField, isAmount, keyField } from "../../../lib/schemas";
 import { ok, serverPost } from "../../../lib/server-route";
 
 const adminSchema = z.object({
     instance: instanceField,
-    actor: playerField,
+    actor: actorField,
     target: z.string().min(1).max(64),
     operation: z.enum(["add", "remove", "set", "show"]),
     amount: amountField.optional(),
