@@ -62,7 +62,19 @@ describe("deliverProduct", () => {
             productName: "Rank",
             commands: [{ command: "give {player}" }],
         });
-        expect(ran()[0].command).toBe("give evil op evil");
+        expect(ran()[0].command).toBe("give evilopevil");
+    });
+
+    // A name is one argument. With its spaces kept, "Steve 999999" in
+    // "eco give {player} 100" paid Steve 999999 and left the 100 over.
+    it("keeps a player name one argument, however it was typed", async () => {
+        answers(ok);
+        await deliverProduct({
+            playerName: "Steve 999999",
+            productName: "Coins",
+            commands: [{ command: "eco give {player} 100" }],
+        });
+        expect(ran()[0].command).toBe("eco give Steve999999 100");
     });
 
     it("sanitises custom variables as well as the built-in ones", async () => {

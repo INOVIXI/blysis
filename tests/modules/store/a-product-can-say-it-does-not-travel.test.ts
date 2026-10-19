@@ -149,6 +149,25 @@ describe("giving away something from the chest", () => {
     });
 });
 
+describe("claiming from the chest with a name typed", () => {
+    // The name goes into the delivery's commands, so it is held to the till's rule.
+    it("refuses a name that is not a game name, and says which rule it broke", async () => {
+        db.productCommand.findMany.mockResolvedValue([{ command: "eco give {player} 100", serverId: null, target: null, whenOnline: false }] as never);
+        const res = await POST(
+            new Request("http://localhost/api/v1/chest/chest-1", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ playerName: "Steve 999999" }),
+            }) as never,
+            { params: Promise.resolve({ id: "chest-1" }) },
+        );
+
+        expect(res.status).toBe(400);
+        await expect(res.json()).resolves.toMatchObject({ code: "chest_player_name_invalid" });
+        expect(db.chestItem.updateMany).not.toHaveBeenCalled();
+    });
+});
+
 describe("the chest as the screen reads it", () => {
     it("marks a row that may be given away", async () => {
         const body = await (await GET()).json();

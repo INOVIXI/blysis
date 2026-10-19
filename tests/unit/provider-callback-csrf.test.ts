@@ -162,9 +162,10 @@ describe("every gateway callback", () => {
         // The sixteenth is the invoice the same integrator sends back once it
         // has issued one.
         //
-        // The other twenty-two are a game server's own calls to game-connect:
-        // hello, the poll, the report and the status, and the eighteen a
-        // player's menus make through it, from the catalogue to a voucher. A
+        // The other twenty-three are a game server's own calls to game-connect:
+        // hello, the poll, the report and the status, and the nineteen a
+        // player's menus make through it, from the catalogue and the price of
+        // a basket to a voucher. A
         // game server has no browser and sends no Origin, and each call
         // proves itself with the server's token before it reads anything.
         //
@@ -178,12 +179,12 @@ describe("every gateway callback", () => {
         // punishments are read out of its database on the scheduler instead.
         // A door into the CSRF gate is worth closing the moment nothing needs
         // it.
-        expect(declared.length).toBe(38);
+        expect(declared.length).toBe(39);
         expect(declared).toContain("stripe-gateway");
         expect(declared).toContain("mollie-gateway");
         expect(declared.filter((name) => name === "birfatura-invoicing")).toHaveLength(4);
         expect(declared).not.toContain("minecraft-litebans");
-        expect(declared.filter((name) => name === "game-connect")).toHaveLength(22);
+        expect(declared.filter((name) => name === "game-connect")).toHaveLength(23);
     });
 });
 

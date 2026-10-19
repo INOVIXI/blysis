@@ -4,6 +4,11 @@ import { refuse } from "./auth";
 
 export const instanceField = z.string().min(8).max(64);
 export const playerField = z.object({ id: z.string().min(1).max(64), name: z.string().min(1).max(64) });
+/**
+ * Who made a staff change: a player, or a server's console, which has a name
+ * and no game id. The routes read only the name.
+ */
+export const actorField = z.object({ id: z.string().min(1).max(64).nullish(), name: z.string().min(1).max(64) });
 export const keyField = z.string().min(8).max(80);
 /**
  * Credits as a client sends them: any number. Whether it is an amount is

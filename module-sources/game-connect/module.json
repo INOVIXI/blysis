@@ -132,6 +132,13 @@
       "description": "A player buys with credits, for themselves or as a gift."
     },
     {
+      "path": "/game-connect/store/quote",
+      "handler": "api/store/quote/route.ts",
+      "method": "POST",
+      "providerCallback": true,
+      "description": "What a purchase would take from this player, before they confirm it."
+    },
+    {
       "path": "/game-connect/chest/list",
       "handler": "api/chest/list/route.ts",
       "method": "POST",
@@ -313,6 +320,10 @@
     },
     {
       "hook": "store.purchase.credits",
+      "type": "filter"
+    },
+    {
+      "hook": "store.quote.credits",
       "type": "filter"
     },
     {

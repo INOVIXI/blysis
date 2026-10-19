@@ -23,6 +23,14 @@ function sanitizeRconArg(input: string): string {
     return input.replace(/[^a-zA-Z0-9_\-. ]/g, "");
 }
 
+/**
+ * A player name is one argument. With its spaces kept, "Steve 999999" in
+ * "eco give {player} 100" paid Steve 999999 and left the 100 over.
+ */
+function sanitizePlayerName(input: string): string {
+    return sanitizeRconArg(input).replace(/ /g, "");
+}
+
 export interface DeliveryCommand {
     command: string;
     /** Which server to run it on. Null means the install's default server. */
@@ -109,7 +117,7 @@ export async function deliverProduct(params: {
     line?: string | null;
 }): Promise<DeliveryResult> {
     const results: string[] = [];
-    const safePlayerName = sanitizeRconArg(params.playerName);
+    const safePlayerName = sanitizePlayerName(params.playerName);
     const safeProductName = sanitizeRconArg(params.productName);
     const reference = params.reference ?? { kind: "manual" as const, id: null, label: params.productName };
     // One key per delivery and place, so a queue keeps a purchase's lines

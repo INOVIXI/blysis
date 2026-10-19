@@ -23,6 +23,7 @@ import {
 } from "../../lib/pricing";
 import { creditingPurchases, ownedRungsOn } from "../../lib/upgrade-credit-server";
 import { z } from "zod";
+import { isPlayerName } from "../../lib/player-name";
 
 /**
  * Bank a creator's cut and record it.
@@ -58,7 +59,12 @@ const checkoutSchema = z.object({
         productId: z.string({ message: "Product is missing" }),
         quantity: z.number().int().min(1, "Quantity must be at least 1"),
     }), { message: "Your cart is empty" }).min(1, "Your cart is empty"),
-    playerName: z.string().min(1, "Player name is required").max(50, "Player name is too long"),
+    playerName: z
+        .string()
+        .trim()
+        .min(1, "Player name is required")
+        .max(50, "Player name is too long")
+        .refine(isPlayerName, "A player name has only the letters a to z, digits and _ . -, with no spaces"),
     couponCode: z.string().optional(),
     creatorCode: z.string().optional(),
     variables: z.record(z.string(), z.record(z.string(), z.string())).optional(),

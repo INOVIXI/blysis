@@ -54,4 +54,39 @@ describe("hook listener timeout", () => {
         const result = await applyFiltersAsync("test.chain", "");
         expect(result).toBe("ac");
     });
+
+    /**
+     * A listener handed the caller's open transaction writes on it, and the
+     * caller commits when this returns. Abandoned at the timeout, its writes
+     * still landed in that commit while the caller read the default and went
+     * on as if nothing had moved. Measured live: twelve credit transfers in a
+     * game each answered "insufficient balance" while the sender lost thirteen
+     * credits, ten of them with no ledger row, and the recipient got nothing.
+     * Such a listener is waited for; a transaction too slow ends at the
+     * database's own timeout and rolls back whole.
+     */
+    it("waits for a filter listener that works on the caller's transaction", async () => {
+        const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+        addFilter(
+            "test.money",
+            (): Promise<{ applied: boolean }> => new Promise((resolve) => setTimeout(() => resolve({ applied: true }), 400)),
+            { moduleId: "wallet" },
+        );
+
+        const moved = await applyFiltersAsync("test.money", { applied: false }, { tx: {}, userId: "u1", amount: -1 });
+
+        expect(moved).toEqual({ applied: true });
+        expect(errorSpy).not.toHaveBeenCalled();
+    });
+
+    it("still gives up on a slow filter listener that has no transaction of the caller's", async () => {
+        vi.spyOn(console, "error").mockImplementation(() => {});
+        addFilter(
+            "test.lookup",
+            (): Promise<string> => new Promise((resolve) => setTimeout(() => resolve("late"), 400)),
+            { moduleId: "slow" },
+        );
+
+        await expect(applyFiltersAsync("test.lookup", "default", { userId: "u1" })).resolves.toBe("default");
+    });
 });

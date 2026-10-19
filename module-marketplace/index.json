@@ -2260,6 +2260,7 @@
           "store.catalog.ingame",
           "servers.list",
           "store.purchase.credits",
+          "store.quote.credits",
           "store.chest.list",
           "store.chest.claim",
           "store.gift.activate",
@@ -2284,7 +2285,7 @@
       "stats": {
         "publicRoutes": 1,
         "adminRoutes": 4,
-        "apiRoutes": 32,
+        "apiRoutes": 33,
         "widgets": 0
       }
     },
@@ -5999,6 +6000,7 @@
           "grantable.options",
           "store.catalog.ingame",
           "store.purchase.credits",
+          "store.quote.credits",
           "store.chest.list",
           "store.chest.claim",
           "store.gift.activate",
