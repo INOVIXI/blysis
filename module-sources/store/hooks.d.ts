@@ -432,7 +432,27 @@ declare global {
         playerId: string | null;
         /** Where it was bought, for the order's notes. */
         channel: string;
+        /**
+         * The caller's key for this one purchase. A retry with the same key is answered with the order the key
+         * already made, never a second one, even while the first attempt is still running.
+         */
+        idempotencyKey?: string | null;
     }
+
+    interface CreditQuoteRequest {
+        buyerId: string;
+        productId: string;
+        quantity: number;
+        /** The member it would be a gift to, or null for the buyer. Their purchases decide the price. */
+        recipientId: string | null;
+    }
+
+    type CreditQuoteResult =
+        | { ok: true; each: number; total: number }
+        | {
+              ok: false;
+              code: "not_found" | "not_in_game" | "quantity_invalid" | "not_giftable" | "recipient_refuses_gifts" | "unavailable";
+          };
 
     type CreditPurchaseResult =
         | { ok: true; orderId: string; orderNumber: string; total: number; balance: number; gift: boolean }
@@ -503,6 +523,8 @@ declare global {
         "store.catalog.ingame": InGameCatalog;
         /** The outcome of a purchase paid in credits. */
         "store.purchase.credits": CreditPurchaseResult;
+        /** What a purchase in game would take from this member, before they confirm it. */
+        "store.quote.credits": CreditQuoteResult;
         /** A member's chest, pending gifts included, and whether they take gifts. */
         "store.chest.list": { items: ChestEntry[]; receiveGifts: boolean };
         /** Send a ready chest item to delivery. */
@@ -528,6 +550,7 @@ declare global {
     interface BlysisFilterContexts {
         "store.catalog.ingame": Record<string, never>;
         "store.purchase.credits": CreditPurchaseRequest;
+        "store.quote.credits": CreditQuoteRequest;
         "store.chest.list": { userId: string };
         "store.chest.claim": { userId: string; itemId: string; playerName: string; playerId: string | null };
         "store.gift.activate": { userId: string; itemId: string };

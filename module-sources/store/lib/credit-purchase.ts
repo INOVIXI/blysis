@@ -89,26 +89,139 @@ async function holdTheLimit(tx: PrismaTransaction, product: ProductRow, ownerId:
     }
 }
 
-export async function purchaseWithCredits(request: CreditPurchaseRequest): Promise<CreditPurchaseResult> {
-    const now = new Date();
+interface PricedProduct {
+    id: string;
+    name: string;
+    type: string;
+    categoryId: string | null;
+}
+
+/**
+ * What this member pays for this many, with every rule checkout applies that a
+ * game can meet: the sale window, an upgrade credit for a lower rung they own,
+ * a bulk discount for the quantity, tax. One function, so the price a game
+ * quotes and the price a purchase takes cannot drift apart.
+ */
+async function priceInGame(product: PricedProduct, quantity: number, ownerId: string, answers: Record<string, string>, now: Date) {
+    const ownedIds = await creditingPurchases(ownerId);
+    const { subtotal, orderItems } = computeOrderPricing({
+        items: [{ productId: product.id, quantity }],
+        products: [
+            {
+                id: product.id,
+                name: product.name,
+                type: product.type,
+                price: effectivePrice(rulesOf(product as unknown as ProductRow), now).price,
+                categoryId: product.categoryId,
+            },
+        ],
+        bulkDiscounts: await prisma.bulkDiscount.findMany({ where: { isActive: true }, take: 500 }),
+        ownedProductIds: ownedIds,
+        ownedRungs: await ownedRungsOn([product.categoryId], ownedIds, now),
+        variables: { [product.id]: answers },
+    });
+
+    const { taxRate, taxIncluded } = await moduleSettings<{ taxRate: number; taxIncluded: boolean }>("store");
+    const { totalDiscount, tax, total } = computeTotals({ subtotal, couponDiscount: 0, creatorDiscount: 0, taxRate, taxIncluded });
+    return { subtotal, orderItems, totalDiscount, tax, total };
+}
+
+type NotSellable = { ok: false; code: "not_found" | "not_in_game" | "quantity_invalid" };
+
+const notSellable = (code: NotSellable["code"]): NotSellable => ({ ok: false, code });
+
+/** A product a game may sell, or why not: the first checks a purchase makes, before any money. */
+async function sellableInGame(productId: string, quantity: number) {
     const product = await prisma.product.findFirst({
-        where: { id: request.productId, isActive: true },
+        where: { id: productId, isActive: true },
         include: { category: { select: { id: true, showInGame: true } } },
     });
-    if (!product) return refuse("not_found");
-    if (!product.showInGame || !product.category?.showInGame) return refuse("not_in_game");
+    if (!product) return notSellable("not_found");
+    if (!product.showInGame || !product.category?.showInGame) return notSellable("not_in_game");
     // A subscription renews through a gateway; credits cannot carry one.
-    if (product.type === "SUBSCRIPTION") return refuse("not_in_game");
+    if (product.type === "SUBSCRIPTION") return notSellable("not_in_game");
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_GAME_QUANTITY) return notSellable("quantity_invalid");
+    return product;
+}
 
-    const quantity = request.quantity;
-    if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_GAME_QUANTITY) return refuse("quantity_invalid");
+/**
+ * Who would own the purchase, or why it cannot be a gift to them. A quote and a
+ * purchase ask the same: a quote for a gift prices it on the recipient's own
+ * purchases, so a quote the purchase would refuse would tell the asker what a
+ * member who takes no gifts owns.
+ */
+type Owner = { ok: true; gift: boolean; ownerId: string } | { ok: false; code: "not_giftable" | "recipient_refuses_gifts" };
 
-    const gift = request.recipientId !== null && request.recipientId !== request.buyerId;
-    const ownerId = gift ? (request.recipientId as string) : request.buyerId;
-    if (gift) {
-        if (!product.giftable || !(await siteAllowsGifting())) return refuse("not_giftable");
-        if (!(await receivesGifts(ownerId))) return refuse("recipient_refuses_gifts");
+async function ownerFor(product: { giftable: boolean }, buyerId: string, recipientId: string | null): Promise<Owner> {
+    if (recipientId === null || recipientId === buyerId) return { ok: true, gift: false, ownerId: buyerId };
+    if (!product.giftable || !(await siteAllowsGifting())) return { ok: false, code: "not_giftable" };
+    if (!(await receivesGifts(recipientId))) return { ok: false, code: "recipient_refuses_gifts" };
+    return { ok: true, gift: true, ownerId: recipientId };
+}
+
+/**
+ * What a purchase in game would take, before the player confirms it.
+ *
+ * The catalogue a game draws is the same for every player, so it carries the
+ * product's price and nothing a member's own purchases or the quantity take
+ * off it. Measured live: the confirm button said 5 and the purchase took 4
+ * from a member who owned a cheaper product on the same shelf. A game asks
+ * this for the basket on its screen and shows the answer.
+ */
+export async function quoteWithCredits(request: CreditQuoteRequest): Promise<CreditQuoteResult> {
+    const product = await sellableInGame(request.productId, request.quantity);
+    if ("ok" in product) return product;
+    const owner = await ownerFor(product, request.buyerId, request.recipientId);
+    if (!owner.ok) return owner;
+    const { orderItems, total } = await priceInGame(product, request.quantity, owner.ownerId, {}, new Date());
+    return { ok: true, each: orderItems[0]?.price ?? 0, total };
+}
+
+interface KeptOrder {
+    id: string;
+    orderNumber: string;
+    total: unknown;
+    metadata: unknown;
+}
+
+/** The order a game's key already made for this buyer, if there is one. */
+async function madeWith(client: Pick<PrismaTransaction, "order">, buyerId: string, key: string): Promise<KeptOrder | null> {
+    return client.order.findFirst({
+        where: { userId: buyerId, metadata: { path: ["gameKey"], equals: key } },
+        select: { id: true, orderNumber: true, total: true, metadata: true },
+    });
+}
+
+/** The answer the first attempt gave, for a retry with its key: the same order, the balance as it is now. */
+async function answeredBefore(order: KeptOrder, buyerId: string): Promise<CreditPurchaseResult> {
+    const after = await prisma.user.findUnique({ where: { id: buyerId }, select: { creditBalance: true } });
+    const metadata = (order.metadata ?? {}) as { gift?: unknown };
+    return {
+        ok: true,
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        total: Number(order.total),
+        balance: Number(after?.creditBalance ?? 0),
+        gift: metadata.gift === true,
+    };
+}
+
+export async function purchaseWithCredits(request: CreditPurchaseRequest): Promise<CreditPurchaseResult> {
+    const now = new Date();
+    // A retry of a purchase that went through while its caller was told it had not. Asked first, so the retry
+    // is not refused for a limit or a stock its own first attempt used up.
+    const key = request.idempotencyKey ?? null;
+    if (key !== null) {
+        const before = await madeWith(prisma, request.buyerId, key);
+        if (before) return answeredBefore(before, request.buyerId);
     }
+    const product = await sellableInGame(request.productId, request.quantity);
+    if ("ok" in product) return product;
+    const quantity = request.quantity;
+
+    const owner = await ownerFor(product, request.buyerId, request.recipientId);
+    if (!owner.ok) return refuse(owner.code);
+    const { gift, ownerId } = owner;
 
     // For sale, to the member who will own it, right now.
     const zone = await siteTimeZone();
@@ -130,26 +243,7 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
         fields.map((field) => [field.name, (request.fields[field.name] ?? "").trim()]).filter(([, value]) => value !== ""),
     );
 
-    const ownedIds = await creditingPurchases(ownerId);
-    const { subtotal, orderItems } = computeOrderPricing({
-        items: [{ productId: product.id, quantity }],
-        products: [
-            {
-                id: product.id,
-                name: product.name,
-                type: product.type,
-                price: effectivePrice(rulesOf(product as unknown as ProductRow), now).price,
-                categoryId: product.categoryId,
-            },
-        ],
-        bulkDiscounts: await prisma.bulkDiscount.findMany({ where: { isActive: true }, take: 500 }),
-        ownedProductIds: ownedIds,
-        ownedRungs: await ownedRungsOn([product.categoryId], ownedIds, now),
-        variables: { [product.id]: answers },
-    });
-
-    const { taxRate, taxIncluded } = await moduleSettings<{ taxRate: number; taxIncluded: boolean }>("store");
-    const { totalDiscount, tax, total } = computeTotals({ subtotal, couponDiscount: 0, creatorDiscount: 0, taxRate, taxIncluded });
+    const { subtotal, orderItems, totalDiscount, tax, total } = await priceInGame(product, quantity, ownerId, answers, now);
     const currSetting = await prisma.setting.findUnique({ where: { key: "default_currency" } });
     const currency = resolveCurrency(currSetting?.value as string);
 
@@ -158,7 +252,13 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
 
     let order;
     try {
-        order = await prisma.$transaction(async (tx) => {
+        const made = await prisma.$transaction(async (tx) => {
+            // The first attempt may still be running when its retry gets here: one key, one order.
+            if (key !== null) {
+                await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`store-purchase:${key}`}))`;
+                const before = await madeWith(tx, request.buyerId, key);
+                if (before) return { before };
+            }
             if (product.perPersonLimit !== null) await holdTheLimit(tx, product as unknown as ProductRow, ownerId, quantity, now, zone);
             return createCreditOrder(tx, {
                 buyerId: request.buyerId,
@@ -182,12 +282,15 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
                     playerName: gift ? null : request.playerName,
                     variables: { [product.id]: answers },
                     channel: request.channel,
+                    ...(key !== null ? { gameKey: key } : {}),
                     ...(gift ? { gift: true, recipientId: ownerId } : {}),
                 },
                 playerName: request.playerName,
                 description: `${gift ? "Gift" : "Purchase"} in game (${product.name} x${quantity})`,
             });
         });
+        if ("before" in made) return answeredBefore(made.before, request.buyerId);
+        order = made;
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (message === INSUFFICIENT_CREDITS) return refuse("insufficient_balance");
