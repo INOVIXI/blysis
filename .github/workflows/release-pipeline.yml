@@ -79,3 +79,60 @@ jobs:
             echo "${{ steps.meta.outputs.tags }}"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    name: Deploy to production
+    needs: publish
+    if: ${{ !github.event.release.prerelease }}
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
+      # Production runs whatever tag UXPLIMA/infra pins, and Argo CD applies infra
+      # within minutes. INFRA_DEPLOY_KEY is a deploy key that can write only to infra.
+      - name: Point infra at this release
+        env:
+          INFRA_DEPLOY_KEY: ${{ secrets.INFRA_DEPLOY_KEY }}
+          APP: blysis-demo
+          TAG: ${{ github.event.release.tag_name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+        run: |
+          set -euo pipefail
+          version="${TAG#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::$TAG is not an x.y.z release"
+            exit 1
+          fi
+
+          ssh_dir="$RUNNER_TEMP/infra-ssh"
+          install -d -m 700 "$ssh_dir"
+          trap 'rm -rf "$ssh_dir"' EXIT
+          printf '%s\n' "$INFRA_DEPLOY_KEY" > "$ssh_dir/key"
+          chmod 600 "$ssh_dir/key"
+          echo "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl" > "$ssh_dir/known_hosts"
+          export GIT_SSH_COMMAND="ssh -i $ssh_dir/key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$ssh_dir/known_hosts"
+
+          git clone -q --depth 1 git@github.com:UXPLIMA/infra.git "$RUNNER_TEMP/infra"
+          cd "$RUNNER_TEMP/infra"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          file="apps/$APP/kustomization.yaml"
+
+          # A rerun or an older hotfix release must never roll production back.
+          for attempt in 1 2 3 4 5; do
+            current=$(sed -nE 's/^ *newTag: *//p' "$file" | sort -uV | tail -1)
+            if [ "$(printf '%s\n%s\n' "$current" "$version" | sort -V | tail -1)" != "$version" ] || [ "$current" = "$version" ]; then
+              echo "infra already pins $APP at $current; leaving it for $version"
+              exit 0
+            fi
+            sed -i -E "s/^( *newTag: *).*/\1$version/" "$file"
+            git commit -q -am "$APP $version" -m "Released in $RELEASE_URL"
+            if git push -q origin HEAD; then
+              echo "### Deploying $version: infra now pins $APP at $version" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            echo "infra moved while pushing (attempt $attempt); retrying on the new tip"
+            git fetch -q --depth 1 origin HEAD
+            git reset -q --hard FETCH_HEAD
+          done
+          echo "::error::Could not push to infra after 5 attempts"
+          exit 1
