@@ -87,7 +87,9 @@ const DEFAULT_PRIORITY = 10;
 /**
  * Per-listener timeout for async dispatch. A stalled module listener must
  * never freeze a user-facing flow (login, registration, checkout all await
- * hook chains). Listeners exceeding the limit are abandoned and logged.
+ * hook chains). Listeners exceeding the limit are abandoned and logged,
+ * except a filter listener working on the caller's transaction: see
+ * `onTheCallersTransaction`.
  * Override via HOOK_LISTENER_TIMEOUT_MS env (resolved lazily for tests).
  */
 const DEFAULT_HOOK_TIMEOUT_MS = 5000;
@@ -121,6 +123,21 @@ function raceWithTimeout<T>(promise: Promise<T> | T, label: string): Promise<T> 
             },
         );
     });
+}
+
+/**
+ * True when a filter's context carries the caller's open transaction.
+ *
+ * A listener handed it writes on that transaction, and the caller commits
+ * once the filter returns. Abandoned at the timeout, its writes would still
+ * land in that commit while the caller read the default value and went on as
+ * if nothing had happened: measured on credit transfers, the sender lost the
+ * credits and the recipient got none. Such a listener is waited for. A
+ * transaction that is too slow ends at the database's own timeout and rolls
+ * back whole, which is the outcome a timeout is meant to give.
+ */
+function onTheCallersTransaction(context: unknown): boolean {
+    return typeof context === "object" && context !== null && "tx" in context && Boolean((context as { tx: unknown }).tx);
 }
 
 function addRegistration(map: Map<string, Registration[]>, name: string, reg: Registration) {
@@ -249,13 +266,12 @@ export async function applyFiltersAsync<K extends string, V extends FilterValue<
     const context = rest[0];
     const list = filterRegistry.get(name);
     if (!list || list.length === 0) return value as never;
+    const waited = onTheCallersTransaction(context);
     let result = value;
     for (const reg of list) {
         try {
-            result = await raceWithTimeout(
-                (reg.listener as AsyncFilterListener<V, unknown>)(result, context),
-                `${name} (${reg.moduleId ?? "core"})`,
-            );
+            const answer = (reg.listener as AsyncFilterListener<V, unknown>)(result, context);
+            result = waited ? await answer : await raceWithTimeout(answer, `${name} (${reg.moduleId ?? "core"})`);
         } catch (err) {
             console.error(`[hooks] Async filter "${name}" listener failed:`, err);
             // Keep the previous value so a slow/broken listener doesn't
