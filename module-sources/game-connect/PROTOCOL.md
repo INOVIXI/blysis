@@ -387,7 +387,9 @@ is the same for every player, so its `price` is the product's own; a member who 
 product on the same shelf, or buys enough for a bulk discount, pays less. Answer
 `{ "each": 4, "total": 12 }`. `recipient` is optional: for a gift, the recipient's purchases decide
 the price. It moves no money and takes no idempotency key. Refusals: `409 not_linked`,
-`409 recipient_unknown`, `409 not_found`, `409 not_in_game`, `409 quantity_invalid`; a
+`409 recipient_unknown`, `409 not_found`, `409 not_in_game`, `409 quantity_invalid`,
+`409 not_giftable`, `409 recipient_refuses_gifts` (a quote for a gift is refused where the gift
+would be, so it never tells the asker what a member who takes no gifts owns); a
 `503 unavailable` means no store answers, and a game shows the catalogue price instead.
 
 ## Chest and gifts

@@ -444,7 +444,10 @@ declare global {
 
     type CreditQuoteResult =
         | { ok: true; each: number; total: number }
-        | { ok: false; code: "not_found" | "not_in_game" | "quantity_invalid" | "unavailable" };
+        | {
+              ok: false;
+              code: "not_found" | "not_in_game" | "quantity_invalid" | "not_giftable" | "recipient_refuses_gifts" | "unavailable";
+          };
 
     type CreditPurchaseResult =
         | { ok: true; orderId: string; orderNumber: string; total: number; balance: number; gift: boolean }

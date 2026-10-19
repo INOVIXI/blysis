@@ -145,6 +145,21 @@ async function sellableInGame(productId: string, quantity: number) {
 }
 
 /**
+ * Who would own the purchase, or why it cannot be a gift to them. A quote and a
+ * purchase ask the same: a quote for a gift prices it on the recipient's own
+ * purchases, so a quote the purchase would refuse would tell the asker what a
+ * member who takes no gifts owns.
+ */
+type Owner = { ok: true; gift: boolean; ownerId: string } | { ok: false; code: "not_giftable" | "recipient_refuses_gifts" };
+
+async function ownerFor(product: { giftable: boolean }, buyerId: string, recipientId: string | null): Promise<Owner> {
+    if (recipientId === null || recipientId === buyerId) return { ok: true, gift: false, ownerId: buyerId };
+    if (!product.giftable || !(await siteAllowsGifting())) return { ok: false, code: "not_giftable" };
+    if (!(await receivesGifts(recipientId))) return { ok: false, code: "recipient_refuses_gifts" };
+    return { ok: true, gift: true, ownerId: recipientId };
+}
+
+/**
  * What a purchase in game would take, before the player confirms it.
  *
  * The catalogue a game draws is the same for every player, so it carries the
@@ -156,8 +171,9 @@ async function sellableInGame(productId: string, quantity: number) {
 export async function quoteWithCredits(request: CreditQuoteRequest): Promise<CreditQuoteResult> {
     const product = await sellableInGame(request.productId, request.quantity);
     if ("ok" in product) return product;
-    const ownerId = request.recipientId ?? request.buyerId;
-    const { orderItems, total } = await priceInGame(product, request.quantity, ownerId, {}, new Date());
+    const owner = await ownerFor(product, request.buyerId, request.recipientId);
+    if (!owner.ok) return owner;
+    const { orderItems, total } = await priceInGame(product, request.quantity, owner.ownerId, {}, new Date());
     return { ok: true, each: orderItems[0]?.price ?? 0, total };
 }
 
@@ -167,12 +183,9 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
     if ("ok" in product) return product;
     const quantity = request.quantity;
 
-    const gift = request.recipientId !== null && request.recipientId !== request.buyerId;
-    const ownerId = gift ? (request.recipientId as string) : request.buyerId;
-    if (gift) {
-        if (!product.giftable || !(await siteAllowsGifting())) return refuse("not_giftable");
-        if (!(await receivesGifts(ownerId))) return refuse("recipient_refuses_gifts");
-    }
+    const owner = await ownerFor(product, request.buyerId, request.recipientId);
+    if (!owner.ok) return refuse(owner.code);
+    const { gift, ownerId } = owner;
 
     // For sale, to the member who will own it, right now.
     const zone = await siteTimeZone();

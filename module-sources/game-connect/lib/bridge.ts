@@ -127,7 +127,7 @@ export async function purchase(request: {
 
 export type QuoteResult =
     | { ok: true; each: number; total: number }
-    | { ok: false; code: "not_found" | "not_in_game" | "quantity_invalid" | "unavailable" };
+    | { ok: false; code: "not_found" | "not_in_game" | "quantity_invalid" | "not_giftable" | "recipient_refuses_gifts" | "unavailable" };
 
 /** What a purchase would take from this member, or unavailable when no store answers. */
 export async function quote(request: { buyerId: string; productId: string; quantity: number; recipientId: string | null }): Promise<QuoteResult> {

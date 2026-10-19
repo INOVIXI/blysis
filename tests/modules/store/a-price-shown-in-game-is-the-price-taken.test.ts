@@ -105,6 +105,14 @@ describe("a price quoted in game", () => {
         expect(charged).toBe(12);
     });
 
+    it("for a gift, is refused where the gift would be, and tells nothing of what the member owns", async () => {
+        owned.push({ productId: "p_small" });
+        db.user.findUnique.mockResolvedValueOnce({ receiveGifts: false, creditBalance: 0 } as never);
+        await expect(quoteWithCredits({ ...ask, recipientId: "u2" })).resolves.toEqual({ ok: false, code: "recipient_refuses_gifts" });
+        db.product.findFirst.mockResolvedValueOnce({ ...product, giftable: false } as never);
+        await expect(quoteWithCredits({ ...ask, recipientId: "u2" })).resolves.toEqual({ ok: false, code: "not_giftable" });
+    });
+
     it("refuses what a purchase would refuse before it looks at any money", async () => {
         await expect(quoteWithCredits({ ...ask, quantity: 0 })).resolves.toEqual({ ok: false, code: "quantity_invalid" });
         db.product.findFirst.mockResolvedValueOnce(null as never);
