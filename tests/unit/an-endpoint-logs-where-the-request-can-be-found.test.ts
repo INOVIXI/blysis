@@ -49,7 +49,6 @@ const CORE = "src/core/lib";
 const REACHED_FROM_A_BROWSER = new Set([
     "src/core/lib/logger.ts",
     "src/core/lib/hooks.ts",
-    "src/core/lib/blocks-merger.ts",
     "src/core/lib/secret-storage.ts",
     "src/core/lib/module-cache.ts",
     "src/core/lib/cache.ts",
@@ -152,6 +151,11 @@ describe("an endpoint", () => {
             bare,
             `these write to the console from inside a module, so nothing joins them to the request that caused them:\n${bare.join("\n")}`,
         ).toEqual([]);
+    });
+
+    it("excuses only core files that exist", () => {
+        const gone = [...REACHED_FROM_A_BROWSER].filter((file) => !fs.existsSync(path.join(ROOT, file)));
+        expect(gone, "an exemption for a deleted file would excuse whatever takes its name next").toEqual([]);
     });
 
     it("is looked for in the endpoints that exist", () => {

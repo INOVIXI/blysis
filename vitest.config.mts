@@ -162,9 +162,10 @@ export default defineConfig({
                 'src/core/lib/path-pattern.ts': {
                     statements: 95, branches: 95, functions: 100, lines: 95,
                 },
-                // Sanitising happens on write, so anything that gets past
-                // this is in the database and every later render serves it.
-                'src/core/lib/sanitize.ts': {
+                // The sanitiser runs at render, on every page that shows
+                // something a person wrote, so anything that gets past it
+                // reaches every reader of that page.
+                'src/core/lib/markdown.ts': {
                     statements: 100, branches: 100, functions: 100, lines: 100,
                 },
                 // Consulted by middleware on every request. Too wide a CIDR
@@ -271,9 +272,6 @@ export default defineConfig({
                 },
                 // Snapshots taken immediately before a destructive update.
                 'src/core/lib/revisions.ts': {
-                    statements: 100, branches: 100, functions: 100, lines: 100,
-                },
-                'src/core/lib/scheduled-tasks.ts': {
                     statements: 100, branches: 100, functions: 100, lines: 100,
                 },
                 // The JSON-LD builders interpolate database strings into a
