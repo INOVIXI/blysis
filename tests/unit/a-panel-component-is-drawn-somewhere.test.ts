@@ -24,7 +24,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { relativePath, stripComments } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -74,7 +74,7 @@ describe("a component the panel exports", () => {
     it("is named by something other than the file that exports it", () => {
         const orphans: string[] = [];
         for (const file of panelFiles) {
-            const rel = path.relative(ROOT, file);
+            const rel = relativePath(ROOT, file);
             const source = code.get(file) ?? stripComments(fs.readFileSync(file, "utf8"));
             for (const match of source.matchAll(EXPORTED)) {
                 const name = match[1];

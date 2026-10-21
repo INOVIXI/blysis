@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { relativePath } from "./source-text";
 
 /**
  * A settings field is a promise: type a value, press Save, something behaves
@@ -144,9 +145,9 @@ describe("the keys the screens promise are the keys the code reads", () => {
 
     it("no module keeps a second mailer of its own", () => {
         const offenders = files
-            .filter((f) => f.includes("/module-sources/"))
+            .filter((f) => relativePath(root, f).startsWith("module-sources/"))
             .filter((f) => /from "resend"/.test(contents.get(f)!))
-            .map((f) => path.relative(root, f));
+            .map((f) => relativePath(root, f));
         expect(
             offenders,
             "a module that builds its own Resend client skips the queue, the email hooks " +

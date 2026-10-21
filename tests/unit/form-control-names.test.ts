@@ -23,6 +23,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync } from "fs";
 import { join } from "path";
+import { relativePath } from "./source-text";
 
 const ROOT = join(__dirname, "../..");
 const SCANNED = ["src/app", "src/core/components", "module-sources"];
@@ -89,7 +90,7 @@ function unnamedControlsUnderALabel(file: string): string[] {
                     const wrapped = open2 !== -1 && !((c1 !== -1 && c1 < ci) || (c2 !== -1 && c2 < ci));
                     if (!wrapped && !/\bid=/.test(tag) && !/aria-label|aria-labelledby/.test(tag)) {
                         const line = source.slice(0, i).split("\n").length;
-                        found.push(`${file.slice(ROOT.length + 1)}:${line}`);
+                        found.push(`${relativePath(ROOT, file)}:${line}`);
                     }
                 }
             }
@@ -102,7 +103,7 @@ function unnamedControlsUnderALabel(file: string): string[] {
 
 describe("form controls", () => {
     const files = SCANNED.flatMap((d) => tsxFiles(join(ROOT, d))).filter(
-        (f) => !f.includes("/src/modules/"),
+        (f) => !relativePath(ROOT, f).startsWith("src/modules/"),
     );
 
     it("scans the app, the shared components and every module", () => {
@@ -127,7 +128,7 @@ describe("form controls", () => {
 
 describe("focus", () => {
     const files = SCANNED.flatMap((d) => tsxFiles(join(ROOT, d))).filter(
-        (f) => !f.includes("/src/modules/"),
+        (f) => !relativePath(ROOT, f).startsWith("src/modules/"),
     );
 
     /**
@@ -144,7 +145,7 @@ describe("focus", () => {
                 // was talking about and was reported as the offender.
                 if (/^\s*(?:\/\/|\/\*|\*)/.test(line)) continue;
                 if (/focus-visible:|focus:ring|ring-\d|focus-visible/.test(line)) continue;
-                offenders.push(`${file.slice(ROOT.length + 1)} -> ${line.trim().slice(0, 70)}`);
+                offenders.push(`${relativePath(ROOT, file)} -> ${line.trim().slice(0, 70)}`);
             }
         }
         expect(offenders).toEqual([]);

@@ -21,7 +21,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { relativePath, stripComments } from "./source-text";
 
 const ROOT = path.resolve(import.meta.dirname, "../..");
 const SCANNED = ["src/app", "src/core", "module-sources"];
@@ -59,7 +59,7 @@ describe("how a role is drawn", () => {
     it("goes through the components that read what the operator wrote", () => {
         const offenders: string[] = [];
         for (const file of files) {
-            const relative = path.relative(ROOT, file);
+            const relative = relativePath(ROOT, file);
             if (ALLOWED.includes(relative)) continue;
             const source = fs.readFileSync(file, "utf8");
             // Comments say `role.color` when they explain why not to.

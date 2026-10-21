@@ -2,7 +2,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { relativePath, stripComments } from "./source-text";
 
 /**
  * Starting something new looks the same everywhere in the panel.
@@ -42,9 +42,9 @@ function screens(): { file: string; body: string; onNewScreen: boolean }[] {
             if (entry.isDirectory()) walk(full);
             else if (entry.name.endsWith(".tsx")) {
                 out.push({
-                    file: path.relative(ROOT, full),
+                    file: relativePath(ROOT, full),
                     body: stripComments(fs.readFileSync(full, "utf8")),
-                    onNewScreen: /\/(new|create)(\/|$)/.test(path.dirname(full)),
+                    onNewScreen: /\/(new|create)(\/|$)/.test(path.posix.dirname(relativePath(ROOT, full))),
                 });
             }
         }

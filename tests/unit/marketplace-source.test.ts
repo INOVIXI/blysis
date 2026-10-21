@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { relativePath } from "./source-text";
 
 const ENV_KEY = "BLYSIS_MARKETPLACE_BASE";
 const DEFAULT_HOST = "https://raw.githubusercontent.com/INOVIXI/blysis/main";
@@ -68,7 +69,7 @@ describe("marketplace source", () => {
                 else if (/\.tsx?$/.test(entry.name)) {
                     const src = fs.readFileSync(full, "utf8");
                     if (/raw\.githubusercontent\.com\/[^"'`]*marketplace/.test(src)) {
-                        offenders.push(path.relative(root, full));
+                        offenders.push(relativePath(root, full));
                     }
                 }
             }
