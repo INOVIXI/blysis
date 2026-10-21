@@ -20,8 +20,10 @@ import path from "node:path";
 import { GET } from "@/app/uploads/[...path]/route";
 
 const UPLOADS = path.resolve(process.cwd(), "public", "uploads");
-const FIXTURE = "vitest-fixture.txt";
-const SECRET = path.resolve(process.cwd(), "vitest-outside-secret.txt");
+// Named per process, so two runs in one checkout cannot delete each other's fixture.
+const FIXTURE = `vitest-fixture-${process.pid}.txt`;
+const OUTSIDE = `vitest-outside-secret-${process.pid}.txt`;
+const SECRET = path.resolve(process.cwd(), OUTSIDE);
 
 const call = (segments: string[]) =>
     GET(new Request("http://localhost/uploads"), { params: Promise.resolve({ path: segments }) });
@@ -55,9 +57,9 @@ describe("an upload url", () => {
         // check answers 403, and either is a pass. Asserting one status would
         // turn the second defence into a failure.
         for (const attempt of [
-            ["..", "..", "vitest-outside-secret.txt"],
-            ["..", "vitest-outside-secret.txt"],
-            [".", "..", "vitest-outside-secret.txt"],
+            ["..", "..", OUTSIDE],
+            ["..", OUTSIDE],
+            [".", "..", OUTSIDE],
         ]) {
             const res = await call(attempt);
             expect(res.status, attempt.join("/")).toBeGreaterThanOrEqual(400);
@@ -66,7 +68,7 @@ describe("an upload url", () => {
     });
 
     it("refuses a segment carrying a separator, which would smuggle a path", async () => {
-        for (const attempt of [["../vitest-outside-secret.txt"], ["sub/dir"], ["back\\slash"]]) {
+        for (const attempt of [[`../${OUTSIDE}`], ["sub/dir"], ["back\\slash"]]) {
             const res = await call(attempt);
             expect(res.status, attempt[0]).toBeGreaterThanOrEqual(400);
             expect(await res.text()).not.toContain("outside");
