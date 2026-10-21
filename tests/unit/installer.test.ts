@@ -40,9 +40,27 @@ function onLinux(argv: string[], run: LinuxRun = {}): string {
     return execFileSync(file, args, { encoding: "utf8", cwd: REPO, input: run.input, env });
 }
 
-const INSTALLER = WSL
-    ? onLinux(["wslpath", "-a", path.join(REPO, "install.sh")]).trim()
-    : path.join(REPO, "install.sh");
+/**
+ * Whether there is a Linux to run the installer on. A Windows machine without
+ * a WSL distribution has none - a hosted CI runner, for one - and there the
+ * file reports itself skipped rather than failing to load; the Linux job runs
+ * it in full.
+ */
+function linuxReachable(): boolean {
+    if (!WSL) return true;
+    try {
+        return execFileSync("wsl.exe", ["--exec", "uname", "-s"], { encoding: "utf8", timeout: 30_000 }).trim() === "Linux";
+    } catch {
+        return false;
+    }
+}
+const LINUX = linuxReachable();
+
+const INSTALLER = !LINUX
+    ? ""
+    : WSL
+        ? onLinux(["wslpath", "-a", path.join(REPO, "install.sh")]).trim()
+        : path.join(REPO, "install.sh");
 
 /**
  * A directory as both sides see it: `linux` is what the installer is given,
@@ -102,7 +120,7 @@ afterAll(() => {
     }
 });
 
-describe("install.sh", () => {
+describe.runIf(LINUX)("install.sh", () => {
     it("generates every secret the stack requires", () => {
         const { env } = dryRun(["--email", "a@example.com"]);
         for (const key of [

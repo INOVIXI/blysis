@@ -117,6 +117,35 @@ jobs:
       - name: Build
         run: npm run build
 
+  # The same gates on a Windows checkout, from PowerShell, the way a
+  # contributor there runs them. A Windows clone used to fail its postinstall
+  # (npx cannot be spawned there), check out CRLF, and fail 121 tests on
+  # backslash paths and missing sh/grep while this workflow stayed green, so
+  # nothing here could have said so. No seeding step: on a clone with no
+  # module installed, verify installs every module for its own run.
+  windows:
+    runs-on: windows-2025
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      # With the postinstall, which is the step that failed on Windows.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Every gate the check job runs
+        run: npm run verify
+
+      - name: The marketplace rebuilds to what is committed
+        run: |
+          npm run build:marketplace
+          git diff --exit-code -- module-marketplace
+
   docker:
     name: Docker image + module lifecycle smoke test
     runs-on: ubuntu-24.04
