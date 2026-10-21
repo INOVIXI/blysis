@@ -9,12 +9,12 @@
  * It runs every gate rather than stopping at the first failure, because the
  * question at the end of a change is "what is broken", not "what broke first".
  *
- * Two things it deliberately does not do:
+ * Two things it does differently:
  *
- *   - It does not reseed `src/modules` from `module-sources` the way CI does.
- *     On a fresh checkout that directory is empty and CI has to fill it; on a
- *     developer's machine it is their install state, and overwriting it would
- *     discard a module they installed to test against.
+ *   - It does not reseed `src/modules` over a developer's install state, which
+ *     would discard a module they installed to test against. Only a checkout
+ *     with nothing installed gets CI's copy of `module-sources`, for the run
+ *     alone (scripts/lib/modules-for-a-run.ts).
  *   - It builds into `.next-prod`, not `.next`, so a dev server on 3001 keeps
  *     its cache and keeps serving. Next writes its own directory into
  *     `tsconfig.json` on the way through, so that file is put back afterwards.
@@ -23,6 +23,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { toolCommand } from "../src/core/lib/tool-command";
+import { installEveryModuleForTheRun } from "./lib/modules-for-a-run";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const TSCONFIG = path.join(ROOT, "tsconfig.json");
@@ -81,8 +82,18 @@ function main(): void {
     const tsconfigBefore = fs.readFileSync(TSCONFIG, "utf8");
     const results: { name: string; code: number }[] = [];
 
-    for (const gate of GATES) {
-        results.push({ name: gate.name, code: run(gate) });
+    // The first gates are the generators, so the copy needs no run of its own.
+    const restore = installEveryModuleForTheRun(ROOT);
+    if (restore) console.log("[verify] no module is installed; running with every module from module-sources, as CI does");
+    try {
+        for (const gate of GATES) {
+            results.push({ name: gate.name, code: run(gate) });
+        }
+    } finally {
+        if (restore) {
+            restore();
+            console.log("[verify] src/modules removed again and the registries regenerated");
+        }
     }
 
     // `next build` adds its own dist directory to the include list.

@@ -81,6 +81,8 @@ export default defineConfig({
          */
         testTimeout: 20_000,
         hookTimeout: 20_000,
+        // A checkout with no module installed runs with all of them, as CI does.
+        globalSetup: ['tests/setup/every-module-installed.ts'],
         include: [
             'tests/unit/**/*.test.{ts,tsx}',
             'tests/integration/**/*.test.{ts,tsx}',

@@ -29,6 +29,8 @@ const ROOT = path.resolve(import.meta.dirname, "../..");
  * running `verify` already has these: `npm ci` installed the tree, and
  * `src/modules` is their working install state - reseeding it from
  * `module-sources` would silently discard a module they installed to test.
+ * Only when nothing is installed does `verify` make CI's copy, for the run
+ * alone (scripts/lib/modules-for-a-run.ts).
  */
 const CI_SETUP_ONLY = [
     "npm ci",
