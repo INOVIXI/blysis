@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { CORE_API_VERSION } from "../src/core/lib/core-version";
 
 const ROOT = process.cwd();
 const TEMPLATE_DIR = path.join(ROOT, "module-template");
@@ -175,6 +176,9 @@ function main(): void {
     manifest.id = moduleId;
     manifest.name = moduleName;
     manifest.description = moduleDescription || `${moduleName} module for Blysis`;
+    // From the running contract rather than the template, which cannot keep
+    // up with it: install refuses a module whose range the core does not meet.
+    manifest.coreVersion = `^${CORE_API_VERSION.split(".")[0]}.0.0`;
 
     fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 4) + "\n");
 
