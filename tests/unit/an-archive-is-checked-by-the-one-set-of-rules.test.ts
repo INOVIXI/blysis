@@ -30,8 +30,8 @@ const ROOT = path.resolve(import.meta.dirname, "../..");
 
 /**
  * Build tooling reads the archives this repository produces, from this
- * repository, to check they match their sources. It is not a trust boundary
- * and it is exempt by CLAUDE.md's own rule about `scripts/`.
+ * repository, to check they match their sources. It is not a trust boundary,
+ * so `scripts/` is not scanned.
  */
 const SCANNED = ["src/app", "src/core"];
 

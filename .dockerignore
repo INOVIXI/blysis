@@ -23,7 +23,6 @@ messages/
 # Generated output - builder regenerates them.
 prisma/schema.prisma
 src/core/generated/
-src/generated/
 
 # Test artifacts.
 tests/
@@ -32,9 +31,6 @@ test-results/
 *.spec.ts
 *.test.ts
 
-# Docs + specs.
-docs/superpowers/
-CLAUDE.md
-COMPETITOR_ANALYSIS.md
-QUALITY_ANALYSIS.md
-ROADMAP.md
+# Documentation: for people working on the code, not for the site.
+docs/
+*.md

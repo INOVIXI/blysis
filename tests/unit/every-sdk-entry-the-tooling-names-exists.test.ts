@@ -21,7 +21,8 @@ const SDK_DIR = path.join(ROOT, "src/core/sdk");
 
 /** Where an author is told which entry points there are. */
 const TELLERS = [
-    "README.md",
+    "AGENTS.md",
+    "docs/internals/overview.md",
     "module-template/README.md",
     "eslint.config.mjs",
     "scripts/validate-module.ts",
