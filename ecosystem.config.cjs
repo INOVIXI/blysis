@@ -30,8 +30,10 @@ if (fs.existsSync(envFile)) {
 module.exports = {
     apps: [{
         name: 'blysis',
-        script: 'npx',
-        args: 'next start -p 3001 -H 0.0.0.0',
+        // `npm start`, never `next start`: its prestart is what puts the build
+        // a module install staged live. The flags after `--` reach next start.
+        script: 'npm',
+        args: 'start -- -p 3001 -H 0.0.0.0',
         cwd: __dirname,
         env: env,
 
