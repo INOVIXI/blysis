@@ -51,7 +51,7 @@ export const GATES: Gate[] = [
     { name: "check:style", argv: ["npm", "run", "check:style"] },
     // The separator matters: without it npm keeps the flag for itself.
     { name: "lint", argv: ["npm", "run", "lint", "--", "--max-warnings=0"] },
-    { name: "audit", argv: ["npm", "audit", "--audit-level=high"] },
+    { name: "audit", argv: ["npm", "audit", "--omit=dev", "--audit-level=high"] },
     { name: "test:coverage", argv: ["npm", "run", "test:coverage"] },
     { name: "build", argv: ["npm", "run", "build"], env: { NEXT_DIST_DIR: ".next-prod" } },
 ];

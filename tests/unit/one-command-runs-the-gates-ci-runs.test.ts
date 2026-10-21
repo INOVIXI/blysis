@@ -121,6 +121,17 @@ describe("the gate list", () => {
         expect(invented, "`verify` runs these and CI does not; one of the two is wrong").toEqual([]);
     });
 
+    // CI fails on a high advisory in production dependencies and only reports
+    // one in the rest of the tree. verify failed on both, so it went red on a
+    // dev-only advisory with no upstream fix that CI let through, and a
+    // contributor learned to read its audit failure as noise.
+    it("fails on the audit CI fails on, and not on the one CI only reports", () => {
+        const audit = GATES.find((g) => g.name === "audit");
+        const failing = ciCheckCommands().find((c) => /^npm audit\b/.test(c) && !c.includes("||"));
+        expect(failing, "CI should still have an audit that fails the job").toBeDefined();
+        expect(audit?.argv.join(" ")).toBe(failing);
+    });
+
     it("names the jobs it deliberately leaves out, with a reason", () => {
         expect(Object.keys(OUTSIDE_VERIFY).length).toBeGreaterThan(0);
         for (const reason of Object.values(OUTSIDE_VERIFY)) {
