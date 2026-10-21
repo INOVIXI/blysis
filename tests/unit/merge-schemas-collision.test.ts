@@ -21,6 +21,7 @@ import { execFileSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import os from "os";
+import { toolCommand } from "@/core/lib/tool-command";
 
 const PROJECT_ROOT = path.resolve(__dirname, "../../");
 const SCRIPT_PATH = path.join(PROJECT_ROOT, "scripts/merge-schemas.ts");
@@ -67,8 +68,8 @@ afterEach(() => {
 });
 
 describe("merge-schemas core-model collision warning", () => {
-    // Why 60s (not 30s): this spawns `npx tsx scripts/merge-schemas.ts` COLD -
-    // npx resolves tsx, tsx boots an esbuild-backed TS loader, then the script
+    // Why 60s (not 30s): this spawns `tsx scripts/merge-schemas.ts` COLD -
+    // tsx boots an esbuild-backed TS loader, then the script
     // runs `npx prisma generate` (which fails fast here, but still pays its own
     // cold-start). In isolation that's ~5s, but under the full `npm test` run
     // the box is saturated by ~40 other workers, and a 30s Vitest per-test
@@ -86,9 +87,11 @@ describe("merge-schemas core-model collision warning", () => {
         let stdout = "";
         let stderr = "";
         try {
+            // Started through `toolCommand`, not as `npx`: on Windows `npx` is
+            // a `.cmd` shim a shell-less spawn cannot find. tsx is resolved
+            // from this project, because the temp root has no node_modules.
             const out = execFileSync(
-                "npx",
-                ["tsx", SCRIPT_PATH],
+                ...toolCommand(["npx", "tsx", SCRIPT_PATH], PROJECT_ROOT),
                 {
                     cwd: tmpRoot,
                     env: { ...process.env },

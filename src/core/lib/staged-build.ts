@@ -43,6 +43,10 @@
  * directory's depth. Moved up from `.next/.staging` to `.next` unchanged, each
  * one points a directory too far and every page that queries the database
  * fails to load its client. Promotion re-points them for where they land.
+ * On Windows Turbopack makes junction points instead, because a directory
+ * symlink there needs Developer Mode or an administrator and a junction does
+ * not. A junction only holds an absolute target, so those survive the move
+ * as they are and promotion never has to create a link on Windows.
  * (The `distDir` Next writes into each route module needs nothing: `next
  * start` hands every request its own.)
  *

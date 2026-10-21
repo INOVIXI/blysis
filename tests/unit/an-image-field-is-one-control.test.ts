@@ -19,6 +19,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -38,7 +39,7 @@ const FILES = [
     ...walk(path.join(ROOT, "src/core")),
     ...walk(path.join(ROOT, "module-sources")),
 ];
-const rel = (f: string) => path.relative(ROOT, f);
+const rel = (f: string) => relativePath(ROOT, f);
 
 /** The control `UrlOrFile` owns; nobody else reaches for it. */
 const OWNS_THE_PICKER = "src/core/components/ui/url-or-file.tsx";

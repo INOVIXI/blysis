@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 /**
  * Every control on a screen says what it is, and every label names something.
@@ -39,7 +40,7 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 const FILES = DIRS.flatMap((d) => walk(path.join(ROOT, d)));
-const rel = (f: string) => path.relative(ROOT, f);
+const rel = (f: string) => relativePath(ROOT, f);
 
 /** The attributes of the JSX element opening at `start`, and where it ends. */
 function openTag(source: string, start: number): { attrs: string; end: number } {

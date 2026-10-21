@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 /**
  * A database enum is not a label.
@@ -87,7 +88,7 @@ describe("what a reader sees is a label, not a column", () => {
         const offences: string[] = [];
         for (const base of SCAN) {
             for (const file of tsxFiles(path.join(ROOT, base))) {
-                offences.push(...rawEnumRenders(path.relative(ROOT, file), fs.readFileSync(file, "utf8")));
+                offences.push(...rawEnumRenders(relativePath(ROOT, file), fs.readFileSync(file, "utf8")));
             }
         }
         expect(offences.join("\n")).toBe("");

@@ -24,6 +24,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -78,7 +79,7 @@ describe("an endpoint that refuses", () => {
     it("says so in the one word every screen reads", () => {
         const mute: string[] = [];
         for (const file of routes) {
-            const rel = path.relative(ROOT, file);
+            const rel = relativePath(ROOT, file);
             if (rel in SPEAKS_ANOTHER_WIRE) continue;
             const source = fs.readFileSync(file, "utf8");
             for (const match of source.matchAll(ANSWER)) {

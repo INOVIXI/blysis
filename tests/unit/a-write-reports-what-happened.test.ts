@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { writeError } from "@/core/lib/write-result";
+import { relativePath } from "./source-text";
 
 /**
  * A screen may not report a write it never checked.
@@ -57,7 +58,7 @@ function mutatingCalls(file: string, source: string): Call[] {
         if (!method) continue;
         const head = source.slice(Math.max(0, start - 60), start);
         found.push({
-            file: path.relative(ROOT, file),
+            file: relativePath(ROOT, file),
             line: source.slice(0, start).split("\n").length,
             method,
             context: source.slice(start, i + 400),

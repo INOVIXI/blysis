@@ -30,6 +30,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -126,7 +127,7 @@ describe("an admin screen that reads a module endpoint", () => {
     it("sees the rows it switched off, or says it is only picking one", () => {
         const blind: string[] = [];
         for (const screen of adminScreens) {
-            const rel = path.relative(ROOT, screen);
+            const rel = relativePath(ROOT, screen);
             if (rel in PICKS_RATHER_THAN_MANAGES) continue;
             const source = fs.readFileSync(screen, "utf8");
             if (ASKS.test(source)) continue;

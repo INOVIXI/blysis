@@ -27,6 +27,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -63,7 +64,7 @@ describe("a hook handler", () => {
             return !guarded.test(source);
         });
         expect(
-            unguarded.map((file) => path.relative(ROOT, file)),
+            unguarded.map((file) => relativePath(ROOT, file)),
             "a handler here runs from a seed and a cron as well as from a page, and " +
             "`auth()` throws where there is no request. The bus swallows it and the " +
             "filter silently answers with what it was given. Use `auth().catch(() => null)`",
@@ -74,6 +75,6 @@ describe("a hook handler", () => {
         // A census that walks the wrong directory passes for the wrong reason.
         const files = hookHandlers();
         expect(files.length).toBeGreaterThan(20);
-        expect(files.some((f) => f.includes("store/hooks/"))).toBe(true);
+        expect(files.some((f) => relativePath(ROOT, f).includes("store/hooks/"))).toBe(true);
     });
 });

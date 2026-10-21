@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 /**
  * A screen with nothing on it says which kind of nothing it is.
@@ -63,7 +63,7 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 const FILES = DIRS.flatMap((d) => walk(path.join(ROOT, d)));
-const rel = (f: string) => path.relative(ROOT, f);
+const rel = (f: string) => relativePath(ROOT, f);
 const code = (s: string) => stripComments(s);
 
 /** True when the file renders an explicit "there is nothing here" branch. */

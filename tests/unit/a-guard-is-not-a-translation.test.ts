@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { relativePath } from "./source-text";
 
 /**
  * `t.has(key) ? t(key) : "English"` earns its place exactly once: when the key
@@ -110,7 +111,7 @@ function literalGuards(files: string[]): { file: string; key: string }[] {
     for (const file of files) {
         const content = fs.readFileSync(file, "utf8");
         if (!content.includes(".has")) continue;
-        const rel = path.relative(root, file);
+        const rel = relativePath(root, file);
         for (const binding of bindings(content).keys()) {
             const pattern = new RegExp(`\\b${binding}\\.has\\s*\\(\\s*["'\`]([^"'\`$]+)["'\`]\\s*\\)`, "g");
             for (const match of content.matchAll(pattern)) {
@@ -140,7 +141,7 @@ describe("a guard is not a translation", () => {
         for (const file of coreFiles) {
             const content = fs.readFileSync(file, "utf8");
             if (!content.includes("Translations(")) continue;
-            const rel = path.relative(root, file);
+            const rel = relativePath(root, file);
             for (const [binding, namespace] of bindings(content)) {
                 const pattern = new RegExp(`\\b${binding}(?:\\.rich|\\.markup)?\\s*\\(\\s*["'\`]([^"'\`$]+)["'\`]`, "g");
                 for (const match of content.matchAll(pattern)) {
@@ -203,10 +204,10 @@ describe("a guard is not a translation", () => {
         const offenders: string[] = [];
         for (const file of [...coreFiles, ...moduleFiles]) {
             const content = fs.readFileSync(file, "utf8");
-            if (path.relative(root, file) in GUARD_STAYS) continue;
+            if (relativePath(root, file) in GUARD_STAYS) continue;
             // `(key, en) => t.has(key) ? t(key) : en` and any spelling of it.
             if (/\(\s*\w+\s*:\s*string\s*,\s*\w+\s*:\s*string\s*\)\s*=>\s*\(?\s*\w+\.has\(/.test(content)) {
-                offenders.push(path.relative(root, file));
+                offenders.push(relativePath(root, file));
             }
         }
         expect(

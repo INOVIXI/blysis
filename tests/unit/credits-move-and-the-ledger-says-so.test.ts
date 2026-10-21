@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 const SOURCES = path.join(ROOT, "module-sources");
@@ -81,7 +82,7 @@ function balanceMoves(): Move[] {
             const line = source.slice(0, at).split("\n").length;
             const span = spans.find(([from, to]) => at > from && at < to);
             moves.push({
-                where: `${path.relative(ROOT, file)}:${line}`,
+                where: `${relativePath(ROOT, file)}:${line}`,
                 inTransaction: span !== undefined,
                 withLedger: span ? LEDGER_WRITE.test(source.slice(span[0], span[1])) : false,
             });

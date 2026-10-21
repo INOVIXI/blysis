@@ -24,6 +24,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -103,7 +104,7 @@ function paintedControls(): string[] {
             if (entry.isDirectory()) { walk(full); continue; }
             if (!entry.name.endsWith(".tsx")) continue;
 
-            const relative = path.relative(ROOT, full);
+            const relative = relativePath(ROOT, full);
             if (NOT_A_CONTROL.some((exempt) => exempt.file === relative)) continue;
             // The button is allowed to paint itself.
             if (relative.endsWith("core/components/ui/button.tsx")) continue;

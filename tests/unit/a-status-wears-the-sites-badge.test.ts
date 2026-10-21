@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 /**
  * A status looks the same wherever it is shown.
@@ -75,7 +75,7 @@ function screens(): string[] {
 
 describe("a status", () => {
     const offenders = screens()
-        .map((file) => ({ rel: path.relative(ROOT, file), maps: colourMaps(stripComments(fs.readFileSync(file, "utf8"))) }))
+        .map((file) => ({ rel: relativePath(ROOT, file), maps: colourMaps(stripComments(fs.readFileSync(file, "utf8"))) }))
         .filter(({ maps }) => maps.length > 0)
         .filter(({ rel }) => !(rel in NOT_A_BADGE))
         // The badge components are where a tone becomes a colour. Reading

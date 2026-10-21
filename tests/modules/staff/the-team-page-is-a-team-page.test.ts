@@ -19,6 +19,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "../../unit/source-text";
 
 const MODULE = path.join(process.cwd(), "module-sources/staff");
 
@@ -26,7 +27,7 @@ function everyFile(dir: string, out: string[] = []): string[] {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
         const full = path.join(dir, entry.name);
         if (entry.isDirectory()) everyFile(full, out);
-        else out.push(path.relative(MODULE, full));
+        else out.push(relativePath(MODULE, full));
     }
     return out;
 }

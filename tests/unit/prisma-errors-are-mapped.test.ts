@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { prismaErrorResponse, prismaErrorOrThrow } from "@/core/lib/prisma-errors";
+import { relativePath } from "./source-text";
 
 /**
  * A row that is not there is a 404, not a 500.
@@ -118,7 +119,7 @@ describe("core routes that write by id", () => {
     it("catch, check first, or say why they need neither", () => {
         const offenders: string[] = [];
         for (const file of routeFiles(path.join(ROOT, "src/app/api"))) {
-            const rel = path.relative(ROOT, file);
+            const rel = relativePath(ROOT, file);
             if (GUARDED_ELSEWHERE[rel]) continue;
             const writes = unguardedWrites(fs.readFileSync(file, "utf8"));
             if (writes.length > 0) offenders.push(`${rel}: ${writes.join(", ")}`);

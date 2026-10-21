@@ -19,7 +19,7 @@ import { render, screen, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 import { pageSource } from "./module-page-source";
 
 vi.mock("@/core/components/layout", () => ({
@@ -141,7 +141,7 @@ describe("the public pages, core's own and the modules'", () => {
                     if (entry.name === "admin") continue;
                     walk(full);
                 } else if (entry.name === "page.tsx") {
-                    out.push(path.relative(ROOT, full));
+                    out.push(relativePath(ROOT, full));
                 }
             }
         };

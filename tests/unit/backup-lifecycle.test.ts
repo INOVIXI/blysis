@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { EventEmitter } from "events";
 import { PassThrough, Readable, Writable } from "stream";
 import zlib from "zlib";
+import { basename } from "path";
 
 /**
  * `tests/unit/backup.test.ts` covers the pure helpers and the id guards.
@@ -66,6 +67,14 @@ const { fsMock, fspMock } = vi.hoisted(() => {
 vi.mock("fs", () => ({ default: fsMock, ...fsMock }));
 vi.mock("fs/promises", () => ({ default: fspMock, ...fspMock }));
 
+// Retention asks the automated-backup setting how many scheduled archives to
+// keep. Without this the real client went looking for the database in the
+// stubbed DATABASE_URL on every rotation, and the answer only came out right
+// because the failure falls back to the same defaults an unset row does.
+vi.mock("@/core/lib/db", () => ({
+    prisma: { setting: { findUnique: async () => null } },
+}));
+
 type Backup = typeof import("@/core/lib/backup");
 
 async function load(): Promise<Backup> {
@@ -111,7 +120,7 @@ beforeEach(() => {
     fspMock.mkdir.mockResolvedValue(undefined);
     fspMock.readdir.mockImplementation(async () => dirEntries);
     fspMock.stat.mockImplementation(async (p: string) => {
-        const name = String(p).split("/").pop()!;
+        const name = basename(String(p));
         const s = statResults[name] ?? { size: 1024, mtime: new Date("2026-09-01T00:00:00Z"), isFile: true };
         return {
             size: s.size,
@@ -120,10 +129,10 @@ beforeEach(() => {
             isFile: () => s.isFile,
         };
     });
-    fspMock.unlink.mockImplementation(async (p: string) => { unlinked.push(String(p).split("/").pop()!); });
+    fspMock.unlink.mockImplementation(async (p: string) => { unlinked.push(basename(String(p))); });
     fspMock.readFile.mockRejectedValue(new Error("ENOENT"));
     fspMock.writeFile.mockImplementation(async (p: string, data: string) => {
-        notesWritten[String(p).split("/").pop()!] = data;
+        notesWritten[basename(String(p))] = data;
     });
     fspMock.access.mockImplementation(async () => {
         if (accessThrows) throw new Error("ENOENT");

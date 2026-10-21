@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 /**
  * An admin screen says what it is, and says it the same way everywhere.
@@ -125,7 +125,7 @@ describe("an admin screen", () => {
 
     it("takes its title from the one header, directly or through a shell", () => {
         const untitled = pages
-            .map((file) => path.relative(ROOT, file))
+            .map((file) => relativePath(ROOT, file))
             .filter((rel) => !EXEMPT.has(rel))
             .filter((rel) => !onlyRedirects(path.join(ROOT, rel)))
             .filter((rel) => !titled(path.join(ROOT, rel)));
@@ -134,7 +134,7 @@ describe("an admin screen", () => {
 
     it("does not roll its own page title", () => {
         const rolled = pages
-            .map((file) => path.relative(ROOT, file))
+            .map((file) => relativePath(ROOT, file))
             .filter((rel) => !EXEMPT.has(rel))
             .filter((rel) => /<h1\b/.test(fs.readFileSync(path.join(ROOT, rel), "utf8")));
         expect(rolled).toEqual([]);
@@ -158,7 +158,7 @@ describe("an admin screen", () => {
             // A JSX comment leaves its braces behind when the comment inside
             // it goes, and one sits between the wrapper and the header.
             const wrapped = /<div className="([^"]*\bflex\b[^"]*)"[^>]*>\s*(?:\{\s*\}\s*)?<AdminPageHeader/.exec(source);
-            if (wrapped) boxed.push(`${path.relative(ROOT, file)}: ${wrapped[1]}`);
+            if (wrapped) boxed.push(`${relativePath(ROOT, file)}: ${wrapped[1]}`);
         }
         expect(boxed).toEqual([]);
     });

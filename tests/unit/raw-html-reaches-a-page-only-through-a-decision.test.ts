@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 /**
  * Every `dangerouslySetInnerHTML` in this tree is one somebody argued for.
@@ -66,7 +66,7 @@ function rawHtmlFiles(): string[] {
             // a gate that reports prose is one people learn to skip.
             const source = withoutComments(fs.readFileSync(full, "utf8"));
             if (/dangerouslySetInnerHTML=\{/.test(source)) {
-                found.add(path.relative(ROOT, full));
+                found.add(relativePath(ROOT, full));
             }
         }
     };

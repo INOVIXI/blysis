@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 /**
  * A form that sends nine values is one save, not nine.
@@ -101,7 +102,7 @@ describe("a write over a request body", () => {
     it("goes through one transaction rather than a loop of awaits", () => {
         const offenders: string[] = [];
         for (const file of files) {
-            const relative = path.relative(ROOT, file);
+            const relative = relativePath(ROOT, file);
             if (MAY_LOOP[relative]) continue;
             const source = fs.readFileSync(file, "utf8");
             for (const body of loopBodies(source)) {

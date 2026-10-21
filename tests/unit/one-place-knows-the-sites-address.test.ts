@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 /**
  * The site's own address is resolved in one place.
@@ -76,7 +77,7 @@ describe("the site's address", () => {
     it("is read through the resolver everywhere else", () => {
         const offenders: string[] = [];
         for (const file of files) {
-            const relative = path.relative(ROOT, file);
+            const relative = relativePath(ROOT, file);
             if (RESOLVERS.has(relative)) continue;
             const hits = code(fs.readFileSync(file, "utf8")).match(VARIABLES);
             if (hits) offenders.push(`${relative}: ${[...new Set(hits)].join(", ")}`);

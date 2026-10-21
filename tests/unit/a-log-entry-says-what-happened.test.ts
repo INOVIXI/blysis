@@ -19,6 +19,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -67,7 +68,7 @@ function loggedActions(): { action: string; where: string }[] {
                 // character class for all three stopped at the first of them.
                 const named = /\baction:\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`)/.exec(body);
                 const action = named?.[1] ?? named?.[2] ?? named?.[3];
-                if (action) out.push({ action, where: path.relative(ROOT, full) });
+                if (action) out.push({ action, where: relativePath(ROOT, full) });
             }
         }
     };

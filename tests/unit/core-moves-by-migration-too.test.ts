@@ -2,6 +2,7 @@
 import { describe, it, expect } from "vitest";
 import path from "node:path";
 import { migrationOwners, migrationsDirFor, CORE_MIGRATION_OWNER } from "@/../scripts/apply-migrations";
+import { relativePath } from "./source-text";
 
 /**
  * Core's own schema moves by migration, like a module's.
@@ -40,7 +41,7 @@ describe("the migration runner", () => {
     it("still finds a module's own", () => {
         const dir = migrationsDirFor("store");
         expect(dir).not.toBeNull();
-        expect(dir).toMatch(/store\/migrations$/);
+        expect(relativePath(ROOT, dir ?? "")).toMatch(/^(src\/modules|module-sources)\/store\/migrations$/);
     });
 
     it("says nothing for a module that has none", () => {

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync, readdirSync } from "fs";
 import { join } from "path";
+import { relativePath } from "./source-text";
 
 /**
  * A mute has to stop the next endpoint too.
@@ -85,7 +86,7 @@ function memberWritingEndpoints(): string[] {
         if (!/export async function POST/.test(source)) continue;
         if (!/\.create\(|\.createMany\(/.test(source)) continue;
         if (!AUTHORED.test(source)) continue;
-        found.push(file.slice(ROOT.length + 1));
+        found.push(relativePath(ROOT, file));
     }
     return found.sort();
 }
