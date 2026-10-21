@@ -30,6 +30,12 @@ const { execFileMock } = vi.hoisted(() => ({
 
 vi.mock("child_process", () => ({ execFile: execFileMock, default: { execFile: execFileMock } }));
 
+// The commands are asserted as they are written. How each one finds its
+// tool on the machine is a-tool-starts-on-every-platform.test.ts's question.
+vi.mock("@/core/lib/tool-command", () => ({
+    toolCommand: (argv: string[]) => [argv[0], argv.slice(1)],
+}));
+
 vi.mock("@/core/lib/logger", () => ({
     
     errorText: (e: unknown) => (e instanceof Error ? e.message : String(e)),log: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },

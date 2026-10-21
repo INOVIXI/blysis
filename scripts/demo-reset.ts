@@ -43,6 +43,7 @@
 import "dotenv/config";
 import { spawnSync } from "node:child_process";
 import { detectSchemaDrift, writeSchemaState } from "../src/core/lib/build-state";
+import { toolCommand } from "../src/core/lib/tool-command";
 
 // `--force` on both seed-demo steps, because a demo host runs the published
 // image and that image sets NODE_ENV=production: seed-demo refuses a
@@ -56,7 +57,7 @@ const STEPS: { what: string; args: string[] }[] = [
 
 /** Run a script through tsx, and stop the reset if it fails. */
 function run(args: string[]): void {
-    const result = spawnSync("npx", ["tsx", ...args], { stdio: "inherit" });
+    const result = spawnSync(...toolCommand(["npx", "tsx", ...args]), { stdio: "inherit" });
     if (result.status !== 0) {
         console.error(`\ndemo-reset stopped: ${args.join(" ")} exited ${result.status}`);
         // Loudly, and without going on: a half-reset demo is worse than a

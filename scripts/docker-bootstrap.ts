@@ -29,6 +29,7 @@
 import "dotenv/config";
 import { Pool } from "pg";
 import { spawnSync } from "child_process";
+import { toolCommand } from "../src/core/lib/tool-command";
 
 async function isInitialized(pool: Pool): Promise<boolean> {
     try {
@@ -41,8 +42,8 @@ async function isInitialized(pool: Pool): Promise<boolean> {
     }
 }
 
-function run(label: string, cmd: string, args: string[]): void {
-    const result = spawnSync(cmd, args, { stdio: "inherit" });
+function run(label: string, argv: string[]): void {
+    const result = spawnSync(...toolCommand(argv), { stdio: "inherit" });
     if (result.status !== 0) {
         console.error(`[bootstrap] ${label} failed (exit ${result.status}).`);
         process.exit(result.status ?? 1);
@@ -68,7 +69,7 @@ function run(label: string, cmd: string, args: string[]): void {
  * outcome. Every other push failure stays fatal.
  */
 function pushTolerantOfRetainedTables(): void {
-    const result = spawnSync("npx", ["prisma", "db", "push"], {
+    const result = spawnSync(...toolCommand(["npx", "prisma", "db", "push"]), {
         encoding: "utf-8",
     });
     const output = `${result.stdout ?? ""}${result.stderr ?? ""}`;
@@ -108,7 +109,7 @@ async function main(): Promise<void> {
     // is core-only; on an upgrade it is core + every module the admin added,
     // which is what keeps the reconciliation below from mistaking a live
     // module's tables for leftovers.
-    run("merge-schemas", "npx", ["tsx", "scripts/merge-schemas.ts"]);
+    run("merge-schemas", ["npx", "tsx", "scripts/merge-schemas.ts"]);
 
     if (initialized) {
         console.log("[bootstrap] Existing database - upgrading…");
@@ -116,14 +117,14 @@ async function main(): Promise<void> {
         // fail for a reason the operator should have to think about, and it
         // guarantees every new table and column exists before anything else
         // runs.
-        run("apply-schema-additions", "npx", ["tsx", "scripts/apply-schema-additions.ts"]);
+        run("apply-schema-additions", ["npx", "tsx", "scripts/apply-schema-additions.ts"]);
         // Then the full reconciliation, for the removals and retypes the
         // additive pass deliberately will not do.
         pushTolerantOfRetainedTables();
-        run("apply-migrations", "npx", ["tsx", "scripts/apply-migrations.ts"]);
+        run("apply-migrations", ["npx", "tsx", "scripts/apply-migrations.ts"]);
         // Strings are database rows, so a new release's new keys only exist
         // after this runs. Idempotent, and admin-edited rows are preserved.
-        run("seed-translations", "npx", ["tsx", "scripts/seed-translations.ts"]);
+        run("seed-translations", ["npx", "tsx", "scripts/seed-translations.ts"]);
         console.log("[bootstrap] Upgrade complete.");
         return;
     }
@@ -134,12 +135,12 @@ async function main(): Promise<void> {
     // only --config, --schema, --url, --accept-data-loss and --force-reset),
     // and passing it aborts the push. merge-schemas.ts above already ran
     // `prisma generate`, so there is nothing to skip.
-    run("prisma db push", "npx", ["prisma", "db", "push"]);
+    run("prisma db push", ["npx", "prisma", "db", "push"]);
 
     console.log("[bootstrap] Fresh database - seeding core data…");
-    run("seed", "npx", ["tsx", "prisma/seed.ts"]);
+    run("seed", ["npx", "tsx", "prisma/seed.ts"]);
     // Without this every string in the UI renders as its own key.
-    run("seed-translations", "npx", ["tsx", "scripts/seed-translations.ts"]);
+    run("seed-translations", ["npx", "tsx", "scripts/seed-translations.ts"]);
     console.log("[bootstrap] Done.");
 }
 

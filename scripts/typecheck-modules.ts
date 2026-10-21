@@ -23,6 +23,7 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { mergeSchemas } from "./lib/merge-prisma-schemas";
+import { toolCommand } from "../src/core/lib/tool-command";
 
 const ROOT = process.cwd();
 const SOURCES = path.join(ROOT, "module-sources");
@@ -110,7 +111,7 @@ function ensureMergedClient(): { modules: number; models: number; regenerated: b
 
     if (!fresh) {
         fs.writeFileSync(SCHEMA_PATH, schema, "utf-8");
-        const gen = spawnSync("npx", ["prisma", "generate", "--schema", SCHEMA_PATH], {
+        const gen = spawnSync(...toolCommand(["npx", "prisma", "generate", "--schema", SCHEMA_PATH]), {
             cwd: ROOT,
             encoding: "utf-8",
             timeout: 180_000,
@@ -151,7 +152,7 @@ const contractCount = writeHookContracts();
 
 let raw: string;
 try {
-    const run = spawnSync("npx", ["tsc", "--noEmit", "-p", path.basename(TSCONFIG_PATH)], {
+    const run = spawnSync(...toolCommand(["npx", "tsc", "--noEmit", "-p", path.basename(TSCONFIG_PATH)]), {
         cwd: ROOT,
         encoding: "utf-8",
         maxBuffer: 32 * 1024 * 1024,

@@ -12,6 +12,7 @@ import { manifestHash } from "@/core/lib/module-install-audit";
 import { PROJECT_ROOT } from "@/core/lib/runtime-paths";
 import { devOnlyDetail } from "@/core/lib/api-utils";
 import { themeRegistry } from "@/core/generated/theme-registry";
+import { toolCommand } from "@/core/lib/tool-command";
 
 const THEMES_DIR = path.join(PROJECT_ROOT, "src/themes");
 // Generic non-theme reservations + every in-tree theme id (from the
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
         await fs.cp(extractDir, target, { recursive: true });
 
         try {
-            execFileSync("npx", ["tsx", "scripts/generate-theme-registry.ts"], { cwd: PROJECT_ROOT, timeout: 30_000, stdio: "pipe" });
+            execFileSync(...toolCommand(["npx", "tsx", "scripts/generate-theme-registry.ts"]), { cwd: PROJECT_ROOT, timeout: 30_000, stdio: "pipe" });
         } catch (e) {
             await fs.rm(target, { recursive: true, force: true });
             return NextResponse.json({ error: "Theme failed regeneration", details: devOnlyDetail(e) }, { status: 400 });
