@@ -22,7 +22,7 @@ import { spawnSync } from "child_process";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
-import { mergeSchemas } from "./lib/merge-prisma-schemas";
+import { mergeSchemas, withClientOutput } from "./lib/merge-prisma-schemas";
 import { toolCommand } from "../src/core/lib/tool-command";
 
 const ROOT = process.cwd();
@@ -95,12 +95,7 @@ function ensureMergedClient(): { modules: number; models: number; regenerated: b
     const merged = mergeSchemas(ROOT, "all-sources");
     for (const warning of merged.warnings) console.warn(`[typecheck-modules] WARNING: ${warning}`);
 
-    // The core generator block has no `output`, which lands the client in
-    // node_modules and would clobber the real one.
-    const schema = merged.schema.replace(
-        /generator\s+client\s*\{[^}]*\}/,
-        `generator client {\n  provider = "prisma-client-js"\n  output   = "${CLIENT_DIR}"\n}`,
-    );
+    const schema = withClientOutput(merged.schema, CLIENT_DIR);
     const hash = crypto.createHash("sha256").update(schema).digest("hex");
 
     fs.mkdirSync(WORK_DIR, { recursive: true });

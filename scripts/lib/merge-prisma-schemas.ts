@@ -182,3 +182,19 @@ export function mergeSchemas(root: string, scope: MergeScope): MergeResult {
         warnings,
     };
 }
+
+/**
+ * Point a merged schema's generator at `clientDir` instead of node_modules.
+ *
+ * The core generator block has no `output`, which lands the client in
+ * node_modules and would clobber the real one. The directory is written with
+ * forward slashes: a Prisma string reads each backslash as an escape, so a
+ * Windows path as the platform spells it does not parse, and Prisma accepts a
+ * forward slash as a separator everywhere.
+ */
+export function withClientOutput(schema: string, clientDir: string): string {
+    return schema.replace(
+        /generator\s+client\s*\{[^}]*\}/,
+        `generator client {\n  provider = "prisma-client-js"\n  output   = "${clientDir.replaceAll("\\", "/")}"\n}`,
+    );
+}
