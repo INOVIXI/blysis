@@ -2,7 +2,6 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import config from "../../vitest.config.mts";
 
 /**
  * A coverage floor holds a file that exists.
@@ -15,12 +14,13 @@ import config from "../../vitest.config.mts";
  */
 
 const ROOT = path.resolve(import.meta.dirname, "../..");
-const GLOBAL = new Set(["statements", "branches", "functions", "lines", "perFile", "autoUpdate", "100"]);
+
+/** The per-file keys of `coverage.thresholds`: a quoted path opening an object. */
+const config = fs.readFileSync(path.join(ROOT, "vitest.config.mts"), "utf8");
+const thresholds = config.slice(config.indexOf("thresholds:"));
+const files = [...thresholds.matchAll(/['"]((?:src|scripts)\/[^'"]+)['"]\s*:\s*\{/g)].map((m) => m[1]);
 
 describe("a coverage floor", () => {
-    const thresholds = (config.test?.coverage as { thresholds?: Record<string, unknown> } | undefined)?.thresholds ?? {};
-    const files = Object.keys(thresholds).filter((key) => !GLOBAL.has(key));
-
     it("names a file the suite can measure", () => {
         const gone = files.filter((file) => !fs.existsSync(path.join(ROOT, file)));
         expect(gone, "move the floor to the file that does this work now, or drop it with the file").toEqual([]);
