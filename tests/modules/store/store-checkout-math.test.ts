@@ -26,7 +26,7 @@ import {
     computeTotals,
     type PricingProduct,
     type PricingBulkDiscount,
-} from "../../module-sources/store/lib/pricing";
+} from "@/modules/store/lib/pricing";
 
 const noOwned = new Set<string>();
 

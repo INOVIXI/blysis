@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
-import { computeCouponDiscount } from "../../module-sources/store/lib/pricing";
+import { computeCouponDiscount } from "@/modules/store/lib/pricing";
 
 const STORE = path.join(process.cwd(), "module-sources/store");
 const read = (p: string) => fs.readFileSync(path.join(STORE, p), "utf8");

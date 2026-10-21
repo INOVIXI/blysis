@@ -1,14 +1,14 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
-import { pageSource } from "./module-page-source";
+import { pageSource } from "../../unit/module-page-source";
 import {
     SUGGESTION_STATUSES,
     STATUS_BADGE_CLASS,
     canonicalStatus,
     spellingsOf,
-} from "../../module-sources/suggestions/lib/statuses";
-import { suggestionUpdateSchema } from "../../module-sources/suggestions/lib/validations";
+} from "@/modules/suggestions/lib/statuses";
+import { suggestionUpdateSchema } from "@/modules/suggestions/lib/validations";
 
 /**
  * Four lists of suggestion statuses, none of which agreed.
@@ -26,7 +26,7 @@ import { suggestionUpdateSchema } from "../../module-sources/suggestions/lib/val
  * of them in both languages, and the admin was already being offered all six.
  */
 
-const MODULE = path.resolve(__dirname, "../../module-sources/suggestions");
+const MODULE = path.resolve(__dirname, "../../../module-sources/suggestions");
 
 function read(...parts: string[]): string {
     return fs.readFileSync(path.join(MODULE, ...parts), "utf8");
