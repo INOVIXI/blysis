@@ -8,6 +8,7 @@ import {
     NON_PUBLIC_NAMESPACES,
     MODULE_ADMIN_KEY_PREFIX,
 } from "@/core/lib/i18n/message-scopes";
+import { relativePath } from "./source-text";
 
 const MESSAGES = {
     common: { home: "Home" },
@@ -101,7 +102,7 @@ describe("the adm_ prefix means admin-only", () => {
                  * admin panel's words is the case this clause exists for.
                  */
                 if (/from ["'](?:next-intl\/server|@\/core\/sdk\/server)["']/.test(source)) continue;
-                offenders.push(path.relative(ROOT, file));
+                offenders.push(relativePath(ROOT, file));
             }
         }
         expect(offenders).toEqual([]);
@@ -118,11 +119,14 @@ describe("the setup namespace", () => {
         const readers: string[] = [];
         for (const dir of [path.join(ROOT, "module-sources"), path.join(ROOT, "src")]) {
             for (const file of nonAdminSources(dir)) {
-                if (/(?:use|get)Translations\(\s*['"]setup['"]/.test(fs.readFileSync(file, "utf8"))) {
-                    readers.push(path.relative(ROOT, file).replace(/\\/g, "/"));
+                // The bare name, a nested `setup.x`, or the server's object form.
+                if (/(?:use|get)Translations\(\s*(?:\{[^}]*\bnamespace\s*:\s*)?['"`]setup['"`.]/.test(fs.readFileSync(file, "utf8"))) {
+                    readers.push(relativePath(ROOT, file));
                 }
             }
         }
+        // The wizard itself reads it, so a scan that finds no reader read nothing.
+        expect(readers.length).toBeGreaterThan(0);
         for (const reader of readers) expect(reader).toContain("(setup)/setup");
     });
 

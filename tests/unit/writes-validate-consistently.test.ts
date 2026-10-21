@@ -24,7 +24,8 @@ import path from "node:path";
  */
 
 const ROOT = path.resolve(__dirname, "../..");
-const WRITE = /prisma\.(\w+)\.(create|createMany|update|updateMany|upsert)\s*\(/g;
+// `tx` is the same client inside a transaction, and writes the same rows.
+const WRITE = /\b(?:prisma|tx)\.(\w+)\.(create|createMany|update|updateMany|upsert)\s*\(/g;
 const GUARD = /\.(safeParse|parse)\(/;
 const BODY_BINDING = /(?:const|let)\s+(\w+)\s*=\s*(?:await\s+)?(?:readJsonBody|request\.json|req\.json)\b/g;
 const HANDLER = /export async function (GET|POST|PATCH|PUT|DELETE)\b/g;
@@ -197,6 +198,19 @@ export async function POST(request: NextRequest) {
     it("does not mix two modules that happen to share a model name", () => {
         const writes = [...writesIn("one", "a.ts", guarded), ...writesIn("two", "b.ts", raw)];
         expect(asymmetricWrites(writes)).toEqual([]);
+    });
+
+    it("sees a write made inside a transaction", () => {
+        const inTransaction = `
+export async function PATCH(request: NextRequest) {
+    const body = await readJsonBody(request);
+    await prisma.$transaction(async (tx) => {
+        await tx.thing.update({ where: { id }, data: { name: body.name } });
+    });
+}
+`;
+        const writes = [...writesIn("m", "a.ts", guarded), ...writesIn("m", "t.ts", inTransaction)];
+        expect(asymmetricWrites(writes).map((w) => w.file)).toEqual(["t.ts"]);
     });
 
     it("reads a write call across nested braces rather than to the first one", () => {

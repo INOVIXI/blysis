@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { rateLimit } from "../../src/core/lib/rate-limit";
+import { relativePath, stripComments } from "./source-text";
 
 /**
  * Two things about rate limiting were true and should not have been.
@@ -49,7 +50,18 @@ function routeFiles(): string[] {
     return out;
 }
 
-export function splitHandlers(file: string, source: string): Handler[] {
+/**
+ * The code of a route, without its comments or imports. A helper above the
+ * handlers that checks for an admin or takes a limit speaks for the handlers
+ * that call it; an `import { isAdmin }` nobody calls, or a comment saying
+ * `rateLimit(` used to be here, does not.
+ */
+function codeOf(source: string): string {
+    return stripComments(source).replace(/^\s*import\s[^;]*;?/gm, "");
+}
+
+export function splitHandlers(file: string, raw: string): Handler[] {
+    const source = codeOf(raw);
     const starts = [...source.matchAll(HANDLER)].map((m) => ({ at: m.index, verb: m[1] }));
     const head = starts.length > 0 ? source.slice(0, starts[0].at) : source;
     return starts.map((s, i) => ({
@@ -72,7 +84,7 @@ export function unlimitedUserWrites(handlers: Handler[]): string[] {
 
 describe("rate limits", () => {
     const handlers = routeFiles().flatMap((file) =>
-        splitHandlers(path.relative(ROOT, file), fs.readFileSync(file, "utf8")),
+        splitHandlers(relativePath(ROOT, file), fs.readFileSync(file, "utf8")),
     );
 
     it("finds the handlers to check", () => {
@@ -193,5 +205,29 @@ export async function GET() {
 
     it("leaves reads alone", () => {
         expect(unlimitedUserWrites(splitHandlers("a.ts", reads))).toEqual([]);
+    });
+
+    it("is not talked out of it by an import or a comment above the handlers", () => {
+        const excused = `
+import { isAdmin } from "@/core/sdk/server";
+// rateLimit( used to guard this route
+${unlimited}`;
+        expect(unlimitedUserWrites(splitHandlers("a.ts", excused))).toEqual(["a.ts POST"]);
+    });
+
+    it("lets a helper above the handlers speak for the ones that call it", () => {
+        const helped = `
+async function gate() {
+    const session = await auth();
+    return isAdmin(session.user.id);
+}
+
+export async function POST(request: NextRequest) {
+    const session = await auth();
+    if (!(await gate())) return forbidden;
+    await prisma.thing.create({ data: {} });
+}
+`;
+        expect(unlimitedUserWrites(splitHandlers("a.ts", helped))).toEqual([]);
     });
 });

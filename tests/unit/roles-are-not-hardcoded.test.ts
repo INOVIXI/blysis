@@ -108,10 +108,18 @@ describe("the one reserved name", () => {
             "src/core/lib/auth.ts",
             "src/proxy.ts",
         ];
+        let seen = 0;
         for (const file of files) {
-            const names = [...read(file).matchAll(/role\??\.?name\s*[=!]==\s*"(\w+)"|sessionRole\s*[=!]==\s*"(\w+)"/g)]
-                .map((m) => m[1] ?? m[2]);
+            // Either quote, either side of the comparison.
+            const names = [
+                ...read(file).matchAll(
+                    /(?:role\??\.?name|sessionRole)\s*[=!]==?\s*["'`](\w+)["'`]|["'`](\w+)["'`]\s*[=!]==?\s*(?:\w+\??\.)*(?:role\??\.?name|sessionRole)\b/g,
+                ),
+            ].map((m) => m[1] ?? m[2]);
             expect([...new Set(names)].filter((n) => n !== "admin"), file).toEqual([]);
+            seen += names.length;
         }
+        // The admin checks themselves are comparisons the scan must see.
+        expect(seen).toBeGreaterThan(0);
     });
 });

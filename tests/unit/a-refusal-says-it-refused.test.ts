@@ -56,8 +56,11 @@ function routeFiles(dir: string, out: string[] = []): string[] {
     return out;
 }
 
-/** `NextResponse.json(<body>, { status: <n> })`, body and status together. */
-const ANSWER = /NextResponse\.json\(\s*([\s\S]{0,400}?),\s*\{\s*status:\s*(\d{3})/g;
+/**
+ * `NextResponse.json(<body>, { status: <n> })`, body and status together.
+ * The platform's own `Response.json` answers the same client, so it counts.
+ */
+const ANSWER = /\b(?:Next)?Response\.json\(\s*([\s\S]{0,400}?),\s*\{\s*status:\s*(\d{3})/g;
 
 const routes = [
     ...routeFiles(path.join(ROOT, "src/app/api")),

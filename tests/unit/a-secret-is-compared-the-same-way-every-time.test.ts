@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { secretsMatch } from "@/core/lib/constant-time";
+import { relativePath, stripComments } from "./source-text";
 
 /**
  * Two places compare a secret a caller sent against one the server holds.
@@ -58,20 +59,85 @@ describe("comparing a secret", () => {
     });
 });
 
+/** What a caller sent: a header, read or already bound. */
+const CALLER = String.raw`(?:\w*[Hh]eader\w*|(?:\w+\.)*headers\.get\([^)]*\))`;
+/** What the server holds: a secret by name, or one read from the environment. */
+const HELD = String.raw`(?:process\.env\.\w*(?:SECRET|TOKEN|KEY)\w*|\w*(?:[Ss]ecret|SECRET)\w*)`;
+const ENV = String.raw`process\.env\.\w*(?:SECRET|TOKEN|KEY)\w*`;
+const OPERAND = String.raw`[\w.$"'\x60[\]]+`;
+const EQ = String.raw`\s*[!=]==?\s*`;
+/**
+ * A comparison with a secret on one side, in either order. An environment
+ * secret is held whatever it is compared with, so its other operand is kept
+ * to tell a presence check from a real one.
+ */
+const COMPARISON = new RegExp(
+    [
+        `${CALLER}${EQ}${HELD}\\b`,
+        `\\b${HELD}${EQ}${CALLER}`,
+        `${ENV}${EQ}(?<after>${OPERAND})`,
+        `(?<before>${OPERAND})${EQ}${ENV}`,
+    ].join("|"),
+    "g",
+);
+const ABSENT = /^(?:undefined|null|""|''|``)$/;
+
+/** Every comparison in `code` that checks a value against a secret rather than for one. */
+function plainComparisons(code: string): string[] {
+    return [...code.matchAll(COMPARISON)]
+        .filter((match) => {
+            const other = match.groups?.after ?? match.groups?.before;
+            return other === undefined || !ABSENT.test(other);
+        })
+        .map((match) => match[0].trim());
+}
+
+function sources(dir: string, out: string[] = []): string[] {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            if (entry.name !== "node_modules" && entry.name !== "generated") sources(full, out);
+        } else if (/\.tsx?$/.test(entry.name)) out.push(full);
+    }
+    return out;
+}
+
+describe("the check for a plain comparison", () => {
+    const flags = (code: string) => plainComparisons(code).length > 0;
+
+    it("catches it whichever operator and whichever side", () => {
+        expect(flags(`if (headerValue === internalSecret) ok();`)).toBe(true);
+        expect(flags(`if (request.headers.get("x-key") !== secret) deny();`)).toBe(true);
+        expect(flags(`if (cronSecret === authHeader) ok();`)).toBe(true);
+        expect(flags(`if (token === process.env.CRON_SECRET) ok();`)).toBe(true);
+        expect(flags(`if (process.env.INTERNAL_API_KEY != given) deny();`)).toBe(true);
+    });
+
+    it("leaves a presence check and an unrelated header alone", () => {
+        expect(flags(`if (process.env.CRON_SECRET === undefined) return;`)).toBe(false);
+        expect(flags(`if (process.env.CRON_SECRET !== "") arm();`)).toBe(false);
+        expect(flags(`if (headers.get("x-forwarded-proto") === "https") secure();`)).toBe(false);
+        expect(flags(`if (cached.secret === secret) return cached.client;`)).toBe(false);
+    });
+});
+
 describe("the places that compare one", () => {
     const sites = [
         "src/core/lib/csrf.ts",
         "src/app/api/v1/modules/status/route.ts",
     ];
 
-    it("do not use === on a header against a secret", () => {
-        const offenders = sites.filter((rel) => {
-            const body = fs.readFileSync(path.join(ROOT, rel), "utf8");
-            return /(headerValue|headers\.get\([^)]*\))\s*===\s*\w*[Ss]ecret/.test(body);
-        });
+    it("never compare a caller's secret with == or ===", () => {
+        const offenders = [path.join(ROOT, "src"), path.join(ROOT, "module-sources")]
+            .flatMap((dir) => sources(dir))
+            .flatMap((file) =>
+                plainComparisons(stripComments(fs.readFileSync(file, "utf8"))).map(
+                    (comparison) => `${relativePath(ROOT, file)}: ${comparison}`,
+                ),
+            );
         expect(
             offenders,
-            `These compare a caller's header against a server secret with ===:\n${offenders.join("\n")}`,
+            `These compare a caller's value against a server secret byte by byte; use secretsMatch:\n${offenders.join("\n")}`,
         ).toEqual([]);
     });
 
