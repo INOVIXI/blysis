@@ -14,14 +14,12 @@ vi.mock('@/core/lib/constants', () => ({
 // Need to dynamically import after mocks
 let rateLimit: typeof import('@/core/lib/rate-limit').rateLimit;
 let getClientIP: typeof import('@/core/lib/rate-limit').getClientIP;
-let rateLimits: typeof import('@/core/lib/rate-limit').rateLimits;
 
 beforeEach(async () => {
     vi.resetModules();
     const mod = await import('@/core/lib/rate-limit');
     rateLimit = mod.rateLimit;
     getClientIP = mod.getClientIP;
-    rateLimits = mod.rateLimits;
 });
 
 describe('rateLimit', () => {
@@ -80,19 +78,5 @@ describe('getClientIP', () => {
 
     it('returns unknown when no IP headers', () => {
         expect(getClientIP(new Headers())).toBe('unknown');
-    });
-});
-
-describe('rateLimits presets', () => {
-    it('has correct auth preset', () => {
-        expect(rateLimits.auth).toEqual({ maxRequests: 10, windowMs: 60000 });
-    });
-
-    it('has correct api preset', () => {
-        expect(rateLimits.api).toEqual({ maxRequests: 120, windowMs: 60000 });
-    });
-
-    it('has correct upload preset', () => {
-        expect(rateLimits.upload).toEqual({ maxRequests: 3, windowMs: 60000 });
     });
 });

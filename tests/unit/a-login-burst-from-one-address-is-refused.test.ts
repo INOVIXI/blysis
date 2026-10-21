@@ -61,6 +61,9 @@ describe("an address that has been guessing", () => {
     });
 
     it("is refused past it", async () => {
+        // The ceiling is per address across all accounts, which is the whole
+        // point: forty accounts tried once each must reach it. Nothing here
+        // names an account, so there is no per-account count to fall back on.
         for (let i = 0; i < LOGIN_FAILURES_PER_ADDRESS; i++) {
             await noteFailedLoginFrom(ADDRESS);
         }
@@ -72,15 +75,6 @@ describe("an address that has been guessing", () => {
             await noteFailedLoginFrom(ADDRESS);
         }
         await expect(loginAllowedFrom("198.51.100.4")).resolves.toBe(true);
-    });
-
-    it("is not read as an answer about any one account", async () => {
-        // The ceiling is per address across all accounts, which is the whole
-        // point: forty accounts tried once each must reach it.
-        for (let i = 0; i < LOGIN_FAILURES_PER_ADDRESS; i++) {
-            await noteFailedLoginFrom(ADDRESS);
-        }
-        await expect(loginAllowedFrom(ADDRESS)).resolves.toBe(false);
     });
 });
 
