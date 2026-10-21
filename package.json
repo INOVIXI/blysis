@@ -9,7 +9,7 @@
   },
   "scripts": {
     "generate:themes": "npx tsx scripts/generate-theme-registry.ts",
-    "build:marketplace": "bash scripts/build-marketplace.sh",
+    "build:marketplace": "npx tsx scripts/build-marketplace.ts",
     "db:merge": "npx tsx scripts/merge-schemas.ts",
     "postinstall": "npx tsx scripts/postinstall.ts",
     "patch:next": "npx tsx scripts/patch-next-agent-rules.ts",

@@ -2,7 +2,7 @@
 /**
  * Nothing reaches a marketplace ZIP that is not in the repository.
  *
- * `scripts/build-marketplace.sh` walks `module-sources/<id>/` off disk, so it
+ * `scripts/build-marketplace.ts` walks `module-sources/<id>/` off disk, so it
  * packs whatever is sitting there - including a file somebody is still
  * working on. The archive is a published artifact: an operator installs it
  * and runs the code inside, and a reader of this repository cannot see that

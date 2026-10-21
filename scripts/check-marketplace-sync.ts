@@ -2,7 +2,7 @@
  * Verify that the committed marketplace artifacts match their sources.
  *
  * `module-marketplace/` holds ZIPs and an index.json built from
- * `module-sources/` by scripts/build-marketplace.sh. Both are committed, and
+ * `module-sources/` by scripts/build-marketplace.ts. Both are committed, and
  * until this check existed nothing compared one against the other - so a
  * module edited without a rebuild kept shipping its old code to every user
  * who installed it from the in-app marketplace.
@@ -30,7 +30,7 @@ const SOURCES_DIR = path.join(ROOT, "module-sources");
 const OUTPUT_DIR = path.join(ROOT, "module-marketplace");
 const INDEX_FILE = path.join(OUTPUT_DIR, "index.json");
 
-/** Files build-marketplace.sh deliberately keeps out of the ZIPs. */
+/** Files build-marketplace.ts deliberately keeps out of the ZIPs. */
 const EXCLUDED = new Set([".DS_Store"]);
 
 const problems: string[] = [];
