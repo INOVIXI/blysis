@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
-import { safeUrl } from "../../module-sources/popups/lib/safe-url";
+import { safeUrl } from "@/modules/popups/lib/safe-url";
 
 /**
  * The popups module shipped two renderers for the same popup. The one that

@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 import fs from "node:fs";
 import { join } from "node:path";
-import { productSlug } from "../../module-sources/store/seed";
+import { productSlug } from "@/modules/store/seed";
 
 /**
  * The demo product names, read from the seed rather than copied here.
@@ -13,7 +13,7 @@ import { productSlug } from "../../module-sources/store/seed";
  * panel has its own gate against.
  */
 function productNames(): string[] {
-    const src = fs.readFileSync(join(__dirname, "..", "..", "module-sources/store/seed.ts"), "utf8");
+    const src = fs.readFileSync(join(__dirname, "..", "..", "..", "module-sources/store/seed.ts"), "utf8");
     const list = src.slice(src.indexOf("const PRODUCTS"), src.indexOf("];", src.indexOf("const PRODUCTS")));
     return [...list.matchAll(/^\s*\["([^"]+)"/gm)].map((m) => m[1]);
 }

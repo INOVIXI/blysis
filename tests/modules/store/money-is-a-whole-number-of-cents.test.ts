@@ -21,7 +21,7 @@ import {
     computeCreatorDiscount,
     computeCreatorCommission,
     computeTotals,
-} from "../../module-sources/store/lib/pricing";
+} from "@/modules/store/lib/pricing";
 
 /** True when `amount` is a whole number of cents, allowing for float dust. */
 const whole = (amount: number) => Math.abs(amount * 100 - Math.round(amount * 100)) < 1e-9;

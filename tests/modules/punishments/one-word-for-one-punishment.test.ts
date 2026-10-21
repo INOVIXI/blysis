@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
-import { pageSource } from "./module-page-source";
+import { pageSource } from "../../unit/module-page-source";
 import {
     PUNISHMENT_TYPES,
     canonicalType,
     spellingsOf,
-} from "../../module-sources/punishments/lib/punishment-types";
+} from "@/modules/punishments/lib/punishment-types";
 
 /**
  * The two screens of one module have to mean the same thing by the same word.
@@ -24,7 +24,7 @@ import {
  * empty table looks like.
  */
 
-const MODULE = path.resolve(__dirname, "../../module-sources/punishments");
+const MODULE = path.resolve(__dirname, "../../../module-sources/punishments");
 
 function read(...parts: string[]): string {
     return fs.readFileSync(path.join(MODULE, ...parts), "utf8");
