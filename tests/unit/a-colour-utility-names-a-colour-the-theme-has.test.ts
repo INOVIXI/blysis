@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join, relative } from "node:path";
+import { join } from "node:path";
+import { relativePath } from "./source-text";
 
 /**
  * Tailwind does not warn about a colour that does not exist. It emits
@@ -197,7 +198,7 @@ describe("a colour utility names a colour the theme has", () => {
                     if (!match) continue;
                     const colour = colourPart(match[1]);
                     if (known.has(colour) || NOT_A_COLOUR.has(colour) || NOT_A_COLOUR.has(match[1])) continue;
-                    offenders.push(`${relative(ROOT, file)}: ${token}`);
+                    offenders.push(`${relativePath(ROOT, file)}: ${token}`);
                 }
             }
         }
@@ -212,7 +213,7 @@ describe("a colour utility names a colour the theme has", () => {
         const offenders: string[] = [];
         for (const root of ROOTS) {
             for (const file of walk(join(ROOT, root))) {
-                if (file.includes("/generated/")) continue;
+                if (relativePath(ROOT, file).includes("/generated/")) continue;
                 for (const list of classLists(readFileSync(file, "utf8"))) {
                     if (list.includes("${")) continue;
                     const tokens = list.split(/\s+/).filter(Boolean).map((t) => t.split(":").pop()!);
@@ -223,7 +224,7 @@ describe("a colour utility names a colour the theme has", () => {
                     const widths = tokens.filter((t) => WIDTH_ONLY.test(t));
                     if (widths.length === 0) continue;
                     if (tokens.some((t) => HAS_COLOUR.test(t))) continue;
-                    offenders.push(`${relative(ROOT, file)}: ${widths.join(" ")}`);
+                    offenders.push(`${relativePath(ROOT, file)}: ${widths.join(" ")}`);
                 }
             }
         }

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { relativePath, stripComments } from "./source-text";
 
 /**
  * Money on this site is written in the currency the site charges in.
@@ -46,7 +46,7 @@ function walk(dir: string, out: string[] = []): string[] {
 
 const screens = () => SCAN_DIRS.flatMap((d) => walk(path.join(ROOT, d)));
 const read = (f: string) => fs.readFileSync(path.join(ROOT, f), "utf8");
-const rel = (f: string) => path.relative(ROOT, f);
+const rel = (f: string) => relativePath(ROOT, f);
 
 /**
  * A currency symbol written into a template literal right before a number.

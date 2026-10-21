@@ -64,7 +64,7 @@ function sourceFiles(dir: string): string[] {
             if (entry.isDirectory()) {
                 // `src/modules` is the installed copy of `module-sources`, rewritten
                 // by the installer. Reporting both would name every offence twice.
-                if (entry.name === "node_modules" || entry.name === "generated" || full.endsWith("src/modules")) continue;
+                if (entry.name === "node_modules" || entry.name === "generated" || relativePath(ROOT, full) === "src/modules") continue;
                 walk(full);
             } else if (/\.tsx?$/.test(entry.name)) {
                 out.push(relativePath(ROOT, full));

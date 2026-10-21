@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 /**
  * Core's catalogue is the strings core actually says.
@@ -38,7 +39,7 @@ function sourceFiles(dir: string, out: string[] = []): string[] {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
         const full = path.join(dir, entry.name);
         if (entry.isDirectory()) {
-            if (entry.name === "node_modules" || full.endsWith("src/modules")) continue;
+            if (entry.name === "node_modules" || relativePath(ROOT, full) === "src/modules") continue;
             sourceFiles(full, out);
         } else if (/\.(ts|tsx|mjs|json|prisma)$/.test(full)) {
             out.push(full);

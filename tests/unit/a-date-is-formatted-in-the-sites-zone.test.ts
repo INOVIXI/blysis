@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, existsSync } from "fs";
 import { join } from "path";
+import { relativePath } from "./source-text";
 
 /**
  * No component formats a date in whatever zone the machine happens to be in.
@@ -51,7 +52,7 @@ describe("a date is formatted in the site's zone", () => {
         ...walk(join(ROOT, "src/app")),
         ...walk(join(ROOT, "module-sources")),
     ]
-        .map((file) => file.slice(ROOT.length + 1))
+        .map((file) => relativePath(ROOT, file))
         .filter((path) => !ALLOWED.includes(path))
         .filter((path) => DATE_FORMAT.test(readFileSync(join(ROOT, path), "utf-8")));
 

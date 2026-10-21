@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
-import { stripComments } from "./source-text";
+import { relativePath, stripComments } from "./source-text";
 
 /**
  * A list query must have a ceiling.
@@ -87,7 +87,7 @@ const files = SCANNED.flatMap((dir) => sourceFiles(path.join(root, dir)));
 function unboundedListQueries(): string[] {
     const found: string[] = [];
     for (const file of files) {
-        const rel = path.relative(root, file);
+        const rel = relativePath(root, file);
         if (rel in EXEMPT) continue;
         const source = stripComments(fs.readFileSync(file, "utf8"));
         for (const m of source.matchAll(/prisma\.(\w+)\s*\.findMany\s*\(/g)) {

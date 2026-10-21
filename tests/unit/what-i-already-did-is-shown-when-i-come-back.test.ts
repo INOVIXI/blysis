@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { relativePath, stripComments } from "./source-text";
 
 /**
  * A screen shows what this reader already did, without being told again.
@@ -99,7 +99,7 @@ function learnedOnlyByDoingItAgain(): OnlyWritten[] {
 
             for (const setter of written) {
                 if (read.has(setter)) continue;
-                found.push({ where: path.relative(ROOT, full), setter });
+                found.push({ where: relativePath(ROOT, full), setter });
             }
         }
     };

@@ -26,7 +26,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { relativePath, stripComments } from "./source-text";
 
 const asked: string[] = [];
 
@@ -149,7 +149,7 @@ describe("the fields that name another record", () => {
                 if (entry.isDirectory()) {
                     if (entry.name !== "node_modules") walk(full);
                 } else if (/\.tsx$/.test(entry.name)) {
-                    found.push(path.relative(ROOT, full));
+                    found.push(relativePath(ROOT, full));
                 }
             }
         };

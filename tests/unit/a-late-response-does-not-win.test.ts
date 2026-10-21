@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 /**
  * A response that arrives late must not overwrite a newer one.
@@ -60,7 +61,7 @@ function effectsIn(file: string, source: string): Effect[] {
         const tail = source.slice(i, i + 400);
         const deps = /^\s*,\s*(\[[^\]]*\])/.exec(tail)?.[1] ?? "";
         found.push({
-            file: path.relative(ROOT, file),
+            file: relativePath(ROOT, file),
             line: source.slice(0, match.index ?? 0).split("\n").length,
             body,
             deps,

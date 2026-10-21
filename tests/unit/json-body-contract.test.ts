@@ -28,7 +28,8 @@
  */
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync } from "fs";
-import { join, relative } from "path";
+import { join } from "path";
+import { relativePath } from "./source-text";
 
 const ROOT = join(__dirname, "../..");
 const SCANNED = ["src/app/api", "module-sources"];
@@ -46,7 +47,7 @@ function routeFiles(dir: string, out: string[] = []): string[] {
 
 const ROUTES = SCANNED.flatMap((d) => routeFiles(join(ROOT, d)));
 const read = (f: string) => readFileSync(f, "utf-8");
-const rel = (f: string) => relative(ROOT, f);
+const rel = (f: string) => relativePath(ROOT, f);
 
 const JSON_CALL = /\b(?:request|req)\s*\.\s*json\s*\(\s*\)/g;
 
