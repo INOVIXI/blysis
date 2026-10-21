@@ -64,7 +64,7 @@ const eslintConfig = defineConfig([
     // the published SDK, never through core's internal layout.
     //
     // This is editor feedback, not the gate. ESLint can't see a third-party
-    // ZIP; `scripts/validate-module.ts` (run by build-marketplace.sh and CI)
+    // ZIP; `scripts/validate-module.ts` (run by CI and `npm run verify`)
     // is what actually holds the boundary.
     {
         files: ["module-sources/**/*.{ts,tsx}"],

@@ -36,7 +36,6 @@ const NEEDS_SCRATCH = ["dev", "build", "test", "test:watch", "test:coverage"];
 const RUNS_ON_A_LINUX_HOST: Record<string, string> = {
     "db:backup": "pg_dump on the server the site runs on, which is the Linux image or its host",
     "db:restore": "psql on the server the site runs on, which is the Linux image or its host",
-    "build:marketplace": "bash plus python3, run by CI on Linux; on Windows it runs from WSL until it is ported to Node",
 };
 
 /** Run argv through the wrapper the way an npm script does. */
@@ -90,6 +89,11 @@ describe("a command that writes while it runs", () => {
             .filter(([, command]) => /(^|&&\s*)(sh|bash) |\brm -rf\b|(^|&&\s*)[A-Z_]+=\S+ /.test(command))
             .map(([name, command]) => `${name}: ${command}`);
         expect(posixOnly).toEqual([]);
+    });
+
+    it("excuses only scripts that are still bash", () => {
+        const ported = Object.keys(RUNS_ON_A_LINUX_HOST).filter((name) => !/^(sh|bash) /.test(scripts[name] ?? ""));
+        expect(ported, "a script that no longer needs a Linux host needs no excuse").toEqual([]);
     });
 
     it("sweeps the scratch directory when the tree is cleaned", () => {

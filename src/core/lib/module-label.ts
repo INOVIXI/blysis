@@ -11,7 +11,7 @@
  *
  *   marketplace - nothing about it is installed, so nothing about it is in
  *   the Translation table. Its row carries its own `i18n` map, written into
- *   the index by build-marketplace.
+ *   the index by build-marketplace.ts.
  *
  * This is one of the few honest uses of a `t.has` guard: the key is built
  * from a module id core does not know.

@@ -1,7 +1,10 @@
-import { describe, it, expect } from "vitest";
+// @vitest-environment node
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import AdmZip from "adm-zip";
+import { buildMarketplace } from "../../scripts/build-marketplace";
 
 /**
  * A published archive is a function of what the module says, and nothing else.
@@ -27,9 +30,7 @@ import AdmZip from "adm-zip";
 
 const ROOT = process.cwd();
 const MARKETPLACE = path.join(ROOT, "module-marketplace");
-const SCRIPT = path.join(ROOT, "scripts/build-marketplace.sh");
-
-/** The ZIP epoch, matching ZIP_EPOCH in the build script. */
+/** The ZIP epoch, as scripts/lib/deterministic-zip.ts writes it. */
 const EPOCH = { year: 1980, month: 1, day: 1 };
 
 function archives(): string[] {
@@ -83,39 +84,83 @@ describe("every published archive", () => {
     });
 });
 
-describe("the build script", () => {
-    const source = fs.readFileSync(SCRIPT, "utf8");
+describe("the build", () => {
+    let root: string;
 
-    it("writes the archive itself rather than shelling to zip", () => {
-        expect(source).toContain("ZIP_EPOCH");
-        expect(source).toContain("def write_zip");
-        // In code, not in the comment that explains why it is gone.
-        const code = source
-            .split("\n")
-            .filter((line) => !line.trim().startsWith("#"))
-            .join("\n");
-        expect(code).not.toMatch(/\bzip -r\b/);
+    function write(rel: string, text: string) {
+        const file = path.join(root, rel);
+        fs.mkdirSync(path.dirname(file), { recursive: true });
+        fs.writeFileSync(file, text);
+    }
+    const manifest = (version: string) => JSON.stringify({ id: "shop", name: "Shop", version });
+    const archive = () => fs.readFileSync(path.join(root, "module-marketplace/shop.zip"));
+    const catalog = () =>
+        JSON.parse(fs.readFileSync(path.join(root, "module-marketplace/index.json"), "utf8")) as {
+            modules: { id: string; updatedAt: string }[];
+        };
+
+    beforeEach(() => {
+        root = fs.mkdtempSync(path.join(os.tmpdir(), "marketplace-build-"));
+        write("messages-core/en.json", "{}");
+        write("src/core/lib/hooks.ts", "");
+        write("module-sources/shop/module.json", manifest("1.0.0"));
+        write("module-sources/shop/lib/price.ts", "export const price = 1;\n");
+        write("module-sources/shop/lib/.DS_Store", "finder");
+        fs.mkdirSync(path.join(root, "module-marketplace"));
     });
 
-    it("writes an archive only after the catalog validates", () => {
-        // A module that breaks the SDK boundary, or listens to a hook nothing
-        // emits, exits the script - and used to have a published ZIP already.
-        const validated = source.indexOf("sys.exit(1)");
-        const written = source.indexOf("write_zip(os.path.join(SOURCES_DIR");
-        expect(validated).toBeGreaterThan(-1);
-        expect(written).toBeGreaterThan(validated);
+    afterEach(() => {
+        fs.rmSync(root, { recursive: true, force: true });
+    });
+
+    it("writes the same bytes from the same source, whenever it runs", () => {
+        buildMarketplace(root, new Date("2026-01-01T00:00:00Z"));
+        const first = archive();
+        fs.rmSync(path.join(root, "module-marketplace/shop.zip"));
+        // A later clock, and a file whose mtime moved, change nothing.
+        fs.utimesSync(path.join(root, "module-sources/shop/lib/price.ts"), new Date(), new Date());
+        buildMarketplace(root, new Date("2026-06-01T00:00:00Z"));
+        expect(archive().equals(first)).toBe(true);
+        const entries = new AdmZip(path.join(root, "module-marketplace/shop.zip")).getEntries();
+        expect(entries.map((e) => e.entryName)).toEqual(["lib/price.ts", "module.json"]);
+        expect(entries.every((e) => e.header.time.getFullYear() === EPOCH.year)).toBe(true);
+    });
+
+    it("leaves an archive that already holds its source exactly as it was", () => {
+        // Whichever zlib compressed it: rebuilding on another machine must not
+        // turn every unchanged archive into a diff.
+        buildMarketplace(root);
+        const holding = new AdmZip(path.join(root, "module-marketplace/shop.zip"));
+        holding.writeZip(path.join(root, "module-marketplace/shop.zip"));
+        const before = archive();
+        expect(buildMarketplace(root).written).toEqual([]);
+        expect(archive().equals(before)).toBe(true);
+    });
+
+    it("writes no archive when the catalog does not validate", () => {
+        // A module that breaks the SDK boundary used to have a published ZIP
+        // before the check that refused it had run.
+        write("module-sources/shop/lib/deep.ts", 'import { prisma } from "@/core/lib/db";\n');
+        const result = buildMarketplace(root);
+        expect(result.errors.join("\n")).toContain("module-sources/shop/lib/deep.ts:1");
+        expect(fs.existsSync(path.join(root, "module-marketplace/shop.zip"))).toBe(false);
+    });
+
+    it("refuses a listener on a hook nothing emits", () => {
+        write("module-sources/shop/module.json", JSON.stringify({
+            id: "shop", name: "Shop", version: "1.0.0", hookListeners: [{ hook: "order.complted" }],
+        }));
+        expect(buildMarketplace(root).errors.join("\n")).toContain("shop: order.complted");
     });
 
     it("keeps a module's date unless its published version moved", () => {
-        expect(source).toContain('prior.get("updatedAt") if prior.get("version") == version else None');
-    });
+        buildMarketplace(root, new Date("2026-01-01T00:00:00Z"));
+        buildMarketplace(root, new Date("2026-02-01T00:00:00Z"));
+        expect(catalog().modules[0].updatedAt).toBe("2026-01-01T00:00:00Z");
 
-    it("keeps shell syntax out of its unquoted heredoc", () => {
-        // <<PYEOF, not <<'PYEOF', so the shell expands what is inside it. Four
-        // backticks in a Python comment ran as command substitution and the
-        // build died on a SyntaxError about a stray 0xff byte.
-        const body = source.slice(source.indexOf("python3 - <<PYEOF"));
-        expect(body).not.toContain("`");
+        write("module-sources/shop/module.json", manifest("1.1.0"));
+        buildMarketplace(root, new Date("2026-03-01T00:00:00Z"));
+        expect(catalog().modules[0].updatedAt).toBe("2026-03-01T00:00:00Z");
     });
 });
 

@@ -250,9 +250,9 @@ function checkNoCoreImports(modulePath: string): CheckResult {
  *
  * This is the gate that actually holds the boundary: ESLint globally ignores
  * `module-sources/**` and `src/modules/**`, and the main tsconfig excludes
- * module sources, so neither would catch a violation. This check runs in
- * `build-marketplace.sh` and in CI, and covers third-party ZIPs at authoring
- * time.
+ * module sources, so neither would catch a violation. This check runs in CI
+ * and `npm run verify`, and covers third-party ZIPs at authoring time;
+ * build-marketplace.ts applies the same import rule before it packs anything.
  */
 function checkSdkImports(modulePath: string): CheckResult {
     function walkFiles(dir: string): string[] {
@@ -594,7 +594,7 @@ function checkApiAuthChecks(modulePath: string): CheckResult {
  * nothing fails at runtime when the two halves disagree: a listener on a
  * misspelled hook simply never fires. `hooksEmitted` makes this module's half
  * declarative so it can be checked - here against the module's own source, and
- * in build-marketplace.sh against every listener in the catalog.
+ * in build-marketplace.ts against every listener in the catalog.
  *
  * Only string literals are matched. A dynamically named hook
  * (`doAction(`${resource}.created`, …)`, as core's crud helpers do) cannot be
