@@ -47,10 +47,12 @@ export const GROWING = new Set([
 const EXEMPT: Record<string, string> = {
     "module-sources/csv-import-export/api/export/route.ts":
         "Exporting every row is the entire purpose of the module; a page size would produce a truncated export.",
+    "module-sources/trophies/lib/trophy-engine.ts":
+        "The engine loads the active ruleset an admin defined; a cap would stop awarding every trophy past it, with nothing to say so.",
 };
 
 /** Filters that pin the query to one owner, so the row count is that owner's, not the site's. */
-const NARROWING = /\b(id|userId|referrerId|orderId|ticketId|topicId|articleId|conversationId|sessionId|keyPrefix)\s*[:,]/;
+const NARROWING = /\b(id|userId|referrerId|orderId|ticketId|topicId|articleId|conversationId|sessionId|keyPrefix)\s*[:,}]/;
 
 function sourceFiles(dir: string, out: string[] = []): string[] {
     if (!fs.existsSync(dir)) return out;
@@ -62,8 +64,6 @@ function sourceFiles(dir: string, out: string[] = []): string[] {
     }
     return out;
 }
-
-/** Strips block comments so a query quoted in a doc comment is not a finding. */
 
 /** The whole call text from its opening paren, brackets balanced. */
 export function callText(source: string, openParen: number): string {
@@ -78,8 +78,25 @@ export function callText(source: string, openParen: number): string {
     return source.slice(openParen);
 }
 
+/**
+ * The `where` of a call, braces balanced, or nothing. An owner's id narrows a
+ * query only there: `select: { id: true }` and `orderBy: { id: "asc" }` name
+ * the same field and read every row.
+ */
+export function whereOf(call: string): string {
+    const start = call.search(/\bwhere\s*:\s*\{/);
+    if (start === -1) return "";
+    const open = call.indexOf("{", start);
+    let depth = 0;
+    for (let i = open; i < call.length; i++) {
+        if (call[i] === "{") depth++;
+        else if (call[i] === "}" && --depth === 0) return call.slice(open, i + 1);
+    }
+    return call.slice(open);
+}
+
 export function isBounded(call: string): boolean {
-    return /\btake\b\s*[:,]/.test(call) || NARROWING.test(call);
+    return /\btake\b\s*[:,]/.test(call) || NARROWING.test(whereOf(call));
 }
 
 const files = SCANNED.flatMap((dir) => sourceFiles(path.join(root, dir)));
@@ -175,10 +192,16 @@ describe("the scanner itself", () => {
     it("counts a per-owner filter as a ceiling", () => {
         expect(isBounded("({ where: { userId, isActive: true } })")).toBe(true);
         expect(isBounded("({ where: { userId: id } })")).toBe(true);
+        expect(isBounded("({ where: { userId } })")).toBe(true);
     });
 
     it("counts nothing else", () => {
         expect(isBounded('({ where: { status: "PUBLISHED" }, orderBy: { createdAt: "desc" } })')).toBe(false);
+    });
+
+    it("does not take an id outside the where for an owner", () => {
+        expect(isBounded("({ where: { isActive: true }, select: { id: true } })")).toBe(false);
+        expect(isBounded('({ orderBy: { id: "asc" } })')).toBe(false);
     });
 
     it("reads a whole call across nested brackets", () => {

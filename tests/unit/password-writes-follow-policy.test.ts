@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { checkPasswordPolicy, PASSWORD_POLICY } from "@/core/lib/password-policy";
 import { clampMinPasswordLength } from "@/core/lib/security-settings";
+import { relativePath, stripComments } from "./source-text";
 
 /**
  * The site has one password policy: ten characters, an uppercase, a digit, and
@@ -27,15 +28,16 @@ import { clampMinPasswordLength } from "@/core/lib/security-settings";
 
 const ROOT = path.resolve(__dirname, "../..");
 
-/** A Prisma write that sets a user's password column. */
-const WRITES_PASSWORD = /password:\s*(?:hashed|hashedPassword|await\s+bcrypt\.hash)/;
+/** A Prisma write that sets a user's password column to a hash, however it is named. */
+const WRITES_PASSWORD = /\bpassword:\s*(?:await\s+(?:\w+\.)?hash\w*\(|\w*[Hh]ash\w*\b)/;
 
 /**
- * Imports are stripped before the call is looked for. An import alone is what
- * a half-reverted change leaves behind, and it must not read as enforcement.
+ * Imports and comments are stripped before the call is looked for. An import
+ * alone is what a half-reverted change leaves behind, and a comment naming the
+ * call is a note about it; neither must read as enforcement.
  */
 function withoutImports(body: string): string {
-    return body.replace(/(?:^|\n)\s*import\s[^;]*;?/g, "\n");
+    return stripComments(body).replace(/(?:^|\n)\s*import\s[^;]*;?/g, "\n");
 }
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -69,8 +71,20 @@ describe("password writes", () => {
     it("runs every one of them through the shared policy", () => {
         const unchecked = passwordWriters
             .filter(({ body }) => !withoutImports(body).includes("enforcePasswordPolicy("))
-            .map(({ file }) => path.relative(ROOT, file));
+            .map(({ file }) => relativePath(ROOT, file));
         expect(unchecked).toEqual([]);
+    });
+
+    it("knows a password write by its hash, whatever the hash is called", () => {
+        expect(WRITES_PASSWORD.test("data: { password: await hash(input, 12) }")).toBe(true);
+        expect(WRITES_PASSWORD.test("data: { password: newHash }")).toBe(true);
+        expect(WRITES_PASSWORD.test("select: { password: true }")).toBe(false);
+    });
+
+    it("does not take a comment naming the policy for a call to it", () => {
+        expect(withoutImports("// enforcePasswordPolicy(password) used to run here")).not.toContain(
+            "enforcePasswordPolicy(",
+        );
     });
 
     it("leaves no second, looser password length in the constants", () => {
