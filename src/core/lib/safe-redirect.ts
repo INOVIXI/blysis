@@ -30,9 +30,10 @@ import { hasControlCharacter } from "@/core/lib/request-path";
  *  - A length ceiling, because a destination longer than any real route on the
  *    site is a payload rather than a place.
  *
- * The path is returned without a locale prefix, the way `@/core/lib/i18n`
- * hrefs are written everywhere else, so the caller's router adds the visitor's
- * own locale rather than whichever one the link was copied from.
+ * The path is returned without a locale prefix, the way
+ * `@/core/lib/i18n/navigation` hrefs are written everywhere else, so the
+ * caller's router adds the visitor's own locale rather than whichever one the
+ * link was copied from.
  */
 
 const MAX_LENGTH = 512;
