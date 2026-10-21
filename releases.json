@@ -1,12 +1,93 @@
 {
   "$comment": "The catalogue the admin update screen reads. Published beside module-marketplace/index.json on the same base, so a fork or an air-gapped mirror serves its own by pointing BLYSIS_MARKETPLACE_BASE somewhere else. Newest last is not required; the reader sorts.",
-  "updated": "2026-09-07",
+  "updated": "2026-10-19",
   "releases": [
     {
       "version": "0.2.1",
       "tag": "0.2.1",
       "publishedAt": "2026-09-07T00:00:00Z",
       "notes": "The version this catalogue starts from.",
+      "security": false,
+      "channel": "stable",
+      "minVersion": null
+    },
+    {
+      "version": "0.3.0",
+      "tag": "0.3.0",
+      "publishedAt": "2026-09-20T17:54:19Z",
+      "notes": "A platform, and it is called Blysis.",
+      "security": false,
+      "channel": "stable",
+      "minVersion": null
+    },
+    {
+      "version": "0.4.0",
+      "tag": "0.4.0",
+      "publishedAt": "2026-09-21T17:24:28Z",
+      "notes": "Every screen walked, and what it found.",
+      "security": false,
+      "channel": "stable",
+      "minVersion": null
+    },
+    {
+      "version": "0.4.1",
+      "tag": "0.4.1",
+      "publishedAt": "2026-09-23T10:06:37Z",
+      "notes": "Next.js 16.3.6 for the next/og advisory.",
+      "security": true,
+      "channel": "stable",
+      "minVersion": null
+    },
+    {
+      "version": "0.4.2",
+      "tag": "0.4.2",
+      "publishedAt": "2026-10-05T18:19:32Z",
+      "notes": "The demo puts itself back.",
+      "security": false,
+      "channel": "stable",
+      "minVersion": null
+    },
+    {
+      "version": "0.4.3",
+      "tag": "0.4.3",
+      "publishedAt": "2026-10-05T19:02:57Z",
+      "notes": "Three migrations a fresh install could not get past.",
+      "security": false,
+      "channel": "stable",
+      "minVersion": null
+    },
+    {
+      "version": "0.4.4",
+      "tag": "0.4.4",
+      "publishedAt": "2026-10-06T10:18:41Z",
+      "notes": "A rebuild that fails leaves the site up.",
+      "security": true,
+      "channel": "stable",
+      "minVersion": null
+    },
+    {
+      "version": "0.4.5",
+      "tag": "0.4.5",
+      "publishedAt": "2026-10-07T09:37:21Z",
+      "notes": "The install lock works behind PgBouncer.",
+      "security": true,
+      "channel": "stable",
+      "minVersion": null
+    },
+    {
+      "version": "0.4.6",
+      "tag": "0.4.6",
+      "publishedAt": "2026-10-17T13:09:33Z",
+      "notes": "The navigation stays on one row.",
+      "security": false,
+      "channel": "stable",
+      "minVersion": null
+    },
+    {
+      "version": "0.4.7",
+      "tag": "0.4.7",
+      "publishedAt": "2026-10-19T08:33:29Z",
+      "notes": "Game servers connect to the site.",
       "security": false,
       "channel": "stable",
       "minVersion": null
