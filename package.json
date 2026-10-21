@@ -37,6 +37,8 @@
     "db:migrate:bootstrap": "npx tsx scripts/apply-migrations.ts --bootstrap",
     "db:migrate:dry": "npx tsx scripts/apply-migrations.ts --dry-run",
     "db:studio": "prisma studio",
+    "services:up": "docker compose -f docker-compose.dev.yml up -d --wait",
+    "services:down": "docker compose -f docker-compose.dev.yml down",
     "db:seed": "npx tsx prisma/seed.ts",
     "seed:demo": "npx tsx scripts/seed-demo.ts",
     "demo:reset": "npx tsx scripts/demo-reset.ts",

@@ -206,16 +206,19 @@ for whether a theme exists.
 
 ## Develop locally
 
-Requires Node.js 24+ and PostgreSQL 14+. Redis is optional locally and required
-in production, where the rate limiter fails closed without it.
+Requires Node.js 24+ and either Docker or PostgreSQL 14+. The app runs on the
+host, on Linux, macOS or Windows alike; Docker only provides the database and
+Redis. Redis is optional locally and required in production, where the rate
+limiter fails closed without it.
 
 ```bash
 git clone https://github.com/INOVIXI/blysis.git
 cd blysis
 npm install                            # postinstall runs db:merge + generate-themes + generate-registry
 
-cp .env.example .env
-# Edit .env - at minimum DATABASE_URL, AUTH_SECRET, AUTH_URL
+npm run services:up                    # Postgres + Redis from docker-compose.dev.yml, on 127.0.0.1
+cp .env.example .env                   # DATABASE_URL already points at that Postgres
+# Edit .env - at minimum AUTH_SECRET; set REDIS_URL to use the Redis too
 
 npm run db:merge                       # merge core + module schemas
 npm run db:push                        # push the merged schema to a fresh database
@@ -286,6 +289,8 @@ npm run db:push          # Push the merged schema to a fresh database
 npm run db:migrate       # Apply per-module SQL migrations
 npm run db:seed          # 3 roles + admin user
 npm run db:studio        # Prisma Studio
+npm run services:up      # Development Postgres + Redis in Docker (127.0.0.1 only)
+npm run services:down    # Stop them; the data volume stays
 npm run db:backup        # Gzipped SQL dump to ./backups/
 npm run db:restore       # Restore from a backup file
 
