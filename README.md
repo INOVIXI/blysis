@@ -111,21 +111,21 @@ start always serves one whole build.
 
 ## Modules
 
-78 first-party modules ship in `module-marketplace/` as ZIPs with an
+91 first-party modules ship in `module-marketplace/` as ZIPs with an
 `index.json` catalog. Their sources live in `module-sources/<id>/` and are
 tracked in git; the ZIPs are built from those sources by
 `npm run build:marketplace`, and CI fails if the two drift apart.
 
 | Category | Modules |
 |----------|---------|
-| Commerce | credits, currency, leaderboard, license-keys, store, vote, wheel |
-| Payment gateways | coinbase-commerce-gateway, coinpayments-gateway, iyzico-gateway, mercadopago-gateway, midtrans-gateway, mollie-gateway, nowpayments-gateway, param-gateway, paymentwall-gateway, paypal-gateway, paysafecard-gateway, paytr-gateway, razorpay-gateway, stripe-gateway |
-| Community | blog, changelog, forum, in-app-notifications, referral, suggestions, trophies |
-| Gaming | downloads, minecraft-link, member-profiles, punishments, servers |
+| Commerce | birfatura-invoicing, credits, currency, leaderboard, license-keys, parasut-invoicing, store, vote, wheel |
+| Payment gateways | coinbase-commerce-gateway, coinpayments-gateway, iyzico-gateway, manual-payment-gateway, mercadopago-gateway, midtrans-gateway, mollie-gateway, nowpayments-gateway, param-gateway, paymentwall-gateway, paypal-gateway, paysafecard-gateway, paytr-gateway, razorpay-gateway, stripe-gateway |
+| Community | blog, changelog, forum, in-app-notifications, profile-posts, referral, suggestions, trophies |
+| Gaming | downloads, game-connect, member-profiles, minecraft-link, minecraft-litebans, punishments, servers |
 | Management | announcements, help-center, login-protection, popups, staff, tickets, two-factor-auth |
-| Content | cookie-consent, custom-forms, custom-pages, email-templates, seo, slider |
+| Content | comparison-table, cookie-consent, custom-forms, custom-pages, email-templates, external-data, seo, showcase, slider, url-redirects |
 | Sign-in | apple-auth, battlenet-auth, discord-auth, epicgames-auth, facebook-auth, faceit-auth, github-auth, google-auth, instagram-auth, kakao-auth, kick-auth, line-auth, microsoft-auth, naver-auth, patreon-auth, reddit-auth, roblox-auth, spotify-auth, steam-auth, tiktok-auth, twitch-auth, vk-auth, x-auth, yandex-auth |
-| Integration | cloudflare-r2, cloudflare-turnstile, csv-import-export, discord-integration, discord-widget, google-analytics, resend-provider, webhook-logs |
+| Integration | cloudflare-r2, cloudflare-turnstile, crisp-chat, csv-import-export, discord-integration, discord-widget, google-analytics, resend-provider, smtp-provider, tawkto-chat, webhook-logs |
 
 A `module.json` declares everything the module contributes: routes, admin
 routes, API endpoints, sidebar menu, dashboard cards, widgets, navbar/footer/
@@ -143,7 +143,8 @@ runtime.
 
 **Module SDK.** Modules import core through `@/core/sdk` (isomorphic),
 `@/core/sdk/server`, `@/core/sdk/auth`, `@/core/sdk/navigation`,
-`@/core/sdk/blocks` and `@/core/sdk/theme`, split by runtime so a client
+`@/core/sdk/theme`, `@/core/sdk/ui`, `@/core/sdk/layout` and
+`@/core/sdk/admin`, split by runtime so a client
 component can never pull `prisma` into its bundle. Core's internal layout
 (`@/core/lib/*`) is not part of the contract; reaching into it fails
 `npm run validate:module`, the marketplace build and ESLint.
@@ -258,8 +259,8 @@ src/
   themes/                   Installed themes (flat ships in-tree)
   proxy.ts                  Middleware: i18n, module route gating, CSRF
 
-messages-core/{en,tr}.json       Core translation seed sources
-module-sources/<id>/             Authoritative source for the 42 first-party modules
+messages-core/<locale>.json      Core translation seed sources, one per locale (12)
+module-sources/<id>/             Authoritative source for the 91 first-party modules
 module-marketplace/              Distributable ZIPs + index.json catalog
 module-marketplace/presets.json  Site-type presets read by the setup wizard (data, not core code)
 theme-marketplace/               Distributable theme ZIPs

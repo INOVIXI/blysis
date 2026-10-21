@@ -55,7 +55,7 @@ my-module/
 │   └── ExampleWidget.tsx    Generic reusable component (used by layoutComponents / navbarComponents demo)
 ├── widgets/
 │   └── ExampleWidget.tsx    Homepage sidebar widget component
-└── messages/                Locale JSON files (en / tr / de) - translations are ALSO inline in module.json
+└── messages/                Locale JSON files, one per locale (12) - translations are ALSO inline in module.json
     ├── en.json
     ├── tr.json
     └── de.json
@@ -199,7 +199,7 @@ npm run build:marketplace
 - **Server components by default** - add `"use client"` only when needed.
 - **No hardcoded UI strings** - use `useTranslations()` (`next-intl`) or declare `translations` in `module.json`.
 - **Auth checks** - admin pages call `isAdmin()` from `@/core/sdk/server`; write API endpoints verify `session.user.id` + `hasPermission()`.
-- **Imports** - the SDK (`@/core/sdk`, `/server`, `/auth`, `/navigation`, `/blocks`, `/theme`, `/ui`, `/layout`, `/admin`) for core, relative paths within the module. Reaching into `@/core/lib/*` or `@/core/components/*` fails `npm run validate:module`.
+- **Imports** - the SDK (`@/core/sdk`, `/server`, `/auth`, `/navigation`, `/theme`, `/ui`, `/layout`, `/admin`) for core, relative paths within the module. Reaching into `@/core/lib/*` or `@/core/components/*` fails `npm run validate:module`.
 - **No `any`** - TypeScript strict mode.
 - **No `confirm()` / `alert()`** - use `useConfirm()` + `toast` from `sonner`.
 - **No emojis in UI** - Lucide icons only.
