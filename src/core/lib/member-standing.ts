@@ -23,7 +23,7 @@
  *
  * **The reason is a message key.** What a member is told when they are refused
  * is a sentence in their own language; `mute`, `tempBan` and `silenced` are
- * how the code refers to a thing. See the naming rule in CLAUDE.md 11a.
+ * how the code refers to a thing, and never reach the screen.
  *
  * Deliberately not cached. Being let back in has to take effect now: an
  * operator lifting a ban and then telling the member to try again is the

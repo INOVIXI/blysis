@@ -111,7 +111,6 @@ const eslintConfig = defineConfig([
         "src/core/generated/**",
         // Throwaway Prisma client built by scripts/typecheck-modules.ts.
         ".typecheck-modules/**",
-        "src/generated/**",
         // The installed runtime copy of a module is generated state, never
         // hand-edited - lint the authoritative source instead.
         "src/modules/**",

@@ -1,32 +1,25 @@
-<!-- Thanks for contributing to Blysis! -->
+<!-- Read CONTRIBUTING.md first. A pull request that leaves out a section below is asked to fill it in before review. -->
 
-## Summary
+## Problem
 
-<!-- What does this PR do and why? -->
+<!-- What is wrong or missing, and how you established it. Link the issue or discussion where a maintainer agreed to the direction; a behaviour change needs one. -->
 
-## Type of change
+## Change
 
-- [ ] Bug fix
-- [ ] New feature (new module / theme preferred over core changes)
-- [ ] Refactor / chore
-- [ ] Documentation
+<!-- What the change does about it, and why this is the smallest change that solves it. -->
 
-## Core motto checklist
+## Scope
 
-Blysis's central invariant: **core knows nothing about any module or theme.**
-
-- [ ] No module names, module paths, or module-specific code added to `src/core/` or core app files
-- [ ] No hardcoded theme names in core
-- [ ] New module/theme behavior is declared in `module.json` / `theme.json` and wired through the registry
-- [ ] Module source changes under `module-sources/` are mirrored to the marketplace (`npm run build:marketplace`) if relevant
+- [ ] This solves one problem; anything adjacent is its own pull request
+- [ ] Core names no module and no theme; a feature only some sites need is a module
+- [ ] Changed module sources are bumped and rebuilt with `npm run build:marketplace`, archives included
+- [ ] New strings are in every locale
 
 ## Verification
 
-- [ ] `npm run lint` passes (`--max-warnings=0`)
-- [ ] `npx tsc --noEmit` passes
-- [ ] `npm test` passes
-- [ ] `npm run build` passes (if applicable)
+<!-- The steps to reproduce, the tests you added or ran and what you saw, and anything you could not check. Before and after screenshots for a visual change. -->
 
-## Notes
+- [ ] `npm run verify` passes
+- [ ] `npm run test:e2e` passes, when the change touches the interface
 
-<!-- Anything reviewers should know: trade-offs, follow-ups, screenshots. -->
+<!-- Last line: the model and harness that wrote the code, e.g. "Written with Claude Opus 5.5 in Claude Code", or "No AI model wrote this code". -->

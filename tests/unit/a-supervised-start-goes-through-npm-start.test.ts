@@ -8,7 +8,7 @@ import path from "node:path";
  *
  * Installing a module builds into `.next/.staging` and exits; the staged build
  * only replaces the live one in `prestart` (`scripts/promote-staged-build.ts`),
- * which runs for `npm start` and never for a bare `next start`. The README says
+ * which runs for `npm start` and never for a bare `next start`. The build notes say
  * as much. `ecosystem.config.cjs` ran `npx next start`, so under PM2 every
  * install built, restarted, and went on serving the build from before it: the
  * module was installed and nowhere to be seen.
