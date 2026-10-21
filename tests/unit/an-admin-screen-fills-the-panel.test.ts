@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { join } from "node:path";
-import { stripComments } from "./source-text";
+import { moduleSourceDirs, stripComments } from "./source-text";
 
 /**
  * A panel screen uses the panel it was given.
@@ -35,21 +34,8 @@ const ROOT = join(__dirname, "..", "..");
 const ADMIN_TREES = [
     "src/app/[locale]/(admin)",
     "src/core/components/admin",
-    ...listModuleAdminDirs(),
+    ...moduleSourceDirs(ROOT, "pages/admin"),
 ];
-
-function listModuleAdminDirs(): string[] {
-    try {
-        return execFileSync("sh", ["-c", "ls -d module-sources/*/pages/admin 2>/dev/null"], {
-            cwd: ROOT,
-            encoding: "utf8",
-        })
-            .split("\n")
-            .filter(Boolean);
-    } catch {
-        return [];
-    }
-}
 
 /** Every .tsx under the given trees, repo-relative. */
 function tsxFilesIn(trees: string[]): string[] {

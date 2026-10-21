@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { join } from "node:path";
-import { stripComments } from "./source-text";
+import { grepTree, moduleSourceDirs, stripComments } from "./source-text";
 
 /**
  * One title row, one set of proportions.
@@ -27,42 +26,15 @@ const ROOT = join(__dirname, "..", "..");
 const ADMIN_TREES = [
     "src/app/[locale]/(admin)",
     "src/core/components/admin",
-    ...listModuleAdminDirs(),
+    ...moduleSourceDirs(ROOT, "pages/admin"),
 ];
 
-function listModuleAdminDirs(): string[] {
-    try {
-        return execFileSync("sh", ["-c", "ls -d module-sources/*/pages/admin 2>/dev/null"], {
-            cwd: ROOT,
-            encoding: "utf8",
-        })
-            .split("\n")
-            .filter(Boolean);
-    } catch {
-        return [];
-    }
-}
-
-function grep(pattern: string, paths: string[]): string[] {
-    if (paths.length === 0) return [];
-    try {
-        return execFileSync("grep", ["-rn", "--include=*.tsx", pattern, ...paths], {
-            cwd: ROOT,
-            encoding: "utf8",
-        })
-            .split("\n")
-            .filter(Boolean);
-    } catch {
-        return [];
-    }
-}
+const grep = (pattern: string, paths: string[]) => grepTree(ROOT, pattern, paths, [".tsx"]);
 
 /** Screens that are deliberately not a page with a title row. */
 const NOT_A_PAGE = [
     // The header itself.
     "src/core/components/admin/AdminPageHeader.tsx",
-    // A full-screen editor with a fixed toolbar, not a scrolling page.
-    "module-sources/custom-pages/pages/admin/builder/",
     // The admin error boundary: a card in the middle of the screen.
     "src/app/[locale]/(admin)/error.tsx",
 ];

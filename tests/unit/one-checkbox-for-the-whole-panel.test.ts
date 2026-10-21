@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { join } from "node:path";
-import { stripComments } from "./source-text";
+import { grepTree, stripComments } from "./source-text";
 
 /**
  * There is one checkbox, and this is how it stays one.
@@ -21,22 +20,14 @@ import { stripComments } from "./source-text";
 
 const ROOT = join(__dirname, "..", "..");
 
-function grep(pattern: string, paths: string[]): string[] {
-    try {
-        return execFileSync("grep", ["-rn", "--include=*.tsx", pattern, ...paths], {
-            cwd: ROOT,
-            encoding: "utf8",
-        })
-            .split("\n")
-            .filter(Boolean);
-    } catch {
-        return []; // grep exits 1 when it matches nothing
-    }
-}
+const grep = (pattern: string, paths: string[]) => grepTree(ROOT, pattern, paths, [".tsx"]);
 
 describe("one checkbox for the whole panel", () => {
     it("declares type=checkbox in exactly one component", () => {
-        const offenders = grep('type="checkbox"', ["src", "module-sources"])
+        const declared = grep('type="checkbox"', ["src", "module-sources"]);
+        // The component itself is a declaration the scan must see, or it read nothing.
+        expect(declared.some((line) => line.startsWith("src/core/components/ui/checkbox.tsx:"))).toBe(true);
+        const offenders = declared
             .filter((line) => !line.startsWith("src/core/components/ui/checkbox.tsx:"))
             // src/modules is a build-time copy of module-sources; a fix has to
             // land in the source, and the copy follows on the next rsync.
