@@ -131,7 +131,6 @@ async function fetchHealthSnapshot(): Promise<HealthSnapshot> {
     const url = `http://127.0.0.1:${port}/api/health`;
     try {
         const res = await fetch(url, {
-            headers: { "x-internal-request": process.env.INTERNAL_API_SECRET || "1" },
             // Short timeout via AbortController
             signal: AbortSignal.timeout(5000),
         });

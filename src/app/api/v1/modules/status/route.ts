@@ -6,12 +6,12 @@ import { secretsMatch } from "@/core/lib/constant-time";
 
 // GET /api/v1/modules/status - Get enabled/disabled status of all modules
 export async function GET(request: NextRequest) {
-    const internalSecret = process.env.INTERNAL_API_SECRET;
-    const headerValue = request.headers.get("x-internal-request");
-
-    const isInternalCall = internalSecret
-        ? secretsMatch(headerValue, internalSecret)
-        : headerValue === "1";
+    // With no secret set the internal path is off: secretsMatch refuses an
+    // empty expected value, so only an admin session gets through.
+    const isInternalCall = secretsMatch(
+        request.headers.get("x-internal-request"),
+        process.env.INTERNAL_API_SECRET ?? "",
+    );
 
     if (!isInternalCall) {
         const session = await auth();
