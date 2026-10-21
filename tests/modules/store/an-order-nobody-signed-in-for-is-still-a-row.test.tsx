@@ -70,7 +70,7 @@ vi.mock("@/core/sdk/admin", () => ({
     AdminPageHeader: ({ title }: { title: string }) => <h1>{title}</h1>,
     FilterChips: () => null,
 }));
-vi.mock("./NewOrderForm", () => ({ NewOrderForm: () => null }));
+vi.mock("@/modules/store/pages/admin/orders/NewOrderForm", () => ({ NewOrderForm: () => null }));
 
 const item = { id: "i1", quantity: 1, price: 9.99, product: { name: "VIP" } };
 

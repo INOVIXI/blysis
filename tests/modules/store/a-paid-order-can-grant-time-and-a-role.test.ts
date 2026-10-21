@@ -103,7 +103,7 @@ vi.mock("@/core/sdk/server", () => ({
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     logActivity: vi.fn(async () => {}),
 }));
-vi.mock("@/modules/store/lib/email", () => ({ sendOrderConfirmationEmail: vi.fn(async () => {}) }));
+vi.mock("@/modules/store/lib/order-email", () => ({ sendOrderConfirmationEmail: vi.fn(async () => {}) }));
 vi.mock("@/modules/store/lib/delivery", () => ({ deliverProduct: vi.fn(async () => {}) }));
 vi.mock("@/modules/store/lib/order-events", () => ({ announceOrderCompleted: vi.fn(async () => {}) }));
 

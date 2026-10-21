@@ -80,7 +80,7 @@ vi.mock("@/core/sdk/admin", () => ({
         </div>
     ),
 }));
-vi.mock("./NewOrderForm", () => ({ NewOrderForm: () => null }));
+vi.mock("@/modules/store/pages/admin/orders/NewOrderForm", () => ({ NewOrderForm: () => null }));
 
 const MESSAGES = JSON.parse(fs.readFileSync(path.join(process.cwd(), "messages-core/en.json"), "utf8"));
 const MANIFEST = JSON.parse(fs.readFileSync(path.join(process.cwd(), "module-sources/store/module.json"), "utf8"));

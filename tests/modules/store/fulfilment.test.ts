@@ -115,7 +115,7 @@ vi.mock("@/core/sdk", async (importOriginal) => ({
 }));
 
 const sendOrderConfirmationEmail = vi.fn(async () => {});
-vi.mock("@/modules/store/lib/email", () => ({ sendOrderConfirmationEmail }));
+vi.mock("@/modules/store/lib/order-email", () => ({ sendOrderConfirmationEmail }));
 const deliverProduct = vi.fn(async () => ({}));
 vi.mock("@/modules/store/lib/delivery", () => ({ deliverProduct }));
 const announceOrderCompleted = vi.fn(async () => {});
@@ -341,6 +341,7 @@ describe("settleOrder", () => {
         const outcome = await settleOrder(settlement);
 
         expect(outcome.handled).toBe(true);
+        expect(sendOrderConfirmationEmail).toHaveBeenCalledWith(expect.objectContaining({ to: expect.any(String) }));
         // Started, not awaited: the delivery claims its chest rows first, so
         // it reaches the commands a few turns after the gateway's answer.
         await vi.waitFor(() => expect(deliverProduct).toHaveBeenCalledWith(expect.objectContaining({ playerName: "Steve" })));
