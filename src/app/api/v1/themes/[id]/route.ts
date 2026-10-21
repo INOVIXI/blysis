@@ -8,6 +8,7 @@ import { isAdmin } from "@/core/lib/permissions";
 import { themeRegistry } from "@/core/generated/theme-registry";
 import { devOnlyDetail } from "@/core/lib/api-utils";
 import { log } from "@/core/lib/logger";
+import { toolCommand } from "@/core/lib/tool-command";
 
 const THEMES_DIR = path.join(process.cwd(), "src/themes");
 // Themes shipped in-tree (every key in the generated registry) are the
@@ -55,7 +56,7 @@ export async function DELETE(_req: NextRequest, { params }: RouteParams) {
     await fs.rm(themeDir, { recursive: true, force: true });
 
     try {
-        execFileSync("npx", ["tsx", "scripts/generate-theme-registry.ts"], { timeout: 30000, stdio: "pipe" });
+        execFileSync(...toolCommand(["npx", "tsx", "scripts/generate-theme-registry.ts"]), { timeout: 30000, stdio: "pipe" });
     } catch (err) {
         log.error("[themes] regenerating the registry failed", {
             error: err instanceof Error ? err.message : String(err),

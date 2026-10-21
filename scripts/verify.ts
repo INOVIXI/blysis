@@ -22,6 +22,7 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { toolCommand } from "../src/core/lib/tool-command";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const TSCONFIG = path.join(ROOT, "tsconfig.json");
@@ -29,7 +30,7 @@ const TSCONFIG = path.join(ROOT, "tsconfig.json");
 export interface Gate {
     /** What it is called in the summary, and what the guard test matches on. */
     name: string;
-    /** Argv, run without a shell. */
+    /** Argv as it would be typed; started through `toolCommand`, without a shell. */
     argv: string[];
     env?: Record<string, string>;
 }
@@ -65,7 +66,7 @@ export const OUTSIDE_VERIFY: Record<string, string> = {
 
 function run(gate: Gate): number {
     const started = Date.now();
-    const result = spawnSync(gate.argv[0], gate.argv.slice(1), {
+    const result = spawnSync(...toolCommand(gate.argv, ROOT), {
         cwd: ROOT,
         stdio: "inherit",
         env: { ...process.env, ...gate.env },

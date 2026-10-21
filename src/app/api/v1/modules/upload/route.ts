@@ -21,6 +21,7 @@ import moduleSystem from "@/core/lib/modules";
 import { MODULES_DIR, TMP_DIR, PROJECT_ROOT } from "@/core/lib/runtime-paths";
 import { devOnlyDetail } from "@/core/lib/api-utils";
 import { log } from "@/core/lib/logger";
+import { toolCommand } from "@/core/lib/tool-command";
 const RESERVED_IDS = new Set([
     "auth", "admin", "core", "api", "users", "roles", "settings", "profile", "modules", "themes",
 ]);
@@ -210,7 +211,7 @@ export async function POST(request: NextRequest) {
         createdTargetDir = targetDir;
 
         try {
-            execFileSync("npx", ["tsx", "scripts/generate-registry.ts"], {
+            execFileSync(...toolCommand(["npx", "tsx", "scripts/generate-registry.ts"]), {
                 cwd: PROJECT_ROOT,
                 timeout: 30000,
                 stdio: "pipe",

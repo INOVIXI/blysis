@@ -25,6 +25,7 @@ import { promisify } from "util";
 import { errorText, log } from "./logger";
 import { writeSchemaState } from "./build-state";
 import { discardStagedBuild, markStagedBuildReady, prepareStagedBuild } from "./staged-build";
+import { toolCommand } from "./tool-command";
 
 const execFileAsync = promisify(execFile);
 
@@ -181,7 +182,7 @@ export function scheduleBuild(): void {
             //    dropping tables it does not know about.
             let schemaMerged = true;
             try {
-                await execFileAsync("npx", ["tsx", "scripts/merge-schemas.ts"], {
+                await execFileAsync(...toolCommand(["npx", "tsx", "scripts/merge-schemas.ts"]), {
                     cwd: process.cwd(), timeout: 60000,
                 });
             } catch (err) {
@@ -222,7 +223,7 @@ export function scheduleBuild(): void {
             //    schema describes a database this instance does not have.
             if (schemaMerged) {
                 try {
-                    await execFileAsync("npx", ["tsx", "scripts/apply-schema-additions.ts"], {
+                    await execFileAsync(...toolCommand(["npx", "tsx", "scripts/apply-schema-additions.ts"]), {
                         cwd: process.cwd(), timeout: 120000,
                     });
                 } catch (err) {
@@ -240,7 +241,7 @@ export function scheduleBuild(): void {
             // 3. Apply per-module SQL migrations - schema changes a module
             //    shipped after its initial release.
             try {
-                await execFileAsync("npx", ["tsx", "scripts/apply-migrations.ts"], {
+                await execFileAsync(...toolCommand(["npx", "tsx", "scripts/apply-migrations.ts"]), {
                     cwd: process.cwd(), timeout: 120000,
                 });
             } catch (err) {
@@ -253,7 +254,7 @@ export function scheduleBuild(): void {
 
             // 4. Generate registry
             try {
-                await execFileAsync("npx", ["tsx", "scripts/generate-registry.ts"], {
+                await execFileAsync(...toolCommand(["npx", "tsx", "scripts/generate-registry.ts"]), {
                     cwd: process.cwd(), timeout: 30000,
                 });
             } catch (err) {
@@ -274,7 +275,7 @@ export function scheduleBuild(): void {
             //    five minutes, which a full module set outgrows on a small
             //    machine, and a killed build was a lost build; now it costs
             //    nothing but the wait.
-            await execFileAsync("npm", ["run", "build"], {
+            await execFileAsync(...toolCommand(["npm", "run", "build"]), {
                 cwd: process.cwd(),
                 env: prepareStagedBuild(),
                 timeout: BUILD_TIMEOUT_MS,

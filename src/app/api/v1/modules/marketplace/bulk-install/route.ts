@@ -19,6 +19,7 @@ import { loadMarketplaceCatalog } from "../_catalog";
 import moduleSystem from "@/core/lib/modules";
 import { readJsonBody } from "@/core/lib/api-body";
 import { z } from "zod";
+import { toolCommand } from "@/core/lib/tool-command";
 
 /**
  * The ticked modules. Only `id` is read; the catalogue supplies everything
@@ -302,20 +303,20 @@ export async function POST(request: NextRequest) {
         // Schema merge + DB push
         if (hasSchemaChanges) {
             try {
-                execFileSync("npx", ["tsx", "scripts/merge-schemas.ts"], { cwd: process.cwd(), timeout: 60000, stdio: "pipe" });
+                execFileSync(...toolCommand(["npx", "tsx", "scripts/merge-schemas.ts"]), { cwd: process.cwd(), timeout: 60000, stdio: "pipe" });
                 // Not `prisma db push`, which is what this used to run: it
                 // reconciles the whole database to the merged schema, and
                 // uninstall deliberately leaves a module's tables behind, so
                 // after any uninstall push either drops them silently or
                 // refuses to run at all. This applies only the additive half
                 // of the same diff.
-                execFileSync("npx", ["tsx", "scripts/apply-schema-additions.ts"], { cwd: process.cwd(), timeout: 120000, stdio: "pipe" });
+                execFileSync(...toolCommand(["npx", "tsx", "scripts/apply-schema-additions.ts"]), { cwd: process.cwd(), timeout: 120000, stdio: "pipe" });
             } catch { /* will need manual: npm run db:merge && npm run db:push */ }
         }
 
         // Registry generation
         try {
-            execFileSync("npx", ["tsx", "scripts/generate-registry.ts"], { cwd: process.cwd(), timeout: 30000, stdio: "pipe" });
+            execFileSync(...toolCommand(["npx", "tsx", "scripts/generate-registry.ts"]), { cwd: process.cwd(), timeout: 30000, stdio: "pipe" });
         } catch { /* will need manual: npx tsx scripts/generate-registry.ts */ }
 
         // Single deferred build + restart for the whole batch. scheduleBuild

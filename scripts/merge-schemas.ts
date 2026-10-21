@@ -21,6 +21,7 @@ import fs from "fs";
 import path from "path";
 import { execFileSync } from "child_process";
 import { mergeSchemas } from "./lib/merge-prisma-schemas";
+import { toolCommand } from "../src/core/lib/tool-command";
 
 const ROOT = process.cwd();
 const OUTPUT_SCHEMA = path.join(ROOT, "prisma/schema.prisma");
@@ -35,7 +36,7 @@ try {
     console.log(`Total: ${result.modelCount} models, ${result.enumCount} enums`);
 
     console.log("Running prisma generate...");
-    execFileSync("npx", ["prisma", "generate"], { cwd: ROOT, timeout: 30000, stdio: "inherit" });
+    execFileSync(...toolCommand(["npx", "prisma", "generate"]), { cwd: ROOT, timeout: 30000, stdio: "inherit" });
     console.log("Prisma client generated successfully.");
 } catch (err) {
     console.error("Schema merge failed:", err);

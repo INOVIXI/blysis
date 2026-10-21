@@ -38,6 +38,7 @@ import {
     promoteStagedBuild,
     settleStagedBuilds,
 } from "../src/core/lib/staged-build";
+import { toolCommand } from "../src/core/lib/tool-command";
 
 function log(msg: string): void {
     console.log(`[reconcile] ${msg}`);
@@ -58,7 +59,7 @@ function reconcileSchema(): void {
 
     log(`regenerating the Prisma client - ${drift.kind}: ${drift.detail}`);
     try {
-        execFileSync("npx", ["tsx", "scripts/merge-schemas.ts"], {
+        execFileSync(...toolCommand(["npx", "tsx", "scripts/merge-schemas.ts"]), {
             stdio: "inherit",
             cwd: process.cwd(),
         });
@@ -105,7 +106,7 @@ function main(): void {
         // `prebuild` re-runs merge-schemas, the theme registry, the module
         // registry and the OpenAPI document, so this one command covers every
         // generated artifact the build depends on.
-        execFileSync("npm", ["run", "build"], { stdio: "inherit", cwd: process.cwd(), env: prepareStagedBuild() });
+        execFileSync(...toolCommand(["npm", "run", "build"]), { stdio: "inherit", cwd: process.cwd(), env: prepareStagedBuild() });
         markStagedBuildReady();
     } catch {
         discardStagedBuild();

@@ -22,6 +22,7 @@ import { syncModuleTranslations } from "@/core/lib/i18n/translation-service";
 import { readJsonBody } from "@/core/lib/api-body";
 import { enforcePasswordPolicy } from "@/core/lib/security-settings";
 import { log } from "@/core/lib/logger";
+import { toolCommand } from "@/core/lib/tool-command";
 
 /**
  * First-run setup API.
@@ -280,7 +281,7 @@ export async function POST(request: NextRequest) {
             // Run the schema merge + registry regeneration best-effort. These
             // scripts are safe to re-run; failures don't break the setup flow.
             try {
-                execFileSync("npx", ["tsx", "scripts/merge-schemas.ts"], {
+                execFileSync(...toolCommand(["npx", "tsx", "scripts/merge-schemas.ts"]), {
                     cwd: process.cwd(),
                     timeout: 60000,
                     stdio: "pipe",
@@ -292,7 +293,7 @@ export async function POST(request: NextRequest) {
                 // schema is what creates the tables the first time. Without
                 // this, every module the wizard installs comes up enabled and
                 // tableless: Prisma P2021 on its first request.
-                execFileSync("npx", ["tsx", "scripts/apply-schema-additions.ts"], {
+                execFileSync(...toolCommand(["npx", "tsx", "scripts/apply-schema-additions.ts"]), {
                     cwd: process.cwd(),
                     timeout: 120000,
                     stdio: "pipe",
@@ -304,7 +305,7 @@ export async function POST(request: NextRequest) {
                 log.error("[setup] Schema merge/additions failed", { error: err instanceof Error ? err.message : String(err) });
             }
             try {
-                execFileSync("npx", ["tsx", "scripts/generate-registry.ts"], {
+                execFileSync(...toolCommand(["npx", "tsx", "scripts/generate-registry.ts"]), {
                     cwd: process.cwd(),
                     timeout: 60000,
                     stdio: "pipe",
@@ -318,7 +319,7 @@ export async function POST(request: NextRequest) {
             // anything the operator could act on.
             for (const moduleId of installedModules) {
                 try {
-                    execFileSync("npx", ["tsx", "scripts/apply-migrations.ts", `--module=${moduleId}`], {
+                    execFileSync(...toolCommand(["npx", "tsx", "scripts/apply-migrations.ts", `--module=${moduleId}`]), {
                         cwd: process.cwd(),
                         timeout: 120000,
                         stdio: "pipe",

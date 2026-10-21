@@ -14,6 +14,7 @@ import { readJsonBody } from "@/core/lib/api-body";
 import { z } from "zod";
 import { devOnlyDetail } from "@/core/lib/api-utils";
 import { log } from "@/core/lib/logger";
+import { toolCommand } from "@/core/lib/tool-command";
 
 /** Which catalogue theme to fetch. The regex checks below still apply. */
 const installThemeSchema = z.object({
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
 
         // Regenerate theme registry
         try {
-            execFileSync("npx", ["tsx", "scripts/generate-theme-registry.ts"], { cwd: process.cwd(), timeout: 30000, stdio: "pipe" });
+            execFileSync(...toolCommand(["npx", "tsx", "scripts/generate-theme-registry.ts"]), { cwd: process.cwd(), timeout: 30000, stdio: "pipe" });
         } catch (err: unknown) {
             await fs.rm(targetDir, { recursive: true, force: true });
             log.error("[themes] registry generation failed, install rolled back", {

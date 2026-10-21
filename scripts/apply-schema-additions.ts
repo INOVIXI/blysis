@@ -36,6 +36,7 @@
 import "dotenv/config";
 import { execFileSync } from "child_process";
 import { prisma } from "../src/core/lib/db";
+import { toolCommand } from "../src/core/lib/tool-command";
 
 /**
  * Operations that only ever add. `AlterTable` is deliberately absent - it is
@@ -140,13 +141,12 @@ function diffScript(): string {
     // in prisma.config.ts; --to-schema is the merged schema on disk. Prisma 7
     // removed --from-url, which is what the equivalent call used to look like.
     return execFileSync(
-        "npx",
-        [
-            "prisma", "migrate", "diff",
+        ...toolCommand([
+            "npx", "prisma", "migrate", "diff",
             "--from-config-datasource",
             "--to-schema", "prisma/schema.prisma",
             "--script",
-        ],
+        ]),
         { cwd: process.cwd(), encoding: "utf-8", timeout: 120000 },
     );
 }

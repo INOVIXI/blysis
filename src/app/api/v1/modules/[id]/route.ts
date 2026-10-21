@@ -16,6 +16,7 @@ import { findDependents } from "@/core/lib/module-dependencies";
 import moduleSystem from "@/core/lib/modules";
 import { invalidate } from "@/core/lib/cache";
 import { log } from "@/core/lib/logger";
+import { toolCommand } from "@/core/lib/tool-command";
 
 export async function DELETE(
     _request: NextRequest,
@@ -135,7 +136,7 @@ export async function DELETE(
             // Synchronous: the generated registry must stop importing the
             // deleted module's files before anything else runs, or the next
             // build fails on a missing import.
-            execFileSync("npx", ["tsx", "scripts/generate-registry.ts"], { cwd: PROJECT_ROOT, timeout: 30000, stdio: "pipe" });
+            execFileSync(...toolCommand(["npx", "tsx", "scripts/generate-registry.ts"]), { cwd: PROJECT_ROOT, timeout: 30000, stdio: "pipe" });
             // The rebuild + process replacement is deferred and debounced, so
             // this response returns now instead of after a 3-minute build the
             // admin's browser would have given up on.

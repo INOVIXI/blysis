@@ -24,6 +24,7 @@ import { readJsonBody } from "@/core/lib/api-body";
 import { z } from "zod";
 import { devOnlyDetail } from "@/core/lib/api-utils";
 import { log } from "@/core/lib/logger";
+import { toolCommand } from "@/core/lib/tool-command";
 
 /** Which catalogue module to fetch. The regex checks below still apply. */
 const installModuleSchema = z.object({
@@ -251,7 +252,7 @@ export async function POST(request: NextRequest) {
         const hasSchema = await fs.access(schemaPath).then(() => true).catch(() => false);
         if (hasSchema) {
             try {
-                execFileSync("npx", ["tsx", "scripts/merge-schemas.ts"], { cwd: PROJECT_ROOT, timeout: 30000, stdio: "pipe" });
+                execFileSync(...toolCommand(["npx", "tsx", "scripts/merge-schemas.ts"]), { cwd: PROJECT_ROOT, timeout: 30000, stdio: "pipe" });
             } catch {
                 // Non-fatal: schema will be merged during deferred build
             }
@@ -265,7 +266,7 @@ export async function POST(request: NextRequest) {
         // is silently invisible for minutes. Hard-fail + roll back the
         // extracted files if it can't generate.
         try {
-            execFileSync("npx", ["tsx", "scripts/generate-registry.ts"], { cwd: PROJECT_ROOT, timeout: 30000, stdio: "pipe" });
+            execFileSync(...toolCommand(["npx", "tsx", "scripts/generate-registry.ts"]), { cwd: PROJECT_ROOT, timeout: 30000, stdio: "pipe" });
         } catch (err) {
             await fs.rm(targetDir, { recursive: true, force: true });
             extractedPath = null;

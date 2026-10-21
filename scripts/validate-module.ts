@@ -3,6 +3,7 @@ import path from "path";
 import { spawnSync } from "child_process";
 import { moduleManifestSchema } from "../src/core/lib/module-manifest-schema";
 import { checkManifestFileRefs } from "../src/core/lib/module-ref-resolver";
+import { toolCommand } from "../src/core/lib/tool-command";
 
 const ROOT = process.cwd();
 
@@ -380,7 +381,7 @@ let modulesTypecheck: { output: string } | null = null;
 
 function runModulesTypecheck(): string {
     if (!modulesTypecheck) {
-        const result = spawnSync("npx", ["tsx", "scripts/typecheck-modules.ts"], {
+        const result = spawnSync(...toolCommand(["npx", "tsx", "scripts/typecheck-modules.ts"]), {
             cwd: ROOT,
             encoding: "utf8",
             timeout: 600000,
