@@ -91,12 +91,12 @@ export async function POST(request: NextRequest) {
         if (!rootFiles.includes("module.json")) {
             const subdirs: string[] = [];
             for (const f of rootFiles) {
-                const stat = await fs.stat(path.join(extractDir, f));
+                const stat = await fs.stat(path.join(/* turbopackIgnore: true */ extractDir, f));
                 if (stat.isDirectory()) subdirs.push(f);
             }
             if (subdirs.length === 1) {
-                const subdir = path.join(extractDir, subdirs[0]);
-                const subFiles = await fs.readdir(subdir);
+                const subdir = path.join(/* turbopackIgnore: true */ extractDir, subdirs[0]);
+                const subFiles = await fs.readdir(/* turbopackIgnore: true */ subdir);
                 if (subFiles.includes("module.json")) {
                     manifestDir = subdir;
                 }
