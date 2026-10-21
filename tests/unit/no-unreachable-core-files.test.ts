@@ -43,7 +43,7 @@ function importers(): { file: string; source: string }[] {
         sourceFiles(path.join(root, dir), files);
     }
     // next-intl's request config is named in next.config.ts, not imported.
-    for (const config of ["next.config.ts", "vitest.config.ts", "prisma.config.ts"]) {
+    for (const config of ["next.config.ts", "vitest.config.mts", "prisma.config.ts"]) {
         const full = path.join(root, config);
         if (fs.existsSync(full)) files.push(full);
     }
