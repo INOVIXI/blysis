@@ -16,7 +16,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync } from "fs";
 import { join } from "path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 const ROOT = join(__dirname, "../..");
 const GENERATED = join(ROOT, "src/core/generated");
@@ -38,8 +38,10 @@ function code(path: string): string {
     return stripComments(readFileSync(path, "utf8"));
 }
 
+const rel = (f: string) => relativePath(ROOT, f);
+
 const SRC_FILES = walk(join(ROOT, "src")).filter(
-    (f) => !f.startsWith(GENERATED) && !f.includes("/src/modules/"),
+    (f) => !f.startsWith(GENERATED) && !rel(f).startsWith("src/modules/"),
 );
 
 /**
@@ -108,9 +110,9 @@ describe("module enabled flag - one helper", () => {
 
     it("no file hand-rolls the comparison", () => {
         const offenders = SRC_FILES.filter((f) => {
-            if (f.endsWith("/core/lib/module-enabled.ts")) return false;
+            if (rel(f) === "src/core/lib/module-enabled.ts") return false;
             return /\w+\[[A-Za-z_$][\w.$]*\] === true/.test(code(f));
-        }).map((f) => f.slice(ROOT.length + 1));
+        }).map(rel);
         expect(offenders).toEqual([]);
     });
 
@@ -149,9 +151,8 @@ describe("module enabled flag - every registry consumer", () => {
             const uses = registryNames.filter((n) => new RegExp(`\\b${n}\\b`).test(src));
             if (uses.length === 0) continue;
             if (GATE.test(src)) continue;
-            const rel = file.slice(ROOT.length + 1);
-            if (UNGATED_BY_DESIGN[rel]) continue;
-            offenders.push(`${rel} (${uses.join(", ")})`);
+            if (UNGATED_BY_DESIGN[rel(file)]) continue;
+            offenders.push(`${rel(file)} (${uses.join(", ")})`);
         }
         expect(offenders).toEqual([]);
     });

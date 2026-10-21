@@ -21,6 +21,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 const ROOT = path.join(__dirname, "../..");
 
@@ -35,7 +36,7 @@ function routesUnder(dir: string): string[] {
     return out;
 }
 
-const rel = (f: string) => path.relative(ROOT, f);
+const rel = (f: string) => relativePath(ROOT, f);
 const read = (f: string) => fs.readFileSync(f, "utf8");
 
 /** Anything that decides whether this caller is allowed, not merely who they are. */

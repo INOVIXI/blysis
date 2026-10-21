@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { isWidgetVisible, orderWidgets, visibleWidgets } from "@/core/lib/homepage-widgets";
+import { relativePath } from "./source-text";
 
 /**
  * A setting a page reads is a setting the page can receive.
@@ -49,7 +50,7 @@ function consumers(): { file: string; source: string }[] {
             }
             if (!/\.tsx?$/.test(entry.name)) continue;
             const source = fs.readFileSync(full, "utf8");
-            if (source.includes("useSiteSettings")) out.push({ file: path.relative(ROOT, full), source });
+            if (source.includes("useSiteSettings")) out.push({ file: relativePath(ROOT, full), source });
         }
     };
     for (const base of ["src", "module-sources"]) walk(path.join(ROOT, base));

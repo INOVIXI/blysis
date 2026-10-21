@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 /**
  * Every handler that changes a row says who is allowed to change it.
@@ -113,7 +113,7 @@ function unguarded(): string[] {
     ];
     const noGuard: string[] = [];
     for (const file of files) {
-        const rel = path.relative(ROOT, file);
+        const rel = relativePath(ROOT, file);
         const source = strip(fs.readFileSync(file, "utf8"));
         for (const verb of HANDLERS) {
             const body = handlerWithHelpers(file, source, verb);

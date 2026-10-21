@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { join, sep } from "path";
 
 /**
  * `uploadFile` is the single funnel every upload passes through - the admin
@@ -254,13 +255,18 @@ describe("uploadFile: SVG sanitisation", () => {
     });
 });
 
+// What reaches `fs` is a native path, so on Windows its separators are
+// backslashes. The `url` and `path` the provider returns are not filesystem
+// paths but the public address and the stored key, and stay forward slashes.
+const UPLOADS_DIR = join("public", "uploads");
+
 describe("localStorageProvider", () => {
     it("writes under public/uploads with a uuid-prefixed sanitised name", async () => {
         const { localStorageProvider } = await load();
 
         const result = await localStorageProvider.upload(png(), "my photo!.png", "image/png");
 
-        expect(mkdir).toHaveBeenCalledWith(expect.stringContaining("public/uploads"), { recursive: true });
+        expect(mkdir).toHaveBeenCalledWith(expect.stringContaining(UPLOADS_DIR), { recursive: true });
         expect(result.url).toMatch(/^\/uploads\/[0-9a-f-]{36}-my-photo-\.png$/);
         expect(result.path).toBe(`public${result.url}`);
         // Two uploads of the same name must not overwrite each other.
@@ -275,7 +281,7 @@ describe("localStorageProvider", () => {
 
         expect(result.path.startsWith("public/uploads/")).toBe(true);
         const written = writeFile.mock.calls[0][0];
-        expect(written).toContain("public/uploads/");
+        expect(written).toContain(UPLOADS_DIR + sep);
         expect(written).not.toContain("..");
     });
 });

@@ -27,8 +27,8 @@
  */
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync, existsSync } from "fs";
-import { join, dirname, resolve as resolvePath, relative } from "path";
-import { stripComments } from "./source-text";
+import { join, dirname, resolve as resolvePath } from "path";
+import { stripComments, relativePath } from "./source-text";
 
 const ROOT = join(__dirname, "../..");
 const SCANNED = ["src", "module-sources"];
@@ -70,19 +70,38 @@ function sourceFiles(dir: string, out: string[] = []): string[] {
 }
 
 const ALL = SCANNED.flatMap((d) => sourceFiles(join(ROOT, d)));
-const rel = (f: string) => relative(ROOT, f);
-const read = (f: string) => readFileSync(f, "utf-8");
+const rel = (f: string) => relativePath(ROOT, f);
+// Every walk below revisits the same files and specifiers, once per client
+// entry and once per set of names asked for. Uncached, that was tens of
+// thousands of reads and existence checks: on a Windows checkout, where each
+// costs far more than on Linux, the test took 80 seconds in a full run and
+// went past its own limit, against five seconds alone.
+const sources = new Map<string, string>();
+const read = (f: string) => {
+    let src = sources.get(f);
+    if (src === undefined) sources.set(f, (src = readFileSync(f, "utf-8")));
+    return src;
+};
+
+const resolved = new Map<string, string | null>();
 
 /** Resolve an import specifier the way the tsconfig path alias does. */
 function resolveSpec(spec: string, fromFile: string): string | null {
+    const key = spec.startsWith("@/") ? spec : `${dirname(fromFile)}|${spec}`;
+    if (resolved.has(key)) return resolved.get(key) ?? null;
     let base: string;
     if (spec.startsWith("@/")) base = join(ROOT, "src", spec.slice(2));
     else if (spec.startsWith(".")) base = resolvePath(dirname(fromFile), spec);
     else return null;
+    let found: string | null = null;
     for (const c of [base, `${base}.ts`, `${base}.tsx`, join(base, "index.ts"), join(base, "index.tsx")]) {
-        if (existsSync(c) && statSync(c).isFile()) return c;
+        if (existsSync(c) && statSync(c).isFile()) {
+            found = c;
+            break;
+        }
     }
-    return null;
+    resolved.set(key, found);
+    return found;
 }
 
 interface Parsed {

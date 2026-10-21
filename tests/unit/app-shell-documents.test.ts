@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 /**
  * No boundary file renders a document of its own.
@@ -88,7 +88,7 @@ describe("app shell documents", () => {
             const wrapper = documentAncestor(path.dirname(file), APP, readOrNull);
             return wrapper !== null && rendersDocument(fs.readFileSync(file, "utf8"));
         });
-        expect(nested.map((f) => path.relative(APP, f))).toEqual([]);
+        expect(nested.map((f) => relativePath(APP, f))).toEqual([]);
     });
 
     it("every boundary nothing composes carries one", () => {
@@ -96,7 +96,7 @@ describe("app shell documents", () => {
             const wrapper = documentAncestor(path.dirname(file), APP, readOrNull);
             return wrapper === null && !rendersDocument(fs.readFileSync(file, "utf8"));
         });
-        expect(bare.map((f) => path.relative(APP, f))).toEqual([]);
+        expect(bare.map((f) => relativePath(APP, f))).toEqual([]);
     });
 
     it("global-error carries its own document", () => {
@@ -128,18 +128,29 @@ describe("app shell documents", () => {
         expect(stripComments('const u = "https://example.test/x"; // trailing')).toBe('const u = "https://example.test/x"; ');
     });
 
+    // The helper asks `read` for paths it built with `path.join`, so the
+    // fixture is spelled the same way. Written as `/app/...` literals, every
+    // lookup missed on Windows: the walk-up found nothing, and the test below
+    // passed without ever reaching the layout it is about.
+    const at = (rel: string) => path.join("/app", rel);
+
     it("documentAncestor walks up and stops at the app root", () => {
         const layouts: Record<string, string> = {
-            "/app/[locale]/layout.tsx": "<html><body>{children}</body></html>",
+            [at("[locale]/layout.tsx")]: "<html><body>{children}</body></html>",
         };
         const read = (p: string) => layouts[p] ?? null;
-        expect(documentAncestor("/app/[locale]/(public)/blog", "/app", read)).toBe("/app/[locale]/layout.tsx");
-        expect(documentAncestor("/app/[locale]", "/app", read)).toBe("/app/[locale]/layout.tsx");
-        expect(documentAncestor("/app", "/app", read)).toBeNull();
+        expect(documentAncestor(at("[locale]/(public)/blog"), at(""), read)).toBe(at("[locale]/layout.tsx"));
+        expect(documentAncestor(at("[locale]"), at(""), read)).toBe(at("[locale]/layout.tsx"));
+        expect(documentAncestor(at(""), at(""), read)).toBeNull();
     });
 
     it("documentAncestor ignores a layout that renders no document", () => {
-        const read = (p: string) => (p === "/app/[locale]/layout.tsx" ? "<div>{children}</div>" : null);
-        expect(documentAncestor("/app/[locale]/blog", "/app", read)).toBeNull();
+        const asked: string[] = [];
+        const read = (p: string) => {
+            asked.push(p);
+            return p === at("[locale]/layout.tsx") ? "<div>{children}</div>" : null;
+        };
+        expect(documentAncestor(at("[locale]/blog"), at(""), read)).toBeNull();
+        expect(asked).toContain(at("[locale]/layout.tsx"));
     });
 });

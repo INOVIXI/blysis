@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { relativePath } from "./source-text";
 
 /**
  * A create or edit form used to unfold as a card above the list it belongs to.
@@ -24,6 +25,7 @@ import { join } from "node:path";
  * form appears on top of it - in core and in every module's admin screens.
  */
 
+const ROOT = process.cwd();
 const ROOTS = ["src/app", "src/core", "module-sources"];
 
 /**
@@ -114,7 +116,7 @@ function walk(dir: string, out: string[] = []): string[] {
         if (entry === "node_modules" || entry === ".next" || entry === "dist") continue;
         const full = join(dir, entry);
         if (statSync(full).isDirectory()) walk(full, out);
-        else if (full.endsWith(".tsx")) out.push(full);
+        else if (full.endsWith(".tsx")) out.push(relativePath(ROOT, full));
     }
     return out;
 }

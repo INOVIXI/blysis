@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -41,7 +42,7 @@ const CHEST_CLAIM = path.join(ROOT, "module-sources/store/lib/gifts.ts");
 
 describe("one-shot redemption", () => {
     it("finds the routes that redeem something", () => {
-        const routes = redeemingRoutes().map((f) => path.relative(ROOT, f));
+        const routes = redeemingRoutes().map((f) => relativePath(ROOT, f));
         expect(routes).toContain("module-sources/store/api/gift-codes/redeem/route.ts");
         expect(fs.readFileSync(path.join(STORE, "chest/[id]/route.ts"), "utf8")).toMatch(/claimChestItem\(/);
         expect(fs.readFileSync(CHEST_CLAIM, "utf8")).toMatch(/isRedeemed:\s*true/);
@@ -50,7 +51,7 @@ describe("one-shot redemption", () => {
     it("every one of them claims with a conditional write and checks it landed", () => {
         for (const file of [...redeemingRoutes(), CHEST_CLAIM]) {
             const source = fs.readFileSync(file, "utf8");
-            const where = path.relative(ROOT, file);
+            const where = relativePath(ROOT, file);
             // The claim: an updateMany guarded on the row still being unredeemed.
             expect(source, `${where} must claim with updateMany`).toMatch(/updateMany\(/);
             expect(source, `${where} must guard the claim on isRedeemed: false`)

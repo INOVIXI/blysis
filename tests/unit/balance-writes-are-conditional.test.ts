@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -82,7 +83,7 @@ describe("spending a credit balance", () => {
         // there. If this list grows, the guard has been copied again.
         const spenders = SOURCES.flatMap(tsFiles)
             .filter((f) => creditDebits(fs.readFileSync(f, "utf8")).length > 0)
-            .map((f) => path.relative(ROOT, f));
+            .map((f) => relativePath(ROOT, f));
         expect(spenders).toEqual(["module-sources/credits/hooks/change.ts"]);
     });
 
@@ -90,7 +91,7 @@ describe("spending a credit balance", () => {
         const offenders: string[] = [];
         for (const file of SOURCES.flatMap(tsFiles)) {
             for (const debit of creditDebits(fs.readFileSync(file, "utf8"))) {
-                if (!debit.isConditional) offenders.push(path.relative(ROOT, file));
+                if (!debit.isConditional) offenders.push(relativePath(ROOT, file));
             }
         }
         expect(offenders).toEqual([]);
@@ -128,7 +129,7 @@ describe("claiming a capped coupon", () => {
                 // that also carries a usageLimit precondition is a claim.
                 if (!/usageLimit/.test(call) && !/usageCount:\s*\{\s*lt/.test(call)) continue;
                 if (match[1] === "updateMany" && /usageCount:\s*\{\s*lt/.test(call)) continue;
-                offenders.push(`${path.relative(ROOT, file)}`);
+                offenders.push(`${relativePath(ROOT, file)}`);
             }
         }
         expect(offenders).toEqual([]);

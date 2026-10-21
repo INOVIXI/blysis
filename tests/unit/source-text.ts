@@ -20,6 +20,8 @@
  * way for a gate to be broken.
  */
 
+import path from "node:path";
+
 /**
  * Comments removed, strings left alone.
  *
@@ -76,4 +78,19 @@ export function stripComments(source: string): string {
     }
 
     return out;
+}
+
+/**
+ * `path.relative`, spelled with forward slashes on every platform.
+ *
+ * Gates name files in their allow-lists and messages the way the repository
+ * does, `src/core/lib/db.ts`, and compare them with what a walk of the tree
+ * found. `path.relative` answers in the platform's separator, so on Windows
+ * every comparison missed: an allow-listed file was reported as both an
+ * offender and an entry that "does not exist", and a list of expected
+ * readers found none of them. Measured on 2026-10-21: 71 failures on a
+ * Windows checkout, every one of them this.
+ */
+export function relativePath(from: string, to: string): string {
+    return path.relative(from, to).split(path.sep).join("/");
 }

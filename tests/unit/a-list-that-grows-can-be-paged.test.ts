@@ -19,6 +19,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { pageSource } from "./module-page-source";
+import { relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -59,7 +60,7 @@ function listPages(): string[] {
                 // or filter chips, is what makes a page a list.
                 if (/\b(?:rows|items|entries|articles|topics|products|tickets|downloads|trophies|suggestions|punishments|notifications|referrals)\.map\(/.test(source)
                     || /\bpaged\.rows\.map\(/.test(source)) {
-                    out.push(path.relative(ROOT, full));
+                    out.push(relativePath(ROOT, full));
                 }
             }
         }

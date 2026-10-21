@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 /**
  * Every URL core fetches server-side is one somebody decided about.
@@ -49,7 +49,7 @@ function unexplainedFetches(): string[] {
                 for (const m of source.matchAll(/(?<![.\w])fetch\(\s*([^,)]+)/g)) {
                     const arg = m[1].trim();
                     const literal = /^["'`]/.test(arg) && !/\$\{/.test(arg);
-                    if (!literal) found.add(path.relative(ROOT, full));
+                    if (!literal) found.add(relativePath(ROOT, full));
                 }
             }
         }

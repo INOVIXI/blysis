@@ -20,6 +20,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "../../unit/source-text";
 
 const ROOT = process.cwd();
 const FORUM = path.join(ROOT, "module-sources", "forum");
@@ -84,7 +85,7 @@ describe("every place that reads the forum", () => {
         for (const file of files) {
             const source = fs.readFileSync(file, "utf8");
             if (!READS.test(source)) continue;
-            const rel = path.relative(FORUM, file);
+            const rel = relativePath(FORUM, file);
             if (SEES_EVERYTHING[rel]) continue;
             if (!ASKS.test(source)) leaking.push(rel);
         }
@@ -107,7 +108,7 @@ describe("every place that reads the forum", () => {
         const unnarrowed: string[] = [];
         for (const file of files) {
             const source = fs.readFileSync(file, "utf8");
-            const rel = path.relative(FORUM, file);
+            const rel = relativePath(FORUM, file);
             if (SEES_EVERYTHING[rel]) continue;
             for (const match of source.matchAll(/\$queryRaw[\s\S]{0,600}?ForumTopic[\s\S]{0,600}?`/g)) {
                 if (!/categoryId/.test(match[0])) unnarrowed.push(rel);

@@ -22,7 +22,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -54,7 +54,7 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 const FILES = [...walk(path.join(ROOT, "src/core")), ...walk(path.join(ROOT, "src/app"))];
-const rel = (f: string) => path.relative(ROOT, f);
+const rel = (f: string) => relativePath(ROOT, f);
 
 /** String literals in a file, with comments already gone. */
 function literals(source: string): string[] {

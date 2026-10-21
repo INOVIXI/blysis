@@ -74,9 +74,10 @@ vi.mock("fs/promises", () => {
         const target = String(p);
         if (target.endsWith("index.json")) return JSON.stringify(CATALOG);
         // The route reads each extracted manifest for the module's name and
-        // its translations.
+        // its translations. The path comes from `path.join`, so on Windows
+        // its separators are backslashes and the id is found by either.
         if (target.endsWith("module.json")) {
-            const id = target.split("/").slice(-2)[0];
+            const id = target.split(/[\\/]/).slice(-2)[0];
             return JSON.stringify({
                 id,
                 name: `${id} module`,

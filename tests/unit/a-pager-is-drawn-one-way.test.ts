@@ -21,6 +21,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 const ROOT = process.cwd();
 
@@ -66,7 +67,7 @@ function sourceFiles(dir: string): string[] {
                 if (entry.name === "node_modules" || entry.name === "generated" || full.endsWith("src/modules")) continue;
                 walk(full);
             } else if (/\.tsx?$/.test(entry.name)) {
-                out.push(path.relative(ROOT, full));
+                out.push(relativePath(ROOT, full));
             }
         }
     };

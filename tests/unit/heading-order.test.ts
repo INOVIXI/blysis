@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 /**
  * A heading rank is document structure, not a font size.
@@ -68,14 +68,24 @@ export function headingSkips(source: string): string[] {
 
 const RELATIVE = /^\.{1,2}\//;
 
+// Cached for the reason `sourceOf` below is: the walk asks the same question
+// from every page, and on a Windows checkout four existence checks per import
+// per page took this test to 42 seconds in a full run.
+const resolvedImports = new Map<string, string[]>();
+
 function resolveImport(spec: string, fromFile: string): string[] {
     let base: string;
     if (spec.startsWith("@/")) base = path.join(root, "src", spec.slice(2));
     else if (RELATIVE.test(spec)) base = path.resolve(path.dirname(fromFile), spec);
     else return [];
-    return [".tsx", ".ts", "/index.tsx", "/index.ts"]
-        .map((ext) => base + ext)
-        .filter((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
+    let targets = resolvedImports.get(base);
+    if (!targets) {
+        targets = [".tsx", ".ts", "/index.tsx", "/index.ts"]
+            .map((ext) => base + ext)
+            .filter((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
+        resolvedImports.set(base, targets);
+    }
+    return targets;
 }
 
 /**
@@ -117,7 +127,7 @@ export function reachesAnH1(file: string, depth = 0, seen = new Set<string>()): 
 
 const allTsx = SCANNED.flatMap((dir) => tsxFiles(path.join(root, dir)));
 const pageFiles = allTsx.filter((f) => path.basename(f) === "page.tsx");
-const rel = (f: string) => path.relative(root, f);
+const rel = (f: string) => relativePath(root, f);
 
 /**
  * A page whose whole job is to send the reader somewhere else.

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 import { join } from "node:path";
 
 /**
@@ -17,6 +17,7 @@ import { join } from "node:path";
  * text clear of the chevron, because `cn` puts the caller's classes last).
  */
 
+const ROOT = process.cwd();
 const ROOTS = ["src/app", "src/core", "module-sources"];
 
 /** The component itself is the one place a bare `<select>` is the point. */
@@ -43,7 +44,7 @@ function walk(dir: string, out: string[] = []): string[] {
         if (entry === "node_modules" || entry === ".next") continue;
         const full = join(dir, entry);
         if (statSync(full).isDirectory()) walk(full, out);
-        else if (full.endsWith(".tsx")) out.push(full);
+        else if (full.endsWith(".tsx")) out.push(relativePath(ROOT, full));
     }
     return out;
 }

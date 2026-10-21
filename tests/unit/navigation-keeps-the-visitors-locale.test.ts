@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 /**
  * A link does not send a Turkish visitor to the English page.
@@ -45,7 +45,7 @@ function walk(dir: string, out: string[] = []): string[] {
     const full = path.join(ROOT, dir);
     if (!fs.existsSync(full)) return out;
     for (const entry of fs.readdirSync(full, { withFileTypes: true })) {
-        const rel = path.join(dir, entry.name);
+        const rel = relativePath(ROOT, path.join(full, entry.name));
         if (entry.isDirectory()) walk(rel, out);
         else if (entry.name.endsWith(".tsx") || entry.name.endsWith(".ts")) out.push(rel);
     }

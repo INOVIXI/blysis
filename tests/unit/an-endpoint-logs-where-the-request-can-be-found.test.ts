@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 /**
  * A failure inside a request is logged where that request can be found again.
@@ -98,7 +99,7 @@ describe("an endpoint", () => {
                 if (source.slice(0, 200).includes('"use client"')) continue;
                 source.split("\n").forEach((line, i) => {
                     if (CONSOLE.test(line) && !COMMENT.test(line)) {
-                        bare.push(`${path.relative(ROOT, file)}:${i + 1}  ${line.trim().slice(0, 80)}`);
+                        bare.push(`${relativePath(ROOT, file)}:${i + 1}  ${line.trim().slice(0, 80)}`);
                     }
                 });
             }
@@ -112,7 +113,7 @@ describe("an endpoint", () => {
     it("writes them the same way inside core, where the request is furthest away", () => {
         const bare: string[] = [];
         for (const file of serverFiles(path.join(ROOT, CORE))) {
-            const relative = path.relative(ROOT, file);
+            const relative = relativePath(ROOT, file);
             if (REACHED_FROM_A_BROWSER.has(relative)) continue;
             const source = fs.readFileSync(file, "utf8");
             if (source.slice(0, 200).includes('"use client"')) continue;
@@ -143,7 +144,7 @@ describe("an endpoint", () => {
                 const trimmed = line.trim();
                 if (trimmed.startsWith("//") || trimmed.startsWith("*")) return;
                 if (CONSOLE.test(line)) {
-                    bare.push(`${path.relative(ROOT, file)}:${i + 1}  ${trimmed.slice(0, 80)}`);
+                    bare.push(`${relativePath(ROOT, file)}:${i + 1}  ${trimmed.slice(0, 80)}`);
                 }
             });
         }

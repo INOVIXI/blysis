@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { relativePath } from "./source-text";
 
 /**
  * Every cover picture is drawn in the same frame.
@@ -77,7 +78,7 @@ describe("a cover is two to one", () => {
         const offenders: string[] = [];
         for (const dir of SCANNED) {
             for (const file of tsxFiles(dir)) {
-                const relative = path.relative(ROOT, file);
+                const relative = relativePath(ROOT, file);
                 const source = fs.readFileSync(file, "utf8");
                 for (const match of source.match(ASPECT) ?? []) {
                     if (allowed.has(`${relative}:${match}`)) continue;
@@ -105,7 +106,7 @@ describe("a cover is two to one", () => {
                     const fixedHeight = /\bh-\d/.test(classes) && !/\bh-full\b/.test(classes);
                     const fixedWidth = /\bw-\d/.test(classes);
                     if (fixedHeight && !fixedWidth) {
-                        offenders.push(`${path.relative(ROOT, file)}: ${classes.slice(0, 70)}`);
+                        offenders.push(`${relativePath(ROOT, file)}: ${classes.slice(0, 70)}`);
                     }
                 }
             }

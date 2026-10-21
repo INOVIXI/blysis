@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 /**
  * A list that grows carries a way through it.
@@ -125,7 +125,7 @@ function adminScreens(): string[] {
             if (entry.isDirectory()) {
                 if (entry.name !== "node_modules") walk(full);
             } else if (entry.name === "page.tsx") {
-                found.push(path.relative(ROOT, full));
+                found.push(relativePath(ROOT, full));
             }
         }
     };

@@ -24,7 +24,7 @@ import { render, screen, fireEvent, within } from "@testing-library/react";
 import fs from "node:fs";
 import path from "node:path";
 import { Pencil, Trash2, ExternalLink } from "lucide-react";
-import { stripComments } from "./source-text";
+import { stripComments, relativePath } from "./source-text";
 
 // next-intl's client navigation only resolves inside a Next request. What it
 // adds is the locale prefix on an href, which
@@ -169,7 +169,7 @@ describe("the lists in the panel", () => {
                 if (entry.isDirectory()) {
                     if (entry.name !== "node_modules") walk(full);
                 } else if (/\.tsx$/.test(entry.name)) {
-                    found.push(path.relative(ROOT, full));
+                    found.push(relativePath(ROOT, full));
                 }
             }
         };

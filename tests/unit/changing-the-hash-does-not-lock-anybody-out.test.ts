@@ -37,6 +37,7 @@ import {
     needsRehash,
     verifyPassword,
 } from "@/core/lib/password-hash";
+import { relativePath } from "./source-text";
 
 const PASSWORD = "correct horse battery staple";
 
@@ -179,7 +180,7 @@ describe("every place a password is checked", () => {
     it("goes through the one function that reads what made the hash", () => {
         const offenders: string[] = [];
         for (const file of files) {
-            const relative = path.relative(ROOT, file);
+            const relative = relativePath(ROOT, file);
             if (relative === SEAM || API_KEYS.includes(relative)) continue;
             const source = fs.readFileSync(file, "utf8");
             if (/bcrypt\s*\.\s*(compare|hash)\s*\(/.test(source)) offenders.push(relative);

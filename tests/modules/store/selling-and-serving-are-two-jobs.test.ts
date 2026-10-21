@@ -2,7 +2,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { stripComments } from "../../unit/source-text";
+import { stripComments, relativePath } from "../../unit/source-text";
 
 /**
  * Setting the prices and handling the orders are two jobs.
@@ -23,7 +23,7 @@ function sources(): { file: string; body: string }[] {
             const full = path.join(d, entry.name);
             if (entry.isDirectory()) walk(full);
             else if (entry.name.endsWith(".ts")) {
-                out.push({ file: path.relative(dir, full), body: stripComments(fs.readFileSync(full, "utf8")) });
+                out.push({ file: relativePath(dir, full), body: stripComments(fs.readFileSync(full, "utf8")) });
             }
         }
     };

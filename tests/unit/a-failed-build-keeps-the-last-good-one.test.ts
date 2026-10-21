@@ -159,11 +159,22 @@ describe("promoting a staged build", () => {
         // depth. Moved from `.next/.staging` to `.next` unchanged, it points
         // one directory too far, and every page that queries the database
         // fails to load @prisma/client.
+        //
+        // On Windows Turbopack makes a junction point instead, and a junction
+        // can only hold an absolute target. Asking Node for a junction with a
+        // relative target makes exactly the link Turbopack makes on each
+        // platform: the type is ignored outside Windows, and on Windows the
+        // target is made absolute. Either way the package must still load
+        // from where the build lands.
         write(path.join(root, "node_modules", "@prisma", "client", "index.js"), "prisma");
         stageNew();
         const link = path.join(stagingDir(root), "node_modules", "@prisma", "client-2c3a");
         fs.mkdirSync(path.dirname(link), { recursive: true });
-        fs.symlinkSync(path.relative(path.dirname(link), path.join(root, "node_modules", "@prisma", "client")), link);
+        fs.symlinkSync(
+            path.relative(path.dirname(link), path.join(root, "node_modules", "@prisma", "client")),
+            link,
+            "junction",
+        );
 
         promoteStagedBuild(root);
 
