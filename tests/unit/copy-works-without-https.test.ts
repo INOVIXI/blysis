@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { execFileSync } from "node:child_process";
 import { join } from "node:path";
+import { grepTree } from "./source-text";
 
 /**
  * `navigator.clipboard` is a secure-context API.
@@ -18,21 +18,14 @@ import { join } from "node:path";
 
 const ROOT = join(__dirname, "..", "..");
 
-function grep(pattern: string, paths: string[]): string[] {
-    try {
-        const out = execFileSync("grep", ["-rn", "--include=*.ts", "--include=*.tsx", pattern, ...paths], {
-            cwd: ROOT,
-            encoding: "utf8",
-        });
-        return out.split("\n").filter(Boolean);
-    } catch {
-        return []; // grep exits 1 when it matches nothing
-    }
-}
+const grep = (pattern: string, paths: string[]) => grepTree(ROOT, pattern, paths, [".ts", ".tsx"]);
 
 describe("copy works without https", () => {
     it("reaches the clipboard API in exactly one place", () => {
-        const offenders = grep("navigator\\.clipboard", ["src", "module-sources"])
+        const uses = grep("navigator\\.clipboard", ["src", "module-sources"]);
+        // The helper is a use the scan must see, or it read nothing at all.
+        expect(uses.some((line) => line.startsWith("src/core/lib/copy-text.ts:"))).toBe(true);
+        const offenders = uses
             // The helper itself, and the two doc comments that explain why it
             // exists, are allowed to name the API.
             .filter((line) => !line.startsWith("src/core/lib/copy-text.ts:"))

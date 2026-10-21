@@ -20,6 +20,7 @@
  * way for a gate to be broken.
  */
 
+import fs from "node:fs";
 import path from "node:path";
 
 /**
@@ -93,4 +94,43 @@ export function stripComments(source: string): string {
  */
 export function relativePath(from: string, to: string): string {
     return path.relative(from, to).split(path.sep).join("/");
+}
+
+/**
+ * `grep -rn` over part of the tree, in-process.
+ *
+ * Gates shelled out to `grep` and `sh -c "ls -d ..."` and caught the failure,
+ * because grep exits 1 when nothing matches. On a machine without either,
+ * which is Windows from PowerShell or cmd, the same catch turned "could not
+ * look" into "found nothing", and the gate passed without reading a file.
+ * Lines come back the way grep prints them, `path:line:text`, with the path
+ * relative to `root` and spelled with forward slashes.
+ */
+export function grepTree(root: string, pattern: string, paths: string[], extensions: string[]): string[] {
+    const regex = new RegExp(pattern);
+    const hits: string[] = [];
+    const visit = (full: string) => {
+        const stat = fs.statSync(full, { throwIfNoEntry: false });
+        if (!stat) return;
+        if (stat.isDirectory()) {
+            for (const entry of fs.readdirSync(full).sort()) visit(path.join(full, entry));
+            return;
+        }
+        if (!extensions.some((ext) => full.endsWith(ext))) return;
+        fs.readFileSync(full, "utf8").split("\n").forEach((line, i) => {
+            if (regex.test(line)) hits.push(`${relativePath(root, full)}:${i + 1}:${line}`);
+        });
+    };
+    for (const p of paths) visit(path.join(root, p));
+    return hits;
+}
+
+/** `module-sources/<id>/<sub>` for every module that has one, as `ls -d` printed them. */
+export function moduleSourceDirs(root: string, sub: string): string[] {
+    const sources = path.join(root, "module-sources");
+    return fs
+        .readdirSync(sources, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory() && fs.existsSync(path.join(sources, entry.name, sub)))
+        .map((entry) => `module-sources/${entry.name}/${sub}`)
+        .sort();
 }
