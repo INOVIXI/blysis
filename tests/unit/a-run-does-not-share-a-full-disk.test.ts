@@ -23,6 +23,8 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import { spawnSync } from "node:child_process";
+import { toolCommand } from "@/core/lib/tool-command";
 
 const ROOT = process.cwd();
 const scripts = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8")).scripts as Record<string, string>;
@@ -30,9 +32,26 @@ const scripts = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf
 /** The scripts that run long enough, or spawn enough, to need somewhere to write. */
 const NEEDS_SCRATCH = ["dev", "build", "test", "test:watch", "test:coverage"];
 
+/** Scripts that are bash on purpose, and why that is not a portability bug. */
+const RUNS_ON_A_LINUX_HOST: Record<string, string> = {
+    "db:backup": "pg_dump on the server the site runs on, which is the Linux image or its host",
+    "db:restore": "psql on the server the site runs on, which is the Linux image or its host",
+    "build:marketplace": "bash plus python3, run by CI on Linux; on Windows it runs from WSL until it is ported to Node",
+};
+
+/** Run argv through the wrapper the way an npm script does. */
+function wrapped(argv: string[]): { status: number | null; out: string } {
+    const result = spawnSync(...toolCommand(["npx", "tsx", "scripts/with-scratch.ts", ...argv], ROOT), {
+        cwd: ROOT,
+        encoding: "utf8",
+        timeout: 30000,
+    });
+    return { status: result.status, out: `${result.stdout}${result.stderr}` };
+}
+
 describe("a command that writes while it runs", () => {
     it("goes through the wrapper that gives it somewhere to write", () => {
-        const bare = NEEDS_SCRATCH.filter((name) => !scripts[name]?.includes("with-scratch.sh"));
+        const bare = NEEDS_SCRATCH.filter((name) => !scripts[name]?.includes("scripts/with-scratch.ts"));
         expect(
             bare,
             `these write scratch files to whatever TMPDIR happens to be, which on a\n` +
@@ -40,30 +59,37 @@ describe("a command that writes while it runs", () => {
         ).toEqual([]);
     });
 
-    it("is POSIX, because the image it runs in has no bash", () => {
-        // node:24-alpine ships busybox ash and no bash. Wrapping `build` in
-        // one turned every image build into `sh: bash: not found` and exit
-        // 127, which says nothing about what was being built.
-        const source = fs.readFileSync(path.join(ROOT, "scripts/with-scratch.sh"), "utf8");
-        expect(source.split("\n")[0]).toBe("#!/bin/sh");
-        // In the prose above it, not in a `set` line.
-        expect(source).not.toMatch(/^\s*set .*pipefail/m);
-        for (const [name, command] of Object.entries(scripts)) {
-            if (!command.includes("with-scratch.sh")) continue;
-            expect(command, `${name} runs the wrapper with bash`).not.toContain("bash ");
-        }
+    it("has a wrapper that points the run's temp directory inside the repository", () => {
+        const { status, out } = wrapped(["tsx", "-e", "console.log(require('node:os').tmpdir())"]);
+        expect(status).toBe(0);
+        expect(out.trim()).toBe(path.join(ROOT, ".tmp"));
     });
 
-    it("has a wrapper that runs, and hands the command its own arguments", () => {
-        const wrapper = path.join(ROOT, "scripts/with-scratch.sh");
-        expect(fs.existsSync(wrapper)).toBe(true);
-        const source = fs.readFileSync(wrapper, "utf8");
-        // `exec "$@"` would look for a program called `NEXT_DEV=1`; `env` is
-        // what lets a caller keep passing `VAR=value cmd`.
-        expect(source).toContain("exec env");
-        for (const variable of ["TMPDIR", "TMP", "TEMP"]) {
-            expect(source, variable).toContain(`export ${variable}=`);
-        }
+    it("hands the command its own arguments, and the VAR=value a caller puts first", () => {
+        const { status, out } = wrapped([
+            "PROBE_VALUE=a b",
+            "tsx", "-e", "console.log(JSON.stringify([process.env.PROBE_VALUE, ...process.argv.slice(1)]))",
+            "one", "two words",
+        ]);
+        expect(status).toBe(0);
+        expect(JSON.parse(out.trim())).toEqual(["a b", "one", "two words"]);
+    });
+
+    it("passes the command's exit code back to whoever ran it", () => {
+        expect(wrapped(["tsx", "-e", "process.exit(7)"]).status).toBe(7);
+    });
+
+    it("leaves every script one that starts on every platform", () => {
+        // node:24-alpine ships busybox ash and no bash, and Windows runs npm
+        // scripts with cmd.exe, which has neither `sh` nor `rm -rf` nor a
+        // `VAR=value cmd` prefix. The wrapper is a Node script for that reason:
+        // it was `sh scripts/with-scratch.sh`, and no test, dev server or build
+        // started on a Windows machine.
+        const posixOnly = Object.entries(scripts)
+            .filter(([name]) => !(name in RUNS_ON_A_LINUX_HOST))
+            .filter(([, command]) => /(^|&&\s*)(sh|bash) |\brm -rf\b|(^|&&\s*)[A-Z_]+=\S+ /.test(command))
+            .map(([name, command]) => `${name}: ${command}`);
+        expect(posixOnly).toEqual([]);
     });
 
     it("sweeps the scratch directory when the tree is cleaned", () => {
