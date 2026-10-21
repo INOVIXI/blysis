@@ -18,7 +18,6 @@ const ENTRY = {
     SERVER: "@/core/sdk/server",
     AUTH: "@/core/sdk/auth",
     NAV: "@/core/sdk/navigation",
-    BLOCKS: "@/core/sdk/blocks",
     THEME: "@/core/sdk/theme",
     UI: "@/core/sdk/ui",
     LAYOUT: "@/core/sdk/layout",
@@ -101,7 +100,6 @@ const LIB_MAP: Record<string, Record<string, Entry>> = {
     "i18n/navigation": {
         Link: ENTRY.NAV, useRouter: ENTRY.NAV, redirect: ENTRY.NAV, usePathname: ENTRY.NAV,
     },
-    "blocks-merger": { buildMergedBlockConfig: ENTRY.BLOCKS },
 };
 
 /**
@@ -161,7 +159,7 @@ function renderImports(byEntry: Map<Entry, Specifier[]>): string {
     // missing, which silently deletes the import instead of rewriting it.
     const order: Entry[] = [
         ENTRY.ISO, ENTRY.SERVER, ENTRY.AUTH, ENTRY.NAV,
-        ENTRY.UI, ENTRY.LAYOUT, ENTRY.ADMIN, ENTRY.THEME, ENTRY.BLOCKS,
+        ENTRY.UI, ENTRY.LAYOUT, ENTRY.ADMIN, ENTRY.THEME,
     ];
     const missing = [...byEntry.keys()].filter((e) => !order.includes(e));
     if (missing.length > 0) {
