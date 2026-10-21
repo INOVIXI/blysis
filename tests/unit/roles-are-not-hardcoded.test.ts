@@ -25,25 +25,17 @@ import { STAFF_ROLE_PRIORITY } from "@/core/lib/constants";
 const ROOT = path.resolve(__dirname, "../..");
 const read = (p: string) => fs.readFileSync(path.join(ROOT, p), "utf8");
 
+/**
+ * What isStaff answers - not by a name, by priority from the session or the
+ * database - is permissions.test.ts. This holds the number it compares
+ * against to one place.
+ */
 describe("what counts as staff", () => {
     const permissions = read("src/core/lib/permissions.ts");
 
     it("is one number, named once", () => {
-        expect(STAFF_ROLE_PRIORITY).toBe(50);
         expect(permissions).toContain("STAFF_ROLE_PRIORITY");
-        expect(permissions).not.toMatch(/>=\s*50\b/);
-    });
-
-    it("never turns on a role name other than admin", () => {
-        const fn = permissions.slice(permissions.indexOf("export async function isStaff"));
-        const body = fn.slice(0, fn.indexOf("\n}"));
-        expect(body).toContain('sessionRole === "admin"');
-        expect(body).not.toContain('"moderator"');
-    });
-
-    it("lets a caller answer from the session without a query", () => {
-        const fn = permissions.slice(permissions.indexOf("export async function isStaff"));
-        expect(fn.slice(0, fn.indexOf("\n}"))).toContain("sessionPriority >= STAFF_ROLE_PRIORITY");
+        expect(permissions).not.toMatch(new RegExp(`>=\\s*${STAFF_ROLE_PRIORITY}\\b`));
     });
 
     it("is measured the same way everywhere", () => {
