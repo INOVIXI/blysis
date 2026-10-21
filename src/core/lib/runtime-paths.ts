@@ -35,10 +35,19 @@ export const PROJECT_ROOT = CWD;
  *
  * The id check stays: this is the second lock, not a replacement for the
  * first.
+ *
+ * Containment is decided by `path.relative` rather than a string prefix. The
+ * prefix test refused every child of a filesystem root, on every platform:
+ * `/` or `C:\` already ends in a separator, so the root plus one more is a
+ * prefix of nothing. `path.relative` answers `..` for anything that climbs
+ * out, and an absolute path when there is no relative route at all, as for
+ * another drive or another UNC share. A child literally named `..foo` is
+ * still inside, which is why the climb is tested as a whole segment.
  */
 export function resolveWithin(root: string, ...segments: string[]): string | null {
     const base = path.resolve(root);
     const target = path.resolve(base, ...segments);
-    if (target !== base && !target.startsWith(base + path.sep)) return null;
+    const relative = path.relative(base, target);
+    if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) return null;
     return target;
 }

@@ -27,6 +27,7 @@
 import "dotenv/config";
 import fs from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
@@ -189,7 +190,10 @@ async function loadSeed(id: string): Promise<ModuleSeed | null> {
     if (!dir) return null;
     const file = path.join(dir, "seed.ts");
     if (!fs.existsSync(file)) return null;
-    const loaded = (await import(file)) as { seed?: ModuleSeed; default?: ModuleSeed };
+    // A URL, not the path: on Windows an absolute path starts with a drive
+    // letter, which the ESM loader reads as a URL scheme it does not support,
+    // so every seed failed to load before the list printed.
+    const loaded = (await import(pathToFileURL(file).href)) as { seed?: ModuleSeed; default?: ModuleSeed };
     const seed = loaded.seed ?? loaded.default;
     if (!seed || typeof seed.run !== "function") {
         throw new Error(`${id}/seed.ts exports no seed with a run()`);

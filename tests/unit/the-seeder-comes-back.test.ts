@@ -2,6 +2,7 @@
 import { describe, expect, it } from "vitest";
 import { execFile } from "node:child_process";
 import { join } from "node:path";
+import { toolCommand } from "@/core/lib/tool-command";
 
 /**
  * A command that has finished ends.
@@ -20,8 +21,7 @@ describe("the seeder comes back", () => {
         const root = join(__dirname, "..", "..");
         const code = await new Promise<number>((resolve, reject) => {
             const child = execFile(
-                join(root, "node_modules/.bin/tsx"),
-                ["scripts/seed-demo.ts", "--list"],
+                ...toolCommand(["npx", "tsx", "scripts/seed-demo.ts", "--list"], root),
                 { cwd: root, timeout: 45_000 },
                 (err) => {
                     if (err && (err as { killed?: boolean }).killed) reject(new Error("did not exit"));

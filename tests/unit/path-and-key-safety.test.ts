@@ -23,10 +23,11 @@
  */
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync } from "fs";
-import { join, relative } from "path";
+import { join, resolve } from "path";
 import { resolveWithin } from "@/core/lib/runtime-paths";
 import { stripHtmlTags } from "@/core/lib/utils";
 import { isUnsafeKey, emptyRecord } from "@/core/lib/safe-object";
+import { relativePath } from "./source-text";
 
 const ROOT = join(__dirname, "../..");
 const SCANNED = ["src", "scripts", "module-sources"];
@@ -48,7 +49,7 @@ function scanned(): { rel: string; source: string }[] {
     for (const dir of SCANNED) {
         for (const full of sourceFiles(join(ROOT, dir))) {
             files.push({
-                rel: relative(ROOT, full).replace(/\\/g, "/"),
+                rel: relativePath(ROOT, full).replace(/\\/g, "/"),
                 source: readFileSync(full, "utf-8"),
             });
         }
@@ -56,9 +57,15 @@ function scanned(): { rel: string; source: string }[] {
     return files;
 }
 
+// The answer is a native path, because every caller hands it to `fs`. On
+// Windows the root lands on the current drive with backslashes, so the
+// expectation is spelled the way the platform spells it; on Linux it is
+// exactly "/srv/app/modules".
+const MODULES_ROOT = resolve("/srv/app/modules");
+
 describe("resolveWithin", () => {
     it("returns a path inside the root", () => {
-        expect(resolveWithin("/srv/app/modules", "blog")).toBe("/srv/app/modules/blog");
+        expect(resolveWithin("/srv/app/modules", "blog")).toBe(join(MODULES_ROOT, "blog"));
     });
 
     it("refuses a segment that climbs out", () => {
@@ -76,7 +83,15 @@ describe("resolveWithin", () => {
     });
 
     it("allows the root itself", () => {
-        expect(resolveWithin("/srv/app/modules", ".")).toBe("/srv/app/modules");
+        expect(resolveWithin("/srv/app/modules", ".")).toBe(MODULES_ROOT);
+    });
+
+    it("allows a child whose name only starts with two dots", () => {
+        expect(resolveWithin("/srv/app/modules", "..blog")).toBe(join(MODULES_ROOT, "..blog"));
+    });
+
+    it("allows a child of a filesystem root", () => {
+        expect(resolveWithin("/", "srv")).toBe(join(resolve("/"), "srv"));
     });
 });
 
