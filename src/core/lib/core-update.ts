@@ -50,12 +50,12 @@ const PROGRESS_FILE = "progress.log";
 const HEARTBEAT_FILE = "heartbeat";
 
 function statePath(name: string): string {
-    return path.join(stateDir(), name);
+    return path.join(/* turbopackIgnore: true */ stateDir(), name);
 }
 
 async function readSmall(name: string, max = 64 * 1024): Promise<string | null> {
     try {
-        const raw = await fs.readFile(statePath(name), "utf8");
+        const raw = await fs.readFile(/* turbopackIgnore: true */ statePath(name), "utf8");
         return raw.slice(0, max).trim();
     } catch {
         return null;
