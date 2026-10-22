@@ -82,10 +82,10 @@ export default async function BlogArticlePage({ params }: PageProps) {
     const dateTag = dateLocaleTag(await getLocale());
 
     // A share link has to be absolute or it shares nothing: the old fallback
-    // was the empty string, which handed Twitter and Facebook a path with no
+    // was the empty string, which handed X and Facebook a path with no
     // host on any install that had not set AUTH_URL.
     const articleUrl = `${resolveAppUrl()}/blog/${article.number}/${article.slug}`;
-    const shareTwitter = `https://twitter.com/intent/tweet?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(article.title)}`;
+    const shareX = `https://x.com/intent/post?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(article.title)}`;
     const shareFacebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`;
 
     const articleJsonLd = buildArticleJsonLd({
@@ -149,12 +149,12 @@ export default async function BlogArticlePage({ params }: PageProps) {
                         <h2 className="font-bold text-foreground mb-4">{t("share")}</h2>
                         <div className="flex gap-2">
                             <a
-                                href={shareTwitter}
+                                href={shareX}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={buttonClassName("default", "default", "flex-1")}
                             >
-                                Twitter
+                                X
                             </a>
                             <a
                                 href={shareFacebook}
