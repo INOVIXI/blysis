@@ -10,6 +10,7 @@ import { runChallenge } from "@/core/lib/auth-challenge";
 import { resolveAppUrl } from "@/core/lib/app-url";
 import { challengeFieldsFrom } from "@/core/lib/auth-challenge-shared";
 import { log } from "@/core/lib/logger";
+import { accountFor } from "@/core/lib/login-identifier";
 
 const GENERIC_OK = { message: "If an account exists, a reset link has been sent." };
 
@@ -66,7 +67,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(GENERIC_OK);
         }
 
-        const user = await prisma.user.findUnique({ where: { email }, select: { id: true, isBanned: true, isDeleted: true, locale: true } });
+        // However the address was capitalised when it registered: a lookup
+        // for the lowercased value alone never found an account stored as
+        // `Admin@Example.com`, and its owner was told a link had been sent.
+        const account = await accountFor({ email }, prisma);
+        const user = account
+            ? await prisma.user.findUnique({ where: { id: account.id }, select: { id: true, isBanned: true, isDeleted: true, locale: true } })
+            : null;
 
         // Build the token unconditionally so the response time is (roughly)
         // constant whether or not the email belongs to a real account.
