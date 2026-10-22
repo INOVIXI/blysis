@@ -1,0 +1,77 @@
+name: PR Size
+
+# Labels each pull request with the size of what a reviewer has to read.
+# CONTRIBUTING asks for one problem per pull request; the label makes a PR that
+# grew past that visible before anyone opens it.
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-size-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  label:
+    name: Label PR size
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      # pull_request_target runs with a write token, so it checks out the base
+      # branch only, for labels.json, and reads the PR's changes through the
+      # API. The PR's own code never reaches this runner.
+      - uses: actions/checkout@v7
+
+      - name: Apply the size label
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require("node:fs");
+            const { sizes } = JSON.parse(fs.readFileSync(".github/labels.json", "utf8"));
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+
+            // Tests are counted only when a PR is nothing else. Generated
+            // files are never counted: the lockfile, and what
+            // `npm run build:marketplace` writes from module-sources.
+            const isTest = (f) => /^tests\//.test(f) || /\.(test|spec)\.[cm]?[jt]sx?$/.test(f);
+            const isGenerated = (f) =>
+              f === "package-lock.json" ||
+              /^module-marketplace\/(.*\.zip|index\.json|manifest-schema\.json)$/.test(f);
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner, repo, pull_number: issue_number, per_page: 100,
+            });
+            let code = 0;
+            let tests = 0;
+            for (const f of files) {
+              if (isGenerated(f.filename)) continue;
+              const lines = f.additions + f.deletions;
+              if (isTest(f.filename)) tests += lines;
+              else code += lines;
+            }
+            const counted = code === 0 ? tests : code;
+            const next = sizes.find((s) => s.maxLines === null || counted <= s.maxLines).name;
+
+            const { data: current } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number, per_page: 100,
+            });
+            const managed = new Set(sizes.map((s) => s.name));
+            for (const label of current) {
+              if (!managed.has(label.name) || label.name === next) continue;
+              try {
+                await github.rest.issues.removeLabel({ owner, repo, issue_number, name: label.name });
+              } catch (err) {
+                if (err.status !== 404) throw err;
+              }
+            }
+            if (!current.some((label) => label.name === next)) {
+              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [next] });
+            }
+            core.info(`#${issue_number}: ${code} lines of code, ${tests} of tests, ${files.length} files -> ${next}`);

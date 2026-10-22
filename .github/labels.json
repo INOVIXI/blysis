@@ -1,0 +1,18 @@
+{
+    "labels": [
+        { "name": "bug", "color": "d73a4a", "description": "Something is broken or behaves incorrectly." },
+        { "name": "enhancement", "color": "a2eeef", "description": "A requested improvement or new capability." },
+        { "name": "documentation", "color": "0075ca", "description": "Docs, guides or comments only." },
+        { "name": "dependencies", "color": "0366d6", "description": "A dependency update." },
+        { "name": "ci", "color": "ededed", "description": "Workflows and the actions they use." },
+        { "name": "triage:keep-open", "color": "5319e7", "description": "A maintainer is deciding this; triage must not close it." }
+    ],
+    "sizes": [
+        { "name": "size:XS", "color": "0e8a16", "maxLines": 9, "description": "Under 10 changed lines, not counting tests or generated files." },
+        { "name": "size:S", "color": "5ebd3e", "maxLines": 29, "description": "10 to 29 changed lines, not counting tests or generated files." },
+        { "name": "size:M", "color": "fbca04", "maxLines": 99, "description": "30 to 99 changed lines, not counting tests or generated files." },
+        { "name": "size:L", "color": "fe7d37", "maxLines": 499, "description": "100 to 499 changed lines, not counting tests or generated files." },
+        { "name": "size:XL", "color": "d93f0b", "maxLines": 999, "description": "500 to 999 changed lines, not counting tests or generated files." },
+        { "name": "size:XXL", "color": "b60205", "maxLines": null, "description": "1,000 or more changed lines, not counting tests or generated files." }
+    ]
+}
