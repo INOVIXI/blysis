@@ -215,12 +215,12 @@ export default function SiteSettingsPage() {
                                 />
                             </div>
                             <div>
-                                <Label>Twitter / X</Label>
+                                <Label>X</Label>
                                 <Input
-                                    aria-label="Twitter / X"
+                                    aria-label="X"
                                     value={form.socialTwitter}
                                     onChange={(e) => setForm({ ...form, socialTwitter: e.target.value })}
-                                    placeholder="https://twitter.com/..."
+                                    placeholder="https://x.com/..."
                                 />
                             </div>
                             <div>

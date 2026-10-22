@@ -163,7 +163,7 @@ function DefaultFooter() {
                                 </a></li>
                             )}
                             {serverConfig.social.twitter && (
-                                <li><a href={serverConfig.social.twitter} target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center transition-colors text-xs font-bold">
+                                <li><a href={serverConfig.social.twitter} target="_blank" rel="noopener noreferrer" aria-label="X" className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center transition-colors text-xs font-bold">
                                     <span aria-hidden="true">X</span>
                                 </a></li>
                             )}
