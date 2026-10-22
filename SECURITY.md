@@ -7,8 +7,9 @@ the latest `main` and the most recent tagged release only.
 
 | Version | Supported |
 |---------|-----------|
-| latest `main` | :white_check_mark: |
-| older tags | :x: |
+| latest `main` | yes |
+| the latest release | yes |
+| older releases | no |
 
 ## Reporting a Vulnerability
 
