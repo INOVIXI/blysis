@@ -4,9 +4,11 @@
  * This module uses the hosted checkout rather than the merchant API: the
  * payment is a link, and the only credential that has to exist on the server
  * is the IPN secret used to verify what comes back. That is a smaller secret
- * to hold than an API key pair, and it is the one that actually protects the
- * store - a forged IPN is the only way a hosted checkout can be abused.
+ * to hold than an API key pair. It has two jobs, because a hosted checkout
+ * can be abused two ways: a forged IPN, which the signature refuses, and a
+ * real payment from a link the buyer edited, which `checkoutBinding` refuses.
  */
+import crypto from "crypto";
 import { readSettingStrings } from "@/core/sdk/server";
 
 export const COINPAYMENTS_CHECKOUT = "https://www.coinpayments.net/index.php";
@@ -37,6 +39,24 @@ export async function getCoinPaymentsConfig(): Promise<CoinPaymentsConfig | null
 export async function isCoinPaymentsConfigured(): Promise<boolean> {
     const config = await getCoinPaymentsConfig();
     return config !== null && config.ipnSecret !== null;
+}
+
+/**
+ * What a checkout link was made for, under the IPN secret.
+ *
+ * The amount and currency of a hosted checkout are query parameters the
+ * buyer's browser holds, and CoinPayments charges whatever they say. An IPN
+ * for a payment of a cent is as genuinely signed as one for the full price,
+ * so the signature proves who sent it and nothing about what was owed. This
+ * travels as `custom`, which CoinPayments echoes back, and an IPN is settled
+ * only when its reference, amount and currency still produce it.
+ * `tests/modules/coinpayments-gateway/a-checkout-pays-the-amount-it-was-given.test.ts`.
+ */
+export function checkoutBinding(secret: string, reference: string, amount: number, currency: string): string {
+    return crypto
+        .createHmac("sha256", secret)
+        .update(`${reference}|${amount.toFixed(2)}|${currency.toUpperCase()}`)
+        .digest("hex");
 }
 
 /** The fiat currencies CoinPayments prices a hosted checkout in. */
