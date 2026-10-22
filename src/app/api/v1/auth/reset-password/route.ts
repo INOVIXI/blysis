@@ -12,6 +12,7 @@ import { checkPasswordBreach } from "@/core/lib/password-breach";
 import { enforcePasswordPolicy } from "@/core/lib/security-settings";
 import { log } from "@/core/lib/logger";
 import { revokeSessionsFor } from "@/core/lib/session-registry";
+import { accountFor } from "@/core/lib/login-identifier";
 
 /**
  * The three fields a reset carries. `password` is bounded here only so an
@@ -82,7 +83,10 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Invalid or expired reset token", code: "invalid_token" }, { status: 400 });
         }
 
-        const user = await prisma.user.findUnique({ where: { email } });
+        // The token was issued for the lowercased address; the account may
+        // have registered it with capitals. Found the way sign-in finds it.
+        const account = await accountFor({ email }, prisma);
+        const user = account ? await prisma.user.findUnique({ where: { id: account.id } }) : null;
         if (!user || user.isBanned || user.isDeleted) {
             return NextResponse.json({ error: "Invalid or expired reset token", code: "invalid_token" }, { status: 400 });
         }

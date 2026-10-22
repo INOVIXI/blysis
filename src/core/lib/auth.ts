@@ -3,7 +3,7 @@ import { cache } from "react";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { impersonationRefusal } from "./impersonation";
-import { identifierLookup } from "./login-identifier";
+import { accountFor, identifierLookup } from "./login-identifier";
 import { REFUSAL_CODE } from "./login-refusal";
 import { loginAllowedFrom, noteFailedLoginFrom } from "./login-throttle";
 import { CALLBACK_URL_COOKIE, CSRF_TOKEN_COOKIE, SECURE_SESSION_COOKIES, SESSION_TOKEN_COOKIE } from "./session-cookie";
@@ -182,10 +182,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     );
                 }
 
-                const user = await prisma.user.findUnique({
-                    where: lookup,
-                    include: { role: true },
-                });
+                const account = await accountFor(lookup, prisma);
+                const user = account
+                    ? await prisma.user.findUnique({ where: { id: account.id }, include: { role: true } })
+                    : null;
 
                 if (!user || !user.password) {
                     // An address that does not exist here is still a guess,

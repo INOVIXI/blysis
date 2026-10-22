@@ -52,7 +52,11 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { email, username, password } = validation.data;
+        const { username, password } = validation.data;
+        // Stored lowercased, as an admin-created account already is: the reset
+        // routes lowercase what they are given, and an address kept with its
+        // capitals was one they could never find.
+        const email = validation.data.email.trim().toLowerCase();
 
         // Whatever module owns the auth.form.challenge slot gets to refuse
         // here, before an account exists. With none installed the filter has
@@ -137,7 +141,7 @@ export async function POST(request: NextRequest) {
         // so we don't burn bcrypt cycles on a doomed insert. Concurrent
         // duplicates still race through the unique-constraint catch below.
         const existingUser = await prisma.user.findFirst({
-            where: { email },
+            where: { email: { equals: email, mode: "insensitive" } },
             select: { id: true },
         });
 
