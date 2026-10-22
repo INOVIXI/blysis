@@ -295,6 +295,23 @@ jobs:
           docker compose exec -T app sh -c 'test -f .next/BUILD_ID && test ! -e .next/.staging && test ! -e .next/.previous' \
             || { echo "the failed build left something behind in .next"; exit 1; }
 
+      # Every dump lands in the backups volume: the nightly one, the panel's,
+      # and the one an update from the panel takes before it starts. The
+      # image did not create that directory, so the volume came up owned by
+      # root, the app could not write a single backup, and the pre-update
+      # dump failed on every install. Taken here as the app's own user.
+      - name: A backup and a restore from inside the image
+        run: |
+          set -euo pipefail
+          docker compose exec -T app sh -c 'npm run db:backup -- "ci" && ls -l backups'
+          id=$(docker compose exec -T app sh -c 'ls backups | grep "^blysis-manual-" | head -1 | sed "s/\.sql\.gz$//"')
+          echo "backup id: $id"
+          [ -n "$id" ] || { echo "no backup was written"; exit 1; }
+          docker compose exec -T app sh -c "echo restore | npm run db:restore -- $id"
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3001/api/v1/blog/articles)
+          echo "status after restore: $code"
+          [ "$code" = "200" ] || { echo "the site did not answer after the restore"; exit 1; }
+
       - name: Dump logs on failure
         if: failure()
         run: docker compose logs --tail=200

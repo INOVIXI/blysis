@@ -115,7 +115,12 @@ COPY --from=builder --chown=nextjs:nodejs /app/module-sources ./module-sources
 COPY --from=builder --chown=nextjs:nodejs /app/messages-core ./messages-core
 
 # src/modules starts empty; admin installs from /admin/modules after boot.
-RUN mkdir -p src/modules && chown -R nextjs:nodejs src/modules
+# backups is where every dump is written: the nightly one, the panel's and
+# the one taken before an update. Both are volume mount points, and Docker
+# gives a new volume the owner of the directory it is mounted over. Without
+# the directory in the image that owner was root, nothing running as nextjs
+# could write a backup, and an update from the panel refused to start.
+RUN mkdir -p src/modules backups && chown -R nextjs:nodejs src/modules backups
 
 # WORKDIR creates /app owned by root. `next build` writes next-env.d.ts and
 # touches tsconfig.json at the project root, so the rebuild path needs the
