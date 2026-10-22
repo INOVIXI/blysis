@@ -241,7 +241,7 @@ declare global {
         /** Which gateway is being asked. Everyone else ignores the call. */
         provider: string;
         kind: PaymentKind;
-        /** The order id, or the credit purchase id. Comes back on settlement. */
+        /** The order id, or the top-up id. Comes back on settlement. */
         reference: string;
         /** Major units, as the buyer sees it. Gateways convert to minor units. */
         amount: number;
@@ -279,14 +279,27 @@ declare global {
     }
 
     interface PaymentSettlement {
+        /**
+         * What the gateway believes the payment was for. The store reads it
+         * from its own rows by `reference` instead: most gateways have no
+         * field to carry it and send "order" for everything.
+         */
         kind: PaymentKind;
         /** The reference the session was started with. */
         reference: string;
         provider: string;
         /** The gateway's id for the money that moved. */
         providerRef: string;
-        amount: number;
-        currency: string;
+        /**
+         * What the provider says arrived, in major units, read from the
+         * provider and never from the buyer. The store refuses a settlement
+         * for less than it charged. Null only when the provider's report
+         * carries no amount at all, so the gateway relies on having fixed it
+         * when the session started, behind a signature.
+         */
+        amount: number | null;
+        /** ISO 4217. Null on the same terms as `amount`. */
+        currency: string | null;
         metadata?: Record<string, string>;
     }
 

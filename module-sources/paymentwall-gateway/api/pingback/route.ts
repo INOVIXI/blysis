@@ -49,8 +49,10 @@ export async function GET(request: NextRequest) {
             reference,
             provider: "paymentwall",
             providerRef: params.ref ?? reference,
-            amount: Number(params.amount ?? 0),
-            currency: (params.currency ?? "USD").toUpperCase(),
+            // A digital goods pingback carries no amount. The widget URL was
+            // signed with it, so Paymentwall charged what the store asked.
+            amount: params.amount ? Number(params.amount) : null,
+            currency: params.currency ? params.currency.toUpperCase() : null,
         });
         if (!outcome.handled) {
             log.error("[paymentwall-gateway] nothing settled a delivered payment", { reference });

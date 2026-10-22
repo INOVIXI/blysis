@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.47.0",
+  "version": "2.48.0",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -10889,6 +10889,12 @@
     {
       "model": "subscription",
       "key": "store.subscriptions",
+      "column": "userId",
+      "erasure": "retain"
+    },
+    {
+      "model": "creditTopUp",
+      "key": "store.creditTopUps",
       "column": "userId",
       "erasure": "retain"
     },

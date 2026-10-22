@@ -10,29 +10,33 @@
 import { Prisma } from "@prisma/client";
 import { prisma, log, grantRole } from "@/core/sdk/server";
 import { sendOrderConfirmationEmail } from "./order-email";
-import { applyFiltersAsync, doActionAsync } from "@/core/sdk";
 import { deliverPaidOrder } from "./credit-order";
 import { announceOrderCompleted } from "./order-events";
 import { claimStock, releaseStock, stockClaims } from "./stock";
 import { countSales, uncountSales } from "./popularity";
 import { extendedExpiry } from "./ownership";
 import { recordedPlayerName, recordedVariables } from "./chest";
-
-const OK: PaymentOutcome = { handled: true, duplicate: false, error: null };
-const ALREADY: PaymentOutcome = { handled: true, duplicate: true, error: null };
-
-function failed(error: string): PaymentOutcome {
-    return { handled: true, duplicate: false, error };
-}
+import { chargeShortfall } from "./charge";
+import { cancelTopUp, findTopUp, settleCredits } from "./credit-top-up";
+import { ALREADY, OK, failed, refused } from "./payment-outcome";
 
 /**
- * The ledger row id for one credit purchase.
+ * Settles whatever the reference names: a top-up, or else an order.
  *
- * Deterministic on purpose: it is the idempotency key for a top-up, enforced
- * by the primary key rather than by a search that two callers can both lose.
+ * What a payment was for is read from the store's own rows, never from the
+ * `kind` a gateway reported. Most gateways have no field to carry it in and
+ * report everything as an order, which sent every top-up through them looking
+ * for an order with the buyer's id.
  */
-function creditLedgerId(provider: string, providerRef: string): string {
-    return `credit:${provider}:${providerRef}`;
+export async function settlePayment(settlement: PaymentSettlement): Promise<PaymentOutcome> {
+    const topUp = await findTopUp(settlement.reference);
+    return topUp ? settleCredits(settlement, topUp) : settleOrder(settlement);
+}
+
+/** The buyer never paid. Read from the store's rows for the same reason as `settlePayment`. */
+export async function cancelPayment(reference: string): Promise<PaymentOutcome> {
+    const topUp = await findTopUp(reference);
+    return topUp ? cancelTopUp(topUp) : voidOrder(reference);
 }
 
 /**
@@ -98,9 +102,40 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
         where: { id: settlement.reference },
         include: { user: { select: { email: true, username: true, locale: true } }, items: true },
     });
-    if (!order) return failed("unknown order");
+    if (!order) {
+        // Handled, so the provider stops retrying a reference that will never
+        // exist, but loud: money arrived for it, and the gateway logs only
+        // what was not handled. A top-up started before top-ups were written
+        // down carries the buyer's id here.
+        log.error("[store] a payment arrived for nothing the store knows", {
+            reference: settlement.reference,
+            provider: settlement.provider,
+            providerRef: settlement.providerRef,
+            amount: settlement.amount,
+            currency: settlement.currency,
+        });
+        return failed("unknown order");
+    }
     // Webhooks retry, and a buyer can reload a return URL. Both arrive here.
     if (order.status === "COMPLETED") return ALREADY;
+
+    // What checkout asked the gateway to collect, converted and grossed up as
+    // it was charged. An order placed before checkout wrote it down has
+    // nothing to be held against, and settles as it always did.
+    const charge =
+        order.chargeAmount != null && order.chargeCurrency != null
+            ? { amount: Number(order.chargeAmount), currency: order.chargeCurrency }
+            : null;
+    const shortfall = charge ? chargeShortfall(charge, settlement) : null;
+    if (shortfall) {
+        log.error("[store] an order was paid for with less than it was charged", {
+            orderId: order.id,
+            provider: settlement.provider,
+            providerRef: settlement.providerRef,
+            shortfall,
+        });
+        return refused(`payment does not match the charge: ${shortfall}`);
+    }
 
     // Order.userId is nullable: the account can be deleted between paying and
     // the webhook landing. The order is still paid, so it stays COMPLETED, but
@@ -245,8 +280,10 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
                 orderId: settlement.reference,
                 provider: settlement.provider,
                 providerId: settlement.providerRef,
-                amount: settlement.amount,
-                currency: settlement.currency.toLowerCase(),
+                // What the provider reported, or, when it reports nothing, what
+                // was charged: the settlement passed the check above either way.
+                amount: settlement.amount ?? charge?.amount ?? Number(order.total),
+                currency: (settlement.currency ?? charge?.currency ?? order.currency).toLowerCase(),
                 status: "COMPLETED",
                 ...(settlement.metadata ? { metadata: settlement.metadata } : {}),
             },
@@ -316,64 +353,6 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
     ).catch((error) => log.error("[store] delivery failed", { orderId: order.id, error: String(error) }));
 
     await announceOrderCompleted(order.id);
-    return OK;
-}
-
-
-/**
- * Settles a wallet top-up.
- *
- * The credit amount is what the store asked the gateway to carry, not what the
- * buyer's browser said: it is read back out of the session metadata the store
- * itself wrote.
- */
-export async function settleCredits(settlement: PaymentSettlement): Promise<PaymentOutcome> {
-    const userId = settlement.metadata?.userId;
-    const credits = Number(settlement.metadata?.creditAmount ?? 0);
-    if (!userId || !(credits > 0)) return failed("credit purchase is missing its amount or buyer");
-
-    // The gateway's own id for the money is the idempotency key, and the
-    // ledger row's primary key is where it is enforced.
-    //
-    // Looking for the row first and writing after did not close anything: a
-    // gateway retry and a reloaded return URL arriving together both found no
-    // row - the search was `description: { contains: … }`, a scan of the whole
-    // ledger at that - and both credited the account. Giving the row a
-    // deterministic id makes the second insert a duplicate key, and the
-    // transaction takes the balance increment down with it. There is no read
-    // before it either: the ledger belongs to the module that keeps it, and
-    // the duplicate is the answer rather than a second opinion about it.
-    const ledgerId = creditLedgerId(settlement.provider, settlement.providerRef);
-
-    try {
-        // The wallet is another module's; the transaction is this one's, and
-        // the deterministic id goes with the request so the duplicate key
-        // still aborts it.
-        await prisma.$transaction(async (tx) => {
-            await applyFiltersAsync("credit.change", { applied: false }, {
-                tx,
-                userId,
-                amount: credits,
-                type: "credit_purchase",
-                description: `Purchased ${credits} credits via ${settlement.provider} (${settlement.providerRef})`,
-                ledgerId,
-            });
-        });
-    } catch (error) {
-        // P2002 is the unique constraint: the other delivery won the race.
-        if (error && typeof error === "object" && "code" in error && (error as { code: unknown }).code === "P2002") {
-            return ALREADY;
-        }
-        throw error;
-    }
-
-    // Told once, after the money is on the account: a retry that lost the
-    // race above returned already and says nothing.
-    await doActionAsync("store.credits.purchased", { userId, amount: credits }).catch((error: unknown) => {
-        log.warn("[store] a credit purchase could not be announced", {
-            error: error instanceof Error ? error.message : String(error),
-        });
-    });
     return OK;
 }
 

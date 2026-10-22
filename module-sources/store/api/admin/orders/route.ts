@@ -104,8 +104,10 @@ export async function POST(request: NextRequest) {
         reference: order.id,
         provider: "manual",
         providerRef: `manual:${order.id}`,
-        amount: total,
-        currency: order.currency,
+        // An order entered by hand has no charge to be held against; the
+        // payment records its total.
+        amount: null,
+        currency: null,
     });
     if (!settled.handled) {
         log.error("Manual order could not be settled", { orderId: order.id });
