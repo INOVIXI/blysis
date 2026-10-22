@@ -2,7 +2,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { latestRelease, parseReleases } from "@/core/lib/core-releases";
+import { isNewerVersion, latestRelease, parseReleases, stageOf } from "@/core/lib/core-releases";
 
 /**
  * The release feed offers the release this tree is.
@@ -15,7 +15,8 @@ import { latestRelease, parseReleases } from "@/core/lib/core-releases";
  * A release commit bumps `package.json`, so the feed is held to that, read
  * through the same parser the update screen uses: no entry is one the parser
  * would quietly drop, and an installation on the oldest listed release is
- * offered exactly the version the tree says it is.
+ * offered exactly the version the tree says it is, on the channel that
+ * version belongs to: a beta tree is offered to the sites that follow betas.
  */
 
 const ROOT = path.resolve(import.meta.dirname, "../..");
@@ -29,7 +30,8 @@ describe("the release feed", () => {
     });
 
     it("offers the oldest listed installation the version package.json says this tree is", () => {
-        const oldest = releases.map((r) => r.version).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))[0];
-        expect(latestRelease(releases, oldest, "stable")?.version).toBe(pkg.version);
+        const oldest = releases.map((r) => r.version).reduce((a, b) => (isNewerVersion(b, a) ? b : a));
+        const channel = stageOf(pkg.version) === "stable" ? "stable" : "beta";
+        expect(latestRelease(releases, oldest, channel)?.version).toBe(pkg.version);
     });
 });

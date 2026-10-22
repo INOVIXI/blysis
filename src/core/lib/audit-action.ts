@@ -47,6 +47,7 @@ const CORE_AUDIT_NAMES: Record<string, string> = {
     "backup.restore": "auditBackupRestore",
     "broadcast.create": "auditBroadcastCreate",
     "broadcast.send": "auditBroadcastSend",
+    "core.update.channel": "auditUpdateChannel",
     "core.update.request": "auditUpdateRequest",
     "ip-block.create": "auditIpBlockCreate",
     "ip-block.delete": "auditIpBlockDelete",
