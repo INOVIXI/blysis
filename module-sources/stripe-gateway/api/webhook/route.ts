@@ -11,6 +11,7 @@ import { applyFiltersAsync } from "@/core/sdk";
 import { log } from "@/core/sdk/server";
 import Stripe from "stripe";
 import { getStripe, getStripeWebhookSecret } from "../../lib/stripe";
+import { fromStripeAmount } from "../../lib/minor-units";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
                     reference,
                     provider: "stripe",
                     providerRef: (session.payment_intent as string) ?? session.id,
-                    amount: (session.amount_total ?? 0) / 100,
+                    amount: fromStripeAmount(session.amount_total ?? 0, session.currency ?? "usd"),
                     currency: session.currency ?? "usd",
                     metadata: (session.metadata ?? {}) as Record<string, string>,
                 }),
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
                 await applyFiltersAsync("payment.refunded", UNHANDLED, {
                     provider: "stripe",
                     providerRef: paymentIntentId,
-                    amount: (charge.amount_refunded ?? 0) / 100,
+                    amount: fromStripeAmount(charge.amount_refunded ?? 0, charge.currency),
                 }),
             );
         }

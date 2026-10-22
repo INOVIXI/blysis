@@ -9,6 +9,7 @@
 import type { HookHandlerFor } from "@/core/sdk";
 import { prisma, log } from "@/core/sdk/server";
 import { getStripe, getStripeEnabled } from "../lib/stripe";
+import { toStripeAmount } from "../lib/minor-units";
 
 /** Everything Stripe is told about a payment, in the shape it wants. */
 function baseParams(request: PaymentSessionRequest): Record<string, unknown> {
@@ -51,7 +52,7 @@ async function priceFor(
     if (known && known.signature === signature) return known.priceId;
 
     const price = await (await getStripe()).prices.create({
-        unit_amount: Math.round(request.amount * 100),
+        unit_amount: toStripeAmount(request.amount, request.currency),
         currency: request.currency.toLowerCase(),
         recurring: { interval: recurring.interval, interval_count: recurring.intervalCount },
         product_data: { name: request.description },
@@ -70,7 +71,7 @@ async function discountParams(request: PaymentSessionRequest): Promise<Record<st
     const discount = Number(request.metadata.discount ?? 0);
     if (!(discount > 0)) return {};
     const coupon = await (await getStripe()).coupons.create({
-        amount_off: Math.round(discount * 100),
+        amount_off: toStripeAmount(discount, request.currency),
         currency: request.currency.toLowerCase(),
         duration: "once",
     });
@@ -102,7 +103,7 @@ const onPaymentSession: HookHandlerFor<"payment.session", "filter"> = async (res
                 price_data: {
                     currency: request.currency.toLowerCase(),
                     product_data: { name: line.name },
-                    unit_amount: Math.round(line.unitAmount * 100),
+                    unit_amount: toStripeAmount(line.unitAmount, request.currency),
                 },
                 quantity: line.quantity,
             }));
