@@ -1,0 +1,50 @@
+name: Labels
+
+# The labels the issue templates, Dependabot, the triage skill and the PR size
+# job apply are defined in .github/labels.json. GitHub silently drops a label
+# that does not exist, which is how every Dependabot PR went unlabelled: its
+# config asked for `dependencies` and `ci`, and neither had been created.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/labels.json
+      - .github/workflows/labels.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: Sync label definitions
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Create or update every label in labels.json
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require("node:fs");
+            const { labels, sizes } = JSON.parse(fs.readFileSync(".github/labels.json", "utf8"));
+            const { owner, repo } = context.repo;
+            // Labels nobody defined here are left alone: removing one would
+            // strip it from every issue and PR that carries it.
+            for (const { name, color, description } of [...labels, ...sizes]) {
+              try {
+                const { data } = await github.rest.issues.getLabel({ owner, repo, name });
+                if (data.color !== color || (data.description ?? "") !== description) {
+                  await github.rest.issues.updateLabel({ owner, repo, name, color, description });
+                  core.info(`updated ${name}`);
+                }
+              } catch (err) {
+                if (err.status !== 404) throw err;
+                await github.rest.issues.createLabel({ owner, repo, name, color, description });
+                core.info(`created ${name}`);
+              }
+            }
