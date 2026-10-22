@@ -7,7 +7,7 @@
  */
 import type { HookHandlerFor } from "@/core/sdk";
 import { resolveAppUrl } from "@/core/sdk/server";
-import { COINPAYMENTS_CHECKOUT, getCoinPaymentsConfig } from "../lib/coinpayments";
+import { checkoutBinding, COINPAYMENTS_CHECKOUT, getCoinPaymentsConfig } from "../lib/coinpayments";
 
 const onPaymentSession: HookHandlerFor<"payment.session", "filter"> = async (result, request) => {
     if (result.handled || request.provider !== "coinpayments") return result;
@@ -33,6 +33,8 @@ const onPaymentSession: HookHandlerFor<"payment.session", "filter"> = async (res
         item_number: request.reference,
         currency: request.currency,
         amountf: request.amount.toFixed(2),
+        // The amount above is the buyer's to edit; this is not. See `checkoutBinding`.
+        custom: checkoutBinding(config.ipnSecret, request.reference, request.amount, request.currency),
         want_shipping: "0",
         success_url: request.successUrl,
         cancel_url: request.cancelUrl,

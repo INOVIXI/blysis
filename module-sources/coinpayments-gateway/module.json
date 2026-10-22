@@ -2,7 +2,7 @@
   "id": "coinpayments-gateway",
   "name": "CoinPayments Gateway",
   "description": "Take Bitcoin, Litecoin, USDT and other crypto payments through CoinPayments",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "coreVersion": "^5.0.0",
   "secretSettings": [
     "coinpayments_ipn_secret"

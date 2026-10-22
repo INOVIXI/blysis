@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-18",
-  "updatedAt": "2026-10-18T13:16:38Z",
+  "updated": "2026-10-22",
+  "updatedAt": "2026-10-22T16:49:58Z",
   "modules": [
     {
       "id": "announcements",
@@ -763,13 +763,13 @@
           "description": "通过 CoinPayments 接收比特币、莱特币、USDT 等加密货币付款"
         }
       },
-      "version": "1.4.0",
+      "version": "1.4.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Bitcoin",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-10-22T16:49:58Z",
       "screenshots": [],
       "tags": [
         "commerce"
