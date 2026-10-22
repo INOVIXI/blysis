@@ -76,7 +76,7 @@ export function moduleFiles(dir: string): ZipEntry[] {
 
 /** Does the archive at `file` already hold exactly these entries, in this order? */
 function holds(file: string, entries: ZipEntry[]): boolean {
-    if (!fs.existsSync(file)) return false;
+    // A missing archive throws here, and is written below like a stale one.
     try {
         const packed = new AdmZip(file).getEntries();
         return (
@@ -153,14 +153,14 @@ export function buildMarketplace(root: string, now: Date = new Date()): BuildRes
     // Read once. Screenshots are curated content and updatedAt is history: both
     // are carried across rebuilds rather than regenerated.
     let previous = new Map<string, Json>();
+    // A missing or unreadable index is caught like a broken one, rather than
+    // checked for first and then written: CodeQL reads that as a race.
     const indexFile = path.join(outputDir, "index.json");
-    if (fs.existsSync(indexFile)) {
-        try {
-            const index = JSON.parse(fs.readFileSync(indexFile, "utf8")) as { modules?: Json[] };
-            previous = new Map((index.modules ?? []).map((entry) => [entry.id as string, entry]));
-        } catch {
-            previous = new Map();
-        }
+    try {
+        const index = JSON.parse(fs.readFileSync(indexFile, "utf8")) as { modules?: Json[] };
+        previous = new Map((index.modules ?? []).map((entry) => [entry.id as string, entry]));
+    } catch {
+        previous = new Map();
     }
 
     const locales = fs

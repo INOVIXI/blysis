@@ -109,12 +109,16 @@ export function relativePath(from: string, to: string): string {
 export function grepTree(root: string, pattern: string, paths: string[], extensions: string[]): string[] {
     const regex = new RegExp(pattern);
     const hits: string[] = [];
+    // Listed or read straight away rather than stat'ed first: a stat and the
+    // read after it is the check-then-use CodeQL reports as a race.
     const visit = (full: string) => {
-        const stat = fs.statSync(full, { throwIfNoEntry: false });
-        if (!stat) return;
-        if (stat.isDirectory()) {
+        try {
             for (const entry of fs.readdirSync(full).sort()) visit(path.join(full, entry));
             return;
+        } catch (err) {
+            const code = (err as NodeJS.ErrnoException).code;
+            if (code === "ENOENT") return;
+            if (code !== "ENOTDIR") throw err;
         }
         if (!extensions.some((ext) => full.endsWith(ext))) return;
         fs.readFileSync(full, "utf8").split("\n").forEach((line, i) => {

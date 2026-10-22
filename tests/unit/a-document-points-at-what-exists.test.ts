@@ -151,11 +151,16 @@ function gluedFences(rel: string, text: string): string[] {
         .map(({ n }) => `${rel}:${n}`);
 }
 
+/** A file's text, "" for a directory, null for nothing. Read rather than stat'ed first, so there is no check to race. */
 function onDisk(rel: string): string | null {
-    const full = path.join(ROOT, rel);
-    const stat = fs.statSync(full, { throwIfNoEntry: false });
-    if (!stat) return null;
-    return stat.isFile() ? fs.readFileSync(full, "utf8") : "";
+    try {
+        return fs.readFileSync(path.join(ROOT, rel), "utf8");
+    } catch (err) {
+        const code = (err as NodeJS.ErrnoException).code;
+        if (code === "EISDIR") return "";
+        if (code === "ENOENT" || code === "ENOTDIR") return null;
+        throw err;
+    }
 }
 
 const DOCS = documents();
