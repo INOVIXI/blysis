@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-10-22",
-  "updatedAt": "2026-10-22T17:13:03Z",
+  "updatedAt": "2026-10-22T17:14:51Z",
   "modules": [
     {
       "id": "announcements",
@@ -3901,13 +3901,13 @@
           "description": "通过 Mollie 接受 iDEAL、Bancontact、SEPA 和银行卡付款"
         }
       },
-      "version": "1.4.0",
+      "version": "1.4.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Landmark",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-10-22T17:14:51Z",
       "screenshots": [],
       "tags": [
         "commerce"

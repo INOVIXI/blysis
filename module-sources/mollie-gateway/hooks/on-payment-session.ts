@@ -6,7 +6,7 @@
  */
 import type { HookHandlerFor } from "@/core/sdk";
 import { log, resolveAppUrl } from "@/core/sdk/server";
-import { getMollieConfig, MOLLIE_API, MolliePayment } from "../lib/mollie";
+import { getMollieConfig, MOLLIE_API, MolliePayment, mollieValue } from "../lib/mollie";
 
 const onPaymentSession: HookHandlerFor<"payment.session", "filter"> = async (result, request) => {
     if (result.handled || request.provider !== "mollie") return result;
@@ -32,8 +32,7 @@ const onPaymentSession: HookHandlerFor<"payment.session", "filter"> = async (res
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${config.apiKey}` },
             body: JSON.stringify({
-                // Mollie insists on two decimals, as a string.
-                amount: { currency: request.currency, value: request.amount.toFixed(2) },
+                amount: { currency: request.currency, value: mollieValue(request.amount, request.currency) },
                 description: request.description.slice(0, 255),
                 redirectUrl: request.successUrl,
                 cancelUrl: request.cancelUrl,

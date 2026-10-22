@@ -50,6 +50,16 @@ export async function mollieGet(config: MollieConfig, path: string): Promise<Mol
     return (await response.json()) as MolliePayment;
 }
 
+/**
+ * An amount the way Mollie wants it: a string with exactly the decimals its
+ * currency has. Mollie lists the yen with none
+ * (https://docs.mollie.com/docs/multicurrency); a yen amount written as
+ * "1000.00" is not the yen's format.
+ */
+export function mollieValue(amount: number, currency: string): string {
+    return currency.toUpperCase() === "JPY" ? Math.round(amount).toFixed(0) : amount.toFixed(2);
+}
+
 /** The currencies Mollie settles. It is a European processor first. */
 export const MOLLIE_CURRENCIES = new Set([
     "EUR", "GBP", "CHF", "SEK", "NOK", "DKK", "PLN", "CZK", "HUF", "RON", "BGN",
