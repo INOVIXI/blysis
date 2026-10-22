@@ -61,11 +61,12 @@ export const POST = withRateLimit("minecraft-link", async (request: NextRequest)
     const username = profile?.name ?? requested;
 
     // Claiming a name someone has already linked is refused without saying
-    // which account holds it.
+    // which account holds it. Minecraft names are one player in any case, and
+    // without a Mojang profile the name is all there is to compare.
     const taken = await prisma.minecraftAccount.findFirst({
         where: {
-            OR: [{ username }, ...(profile ? [{ uuid: profile.uuid }] : [])],
-            NOT: { userId },
+            OR: [{ username: { equals: username, mode: "insensitive" } }, ...(profile ? [{ uuid: profile.uuid }] : [])],
+            userId: { not: userId },
         },
         select: { id: true },
     });

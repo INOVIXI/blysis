@@ -3737,13 +3737,13 @@
           "description": "让玩家通过读取服务器私信发给其的验证码，证明自己拥有某个游戏内 Minecraft 账户"
         }
       },
-      "version": "1.6.1",
+      "version": "1.6.2",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Link2",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-06T09:06:29Z",
+      "updatedAt": "2026-10-22T19:50:00Z",
       "screenshots": [],
       "tags": [
         "gaming"

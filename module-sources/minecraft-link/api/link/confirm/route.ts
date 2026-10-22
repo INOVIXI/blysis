@@ -33,11 +33,12 @@ export const POST = withRateLimit("minecraft-link-confirm", async (request: Next
     const profile = await lookupProfile(result.username);
 
     // Between the whisper and the code coming back, someone else could have
-    // linked the same name. Last check before it becomes a binding.
+    // linked the same name, in any case. Last check before it becomes a
+    // binding.
     const taken = await prisma.minecraftAccount.findFirst({
         where: {
-            OR: [{ username: result.username }, ...(profile ? [{ uuid: profile.uuid }] : [])],
-            NOT: { userId },
+            OR: [{ username: { equals: result.username, mode: "insensitive" } }, ...(profile ? [{ uuid: profile.uuid }] : [])],
+            userId: { not: userId },
         },
         select: { id: true },
     });
