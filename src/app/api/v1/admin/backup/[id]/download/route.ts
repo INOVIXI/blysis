@@ -4,10 +4,9 @@ import { isAdmin } from "@/core/lib/permissions";
 import { getBackupPath } from "@/core/lib/backup";
 import fs from "fs";
 import path from "path";
+import { BACKUPS_DIR } from "@/core/lib/runtime-paths";
 
 type RouteParams = { params: Promise<{ id: string }> };
-
-const BACKUP_DIR = path.resolve(process.cwd(), "backups");
 
 /**
  * GET /api/v1/admin/backup/[id]/download
@@ -25,9 +24,9 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Backup not found" }, { status: 404 });
     }
 
-    // Defence-in-depth: ensure the resolved path is inside BACKUP_DIR
+    // Defence-in-depth: ensure the resolved path is inside BACKUPS_DIR
     const normalised = path.resolve(fullPath);
-    if (!normalised.startsWith(BACKUP_DIR + path.sep)) {
+    if (!normalised.startsWith(BACKUPS_DIR + path.sep)) {
         return NextResponse.json({ error: "Invalid path" }, { status: 400 });
     }
 

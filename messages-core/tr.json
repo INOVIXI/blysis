@@ -1238,6 +1238,7 @@
     "backup_cannotTitle": "Bu sunucuda yedek alınamıyor",
     "backup_cannotMissing": "pg_dump burada kurulu değil. PostgreSQL istemci araçlarının, yalnızca veritabanı sunucusunda değil, siteyi çalıştıran makinede olması gerekir. Resmî imaj bunları içerir; başka bir yolla kurulmuş bir sitede ayrıca eklenmelidir.",
     "backup_cannotTooOld": "Buradaki PostgreSQL istemcisi {client} sürümünde, veritabanı ise {server} sürümünde. pg_dump kendisinden yeni bir sunucuyu reddeder; {server} ya da üstü bir istemci gerekir.",
+    "backup_cannotWrite": "Site, yedeklerin tutulduğu {directory} klasörüne yazamıyor. Sitenin çalıştığı kullanıcıya bu klasöre yazma izni verilmeli. Resmî imajda en yeni sürüme güncellemek bunu düzeltir.",
     "auditLog_actionKey": "Eylem Anahtarı",
     "revisions_action_update": "Güncellendi",
     "revisions_action_delete": "Silindi",

@@ -20,6 +20,7 @@ import fsp from "fs/promises";
 import path from "path";
 import zlib from "zlib";
 import { pipeline } from "stream/promises";
+import { BACKUPS_DIR } from "./runtime-paths";
 
 export interface BackupMeta {
     id: string;
@@ -30,7 +31,6 @@ export interface BackupMeta {
     notes?: string;
 }
 
-const BACKUP_DIR = path.resolve(process.cwd(), "backups");
 const FILE_EXT = ".sql.gz";
 const FILENAME_RE = /^blysis-(manual|scheduled)-([0-9TZ\-]+)\.sql\.gz$/;
 
@@ -48,7 +48,7 @@ const RETAIN_MANUAL = 10;
 // ─── helpers ──────────────────────────────────────────────────────────────
 
 async function ensureBackupDir(): Promise<void> {
-    await fsp.mkdir(BACKUP_DIR, { recursive: true });
+    await fsp.mkdir(BACKUPS_DIR, { recursive: true });
 }
 
 function parsePgEnv(): NodeJS.ProcessEnv {
@@ -90,9 +90,9 @@ function filenameToId(filename: string): string {
 function resolveBackupPath(id: string): string | null {
     const filename = idToFilename(id);
     if (!filename) return null;
-    const full = path.resolve(BACKUP_DIR, filename);
-    // Defence-in-depth against traversal: must stay under BACKUP_DIR
-    if (!full.startsWith(BACKUP_DIR + path.sep) && full !== BACKUP_DIR) {
+    const full = path.resolve(BACKUPS_DIR, filename);
+    // Defence-in-depth against traversal: must stay under BACKUPS_DIR
+    if (!full.startsWith(BACKUPS_DIR + path.sep) && full !== BACKUPS_DIR) {
         return null;
     }
     return full;
@@ -117,7 +117,7 @@ function describeSpawnFailure(tool: string, err: unknown): Error {
 }
 
 async function readNotes(filename: string): Promise<string | undefined> {
-    const notePath = path.join(BACKUP_DIR, `${filename}.note`);
+    const notePath = path.join(BACKUPS_DIR, `${filename}.note`);
     try {
         return (await fsp.readFile(notePath, "utf8")).trim() || undefined;
     } catch {
@@ -126,12 +126,12 @@ async function readNotes(filename: string): Promise<string | undefined> {
 }
 
 async function writeNotes(filename: string, notes: string): Promise<void> {
-    const notePath = path.join(BACKUP_DIR, `${filename}.note`);
+    const notePath = path.join(BACKUPS_DIR, `${filename}.note`);
     await fsp.writeFile(notePath, notes, "utf8");
 }
 
 async function deleteNotes(filename: string): Promise<void> {
-    const notePath = path.join(BACKUP_DIR, `${filename}.note`);
+    const notePath = path.join(BACKUPS_DIR, `${filename}.note`);
     try { await fsp.unlink(notePath); } catch { /* ignore */ }
 }
 
@@ -149,7 +149,7 @@ export async function createBackup(
 
     const createdAt = new Date();
     const filename = buildFilename(type, createdAt);
-    const fullPath = path.join(BACKUP_DIR, filename);
+    const fullPath = path.join(BACKUPS_DIR, filename);
 
     const pgEnv = parsePgEnv();
 
@@ -212,14 +212,14 @@ export async function createBackup(
  */
 export async function listBackups(): Promise<BackupMeta[]> {
     await ensureBackupDir();
-    const entries = await fsp.readdir(BACKUP_DIR);
+    const entries = await fsp.readdir(BACKUPS_DIR);
     const results: BackupMeta[] = [];
 
     for (const filename of entries) {
         const match = FILENAME_RE.exec(filename);
         if (!match) continue;
         const type = match[1] as "manual" | "scheduled";
-        const full = path.join(BACKUP_DIR, filename);
+        const full = path.join(BACKUPS_DIR, filename);
         let stat: fs.Stats;
         try {
             stat = await fsp.stat(full);

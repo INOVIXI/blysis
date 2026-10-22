@@ -1238,6 +1238,7 @@
     "backup_cannotTitle": "Não é possível fazer backup neste servidor",
     "backup_cannotMissing": "O pg_dump não está instalado aqui. As ferramentas cliente do PostgreSQL precisam estar na máquina que roda o site, não apenas no host do banco de dados. A imagem oficial já as inclui; um site instalado de outra forma precisa tê-las adicionadas.",
     "backup_cannotTooOld": "O cliente PostgreSQL aqui é a versão {client} e o banco de dados é a versão {server}. O pg_dump recusa um servidor mais novo que ele, então é preciso um cliente na versão {server} ou superior.",
+    "backup_cannotWrite": "O site não consegue gravar em {directory}, onde os backups são guardados. O usuário com que o site roda precisa de permissão de escrita nessa pasta. Na imagem oficial, atualizar para a versão mais recente corrige isso.",
     "auditLog_actionKey": "Chave da ação",
     "revisions_action_update": "Atualizado",
     "revisions_action_delete": "Excluído",
