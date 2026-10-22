@@ -10,9 +10,9 @@ import { ADMIN_PAGE_RULES, API_WRITE_RULES } from "@/core/generated/permission-m
  * door is moved. Two properties matter more than the individual answers.
  *
  * A rule is anchored at the end of the path. A prefix rule for
- * `/api/v1/users` also matches `/api/v1/users/me`, which is a member editing
- * their own account: the looser rule would have demanded an operator's
- * permission for it, and a member would have been refused their own profile.
+ * `/api/v1/users` also matches `/api/v1/users/<id>/delete`, which asks for a
+ * permission of its own: the looser rule would have let anybody who may edit
+ * accounts erase them.
  *
  * And an unknown path answers `undeclared`, which the enforcement reads as no.
  * A panel path nobody declared is reachable by an administrator and by nobody
@@ -73,8 +73,12 @@ describe("a write", () => {
         expect(apiWriteRequirement("/api/v1/roles/clx1")).toEqual({ kind: "permission", name: "admin.roles" });
     });
 
+    it("answers for the whole path, not the first rule it starts with", () => {
+        expect(apiWriteRequirement("/api/v1/users/clx1/delete")).toEqual({ kind: "permission", name: "admin.users.delete" });
+    });
+
     it("keeps a member's own account out of the operator's permission", () => {
-        expect(apiWriteRequirement("/api/v1/users/me")).toEqual({ kind: "open", openTo: "member" });
+        expect(apiWriteRequirement("/api/v1/auth/profile")).toEqual({ kind: "open", openTo: "member" });
         expect(apiWriteRequirement("/api/v1/me/avatar")).toEqual({ kind: "open", openTo: "member" });
         expect(apiWriteRequirement("/api/v1/sessions/abc")).toEqual({ kind: "open", openTo: "member" });
     });

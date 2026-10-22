@@ -468,7 +468,8 @@
     "emailQueue_to": "收件人",
     "enabled": "已启用",
     "err": {
-      "demo_disabled": "这是公开演示站，因此此更改不会被保存。请运行你自己的实例进行尝试。"
+      "demo_disabled": "这是公开演示站，因此此更改不会被保存。请运行你自己的实例进行尝试。",
+      "username_taken": "该用户名已被占用。"
     },
     "error_id": "错误编号：",
     "error_title": "出了点问题",

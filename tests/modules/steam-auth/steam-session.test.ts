@@ -69,9 +69,11 @@ const prismaMock = {
         }),
     },
     user: {
-        findUnique: vi.fn(async ({ where }: { where: { username?: string; id?: string } }) => {
-            if (where.username) return db.users.find((u) => u.username === where.username) ?? null;
-            return db.users.find((u) => u.id === where.id) ?? null;
+        findUnique: vi.fn(async ({ where }: { where: { id: string } }) => db.users.find((u) => u.id === where.id) ?? null),
+        findFirst: vi.fn(async ({ where }: { where: { username: { equals: string; mode?: string } } }) => {
+            const { equals, mode } = where.username;
+            const same = (name: string) => (mode === "insensitive" ? name.toLowerCase() === equals.toLowerCase() : name === equals);
+            return db.users.find((u) => same(u.username)) ?? null;
         }),
         create: vi.fn(
             async ({
@@ -209,6 +211,22 @@ describe("upsertSteamUser", () => {
         expect(user!.id).not.toBe("u-victim");
         expect(user!.role).toBe("member");
         expect(user!.name).not.toBe("Kaya");
+    });
+
+    it("does not give a new account a name somebody holds under another capitalisation", async () => {
+        db.users.push({
+            id: "u-victim",
+            email: "victim@example.com",
+            username: "kaya",
+            avatar: null,
+            roleId: "role-admin",
+            isBanned: false,
+            isDeleted: false,
+            role: { name: "admin", priority: 100 },
+        });
+
+        const user = await upsertSteamUser(player());
+        expect(user!.name.toLowerCase()).not.toBe("kaya");
     });
 
     it("refuses a banned account", async () => {

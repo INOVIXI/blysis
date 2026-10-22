@@ -468,7 +468,8 @@
     "emailQueue_to": "A",
     "enabled": "Attivato",
     "err": {
-      "demo_disabled": "Questa è la demo pubblica, quindi la modifica non viene salvata. Avvia una tua istanza per provarla."
+      "demo_disabled": "Questa è la demo pubblica, quindi la modifica non viene salvata. Avvia una tua istanza per provarla.",
+      "username_taken": "Questo nome utente è già in uso."
     },
     "error_id": "ID errore:",
     "error_title": "Qualcosa è andato storto",

@@ -7,6 +7,7 @@ import { logActivity } from "@/core/lib/activity-log";
 import { rateLimit, getClientIP, rateLimits } from "@/core/lib/rate-limit";
 import { hashPassword } from "@/core/lib/password-hash";
 import { checkUsername, registrationRefusal } from "@/core/lib/registration-rules";
+import { usernameTaken } from "@/core/lib/username-taken";
 import { checkPasswordBreach } from "@/core/lib/password-breach";
 import {
     enforcePasswordPolicy,
@@ -136,11 +137,11 @@ export async function POST(request: NextRequest) {
         // so we don't burn bcrypt cycles on a doomed insert. Concurrent
         // duplicates still race through the unique-constraint catch below.
         const existingUser = await prisma.user.findFirst({
-            where: { OR: [{ email }, { username }] },
+            where: { email },
             select: { id: true },
         });
 
-        if (existingUser) {
+        if (existingUser || (await usernameTaken(username))) {
             return NextResponse.json(
                 { error: "Email or username already registered", code: "already_registered" },
                 { status: 400 }

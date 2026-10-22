@@ -68,7 +68,7 @@ export interface CoreAdapterClient {
     user: {
         create(args: { data: Record<string, unknown> }): Promise<CoreUserRow>;
         update(args: { where: { id: string }; data: Record<string, unknown> }): Promise<CoreUserRow>;
-        findUnique(args: { where: { username: string } }): Promise<{ id: string } | null>;
+        findFirst(args: { where: { username: { equals: string; mode: "insensitive" } }; select: { id: true } }): Promise<{ id: string } | null>;
     };
     account: {
         create(args: { data: Record<string, unknown> }): Promise<unknown>;
@@ -142,11 +142,25 @@ function isUniqueViolation(error: unknown, field: string): boolean {
 }
 
 /**
+ * Whether the name is somebody's already, however it is capitalised. The
+ * unique key is exact, so it is the check, not the constraint, that keeps a
+ * provider's "Admin" off the site's "admin".
+ */
+async function nameHeld(prisma: CoreAdapterClient, username: string): Promise<boolean> {
+    const holder = await prisma.user.findFirst({
+        where: { username: { equals: username, mode: "insensitive" } },
+        select: { id: true },
+    });
+    return holder !== null;
+}
+
+/**
  * Creates the user, retrying the username until it is free.
  *
- * The pre-check is only an optimisation: two sign-ups with the same display
- * name can still collide between the check and the insert, so the unique
- * constraint is what actually decides and a violation just means another try.
+ * The pre-check is what keeps a name somebody holds under another
+ * capitalisation off a new account. Two sign-ups with the same display name
+ * can still collide between the check and the insert, and there the unique
+ * constraint decides and a violation just means another try.
  */
 async function createUserWithUsername(
     prisma: CoreAdapterClient,
@@ -155,7 +169,7 @@ async function createUserWithUsername(
     const base = data.username.slice(0, USERNAME_MAX);
     let username = base;
     for (let attempt = 0; attempt < 5; attempt++) {
-        if (attempt > 0 || (await prisma.user.findUnique({ where: { username } }))) {
+        if (attempt > 0 || (await nameHeld(prisma, username))) {
             username = `${base.slice(0, USERNAME_MAX - 9)}_${crypto.randomUUID().slice(0, 8)}`;
         }
         try {

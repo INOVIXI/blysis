@@ -155,10 +155,6 @@ export const MEMBER_MUTATIONS: MemberMutation[] = [
         reason: "A member erasing their own account, which is a right rather than a privilege and cannot be made to depend on a grant.",
     },
     {
-        path: "/v1/users/me",
-        reason: "The same member editing the same row, reached under a different name by the screens that were written later.",
-    },
-    {
         path: "/v1/me/avatar",
         reason: "A member's own picture. The operator's switch for this is a site setting, not a permission, because it applies to every member at once.",
     },

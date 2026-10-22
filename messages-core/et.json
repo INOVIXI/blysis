@@ -468,7 +468,8 @@
     "emailQueue_to": "Saaja",
     "enabled": "Lubatud",
     "err": {
-      "demo_disabled": "See on avalik demo, seega seda muudatust ei salvestata. Proovimiseks käivita oma eksemplar."
+      "demo_disabled": "See on avalik demo, seega seda muudatust ei salvestata. Proovimiseks käivita oma eksemplar.",
+      "username_taken": "See kasutajanimi on juba võetud."
     },
     "error_id": "Vea ID:",
     "error_title": "Midagi läks valesti",

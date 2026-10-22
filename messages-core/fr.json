@@ -468,7 +468,8 @@
     "emailQueue_to": "Destinataire",
     "enabled": "Activé",
     "err": {
-      "demo_disabled": "Ceci est la démo publique : cette modification n’est pas enregistrée. Installez votre propre instance pour l’essayer."
+      "demo_disabled": "Ceci est la démo publique : cette modification n’est pas enregistrée. Installez votre propre instance pour l’essayer.",
+      "username_taken": "Ce nom d’utilisateur est déjà pris."
     },
     "error_id": "ID de l’erreur :",
     "error_title": "Une erreur s’est produite",

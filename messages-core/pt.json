@@ -468,7 +468,8 @@
     "emailQueue_to": "Para",
     "enabled": "Ativado",
     "err": {
-      "demo_disabled": "Esta é a demonstração pública, por isso esta alteração não será salva. Execute sua própria instância para testar."
+      "demo_disabled": "Esta é a demonstração pública, por isso esta alteração não será salva. Execute sua própria instância para testar.",
+      "username_taken": "Este nome de usuário já está em uso."
     },
     "error_id": "ID do erro:",
     "error_title": "Algo deu errado",
