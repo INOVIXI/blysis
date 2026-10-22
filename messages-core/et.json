@@ -1238,6 +1238,7 @@
     "backup_cannotTitle": "Sellel serveril ei saa varukoopiat teha",
     "backup_cannotMissing": "pg_dump pole siin paigaldatud. PostgreSQL-i kliendiriistad peavad olema masinas, kus sait töötab, mitte ainult andmebaasi serveris. Ametlik pilt sisaldab neid; muul viisil paigaldatud sait peab need lisama.",
     "backup_cannotTooOld": "Siinne PostgreSQL-i klient on versioon {client} ja andmebaas on versioon {server}. pg_dump ei tööta serveriga, mis on uuem kui ta ise, seega on vaja klienti versioonist {server} või uuemat.",
+    "backup_cannotWrite": "Sait ei saa kirjutada kausta {directory}, kus varukoopiaid hoitakse. Kasutajale, kelle all sait töötab, tuleb anda sellesse kausta kirjutamisõigus. Ametliku kujutise puhul parandab selle uusimale versioonile uuendamine.",
     "auditLog_actionKey": "Tegevuse võti",
     "revisions_action_update": "Uuendatud",
     "revisions_action_delete": "Kustutatud",

@@ -25,6 +25,9 @@ let dumpVersion: string | null = "pg_dump (PostgreSQL) 18.1";
 let spawnError: NodeJS.ErrnoException | null = null;
 let serverVersion: number | null = 180001;
 let serverThrows = false;
+let writeError: NodeJS.ErrnoException | null = null;
+let parentError: NodeJS.ErrnoException | null = null;
+const created: string[] = [];
 
 vi.mock("child_process", () => ({
     spawn: () => {
@@ -47,6 +50,21 @@ vi.mock("child_process", () => ({
     },
 }));
 
+// The backups folder, and the folder it would be made in, asked whether
+// this process may write into them. Anything that makes a folder is recorded,
+// because the check must not.
+vi.mock("fs/promises", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("fs/promises")>();
+    const access = async (target: string) => {
+        const error = /backups$/.test(String(target)) ? writeError : parentError;
+        if (error) throw error;
+    };
+    const mkdir = async (target: string) => {
+        created.push(String(target));
+    };
+    return { ...actual, default: { ...actual, access, mkdir }, access, mkdir };
+});
+
 vi.mock("@/core/lib/db", () => ({
     prisma: {
         $queryRawUnsafe: async () => {
@@ -67,6 +85,9 @@ beforeEach(() => {
     spawnError = null;
     serverVersion = 180001;
     serverThrows = false;
+    writeError = null;
+    parentError = null;
+    created.length = 0;
     resetBackupToolCheck();
 });
 
@@ -103,6 +124,43 @@ describe("a client older than the server", () => {
     });
 });
 
+// The Docker image did not create its backups folder, so the volume came up
+// owned by root and the app, running as nextjs, never wrote a single backup.
+// The tools were all there; the screen said nothing was wrong.
+describe("a folder the site cannot write to", () => {
+    it("says so, and names the folder", async () => {
+        writeError = Object.assign(new Error("EACCES: permission denied"), { code: "EACCES" });
+        const answer = await canTakeABackup();
+        expect(answer).toMatchObject({ ok: false, reason: "not_writable" });
+        expect(answer.directory).toMatch(/backups$/);
+    });
+
+    it("says the same of a folder on a read-only disk", async () => {
+        writeError = Object.assign(new Error("EROFS: read-only file system"), { code: "EROFS" });
+        expect((await canTakeABackup()).reason).toBe("not_writable");
+    });
+
+    it("is fine with a folder not made yet, when it may be made, and does not make it", async () => {
+        // The first backup makes the folder. Asking must not, or every screen
+        // load and every test run would leave one behind.
+        writeError = Object.assign(new Error("ENOENT: no such file or directory"), { code: "ENOENT" });
+        expect((await canTakeABackup()).ok).toBe(true);
+        expect(created).toEqual([]);
+    });
+
+    it("says so of a folder not made yet, when it could not be made", async () => {
+        writeError = Object.assign(new Error("ENOENT: no such file or directory"), { code: "ENOENT" });
+        parentError = Object.assign(new Error("EACCES: permission denied"), { code: "EACCES" });
+        expect((await canTakeABackup()).reason).toBe("not_writable");
+    });
+
+    it("names the missing tools first, because that is the thing to fix first", async () => {
+        spawnError = Object.assign(new Error("spawn pg_dump ENOENT"), { code: "ENOENT" });
+        writeError = Object.assign(new Error("EACCES: permission denied"), { code: "EACCES" });
+        expect((await canTakeABackup()).reason).toBe("missing");
+    });
+});
+
 describe("a check that cannot finish", () => {
     it("does not claim a backup is impossible when it is the database that would not answer", async () => {
         // A database that will not say its version is a database problem. The
@@ -114,6 +172,11 @@ describe("a check that cannot finish", () => {
 
     it("reads a version string it does not recognise as no answer rather than a failure", async () => {
         dumpVersion = "something else entirely";
+        expect((await canTakeABackup()).ok).toBe(true);
+    });
+
+    it("does not read a failure that is not about permission as a folder it cannot write", async () => {
+        writeError = Object.assign(new Error("EIO: i/o error"), { code: "EIO" });
         expect((await canTakeABackup()).ok).toBe(true);
     });
 });

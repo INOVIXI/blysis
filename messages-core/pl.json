@@ -1238,6 +1238,7 @@
     "backup_cannotTitle": "Na tym serwerze nie można wykonać kopii zapasowej",
     "backup_cannotMissing": "Narzędzie pg_dump nie jest tutaj zainstalowane. Klienci PostgreSQL muszą być na maszynie, na której działa strona, a nie tylko na serwerze bazy danych. Oficjalny obraz je zawiera; strona zainstalowana w inny sposób musi je dodać.",
     "backup_cannotTooOld": "Klient PostgreSQL tutaj ma wersję {client}, a baza danych ma wersję {server}. pg_dump odmawia pracy z serwerem nowszym od siebie, więc potrzebny jest klient w wersji {server} lub nowszej.",
+    "backup_cannotWrite": "Strona nie może zapisywać w {directory}, gdzie przechowywane są kopie zapasowe. Użytkownik, na którym działa strona, potrzebuje prawa zapisu do tego folderu. W oficjalnym obrazie naprawia to aktualizacja do najnowszego wydania.",
     "auditLog_actionKey": "Klucz działania",
     "revisions_action_update": "Zaktualizowano",
     "revisions_action_delete": "Usunięto",

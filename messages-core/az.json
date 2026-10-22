@@ -1238,6 +1238,7 @@
     "backup_cannotTitle": "Bu serverdə ehtiyat nüsxə almaq olmur",
     "backup_cannotMissing": "Burada pg_dump quraşdırılmayıb. PostgreSQL müştəri alətləri yalnız verilənlər bazası hostunda deyil, saytı işlədən maşında olmalıdır. Rəsmi image onları özü ehtiva edir; başqa üsulla quraşdırılmış sayt onları əlavə etməlidir.",
     "backup_cannotTooOld": "Buradakı PostgreSQL müştərisinin versiyası {client}, verilənlər bazasının versiyası isə {server}-dir. pg_dump özündən yeni serveri qəbul etmir, ona görə {server} və ya daha yuxarı müştəri lazımdır.",
+    "backup_cannotWrite": "Sayt ehtiyat nüsxələrin saxlandığı {directory} qovluğuna yaza bilmir. Saytın işlədiyi istifadəçiyə bu qovluğa yazma icazəsi verilməlidir. Rəsmi imicdə ən yeni buraxılışa yeniləmək bunu düzəldir.",
     "auditLog_actionKey": "Əməliyyat açarı",
     "revisions_action_update": "Yenilənib",
     "revisions_action_delete": "Silinib",

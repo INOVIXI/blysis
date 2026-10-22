@@ -1238,6 +1238,7 @@
     "backup_cannotTitle": "Auf diesem Server kann kein Backup erstellt werden",
     "backup_cannotMissing": "pg_dump ist hier nicht installiert. Die PostgreSQL-Client-Tools müssen auf dem Rechner liegen, auf dem die Seite läuft, nicht nur auf dem Datenbankserver. Das offizielle Image enthält sie; eine anders installierte Seite muss sie nachrüsten.",
     "backup_cannotTooOld": "Der PostgreSQL-Client hier hat Version {client}, die Datenbank Version {server}. pg_dump lehnt einen Server ab, der neuer ist als er selbst, daher wird ein Client ab Version {server} benötigt.",
+    "backup_cannotWrite": "Die Seite kann nicht in {directory} schreiben, wo die Backups liegen. Der Benutzer, unter dem die Seite läuft, braucht Schreibrechte für diesen Ordner. Beim offiziellen Image behebt ein Update auf das neueste Release das.",
     "auditLog_actionKey": "Aktionsschlüssel",
     "revisions_action_update": "Geändert",
     "revisions_action_delete": "Gelöscht",

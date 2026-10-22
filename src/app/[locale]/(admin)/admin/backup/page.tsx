@@ -73,7 +73,7 @@ export default function BackupAdminPage() {
      * than the server it would dump - and both are found out from a red row
      * on the jobs screen a day later, or at the moment a backup was wanted.
      */
-    const [tools, setTools] = useState<{ ok: boolean; reason: string | null; clientMajor: number | null; serverMajor: number | null } | null>(null);
+    const [tools, setTools] = useState<{ ok: boolean; reason: string | null; clientMajor: number | null; serverMajor: number | null; directory: string } | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [restoringId, setRestoringId] = useState<string | null>(null);
     const [automated, setAutomated] = useState(true);
@@ -325,7 +325,9 @@ export default function BackupAdminPage() {
                                         client: tools.clientMajor ?? 0,
                                         server: tools.serverMajor ?? 0,
                                     })
-                                    : t("backup_cannotMissing")}
+                                    : tools.reason === "not_writable"
+                                        ? t("backup_cannotWrite", { directory: tools.directory })
+                                        : t("backup_cannotMissing")}
                             </p>
                         </div>
                     </CardContent>

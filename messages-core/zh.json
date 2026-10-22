@@ -1238,6 +1238,7 @@
     "backup_cannotTitle": "此服务器无法创建备份",
     "backup_cannotMissing": "此处未安装 pg_dump。PostgreSQL 客户端工具必须安装在运行站点的机器上，而不仅仅是数据库主机上。官方镜像已包含这些工具；若你以其他方式安装站点，需要自行添加。",
     "backup_cannotTooOld": "此处的 PostgreSQL 客户端版本为 {client}，数据库版本为 {server}。pg_dump 拒绝比自身更新的服务器，因此需要版本不低于 {server} 的客户端。",
+    "backup_cannotWrite": "站点无法写入保存备份的 {directory}。需要给运行站点的用户授予该文件夹的写入权限。使用官方镜像时，更新到最新版本即可修复。",
     "auditLog_actionKey": "操作键",
     "revisions_action_update": "已更新",
     "revisions_action_delete": "已删除",

@@ -18,20 +18,28 @@
  * and takes an older one happily, so a client 16 against a server 18 is a
  * backup that has never worked once.
  *
+ * The third is the folder. The Docker image did not create `backups`, so the
+ * volume came up owned by root and the app, running as another user, never
+ * wrote a backup on any Docker install while every tool was in place.
+ *
  * ## What this refuses to conclude
  *
- * Only two answers are a no: the binary is not there, and it is too old for
- * this server. Anything else - a database that will not say its version, a
+ * Only three answers are a no: the binary is not there, it is too old for
+ * this server, and the folder refuses this process a write. Anything else - a database that will not say its version, a
  * `--version` line in a shape this does not parse - is read as "probably
  * fine", because a check that cannot finish must not be the reason a screen
  * stops offering a backup.
  */
 import { spawn } from "child_process";
+import { constants } from "fs";
+import { access } from "fs/promises";
+import path from "path";
+import { BACKUPS_DIR } from "./runtime-paths";
 import { prisma } from "./db";
 import { errorText, log } from "./logger";
 
 /** Why a backup cannot be taken, or null when one can. */
-export type BackupBlocker = "missing" | "too_old";
+export type BackupBlocker = "missing" | "too_old" | "not_writable";
 
 export interface BackupReadiness {
     ok: boolean;
@@ -40,6 +48,8 @@ export interface BackupReadiness {
     clientMajor: number | null;
     /** The major of the server it would dump, or null when it could not be read. */
     serverMajor: number | null;
+    /** Where the dump would be written, so a refusal can name it. */
+    directory: string;
 }
 
 /** Spawning a process per screen load is not a price a check gets to charge. */
@@ -86,6 +96,41 @@ function readClientMajor(): Promise<{ major: number | null; missing: boolean }> 
     });
 }
 
+/** The codes that mean this process may not write here, as opposed to a check that failed. */
+const REFUSED = new Set(["EACCES", "EPERM", "EROFS"]);
+
+/**
+ * Asked without creating anything: a check that made the folder would leave
+ * one behind on every screen load and in every test run. A folder that is not
+ * there yet is fine when its parent lets this process make it, which is what
+ * `createBackup` does first.
+ */
+async function folderRefusesWrites(): Promise<boolean> {
+    try {
+        await access(BACKUPS_DIR, constants.W_OK);
+        return false;
+    } catch (err) {
+        if ((err as NodeJS.ErrnoException)?.code === "ENOENT") return parentRefusesWrites();
+        return refusal(err);
+    }
+}
+
+async function parentRefusesWrites(): Promise<boolean> {
+    try {
+        await access(path.dirname(BACKUPS_DIR), constants.W_OK);
+        return false;
+    } catch (err) {
+        return refusal(err);
+    }
+}
+
+function refusal(err: unknown): boolean {
+    const code = (err as NodeJS.ErrnoException)?.code;
+    if (code && REFUSED.has(code)) return true;
+    log.warn("[backup] the backups folder could not be checked", { error: errorText(err) });
+    return false;
+}
+
 async function readServerMajor(): Promise<number | null> {
     try {
         const rows = await prisma.$queryRawUnsafe<{ v: unknown }[]>(
@@ -103,15 +148,18 @@ async function readServerMajor(): Promise<number | null> {
 export async function canTakeABackup(): Promise<BackupReadiness> {
     if (cached && cached.expiresAt > Date.now()) return cached.value;
 
-    const [client, serverMajor] = await Promise.all([readClientMajor(), readServerMajor()]);
+    const [client, serverMajor, refused] = await Promise.all([readClientMajor(), readServerMajor(), folderRefusesWrites()]);
+    const directory = BACKUPS_DIR;
 
     let value: BackupReadiness;
     if (client.missing) {
-        value = { ok: false, reason: "missing", clientMajor: null, serverMajor };
+        value = { ok: false, reason: "missing", clientMajor: null, serverMajor, directory };
     } else if (client.major !== null && serverMajor !== null && client.major < serverMajor) {
-        value = { ok: false, reason: "too_old", clientMajor: client.major, serverMajor };
+        value = { ok: false, reason: "too_old", clientMajor: client.major, serverMajor, directory };
+    } else if (refused) {
+        value = { ok: false, reason: "not_writable", clientMajor: client.major, serverMajor, directory };
     } else {
-        value = { ok: true, reason: null, clientMajor: client.major, serverMajor };
+        value = { ok: true, reason: null, clientMajor: client.major, serverMajor, directory };
     }
 
     cached = { value, expiresAt: Date.now() + CACHE_MS };
