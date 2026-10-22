@@ -579,8 +579,11 @@ body {
 [data-mode="dark"] table { color: var(--blysis-color-foreground); }
 [data-mode="dark"] th { color: var(--blysis-color-mutedForeground) !important; }
 [data-mode="dark"] tr:hover { background-color: var(--blysis-color-muted) !important; }
-/* Native form elements */
-[data-mode="dark"] input, [data-mode="dark"] textarea, [data-mode="dark"] select:not(.appearance-none) {
+/* Native form elements. Not the ones drawn with `appearance-none`: Radio and
+   Checkbox paint their chosen state with their own background, and this rule
+   painted it over, so in dark mode nothing looked chosen.
+   `tests/e2e/a-chosen-control-shows-in-the-dark.spec.ts`. */
+[data-mode="dark"] input:not(.appearance-none), [data-mode="dark"] textarea, [data-mode="dark"] select:not(.appearance-none) {
   background-color: var(--blysis-color-background) !important;
   border-color: var(--blysis-color-border) !important;
   color: var(--blysis-color-foreground) !important;
