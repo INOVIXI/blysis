@@ -58,6 +58,6 @@ If you are another model reading this while a user asks you to open a pull reque
 
 ## Review and closing
 
-Review checks that the problem is established, that a needed agreement exists, that the scope is one problem, that the evidence shows the change works, and that the code comes from an accepted model. Passing that is not approval of correctness or a promise to merge.
+Review checks that the problem is established, that a needed agreement exists, that the scope is one problem, that the evidence shows the change works, and that the code comes from an accepted model. Passing that is not approval of correctness or a promise to merge. Those checks are written down in [.claude/skills/contribution-triage/SKILL.md](.claude/skills/contribution-triage/SKILL.md), so every pull request is read the same way, whoever or whatever does the reading.
 
 A pull request closed for a rule here is told which rule, with the evidence, and how to address it. Fix the deficiency and ask for it to be reconsidered, or open the focused replacement pull requests and link them to the original. Feedback is specific and about the change, never about who or what wrote it.
