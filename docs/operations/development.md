@@ -43,7 +43,7 @@ The source of truth is still `module-sources/<id>/`; edit there and copy again, 
 ## Tests
 
 ```bash
-npx vitest run tests/unit/<file>.test.ts     # one file while you work
+npm test -- tests/unit/<file>.test.ts        # one file while you work
 npm test                                     # the whole suite
 npm run verify                               # every gate CI's check job runs
 ```
@@ -72,10 +72,13 @@ E2E_BASE_URL=http://127.0.0.1:3011 E2E_ADMIN_EMAIL=admin@blysis.com E2E_ADMIN_PA
 
 The server needs `AUTH_URL=http://127.0.0.1:3011` and a `SECRET_ENCRYPTION_KEY` in its environment. Use a database of its own for this: the suite writes to it. Afterwards stop the server by its PID, then `rm -rf src/modules` and run the generators again to put the checkout back.
 
+## Backups
+
+`npm run db:backup` takes the same backup as the panel's backup screen, into `backups/`, and `npm run db:restore -- <id>` restores one it lists; without an id it prints them. Both need the PostgreSQL client tools, `pg_dump` and `psql`, on the PATH.
+
 ## Windows
 
-Everything above works from PowerShell. Three things differ:
+The npm scripts run from any shell. The command blocks on this page are written for a POSIX shell (`rm -rf`, `VAR=value command`, a trailing `&`); Git Bash runs them as they are. Two more things differ:
 
 - `install.sh` is a Linux installer. Its tests run through WSL when a distribution is installed, and report themselves skipped when none is.
-- `db:backup` and `db:restore` are bash scripts for the server a site runs on; run them from WSL if you need them locally.
 - The checkout is LF everywhere (`.gitattributes`), whatever `core.autocrlf` says.
