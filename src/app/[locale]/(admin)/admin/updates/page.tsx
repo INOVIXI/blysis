@@ -3,13 +3,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { CheckCircle2, Loader2, ShieldAlert, WifiOff } from "lucide-react";
+import { CheckCircle2, FlaskConical, Loader2, Lock, ShieldAlert, WifiOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
 import { CheckboxField } from "@/core/components/ui/checkbox";
+import { RadioField } from "@/core/components/ui/radio";
+import { Badge } from "@/core/components/ui/badge";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
-import { errorMessage } from "@/core/lib/write-result";
+import { errorMessage, writeError } from "@/core/lib/write-result";
 import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 /**
@@ -27,8 +29,11 @@ interface Release {
     publishedAt: string;
     notes: string;
     security: boolean;
-    channel: string;
+    stage: Stage;
 }
+
+type Stage = "stable" | "beta" | "rc";
+type Channel = "stable" | "beta";
 
 interface Intent {
     toVersion: string;
@@ -38,6 +43,17 @@ interface Intent {
     log: string[];
     finishedAt: string | null;
 }
+
+/** What a pre-release is called on its badge. A release has no badge. */
+const STAGE_LABEL = {
+    beta: "updates_stageBeta",
+    rc: "updates_stageRc",
+} as const;
+
+const CHANNELS = [
+    { id: "stable", label: "updates_channelStable", hint: "updates_channelStableHint" },
+    { id: "beta", label: "updates_channelBeta", hint: "updates_channelBetaHint" },
+] as const;
 
 /**
  * The state words, written out rather than assembled.
@@ -69,7 +85,9 @@ interface UpdateRow {
 
 interface UpdateState {
     current: string;
-    channel: string;
+    currentStage: Stage;
+    channel: Channel;
+    channelPinned: boolean;
     feedReadable: boolean;
     latest: Release | null;
     newest: Release | null;
@@ -89,6 +107,7 @@ export default function UpdatesPage() {
     const [loading, setLoading] = useState(true);
     const [starting, setStarting] = useState(false);
     const [skipBackup, setSkipBackup] = useState(false);
+    const [savingChannel, setSavingChannel] = useState(false);
 
     const load = useCallback(async () => {
         try {
@@ -115,10 +134,35 @@ export default function UpdatesPage() {
         return () => clearInterval(timer);
     }, [inFlight, load]);
 
-    const start = async (version: string) => {
+    const chooseChannel = async (channel: Channel) => {
+        setSavingChannel(true);
+        try {
+            const res = await fetch("/api/v1/admin/updates", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ channel }),
+            });
+            const failed = await writeError(res, t("updates_channelSaveFailed"), t);
+            if (failed) {
+                toast.error(failed);
+                return;
+            }
+            toast.success(t("updates_channelSaved"));
+            await load();
+        } catch {
+            toast.error(t("updates_channelSaveFailed"));
+        } finally {
+            setSavingChannel(false);
+        }
+    };
+
+    const start = async (release: Release) => {
+        const version = release.version;
         const ok = await confirm({
             title: t("updates_confirmTitle", { version }),
-            message: t("updates_confirmMessage"),
+            // A pre-release says so before the button does anything, because
+            // there is no stepping back down from one.
+            message: release.stage === "stable" ? t("updates_confirmMessage") : t("updates_confirmPrerelease", { version }),
             variant: "danger",
         });
         if (!ok) return;
@@ -157,6 +201,10 @@ export default function UpdatesPage() {
     }
 
     const target = state.latest;
+    // A site that left the beta channel while on a pre-release has nothing to
+    // move to until that pre-release's own version ships, and an empty
+    // "newest version" would be a lie about why.
+    const waitingForRelease = state.channel === "stable" && state.currentStage !== "stable" && !target;
 
     return (
         <div className="space-y-6">
@@ -173,7 +221,13 @@ export default function UpdatesPage() {
                         </p>
                     )}
 
-                    {state.feedReadable && !target && (
+                    {state.feedReadable && waitingForRelease && (
+                        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <FlaskConical className="w-4 h-4" /> {t("updates_waitingForRelease", { version: state.current.split("-")[0] })}
+                        </p>
+                    )}
+
+                    {state.feedReadable && !target && !waitingForRelease && (
                         <p className="flex items-center gap-2 text-sm text-muted-foreground">
                             <CheckCircle2 className="w-4 h-4" /> {t("updates_upToDate")}
                         </p>
@@ -183,6 +237,11 @@ export default function UpdatesPage() {
                         <div className="space-y-3">
                             <div className="flex items-center gap-2">
                                 <span className="font-medium">{t("updates_available", { version: target.version })}</span>
+                                {target.stage !== "stable" && (
+                                    <Badge tone="warning" className="gap-1">
+                                        <FlaskConical className="w-3 h-3" /> {t(STAGE_LABEL[target.stage])}
+                                    </Badge>
+                                )}
                                 {target.security && (
                                     <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive">
                                         <ShieldAlert className="w-3 h-3" /> {t("updates_security")}
@@ -208,13 +267,40 @@ export default function UpdatesPage() {
                             />
 
                             <div className="flex items-center gap-3">
-                                <Button onClick={() => void start(target.version)} disabled={starting || inFlight || !state.canStart}>
+                                <Button onClick={() => void start(target)} disabled={starting || inFlight || !state.canStart}>
                                     {(starting || inFlight) && <Loader2 className="w-4 h-4 animate-spin" />}
                                     {t("updates_install", { version: target.version })}
                                 </Button>
                                 <span className="text-xs text-muted-foreground">{t("updates_downtime")}</span>
                             </div>
                         </div>
+                    )}
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-base">{t("updates_channelTitle")}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                    <div role="radiogroup" aria-label={t("updates_channelTitle")} className="space-y-3">
+                        {CHANNELS.map((c) => (
+                            <RadioField
+                                key={c.id}
+                                name="update-channel"
+                                value={c.id}
+                                checked={state.channel === c.id}
+                                disabled={state.channelPinned || savingChannel || inFlight}
+                                onChange={() => void chooseChannel(c.id)}
+                                label={t(c.label)}
+                                description={t(c.hint)}
+                            />
+                        ))}
+                    </div>
+                    {state.channelPinned && (
+                        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Lock className="w-4 h-4" /> {t("updates_channelPinned")}
+                        </p>
                     )}
                 </CardContent>
             </Card>

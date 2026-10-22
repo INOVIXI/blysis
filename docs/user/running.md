@@ -17,6 +17,8 @@ Everything here uses the `blysis` command the installer put on the server.
 
 **Admin > Updates** shows the version the site runs and the one it can move to. Updating from there puts the site into maintenance, takes a database backup and restarts on the new version. A release marked as a security release is one to install soon.
 
+The same screen chooses the release channel. **Stable** offers releases only, and is the right choice for a site people use. **Beta** also offers betas and release candidates before they are released; they can have bugs, and a site cannot go back from one to the release before it, so it waits there until the next release. Setting `BLYSIS_UPDATE_CHANNEL` to `stable` or `beta` in `.env` fixes the channel on the server, and the screen then shows it without a switch.
+
 `blysis update` does the same from the server. Given a tag, it pins the site to that release, and a later plain `blysis update` stays on it until you name another.
 
 The first start on a new release can take several minutes when modules are installed, because their pages are compiled into the site again for that version. The site comes back on its own; `blysis logs app` shows the progress. If a release from the panel does not come up healthy, the previous one is put back.

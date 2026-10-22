@@ -11,9 +11,12 @@ import {
     coreReleasesUrl,
     isNewerVersion,
     nextInstallable,
+    onChannel,
     parseReleases,
+    stageOf,
     type CoreRelease,
 } from "@/core/lib/core-releases";
+import { UPDATE_CHANNELS, getUpdateChannel, setUpdateChannel } from "@/core/lib/update-channel";
 import { canStart, readIntent, writeIntent } from "@/core/lib/core-update";
 import { createBackup } from "@/core/lib/backup";
 import { getMaintenanceConfig, setMaintenanceConfig } from "@/core/lib/maintenance";
@@ -42,9 +45,11 @@ const requestSchema = z.object({
     skipBackup: z.boolean().default(false),
 });
 
-/** The channel this install follows. Betas are opt-in through the environment. */
-function channel(): "stable" | "beta" {
-    return process.env.BLYSIS_UPDATE_CHANNEL === "beta" ? "beta" : "stable";
+const channelSchema = z.object({ channel: z.enum(UPDATE_CHANNELS) });
+
+/** A release as the screen draws it: with whether it is a beta or a candidate. */
+function withStage(release: CoreRelease | null) {
+    return release ? { ...release, stage: stageOf(release.version) } : null;
 }
 
 function currentVersion(): string {
@@ -67,8 +72,9 @@ export async function GET() {
     if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const current = currentVersion();
+    const { channel, pinned } = await getUpdateChannel();
     const releases = await fetchReleases();
-    const step = releases ? nextInstallable(releases, current, channel()) : { target: null, newest: null };
+    const step = releases ? nextInstallable(releases, current, channel) : { target: null, newest: null };
     const intent = await readIntent();
 
     const history = await prisma.coreUpdate.findMany({
@@ -87,14 +93,16 @@ export async function GET() {
 
     return NextResponse.json({
         current,
-        channel: channel(),
+        currentStage: stageOf(current),
+        channel,
+        channelPinned: pinned,
         // Distinguishable from "you are up to date": an install that cannot
         // reach the feed must not be told it is current.
         feedReadable: releases !== null,
         // The version this install may move to now, which is the step when the
         // newest one asks for one.
-        latest: step.target,
-        newest: step.newest,
+        latest: withStage(step.target),
+        newest: withStage(step.newest),
         blockedBy: step.newest ? blockedBy(step.newest, current)?.version ?? null : null,
         intent,
         canStart: canStart(intent),
@@ -128,6 +136,15 @@ export async function POST(request: NextRequest) {
     if (!release || !isNewerVersion(current, release.version)) {
         return NextResponse.json(
             { error: "That version is not one this install can move to.", code: "unknown_version" },
+            { status: 400 },
+        );
+    }
+
+    // The screen offers only what the channel allows, and the request is held
+    // to the same: a stable site is not moved to a beta by naming one.
+    if (!onChannel(release.version, (await getUpdateChannel()).channel)) {
+        return NextResponse.json(
+            { error: "That version is a pre-release, and this site follows stable releases.", code: "not_on_channel" },
             { status: 400 },
         );
     }
@@ -210,4 +227,39 @@ export async function POST(request: NextRequest) {
     log.info("[update] requested", { from: current, to: release.version, tag: release.tag });
 
     return NextResponse.json({ intent }, { status: 202 });
+}
+
+/**
+ * Choosing which releases the site is offered. Moving from beta back to
+ * stable never steps the site down: updates only add to the database, so a
+ * site on a pre-release stays on it until the release it previews ships.
+ */
+export async function PATCH(request: NextRequest) {
+    const session = await auth();
+    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    const body = await readJsonBody(request);
+    if (body instanceof NextResponse) return body;
+    const parsed = channelSchema.safeParse(body);
+    if (!parsed.success) {
+        return NextResponse.json({ error: "Name a channel: stable or beta.", code: "invalid_input" }, { status: 400 });
+    }
+
+    if ((await getUpdateChannel()).pinned) {
+        return NextResponse.json(
+            { error: "BLYSIS_UPDATE_CHANNEL in .env decides the channel on this server.", code: "channel_pinned" },
+            { status: 409 },
+        );
+    }
+
+    await setUpdateChannel(parsed.data.channel);
+    logActivity({
+        userId: session.user.id,
+        action: "core.update.channel",
+        entity: "core",
+        entityId: parsed.data.channel,
+    }).catch(() => {});
+
+    return NextResponse.json({ channel: parsed.data.channel });
 }

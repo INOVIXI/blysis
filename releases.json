@@ -8,7 +8,6 @@
       "publishedAt": "2026-09-07T00:00:00Z",
       "notes": "The version this catalogue starts from.",
       "security": false,
-      "channel": "stable",
       "minVersion": null
     },
     {
@@ -17,7 +16,6 @@
       "publishedAt": "2026-09-20T17:54:19Z",
       "notes": "A platform, and it is called Blysis.",
       "security": false,
-      "channel": "stable",
       "minVersion": null
     },
     {
@@ -26,7 +24,6 @@
       "publishedAt": "2026-09-21T17:24:28Z",
       "notes": "Every screen walked, and what it found.",
       "security": false,
-      "channel": "stable",
       "minVersion": null
     },
     {
@@ -35,7 +32,6 @@
       "publishedAt": "2026-09-23T10:06:37Z",
       "notes": "Next.js 16.3.6 for the next/og advisory.",
       "security": true,
-      "channel": "stable",
       "minVersion": null
     },
     {
@@ -44,7 +40,6 @@
       "publishedAt": "2026-10-05T18:19:32Z",
       "notes": "The demo puts itself back.",
       "security": false,
-      "channel": "stable",
       "minVersion": null
     },
     {
@@ -53,7 +48,6 @@
       "publishedAt": "2026-10-05T19:02:57Z",
       "notes": "Three migrations a fresh install could not get past.",
       "security": false,
-      "channel": "stable",
       "minVersion": null
     },
     {
@@ -62,7 +56,6 @@
       "publishedAt": "2026-10-06T10:18:41Z",
       "notes": "A rebuild that fails leaves the site up.",
       "security": true,
-      "channel": "stable",
       "minVersion": null
     },
     {
@@ -71,7 +64,6 @@
       "publishedAt": "2026-10-07T09:37:21Z",
       "notes": "The install lock works behind PgBouncer.",
       "security": true,
-      "channel": "stable",
       "minVersion": null
     },
     {
@@ -80,7 +72,6 @@
       "publishedAt": "2026-10-17T13:09:33Z",
       "notes": "The navigation stays on one row.",
       "security": false,
-      "channel": "stable",
       "minVersion": null
     },
     {
@@ -89,7 +80,6 @@
       "publishedAt": "2026-10-19T08:33:29Z",
       "notes": "Game servers connect to the site.",
       "security": false,
-      "channel": "stable",
       "minVersion": null
     }
   ]

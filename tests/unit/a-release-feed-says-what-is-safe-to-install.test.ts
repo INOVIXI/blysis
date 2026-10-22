@@ -11,6 +11,10 @@
  * The comparison is the other half. `0.10.0` is newer than `0.9.0`, and a
  * string compare says the opposite; a feed that lists an older version than
  * the one running must not offer an update at all.
+ *
+ * A pre-release is said in the number, `0.13.0-beta.1` or `0.13.0-rc.1`, and
+ * the number is what puts it on the beta channel: a separate field that
+ * could disagree with it is a field somebody gets wrong on release day.
  */
 import { describe, it, expect } from "vitest";
 import {
@@ -19,6 +23,7 @@ import {
     latestRelease,
     blockedBy,
     nextInstallable,
+    stageOf,
     type CoreRelease,
 } from "@/core/lib/core-releases";
 
@@ -28,7 +33,6 @@ const release = (over: Partial<CoreRelease> = {}): CoreRelease => ({
     publishedAt: "2026-09-01T00:00:00Z",
     notes: "Faster product list.",
     security: false,
-    channel: "stable",
     minVersion: null,
     ...over,
 });
@@ -97,7 +101,7 @@ describe("what to offer the operator", () => {
         release({ version: "0.2.2", tag: "0.2.2" }),
         release({ version: "0.4.0", tag: "0.4.0" }),
         release({ version: "0.3.0", tag: "0.3.0" }),
-        release({ version: "0.5.0", tag: "0.5.0", channel: "beta" }),
+        release({ version: "0.5.0-beta.1", tag: "0.5.0-beta.1" }),
     ];
 
     it("offers the newest stable one", () => {
@@ -105,7 +109,7 @@ describe("what to offer the operator", () => {
     });
 
     it("offers a beta only to somebody who asked for betas", () => {
-        expect(latestRelease(feed, "0.2.1", "beta")?.version).toBe("0.5.0");
+        expect(latestRelease(feed, "0.2.1", "beta")?.version).toBe("0.5.0-beta.1");
     });
 
     it("offers nothing when the newest release is the one running", () => {
@@ -159,5 +163,60 @@ describe("what to offer when the newest one is out of reach", () => {
 
     it("offers nothing at all when there is nothing newer", () => {
         expect(nextInstallable(feed, "9.9.9", "stable")).toEqual({ target: null, newest: null });
+    });
+});
+
+describe("a pre-release", () => {
+    it("comes before the release it previews, betas before candidates", () => {
+        const ladder = ["0.12.9", "0.13.0-beta.1", "0.13.0-beta.2", "0.13.0-beta.10", "0.13.0-rc.1", "0.13.0-rc.2", "0.13.0", "0.13.1"];
+        for (let i = 0; i < ladder.length - 1; i++) {
+            expect(isNewerVersion(ladder[i], ladder[i + 1]), `${ladder[i]} -> ${ladder[i + 1]}`).toBe(true);
+            expect(isNewerVersion(ladder[i + 1], ladder[i]), `${ladder[i + 1]} -> ${ladder[i]}`).toBe(false);
+        }
+    });
+
+    it("is not newer than itself", () => {
+        expect(isNewerVersion("0.13.0-rc.1", "0.13.0-rc.1")).toBe(false);
+    });
+
+    it("is said in the number, and the number decides the channel", () => {
+        expect(stageOf("0.13.0")).toBe("stable");
+        expect(stageOf("v0.13.0-beta.3")).toBe("beta");
+        expect(stageOf("0.13.0-rc.1")).toBe("rc");
+    });
+
+    it("is only a beta or a candidate, numbered, so nothing else reaches an operator", () => {
+        for (const junk of ["0.13.0-alpha.1", "0.13.0-beta", "0.13.0-rc", "0.13.0-beta.1.2", "0.13.0-nightly.1", "0.13.0+build.5", "0.13-beta.1"]) {
+            expect(isNewerVersion("0.12.0", junk), junk).toBe(false);
+            expect(parseReleases({ releases: [release({ version: junk, tag: "0.13.0" })] }), junk).toEqual([]);
+        }
+    });
+
+    const feed = [
+        release({ version: "0.12.0", tag: "0.12.0" }),
+        release({ version: "0.13.0-beta.1", tag: "0.13.0-beta.1" }),
+        release({ version: "0.13.0-rc.1", tag: "0.13.0-rc.1" }),
+    ];
+
+    it("is never offered on the stable channel", () => {
+        expect(latestRelease(feed, "0.11.0", "stable")?.version).toBe("0.12.0");
+        expect(latestRelease(feed, "0.12.0", "stable")).toBeNull();
+    });
+
+    it("is offered on the beta channel, newest first", () => {
+        expect(latestRelease(feed, "0.12.0", "beta")?.version).toBe("0.13.0-rc.1");
+    });
+
+    it("gives way to the release it previewed, on either channel", () => {
+        const released = [...feed, release({ version: "0.13.0", tag: "0.13.0" })];
+        expect(latestRelease(released, "0.13.0-rc.1", "beta")?.version).toBe("0.13.0");
+        expect(latestRelease(released, "0.13.0-beta.1", "stable")?.version).toBe("0.13.0");
+    });
+
+    // Updates only add to the database, so there is no stepping down from a
+    // beta to the stable release before it. A site that leaves the beta
+    // channel waits on the pre-release it has until its release ships.
+    it("leaves a site that left the beta channel where it is until the release ships", () => {
+        expect(latestRelease(feed, "0.13.0-rc.1", "stable")).toBeNull();
     });
 });

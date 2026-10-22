@@ -30,8 +30,19 @@ export function coreReleasesUrl(): string {
  */
 const TAG = /^[A-Za-z0-9_][A-Za-z0-9._-]{0,127}$/;
 
-/** A version is dotted numbers, optionally written with the tag's leading v. */
-const VERSION = /^v?\d+(\.\d+)*$/;
+/**
+ * A version is dotted numbers, optionally written with the tag's leading v,
+ * and a pre-release says so in a full three-part number: `0.13.0-beta.1`,
+ * `0.13.0-rc.2`. Only those two words, each numbered, because the word is what puts a
+ * release on the beta channel and anything else would reach an operator
+ * under a name nobody decided to give it.
+ */
+const VERSION = /^v?(\d+(\.\d+)*|\d+\.\d+\.\d+-(beta|rc)\.\d+)$/;
+
+/** Where a release stands. Only `stable` is offered to a site on the stable channel. */
+export type ReleaseStage = "stable" | "beta" | "rc";
+
+export type UpdateChannel = "stable" | "beta";
 
 const releaseSchema = z.object({
     version: z.string().regex(VERSION),
@@ -39,7 +50,6 @@ const releaseSchema = z.object({
     publishedAt: z.string().min(1),
     notes: z.string().default(""),
     security: z.boolean().default(false),
-    channel: z.enum(["stable", "beta"]).default("stable"),
     /** The oldest version that may move straight to this one. */
     minVersion: z.string().regex(VERSION).nullable().default(null),
 });
@@ -66,38 +76,68 @@ export function parseReleases(raw: unknown): CoreRelease[] {
     return out;
 }
 
-function parts(version: string): number[] | null {
-    if (!VERSION.test(version)) return null;
-    return version.replace(/^v/, "").split(".").map(Number);
+interface VersionParts {
+    numbers: number[];
+    /** Null for a release; for a pre-release, its stage and its number within it. */
+    pre: { stage: "beta" | "rc"; n: number } | null;
 }
 
-/** Is `latest` a version this install has not got yet? */
+function parts(version: string): VersionParts | null {
+    if (!VERSION.test(version)) return null;
+    const [release, suffix] = version.replace(/^v/, "").split("-");
+    if (!suffix) return { numbers: release.split(".").map(Number), pre: null };
+    const [stage, n] = suffix.split(".");
+    return { numbers: release.split(".").map(Number), pre: { stage: stage as "beta" | "rc", n: Number(n) } };
+}
+
+/** Is this version a release, or which kind of preview of one? */
+export function stageOf(version: string): ReleaseStage {
+    return parts(version)?.pre?.stage ?? "stable";
+}
+
+const PRE_RANK = { beta: 0, rc: 1 } as const;
+
+/**
+ * Is `latest` a version this install has not got yet?
+ *
+ * Ordered the way semver orders them: the numbers first, then a pre-release
+ * before the release it previews, a beta before a candidate, and within a
+ * stage by its number, so `beta.10` follows `beta.9`.
+ */
 export function isNewerVersion(current: string, latest: string): boolean {
     const c = parts(current);
     const l = parts(latest);
     if (!c || !l) return false;
-    for (let i = 0; i < Math.max(c.length, l.length); i++) {
-        const cv = c[i] ?? 0;
-        const lv = l[i] ?? 0;
+    for (let i = 0; i < Math.max(c.numbers.length, l.numbers.length); i++) {
+        const cv = c.numbers[i] ?? 0;
+        const lv = l.numbers[i] ?? 0;
         if (lv > cv) return true;
         if (lv < cv) return false;
     }
-    return false;
+    if (!c.pre || !l.pre) return c.pre !== null && l.pre === null;
+    if (c.pre.stage !== l.pre.stage) return PRE_RANK[l.pre.stage] > PRE_RANK[c.pre.stage];
+    return l.pre.n > c.pre.n;
+}
+
+/** Whether a site following this channel may be offered this version. */
+export function onChannel(version: string, channel: UpdateChannel): boolean {
+    return channel === "beta" || stageOf(version) === "stable";
 }
 
 /**
  * The newest release worth offering, or null when there is nothing to do.
  *
- * A beta channel sees betas as well as stable releases, because a beta line
- * that hid the stable fix released after it would be worse than useless.
+ * A beta channel sees betas and candidates as well as stable releases,
+ * because a beta line that hid the stable fix released after it would be
+ * worse than useless.
  */
 export function latestRelease(
     releases: CoreRelease[],
     current: string,
-    channel: "stable" | "beta",
+    channel: UpdateChannel,
 ): CoreRelease | null {
     const eligible = releases.filter(
-        (r) => (channel === "beta" || r.channel === "stable") && isNewerVersion(current, r.version),
+        (r) => onChannel(r.version, channel) && isNewerVersion(current, r.version),
     );
     if (eligible.length === 0) return null;
     return eligible.reduce((best, r) => (isNewerVersion(best.version, r.version) ? r : best));
@@ -136,7 +176,7 @@ export interface NextStep {
 export function nextInstallable(
     releases: CoreRelease[],
     current: string,
-    channel: "stable" | "beta",
+    channel: UpdateChannel,
 ): NextStep {
     const newest = latestRelease(releases, current, channel);
     if (!newest) return { target: null, newest: null };

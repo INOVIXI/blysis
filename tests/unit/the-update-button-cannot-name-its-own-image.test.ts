@@ -42,6 +42,12 @@ vi.mock("@/core/lib/maintenance", () => ({
     getMaintenanceConfig: async () => maintenance,
     setMaintenanceConfig: async (next: typeof maintenance) => { maintenance = next; },
 }));
+// Which releases the site follows is its own test; this one is about the tag.
+vi.mock("@/core/lib/update-channel", () => ({
+    UPDATE_CHANNELS: ["stable", "beta"],
+    getUpdateChannel: async () => ({ channel: "stable", pinned: false }),
+    setUpdateChannel: async () => undefined,
+}));
 vi.mock("@/core/lib/db", () => ({
     prisma: {
         coreUpdate: {
