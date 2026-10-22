@@ -258,7 +258,14 @@ function DefaultNavbar() {
                                             <ChevronDown className={`w-3 h-3 transition-transform ${navDropdown === link.label ? "rotate-180" : ""}`} />
                                         </button>
                                         {navDropdown === link.label && (
-                                            <div className="absolute top-full pt-1 z-50">
+                                            // Hung from the bar, the panel began 8px below the
+                                            // trigger's bottom edge, and the pointer crossing
+                                            // that strip left the item and shut the menu before
+                                            // it reached a link. Its transparent top padding now
+                                            // reaches up over the trigger, so the way down never
+                                            // leaves the item; the card itself sits where it
+                                            // did. `tests/e2e/a-menu-stays-open-on-the-way-into-it.spec.ts`.
+                                            <div className="absolute top-[calc(100%-0.75rem)] pt-4 z-50">
                                                 <div className="w-52 bg-card border border-[var(--color-border)] rounded-lg shadow-lg py-1 animate-fade-in">
                                                     {link.children.map((child: { label: string; href: string; icon?: string }) => (
                                                         <Link key={child.href} href={child.href}
