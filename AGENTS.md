@@ -77,7 +77,7 @@ The full runbook, including running the end-to-end suite against a real build, i
 
 ## Verifying
 
-- While you iterate, run the narrowest test: `npx vitest run tests/unit/<file>.test.ts`, with `-t "<name>"` for one case.
+- While you iterate, run the narrowest test: `npm test -- tests/unit/<file>.test.ts`, with `-t "<name>"` for one case. A bare `npx vitest` skips `scripts/with-scratch.ts`, so its temp files land in the shared system directory and `tests/unit/a-run-does-not-share-a-full-disk.test.ts` fails.
 - Before you say done, run `npm run verify`. It runs every gate CI's check job runs, in CI's order, and reports all failures at once. On a checkout with no module installed it installs every module for its own run, as CI does.
 - Run `npm run test:e2e` when a change touches the interface. It needs a served build; see the runbook.
 - A bug in logic, data, state or a protocol gets a failing test first, in the module's existing test file where there is one, then the fix. Watch the test fail for the right reason before you trust it.

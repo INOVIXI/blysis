@@ -32,12 +32,6 @@ const scripts = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf
 /** The scripts that run long enough, or spawn enough, to need somewhere to write. */
 const NEEDS_SCRATCH = ["dev", "build", "test", "test:watch", "test:coverage"];
 
-/** Scripts that are bash on purpose, and why that is not a portability bug. */
-const RUNS_ON_A_LINUX_HOST: Record<string, string> = {
-    "db:backup": "pg_dump on the server the site runs on, which is the Linux image or its host",
-    "db:restore": "psql on the server the site runs on, which is the Linux image or its host",
-};
-
 /** Run argv through the wrapper the way an npm script does. */
 function wrapped(argv: string[]): { status: number | null; out: string } {
     const result = spawnSync(...toolCommand(["npx", "tsx", "scripts/with-scratch.ts", ...argv], ROOT), {
@@ -85,15 +79,9 @@ describe("a command that writes while it runs", () => {
         // it was `sh scripts/with-scratch.sh`, and no test, dev server or build
         // started on a Windows machine.
         const posixOnly = Object.entries(scripts)
-            .filter(([name]) => !(name in RUNS_ON_A_LINUX_HOST))
             .filter(([, command]) => /(^|&&\s*)(sh|bash) |\brm -rf\b|(^|&&\s*)[A-Z_]+=\S+ /.test(command))
             .map(([name, command]) => `${name}: ${command}`);
         expect(posixOnly).toEqual([]);
-    });
-
-    it("excuses only scripts that are still bash", () => {
-        const ported = Object.keys(RUNS_ON_A_LINUX_HOST).filter((name) => !/^(sh|bash) /.test(scripts[name] ?? ""));
-        expect(ported, "a script that no longer needs a Linux host needs no excuse").toEqual([]);
     });
 
     it("sweeps the scratch directory when the tree is cleaned", () => {
