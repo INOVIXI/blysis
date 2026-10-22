@@ -135,6 +135,10 @@ export default function UpdatesPage() {
     }, [inFlight, load]);
 
     const chooseChannel = async (channel: Channel) => {
+        // Shown at once: the radio is controlled by the loaded state, and
+        // waiting for the save made the dot jump back to the old choice and
+        // then forward again. A refused save loads the real answer back.
+        setState((s) => (s ? { ...s, channel } : s));
         setSavingChannel(true);
         try {
             const res = await fetch("/api/v1/admin/updates", {
@@ -145,12 +149,14 @@ export default function UpdatesPage() {
             const failed = await writeError(res, t("updates_channelSaveFailed"), t);
             if (failed) {
                 toast.error(failed);
+                await load();
                 return;
             }
             toast.success(t("updates_channelSaved"));
             await load();
         } catch {
             toast.error(t("updates_channelSaveFailed"));
+            await load();
         } finally {
             setSavingChannel(false);
         }
