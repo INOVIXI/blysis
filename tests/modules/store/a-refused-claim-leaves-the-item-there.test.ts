@@ -19,7 +19,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const db = {
     chestItem: { findUnique: vi.fn(), updateMany: vi.fn(async () => ({ count: 1 })) },
     productCommand: { findMany: vi.fn(async () => [] as { command: string; serverId: string | null }[]) },
-    user: { findFirst: vi.fn(async () => null) },
+    user: { findMany: vi.fn(async () => []) },
 };
 
 vi.mock("@/core/sdk/server", () => ({
