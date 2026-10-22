@@ -166,23 +166,28 @@ export async function createBackup(
     const gzip = zlib.createGzip();
     const writeStream = fs.createWriteStream(fullPath);
 
-    try {
-        await Promise.all([
-            // pg_dump stdout → gzip → file
-            pipeline(pgDump.stdout, gzip, writeStream),
-            // wait for pg_dump to exit
-            new Promise<void>((resolve, reject) => {
-                pgDump.on("error", (err) => reject(describeSpawnFailure("pg_dump", err)));
-                pgDump.on("exit", (code) => {
-                    if (code === 0) resolve();
-                    else reject(new Error(`pg_dump exited with code ${code}${pgStderr ? `: ${pgStderr.trim()}` : ""}`));
-                });
-            }),
-        ]);
-    } catch (err) {
+    // Both settle before anything is decided. With `Promise.all`, a pg_dump
+    // that could not start rejected before the file had been opened, the
+    // delete below found nothing, and the stream then opened the file and
+    // gzip closed it as an empty archive that the backup screen listed.
+    // `tests/unit/a-backup-that-failed-leaves-no-file.test.ts`.
+    const [piped, exited] = await Promise.allSettled([
+        // pg_dump stdout → gzip → file
+        pipeline(pgDump.stdout, gzip, writeStream),
+        // wait for pg_dump to exit
+        new Promise<void>((resolve, reject) => {
+            pgDump.on("error", (err) => reject(describeSpawnFailure("pg_dump", err)));
+            pgDump.on("exit", (code) => {
+                if (code === 0) resolve();
+                else reject(new Error(`pg_dump exited with code ${code}${pgStderr ? `: ${pgStderr.trim()}` : ""}`));
+            });
+        }),
+    ]);
+    const failure = exited.status === "rejected" ? exited.reason : piped.status === "rejected" ? piped.reason : null;
+    if (failure !== null) {
         // Remove any partial file
         try { await fsp.unlink(fullPath); } catch { /* ignore */ }
-        throw err instanceof Error ? err : new Error(String(err));
+        throw failure instanceof Error ? failure : new Error(String(failure));
     }
 
     if (notes && notes.trim()) {
