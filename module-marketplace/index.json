@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-10-22",
-  "updatedAt": "2026-10-22T17:14:51Z",
+  "updatedAt": "2026-10-22T17:42:57Z",
   "modules": [
     {
       "id": "announcements",
@@ -5873,13 +5873,13 @@
           "description": "允许用户使用其 Steam 账户登录"
         }
       },
-      "version": "1.4.0",
+      "version": "1.4.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Gamepad2",
       "category": "integration",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-10-22T17:42:57Z",
       "screenshots": [],
       "tags": [
         "integration"

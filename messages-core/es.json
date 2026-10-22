@@ -468,7 +468,8 @@
     "emailQueue_to": "Para",
     "enabled": "Activado",
     "err": {
-      "demo_disabled": "Esta es la demo pública, así que este cambio no se guarda. Instala tu propia instancia para probarlo."
+      "demo_disabled": "Esta es la demo pública, así que este cambio no se guarda. Instala tu propia instancia para probarlo.",
+      "username_taken": "Ese nombre de usuario ya está en uso."
     },
     "error_id": "ID del error:",
     "error_title": "Algo salió mal",

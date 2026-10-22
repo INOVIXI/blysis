@@ -2,7 +2,7 @@
   "id": "steam-auth",
   "name": "Steam Login",
   "description": "Allow users to sign in with their Steam account",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "coreVersion": "^5.0.0",
   "category": "integration",
   "author": "Blysis",

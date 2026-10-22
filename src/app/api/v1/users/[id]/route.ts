@@ -6,6 +6,7 @@ import { prisma } from "@/core/lib/db";
 import { isAdmin } from "@/core/lib/permissions";
 import { logActivity } from "@/core/lib/activity-log";
 import { readJsonBody } from "@/core/lib/api-body";
+import { usernameTaken } from "@/core/lib/username-taken";
 import { z } from "zod";
 
 /**
@@ -119,7 +120,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             data.roleId = fields.roleId;
         }
 
-        if (fields.username) data.username = fields.username;
+        if (fields.username) {
+            if (await usernameTaken(fields.username, id)) {
+                return NextResponse.json({ error: "Username already taken", code: "username_taken" }, { status: 409 });
+            }
+            data.username = fields.username;
+        }
         if (fields.email) data.email = fields.email;
 
         // Ban/unban

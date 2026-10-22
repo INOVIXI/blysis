@@ -468,7 +468,8 @@
     "emailQueue_to": "To",
     "enabled": "Enabled",
     "err": {
-      "demo_disabled": "This is the public demo, so this change is not saved. Run your own instance to try it."
+      "demo_disabled": "This is the public demo, so this change is not saved. Run your own instance to try it.",
+      "username_taken": "That username is already taken."
     },
     "error_id": "Error ID:",
     "error_title": "Something went wrong",

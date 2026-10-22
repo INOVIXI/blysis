@@ -36,7 +36,11 @@ function fakePrisma(over: Partial<{ taken: string[]; failFirst: boolean }> = {})
                 return row({ ...(data as Partial<CoreUserRow>), id: "new" }) as CoreUserRow;
             },
             update: async ({ where, data }) => row({ ...(data as Partial<CoreUserRow>), id: where.id }),
-            findUnique: async ({ where }) => (taken.has(where.username) ? { id: "other" } : null),
+            findFirst: async ({ where }) => {
+                const { equals, mode } = where.username;
+                const held = [...taken].some((name) => (mode === "insensitive" ? name.toLowerCase() === equals.toLowerCase() : name === equals));
+                return held ? { id: "other" } : null;
+            },
         },
         account: {
             create: async ({ data }) => {
@@ -156,6 +160,18 @@ describe("coreAuthAdapter createUser", () => {
 
         expect(created[0].username).not.toBe("ada");
         expect(created[0].username).toMatch(/^ada_[0-9a-f]{8}$/);
+    });
+
+    // A provider's display name is whatever the person typed there, so
+    // signing in with Discord as "Admin" must not hand them the name the
+    // site's "admin" already answers to.
+    it("suffixes a username somebody holds under another capitalisation", async () => {
+        const { prisma, created } = fakePrisma({ taken: ["ada"] });
+        const adapter = coreAuthAdapter(emptyBase, prisma);
+
+        await adapter.createUser!({ id: "x", name: "Ada", email: "a@b.co", emailVerified: null } as AdapterUser);
+
+        expect(created[0].username).toMatch(/^Ada_[0-9a-f]{8}$/);
     });
 
     it("retries when the unique constraint fires between the check and the insert", async () => {

@@ -468,7 +468,8 @@
     "emailQueue_to": "Do",
     "enabled": "Włączone",
     "err": {
-      "demo_disabled": "To publiczne demo, więc ta zmiana nie zostanie zapisana. Uruchom własną instancję, aby ją wypróbować."
+      "demo_disabled": "To publiczne demo, więc ta zmiana nie zostanie zapisana. Uruchom własną instancję, aby ją wypróbować.",
+      "username_taken": "Ta nazwa użytkownika jest już zajęta."
     },
     "error_id": "Identyfikator błędu:",
     "error_title": "Coś poszło nie tak",

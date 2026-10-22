@@ -9,6 +9,7 @@ import { hashPassword, verifyPassword } from "@/core/lib/password-hash";
 import { readSettingValues } from "@/core/lib/setting-values";
 import { MEMBER_AVATAR_UPLOADS_KEY, memberAvatarsAllowed } from "@/core/lib/member-uploads";
 import { requestEmailChange } from "@/core/lib/email-change";
+import { usernameTaken } from "@/core/lib/username-taken";
 /** What proves the person at the screen is the account's owner. */
 const identityProofSchema = z.object({ currentPassword: z.string().min(1).max(200).optional() });
 
@@ -189,10 +190,7 @@ export async function PATCH(request: NextRequest) {
                 { status: 403 },
             );
         }
-        const existing = await prisma.user.findFirst({
-            where: { username: validation.data.username, id: { not: session.user.id } },
-        });
-        if (existing) {
+        if (await usernameTaken(validation.data.username, session.user.id)) {
             return NextResponse.json({ error: "Username already taken", code: "username_taken" }, { status: 400 });
         }
         data.username = validation.data.username;

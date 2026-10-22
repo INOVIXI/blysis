@@ -468,7 +468,8 @@
     "emailQueue_to": "Alıcı",
     "enabled": "Açık",
     "err": {
-      "demo_disabled": "Burası herkese açık demo, bu yüzden bu değişiklik kaydedilmedi. Denemek için kendi kurulumunu çalıştır."
+      "demo_disabled": "Burası herkese açık demo, bu yüzden bu değişiklik kaydedilmedi. Denemek için kendi kurulumunu çalıştır.",
+      "username_taken": "Bu kullanıcı adı zaten alınmış."
     },
     "error_id": "Hata kimliği:",
     "error_title": "Bir şeyler ters gitti",

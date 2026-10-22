@@ -468,7 +468,8 @@
     "emailQueue_to": "An",
     "enabled": "Aktiviert",
     "err": {
-      "demo_disabled": "Dies ist die öffentliche Demo, daher wird diese Änderung nicht gespeichert. Betreibe deine eigene Instanz, um sie auszuprobieren."
+      "demo_disabled": "Dies ist die öffentliche Demo, daher wird diese Änderung nicht gespeichert. Betreibe deine eigene Instanz, um sie auszuprobieren.",
+      "username_taken": "Dieser Benutzername ist bereits vergeben."
     },
     "error_id": "Fehler-ID:",
     "error_title": "Etwas ist schiefgelaufen",

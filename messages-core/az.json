@@ -468,7 +468,8 @@
     "emailQueue_to": "Kimə",
     "enabled": "Aktivdir",
     "err": {
-      "demo_disabled": "Bu ictimai demodur, ona görə bu dəyişiklik saxlanılmır. Sınamaq üçün öz nüsxənizi işə salın."
+      "demo_disabled": "Bu ictimai demodur, ona görə bu dəyişiklik saxlanılmır. Sınamaq üçün öz nüsxənizi işə salın.",
+      "username_taken": "Bu istifadəçi adı artıq tutulub."
     },
     "error_id": "Xəta ID-si:",
     "error_title": "Nəsə səhv getdi",

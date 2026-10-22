@@ -40,7 +40,13 @@ function baseUsername(player: SteamPlayer): string {
 
 async function uniqueUsername(player: SteamPlayer): Promise<string> {
     const base = baseUsername(player);
-    if (!(await prisma.user.findUnique({ where: { username: base }, select: { id: true } }))) return base;
+    // However it is capitalised: the unique key is exact, and a persona
+    // called "Admin" must not arrive beside the site's "admin".
+    const holder = await prisma.user.findFirst({
+        where: { username: { equals: base, mode: "insensitive" } },
+        select: { id: true },
+    });
+    if (!holder) return base;
     // Two people can absolutely share a Steam persona name. Fall back to the
     // Steam id, which cannot collide, rather than counting upward forever.
     return `${base.slice(0, 15)}_${player.steamId.slice(-8)}`;
