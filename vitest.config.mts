@@ -101,7 +101,7 @@ export default defineConfig({
             // can be enforced. Do not add them here.
             exclude: ['src/core/lib/db.ts', 'src/core/lib/auth.ts'],
             // A ratchet, not a target. Set just under the numbers the suite
-            // actually produced on 2026-09-02 so an unrelated change cannot
+            // actually produced on 2026-10-22 so an unrelated change cannot
             // quietly remove coverage; raise them when you add tests, never
             // lower them to make a build pass.
             //
@@ -112,10 +112,10 @@ export default defineConfig({
             // installed, so `npm run test:coverage` failed on the missing
             // provider and CI ran `npm test` without it.
             thresholds: {
-                statements: 84,
-                branches: 80,
-                functions: 79,
-                lines: 86,
+                statements: 90,
+                branches: 84,
+                functions: 89,
+                lines: 91,
                 'src/core/lib/permissions.ts': {
                     statements: 85, branches: 90, functions: 72, lines: 80,
                 },
