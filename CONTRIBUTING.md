@@ -48,7 +48,7 @@ The commit style is in [AGENTS.md](AGENTS.md#commits-and-pull-requests): Convent
 
 ## Models we accept
 
-Code written by an AI model is accepted only from **Claude Opus 5.5** and **Claude Fable 5.1**. A pull request any part of whose code was written by another model is closed. This applies to the model that wrote the code, not to one used only as a reviewer.
+Code written by an AI model is accepted only from **Claude Opus 5.5** and **Claude Fable 5.5**. A pull request any part of whose code was written by another model is closed. This applies to the model that wrote the code, not to one used only as a reviewer.
 
 Name the model and the harness on the last line of the pull request description, for example `Written with Claude Opus 5.5 in Claude Code`. A pull request that does not say whether a model wrote it is asked to say so before review.
 
