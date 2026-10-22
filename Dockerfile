@@ -70,6 +70,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # newer than itself, while an 18 client dumps 16 and 17 servers fine. 3.3MB.
 RUN apk add --no-cache postgresql18-client
 
+# su-exec: the entrypoint starts as root for one repair and then becomes
+# nextjs with it. See scripts/docker-as-app-user.sh.
+RUN apk add --no-cache su-exec
+
 # Non-root user so an RCE via a module hook cannot write outside /app.
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 --ingroup nodejs nextjs
@@ -128,7 +132,11 @@ RUN mkdir -p src/modules backups && chown -R nextjs:nodejs src/modules backups
 # the copied trees above already carry the right owner.
 RUN chown nextjs:nodejs /app
 
-USER nextjs
+# Not `USER nextjs`: the entrypoint starts as root, repairs the backups
+# volume's owner and then runs everything as nextjs. The image starting as
+# nextjs is what left a root-owned volume nobody could repair. A shell from
+# `docker compose exec app` is root for the same reason; pass `-u nextjs` to
+# one that writes files the app must own.
 EXPOSE 3001
 
 # start-period covers a boot-time rebuild. reconcile-build.ts rebuilds before
@@ -138,8 +146,11 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=10s --start-period=600s --retries=3 \
     CMD wget -qO- http://127.0.0.1:3001/api/health >/dev/null || exit 1
 
-# The entrypoint reconciles the build against the installed modules and then
+# The command reconciles the build against the installed modules and then
 # `exec`s the server, so `next start` still ends up as PID 1 and the shutdown
 # registry still sees SIGTERM. The `exec` is what makes the shell safe here -
-# a wrapper that forks instead would swallow the signal.
+# a wrapper that forks instead would swallow the signal. The entrypoint
+# `exec`s too, for the same reason, and wraps any command a service names
+# instead, so the migrate service runs as nextjs as well.
+ENTRYPOINT ["/app/scripts/docker-as-app-user.sh"]
 CMD ["/app/scripts/docker-entrypoint.sh"]

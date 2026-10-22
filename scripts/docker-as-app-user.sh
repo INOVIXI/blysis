@@ -1,9 +1,9 @@
 #!/bin/sh
 # Runs the container's command as nextjs, after the one repair only root can make.
 #
-# Every dump is written to /app/backups, a volume. The image did not create
-# that directory until 0.4.8, so Docker made the mount point itself, owned by
-# root, and gave every volume created before then the same owner. nextjs
+# Every dump is written to /app/backups, a volume. The image did not always
+# create that directory, so Docker made the mount point itself, owned by
+# root, and gave every volume it created that way the same owner. nextjs
 # cannot write a backup into it and cannot take it back, and the image used to
 # start as nextjs, so nothing could. The container now starts as root, hands
 # that one directory to nextjs, and becomes nextjs before anything else runs:

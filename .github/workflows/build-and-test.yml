@@ -212,10 +212,10 @@ jobs:
       - name: Install the blog module into the volume
         run: |
           set -euo pipefail
-          docker compose exec -T app cp -R module-sources/blog src/modules/blog
-          docker compose exec -T app npx tsx scripts/merge-schemas.ts
-          docker compose exec -T app npx tsx scripts/apply-migrations.ts
-          docker compose exec -T app npx prisma db push --accept-data-loss
+          docker compose exec -T -u nextjs app cp -R module-sources/blog src/modules/blog
+          docker compose exec -T -u nextjs app npx tsx scripts/merge-schemas.ts
+          docker compose exec -T -u nextjs app npx tsx scripts/apply-migrations.ts
+          docker compose exec -T -u nextjs app npx prisma db push --accept-data-loss
 
       - name: Restart, and expect a reconciling rebuild
         run: |
@@ -243,7 +243,7 @@ jobs:
       - name: Reconciler is a no-op once the build matches
         run: |
           set -euo pipefail
-          docker compose exec -T app npx tsx scripts/reconcile-build.ts > /tmp/reconcile.txt 2>&1
+          docker compose exec -T -u nextjs app npx tsx scripts/reconcile-build.ts > /tmp/reconcile.txt 2>&1
           cat /tmp/reconcile.txt
           grep -q 'build matches installed modules' /tmp/reconcile.txt
 
@@ -281,7 +281,7 @@ jobs:
       - name: A build that fails leaves the previous build serving
         run: |
           set -euo pipefail
-          docker compose exec -T app sh -c '
+          docker compose exec -T -u nextjs app sh -c '
             echo "export const broken: number = \"not a number\";" > src/modules/blog/broken.ts
             sed -i "s/\"version\": \"\([^\"]*\)\"/\"version\": \"\1-broken\"/" src/modules/blog/module.json'
           docker compose restart app
@@ -292,22 +292,33 @@ jobs:
           code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3001/api/v1/blog/articles)
           echo "status with a broken module: $code"
           [ "$code" = "200" ] || { echo "the previous build is not serving the module it had"; exit 1; }
-          docker compose exec -T app sh -c 'test -f .next/BUILD_ID && test ! -e .next/.staging && test ! -e .next/.previous' \
+          docker compose exec -T -u nextjs app sh -c 'test -f .next/BUILD_ID && test ! -e .next/.staging && test ! -e .next/.previous' \
             || { echo "the failed build left something behind in .next"; exit 1; }
 
       # Every dump lands in the backups volume: the nightly one, the panel's,
       # and the one an update from the panel takes before it starts. The
       # image did not create that directory, so the volume came up owned by
       # root, the app could not write a single backup, and the pre-update
-      # dump failed on every install. Taken here as the app's own user.
+      # dump failed on every install. The volume is put back the way those
+      # installs have it, and a restart has to repair it before the app's own
+      # user takes a backup (scripts/docker-as-app-user.sh).
       - name: A backup and a restore from inside the image
         run: |
           set -euo pipefail
-          docker compose exec -T app sh -c 'npm run db:backup -- "ci" && ls -l backups'
-          id=$(docker compose exec -T app sh -c 'ls backups | grep "^blysis-manual-" | head -1 | sed "s/\.sql\.gz$//"')
+          docker compose exec -T -u 0 app chown root:root /app/backups
+          docker compose restart app
+          ./.github/scripts/wait-for-health.sh 900
+          owner=$(docker compose exec -T app sh -c 'stat -c %U /app/backups')
+          # The owner of /proc/1 is the user PID 1 runs as; BusyBox ps has no -p.
+          runs_as=$(docker compose exec -T app sh -c 'stat -c %U /proc/1')
+          echo "backups owned by $owner, server running as $runs_as"
+          [ "$owner" = "nextjs" ] || { echo "the entrypoint did not repair the backups volume"; exit 1; }
+          [ "$runs_as" = "nextjs" ] || { echo "the server is not running as nextjs"; exit 1; }
+          docker compose exec -T -u nextjs app sh -c 'npm run db:backup -- "ci" && ls -l backups'
+          id=$(docker compose exec -T -u nextjs app sh -c 'ls backups | grep "^blysis-manual-" | head -1 | sed "s/\.sql\.gz$//"')
           echo "backup id: $id"
           [ -n "$id" ] || { echo "no backup was written"; exit 1; }
-          docker compose exec -T app sh -c "echo restore | npm run db:restore -- $id"
+          docker compose exec -T -u nextjs app sh -c "echo restore | npm run db:restore -- $id"
           code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3001/api/v1/blog/articles)
           echo "status after restore: $code"
           [ "$code" = "200" ] || { echo "the site did not answer after the restore"; exit 1; }
