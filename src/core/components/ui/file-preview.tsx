@@ -73,10 +73,24 @@ export function FilePreview({
 
 /**
  * Looks like an image, by what the field asked for or by what the address
- * ends in. A field that says `image/*` is believed before the file loads.
+ * ends in. A field that says `image/*` is believed before the file loads, but
+ * only for an address a browser fetches: a pasted link is whatever somebody
+ * typed, and `javascript:` or `data:` does not go into `src`.
+ * `tests/unit/a-preview-loads-only-an-address.test.tsx`.
  */
 export function looksLikeImage(value: string | null, accept?: string): boolean {
+    if (!value || !isFetchedAddress(value)) return false;
     if (accept && accept.startsWith("image/")) return true;
-    if (!value) return false;
     return /\.(png|jpe?g|gif|webp|svg|avif|bmp|ico)(\?.*)?$/i.test(value);
+}
+
+/** A path on this site, or an http(s) address. */
+function isFetchedAddress(value: string): boolean {
+    if (value.startsWith("/")) return true;
+    try {
+        const { protocol } = new URL(value);
+        return protocol === "http:" || protocol === "https:";
+    } catch {
+        return false;
+    }
 }
