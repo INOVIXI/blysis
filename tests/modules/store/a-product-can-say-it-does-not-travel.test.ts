@@ -24,9 +24,8 @@ const db = {
     product: { findUnique: vi.fn(), findMany: vi.fn(async () => [] as unknown[]) },
     productCommand: { findMany: vi.fn(async () => []) },
     user: {
-        findFirst: vi.fn(async () => ({ id: "member-2", username: "alex" })),
         findUnique: vi.fn(async () => ({ receiveGifts: true })),
-        findMany: vi.fn(async () => [] as unknown[]),
+        findMany: vi.fn(async () => [{ id: "member-2", username: "alex" }] as unknown[]),
     },
 };
 
@@ -87,7 +86,7 @@ beforeEach(() => {
     db.chestItem.updateMany.mockResolvedValue({ count: 1 });
     db.product.findUnique.mockResolvedValue({ giftable: true });
     db.product.findMany.mockResolvedValue([{ id: "prod-1" }]);
-    db.user.findFirst.mockResolvedValue({ id: "member-2", username: "alex" });
+    db.user.findMany.mockResolvedValue([{ id: "member-2", username: "alex" }]);
 });
 
 describe("giving away something from the chest", () => {

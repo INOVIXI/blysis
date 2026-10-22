@@ -96,10 +96,16 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
             );
         }
 
-        const target = await prisma.user.findFirst({
-            where: { OR: [{ username: fields.giftTo }, { id: fields.giftTo }] },
+        // A username is unique whatever its case, so the name is matched that
+        // way. Two accounts left differing only by case are told apart by the
+        // exact spelling, and otherwise neither is guessed at.
+        const named = await prisma.user.findMany({
+            where: { OR: [{ username: { equals: fields.giftTo, mode: "insensitive" } }, { id: fields.giftTo }] },
             select: { id: true, username: true, receiveGifts: true },
+            take: 10,
         });
+        const target = named.find((row) => row.id === fields.giftTo || row.username === fields.giftTo)
+            ?? (named.length === 1 ? named[0] : null);
         if (!target) return NextResponse.json({ error: "User not found" }, { status: 404 });
         if (target.id === userId) {
             return NextResponse.json({ error: "That is your own chest", code: "chest_gift_to_self" }, { status: 400 });
