@@ -16,10 +16,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import { isUnsafeKey } from "@/core/lib/safe-object";
+import { locales } from "@/core/lib/i18n/config";
 
 const shipped = new Map<string, Record<string, Record<string, unknown>>>();
 
 export function shippedMessages(locale: string): Record<string, Record<string, unknown>> {
+    // The locale becomes part of a path, so it is held to the served list
+    // here rather than trusted to every caller to have done it first.
+    // `tests/unit/a-shipped-catalogue-is-read-only-for-a-served-locale.test.ts`.
+    if (!(locales as readonly string[]).includes(locale)) return {};
+
     const cached = shipped.get(locale);
     if (cached) return cached;
 
