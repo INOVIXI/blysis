@@ -154,7 +154,7 @@ describe("the other events", () => {
     it("reports a refund against the payment intent, not the charge", async () => {
         constructEvent.mockReturnValue({
             type: "charge.refunded",
-            data: { object: { id: "ch_1", payment_intent: "pi_123", amount_refunded: 4200 } },
+            data: { object: { id: "ch_1", payment_intent: "pi_123", amount_refunded: 4200, currency: "usd" } },
         });
         await POST(makeReq());
         expect(asked().hook).toBe("payment.refunded");
