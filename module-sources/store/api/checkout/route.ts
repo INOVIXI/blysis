@@ -615,6 +615,14 @@ export async function POST(request: NextRequest) {
             settleAmount = converted;
         }
 
+        // Written down before the gateway is asked, so the settlement that
+        // comes back is held against what was charged rather than taking the
+        // gateway's word for it. See `chargeShortfall`.
+        await prisma.order.update({
+            where: { id: order.id },
+            data: { chargeAmount: settleAmount, chargeCurrency: settleIn },
+        });
+
         const subProduct = isSubscriptionCheckout ? subscriptionProducts[0] : null;
 
         const payment = await startPaymentSession({

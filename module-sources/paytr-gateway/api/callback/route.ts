@@ -62,9 +62,11 @@ export async function POST(request: NextRequest) {
         reference,
         provider: "paytr",
         providerRef: merchantOid,
-        // PayTR reports the settled amount in kurus.
+        // PayTR reports the settled amount in minor units, and covers it with
+        // the hash. It reports no currency: that went into the hashed token
+        // when the payment started, so it is the one the store charged.
         amount: Number(totalAmount) / 100,
-        currency: "TRY",
+        currency: null,
     });
 
     if (!outcome.handled) {

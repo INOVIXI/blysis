@@ -134,11 +134,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
                 kind: "order",
                 reference: existing.id,
                 provider: existing.paymentMethod || "manual",
-                // The order's own total. A number from the request would let
-                // a typo mark a 500 order paid at 5.
                 providerRef: existing.paymentId || `manual:${existing.id}`,
-                amount: Number(existing.total),
-                currency: existing.currency,
+                // Nothing is reported, so the payment records what checkout
+                // charged, or the order's total. A number from the request
+                // would let a typo mark a 500 order paid at 5, and the order's
+                // total held against a charge in another currency would refuse
+                // every converted order an operator confirmed by hand.
+                amount: null,
+                currency: null,
             });
             if (!settled.handled) {
                 log.error("Marking an order paid did not settle it", { id, error: settled.error });

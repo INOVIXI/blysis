@@ -77,15 +77,17 @@ describe("marking an unpaid order paid", () => {
     it("grants what was bought, down the same path a gateway takes", async () => {
         const res = await setStatus("COMPLETED");
         expect(res.status).toBe(200);
-        expect(settleOrder).toHaveBeenCalledWith(
-            expect.objectContaining({ kind: "order", reference: "order-1", amount: 42, currency: "USD" }),
-        );
+        expect(settleOrder).toHaveBeenCalledWith(expect.objectContaining({ kind: "order", reference: "order-1" }));
     });
 
-    it("settles at the order's own total, never a number from the request", async () => {
+    // Settlement records what checkout charged, or the total, when nothing is
+    // reported. A number from the request would let a typo mark a 500 order
+    // paid at 5; the total, held against a charge converted into another
+    // currency, would refuse every such order an operator confirms.
+    it("reports no amount of its own, from the request or from the total", async () => {
         db.order.findUnique.mockResolvedValue({ ...pending, total: "500.00" });
         await setStatus("COMPLETED");
-        expect(settleOrder).toHaveBeenCalledWith(expect.objectContaining({ amount: 500 }));
+        expect(settleOrder).toHaveBeenCalledWith(expect.objectContaining({ amount: null, currency: null }));
     });
 
     it("does not also write the status itself, which would be a second way to set it", async () => {

@@ -1,17 +1,17 @@
 /** A gateway says the buyer never paid: session expired, or they backed out. */
 import type { HookHandlerFor } from "@/core/sdk";
 import { log } from "@/core/sdk/server";
-import { voidOrder } from "../lib/fulfilment";
+import { cancelPayment } from "../lib/fulfilment";
 
 const onPaymentVoided: HookHandlerFor<"payment.voided", "filter"> = async (outcome, event) => {
     if (outcome.handled) return outcome;
-    // A wallet top-up that was never paid for leaves nothing behind to undo.
-    if (event.kind !== "order") return { handled: true, duplicate: false, error: null };
 
     try {
-        return await voidOrder(event.reference);
+        // Whether the reference is an order or a top-up is the store's to
+        // know; see `settlePayment`.
+        return await cancelPayment(event.reference);
     } catch (error) {
-        log.error("[store] could not cancel an abandoned order", {
+        log.error("[store] could not cancel an abandoned payment", {
             reference: event.reference,
             error: error instanceof Error ? error.message : String(error),
         });

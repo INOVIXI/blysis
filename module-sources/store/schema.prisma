@@ -11,6 +11,7 @@
 //   stripeCustomerId String?
 //   subscriptions    Subscription[]
 //   receiveGifts     Boolean            @default(true)
+//   creditTopUps     CreditTopUp[]      @relation("CreditTopUps")
 // @@user-relations-end
 // NOTE: User FK fields below are nullable + onDelete: SetNull so that
 // deleting a user preserves their order/credit/subscription history for
@@ -200,6 +201,12 @@ model Order {
   discount      Decimal     @default(0) @db.Decimal(10, 2)
   tax           Decimal     @default(0) @db.Decimal(10, 2)
   currency      String      @default("USD")
+  /// What checkout asked the gateway to collect: the total converted into the
+  /// gateway's currency and grossed up for a fee passed on, which is not
+  /// `total`. A settlement is held against it. Null on an order placed before
+  /// it was recorded, and on one never sent to a gateway.
+  chargeAmount   Decimal?   @db.Decimal(10, 2)
+  chargeCurrency String?
   paymentMethod String?
   paymentId     String?
   notes         String?
@@ -537,4 +544,30 @@ model CreditPackage {
   updatedAt    DateTime @updatedAt
 
   @@index([isActive, order])
+}
+
+/// One wallet top-up a buyer started: the credits it sells and what it costs.
+/// Its id is the reference the gateway carries, so settling it reads the
+/// credits, the buyer and the price from here rather than from whatever the
+/// gateway echoed back. See lib/credit-top-up.ts.
+model CreditTopUp {
+  id        String            @id @default(cuid())
+  credits   Int
+  amount    Decimal           @db.Decimal(10, 2)
+  currency  String
+  provider  String
+  status    CreditTopUpStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  userId String?
+  user   User?   @relation("CreditTopUps", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+enum CreditTopUpStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
 }

@@ -7,7 +7,7 @@
  */
 import type { HookHandlerFor } from "@/core/sdk";
 import { log } from "@/core/sdk/server";
-import { settleOrder, settleCredits } from "../lib/fulfilment";
+import { settlePayment } from "../lib/fulfilment";
 
 const onPaymentSettled: HookHandlerFor<"payment.settled", "filter"> = async (outcome, settlement) => {
     // Somebody already dealt with it. Two stores on one install is not a
@@ -15,9 +15,7 @@ const onPaymentSettled: HookHandlerFor<"payment.settled", "filter"> = async (out
     if (outcome.handled) return outcome;
 
     try {
-        return settlement.kind === "credits"
-            ? await settleCredits(settlement)
-            : await settleOrder(settlement);
+        return await settlePayment(settlement);
     } catch (error) {
         log.error("[store] could not settle a payment", {
             kind: settlement.kind,

@@ -42,7 +42,9 @@ export async function GET(request: NextRequest) {
                 reference: pending.reference,
                 provider: "paypal",
                 providerRef: token,
-                amount: capture.amount || Number(pending.amount),
+                // PayPal's own figure for the capture. Falling back to what was
+                // asked would be the gateway vouching for itself.
+                amount: capture.amount || null,
                 currency: pending.currency,
                 metadata: (pending.metadata as Record<string, string>) ?? {},
             },

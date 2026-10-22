@@ -60,6 +60,10 @@ const db = {
     product: { findMany: vi.fn(async () => []), updateMany: vi.fn(async () => ({ count: 1 })) },
     user: { update: vi.fn(async () => ({})) },
     creditTransaction: { findUnique: vi.fn(async () => null), create: vi.fn(async () => ({})) },
+    creditTopUp: {
+        findUnique: vi.fn(async () => null as unknown),
+        updateMany: vi.fn(async () => ({ count: 1 })),
+    },
     subscription: {
         findFirst: vi.fn(),
         update: vi.fn(async () => ({})),
@@ -98,9 +102,10 @@ const models = Object.fromEntries(Object.entries(db).filter(([k]) => k !== "$tra
 const txClient = trace(models, true);
 const prismaClient = { ...trace(models, false), $transaction: db.$transaction };
 
+const log = { error: vi.fn(), warn: vi.fn(), info: vi.fn() };
 vi.mock("@/core/sdk/server", () => ({
     prisma: prismaClient,
-    log: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
+    log,
 }));
 
 /**
@@ -121,9 +126,10 @@ vi.mock("@/modules/store/lib/delivery", () => ({ deliverProduct }));
 const announceOrderCompleted = vi.fn(async () => {});
 vi.mock("@/modules/store/lib/order-events", () => ({ announceOrderCompleted }));
 
-const { settleOrder, settleCredits, voidOrder, refundPayment, applySubscriptionChange } = await import(
+const { settlePayment, settleOrder, cancelPayment, voidOrder, refundPayment, applySubscriptionChange } = await import(
     "@/modules/store/lib/fulfilment"
 );
+const { settleCredits } = await import("@/modules/store/lib/credit-top-up");
 
 const settlement: PaymentSettlement = {
     kind: "order",
@@ -157,6 +163,8 @@ beforeEach(() => {
     db.ownedProduct.createMany.mockResolvedValue({ count: 1 });
     db.productCommand.findMany.mockResolvedValue([]);
     db.creditTransaction.findUnique.mockResolvedValue(null);
+    db.creditTopUp.findUnique.mockResolvedValue(null);
+    db.creditTopUp.updateMany.mockResolvedValue({ count: 1 });
 });
 
 describe("settleOrder", () => {
@@ -230,6 +238,21 @@ describe("settleOrder", () => {
         expect(outcome.handled).toBe(true);
         expect(outcome.error).toMatch(/unknown order/i);
         expect(db.order.updateMany).not.toHaveBeenCalled();
+    });
+
+    // Handled, so the provider does not retry a reference that will never
+    // exist. But money arrived for it, and a top-up started before top-ups
+    // were written down carries the buyer's id here: the operator has to
+    // hear of it, because the gateway logs only what was not handled.
+    it("says loudly that money arrived for a reference it does not know", async () => {
+        db.order.findUnique.mockResolvedValueOnce(null);
+
+        await settleOrder(settlement);
+
+        expect(log.error).toHaveBeenCalledWith(
+            expect.stringMatching(/nothing the store knows/),
+            expect.objectContaining({ reference: "order-1", provider: "stripe", providerRef: "pi_123" }),
+        );
     });
 
     // The order is paid either way. There is simply nobody left to grant to.
@@ -348,26 +371,156 @@ describe("settleOrder", () => {
     });
 });
 
-describe("settleCredits", () => {
-    const topUp: PaymentSettlement = {
-        kind: "credits",
-        reference: "user-1",
-        provider: "stripe",
-        providerRef: "pi_credit",
-        amount: 25,
+/**
+ * An order holds what the store asked the gateway to collect, and a
+ * settlement is held against it. The gateway's word for the amount used to be
+ * the only one there was: a cent settled an order of fifty.
+ */
+describe("settleOrder, against what was charged", () => {
+    const charged = { ...paidOrder, status: "PENDING", chargeAmount: 42, chargeCurrency: "USD" };
+
+    it("settles a payment of the amount charged", async () => {
+        db.order.findUnique.mockResolvedValueOnce(charged);
+        expect(await settleOrder(settlement)).toEqual({ handled: true, duplicate: false, error: null });
+    });
+
+    it("settles nothing for a payment of less, and says nobody recorded it", async () => {
+        db.order.findUnique.mockResolvedValueOnce(charged);
+
+        const outcome = await settleOrder({ ...settlement, amount: 0.01 });
+
+        // Not handled: the gateway answers its provider with a failure, so the
+        // operator hears of it, rather than telling the buyer it went through.
+        expect(outcome.handled).toBe(false);
+        expect(outcome.error).toBeTruthy();
+        expect(db.order.updateMany).not.toHaveBeenCalled();
+        expect(db.chestItem.createMany).not.toHaveBeenCalled();
+    });
+
+    it("settles nothing for a payment in another currency", async () => {
+        db.order.findUnique.mockResolvedValueOnce(charged);
+        const outcome = await settleOrder({ ...settlement, currency: "TRY" });
+        expect(outcome.handled).toBe(false);
+        expect(db.order.updateMany).not.toHaveBeenCalled();
+    });
+
+    it("records the charge as the payment when the provider does not report the amount", async () => {
+        db.order.findUnique.mockResolvedValueOnce(charged);
+
+        expect(await settleOrder({ ...settlement, amount: null, currency: null })).toMatchObject({ handled: true, error: null });
+        expect(db.payment.create).toHaveBeenCalledWith(
+            expect.objectContaining({ data: expect.objectContaining({ amount: 42, currency: "usd" }) }),
+        );
+    });
+
+    // Orders placed before the charge was written down have nothing to hold a
+    // settlement against, and refusing them would strand the ones in flight.
+    it("settles an order placed before charges were recorded as it always did", async () => {
+        db.order.findUnique.mockResolvedValueOnce({ ...paidOrder, status: "PENDING", chargeAmount: null, chargeCurrency: null });
+        expect(await settleOrder({ ...settlement, amount: 0.01 })).toMatchObject({ handled: true, error: null });
+    });
+});
+
+describe("settlePayment", () => {
+    const topUp = {
+        id: "topup-1",
+        userId: "user-1",
+        credits: 1200,
+        amount: 10,
         currency: "USD",
-        metadata: { userId: "user-1", creditAmount: "25" },
+        status: "PENDING",
     };
 
-    it("asks for the credits the store told the gateway to carry", async () => {
-        const outcome = await settleCredits(topUp);
+    /**
+     * Eight gateways report every payment as an order: they have no field to
+     * carry the kind in. A top-up settled through one of them looked
+     * for an order with the buyer's id, found none, and told the buyer it had
+     * worked. The store reads the kind from its own records now.
+     */
+    it("settles a top-up whatever kind the gateway called it", async () => {
+        db.creditTopUp.findUnique.mockResolvedValueOnce(topUp);
+
+        const outcome = await settlePayment({ ...settlement, kind: "order", reference: "topup-1", amount: 10 });
 
         expect(outcome).toEqual({ handled: true, duplicate: false, error: null });
         expect(applyFiltersAsync).toHaveBeenCalledWith(
             "credit.change",
             expect.anything(),
-            expect.objectContaining({ userId: "user-1", amount: 25, type: "credit_purchase" }),
+            expect.objectContaining({ userId: "user-1", amount: 1200, type: "credit_purchase" }),
         );
+        expect(db.order.findUnique).not.toHaveBeenCalled();
+    });
+
+    it("settles an order when the reference is not a top-up", async () => {
+        db.order.findUnique.mockResolvedValueOnce({ ...paidOrder, status: "PENDING" });
+        expect(await settlePayment(settlement)).toEqual({ handled: true, duplicate: false, error: null });
+        expect(db.order.updateMany).toHaveBeenCalled();
+    });
+});
+
+describe("settleCredits", () => {
+    const topUp = {
+        id: "topup-1",
+        userId: "user-1",
+        credits: 1200,
+        amount: 10,
+        currency: "USD",
+        status: "PENDING",
+    };
+    const settled: PaymentSettlement = {
+        kind: "credits",
+        reference: "topup-1",
+        provider: "stripe",
+        providerRef: "pi_credit",
+        amount: 10,
+        currency: "USD",
+        metadata: {},
+    };
+
+    it("credits what the top-up sold, not what the gateway carried back", async () => {
+        // The metadata travels through the provider, and through the buyer's
+        // browser for some gateways. The top-up row is the store's own.
+        const outcome = await settleCredits({ ...settled, metadata: { userId: "someone-else", creditAmount: "1000000" } }, topUp);
+
+        expect(outcome).toEqual({ handled: true, duplicate: false, error: null });
+        expect(applyFiltersAsync).toHaveBeenCalledWith(
+            "credit.change",
+            expect.anything(),
+            expect.objectContaining({ userId: "user-1", amount: 1200 }),
+        );
+    });
+
+    it("claims the top-up in the transaction that credits it", async () => {
+        await settleCredits(settled, topUp);
+
+        expect(calls.find((c) => c.op === "creditTopUp.updateMany")).toMatchObject({
+            viaTx: true,
+            args: { where: { id: "topup-1", status: "PENDING" }, data: { status: "COMPLETED" } },
+        });
+    });
+
+    it("credits nothing when another delivery claimed the top-up first", async () => {
+        db.creditTopUp.updateMany.mockResolvedValueOnce({ count: 0 });
+
+        expect(await settleCredits(settled, topUp)).toEqual({ handled: true, duplicate: true, error: null });
+        expect(applyFiltersAsync).not.toHaveBeenCalledWith("credit.change", expect.anything(), expect.anything());
+    });
+
+    it("says already settled for a top-up that is complete", async () => {
+        expect(await settleCredits(settled, { ...topUp, status: "COMPLETED" })).toEqual({
+            handled: true,
+            duplicate: true,
+            error: null,
+        });
+        expect(db.creditTopUp.updateMany).not.toHaveBeenCalled();
+    });
+
+    it("credits nothing for a payment of less than the top-up cost", async () => {
+        const outcome = await settleCredits({ ...settled, amount: 0.01 }, topUp);
+
+        expect(outcome.handled).toBe(false);
+        expect(db.creditTopUp.updateMany).not.toHaveBeenCalled();
+        expect(applyFiltersAsync).not.toHaveBeenCalledWith("credit.change", expect.anything(), expect.anything());
     });
 
     /**
@@ -378,11 +531,8 @@ describe("settleCredits", () => {
      * idempotency key now.
      */
     it("keys the ledger row on the gateway's own reference", async () => {
-        await settleCredits(topUp);
+        await settleCredits(settled, topUp);
 
-        // There is no read before the write any more: the ledger belongs to
-        // another module, and the duplicate key is the answer rather than a
-        // second opinion about it.
         expect(db.creditTransaction.findUnique).not.toHaveBeenCalled();
         expect(applyFiltersAsync).toHaveBeenCalledWith(
             "credit.change",
@@ -396,7 +546,7 @@ describe("settleCredits", () => {
             Object.assign(new Error("Unique constraint failed"), { code: "P2002" }),
         );
 
-        expect(await settleCredits(topUp)).toEqual({ handled: true, duplicate: true, error: null });
+        expect(await settleCredits(settled, topUp)).toEqual({ handled: true, duplicate: true, error: null });
     });
 
     it("does not swallow a failure that is not a duplicate", async () => {
@@ -404,14 +554,34 @@ describe("settleCredits", () => {
             Object.assign(new Error("connection lost"), { code: "P1001" }),
         );
 
-        await expect(settleCredits(topUp)).rejects.toThrow("connection lost");
+        await expect(settleCredits(settled, topUp)).rejects.toThrow("connection lost");
     });
 
-    it("refuses a top-up with no buyer or no amount", async () => {
-        const outcome = await settleCredits({ ...topUp, metadata: { userId: "user-1" } });
+    it("refuses a top-up whose buyer's account is gone", async () => {
+        const outcome = await settleCredits(settled, { ...topUp, userId: null });
 
         expect(outcome.error).toBeTruthy();
-        expect(db.user.update).not.toHaveBeenCalled();
+        expect(applyFiltersAsync).not.toHaveBeenCalledWith("credit.change", expect.anything(), expect.anything());
+    });
+});
+
+describe("cancelPayment", () => {
+    it("cancels a top-up the buyer walked away from", async () => {
+        db.creditTopUp.findUnique.mockResolvedValueOnce({ id: "topup-1", status: "PENDING" });
+
+        expect(await cancelPayment("topup-1")).toMatchObject({ handled: true });
+        expect(db.creditTopUp.updateMany).toHaveBeenCalledWith({
+            where: { id: "topup-1", status: "PENDING" },
+            data: { status: "CANCELLED" },
+        });
+        expect(db.order.findUnique).not.toHaveBeenCalled();
+    });
+
+    it("hands anything else to the order it names", async () => {
+        db.order.findUnique.mockResolvedValueOnce({ id: "order-1", status: "PENDING" });
+
+        expect(await cancelPayment("order-1")).toMatchObject({ handled: true });
+        expect(db.order.update).toHaveBeenCalledWith({ where: { id: "order-1" }, data: { status: "CANCELLED" } });
     });
 });
 

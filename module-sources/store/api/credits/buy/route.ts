@@ -53,8 +53,8 @@ export async function POST(request: NextRequest) {
 
         // Two ways to buy, and the package is the one that decides both
         // numbers for itself. What the buyer is charged and what lands in
-        // their balance are read off the row here and carried with the
-        // payment, because a gateway settles minutes later - days later for a
+        // their balance are read off the row here and written onto the top-up,
+        // because a gateway settles minutes later - days later for a
         // transfer confirmed by hand - and an operator editing the package in
         // between must not change what somebody already bought.
         let amount: number;
@@ -117,12 +117,18 @@ export async function POST(request: NextRequest) {
             select: { email: true, username: true },
         });
 
+        // The row is the reference, and everything the settlement needs: the
+        // buyer's id used to be the reference, and the credits travelled as
+        // metadata, which most gateways cannot carry. See `credit-top-up.ts`.
+        const topUp = await prisma.creditTopUp.create({
+            data: { userId: session.user.id, credits: amount, amount: totalAmount, currency, provider },
+            select: { id: true },
+        });
+
         const payment = await startPaymentSession({
             provider,
             kind: "credits",
-            // Credits have no order row, so the reference is the buyer: it is
-            // what the settlement needs to find them again.
-            reference: session.user.id,
+            reference: topUp.id,
             amount: totalAmount,
             currency,
             description,
