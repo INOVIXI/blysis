@@ -1,0 +1,597 @@
+{
+  "schemaVersion": 2,
+  "id": "vanguard",
+  "name": "Vanguard",
+  "description": "Navy stage, cobalt accent and cut corners: a game-server look with the navigation down the left edge and each page's title on a backdrop. Light and dark.",
+  "version": "1.0.0",
+  "author": "Blysis",
+  "modes": {
+    "default": "light",
+    "available": {
+      "light": {
+        "tokens": {
+          "colors": {
+            "primary": "#2457f5",
+            "primaryForeground": "#ffffff",
+            "secondary": "#3c4762",
+            "secondaryForeground": "#ffffff",
+            "accent": "#8fd3ff",
+            "accentForeground": "#0b1633",
+            "background": "#eef2f9",
+            "foreground": "#0e1a33",
+            "muted": "#e4e9f2",
+            "mutedForeground": "#4a5570",
+            "border": "#d3dbea",
+            "card": "#ffffff",
+            "cardForeground": "#0e1a33",
+            "destructive": "#c0262d",
+            "destructiveForeground": "#ffffff",
+            "success": "#15803d",
+            "successForeground": "#ffffff",
+            "warning": "#a15c00",
+            "warningForeground": "#ffffff",
+            "stage": "#0b1633",
+            "stageForeground": "#ffffff",
+            "stageMuted": "#c7d3ee",
+            "stageFar": "#122352",
+            "stageNear": "#1a3072",
+            "stageGlow": "#3468ff5c"
+          },
+          "fonts": {
+            "heading": "var(--font-vanguard-heading), var(--font-outfit), system-ui, sans-serif",
+            "body": "var(--font-vanguard-body), var(--font-inter), system-ui, sans-serif",
+            "mono": "var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace"
+          }
+        }
+      },
+      "dark": {
+        "tokens": {
+          "colors": {
+            "primary": "#6f95ff",
+            "primaryForeground": "#050a18",
+            "secondary": "#a9b6d3",
+            "secondaryForeground": "#050a18",
+            "accent": "#8fd3ff",
+            "accentForeground": "#050a18",
+            "background": "#070d1d",
+            "foreground": "#e6ecf8",
+            "muted": "#152039",
+            "mutedForeground": "#a3b0cc",
+            "border": "#24314f",
+            "card": "#0f1930",
+            "cardForeground": "#e6ecf8",
+            "destructive": "#f87171",
+            "destructiveForeground": "#050a18",
+            "success": "#4ade80",
+            "successForeground": "#050a18",
+            "warning": "#fbbf24",
+            "warningForeground": "#050a18",
+            "stage": "#040915",
+            "stageForeground": "#ffffff",
+            "stageMuted": "#b4c2e2",
+            "stageFar": "#0b1636",
+            "stageNear": "#12224c",
+            "stageGlow": "#3468ff47"
+          },
+          "fonts": {
+            "heading": "var(--font-vanguard-heading), var(--font-outfit), system-ui, sans-serif",
+            "body": "var(--font-vanguard-body), var(--font-inter), system-ui, sans-serif",
+            "mono": "var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace"
+          }
+        }
+      }
+    }
+  },
+  "tokens": {
+    "colors": {
+      "primary": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "primaryForeground": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "accent": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "accentForeground": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "secondary": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "background": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "foreground": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "muted": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "mutedForeground": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "border": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "card": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "cardForeground": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "destructive": {
+        "type": "color",
+        "group": "State"
+      },
+      "success": {
+        "type": "color",
+        "group": "State"
+      },
+      "warning": {
+        "type": "color",
+        "group": "State"
+      },
+      "stage": {
+        "type": "color",
+        "group": "Stage"
+      },
+      "stageForeground": {
+        "type": "color",
+        "group": "Stage"
+      },
+      "stageMuted": {
+        "type": "color",
+        "group": "Stage"
+      },
+      "stageFar": {
+        "type": "color",
+        "group": "Stage"
+      },
+      "stageNear": {
+        "type": "color",
+        "group": "Stage"
+      }
+    },
+    "fonts": {
+      "heading": {
+        "type": "font",
+        "default": "var(--font-vanguard-heading), var(--font-outfit), system-ui, sans-serif"
+      },
+      "body": {
+        "type": "font",
+        "default": "var(--font-vanguard-body), var(--font-inter), system-ui, sans-serif"
+      },
+      "mono": {
+        "type": "font",
+        "default": "var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace"
+      }
+    },
+    "radius": {
+      "type": "select",
+      "default": "md",
+      "options": [
+        {
+          "value": "none",
+          "label": "Square (0)"
+        },
+        {
+          "value": "sm",
+          "label": "Subtle (0.25rem)"
+        },
+        {
+          "value": "md",
+          "label": "Rounded (0.5rem)"
+        },
+        {
+          "value": "lg",
+          "label": "Soft (0.75rem)"
+        }
+      ]
+    }
+  },
+  "fontFiles": {
+    "heading": [
+      {
+        "file": "fonts/ChakraPetch-Medium.woff2",
+        "weight": "500",
+        "style": "normal"
+      },
+      {
+        "file": "fonts/ChakraPetch-SemiBold.woff2",
+        "weight": "600",
+        "style": "normal"
+      },
+      {
+        "file": "fonts/ChakraPetch-Bold.woff2",
+        "weight": "700",
+        "style": "normal"
+      }
+    ],
+    "body": [
+      {
+        "file": "fonts/Figtree-Variable.woff2",
+        "weight": "300 900",
+        "style": "normal"
+      }
+    ]
+  },
+  "stylesheet": "theme.css",
+  "settings": {
+    "hero": {
+      "label": "Hero",
+      "icon": "Image",
+      "labelKey": "theme_vanguard_hero",
+      "fields": {
+        "enabled": {
+          "type": "toggle",
+          "label": "Show the hero on the homepage",
+          "default": true,
+          "labelKey": "theme_vanguard_hero_enabled"
+        },
+        "tag": {
+          "type": "text",
+          "label": "Small label above the heading",
+          "max": 60,
+          "labelKey": "theme_vanguard_hero_tag"
+        },
+        "title": {
+          "type": "text",
+          "label": "Heading",
+          "max": 120,
+          "labelKey": "theme_vanguard_hero_title"
+        },
+        "subtitle": {
+          "type": "text",
+          "label": "Line under the heading",
+          "max": 300,
+          "labelKey": "theme_vanguard_hero_subtitle"
+        },
+        "ctaText": {
+          "type": "text",
+          "label": "Button text",
+          "max": 40,
+          "labelKey": "theme_vanguard_hero_ctaText"
+        },
+        "ctaHref": {
+          "type": "text",
+          "label": "Where the button goes",
+          "max": 300,
+          "labelKey": "theme_vanguard_hero_ctaHref"
+        }
+      }
+    },
+    "auth": {
+      "label": "Sign-in screen",
+      "icon": "LogIn",
+      "labelKey": "theme_vanguard_auth",
+      "fields": {
+        "tag": {
+          "type": "text",
+          "label": "Small label on the sign-in screen",
+          "max": 60,
+          "labelKey": "theme_vanguard_auth_tag"
+        },
+        "title": {
+          "type": "text",
+          "label": "Heading on the sign-in screen",
+          "max": 120,
+          "labelKey": "theme_vanguard_auth_title"
+        },
+        "subtitle": {
+          "type": "text",
+          "label": "Line under that heading",
+          "max": 300,
+          "labelKey": "theme_vanguard_auth_subtitle"
+        }
+      }
+    }
+  },
+  "components": {
+    "SiteShell": "components/SiteShell.tsx",
+    "PageHeader": "components/PageHeader.tsx",
+    "AuthFrame": "components/AuthFrame.tsx"
+  },
+  "translations": {
+    "en": {
+      "admin": {
+        "theme_vanguard_hero": "Hero",
+        "theme_vanguard_hero_enabled": "Show the hero on the homepage",
+        "theme_vanguard_hero_tag": "Small label above the heading",
+        "theme_vanguard_hero_title": "Heading",
+        "theme_vanguard_hero_subtitle": "Line under the heading",
+        "theme_vanguard_hero_ctaText": "Button text",
+        "theme_vanguard_hero_ctaHref": "Where the button goes",
+        "theme_vanguard_auth": "Sign-in screen",
+        "theme_vanguard_auth_tag": "Small label on the sign-in screen",
+        "theme_vanguard_auth_title": "Heading on the sign-in screen",
+        "theme_vanguard_auth_subtitle": "Line under that heading"
+      },
+      "vanguard": {
+        "heroTag": "Now open",
+        "heroTitle": "Your world is waiting",
+        "heroSubtitle": "Join the server, meet the people who play on it and leave your mark.",
+        "joinDiscord": "Join our Discord",
+        "authTag": "Welcome",
+        "authTitle": "One account for the whole site",
+        "authSubtitle": "Your profile, your purchases and your posts, all in one place."
+      }
+    },
+    "tr": {
+      "admin": {
+        "theme_vanguard_hero": "Hero",
+        "theme_vanguard_hero_enabled": "Hero'yu ana sayfada göster",
+        "theme_vanguard_hero_tag": "Başlığın üstündeki küçük etiket",
+        "theme_vanguard_hero_title": "Başlık",
+        "theme_vanguard_hero_subtitle": "Başlığın altındaki satır",
+        "theme_vanguard_hero_ctaText": "Düğme metni",
+        "theme_vanguard_hero_ctaHref": "Düğmenin gittiği yer",
+        "theme_vanguard_auth": "Giriş ekranı",
+        "theme_vanguard_auth_tag": "Giriş ekranındaki küçük etiket",
+        "theme_vanguard_auth_title": "Giriş ekranındaki başlık",
+        "theme_vanguard_auth_subtitle": "O başlığın altındaki satır"
+      },
+      "vanguard": {
+        "heroTag": "Şimdi açık",
+        "heroTitle": "Dünyan seni bekliyor",
+        "heroSubtitle": "Sunucuya katıl, orada oynayanlarla tanış ve izini bırak.",
+        "joinDiscord": "Discord'a katıl",
+        "authTag": "Hoş geldin",
+        "authTitle": "Bütün site için tek hesap",
+        "authSubtitle": "Profilin, satın aldıkların ve yazdıkların tek yerde."
+      }
+    },
+    "az": {
+      "admin": {
+        "theme_vanguard_hero": "Əsas banner",
+        "theme_vanguard_hero_enabled": "Əsas səhifədə əsas banneri göstər",
+        "theme_vanguard_hero_tag": "Başlığın üstündəki kiçik etiket",
+        "theme_vanguard_hero_title": "Başlıq",
+        "theme_vanguard_hero_subtitle": "Başlığın altındakı sətir",
+        "theme_vanguard_hero_ctaText": "Düymənin mətni",
+        "theme_vanguard_hero_ctaHref": "Düymənin apardığı yer",
+        "theme_vanguard_auth": "Giriş ekranı",
+        "theme_vanguard_auth_tag": "Giriş ekranındakı kiçik etiket",
+        "theme_vanguard_auth_title": "Giriş ekranındakı başlıq",
+        "theme_vanguard_auth_subtitle": "Həmin başlığın altındakı sətir"
+      },
+      "vanguard": {
+        "heroTag": "İndi açıqdır",
+        "heroTitle": "Dünyan səni gözləyir",
+        "heroSubtitle": "Serverə qoşul, orada oynayanlarla tanış ol və izini burax.",
+        "joinDiscord": "Discord-a qoşul",
+        "authTag": "Xoş gəldin",
+        "authTitle": "Bütün sayt üçün bir hesab",
+        "authSubtitle": "Profilin, aldıqların və yazdıqların bir yerdə."
+      }
+    },
+    "de": {
+      "admin": {
+        "theme_vanguard_hero": "Hero-Banner",
+        "theme_vanguard_hero_enabled": "Hero-Banner auf der Startseite anzeigen",
+        "theme_vanguard_hero_tag": "Kleines Etikett über der Überschrift",
+        "theme_vanguard_hero_title": "Überschrift",
+        "theme_vanguard_hero_subtitle": "Zeile unter der Überschrift",
+        "theme_vanguard_hero_ctaText": "Button-Text",
+        "theme_vanguard_hero_ctaHref": "Wohin der Button führt",
+        "theme_vanguard_auth": "Anmeldeseite",
+        "theme_vanguard_auth_tag": "Kleines Etikett auf der Anmeldeseite",
+        "theme_vanguard_auth_title": "Überschrift auf der Anmeldeseite",
+        "theme_vanguard_auth_subtitle": "Zeile unter dieser Überschrift"
+      },
+      "vanguard": {
+        "heroTag": "Jetzt offen",
+        "heroTitle": "Deine Welt wartet",
+        "heroSubtitle": "Tritt dem Server bei, lerne die Leute kennen, die dort spielen, und hinterlasse deine Spuren.",
+        "joinDiscord": "Unserem Discord beitreten",
+        "authTag": "Willkommen",
+        "authTitle": "Ein Konto für die ganze Seite",
+        "authSubtitle": "Dein Profil, deine Käufe und deine Beiträge an einem Ort."
+      }
+    },
+    "es": {
+      "admin": {
+        "theme_vanguard_hero": "Banner principal",
+        "theme_vanguard_hero_enabled": "Mostrar el banner principal en la página de inicio",
+        "theme_vanguard_hero_tag": "Etiqueta pequeña sobre el título",
+        "theme_vanguard_hero_title": "Título",
+        "theme_vanguard_hero_subtitle": "Línea debajo del título",
+        "theme_vanguard_hero_ctaText": "Texto del botón",
+        "theme_vanguard_hero_ctaHref": "Adónde lleva el botón",
+        "theme_vanguard_auth": "Pantalla de acceso",
+        "theme_vanguard_auth_tag": "Etiqueta pequeña en la pantalla de acceso",
+        "theme_vanguard_auth_title": "Título en la pantalla de acceso",
+        "theme_vanguard_auth_subtitle": "Línea debajo de ese título"
+      },
+      "vanguard": {
+        "heroTag": "Ya abierto",
+        "heroTitle": "Tu mundo te espera",
+        "heroSubtitle": "Únete al servidor, conoce a quienes juegan en él y deja tu huella.",
+        "joinDiscord": "Únete a nuestro Discord",
+        "authTag": "Bienvenido",
+        "authTitle": "Una cuenta para todo el sitio",
+        "authSubtitle": "Tu perfil, tus compras y tus publicaciones en un solo lugar."
+      }
+    },
+    "et": {
+      "admin": {
+        "theme_vanguard_hero": "Bänner",
+        "theme_vanguard_hero_enabled": "Näita esilehel bännerit",
+        "theme_vanguard_hero_tag": "Väike silt pealkirja kohal",
+        "theme_vanguard_hero_title": "Pealkiri",
+        "theme_vanguard_hero_subtitle": "Pealkirja all olev rida",
+        "theme_vanguard_hero_ctaText": "Nupu tekst",
+        "theme_vanguard_hero_ctaHref": "Kuhu nupp viib",
+        "theme_vanguard_auth": "Sisselogimise vaade",
+        "theme_vanguard_auth_tag": "Väike silt sisselogimise vaates",
+        "theme_vanguard_auth_title": "Pealkiri sisselogimise vaates",
+        "theme_vanguard_auth_subtitle": "Rida selle pealkirja all"
+      },
+      "vanguard": {
+        "heroTag": "Nüüd avatud",
+        "heroTitle": "Sinu maailm ootab",
+        "heroSubtitle": "Liitu serveriga, tutvu seal mängijatega ja jäta oma jälg.",
+        "joinDiscord": "Liitu meie Discordiga",
+        "authTag": "Tere tulemast",
+        "authTitle": "Üks konto kogu saidi jaoks",
+        "authSubtitle": "Sinu profiil, ostud ja postitused ühes kohas."
+      }
+    },
+    "fr": {
+      "admin": {
+        "theme_vanguard_hero": "Bannière d’accueil",
+        "theme_vanguard_hero_enabled": "Afficher la bannière sur la page d’accueil",
+        "theme_vanguard_hero_tag": "Petite étiquette au-dessus du titre",
+        "theme_vanguard_hero_title": "Titre",
+        "theme_vanguard_hero_subtitle": "Ligne sous le titre",
+        "theme_vanguard_hero_ctaText": "Texte du bouton",
+        "theme_vanguard_hero_ctaHref": "Destination du bouton",
+        "theme_vanguard_auth": "Écran de connexion",
+        "theme_vanguard_auth_tag": "Petite étiquette de l’écran de connexion",
+        "theme_vanguard_auth_title": "Titre de l’écran de connexion",
+        "theme_vanguard_auth_subtitle": "Ligne sous ce titre"
+      },
+      "vanguard": {
+        "heroTag": "Ouvert maintenant",
+        "heroTitle": "Votre monde vous attend",
+        "heroSubtitle": "Rejoignez le serveur, rencontrez ceux qui y jouent et laissez votre empreinte.",
+        "joinDiscord": "Rejoindre notre Discord",
+        "authTag": "Bienvenue",
+        "authTitle": "Un seul compte pour tout le site",
+        "authSubtitle": "Votre profil, vos achats et vos messages au même endroit."
+      }
+    },
+    "it": {
+      "admin": {
+        "theme_vanguard_hero": "Banner principale",
+        "theme_vanguard_hero_enabled": "Mostra il banner principale in home",
+        "theme_vanguard_hero_tag": "Piccola etichetta sopra il titolo",
+        "theme_vanguard_hero_title": "Titolo",
+        "theme_vanguard_hero_subtitle": "Riga sotto il titolo",
+        "theme_vanguard_hero_ctaText": "Testo del pulsante",
+        "theme_vanguard_hero_ctaHref": "Dove porta il pulsante",
+        "theme_vanguard_auth": "Schermata di accesso",
+        "theme_vanguard_auth_tag": "Piccola etichetta nella schermata di accesso",
+        "theme_vanguard_auth_title": "Titolo nella schermata di accesso",
+        "theme_vanguard_auth_subtitle": "Riga sotto quel titolo"
+      },
+      "vanguard": {
+        "heroTag": "Ora aperto",
+        "heroTitle": "Il tuo mondo ti aspetta",
+        "heroSubtitle": "Entra nel server, conosci chi ci gioca e lascia il segno.",
+        "joinDiscord": "Unisciti al nostro Discord",
+        "authTag": "Benvenuto",
+        "authTitle": "Un solo account per tutto il sito",
+        "authSubtitle": "Il tuo profilo, i tuoi acquisti e i tuoi post in un unico posto."
+      }
+    },
+    "pl": {
+      "admin": {
+        "theme_vanguard_hero": "Baner główny",
+        "theme_vanguard_hero_enabled": "Pokazuj baner główny na stronie głównej",
+        "theme_vanguard_hero_tag": "Mała etykieta nad nagłówkiem",
+        "theme_vanguard_hero_title": "Nagłówek",
+        "theme_vanguard_hero_subtitle": "Linia pod nagłówkiem",
+        "theme_vanguard_hero_ctaText": "Tekst przycisku",
+        "theme_vanguard_hero_ctaHref": "Dokąd prowadzi przycisk",
+        "theme_vanguard_auth": "Ekran logowania",
+        "theme_vanguard_auth_tag": "Mała etykieta na ekranie logowania",
+        "theme_vanguard_auth_title": "Nagłówek na ekranie logowania",
+        "theme_vanguard_auth_subtitle": "Linia pod tym nagłówkiem"
+      },
+      "vanguard": {
+        "heroTag": "Już otwarte",
+        "heroTitle": "Twój świat czeka",
+        "heroSubtitle": "Dołącz do serwera, poznaj tych, którzy na nim grają, i zostaw swój ślad.",
+        "joinDiscord": "Dołącz do naszego Discorda",
+        "authTag": "Witaj",
+        "authTitle": "Jedno konto na całą stronę",
+        "authSubtitle": "Twój profil, zakupy i posty w jednym miejscu."
+      }
+    },
+    "pt": {
+      "admin": {
+        "theme_vanguard_hero": "Banner principal",
+        "theme_vanguard_hero_enabled": "Mostrar o banner principal na página inicial",
+        "theme_vanguard_hero_tag": "Etiqueta pequena acima do título",
+        "theme_vanguard_hero_title": "Título",
+        "theme_vanguard_hero_subtitle": "Linha abaixo do título",
+        "theme_vanguard_hero_ctaText": "Texto do botão",
+        "theme_vanguard_hero_ctaHref": "Para onde o botão leva",
+        "theme_vanguard_auth": "Tela de acesso",
+        "theme_vanguard_auth_tag": "Etiqueta pequena na tela de acesso",
+        "theme_vanguard_auth_title": "Título na tela de acesso",
+        "theme_vanguard_auth_subtitle": "Linha abaixo desse título"
+      },
+      "vanguard": {
+        "heroTag": "Já aberto",
+        "heroTitle": "Seu mundo está esperando",
+        "heroSubtitle": "Entre no servidor, conheça quem joga nele e deixe sua marca.",
+        "joinDiscord": "Entre no nosso Discord",
+        "authTag": "Bem-vindo",
+        "authTitle": "Uma conta para o site inteiro",
+        "authSubtitle": "Seu perfil, suas compras e suas publicações em um só lugar."
+      }
+    },
+    "ru": {
+      "admin": {
+        "theme_vanguard_hero": "Главный баннер",
+        "theme_vanguard_hero_enabled": "Показывать главный баннер на главной странице",
+        "theme_vanguard_hero_tag": "Небольшая метка над заголовком",
+        "theme_vanguard_hero_title": "Заголовок",
+        "theme_vanguard_hero_subtitle": "Строка под заголовком",
+        "theme_vanguard_hero_ctaText": "Текст кнопки",
+        "theme_vanguard_hero_ctaHref": "Куда ведет кнопка",
+        "theme_vanguard_auth": "Экран входа",
+        "theme_vanguard_auth_tag": "Небольшая метка на экране входа",
+        "theme_vanguard_auth_title": "Заголовок на экране входа",
+        "theme_vanguard_auth_subtitle": "Строка под этим заголовком"
+      },
+      "vanguard": {
+        "heroTag": "Уже открыто",
+        "heroTitle": "Твой мир ждет",
+        "heroSubtitle": "Заходи на сервер, знакомься с теми, кто на нем играет, и оставь свой след.",
+        "joinDiscord": "Присоединиться к Discord",
+        "authTag": "Добро пожаловать",
+        "authTitle": "Один аккаунт для всего сайта",
+        "authSubtitle": "Твой профиль, покупки и сообщения в одном месте."
+      }
+    },
+    "zh": {
+      "admin": {
+        "theme_vanguard_hero": "首页横幅",
+        "theme_vanguard_hero_enabled": "在首页显示横幅",
+        "theme_vanguard_hero_tag": "标题上方的小标签",
+        "theme_vanguard_hero_title": "标题",
+        "theme_vanguard_hero_subtitle": "标题下方的文字",
+        "theme_vanguard_hero_ctaText": "按钮文字",
+        "theme_vanguard_hero_ctaHref": "按钮的跳转位置",
+        "theme_vanguard_auth": "登录页面",
+        "theme_vanguard_auth_tag": "登录页面上的小标签",
+        "theme_vanguard_auth_title": "登录页面上的标题",
+        "theme_vanguard_auth_subtitle": "该标题下方的文字"
+      },
+      "vanguard": {
+        "heroTag": "现已开放",
+        "heroTitle": "你的世界在等你",
+        "heroSubtitle": "加入服务器，认识在这里游戏的人，留下你的印记。",
+        "joinDiscord": "加入我们的 Discord",
+        "authTag": "欢迎",
+        "authTitle": "一个账户，畅行全站",
+        "authSubtitle": "你的资料、购买记录和帖子都在一处。"
+      }
+    }
+  }
+}

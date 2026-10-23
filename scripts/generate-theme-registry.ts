@@ -148,7 +148,9 @@ function emitComponentsTsx(themes: Record<string, ThemeManifest>): string {
         for (const [name, rel] of Object.entries(theme.components)) {
             const varName = `Override_${counter++}`;
             imports.push(`const ${varName} = dynamic(() => import("@/themes/${themeId}/${rel.replace(/\.(tsx|ts|jsx|js)$/, "")}"));`);
-            fields.push(`    ${JSON.stringify(name)}: ${varName},`);
+            // Each override takes the props of the slot it fills, which differ
+            // by name; the slot that renders it states them.
+            fields.push(`    ${JSON.stringify(name)}: ${varName} as ComponentType<object>,`);
         }
         entries.push(`  ${JSON.stringify(themeId)}: {\n${fields.join("\n")}\n  },`);
     }
@@ -160,11 +162,11 @@ function emitComponentsTsx(themes: Record<string, ThemeManifest>): string {
         "",
         ...imports,
         "",
-        "export const themeComponents: Record<string, Record<string, ComponentType>> = {",
+        "export const themeComponents: Record<string, Record<string, ComponentType<object>>> = {",
         ...entries,
         "};",
         "",
-        "export function getThemeComponent(themeId: string, name: string): ComponentType | null {",
+        "export function getThemeComponent(themeId: string, name: string): ComponentType<object> | null {",
         "  return themeComponents[themeId]?.[name] ?? null;",
         "}",
         "",

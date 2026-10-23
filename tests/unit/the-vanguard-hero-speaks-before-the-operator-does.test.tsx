@@ -1,0 +1,99 @@
+/**
+ * Vanguard's homepage hero, before and after an operator writes their own.
+ *
+ * Its settings are free text and start empty. A default typed in English
+ * into the manifest would greet a Turkish site in English until somebody
+ * thought to open the theme's settings, so every line falls back to the
+ * theme's own string in the reader's language instead. And because the
+ * button's address is free text too, it carries only a path on this site or
+ * an http(s) address: `javascript:` in an href runs for every visitor.
+ */
+import React from "react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
+import fs from "node:fs";
+import path from "node:path";
+
+const state = vi.hoisted(() => ({ config: {} as Record<string, unknown>, site: {} as Record<string, unknown> }));
+
+vi.mock("@/core/sdk/theme", () => ({
+    useThemeConfig: () => (key: string, fallback?: unknown) => (key in state.config ? state.config[key] : fallback),
+}));
+vi.mock("@/core/sdk/ui", () => ({ useSiteSettings: () => ({ settings: state.site }) }));
+vi.mock("@/core/sdk/layout", () => ({ Slot: ({ name }: { name: string }) => <div data-testid={`slot:${name}`} /> }));
+vi.mock("@/core/sdk/navigation", () => ({
+    Link: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a>,
+}));
+
+const { default: Hero } = await import("@/themes/vanguard/components/Hero");
+const { linkTarget } = await import("@/themes/vanguard/components/links");
+
+const MANIFEST = JSON.parse(fs.readFileSync(path.join(process.cwd(), "src/themes/vanguard/theme.json"), "utf8"));
+
+function draw(locale: string) {
+    return render(
+        <NextIntlClientProvider locale={locale} messages={MANIFEST.translations[locale]}>
+            <Hero />
+        </NextIntlClientProvider>,
+    );
+}
+
+beforeEach(() => {
+    state.config = {};
+    state.site = {};
+});
+
+describe("the Vanguard hero", () => {
+    it("greets a fresh Turkish site in Turkish", () => {
+        draw("tr");
+        expect(screen.getByRole("heading", { level: 2 }).textContent).toBe(MANIFEST.translations.tr.vanguard.heroTitle);
+        expect(screen.getByText(MANIFEST.translations.tr.vanguard.heroTag)).toBeTruthy();
+    });
+
+    it("says what the operator wrote once they wrote it", () => {
+        state.config = { "hero.title": "Sezon dört", "hero.tag": "Yeni" };
+        draw("tr");
+        expect(screen.getByRole("heading", { level: 2 }).textContent).toBe("Sezon dört");
+        expect(screen.getByText("Yeni")).toBeTruthy();
+    });
+
+    it("draws its button only once it has somewhere to go", () => {
+        state.config = { "hero.ctaText": "Nasıl katılırım?" };
+        draw("tr");
+        expect(screen.queryByRole("link", { name: "Nasıl katılırım?" })).toBeNull();
+        state.config = { "hero.ctaText": "Nasıl katılırım?", "hero.ctaHref": "/help" };
+        draw("tr");
+        expect(screen.getByRole("link", { name: "Nasıl katılırım?" }).getAttribute("href")).toBe("/help");
+    });
+
+    it("links the site's own Discord address, in the reader's words", () => {
+        state.site = { site_discord_url: "https://discord.gg/example" };
+        draw("en");
+        expect(screen.getByRole("link", { name: MANIFEST.translations.en.vanguard.joinDiscord }).getAttribute("href")).toBe("https://discord.gg/example");
+    });
+
+    it("places hero.bottom on the stage", () => {
+        draw("en");
+        expect(screen.getByTestId("slot:hero.bottom")).toBeTruthy();
+    });
+
+    it("draws nothing once switched off", () => {
+        state.config = { "hero.enabled": false };
+        const { container } = draw("en");
+        expect(container.innerHTML).toBe("");
+    });
+});
+
+describe("an address from a setting", () => {
+    it("is a path on this site or an http(s) address", () => {
+        expect(linkTarget("/store")).toEqual({ href: "/store", external: false });
+        expect(linkTarget("https://discord.gg/x")).toEqual({ href: "https://discord.gg/x", external: true });
+    });
+
+    it("is nothing else", () => {
+        for (const raw of ["javascript:alert(1)", "JAVASCRIPT:alert(1)", "//evil.example", "/\\evil.example", "data:text/html,x", "store", "", null, 42]) {
+            expect(linkTarget(raw), String(raw)).toBeNull();
+        }
+    });
+});
