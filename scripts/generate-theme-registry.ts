@@ -3,11 +3,13 @@ import fs from "fs";
 import path from "path";
 import { themeManifestSchema, type ThemeManifest } from "../src/core/lib/theme-manifest-schema";
 import { scopeThemeStylesheet } from "./lib/theme-stylesheet";
+import { emitThemeFontsTs } from "./lib/theme-fonts";
 
 const THEMES_DIR = path.join(process.cwd(), "src/themes");
 const REGISTRY_OUT = path.join(process.cwd(), "src/core/generated/theme-registry.ts");
 const TOKENS_OUT = path.join(process.cwd(), "src/core/generated/theme-tokens.css");
 const STYLES_OUT = path.join(process.cwd(), "src/core/generated/theme-styles.css");
+const FONTS_OUT = path.join(process.cwd(), "src/core/generated/theme-fonts.ts");
 
 function loadThemes(): Record<string, ThemeManifest> {
     if (!fs.existsSync(THEMES_DIR)) return {};
@@ -218,6 +220,7 @@ function run(): void {
     fs.writeFileSync(REGISTRY_OUT, emitRegistryTs(themes));
     fs.writeFileSync(TOKENS_OUT, emitTokensCss(themes));
     fs.writeFileSync(STYLES_OUT, emitStylesCss(themes));
+    fs.writeFileSync(FONTS_OUT, emitThemeFontsTs(themes, (file) => fs.existsSync(path.join(THEMES_DIR, file))));
     fs.writeFileSync(COMPONENTS_OUT, emitComponentsTsx(themes));
     fs.writeFileSync(ADMIN_ROUTES_OUT, emitAdminRoutesTs(themes));
     console.log(`Generated theme registry (${Object.keys(themes).length} themes).`);

@@ -4,6 +4,7 @@ import { isKnownLocale } from "@/core/lib/i18n/resolve-locale";
 import { buildSiteHead, buildPageMeta, buildOrganizationJsonLd } from "@/core/lib/seo";
 import { Inter, Outfit, JetBrains_Mono } from "next/font/google";
 import { buildTokenOverrideCss } from "@/core/lib/theme-override-css";
+import { themeFontVariables } from "@/core/generated/theme-fonts";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { publicMessages } from "@/core/lib/i18n/message-scopes";
@@ -150,7 +151,7 @@ export default async function RootLayout({
       suppressHydrationWarning
       data-theme={active.themeId}
       data-mode={active.mode}
-      className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable}`}
+      className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} ${themeFontVariables}`}
     >
       <head>
         <script

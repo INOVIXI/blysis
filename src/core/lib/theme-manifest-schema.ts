@@ -10,6 +10,9 @@ const COMPONENT_PATH = /^[a-zA-Z0-9_./-]+\.(tsx|jsx|ts|js)$/;
 const SLOT_NAME = /^[a-zA-Z0-9.-]+$/;
 /** A file inside the theme's own directory: no `..`, no leading slash. */
 const STYLESHEET_PATH = /^(?!.*\.\.)[a-zA-Z0-9_-][a-zA-Z0-9_./-]*\.css$/;
+const FONT_PATH = /^(?!.*\.\.)[a-zA-Z0-9_-][a-zA-Z0-9_./-]*\.(woff2|woff|ttf|otf)$/;
+/** One weight, `400`, or a variable font's range, `300 900`. */
+const FONT_WEIGHT = /^[1-9]00(?: [1-9]00)?$/;
 /**
  * A key into the theme's own `translations` block.
  *
@@ -153,6 +156,20 @@ export const themeManifestSchema = z.object({
      * selector scoped to this theme by `scripts/lib/theme-stylesheet.ts`.
      */
     stylesheet: z.string().max(256).regex(STYLESHEET_PATH).optional(),
+
+    /**
+     * Typefaces the theme ships, by family. Each is self-hosted through
+     * `next/font/local` and published as `--font-<theme id>-<family>`, which
+     * the theme's font tokens name like any other stack.
+     */
+    fontFiles: z.record(
+        z.string().regex(SAFE_KEY),
+        z.array(z.object({
+            file: z.string().max(256).regex(FONT_PATH),
+            weight: z.string().regex(FONT_WEIGHT),
+            style: z.enum(["normal", "italic"]),
+        })).min(1).max(12),
+    ).optional(),
 
     slots: z.array(z.object({
         name: z.string().min(1).max(128).regex(SLOT_NAME),
