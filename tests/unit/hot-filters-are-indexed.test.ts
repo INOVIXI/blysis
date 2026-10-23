@@ -43,6 +43,7 @@ const EXEMPT: Record<string, string> = {
     "ApiKey.isActive": "paired with keyPrefix, which is indexed",
     "ActivityLog.metadata": "a JSON path filter, which a plain btree index does not serve",
     "OrderItem.order": "a relation filter, which this scan cannot see through: the join uses OrderItem.orderId and the conditions are Order.status and Order.createdAt, all three indexed",
+    "ForumPost.topic": "a relation filter, which this scan cannot see through: the join uses ForumPost.topicId and the conditions are ForumTopic.moderationState and ForumTopic.categoryId, all three indexed",
     "User.loginSessions": "a relation filter, which this scan cannot see through: the join uses UserSession.userId and the conditions are isRevoked and expiresAt, all indexed",
     "User.isBanned": "counting the administrators who can still sign in, which runs once per ban, demotion or deletion - an admin action, not a request path, and the row it protects against losing is the last one",
     "User.isDeleted": "the same count, for the same reason",
