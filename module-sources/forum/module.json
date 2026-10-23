@@ -2,7 +2,7 @@
   "id": "forum",
   "name": "Forum Module",
   "description": "Community discussion forum with categories, topics, and replies",
-  "version": "1.12.2",
+  "version": "1.13.1",
   "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis Team",
@@ -219,6 +219,16 @@
       "type": "action"
     }
   ],
+  "widgets": [
+    {
+      "id": "LatestTopicsWidget",
+      "component": "widgets/latest-topics-widget",
+      "label": "Latest forum topics",
+      "labelKey": "widget_forumLatest",
+      "defaultVisible": true,
+      "defaultOrder": 30
+    }
+  ],
   "translations": {
     "en": {
       "nav": {
@@ -345,7 +355,11 @@
         "topicsCount": "{count, plural, one {# topic} other {# topics}}",
         "views": "{count} views",
         "viewsCount": "{count, plural, one {# view} other {# views}}",
-        "writeYourReply": "Write your reply…"
+        "writeYourReply": "Write your reply…",
+        "widget_latestTitle": "New on the forum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "a former member",
+        "widget_latestAll": "Go to the forum"
       },
       "admin": {
         "actions": "Actions",
@@ -384,7 +398,8 @@
         "topic": "Topic",
         "menu_forum_forum_permissions": "Forum Permissions",
         "revision_forum_post": "Forum Post",
-        "revision_forum_topic": "Forum Topic"
+        "revision_forum_topic": "Forum Topic",
+        "widget_forumLatest": "Latest forum topics"
       },
       "activity": {
         "forumPostCreated": "replied to:",
@@ -531,7 +546,11 @@
         "topicsCount": "{count, plural, one {# konu} other {# konu}}",
         "views": "{count} görüntülenme",
         "viewsCount": "{count, plural, one {# görüntüleme} other {# görüntüleme}}",
-        "writeYourReply": "Yanıtınızı yazın…"
+        "writeYourReply": "Yanıtınızı yazın…",
+        "widget_latestTitle": "Forumda yeni",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "eski bir üye",
+        "widget_latestAll": "Foruma git"
       },
       "admin": {
         "actions": "İşlemler",
@@ -570,7 +589,8 @@
         "topic": "Konu",
         "menu_forum_forum_permissions": "Forum İzinleri",
         "revision_forum_post": "Forum Mesajı",
-        "revision_forum_topic": "Forum Konusu"
+        "revision_forum_topic": "Forum Konusu",
+        "widget_forumLatest": "Forumdaki son konular"
       },
       "activity": {
         "forumPostCreated": "yanıt verdi:",
@@ -717,7 +737,11 @@
         "topicsCount": "{count, plural, one {# mövzu} other {# mövzu}}",
         "views": "{count} baxış",
         "viewsCount": "{count, plural, one {# baxış} other {# baxış}}",
-        "writeYourReply": "Cavabınızı yazın…"
+        "writeYourReply": "Cavabınızı yazın…",
+        "widget_latestTitle": "Forumda yeni",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "keçmiş üzv",
+        "widget_latestAll": "Foruma keç"
       },
       "admin": {
         "actions": "Əməliyyatlar",
@@ -756,7 +780,8 @@
         "topic": "Mövzu",
         "menu_forum_forum_permissions": "Forum icazələri",
         "revision_forum_post": "Forum yazısı",
-        "revision_forum_topic": "Forum mövzusu"
+        "revision_forum_topic": "Forum mövzusu",
+        "widget_forumLatest": "Forumdakı son mövzular"
       },
       "activity": {
         "forumPostCreated": "cavab yazdı:",
@@ -903,7 +928,11 @@
         "topicsCount": "{count, plural, one {# Thema} other {# Themen}}",
         "views": "{count} Aufrufe",
         "viewsCount": "{count, plural, one {# Aufruf} other {# Aufrufe}}",
-        "writeYourReply": "Schreibe deine Antwort…"
+        "writeYourReply": "Schreibe deine Antwort…",
+        "widget_latestTitle": "Neu im Forum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "ein ehemaliges Mitglied",
+        "widget_latestAll": "Zum Forum"
       },
       "admin": {
         "actions": "Aktionen",
@@ -942,7 +971,8 @@
         "topic": "Thema",
         "menu_forum_forum_permissions": "Forum-Berechtigungen",
         "revision_forum_post": "Forum-Beitrag",
-        "revision_forum_topic": "Forum-Thema"
+        "revision_forum_topic": "Forum-Thema",
+        "widget_forumLatest": "Neueste Forenthemen"
       },
       "activity": {
         "forumPostCreated": "hat geantwortet auf:",
@@ -1089,7 +1119,11 @@
         "topicsCount": "{count, plural, one {# tema} other {# temas}}",
         "views": "{count} visitas",
         "viewsCount": "{count, plural, one {# visita} other {# visitas}}",
-        "writeYourReply": "Escribe tu respuesta…"
+        "writeYourReply": "Escribe tu respuesta…",
+        "widget_latestTitle": "Nuevo en el foro",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "un antiguo miembro",
+        "widget_latestAll": "Ir al foro"
       },
       "admin": {
         "actions": "Acciones",
@@ -1128,7 +1162,8 @@
         "topic": "Tema",
         "menu_forum_forum_permissions": "Permisos del foro",
         "revision_forum_post": "Mensaje del foro",
-        "revision_forum_topic": "Tema del foro"
+        "revision_forum_topic": "Tema del foro",
+        "widget_forumLatest": "Últimos temas del foro"
       },
       "activity": {
         "forumPostCreated": "respondió a:",
@@ -1275,7 +1310,11 @@
         "topicsCount": "{count, plural, one {# teema} other {# teemat}}",
         "views": "{count} vaatamist",
         "viewsCount": "{count, plural, one {# vaatamine} other {# vaatamist}}",
-        "writeYourReply": "Kirjuta oma vastus…"
+        "writeYourReply": "Kirjuta oma vastus…",
+        "widget_latestTitle": "Foorumis uut",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "endine liige",
+        "widget_latestAll": "Mine foorumisse"
       },
       "admin": {
         "actions": "Tegevused",
@@ -1314,7 +1353,8 @@
         "topic": "Teema",
         "menu_forum_forum_permissions": "Foorumi õigused",
         "revision_forum_post": "Foorumi postitus",
-        "revision_forum_topic": "Foorumi teema"
+        "revision_forum_topic": "Foorumi teema",
+        "widget_forumLatest": "Foorumi uusimad teemad"
       },
       "activity": {
         "forumPostCreated": "vastas teemale:",
@@ -1461,7 +1501,11 @@
         "topicsCount": "{count, plural, one {# sujet} other {# sujets}}",
         "views": "{count} vues",
         "viewsCount": "{count, plural, one {# vue} other {# vues}}",
-        "writeYourReply": "Rédigez votre réponse…"
+        "writeYourReply": "Rédigez votre réponse…",
+        "widget_latestTitle": "Nouveau sur le forum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "un ancien membre",
+        "widget_latestAll": "Aller au forum"
       },
       "admin": {
         "actions": "Actions",
@@ -1500,7 +1544,8 @@
         "topic": "Sujet",
         "menu_forum_forum_permissions": "Autorisations du forum",
         "revision_forum_post": "Message du forum",
-        "revision_forum_topic": "Sujet du forum"
+        "revision_forum_topic": "Sujet du forum",
+        "widget_forumLatest": "Derniers sujets du forum"
       },
       "activity": {
         "forumPostCreated": "a répondu à :",
@@ -1647,7 +1692,11 @@
         "topicsCount": "{count, plural, one {# discussione} other {# discussioni}}",
         "views": "{count} visualizzazioni",
         "viewsCount": "{count, plural, one {# visualizzazione} other {# visualizzazioni}}",
-        "writeYourReply": "Scrivi la tua risposta…"
+        "writeYourReply": "Scrivi la tua risposta…",
+        "widget_latestTitle": "Novità sul forum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "un ex membro",
+        "widget_latestAll": "Vai al forum"
       },
       "admin": {
         "actions": "Azioni",
@@ -1686,7 +1735,8 @@
         "topic": "Discussione",
         "menu_forum_forum_permissions": "Permessi del forum",
         "revision_forum_post": "Risposta del forum",
-        "revision_forum_topic": "Discussione del forum"
+        "revision_forum_topic": "Discussione del forum",
+        "widget_forumLatest": "Ultime discussioni del forum"
       },
       "activity": {
         "forumPostCreated": "ha risposto a:",
@@ -1833,7 +1883,11 @@
         "topicsCount": "{count, plural, one {# temat} few {# tematy} many {# tematów} other {# tematu}}",
         "views": "{count, plural, one {# wyświetlenie} few {# wyświetlenia} many {# wyświetleń} other {# wyświetlenia}}",
         "viewsCount": "{count, plural, one {# wyświetlenie} few {# wyświetlenia} many {# wyświetleń} other {# wyświetlenia}}",
-        "writeYourReply": "Napisz swoją odpowiedź…"
+        "writeYourReply": "Napisz swoją odpowiedź…",
+        "widget_latestTitle": "Nowe na forum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "były członek",
+        "widget_latestAll": "Przejdź do forum"
       },
       "admin": {
         "actions": "Działania",
@@ -1872,7 +1926,8 @@
         "topic": "Temat",
         "menu_forum_forum_permissions": "Uprawnienia forum",
         "revision_forum_post": "Post na forum",
-        "revision_forum_topic": "Temat forum"
+        "revision_forum_topic": "Temat forum",
+        "widget_forumLatest": "Najnowsze tematy na forum"
       },
       "activity": {
         "forumPostCreated": "odpowiedział w temacie:",
@@ -2019,7 +2074,11 @@
         "topicsCount": "{count, plural, one {# tópico} other {# tópicos}}",
         "views": "{count} visualizações",
         "viewsCount": "{count, plural, one {# visualização} other {# visualizações}}",
-        "writeYourReply": "Escreva sua resposta…"
+        "writeYourReply": "Escreva sua resposta…",
+        "widget_latestTitle": "Novo no fórum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "um ex-membro",
+        "widget_latestAll": "Ir para o fórum"
       },
       "admin": {
         "actions": "Ações",
@@ -2058,7 +2117,8 @@
         "topic": "Tópico",
         "menu_forum_forum_permissions": "Permissões do fórum",
         "revision_forum_post": "Publicação do fórum",
-        "revision_forum_topic": "Tópico do fórum"
+        "revision_forum_topic": "Tópico do fórum",
+        "widget_forumLatest": "Tópicos mais recentes do fórum"
       },
       "activity": {
         "forumPostCreated": "respondeu a:",
@@ -2205,7 +2265,11 @@
         "topicsCount": "{count, plural, one {# тема} few {# темы} many {# тем} other {# темы}}",
         "views": "Просмотров: {count}",
         "viewsCount": "{count, plural, one {# просмотр} few {# просмотра} many {# просмотров} other {# просмотра}}",
-        "writeYourReply": "Напишите ответ…"
+        "writeYourReply": "Напишите ответ…",
+        "widget_latestTitle": "Новое на форуме",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "бывший участник",
+        "widget_latestAll": "Перейти на форум"
       },
       "admin": {
         "actions": "Действия",
@@ -2244,7 +2308,8 @@
         "topic": "Тема",
         "menu_forum_forum_permissions": "Права форума",
         "revision_forum_post": "Сообщение форума",
-        "revision_forum_topic": "Тема форума"
+        "revision_forum_topic": "Тема форума",
+        "widget_forumLatest": "Новые темы форума"
       },
       "activity": {
         "forumPostCreated": "ответил(а) в теме:",
@@ -2391,7 +2456,11 @@
         "topicsCount": "{count, plural, one {# 个主题} other {# 个主题}}",
         "views": "{count} 次浏览",
         "viewsCount": "{count, plural, one {# 次浏览} other {# 次浏览}}",
-        "writeYourReply": "写下你的回复…"
+        "writeYourReply": "写下你的回复…",
+        "widget_latestTitle": "论坛新帖",
+        "widget_latestBy": "{name}，{when}",
+        "widget_latestNobody": "前成员",
+        "widget_latestAll": "前往论坛"
       },
       "admin": {
         "actions": "操作",
@@ -2430,7 +2499,8 @@
         "topic": "主题",
         "menu_forum_forum_permissions": "论坛权限",
         "revision_forum_post": "论坛帖子",
-        "revision_forum_topic": "论坛主题"
+        "revision_forum_topic": "论坛主题",
+        "widget_forumLatest": "论坛最新主题"
       },
       "activity": {
         "forumPostCreated": "回复了：",
