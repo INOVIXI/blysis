@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../core/generated/theme-tokens.css";
+@import "../core/generated/theme-styles.css";
 @source "../../src/modules";
 
 @layer base {
@@ -99,6 +100,23 @@
   --font-body:                    var(--blysis-font-body);
   --font-mono:                    var(--blysis-font-mono);
   --radius:                       var(--blysis-radius);
+
+  /*
+   * The scale every `rounded-*` class reads, as multiples of the theme's
+   * radius. Left to Tailwind these are fixed lengths, so a theme asking for
+   * square corners got square inputs inside round cards. The factors are the
+   * ones that make the default 0.5rem give Tailwind's own lengths, which is
+   * why a site on the default theme sees no change.
+   * `a-corner-follows-the-theme` compiles this and holds both halves.
+   */
+  --radius-xs:                    calc(var(--blysis-radius) * 0.25);
+  --radius-sm:                    calc(var(--blysis-radius) * 0.5);
+  --radius-md:                    calc(var(--blysis-radius) * 0.75);
+  --radius-lg:                    calc(var(--blysis-radius) * 1);
+  --radius-xl:                    calc(var(--blysis-radius) * 1.5);
+  --radius-2xl:                   calc(var(--blysis-radius) * 2);
+  --radius-3xl:                   calc(var(--blysis-radius) * 3);
+  --radius-4xl:                   calc(var(--blysis-radius) * 4);
 
   /*
    * The shape every cover picture is drawn in: `aspect-card`.
