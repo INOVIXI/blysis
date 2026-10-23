@@ -2,7 +2,7 @@
   "id": "vote",
   "name": "Vote Sites",
   "description": "Send players to the server listings you are ranked on, and count how often they go",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "coreVersion": "^5.21.0",
   "category": "gaming",
   "author": "Blysis",
@@ -121,7 +121,7 @@
       },
       "activity": {
         "kindVoteCast": "Vote",
-        "voteCast": "Voted on {site}"
+        "voteCast": "Opened {site} to vote"
       }
     },
     "tr": {
@@ -176,7 +176,7 @@
       },
       "activity": {
         "kindVoteCast": "Oy",
-        "voteCast": "{site} için oy verdi"
+        "voteCast": "Oy vermek için {site} sitesini açtı"
       }
     },
     "az": {
@@ -231,7 +231,7 @@
       },
       "activity": {
         "kindVoteCast": "Səs",
-        "voteCast": "{site} üçün səs verdi"
+        "voteCast": "Səs vermək üçün {site} saytını açdı"
       }
     },
     "de": {
@@ -286,7 +286,7 @@
       },
       "activity": {
         "kindVoteCast": "Vote",
-        "voteCast": "Für {site} abgestimmt"
+        "voteCast": "{site} zum Abstimmen geöffnet"
       }
     },
     "es": {
@@ -341,7 +341,7 @@
       },
       "activity": {
         "kindVoteCast": "Voto",
-        "voteCast": "Votó en {site}"
+        "voteCast": "Abrió {site} para votar"
       }
     },
     "et": {
@@ -396,7 +396,7 @@
       },
       "activity": {
         "kindVoteCast": "Hääl",
-        "voteCast": "Hääletas saidil {site}"
+        "voteCast": "Avas hääletamiseks saidi {site}"
       }
     },
     "fr": {
@@ -451,7 +451,7 @@
       },
       "activity": {
         "kindVoteCast": "Vote",
-        "voteCast": "A voté sur {site}"
+        "voteCast": "A ouvert {site} pour voter"
       }
     },
     "it": {
@@ -506,7 +506,7 @@
       },
       "activity": {
         "kindVoteCast": "Voto",
-        "voteCast": "Ha votato su {site}"
+        "voteCast": "Ha aperto {site} per votare"
       }
     },
     "pl": {
@@ -561,7 +561,7 @@
       },
       "activity": {
         "kindVoteCast": "Głos",
-        "voteCast": "Głos oddany na {site}"
+        "voteCast": "Otwarto {site}, by zagłosować"
       }
     },
     "pt": {
@@ -616,7 +616,7 @@
       },
       "activity": {
         "kindVoteCast": "Voto",
-        "voteCast": "Votou em {site}"
+        "voteCast": "Abriu {site} para votar"
       }
     },
     "ru": {
@@ -671,7 +671,7 @@
       },
       "activity": {
         "kindVoteCast": "Голос",
-        "voteCast": "Голос отдан на {site}"
+        "voteCast": "Открыт сайт {site} для голосования"
       }
     },
     "zh": {
@@ -726,7 +726,7 @@
       },
       "activity": {
         "kindVoteCast": "投票",
-        "voteCast": "在 {site} 投票"
+        "voteCast": "打开 {site} 去投票"
       }
     }
   },

@@ -90,7 +90,9 @@ export async function POST(request: NextRequest) {
             },
         }).catch(() => {});
 
-        return NextResponse.json({ message: `Vote recorded for ${site.name}.` });
+        // A fact, not a sentence: the button says its own words in the reader's
+        // language, and this one said "vote" about a click.
+        return NextResponse.json({ ok: true });
     } catch (err) {
         const message = err instanceof Error ? err.message : "Unknown error";
         // The cooldown carries the hours left rather than a finished sentence:
