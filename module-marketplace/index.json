@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-10-23",
-  "updatedAt": "2026-10-23T20:18:18Z",
+  "updatedAt": "2026-10-23T20:22:50Z",
   "modules": [
     {
       "id": "announcements",
@@ -999,13 +999,13 @@
           "description": "为用户提供的虚拟货币钱包"
         }
       },
-      "version": "1.10.1",
-      "coreVersion": "^5.0.0",
+      "version": "1.10.2",
+      "coreVersion": "^5.21.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-10-23T20:22:50Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -4865,13 +4865,13 @@
           "description": "针对成员的封禁、禁言和警告，可在此发出，也可由其他位置的模块上报"
         }
       },
-      "version": "1.7.3",
-      "coreVersion": "^5.0.0",
+      "version": "1.7.4",
+      "coreVersion": "^5.21.0",
       "author": "Blysis",
       "icon": "Shield",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-10-23T20:22:50Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -6848,13 +6848,13 @@
           "description": "将玩家引导至你所在的服务器列表，并统计投票人数"
         }
       },
-      "version": "1.6.3",
-      "coreVersion": "^5.0.0",
+      "version": "1.6.4",
+      "coreVersion": "^5.21.0",
       "author": "Blysis",
       "icon": "Vote",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-06T09:06:29Z",
+      "updatedAt": "2026-10-23T20:22:50Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -7004,13 +7004,13 @@
           "description": "可配置奖品和冷却时间的转动赢奖游戏"
         }
       },
-      "version": "1.10.0",
-      "coreVersion": "^5.0.0",
+      "version": "1.10.1",
+      "coreVersion": "^5.21.0",
       "author": "Blysis",
       "icon": "Dices",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T13:18:04Z",
+      "updatedAt": "2026-10-23T20:22:50Z",
       "screenshots": [],
       "tags": [
         "commerce"

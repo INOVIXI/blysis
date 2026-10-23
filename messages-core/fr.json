@@ -154,6 +154,7 @@
     "title": "Fil d’activité",
     "twoFactorDisabled": "Double authentification désactivée",
     "twoFactorEnabled": "Double authentification activée",
+    "userProfileUpdated": "{username} a mis à jour son profil",
     "userRegistered": "a rejoint la communauté",
     "viewAll": "Voir tout"
   },

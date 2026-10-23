@@ -154,6 +154,7 @@
     "title": "Etkinlik Akışı",
     "twoFactorDisabled": "İki adımlı doğrulama devre dışı bırakıldı",
     "twoFactorEnabled": "İki adımlı doğrulama etkinleştirildi",
+    "userProfileUpdated": "{username} profilini güncelledi",
     "userRegistered": "topluluğa katıldı",
     "viewAll": "Tümünü gör"
   },

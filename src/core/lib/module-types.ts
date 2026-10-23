@@ -262,6 +262,9 @@ export interface ModuleManifest {
         nameKey: string;      // what the kind is called, e.g. "kindForumTopicCreated"
         prefix?: string;      // English prefix to strip, e.g. "New topic: "
         key?: string;         // translation key under "activity", e.g. "forumTopicCreated"
+        // The whole English sentence with named blanks, for a title a prefix
+        // cannot describe, e.g. { pattern: "Received {amount} credits", key: "creditAdded" }.
+        patterns?: { pattern: string; key: string }[];
     }[];
 
     // What this module's audit-log entries are called. `logActivity` files a

@@ -154,6 +154,7 @@
     "title": "Activity Feed",
     "twoFactorDisabled": "Two-factor authentication disabled",
     "twoFactorEnabled": "Two-factor authentication enabled",
+    "userProfileUpdated": "{username} updated their profile",
     "userRegistered": "joined the community",
     "viewAll": "View all"
   },

@@ -1212,6 +1212,33 @@
             "minLength": 1,
             "maxLength": 128,
             "pattern": "^[a-zA-Z0-9._-]+$"
+          },
+          "patterns": {
+            "minItems": 1,
+            "maxItems": 4,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "pattern": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "pattern": "\\{[a-zA-Z]+\\}"
+                },
+                "key": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "^[a-zA-Z0-9._-]+$"
+                }
+              },
+              "required": [
+                "pattern",
+                "key"
+              ],
+              "additionalProperties": false
+            }
           }
         },
         "required": [

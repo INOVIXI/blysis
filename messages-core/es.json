@@ -154,6 +154,7 @@
     "title": "Actividad",
     "twoFactorDisabled": "Verificación en dos pasos desactivada",
     "twoFactorEnabled": "Verificación en dos pasos activada",
+    "userProfileUpdated": "{username} actualizó su perfil",
     "userRegistered": "se unió a la comunidad",
     "viewAll": "Ver todo"
   },

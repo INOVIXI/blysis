@@ -616,9 +616,11 @@ const searchProvider = z.object({
  * and a member reading their own account was shown `vote.vote.cast`.
  *
  * `prefix` and `key` translate the stored title, and they come as a pair or
- * not at all. Six events cannot use them: their English puts the entity in
- * the middle ("Received 40 credits") or after a clause, and `{ prefix, key }`
- * can only replace a head. Those declare a name and leave the title alone.
+ * not at all. They can only replace a head, so English that puts the entity
+ * in the middle ("Received 40 credits") or first ("Ban issued to Steve")
+ * declares `patterns` instead: the sentence with its blanks named, tried in
+ * order, each with the key whose message takes those names as parameters.
+ * A row no pattern describes keeps its English rather than losing its entity.
  */
 /** What one of this module's audit-log actions is called. */
 const auditAction = z.object({
@@ -626,14 +628,27 @@ const auditAction = z.object({
     nameKey: z.string().min(1).max(120),
 }).strict();
 
+const activityTitlePattern = z.object({
+    pattern: z.string().min(1).max(200)
+        .regex(/\{[a-zA-Z]+\}/, "a pattern names at least one blank, like {player}")
+        // Two blanks side by side have no words between them to say where
+        // one ends, so the split would be a guess.
+        .refine((pattern) => !/\}\{/.test(pattern), "two blanks need words between them"),
+    key: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
+}).strict();
+
 const activityTitle = z.object({
     type: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
     nameKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
     prefix: z.string().max(128).optional(),
     key: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/).optional(),
+    patterns: z.array(activityTitlePattern).min(1).max(4).optional(),
 }).refine(
     (entry) => (entry.prefix === undefined) === (entry.key === undefined),
     { message: "prefix and key describe one substitution: declare both or neither" },
+).refine(
+    (entry) => entry.prefix === undefined || entry.patterns === undefined,
+    { message: "a title is translated by a prefix or by patterns, not both" },
 );
 
 const webhookReceiver = z

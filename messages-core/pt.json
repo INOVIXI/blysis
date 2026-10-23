@@ -154,6 +154,7 @@
     "title": "Feed de atividades",
     "twoFactorDisabled": "Verificação em duas etapas desativada",
     "twoFactorEnabled": "Verificação em duas etapas ativada",
+    "userProfileUpdated": "{username} atualizou o seu perfil",
     "userRegistered": "entrou na comunidade",
     "viewAll": "Ver tudo"
   },

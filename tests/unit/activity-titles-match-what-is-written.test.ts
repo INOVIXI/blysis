@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { activityTypeLabel, localizeActivityTitle } from "@/core/lib/activity-title";
+import { locales } from "@/core/lib/i18n/config";
 
 /**
  * A declared activity title has to describe a row that exists.
@@ -28,6 +29,13 @@ import { activityTypeLabel, localizeActivityTitle } from "@/core/lib/activity-ti
  * "Completed order #1234")` returned `"satın aldı:"`.
  *
  * Only `forum` and `suggestions` were right.
+ *
+ * Six more kinds could not be declared at all, because their English does not
+ * end where the entity begins - "Received 40 credits", "Ban issued to Steve" -
+ * and a prefix can only replace a head. They were written down here as
+ * English by limitation, which meant a Turkish visitor read every one of them
+ * in English. A `pattern` names the whole sentence with its blanks, so those
+ * are declared now too, and nothing written to the feed is exempt.
  */
 
 const ROOT = process.cwd();
@@ -36,9 +44,11 @@ interface ActivityTitle {
     type: string;
     /** What the kind is called. Every entry has one; see the gate that reads it. */
     nameKey: string;
-    /** The title substitution, when the event's English allows one. */
+    /** The title substitution, when the event's English starts with a fixed head. */
     prefix?: string;
     key?: string;
+    /** The whole sentence with its blanks, for English that does not. */
+    patterns?: { pattern: string; key: string }[];
 }
 
 function manifests(): { id: string; titles: ActivityTitle[]; translations: Record<string, Record<string, Record<string, string>>> }[] {
@@ -99,45 +109,20 @@ function headOf(chunk: string): string {
     return quoted ? quoted[1] : "";
 }
 
-/**
- * Types whose stored *title* stays English whatever the locale.
- *
- * Each is here because the English does not end where the entity begins,
- * which is the only shape `{ prefix, key }` can express: translating these
- * needs the row to store parameters rather than prose. They are declared all
- * the same - `nameKey` alone - because what the kind is *called* is a
- * different question and every kind has to answer it. Six of these were
- * undeclared entirely, and the filter above a member's own activity listed
- * them by their type.
- *
- * A new activity type must be declared with a name, and named here too if its
- * title cannot be substituted.
- */
-const ENGLISH_BY_LIMITATION = new Set([
-    // "${type} issued to ${player}: ${reason}" - starts with an interpolation.
-    "punishments.punishment.issued",
-    // "${punishment.type} revoked for ${player}" - same.
-    "punishments.punishment.revoked",
-    // "${username} updated their profile" - same. Core's, so it has no manifest
-    // entry; `CORE_NAMES` in activity-title.ts names it.
-    "user.profile.updated",
-    // "Received ${amount} credits" - the entity sits between two English words.
-    "credits.credit.added",
-    // "Voted on ${site} and earned ${n} credits" - trailing clause, and it is
-    // only there when the vote paid out, so no fixed suffix describes it.
-    "vote.vote.cast",
-    // "Won ${prize} on the wheel" - trailing English after the entity.
-    "wheel.prize.won",
-]);
-
 /** The types and keys core declares for its own events, read off the source. */
 function coreDeclarations(): { types: string[]; keys: string[] } {
     const source = fs.readFileSync(path.join(ROOT, "src/core/lib/activity-title.ts"), "utf8");
-    const block = source.slice(source.indexOf("const CORE_PREFIXES"), source.indexOf("const PREFIXES"));
+    const prefixes = source.slice(source.indexOf("const CORE_PREFIXES"), source.indexOf("const PREFIXES"));
+    const patterns = source.slice(source.indexOf("const CORE_PATTERNS"), source.indexOf("const PATTERNS"));
     return {
-        types: [...block.matchAll(/"([a-z][\w.]*)":\s*\{/g)].map((m) => m[1]),
-        keys: [...block.matchAll(/key:\s*"([^"]+)"/g)].map((m) => m[1]),
+        types: [...prefixes.matchAll(/"([a-z][\w.]*)":\s*\{/g), ...patterns.matchAll(/"([a-z][\w.]*)":\s*\[/g)].map((m) => m[1]),
+        keys: [...prefixes.matchAll(/key:\s*"([^"]+)"/g), ...patterns.matchAll(/key:\s*"([^"]+)"/g)].map((m) => m[1]),
     };
+}
+
+/** The fixed words of a pattern, between and around its blanks. */
+function wordsOf(pattern: string): string[] {
+    return pattern.split(/\{[a-zA-Z]+\}/).filter((part) => part !== "");
 }
 
 describe("what the feed writes", () => {
@@ -148,15 +133,17 @@ describe("what the feed writes", () => {
         expect([...written.keys()]).toContain("store.order.completed");
     });
 
-    it("has a title declaration for every type, or a reason recorded here", () => {
+    it("has a title declaration for every type", () => {
         // A name-only entry is not a title declaration: the title is still the
         // English the row was written with.
         const substituted = new Set(
-            manifests().flatMap((m) => m.titles.filter((t) => t.prefix !== undefined).map((t) => t.type)),
+            manifests().flatMap((m) => m.titles
+                .filter((t) => t.prefix !== undefined || t.patterns !== undefined)
+                .map((t) => t.type)),
         );
         for (const type of coreDeclarations().types) substituted.add(type);
         const english = [...written.keys()].filter((t) => !substituted.has(t)).sort();
-        expect(english).toEqual([...ENGLISH_BY_LIMITATION].sort());
+        expect(english).toEqual([]);
     });
 });
 
@@ -187,15 +174,35 @@ describe("what a module declares", () => {
         expect(mismatched).toEqual([]);
     });
 
+    it("names patterns whose words the written title actually contains", () => {
+        const mismatched: string[] = [];
+        let read = 0;
+        for (const { id, titles } of manifests()) {
+            for (const t of titles) {
+                const row = written.get(t.type);
+                if (!row) continue;
+                const source = fs.readFileSync(path.join(ROOT, row.where), "utf8");
+                for (const { pattern } of t.patterns ?? []) {
+                    read++;
+                    for (const word of wordsOf(pattern)) {
+                        if (!source.includes(word)) mismatched.push(`${id}: ${t.type} expects ${JSON.stringify(word)}, ${row.where} never writes it`);
+                    }
+                }
+            }
+        }
+        expect(read, "no pattern was read").toBeGreaterThan(0);
+        expect(mismatched).toEqual([]);
+    });
+
     it("ships the key it names, in every locale it ships", () => {
         const missing: string[] = [];
         for (const { id, titles, translations } of manifests()) {
             for (const t of titles) {
-                if (t.key === undefined) continue;
-                for (const locale of Object.keys(translations)) {
-                    const value = translations[locale]?.activity?.[t.key];
+                const keys = [t.key, ...(t.patterns ?? []).map((p) => p.key)].filter((k): k is string => k !== undefined);
+                for (const key of keys) for (const locale of Object.keys(translations)) {
+                    const value = translations[locale]?.activity?.[key];
                     if (typeof value !== "string" || !value.trim()) {
-                        missing.push(`${id}: activity.${t.key} missing for ${locale}`);
+                        missing.push(`${id}: activity.${key} missing for ${locale}`);
                     }
                 }
             }
@@ -212,9 +219,9 @@ describe("what core declares", () => {
         expect(types).toHaveLength(keys.length);
     });
 
-    it("ships every key it names, in both locales", () => {
+    it("ships every key it names, in every locale", () => {
         const missing: string[] = [];
-        for (const locale of ["en", "tr"]) {
+        for (const locale of locales) {
             const messages = JSON.parse(fs.readFileSync(path.join(ROOT, `messages-core/${locale}.json`), "utf8"));
             for (const key of keys) {
                 const value = messages?.activity?.[key];
@@ -237,9 +244,7 @@ describe("localizeActivityTitle", () => {
     });
 
     it("leaves a type nobody declared exactly as written", () => {
-        expect(localizeActivityTitle("wheel.prize.won", "Won a Diamond Sword on the wheel", t)).toBe(
-            "Won a Diamond Sword on the wheel",
-        );
+        expect(localizeActivityTitle("ghost.module.event", "Did a thing", t)).toBe("Did a thing");
     });
 
     it("substitutes the label and keeps what follows when the prefix matches", () => {

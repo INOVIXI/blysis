@@ -12,13 +12,19 @@
  * event types via the `activityTitles` manifest field, aggregated at build
  * time into `ModuleActivityTitles`. Core knows only its own events.
  *
+ * A title whose English does not start with fixed words - "Received 40
+ * credits", "ban issued to Steve" - is declared as `patterns` instead: the
+ * sentence with named blanks, whose values the message is given as
+ * parameters. `an-activity-reads-in-the-readers-language` reads every such
+ * row in every locale.
+ *
  * Pass `t` from `useTranslations("activity")` (client) or
  * `getTranslations("activity")` (server). Falls back to the raw title
  * for any type/prefix combination we don't recognize.
  */
 import { ModuleActivityTitles } from "@/core/generated/module-registry";
 
-type Translator = ((key: string) => string) & { has?: (key: string) => boolean };
+type Translator = ((key: string, values?: Record<string, string>) => string) & { has?: (key: string) => boolean };
 
 // Core-only activity events. Module events are merged in from the registry.
 // An empty prefix means the stored title is a whole English sentence with no
@@ -37,6 +43,48 @@ const PREFIXES: Record<string, { prefix: string; key: string }> = {
             .map((e) => [e.type, { prefix: e.prefix as string, key: e.key as string }]),
     ),
 };
+
+/**
+ * Core-only events whose English a prefix cannot describe, as whole sentences
+ * with named blanks. Module ones come from the registry, declared as
+ * `patterns` in the manifest.
+ */
+const CORE_PATTERNS: Record<string, { pattern: string; key: string }[]> = {
+    "user.profile.updated": [{ pattern: "{username} updated their profile", key: "userProfileUpdated" }],
+};
+
+interface CompiledPattern {
+    match: RegExp;
+    names: string[];
+    key: string;
+}
+
+/**
+ * A pattern as a regular expression: its words literal, each blank a lazy
+ * capture, anchored at both ends so a row that only starts like the pattern
+ * is not taken for one. Captures span lines, because a reason a moderator
+ * typed may.
+ */
+function compile({ pattern, key }: { pattern: string; key: string }): CompiledPattern {
+    const names: string[] = [];
+    const source = pattern
+        .split(/(\{[a-zA-Z]+\})/)
+        .map((part) => {
+            const blank = /^\{([a-zA-Z]+)\}$/.exec(part);
+            if (!blank) return part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            names.push(blank[1]);
+            return "([\\s\\S]+?)";
+        })
+        .join("");
+    return { match: new RegExp(`^${source}$`), names, key };
+}
+
+const PATTERNS: Record<string, CompiledPattern[]> = Object.fromEntries([
+    ...Object.entries(CORE_PATTERNS),
+    ...ModuleActivityTitles
+        .filter((e) => e.patterns !== undefined)
+        .map((e) => [e.type, e.patterns as { pattern: string; key: string }[]] as const),
+].map(([type, patterns]) => [type, patterns.map(compile)]));
 
 /**
  * What each kind of event is called, on its own.
@@ -82,6 +130,15 @@ export function activityKinds(): { type: string; nameKey: string }[] {
 }
 
 export function localizeActivityTitle(type: string, title: string, t: Translator): string {
+    // The first pattern the row fits names its blanks, and the message puts
+    // them where its own language wants them. A row that fits none - an older
+    // wording, a row written by hand - keeps its English and its entity.
+    for (const pattern of PATTERNS[type] ?? []) {
+        const found = pattern.match.exec(title);
+        if (!found) continue;
+        if (t.has?.(pattern.key) === false) return title;
+        return t(pattern.key, Object.fromEntries(pattern.names.map((name, at) => [name, found[at + 1]])));
+    }
     const cfg = PREFIXES[type];
     if (!cfg) return title;
     // For prefixed entries, strip the English prefix and substitute.

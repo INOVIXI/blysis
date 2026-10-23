@@ -154,6 +154,7 @@
     "title": "Tegevuste voog",
     "twoFactorDisabled": "Kaksikautentimine välja lülitatud",
     "twoFactorEnabled": "Kaksikautentimine sisse lülitatud",
+    "userProfileUpdated": "{username} uuendas oma profiili",
     "userRegistered": "liitus kogukonnaga",
     "viewAll": "Vaata kõiki"
   },

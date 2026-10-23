@@ -154,6 +154,7 @@
     "title": "Kanał aktywności",
     "twoFactorDisabled": "Uwierzytelnianie dwuetapowe wyłączone",
     "twoFactorEnabled": "Uwierzytelnianie dwuetapowe włączone",
+    "userProfileUpdated": "{username} zaktualizował(a) profil",
     "userRegistered": "dołączył do społeczności",
     "viewAll": "Zobacz wszystkie"
   },

@@ -12,6 +12,13 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.21.0 - an `activityTitles` entry may declare `patterns`: the stored
+ * English with its blanks named, each with the message that takes them. A
+ * prefix can only translate a title that starts with fixed words, so a kind
+ * written as "Received 40 credits" or "ban issued to Steve" stayed English
+ * for every reader. A module using it requires this core, because an older
+ * one drops the field and shows the English again.
+ *
  * 5.20.0 - `isPrivateHost` joins `@/core/sdk`. The servers module publishes
  * where to connect, and a network registers its backend servers by their
  * inside address so the module can ask them; a module had no way to tell
@@ -631,4 +638,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.20.0";
+export const CORE_API_VERSION = "5.21.0";

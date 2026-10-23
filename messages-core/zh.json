@@ -154,6 +154,7 @@
     "title": "动态",
     "twoFactorDisabled": "已关闭两步验证",
     "twoFactorEnabled": "已开启两步验证",
+    "userProfileUpdated": "{username} 更新了个人资料",
     "userRegistered": "加入了社区",
     "viewAll": "查看全部"
   },

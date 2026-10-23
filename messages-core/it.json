@@ -154,6 +154,7 @@
     "title": "Feed di attività",
     "twoFactorDisabled": "Autenticazione a due fattori disattivata",
     "twoFactorEnabled": "Autenticazione a due fattori attivata",
+    "userProfileUpdated": "{username} ha aggiornato il proprio profilo",
     "userRegistered": "si è unito alla community",
     "viewAll": "Vedi tutto"
   },

@@ -154,6 +154,7 @@
     "title": "Aktivitäts-Feed",
     "twoFactorDisabled": "Zwei-Faktor-Authentifizierung deaktiviert",
     "twoFactorEnabled": "Zwei-Faktor-Authentifizierung aktiviert",
+    "userProfileUpdated": "{username} hat das Profil aktualisiert",
     "userRegistered": "ist der Community beigetreten",
     "viewAll": "Alle anzeigen"
   },

@@ -2,8 +2,8 @@
   "id": "wheel",
   "name": "Wheel of Fortune",
   "description": "Spin-to-win game with configurable prizes and cooldowns",
-  "version": "1.10.0",
-  "coreVersion": "^5.0.0",
+  "version": "1.10.1",
+  "coreVersion": "^5.21.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Dices",
@@ -223,7 +223,8 @@
         "wheel": "Turn the wheel for a chance at a prize, and see what is on it, what a turn costs and when you can turn it again."
       },
       "activity": {
-        "kindWheelPrizeWon": "Wheel Prize"
+        "kindWheelPrizeWon": "Wheel Prize",
+        "prizeWon": "Won {prize} on the wheel"
       }
     },
     "tr": {
@@ -320,7 +321,8 @@
         "wheel": "Ödül kazanmak için çarkı çevirin; üzerinde neler olduğunu, bir çevirmenin maliyetini ve ne zaman tekrar çevirebileceğinizi görün."
       },
       "activity": {
-        "kindWheelPrizeWon": "Çark Ödülü"
+        "kindWheelPrizeWon": "Çark Ödülü",
+        "prizeWon": "Çarkta {prize} kazandı"
       }
     },
     "az": {
@@ -417,7 +419,8 @@
         "wheel": "Mükafat qazanmaq şansı üçün çarxı çevirin, üzərində nə olduğunu, bir fırlanmanın nə qədər başa gəldiyini və nə vaxt yenidən çevirə biləcəyinizi görün."
       },
       "activity": {
-        "kindWheelPrizeWon": "Çarx mükafatı"
+        "kindWheelPrizeWon": "Çarx mükafatı",
+        "prizeWon": "Çarxda {prize} qazandı"
       }
     },
     "de": {
@@ -514,7 +517,8 @@
         "wheel": "Dreh das Rad für die Chance auf einen Gewinn und sieh, was darauf liegt, was eine Drehung kostet und wann du wieder drehen kannst."
       },
       "activity": {
-        "kindWheelPrizeWon": "Glücksrad-Gewinn"
+        "kindWheelPrizeWon": "Glücksrad-Gewinn",
+        "prizeWon": "{prize} am Glücksrad gewonnen"
       }
     },
     "es": {
@@ -611,7 +615,8 @@
         "wheel": "Gira la rueda para tener la oportunidad de ganar un premio, y mira qué hay en ella, cuánto cuesta cada giro y cuándo puedes volver a girarla."
       },
       "activity": {
-        "kindWheelPrizeWon": "Premio de la ruleta"
+        "kindWheelPrizeWon": "Premio de la ruleta",
+        "prizeWon": "Ganó {prize} en la ruleta"
       }
     },
     "et": {
@@ -708,7 +713,8 @@
         "wheel": "Keera ratast, et võita auhind, ja vaata, mis rattal on, mis keeramine maksab ja millal saad seda uuesti keerata."
       },
       "activity": {
-        "kindWheelPrizeWon": "Õnnerattaauhind"
+        "kindWheelPrizeWon": "Õnnerattaauhind",
+        "prizeWon": "Võitis ratta pealt: {prize}"
       }
     },
     "fr": {
@@ -805,7 +811,8 @@
         "wheel": "Faites tourner la roue pour tenter de gagner un lot, et découvrez ce qu’elle contient, ce que coûte un tour et quand vous pourrez la refaire tourner."
       },
       "activity": {
-        "kindWheelPrizeWon": "Lot de la roue"
+        "kindWheelPrizeWon": "Lot de la roue",
+        "prizeWon": "A gagné {prize} à la roue"
       }
     },
     "it": {
@@ -902,7 +909,8 @@
         "wheel": "Gira la ruota per la possibilità di vincere un premio e scopri cosa c’è sopra, quanto costa un giro e quando potrai girarla di nuovo."
       },
       "activity": {
-        "kindWheelPrizeWon": "Premio della ruota"
+        "kindWheelPrizeWon": "Premio della ruota",
+        "prizeWon": "Ha vinto {prize} alla ruota"
       }
     },
     "pl": {
@@ -999,7 +1007,8 @@
         "wheel": "Zakręć kołem, licząc na nagrodę. Zobacz, co na nim jest, ile kosztuje obrót i kiedy znów możesz zakręcić."
       },
       "activity": {
-        "kindWheelPrizeWon": "Nagroda z koła fortuny"
+        "kindWheelPrizeWon": "Nagroda z koła fortuny",
+        "prizeWon": "Wygrana na kole: {prize}"
       }
     },
     "pt": {
@@ -1096,7 +1105,8 @@
         "wheel": "Gire a roleta para ter a chance de ganhar um prêmio e veja o que há nela, quanto custa um giro e quando você pode girar de novo."
       },
       "activity": {
-        "kindWheelPrizeWon": "Prêmio da roleta"
+        "kindWheelPrizeWon": "Prêmio da roleta",
+        "prizeWon": "Ganhou {prize} na roleta"
       }
     },
     "ru": {
@@ -1193,7 +1203,8 @@
         "wheel": "Крутите колесо, чтобы выиграть приз, и смотрите, что на нем есть, сколько стоит прокрутка и когда ее можно повторить."
       },
       "activity": {
-        "kindWheelPrizeWon": "Приз колеса"
+        "kindWheelPrizeWon": "Приз колеса",
+        "prizeWon": "Выигрыш на колесе: {prize}"
       }
     },
     "zh": {
@@ -1290,7 +1301,8 @@
         "wheel": "转动转盘赢取奖品，查看转盘上有哪些奖品、每次转动的费用，以及何时可以再次转动。"
       },
       "activity": {
-        "kindWheelPrizeWon": "转盘奖品"
+        "kindWheelPrizeWon": "转盘奖品",
+        "prizeWon": "在转盘中赢得 {prize}"
       }
     }
   },
@@ -1323,7 +1335,13 @@
   "activityTitles": [
     {
       "type": "wheel.prize.won",
-      "nameKey": "kindWheelPrizeWon"
+      "nameKey": "kindWheelPrizeWon",
+      "patterns": [
+        {
+          "pattern": "Won {prize} on the wheel",
+          "key": "prizeWon"
+        }
+      ]
     }
   ]
 }

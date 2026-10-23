@@ -154,6 +154,7 @@
     "title": "Fəaliyyət lenti",
     "twoFactorDisabled": "İki addımlı doğrulama söndürüldü",
     "twoFactorEnabled": "İki addımlı doğrulama aktivləşdirildi",
+    "userProfileUpdated": "{username} profilini yenilədi",
     "userRegistered": "icmaya qoşuldu",
     "viewAll": "Hamısına bax"
   },
