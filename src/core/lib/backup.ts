@@ -310,7 +310,10 @@ export async function restoreBackup(id: string): Promise<{ success: boolean; err
             }
         });
 
-        const readStream = fs.createReadStream(fullPath);
+        // Opaque to the tracer: a backup path built at runtime reads to it as any
+        // file in the project, and the whole tree was traced into every bundle
+        // that imports this file, the proxy among them.
+        const readStream = fs.createReadStream(/* turbopackIgnore: true */ fullPath);
         const gunzip = zlib.createGunzip();
         readStream.on("error", (err) => {
             resolve({ success: false, error: err.message });
@@ -333,7 +336,7 @@ export async function getBackupPath(id: string): Promise<string | null> {
     const fullPath = resolveBackupPath(id);
     if (!fullPath) return null;
     try {
-        const stat = await fsp.stat(fullPath);
+        const stat = await fsp.stat(/* turbopackIgnore: true */ fullPath);
         if (!stat.isFile()) return null;
     } catch {
         return null;
