@@ -151,7 +151,7 @@ export default function CreditPackagesPage() {
     }
 
     const numbers = (draft: Draft, onChange: (draft: Draft) => void, prefix: string) => (
-        <div className="grid sm:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
             <div className="sm:col-span-2">
                 <Label htmlFor={`${prefix}-name`}>{t("adm_creditPackName")}</Label>
                 <Input id={`${prefix}-name`} value={draft.name} onChange={(e) => onChange({ ...draft, name: e.target.value })} />

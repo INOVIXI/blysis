@@ -144,7 +144,7 @@ export function RoleForm({ role }: { role?: RoleRecord }) {
             <Card>
                 <CardContent className="p-6">
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <Label htmlFor="role-name">{t("roles_internalName")} *</Label>
                                 <Input
@@ -208,7 +208,7 @@ export function RoleForm({ role }: { role?: RoleRecord }) {
                             attribute, so the site writes a rule instead - and
                             `safeRoleCss` decides what may go in one, here and
                             again at every render site. */}
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <Label htmlFor="role-name-css">{t("roles_nameCss")}</Label>
                                 <Textarea

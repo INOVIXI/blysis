@@ -2,7 +2,7 @@
   "id": "game-connect",
   "name": "Game Connect",
   "description": "Let game servers connect to this site themselves: queued delivery that survives a restart, live status, the store and credits in game, and account linking, for any game with a client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "coreVersion": "^5.0.0",
   "category": "gaming",
   "author": "Blysis",

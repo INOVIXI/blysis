@@ -197,7 +197,7 @@ export default function TranslationsPage() {
             />
 
             <Card className="mb-6">
-                <CardContent className="p-4 grid gap-3 md:grid-cols-4 md:items-end">
+                <CardContent className="p-4 grid grid-cols-1 gap-3 md:grid-cols-4 md:items-end">
                     <div className="relative md:col-span-2">
                         <Search
                             className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"

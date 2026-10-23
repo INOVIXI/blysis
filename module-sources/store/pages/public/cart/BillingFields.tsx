@@ -75,7 +75,7 @@ export function BillingFields({
             </div>
 
             {value.kind === "company" && (
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <Label htmlFor="billingTaxNumber">{t("billing_taxNumber")}</Label>
                         <Input
@@ -110,7 +110,7 @@ export function BillingFields({
                 />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                     <Label htmlFor="billingCity">{t("billing_city")}</Label>
                     <Input

@@ -126,7 +126,7 @@ export default function CloudflareTurnstileAdminPage() {
                 its left edge. The screen has two subjects - the pair of keys
                 Cloudflare issues, and the pages that ask for a challenge -
                 and they are what the cards are. */}
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <Card>
                     <CardHeader>
                         <CardTitle>{t("keysTitle")}</CardTitle>

@@ -211,7 +211,7 @@ export default function SeoPagesScreen() {
                 }
             />
 
-            <div className="grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)] items-start">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[22rem_minmax(0,1fr)] items-start">
                 <Card>
                     <CardContent className="p-0">
                         <SeoPageList

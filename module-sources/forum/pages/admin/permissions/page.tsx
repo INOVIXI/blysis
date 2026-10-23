@@ -155,7 +155,7 @@ export default function ForumPermissionsPage() {
         <>
             <AdminPageHeader title={t("adm_permTitle")} description={t("adm_permSubtitle")} />
 
-            <div className="grid lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <Card className="lg:col-span-1">
                     <CardHeader><CardTitle>{t("adm_permCategories")}</CardTitle></CardHeader>
                     <CardContent className="p-2">

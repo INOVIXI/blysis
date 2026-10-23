@@ -112,7 +112,7 @@ export function AvailabilityFields({ value, onChange, timeZone }: Props) {
                     <p className="mt-1 text-xs text-muted-foreground">{t("adm_whoMayBuyHint")}</p>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <Label htmlFor="availableFrom">{t("adm_availableFrom")}</Label>
                         <Input
@@ -157,7 +157,7 @@ export function AvailabilityFields({ value, onChange, timeZone }: Props) {
                     <p className="mt-1 text-xs text-muted-foreground">{t("adm_availableDaysHint")}</p>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <Label htmlFor="availableFrom24">{t("adm_availableFromHour")}</Label>
                         <Input
@@ -193,7 +193,7 @@ export function AvailabilityFields({ value, onChange, timeZone }: Props) {
                     </NativeSelect>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <Label htmlFor="perPersonLimit">{t("adm_perPersonLimit")}</Label>
                         <Input
@@ -222,7 +222,7 @@ export function AvailabilityFields({ value, onChange, timeZone }: Props) {
                     </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <Label htmlFor="periodStock">{t("adm_periodStock")}</Label>
                         <Input
@@ -251,7 +251,7 @@ export function AvailabilityFields({ value, onChange, timeZone }: Props) {
                     </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <div>
                         <Label htmlFor="salePrice">{t("adm_salePrice")}</Label>
                         <Input

@@ -71,7 +71,7 @@ export function CreditPackages({ onBought }: { onBought: () => void }) {
         <Card>
             <CardHeader><CardTitle>{t("buy_title")}</CardTitle></CardHeader>
             <CardContent>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {packages.map((pack) => (
                         <div key={pack.id} className="rounded-lg border border-border p-4">
                             <p className="font-medium">{pack.name}</p>

@@ -481,7 +481,7 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
                                         // no cell beside it left to sit empty.
                                         <div
                                             key={row[0].key}
-                                            className={cn("grid gap-4", row.length > 1 && "md:grid-cols-2")}
+                                            className={cn("grid grid-cols-1 gap-4", row.length > 1 && "md:grid-cols-2")}
                                         >
                                             {row.map((field) => {
                                                 const namesItself = field.type === "toggle";

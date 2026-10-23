@@ -270,7 +270,7 @@ export default function EditProductPage(props: PageProps) {
             />
 
             <form id="product-form" onSubmit={handleSubmit}>
-                <div className="grid lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-6">
                         <Card>
                             <CardHeader>

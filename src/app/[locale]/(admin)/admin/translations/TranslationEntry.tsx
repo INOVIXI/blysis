@@ -133,7 +133,7 @@ export function TranslationEntry({ entry, source, target, onSave, onRestore }: T
                     </div>
                 </div>
 
-                <div className="grid gap-3 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                     <div className="space-y-1">
                         <p className="text-xs font-medium text-muted-foreground">
                             {localeNames[source]}

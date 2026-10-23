@@ -126,7 +126,7 @@ export function AccountSettings({
                     {/* Two columns from the medium breakpoint up. The fields are
                         short and the page is the full measure now, so one per
                         line left a column of white space beside every input. */}
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
                             <Label htmlFor={usernameId}>{t("username")}</Label>
                             <Input

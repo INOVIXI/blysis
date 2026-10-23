@@ -138,7 +138,7 @@ export default function ProfilePage() {
             {/* The nav column is a fixed measure so the panel beside it keeps
                 the same width from section to section; a column sized by its
                 longest label moves the content every time a module adds one. */}
-            <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)] items-start">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_minmax(0,1fr)] items-start">
                 <AccountNav
                     sections={sections}
                     active={active}

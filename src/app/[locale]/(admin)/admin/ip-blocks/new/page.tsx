@@ -73,7 +73,7 @@ export default function NewIpBlockPage() {
                         anyway, so the card drew a border around an empty
                         right half of the panel. */}
                     <form onSubmit={submit} className="space-y-4">
-                        <div className="grid gap-4 md:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div>
                                 <Label htmlFor="ip-block-ip">{t("ipBlocks_ipLabel")}</Label>
                                 <Input

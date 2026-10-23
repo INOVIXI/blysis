@@ -162,7 +162,7 @@ export default function ActiveThemeAppearancePage() {
                 tall as the taller one; the right column lays its cards out
                 in a flex column and lets the last one take the slack, which
                 is what stops it ending a few pixels short of the swatches. */}
-            <div className="grid gap-6 mt-6 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 mt-6 xl:grid-cols-3">
                 <div className="xl:col-span-2 space-y-6">
                     {Object.keys(colorTokens).length > 0 && (
                         <Card>
@@ -171,7 +171,7 @@ export default function ActiveThemeAppearancePage() {
                                 <CardDescription>{t("theme_overrideDesc")}</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
                                     {Object.entries(colorTokens).map(([name, def]) => {
                                         const modeDefault = activeTheme.modes?.available?.[currentMode]?.tokens?.colors?.[name];
                                         const effectiveDef = {

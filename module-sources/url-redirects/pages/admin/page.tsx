@@ -91,7 +91,7 @@ export default function UrlRedirectsPage() {
             <Card className="mb-6">
                 <CardContent className="p-6">
                     <form onSubmit={add} className="space-y-4">
-                        <div className="grid gap-4 md:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div>
                                 <Label htmlFor="redirectFrom">{t("adm_from")}</Label>
                                 <Input

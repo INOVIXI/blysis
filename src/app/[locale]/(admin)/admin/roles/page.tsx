@@ -93,7 +93,7 @@ export default function AdminRolesPage() {
             <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
 
             {/* Roles List */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {list.rows.map((role) => (
                     <Card key={role.id} className="relative">
                         <CardHeader>

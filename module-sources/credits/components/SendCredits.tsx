@@ -67,7 +67,7 @@ export function SendCredits({ balance, onSent }: { balance: number; onSent: () =
             <CardContent>
                 <form onSubmit={send} className="space-y-4">
                     <p className="text-sm text-muted-foreground">{t("send_hint", { balance })}</p>
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
                             <Label htmlFor="creditsTo">{t("send_to")}</Label>
                             <Input

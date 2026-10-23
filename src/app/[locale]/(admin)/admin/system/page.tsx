@@ -79,7 +79,7 @@ export default function SystemPage() {
             </div>
 
             {/* Process Memory */}
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-base">{t("system_processMemory")}</CardTitle>

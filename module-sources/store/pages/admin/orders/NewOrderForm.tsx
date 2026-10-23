@@ -178,7 +178,7 @@ export function NewOrderForm({ onDone, onCancel }: { onDone: () => void; onCance
                             </div>
                             <div className="mt-2 space-y-2">
                                 {form.lines.map((line, index) => (
-                                    <div key={index} className="grid items-end gap-2 md:grid-cols-[1fr_6rem_8rem_auto]">
+                                    <div key={index} className="grid grid-cols-1 items-end gap-2 md:grid-cols-[1fr_6rem_8rem_auto]">
                                         <div>
                                             <NativeSelect
                                                 aria-label={t("adm_manualOrderProductFor", { line: index + 1 })}

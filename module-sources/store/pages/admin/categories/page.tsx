@@ -189,7 +189,7 @@ export default function AdminStoreCategoriesPage() {
                                 <h2 className="text-sm font-medium text-muted-foreground border-b border-border pb-2">
                                     {t("adm_categoryBasics")}
                                 </h2>
-                                <div className="grid md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <Label>{`${t("adm_name")} *`}</Label>
                                         <Input

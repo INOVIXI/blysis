@@ -177,7 +177,7 @@ export default function CustomPagesAdminPage() {
                                 edit form - which has no slug box to put
                                 beside the title - leaves no empty cell where
                                 the slug used to be. */}
-                            <div className={`grid gap-4 ${editingId ? "" : "md:grid-cols-2"}`}>
+                            <div className={`grid grid-cols-1 gap-4 ${editingId ? "" : "md:grid-cols-2"}`}>
                                 <div>
                                     <Label>{`${t("adm_title")} *`}</Label>
                                     <Input aria-label={t("adm_title")} value={title} onChange={(e) => setTitle(e.target.value)} required placeholder={t("adm_pageTitle")} />

@@ -396,7 +396,7 @@ export default function AdminTrophiesPage() {
                                 ) : (
                                     <>
                                         {form.conditions.map((condition, i) => (
-                                            <div key={i} className="grid gap-2 md:grid-cols-[1fr_8rem_auto] md:items-end">
+                                            <div key={i} className="grid grid-cols-1 gap-2 md:grid-cols-[1fr_8rem_auto] md:items-end">
                                                 <div>
                                                     <Label>{t("adm_conditionEvent")}</Label>
                                                     <NativeSelect

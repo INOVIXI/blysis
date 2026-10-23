@@ -168,7 +168,7 @@ export default function DevToolsPage() {
             )}
 
             {tab === "registries" && (
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {Object.entries(data.registries).map(([key, items]) => (
                         <Card key={key}>
                             <CardHeader className="pb-2">
@@ -191,7 +191,7 @@ export default function DevToolsPage() {
             )}
 
             {tab === "runtime" && (
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Card>
                         <CardHeader><CardTitle className="text-base">{t("dev_process")}</CardTitle></CardHeader>
                         <CardContent className="space-y-2 text-sm">

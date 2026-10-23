@@ -330,7 +330,7 @@ export default function ComparisonTablesAdminPage() {
             />
 
             <Card className="mb-6">
-                <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
+                <CardContent className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <Label htmlFor="table-title">{t("adm_tableTitle")}</Label>
                         <Input id="table-title" value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} />

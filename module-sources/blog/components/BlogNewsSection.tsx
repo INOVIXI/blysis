@@ -84,7 +84,7 @@ export function BlogNewsSection() {
   return (
     <div className={NEWS_SECTION_HEIGHT}>
       <h2 className="text-xl font-bold text-foreground mb-6">{t('title')}</h2>
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {paginatedNews.map((post) => (
           <NewsCard key={post.id} post={post} />
         ))}

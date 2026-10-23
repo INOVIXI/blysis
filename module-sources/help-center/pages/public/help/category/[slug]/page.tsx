@@ -54,7 +54,7 @@ export default async function HelpCategoryPage({ params, searchParams }: PagePro
                         that only carries a title reads as a list of the same
                         thing, and a category with thirty of them had no way to
                         stop scrolling. */}
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {rows.map((article) => (
                             <Link
                                 key={article.id}

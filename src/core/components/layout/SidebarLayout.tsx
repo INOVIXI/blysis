@@ -31,10 +31,16 @@ interface SidebarLayoutProps {
  * is passed in rather than written above the layout: one component draws it
  * and the spacer that answers it, and the two cannot drift apart.
  * `a-column-starts-where-the-one-beside-it-does.spec.ts` measures the result.
+ *
+ * On a phone the one column is stated as `grid-cols-1`, a `minmax(0, 1fr)`
+ * track. Left implicit it is an `auto` track, which grows to the widest
+ * min-content of anything in it: a widget's tab rail that scrolls on its own
+ * still pushed the column, every card beside it and the document to 600px on
+ * a 320px phone. `a-page-fits-the-phone-it-is-read-on.spec.ts` measures it.
  */
 export default function StandardSidebarLayout({ children, sidebar, heading }: SidebarLayoutProps) {
     return (
-        <div data-sidebar-layout className="grid lg:grid-cols-3 gap-6">
+        <div data-sidebar-layout className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div data-sidebar-main className="lg:col-span-2">
                 {heading ? (
                     <h2 className="text-xl font-bold text-foreground mb-6">{heading}</h2>
