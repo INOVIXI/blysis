@@ -1423,7 +1423,7 @@
     "password": "Пароль",
     "passwordMinLength": "Пароль должен содержать не менее 6 символов",
     "passwordsDontMatch": "Пароли не совпадают",
-    "registerSubtitle": "Начните работу с Blysis",
+    "registerSubtitle": "Создайте учетную запись и присоединяйтесь",
     "registerTitle": "Создать учетную запись",
     "rememberMe": "Оставаться в системе",
     "resetButton": "Сбросить пароль",

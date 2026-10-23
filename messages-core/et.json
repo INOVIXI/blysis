@@ -1423,7 +1423,7 @@
     "password": "Parool",
     "passwordMinLength": "Parool peab olema vähemalt 6 märki pikk",
     "passwordsDontMatch": "Paroolid ei kattu",
-    "registerSubtitle": "Alusta Blysisega",
+    "registerSubtitle": "Loo konto ja liitu meiega",
     "registerTitle": "Loo konto",
     "rememberMe": "Hoia mind sisselogituna",
     "resetButton": "Lähtesta parool",

@@ -1423,7 +1423,7 @@
     "password": "Password",
     "passwordMinLength": "Password must be at least 6 characters",
     "passwordsDontMatch": "Passwords don't match",
-    "registerSubtitle": "Get started with Blysis",
+    "registerSubtitle": "Create your account and join in",
     "registerTitle": "Create Account",
     "rememberMe": "Keep me signed in",
     "resetButton": "Reset Password",

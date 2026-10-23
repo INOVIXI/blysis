@@ -1423,7 +1423,7 @@
     "password": "密码",
     "passwordMinLength": "密码至少需要 6 个字符",
     "passwordsDontMatch": "两次输入的密码不一致",
-    "registerSubtitle": "开始使用 Blysis",
+    "registerSubtitle": "创建你的账户，加入我们",
     "registerTitle": "创建账户",
     "rememberMe": "保持登录状态",
     "resetButton": "重置密码",

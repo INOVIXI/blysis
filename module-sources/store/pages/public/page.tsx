@@ -125,7 +125,7 @@ export default async function StorePage({ searchParams }: PageProps) {
 
             {!search && !chosen && (
                 <section>
-                    <h2 className="text-xl font-bold text-foreground mb-6">{t("title")}</h2>
+                    <h2 className="text-xl font-bold text-foreground mb-6">{t("categories")}</h2>
                     {roots.length === 0 ? (
                         <div className="text-center py-12 bg-card rounded-xl">
                             <p className="text-muted-foreground">{t("noCategories")}</p>

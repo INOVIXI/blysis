@@ -601,10 +601,6 @@ export default function CartPage() {
                                         t('proceedToCheckout')
                                     )}
                                 </Button>
-
-                                <p className="text-xs text-muted-foreground text-center">
-                                    {t('secureCheckout')}
-                                </p>
                             </CardContent>
                         </Card>
                     </div>
