@@ -18,6 +18,13 @@ import { test, expect } from "@playwright/test";
  *
  * So the rule is measured on the page rather than read off the class names,
  * because the next version of this bug will wear different classes.
+ *
+ * What a rail that scrolls sideways holds is not counted against the screen,
+ * as long as the rail itself fits it: a leaderboard widget's tabs run past the
+ * edge by design and are reached by swiping the rail, and the page does not
+ * grow by a pixel for them. Only `auto` and `scroll` count as such a rail.
+ * `hidden` and `clip` cut content off where no reader can reach it, and the
+ * document element never counts, since its scroll is the very thing measured.
  */
 
 test.use({ viewport: { width: 320, height: 658 }, isMobile: true, hasTouch: true });
@@ -34,7 +41,16 @@ for (const path of PAGES) {
 
         const report = await page.evaluate(() => {
             const viewport = document.documentElement.clientWidth;
+            const inRailThatFits = (el: Element) => {
+                for (let up = el.parentElement; up && up !== document.body && up !== document.documentElement; up = up.parentElement) {
+                    if (!["auto", "scroll"].includes(getComputedStyle(up).overflowX)) continue;
+                    const box = up.getBoundingClientRect();
+                    return box.left >= -1 && box.right <= viewport + 1;
+                }
+                return false;
+            };
             const offenders = [...document.querySelectorAll<HTMLElement>("*")]
+                .filter((el) => !inRailThatFits(el))
                 .filter((el) => {
                     const box = el.getBoundingClientRect();
                     return box.width > viewport + 1 || box.right > viewport + 1;
