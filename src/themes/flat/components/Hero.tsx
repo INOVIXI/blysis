@@ -17,8 +17,9 @@ import { ArrowRight } from "lucide-react";
  * Its heading is an h2 for the same reason: the homepage names itself in an
  * h1 already, and a page has one.
  *
- * `hero.bottom` is drawn under the banner, which is where modules that
- * declare it expect to be: nothing else on the page places that slot.
+ * `hero.bottom` is drawn under the banner, in the banner's measure, which
+ * is where modules that declare it expect to be: nothing else on the page
+ * places that slot, and a contribution brings no margins of its own.
  */
 export default function Hero() {
     const get = useThemeConfig();
@@ -74,7 +75,9 @@ export default function Hero() {
                     ) : null}
                 </div>
             </section>
-            <Slot name="hero.bottom" />
+            <div className="max-w-5xl mx-auto px-4 py-3 empty:hidden">
+                <Slot name="hero.bottom" />
+            </div>
         </>
     );
 }
