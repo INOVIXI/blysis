@@ -1,0 +1,592 @@
+/*
+ * Vanguard. Every selector here is scoped to [data-theme="vanguard"] by the
+ * theme generator, so nothing below draws on a site wearing another theme.
+ *
+ * The look lives under `.vg-site` (the public frame) and `.vg-auth` (the
+ * sign-in screens). The panel wears this theme's colours and fonts but not
+ * its capitals or its cut corners: an operator's tables are not a poster.
+ */
+
+html {
+  --vg-cut: 10px;
+  --vg-card-radius: 16px;
+  --vg-shadow: 0 10px 30px rgb(11 22 51 / 0.16);
+  --vg-glass: color-mix(in srgb, var(--blysis-color-accent) 16%, transparent);
+  --vg-pixel: color-mix(in srgb, var(--blysis-color-primary) 70%, var(--blysis-color-stage));
+}
+
+html[data-mode="dark"] {
+  --vg-shadow: 0 10px 30px rgb(0 0 0 / 0.45);
+}
+
+/* A corner cut off a box, at the size its custom property says. */
+.vg-site .blysis-button,
+.vg-auth .blysis-button,
+.vg-cut-button,
+.vg-tag,
+.vg-rail-link[data-active],
+.vg-site .blysis-badge {
+  clip-path: polygon(var(--vg-cut) 0, 100% 0, 100% calc(100% - var(--vg-cut)), calc(100% - var(--vg-cut)) 100%, 0 100%, 0 var(--vg-cut));
+}
+
+/* Type */
+
+.vg-site,
+.vg-auth {
+  font-family: var(--blysis-font-body);
+}
+
+.vg-site :is(h1, h2, h3, h4),
+.vg-auth :is(h1, h2, h3) {
+  font-family: var(--blysis-font-heading);
+  letter-spacing: 0.02em;
+}
+
+/* Capitals for the site's own headings, never for what a person wrote. */
+.vg-site :is(h1, h2):not(.blysis-content *),
+.vg-auth h1 {
+  text-transform: uppercase;
+}
+
+/* Primitives on the public pages */
+
+.vg-site .blysis-button,
+.vg-auth .blysis-button {
+  --vg-cut: 8px;
+  border-radius: 0;
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* A clipped box cannot show a ring drawn outside it, so focus is drawn inside. */
+.vg-site .blysis-button:focus-visible,
+.vg-auth .blysis-button:focus-visible,
+.vg-cut-button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -5px;
+}
+
+.vg-site .blysis-badge {
+  --vg-cut: 5px;
+  border-radius: 0;
+  font-family: var(--blysis-font-heading);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vg-site .blysis-card,
+.vg-site [data-sidebar] > .bg-card {
+  border-radius: var(--vg-card-radius);
+  box-shadow: var(--vg-shadow);
+}
+
+/* The frame */
+
+.vg-site {
+  isolation: isolate;
+  overflow-x: clip;
+}
+
+.vg-frame {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.vg-rail {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 236px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vg-main {
+  position: relative;
+  z-index: 1;
+  flex: 999 1 560px;
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .vg-rail {
+    flex: 0 0 236px;
+    position: sticky;
+    top: 24px;
+  }
+}
+
+.vg-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--vg-card-radius);
+  background: var(--blysis-color-card);
+  color: var(--blysis-color-cardForeground);
+  box-shadow: var(--vg-shadow);
+}
+
+.vg-brand[data-on="stage"] {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--blysis-color-stageForeground);
+}
+
+.vg-brand-mark {
+  flex-shrink: 0;
+}
+
+.vg-brand-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.vg-rail-nav,
+.vg-rail-actions {
+  border-radius: var(--vg-card-radius);
+  background: var(--blysis-color-card);
+  color: var(--blysis-color-cardForeground);
+  box-shadow: 0 1px 0 var(--blysis-color-border);
+}
+
+.vg-rail-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+}
+
+.vg-rail-link {
+  --vg-cut: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  color: var(--blysis-color-cardForeground);
+  font-family: var(--blysis-font-heading);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background-color 150ms, color 150ms;
+}
+
+.vg-rail-link:hover {
+  background: var(--blysis-color-muted);
+}
+
+.vg-rail-link[data-active] {
+  background: var(--blysis-color-primary);
+  color: var(--blysis-color-primaryForeground);
+  font-weight: 700;
+}
+
+.vg-rail-link:focus-visible {
+  outline: 2px solid var(--blysis-color-primary);
+  outline-offset: -2px;
+}
+
+.vg-rail-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 18px;
+}
+
+.vg-rail-actions {
+  padding: 10px;
+}
+
+.vg-rail-actions > div {
+  flex-wrap: wrap;
+}
+
+/* On a phone the rail is a band across the top and its links scroll sideways. */
+@media (max-width: 63.99rem) {
+  .vg-rail-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .vg-rail-link {
+    flex-shrink: 0;
+  }
+
+  .vg-rail-sub {
+    flex-direction: row;
+    padding-left: 0;
+  }
+}
+
+/* The stage */
+
+.vg-stage {
+  position: absolute;
+  z-index: -1;
+  top: -24px;
+  bottom: 0;
+  left: -100vw;
+  right: -100vw;
+  overflow: hidden;
+  background: var(--blysis-color-stage);
+  pointer-events: none;
+}
+
+.vg-stage-sky {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100vw;
+  right: 100vw;
+  background-image: radial-gradient(ellipse 55% 60% at 42% 38%, var(--blysis-color-stageGlow), transparent 70%);
+}
+
+.vg-pixel {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--vg-pixel);
+}
+
+.vg-pixel[data-size="s"] {
+  width: 4px;
+  height: 4px;
+}
+
+.vg-pixel[data-size="l"] {
+  width: 8px;
+  height: 8px;
+}
+
+.vg-pixel[data-tone="ice"] {
+  background: var(--blysis-color-accent);
+}
+
+/* A pixel past the bottom, or the stage's own colour shows through as a hairline where rounding leaves a gap. */
+.vg-ridge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+}
+
+.vg-ridge[data-depth="far"] {
+  height: min(70%, 300px);
+  background: var(--blysis-color-stageFar);
+  clip-path: polygon(0 52%, 6% 52%, 6% 38%, 13% 38%, 13% 50%, 21% 50%, 21% 24%, 29% 24%, 29% 42%, 37% 42%, 37% 32%, 46% 32%, 46% 8%, 54% 8%, 54% 28%, 62% 28%, 62% 46%, 70% 46%, 70% 18%, 78% 18%, 78% 36%, 87% 36%, 87% 12%, 94% 12%, 94% 40%, 100% 40%, 100% 100%, 0 100%);
+}
+
+.vg-ridge[data-depth="near"] {
+  height: min(45%, 190px);
+  background: var(--blysis-color-stageNear);
+  clip-path: polygon(0 34%, 9% 34%, 9% 54%, 16% 54%, 16% 22%, 25% 22%, 25% 44%, 33% 44%, 33% 60%, 42% 60%, 42% 30%, 50% 30%, 50% 48%, 59% 48%, 59% 14%, 67% 14%, 67% 40%, 76% 40%, 76% 56%, 84% 56%, 84% 26%, 92% 26%, 92% 46%, 100% 46%, 100% 100%, 0 100%);
+}
+
+/* The nearest ridge is the ground the page stands on, in the page's colour. */
+.vg-ridge[data-depth="ground"] {
+  height: min(22%, 92px);
+  background: var(--blysis-color-background);
+  clip-path: polygon(0 46%, 8% 46%, 8% 26%, 17% 26%, 17% 56%, 26% 56%, 26% 34%, 35% 34%, 35% 6%, 41% 6%, 41% 40%, 52% 40%, 52% 18%, 60% 18%, 60% 50%, 70% 50%, 70% 28%, 80% 28%, 80% 8%, 86% 8%, 86% 44%, 94% 44%, 94% 22%, 100% 22%, 100% 100%, 0 100%);
+}
+
+.vg-tag {
+  --vg-cut: 6px;
+  align-self: flex-start;
+  padding: 6px 12px;
+  background: var(--blysis-color-accent);
+  color: var(--blysis-color-accentForeground);
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.vg-cut-button {
+  --vg-cut: 12px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 54px;
+  padding: 0 24px;
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: filter 150ms;
+}
+
+.vg-cut-button:hover {
+  filter: brightness(1.1);
+}
+
+.vg-cut-button[data-tone="primary"] {
+  background: var(--blysis-color-primary);
+  color: var(--blysis-color-primaryForeground);
+}
+
+.vg-cut-button[data-tone="glass"] {
+  background: var(--vg-glass);
+  color: var(--blysis-color-stageForeground);
+}
+
+/* The homepage */
+
+.vg-hero {
+  position: relative;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 8px 4px 72px;
+  color: var(--blysis-color-stageForeground);
+}
+
+.vg-hero-title {
+  max-width: 640px;
+  margin-top: 12px;
+  font-size: clamp(2.25rem, 5vw, 3.6rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.vg-hero-lede {
+  max-width: 520px;
+  color: var(--blysis-color-stageMuted);
+  font-size: 1.0625rem;
+}
+
+.vg-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.vg-hero-bottom {
+  margin-top: auto;
+  max-width: 640px;
+  padding-top: 18px;
+  border-top: 1px solid color-mix(in srgb, var(--blysis-color-stageForeground) 18%, transparent);
+}
+
+.vg-hero-bottom:empty {
+  display: none;
+}
+
+/* What a module puts here is drawn in the page's colours; on the stage its surfaces are the sky's. */
+.vg-hero-bottom :is(li, [class*="bg-"]) {
+  background-color: color-mix(in srgb, var(--blysis-color-stageForeground) 10%, transparent);
+}
+
+.vg-home {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.vg-home > [data-home-trail] {
+  display: none;
+}
+
+.vg-home [data-sidebar] > .blysis-heading-spacer {
+  display: none;
+}
+
+/*
+ * The widgets stand beside the hero, not under it. The layout the homepage
+ * hands over is flattened into this grid, so its two columns and the hero
+ * are cells of one grid: the hero over the sections, the widgets down the
+ * side from the top.
+ */
+@media (min-width: 64rem) {
+  /* The heading spacer is the homepage's and draws nothing here, so it does
+     not count as a widget. */
+  .vg-home:has(> [data-sidebar-layout] > [data-sidebar] > :not(template, .blysis-heading-spacer)) {
+    grid-template-columns: minmax(0, 1fr) 300px;
+  }
+
+  .vg-home > [data-sidebar-layout] {
+    display: contents;
+  }
+
+  .vg-home > [data-sidebar-layout] > [data-sidebar-main] {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .vg-home > [data-sidebar-layout] > [data-sidebar] {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+/* A page's header */
+
+.vg-page-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 12px;
+  padding: 8px 4px 80px;
+  color: var(--blysis-color-stageForeground);
+}
+
+.vg-page-trail {
+  color: var(--blysis-color-stageMuted);
+}
+
+.vg-page-trail :is(nav, ol, li, a, span) {
+  color: inherit;
+}
+
+.vg-page-trail a:hover {
+  color: var(--blysis-color-stageForeground);
+}
+
+.vg-page-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vg-page-title {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.vg-page-lede {
+  max-width: 560px;
+  margin-top: 8px;
+  color: var(--blysis-color-stageMuted);
+}
+
+.vg-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* The sign-in screens */
+
+.vg-auth {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  overflow: hidden;
+  color: var(--blysis-color-stageForeground);
+}
+
+.vg-auth .vg-stage {
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.vg-auth .vg-stage-sky {
+  left: 0;
+  right: 0;
+}
+
+/* Nothing stands on this stage, so its nearest ridge is a hill, not the ground. */
+.vg-auth .vg-ridge[data-depth="ground"] {
+  background: color-mix(in srgb, var(--blysis-color-stageNear) 88%, var(--blysis-color-stageForeground));
+}
+
+.vg-auth-frame {
+  position: relative;
+  max-width: 1240px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.vg-auth-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.vg-auth-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--blysis-color-stageMuted);
+  font-weight: 600;
+}
+
+.vg-auth-home:hover {
+  color: var(--blysis-color-stageForeground);
+}
+
+.vg-auth-body {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 48px;
+}
+
+.vg-auth-welcome {
+  flex: 1 1 420px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.vg-auth-title {
+  font-family: var(--blysis-font-heading);
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.vg-auth-lede {
+  max-width: 440px;
+  color: var(--blysis-color-stageMuted);
+  font-size: 1.0625rem;
+}
+
+.vg-auth-card {
+  flex: 0 1 440px;
+  min-width: 0;
+  color: var(--blysis-color-foreground);
+  filter: drop-shadow(0 24px 40px rgb(0 0 0 / 0.35));
+}
+
+.vg-auth-card .blysis-card {
+  --vg-cut: 22px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  clip-path: polygon(var(--vg-cut) 0, 100% 0, 100% calc(100% - var(--vg-cut)), calc(100% - var(--vg-cut)) 100%, 0 100%, 0 var(--vg-cut));
+}

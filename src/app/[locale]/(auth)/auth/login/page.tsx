@@ -309,16 +309,19 @@ export default function LoginPage() {
                             {loading ? t('signingIn') : t('signIn')}
                         </Button>
 
-                        <div className="relative my-6">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-border" />
+                        {/* OAuth buttons - from installed modules. The divider
+                            above them is theirs: drawn alone it promised a way
+                            in that was not there. */}
+                        {oauthButtons.length > 0 && (
+                            <div className="relative my-6">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-border" />
+                                </div>
+                                <div className="relative flex justify-center text-xs uppercase">
+                                    <span className="bg-card px-2 text-muted-foreground">{t('orContinueWith')}</span>
+                                </div>
                             </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-card px-2 text-muted-foreground">{t('orContinueWith')}</span>
-                            </div>
-                        </div>
-
-                        {/* OAuth buttons - from installed modules */}
+                        )}
                         {oauthButtons.length > 0 && (
                                 <div className={`grid ${oauthButtons.length === 1 ? "grid-cols-1" : "grid-cols-2"} gap-3`}>
                                     {oauthButtons.map(btn => (

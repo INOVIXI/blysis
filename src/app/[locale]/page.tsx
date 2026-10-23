@@ -51,7 +51,9 @@ export default function HomePage() {
       */}
       <h1 className="sr-only">{(settings.site_name as string) || commonT('home')}</h1>
 
-      <div className="text-sm text-muted-foreground mb-4">
+      {/* `data-home-trail` is how a theme reaches this line, to hide it
+          where its homepage opens on a hero instead. */}
+      <div data-home-trail className="text-sm text-muted-foreground mb-4">
         <Link href="/" className="hover:text-primary transition-colors">{commonT('home')}</Link>
       </div>
 
