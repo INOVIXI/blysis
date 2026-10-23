@@ -1,6 +1,6 @@
 {
   "$comment": "The catalogue the admin update screen reads. Published beside module-marketplace/index.json on the same base, so a fork or an air-gapped mirror serves its own by pointing BLYSIS_MARKETPLACE_BASE somewhere else. Newest last is not required; the reader sorts.",
-  "updated": "2026-10-19",
+  "updated": "2026-10-23",
   "releases": [
     {
       "version": "0.2.1",
@@ -80,6 +80,14 @@
       "publishedAt": "2026-10-19T08:33:29Z",
       "notes": "Game servers connect to the site.",
       "security": false,
+      "minVersion": null
+    },
+    {
+      "version": "0.4.8",
+      "tag": "0.4.8",
+      "publishedAt": "2026-10-23T17:39:17Z",
+      "notes": "Next.js 16.4.3 for two remote code execution advisories and a denial of service.",
+      "security": true,
       "minVersion": null
     }
   ]
