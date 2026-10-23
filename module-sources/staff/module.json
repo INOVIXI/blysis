@@ -2,7 +2,7 @@
   "id": "staff",
   "name": "Staff",
   "description": "Staff member listing and applications",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "coreVersion": "^5.0.0",
   "category": "management",
   "author": "Blysis",
@@ -71,7 +71,8 @@
         "perm_manage": "Manage",
         "role": "Role",
         "subtitle": "The people behind the community",
-        "title": "Our team"
+        "title": "Our team",
+        "onlineNow": "On the team right now"
       },
       "admin": {
         "menu_staff": "Staff",
@@ -110,7 +111,8 @@
         "perm_manage": "Yönetebilir",
         "role": "Rol",
         "subtitle": "Topluluğun arkasındaki ekip",
-        "title": "Ekibimiz"
+        "title": "Ekibimiz",
+        "onlineNow": "Şu an ekipte"
       },
       "admin": {
         "menu_staff": "Personel",
@@ -149,7 +151,8 @@
         "perm_manage": "İdarə et",
         "role": "Vəzifə",
         "subtitle": "İcmanın arxasında duran insanlar",
-        "title": "Komandamız"
+        "title": "Komandamız",
+        "onlineNow": "Hazırda komandada"
       },
       "admin": {
         "menu_staff": "Heyət",
@@ -188,7 +191,8 @@
         "perm_manage": "Verwalten",
         "role": "Rolle",
         "subtitle": "Die Menschen hinter der Community",
-        "title": "Unser Team"
+        "title": "Unser Team",
+        "onlineNow": "Gerade im Team"
       },
       "admin": {
         "menu_staff": "Team",
@@ -227,7 +231,8 @@
         "perm_manage": "Gestionar",
         "role": "Cargo",
         "subtitle": "Las personas detrás de la comunidad",
-        "title": "Nuestro equipo"
+        "title": "Nuestro equipo",
+        "onlineNow": "Del equipo, ahora"
       },
       "admin": {
         "menu_staff": "Equipo",
@@ -266,7 +271,8 @@
         "perm_manage": "Halda",
         "role": "Roll",
         "subtitle": "Inimesed, kes kogukonna taga on",
-        "title": "Meie meeskond"
+        "title": "Meie meeskond",
+        "onlineNow": "Praegu meeskonnas"
       },
       "admin": {
         "menu_staff": "Personal",
@@ -305,7 +311,8 @@
         "perm_manage": "Gérer",
         "role": "Rôle",
         "subtitle": "Les personnes qui animent la communauté",
-        "title": "Notre équipe"
+        "title": "Notre équipe",
+        "onlineNow": "En ce moment dans l’équipe"
       },
       "admin": {
         "menu_staff": "Équipe",
@@ -344,7 +351,8 @@
         "perm_manage": "Gestisci",
         "role": "Ruolo",
         "subtitle": "Le persone dietro la community",
-        "title": "Il nostro team"
+        "title": "Il nostro team",
+        "onlineNow": "Ora nello staff"
       },
       "admin": {
         "menu_staff": "Staff",
@@ -383,7 +391,8 @@
         "perm_manage": "Zarządzaj",
         "role": "Rola",
         "subtitle": "Ludzie stojący za społecznością",
-        "title": "Nasz zespół"
+        "title": "Nasz zespół",
+        "onlineNow": "Teraz w ekipie"
       },
       "admin": {
         "menu_staff": "Zespół",
@@ -422,7 +431,8 @@
         "perm_manage": "Gerenciar",
         "role": "Cargo",
         "subtitle": "As pessoas por trás da comunidade",
-        "title": "Nossa equipe"
+        "title": "Nossa equipe",
+        "onlineNow": "Na equipe agora"
       },
       "admin": {
         "menu_staff": "Equipe",
@@ -461,7 +471,8 @@
         "perm_manage": "Управление",
         "role": "Роль",
         "subtitle": "Люди, которые стоят за сообществом",
-        "title": "Наша команда"
+        "title": "Наша команда",
+        "onlineNow": "Сейчас в команде"
       },
       "admin": {
         "menu_staff": "Сотрудники",
@@ -500,7 +511,8 @@
         "perm_manage": "管理",
         "role": "职位",
         "subtitle": "社区背后的人",
-        "title": "我们的团队"
+        "title": "我们的团队",
+        "onlineNow": "当前在线的团队成员"
       },
       "admin": {
         "menu_staff": "员工",
