@@ -24,6 +24,7 @@
 import net from "net";
 import dgram from "dgram";
 import { prisma } from "@/core/sdk/server";
+import { isPrivateHost } from "@/core/sdk";
 
 export interface ServerStatus {
     online: boolean;
@@ -38,6 +39,28 @@ export interface ServerQueryResult extends ServerStatus {
     type: string;
     /** False when we have no way to ask this kind of server anything. */
     queryable: boolean;
+    /** Where a player connects, written the way their game client wants it typed; null when it is not to be published. */
+    address: string | null;
+}
+
+/** The port a game's client fills in by itself when a player types none. */
+const CLIENT_DEFAULT_PORT: Record<string, number> = { minecraft: 25565 };
+
+/**
+ * The address a player is told to type, or null when it must not be told.
+ *
+ * Only the game port is ever part of it: the query port is a door for this
+ * module, not for players. And an address inside the operator's network is
+ * never published: a network registers its backend servers that way so they
+ * can be asked, players reach them through a proxy, and the inside address
+ * told to the world is a map of the operator's network.
+ */
+export function connectAddress(type: string, host: string, port: number): string | null {
+    const bare = host.trim();
+    const v6 = bare.includes(":") ? (bare.startsWith("[") ? bare : `[${bare}]`) : null;
+    if (!bare || isPrivateHost(v6 ?? bare)) return null;
+    const shown = v6 ?? bare;
+    return CLIENT_DEFAULT_PORT[type.toLowerCase()] === port ? shown : `${shown}:${port}`;
 }
 
 interface GameServerRow {
@@ -399,6 +422,7 @@ export async function getAllServerStatuses(): Promise<ServerQueryResult[]> {
             name: server.name,
             type: server.type,
             queryable: isQueryable(server.type),
+            address: connectAddress(server.type, server.host, server.port),
             ...(isQueryable(server.type) ? await cachedQuery(server) : OFFLINE),
         })),
     );

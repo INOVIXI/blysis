@@ -45,7 +45,7 @@ const prismaMock = {
 vi.mock("@/core/sdk/server", () => ({
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() }, prisma: prismaMock }));
 
-const { getServerStatus, getAllServerStatuses, isQueryable } = await import(
+const { getServerStatus, getAllServerStatuses, isQueryable, connectAddress } = await import(
     "@/modules/servers/lib/server-query"
 );
 
@@ -278,6 +278,33 @@ describe("every server at once", () => {
         db.servers.push(server({ port: 1, isDefault: true }));
         db.servers.push(server({ port: 1, isActive: false }));
         await expect(getAllServerStatuses()).resolves.toHaveLength(1);
+    });
+
+    it("says where a player connects, the way a game client wants it typed", async () => {
+        // A Minecraft client fills in 25565 by itself, so the address a player
+        // is told to type leaves it off; any other port has to be written.
+        // Hytale is never asked, so its host can be anything; the Minecraft
+        // and FiveM ones point at loopback ports nothing listens on, and are
+        // refused at once.
+        db.servers.push(server({ name: "Lobby", host: "play.example.com", port: 25565, isDefault: true, type: "hytale" }));
+        db.servers.push(server({ name: "Survival", host: "localhost", port: 25565 }));
+        const statuses = await getAllServerStatuses();
+        expect(statuses[0].address).toBe("play.example.com:25565");
+        expect(connectAddress("minecraft", "play.example.com", 25565)).toBe("play.example.com");
+        expect(connectAddress("minecraft", "play.example.com", 25566)).toBe("play.example.com:25566");
+        expect(connectAddress("fivem", "203.0.113.7", 30120)).toBe("203.0.113.7:30120");
+    });
+
+    it("never publishes an address on the operator's own network", async () => {
+        // A network registers its backend servers by their inside address so
+        // this module can ask them; players reach them through a proxy. Told
+        // to the world, that address is a map of the operator's network.
+        for (const host of ["localhost", "127.0.0.1", "10.0.0.5", "172.16.4.2", "172.31.255.1", "192.168.1.20", "169.254.3.3", "::1", "[::1]", "fd12:3456::1", "fe80::1", "backend.local", "0.0.0.0"]) {
+            expect(connectAddress("minecraft", host, 25565), host).toBeNull();
+        }
+        for (const host of ["172.32.0.1", "11.0.0.1", "play.example.com", "2001:db8::1"]) {
+            expect(connectAddress("minecraft", host, 25565), host).not.toBeNull();
+        }
     });
 
     it("reports nothing rather than failing when no server is configured", async () => {

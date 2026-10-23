@@ -2,7 +2,7 @@
   "id": "servers",
   "name": "Game Servers",
   "description": "Game server management, RCON, and status monitoring",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "coreVersion": "^5.0.0",
   "category": "gaming",
   "author": "Blysis",
@@ -67,6 +67,16 @@
       "permission": "servers.manage"
     }
   ],
+  "widgets": [
+    {
+      "id": "ServerStatusWidget",
+      "component": "widgets/server-status-widget",
+      "label": "Server status",
+      "labelKey": "widget_serverStatus",
+      "defaultVisible": true,
+      "defaultOrder": 5
+    }
+  ],
   "translations": {
     "en": {
       "servers": {
@@ -110,7 +120,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Game Servers",
-        "version": "Version"
+        "version": "Version",
+        "widget_title": "Where to play",
+        "widget_playing": "{online} of {max} playing",
+        "widget_copy": "Copy the address of {name}",
+        "widget_copied": "Address copied",
+        "widget_copyFailed": "The address could not be copied"
       },
       "admin": {
         "menu_servers": "Servers",
@@ -119,7 +134,8 @@
         "menu_servers_game_servers": "Game Servers",
         "navGroup_gaming": "Gaming",
         "module_servers_name": "Game Servers",
-        "module_servers_description": "Game server management, RCON, and status monitoring"
+        "module_servers_description": "Game server management, RCON, and status monitoring",
+        "widget_serverStatus": "Server status"
       }
     },
     "tr": {
@@ -164,7 +180,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Oyun Sunucuları",
-        "version": "Sürüm"
+        "version": "Sürüm",
+        "widget_title": "Nerede oynanır",
+        "widget_playing": "{max} kişiden {online} kişi oynuyor",
+        "widget_copy": "{name} adresini kopyala",
+        "widget_copied": "Adres kopyalandı",
+        "widget_copyFailed": "Adres kopyalanamadı"
       },
       "admin": {
         "menu_servers": "Sunucular",
@@ -173,7 +194,8 @@
         "menu_servers_game_servers": "Oyun Sunucuları",
         "navGroup_gaming": "Oyun",
         "module_servers_name": "Oyun Sunucuları",
-        "module_servers_description": "Oyun sunucusu yönetimi, RCON ve durum izleme"
+        "module_servers_description": "Oyun sunucusu yönetimi, RCON ve durum izleme",
+        "widget_serverStatus": "Sunucu durumu"
       }
     },
     "az": {
@@ -218,7 +240,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Oyun serverləri",
-        "version": "Versiya"
+        "version": "Versiya",
+        "widget_title": "Harada oynanır",
+        "widget_playing": "{max} nəfərdən {online} nəfər oynayır",
+        "widget_copy": "{name} ünvanını kopyala",
+        "widget_copied": "Ünvan kopyalandı",
+        "widget_copyFailed": "Ünvanı kopyalamaq olmadı"
       },
       "admin": {
         "menu_servers": "Serverlər",
@@ -227,7 +254,8 @@
         "menu_servers_game_servers": "Oyun serverləri",
         "navGroup_gaming": "Oyunlar",
         "module_servers_name": "Oyun serverləri",
-        "module_servers_description": "Oyun serveri idarəetməsi, RCON və status monitorinqi"
+        "module_servers_description": "Oyun serveri idarəetməsi, RCON və status monitorinqi",
+        "widget_serverStatus": "Server vəziyyəti"
       }
     },
     "de": {
@@ -272,7 +300,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Spielserver",
-        "version": "Version"
+        "version": "Version",
+        "widget_title": "Wo gespielt wird",
+        "widget_playing": "{online} von {max} spielen",
+        "widget_copy": "Adresse von {name} kopieren",
+        "widget_copied": "Adresse kopiert",
+        "widget_copyFailed": "Die Adresse konnte nicht kopiert werden"
       },
       "admin": {
         "menu_servers": "Server",
@@ -281,7 +314,8 @@
         "menu_servers_game_servers": "Spielserver",
         "navGroup_gaming": "Gaming",
         "module_servers_name": "Spielserver",
-        "module_servers_description": "Verwaltung von Spielservern, RCON und Statusüberwachung"
+        "module_servers_description": "Verwaltung von Spielservern, RCON und Statusüberwachung",
+        "widget_serverStatus": "Serverstatus"
       }
     },
     "es": {
@@ -326,7 +360,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Servidores de juego",
-        "version": "Versión"
+        "version": "Versión",
+        "widget_title": "Dónde jugar",
+        "widget_playing": "{online} de {max} jugando",
+        "widget_copy": "Copiar la dirección de {name}",
+        "widget_copied": "Dirección copiada",
+        "widget_copyFailed": "No se pudo copiar la dirección"
       },
       "admin": {
         "menu_servers": "Servidores",
@@ -335,7 +374,8 @@
         "menu_servers_game_servers": "Servidores de juego",
         "navGroup_gaming": "Juegos",
         "module_servers_name": "Servidores de juego",
-        "module_servers_description": "Gestión de servidores de juego, RCON y supervisión del estado"
+        "module_servers_description": "Gestión de servidores de juego, RCON y supervisión del estado",
+        "widget_serverStatus": "Estado del servidor"
       }
     },
     "et": {
@@ -380,7 +420,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Mängaserverid",
-        "version": "Versioon"
+        "version": "Versioon",
+        "widget_title": "Kus mängida",
+        "widget_playing": "{online} / {max} mängib",
+        "widget_copy": "Kopeeri serveri {name} aadress",
+        "widget_copied": "Aadress kopeeritud",
+        "widget_copyFailed": "Aadressi ei õnnestunud kopeerida"
       },
       "admin": {
         "menu_servers": "Serverid",
@@ -389,7 +434,8 @@
         "menu_servers_game_servers": "Mängaserverid",
         "navGroup_gaming": "Mängimine",
         "module_servers_name": "Mängaserverid",
-        "module_servers_description": "Mänguserverite haldus, RCON ja staatuse jälgimine"
+        "module_servers_description": "Mänguserverite haldus, RCON ja staatuse jälgimine",
+        "widget_serverStatus": "Serveri olek"
       }
     },
     "fr": {
@@ -434,7 +480,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Serveurs de jeu",
-        "version": "Version"
+        "version": "Version",
+        "widget_title": "Où jouer",
+        "widget_playing": "{online} sur {max} en jeu",
+        "widget_copy": "Copier l’adresse de {name}",
+        "widget_copied": "Adresse copiée",
+        "widget_copyFailed": "L’adresse n’a pas pu être copiée"
       },
       "admin": {
         "menu_servers": "Serveurs",
@@ -443,7 +494,8 @@
         "menu_servers_game_servers": "Serveurs de jeu",
         "navGroup_gaming": "Jeux",
         "module_servers_name": "Serveurs de jeu",
-        "module_servers_description": "Gestion des serveurs de jeu, RCON et suivi de l’état"
+        "module_servers_description": "Gestion des serveurs de jeu, RCON et suivi de l’état",
+        "widget_serverStatus": "État du serveur"
       }
     },
     "it": {
@@ -488,7 +540,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Server di gioco",
-        "version": "Versione"
+        "version": "Versione",
+        "widget_title": "Dove si gioca",
+        "widget_playing": "{online} su {max} in gioco",
+        "widget_copy": "Copia l’indirizzo di {name}",
+        "widget_copied": "Indirizzo copiato",
+        "widget_copyFailed": "Impossibile copiare l’indirizzo"
       },
       "admin": {
         "menu_servers": "Server",
@@ -497,7 +554,8 @@
         "menu_servers_game_servers": "Server di gioco",
         "navGroup_gaming": "Gaming",
         "module_servers_name": "Server di gioco",
-        "module_servers_description": "Gestione dei server di gioco, RCON e monitoraggio dello stato"
+        "module_servers_description": "Gestione dei server di gioco, RCON e monitoraggio dello stato",
+        "widget_serverStatus": "Stato del server"
       }
     },
     "pl": {
@@ -542,7 +600,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Serwery gier",
-        "version": "Wersja"
+        "version": "Wersja",
+        "widget_title": "Gdzie grać",
+        "widget_playing": "Gra {online} z {max}",
+        "widget_copy": "Skopiuj adres serwera {name}",
+        "widget_copied": "Adres skopiowany",
+        "widget_copyFailed": "Nie udało się skopiować adresu"
       },
       "admin": {
         "menu_servers": "Serwery",
@@ -551,7 +614,8 @@
         "menu_servers_game_servers": "Serwery gier",
         "navGroup_gaming": "Gry",
         "module_servers_name": "Serwery gier",
-        "module_servers_description": "Zarządzanie serwerami gier, RCON i monitorowanie statusu"
+        "module_servers_description": "Zarządzanie serwerami gier, RCON i monitorowanie statusu",
+        "widget_serverStatus": "Stan serwera"
       }
     },
     "pt": {
@@ -596,7 +660,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Servidores de jogos",
-        "version": "Versão"
+        "version": "Versão",
+        "widget_title": "Onde jogar",
+        "widget_playing": "{online} de {max} jogando",
+        "widget_copy": "Copiar o endereço de {name}",
+        "widget_copied": "Endereço copiado",
+        "widget_copyFailed": "Não foi possível copiar o endereço"
       },
       "admin": {
         "menu_servers": "Servidores",
@@ -605,7 +674,8 @@
         "menu_servers_game_servers": "Servidores de jogos",
         "navGroup_gaming": "Jogos",
         "module_servers_name": "Servidores de jogos",
-        "module_servers_description": "Gerenciamento de servidores de jogos, RCON e monitoramento de status"
+        "module_servers_description": "Gerenciamento de servidores de jogos, RCON e monitoramento de status",
+        "widget_serverStatus": "Status do servidor"
       }
     },
     "ru": {
@@ -650,7 +720,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Игровые серверы",
-        "version": "Версия"
+        "version": "Версия",
+        "widget_title": "Где играть",
+        "widget_playing": "Играют {online} из {max}",
+        "widget_copy": "Скопировать адрес сервера {name}",
+        "widget_copied": "Адрес скопирован",
+        "widget_copyFailed": "Не удалось скопировать адрес"
       },
       "admin": {
         "menu_servers": "Серверы",
@@ -659,7 +734,8 @@
         "menu_servers_game_servers": "Игровые серверы",
         "navGroup_gaming": "Игры",
         "module_servers_name": "Игровые серверы",
-        "module_servers_description": "Управление игровыми серверами, RCON и мониторинг статуса"
+        "module_servers_description": "Управление игровыми серверами, RCON и мониторинг статуса",
+        "widget_serverStatus": "Статус сервера"
       }
     },
     "zh": {
@@ -704,7 +780,12 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "游戏服务器",
-        "version": "版本"
+        "version": "版本",
+        "widget_title": "在哪里玩",
+        "widget_playing": "{online} / {max} 人在线",
+        "widget_copy": "复制 {name} 的地址",
+        "widget_copied": "地址已复制",
+        "widget_copyFailed": "无法复制地址"
       },
       "admin": {
         "menu_servers": "服务器",
@@ -713,7 +794,8 @@
         "menu_servers_game_servers": "游戏服务器",
         "navGroup_gaming": "游戏",
         "module_servers_name": "游戏服务器",
-        "module_servers_description": "游戏服务器管理、RCON 和状态监控"
+        "module_servers_description": "游戏服务器管理、RCON 和状态监控",
+        "widget_serverStatus": "服务器状态"
       }
     }
   },
