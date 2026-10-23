@@ -181,7 +181,9 @@ export default function WarningsPage() {
                                             </span>
                                         </div>
                                         <p className="text-sm text-muted-foreground truncate">
-                                            {w.reason}
+                                            {/* A warning may arrive with none, from whatever issued
+                                                it without being given one. */}
+                                            {w.reason || t("warnings_noReason")}
                                         </p>
                                         <p className="text-xs text-muted-foreground mt-1">
                                             {t("warnings_by")}{" "}

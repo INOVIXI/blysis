@@ -2,7 +2,7 @@
   "id": "punishments",
   "name": "Punishments",
   "description": "Bans, mutes and warnings against members, issued here or reported by a module that watches somewhere else",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "coreVersion": "^5.21.0",
   "category": "management",
   "author": "Blysis",

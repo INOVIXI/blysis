@@ -1172,6 +1172,7 @@
     "warnings_issued": "Предупреждение выдано.",
     "warnings_issuing": "Выдача...",
     "warnings_newTitle": "Новое предупреждение",
+    "warnings_noReason": "Причина не указана",
     "warnings_none": "Предупреждения не выдавались.",
     "warnings_points": "Баллы",
     "warnings_pts": "б.",
