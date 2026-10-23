@@ -26,9 +26,12 @@ const ran: string[] = [];
 
 vi.mock("@/core/lib/db", () => ({
     prisma: {
-        // Tagged template: the job key is the first interpolated value, and
-        // every claim succeeds so the registered job actually runs.
-        $executeRaw: () => Promise.resolve(1),
+        // Tagged template: the job key is the first interpolated value. Only
+        // the jobs this file registers are claimed. Claiming every key ran
+        // core's own jobs too, and the nightly backup made `backups/` in the
+        // checkout and started pg_dump against whatever DATABASE_URL was set.
+        $executeRaw: (_strings: TemplateStringsArray, ...values: unknown[]) =>
+            Promise.resolve(String(values[0]).startsWith("test-module:") ? 1 : 0),
         cronRun: { update: () => Promise.resolve({}) },
     },
 }));
