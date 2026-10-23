@@ -70,13 +70,18 @@ export function BlogNewsSection() {
   }
   // Don't return null when empty - render a visible empty state so the
   // homepage doesn't appear blank when blog is the only enabled section
-  // and there's no published content yet.
+  // and there's no published content yet. The heading stays above the card,
+  // where every other state draws it: the widget column beside this one is
+  // offset by exactly a section heading, and a heading inside the card left
+  // the first widget 52px below it on every new site.
   if (blogPosts.length === 0) {
     return (
-      <div className={`${NEWS_SECTION_HEIGHT} flex flex-col items-center justify-center bg-card border border-dashed border-border rounded-lg py-10 px-6 text-center`}>
-        <Newspaper className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
-        <h2 className="font-medium text-foreground">{t('title')}</h2>
-        <p className="text-sm text-muted-foreground mt-1">{t('empty')}</p>
+      <div className={`${NEWS_SECTION_HEIGHT} flex flex-col`}>
+        <h2 className="text-xl font-bold text-foreground mb-6">{t('title')}</h2>
+        <div className="flex-1 flex flex-col items-center justify-center bg-card border border-dashed border-border rounded-lg py-10 px-6 text-center">
+          <Newspaper className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">{t('empty')}</p>
+        </div>
       </div>
     );
   }
