@@ -391,6 +391,11 @@ html[data-mode="dark"] {
   display: none;
 }
 
+/* What a module puts here is drawn in the page's colours; on the stage its surfaces are the sky's. */
+.vg-hero-bottom :is(li, [class*="bg-"]) {
+  background-color: color-mix(in srgb, var(--blysis-color-stageForeground) 10%, transparent);
+}
+
 .vg-home {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
