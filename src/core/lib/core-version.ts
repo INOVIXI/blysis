@@ -12,6 +12,12 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.20.0 - `isPrivateHost` joins `@/core/sdk`. The servers module publishes
+ * where to connect, and a network registers its backend servers by their
+ * inside address so the module can ask them; a module had no way to tell
+ * such an address from a public one without copying the check the webhook
+ * guard already made, and a copy of a security check is one that drifts.
+ *
  * 5.19.0 - a theme can redraw the frame, not only the hero. `SiteShell`,
  * `PageHeader` and `AuthFrame` become names a theme's `components` may
  * replace, and `@/core/sdk/theme` gains what a theme needs to draw them:
@@ -625,4 +631,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.19.0";
+export const CORE_API_VERSION = "5.20.0";

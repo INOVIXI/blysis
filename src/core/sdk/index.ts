@@ -66,6 +66,13 @@ export { sharedJson, peekShared, invalidateShared } from "@/core/lib/shared-requ
 
 export { copyText } from "@/core/lib/copy-text";
 
+/**
+ * Whether a host only exists inside the operator's own network. Ask it
+ * before telling the world an address an operator typed for the server's
+ * own use.
+ */
+export { isPrivateHost } from "@/core/lib/url-safety";
+
 export { writeError, errorMessage } from "@/core/lib/write-result";
 // Deleting several rows and saying what actually happened. There is no
 // endpoint that takes a list of ids, so this is several requests - and the
