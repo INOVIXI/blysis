@@ -155,7 +155,9 @@ describe("the renderers", () => {
     const read = (p: string) => fs.readFileSync(path.join(ROOT, p), "utf8");
 
     it("resolves the key in the navbar", () => {
-        const src = read("src/core/components/layout/Navbar.tsx");
+        // In the hook the bar draws from, which a theme's own navigation
+        // asks too, so both say a module's name in the same language.
+        const src = read("src/core/hooks/useNavLinks.ts");
         expect(src).toContain("link.labelKey && t.has(link.labelKey) ? t(link.labelKey) : link.label");
         // registry links and admin-configured links both go through it
         expect(src).toContain("label: navLabel(nl)");

@@ -14,3 +14,23 @@ export { useThemeConfig } from "@/core/lib/theme-config-client";
  * not page composition.
  */
 export { ThemeComponentSlot } from "@/core/components/theme/ThemeComponentSlot";
+
+/**
+ * What a theme's own frame is drawn from. A theme names `SiteShell`,
+ * `PageHeader` or `AuthFrame` in its manifest's `components` to replace one,
+ * and is handed the props typed here.
+ */
+export type { SiteShellProps } from "@/core/components/layout/SiteShell";
+export type { PageHeaderProps } from "@/core/components/layout/PageHeader";
+export type { AuthFrameProps } from "@/core/components/layout/AuthFrame";
+
+/** The site's navigation as the bar sees it, for a theme that draws its own. */
+export { useNavLinks } from "@/core/hooks/useNavLinks";
+export type { NavLink, NavLinks } from "@/core/hooks/useNavLinks";
+
+/** The controls at the end of the bar, wherever a theme puts them. */
+export { NavbarActions } from "@/core/components/layout/NavbarActions";
+
+export { PageBreadcrumb } from "@/core/components/layout/PageBreadcrumb";
+export type { Crumb } from "@/core/components/layout/PageBreadcrumb";
+export { SiteName, SiteMark } from "@/core/components/ui/site-name";

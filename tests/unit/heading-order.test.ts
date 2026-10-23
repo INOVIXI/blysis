@@ -111,8 +111,11 @@ function sourceOf(file: string): string | null {
     return stripped.get(file) ?? null;
 }
 
+// Four imports deep: a module page renders its view, the view renders
+// PageFrame, and PageFrame draws its title through PageHeader, which a theme
+// may replace. At three the walk stopped one file short of every such title.
 export function reachesAnH1(file: string, depth = 0, seen = new Set<string>()): boolean {
-    if (depth > 3 || seen.has(file)) return false;
+    if (depth > 4 || seen.has(file)) return false;
     seen.add(file);
     const source = sourceOf(file);
     if (source === null) return false;

@@ -12,6 +12,18 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.19.0 - a theme can redraw the frame, not only the hero. `SiteShell`,
+ * `PageHeader` and `AuthFrame` become names a theme's `components` may
+ * replace, and `@/core/sdk/theme` gains what a theme needs to draw them:
+ * `useNavLinks` (the site's navigation as the bar sees it), `NavbarActions`
+ * (the mode toggle, the modules' controls and the account menu),
+ * `PageBreadcrumb`, `SiteName`, `SiteMark` and the props types. A theme
+ * manifest also gains `stylesheet` and `fontFiles`. A theme could restyle
+ * colours, fonts and one radius and replace three components, so a look that
+ * put the navigation down the left edge, or the page title on a backdrop,
+ * had to copy core to get there. Additive: a theme that brings none of these
+ * is drawn as before.
+ *
  * 5.18.0 - `auditActions` in a manifest says what this module's audit-log
  * entries are called: `{ action, nameKey }`, with the name under the
  * `activity` namespace the module already writes its activity kinds into.
@@ -613,4 +625,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.18.0";
+export const CORE_API_VERSION = "5.19.0";

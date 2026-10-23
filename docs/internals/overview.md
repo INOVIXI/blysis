@@ -32,7 +32,9 @@ A module ships React server components, and Next.js compiles those at build time
 
 ## Themes
 
-A theme is a directory in `src/themes/<id>/` with a `theme.json`, validated by `src/core/lib/theme-manifest-schema.ts`, which is the reference for every field. Its modes (light, dark or any named variant) live in that one manifest; there are no separate dark themes and no inheritance between themes. Settings a theme declares are rendered by core at `/admin/theme/<group>`, so a theme author writes no React for them, and a theme overrides a core component only through a `ThemeComponentSlot` that core places.
+A theme is a directory in `src/themes/<id>/` with a `theme.json`, validated by `src/core/lib/theme-manifest-schema.ts`, which is the reference for every field. Its modes (light, dark or any named variant) live in that one manifest; there are no separate dark themes and no inheritance between themes. Settings a theme declares are rendered by core at `/admin/theme/<group>`, so a theme author writes no React for them, and a theme overrides a core component only through a `ThemeComponentSlot` that core places. Those slots include the whole frame of a public page (`SiteShell`, `PageHeader`, `AuthFrame`), so a theme changes where things sit by replacing the frame, never by editing a page.
+
+Every installed theme is compiled into every build, and two things follow from that. A theme's `stylesheet` lands in the one stylesheet the site serves, so the generator prefixes every selector with `[data-theme="<id>"]` (`scripts/lib/theme-stylesheet.ts`); it is unlayered, which means it wins over Tailwind's utilities. A theme's `fontFiles` become `next/font/local` calls with preloading off, or a site would download the fonts of themes it is not wearing.
 
 The filesystem is the source of truth for which themes exist: there is no `Theme` table. `ThemeState` holds the active theme and mode, `ThemeCustomization` an admin's token overrides per theme and mode, and `ThemeSetting` the values of a theme's settings.
 

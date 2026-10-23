@@ -26,8 +26,11 @@ vi.mock("@/core/components/layout", () => ({
     Navbar: () => <nav data-testid="navbar" />,
     Footer: () => <footer data-testid="footer" />,
 }));
+// A site wearing no theme override: every slot draws core's own fallback,
+// which is the frame this file is about.
 vi.mock("@/core/components/theme/ThemeComponentSlot", () => ({
-    ThemeComponentSlot: () => null,
+    ThemeComponentSlot: ({ fallback: Fallback, name: _name, ...rest }: { fallback?: React.ComponentType<Record<string, unknown>>; name: string }) =>
+        Fallback ? <Fallback {...rest} /> : null,
 }));
 // next-intl's client navigation cannot be resolved under vitest's jsdom
 // environment, and what it adds - the locale prefix on every href - is

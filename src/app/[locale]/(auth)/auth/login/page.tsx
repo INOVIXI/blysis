@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SiteName } from "@/core/components/ui/site-name";
+import { AuthFrame } from "@/core/components/layout/AuthFrame";
+import { Card } from "@/core/components/ui/card";
 import { Link, useRouter } from "@/core/lib/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Home, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
@@ -168,212 +169,196 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12 relative">
-            <Link
-                href="/"
-                aria-label={t('backToHome')}
-                className="absolute top-6 left-6 w-10 h-10 rounded-full bg-card border border-border shadow-sm flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-all"
-            >
-                <Home className="w-5 h-5" aria-hidden="true" />
-            </Link>
-
-            <div className="w-full max-w-md">
-                <div className="text-center mb-8">
-                    <Link href="/" className="inline-flex items-center gap-3">
-                        <SiteName className="font-bold text-2xl text-foreground" />
-                    </Link>
-                </div>
-
-                {isDemo && (
-                    <div className="mb-4 rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm">
-                        <div className="flex items-start gap-3">
-                            <Sparkles className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                            <div className="flex-1 min-w-0">
-                                <p className="font-medium text-foreground">{t('demoBanner')}</p>
-                                <p className="text-muted-foreground mt-1">{t('demoBannerBody')}</p>
-                                {/* Both halves of the product, and which is
-                                    which: somebody looking at a panel they
-                                    did not ask for learns nothing, and
-                                    somebody who wanted the panel and got a
-                                    member's profile learns less. */}
-                                <div className="mt-3 space-y-2">
-                                    {DEMO_ACCOUNTS.map((account) => (
-                                        <div key={account.username} className="flex items-center justify-between gap-3">
-                                            <p className="text-muted-foreground min-w-0">
-                                                <span className="text-foreground font-medium">
-                                                    {account.isAdmin ? t('demoAsAdmin') : t('demoAsMember')}
-                                                </span>
-                                                <br />
-                                                <code className="text-foreground font-mono">{account.username}</code>
-                                                {" / "}
-                                                <code className="text-foreground font-mono">{account.password}</code>
-                                            </p>
-                                            <Button
-                                                type="button"
-                                                size="sm"
-                                                variant="outline"
-                                                className="flex-shrink-0"
-                                                /* Two buttons doing different
-                                                   things read as one repeated
-                                                   twice to anybody who cannot
-                                                   see which row they are on. */
-                                                aria-label={t('demoFillFor', {
-                                                    who: account.isAdmin ? t('demoAsAdmin') : t('demoAsMember'),
-                                                })}
-                                                onClick={() => fillDemo(account)}
-                                            >
-                                                {t('demoFillCreds')}
-                                            </Button>
-                                        </div>
-                                    ))}
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-3">{t('demoResetNote')}</p>
+        <AuthFrame>
+            {isDemo && (
+                <div className="mb-4 rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm">
+                    <div className="flex items-start gap-3">
+                        <Sparkles className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <div className="flex-1 min-w-0">
+                            <p className="font-medium text-foreground">{t('demoBanner')}</p>
+                            <p className="text-muted-foreground mt-1">{t('demoBannerBody')}</p>
+                            {/* Both halves of the product, and which is
+                                which: somebody looking at a panel they
+                                did not ask for learns nothing, and
+                                somebody who wanted the panel and got a
+                                member's profile learns less. */}
+                            <div className="mt-3 space-y-2">
+                                {DEMO_ACCOUNTS.map((account) => (
+                                    <div key={account.username} className="flex items-center justify-between gap-3">
+                                        <p className="text-muted-foreground min-w-0">
+                                            <span className="text-foreground font-medium">
+                                                {account.isAdmin ? t('demoAsAdmin') : t('demoAsMember')}
+                                            </span>
+                                            <br />
+                                            <code className="text-foreground font-mono">{account.username}</code>
+                                            {" / "}
+                                            <code className="text-foreground font-mono">{account.password}</code>
+                                        </p>
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            variant="outline"
+                                            className="flex-shrink-0"
+                                            /* Two buttons doing different
+                                               things read as one repeated
+                                               twice to anybody who cannot
+                                               see which row they are on. */
+                                            aria-label={t('demoFillFor', {
+                                                who: account.isAdmin ? t('demoAsAdmin') : t('demoAsMember'),
+                                            })}
+                                            onClick={() => fillDemo(account)}
+                                        >
+                                            {t('demoFillCreds')}
+                                        </Button>
+                                    </div>
+                                ))}
                             </div>
+                            <p className="text-xs text-muted-foreground mt-3">{t('demoResetNote')}</p>
                         </div>
                     </div>
-                )}
-
-                <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
-                    <div className="p-6 border-b border-border">
-                        <h1 className="text-xl font-bold text-foreground text-center">{t('loginTitle')}</h1>
-                        <p className="text-muted-foreground text-sm text-center mt-1">{t('loginSubtitle')}</p>
-                    </div>
-
-                    <div className="p-6">
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            {error && (
-                                <div role="alert" className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
-                                    {error}
-                                </div>
-                            )}
-
-                            <div className="space-y-2">
-                                <label htmlFor="email" className="text-sm font-medium text-foreground">
-                                    {t('emailOrUsername')}
-                                </label>
-                                {/* Not type="email": the browser's own
-                                    validation would refuse a username. */}
-                                <Input
-                                    id="email"
-                                    type="text"
-                                    autoComplete="username"
-                                    placeholder={t('emailOrUsernamePlaceholder')}
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary focus:bg-card"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label htmlFor="password" className="text-sm font-medium text-foreground">
-                                    {t('password')}
-                                </label>
-                                <PasswordInput
-                                    id="password"
-                                    autoComplete="current-password"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    showLabel={t('showPassword')}
-                                    hideLabel={t('hidePassword')}
-                                    className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary focus:bg-card"
-                                />
-                            </div>
-
-                            {needs2FA && (
-                                <div className="space-y-2 p-3 bg-primary/10 border border-primary/25 rounded-lg">
-                                    <label htmlFor="twoFactorCode" className="text-sm font-medium text-primary">
-                                        {t('twoFactorCode')}
-                                    </label>
-                                    <Input
-                                        id="twoFactorCode"
-                                        type="text"
-                                        placeholder={t('twoFactorPlaceholder')}
-                                        value={twoFactorCode}
-                                        onChange={(e) => setTwoFactorCode(e.target.value)}
-                                        autoFocus
-                                        className="border-primary/25 bg-card text-center font-mono text-lg tracking-widest"
-                                        maxLength={10}
-                                    />
-                                </div>
-                            )}
-
-                            <div className="flex items-center justify-between gap-3">
-                                <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
-                                    <Checkbox
-                                        checked={remember}
-                                        onChange={(e) => setRemember(e.target.checked)}
-                                    />
-                                    {t('rememberMe')}
-                                </label>
-                                <Link href="/auth/forgot-password" className="text-xs text-primary hover:underline">
-                                    {t('forgotPassword')}
-                                </Link>
-                            </div>
-
-                            <Challenge action="login" onField={challenge.onField} />
-
-                            <Button
-                                type="submit"
-                                className="w-full"
-                                disabled={loading}
-                            >
-                                {loading ? t('signingIn') : t('signIn')}
-                            </Button>
-
-                            <div className="relative my-6">
-                                <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-border" />
-                                </div>
-                                <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-card px-2 text-muted-foreground">{t('orContinueWith')}</span>
-                                </div>
-                            </div>
-
-                            {/* OAuth buttons - from installed modules */}
-                            {oauthButtons.length > 0 && (
-                                    <div className={`grid ${oauthButtons.length === 1 ? "grid-cols-1" : "grid-cols-2"} gap-3`}>
-                                        {oauthButtons.map(btn => (
-                                            <Button key={btn.id} type="button" variant="outline"
-                                                // A provider that does not start its flow the Auth.js way
-                                                // (Steam opens an OpenID 2.0 redirect) names its own entry
-                                                // route in the manifest; everything else goes through signIn.
-                                                // The manifest schema already forbids an off-site href; this
-                                                // is the second look, because getting it wrong points the
-                                                // sign-in button at somebody else's login form.
-                                                onClick={() => {
-                                                    const href = safeInternalPath(btn.href ?? "");
-                                                    if (href) {
-                                                        window.location.href = href;
-                                                    } else {
-                                                        signIn(btn.provider, { callbackUrl: `/${locale}${destination === "/" ? "" : destination}` });
-                                                    }
-                                                }}
-                                                className="border-border text-foreground hover:bg-muted">
-                                                <svg className="w-5 h-5" viewBox="0 0 24 24" fill={btn.color}>
-                                                    {btn.svgIcon.includes("|")
-                                                        ? btn.svgIcon.split("|").map((d: string, i: number) => <path key={i} d={d} />)
-                                                        : <path d={btn.svgIcon} />
-                                                    }
-                                                </svg>
-                                                {btn.label}
-                                            </Button>
-                                        ))}
-                                    </div>
-                            )}
-                        </form>
-
-                        <p className="text-center text-sm text-muted-foreground mt-6">
-                            {t('noAccount')}{" "}
-                            <Link href="/auth/register" className="text-primary hover:underline font-medium">
-                                {t('signUp')}
-                            </Link>
-                        </p>
-                    </div>
                 </div>
-            </div>
-        </div>
+            )}
+
+            <Card className="rounded-lg overflow-hidden">
+                <div className="p-6 border-b border-border">
+                    <h1 className="text-xl font-bold text-foreground text-center">{t('loginTitle')}</h1>
+                    <p className="text-muted-foreground text-sm text-center mt-1">{t('loginSubtitle')}</p>
+                </div>
+
+                <div className="p-6">
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        {error && (
+                            <div role="alert" className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+                                {error}
+                            </div>
+                        )}
+
+                        <div className="space-y-2">
+                            <label htmlFor="email" className="text-sm font-medium text-foreground">
+                                {t('emailOrUsername')}
+                            </label>
+                            {/* Not type="email": the browser's own
+                                validation would refuse a username. */}
+                            <Input
+                                id="email"
+                                type="text"
+                                autoComplete="username"
+                                placeholder={t('emailOrUsernamePlaceholder')}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary focus:bg-card"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label htmlFor="password" className="text-sm font-medium text-foreground">
+                                {t('password')}
+                            </label>
+                            <PasswordInput
+                                id="password"
+                                autoComplete="current-password"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                showLabel={t('showPassword')}
+                                hideLabel={t('hidePassword')}
+                                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary focus:bg-card"
+                            />
+                        </div>
+
+                        {needs2FA && (
+                            <div className="space-y-2 p-3 bg-primary/10 border border-primary/25 rounded-lg">
+                                <label htmlFor="twoFactorCode" className="text-sm font-medium text-primary">
+                                    {t('twoFactorCode')}
+                                </label>
+                                <Input
+                                    id="twoFactorCode"
+                                    type="text"
+                                    placeholder={t('twoFactorPlaceholder')}
+                                    value={twoFactorCode}
+                                    onChange={(e) => setTwoFactorCode(e.target.value)}
+                                    autoFocus
+                                    className="border-primary/25 bg-card text-center font-mono text-lg tracking-widest"
+                                    maxLength={10}
+                                />
+                            </div>
+                        )}
+
+                        <div className="flex items-center justify-between gap-3">
+                            <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
+                                <Checkbox
+                                    checked={remember}
+                                    onChange={(e) => setRemember(e.target.checked)}
+                                />
+                                {t('rememberMe')}
+                            </label>
+                            <Link href="/auth/forgot-password" className="text-xs text-primary hover:underline">
+                                {t('forgotPassword')}
+                            </Link>
+                        </div>
+
+                        <Challenge action="login" onField={challenge.onField} />
+
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={loading}
+                        >
+                            {loading ? t('signingIn') : t('signIn')}
+                        </Button>
+
+                        <div className="relative my-6">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-border" />
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-card px-2 text-muted-foreground">{t('orContinueWith')}</span>
+                            </div>
+                        </div>
+
+                        {/* OAuth buttons - from installed modules */}
+                        {oauthButtons.length > 0 && (
+                                <div className={`grid ${oauthButtons.length === 1 ? "grid-cols-1" : "grid-cols-2"} gap-3`}>
+                                    {oauthButtons.map(btn => (
+                                        <Button key={btn.id} type="button" variant="outline"
+                                            // A provider that does not start its flow the Auth.js way
+                                            // (Steam opens an OpenID 2.0 redirect) names its own entry
+                                            // route in the manifest; everything else goes through signIn.
+                                            // The manifest schema already forbids an off-site href; this
+                                            // is the second look, because getting it wrong points the
+                                            // sign-in button at somebody else's login form.
+                                            onClick={() => {
+                                                const href = safeInternalPath(btn.href ?? "");
+                                                if (href) {
+                                                    window.location.href = href;
+                                                } else {
+                                                    signIn(btn.provider, { callbackUrl: `/${locale}${destination === "/" ? "" : destination}` });
+                                                }
+                                            }}
+                                            className="border-border text-foreground hover:bg-muted">
+                                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill={btn.color}>
+                                                {btn.svgIcon.includes("|")
+                                                    ? btn.svgIcon.split("|").map((d: string, i: number) => <path key={i} d={d} />)
+                                                    : <path d={btn.svgIcon} />
+                                                }
+                                            </svg>
+                                            {btn.label}
+                                        </Button>
+                                    ))}
+                                </div>
+                        )}
+                    </form>
+
+                    <p className="text-center text-sm text-muted-foreground mt-6">
+                        {t('noAccount')}{" "}
+                        <Link href="/auth/register" className="text-primary hover:underline font-medium">
+                            {t('signUp')}
+                        </Link>
+                    </p>
+                </div>
+            </Card>
+        </AuthFrame>
     );
 }

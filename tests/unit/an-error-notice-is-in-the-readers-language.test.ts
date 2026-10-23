@@ -85,7 +85,7 @@ describe("a failing module component is named to the console, not to the visitor
             "src/core/components/ServerSlot.tsx",
             "src/core/components/Slot.tsx",
             "src/core/components/layout/ModuleLayoutComponents.tsx",
-            "src/core/components/layout/Navbar.tsx",
+            "src/core/components/layout/NavbarActions.tsx",
         ];
         for (const file of callers) {
             expect(read(file), file).not.toContain("fallbackLabel");

@@ -40,7 +40,7 @@ describe("what counts as staff", () => {
 
     it("is measured the same way everywhere", () => {
         // The navbar and the homepage both decide whether to show staff links.
-        for (const file of ["src/core/components/layout/Navbar.tsx", "src/app/[locale]/page.tsx"]) {
+        for (const file of ["src/core/components/layout/NavbarActions.tsx", "src/app/[locale]/page.tsx"]) {
             const src = read(file);
             expect(src, file).toContain("STAFF_ROLE_PRIORITY");
             expect(src, file).not.toMatch(/rolePriority\s*\?\?\s*0\)\s*>=\s*50/);
