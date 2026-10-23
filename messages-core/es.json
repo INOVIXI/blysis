@@ -1421,7 +1421,7 @@
     "password": "Contraseña",
     "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
     "passwordsDontMatch": "Las contraseñas no coinciden",
-    "registerSubtitle": "Empieza con Blysis",
+    "registerSubtitle": "Crea tu cuenta y únete",
     "registerTitle": "Crear cuenta",
     "rememberMe": "Mantener la sesión iniciada",
     "resetButton": "Restablecer contraseña",
