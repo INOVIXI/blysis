@@ -8,6 +8,8 @@ const SEMVER = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 const ADMIN_PATH = /^\/[a-z0-9][a-z0-9/-]*$/;
 const COMPONENT_PATH = /^[a-zA-Z0-9_./-]+\.(tsx|jsx|ts|js)$/;
 const SLOT_NAME = /^[a-zA-Z0-9.-]+$/;
+/** A file inside the theme's own directory: no `..`, no leading slash. */
+const STYLESHEET_PATH = /^(?!.*\.\.)[a-zA-Z0-9_-][a-zA-Z0-9_./-]*\.css$/;
 /**
  * A key into the theme's own `translations` block.
  *
@@ -145,6 +147,12 @@ export const themeManifestSchema = z.object({
         z.string().regex(/^[A-Z][A-Za-z0-9]*$/),
         z.string().regex(COMPONENT_PATH),
     ).optional(),
+
+    /**
+     * The theme's own CSS, compiled into the site's stylesheet with every
+     * selector scoped to this theme by `scripts/lib/theme-stylesheet.ts`.
+     */
+    stylesheet: z.string().max(256).regex(STYLESHEET_PATH).optional(),
 
     slots: z.array(z.object({
         name: z.string().min(1).max(128).regex(SLOT_NAME),
