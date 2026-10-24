@@ -96,7 +96,8 @@
     "welcomeOpenSettings": "打开设置",
     "welcomeTitle": "欢迎来到你的社区",
     "welcomeVisitorHint": "使用上方的导航探索社区。",
-    "writeContentHere": "在此撰写内容……"
+    "writeContentHere": "在此撰写内容……",
+    "statsLabel": "站点概览"
   },
   "notFound": {
     "title": "页面未找到",

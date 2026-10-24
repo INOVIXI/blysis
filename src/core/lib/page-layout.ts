@@ -1,6 +1,6 @@
 import { isWidgetVisible, orderWidgets } from "@/core/lib/homepage-widgets";
 import { sortBlocks, type CatalogBlock } from "@/core/lib/page-blocks";
-import { cellWidths, type LayoutDocument, type RowSplit, type WidthClass } from "@/core/lib/page-layout-schema";
+import { cellWidths, themeSettingRef, type LayoutDocument, type RowSplit, type WidthClass } from "@/core/lib/page-layout-schema";
 import { sanitizeSettingValue, settingDefault } from "@/core/lib/setting-field-value";
 
 /** One block as the page draws it: where it stands and what it was told. */
@@ -29,6 +29,8 @@ interface ResolveInput {
     enabled: (module: string) => boolean;
     /** Site settings; only the two the old widgets screen wrote are read. */
     settings: Record<string, unknown>;
+    /** The active theme's settings by group, for the settings its layout leaves to the operator. */
+    themeSettings?: Record<string, Record<string, unknown>>;
 }
 
 const keyOf = (block: CatalogBlock) => block.id.replace(/\./g, "-");
@@ -67,11 +69,20 @@ function coreDefaultLayout(blocks: CatalogBlock[], visibility: unknown): LayoutD
     return { rows: rows.map((r) => (r.split === "2-1" ? { ...r, rest: 1 } : r)) };
 }
 
-/** Every setting the block declares, as given when it may hold it, else its default. */
-function settingsOf(block: CatalogBlock, given: Record<string, unknown> | undefined): Record<string, unknown> {
+/**
+ * Every setting the block declares, as given when it may hold it, else its
+ * default. A setting the layout leaves to the operator is read from the
+ * theme's settings first, and held to the block's field all the same.
+ */
+function settingsOf(
+    block: CatalogBlock,
+    given: Record<string, unknown> | undefined,
+    themeSettings: Record<string, Record<string, unknown>> | undefined,
+): Record<string, unknown> {
     const out: Record<string, unknown> = {};
     for (const [key, def] of Object.entries(block.settings)) {
-        const raw = given?.[key];
+        const ref = themeSettingRef(given?.[key]);
+        const raw = ref ? themeSettings?.[ref.group]?.[ref.field] : given?.[key];
         const clean = raw === undefined ? undefined : sanitizeSettingValue(def, raw);
         out[key] = clean ?? settingDefault(def);
     }
@@ -120,12 +131,12 @@ export function resolveLayout(input: ResolveInput): ResolvedLayout {
         const cells = row.cells.map((cell, c) => cell.flatMap((instance) => {
             const block = byId.get(instance.block);
             if (!block || !block.widths.includes(widths[c]) || switchedOff(block)) return [];
-            return [{ key: instance.key, block, settings: settingsOf(block, instance.settings), width: widths[c] }];
+            return [{ key: instance.key, block, settings: settingsOf(block, instance.settings, input.themeSettings), width: widths[c] }];
         }));
         if (row.rest !== undefined) {
             const width = widths[row.rest];
             const fits = unnamed.filter((b) => b.widths.includes(width));
-            cells[row.rest].push(...fits.map((block) => ({ key: freshKey(block), block, settings: settingsOf(block, undefined), width })));
+            cells[row.rest].push(...fits.map((block) => ({ key: freshKey(block), block, settings: settingsOf(block, undefined, undefined), width })));
             unnamed = unnamed.filter((b) => !fits.includes(b));
         }
         return { split: row.split, cells };

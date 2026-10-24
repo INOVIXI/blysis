@@ -12,6 +12,15 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.24.0 - `BlockHeading`, `StatTile`, `useBlockText` and the `BlockProps`
+ * type join `@/core/sdk/ui`. A block is handed its settings and its width
+ * class; its heading and a stats tile are core's, so every block and every
+ * tile a theme styles is the same element; and a text setting may name a
+ * message, which `useBlockText` shows in the reader's language. A theme's
+ * layout may also leave a setting to the operator with
+ * `{ "$theme": "<group>.<field>" }`, and a module may not be called `core`,
+ * the name of the blocks that belong to no module. Additive.
+ *
  * 5.23.0 - a module may declare `blocks` and a theme may ship
  * `layouts.home`. A block names the file that draws it, the widths it can be
  * drawn in (`full`, `wide`, `narrow`), its settings in a theme's field
@@ -654,4 +663,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.23.0";
+export const CORE_API_VERSION = "5.24.0";

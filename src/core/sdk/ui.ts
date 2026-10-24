@@ -166,3 +166,12 @@ export { usePrompt, type PromptOptions } from "@/core/components/ui/confirm-dial
 export { useLocalDate, useLocalDateTime } from "@/core/hooks/useLocalDate";
 export { useRelativeTime } from "@/core/hooks/useRelativeTime";
 
+
+// What a block is drawn with. A block's heading and a stats tile are shared
+// so a theme styles one of each, and a block's words go through
+// `useBlockText`, which reads a message key a theme's layout gave it in the
+// reader's language.
+export { BlockHeading } from "@/core/components/ui/block-heading";
+export { StatTile } from "@/core/components/ui/stat-tile";
+export { useBlockText } from "@/core/hooks/useBlockText";
+export type { BlockProps } from "@/core/lib/page-blocks";

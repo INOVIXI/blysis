@@ -60,14 +60,27 @@ interface SlotProps {
     fallback?: React.ReactNode;
 }
 
-export function Slot({ name, context, fallback = null }: SlotProps) {
+/** The contributions to a slot from modules that are on, in their order. */
+function useContributions(name: string) {
     const moduleStatus = useAllModules();
-
-    const contributions = ModuleSlotContents
+    return ModuleSlotContents
         .filter((sc) => sc.slot === name)
         .filter((sc) => isEnabledIn(moduleStatus, sc.module))
         .filter((sc) => (SlotContentRegistry as Record<string, React.ComponentType<Record<string, unknown>>>)[sc.id])
         .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+}
+
+/**
+ * Whether any module that is on contributes to a slot. A frame around a slot
+ * asks it to draw nothing at all, rather than an empty frame, when nobody
+ * does.
+ */
+export function useSlotHasContent(name: string): boolean {
+    return useContributions(name).length > 0;
+}
+
+export function Slot({ name, context, fallback = null }: SlotProps) {
+    const contributions = useContributions(name);
 
     if (contributions.length === 0) return <>{fallback}</>;
 

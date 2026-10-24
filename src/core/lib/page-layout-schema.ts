@@ -38,6 +38,27 @@ export function cellWidths(split: RowSplit): WidthClass[] {
     return CELL_WIDTHS[split];
 }
 
+/**
+ * A setting the theme leaves to the operator: `{ "$theme": "<group>.<field>" }`
+ * names one of the theme's own settings, which the operator fills in on the
+ * theme's settings screen. There is no layout editor, so this is how words
+ * only a site knows reach a block the theme placed.
+ */
+const THEME_REF = /^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)$/;
+
+/** The theme setting a value names, or null when it names none. */
+export function themeSettingRef(value: unknown): { group: string; field: string } | null {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    const ref = (value as Record<string, unknown>).$theme;
+    const match = typeof ref === "string" && Object.keys(value).length === 1 ? THEME_REF.exec(ref) : null;
+    return match ? { group: match[1], field: match[2] } : null;
+}
+
+const settingValueSchema = z.unknown().refine(
+    (value) => !value || typeof value !== "object" || Array.isArray(value) || themeSettingRef(value) !== null,
+    "an object setting names one theme setting: { \"$theme\": \"<group>.<field>\" }",
+);
+
 /** The ceilings a document is held to, wherever it came from. */
 const LAYOUT_LIMITS = { rows: 30, instances: 12, hidden: 64, settings: 50 } as const;
 
@@ -46,7 +67,7 @@ const blockInstanceSchema = z.object({
     key: z.string().min(1).max(32).regex(/^[A-Za-z0-9_-]+$/),
     /** `<module>.<entry>`, as `ModuleBlocks` lists it. */
     block: z.string().max(130).regex(/^[a-z0-9-]+\.[A-Za-z0-9_-]+$/),
-    settings: z.record(z.string().max(64), z.unknown())
+    settings: z.record(z.string().max(64), settingValueSchema)
         .refine((s) => Object.keys(s).length <= LAYOUT_LIMITS.settings, "too many settings")
         .optional(),
 });

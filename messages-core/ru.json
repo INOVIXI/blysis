@@ -96,7 +96,8 @@
     "welcomeOpenSettings": "Открыть настройки",
     "welcomeTitle": "Добро пожаловать в ваше сообщество",
     "welcomeVisitorHint": "Используйте навигацию выше, чтобы изучить сообщество.",
-    "writeContentHere": "Напишите содержимое здесь..."
+    "writeContentHere": "Напишите содержимое здесь...",
+    "statsLabel": "Сайт в цифрах"
   },
   "notFound": {
     "title": "Страница не найдена",

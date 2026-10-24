@@ -2,7 +2,6 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/core/lib/i18n/navigation";
 import { SiteShell } from "@/core/components/layout/SiteShell";
 import { PageLayoutView } from "@/core/components/layout/PageLayoutView";
-import { getActiveTheme } from "@/core/lib/theme-state";
 import { loadHomeLayout } from "@/core/lib/page-layout-loader";
 import { readSettingStrings } from "@/core/lib/setting-values";
 import { HomeWelcome } from "./HomeWelcome";
@@ -16,9 +15,8 @@ export const dynamic = "force-dynamic";
  */
 export default async function HomePage() {
     const commonT = await getTranslations("common");
-    const { themeId } = await getActiveTheme();
     const [layout, { site_name: siteName }] = await Promise.all([
-        loadHomeLayout(themeId),
+        loadHomeLayout(),
         readSettingStrings(["site_name"]).catch(() => ({ site_name: null })),
     ]);
 

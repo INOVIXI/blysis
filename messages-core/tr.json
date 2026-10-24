@@ -96,7 +96,8 @@
     "welcomeOpenSettings": "Ayarları aç",
     "welcomeTitle": "Topluluğunuza hoş geldiniz",
     "welcomeVisitorHint": "Üst menüden topluluğu keşfedebilirsiniz.",
-    "writeContentHere": "İçeriğinizi buraya yazın..."
+    "writeContentHere": "İçeriğinizi buraya yazın...",
+    "statsLabel": "Sunucu özeti"
   },
   "notFound": {
     "title": "Sayfa bulunamadı",

@@ -96,7 +96,8 @@
     "welcomeOpenSettings": "Parametrləri aç",
     "welcomeTitle": "İcmanıza xoş gəlmisiniz",
     "welcomeVisitorHint": "İcmanı araşdırmaq üçün yuxarıdakı naviqasiyadan istifadə edin.",
-    "writeContentHere": "Məzmununuzu buraya yazın..."
+    "writeContentHere": "Məzmununuzu buraya yazın...",
+    "statsLabel": "Server icmalı"
   },
   "notFound": {
     "title": "Səhifə tapılmadı",

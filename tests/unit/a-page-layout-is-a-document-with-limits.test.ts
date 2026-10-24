@@ -7,9 +7,8 @@ import { themeManifestSchema } from "@/core/lib/theme-manifest-schema";
 /**
  * A page's arrangement is a document with one shape and fixed limits.
  *
- * It comes from three places core does not write: a theme's manifest, a
- * ZIP somebody uploaded and the panel an operator edits. So the shape is
- * checked wherever it arrives, a row has exactly the cells its split says,
+ * It comes from a place core does not write, a theme's manifest, which may
+ * be a ZIP somebody uploaded. So the shape is checked where it arrives, a row has exactly the cells its split says,
  * the place new blocks go is one cell of one row, and every count has a
  * ceiling, so a document cannot be made that the page cannot draw.
  */
@@ -59,6 +58,14 @@ describe("a layout document", () => {
         expect(parse({ rows: [{ split: "1", cells: [[instance("a", "news")]] }] }).success).toBe(false);
     });
 
+    it("leaves a setting to the operator by naming a theme setting", () => {
+        const leave = (settings: unknown) => parse({ rows: [{ split: "1", cells: [[{ key: "a", block: "sample.news", settings }]] }] }).success;
+        expect(leave({ title: { $theme: "stats.title" } })).toBe(true);
+        expect(leave({ title: { $theme: "stats" } })).toBe(false);
+        expect(leave({ title: { $theme: "stats.title", also: 1 } })).toBe(false);
+        expect(leave({ title: { theme: "stats.title" } })).toBe(false);
+    });
+
     it("knows what width each split offers", () => {
         expect(cellWidths("1-2")).toEqual(["narrow", "wide"]);
         expect(cellWidths("full")).toEqual(["full"]);
@@ -71,6 +78,17 @@ describe("a theme", () => {
 
     it("may ship the arrangement of its homepage", () => {
         expect(themeManifestSchema.safeParse({ ...flat, layouts: { home: ONE_ROW } }).success).toBe(true);
+    });
+
+    it("leaves to the operator only a setting it declares", () => {
+        const leaving = (ref: string) => ({
+            ...flat,
+            settings: { ...flat.settings, stats: { label: "Stats", fields: { title: { type: "text", label: "Title" } } } },
+            layouts: { home: { rows: [{ split: "1", cells: [[{ key: "a", block: "sample.news", settings: { title: { $theme: ref } } }]] }] } },
+        });
+        expect(themeManifestSchema.safeParse(leaving("stats.title")).success).toBe(true);
+        expect(themeManifestSchema.safeParse(leaving("stats.missing")).success).toBe(false);
+        expect(themeManifestSchema.safeParse(leaving("nogroup.title")).success).toBe(false);
     });
 
     it("may not ship one the page cannot draw", () => {

@@ -91,6 +91,15 @@ describe("the homepage's arrangement", () => {
         });
     });
 
+    it("fills a setting the theme leaves to the operator from the theme's settings", () => {
+        const tile = block("m.tile", { widths: ["full"], settings: { value: { type: "text", default: "" }, count: { type: "number", default: 2, min: 1, max: 4 } } });
+        const theme: LayoutDocument = { rows: [{ split: "full", cells: [[{ key: "t", block: "m.tile", settings: { value: { $theme: "stats.value" }, count: { $theme: "stats.count" } } }]] }] };
+        const drawn = (themeSettings: Record<string, Record<string, unknown>>) => resolve({ blocks: [tile], themeLayout: theme, themeSettings }).rows[0].cells[0][0].settings;
+        expect(drawn({ stats: { value: "Cmt 20:00", count: 3 } })).toEqual({ value: "Cmt 20:00", count: 3 });
+        expect(drawn({})).toEqual({ value: "", count: 2 });
+        expect(drawn({ stats: { value: 7, count: 99 } })).toEqual({ value: "", count: 2 });
+    });
+
     it("drops a disabled module's block", () => {
         const layout = resolve({ blocks: [block("on.a"), block("off.b")], enabled: (m) => m !== "off" });
         expect(ids(layout.rows[0].cells[1])).toEqual(["on.a"]);

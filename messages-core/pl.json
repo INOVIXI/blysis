@@ -96,7 +96,8 @@
     "welcomeOpenSettings": "Otwórz ustawienia",
     "welcomeTitle": "Witaj w swojej społeczności",
     "welcomeVisitorHint": "Skorzystaj z nawigacji powyżej, aby poznać społeczność.",
-    "writeContentHere": "Napisz tutaj treść..."
+    "writeContentHere": "Napisz tutaj treść...",
+    "statsLabel": "Strona w skrócie"
   },
   "notFound": {
     "title": "Nie znaleziono strony",

@@ -19,6 +19,16 @@ export interface CatalogBlock {
     replaces: string[];
 }
 
+/**
+ * What a block component is handed: its settings, checked against its fields
+ * with every default filled, and the width class of the cell it stands in.
+ * It lays itself out by its box (`@container`), never by the screen.
+ */
+export interface BlockProps {
+    settings: Record<string, unknown>;
+    width: WidthClass;
+}
+
 type BlockSource = Partial<Pick<ValidatedModuleManifest, "blocks" | "widgets" | "homepageSections">>;
 
 /**
