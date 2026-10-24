@@ -71,8 +71,10 @@ describe("the linked accounts a member sees", () => {
     });
 
     it("is what the public profile shows too, rather than a second reading", () => {
-        const publicApi = read(MODULE, "api/[username]/route.ts");
-        expect(publicApi).not.toContain("prisma.linkedAccount");
-        expect(publicApi).toContain("readLinkedAccounts(");
+        // The page and the endpoint both read a profile through `readMember`.
+        const publicRead = read(MODULE, "lib/read-member.ts");
+        expect(publicRead).not.toContain("prisma.linkedAccount");
+        expect(publicRead).toContain("readLinkedAccounts(");
+        expect(read(MODULE, "api/[username]/route.ts")).toContain("readMember(");
     });
 });
