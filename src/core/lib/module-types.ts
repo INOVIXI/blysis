@@ -1,3 +1,4 @@
+import type { ThemeFieldDef } from "./theme-manifest-schema";
 
 /** One admin-editable setting declared by a module manifest. */
 export interface ModuleSetting {
@@ -337,6 +338,19 @@ export interface ModuleManifest {
         type: "content" | "widget";   // content = main area, widget = sidebar
         component: string;             // path to component (e.g. "@core/widgets/xxx" or "components/xxx")
         order: number;                  // render order
+    }[];
+
+    // Blocks a page is built from; see `blockEntry` in module-manifest-schema.ts.
+    blocks?: {
+        id: string;
+        label?: string;
+        labelKey?: string;
+        component: string;
+        widths: ("full" | "wide" | "narrow")[];
+        defaultOrder: number;
+        defaultVisible: boolean;
+        settings?: Record<string, ThemeFieldDef>;
+        replaces?: string[];
     }[];
 
     dashboardCards?: {

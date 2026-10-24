@@ -64,11 +64,6 @@ const PUBLIC_KEYS = [
     "default_currency",
     // Theme customizer overrides
     "theme_overrides",
-    // Admin > Settings > Widgets writes both of these, and the homepage is
-    // the only thing that reads them. Leaving them off this list meant the
-    // customiser saved preferences the page it configures never received.
-    "widget_visibility",
-    "widget_order",
     // Back-compat alias the footer falls back to; unreachable while it was
     // absent here, so the fallback it documents never resolved.
     "hero_discord_url",

@@ -6,6 +6,7 @@ import type { ModuleSetting } from '../src/core/lib/module-types';
 import { exportedHttpMethods } from '../src/core/lib/http-methods';
 import { CORE_ADMIN_SCREENS } from '../src/core/lib/admin-screens';
 import { CORE_ADMIN_API, MEMBER_MUTATIONS } from '../src/core/lib/admin-api';
+import { blocksOf, sortBlocks, type CatalogBlock } from '../src/core/lib/page-blocks';
 
 function toComponentName(basename: string): string {
     return basename
@@ -80,7 +81,7 @@ function generateRegistry() {
     // No `next/dynamic` here any more: every registry in this file holds a
     // component that is part of a page already rendering. The page registry
     // next door still uses it, because a module page is a route of its own.
-    const imports = `/* eslint-disable */\nimport type { ComponentType } from 'react';\n\n`;
+    const imports = `/* eslint-disable */\nimport type { ComponentType } from 'react';\nimport type { CatalogBlock } from '@/core/lib/page-blocks';\n\n`;
     /*
      * A module page is imported for real, not through `next/dynamic`.
      *
@@ -186,6 +187,7 @@ function generateRegistry() {
     const allChallengePoints: ManifestItem[] = [];
     const allDashboardCards: ManifestItem[] = [];
     const allDashboardSections: ManifestItem[] = [];
+    const allBlocks: CatalogBlock[] = [];
     const allHomepageSections: ({ id: string; type: 'content' | 'widget'; component: string; order: number; module: string })[] = [];
     const allLayoutComponents: ({ id: string; component: string; include?: string[]; exclude?: string[]; module: string })[] = [];
     const allNavbarComponents: ({ id: string; component: string; order: number; module: string })[] = [];
@@ -258,6 +260,7 @@ function generateRegistry() {
         manifest.webhookReceivers?.forEach((wr) => allWebhookReceivers.push({ ...wr, module: moduleName }));
         manifest.notificationTypes?.forEach((nt) => allNotificationTypes.push({ ...nt, module: moduleName }));
         manifest.homepageSections?.forEach((section) => allHomepageSections.push({ ...section, module: moduleName }));
+        allBlocks.push(...blocksOf(moduleName, manifest));
         if (manifest.seoRoutes?.handler) {
             allSeoRoutes.push({ module: moduleName, handler: manifest.seoRoutes.handler });
         }
@@ -337,9 +340,15 @@ function generateRegistry() {
 
     emitStaticRegistry('Widget component registry', 'WidgetComponentRegistry', allWidgets);
     emitStaticRegistry('Homepage section component registry', 'HomepageSectionRegistry', allHomepageSections);
+    const sortedBlocks = sortBlocks(allBlocks);
+    emitStaticRegistry('Block component registry', 'BlockComponentRegistry', sortedBlocks);
     const homepageSectionImports = `export const ModuleHomepageSections: { id: string; type: string; component: string; order: number; module: string }[] = ${JSON.stringify(allHomepageSections, null, 2)};\n\n`;
 
-    let widgetRegistry = `export const ModuleWidgets: { id: string; label?: string; labelKey?: string; component: string; module: string; defaultOrder: number; defaultVisible: boolean }[] = ${JSON.stringify(allWidgets, null, 2)};\n\n`;
+    let widgetRegistry = `// Every block a page can be arranged from: declared blocks, and each widget and section read as one (page-blocks.ts).
+export const ModuleBlocks: CatalogBlock[] = ${JSON.stringify(sortedBlocks, null, 2)};
+
+`;
+    widgetRegistry += `export const ModuleWidgets: { id: string; label?: string; labelKey?: string; component: string; module: string; defaultOrder: number; defaultVisible: boolean }[] = ${JSON.stringify(allWidgets, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleNavLinks: { label: string; labelKey?: string; href: string; icon?: string; position?: number; module: string }[] = ${JSON.stringify(allNavLinks, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleDemoUnsafe: { path: string; module: string }[] = ${JSON.stringify(allDemoUnsafe.sort((a, b) => a.path.localeCompare(b.path)), null, 2)};\n\n`;
     widgetRegistry += `export const ModuleFooterLinks: { label: string; labelKey?: string; href: string; section?: string; module: string }[] = ${JSON.stringify(allFooterLinks, null, 2)};\n\n`;

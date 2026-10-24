@@ -28,6 +28,8 @@
 import { z } from "zod";
 import { CRON_SCHEDULES } from "./cron-schedules";
 import { isValidRange } from "./semver-range";
+import { WIDTH_CLASSES } from "./page-layout-schema";
+import { settingFieldSchema } from "./theme-manifest-schema";
 
 const SAFE_ID = /^[a-z0-9][a-z0-9-]*$/;
 const SAFE_SLUG = /^[A-Za-z0-9_-]+$/;
@@ -705,6 +707,27 @@ const settingsCard = z.object({
     color: z.string().min(1).max(64),
 });
 
+// What a page is built from. A widget could only stand in the homepage's
+// sidebar and a section only in its main column, because core decided where
+// each kind went; a block says which widths it can be drawn in, and whoever
+// arranges the page puts it in any cell that offers one of them. Its
+// settings are a theme's setting fields, so one form draws both. `replaces`
+// names the widget or section it used to be, so an arrangement saved under
+// the old name follows it.
+const blockEntry = z.object({
+    id: z.string().min(1).max(64).regex(SAFE_SLUG),
+    label: z.string().min(1).max(100).optional(),
+    labelKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/).optional(),
+    component: relativePath("component"),
+    widths: z.array(z.enum(WIDTH_CLASSES)).min(1).max(WIDTH_CLASSES.length),
+    defaultOrder: z.number().int(),
+    defaultVisible: z.boolean(),
+    settings: z.record(z.string().regex(SAFE_SLUG), settingFieldSchema)
+        .refine((r) => Object.keys(r).length <= 50, "max 50 settings per block")
+        .optional(),
+    replaces: z.array(z.string().min(1).max(64).regex(SAFE_SLUG)).max(8).optional(),
+});
+
 const homepageSection = z.object({
     id: z.string().min(1).max(64).regex(SAFE_SLUG),
     type: z.enum(["content", "widget"]),
@@ -1069,6 +1092,7 @@ export const moduleManifestSchema = z.object({
     layoutComponents: z.array(layoutComponent).max(50).optional(),
     settingsCards: z.array(settingsCard).max(50).optional(),
     homepageSections: z.array(homepageSection).max(50).optional(),
+    blocks: z.array(blockEntry).max(50).optional(),
     dashboardCards: z.array(dashboardCard).max(50).optional(),
     dashboardSections: z.array(dashboardSection).max(20).optional(),
     statsApi: routePath.optional(),
@@ -1135,6 +1159,7 @@ export function collectManifestFileRefs(m: ValidatedModuleManifest): string[] {
     m.webhookReceivers?.forEach((r) => push(r.handler));
     m.layoutComponents?.forEach((r) => push(r.component));
     m.homepageSections?.forEach((r) => push(r.component));
+    m.blocks?.forEach((r) => push(r.component));
     push(m.hooks?.onEnable);
     push(m.hooks?.onDisable);
     push(m.seoRoutes?.handler);

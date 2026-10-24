@@ -187,6 +187,7 @@ export const CORE_TABLES_WITHHELD: Record<string, string> = {
     // saved a global theme value; it is not data about that person.
     ThemeCustomization: "site configuration, not personal data",
     ThemeSetting: "site configuration, not personal data",
+    PageLayout: "site configuration, not personal data",
 };
 
 /**

@@ -1474,6 +1474,410 @@
         ]
       }
     },
+    "blocks": {
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "labelKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-zA-Z0-9._-]+$"
+          },
+          "component": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "widths": {
+            "minItems": 1,
+            "maxItems": 3,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "full",
+                "wide",
+                "narrow"
+              ]
+            }
+          },
+          "defaultOrder": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "defaultVisible": {
+            "type": "boolean"
+          },
+          "settings": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "color"
+                    },
+                    "default": {
+                      "type": "string",
+                      "pattern": "^#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"
+                    },
+                    "group": {
+                      "type": "string",
+                      "maxLength": 64
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "labelKey": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "font"
+                    },
+                    "default": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "options": {
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "maxLength": 100
+                      }
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "labelKey": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "select"
+                    },
+                    "default": {
+                      "type": "string",
+                      "maxLength": 64
+                    },
+                    "options": {
+                      "minItems": 1,
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "string",
+                            "maxLength": 64
+                          },
+                          "label": {
+                            "type": "string",
+                            "maxLength": 100
+                          },
+                          "labelKey": {
+                            "type": "string",
+                            "maxLength": 128,
+                            "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "label"
+                        ]
+                      }
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "labelKey": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "options"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "slider"
+                    },
+                    "default": {
+                      "type": "number"
+                    },
+                    "min": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    },
+                    "step": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "labelKey": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "min",
+                    "max"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "toggle"
+                    },
+                    "default": {
+                      "type": "boolean"
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "labelKey": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "text"
+                    },
+                    "default": {
+                      "type": "string",
+                      "maxLength": 10000
+                    },
+                    "max": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 10000
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "labelKey": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "url"
+                    },
+                    "default": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "labelKey": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "richtext"
+                    },
+                    "default": {
+                      "type": "string",
+                      "maxLength": 10000
+                    },
+                    "max": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 10000
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "labelKey": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "image"
+                    },
+                    "default": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "aspectRatio": {
+                      "type": "string",
+                      "maxLength": 20
+                    },
+                    "maxKb": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 10000
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "labelKey": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "number"
+                    },
+                    "default": {
+                      "type": "number"
+                    },
+                    "min": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "labelKey": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            }
+          },
+          "replaces": {
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "component",
+          "widths",
+          "defaultOrder",
+          "defaultVisible"
+        ]
+      }
+    },
     "dashboardCards": {
       "maxItems": 50,
       "type": "array",

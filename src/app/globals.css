@@ -662,9 +662,23 @@ body {
  * and `<template>` is excluded explicitly because that is what React streams
  * in place of a Suspense boundary it has not resolved yet: a plain `:empty`
  * would leave the column reserved until hydration and then collapse it.
+ *
+ * The heading spacer does not count either: it answers a heading beside it
+ * and draws nothing of its own, and while it counted, a homepage whose widgets
+ * all rendered null kept its empty third. A block's box counts only when the
+ * block drew something into it.
  */
-[data-sidebar-layout] > [data-sidebar]:not(:has(> :not(template))) {
+[data-block]:empty {
   display: none;
+}
+
+[data-sidebar-layout] > [data-sidebar]:not(:has(> :not(template, .blysis-heading-spacer, [data-block]:empty))) {
+  display: none;
+}
+
+/* The space between the rows of a page's arrangement (PageLayoutView). */
+:where([data-sidebar-layout], [data-layout-row]) + :where([data-sidebar-layout], [data-layout-row]) {
+  margin-top: 2rem;
 }
 
 @media (min-width: 64rem) {
@@ -674,12 +688,16 @@ body {
    * says the second thing directly is invalid, and an invalid selector is
    * dropped without a word: the column hid, the content stayed at two thirds,
    * and the page still looked off centre.
+   *
+   * Both weigh one attribute, the second winning by coming later, so a theme
+   * that places the columns itself always outranks them; see
+   * globals-css.test.ts.
    */
-  [data-sidebar-layout] > [data-sidebar-main] {
+  :where([data-sidebar-layout]) > [data-sidebar-main] {
     grid-column: 1 / -1;
   }
 
-  [data-sidebar-layout]:has(> [data-sidebar] > :not(template)) > [data-sidebar-main] {
+  :where([data-sidebar-layout]:has(> [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty))) > [data-sidebar-main] {
     grid-column: span 2 / span 2;
   }
 }

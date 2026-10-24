@@ -12,11 +12,21 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.23.0 - a module may declare `blocks` and a theme may ship
+ * `layouts.home`. A block names the file that draws it, the widths it can be
+ * drawn in (`full`, `wide`, `narrow`), its settings in a theme's field
+ * definitions and the widget or section it `replaces`; a layout is rows of
+ * cells of blocks. The homepage's arrangement had been core's alone, the same
+ * main column and sidebar for every theme, so a theme could recolour the page
+ * but never arrange it. Additive: `widgets` and `homepageSections` are read
+ * as blocks, and a theme with no layout keeps the arrangement it had. A select
+ * option may also carry a `labelKey`.
+ *
  * 5.22.0 - `linkTarget` joins `@/core/sdk/theme`: an address an operator
  * typed into a theme setting, as a link only when it is a path on this site
- * or an http(s) address. Vanguard kept this check beside its hero, and a
- * second theme with a button in its settings would have copied it, test and
- * all, or gone without. Additive.
+ * or an http(s) address. One theme kept this check beside its own hero, and
+ * the next theme with a button in its settings would have copied it, test
+ * and all, or gone without. Additive.
  *
  * 5.21.0 - an `activityTitles` entry may declare `patterns`: the stored
  * English with its blanks named, each with the message that takes them. A
@@ -644,4 +654,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.22.0";
+export const CORE_API_VERSION = "5.23.0";

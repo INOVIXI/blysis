@@ -14,8 +14,9 @@
  * was hardcoded to visible rather than read from the declaration, so a module
  * that ships a widget switched off would have had it switched on.
  *
- * Both screens now go through here, so the customiser and the homepage cannot
- * disagree about what an unsaved widget does.
+ * Both screens now go through here, the homepage by way of `resolveLayout`
+ * on the server, so the customiser and the homepage cannot disagree about
+ * what an unsaved widget does.
  */
 
 /** The registry fields this module needs; `ModuleWidgets` entries satisfy it. */
@@ -47,13 +48,4 @@ export function orderWidgets<T extends HomepageWidget>(widgets: T[], order: unkn
     const declared = new Map(widgets.map((w, i) => [w.id, saved.size + i]));
     const rank = (w: T) => saved.get(w.id) ?? declared.get(w.id) ?? 0;
     return [...widgets].sort((a, b) => rank(a) - rank(b));
-}
-
-/** The visible widgets, in the order the homepage should render them. */
-export function visibleWidgets<T extends HomepageWidget>(
-    widgets: T[],
-    settings: Record<string, unknown>,
-): T[] {
-    const visible = widgets.filter((w) => isWidgetVisible(w, settings.widget_visibility));
-    return orderWidgets(visible, settings.widget_order);
 }

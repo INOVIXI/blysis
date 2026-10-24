@@ -57,6 +57,8 @@ const SRC_FILES = walk(join(ROOT, "src")).filter(
  * the palette, the renderer drops it, and the exemption is gone.
  */
 const UNGATED_BY_DESIGN: Record<string, string> = {
+    "src/core/components/layout/PageLayoutView.tsx":
+        "Draws an arrangement `resolveLayout` already filtered: every block of a disabled module was left out on the server, in page-layout-loader.ts, which gates the flag. Asking again on the client would read a second copy of the states that can disagree with the first.",
     "src/app/api/v1/settings/route.ts":
         "Reads the declared credential keys to decide whether a write needs the credentials permission. A key belonging to a disabled module is still a credential, and filtering by enablement would let somebody write a gateway's secret by turning that gateway off first.",
     "src/core/lib/auth.ts":

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { layoutDocumentSchema } from "./page-layout-schema";
 
 const HEX = /^#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
 const SAFE_ID = /^[a-z0-9][a-z0-9-]*$/;
@@ -41,7 +42,11 @@ const fontDef = z.object({
 const selectDef = z.object({
     type: z.literal("select"),
     default: z.string().max(64).optional(),
-    options: z.array(z.object({ value: z.string().max(64), label: z.string().max(100) })).min(1).max(100),
+    options: z.array(z.object({
+        value: z.string().max(64),
+        label: z.string().max(100),
+        labelKey: z.string().max(128).regex(SAFE_TRANSLATION_KEY).optional(),
+    })).min(1).max(100),
     label: z.string().max(100).optional(),
     labelKey: z.string().max(128).regex(SAFE_TRANSLATION_KEY).optional(),
 });
@@ -97,7 +102,11 @@ const numberDef = z.object({
     labelKey: z.string().max(128).regex(SAFE_TRANSLATION_KEY).optional(),
 });
 
-const fieldDef = z.discriminatedUnion("type", [
+/**
+ * One setting a manifest declares: a theme's settings group, and a module's
+ * block. Both screens draw it with the same form.
+ */
+export const settingFieldSchema = z.discriminatedUnion("type", [
     colorDef, fontDef, selectDef, sliderDef, toggleDef,
     textDef, urlDef, richTextDef, imageDef, numberDef,
 ]);
@@ -116,7 +125,7 @@ const settingsGroup = z.object({
     labelKey: z.string().max(128).regex(SAFE_TRANSLATION_KEY).optional(),
     icon: z.string().max(64).optional(),
     order: z.number().int().optional(),
-    fields: z.record(z.string().regex(SAFE_KEY), fieldDef)
+    fields: z.record(z.string().regex(SAFE_KEY), settingFieldSchema)
         .refine(r => Object.keys(r).length > 0, "at least one field required")
         .refine(r => Object.keys(r).length <= 50, "max 50 fields per group"),
 });
@@ -145,6 +154,14 @@ export const themeManifestSchema = z.object({
     }).default({}),
 
     settings: z.record(z.string().regex(SAFE_KEY), settingsGroup).optional(),
+
+    /**
+     * How the theme arranges a page until the operator arranges it their
+     * way: blocks by id, in rows and cells. A block whose module is not
+     * installed is skipped, and one the document does not name goes to its
+     * `rest` cell.
+     */
+    layouts: z.object({ home: layoutDocumentSchema.optional() }).strict().optional(),
 
     components: z.record(
         z.string().regex(/^[A-Z][A-Za-z0-9]*$/),
@@ -204,6 +221,6 @@ export const themeManifestSchema = z.object({
 }).strict();
 
 export type ThemeManifest = z.infer<typeof themeManifestSchema>;
-export type ThemeFieldDef = z.infer<typeof fieldDef>;
+export type ThemeFieldDef = z.infer<typeof settingFieldSchema>;
 export type ThemeModeDef = z.infer<typeof modeDef>;
 export type ThemeSettingsGroup = z.infer<typeof settingsGroup>;

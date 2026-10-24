@@ -4,33 +4,18 @@ import { isAdmin } from "@/core/lib/permissions";
 import { prisma } from "@/core/lib/db";
 import { Prisma } from "@prisma/client";
 import { themeRegistry } from "@/core/generated/theme-registry";
-import type { ThemeFieldDef } from "@/core/lib/theme-manifest-schema";
 import { readJsonBody } from "@/core/lib/api-body";
+import { sanitizeSettingValue } from "@/core/lib/setting-field-value";
 import { z } from "zod";
 
 /**
  * A bag of theme setting values. The values themselves stay `unknown`:
- * `sanitizeByType` below decides what each one may be from the theme's own
+ * `sanitizeSettingValue` decides what each one may be from the theme's own
  * field declaration, and a value it does not recognise is dropped.
  */
 const themeSettingsSchema = z.object({
     values: z.record(z.string().max(128), z.unknown()),
 });
-
-function sanitizeByType(def: ThemeFieldDef, value: unknown): unknown {
-    switch (def.type) {
-        case "color":    return typeof value === "string" && /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(value) ? value : undefined;
-        case "font":     return typeof value === "string" && value.length <= 100 ? value : undefined;
-        case "select":   return typeof value === "string" && def.options.some(o => o.value === value) ? value : undefined;
-        case "slider":   return typeof value === "number" && Number.isFinite(value) && value >= def.min && value <= def.max ? value : undefined;
-        case "toggle":   return typeof value === "boolean" ? value : undefined;
-        case "text":     return typeof value === "string" ? value.slice(0, def.max ?? 10000) : undefined;
-        case "url":      return typeof value === "string" && (value.startsWith("/") || /^https?:\/\//.test(value)) ? value : undefined;
-        case "richtext": return typeof value === "string" ? value.slice(0, def.max ?? 10000) : undefined;
-        case "image":    return typeof value === "string" && (value.startsWith("/") || /^https?:\/\//.test(value) || value.startsWith("data:image/")) ? value : undefined;
-        case "number":   return typeof value === "number" && Number.isFinite(value) ? value : undefined;
-    }
-}
 
 export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string; group: string }> }) {
     const session = await auth();
@@ -69,7 +54,7 @@ export async function PUT(req: NextRequest, ctx: { params: Promise<{ id: string;
     for (const [key, raw] of Object.entries(parsed.data.values)) {
         const def = groupDef.fields[key];
         if (!def) continue;
-        const clean = sanitizeByType(def, raw);
+        const clean = sanitizeSettingValue(def, raw);
         if (clean === undefined) {
             ops.push(prisma.themeSetting.deleteMany({ where: { themeId: id, groupKey: group, key } }));
         } else {

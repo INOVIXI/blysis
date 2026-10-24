@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { stripComments } from "./source-text";
 
 const CSS = fs.readFileSync(path.resolve(__dirname, "../../src/app/globals.css"), "utf-8");
 
@@ -44,10 +45,41 @@ describe("globals.css", () => {
         expect(hasNestingDepths("a:has(> b) c:has(> d) { color: red }")).toEqual([0, 0]);
     });
 
+    it("places the main column with rules any theme rule outranks", () => {
+        // A theme's stylesheet is scoped under `[data-theme="..."]`, so its
+        // rule on the main column is at least two attributes and a class
+        // strong. Core's "two thirds when there is a sidebar" rule grew past
+        // that when its `:has()` learned to ignore empty blocks, and a theme
+        // that lays the homepage out as its own grid had its main column
+        // pushed into a second, zero-width track. Inside `:where()` core's
+        // condition weighs nothing, whatever it has to say.
+        const rules = [...stripComments(CSS).matchAll(/([^{}]+)\{[^{}]*grid-column[^{}]*\}/g)]
+            .map((m) => m[1].trim())
+            .filter((selector) => selector.endsWith("> [data-sidebar-main]"));
+        expect(rules.length).toBeGreaterThanOrEqual(2);
+        for (const selector of rules) expect(selector).toMatch(/^:where\(/);
+    });
+
+    it("is asked the same way by a theme that asks whether a sidebar has anything in it", () => {
+        // A theme that lays the homepage out itself asks the same question
+        // core does, and asked it the old way: a sidebar of blocks that all
+        // drew nothing still got its column there.
+        const themes = path.resolve(__dirname, "../../src/themes");
+        const asks = fs.readdirSync(themes)
+            .map((id) => path.join(themes, id, "theme.css"))
+            .filter((file) => fs.existsSync(file))
+            .flatMap((file) => [...fs.readFileSync(file, "utf-8").matchAll(/\[data-sidebar\] > :not\(([^)]*)\)/g)]
+                .map((m) => `${path.basename(path.dirname(file))}: ${m[1]}`));
+        expect(asks.length).toBeGreaterThan(0);
+        for (const ask of asks) expect(ask).toMatch(/template, \.blysis-heading-spacer, \[data-block\]:empty$/);
+    });
+
     it("keeps the sidebar collapse rules the layout depends on", () => {
         // SidebarLayout renders these two attributes and nothing else styles
         // them; losing the rules puts the empty-column bug straight back.
         expect(CSS).toMatch(/\[data-sidebar-layout\][^{]*\[data-sidebar-main\]/);
-        expect(CSS).toMatch(/\[data-sidebar\]:not\(:has\(> :not\(template\)\)\)/);
+        // A column holding only the heading spacer and blocks that drew
+        // nothing is empty too.
+        expect(CSS).toContain("[data-sidebar]:not(:has(> :not(template, .blysis-heading-spacer, [data-block]:empty)))");
     });
 });
