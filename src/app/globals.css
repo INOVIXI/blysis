@@ -618,9 +618,12 @@ body {
 [data-mode="dark"] .bg-red-50 { background-color: rgba(239, 68, 68, 0.1) !important; }
 [data-mode="dark"] .bg-blue-50 { background-color: rgba(59, 130, 246, 0.1) !important; }
 [data-mode="dark"] .bg-yellow-50 { background-color: rgba(245, 158, 11, 0.1) !important; }
-/* Shadows */
-[data-mode="dark"] .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.3) !important; }
-[data-mode="dark"] .shadow-lg { box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important; }
+/* Shadows. Deepened through the utility's own variable rather than over it:
+   an `!important` box-shadow here beat every theme that draws a shadow of its
+   own, so a theme's button lost its edge in dark mode only.
+   `tests/e2e/a-theme-draws-its-own-shadow-in-the-dark.spec.ts`. */
+[data-mode="dark"] .shadow-sm { --tw-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+[data-mode="dark"] .shadow-lg { --tw-shadow: 0 4px 12px rgba(0,0,0,0.4); }
 /* ARIA roles */
 [data-mode="dark"] [role="menu"], [data-mode="dark"] [role="listbox"] {
   background-color: var(--blysis-color-card) !important;
