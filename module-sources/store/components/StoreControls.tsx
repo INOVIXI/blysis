@@ -31,7 +31,6 @@ export function StoreSearch({ initial, category }: { initial: string; category?:
         <form
             role="search"
             onSubmit={(event) => { event.preventDefault(); go(value.trim()); }}
-            className="mb-6"
         >
             <div className="relative max-w-lg">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" aria-hidden="true" />

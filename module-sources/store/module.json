@@ -2,8 +2,8 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.49.2",
-  "coreVersion": "^5.0.0",
+  "version": "2.50.0",
+  "coreVersion": "^5.25.0",
   "category": "commerce",
   "author": "Blysis Team",
   "icon": "ShoppingBag",
@@ -1474,7 +1474,11 @@
         "dlv_cancelled": "Cancelled",
         "blk_shelves": "Shelves",
         "adm_summary": "Summary",
-        "adm_summaryHint": "One line shown on the product's card, in the shop and on the homepage."
+        "adm_summaryHint": "One line shown on the product's card, in the shop and on the homepage.",
+        "shelfAll": "See all ({count})",
+        "discountTag": "{percent}% off",
+        "durationDays": "{days, plural, one {# day} other {# days}}",
+        "relatedProducts": "From the same shelf"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -2306,7 +2310,11 @@
         "dlv_cancelled": "İptal edildi",
         "blk_shelves": "Kategoriler",
         "adm_summary": "Özet",
-        "adm_summaryHint": "Ürünün kartında, mağazada ve ana sayfada görünen tek satır."
+        "adm_summaryHint": "Ürünün kartında, mağazada ve ana sayfada görünen tek satır.",
+        "shelfAll": "Hepsini gör ({count})",
+        "discountTag": "%{percent} indirim",
+        "durationDays": "{days} gün",
+        "relatedProducts": "Aynı raftan"
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -3138,7 +3146,11 @@
         "dlv_cancelled": "Ləğv edildi",
         "blk_shelves": "Kateqoriyalar",
         "adm_summary": "Xülasə",
-        "adm_summaryHint": "Məhsulun kartında, mağazada və ana səhifədə görünən bir sətir."
+        "adm_summaryHint": "Məhsulun kartında, mağazada və ana səhifədə görünən bir sətir.",
+        "shelfAll": "Hamısına bax ({count})",
+        "discountTag": "%{percent} endirim",
+        "durationDays": "{days} gün",
+        "relatedProducts": "Eyni rəfdən"
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -3970,7 +3982,11 @@
         "dlv_cancelled": "Storniert",
         "blk_shelves": "Kategorien",
         "adm_summary": "Kurzbeschreibung",
-        "adm_summaryHint": "Eine Zeile auf der Karte des Produkts, im Shop und auf der Startseite."
+        "adm_summaryHint": "Eine Zeile auf der Karte des Produkts, im Shop und auf der Startseite.",
+        "shelfAll": "Alle ansehen ({count})",
+        "discountTag": "{percent} % Rabatt",
+        "durationDays": "{days, plural, one {# Tag} other {# Tage}}",
+        "relatedProducts": "Aus demselben Regal"
       },
       "cart": {
         "title": "Warenkorb",
@@ -4802,7 +4818,11 @@
         "dlv_cancelled": "Cancelado",
         "blk_shelves": "Categorías",
         "adm_summary": "Resumen",
-        "adm_summaryHint": "Una línea que se muestra en la tarjeta del producto, en la tienda y en la portada."
+        "adm_summaryHint": "Una línea que se muestra en la tarjeta del producto, en la tienda y en la portada.",
+        "shelfAll": "Ver todo ({count})",
+        "discountTag": "{percent} % de descuento",
+        "durationDays": "{days, plural, one {# día} other {# días}}",
+        "relatedProducts": "De la misma sección"
       },
       "cart": {
         "title": "Carrito de compra",
@@ -5634,7 +5654,11 @@
         "dlv_cancelled": "Tühistatud",
         "blk_shelves": "Kategooriad",
         "adm_summary": "Kokkuvõte",
-        "adm_summaryHint": "Üks rida toote kaardil, poes ja avalehel."
+        "adm_summaryHint": "Üks rida toote kaardil, poes ja avalehel.",
+        "shelfAll": "Vaata kõiki ({count})",
+        "discountTag": "{percent}% soodsam",
+        "durationDays": "{days, plural, one {# päev} other {# päeva}}",
+        "relatedProducts": "Samast riiulist"
       },
       "cart": {
         "title": "Ostukorv",
@@ -6466,7 +6490,11 @@
         "dlv_cancelled": "Annulé",
         "blk_shelves": "Catégories",
         "adm_summary": "Résumé",
-        "adm_summaryHint": "Une ligne affichée sur la carte du produit, dans la boutique et sur l'accueil."
+        "adm_summaryHint": "Une ligne affichée sur la carte du produit, dans la boutique et sur l'accueil.",
+        "shelfAll": "Tout voir ({count})",
+        "discountTag": "-{percent} %",
+        "durationDays": "{days, plural, one {# jour} other {# jours}}",
+        "relatedProducts": "Du même rayon"
       },
       "cart": {
         "title": "Panier",
@@ -7298,7 +7326,11 @@
         "dlv_cancelled": "Annullato",
         "blk_shelves": "Categorie",
         "adm_summary": "Riepilogo",
-        "adm_summaryHint": "Una riga mostrata sulla scheda del prodotto, nel negozio e nella home."
+        "adm_summaryHint": "Una riga mostrata sulla scheda del prodotto, nel negozio e nella home.",
+        "shelfAll": "Vedi tutti ({count})",
+        "discountTag": "-{percent}%",
+        "durationDays": "{days, plural, one {# giorno} other {# giorni}}",
+        "relatedProducts": "Dallo stesso scaffale"
       },
       "cart": {
         "title": "Carrello",
@@ -8130,7 +8162,11 @@
         "dlv_cancelled": "Anulowano",
         "blk_shelves": "Kategorie",
         "adm_summary": "Podsumowanie",
-        "adm_summaryHint": "Jedna linijka na karcie produktu, w sklepie i na stronie głównej."
+        "adm_summaryHint": "Jedna linijka na karcie produktu, w sklepie i na stronie głównej.",
+        "shelfAll": "Zobacz wszystkie ({count})",
+        "discountTag": "-{percent}%",
+        "durationDays": "{days, plural, one {# dzień} other {# dni}}",
+        "relatedProducts": "Z tej samej półki"
       },
       "cart": {
         "title": "Koszyk",
@@ -8962,7 +8998,11 @@
         "dlv_cancelled": "Cancelado",
         "blk_shelves": "Categorias",
         "adm_summary": "Resumo",
-        "adm_summaryHint": "Uma linha mostrada no cartão do produto, na loja e na página inicial."
+        "adm_summaryHint": "Uma linha mostrada no cartão do produto, na loja e na página inicial.",
+        "shelfAll": "Ver todos ({count})",
+        "discountTag": "{percent}% de desconto",
+        "durationDays": "{days, plural, one {# dia} other {# dias}}",
+        "relatedProducts": "Da mesma seção"
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -9794,7 +9834,11 @@
         "dlv_cancelled": "Отменено",
         "blk_shelves": "Категории",
         "adm_summary": "Краткое описание",
-        "adm_summaryHint": "Одна строка на карточке товара, в магазине и на главной."
+        "adm_summaryHint": "Одна строка на карточке товара, в магазине и на главной.",
+        "shelfAll": "Смотреть все ({count})",
+        "discountTag": "Скидка {percent}%",
+        "durationDays": "{days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
+        "relatedProducts": "С той же полки"
       },
       "cart": {
         "title": "Корзина",
@@ -10626,7 +10670,11 @@
         "dlv_cancelled": "已取消",
         "blk_shelves": "分类",
         "adm_summary": "摘要",
-        "adm_summaryHint": "显示在商品卡片上的一句话，商店和首页都会显示。"
+        "adm_summaryHint": "显示在商品卡片上的一句话，商店和首页都会显示。",
+        "shelfAll": "查看全部（{count}）",
+        "discountTag": "优惠 {percent}%",
+        "durationDays": "{days} 天",
+        "relatedProducts": "同一货架"
       },
       "cart": {
         "title": "购物车",
@@ -11074,6 +11122,227 @@
           "type": "toggle",
           "default": false
         }
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "home",
+      "blocks": [
+        {
+          "id": "search",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "categories",
+          "widths": [
+            "full",
+            "wide"
+          ],
+          "settings": {
+            "style": {
+              "type": "select",
+              "default": "cards",
+              "options": [
+                {
+                  "value": "cards",
+                  "label": "Cards with pictures"
+                },
+                {
+                  "value": "chips",
+                  "label": "A row of links"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "featured",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "shelves",
+          "widths": [
+            "full",
+            "wide"
+          ],
+          "settings": {
+            "limit": {
+              "type": "number",
+              "default": 3,
+              "min": 1,
+              "max": 8
+            }
+          }
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "search",
+                  "block": "store.search"
+                },
+                {
+                  "key": "categories",
+                  "block": "store.categories"
+                }
+              ]
+            ]
+          }
+        ],
+        "hidden": [
+          "store.featured",
+          "store.shelves"
+        ]
+      }
+    },
+    {
+      "id": "shelf",
+      "blocks": [
+        {
+          "id": "crumbs",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "search",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "categories",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "subcategories",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "products",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "crumbs",
+                  "block": "store.crumbs"
+                },
+                {
+                  "key": "search",
+                  "block": "store.search"
+                },
+                {
+                  "key": "subcategories",
+                  "block": "store.subcategories"
+                },
+                {
+                  "key": "products",
+                  "block": "store.products"
+                }
+              ]
+            ]
+          }
+        ],
+        "hidden": [
+          "store.categories"
+        ]
+      }
+    },
+    {
+      "id": "product",
+      "blocks": [
+        {
+          "id": "gallery",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "buy",
+          "widths": [
+            "narrow",
+            "wide"
+          ],
+          "settings": {
+            "title": {
+              "type": "toggle",
+              "default": false
+            }
+          }
+        },
+        {
+          "id": "details",
+          "widths": [
+            "full",
+            "wide",
+            "narrow"
+          ]
+        },
+        {
+          "id": "related",
+          "widths": [
+            "full",
+            "wide",
+            "narrow"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "gallery",
+                  "block": "store.gallery"
+                },
+                {
+                  "key": "details",
+                  "block": "store.details"
+                }
+              ],
+              [
+                {
+                  "key": "buy",
+                  "block": "store.buy"
+                }
+              ]
+            ]
+          }
+        ],
+        "hidden": [
+          "store.related"
+        ]
       }
     }
   ]
