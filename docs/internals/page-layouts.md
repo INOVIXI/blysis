@@ -1,10 +1,10 @@
-# The homepage's arrangement
+# Arranged pages
 
-The homepage is a list of rows, each split into cells, each cell holding blocks. A module offers blocks; a theme says where they stand. This note keeps the decisions behind that and the traps in it. The code is `src/core/lib/page-layout.ts` (the resolver), `src/core/lib/page-layout-schema.ts` (the document), `src/core/lib/page-blocks.ts` (the catalogue) and `src/core/components/layout/PageLayoutView.tsx` (the drawing).
+The homepage, and every page a module declares in `pages`, is a list of rows, each split into cells, each cell holding blocks. A module offers blocks; a theme says where they stand. This note keeps the decisions behind that and the traps in it. The code is `src/core/lib/page-layout.ts` (the resolver), `src/core/lib/page-layout-schema.ts` (the document), `src/core/lib/page-blocks.ts` (the catalogue), `src/core/components/layout/PageLayoutView.tsx` (the homepage) and `src/core/components/layout/ArrangedPage.tsx` (a module's page).
 
 ## The arrangement is the theme's code, and nothing is stored
 
-A theme that needs a homepage of its own ships it as `layouts.home` in its `theme.json`. A theme that ships none gets core's, which is the page Blysis always drew: the sections in the main column, the widgets beside them. There is no layout editor and no table holding an arrangement. One was designed and dropped: the people who change a theme's page are the theme's authors, a document in a manifest is reviewed and versioned with the CSS that styles it, and a saved copy would have gone stale the first time the theme changed underneath it.
+A theme that needs a homepage of its own ships it as `layouts.home` in its `theme.json`, and a page of a module's as `layouts["<module>.<page>"]`. A theme that ships none gets the default: for the homepage core's, which is the page Blysis always drew, the sections in the main column and the widgets beside them; for a module's page the arrangement the module declares beside it. There is no layout editor and no table holding an arrangement. One was designed and dropped: the people who change a theme's page are the theme's authors, a document in a manifest is reviewed and versioned with the CSS that styles it, and a saved copy would have gone stale the first time the theme changed underneath it.
 
 What an operator has is **Settings > Widgets**, and it holds over any arrangement. A block switched off there is drawn nowhere, whoever placed it, and the blocks the page adds by itself come in the order saved there. A block keeps the switch and the place in that order it had as a widget or section through `replaces` in its manifest.
 
@@ -34,3 +34,12 @@ A block whose content is other modules' slot content, such as core's stats row, 
 ## Places a module can reach on a theme's page
 
 Core's own blocks are listed in `src/core/lib/core-blocks.ts` under the reserved module id `core`. The stats row draws the `home.stats` slot first, where a module gives a live tile with `StatTile`. A theme's hero draws `hero.tags` before its own label, where a module gives a short status such as whether the server is open, and `hero.bottom` under its buttons. A theme's sign-in screens may draw `auth.login.aside`, for someone coming back, and `auth.register.aside`, for someone new, beside the form. These slots are a convention between themes and modules rather than core chrome, so a theme that draws none of them simply shows none.
+
+## A module's page
+
+A page a module draws itself, a product or an article, declares in its manifest the blocks it is built from and a default arrangement, and draws them through `ArrangedPage`. The page reads its data once on the server and hands `ArrangedPage` a function per block, so a block is the page's own markup and may be a server component; the blocks are not in the homepage's catalogue and cannot be placed on any other page. A theme's arrangement for the page may name only that page's blocks, which the theme manifest schema checks against the installed modules' pages.
+
+The default arrangement must draw the page exactly as it stood before it was arranged, because Flat and every theme without an arrangement for it show that default. Four things in `ArrangedPage` exist for that and nothing else: a page's rows stand `1.5rem` apart unless the theme sets `--blysis-row-gap` (the homepage's are `2rem`); a block alone in its cell fills the cell, so cards side by side end level as they did in a grid of the page's; a page's two halves sit side by side from a tablet up; and a page whose third beside two thirds is its own column rather than a sidebar says `sidebar={false}`, so the column is not drawn, styled or spaced as a sidebar. A block that sticks, such as a product's buy box, sticks only when its box is as tall as its column, which the filling gives it. When an arrangement moves something, compare the page under a theme without one before and after, at a desk and on a phone.
+
+An arrangement may hide the header band (`header: "hidden"`) for a page that opens on something naming it already. The title stays the page's one `h1`, read but not seen, so a block that shows the name draws it as a paragraph hidden from screen readers, and the crumb trail the header carried has to be offered as a block of its own if the page needs one.
+

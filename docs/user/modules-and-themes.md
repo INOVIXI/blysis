@@ -32,3 +32,7 @@ The homepage's arrangement comes with the theme: which sections it shows, in whi
 
 - **Admin > Settings > Widgets** switches a section or widget off everywhere, whichever theme placed it, and orders the ones the theme leaves to the page. Under a theme that arranges its own homepage the screen says so; the switches still work.
 - A module you install later shows up at the end of the page, in the place the theme keeps for it.
+
+### The shop, articles, topics and profiles
+
+A theme can also lay out some pages a module draws: the shop, a product, an article, a forum topic and a member's profile. One theme may open the shop on a showcase and set a topic's authors in a column of their own; another shows them as the module draws them. The content is the same either way, and switching themes changes only where things stand.

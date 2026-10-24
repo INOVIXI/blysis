@@ -23,5 +23,5 @@ Internal notes keep the decisions, constraints and traps the source alone does n
 - [How an install becomes a build](./internals/build-lifecycle.md)
 - [Database: schema, additions and migrations](./internals/database.md)
 - [Conventions as tests](./internals/gates.md)
-- [The homepage's arrangement](./internals/page-layouts.md)
+- [Arranged pages](./internals/page-layouts.md)
 - [Dependencies held back](./internals/dependencies.md)

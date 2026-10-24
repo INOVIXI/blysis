@@ -90,7 +90,8 @@ The template manifest enumerates every common UI registration so you can see all
 | `navbarComponents` / `footerComponents` | Navbar right-side and footer components |
 | `layoutComponents` | Site-wide components with URL include/exclude filters |
 | `widgets` | Homepage sidebar widgets |
-| `blocks` | Homepage blocks a theme's arrangement places, with the widths they work at and their settings; `replaces` carries an old widget or section's place and switch (see [the homepage's arrangement](../docs/internals/page-layouts.md)) |
+| `blocks` | Homepage blocks a theme's arrangement places, with the widths they work at and their settings; `replaces` carries an old widget or section's place and switch (see [arranged pages](../docs/internals/page-layouts.md)) |
+| `pages` | A page the module draws through `ArrangedPage`, the blocks it is built from and its default arrangement, which a theme may replace under `layouts["<module>.<page>"]` |
 | `homepageSections` | Homepage main content, read as a wide block; a new one is better declared in `blocks` |
 | `profileTabs` | Tabs added to the user profile page |
 | `dashboardCards` + `statsApi` | Admin dashboard stat cards + data endpoint |
