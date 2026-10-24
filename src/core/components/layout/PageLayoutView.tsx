@@ -1,0 +1,114 @@
+"use client";
+
+import React from "react";
+import { BlockComponentRegistry } from "@/core/generated/module-components";
+import { ModuleErrorBoundary } from "@/core/components/ModuleErrorBoundary";
+import StandardSidebarLayout from "@/core/components/layout/SidebarLayout";
+import type { ResolvedInstance, ResolvedLayout, ResolvedRow } from "@/core/lib/page-layout";
+import { cellWidths, type RowSplit } from "@/core/lib/page-layout-schema";
+
+interface PageLayoutViewProps {
+    layout: ResolvedLayout;
+    /** What a site with no content shows in its main column. */
+    welcome: React.ReactNode;
+}
+
+/**
+ * One block in a box that names it, its variant and its width, so a theme
+ * styles it by attribute, and that is an inline-size container, so the
+ * block lays itself out by the width it was given rather than the screen's.
+ * A block with nothing to show renders nothing and its box is `:empty`.
+ */
+function Block({ instance }: { instance: ResolvedInstance }) {
+    const Component = BlockComponentRegistry[instance.block.id];
+    if (!Component) return null;
+    const variant = typeof instance.settings.variant === "string" ? instance.settings.variant : undefined;
+    return (
+        <div data-block={instance.block.id} data-variant={variant} data-width={instance.width} className="@container">
+            <ModuleErrorBoundary componentId={instance.block.id}>
+                <Component settings={instance.settings} width={instance.width} />
+            </ModuleErrorBoundary>
+        </div>
+    );
+}
+
+/** The grid each split other than two thirds and one third is drawn in. */
+const GRID: Record<Exclude<RowSplit, "2-1">, { row: string; cells: string[] }> = {
+    "full": { row: "grid grid-cols-1", cells: [""] },
+    "1": { row: "grid grid-cols-1", cells: [""] },
+    "1-1": { row: "grid grid-cols-1 lg:grid-cols-2 gap-6", cells: ["", ""] },
+    "1-2": { row: "grid grid-cols-1 lg:grid-cols-3 gap-6", cells: ["", "lg:col-span-2"] },
+    "1-1-1": { row: "grid grid-cols-1 lg:grid-cols-3 gap-6", cells: ["", "", ""] },
+    "1-1-1-1": { row: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6", cells: ["", "", "", ""] },
+};
+
+function Row({ row, welcomeAt, welcome }: { row: ResolvedRow; welcomeAt: number; welcome: React.ReactNode }) {
+    const cell = (index: number) => (index === welcomeAt ? welcome : (
+        <div className="space-y-8">
+            {row.cells[index].map((instance) => <Block key={instance.key} instance={instance} />)}
+        </div>
+    ));
+
+    if (row.split === "2-1") {
+        // Today's page, hook for hook: the spacer answers the heading every
+        // section in the main column opens with, and a row with nothing beside
+        // the main column is the main column alone, as it always was.
+        const side = row.cells[1];
+        if (side.length === 0) return cell(0);
+        return (
+            <StandardSidebarLayout
+                sidebar={
+                    <>
+                        <div aria-hidden="true" className="hidden lg:block blysis-heading-spacer" />
+                        {side.map((instance) => <Block key={instance.key} instance={instance} />)}
+                    </>
+                }
+            >
+                {cell(0)}
+            </StandardSidebarLayout>
+        );
+    }
+
+    const grid = GRID[row.split];
+    return (
+        <div data-layout-row={row.split} className={grid.row}>
+            {row.cells.map((_, index) => (
+                <div key={index} data-layout-cell className={`min-w-0 ${grid.cells[index]}`.trim()}>
+                    {cell(index)}
+                </div>
+            ))}
+        </div>
+    );
+}
+
+/** The first cell that is not narrow, where the welcome card stands. */
+function welcomeCell(rows: ResolvedRow[]): { row: number; cell: number } | null {
+    for (let row = 0; row < rows.length; row++) {
+        const cell = cellWidths(rows[row].split).findIndex((width) => width !== "narrow");
+        if (cell >= 0) return { row, cell };
+    }
+    return null;
+}
+
+/**
+ * The page's arrangement, row after row. The rows are not wrapped in an
+ * element of their own: a theme that reaches the two thirds and one third
+ * row as a direct child of its frame still finds it. The
+ * space between rows is `globals.css`'s. A `full` row spans the page column;
+ * running it from edge to edge is the theme's to do, by `data-layout-row`.
+ *
+ * The welcome card takes the first wide or full cell when the page has no
+ * content, as it took the main column before; a page with no such cell shows
+ * it above the rows.
+ */
+export function PageLayoutView({ layout, welcome }: PageLayoutViewProps) {
+    const target = layout.welcome ? welcomeCell(layout.rows) : null;
+    return (
+        <>
+            {layout.welcome && !target ? welcome : null}
+            {layout.rows.map((row, r) => (
+                <Row key={r} row={row} welcome={welcome} welcomeAt={target && target.row === r ? target.cell : -1} />
+            ))}
+        </>
+    );
+}

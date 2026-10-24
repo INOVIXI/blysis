@@ -662,9 +662,23 @@ body {
  * and `<template>` is excluded explicitly because that is what React streams
  * in place of a Suspense boundary it has not resolved yet: a plain `:empty`
  * would leave the column reserved until hydration and then collapse it.
+ *
+ * The heading spacer does not count either: it answers a heading beside it
+ * and draws nothing of its own, and while it counted, a homepage whose widgets
+ * all rendered null kept its empty third. A block's box counts only when the
+ * block drew something into it.
  */
-[data-sidebar-layout] > [data-sidebar]:not(:has(> :not(template))) {
+[data-block]:empty {
   display: none;
+}
+
+[data-sidebar-layout] > [data-sidebar]:not(:has(> :not(template, .blysis-heading-spacer, [data-block]:empty))) {
+  display: none;
+}
+
+/* The space between the rows of a page's arrangement (PageLayoutView). */
+:where([data-sidebar-layout], [data-layout-row]) + :where([data-sidebar-layout], [data-layout-row]) {
+  margin-top: 2rem;
 }
 
 @media (min-width: 64rem) {
@@ -679,7 +693,7 @@ body {
     grid-column: 1 / -1;
   }
 
-  [data-sidebar-layout]:has(> [data-sidebar] > :not(template)) > [data-sidebar-main] {
+  [data-sidebar-layout]:has(> [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty)) > [data-sidebar-main] {
     grid-column: span 2 / span 2;
   }
 }

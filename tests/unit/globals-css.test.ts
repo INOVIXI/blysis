@@ -48,6 +48,8 @@ describe("globals.css", () => {
         // SidebarLayout renders these two attributes and nothing else styles
         // them; losing the rules puts the empty-column bug straight back.
         expect(CSS).toMatch(/\[data-sidebar-layout\][^{]*\[data-sidebar-main\]/);
-        expect(CSS).toMatch(/\[data-sidebar\]:not\(:has\(> :not\(template\)\)\)/);
+        // A column holding only the heading spacer and blocks that drew
+        // nothing is empty too.
+        expect(CSS).toContain("[data-sidebar]:not(:has(> :not(template, .blysis-heading-spacer, [data-block]:empty)))");
     });
 });
