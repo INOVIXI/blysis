@@ -723,9 +723,10 @@ export function buildThemeNavGroup(activeThemeId: string): NavGroup | null {
     const themeItems: ThemeAdminNavItem[] = themeAdminRoutes[activeThemeId] ?? [];
 
     const items: NavItem[] = [
-        { label: "Appearance", href: "/admin/theme/appearance", icon: Palette },
+        { label: "Appearance", labelKey: "sidebar_appearance", href: "/admin/theme/appearance", icon: Palette },
         ...themeItems.map((i: ThemeAdminNavItem) => ({
             label: i.label,
+            labelKey: i.labelKey,
             href: adminHref(i.path),
             icon: resolveLucideIcon(i.icon) ?? Palette,
         })),

@@ -178,6 +178,8 @@ const ADMIN_ROUTES_OUT = path.join(process.cwd(), "src/core/generated/theme-admi
 interface ThemeAdminNavItem {
     path: string;
     label: string;
+    /** The admin key the theme declares for the label, so the panel's language names it. */
+    labelKey?: string;
     icon?: string;
     kind: "settings" | "custom";
     group?: string;
@@ -191,6 +193,7 @@ function emitAdminRoutesTs(themes: Record<string, ThemeManifest>): string {
             items.push({
                 path: `/theme/${group}`,
                 label: def.label,
+                labelKey: def.labelKey,
                 icon: def.icon,
                 kind: "settings",
                 group,
@@ -206,6 +209,7 @@ function emitAdminRoutesTs(themes: Record<string, ThemeManifest>): string {
         "export interface ThemeAdminNavItem {",
         "  path: string;",
         "  label: string;",
+        "  labelKey?: string;",
         "  icon?: string;",
         "  kind: 'settings' | 'custom';",
         "  group?: string;",
