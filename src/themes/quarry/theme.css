@@ -791,8 +791,12 @@ html {
   border: 0;
   border-radius: 0;
   background: none;
-  box-shadow: none;
   color: var(--blysis-color-stageForeground);
+}
+
+/* A band, not a card: it stands on no edge of its own. */
+.qr-site [data-block="store.featured"] [data-featured-product].bg-card {
+  box-shadow: none;
 }
 
 .qr-site [data-featured-product] .text-foreground {
