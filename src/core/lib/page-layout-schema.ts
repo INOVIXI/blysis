@@ -19,7 +19,7 @@ export type WidthClass = (typeof WIDTH_CLASSES)[number];
  * How a row divides the page column. `full` runs edge to edge; the others sit
  * in the column, a number per cell giving its share.
  */
-export const ROW_SPLITS = ["full", "1", "1-1", "2-1", "1-2", "1-1-1", "1-1-1-1"] as const;
+const ROW_SPLITS = ["full", "1", "1-1", "2-1", "1-2", "1-1-1", "1-1-1-1"] as const;
 
 export type RowSplit = (typeof ROW_SPLITS)[number];
 
@@ -39,7 +39,7 @@ export function cellWidths(split: RowSplit): WidthClass[] {
 }
 
 /** The ceilings a document is held to, wherever it came from. */
-export const LAYOUT_LIMITS = { rows: 30, instances: 12, hidden: 64, settings: 50 } as const;
+const LAYOUT_LIMITS = { rows: 30, instances: 12, hidden: 64, settings: 50 } as const;
 
 const blockInstanceSchema = z.object({
     /** Names this placement, so two of the same block can be told apart. */
