@@ -48,7 +48,7 @@ function Picture({ post, sizes }: { post: Article; sizes: string }) {
 /** The newest article, large: picture, category, date and reading time, headline, summary. */
 function Lead({ post }: { post: Article }) {
     const t = useTranslations("news");
-    const formatDate = useLocalDate();
+    const formatDate = useLocalDate({ dateStyle: "long" });
     const date = post.publishedAt || post.createdAt;
     return (
         <article data-news-lead className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
@@ -74,7 +74,7 @@ function Lead({ post }: { post: Article }) {
 
 /** One of the articles after the newest: a small picture, category, headline, date. */
 function Row({ post }: { post: Article }) {
-    const formatDate = useLocalDate();
+    const formatDate = useLocalDate({ dateStyle: "long" });
     const date = post.publishedAt || post.createdAt;
     return (
         <article data-news-row className="flex min-h-[7.5rem] overflow-hidden rounded-xl border border-border bg-card">

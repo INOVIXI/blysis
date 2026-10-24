@@ -77,6 +77,16 @@ describe("the news block", () => {
         expect(screen.queryByText("Headline 5")).toBeNull();
     });
 
+    // A news item is dated as an article is, with the month by name: "10/24/2026"
+    // read as a form field, and in half the world as the wrong day.
+    it("dates its articles with the month by name", async () => {
+        draw({ variant: "featured" }, [1, 2].map(article));
+        const lead = (await screen.findByRole("heading", { level: 3, name: "Headline 1" })).closest("article")!;
+        const row = screen.getByRole("heading", { level: 3, name: "Headline 2" }).closest("article")!;
+        expect(within(lead).getByText(/October 24, 2026/)).toBeTruthy();
+        expect(within(row).getByText("October 24, 2026")).toBeTruthy();
+    });
+
     it("says its heading in the reader's language and links to every article", async () => {
         draw({ variant: "featured", kicker: "sample.kicker", allLink: true }, [1].map(article));
         expect(await screen.findByText("Latest")).toBeTruthy();
