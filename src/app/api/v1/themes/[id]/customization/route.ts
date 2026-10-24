@@ -21,14 +21,6 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
     return NextResponse.json({ overrides: Object.fromEntries(rows.map(r => [r.mode, r.overrides])) });
 }
 
-const HEX = /^#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
-const SAFE_FONT = /^[A-Za-z0-9 ,._'"-]+$/;
-
-function clampString(v: unknown, max: number): string | undefined {
-    if (typeof v !== "string") return undefined;
-    return v.length > max ? v.slice(0, max) : v;
-}
-
 /**
  * Sanitize a token override (colors/fonts map, or radius/space scalar).
  */
@@ -41,7 +33,8 @@ function sanitizeTokenValue(tokenKey: "colors" | "fonts" | "radius" | "space", v
             // about CSS. A token name is rendered into a <style> block, so it
             // is checked for what it is rather than for what it is not.
             if (isUnsafeKey(k) || !isTokenName(k)) continue;
-            if (typeof v === "string" && HEX.test(v)) out[k] = v;
+            const color = sanitizeSettingValue({ type: "color" }, v);
+            if (typeof color === "string") out[k] = color;
         }
         return Object.keys(out).length > 0 ? out : undefined;
     }
@@ -50,8 +43,8 @@ function sanitizeTokenValue(tokenKey: "colors" | "fonts" | "radius" | "space", v
         const out: Record<string, string> = emptyRecord();
         for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
             if (isUnsafeKey(k) || !isTokenName(k)) continue;
-            const s = clampString(v, 100);
-            if (s !== undefined && SAFE_FONT.test(s)) out[k] = s;
+            const font = sanitizeSettingValue({ type: "font" }, v);
+            if (typeof font === "string") out[k] = font;
         }
         return Object.keys(out).length > 0 ? out : undefined;
     }
