@@ -12,6 +12,12 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.22.0 - `linkTarget` joins `@/core/sdk/theme`: an address an operator
+ * typed into a theme setting, as a link only when it is a path on this site
+ * or an http(s) address. Vanguard kept this check beside its hero, and a
+ * second theme with a button in its settings would have copied it, test and
+ * all, or gone without. Additive.
+ *
  * 5.19.0 - a theme can redraw the frame, not only the hero. `SiteShell`,
  * `PageHeader` and `AuthFrame` become names a theme's `components` may
  * replace, and `@/core/sdk/theme` gains what a theme needs to draw them:
@@ -625,4 +631,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.19.0";
+export const CORE_API_VERSION = "5.22.0";

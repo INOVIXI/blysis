@@ -34,3 +34,6 @@ export { NavbarActions } from "@/core/components/layout/NavbarActions";
 export { PageBreadcrumb } from "@/core/components/layout/PageBreadcrumb";
 export type { Crumb } from "@/core/components/layout/PageBreadcrumb";
 export { SiteName, SiteMark } from "@/core/components/ui/site-name";
+
+/** An address from a theme setting, only as a link a visitor may follow. */
+export { linkTarget } from "@/core/lib/setting-link";
