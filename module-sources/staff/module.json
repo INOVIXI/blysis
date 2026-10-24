@@ -2,7 +2,7 @@
   "id": "staff",
   "name": "Staff",
   "description": "Staff member listing and applications",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "coreVersion": "^5.0.0",
   "category": "management",
   "author": "Blysis",
@@ -72,7 +72,8 @@
         "role": "Role",
         "subtitle": "The people behind the community",
         "title": "Our team",
-        "onlineNow": "On the team right now"
+        "onlineNow": "On the team right now",
+        "blk_nobodyOnline": "Nobody from the team is online right now."
       },
       "admin": {
         "menu_staff": "Staff",
@@ -112,7 +113,8 @@
         "role": "Rol",
         "subtitle": "Topluluğun arkasındaki ekip",
         "title": "Ekibimiz",
-        "onlineNow": "Şu an ekipte"
+        "onlineNow": "Şu an ekipte",
+        "blk_nobodyOnline": "Şu an ekipten kimse çevrimiçi değil."
       },
       "admin": {
         "menu_staff": "Personel",
@@ -152,7 +154,8 @@
         "role": "Vəzifə",
         "subtitle": "İcmanın arxasında duran insanlar",
         "title": "Komandamız",
-        "onlineNow": "Hazırda komandada"
+        "onlineNow": "Hazırda komandada",
+        "blk_nobodyOnline": "Hazırda komandadan heç kim onlayn deyil."
       },
       "admin": {
         "menu_staff": "Heyət",
@@ -192,7 +195,8 @@
         "role": "Rolle",
         "subtitle": "Die Menschen hinter der Community",
         "title": "Unser Team",
-        "onlineNow": "Gerade im Team"
+        "onlineNow": "Gerade im Team",
+        "blk_nobodyOnline": "Gerade ist niemand aus dem Team online."
       },
       "admin": {
         "menu_staff": "Team",
@@ -232,7 +236,8 @@
         "role": "Cargo",
         "subtitle": "Las personas detrás de la comunidad",
         "title": "Nuestro equipo",
-        "onlineNow": "Del equipo, ahora"
+        "onlineNow": "Del equipo, ahora",
+        "blk_nobodyOnline": "Ahora mismo no hay nadie del equipo en línea."
       },
       "admin": {
         "menu_staff": "Equipo",
@@ -272,7 +277,8 @@
         "role": "Roll",
         "subtitle": "Inimesed, kes kogukonna taga on",
         "title": "Meie meeskond",
-        "onlineNow": "Praegu meeskonnas"
+        "onlineNow": "Praegu meeskonnas",
+        "blk_nobodyOnline": "Praegu pole keegi meeskonnast võrgus."
       },
       "admin": {
         "menu_staff": "Personal",
@@ -312,7 +318,8 @@
         "role": "Rôle",
         "subtitle": "Les personnes qui animent la communauté",
         "title": "Notre équipe",
-        "onlineNow": "En ce moment dans l’équipe"
+        "onlineNow": "En ce moment dans l’équipe",
+        "blk_nobodyOnline": "Personne de l'équipe n'est en ligne pour le moment."
       },
       "admin": {
         "menu_staff": "Équipe",
@@ -352,7 +359,8 @@
         "role": "Ruolo",
         "subtitle": "Le persone dietro la community",
         "title": "Il nostro team",
-        "onlineNow": "Ora nello staff"
+        "onlineNow": "Ora nello staff",
+        "blk_nobodyOnline": "Al momento nessuno del team è online."
       },
       "admin": {
         "menu_staff": "Staff",
@@ -392,7 +400,8 @@
         "role": "Rola",
         "subtitle": "Ludzie stojący za społecznością",
         "title": "Nasz zespół",
-        "onlineNow": "Teraz w ekipie"
+        "onlineNow": "Teraz w ekipie",
+        "blk_nobodyOnline": "Nikt z zespołu nie jest teraz online."
       },
       "admin": {
         "menu_staff": "Zespół",
@@ -432,7 +441,8 @@
         "role": "Cargo",
         "subtitle": "As pessoas por trás da comunidade",
         "title": "Nossa equipe",
-        "onlineNow": "Na equipe agora"
+        "onlineNow": "Na equipe agora",
+        "blk_nobodyOnline": "Ninguém da equipe está online agora."
       },
       "admin": {
         "menu_staff": "Equipe",
@@ -472,7 +482,8 @@
         "role": "Роль",
         "subtitle": "Люди, которые стоят за сообществом",
         "title": "Наша команда",
-        "onlineNow": "Сейчас в команде"
+        "onlineNow": "Сейчас в команде",
+        "blk_nobodyOnline": "Сейчас никого из команды нет в сети."
       },
       "admin": {
         "menu_staff": "Сотрудники",
@@ -512,7 +523,8 @@
         "role": "职位",
         "subtitle": "社区背后的人",
         "title": "我们的团队",
-        "onlineNow": "当前在线的团队成员"
+        "onlineNow": "当前在线的团队成员",
+        "blk_nobodyOnline": "目前团队中没有人在线。"
       },
       "admin": {
         "menu_staff": "员工",
@@ -556,6 +568,24 @@
       "href": "/staff",
       "icon": "Users",
       "position": 100
+    }
+  ],
+  "blocks": [
+    {
+      "id": "online",
+      "component": "components/OnlineCard",
+      "widths": [
+        "narrow",
+        "wide"
+      ],
+      "defaultOrder": 50,
+      "defaultVisible": false,
+      "settings": {
+        "title": {
+          "type": "text",
+          "max": 80
+        }
+      }
     }
   ]
 }
