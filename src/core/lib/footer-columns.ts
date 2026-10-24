@@ -179,7 +179,9 @@ export function drawnFooterColumns(
  * The catch-all is the first column claiming no section; failing that, the
  * first column; failing that, one made here. A link is never dropped for
  * naming a section nobody adopted, because the module chose that word and
- * core has no say in it.
+ * core has no say in it. It is left out only when the footer already links
+ * to its page, in the operator's words or another module's: the same page
+ * twice in one footer reads as two places.
  */
 export function placeModuleLinks(
     columns: FooterColumn[],
@@ -192,8 +194,11 @@ export function placeModuleLinks(
         placed.push({ title: null, titleKey: "quickLinks", section: null, links: [] });
     }
     const catchAll = placed.find((column) => column.section === null) ?? placed[0];
+    const linked = new Set(placed.flatMap((column) => column.links.map((link) => link.href)));
 
     for (const link of moduleLinks) {
+        if (linked.has(link.href)) continue;
+        linked.add(link.href);
         const section = text(link.section, MAX_TITLE);
         const home = section === null
             ? catchAll
