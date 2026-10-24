@@ -60,7 +60,9 @@ for (const path of PAGES) {
                     const box = child.getBoundingClientRect();
                     return box.width > viewport + 1 || box.right > viewport + 1;
                 }))
-                .map((el) => `${el.tagName.toLowerCase()}.${el.className.toString().split(" ").slice(0, 3).join(".")}`);
+                // The attribute, not `className`: on an SVG element that is an
+                // SVGAnimatedString, and an offender was named "[object ...]".
+                .map((el) => `${el.tagName.toLowerCase()}.${(el.getAttribute("class") ?? "").split(" ").slice(0, 3).join(".")}`);
             return { viewport, documentWidth: document.documentElement.scrollWidth, offenders };
         });
 
