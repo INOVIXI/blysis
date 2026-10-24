@@ -1,4 +1,6 @@
 import { describe, it, expect } from "vitest";
+import fs from "node:fs";
+import path from "node:path";
 import { sanitizeSettingValue, settingDefault } from "@/core/lib/setting-field-value";
 import type { ThemeFieldDef } from "@/core/lib/theme-manifest-schema";
 
@@ -51,5 +53,15 @@ describe("a setting value", () => {
         expect(settingDefault(field({ type: "toggle" }))).toBe(false);
         expect(settingDefault(field({ type: "select", options: [{ value: "grid", label: "Grid" }, { value: "list", label: "List" }] }))).toBe("grid");
         expect(settingDefault(field({ type: "text" }))).toBe("");
+    });
+
+    it("has no second checker in a theme route", () => {
+        // The customization route kept its colour and font checks after the
+        // field checks moved, which is how the two copies started to differ.
+        for (const route of ["customization/route.ts", "settings/[group]/route.ts"]) {
+            const source = fs.readFileSync(path.join(process.cwd(), "src/app/api/v1/themes/[id]", route), "utf8");
+            expect(source, route).toContain("sanitizeSettingValue");
+            expect(source, route).not.toMatch(/const (HEX|SAFE_FONT)|function clampString/);
+        }
     });
 });

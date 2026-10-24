@@ -88,6 +88,29 @@ describe("the homepage's arrangement", () => {
         expect(ids(layout.rows[0].cells[1])).toEqual(["m.a", "m.b"]);
     });
 
+    it("gives a block it adds a key no placement on the page has", () => {
+        const saved: LayoutDocument = {
+            rows: [{ split: "2-1", cells: [[], [{ key: "m-b", block: "m.a" }]], rest: 1 }],
+        };
+        const layout = resolve({ blocks: [block("m.a"), block("m.b")], saved });
+        const keys = layout.rows.flatMap((row) => row.cells.flat().map((i) => i.key));
+        expect(ids(layout.rows[0].cells[1])).toEqual(["m.a", "m.b"]);
+        expect(new Set(keys).size).toBe(keys.length);
+
+        const noRest: LayoutDocument = { rows: [{ split: "1", cells: [[{ key: "m-a", block: "m.x" }]] }] };
+        const own = resolve({ blocks: [section("m.x", 0), block("m.a")], saved: noRest });
+        const ownKeys = own.rows.flatMap((row) => row.cells.flat().map((i) => i.key));
+        expect(ownKeys).toHaveLength(2);
+        expect(new Set(ownKeys).size).toBe(2);
+    });
+
+    it("stands a block that needs the whole width above today's page", () => {
+        const banner = block("m.banner", { widths: ["full"] });
+        const layout = resolve({ blocks: [section("m.x", 0), block("m.a"), banner] });
+        expect(layout.rows.map((row) => row.split)).toEqual(["full", "2-1"]);
+        expect(ids(layout.rows[0].cells[0])).toEqual(["m.banner"]);
+    });
+
     it("gives an unnamed block a row of its own when the document has no rest cell", () => {
         const saved: LayoutDocument = { rows: [{ split: "1", cells: [[{ key: "x", block: "m.x" }]] }] };
         const layout = resolve({ blocks: [section("m.x", 0), block("m.a")], saved });

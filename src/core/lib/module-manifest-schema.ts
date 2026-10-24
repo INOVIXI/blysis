@@ -1100,7 +1100,21 @@ export const moduleManifestSchema = z.object({
     userDataExport: z.array(userDataExportEntry).max(50).optional(),
     moderationProviders: z.array(moderationProvider).max(20).optional(),
     csp: cspContribution.optional(),
-}).strict();
+}).strict().superRefine((m, ctx) => {
+    // Every widget and section is also a block under its own id, unless a
+    // declared block replaces it (page-blocks.ts). Two of them under one id
+    // would be one block in the registry, drawing whichever was listed last.
+    const replaced = new Set((m.blocks ?? []).flatMap((b) => b.replaces ?? []));
+    const ids = [
+        ...(m.blocks ?? []).map((b) => b.id),
+        ...[...(m.widgets ?? []), ...(m.homepageSections ?? [])].map((e) => e.id).filter((id) => !replaced.has(id)),
+    ];
+    const seen = new Set<string>();
+    for (const id of ids) {
+        if (seen.has(id)) ctx.addIssue({ code: "custom", path: ["blocks"], message: `"${id}" names two blocks, widgets or sections` });
+        seen.add(id);
+    }
+});
 
 export type ValidatedModuleManifest = z.infer<typeof moduleManifestSchema>;
 

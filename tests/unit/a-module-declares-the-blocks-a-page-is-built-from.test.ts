@@ -53,6 +53,22 @@ describe("a module's blocks", () => {
         expect(parse(many).success).toBe(false);
     });
 
+    it("each have a name no other block of the module has", () => {
+        // A widget and a section are blocks under their own ids, so two of
+        // them sharing an id are one block that draws whichever came last.
+        const widget = { id: "NewsSection", label: "News", component: "widgets/News", defaultOrder: 1, defaultVisible: true };
+        const section = { id: "NewsSection", type: "content", component: "sections/News", order: 1 };
+        expect(parse([NEWS, NEWS]).success).toBe(false);
+        expect(moduleManifestSchema.safeParse({ ...BASE, widgets: [widget], homepageSections: [section] }).success).toBe(false);
+        expect(moduleManifestSchema.safeParse({ ...BASE, blocks: [{ ...NEWS, id: "Other", replaces: [] }], widgets: [{ ...widget, id: "Other" }] }).success).toBe(false);
+    });
+
+    it("may share a name with the widget or section they replace", () => {
+        const section = { id: "News", type: "content", component: "sections/News", order: 1 };
+        const parsed = moduleManifestSchema.safeParse({ ...BASE, blocks: [{ ...NEWS, id: "News", replaces: ["News"] }], homepageSections: [section] });
+        expect(parsed.success, JSON.stringify(parsed.error?.issues)).toBe(true);
+    });
+
     it("have their component file checked like any other", () => {
         const parsed = parse([NEWS]);
         expect(parsed.success).toBe(true);
