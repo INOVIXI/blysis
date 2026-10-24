@@ -675,78 +675,250 @@ html {
   gap: 8px;
 }
 
-/* The sign-in screens */
-
+/*
+ * The sign-in screens, laid out like a game's launcher: the menu in a rail,
+ * the picture in the middle with the server's state and an aside on it, the
+ * form in a panel. The rail and the picture stand on the hero's ground in
+ * both modes; the panel is the page's.
+ */
 .qr-auth {
-  position: relative;
-  isolation: isolate;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) minmax(360px, 460px);
   min-height: 100vh;
-  overflow: hidden;
   background: var(--blysis-color-stage);
+}
+
+.qr-auth-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 12px;
+  background: color-mix(in srgb, var(--blysis-color-stage) 70%, black);
+}
+
+.qr-auth-rail-home {
+  margin-bottom: 16px;
+}
+
+.qr-auth-rail-home img {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.qr-auth-rail-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 72px;
+  padding: 10px 2px;
+  border-radius: 4px;
+  color: var(--blysis-color-stageMuted);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.qr-auth-rail-link:hover {
+  background: color-mix(in srgb, var(--blysis-color-stage) 85%, white);
   color: var(--blysis-color-stageForeground);
 }
 
-.qr-auth::before {
+.qr-auth-scene {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 32px 40px 40px;
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-auth-picture {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Dark under the aside, the picture clear above it. */
+.qr-auth-scene::after {
   content: "";
   position: absolute;
   z-index: -1;
   inset: 0;
-  background: color-mix(in srgb, var(--blysis-color-stage) 55%, transparent);
+  background: linear-gradient(0deg, color-mix(in srgb, var(--blysis-color-stage) 88%, transparent), transparent 55%);
 }
 
-.qr-auth-frame {
-  max-width: 1200px;
-  min-height: 100vh;
-  margin: 0 auto;
-  padding: 24px 16px 48px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+.qr-auth-aside {
+  max-width: 480px;
 }
 
-.qr-auth-top {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+.qr-auth-aside :is([data-latest-article], [data-where-to-play]) {
+  border-radius: 4px;
+  background: var(--blysis-color-background);
+  color: var(--blysis-color-foreground);
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
 }
 
-.qr-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.qr-brand-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-family: var(--blysis-font-heading);
-  font-weight: 900;
-  font-size: 1.25rem;
+.qr-auth-aside :is([data-latest-article], [data-where-to-play]) h2 {
+  font-size: 1.375rem;
   text-transform: uppercase;
 }
 
-.qr-auth-home {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--blysis-color-stageMuted);
+.qr-auth-aside [data-latest-article] h2 {
+  font-size: 1.625rem;
+}
+
+.qr-auth-aside [data-server-row] {
+  border-radius: 3px;
+  background: var(--blysis-color-card);
+  font-size: 0.9375rem;
   font-weight: 700;
 }
 
-.qr-auth-home:hover {
-  color: var(--blysis-color-stageForeground);
+.qr-auth-aside [data-server-row] [data-state] {
+  font-family: var(--blysis-font-heading);
+  font-size: 0.8125rem;
 }
 
-.qr-auth-card {
-  width: 100%;
-  max-width: 440px;
-  margin: auto;
+.qr-auth-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px 40px;
+  background: var(--blysis-color-background);
   color: var(--blysis-color-foreground);
 }
 
+.qr-auth-kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--blysis-color-primary);
+  font-family: var(--blysis-font-heading);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.qr-auth-kicker::before {
+  content: "";
+  width: 18px;
+  height: 6px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+/* The page hands over a card; in the panel its words stand on the panel. */
 .qr-auth-card .blysis-card {
-  box-shadow: 0 6px 0 var(--blysis-color-edge);
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.qr-auth-card .blysis-card > div {
+  padding: 0;
+  border: 0;
+}
+
+.qr-auth-card .blysis-card > div + div {
+  margin-top: 24px;
+}
+
+.qr-auth-card .blysis-card > div:first-child > * {
+  text-align: left;
+}
+
+.qr-auth-card h1 {
+  font-size: 2.125rem;
+  line-height: 1.1;
+}
+
+/* The way to the other form reads on from the button, not centred under it. */
+.qr-auth-card .blysis-card p.text-center {
+  text-align: left;
+}
+
+.qr-auth-card button[type="submit"] {
+  min-height: 64px;
+  font-size: 1.25rem;
+}
+
+.qr-auth-address {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 4px;
+  background: var(--blysis-color-stage);
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-auth-address p {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  color: var(--blysis-color-stageMuted);
+  font-size: 0.75rem;
+}
+
+.qr-auth-address .qr-address {
+  font-size: 1rem;
+}
+
+.qr-auth-address .blysis-button.bg-secondary {
+  --qr-edge: color-mix(in srgb, var(--blysis-color-accent) 55%, black);
+  background: var(--blysis-color-accent);
+  color: var(--blysis-color-accentForeground);
+}
+
+/*
+ * A phone or a narrow window: the rail becomes a row across the top, the
+ * form comes next and the picture follows it as a band.
+ */
+@media (max-width: 63.999rem) {
+  .qr-auth {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: auto;
+  }
+
+  .qr-auth-rail {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 10px 12px;
+  }
+
+  .qr-auth-rail-home {
+    margin: 0 8px 0 0;
+  }
+
+  .qr-auth-rail-link {
+    flex: none;
+  }
+
+  .qr-auth-panel {
+    order: 2;
+    padding: 28px 16px;
+  }
+
+  .qr-auth-scene {
+    order: 3;
+    min-height: 360px;
+    padding: 24px 16px;
+  }
+
+  .qr-auth-address {
+    margin-top: 0;
+  }
 }

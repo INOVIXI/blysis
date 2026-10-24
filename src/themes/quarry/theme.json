@@ -334,6 +334,23 @@
           "labelKey": "theme_quarry_stats_tile3Icon"
         }
       }
+    },
+    "auth": {
+      "label": "Sign-in screens",
+      "icon": "LogIn",
+      "labelKey": "theme_quarry_auth",
+      "fields": {
+        "loginImage": {
+          "type": "image",
+          "label": "Picture beside the sign-in form",
+          "labelKey": "theme_quarry_auth_loginImage"
+        },
+        "registerImage": {
+          "type": "image",
+          "label": "Picture beside the sign-up form",
+          "labelKey": "theme_quarry_auth_registerImage"
+        }
+      }
     }
   },
   "layouts": {
@@ -500,7 +517,10 @@
         "theme_quarry_color_stage": "Hero background",
         "theme_quarry_color_stageForeground": "Hero text",
         "theme_quarry_color_stageMuted": "Hero muted text",
-        "theme_quarry_color_highlight": "Highlight"
+        "theme_quarry_color_highlight": "Highlight",
+        "theme_quarry_auth": "Sign-in screens",
+        "theme_quarry_auth_loginImage": "Picture beside the sign-in form",
+        "theme_quarry_auth_registerImage": "Picture beside the sign-up form"
       },
       "quarry": {
         "heroTag": "Season open",
@@ -519,7 +539,9 @@
         "shopTitle": "From the store",
         "votersTitle": "Top voters this month",
         "teamTitle": "Team online",
-        "forumTitle": "New on the forum"
+        "forumTitle": "New on the forum",
+        "authKickerLogin": "Account",
+        "authKickerRegister": "New player"
       }
     },
     "tr": {
@@ -547,7 +569,10 @@
         "theme_quarry_color_stage": "Hero arka planı",
         "theme_quarry_color_stageForeground": "Hero yazısı",
         "theme_quarry_color_stageMuted": "Hero soluk yazısı",
-        "theme_quarry_color_highlight": "Öne çıkan renk"
+        "theme_quarry_color_highlight": "Öne çıkan renk",
+        "theme_quarry_auth": "Giriş ekranları",
+        "theme_quarry_auth_loginImage": "Giriş formunun yanındaki görsel",
+        "theme_quarry_auth_registerImage": "Kayıt formunun yanındaki görsel"
       },
       "quarry": {
         "heroTag": "Sezon açık",
@@ -566,7 +591,9 @@
         "shopTitle": "Mağazadan",
         "votersTitle": "Ayın oy liderleri",
         "teamTitle": "Çevrimiçi ekip",
-        "forumTitle": "Forumda yeni"
+        "forumTitle": "Forumda yeni",
+        "authKickerLogin": "Hesap",
+        "authKickerRegister": "Yeni oyuncu"
       }
     },
     "az": {
@@ -594,7 +621,10 @@
         "theme_quarry_color_stage": "Hero fonu",
         "theme_quarry_color_stageForeground": "Hero mətni",
         "theme_quarry_color_stageMuted": "Hero solğun mətni",
-        "theme_quarry_color_highlight": "Seçilən rəng"
+        "theme_quarry_color_highlight": "Seçilən rəng",
+        "theme_quarry_auth": "Giriş ekranları",
+        "theme_quarry_auth_loginImage": "Giriş formunun yanındakı şəkil",
+        "theme_quarry_auth_registerImage": "Qeydiyyat formunun yanındakı şəkil"
       },
       "quarry": {
         "heroTag": "Mövsüm açıqdır",
@@ -613,7 +643,9 @@
         "shopTitle": "Mağazadan",
         "votersTitle": "Ayın səs liderləri",
         "teamTitle": "Onlayn komanda",
-        "forumTitle": "Forumda yeni"
+        "forumTitle": "Forumda yeni",
+        "authKickerLogin": "Hesab",
+        "authKickerRegister": "Yeni oyunçu"
       }
     },
     "de": {
@@ -641,7 +673,10 @@
         "theme_quarry_color_stage": "Hero-Hintergrund",
         "theme_quarry_color_stageForeground": "Hero-Text",
         "theme_quarry_color_stageMuted": "Gedämpfter Hero-Text",
-        "theme_quarry_color_highlight": "Hervorhebung"
+        "theme_quarry_color_highlight": "Hervorhebung",
+        "theme_quarry_auth": "Anmeldeseiten",
+        "theme_quarry_auth_loginImage": "Bild neben dem Anmeldeformular",
+        "theme_quarry_auth_registerImage": "Bild neben dem Registrierungsformular"
       },
       "quarry": {
         "heroTag": "Saison offen",
@@ -660,7 +695,9 @@
         "shopTitle": "Aus dem Shop",
         "votersTitle": "Top-Wähler des Monats",
         "teamTitle": "Team online",
-        "forumTitle": "Neu im Forum"
+        "forumTitle": "Neu im Forum",
+        "authKickerLogin": "Konto",
+        "authKickerRegister": "Neuer Spieler"
       }
     },
     "es": {
@@ -688,7 +725,10 @@
         "theme_quarry_color_stage": "Fondo del hero",
         "theme_quarry_color_stageForeground": "Texto del hero",
         "theme_quarry_color_stageMuted": "Texto atenuado del hero",
-        "theme_quarry_color_highlight": "Resalte"
+        "theme_quarry_color_highlight": "Resalte",
+        "theme_quarry_auth": "Pantallas de acceso",
+        "theme_quarry_auth_loginImage": "Imagen junto al formulario de acceso",
+        "theme_quarry_auth_registerImage": "Imagen junto al formulario de registro"
       },
       "quarry": {
         "heroTag": "Temporada abierta",
@@ -707,7 +747,9 @@
         "shopTitle": "De la tienda",
         "votersTitle": "Más votantes del mes",
         "teamTitle": "Equipo en línea",
-        "forumTitle": "Nuevo en el foro"
+        "forumTitle": "Nuevo en el foro",
+        "authKickerLogin": "Cuenta",
+        "authKickerRegister": "Nuevo jugador"
       }
     },
     "et": {
@@ -735,7 +777,10 @@
         "theme_quarry_color_stage": "Hero taust",
         "theme_quarry_color_stageForeground": "Hero tekst",
         "theme_quarry_color_stageMuted": "Hero summutatud tekst",
-        "theme_quarry_color_highlight": "Esiletõste"
+        "theme_quarry_color_highlight": "Esiletõste",
+        "theme_quarry_auth": "Sisselogimise vaated",
+        "theme_quarry_auth_loginImage": "Pilt sisselogimisvormi kõrval",
+        "theme_quarry_auth_registerImage": "Pilt registreerimisvormi kõrval"
       },
       "quarry": {
         "heroTag": "Hooaeg on avatud",
@@ -754,7 +799,9 @@
         "shopTitle": "Poest",
         "votersTitle": "Kuu aktiivseimad hääletajad",
         "teamTitle": "Meeskond võrgus",
-        "forumTitle": "Uus foorumis"
+        "forumTitle": "Uus foorumis",
+        "authKickerLogin": "Konto",
+        "authKickerRegister": "Uus mängija"
       }
     },
     "fr": {
@@ -782,7 +829,10 @@
         "theme_quarry_color_stage": "Fond du hero",
         "theme_quarry_color_stageForeground": "Texte du hero",
         "theme_quarry_color_stageMuted": "Texte atténué du hero",
-        "theme_quarry_color_highlight": "Mise en avant"
+        "theme_quarry_color_highlight": "Mise en avant",
+        "theme_quarry_auth": "Écrans de connexion",
+        "theme_quarry_auth_loginImage": "Image à côté du formulaire de connexion",
+        "theme_quarry_auth_registerImage": "Image à côté du formulaire d'inscription"
       },
       "quarry": {
         "heroTag": "Saison ouverte",
@@ -801,7 +851,9 @@
         "shopTitle": "De la boutique",
         "votersTitle": "Meilleurs votants du mois",
         "teamTitle": "Équipe en ligne",
-        "forumTitle": "Nouveau sur le forum"
+        "forumTitle": "Nouveau sur le forum",
+        "authKickerLogin": "Compte",
+        "authKickerRegister": "Nouveau joueur"
       }
     },
     "it": {
@@ -829,7 +881,10 @@
         "theme_quarry_color_stage": "Sfondo dell'hero",
         "theme_quarry_color_stageForeground": "Testo dell'hero",
         "theme_quarry_color_stageMuted": "Testo attenuato dell'hero",
-        "theme_quarry_color_highlight": "Evidenziazione"
+        "theme_quarry_color_highlight": "Evidenziazione",
+        "theme_quarry_auth": "Schermate di accesso",
+        "theme_quarry_auth_loginImage": "Immagine accanto al modulo di accesso",
+        "theme_quarry_auth_registerImage": "Immagine accanto al modulo di registrazione"
       },
       "quarry": {
         "heroTag": "Stagione aperta",
@@ -848,7 +903,9 @@
         "shopTitle": "Dal negozio",
         "votersTitle": "Migliori votanti del mese",
         "teamTitle": "Staff online",
-        "forumTitle": "Novità sul forum"
+        "forumTitle": "Novità sul forum",
+        "authKickerLogin": "Account",
+        "authKickerRegister": "Nuovo giocatore"
       }
     },
     "pl": {
@@ -876,7 +933,10 @@
         "theme_quarry_color_stage": "Tło hero",
         "theme_quarry_color_stageForeground": "Tekst hero",
         "theme_quarry_color_stageMuted": "Wyciszony tekst hero",
-        "theme_quarry_color_highlight": "Wyróżnienie"
+        "theme_quarry_color_highlight": "Wyróżnienie",
+        "theme_quarry_auth": "Ekrany logowania",
+        "theme_quarry_auth_loginImage": "Obraz obok formularza logowania",
+        "theme_quarry_auth_registerImage": "Obraz obok formularza rejestracji"
       },
       "quarry": {
         "heroTag": "Sezon otwarty",
@@ -895,7 +955,9 @@
         "shopTitle": "Ze sklepu",
         "votersTitle": "Najaktywniejsi głosujący miesiąca",
         "teamTitle": "Ekipa online",
-        "forumTitle": "Nowe na forum"
+        "forumTitle": "Nowe na forum",
+        "authKickerLogin": "Konto",
+        "authKickerRegister": "Nowy gracz"
       }
     },
     "pt": {
@@ -923,7 +985,10 @@
         "theme_quarry_color_stage": "Fundo do hero",
         "theme_quarry_color_stageForeground": "Texto do hero",
         "theme_quarry_color_stageMuted": "Texto atenuado do hero",
-        "theme_quarry_color_highlight": "Realce"
+        "theme_quarry_color_highlight": "Realce",
+        "theme_quarry_auth": "Telas de acesso",
+        "theme_quarry_auth_loginImage": "Imagem ao lado do formulário de acesso",
+        "theme_quarry_auth_registerImage": "Imagem ao lado do formulário de cadastro"
       },
       "quarry": {
         "heroTag": "Temporada aberta",
@@ -942,7 +1007,9 @@
         "shopTitle": "Da loja",
         "votersTitle": "Quem mais votou no mês",
         "teamTitle": "Equipe online",
-        "forumTitle": "Novo no fórum"
+        "forumTitle": "Novo no fórum",
+        "authKickerLogin": "Conta",
+        "authKickerRegister": "Novo jogador"
       }
     },
     "ru": {
@@ -970,7 +1037,10 @@
         "theme_quarry_color_stage": "Фон hero",
         "theme_quarry_color_stageForeground": "Текст hero",
         "theme_quarry_color_stageMuted": "Приглушённый текст hero",
-        "theme_quarry_color_highlight": "Выделение"
+        "theme_quarry_color_highlight": "Выделение",
+        "theme_quarry_auth": "Экраны входа",
+        "theme_quarry_auth_loginImage": "Картинка рядом с формой входа",
+        "theme_quarry_auth_registerImage": "Картинка рядом с формой регистрации"
       },
       "quarry": {
         "heroTag": "Сезон открыт",
@@ -989,7 +1059,9 @@
         "shopTitle": "Из магазина",
         "votersTitle": "Лидеры голосования месяца",
         "teamTitle": "Команда в сети",
-        "forumTitle": "Новое на форуме"
+        "forumTitle": "Новое на форуме",
+        "authKickerLogin": "Аккаунт",
+        "authKickerRegister": "Новый игрок"
       }
     },
     "zh": {
@@ -1017,7 +1089,10 @@
         "theme_quarry_color_stage": "主视觉背景",
         "theme_quarry_color_stageForeground": "主视觉文字",
         "theme_quarry_color_stageMuted": "主视觉柔和文字",
-        "theme_quarry_color_highlight": "突出色"
+        "theme_quarry_color_highlight": "突出色",
+        "theme_quarry_auth": "登录页面",
+        "theme_quarry_auth_loginImage": "登录表单旁的图片",
+        "theme_quarry_auth_registerImage": "注册表单旁的图片"
       },
       "quarry": {
         "heroTag": "赛季开放中",
@@ -1036,7 +1111,9 @@
         "shopTitle": "商店精选",
         "votersTitle": "本月投票榜",
         "teamTitle": "在线团队",
-        "forumTitle": "论坛新帖"
+        "forumTitle": "论坛新帖",
+        "authKickerLogin": "账户",
+        "authKickerRegister": "新玩家"
       }
     }
   }
