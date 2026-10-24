@@ -183,7 +183,7 @@ describe("the two screens this cost the most", () => {
     });
 
     it("widget settings cannot be saved over settings it never read", () => {
-        const source = fs.readFileSync(path.join(ROOT, "src/app/[locale]/(admin)/admin/settings/widgets/page.tsx"), "utf8");
+        const source = fs.readFileSync(path.join(ROOT, "src/app/[locale]/(admin)/admin/settings/widgets/WidgetSettingsScreen.tsx"), "utf8");
         // The save button is offered only once the current visibility has
         // actually been read, whichever corner of the screen it is drawn in.
         const guard = /sortedWidgets\.length > 0 && !loadFailed \?[\s\S]{0,400}?widgets_save/;

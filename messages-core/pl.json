@@ -1203,6 +1203,7 @@
     "widgets_fromModule": "Dostarcza {module}",
     "widgets_hidden": "Ukryte",
     "widgets_needsContent": "Włączony widżet nadal jest pusty, dopóki jego moduł nie ma dla niego treści: dopóki nie powstanie pierwszy rekord, widżet nie ma co pokazać.",
+    "widgets_themeArranges": "{theme} sam układa stronę główną. Widżet wyłączony tutaj nie pojawia się nigdzie, ale kolejność ustawiona tutaj dotyczy tylko widżetów, które {theme} zostawia stronie.",
     "widgets_none": "Jeszcze nie ma widżetów. Zainstaluj moduł, który je dodaje.",
     "widgets_save": "Zapisz",
     "widgets_saved": "Zapisano ustawienia widżetów",

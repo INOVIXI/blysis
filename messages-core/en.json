@@ -1203,6 +1203,7 @@
     "widgets_fromModule": "Provided by {module}",
     "widgets_hidden": "Hidden",
     "widgets_needsContent": "A widget that is switched on still renders nothing while its module has no content for it: until the first record exists, there is nothing for the widget to show.",
+    "widgets_themeArranges": "{theme} arranges the homepage itself. A widget switched off here is shown nowhere, but the order here only places the widgets {theme} leaves to the page.",
     "widgets_none": "No widgets yet. Install a module that contributes one.",
     "widgets_save": "Save",
     "widgets_saved": "Widget settings saved",

@@ -1203,6 +1203,7 @@
     "widgets_fromModule": "Pakkus {module}",
     "widgets_hidden": "Peidetud",
     "widgets_needsContent": "Sisselülitatud vidin ei kuva veel midagi, kui selle moodul pole tema jaoks sisu andnud: enne esimese kirje olemasolu pole vidinal midagi näidata.",
+    "widgets_themeArranges": "{theme} paigutab avalehe ise. Siin välja lülitatud vidinat ei näidata kusagil, kuid siinne järjekord kehtib ainult vidinatele, mille {theme} lehele jätab.",
     "widgets_none": "Vidinaid veel pole. Paigalda moodul, mis mõnda lisab.",
     "widgets_save": "Salvesta",
     "widgets_saved": "Vidina seaded salvestatud",

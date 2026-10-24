@@ -65,6 +65,32 @@ describe("the homepage's arrangement", () => {
         expect(resolve({ blocks, themeLayout: theme }).rows[0].split).toBe("1-1");
     });
 
+    describe("under a theme's arrangement, Settings > Widgets still", () => {
+        const placed: LayoutDocument = { rows: [{ split: "2-1", cells: [[], [{ key: "a", block: "m.a" }]], rest: 1 }] };
+
+        it("hides a widget it switched off, wherever the theme put it", () => {
+            const layout = resolve({ blocks: [block("m.a")], themeLayout: placed, settings: { widget_visibility: { a: false } } });
+            expect(ids(layout.rows[0].cells[1])).toEqual([]);
+        });
+
+        it("leaves a theme's widget standing when nothing was switched", () => {
+            const layout = resolve({ blocks: [block("m.a", { defaultVisible: false })], themeLayout: placed });
+            expect(ids(layout.rows[0].cells[1])).toEqual(["m.a"]);
+        });
+
+        it("orders the widgets the theme leaves to the page", () => {
+            const open: LayoutDocument = { rows: [{ split: "2-1", cells: [[], []], rest: 1 }] };
+            const layout = resolve({ blocks: [block("m.a"), block("m.b"), block("m.c")], themeLayout: open, settings: { widget_order: ["c", "a"] } });
+            expect(ids(layout.rows[0].cells[1])).toEqual(["m.c", "m.a", "m.b"]);
+        });
+
+        it("adds a widget it switched on that is off by default", () => {
+            const open: LayoutDocument = { rows: [{ split: "2-1", cells: [[], []], rest: 1 }] };
+            const layout = resolve({ blocks: [block("m.a", { defaultVisible: false })], themeLayout: open, settings: { widget_visibility: { a: true } } });
+            expect(ids(layout.rows[0].cells[1])).toEqual(["m.a"]);
+        });
+    });
+
     it("drops a disabled module's block", () => {
         const layout = resolve({ blocks: [block("on.a"), block("off.b")], enabled: (m) => m !== "off" });
         expect(ids(layout.rows[0].cells[1])).toEqual(["on.a"]);

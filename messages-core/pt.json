@@ -1203,6 +1203,7 @@
     "widgets_fromModule": "Fornecido por {module}",
     "widgets_hidden": "Oculto",
     "widgets_needsContent": "Um widget ligado ainda não aparece enquanto o módulo dele não tiver conteúdo: até o primeiro registro existir, não há o que o widget mostrar.",
+    "widgets_themeArranges": "{theme} organiza a página inicial por conta própria. Um widget desligado aqui não aparece em lugar nenhum, mas a ordem daqui só posiciona os widgets que {theme} deixa para a página.",
     "widgets_none": "Nenhum widget ainda. Instale um módulo que forneça um.",
     "widgets_save": "Salvar",
     "widgets_saved": "Configurações dos widgets salvas",

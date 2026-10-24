@@ -124,7 +124,7 @@ describe("the manifest contract", () => {
 
 describe("the screen that renders it", () => {
     const page = fs.readFileSync(
-        path.join(ROOT, "src/app/[locale]/(admin)/admin/settings/widgets/page.tsx"),
+        path.join(ROOT, "src/app/[locale]/(admin)/admin/settings/widgets/WidgetSettingsScreen.tsx"),
         "utf8",
     );
 

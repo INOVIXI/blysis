@@ -1203,6 +1203,7 @@
     "widgets_fromModule": "由 {module} 提供",
     "widgets_hidden": "已隐藏",
     "widgets_needsContent": "已开启的小组件在其模块尚无内容时仍不会显示：在第一条记录产生之前，小组件没有可显示的内容。",
+    "widgets_themeArranges": "{theme} 自行安排首页。在此关闭的小组件不会在任何位置显示，但此处的顺序只作用于 {theme} 留给页面的小组件。",
     "widgets_none": "暂无小组件。请安装提供小组件的模块。",
     "widgets_save": "保存",
     "widgets_saved": "小组件设置已保存",

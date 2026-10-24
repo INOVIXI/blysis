@@ -1203,6 +1203,7 @@
     "widgets_fromModule": "Proporcionado por {module}",
     "widgets_hidden": "Oculto",
     "widgets_needsContent": "Un widget activado sigue sin mostrar nada mientras su módulo no tenga contenido para él: hasta que exista el primer registro, no hay nada que mostrar.",
+    "widgets_themeArranges": "{theme} organiza la página de inicio por sí mismo. Un widget desactivado aquí no se muestra en ningún sitio, pero el orden de aquí solo coloca los widgets que {theme} deja a la página.",
     "widgets_none": "Todavía no hay widgets. Instala un módulo que aporte alguno.",
     "widgets_save": "Guardar",
     "widgets_saved": "Ajustes de widgets guardados",

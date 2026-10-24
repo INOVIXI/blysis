@@ -1203,6 +1203,7 @@
     "widgets_fromModule": "{module} tarafından sağlanır",
     "widgets_hidden": "Gizli",
     "widgets_needsContent": "Açık bir bileşen, modülünde gösterecek içerik yoksa yine de görünmez: ilk kayıt oluşana kadar gösterecek bir şey yoktur.",
+    "widgets_themeArranges": "{theme} ana sayfayı kendisi diziyor. Burada kapattığınız bileşen hiçbir yerde gösterilmez; buradaki sıra ise yalnızca {theme} temasının sayfaya bıraktığı bileşenlere uygulanır.",
     "widgets_none": "Henüz bileşen yok. Bileşen sağlayan bir modül kurun.",
     "widgets_save": "Kaydet",
     "widgets_saved": "Bileşen ayarları kaydedildi",
