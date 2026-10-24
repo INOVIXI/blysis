@@ -5,8 +5,7 @@
  * nothing to show leaves that box empty and hidden. Spacing the column with
  * `space-y` puts a margin under every child but the last, and the last child
  * was a hidden box: the last card that drew kept its margin, and the column
- * ran 20px past it into the space above the footer. A gap spaces only the
- * children that draw.
+ * ran 20px past it into the space above the footer.
  *
  * Geometry rather than markup, for the reason the column-start spec gives:
  * what is under test is where the boxes land.
