@@ -30,16 +30,16 @@ vi.mock("@/core/sdk/navigation", () => ({
 
 const arranged = vi.hoisted(() => ({ layouts: {} as Record<string, unknown> }));
 
-vi.mock("@/core/sdk/server", async () => {
+vi.mock("@/core/sdk/page", async () => {
     const { arrangedPageStub: stub } = await import("../../stubs/server-tree");
     const manifest = JSON.parse((await import("node:fs")).readFileSync(
         (await import("node:path")).join(process.cwd(), "module-sources/store/module.json"), "utf8"));
     return {
         ArrangedPage: async (props: Parameters<ReturnType<typeof stub>>[0]) =>
             stub("store", manifest, arranged.layouts as Parameters<typeof stub>[2])(props),
-        moduleSettings: async () => ({ lowStockAt: 0 }),
     };
 });
+vi.mock("@/core/sdk/server", () => ({ moduleSettings: async () => ({ lowStockAt: 0 }) }));
 
 vi.mock("@/core/sdk/ui", () => ({ RichContent: () => null }));
 vi.mock("@/modules/store/components/ProductGallery", () => ({ ProductGallery: () => null }));

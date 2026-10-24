@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
 import { Card, CardContent, CardHeader, CardTitle, MemberAvatar, RoleBadge } from "@/core/sdk/ui";
 import { PageFrame, Slot } from "@/core/sdk/layout";
-import { ArrangedPage } from "@/core/sdk/server";
+import { ArrangedPage } from "@/core/sdk/page";
 import { MessageSquare, FileText, ShoppingCart, ThumbsUp, Calendar } from "lucide-react";
 import { isListable } from "../../../lib/member-content";
 import { readMember } from "../../../lib/read-member";

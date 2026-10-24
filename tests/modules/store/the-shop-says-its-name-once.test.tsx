@@ -31,10 +31,8 @@ vi.mock("@/core/sdk/navigation", () => ({
 vi.mock("@/core/sdk/layout", () => ({ Slot: () => null }));
 
 // The front as a site whose theme does not arrange it sees it.
-vi.mock("@/core/sdk/server", () => ({
-    ArrangedPage: arrangedPageStub("store", MANIFEST),
-    moduleSettings: async () => ({ lowStockAt: 0 }),
-}));
+vi.mock("@/core/sdk/page", () => ({ ArrangedPage: arrangedPageStub("store", MANIFEST) }));
+vi.mock("@/core/sdk/server", () => ({ moduleSettings: async () => ({ lowStockAt: 0 }) }));
 vi.mock("@/modules/store/components/FeaturedProduct", () => ({ FeaturedProduct: () => null }));
 
 vi.mock("@/core/sdk/ui", () => ({

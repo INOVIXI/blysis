@@ -1,6 +1,7 @@
 import { formatDate } from "@/core/sdk";
 import { RichContent, buttonClassName } from "@/core/sdk/ui";
-import { ArrangedPage, buildArticleJsonLd, moduleSettings, prisma, resolveAppUrl } from "@/core/sdk/server";
+import { ArrangedPage } from "@/core/sdk/page";
+import { buildArticleJsonLd, moduleSettings, prisma, resolveAppUrl } from "@/core/sdk/server";
 import { Link } from "@/core/sdk/navigation";
 import { Slot } from "@/core/sdk/layout";
 import Image from "next/image";

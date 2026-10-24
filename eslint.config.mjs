@@ -84,7 +84,7 @@ const eslintConfig = defineConfig([
                                 "@/core/components/*",
                             ],
                             message:
-                                "Modules must import core through the SDK: @/core/sdk (isomorphic), or one of @/core/sdk/{server,auth,navigation,theme,ui,layout,admin}. Run `npx tsx scripts/migrate-module-imports.ts <path>` to rewrite.",
+                                "Modules must import core through the SDK: @/core/sdk (isomorphic), or one of @/core/sdk/{server,auth,navigation,theme,ui,layout,page,admin}. Run `npx tsx scripts/migrate-module-imports.ts <path>` to rewrite.",
                         },
                     ],
                 },

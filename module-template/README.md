@@ -91,7 +91,7 @@ The template manifest enumerates every common UI registration so you can see all
 | `layoutComponents` | Site-wide components with URL include/exclude filters |
 | `widgets` | Homepage sidebar widgets |
 | `blocks` | Homepage blocks a theme's arrangement places, with the widths they work at and their settings; `replaces` carries an old widget or section's place and switch (see [arranged pages](../docs/internals/page-layouts.md)) |
-| `pages` | A page the module draws through `ArrangedPage`, the blocks it is built from and its default arrangement, which a theme may replace under `layouts["<module>.<page>"]` |
+| `pages` | A page the module draws through `ArrangedPage` from `@/core/sdk/page`, the blocks it is built from and its default arrangement, which a theme may replace under `layouts["<module>.<page>"]` |
 | `homepageSections` | Homepage main content, read as a wide block; a new one is better declared in `blocks` |
 | `profileTabs` | Tabs added to the user profile page |
 | `dashboardCards` + `statsApi` | Admin dashboard stat cards + data endpoint |
@@ -202,7 +202,7 @@ npm run build:marketplace
 - **Server components by default** - add `"use client"` only when needed.
 - **No hardcoded UI strings** - use `useTranslations()` (`next-intl`) or declare `translations` in `module.json`.
 - **Auth checks** - admin pages call `isAdmin()` from `@/core/sdk/server`; write API endpoints verify `session.user.id` + `hasPermission()`.
-- **Imports** - the SDK (`@/core/sdk`, `/server`, `/auth`, `/navigation`, `/theme`, `/ui`, `/layout`, `/admin`) for core, relative paths within the module. Reaching into `@/core/lib/*` or `@/core/components/*` fails `npm run validate:module`.
+- **Imports** - the SDK (`@/core/sdk`, `/server`, `/auth`, `/navigation`, `/theme`, `/ui`, `/layout`, `/page`, `/admin`) for core, relative paths within the module. Reaching into `@/core/lib/*` or `@/core/components/*` fails `npm run validate:module`.
 - **No `any`** - TypeScript strict mode.
 - **No `confirm()` / `alert()`** - use `useConfirm()` + `toast` from `sonner`.
 - **No emojis in UI** - Lucide icons only.

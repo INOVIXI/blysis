@@ -20,7 +20,8 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
-import { ArrangedPage, moduleSettings } from "@/core/sdk/server";
+import { ArrangedPage } from "@/core/sdk/page";
+import { moduleSettings } from "@/core/sdk/server";
 import { RichContent } from "@/core/sdk/ui";
 import { ChevronRight } from "lucide-react";
 import { readProduct } from "../../../../lib/read-product";

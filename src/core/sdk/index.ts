@@ -28,6 +28,7 @@
  *   `@/core/sdk/theme`       active theme config + component overrides
  *   `@/core/sdk/ui`          shared UI primitives (client)
  *   `@/core/sdk/layout`      navbar / footer / slots (page composition)
+ *   `@/core/sdk/page`        a module's page arranged from blocks (server)
  *   `@/core/sdk/admin`       admin CRUD and settings scaffolds
  *
  * Adding a symbol here is a minor CORE_API_VERSION bump; changing or removing

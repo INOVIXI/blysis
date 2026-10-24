@@ -16,7 +16,8 @@
  */
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ArrangedPage, hasPermission } from "@/core/sdk/server";
+import { ArrangedPage } from "@/core/sdk/page";
+import { hasPermission } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { countTopicView, readTopic } from "../../../../lib/read-topic";
 import { TopicView } from "../../../../components/TopicView";
