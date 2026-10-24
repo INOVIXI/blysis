@@ -687,9 +687,33 @@ body {
   margin-block-end: 0;
 }
 
-/* The space between the rows of a page's arrangement (PageLayoutView). */
-:where([data-sidebar-layout], [data-layout-row]) + :where([data-sidebar-layout], [data-layout-row]) {
-  margin-top: 2rem;
+/*
+ * A block whose content is other modules' slot content is a frame they may
+ * all leave empty: the stats row is then a section with no child, which is
+ * nothing drawn although its box is not `:empty`.
+ */
+[data-block]:has(> [data-stats]:empty) {
+  display: none;
+}
+
+/*
+ * A row in which no block drew anything is hidden, as an empty sidebar is:
+ * a site with no server kept the row its server cards would have stood in,
+ * and the 2rem above it. A row holding the welcome card is never empty.
+ */
+[data-layout-row]:not(:has([data-block] > :not([data-stats]:empty), [data-layout-cell] > :not([data-layout-blocks]))) {
+  display: none;
+}
+
+/*
+ * The space between the rows of a page's arrangement (PageLayoutView),
+ * counted only between rows that drew: `~` rather than `+`, so a hidden row
+ * neither takes the space nor hands it to the row after it. A theme that wants
+ * more room sets `--blysis-row-gap` rather than writing a rule of its own,
+ * which would not know to skip a hidden row.
+ */
+:where([data-sidebar-layout], [data-layout-row]:has([data-block] > :not([data-stats]:empty), [data-layout-cell] > :not([data-layout-blocks]))) ~ :where([data-sidebar-layout], [data-layout-row]:has([data-block] > :not([data-stats]:empty), [data-layout-cell] > :not([data-layout-blocks]))) {
+  margin-top: var(--blysis-row-gap, 2rem);
 }
 
 @media (min-width: 64rem) {

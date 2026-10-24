@@ -91,6 +91,15 @@ describe("the homepage's arrangement", () => {
         });
     });
 
+    it("fills a setting the theme leaves to the operator from the theme's settings", () => {
+        const tile = block("m.tile", { widths: ["full"], settings: { value: { type: "text", default: "" }, count: { type: "number", default: 2, min: 1, max: 4 } } });
+        const theme: LayoutDocument = { rows: [{ split: "full", cells: [[{ key: "t", block: "m.tile", settings: { value: { $theme: "stats.value" }, count: { $theme: "stats.count" } } }]] }] };
+        const drawn = (themeSettings: Record<string, Record<string, unknown>>) => resolve({ blocks: [tile], themeLayout: theme, themeSettings }).rows[0].cells[0][0].settings;
+        expect(drawn({ stats: { value: "Cmt 20:00", count: 3 } })).toEqual({ value: "Cmt 20:00", count: 3 });
+        expect(drawn({})).toEqual({ value: "", count: 2 });
+        expect(drawn({ stats: { value: 7, count: 99 } })).toEqual({ value: "", count: 2 });
+    });
+
     it("drops a disabled module's block", () => {
         const layout = resolve({ blocks: [block("on.a"), block("off.b")], enabled: (m) => m !== "off" });
         expect(ids(layout.rows[0].cells[1])).toEqual(["on.a"]);
@@ -110,6 +119,22 @@ describe("the homepage's arrangement", () => {
         };
         const layout = resolve({ blocks: [block("m.a"), block("m.b", { defaultOrder: 5 }), block("m.c")], themeLayout: theme });
         expect(ids(layout.rows[0].cells[1])).toEqual(["m.a", "m.b"]);
+    });
+
+    it("deals the blocks it adds across a row of equal cells, from the rest cell on", () => {
+        // A row of three cards with every leftover widget stacked under one
+        // of them was a column three times the height of its neighbours.
+        const theme: LayoutDocument = {
+            rows: [{ split: "1-1-1", cells: [[{ key: "a", block: "m.a" }], [], []], rest: 1 }],
+        };
+        const layout = resolve({ blocks: ["m.a", "m.b", "m.c", "m.d", "m.e"].map((id, n) => block(id, { defaultOrder: n })), themeLayout: theme });
+        expect(layout.rows[0].cells.map(ids)).toEqual([["m.a", "m.d"], ["m.b", "m.e"], ["m.c"]]);
+    });
+
+    it("keeps the blocks it adds out of a cell of another width", () => {
+        const theme: LayoutDocument = { rows: [{ split: "2-1", cells: [[], []], rest: 1 }] };
+        const layout = resolve({ blocks: [block("m.a"), block("m.b", { defaultOrder: 5 })], themeLayout: theme });
+        expect(layout.rows[0].cells.map(ids)).toEqual([[], ["m.a", "m.b"]]);
     });
 
     it("gives a block it adds a key no placement on the page has", () => {

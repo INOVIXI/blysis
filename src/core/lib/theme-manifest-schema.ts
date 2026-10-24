@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { layoutDocumentSchema } from "./page-layout-schema";
+import { layoutDocumentSchema, themeSettingRef } from "./page-layout-schema";
 
 const HEX = /^#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
 const SAFE_ID = /^[a-z0-9][a-z0-9-]*$/;
@@ -218,7 +218,22 @@ export const themeManifestSchema = z.object({
         z.string().max(10),
         z.record(z.string().max(64), z.record(z.string().max(128), z.string().max(2000))),
     ).optional(),
-}).strict();
+}).strict().superRefine((theme, ctx) => {
+    // A setting its layout leaves to the operator is one of the theme's own,
+    // or the operator would have nowhere to fill it in.
+    theme.layouts?.home?.rows.forEach((row, r) => row.cells.forEach((cell, c) => cell.forEach((instance, i) => {
+        for (const [key, value] of Object.entries(instance.settings ?? {})) {
+            const ref = themeSettingRef(value);
+            if (ref && !theme.settings?.[ref.group]?.fields[ref.field]) {
+                ctx.addIssue({
+                    code: "custom",
+                    path: ["layouts", "home", "rows", r, "cells", c, i, "settings", key],
+                    message: `"${ref.group}.${ref.field}" is not a setting this theme declares`,
+                });
+            }
+        }
+    })));
+});
 
 export type ThemeManifest = z.infer<typeof themeManifestSchema>;
 export type ThemeFieldDef = z.infer<typeof settingFieldSchema>;

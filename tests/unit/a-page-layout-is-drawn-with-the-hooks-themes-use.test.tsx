@@ -15,6 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { ResolvedLayout, ResolvedInstance } from "@/core/lib/page-layout";
 import type { CatalogBlock } from "@/core/lib/page-blocks";
+import { stripComments } from "./source-text";
 
 vi.mock("@/core/generated/module-components", () => ({
     BlockComponentRegistry: {
@@ -90,6 +91,65 @@ describe("a sidebar of blocks that drew nothing", () => {
         expect(css).toMatch(/\[data-block\]:empty\s*\{\s*display:\s*none;?\s*\}/);
         expect(css).toContain("[data-sidebar-layout] > [data-sidebar]:not(:has(> :not(template, .blysis-heading-spacer, [data-block]:empty)))");
         expect(css).toContain(":where([data-sidebar-layout]:has(> [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty))) > [data-sidebar-main]");
+    });
+});
+
+describe("a row of blocks that drew nothing", () => {
+    /**
+     * A row whose every block drew nothing is hidden, and the space between
+     * rows is counted only between rows that drew: an empty row kept its 2rem
+     * above it, so a site with no server left a gap where the server cards
+     * would have stood. The stats row counts as empty when the tiles modules
+     * gave it all drew nothing, which is a section with no child.
+     */
+    const css = fs.readFileSync(path.join(process.cwd(), "src/app/globals.css"), "utf8");
+    const selectorOf = (marker: string) => {
+        const rule = stripComments(css).split("}").find((r) => r.includes(marker) && r.includes("display: none"));
+        expect(rule, marker).toBeTruthy();
+        return (rule as string).split("{")[0].trim();
+    };
+    const Empty = () => null;
+    const Stats = () => <section data-stats />;
+    const Drew = () => <p>drew</p>;
+    const shape = (cells: React.ComponentType[][]) => (
+        <div>
+            {cells.map((cell, r) => (
+                <div key={r} data-layout-row="1">
+                    <div data-layout-cell>
+                        <div data-layout-blocks>
+                            {cell.map((C, b) => <div key={b} data-block={`m.b${b}`}><C /></div>)}
+                        </div>
+                    </div>
+                </div>
+            ))}
+            <div data-layout-row="1"><div data-layout-cell><p>welcome card</p></div></div>
+        </div>
+    );
+
+    it("is hidden, while a row with a block that drew or the welcome card is not", () => {
+        const { container } = render(shape([[Empty], [Empty, Stats], [Empty, Drew]]));
+        const hidden = [...container.querySelectorAll(selectorOf("[data-layout-row]:not("))];
+        const rows = [...container.querySelectorAll("[data-layout-row]")];
+        expect(hidden).toEqual([rows[0], rows[1]]);
+    });
+
+    it("leaves a stats row with nothing in it out of its cell", () => {
+        const { container } = render(shape([[Stats, Drew]]));
+        expect([...container.querySelectorAll(selectorOf("[data-stats]:empty)"))]).toEqual([container.querySelector('[data-block="m.b0"]')]);
+    });
+
+    it("is drawn by the page with its blocks in a box the rule can find", () => {
+        const layout: ResolvedLayout = { welcome: false, rows: [{ split: "1", cells: [[placed("m.wide", "wide")]] }] };
+        const { container } = render(<PageLayoutView layout={layout} welcome={WELCOME} />);
+        expect(container.querySelector("[data-layout-row] > [data-layout-cell] > [data-layout-blocks] > [data-block]")).toBeTruthy();
+    });
+
+    it("takes no space above the next row", () => {
+        expect(css).not.toMatch(/\[data-layout-row\]\)\s*\+/);
+        // The space is a theme's to change, through a variable, so a theme
+        // that wants more room keeps the rule that skips hidden rows.
+        expect(css).toMatch(/\)\s*\{\s*margin-top: var\(--blysis-row-gap, 2rem\);/);
+        expect(css).toMatch(/\)\s*~\s*:where\(\[data-sidebar-layout\], \[data-layout-row\]:has\(/);
     });
 });
 

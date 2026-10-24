@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-23",
-  "updatedAt": "2026-10-23T20:52:49Z",
+  "updated": "2026-10-24",
+  "updatedAt": "2026-10-24T13:38:26Z",
   "modules": [
     {
       "id": "announcements",
@@ -365,13 +365,13 @@
           "description": "新闻与公告系统"
         }
       },
-      "version": "1.10.4",
+      "version": "1.11.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-23T20:52:49Z",
+      "updatedAt": "2026-10-24T12:42:57Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2155,13 +2155,13 @@
           "description": "带分类、主题和回复的社区讨论论坛"
         }
       },
-      "version": "1.13.1",
+      "version": "1.14.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-23T20:41:25Z",
+      "updatedAt": "2026-10-24T13:38:26Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -3031,13 +3031,13 @@
           "description": "按购买、投票和活跃度排列的成员排名"
         }
       },
-      "version": "1.6.0",
+      "version": "1.7.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Trophy",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-23T20:41:29Z",
+      "updatedAt": "2026-10-24T12:46:38Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -5418,13 +5418,13 @@
           "description": "游戏服务器管理、RCON 和状态监控"
         }
       },
-      "version": "1.6.0",
+      "version": "1.8.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Server",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-23T20:18:18Z",
+      "updatedAt": "2026-10-24T13:38:26Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -5798,13 +5798,13 @@
           "description": "运营这里的人，以及管理他们的界面。"
         }
       },
-      "version": "1.6.1",
+      "version": "1.7.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-23T20:41:27Z",
+      "updatedAt": "2026-10-24T12:50:10Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -5948,13 +5948,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.48.5",
+      "version": "2.49.2",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-23T20:41:20Z",
+      "updatedAt": "2026-10-24T13:38:26Z",
       "screenshots": [],
       "tags": [
         "commerce"

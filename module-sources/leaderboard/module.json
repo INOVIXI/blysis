@@ -2,7 +2,7 @@
   "id": "leaderboard",
   "name": "Leaderboard",
   "description": "Member rankings by purchases, votes and activity",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis",
@@ -504,6 +504,29 @@
     {
       "hook": "leaderboard.boards",
       "type": "filter"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "board",
+      "component": "components/BoardBlock",
+      "widths": [
+        "narrow",
+        "wide",
+        "full"
+      ],
+      "defaultOrder": 40,
+      "defaultVisible": false,
+      "settings": {
+        "board": {
+          "type": "text",
+          "max": 64
+        },
+        "title": {
+          "type": "text",
+          "max": 80
+        }
+      }
     }
   ]
 }

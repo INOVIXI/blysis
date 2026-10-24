@@ -96,7 +96,8 @@
     "welcomeOpenSettings": "Ava seaded",
     "welcomeTitle": "Tere tulemast oma kogukonda",
     "welcomeVisitorHint": "Kogukonna avastamiseks kasuta ülal olevat navigeerimist.",
-    "writeContentHere": "Kirjuta sisu siia..."
+    "writeContentHere": "Kirjuta sisu siia...",
+    "statsLabel": "Sait ühe pilguga"
   },
   "notFound": {
     "title": "Lehte ei leitud",

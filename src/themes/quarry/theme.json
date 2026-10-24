@@ -3,7 +3,7 @@
   "id": "quarry",
   "name": "Quarry",
   "description": "Flat charcoal panels, chunky buttons that press down and heavy block capitals: a game-server look with the server's address one click from the homepage. Dark and light.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Blysis",
   "modes": {
     "default": "dark",
@@ -262,6 +262,200 @@
           "labelKey": "theme_quarry_hero_backgroundImage"
         }
       }
+    },
+    "stats": {
+      "label": "Numbers row",
+      "icon": "BarChart3",
+      "labelKey": "theme_quarry_stats",
+      "fields": {
+        "tile1Value": {
+          "type": "text",
+          "label": "Tile 1: the number",
+          "max": 40,
+          "labelKey": "theme_quarry_stats_tile1Value"
+        },
+        "tile1Label": {
+          "type": "text",
+          "label": "Tile 1: what it counts",
+          "max": 80,
+          "labelKey": "theme_quarry_stats_tile1Label"
+        },
+        "tile1Icon": {
+          "type": "text",
+          "label": "Tile 1: icon (a Lucide name, such as Trophy)",
+          "max": 64,
+          "labelKey": "theme_quarry_stats_tile1Icon"
+        },
+        "tile2Value": {
+          "type": "text",
+          "label": "Tile 2: the number",
+          "max": 40,
+          "labelKey": "theme_quarry_stats_tile2Value"
+        },
+        "tile2Label": {
+          "type": "text",
+          "label": "Tile 2: what it counts",
+          "max": 80,
+          "labelKey": "theme_quarry_stats_tile2Label"
+        },
+        "tile2Icon": {
+          "type": "text",
+          "label": "Tile 2: icon (a Lucide name, such as Trophy)",
+          "max": 64,
+          "labelKey": "theme_quarry_stats_tile2Icon"
+        },
+        "tile3Value": {
+          "type": "text",
+          "label": "Tile 3: the number",
+          "max": 40,
+          "labelKey": "theme_quarry_stats_tile3Value"
+        },
+        "tile3Label": {
+          "type": "text",
+          "label": "Tile 3: what it counts",
+          "max": 80,
+          "labelKey": "theme_quarry_stats_tile3Label"
+        },
+        "tile3Icon": {
+          "type": "text",
+          "label": "Tile 3: icon (a Lucide name, such as Trophy)",
+          "max": 64,
+          "labelKey": "theme_quarry_stats_tile3Icon"
+        }
+      }
+    }
+  },
+  "layouts": {
+    "home": {
+      "rows": [
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "stats",
+                "block": "core.stats",
+                "settings": {
+                  "tile1Value": {
+                    "$theme": "stats.tile1Value"
+                  },
+                  "tile1Label": {
+                    "$theme": "stats.tile1Label"
+                  },
+                  "tile1Icon": {
+                    "$theme": "stats.tile1Icon"
+                  },
+                  "tile2Value": {
+                    "$theme": "stats.tile2Value"
+                  },
+                  "tile2Label": {
+                    "$theme": "stats.tile2Label"
+                  },
+                  "tile2Icon": {
+                    "$theme": "stats.tile2Icon"
+                  },
+                  "tile3Value": {
+                    "$theme": "stats.tile3Value"
+                  },
+                  "tile3Label": {
+                    "$theme": "stats.tile3Label"
+                  },
+                  "tile3Icon": {
+                    "$theme": "stats.tile3Icon"
+                  }
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "news",
+                "block": "blog.news",
+                "settings": {
+                  "variant": "featured",
+                  "kicker": "quarry.newsKicker",
+                  "title": "quarry.newsTitle",
+                  "allLink": true
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "modes",
+                "block": "servers.cards",
+                "settings": {
+                  "kicker": "quarry.modesKicker",
+                  "title": "quarry.modesTitle"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "shop",
+                "block": "store.products",
+                "settings": {
+                  "kicker": "quarry.shopKicker",
+                  "title": "quarry.shopTitle",
+                  "count": 4
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "split": "1-1-1",
+          "rest": 0,
+          "cells": [
+            [
+              {
+                "key": "voters",
+                "block": "leaderboard.board",
+                "settings": {
+                  "board": "voters",
+                  "title": "quarry.votersTitle"
+                }
+              }
+            ],
+            [
+              {
+                "key": "team",
+                "block": "staff.online",
+                "settings": {
+                  "title": "quarry.teamTitle"
+                }
+              }
+            ],
+            [
+              {
+                "key": "forum",
+                "block": "forum.latest-topics",
+                "settings": {
+                  "title": "quarry.forumTitle"
+                }
+              }
+            ]
+          ]
+        }
+      ],
+      "hidden": [
+        "servers.ServerStatusWidget",
+        "leaderboard.LeaderboardWidget",
+        "forum.LatestTopicsWidget"
+      ]
     }
   },
   "components": {
@@ -280,7 +474,17 @@
         "theme_quarry_hero_address": "Server address visitors can copy",
         "theme_quarry_hero_ctaText": "Button text",
         "theme_quarry_hero_ctaHref": "Where the button goes",
-        "theme_quarry_hero_backgroundImage": "Background picture"
+        "theme_quarry_hero_backgroundImage": "Background picture",
+        "theme_quarry_stats": "Numbers row",
+        "theme_quarry_stats_tile1Value": "Tile 1: the number",
+        "theme_quarry_stats_tile1Label": "Tile 1: what it counts",
+        "theme_quarry_stats_tile1Icon": "Tile 1: icon (a Lucide name, such as Trophy)",
+        "theme_quarry_stats_tile2Value": "Tile 2: the number",
+        "theme_quarry_stats_tile2Label": "Tile 2: what it counts",
+        "theme_quarry_stats_tile2Icon": "Tile 2: icon (a Lucide name, such as Trophy)",
+        "theme_quarry_stats_tile3Value": "Tile 3: the number",
+        "theme_quarry_stats_tile3Label": "Tile 3: what it counts",
+        "theme_quarry_stats_tile3Icon": "Tile 3: icon (a Lucide name, such as Trophy)"
       },
       "quarry": {
         "heroTag": "Season open",
@@ -290,7 +494,16 @@
         "addressCopied": "Address copied",
         "copyFailed": "Select the address and copy it yourself",
         "addressLabel": "Server address",
-        "joinDiscord": "Join our Discord"
+        "joinDiscord": "Join our Discord",
+        "newsKicker": "Latest",
+        "newsTitle": "News",
+        "modesKicker": "Where you'll play",
+        "modesTitle": "Game modes",
+        "shopKicker": "Support the server",
+        "shopTitle": "From the store",
+        "votersTitle": "Top voters this month",
+        "teamTitle": "Team online",
+        "forumTitle": "New on the forum"
       }
     },
     "tr": {
@@ -303,7 +516,17 @@
         "theme_quarry_hero_address": "Ziyaretçilerin kopyalayacağı sunucu adresi",
         "theme_quarry_hero_ctaText": "Düğme metni",
         "theme_quarry_hero_ctaHref": "Düğmenin gittiği yer",
-        "theme_quarry_hero_backgroundImage": "Arka plan görseli"
+        "theme_quarry_hero_backgroundImage": "Arka plan görseli",
+        "theme_quarry_stats": "Sayılar satırı",
+        "theme_quarry_stats_tile1Value": "Kutu 1: sayı",
+        "theme_quarry_stats_tile1Label": "Kutu 1: neyi saydığı",
+        "theme_quarry_stats_tile1Icon": "Kutu 1: simge (Trophy gibi bir Lucide adı)",
+        "theme_quarry_stats_tile2Value": "Kutu 2: sayı",
+        "theme_quarry_stats_tile2Label": "Kutu 2: neyi saydığı",
+        "theme_quarry_stats_tile2Icon": "Kutu 2: simge (Trophy gibi bir Lucide adı)",
+        "theme_quarry_stats_tile3Value": "Kutu 3: sayı",
+        "theme_quarry_stats_tile3Label": "Kutu 3: neyi saydığı",
+        "theme_quarry_stats_tile3Icon": "Kutu 3: simge (Trophy gibi bir Lucide adı)"
       },
       "quarry": {
         "heroTag": "Sezon açık",
@@ -313,7 +536,16 @@
         "addressCopied": "Adres kopyalandı",
         "copyFailed": "Adresi seçip kendin kopyala",
         "addressLabel": "Sunucu adresi",
-        "joinDiscord": "Discord'a katıl"
+        "joinDiscord": "Discord'a katıl",
+        "newsKicker": "Son gelişmeler",
+        "newsTitle": "Haberler",
+        "modesKicker": "Nerede oynayacaksın",
+        "modesTitle": "Oyun modları",
+        "shopKicker": "Sunucuyu destekle",
+        "shopTitle": "Mağazadan",
+        "votersTitle": "Ayın oy liderleri",
+        "teamTitle": "Çevrimiçi ekip",
+        "forumTitle": "Forumda yeni"
       }
     },
     "az": {
@@ -326,7 +558,17 @@
         "theme_quarry_hero_address": "Ziyarətçilərin kopyalayacağı server ünvanı",
         "theme_quarry_hero_ctaText": "Düymənin mətni",
         "theme_quarry_hero_ctaHref": "Düymənin apardığı yer",
-        "theme_quarry_hero_backgroundImage": "Fon şəkli"
+        "theme_quarry_hero_backgroundImage": "Fon şəkli",
+        "theme_quarry_stats": "Rəqəmlər sırası",
+        "theme_quarry_stats_tile1Value": "Xana 1: rəqəm",
+        "theme_quarry_stats_tile1Label": "Xana 1: nəyi saydığı",
+        "theme_quarry_stats_tile1Icon": "Xana 1: ikon (Trophy kimi Lucide adı)",
+        "theme_quarry_stats_tile2Value": "Xana 2: rəqəm",
+        "theme_quarry_stats_tile2Label": "Xana 2: nəyi saydığı",
+        "theme_quarry_stats_tile2Icon": "Xana 2: ikon (Trophy kimi Lucide adı)",
+        "theme_quarry_stats_tile3Value": "Xana 3: rəqəm",
+        "theme_quarry_stats_tile3Label": "Xana 3: nəyi saydığı",
+        "theme_quarry_stats_tile3Icon": "Xana 3: ikon (Trophy kimi Lucide adı)"
       },
       "quarry": {
         "heroTag": "Mövsüm açıqdır",
@@ -336,7 +578,16 @@
         "addressCopied": "Ünvan kopyalandı",
         "copyFailed": "Ünvanı seçib özün kopyala",
         "addressLabel": "Server ünvanı",
-        "joinDiscord": "Discord-a qoşul"
+        "joinDiscord": "Discord-a qoşul",
+        "newsKicker": "Son yeniliklər",
+        "newsTitle": "Xəbərlər",
+        "modesKicker": "Harada oynayacaqsan",
+        "modesTitle": "Oyun rejimləri",
+        "shopKicker": "Serveri dəstəklə",
+        "shopTitle": "Mağazadan",
+        "votersTitle": "Ayın səs liderləri",
+        "teamTitle": "Onlayn komanda",
+        "forumTitle": "Forumda yeni"
       }
     },
     "de": {
@@ -349,7 +600,17 @@
         "theme_quarry_hero_address": "Serveradresse zum Kopieren für Besucher",
         "theme_quarry_hero_ctaText": "Button-Text",
         "theme_quarry_hero_ctaHref": "Wohin der Button führt",
-        "theme_quarry_hero_backgroundImage": "Hintergrundbild"
+        "theme_quarry_hero_backgroundImage": "Hintergrundbild",
+        "theme_quarry_stats": "Zahlenzeile",
+        "theme_quarry_stats_tile1Value": "Kachel 1: die Zahl",
+        "theme_quarry_stats_tile1Label": "Kachel 1: was sie zählt",
+        "theme_quarry_stats_tile1Icon": "Kachel 1: Symbol (ein Lucide-Name wie Trophy)",
+        "theme_quarry_stats_tile2Value": "Kachel 2: die Zahl",
+        "theme_quarry_stats_tile2Label": "Kachel 2: was sie zählt",
+        "theme_quarry_stats_tile2Icon": "Kachel 2: Symbol (ein Lucide-Name wie Trophy)",
+        "theme_quarry_stats_tile3Value": "Kachel 3: die Zahl",
+        "theme_quarry_stats_tile3Label": "Kachel 3: was sie zählt",
+        "theme_quarry_stats_tile3Icon": "Kachel 3: Symbol (ein Lucide-Name wie Trophy)"
       },
       "quarry": {
         "heroTag": "Saison offen",
@@ -359,7 +620,16 @@
         "addressCopied": "Adresse kopiert",
         "copyFailed": "Markiere die Adresse und kopiere sie selbst",
         "addressLabel": "Serveradresse",
-        "joinDiscord": "Unserem Discord beitreten"
+        "joinDiscord": "Unserem Discord beitreten",
+        "newsKicker": "Neuigkeiten",
+        "newsTitle": "Nachrichten",
+        "modesKicker": "Wo du spielst",
+        "modesTitle": "Spielmodi",
+        "shopKicker": "Unterstütze den Server",
+        "shopTitle": "Aus dem Shop",
+        "votersTitle": "Top-Wähler des Monats",
+        "teamTitle": "Team online",
+        "forumTitle": "Neu im Forum"
       }
     },
     "es": {
@@ -372,7 +642,17 @@
         "theme_quarry_hero_address": "Dirección del servidor que copian los visitantes",
         "theme_quarry_hero_ctaText": "Texto del botón",
         "theme_quarry_hero_ctaHref": "Adónde lleva el botón",
-        "theme_quarry_hero_backgroundImage": "Imagen de fondo"
+        "theme_quarry_hero_backgroundImage": "Imagen de fondo",
+        "theme_quarry_stats": "Fila de cifras",
+        "theme_quarry_stats_tile1Value": "Casilla 1: la cifra",
+        "theme_quarry_stats_tile1Label": "Casilla 1: qué cuenta",
+        "theme_quarry_stats_tile1Icon": "Casilla 1: icono (un nombre de Lucide, como Trophy)",
+        "theme_quarry_stats_tile2Value": "Casilla 2: la cifra",
+        "theme_quarry_stats_tile2Label": "Casilla 2: qué cuenta",
+        "theme_quarry_stats_tile2Icon": "Casilla 2: icono (un nombre de Lucide, como Trophy)",
+        "theme_quarry_stats_tile3Value": "Casilla 3: la cifra",
+        "theme_quarry_stats_tile3Label": "Casilla 3: qué cuenta",
+        "theme_quarry_stats_tile3Icon": "Casilla 3: icono (un nombre de Lucide, como Trophy)"
       },
       "quarry": {
         "heroTag": "Temporada abierta",
@@ -382,7 +662,16 @@
         "addressCopied": "Dirección copiada",
         "copyFailed": "Selecciona la dirección y cópiala tú",
         "addressLabel": "Dirección del servidor",
-        "joinDiscord": "Únete a nuestro Discord"
+        "joinDiscord": "Únete a nuestro Discord",
+        "newsKicker": "Lo último",
+        "newsTitle": "Noticias",
+        "modesKicker": "Dónde jugarás",
+        "modesTitle": "Modos de juego",
+        "shopKicker": "Apoya al servidor",
+        "shopTitle": "De la tienda",
+        "votersTitle": "Más votantes del mes",
+        "teamTitle": "Equipo en línea",
+        "forumTitle": "Nuevo en el foro"
       }
     },
     "et": {
@@ -395,7 +684,17 @@
         "theme_quarry_hero_address": "Serveri aadress, mida külastajad kopeerivad",
         "theme_quarry_hero_ctaText": "Nupu tekst",
         "theme_quarry_hero_ctaHref": "Kuhu nupp viib",
-        "theme_quarry_hero_backgroundImage": "Taustapilt"
+        "theme_quarry_hero_backgroundImage": "Taustapilt",
+        "theme_quarry_stats": "Numbrite rida",
+        "theme_quarry_stats_tile1Value": "Paan 1: number",
+        "theme_quarry_stats_tile1Label": "Paan 1: mida see loeb",
+        "theme_quarry_stats_tile1Icon": "Paan 1: ikoon (Lucide nimi, nt Trophy)",
+        "theme_quarry_stats_tile2Value": "Paan 2: number",
+        "theme_quarry_stats_tile2Label": "Paan 2: mida see loeb",
+        "theme_quarry_stats_tile2Icon": "Paan 2: ikoon (Lucide nimi, nt Trophy)",
+        "theme_quarry_stats_tile3Value": "Paan 3: number",
+        "theme_quarry_stats_tile3Label": "Paan 3: mida see loeb",
+        "theme_quarry_stats_tile3Icon": "Paan 3: ikoon (Lucide nimi, nt Trophy)"
       },
       "quarry": {
         "heroTag": "Hooaeg on avatud",
@@ -405,7 +704,16 @@
         "addressCopied": "Aadress kopeeritud",
         "copyFailed": "Vali aadress ja kopeeri see ise",
         "addressLabel": "Serveri aadress",
-        "joinDiscord": "Liitu meie Discordiga"
+        "joinDiscord": "Liitu meie Discordiga",
+        "newsKicker": "Viimased uudised",
+        "newsTitle": "Uudised",
+        "modesKicker": "Kus sa mängid",
+        "modesTitle": "Mängurežiimid",
+        "shopKicker": "Toeta serverit",
+        "shopTitle": "Poest",
+        "votersTitle": "Kuu aktiivseimad hääletajad",
+        "teamTitle": "Meeskond võrgus",
+        "forumTitle": "Uus foorumis"
       }
     },
     "fr": {
@@ -418,7 +726,17 @@
         "theme_quarry_hero_address": "Adresse du serveur à copier pour les visiteurs",
         "theme_quarry_hero_ctaText": "Texte du bouton",
         "theme_quarry_hero_ctaHref": "Destination du bouton",
-        "theme_quarry_hero_backgroundImage": "Image de fond"
+        "theme_quarry_hero_backgroundImage": "Image de fond",
+        "theme_quarry_stats": "Rangée de chiffres",
+        "theme_quarry_stats_tile1Value": "Tuile 1 : le chiffre",
+        "theme_quarry_stats_tile1Label": "Tuile 1 : ce qu'elle compte",
+        "theme_quarry_stats_tile1Icon": "Tuile 1 : icône (un nom Lucide, comme Trophy)",
+        "theme_quarry_stats_tile2Value": "Tuile 2 : le chiffre",
+        "theme_quarry_stats_tile2Label": "Tuile 2 : ce qu'elle compte",
+        "theme_quarry_stats_tile2Icon": "Tuile 2 : icône (un nom Lucide, comme Trophy)",
+        "theme_quarry_stats_tile3Value": "Tuile 3 : le chiffre",
+        "theme_quarry_stats_tile3Label": "Tuile 3 : ce qu'elle compte",
+        "theme_quarry_stats_tile3Icon": "Tuile 3 : icône (un nom Lucide, comme Trophy)"
       },
       "quarry": {
         "heroTag": "Saison ouverte",
@@ -428,7 +746,16 @@
         "addressCopied": "Adresse copiée",
         "copyFailed": "Sélectionnez l’adresse et copiez-la vous-même",
         "addressLabel": "Adresse du serveur",
-        "joinDiscord": "Rejoindre notre Discord"
+        "joinDiscord": "Rejoindre notre Discord",
+        "newsKicker": "Dernières nouvelles",
+        "newsTitle": "Actualités",
+        "modesKicker": "Où tu joueras",
+        "modesTitle": "Modes de jeu",
+        "shopKicker": "Soutiens le serveur",
+        "shopTitle": "De la boutique",
+        "votersTitle": "Meilleurs votants du mois",
+        "teamTitle": "Équipe en ligne",
+        "forumTitle": "Nouveau sur le forum"
       }
     },
     "it": {
@@ -441,7 +768,17 @@
         "theme_quarry_hero_address": "Indirizzo del server da copiare per i visitatori",
         "theme_quarry_hero_ctaText": "Testo del pulsante",
         "theme_quarry_hero_ctaHref": "Dove porta il pulsante",
-        "theme_quarry_hero_backgroundImage": "Immagine di sfondo"
+        "theme_quarry_hero_backgroundImage": "Immagine di sfondo",
+        "theme_quarry_stats": "Riga dei numeri",
+        "theme_quarry_stats_tile1Value": "Riquadro 1: il numero",
+        "theme_quarry_stats_tile1Label": "Riquadro 1: cosa conta",
+        "theme_quarry_stats_tile1Icon": "Riquadro 1: icona (un nome Lucide, come Trophy)",
+        "theme_quarry_stats_tile2Value": "Riquadro 2: il numero",
+        "theme_quarry_stats_tile2Label": "Riquadro 2: cosa conta",
+        "theme_quarry_stats_tile2Icon": "Riquadro 2: icona (un nome Lucide, come Trophy)",
+        "theme_quarry_stats_tile3Value": "Riquadro 3: il numero",
+        "theme_quarry_stats_tile3Label": "Riquadro 3: cosa conta",
+        "theme_quarry_stats_tile3Icon": "Riquadro 3: icona (un nome Lucide, come Trophy)"
       },
       "quarry": {
         "heroTag": "Stagione aperta",
@@ -451,7 +788,16 @@
         "addressCopied": "Indirizzo copiato",
         "copyFailed": "Seleziona l’indirizzo e copialo tu",
         "addressLabel": "Indirizzo del server",
-        "joinDiscord": "Unisciti al nostro Discord"
+        "joinDiscord": "Unisciti al nostro Discord",
+        "newsKicker": "Ultime novità",
+        "newsTitle": "Notizie",
+        "modesKicker": "Dove giocherai",
+        "modesTitle": "Modalità di gioco",
+        "shopKicker": "Sostieni il server",
+        "shopTitle": "Dal negozio",
+        "votersTitle": "Migliori votanti del mese",
+        "teamTitle": "Staff online",
+        "forumTitle": "Novità sul forum"
       }
     },
     "pl": {
@@ -464,7 +810,17 @@
         "theme_quarry_hero_address": "Adres serwera do skopiowania przez odwiedzających",
         "theme_quarry_hero_ctaText": "Tekst przycisku",
         "theme_quarry_hero_ctaHref": "Dokąd prowadzi przycisk",
-        "theme_quarry_hero_backgroundImage": "Obraz tła"
+        "theme_quarry_hero_backgroundImage": "Obraz tła",
+        "theme_quarry_stats": "Rząd liczb",
+        "theme_quarry_stats_tile1Value": "Kafelek 1: liczba",
+        "theme_quarry_stats_tile1Label": "Kafelek 1: co liczy",
+        "theme_quarry_stats_tile1Icon": "Kafelek 1: ikona (nazwa Lucide, np. Trophy)",
+        "theme_quarry_stats_tile2Value": "Kafelek 2: liczba",
+        "theme_quarry_stats_tile2Label": "Kafelek 2: co liczy",
+        "theme_quarry_stats_tile2Icon": "Kafelek 2: ikona (nazwa Lucide, np. Trophy)",
+        "theme_quarry_stats_tile3Value": "Kafelek 3: liczba",
+        "theme_quarry_stats_tile3Label": "Kafelek 3: co liczy",
+        "theme_quarry_stats_tile3Icon": "Kafelek 3: ikona (nazwa Lucide, np. Trophy)"
       },
       "quarry": {
         "heroTag": "Sezon otwarty",
@@ -474,7 +830,16 @@
         "addressCopied": "Adres skopiowany",
         "copyFailed": "Zaznacz adres i skopiuj go samodzielnie",
         "addressLabel": "Adres serwera",
-        "joinDiscord": "Dołącz do naszego Discorda"
+        "joinDiscord": "Dołącz do naszego Discorda",
+        "newsKicker": "Najnowsze",
+        "newsTitle": "Aktualności",
+        "modesKicker": "Gdzie zagrasz",
+        "modesTitle": "Tryby gry",
+        "shopKicker": "Wesprzyj serwer",
+        "shopTitle": "Ze sklepu",
+        "votersTitle": "Najaktywniejsi głosujący miesiąca",
+        "teamTitle": "Ekipa online",
+        "forumTitle": "Nowe na forum"
       }
     },
     "pt": {
@@ -487,7 +852,17 @@
         "theme_quarry_hero_address": "Endereço do servidor que os visitantes copiam",
         "theme_quarry_hero_ctaText": "Texto do botão",
         "theme_quarry_hero_ctaHref": "Para onde o botão leva",
-        "theme_quarry_hero_backgroundImage": "Imagem de fundo"
+        "theme_quarry_hero_backgroundImage": "Imagem de fundo",
+        "theme_quarry_stats": "Linha de números",
+        "theme_quarry_stats_tile1Value": "Bloco 1: o número",
+        "theme_quarry_stats_tile1Label": "Bloco 1: o que conta",
+        "theme_quarry_stats_tile1Icon": "Bloco 1: ícone (um nome Lucide, como Trophy)",
+        "theme_quarry_stats_tile2Value": "Bloco 2: o número",
+        "theme_quarry_stats_tile2Label": "Bloco 2: o que conta",
+        "theme_quarry_stats_tile2Icon": "Bloco 2: ícone (um nome Lucide, como Trophy)",
+        "theme_quarry_stats_tile3Value": "Bloco 3: o número",
+        "theme_quarry_stats_tile3Label": "Bloco 3: o que conta",
+        "theme_quarry_stats_tile3Icon": "Bloco 3: ícone (um nome Lucide, como Trophy)"
       },
       "quarry": {
         "heroTag": "Temporada aberta",
@@ -497,7 +872,16 @@
         "addressCopied": "Endereço copiado",
         "copyFailed": "Selecione o endereço e copie você mesmo",
         "addressLabel": "Endereço do servidor",
-        "joinDiscord": "Entre no nosso Discord"
+        "joinDiscord": "Entre no nosso Discord",
+        "newsKicker": "Novidades",
+        "newsTitle": "Notícias",
+        "modesKicker": "Onde você vai jogar",
+        "modesTitle": "Modos de jogo",
+        "shopKicker": "Apoie o servidor",
+        "shopTitle": "Da loja",
+        "votersTitle": "Quem mais votou no mês",
+        "teamTitle": "Equipe online",
+        "forumTitle": "Novo no fórum"
       }
     },
     "ru": {
@@ -510,7 +894,17 @@
         "theme_quarry_hero_address": "Адрес сервера, который копируют посетители",
         "theme_quarry_hero_ctaText": "Текст кнопки",
         "theme_quarry_hero_ctaHref": "Куда ведет кнопка",
-        "theme_quarry_hero_backgroundImage": "Фоновое изображение"
+        "theme_quarry_hero_backgroundImage": "Фоновое изображение",
+        "theme_quarry_stats": "Строка с цифрами",
+        "theme_quarry_stats_tile1Value": "Плитка 1: число",
+        "theme_quarry_stats_tile1Label": "Плитка 1: что считает",
+        "theme_quarry_stats_tile1Icon": "Плитка 1: значок (имя Lucide, например Trophy)",
+        "theme_quarry_stats_tile2Value": "Плитка 2: число",
+        "theme_quarry_stats_tile2Label": "Плитка 2: что считает",
+        "theme_quarry_stats_tile2Icon": "Плитка 2: значок (имя Lucide, например Trophy)",
+        "theme_quarry_stats_tile3Value": "Плитка 3: число",
+        "theme_quarry_stats_tile3Label": "Плитка 3: что считает",
+        "theme_quarry_stats_tile3Icon": "Плитка 3: значок (имя Lucide, например Trophy)"
       },
       "quarry": {
         "heroTag": "Сезон открыт",
@@ -520,7 +914,16 @@
         "addressCopied": "Адрес скопирован",
         "copyFailed": "Выдели адрес и скопируй его сам",
         "addressLabel": "Адрес сервера",
-        "joinDiscord": "Присоединиться к Discord"
+        "joinDiscord": "Присоединиться к Discord",
+        "newsKicker": "Последнее",
+        "newsTitle": "Новости",
+        "modesKicker": "Где ты будешь играть",
+        "modesTitle": "Игровые режимы",
+        "shopKicker": "Поддержи сервер",
+        "shopTitle": "Из магазина",
+        "votersTitle": "Лидеры голосования месяца",
+        "teamTitle": "Команда в сети",
+        "forumTitle": "Новое на форуме"
       }
     },
     "zh": {
@@ -533,7 +936,17 @@
         "theme_quarry_hero_address": "访客可复制的服务器地址",
         "theme_quarry_hero_ctaText": "按钮文字",
         "theme_quarry_hero_ctaHref": "按钮的跳转位置",
-        "theme_quarry_hero_backgroundImage": "背景图片"
+        "theme_quarry_hero_backgroundImage": "背景图片",
+        "theme_quarry_stats": "数字栏",
+        "theme_quarry_stats_tile1Value": "第 1 格：数字",
+        "theme_quarry_stats_tile1Label": "第 1 格：说明",
+        "theme_quarry_stats_tile1Icon": "第 1 格：图标（Lucide 名称，如 Trophy）",
+        "theme_quarry_stats_tile2Value": "第 2 格：数字",
+        "theme_quarry_stats_tile2Label": "第 2 格：说明",
+        "theme_quarry_stats_tile2Icon": "第 2 格：图标（Lucide 名称，如 Trophy）",
+        "theme_quarry_stats_tile3Value": "第 3 格：数字",
+        "theme_quarry_stats_tile3Label": "第 3 格：说明",
+        "theme_quarry_stats_tile3Icon": "第 3 格：图标（Lucide 名称，如 Trophy）"
       },
       "quarry": {
         "heroTag": "赛季开放中",
@@ -543,7 +956,16 @@
         "addressCopied": "地址已复制",
         "copyFailed": "请选中地址后自行复制",
         "addressLabel": "服务器地址",
-        "joinDiscord": "加入我们的 Discord"
+        "joinDiscord": "加入我们的 Discord",
+        "newsKicker": "最新动态",
+        "newsTitle": "新闻",
+        "modesKicker": "在哪里玩",
+        "modesTitle": "游戏模式",
+        "shopKicker": "支持服务器",
+        "shopTitle": "商店精选",
+        "votersTitle": "本月投票榜",
+        "teamTitle": "在线团队",
+        "forumTitle": "论坛新帖"
       }
     }
   }

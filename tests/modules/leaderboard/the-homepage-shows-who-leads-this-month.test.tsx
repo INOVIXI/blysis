@@ -25,6 +25,7 @@ vi.mock("@/core/components/currency/site-currency", () => ({
 
 const MANIFEST = JSON.parse(fs.readFileSync(path.join(process.cwd(), "module-sources/leaderboard/module.json"), "utf8"));
 const { LeaderboardWidget } = await import("@/modules/leaderboard/widgets/leaderboard-widget");
+const { BoardBlock } = await import("@/modules/leaderboard/components/BoardBlock");
 
 const BOARDS = [
     { id: "voters", labelKey: "vote.leaderboardVoters", icon: "Medal", unit: "count", rows: [] },
@@ -46,15 +47,16 @@ function serve(boards: unknown[]) {
     }));
 }
 
-function draw(locale = "en") {
+function draw(locale = "en", node: React.ReactNode = <LeaderboardWidget />) {
     const messages = {
         ...MANIFEST.translations[locale],
         vote: { leaderboardVoters: "Voters" },
         store: { leaderboardBuyers: "Buyers" },
+        sample: { title: "This month's top voters" },
     };
     return render(
         <NextIntlClientProvider locale={locale} messages={messages}>
-            <LeaderboardWidget />
+            {node}
         </NextIntlClientProvider>,
     );
 }
@@ -122,5 +124,38 @@ describe("the leaderboard widget", () => {
             }
             expect(catalogue.admin.widget_leaderboard, `${locale} admin.widget_leaderboard`).toBeTruthy();
         }
+    });
+});
+
+describe("the leaderboard block", () => {
+    it("is declared as a block a theme places, beside the widget", () => {
+        const block = MANIFEST.blocks.find((b: { id: string }) => b.id === "board");
+        expect(block?.defaultVisible).toBe(false);
+        expect(Object.keys(block?.settings ?? {})).toEqual(expect.arrayContaining(["board", "title"]));
+        expect(MANIFEST.widgets.find((w: { id: string }) => w.id === "LeaderboardWidget")).toBeTruthy();
+    });
+
+    it("shows the one board it was given, under the title it was given, with no tabs", async () => {
+        serve(BOARDS);
+        draw("en", <BoardBlock settings={{ board: "buyers", title: "sample.title" }} width="narrow" />);
+        expect(await screen.findByText("linus")).toBeTruthy();
+        expect(screen.queryByRole("tablist")).toBeNull();
+        expect(screen.getByRole("heading", { level: 2 }).textContent).toBe("This month's top voters");
+        const asked = vi.mocked(fetch).mock.calls.map((c) => String(c[0]));
+        expect(asked.every((u) => u.includes("board=buyers"))).toBe(true);
+    });
+
+    it("draws nothing when the board it was given is not offered", async () => {
+        serve(BOARDS);
+        const { container } = draw("en", <BoardBlock settings={{ board: "posters", title: "" }} width="narrow" />);
+        await waitFor(() => expect(fetch).toHaveBeenCalled());
+        await waitFor(() => expect(container.innerHTML).toBe(""));
+    });
+
+    it("is the widget, tabs and all, when it was given no board", async () => {
+        serve(BOARDS);
+        draw("en", <BoardBlock settings={{ board: "", title: "" }} width="narrow" />);
+        await screen.findByText("ada");
+        expect(screen.getByRole("tablist")).toBeTruthy();
     });
 });

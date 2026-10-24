@@ -96,7 +96,8 @@
     "welcomeOpenSettings": "Open settings",
     "welcomeTitle": "Welcome to your community",
     "welcomeVisitorHint": "Use the navigation above to explore the community.",
-    "writeContentHere": "Write your content here..."
+    "writeContentHere": "Write your content here...",
+    "statsLabel": "The site at a glance"
   },
   "notFound": {
     "title": "Page not found",

@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.48.5",
+  "version": "2.49.2",
   "coreVersion": "^5.0.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -1471,7 +1471,10 @@
         "dlv_delivered": "Delivered",
         "dlv_failed": "Not delivered",
         "dlv_review": "Being checked",
-        "dlv_cancelled": "Cancelled"
+        "dlv_cancelled": "Cancelled",
+        "blk_shelves": "Shelves",
+        "adm_summary": "Summary",
+        "adm_summaryHint": "One line shown on the product's card, in the shop and on the homepage."
       },
       "cart": {
         "title": "Shopping Cart",
@@ -2300,7 +2303,10 @@
         "dlv_delivered": "Teslim edildi",
         "dlv_failed": "Teslim edilemedi",
         "dlv_review": "İnceleniyor",
-        "dlv_cancelled": "İptal edildi"
+        "dlv_cancelled": "İptal edildi",
+        "blk_shelves": "Kategoriler",
+        "adm_summary": "Özet",
+        "adm_summaryHint": "Ürünün kartında, mağazada ve ana sayfada görünen tek satır."
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -3129,7 +3135,10 @@
         "dlv_delivered": "Çatdırıldı",
         "dlv_failed": "Çatdırılmadı",
         "dlv_review": "Yoxlanılır",
-        "dlv_cancelled": "Ləğv edildi"
+        "dlv_cancelled": "Ləğv edildi",
+        "blk_shelves": "Kateqoriyalar",
+        "adm_summary": "Xülasə",
+        "adm_summaryHint": "Məhsulun kartında, mağazada və ana səhifədə görünən bir sətir."
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -3958,7 +3967,10 @@
         "dlv_delivered": "Geliefert",
         "dlv_failed": "Nicht geliefert",
         "dlv_review": "Wird geprüft",
-        "dlv_cancelled": "Storniert"
+        "dlv_cancelled": "Storniert",
+        "blk_shelves": "Kategorien",
+        "adm_summary": "Kurzbeschreibung",
+        "adm_summaryHint": "Eine Zeile auf der Karte des Produkts, im Shop und auf der Startseite."
       },
       "cart": {
         "title": "Warenkorb",
@@ -4787,7 +4799,10 @@
         "dlv_delivered": "Entregado",
         "dlv_failed": "No entregado",
         "dlv_review": "En revisión",
-        "dlv_cancelled": "Cancelado"
+        "dlv_cancelled": "Cancelado",
+        "blk_shelves": "Categorías",
+        "adm_summary": "Resumen",
+        "adm_summaryHint": "Una línea que se muestra en la tarjeta del producto, en la tienda y en la portada."
       },
       "cart": {
         "title": "Carrito de compra",
@@ -5616,7 +5631,10 @@
         "dlv_delivered": "Kohale toimetatud",
         "dlv_failed": "Kohale toimetamata",
         "dlv_review": "Kontrollimisel",
-        "dlv_cancelled": "Tühistatud"
+        "dlv_cancelled": "Tühistatud",
+        "blk_shelves": "Kategooriad",
+        "adm_summary": "Kokkuvõte",
+        "adm_summaryHint": "Üks rida toote kaardil, poes ja avalehel."
       },
       "cart": {
         "title": "Ostukorv",
@@ -6445,7 +6463,10 @@
         "dlv_delivered": "Livré",
         "dlv_failed": "Non livré",
         "dlv_review": "En vérification",
-        "dlv_cancelled": "Annulé"
+        "dlv_cancelled": "Annulé",
+        "blk_shelves": "Catégories",
+        "adm_summary": "Résumé",
+        "adm_summaryHint": "Une ligne affichée sur la carte du produit, dans la boutique et sur l'accueil."
       },
       "cart": {
         "title": "Panier",
@@ -7274,7 +7295,10 @@
         "dlv_delivered": "Consegnato",
         "dlv_failed": "Non consegnato",
         "dlv_review": "In verifica",
-        "dlv_cancelled": "Annullato"
+        "dlv_cancelled": "Annullato",
+        "blk_shelves": "Categorie",
+        "adm_summary": "Riepilogo",
+        "adm_summaryHint": "Una riga mostrata sulla scheda del prodotto, nel negozio e nella home."
       },
       "cart": {
         "title": "Carrello",
@@ -8103,7 +8127,10 @@
         "dlv_delivered": "Dostarczono",
         "dlv_failed": "Nie dostarczono",
         "dlv_review": "W trakcie sprawdzania",
-        "dlv_cancelled": "Anulowano"
+        "dlv_cancelled": "Anulowano",
+        "blk_shelves": "Kategorie",
+        "adm_summary": "Podsumowanie",
+        "adm_summaryHint": "Jedna linijka na karcie produktu, w sklepie i na stronie głównej."
       },
       "cart": {
         "title": "Koszyk",
@@ -8932,7 +8959,10 @@
         "dlv_delivered": "Entregue",
         "dlv_failed": "Não entregue",
         "dlv_review": "Em verificação",
-        "dlv_cancelled": "Cancelado"
+        "dlv_cancelled": "Cancelado",
+        "blk_shelves": "Categorias",
+        "adm_summary": "Resumo",
+        "adm_summaryHint": "Uma linha mostrada no cartão do produto, na loja e na página inicial."
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -9761,7 +9791,10 @@
         "dlv_delivered": "Доставлено",
         "dlv_failed": "Не доставлено",
         "dlv_review": "На проверке",
-        "dlv_cancelled": "Отменено"
+        "dlv_cancelled": "Отменено",
+        "blk_shelves": "Категории",
+        "adm_summary": "Краткое описание",
+        "adm_summaryHint": "Одна строка на карточке товара, в магазине и на главной."
       },
       "cart": {
         "title": "Корзина",
@@ -10590,7 +10623,10 @@
         "dlv_delivered": "已发货",
         "dlv_failed": "未发货",
         "dlv_review": "检查中",
-        "dlv_cancelled": "已取消"
+        "dlv_cancelled": "已取消",
+        "blk_shelves": "分类",
+        "adm_summary": "摘要",
+        "adm_summaryHint": "显示在商品卡片上的一句话，商店和首页都会显示。"
       },
       "cart": {
         "title": "购物车",
@@ -11007,6 +11043,38 @@
     {
       "action": "store.credits.transferred",
       "nameKey": "auditCreditsTransferred"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "products",
+      "component": "components/ProductsBlock",
+      "widths": [
+        "wide",
+        "full"
+      ],
+      "defaultOrder": 30,
+      "defaultVisible": false,
+      "settings": {
+        "kicker": {
+          "type": "text",
+          "max": 60
+        },
+        "title": {
+          "type": "text",
+          "max": 80
+        },
+        "count": {
+          "type": "number",
+          "default": 4,
+          "min": 2,
+          "max": 12
+        },
+        "allLink": {
+          "type": "toggle",
+          "default": false
+        }
+      }
     }
   ]
 }

@@ -96,7 +96,8 @@
     "welcomeOpenSettings": "Ouvrir les paramètres",
     "welcomeTitle": "Bienvenue dans votre communauté",
     "welcomeVisitorHint": "Utilisez la navigation ci-dessus pour explorer la communauté.",
-    "writeContentHere": "Rédigez votre contenu ici…"
+    "writeContentHere": "Rédigez votre contenu ici…",
+    "statsLabel": "Le site en un coup d’œil"
   },
   "notFound": {
     "title": "Page introuvable",

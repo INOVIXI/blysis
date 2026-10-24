@@ -63,6 +63,12 @@ describe("a module's blocks", () => {
         expect(moduleManifestSchema.safeParse({ ...BASE, blocks: [{ ...NEWS, id: "Other", replaces: [] }], widgets: [{ ...widget, id: "Other" }] }).success).toBe(false);
     });
 
+    it("never sit under core's name", () => {
+        // Core's own blocks are `core.<id>`; a module called `core` would
+        // give the page two blocks under one name.
+        expect(moduleManifestSchema.safeParse({ ...BASE, id: "core", blocks: [NEWS] }).success).toBe(false);
+    });
+
     it("may share a name with the widget or section they replace", () => {
         const section = { id: "News", type: "content", component: "sections/News", order: 1 };
         const parsed = moduleManifestSchema.safeParse({ ...BASE, blocks: [{ ...NEWS, id: "News", replaces: ["News"] }], homepageSections: [section] });

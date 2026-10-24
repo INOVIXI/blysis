@@ -13,22 +13,25 @@ import type { ModuleSeed } from "@/core/sdk/seed";
  * old single-server status field describes; one turned off, which used to be
  * a row that vanished from the only screen that could turn it back on.
  *
+ * Each says in a line what it is, the way the homepage's server cards show
+ * it; none has a picture, so the cards draw their placeholder.
+ *
  * No RCON password. It is a credential, and a credential does not belong in
  * a file that ships in a ZIP.
  */
-const SERVERS: [string, string, string, number, number | null, boolean, boolean][] = [
-    ["Survival", "minecraft", "survival.demo.invalid", 25565, 25565, true, true],
-    ["Rust Main", "rust", "rust.demo.invalid", 28015, 28016, false, true],
-    ["Creative (retired)", "minecraft", "creative.demo.invalid", 25566, null, false, false],
+const SERVERS: [string, string, string, number, number | null, boolean, boolean, string][] = [
+    ["Survival", "minecraft", "survival.demo.invalid", 25565, 25565, true, true, "One world and a real economy. Build a village, open a trade road."],
+    ["Rust Main", "rust", "rust.demo.invalid", 28015, 28016, false, true, "Weekly wipes, a monthly map and raids every night."],
+    ["Creative (retired)", "minecraft", "creative.demo.invalid", 25566, null, false, false, "Unlimited blocks and a plot of your own."],
 ];
 
 export const seed: ModuleSeed = {
     run: async (ctx) => {
-        for (const [order, [name, type, host, port, queryPort, isDefault, isActive]] of SERVERS.entries()) {
+        for (const [order, [name, type, host, port, queryPort, isDefault, isActive, description]] of SERVERS.entries()) {
             const existing = await ctx.prisma.gameServer.findFirst({ where: { name } });
             if (existing) continue;
             await ctx.create("gameServer", () => ctx.prisma.gameServer.create({
-                data: { name, type, host, port, queryPort, isDefault, isActive, order },
+                data: { name, type, host, port, queryPort, isDefault, isActive, order, description },
             }));
         }
         ctx.log(`${SERVERS.length} game servers`);

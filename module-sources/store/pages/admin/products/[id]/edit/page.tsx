@@ -20,7 +20,7 @@ import { useState, useEffect, use } from "react";
 import Image from "next/image";
 import { useRouter } from "@/core/sdk/navigation";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, UrlOrFile, Input, Label, LoadFailed, NativeSelect, RichTextEditor, useConfirm, useSiteSettings } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, UrlOrFile, Input, Label, LoadFailed, NativeSelect, RichTextEditor, Textarea, useConfirm, useSiteSettings } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, Trash2, X, Plus } from "lucide-react";
 import { writeError } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -60,6 +60,7 @@ export default function EditProductPage(props: PageProps) {
     const [form, setForm] = useState({
         name: "",
         description: "",
+        shortDesc: "",
         price: "",
         comparePrice: "",
         image: "",
@@ -96,6 +97,7 @@ export default function EditProductPage(props: PageProps) {
                 setForm({
                     name: p.name || "",
                     description: p.description || "",
+                    shortDesc: p.shortDesc || "",
                     price: String(p.price || ""),
                     comparePrice: p.comparePrice ? String(p.comparePrice) : "",
                     image: p.image || "",
@@ -159,7 +161,10 @@ export default function EditProductPage(props: PageProps) {
         try {
             const payload = {
                 name: form.name,
-                description: form.description || undefined,
+                // Sent as they stand, so a description or summary the admin
+                // emptied is saved empty rather than left as it was.
+                description: form.description,
+                shortDesc: form.shortDesc.trim() || null,
                 price: parseFloat(form.price),
                 comparePrice: form.comparePrice ? parseFloat(form.comparePrice) : null,
                 image: form.image || (form.images.length > 0 ? form.images[0] : null),
@@ -293,6 +298,17 @@ export default function EditProductPage(props: PageProps) {
                                         value={form.description}
                                         onChange={(value: string) => setForm({ ...form, description: value })}
                                     />
+                                </div>
+                                <div>
+                                    <Label htmlFor="shortDesc">{t("adm_summary")}</Label>
+                                    <Textarea
+                                        id="shortDesc"
+                                        rows={2}
+                                        maxLength={500}
+                                        value={form.shortDesc}
+                                        onChange={(e) => setForm({ ...form, shortDesc: e.target.value })}
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-1">{t("adm_summaryHint")}</p>
                                 </div>
                                 <div>
                                     <UrlOrFile

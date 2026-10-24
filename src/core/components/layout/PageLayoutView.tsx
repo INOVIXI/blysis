@@ -2,6 +2,7 @@
 
 import React from "react";
 import { BlockComponentRegistry } from "@/core/generated/module-components";
+import { CORE_BLOCK_COMPONENTS } from "@/core/components/blocks";
 import { ModuleErrorBoundary } from "@/core/components/ModuleErrorBoundary";
 import StandardSidebarLayout from "@/core/components/layout/SidebarLayout";
 import type { ResolvedInstance, ResolvedLayout, ResolvedRow } from "@/core/lib/page-layout";
@@ -20,7 +21,7 @@ interface PageLayoutViewProps {
  * A block with nothing to show renders nothing and its box is `:empty`.
  */
 function Block({ instance }: { instance: ResolvedInstance }) {
-    const Component = BlockComponentRegistry[instance.block.id];
+    const Component = CORE_BLOCK_COMPONENTS[instance.block.id] ?? BlockComponentRegistry[instance.block.id];
     if (!Component) return null;
     const variant = typeof instance.settings.variant === "string" ? instance.settings.variant : undefined;
     return (
@@ -47,7 +48,7 @@ function Row({ row, welcomeAt, welcome }: { row: ResolvedRow; welcomeAt: number;
     // `space-y` left a margin under the last block that did
     // (a-column-ends-where-its-last-card-does).
     const cell = (index: number) => (index === welcomeAt ? welcome : (
-        <div className="flex flex-col gap-8">
+        <div data-layout-blocks className="flex flex-col gap-8">
             {row.cells[index].map((instance) => <Block key={instance.key} instance={instance} />)}
         </div>
     ));

@@ -13,6 +13,15 @@ import { Scene } from "./Scene";
 type Copied = "idle" | "copied" | "failed";
 
 /**
+ * A heading of several sentences, split before its last one, which is drawn
+ * on a line of its own in the accent colour. One sentence is not split.
+ */
+function splitTitle(title: string): [string, string] {
+    const match = /^([\s\S]*[.!?])\s+(\S[\s\S]*)$/.exec(title);
+    return match ? [match[1], match[2]] : [title, ""];
+}
+
+/**
  * The homepage's opening, edge to edge under the bar: a label, a heading, a
  * line under it, the server's address one press from the clipboard and up to
  * two more buttons, over the operator's picture or the drawn landscape.
@@ -21,7 +30,9 @@ type Copied = "idle" | "copied" | "failed";
  * while the operator has not written one. The address button is drawn only
  * once there is an address, and says so when the copy did not happen: a site
  * reached over plain http has no clipboard API, and `copyText` reports which
- * way it went. `hero.bottom` sits under the buttons, on the same dark ground.
+ * way it went. `hero.tags` comes before the label, where a module says
+ * whether the server is open; `hero.bottom` sits under the buttons, on the
+ * same dark ground.
  *
  * The heading is an h2: the homepage names itself in an h1 already.
  */
@@ -46,6 +57,8 @@ export default function Hero() {
     const discord = linkTarget(settings.site_discord_url);
     const picture = linkTarget(get<string>("hero.backgroundImage", ""));
 
+    const [head, tail] = splitTitle(text("hero.title") || t("heroTitle"));
+
     async function copy() {
         setCopied((await copyText(address)) ? "copied" : "failed");
     }
@@ -58,8 +71,14 @@ export default function Hero() {
                 <Scene />
             )}
             <div className="qr-hero-inner container mx-auto px-4">
-                <span className="qr-tag">{text("hero.tag") || t("heroTag")}</span>
-                <h2 className="qr-hero-title">{text("hero.title") || t("heroTitle")}</h2>
+                <div className="qr-hero-tags">
+                    <Slot name="hero.tags" />
+                    <span className="qr-tag">{text("hero.tag") || t("heroTag")}</span>
+                </div>
+                <h2 className="qr-hero-title">
+                    {head}
+                    {tail ? <>{" "}<span className="qr-hero-accent">{tail}</span></> : null}
+                </h2>
                 <p className="qr-hero-lede">{text("hero.subtitle") || t("heroSubtitle")}</p>
                 {address || (cta && ctaText) || discord ? (
                     <div className="qr-hero-actions">
