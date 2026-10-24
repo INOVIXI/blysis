@@ -70,6 +70,54 @@ describe("an arranged page", () => {
         expect(document.querySelector("[data-sidebar-main]")?.textContent).toBe("article");
     });
 
+    it("draws two thirds and a third as the page's own columns when it has no sidebar", async () => {
+        loadPageLayout.mockResolvedValue({
+            header: "shown",
+            rows: [{ split: "2-1", cells: [[placed("article", "wide")], [placed("related", "narrow")]] }],
+        });
+        render(await ArrangedPage({ page: "m.post", frame: { title: "Season four" }, blocks: BLOCKS, sidebar: false }));
+
+        expect(document.querySelector("[data-sidebar-layout], [data-sidebar]")).toBeNull();
+        const row = document.querySelector("[data-layout-row='2-1']");
+        expect([...(row?.children ?? [])].map((cell) => cell.textContent)).toEqual(["article", "related"]);
+        // Alone in its column, a block fills it, so what sticks in it has room to.
+        expect(screen.getByText("related").closest("[data-layout-blocks]")?.className).toContain("[&>[data-block]:only-child]:flex-1");
+    });
+
+    it("holds its rows together, so they stand as a page's parts do and not as the homepage's", async () => {
+        loadPageLayout.mockResolvedValue({
+            header: "shown",
+            rows: [
+                { split: "1", cells: [[placed("article", "wide")]] },
+                { split: "2-1", cells: [[placed("related", "wide")], [placed("share", "narrow")]] },
+            ],
+        });
+        await draw();
+        const rows = document.querySelector("[data-page-rows]");
+        expect([...(rows?.children ?? [])].map((row) => row.getAttribute("data-layout-row") ?? row.hasAttribute("data-sidebar-layout"))).toEqual(["1", true]);
+    });
+
+    it("lets a block alone in a cell fill it, so cards side by side end level", async () => {
+        loadPageLayout.mockResolvedValue({
+            header: "shown",
+            rows: [{ split: "1-1", cells: [[placed("article", "wide")], [placed("related", "wide"), placed("share", "wide")]] }],
+        });
+        await draw();
+        const [alone, together] = [...document.querySelectorAll("[data-layout-cell] > [data-layout-blocks]")];
+        expect(alone.className).toContain("h-full");
+        expect(alone.className).toContain("[&>[data-block]:only-child]:flex-1");
+        expect(together.children).toHaveLength(2);
+    });
+
+    it("sets two halves side by side from a tablet up, as the pages it replaced did", async () => {
+        loadPageLayout.mockResolvedValue({
+            header: "shown",
+            rows: [{ split: "1-1", cells: [[placed("article", "wide")], [placed("related", "wide")]] }],
+        });
+        await draw();
+        expect(document.querySelector("[data-layout-row='1-1']")?.className).toContain("md:grid-cols-2");
+    });
+
     it("keeps its title as its one h1 when the theme hides the header", async () => {
         loadPageLayout.mockResolvedValue({ header: "hidden", rows: [{ split: "1", cells: [[placed("article", "wide")]] }] });
         await draw();

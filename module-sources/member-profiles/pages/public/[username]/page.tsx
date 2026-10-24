@@ -128,8 +128,10 @@ export default async function MemberProfilePage({ params }: PageProps) {
                         </nav>
                     );
                 },
+                // The two cards fill their cells, so set side by side they end
+                // on one line, as the grid the page used to draw made them.
                 accounts: () => (member.linkedAccounts.length > 0 ? (
-                    <Card>
+                    <Card className="h-full">
                         <CardHeader><CardTitle className="text-sm">{t("linkedAccounts")}</CardTitle></CardHeader>
                         <CardContent>
                             <div className="space-y-2">
@@ -144,7 +146,7 @@ export default async function MemberProfilePage({ params }: PageProps) {
                     </Card>
                 ) : null),
                 activity: () => (member.recentTopics.length > 0 ? (
-                    <Card>
+                    <Card className="h-full">
                         <CardHeader><CardTitle className="text-sm">{t("activity")}</CardTitle></CardHeader>
                         <CardContent>
                             <div className="space-y-2">

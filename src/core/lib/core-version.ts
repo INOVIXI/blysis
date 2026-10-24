@@ -14,10 +14,11 @@
  *
  * 5.25.0 - a module may declare `pages`, each built from blocks with a
  * default arrangement, and draw one with `ArrangedPage` from
- * `@/core/sdk/server`; a theme arranges it under `layouts["<module>.<page>"]`
- * as it arranges `home`. An arrangement may hide the header band
- * (`header: "hidden"`) and place a row of a quarter, a half and a quarter
- * (`1-2-1`), and `PageFrame` takes a `picture` and a `meta` line a theme's
+ * `@/core/sdk/server` (`sidebar: false` for a page whose third beside two
+ * thirds is its own column, not a sidebar); a theme arranges it under
+ * `layouts["<module>.<page>"]` as it arranges `home`. An arrangement may hide
+ * the header band (`header: "hidden"`) and place a row of a quarter, a half
+ * and a quarter (`1-2-1`), and `PageFrame` takes a `picture` and a `meta` line a theme's
  * header may draw. The store's, a blog's or a forum's page had been the
  * module's alone, so a theme could recolour it but never arrange it. The 404
  * stands in the site's shell, and a theme may draw it as `NotFound`, typed by

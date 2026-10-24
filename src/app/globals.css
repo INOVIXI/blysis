@@ -714,9 +714,18 @@ body {
  * neither takes the space nor hands it to the row after it. A theme that wants
  * more room sets `--blysis-row-gap` rather than writing a rule of its own,
  * which would not know to skip a hidden row.
+ *
+ * A module's page (ArrangedPage) holds its rows in `data-page-rows`, and they
+ * stand 1.5rem apart, the space its blocks keep inside a cell, since they are
+ * the parts of one page; the pages they replaced spaced them so.
  */
 :where([data-sidebar-layout], [data-layout-row]:has([data-block] > :not([data-stats]:empty), [data-layout-cell] > :not([data-layout-blocks]))) ~ :where([data-sidebar-layout], [data-layout-row]:has([data-block] > :not([data-stats]:empty), [data-layout-cell] > :not([data-layout-blocks]))) {
-  margin-top: var(--blysis-row-gap, 2rem);
+  margin-top: var(--blysis-row-gap, var(--blysis-page-row-gap, 2rem));
+}
+
+[data-page-rows] {
+  display: contents;
+  --blysis-page-row-gap: 1.5rem;
 }
 
 @media (min-width: 64rem) {

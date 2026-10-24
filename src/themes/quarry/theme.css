@@ -755,7 +755,7 @@ html {
  * A block that opens a page with no header comes up against the bar, as the
  * header band would: the shop's showcase and a member's band.
  */
-.qr-main > h1.sr-only + [data-layout-row] :is([data-block="store.featured"], [data-block="member-profiles.band"]):first-child {
+.qr-main > h1.sr-only + [data-page-rows] > [data-layout-row]:first-child :is([data-block="store.featured"], [data-block="member-profiles.band"]):first-child {
   margin-top: -32px;
 }
 

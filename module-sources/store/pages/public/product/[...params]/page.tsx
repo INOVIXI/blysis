@@ -71,6 +71,9 @@ export default async function ProductPage({ params }: PageProps) {
         <ArrangedPage
             page="store.product"
             frame={{ title: product.name, trail: [{ label: t("title"), href: "/store" }] }}
+            // The box beside the pictures is the product's, not a sidebar's
+            // widget, and follows the reader down the column it stands in.
+            sidebar={false}
             blocks={{
                 // The header's trail, for a theme that hides the header and
                 // would otherwise leave no way back to the product's shelf.
