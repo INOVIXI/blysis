@@ -89,12 +89,14 @@ The template manifest enumerates every common UI registration so you can see all
 | `navLinks` / `footerLinks` | Public navbar and footer entries |
 | `navbarComponents` / `footerComponents` | Navbar right-side and footer components |
 | `layoutComponents` | Site-wide components with URL include/exclude filters |
-| `homepageSections` / `widgets` | Homepage main content and sidebar widgets |
+| `widgets` | Homepage sidebar widgets |
+| `blocks` | Homepage blocks a theme's arrangement places, with the widths they work at and their settings; `replaces` carries an old widget or section's place and switch (see [the homepage's arrangement](../docs/internals/page-layouts.md)) |
+| `homepageSections` | Homepage main content, read as a wide block; a new one is better declared in `blocks` |
 | `profileTabs` | Tabs added to the user profile page |
 | `dashboardCards` + `statsApi` | Admin dashboard stat cards + data endpoint |
 | `settingsCards` | Cards on the admin Settings page |
 | `oauthButtons` | OAuth login/register buttons |
-| `slotContents` | Render into core (`layout.beforeMain`, `layout.afterMain`, `head.extra`) or theme-declared slots |
+| `slotContents` | Render into core (`layout.beforeMain`, `layout.afterMain`, `head.extra`, `home.stats`) or the slots themes draw (`hero.tags`, `hero.bottom`) |
 
 ### Behavior (all optional)
 
