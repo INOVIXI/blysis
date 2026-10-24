@@ -1,0 +1,550 @@
+{
+  "schemaVersion": 2,
+  "id": "quarry",
+  "name": "Quarry",
+  "description": "Flat charcoal panels, chunky buttons that press down and heavy block capitals: a game-server look with the server's address one click from the homepage. Dark and light.",
+  "version": "1.0.0",
+  "author": "Blysis",
+  "modes": {
+    "default": "dark",
+    "available": {
+      "dark": {
+        "tokens": {
+          "colors": {
+            "primary": "#5cc72a",
+            "primaryForeground": "#0b1a05",
+            "secondary": "#2a2e37",
+            "secondaryForeground": "#f3f5f8",
+            "accent": "#23c4d8",
+            "accentForeground": "#06252a",
+            "background": "#15171c",
+            "foreground": "#f3f5f8",
+            "muted": "#2a2e37",
+            "mutedForeground": "#a9b0bd",
+            "border": "#33384a",
+            "card": "#20232a",
+            "cardForeground": "#f3f5f8",
+            "destructive": "#f26b6b",
+            "destructiveForeground": "#1f0606",
+            "success": "#5cc72a",
+            "successForeground": "#0b1a05",
+            "warning": "#f5a524",
+            "warningForeground": "#241500",
+            "edge": "#0b0d11",
+            "stage": "#101216",
+            "stageForeground": "#ffffff",
+            "stageMuted": "#c9ced8"
+          }
+        }
+      },
+      "light": {
+        "tokens": {
+          "colors": {
+            "primary": "#2b7f10",
+            "primaryForeground": "#ffffff",
+            "secondary": "#e3e7ec",
+            "secondaryForeground": "#15171c",
+            "accent": "#0d7482",
+            "accentForeground": "#ffffff",
+            "background": "#eef1f4",
+            "foreground": "#15171c",
+            "muted": "#e3e7ec",
+            "mutedForeground": "#4f5766",
+            "border": "#d3d9e1",
+            "card": "#ffffff",
+            "cardForeground": "#15171c",
+            "destructive": "#c42828",
+            "destructiveForeground": "#ffffff",
+            "success": "#15803d",
+            "successForeground": "#ffffff",
+            "warning": "#a15c00",
+            "warningForeground": "#ffffff",
+            "edge": "#c5ccd6",
+            "stage": "#15171c",
+            "stageForeground": "#ffffff",
+            "stageMuted": "#c9ced8"
+          }
+        }
+      }
+    }
+  },
+  "tokens": {
+    "colors": {
+      "primary": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "primaryForeground": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "accent": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "accentForeground": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "secondary": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "background": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "foreground": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "muted": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "mutedForeground": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "border": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "card": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "cardForeground": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "edge": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "destructive": {
+        "type": "color",
+        "group": "State"
+      },
+      "success": {
+        "type": "color",
+        "group": "State"
+      },
+      "warning": {
+        "type": "color",
+        "group": "State"
+      },
+      "stage": {
+        "type": "color",
+        "group": "Hero"
+      },
+      "stageForeground": {
+        "type": "color",
+        "group": "Hero"
+      },
+      "stageMuted": {
+        "type": "color",
+        "group": "Hero"
+      }
+    },
+    "fonts": {
+      "heading": {
+        "type": "font",
+        "default": "var(--font-quarry-heading), var(--font-quarry-headingExtra), system-ui, sans-serif"
+      },
+      "body": {
+        "type": "font",
+        "default": "var(--font-quarry-body), var(--font-inter), system-ui, sans-serif"
+      },
+      "mono": {
+        "type": "font",
+        "default": "var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace"
+      }
+    },
+    "radius": {
+      "type": "select",
+      "default": "sm",
+      "options": [
+        {
+          "value": "none",
+          "label": "Square (0)"
+        },
+        {
+          "value": "sm",
+          "label": "Subtle (0.25rem)"
+        },
+        {
+          "value": "md",
+          "label": "Rounded (0.5rem)"
+        },
+        {
+          "value": "lg",
+          "label": "Soft (0.75rem)"
+        }
+      ]
+    }
+  },
+  "fontFiles": {
+    "heading": [
+      {
+        "file": "fonts/Tektur-Heading.woff2",
+        "weight": "600 900",
+        "style": "normal"
+      }
+    ],
+    "headingExtra": [
+      {
+        "file": "fonts/Exo2-Currency.woff2",
+        "weight": "600 900",
+        "style": "normal"
+      }
+    ],
+    "body": [
+      {
+        "file": "fonts/Onest-Body.woff2",
+        "weight": "300 900",
+        "style": "normal"
+      }
+    ]
+  },
+  "stylesheet": "theme.css",
+  "settings": {
+    "hero": {
+      "label": "Hero",
+      "icon": "Image",
+      "labelKey": "theme_quarry_hero",
+      "fields": {
+        "enabled": {
+          "type": "toggle",
+          "label": "Show the hero on the homepage",
+          "default": true,
+          "labelKey": "theme_quarry_hero_enabled"
+        },
+        "tag": {
+          "type": "text",
+          "label": "Small label above the heading",
+          "max": 60,
+          "labelKey": "theme_quarry_hero_tag"
+        },
+        "title": {
+          "type": "text",
+          "label": "Heading",
+          "max": 120,
+          "labelKey": "theme_quarry_hero_title"
+        },
+        "subtitle": {
+          "type": "text",
+          "label": "Line under the heading",
+          "max": 300,
+          "labelKey": "theme_quarry_hero_subtitle"
+        },
+        "address": {
+          "type": "text",
+          "label": "Server address visitors can copy",
+          "max": 120,
+          "labelKey": "theme_quarry_hero_address"
+        },
+        "ctaText": {
+          "type": "text",
+          "label": "Button text",
+          "max": 40,
+          "labelKey": "theme_quarry_hero_ctaText"
+        },
+        "ctaHref": {
+          "type": "text",
+          "label": "Where the button goes",
+          "max": 300,
+          "labelKey": "theme_quarry_hero_ctaHref"
+        },
+        "backgroundImage": {
+          "type": "image",
+          "label": "Background picture",
+          "labelKey": "theme_quarry_hero_backgroundImage"
+        }
+      }
+    }
+  },
+  "components": {
+    "SiteShell": "components/SiteShell.tsx",
+    "PageHeader": "components/PageHeader.tsx",
+    "AuthFrame": "components/AuthFrame.tsx"
+  },
+  "translations": {
+    "en": {
+      "admin": {
+        "theme_quarry_hero": "Hero",
+        "theme_quarry_hero_enabled": "Show the hero on the homepage",
+        "theme_quarry_hero_tag": "Small label above the heading",
+        "theme_quarry_hero_title": "Heading",
+        "theme_quarry_hero_subtitle": "Line under the heading",
+        "theme_quarry_hero_address": "Server address visitors can copy",
+        "theme_quarry_hero_ctaText": "Button text",
+        "theme_quarry_hero_ctaHref": "Where the button goes",
+        "theme_quarry_hero_backgroundImage": "Background picture"
+      },
+      "quarry": {
+        "heroTag": "Season open",
+        "heroTitle": "Build it before someone else does",
+        "heroSubtitle": "A new map, a fresh economy and plenty of empty land. Join now and claim your corner.",
+        "copyAddress": "Copy the address",
+        "addressCopied": "Address copied",
+        "copyFailed": "Select the address and copy it yourself",
+        "addressLabel": "Server address",
+        "joinDiscord": "Join our Discord"
+      }
+    },
+    "tr": {
+      "admin": {
+        "theme_quarry_hero": "Hero",
+        "theme_quarry_hero_enabled": "Hero'yu ana sayfada göster",
+        "theme_quarry_hero_tag": "Başlığın üstündeki küçük etiket",
+        "theme_quarry_hero_title": "Başlık",
+        "theme_quarry_hero_subtitle": "Başlığın altındaki satır",
+        "theme_quarry_hero_address": "Ziyaretçilerin kopyalayacağı sunucu adresi",
+        "theme_quarry_hero_ctaText": "Düğme metni",
+        "theme_quarry_hero_ctaHref": "Düğmenin gittiği yer",
+        "theme_quarry_hero_backgroundImage": "Arka plan görseli"
+      },
+      "quarry": {
+        "heroTag": "Sezon açık",
+        "heroTitle": "Başkası kurmadan sen kur",
+        "heroSubtitle": "Yeni harita, sıfırdan ekonomi ve bomboş arsalar. Şimdi katıl, köşeni kap.",
+        "copyAddress": "Adresi kopyala",
+        "addressCopied": "Adres kopyalandı",
+        "copyFailed": "Adresi seçip kendin kopyala",
+        "addressLabel": "Sunucu adresi",
+        "joinDiscord": "Discord'a katıl"
+      }
+    },
+    "az": {
+      "admin": {
+        "theme_quarry_hero": "Əsas banner",
+        "theme_quarry_hero_enabled": "Əsas səhifədə əsas banneri göstər",
+        "theme_quarry_hero_tag": "Başlığın üstündəki kiçik etiket",
+        "theme_quarry_hero_title": "Başlıq",
+        "theme_quarry_hero_subtitle": "Başlığın altındakı sətir",
+        "theme_quarry_hero_address": "Ziyarətçilərin kopyalayacağı server ünvanı",
+        "theme_quarry_hero_ctaText": "Düymənin mətni",
+        "theme_quarry_hero_ctaHref": "Düymənin apardığı yer",
+        "theme_quarry_hero_backgroundImage": "Fon şəkli"
+      },
+      "quarry": {
+        "heroTag": "Mövsüm açıqdır",
+        "heroTitle": "Başqası qurmadan sən qur",
+        "heroSubtitle": "Yeni xəritə, sıfırdan iqtisadiyyat və boş torpaqlar. İndi qoşul, öz küncünü tut.",
+        "copyAddress": "Ünvanı kopyala",
+        "addressCopied": "Ünvan kopyalandı",
+        "copyFailed": "Ünvanı seçib özün kopyala",
+        "addressLabel": "Server ünvanı",
+        "joinDiscord": "Discord-a qoşul"
+      }
+    },
+    "de": {
+      "admin": {
+        "theme_quarry_hero": "Hero-Banner",
+        "theme_quarry_hero_enabled": "Hero-Banner auf der Startseite anzeigen",
+        "theme_quarry_hero_tag": "Kleines Etikett über der Überschrift",
+        "theme_quarry_hero_title": "Überschrift",
+        "theme_quarry_hero_subtitle": "Zeile unter der Überschrift",
+        "theme_quarry_hero_address": "Serveradresse zum Kopieren für Besucher",
+        "theme_quarry_hero_ctaText": "Button-Text",
+        "theme_quarry_hero_ctaHref": "Wohin der Button führt",
+        "theme_quarry_hero_backgroundImage": "Hintergrundbild"
+      },
+      "quarry": {
+        "heroTag": "Saison offen",
+        "heroTitle": "Bau es, bevor es ein anderer tut",
+        "heroSubtitle": "Eine neue Karte, eine frische Wirtschaft und jede Menge freies Land. Komm jetzt dazu und sichere dir deine Ecke.",
+        "copyAddress": "Adresse kopieren",
+        "addressCopied": "Adresse kopiert",
+        "copyFailed": "Markiere die Adresse und kopiere sie selbst",
+        "addressLabel": "Serveradresse",
+        "joinDiscord": "Unserem Discord beitreten"
+      }
+    },
+    "es": {
+      "admin": {
+        "theme_quarry_hero": "Banner principal",
+        "theme_quarry_hero_enabled": "Mostrar el banner principal en la página de inicio",
+        "theme_quarry_hero_tag": "Etiqueta pequeña sobre el título",
+        "theme_quarry_hero_title": "Título",
+        "theme_quarry_hero_subtitle": "Línea debajo del título",
+        "theme_quarry_hero_address": "Dirección del servidor que copian los visitantes",
+        "theme_quarry_hero_ctaText": "Texto del botón",
+        "theme_quarry_hero_ctaHref": "Adónde lleva el botón",
+        "theme_quarry_hero_backgroundImage": "Imagen de fondo"
+      },
+      "quarry": {
+        "heroTag": "Temporada abierta",
+        "heroTitle": "Constrúyelo antes que nadie",
+        "heroSubtitle": "Un mapa nuevo, una economía desde cero y mucho terreno libre. Únete ahora y reclama tu rincón.",
+        "copyAddress": "Copiar la dirección",
+        "addressCopied": "Dirección copiada",
+        "copyFailed": "Selecciona la dirección y cópiala tú",
+        "addressLabel": "Dirección del servidor",
+        "joinDiscord": "Únete a nuestro Discord"
+      }
+    },
+    "et": {
+      "admin": {
+        "theme_quarry_hero": "Bänner",
+        "theme_quarry_hero_enabled": "Näita esilehel bännerit",
+        "theme_quarry_hero_tag": "Väike silt pealkirja kohal",
+        "theme_quarry_hero_title": "Pealkiri",
+        "theme_quarry_hero_subtitle": "Pealkirja all olev rida",
+        "theme_quarry_hero_address": "Serveri aadress, mida külastajad kopeerivad",
+        "theme_quarry_hero_ctaText": "Nupu tekst",
+        "theme_quarry_hero_ctaHref": "Kuhu nupp viib",
+        "theme_quarry_hero_backgroundImage": "Taustapilt"
+      },
+      "quarry": {
+        "heroTag": "Hooaeg on avatud",
+        "heroTitle": "Ehita enne, kui keegi teine jõuab",
+        "heroSubtitle": "Uus kaart, nullist majandus ja palju tühja maad. Liitu kohe ja võta oma nurk.",
+        "copyAddress": "Kopeeri aadress",
+        "addressCopied": "Aadress kopeeritud",
+        "copyFailed": "Vali aadress ja kopeeri see ise",
+        "addressLabel": "Serveri aadress",
+        "joinDiscord": "Liitu meie Discordiga"
+      }
+    },
+    "fr": {
+      "admin": {
+        "theme_quarry_hero": "Bannière d’accueil",
+        "theme_quarry_hero_enabled": "Afficher la bannière sur la page d’accueil",
+        "theme_quarry_hero_tag": "Petite étiquette au-dessus du titre",
+        "theme_quarry_hero_title": "Titre",
+        "theme_quarry_hero_subtitle": "Ligne sous le titre",
+        "theme_quarry_hero_address": "Adresse du serveur à copier pour les visiteurs",
+        "theme_quarry_hero_ctaText": "Texte du bouton",
+        "theme_quarry_hero_ctaHref": "Destination du bouton",
+        "theme_quarry_hero_backgroundImage": "Image de fond"
+      },
+      "quarry": {
+        "heroTag": "Saison ouverte",
+        "heroTitle": "Construisez avant les autres",
+        "heroSubtitle": "Une nouvelle carte, une économie repartie de zéro et beaucoup de terrain libre. Rejoignez-nous et réservez votre coin.",
+        "copyAddress": "Copier l’adresse",
+        "addressCopied": "Adresse copiée",
+        "copyFailed": "Sélectionnez l’adresse et copiez-la vous-même",
+        "addressLabel": "Adresse du serveur",
+        "joinDiscord": "Rejoindre notre Discord"
+      }
+    },
+    "it": {
+      "admin": {
+        "theme_quarry_hero": "Banner principale",
+        "theme_quarry_hero_enabled": "Mostra il banner principale in home",
+        "theme_quarry_hero_tag": "Piccola etichetta sopra il titolo",
+        "theme_quarry_hero_title": "Titolo",
+        "theme_quarry_hero_subtitle": "Riga sotto il titolo",
+        "theme_quarry_hero_address": "Indirizzo del server da copiare per i visitatori",
+        "theme_quarry_hero_ctaText": "Testo del pulsante",
+        "theme_quarry_hero_ctaHref": "Dove porta il pulsante",
+        "theme_quarry_hero_backgroundImage": "Immagine di sfondo"
+      },
+      "quarry": {
+        "heroTag": "Stagione aperta",
+        "heroTitle": "Costruisci prima degli altri",
+        "heroSubtitle": "Una mappa nuova, un’economia da zero e tanto terreno libero. Entra ora e prenditi il tuo angolo.",
+        "copyAddress": "Copia l’indirizzo",
+        "addressCopied": "Indirizzo copiato",
+        "copyFailed": "Seleziona l’indirizzo e copialo tu",
+        "addressLabel": "Indirizzo del server",
+        "joinDiscord": "Unisciti al nostro Discord"
+      }
+    },
+    "pl": {
+      "admin": {
+        "theme_quarry_hero": "Baner główny",
+        "theme_quarry_hero_enabled": "Pokazuj baner główny na stronie głównej",
+        "theme_quarry_hero_tag": "Mała etykieta nad nagłówkiem",
+        "theme_quarry_hero_title": "Nagłówek",
+        "theme_quarry_hero_subtitle": "Linia pod nagłówkiem",
+        "theme_quarry_hero_address": "Adres serwera do skopiowania przez odwiedzających",
+        "theme_quarry_hero_ctaText": "Tekst przycisku",
+        "theme_quarry_hero_ctaHref": "Dokąd prowadzi przycisk",
+        "theme_quarry_hero_backgroundImage": "Obraz tła"
+      },
+      "quarry": {
+        "heroTag": "Sezon otwarty",
+        "heroTitle": "Zbuduj to, zanim zrobi to ktoś inny",
+        "heroSubtitle": "Nowa mapa, gospodarka od zera i mnóstwo wolnej ziemi. Dołącz teraz i zajmij swój kąt.",
+        "copyAddress": "Kopiuj adres",
+        "addressCopied": "Adres skopiowany",
+        "copyFailed": "Zaznacz adres i skopiuj go samodzielnie",
+        "addressLabel": "Adres serwera",
+        "joinDiscord": "Dołącz do naszego Discorda"
+      }
+    },
+    "pt": {
+      "admin": {
+        "theme_quarry_hero": "Banner principal",
+        "theme_quarry_hero_enabled": "Mostrar o banner principal na página inicial",
+        "theme_quarry_hero_tag": "Etiqueta pequena acima do título",
+        "theme_quarry_hero_title": "Título",
+        "theme_quarry_hero_subtitle": "Linha abaixo do título",
+        "theme_quarry_hero_address": "Endereço do servidor que os visitantes copiam",
+        "theme_quarry_hero_ctaText": "Texto do botão",
+        "theme_quarry_hero_ctaHref": "Para onde o botão leva",
+        "theme_quarry_hero_backgroundImage": "Imagem de fundo"
+      },
+      "quarry": {
+        "heroTag": "Temporada aberta",
+        "heroTitle": "Construa antes que outro construa",
+        "heroSubtitle": "Um mapa novo, uma economia do zero e muito terreno livre. Entre agora e garanta o seu canto.",
+        "copyAddress": "Copiar o endereço",
+        "addressCopied": "Endereço copiado",
+        "copyFailed": "Selecione o endereço e copie você mesmo",
+        "addressLabel": "Endereço do servidor",
+        "joinDiscord": "Entre no nosso Discord"
+      }
+    },
+    "ru": {
+      "admin": {
+        "theme_quarry_hero": "Главный баннер",
+        "theme_quarry_hero_enabled": "Показывать главный баннер на главной странице",
+        "theme_quarry_hero_tag": "Небольшая метка над заголовком",
+        "theme_quarry_hero_title": "Заголовок",
+        "theme_quarry_hero_subtitle": "Строка под заголовком",
+        "theme_quarry_hero_address": "Адрес сервера, который копируют посетители",
+        "theme_quarry_hero_ctaText": "Текст кнопки",
+        "theme_quarry_hero_ctaHref": "Куда ведет кнопка",
+        "theme_quarry_hero_backgroundImage": "Фоновое изображение"
+      },
+      "quarry": {
+        "heroTag": "Сезон открыт",
+        "heroTitle": "Построй раньше других",
+        "heroSubtitle": "Новая карта, экономика с нуля и много свободной земли. Заходи сейчас и займи свой угол.",
+        "copyAddress": "Скопировать адрес",
+        "addressCopied": "Адрес скопирован",
+        "copyFailed": "Выдели адрес и скопируй его сам",
+        "addressLabel": "Адрес сервера",
+        "joinDiscord": "Присоединиться к Discord"
+      }
+    },
+    "zh": {
+      "admin": {
+        "theme_quarry_hero": "首页横幅",
+        "theme_quarry_hero_enabled": "在首页显示横幅",
+        "theme_quarry_hero_tag": "标题上方的小标签",
+        "theme_quarry_hero_title": "标题",
+        "theme_quarry_hero_subtitle": "标题下方的文字",
+        "theme_quarry_hero_address": "访客可复制的服务器地址",
+        "theme_quarry_hero_ctaText": "按钮文字",
+        "theme_quarry_hero_ctaHref": "按钮的跳转位置",
+        "theme_quarry_hero_backgroundImage": "背景图片"
+      },
+      "quarry": {
+        "heroTag": "赛季开放中",
+        "heroTitle": "抢在别人之前建起来",
+        "heroSubtitle": "全新地图、从零开始的经济和大片空地。现在加入，占下你的角落。",
+        "copyAddress": "复制地址",
+        "addressCopied": "地址已复制",
+        "copyFailed": "请选中地址后自行复制",
+        "addressLabel": "服务器地址",
+        "joinDiscord": "加入我们的 Discord"
+      }
+    }
+  }
+}
