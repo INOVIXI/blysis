@@ -127,7 +127,9 @@ html {
   align-items: center;
   background: var(--blysis-color-stage);
   color: var(--blysis-color-stageForeground);
-  box-shadow: inset 0 calc(-1 * var(--qr-strip)) 0 var(--blysis-color-primary);
+  /* A border, not an inset shadow: the picture and the scene fill the
+     padding box and would paint over a shadow drawn inside it. */
+  border-bottom: var(--qr-strip) solid var(--blysis-color-primary);
 }
 
 .qr-scene,
@@ -170,7 +172,7 @@ html {
   align-items: flex-start;
   gap: 18px;
   padding-top: 64px;
-  padding-bottom: calc(72px + var(--qr-strip));
+  padding-bottom: 72px;
 }
 
 .qr-tag {
@@ -241,6 +243,11 @@ html {
 }
 
 .qr-hero-bottom:empty {
+  display: none;
+}
+
+/* The homepage's own crumb says "home" under a hero that already does. */
+.qr-hero + .qr-main [data-home-trail] {
   display: none;
 }
 
