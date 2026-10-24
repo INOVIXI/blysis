@@ -14,15 +14,19 @@
  * The page is the store's `product` page, built from the gallery, the box it
  * is bought from, its description and the others on its shelf. With no word
  * from the theme it stands as it always has, the pictures and the words beside
- * the box, and the others on the shelf are not shown.
+ * the box, and the others on the shelf and the trail the header already
+ * carries are not shown.
  */
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/core/sdk/navigation";
 import { ArrangedPage, moduleSettings } from "@/core/sdk/server";
 import { RichContent } from "@/core/sdk/ui";
+import { ChevronRight } from "lucide-react";
 import { readProduct } from "../../../../lib/read-product";
 import { readBulkLadder } from "../../../../lib/read-bulk-rules";
 import { readRelated } from "../../../../lib/read-store";
+import { storeHref } from "../../../../components/StoreFront";
 import { ProductCard } from "../../../../components/ProductCard";
 import { ProductGallery } from "../../../../components/ProductGallery";
 import { ProductView } from "../../../../components/ProductView";
@@ -68,6 +72,21 @@ export default async function ProductPage({ params }: PageProps) {
             page="store.product"
             frame={{ title: product.name, trail: [{ label: t("title"), href: "/store" }] }}
             blocks={{
+                // The header's trail, for a theme that hides the header and
+                // would otherwise leave no way back to the product's shelf.
+                crumbs: () => (
+                    <nav aria-label={t("title")} className="text-sm text-muted-foreground flex flex-wrap items-center gap-2">
+                        <Link href="/store" className="hover:text-primary">{t("title")}</Link>
+                        {product.category ? (
+                            <>
+                                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                                <Link href={storeHref({ category: product.category.slug })} className="hover:text-primary">{product.category.name}</Link>
+                            </>
+                        ) : null}
+                        <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                        <span aria-current="page" className="text-foreground">{product.name}</span>
+                    </nav>
+                ),
                 gallery: () => <ProductGallery name={product.name} image={product.image} images={product.images} />,
                 buy: ({ settings }) => <ProductView product={product} bulkLadder={ladder} title={settings.title === true} />,
                 // The name is the frame's title, so the card holds the

@@ -11280,6 +11280,13 @@
       "id": "product",
       "blocks": [
         {
+          "id": "crumbs",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
           "id": "gallery",
           "widths": [
             "full",
@@ -11341,6 +11348,7 @@
           }
         ],
         "hidden": [
+          "store.crumbs",
           "store.related"
         ]
       }

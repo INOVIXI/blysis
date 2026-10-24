@@ -11,11 +11,13 @@
  * on a site whose theme has no arrangement for it: the module's own default
  * from its manifest, resolved by the real resolver, under a frame that draws
  * the title as the h1. A test of the page therefore draws what a visitor to
- * such a site sees, hidden blocks left out.
+ * such a site sees, hidden blocks left out. Given a theme's arrangements by
+ * page, it draws a page the way that theme arranges it instead.
  */
 import React from "react";
 import { pagesOf } from "@/core/lib/page-blocks";
 import { resolvePageLayout } from "@/core/lib/page-layout";
+import type { LayoutDocument } from "@/core/lib/page-layout-schema";
 import type { ArrangedPageProps } from "@/core/components/layout/ArrangedPage";
 
 const isAsync = (fn: unknown): fn is (props: unknown) => Promise<React.ReactNode> =>
@@ -34,11 +36,11 @@ export async function serverTree(node: React.ReactNode | Promise<React.ReactNode
     return React.cloneElement(awaited, undefined, await serverTree(props.children));
 }
 
-export function arrangedPageStub(module: string, manifest: Parameters<typeof pagesOf>[1]) {
+export function arrangedPageStub(module: string, manifest: Parameters<typeof pagesOf>[1], themeLayouts: Record<string, LayoutDocument> = {}) {
     return async function ArrangedPage({ page, frame, blocks, children }: ArrangedPageProps) {
         const declared = pagesOf(module, manifest).find((p) => p.id === page);
         if (!declared) throw new Error(`${module} declares no page ${page}`);
-        const layout = resolvePageLayout({ page: declared, themeLayout: undefined });
+        const layout = resolvePageLayout({ page: declared, themeLayout: themeLayouts[page] });
         const drawn = layout.rows.flatMap((row) => row.cells.flat()).map((instance) => (
             <div key={instance.key} data-block={instance.block.id}>
                 {blocks[instance.block.entryId]?.({ settings: instance.settings, width: instance.width })}
