@@ -14,9 +14,9 @@
  *
  * 5.22.0 - `linkTarget` joins `@/core/sdk/theme`: an address an operator
  * typed into a theme setting, as a link only when it is a path on this site
- * or an http(s) address. Vanguard kept this check beside its hero, and a
- * second theme with a button in its settings would have copied it, test and
- * all, or gone without. Additive.
+ * or an http(s) address. One theme kept this check beside its own hero, and
+ * the next theme with a button in its settings would have copied it, test
+ * and all, or gone without. Additive.
  *
  * 5.19.0 - a theme can redraw the frame, not only the hero. `SiteShell`,
  * `PageHeader` and `AuthFrame` become names a theme's `components` may
