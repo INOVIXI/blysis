@@ -380,20 +380,30 @@ html[data-mode="dark"] {
   margin-top: 4px;
 }
 
+/*
+ * What a module puts here is written for the page, with the page's tokens,
+ * and here the ground is the stage in both modes. So the tokens are the
+ * stage's under the hero: repainting only the surfaces left the page's dark
+ * grey text on them, and the staff strip's avatar initial disappeared in the
+ * light mode. `what-a-module-draws-on-the-vanguard-stage-can-be-read` measures
+ * each pair.
+ */
 .vg-hero-bottom {
   margin-top: auto;
   max-width: 640px;
   padding-top: 18px;
   border-top: 1px solid color-mix(in srgb, var(--blysis-color-stageForeground) 18%, transparent);
+  --blysis-color-background: var(--blysis-color-stage);
+  --blysis-color-foreground: var(--blysis-color-stageForeground);
+  --blysis-color-muted: color-mix(in srgb, var(--blysis-color-stageForeground) 12%, transparent);
+  --blysis-color-mutedForeground: var(--blysis-color-stageMuted);
+  --blysis-color-card: color-mix(in srgb, var(--blysis-color-stageForeground) 10%, transparent);
+  --blysis-color-cardForeground: var(--blysis-color-stageForeground);
+  --blysis-color-border: color-mix(in srgb, var(--blysis-color-stageForeground) 18%, transparent);
 }
 
 .vg-hero-bottom:empty {
   display: none;
-}
-
-/* What a module puts here is drawn in the page's colours; on the stage its surfaces are the sky's. */
-.vg-hero-bottom :is(li, [class*="bg-"]) {
-  background-color: color-mix(in srgb, var(--blysis-color-stageForeground) 10%, transparent);
 }
 
 .vg-home {
