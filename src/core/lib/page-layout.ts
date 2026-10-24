@@ -1,7 +1,6 @@
-import { log } from "@/core/lib/logger";
 import { isWidgetVisible, orderWidgets } from "@/core/lib/homepage-widgets";
 import { sortBlocks, type CatalogBlock } from "@/core/lib/page-blocks";
-import { cellWidths, layoutDocumentSchema, type LayoutDocument, type RowSplit, type WidthClass } from "@/core/lib/page-layout-schema";
+import { cellWidths, type LayoutDocument, type RowSplit, type WidthClass } from "@/core/lib/page-layout-schema";
 import { sanitizeSettingValue, settingDefault } from "@/core/lib/setting-field-value";
 
 /** One block as the page draws it: where it stands and what it was told. */
@@ -24,9 +23,7 @@ export interface ResolvedLayout {
 }
 
 interface ResolveInput {
-    /** The operator's stored document, unchecked: it is checked here. */
-    saved: unknown;
-    themeDefault: LayoutDocument | undefined;
+    themeLayout: LayoutDocument | undefined;
     /** Every block the registry lists, installed or not switched on. */
     blocks: CatalogBlock[];
     enabled: (module: string) => boolean;
@@ -74,14 +71,6 @@ function coreDefaultLayout(blocks: CatalogBlock[], settings: Record<string, unkn
     return { rows: rows.map((r) => (r.split === "2-1" ? { ...r, rest: 1 } : r)), hidden };
 }
 
-function savedDocument(saved: unknown): LayoutDocument | null {
-    if (saved === null || saved === undefined) return null;
-    const parsed = layoutDocumentSchema.safeParse(saved);
-    if (parsed.success) return parsed.data;
-    log.warn("[page-layout] a saved arrangement does not match the layout schema; drawing the theme's instead");
-    return null;
-}
-
 /** Every setting the block declares, as given when it may hold it, else its default. */
 function settingsOf(block: CatalogBlock, given: Record<string, unknown> | undefined): Record<string, unknown> {
     const out: Record<string, unknown> = {};
@@ -94,8 +83,7 @@ function settingsOf(block: CatalogBlock, given: Record<string, unknown> | undefi
 }
 
 /**
- * What the homepage draws: the saved document if it is one, else the
- * theme's, else core's. Then a block of a module that is gone or switched
+ * What the homepage draws: the theme's arrangement, else core's. Then a block of a module that is gone or switched
  * off is left out, a block is drawn only in a cell whose width it declares,
  * every setting is one its field allows, and a block the document never
  * named and did not hide goes to its `rest` cell, or to rows of its own.
@@ -103,7 +91,7 @@ function settingsOf(block: CatalogBlock, given: Record<string, unknown> | undefi
 export function resolveLayout(input: ResolveInput): ResolvedLayout {
     const usable = sortBlocks(input.blocks.filter((b) => input.enabled(b.module)));
     const byId = new Map(usable.map((b) => [b.id, b]));
-    const doc = savedDocument(input.saved) ?? input.themeDefault ?? coreDefaultLayout(usable, input.settings);
+    const doc = input.themeLayout ?? coreDefaultLayout(usable, input.settings);
 
     const named = new Set(doc.rows.flatMap((row) => row.cells.flat().map((i) => i.block)));
     const hidden = new Set(doc.hidden ?? []);

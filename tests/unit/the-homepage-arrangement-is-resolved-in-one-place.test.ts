@@ -9,8 +9,7 @@ const { resolveLayout } = await import("@/core/lib/page-layout");
 /**
  * What the homepage draws is decided in one function.
  *
- * The arrangement comes from the operator's saved document, or the theme's,
- * or, for a site that has neither, from the widget order and visibility the
+ * The arrangement is the theme's, or, for a theme that ships none, from the widget order and visibility the
  * old Settings > Widgets screen saved, so an upgraded site looks exactly as
  * it did. Whatever the source, a block of a module that is gone or switched
  * off is left out, a block is only drawn where it fits, a bad setting falls
@@ -30,11 +29,11 @@ const section = (id: string, order: number) => block(id, { widths: ["wide", "ful
 const ids = (cell: { block: CatalogBlock }[]) => cell.map((i) => i.block.id);
 
 function resolve(input: Partial<Parameters<typeof resolveLayout>[0]> & { blocks: CatalogBlock[] }) {
-    return resolveLayout({ saved: null, themeDefault: undefined, enabled: () => true, settings: {}, ...input });
+    return resolveLayout({ themeLayout: undefined, enabled: () => true, settings: {}, ...input });
 }
 
 describe("the homepage's arrangement", () => {
-    it("draws today's page for a site that never saved one", () => {
+    it("draws today's page under a theme that ships no arrangement", () => {
         const layout = resolve({
             blocks: [section("m.x", 10), section("m.y", 20), block("m.a"), block("m.b"), block("m.c")],
             settings: { widget_order: ["c", "a"], widget_visibility: { b: false } },
@@ -59,12 +58,11 @@ describe("the homepage's arrangement", () => {
         expect(ids(layout.rows[0].cells[1])).toEqual(["m.renamed", "m.a"]);
     });
 
-    it("prefers the saved document over the theme's, and the theme's over core's", () => {
+    it("prefers the theme's arrangement over core's", () => {
         const blocks = [block("m.a"), block("m.b")];
         const theme: LayoutDocument = { rows: [{ split: "1-1", cells: [[{ key: "b", block: "m.b" }], [{ key: "a", block: "m.a" }]] }] };
-        const saved: LayoutDocument = { rows: [{ split: "1-1-1", cells: [[{ key: "a", block: "m.a" }], [], [{ key: "b", block: "m.b" }]] }] };
-        expect(resolve({ blocks, themeDefault: theme }).rows[0].split).toBe("1-1");
-        expect(resolve({ blocks, themeDefault: theme, saved }).rows[0].split).toBe("1-1-1");
+        expect(resolve({ blocks }).rows[0].split).toBe("2-1");
+        expect(resolve({ blocks, themeLayout: theme }).rows[0].split).toBe("1-1");
     });
 
     it("drops a disabled module's block", () => {
@@ -73,32 +71,32 @@ describe("the homepage's arrangement", () => {
     });
 
     it("drops a block placed in a cell too narrow for it", () => {
-        const saved: LayoutDocument = { rows: [{ split: "1-1", cells: [[{ key: "x", block: "m.x" }], [{ key: "a", block: "m.a" }]] }] };
-        const layout = resolve({ blocks: [section("m.x", 0), block("m.a")], saved });
+        const theme: LayoutDocument = { rows: [{ split: "1-1", cells: [[{ key: "x", block: "m.x" }], [{ key: "a", block: "m.a" }]] }] };
+        const layout = resolve({ blocks: [section("m.x", 0), block("m.a")], themeLayout: theme });
         expect(ids(layout.rows[0].cells[0])).toEqual([]);
         expect(ids(layout.rows[0].cells[1])).toEqual(["m.a"]);
     });
 
     it("appends a block the document never named to the rest cell, and not one it hid", () => {
-        const saved: LayoutDocument = {
+        const theme: LayoutDocument = {
             rows: [{ split: "2-1", cells: [[], [{ key: "a", block: "m.a" }]], rest: 1 }],
             hidden: ["m.c"],
         };
-        const layout = resolve({ blocks: [block("m.a"), block("m.b", { defaultOrder: 5 }), block("m.c")], saved });
+        const layout = resolve({ blocks: [block("m.a"), block("m.b", { defaultOrder: 5 }), block("m.c")], themeLayout: theme });
         expect(ids(layout.rows[0].cells[1])).toEqual(["m.a", "m.b"]);
     });
 
     it("gives a block it adds a key no placement on the page has", () => {
-        const saved: LayoutDocument = {
+        const theme: LayoutDocument = {
             rows: [{ split: "2-1", cells: [[], [{ key: "m-b", block: "m.a" }]], rest: 1 }],
         };
-        const layout = resolve({ blocks: [block("m.a"), block("m.b")], saved });
+        const layout = resolve({ blocks: [block("m.a"), block("m.b")], themeLayout: theme });
         const keys = layout.rows.flatMap((row) => row.cells.flat().map((i) => i.key));
         expect(ids(layout.rows[0].cells[1])).toEqual(["m.a", "m.b"]);
         expect(new Set(keys).size).toBe(keys.length);
 
         const noRest: LayoutDocument = { rows: [{ split: "1", cells: [[{ key: "m-a", block: "m.x" }]] }] };
-        const own = resolve({ blocks: [section("m.x", 0), block("m.a")], saved: noRest });
+        const own = resolve({ blocks: [section("m.x", 0), block("m.a")], themeLayout: noRest });
         const ownKeys = own.rows.flatMap((row) => row.cells.flat().map((i) => i.key));
         expect(ownKeys).toHaveLength(2);
         expect(new Set(ownKeys).size).toBe(2);
@@ -112,20 +110,16 @@ describe("the homepage's arrangement", () => {
     });
 
     it("gives an unnamed block a row of its own when the document has no rest cell", () => {
-        const saved: LayoutDocument = { rows: [{ split: "1", cells: [[{ key: "x", block: "m.x" }]] }] };
-        const layout = resolve({ blocks: [section("m.x", 0), block("m.a")], saved });
+        const theme: LayoutDocument = { rows: [{ split: "1", cells: [[{ key: "x", block: "m.x" }]] }] };
+        const layout = resolve({ blocks: [section("m.x", 0), block("m.a")], themeLayout: theme });
         expect(layout.rows).toHaveLength(2);
         expect(ids(layout.rows[1].cells[1])).toEqual(["m.a"]);
     });
 
-    it("keeps a page when one instance is malformed", () => {
+    it("falls back to a setting's default when the theme gives one it cannot hold", () => {
         const counted = block("m.a", { settings: { count: { type: "number", default: 4, min: 1, max: 12 } } });
-        const saved = { rows: [{ split: "1-1", cells: [[{ key: "a", block: "m.a", settings: { count: "many" } }], []] }] };
-        expect(resolve({ blocks: [counted], saved }).rows[0].cells[0][0].settings).toEqual({ count: 4 });
-
-        const theme: LayoutDocument = { rows: [{ split: "1-1", cells: [[{ key: "a", block: "m.a" }], []] }] };
-        const broken = { rows: [{ split: "3-1", cells: [] }] };
-        expect(resolve({ blocks: [counted], saved: broken, themeDefault: theme }).rows[0].split).toBe("1-1");
+        const theme: LayoutDocument = { rows: [{ split: "1-1", cells: [[{ key: "a", block: "m.a", settings: { count: "many" } }], []] }] };
+        expect(resolve({ blocks: [counted], themeLayout: theme }).rows[0].cells[0][0].settings).toEqual({ count: 4 });
     });
 
     it("draws the welcome card when nothing has content", () => {
