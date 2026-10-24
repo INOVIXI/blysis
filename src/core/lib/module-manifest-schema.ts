@@ -1127,7 +1127,7 @@ export type ValidatedModuleManifest = z.infer<typeof moduleManifestSchema>;
 /**
  * The file extensions a manifest ref may be written without. The registry
  * generator strips any extension off a ref and emits a bare import specifier
- * (`@/modules/blog/components/BlogNewsSection`), leaving the bundler to pick
+ * (`@/modules/<id>/components/Foo`), leaving the bundler to pick
  * the file - so `components/Foo`, `components/Foo.tsx` and `components/Foo/`
  * all name the same module. Anything that validates refs against the disk has
  * to apply the same rule or it rejects manifests the build would have loaded

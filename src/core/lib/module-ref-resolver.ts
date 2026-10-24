@@ -16,9 +16,9 @@ import {
  * fourth. The copies disagreed:
  *
  *   - The routes compared the ref to the disk verbatim, so a manifest saying
- *     `components/BlogNewsSection` was rejected even though
- *     `components/BlogNewsSection.tsx` sat right there - the extensionless
- *     form the registry generator not only accepts but strips down to.
+ *     `components/Foo` was rejected even though `components/Foo.tsx` sat
+ *     right there - the extensionless form the registry generator not only
+ *     accepts but strips down to.
  *   - The CI gate was extension-tolerant, but only for five of the twenty-one
  *     keys that can carry a ref, and it checked `routes`/`adminRoutes`/`api`
  *     verbatim.

@@ -67,6 +67,10 @@ describe("the visual page editor", () => {
         expect(named).toEqual([]);
     });
 
+    // The builder's blocks lived in a `blocks/` folder and a `pageBlocks`
+    // field. A homepage block (a manifest's `blocks`) is another thing, the
+    // file a theme's arrangement draws, and it lives with the module's other
+    // components, so the folder stays a sign of the builder coming back.
     it("left no block for a module to contribute", () => {
         const offenders: string[] = [];
         for (const id of fs.readdirSync(path.join(ROOT, "module-sources"))) {
