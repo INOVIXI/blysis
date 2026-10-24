@@ -429,9 +429,10 @@ html[data-mode="dark"] {
  * side from the top.
  */
 @media (min-width: 64rem) {
-  /* The heading spacer is the homepage's and draws nothing here, so it does
-     not count as a widget. */
-  .vg-home:has(> [data-sidebar-layout] > [data-sidebar] > :not(template, .blysis-heading-spacer)) {
+  /* The heading spacer is the homepage's and draws nothing here, and a block
+     that drew nothing is no widget either: core asks the same question in
+     globals.css, and globals-css.test.ts holds the two together. */
+  .vg-home:has(> [data-sidebar-layout] > [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty)) {
     grid-template-columns: minmax(0, 1fr) 300px;
   }
 

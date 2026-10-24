@@ -89,6 +89,6 @@ describe("a sidebar of blocks that drew nothing", () => {
     it("collapses, because an empty block box does not count as content", () => {
         expect(css).toMatch(/\[data-block\]:empty\s*\{\s*display:\s*none;?\s*\}/);
         expect(css).toContain("[data-sidebar-layout] > [data-sidebar]:not(:has(> :not(template, .blysis-heading-spacer, [data-block]:empty)))");
-        expect(css).toContain("[data-sidebar-layout]:has(> [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty)) > [data-sidebar-main]");
+        expect(css).toContain(":where([data-sidebar-layout]:has(> [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty))) > [data-sidebar-main]");
     });
 });

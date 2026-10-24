@@ -688,12 +688,16 @@ body {
    * says the second thing directly is invalid, and an invalid selector is
    * dropped without a word: the column hid, the content stayed at two thirds,
    * and the page still looked off centre.
+   *
+   * Both weigh one attribute, the second winning by coming later, so a theme
+   * that places the columns itself always outranks them; see
+   * globals-css.test.ts.
    */
-  [data-sidebar-layout] > [data-sidebar-main] {
+  :where([data-sidebar-layout]) > [data-sidebar-main] {
     grid-column: 1 / -1;
   }
 
-  [data-sidebar-layout]:has(> [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty)) > [data-sidebar-main] {
+  :where([data-sidebar-layout]:has(> [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty))) > [data-sidebar-main] {
     grid-column: span 2 / span 2;
   }
 }
