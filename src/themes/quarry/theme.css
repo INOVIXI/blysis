@@ -89,9 +89,12 @@ html {
   overflow-x: clip;
 }
 
-/* A column a poster can fill, a little narrower than the default one. */
+/*
+ * A column a poster can fill, a little narrower than the default one: 1200px
+ * of content between the 24px gutters, which a border-box column counts in.
+ */
 .qr-site .container {
-  max-width: 1200px;
+  max-width: 1248px;
 }
 
 @media (min-width: 40rem) {
@@ -101,21 +104,78 @@ html {
   }
 }
 
+/* The bar sits on the page's own ground, parted from the hero by a hairline. */
 .qr-bar > header {
+  border-bottom: 0;
   background: var(--blysis-color-background);
-  border-bottom-color: var(--blysis-color-border);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--blysis-color-border) 50%, var(--blysis-color-background));
 }
 
-/* The site's name beside its mark, the only bold link in the bar. */
+.qr-bar > header > .container > div {
+  height: 60px;
+}
+
+/*
+ * The site's name beside its mark, in the heading face. The mark is sized
+ * with min-width and min-height because core gives it an inline size, which
+ * a minimum outranks without `!important`.
+ */
 .qr-bar header a.font-semibold {
+  gap: 10px;
   font-family: var(--blysis-font-heading);
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 1.125rem;
   text-transform: uppercase;
 }
 
-.qr-bar nav [data-nav-item] {
+.qr-bar header a.font-semibold > img {
+  min-width: 28px;
+  min-height: 28px;
+}
+
+/* Words, not icons: the links are read as a row of names. */
+.qr-bar header :is(a[data-nav-item], [data-nav-item] > button) {
+  padding-left: 10px;
+  padding-right: 10px;
   font-weight: 700;
+}
+
+.qr-bar header :is(a[data-nav-item], [data-nav-item] > button) > svg:first-child {
+  display: none;
+}
+
+.qr-bar header :is(a[data-nav-item], [data-nav-item] > button, .blysis-button).text-muted-foreground:not(:hover) {
+  color: color-mix(in srgb, var(--blysis-color-foreground) 45%, var(--blysis-color-mutedForeground));
+}
+
+.qr-bar header .blysis-button:not([class*=" bg-"]) {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.qr-bar header .blysis-button.bg-primary {
+  height: 40px;
+  margin-left: 6px;
+  padding: 0 16px;
+  font-size: 0.8125rem;
+}
+
+@media (min-width: 40rem) {
+  .qr-bar > header > .container > div {
+    height: 68px;
+  }
+
+  /* The mark stands on the column's edge, as the hero's words below it do. */
+  .qr-bar header a.font-semibold {
+    margin-right: 6px;
+    padding-left: 0;
+    font-size: 1.375rem;
+  }
+
+  .qr-bar header a.font-semibold > img {
+    min-width: 34px;
+    min-height: 34px;
+  }
 }
 
 .qr-main {
@@ -316,6 +376,7 @@ html {
   color: var(--blysis-color-stageForeground);
   font-family: var(--blysis-font-heading);
   font-weight: 700;
+  letter-spacing: 0.02em;
   user-select: all;
 }
 
@@ -391,9 +452,17 @@ html {
   color: var(--blysis-color-warning);
 }
 
-/* Every card a block draws stands on its edge, as the sidebar's do. */
+/*
+ * Every card a block draws stands on its edge, as the sidebar's do, and the
+ * edge is all that parts it from the page: an outline on top of it read as a
+ * second frame. A card that answers the pointer still shows its outline then.
+ */
 .qr-site [data-block] :is(.bg-card.rounded-xl, [data-stat-tile]) {
   box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.qr-site [data-block] :is(.bg-card.rounded-xl, [data-stat-tile]):not(:hover) {
+  border-color: transparent;
 }
 
 /* The numbers: each tile's icon is a block of its own colour. */
@@ -414,12 +483,13 @@ html {
 }
 
 .qr-site [data-stats] > :nth-child(4n + 4) [data-stat-icon] {
-  --qr-tile: var(--blysis-color-destructive);
+  --qr-tile: var(--blysis-color-highlight);
 }
 
 .qr-site [data-stat-value] {
   font-family: var(--blysis-font-heading);
   font-weight: 900;
+  text-transform: uppercase;
 }
 
 /* A game mode: how many play in a dark tag, and a cyan button that connects. */
@@ -461,6 +531,25 @@ html {
   font-size: 1.125rem;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.qr-site [data-news-row] h3 {
+  font-family: var(--blysis-font-body);
+  font-size: 1.0625rem;
+}
+
+/*
+ * The lead article's summary follows its headline. The block keeps room for
+ * two lines of each so its waiting outline matches; here the words close up
+ * and the card is as tall as what it says.
+ */
+.qr-site [data-news-lead] :is(h3, h3 + p) {
+  min-height: 0;
+}
+
+.qr-site [data-news-lead] h3 + p {
+  color: color-mix(in srgb, var(--blysis-color-foreground) 45%, var(--blysis-color-mutedForeground));
+  font-size: 0.9375rem;
 }
 
 /* The shop's shelves: the chosen one light, the rest dark, all pressable. */

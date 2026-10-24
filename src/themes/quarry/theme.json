@@ -33,7 +33,8 @@
             "edge": "#0b0d11",
             "stage": "#101216",
             "stageForeground": "#ffffff",
-            "stageMuted": "#c9ced8"
+            "stageMuted": "#c9ced8",
+            "highlight": "#8d5cf6"
           }
         }
       },
@@ -62,7 +63,8 @@
             "edge": "#c5ccd6",
             "stage": "#15171c",
             "stageForeground": "#ffffff",
-            "stageMuted": "#c9ced8"
+            "stageMuted": "#c9ced8",
+            "highlight": "#6d3fd6"
           }
         }
       }
@@ -120,7 +122,8 @@
       },
       "edge": {
         "type": "color",
-        "group": "Surface"
+        "group": "Surface",
+        "labelKey": "theme_quarry_color_edge"
       },
       "destructive": {
         "type": "color",
@@ -136,15 +139,23 @@
       },
       "stage": {
         "type": "color",
-        "group": "Hero"
+        "group": "Hero",
+        "labelKey": "theme_quarry_color_stage"
       },
       "stageForeground": {
         "type": "color",
-        "group": "Hero"
+        "group": "Hero",
+        "labelKey": "theme_quarry_color_stageForeground"
       },
       "stageMuted": {
         "type": "color",
-        "group": "Hero"
+        "group": "Hero",
+        "labelKey": "theme_quarry_color_stageMuted"
+      },
+      "highlight": {
+        "type": "color",
+        "group": "Brand",
+        "labelKey": "theme_quarry_color_highlight"
       }
     },
     "fonts": {
@@ -484,7 +495,12 @@
         "theme_quarry_stats_tile2Icon": "Tile 2: icon (a Lucide name, such as Trophy)",
         "theme_quarry_stats_tile3Value": "Tile 3: the number",
         "theme_quarry_stats_tile3Label": "Tile 3: what it counts",
-        "theme_quarry_stats_tile3Icon": "Tile 3: icon (a Lucide name, such as Trophy)"
+        "theme_quarry_stats_tile3Icon": "Tile 3: icon (a Lucide name, such as Trophy)",
+        "theme_quarry_color_edge": "Edge under buttons and cards",
+        "theme_quarry_color_stage": "Hero background",
+        "theme_quarry_color_stageForeground": "Hero text",
+        "theme_quarry_color_stageMuted": "Hero muted text",
+        "theme_quarry_color_highlight": "Highlight"
       },
       "quarry": {
         "heroTag": "Season open",
@@ -526,7 +542,12 @@
         "theme_quarry_stats_tile2Icon": "Kutu 2: simge (Trophy gibi bir Lucide adı)",
         "theme_quarry_stats_tile3Value": "Kutu 3: sayı",
         "theme_quarry_stats_tile3Label": "Kutu 3: neyi saydığı",
-        "theme_quarry_stats_tile3Icon": "Kutu 3: simge (Trophy gibi bir Lucide adı)"
+        "theme_quarry_stats_tile3Icon": "Kutu 3: simge (Trophy gibi bir Lucide adı)",
+        "theme_quarry_color_edge": "Buton ve kart kenarı",
+        "theme_quarry_color_stage": "Hero arka planı",
+        "theme_quarry_color_stageForeground": "Hero yazısı",
+        "theme_quarry_color_stageMuted": "Hero soluk yazısı",
+        "theme_quarry_color_highlight": "Öne çıkan renk"
       },
       "quarry": {
         "heroTag": "Sezon açık",
@@ -568,7 +589,12 @@
         "theme_quarry_stats_tile2Icon": "Xana 2: ikon (Trophy kimi Lucide adı)",
         "theme_quarry_stats_tile3Value": "Xana 3: rəqəm",
         "theme_quarry_stats_tile3Label": "Xana 3: nəyi saydığı",
-        "theme_quarry_stats_tile3Icon": "Xana 3: ikon (Trophy kimi Lucide adı)"
+        "theme_quarry_stats_tile3Icon": "Xana 3: ikon (Trophy kimi Lucide adı)",
+        "theme_quarry_color_edge": "Düymə və kart kənarı",
+        "theme_quarry_color_stage": "Hero fonu",
+        "theme_quarry_color_stageForeground": "Hero mətni",
+        "theme_quarry_color_stageMuted": "Hero solğun mətni",
+        "theme_quarry_color_highlight": "Seçilən rəng"
       },
       "quarry": {
         "heroTag": "Mövsüm açıqdır",
@@ -610,7 +636,12 @@
         "theme_quarry_stats_tile2Icon": "Kachel 2: Symbol (ein Lucide-Name wie Trophy)",
         "theme_quarry_stats_tile3Value": "Kachel 3: die Zahl",
         "theme_quarry_stats_tile3Label": "Kachel 3: was sie zählt",
-        "theme_quarry_stats_tile3Icon": "Kachel 3: Symbol (ein Lucide-Name wie Trophy)"
+        "theme_quarry_stats_tile3Icon": "Kachel 3: Symbol (ein Lucide-Name wie Trophy)",
+        "theme_quarry_color_edge": "Kante unter Buttons und Karten",
+        "theme_quarry_color_stage": "Hero-Hintergrund",
+        "theme_quarry_color_stageForeground": "Hero-Text",
+        "theme_quarry_color_stageMuted": "Gedämpfter Hero-Text",
+        "theme_quarry_color_highlight": "Hervorhebung"
       },
       "quarry": {
         "heroTag": "Saison offen",
@@ -652,7 +683,12 @@
         "theme_quarry_stats_tile2Icon": "Casilla 2: icono (un nombre de Lucide, como Trophy)",
         "theme_quarry_stats_tile3Value": "Casilla 3: la cifra",
         "theme_quarry_stats_tile3Label": "Casilla 3: qué cuenta",
-        "theme_quarry_stats_tile3Icon": "Casilla 3: icono (un nombre de Lucide, como Trophy)"
+        "theme_quarry_stats_tile3Icon": "Casilla 3: icono (un nombre de Lucide, como Trophy)",
+        "theme_quarry_color_edge": "Borde bajo botones y tarjetas",
+        "theme_quarry_color_stage": "Fondo del hero",
+        "theme_quarry_color_stageForeground": "Texto del hero",
+        "theme_quarry_color_stageMuted": "Texto atenuado del hero",
+        "theme_quarry_color_highlight": "Resalte"
       },
       "quarry": {
         "heroTag": "Temporada abierta",
@@ -694,7 +730,12 @@
         "theme_quarry_stats_tile2Icon": "Paan 2: ikoon (Lucide nimi, nt Trophy)",
         "theme_quarry_stats_tile3Value": "Paan 3: number",
         "theme_quarry_stats_tile3Label": "Paan 3: mida see loeb",
-        "theme_quarry_stats_tile3Icon": "Paan 3: ikoon (Lucide nimi, nt Trophy)"
+        "theme_quarry_stats_tile3Icon": "Paan 3: ikoon (Lucide nimi, nt Trophy)",
+        "theme_quarry_color_edge": "Nuppude ja kaartide serv",
+        "theme_quarry_color_stage": "Hero taust",
+        "theme_quarry_color_stageForeground": "Hero tekst",
+        "theme_quarry_color_stageMuted": "Hero summutatud tekst",
+        "theme_quarry_color_highlight": "Esiletõste"
       },
       "quarry": {
         "heroTag": "Hooaeg on avatud",
@@ -736,7 +777,12 @@
         "theme_quarry_stats_tile2Icon": "Tuile 2 : icône (un nom Lucide, comme Trophy)",
         "theme_quarry_stats_tile3Value": "Tuile 3 : le chiffre",
         "theme_quarry_stats_tile3Label": "Tuile 3 : ce qu'elle compte",
-        "theme_quarry_stats_tile3Icon": "Tuile 3 : icône (un nom Lucide, comme Trophy)"
+        "theme_quarry_stats_tile3Icon": "Tuile 3 : icône (un nom Lucide, comme Trophy)",
+        "theme_quarry_color_edge": "Bord sous les boutons et les cartes",
+        "theme_quarry_color_stage": "Fond du hero",
+        "theme_quarry_color_stageForeground": "Texte du hero",
+        "theme_quarry_color_stageMuted": "Texte atténué du hero",
+        "theme_quarry_color_highlight": "Mise en avant"
       },
       "quarry": {
         "heroTag": "Saison ouverte",
@@ -778,7 +824,12 @@
         "theme_quarry_stats_tile2Icon": "Riquadro 2: icona (un nome Lucide, come Trophy)",
         "theme_quarry_stats_tile3Value": "Riquadro 3: il numero",
         "theme_quarry_stats_tile3Label": "Riquadro 3: cosa conta",
-        "theme_quarry_stats_tile3Icon": "Riquadro 3: icona (un nome Lucide, come Trophy)"
+        "theme_quarry_stats_tile3Icon": "Riquadro 3: icona (un nome Lucide, come Trophy)",
+        "theme_quarry_color_edge": "Bordo sotto pulsanti e schede",
+        "theme_quarry_color_stage": "Sfondo dell'hero",
+        "theme_quarry_color_stageForeground": "Testo dell'hero",
+        "theme_quarry_color_stageMuted": "Testo attenuato dell'hero",
+        "theme_quarry_color_highlight": "Evidenziazione"
       },
       "quarry": {
         "heroTag": "Stagione aperta",
@@ -820,7 +871,12 @@
         "theme_quarry_stats_tile2Icon": "Kafelek 2: ikona (nazwa Lucide, np. Trophy)",
         "theme_quarry_stats_tile3Value": "Kafelek 3: liczba",
         "theme_quarry_stats_tile3Label": "Kafelek 3: co liczy",
-        "theme_quarry_stats_tile3Icon": "Kafelek 3: ikona (nazwa Lucide, np. Trophy)"
+        "theme_quarry_stats_tile3Icon": "Kafelek 3: ikona (nazwa Lucide, np. Trophy)",
+        "theme_quarry_color_edge": "Krawędź pod przyciskami i kartami",
+        "theme_quarry_color_stage": "Tło hero",
+        "theme_quarry_color_stageForeground": "Tekst hero",
+        "theme_quarry_color_stageMuted": "Wyciszony tekst hero",
+        "theme_quarry_color_highlight": "Wyróżnienie"
       },
       "quarry": {
         "heroTag": "Sezon otwarty",
@@ -862,7 +918,12 @@
         "theme_quarry_stats_tile2Icon": "Bloco 2: ícone (um nome Lucide, como Trophy)",
         "theme_quarry_stats_tile3Value": "Bloco 3: o número",
         "theme_quarry_stats_tile3Label": "Bloco 3: o que conta",
-        "theme_quarry_stats_tile3Icon": "Bloco 3: ícone (um nome Lucide, como Trophy)"
+        "theme_quarry_stats_tile3Icon": "Bloco 3: ícone (um nome Lucide, como Trophy)",
+        "theme_quarry_color_edge": "Borda sob botões e cartões",
+        "theme_quarry_color_stage": "Fundo do hero",
+        "theme_quarry_color_stageForeground": "Texto do hero",
+        "theme_quarry_color_stageMuted": "Texto atenuado do hero",
+        "theme_quarry_color_highlight": "Realce"
       },
       "quarry": {
         "heroTag": "Temporada aberta",
@@ -904,7 +965,12 @@
         "theme_quarry_stats_tile2Icon": "Плитка 2: значок (имя Lucide, например Trophy)",
         "theme_quarry_stats_tile3Value": "Плитка 3: число",
         "theme_quarry_stats_tile3Label": "Плитка 3: что считает",
-        "theme_quarry_stats_tile3Icon": "Плитка 3: значок (имя Lucide, например Trophy)"
+        "theme_quarry_stats_tile3Icon": "Плитка 3: значок (имя Lucide, например Trophy)",
+        "theme_quarry_color_edge": "Кромка под кнопками и карточками",
+        "theme_quarry_color_stage": "Фон hero",
+        "theme_quarry_color_stageForeground": "Текст hero",
+        "theme_quarry_color_stageMuted": "Приглушённый текст hero",
+        "theme_quarry_color_highlight": "Выделение"
       },
       "quarry": {
         "heroTag": "Сезон открыт",
@@ -946,7 +1012,12 @@
         "theme_quarry_stats_tile2Icon": "第 2 格：图标（Lucide 名称，如 Trophy）",
         "theme_quarry_stats_tile3Value": "第 3 格：数字",
         "theme_quarry_stats_tile3Label": "第 3 格：说明",
-        "theme_quarry_stats_tile3Icon": "第 3 格：图标（Lucide 名称，如 Trophy）"
+        "theme_quarry_stats_tile3Icon": "第 3 格：图标（Lucide 名称，如 Trophy）",
+        "theme_quarry_color_edge": "按钮和卡片的底边",
+        "theme_quarry_color_stage": "主视觉背景",
+        "theme_quarry_color_stageForeground": "主视觉文字",
+        "theme_quarry_color_stageMuted": "主视觉柔和文字",
+        "theme_quarry_color_highlight": "突出色"
       },
       "quarry": {
         "heroTag": "赛季开放中",

@@ -103,7 +103,10 @@ export default function Hero() {
                 {address ? (
                     <p className="qr-hero-address" aria-live="polite">
                         {copied === "failed" ? t("copyFailed") : t("addressLabel")}{" "}
-                        <code className="qr-address">{address}</code>
+                        {/* Not `code`: the dark stylesheet boxes every code
+                            element in the muted colour, and the address is
+                            words on the hero, not a snippet. */}
+                        <span className="qr-address">{address}</span>
                     </p>
                 ) : null}
                 <div className="qr-hero-bottom">
