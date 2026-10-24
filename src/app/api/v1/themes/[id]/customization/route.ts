@@ -7,10 +7,11 @@ import { themeRegistry } from "@/core/generated/theme-registry";
 import { logActivity } from "@/core/lib/activity-log";
 import { sanitizeCustomCss } from "@/core/lib/css-sanitizer";
 import { isTokenName } from "@/core/lib/theme-override-css";
-import type { ThemeManifest, ThemeFieldDef } from "@/core/lib/theme-manifest-schema";
+import type { ThemeManifest } from "@/core/lib/theme-manifest-schema";
 import { isUnsafeKey, emptyRecord } from "@/core/lib/safe-object";
 import { z } from "zod";
 import { readJsonBody } from "@/core/lib/api-body";
+import { sanitizeSettingValue } from "@/core/lib/setting-field-value";
 
 // Reject prototype-polluting keys when copying user-supplied override maps.
 
@@ -22,68 +23,10 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
 
 const HEX = /^#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
 const SAFE_FONT = /^[A-Za-z0-9 ,._'"-]+$/;
-const SAFE_ASPECT = /^\d+(?:\.\d+)?\s*\/\s*\d+(?:\.\d+)?$|^\d+(?:\.\d+)?$/;
 
 function clampString(v: unknown, max: number): string | undefined {
     if (typeof v !== "string") return undefined;
     return v.length > max ? v.slice(0, max) : v;
-}
-
-function isSafeUrl(v: unknown): v is string {
-    if (typeof v !== "string") return false;
-    // Accept only http(s), data: images, or same-origin relative paths.
-    if (v.startsWith("/") && !v.startsWith("//")) return true;
-    try {
-        const u = new URL(v);
-        if (u.protocol === "http:" || u.protocol === "https:") return true;
-        if (u.protocol === "data:" && /^data:image\//i.test(v)) return true;
-        return false;
-    } catch {
-        return false;
-    }
-}
-
-/**
- * Sanitize a single field value against its schema definition. Returns
- * `undefined` when the value is unusable so the caller can drop the field
- * instead of persisting a broken override.
- */
-function sanitizeField(def: ThemeFieldDef, value: unknown): unknown {
-    switch (def.type) {
-        case "color":
-            return typeof value === "string" && HEX.test(value) ? value : undefined;
-        case "font": {
-            const s = clampString(value, 100);
-            return s !== undefined && SAFE_FONT.test(s) ? s : undefined;
-        }
-        case "select": {
-            if (typeof value !== "string") return undefined;
-            return def.options.some(o => o.value === value) ? value : undefined;
-        }
-        case "slider": {
-            if (typeof value !== "number" || !Number.isFinite(value)) return undefined;
-            if (value < def.min || value > def.max) return undefined;
-            return value;
-        }
-        case "toggle":
-            return typeof value === "boolean" ? value : undefined;
-        case "text":
-            return clampString(value, def.max ?? 10000);
-        case "url":
-            return isSafeUrl(value) ? value : undefined;
-        case "richtext": {
-            const s = clampString(value, def.max ?? 10000);
-            return s !== undefined ? s : undefined;
-        }
-        case "image": {
-            if (!isSafeUrl(value)) return undefined;
-            if (def.aspectRatio && !SAFE_ASPECT.test(def.aspectRatio)) {
-                // aspectRatio is manifest-declared so this should never trip,
-                // but guard against a malformed manifest leaking through.
-            }
-            return value;
-        }
-    }
 }
 
 /**
@@ -115,12 +58,12 @@ function sanitizeTokenValue(tokenKey: "colors" | "fonts" | "radius" | "space", v
     if (tokenKey === "radius") {
         const def = manifest.tokens?.radius;
         if (!def) return undefined;
-        return sanitizeField(def, value);
+        return sanitizeSettingValue(def, value);
     }
     if (tokenKey === "space") {
         const def = manifest.tokens?.space;
         if (!def) return undefined;
-        return sanitizeField(def, value);
+        return sanitizeSettingValue(def, value);
     }
     return undefined;
 }
@@ -157,7 +100,7 @@ function sanitizeOverrides(manifest: ThemeManifest, overrides: Record<string, un
             if (isUnsafeKey(fieldKey)) continue;
             const fieldDef = groupDef.fields[fieldKey];
             if (!fieldDef || !Object.prototype.hasOwnProperty.call(groupDef.fields, fieldKey)) continue;
-            const sanitized = sanitizeField(fieldDef, fieldVal);
+            const sanitized = sanitizeSettingValue(fieldDef, fieldVal);
             if (sanitized !== undefined) cleanGroup[fieldKey] = sanitized;
         }
         if (Object.keys(cleanGroup).length > 0) out[groupKey] = cleanGroup;
