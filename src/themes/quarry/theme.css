@@ -1447,16 +1447,26 @@ html {
 }
 
 /* As tall as the window and no taller: a long menu scrolls in the rail. */
+/*
+ * A menu longer than the window scrolls down the rail, on a thin bar. The
+ * links take the width the bar leaves them rather than a fixed one: a fixed
+ * width plus a classic scrollbar was wider than the rail, so it scrolled
+ * sideways as well.
+ */
 .qr-auth-rail {
   position: sticky;
   top: 0;
   max-height: 100vh;
+  overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--blysis-color-stageMuted) 35%, transparent) transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding: 20px 12px;
+  /* Narrow sides, so a link keeps its 72px beside the bar. */
+  padding: 20px 6px;
   background: color-mix(in srgb, var(--blysis-color-stage) 70%, black);
 }
 
@@ -1474,7 +1484,8 @@ html {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  width: 72px;
+  width: 100%;
+  max-width: 72px;
   padding: 10px 2px;
   border-radius: 4px;
   color: var(--blysis-color-stageMuted);
@@ -1482,6 +1493,7 @@ html {
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .qr-auth-rail-link:hover {
@@ -1670,6 +1682,7 @@ html {
 
   .qr-auth-rail-link {
     flex: none;
+    width: 72px;
   }
 
   .qr-auth-panel {
