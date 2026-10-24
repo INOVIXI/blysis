@@ -37,11 +37,6 @@ interface SidebarLayoutProps {
  * min-content of anything in it: a widget's tab rail that scrolls on its own
  * still pushed the column, every card beside it and the document to 600px on
  * a 320px phone. `a-page-fits-the-phone-it-is-read-on.spec.ts` measures it.
- *
- * The sidebar is spaced with a gap rather than `space-y`, which puts a margin
- * under every child but the last: when the last child is a widget's box that
- * stayed empty and hidden, the last widget that drew kept its margin and the
- * column ran past it. `a-column-ends-where-its-last-card-does.spec.ts`.
  */
 export default function StandardSidebarLayout({ children, sidebar, heading }: SidebarLayoutProps) {
     return (
@@ -52,7 +47,7 @@ export default function StandardSidebarLayout({ children, sidebar, heading }: Si
                 ) : null}
                 {children}
             </div>
-            <div data-sidebar className="flex flex-col gap-5">
+            <div data-sidebar className="space-y-5">
                 {heading ? (
                     <div aria-hidden="true" className="hidden lg:block blysis-heading-spacer" />
                 ) : null}
