@@ -146,6 +146,11 @@ html {
   background-position: center;
 }
 
+/* components/Scene.tsx says what this is. */
+.qr-scene {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 600' shape-rendering='crispEdges'%3E%3Crect width='1440' height='600' fill='%232b2457'/%3E%3Crect y='120' width='1440' height='120' fill='%233a2d6b'/%3E%3Crect y='240' width='1440' height='90' fill='%235a3a78'/%3E%3Crect y='330' width='1440' height='60' fill='%238a4a6f'/%3E%3Crect x='1010' y='250' width='110' height='110' fill='%23ffb15c'/%3E%3Crect x='1030' y='270' width='70' height='70' fill='%23ffd08a'/%3E%3Cpolygon points='560,600 560,360 640,360 640,300 720,300 720,250 800,250 800,320 880,320 880,280 960,280 960,340 1040,340 1040,300 1120,300 1120,360 1200,360 1200,320 1280,320 1280,380 1360,380 1360,340 1440,340 1440,600' fill='%233b3a73'/%3E%3Cpolygon points='0,600 0,430 120,430 120,390 240,390 240,440 400,440 400,400 520,400 520,450 680,450 680,410 820,410 820,460 980,460 980,420 1120,420 1120,470 1280,470 1280,430 1440,430 1440,600' fill='%2326294f'/%3E%3Crect x='1160' y='360' width='28' height='110' fill='%231a1c38'/%3E%3Crect x='1124' y='300' width='100' height='72' fill='%231d3a2a'/%3E%3Crect x='1144' y='280' width='60' height='22' fill='%231d3a2a'/%3E%3Crect x='1300' y='380' width='22' height='90' fill='%231a1c38'/%3E%3Crect x='1270' y='330' width='82' height='60' fill='%231d3a2a'/%3E%3Crect y='500' width='1440' height='24' fill='%232f6e1c'/%3E%3Crect y='524' width='1440' height='76' fill='%231d1712'/%3E%3Crect x='760' y='470' width='12' height='30' fill='%235a3c22'/%3E%3Crect x='756' y='456' width='20' height='16' fill='%23ffc46b'/%3E%3Crect x='1030' y='470' width='12' height='30' fill='%235a3c22'/%3E%3Crect x='1026' y='456' width='20' height='16' fill='%23ffc46b'/%3E%3C/svg%3E") center bottom / cover no-repeat;
+}
+
 /* Dark where the words are, the picture clear where they are not. */
 .qr-hero::before {
   content: "";
