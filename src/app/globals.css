@@ -676,6 +676,17 @@ body {
   display: none;
 }
 
+/*
+ * The sidebar is spaced with `space-y`, a margin under every child but the
+ * last, and a block that drew nothing is hidden but still a child. So the
+ * last child that drew loses that margin too, or the column runs past it
+ * (a-column-ends-where-its-last-card-does). A gap would not need this, but it
+ * adds to the heading spacer's margin where `space-y` collapses into it.
+ */
+:where([data-sidebar] > :not(:has(~ :not(template, [data-block]:empty)))) {
+  margin-block-end: 0;
+}
+
 /* The space between the rows of a page's arrangement (PageLayoutView). */
 :where([data-sidebar-layout], [data-layout-row]) + :where([data-sidebar-layout], [data-layout-row]) {
   margin-top: 2rem;
