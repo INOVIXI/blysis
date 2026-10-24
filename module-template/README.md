@@ -96,7 +96,7 @@ The template manifest enumerates every common UI registration so you can see all
 | `dashboardCards` + `statsApi` | Admin dashboard stat cards + data endpoint |
 | `settingsCards` | Cards on the admin Settings page |
 | `oauthButtons` | OAuth login/register buttons |
-| `slotContents` | Render into core (`layout.beforeMain`, `layout.afterMain`, `head.extra`, `home.stats`) or the slots themes draw (`hero.tags`, `hero.bottom`) |
+| `slotContents` | Render into core (`layout.beforeMain`, `layout.afterMain`, `head.extra`, `home.stats`) or the slots themes draw (`hero.tags`, `hero.bottom`, `auth.login.aside`, `auth.register.aside`) |
 
 ### Behavior (all optional)
 

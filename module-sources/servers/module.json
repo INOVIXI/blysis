@@ -2,7 +2,7 @@
   "id": "servers",
   "name": "Game Servers",
   "description": "Game server management, RCON, and status monitoring",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "coreVersion": "^5.0.0",
   "category": "gaming",
   "author": "Blysis",
@@ -132,7 +132,8 @@
         "svr_descriptionPlaceholder": "One line about this server, shown on its card",
         "svr_image": "Picture",
         "tag_open": "Open · {count} playing",
-        "tag_closed": "Closed"
+        "tag_closed": "Closed",
+        "slot_whereToPlay": "Where you will play"
       },
       "admin": {
         "menu_servers": "Servers",
@@ -199,7 +200,8 @@
         "svr_descriptionPlaceholder": "Bu sunucuyu anlatan, kartında görünen bir satır",
         "svr_image": "Görsel",
         "tag_open": "Açık · {count} oyuncu",
-        "tag_closed": "Kapalı"
+        "tag_closed": "Kapalı",
+        "slot_whereToPlay": "Nerede oynayacaksın"
       },
       "admin": {
         "menu_servers": "Sunucular",
@@ -266,7 +268,8 @@
         "svr_descriptionPlaceholder": "Bu server haqqında kartında görünən bir sətir",
         "svr_image": "Şəkil",
         "tag_open": "Açıq · {count} oyunçu",
-        "tag_closed": "Bağlı"
+        "tag_closed": "Bağlı",
+        "slot_whereToPlay": "Harada oynayacaqsan"
       },
       "admin": {
         "menu_servers": "Serverlər",
@@ -333,7 +336,8 @@
         "svr_descriptionPlaceholder": "Eine Zeile über diesen Server, auf seiner Karte gezeigt",
         "svr_image": "Bild",
         "tag_open": "Offen · {count} spielen",
-        "tag_closed": "Geschlossen"
+        "tag_closed": "Geschlossen",
+        "slot_whereToPlay": "Wo du spielen wirst"
       },
       "admin": {
         "menu_servers": "Server",
@@ -400,7 +404,8 @@
         "svr_descriptionPlaceholder": "Una línea sobre este servidor, mostrada en su tarjeta",
         "svr_image": "Imagen",
         "tag_open": "Abierto · {count} jugando",
-        "tag_closed": "Cerrado"
+        "tag_closed": "Cerrado",
+        "slot_whereToPlay": "Dónde jugarás"
       },
       "admin": {
         "menu_servers": "Servidores",
@@ -467,7 +472,8 @@
         "svr_descriptionPlaceholder": "Üks rida selle serveri kohta, näidatakse tema kaardil",
         "svr_image": "Pilt",
         "tag_open": "Avatud · {count} mängib",
-        "tag_closed": "Suletud"
+        "tag_closed": "Suletud",
+        "slot_whereToPlay": "Kus sa mängima hakkad"
       },
       "admin": {
         "menu_servers": "Serverid",
@@ -534,7 +540,8 @@
         "svr_descriptionPlaceholder": "Une ligne sur ce serveur, affichée sur sa carte",
         "svr_image": "Image",
         "tag_open": "Ouvert · {count} en jeu",
-        "tag_closed": "Fermé"
+        "tag_closed": "Fermé",
+        "slot_whereToPlay": "Où tu vas jouer"
       },
       "admin": {
         "menu_servers": "Serveurs",
@@ -601,7 +608,8 @@
         "svr_descriptionPlaceholder": "Una riga su questo server, mostrata sulla sua scheda",
         "svr_image": "Immagine",
         "tag_open": "Aperto · {count} in gioco",
-        "tag_closed": "Chiuso"
+        "tag_closed": "Chiuso",
+        "slot_whereToPlay": "Dove giocherai"
       },
       "admin": {
         "menu_servers": "Server",
@@ -668,7 +676,8 @@
         "svr_descriptionPlaceholder": "Jedna linijka o tym serwerze, widoczna na jego karcie",
         "svr_image": "Obraz",
         "tag_open": "Otwarty · {count} gra",
-        "tag_closed": "Zamknięty"
+        "tag_closed": "Zamknięty",
+        "slot_whereToPlay": "Gdzie zagrasz"
       },
       "admin": {
         "menu_servers": "Serwery",
@@ -735,7 +744,8 @@
         "svr_descriptionPlaceholder": "Uma linha sobre este servidor, mostrada no seu cartão",
         "svr_image": "Imagem",
         "tag_open": "Aberto · {count} jogando",
-        "tag_closed": "Fechado"
+        "tag_closed": "Fechado",
+        "slot_whereToPlay": "Onde você vai jogar"
       },
       "admin": {
         "menu_servers": "Servidores",
@@ -802,7 +812,8 @@
         "svr_descriptionPlaceholder": "Одна строка об этом сервере, показывается на его карточке",
         "svr_image": "Изображение",
         "tag_open": "Открыт · {count} в игре",
-        "tag_closed": "Закрыт"
+        "tag_closed": "Закрыт",
+        "slot_whereToPlay": "Где ты будешь играть"
       },
       "admin": {
         "menu_servers": "Серверы",
@@ -869,7 +880,8 @@
         "svr_descriptionPlaceholder": "一句话介绍这个服务器，显示在它的卡片上",
         "svr_image": "图片",
         "tag_open": "开放中 · {count} 人在玩",
-        "tag_closed": "已关闭"
+        "tag_closed": "已关闭",
+        "slot_whereToPlay": "你将在哪里玩"
       },
       "admin": {
         "menu_servers": "服务器",
@@ -936,6 +948,12 @@
       "id": "status-tag",
       "slot": "hero.tags",
       "component": "slots/StatusTag",
+      "order": 10
+    },
+    {
+      "id": "where-to-play",
+      "slot": "auth.register.aside",
+      "component": "slots/WhereToPlay",
       "order": 10
     }
   ]

@@ -7,6 +7,7 @@ import { Newspaper } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { Badge, BlockHeading, LoadFailed, Pagination, Waiting, buttonClassName, useBlockText, useLocalDate, type BlockProps } from "@/core/sdk/ui";
 import { NewsCard, type BlogCardArticle } from "./news-card";
+import { readingMinutes } from "../lib/reading-time";
 
 interface Article extends BlogCardArticle {
     content?: string | null;
@@ -24,12 +25,6 @@ const PER_PAGE = 4;
  * the block its height before and after.
  */
 const GRID_ROOM = "min-h-[786px]";
-
-/** Minutes to read, at two hundred words a minute, never less than one. */
-function readingMinutes(content: string | null | undefined): number {
-    const words = (content ?? "").trim().split(/\s+/).filter(Boolean).length;
-    return Math.max(1, Math.round(words / 200));
-}
 
 function href(post: Article) {
     return `/blog/${post.number}/${post.slug}`;

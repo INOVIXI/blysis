@@ -47,6 +47,7 @@ const article = (n: number) => ({
 });
 
 const { NewsBlock } = await import("@/modules/blog/components/NewsBlock");
+const { default: LatestArticle } = await import("@/modules/blog/slots/LatestArticle");
 
 function draw(settings: Record<string, unknown>, articles: unknown[]) {
     vi.stubGlobal("fetch", async () => new Response(JSON.stringify({ articles })));
@@ -129,5 +130,42 @@ describe("the news block", () => {
             expect(await screen.findByText("Headline 1"), variant).toBeTruthy();
             unmount();
         }
+    });
+});
+
+// Someone signing back in is shown what they missed: the newest article,
+// beside the form, in a theme's `auth.login.aside`.
+describe("the newest article beside the sign-in form", () => {
+    function aside(articles: unknown[], ok = true) {
+        vi.stubGlobal("fetch", async () => new Response(JSON.stringify({ articles }), { status: ok ? 200 : 503 }));
+        return render(
+            <NextIntlClientProvider locale="en" messages={MESSAGES} timeZone="UTC">
+                <LatestArticle />
+            </NextIntlClientProvider>,
+        );
+    }
+
+    it("is offered to the sign-in screen's aside", () => {
+        expect(MANIFEST.slotContents.find((s: { slot: string; id: string }) => s.slot === "auth.login.aside" && s.id === "latest-article")).toBeTruthy();
+    });
+
+    it("shows the newest article: its category, date, reading time, headline and summary, and links to it", async () => {
+        aside([1, 2].map(article));
+        const card = (await screen.findByRole("heading", { name: "Headline 1" })).closest("article")!;
+        expect(within(card).getByText("Category 1")).toBeTruthy();
+        expect(within(card).getByText(/October 24, 2026 · 2 min read/)).toBeTruthy();
+        expect(within(card).getByText("Summary 1")).toBeTruthy();
+        expect(within(card).getAllByRole("link").map((a) => a.getAttribute("href"))).toEqual(["/blog/1/article-1", "/blog/1/article-1"]);
+        expect(screen.queryByText("Headline 2")).toBeNull();
+    });
+
+    it("draws nothing when nothing is published or the read failed", async () => {
+        const none = aside([]);
+        await new Promise((r) => setTimeout(r, 20));
+        expect(none.container.innerHTML).toBe("");
+        none.unmount();
+        const failed = aside([1].map(article), false);
+        await new Promise((r) => setTimeout(r, 20));
+        expect(failed.container.innerHTML).toBe("");
     });
 });

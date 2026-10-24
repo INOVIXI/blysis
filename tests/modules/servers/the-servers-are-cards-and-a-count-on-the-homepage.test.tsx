@@ -9,7 +9,7 @@
  */
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import fs from "node:fs";
 import path from "node:path";
@@ -44,6 +44,7 @@ const server = (name: string, over: Record<string, unknown> = {}) => ({
 const { ServerCards } = await import("@/modules/servers/components/ServerCards");
 const { default: PlayersTile } = await import("@/modules/servers/slots/PlayersTile");
 const { default: StatusTag } = await import("@/modules/servers/slots/StatusTag");
+const { default: WhereToPlay } = await import("@/modules/servers/slots/WhereToPlay");
 
 function draw(node: React.ReactNode) {
     return render(<NextIntlClientProvider locale="en" messages={MESSAGES}>{node}</NextIntlClientProvider>);
@@ -139,5 +140,39 @@ describe("the status tag on the hero", () => {
         answer.servers = [server("Hytale", { queryable: false })];
         const { container } = draw(<StatusTag />);
         await waitFor(() => expect(container.innerHTML).toBe(""));
+    });
+});
+
+// A new player on the sign-up screen is told where they will play: every
+// server by name, with how many are on it, or that it is closed.
+describe("where to play, beside the sign-up form", () => {
+    it("is offered to the sign-up screen's aside", () => {
+        expect(MANIFEST.slotContents.find((s: { slot: string; id: string }) => s.slot === "auth.register.aside" && s.id === "where-to-play")).toBeTruthy();
+    });
+
+    it("names every server with how many play on it, or that it is closed", async () => {
+        answer.servers = [
+            server("Survival", { players: { online: 128, max: 500 } }),
+            server("Skyblock", { online: false }),
+            server("Hytale", { queryable: false }),
+        ];
+        draw(<WhereToPlay />);
+        const list = await screen.findByRole("list");
+        expect(screen.getByRole("heading", { name: en.slot_whereToPlay })).toBeTruthy();
+        const rows = within(list).getAllByRole("listitem").map((li) => li.textContent);
+        expect(rows).toEqual([
+            `Survival${en.cards_players.replace("{count}", "128")}`,
+            `Skyblock${en.tag_closed}`,
+            "Hytale",
+        ]);
+    });
+
+    it("draws nothing on a site with no server, or while the answer did not come", async () => {
+        const empty = draw(<WhereToPlay />);
+        await waitFor(() => expect(empty.container.innerHTML).toBe(""));
+        empty.unmount();
+        answer.down = true;
+        const down = draw(<WhereToPlay />);
+        await waitFor(() => expect(down.container.innerHTML).toBe(""));
     });
 });
