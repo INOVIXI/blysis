@@ -4,9 +4,8 @@ import { useTranslations } from "next-intl";
 import { Slot } from "@/core/sdk/layout";
 import { Link } from "@/core/sdk/navigation";
 import { useSiteSettings } from "@/core/sdk/ui";
-import { useThemeConfig } from "@/core/sdk/theme";
+import { linkTarget, useThemeConfig } from "@/core/sdk/theme";
 import { Stage } from "./Stage";
-import { linkTarget } from "./links";
 
 /**
  * The homepage's opening: a label, a heading, a line under it and up to two

@@ -1,0 +1,387 @@
+/*
+ * Quarry. Every selector here is scoped to [data-theme="quarry"] by the theme
+ * generator, so nothing below draws on a site wearing another theme.
+ *
+ * The look lives under `.qr-site` (the public frame) and `.qr-auth` (the
+ * sign-in screens). The panel wears this theme's colours and fonts but not
+ * its capitals or its pressed buttons: an operator's tables are not a poster.
+ *
+ * Surfaces are flat colour. A strip of the brand colour closes the hero, a
+ * page's header band and opens the footer; that strip and the buttons that
+ * press down are the whole signature.
+ */
+
+html {
+  --qr-press: 4px;
+  --qr-strip: 6px;
+}
+
+/* Type */
+
+.qr-site,
+.qr-auth {
+  font-family: var(--blysis-font-body);
+}
+
+.qr-site :is(h1, h2, h3, h4),
+.qr-auth :is(h1, h2, h3) {
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+/* Capitals for the site's own headings, never for what a person wrote. */
+.qr-site :is(h1, h2):not(.blysis-content *),
+.qr-auth h1 {
+  text-transform: uppercase;
+}
+
+/* Primitives on the public pages */
+
+/*
+ * A filled or outlined button stands on an edge of its own colour, darker,
+ * and sinks onto it when pressed. The link and ghost variants have no
+ * surface to stand on, so the rule asks for a background class.
+ */
+.qr-site .blysis-button[class*=" bg-"],
+.qr-auth .blysis-button[class*=" bg-"] {
+  --qr-edge: var(--blysis-color-edge);
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 var(--qr-press) 0 var(--qr-edge);
+  transition: transform 80ms, box-shadow 80ms, background-color 150ms;
+}
+
+.qr-site .blysis-button.bg-primary,
+.qr-auth .blysis-button.bg-primary {
+  --qr-edge: color-mix(in srgb, var(--blysis-color-primary) 55%, black);
+}
+
+.qr-site .blysis-button.bg-destructive,
+.qr-auth .blysis-button.bg-destructive {
+  --qr-edge: color-mix(in srgb, var(--blysis-color-destructive) 55%, black);
+}
+
+.qr-site .blysis-button[class*=" bg-"]:active:not(:disabled),
+.qr-auth .blysis-button[class*=" bg-"]:active:not(:disabled) {
+  transform: translateY(calc(var(--qr-press) - 1px));
+  box-shadow: 0 1px 0 var(--qr-edge);
+}
+
+.qr-site .blysis-card,
+.qr-site [data-sidebar] > .bg-card {
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.qr-site .blysis-badge {
+  border-radius: 3px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* The frame */
+
+.qr-site {
+  overflow-x: clip;
+}
+
+.qr-bar > header {
+  background: var(--blysis-color-background);
+  border-bottom-color: var(--blysis-color-border);
+}
+
+/* The site's name beside its mark, the only bold link in the bar. */
+.qr-bar header a.font-semibold {
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.qr-bar nav [data-nav-item] {
+  font-weight: 700;
+}
+
+.qr-main {
+  padding-top: 32px;
+  padding-bottom: 48px;
+}
+
+.qr-site > footer {
+  margin-top: 0;
+  border-top: 0;
+  box-shadow: inset 0 var(--qr-strip) 0 var(--blysis-color-primary);
+}
+
+/* The hero */
+
+.qr-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  background: var(--blysis-color-stage);
+  color: var(--blysis-color-stageForeground);
+  box-shadow: inset 0 calc(-1 * var(--qr-strip)) 0 var(--blysis-color-primary);
+}
+
+.qr-scene,
+.qr-hero-picture {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.qr-hero-picture {
+  background-size: cover;
+  background-position: center;
+}
+
+/* Dark where the words are, the picture clear where they are not. */
+.qr-hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--blysis-color-stage) 94%, transparent) 0%,
+    color-mix(in srgb, var(--blysis-color-stage) 80%, transparent) 42%,
+    color-mix(in srgb, var(--blysis-color-stage) 10%, transparent) 78%);
+}
+
+/* On a phone the words cover the picture, so it is dimmed all over. */
+@media (max-width: 47.99rem) {
+  .qr-hero::before {
+    background: color-mix(in srgb, var(--blysis-color-stage) 84%, transparent);
+  }
+}
+
+.qr-hero-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  padding-top: 64px;
+  padding-bottom: calc(72px + var(--qr-strip));
+}
+
+.qr-tag {
+  padding: 5px 10px;
+  border-radius: 3px;
+  background: var(--blysis-color-primary);
+  color: var(--blysis-color-primaryForeground);
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.qr-hero-title {
+  max-width: 720px;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1.02;
+  overflow-wrap: anywhere;
+}
+
+.qr-hero-lede {
+  max-width: 540px;
+  color: var(--blysis-color-stageMuted);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.qr-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.qr-hero-address {
+  color: var(--blysis-color-stageMuted);
+  font-size: 0.875rem;
+}
+
+.qr-address {
+  color: var(--blysis-color-stageForeground);
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  user-select: all;
+}
+
+/*
+ * What a module puts here is written for the page, with the page's tokens,
+ * and here the ground is the hero's in both modes. So the tokens are the
+ * hero's under it, as Vanguard learned when the staff strip's initial
+ * disappeared on its stage in the light mode.
+ * `what-a-module-draws-on-the-quarry-hero-can-be-read` measures each pair.
+ */
+.qr-hero-bottom {
+  width: 100%;
+  max-width: 720px;
+  padding-top: 18px;
+  border-top: 1px solid color-mix(in srgb, var(--blysis-color-stageForeground) 18%, transparent);
+  --blysis-color-background: var(--blysis-color-stage);
+  --blysis-color-foreground: var(--blysis-color-stageForeground);
+  --blysis-color-muted: color-mix(in srgb, var(--blysis-color-stageForeground) 12%, transparent);
+  --blysis-color-mutedForeground: var(--blysis-color-stageMuted);
+  --blysis-color-card: color-mix(in srgb, var(--blysis-color-stageForeground) 10%, transparent);
+  --blysis-color-cardForeground: var(--blysis-color-stageForeground);
+  --blysis-color-border: color-mix(in srgb, var(--blysis-color-stageForeground) 18%, transparent);
+}
+
+.qr-hero-bottom:empty {
+  display: none;
+}
+
+/* A page's header */
+
+.qr-page-header {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* Up against the bar, across the main column's top padding. */
+  margin: -32px 0 32px;
+  padding: 36px 0 calc(32px + var(--qr-strip));
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-page-header::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: -100vw;
+  right: -100vw;
+  background: var(--blysis-color-stage);
+  box-shadow: inset 0 calc(-1 * var(--qr-strip)) 0 var(--blysis-color-primary);
+}
+
+.qr-page-trail {
+  color: var(--blysis-color-stageMuted);
+}
+
+.qr-page-trail :is(nav, ol, li, a, span) {
+  color: inherit;
+}
+
+.qr-page-trail a:hover {
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-page-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.qr-page-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.qr-page-lede {
+  max-width: 600px;
+  margin-top: 8px;
+  color: var(--blysis-color-stageMuted);
+}
+
+.qr-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* The sign-in screens */
+
+.qr-auth {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--blysis-color-stage);
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-auth::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: color-mix(in srgb, var(--blysis-color-stage) 55%, transparent);
+}
+
+.qr-auth-frame {
+  max-width: 1200px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.qr-auth-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.qr-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.qr-brand-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--blysis-font-heading);
+  font-weight: 900;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+}
+
+.qr-auth-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--blysis-color-stageMuted);
+  font-weight: 700;
+}
+
+.qr-auth-home:hover {
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-auth-card {
+  width: 100%;
+  max-width: 440px;
+  margin: auto;
+  color: var(--blysis-color-foreground);
+}
+
+.qr-auth-card .blysis-card {
+  box-shadow: 0 6px 0 var(--blysis-color-edge);
+}

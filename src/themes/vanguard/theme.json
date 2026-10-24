@@ -36,11 +36,6 @@
             "stageFar": "#122352",
             "stageNear": "#1a3072",
             "stageGlow": "#3468ff5c"
-          },
-          "fonts": {
-            "heading": "var(--font-vanguard-heading), var(--font-outfit), system-ui, sans-serif",
-            "body": "var(--font-vanguard-body), var(--font-inter), system-ui, sans-serif",
-            "mono": "var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace"
           }
         }
       },
@@ -72,11 +67,6 @@
             "stageFar": "#0b1636",
             "stageNear": "#12224c",
             "stageGlow": "#3468ff47"
-          },
-          "fonts": {
-            "heading": "var(--font-vanguard-heading), var(--font-outfit), system-ui, sans-serif",
-            "body": "var(--font-vanguard-body), var(--font-inter), system-ui, sans-serif",
-            "mono": "var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace"
           }
         }
       }

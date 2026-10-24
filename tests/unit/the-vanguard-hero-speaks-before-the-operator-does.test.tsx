@@ -4,9 +4,9 @@
  * Its settings are free text and start empty. A default typed in English
  * into the manifest would greet a Turkish site in English until somebody
  * thought to open the theme's settings, so every line falls back to the
- * theme's own string in the reader's language instead. And because the
- * button's address is free text too, it carries only a path on this site or
- * an http(s) address: `javascript:` in an href runs for every visitor.
+ * theme's own string in the reader's language instead. The button's address
+ * is free text too and goes through `linkTarget`, which
+ * a-link-from-a-setting-goes-only-where-a-link-may tests.
  */
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -17,8 +17,9 @@ import path from "node:path";
 
 const state = vi.hoisted(() => ({ config: {} as Record<string, unknown>, site: {} as Record<string, unknown> }));
 
-vi.mock("@/core/sdk/theme", () => ({
+vi.mock("@/core/sdk/theme", async () => ({
     useThemeConfig: () => (key: string, fallback?: unknown) => (key in state.config ? state.config[key] : fallback),
+    linkTarget: (await import("@/core/lib/setting-link")).linkTarget,
 }));
 vi.mock("@/core/sdk/ui", () => ({ useSiteSettings: () => ({ settings: state.site }) }));
 vi.mock("@/core/sdk/layout", () => ({ Slot: ({ name }: { name: string }) => <div data-testid={`slot:${name}`} /> }));
@@ -27,7 +28,6 @@ vi.mock("@/core/sdk/navigation", () => ({
 }));
 
 const { default: Hero } = await import("@/themes/vanguard/components/Hero");
-const { linkTarget } = await import("@/themes/vanguard/components/links");
 
 const MANIFEST = JSON.parse(fs.readFileSync(path.join(process.cwd(), "src/themes/vanguard/theme.json"), "utf8"));
 
@@ -82,18 +82,5 @@ describe("the Vanguard hero", () => {
         state.config = { "hero.enabled": false };
         const { container } = draw("en");
         expect(container.innerHTML).toBe("");
-    });
-});
-
-describe("an address from a setting", () => {
-    it("is a path on this site or an http(s) address", () => {
-        expect(linkTarget("/store")).toEqual({ href: "/store", external: false });
-        expect(linkTarget("https://discord.gg/x")).toEqual({ href: "https://discord.gg/x", external: true });
-    });
-
-    it("is nothing else", () => {
-        for (const raw of ["javascript:alert(1)", "JAVASCRIPT:alert(1)", "//evil.example", "/\\evil.example", "data:text/html,x", "store", "", null, 42]) {
-            expect(linkTarget(raw), String(raw)).toBeNull();
-        }
     });
 });

@@ -12,6 +12,12 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.22.0 - `linkTarget` joins `@/core/sdk/theme`: an address an operator
+ * typed into a theme setting, as a link only when it is a path on this site
+ * or an http(s) address. Vanguard kept this check beside its hero, and a
+ * second theme with a button in its settings would have copied it, test and
+ * all, or gone without. Additive.
+ *
  * 5.21.0 - an `activityTitles` entry may declare `patterns`: the stored
  * English with its blanks named, each with the message that takes them. A
  * prefix can only translate a title that starts with fixed words, so a kind
@@ -638,4 +644,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.21.0";
+export const CORE_API_VERSION = "5.22.0";
