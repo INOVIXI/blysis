@@ -92,3 +92,30 @@ describe("a sidebar of blocks that drew nothing", () => {
         expect(css).toContain(":where([data-sidebar-layout]:has(> [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty))) > [data-sidebar-main]");
     });
 });
+
+describe("a theme rule on a widget in the sidebar", () => {
+    /**
+     * Themes styled a sidebar widget as `[data-sidebar] > .bg-card`. On the
+     * homepage every widget now stands in its block's box, one level down, so
+     * such a rule reached the widget on every page but the one it was most
+     * often looked at on.
+     */
+    it("reaches the widget inside its block's box too", () => {
+        const themes = path.resolve(process.cwd(), "src/themes");
+        const missing: string[] = [];
+        let seen = 0;
+        for (const id of fs.readdirSync(themes)) {
+            const file = path.join(themes, id, "theme.css");
+            if (!fs.existsSync(file)) continue;
+            const css = fs.readFileSync(file, "utf8");
+            for (const m of css.matchAll(/([^{}]*?)\[data-sidebar\] > (\.[\w-]+)/g)) {
+                if (m[2] === ".blysis-heading-spacer") continue;
+                seen++;
+                const reach = `${m[1].trim().split(",").pop()?.trim() ?? ""} [data-sidebar] > [data-block] > ${m[2]}`.trim();
+                if (!css.includes(reach)) missing.push(`${id}: ${reach}`);
+            }
+        }
+        expect(seen).toBeGreaterThan(0);
+        expect(missing).toEqual([]);
+    });
+});

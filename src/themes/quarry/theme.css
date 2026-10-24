@@ -71,7 +71,8 @@ html {
 }
 
 .qr-site .blysis-card,
-.qr-site [data-sidebar] > .bg-card {
+.qr-site [data-sidebar] > .bg-card,
+.qr-site [data-sidebar] > [data-block] > .bg-card {
   box-shadow: 0 5px 0 var(--blysis-color-edge);
 }
 
