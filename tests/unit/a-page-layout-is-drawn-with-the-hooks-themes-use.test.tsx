@@ -146,6 +146,9 @@ describe("a row of blocks that drew nothing", () => {
 
     it("takes no space above the next row", () => {
         expect(css).not.toMatch(/\[data-layout-row\]\)\s*\+/);
+        // The space is a theme's to change, through a variable, so a theme
+        // that wants more room keeps the rule that skips hidden rows.
+        expect(css).toMatch(/\)\s*\{\s*margin-top: var\(--blysis-row-gap, 2rem\);/);
         expect(css).toMatch(/\)\s*~\s*:where\(\[data-sidebar-layout\], \[data-layout-row\]:has\(/);
     });
 });
