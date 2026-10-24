@@ -355,7 +355,9 @@ html[data-mode="dark"] {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 8px 4px 72px;
+  /* Clear of the ground ridge at its tallest, which reaches 86px up:
+     a-vanguard-stage-ends-below-what-is-written-on-it. */
+  padding: 8px 4px 100px;
   color: var(--blysis-color-stageForeground);
 }
 
@@ -456,7 +458,8 @@ html[data-mode="dark"] {
   flex-direction: column;
   gap: 14px;
   margin-bottom: 12px;
-  padding: 8px 4px 80px;
+  /* Clear of the ground, as the hero is. */
+  padding: 8px 4px 100px;
   color: var(--blysis-color-stageForeground);
 }
 
