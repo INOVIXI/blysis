@@ -1205,6 +1205,7 @@
     "widgets_fromModule": "Fornito da {module}",
     "widgets_hidden": "Nascosto",
     "widgets_needsContent": "Un widget attivo non mostra nulla finché il suo modulo non ha contenuti per lui: finché non esiste il primo record, non c’è nulla da mostrare.",
+    "widgets_themeArranges": "{theme} dispone da sé la home page. Un widget disattivato qui non compare da nessuna parte, ma l’ordine impostato qui colloca solo i widget che {theme} lascia alla pagina.",
     "widgets_none": "Nessun widget ancora. Installa un modulo che ne fornisce uno.",
     "widgets_save": "Salva",
     "widgets_saved": "Impostazioni dei widget salvate",

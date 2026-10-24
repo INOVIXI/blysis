@@ -1205,6 +1205,7 @@
     "widgets_fromModule": "Fourni par {module}",
     "widgets_hidden": "Masqué",
     "widgets_needsContent": "Un widget activé n’affiche toujours rien tant que son module n’a pas de contenu pour lui : tant que le premier enregistrement n’existe pas, il n’a rien à montrer.",
+    "widgets_themeArranges": "{theme} dispose lui-même la page d’accueil. Un widget désactivé ici n’apparaît nulle part, mais l’ordre défini ici ne place que les widgets que {theme} laisse à la page.",
     "widgets_none": "Aucun widget pour le moment. Installez un module qui en fournit un.",
     "widgets_save": "Enregistrer",
     "widgets_saved": "Paramètres des widgets enregistrés",

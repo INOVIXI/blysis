@@ -1205,6 +1205,7 @@
     "widgets_fromModule": "{module} tərəfindən təqdim olunur",
     "widgets_hidden": "Gizlədilib",
     "widgets_needsContent": "Aktiv olan vidjet, onun modulunun məzmunu olmadığı müddətdə heç nə göstərmir: ilk qeyd yaranana qədər vidjetin göstərəcəyi bir şey yoxdur.",
+    "widgets_themeArranges": "{theme} ana səhifəni özü düzür. Burada söndürdüyünüz vidjet heç yerdə göstərilmir, buradakı sıra isə yalnız {theme} temasının səhifəyə buraxdığı vidjetlərə tətbiq olunur.",
     "widgets_none": "Hələ vidjet yoxdur. Vidjet əlavə edən modul quraşdırın.",
     "widgets_save": "Yadda saxla",
     "widgets_saved": "Vidjet parametrləri yadda saxlanıldı",

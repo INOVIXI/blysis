@@ -1205,6 +1205,7 @@
     "widgets_fromModule": "Bereitgestellt von {module}",
     "widgets_hidden": "Ausgeblendet",
     "widgets_needsContent": "Ein eingeschaltetes Widget zeigt trotzdem nichts an, solange sein Modul keinen Inhalt dafür hat. Bis der erste Eintrag existiert, gibt es für das Widget nichts anzuzeigen.",
+    "widgets_themeArranges": "{theme} ordnet die Startseite selbst an. Ein hier ausgeschaltetes Widget wird nirgends angezeigt, die Reihenfolge hier gilt aber nur für die Widgets, die {theme} der Seite überlässt.",
     "widgets_none": "Noch keine Widgets. Installiere ein Modul, das eines bereitstellt.",
     "widgets_save": "Speichern",
     "widgets_saved": "Widget-Einstellungen gespeichert",

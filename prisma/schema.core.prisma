@@ -72,7 +72,6 @@ model User {
   loginSessions    UserSession[]      @relation("UserSessions")
   themeCustomizations   ThemeCustomization[] @relation("ThemeCustomizationUpdater")
   themeSettingUpdates   ThemeSetting[]       @relation("ThemeSettingUpdater")
-  pageLayoutUpdates     PageLayout[]         @relation("PageLayoutUpdater")
 
   // Module relations are injected here by merge-schemas.ts
   // @@MODULE_RELATIONS
@@ -313,22 +312,6 @@ model ThemeSetting {
   updatedAt   DateTime @updatedAt
 
   @@unique([themeId, groupKey, key])
-  @@index([updatedById])
-}
-
-/// An operator's arrangement of one page under one theme: rows of cells of
-/// blocks (src/core/lib/page-layout-schema.ts). No row means the theme's own
-/// arrangement, so returning to it is deleting the row.
-model PageLayout {
-  id          String   @id @default(cuid())
-  page        String
-  themeId     String
-  document    Json
-  updatedById String?
-  updatedBy   User?    @relation("PageLayoutUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
-  updatedAt   DateTime @updatedAt
-
-  @@unique([page, themeId])
   @@index([updatedById])
 }
 

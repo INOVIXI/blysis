@@ -1,7 +1,6 @@
-import { log } from "@/core/lib/logger";
 import { isWidgetVisible, orderWidgets } from "@/core/lib/homepage-widgets";
 import { sortBlocks, type CatalogBlock } from "@/core/lib/page-blocks";
-import { cellWidths, layoutDocumentSchema, type LayoutDocument, type RowSplit, type WidthClass } from "@/core/lib/page-layout-schema";
+import { cellWidths, type LayoutDocument, type RowSplit, type WidthClass } from "@/core/lib/page-layout-schema";
 import { sanitizeSettingValue, settingDefault } from "@/core/lib/setting-field-value";
 
 /** One block as the page draws it: where it stands and what it was told. */
@@ -24,9 +23,7 @@ export interface ResolvedLayout {
 }
 
 interface ResolveInput {
-    /** The operator's stored document, unchecked: it is checked here. */
-    saved: unknown;
-    themeDefault: LayoutDocument | undefined;
+    themeLayout: LayoutDocument | undefined;
     /** Every block the registry lists, installed or not switched on. */
     blocks: CatalogBlock[];
     enabled: (module: string) => boolean;
@@ -56,30 +53,18 @@ function rowsFor(blocks: CatalogBlock[], keyFor: (b: CatalogBlock) => string = k
 }
 
 /**
- * The arrangement of a site that has saved none under a theme that ships
- * none: the homepage as it has always been, under a full row for any block
- * that needs the whole width. The narrow column honours the order and
- * visibility Settings > Widgets saved, matched through `replaces` so a block
- * keeps a place saved under its old widget id. A block switched off there is
- * listed as hidden, so it is not added back as an unnamed one.
+ * The arrangement under a theme that ships none: the homepage as it has
+ * always been, under a full row for any block that needs the whole width.
+ * It places only what needs more than the narrow column. The widgets come in
+ * through its `rest` cell, in the order and with the visibility Settings >
+ * Widgets saved, the way they do under any theme.
  */
-function coreDefaultLayout(blocks: CatalogBlock[], settings: Record<string, unknown>): LayoutDocument {
-    const legacy = blocks.map((block) => ({ id: legacyId(block), defaultVisible: block.defaultVisible, block }));
-    const visible = legacy.filter((w) => isWidgetVisible(w, settings.widget_visibility));
-    const hidden = legacy.filter((w) => !visible.includes(w)).map((w) => w.block.id);
-    const wide = visible.filter((w) => w.block.widths.includes("wide")).map((w) => w.block);
-    const narrow = orderWidgets(visible.filter((w) => !w.block.widths.includes("wide")), settings.widget_order).map((w) => w.block);
-    const rows = rowsFor([...wide, ...narrow]);
+function coreDefaultLayout(blocks: CatalogBlock[], visibility: unknown): LayoutDocument {
+    const placed = blocks.filter((b) => (b.widths.includes("wide") || !b.widths.includes("narrow"))
+        && isWidgetVisible({ id: legacyId(b), defaultVisible: b.defaultVisible }, visibility));
+    const rows = rowsFor(placed);
     if (!rows.some((r) => r.split === "2-1")) rows.push({ split: "2-1", cells: [[], []] });
-    return { rows: rows.map((r) => (r.split === "2-1" ? { ...r, rest: 1 } : r)), hidden };
-}
-
-function savedDocument(saved: unknown): LayoutDocument | null {
-    if (saved === null || saved === undefined) return null;
-    const parsed = layoutDocumentSchema.safeParse(saved);
-    if (parsed.success) return parsed.data;
-    log.warn("[page-layout] a saved arrangement does not match the layout schema; drawing the theme's instead");
-    return null;
+    return { rows: rows.map((r) => (r.split === "2-1" ? { ...r, rest: 1 } : r)) };
 }
 
 /** Every setting the block declares, as given when it may hold it, else its default. */
@@ -94,20 +79,32 @@ function settingsOf(block: CatalogBlock, given: Record<string, unknown> | undefi
 }
 
 /**
- * What the homepage draws: the saved document if it is one, else the
- * theme's, else core's. Then a block of a module that is gone or switched
- * off is left out, a block is drawn only in a cell whose width it declares,
- * every setting is one its field allows, and a block the document never
- * named and did not hide goes to its `rest` cell, or to rows of its own.
+ * What the homepage draws: the theme's arrangement, else core's. Then a block
+ * of a module that is gone or switched off is left out, a block is drawn only
+ * in a cell whose width it declares, every setting is one its field allows,
+ * and a block the document never named and did not hide goes to its `rest`
+ * cell, or to rows of its own.
+ *
+ * Settings > Widgets holds over any arrangement, since it is all an operator
+ * has: a widget switched off there is drawn nowhere, whoever placed it, and
+ * the widgets the page adds itself come in the order saved there.
  */
 export function resolveLayout(input: ResolveInput): ResolvedLayout {
     const usable = sortBlocks(input.blocks.filter((b) => input.enabled(b.module)));
     const byId = new Map(usable.map((b) => [b.id, b]));
-    const doc = savedDocument(input.saved) ?? input.themeDefault ?? coreDefaultLayout(usable, input.settings);
+    const doc = input.themeLayout ?? coreDefaultLayout(usable, input.settings.widget_visibility);
 
     const named = new Set(doc.rows.flatMap((row) => row.cells.flat().map((i) => i.block)));
     const hidden = new Set(doc.hidden ?? []);
-    let unnamed = usable.filter((b) => b.defaultVisible && !named.has(b.id) && !hidden.has(b.id));
+    const visibility = input.settings.widget_visibility as Record<string, unknown> | undefined;
+    const switchedOff = (block: CatalogBlock) => visibility?.[legacyId(block)] === false;
+    let unnamed = orderWidgets(
+        usable
+            .filter((b) => !named.has(b.id) && !hidden.has(b.id))
+            .map((block) => ({ id: legacyId(block), defaultVisible: block.defaultVisible, block }))
+            .filter((w) => isWidgetVisible(w, visibility)),
+        input.settings.widget_order,
+    ).map((w) => w.block);
     // A block the page adds is keyed by its id, unless a placement the
     // document made already holds that key.
     const keys = new Set(doc.rows.flatMap((row) => row.cells.flat().map((i) => i.key)));
@@ -122,7 +119,7 @@ export function resolveLayout(input: ResolveInput): ResolvedLayout {
         const widths = cellWidths(row.split);
         const cells = row.cells.map((cell, c) => cell.flatMap((instance) => {
             const block = byId.get(instance.block);
-            if (!block || !block.widths.includes(widths[c])) return [];
+            if (!block || !block.widths.includes(widths[c]) || switchedOff(block)) return [];
             return [{ key: instance.key, block, settings: settingsOf(block, instance.settings), width: widths[c] }];
         }));
         if (row.rest !== undefined) {
