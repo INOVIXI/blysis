@@ -14,7 +14,7 @@ import { test, expect } from '@playwright/test';
 
 const DESKTOP = { width: 1440, height: 1200 };
 
-test('the homepage columns end at their last card', async ({ page }) => {
+test('the homepage row ends at its lowest card', async ({ page }) => {
     test.setTimeout(90_000);
     await page.setViewportSize(DESKTOP);
     await page.goto('/tr', { waitUntil: 'load' });
@@ -22,22 +22,18 @@ test('the homepage columns end at their last card', async ({ page }) => {
     test.skip(!drawn, 'this homepage has no sidebar');
     await page.waitForTimeout(2_500);
 
+    // The row, not each column: a grid stretches the shorter column to the
+    // taller one, so only the row's own bottom says whether anything ran on.
     const overhang = await page.evaluate(() => {
-        const out: Record<string, number> = {};
-        for (const selector of ['[data-sidebar]', '[data-sidebar-main]']) {
-            const column = document.querySelector(selector);
-            if (!column) continue;
-            const drawnChildren = [...column.querySelectorAll('[data-block]')]
-                .filter((block) => block.getBoundingClientRect().height > 0);
-            if (drawnChildren.length === 0) continue;
-            const last = Math.max(...drawnChildren.map((block) => block.getBoundingClientRect().bottom));
-            out[selector] = Math.round(column.getBoundingClientRect().bottom - last);
-        }
-        return out;
+        const row = document.querySelector('[data-sidebar-layout]');
+        if (!row) return null;
+        const drawnBlocks = [...row.querySelectorAll('[data-block]')]
+            .filter((block) => block.getBoundingClientRect().height > 0);
+        if (drawnBlocks.length === 0) return null;
+        const lowest = Math.max(...drawnBlocks.map((block) => block.getBoundingClientRect().bottom));
+        return Math.round(row.getBoundingClientRect().bottom - lowest);
     });
 
-    expect(Object.keys(overhang).length, 'no column drew a block').toBeGreaterThan(0);
-    for (const [column, px] of Object.entries(overhang)) {
-        expect(px, `${column} runs ${px}px past its last block`).toBeLessThanOrEqual(1);
-    }
+    expect(overhang, 'the row drew no block').not.toBeNull();
+    expect(overhang, `the row runs ${overhang}px past its lowest block`).toBeLessThanOrEqual(1);
 });
