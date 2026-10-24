@@ -1,5 +1,5 @@
 import { isWidgetVisible, orderWidgets } from "@/core/lib/homepage-widgets";
-import { sortBlocks, type CatalogBlock } from "@/core/lib/page-blocks";
+import { sortBlocks, type CatalogBlock, type ModulePage } from "@/core/lib/page-blocks";
 import { cellWidths, themeSettingRef, type LayoutDocument, type RowSplit, type WidthClass } from "@/core/lib/page-layout-schema";
 import { sanitizeSettingValue, settingDefault } from "@/core/lib/setting-field-value";
 
@@ -20,6 +20,12 @@ export interface ResolvedLayout {
     rows: ResolvedRow[];
     /** Nothing stands in a wide or full cell, which is when the page greets a new site instead. */
     welcome: boolean;
+}
+
+/** A module's page as it is drawn, and whether its header band is. */
+export interface ResolvedPageLayout {
+    rows: ResolvedRow[];
+    header: "shown" | "hidden";
 }
 
 interface ResolveInput {
@@ -102,20 +108,67 @@ function settingsOf(
  */
 export function resolveLayout(input: ResolveInput): ResolvedLayout {
     const usable = sortBlocks(input.blocks.filter((b) => input.enabled(b.module)));
-    const byId = new Map(usable.map((b) => [b.id, b]));
     const doc = input.themeLayout ?? coreDefaultLayout(usable, input.settings.widget_visibility);
 
     const named = new Set(doc.rows.flatMap((row) => row.cells.flat().map((i) => i.block)));
     const hidden = new Set(doc.hidden ?? []);
     const visibility = input.settings.widget_visibility as Record<string, unknown> | undefined;
     const switchedOff = (block: CatalogBlock) => visibility?.[legacyId(block)] === false;
-    let unnamed = orderWidgets(
+    const unnamed = orderWidgets(
         usable
             .filter((b) => !named.has(b.id) && !hidden.has(b.id))
             .map((block) => ({ id: legacyId(block), defaultVisible: block.defaultVisible, block }))
             .filter((w) => isWidgetVisible(w, visibility)),
         input.settings.widget_order,
     ).map((w) => w.block);
+
+    const rows = arrange({ doc, usable, unnamed, skip: switchedOff, themeSettings: input.themeSettings });
+    const welcome = !rows.some((row) => {
+        const widths = cellWidths(row.split);
+        return row.cells.some((cell, c) => widths[c] !== "narrow" && cell.length > 0);
+    });
+    return { rows, welcome };
+}
+
+/**
+ * What one of a module's pages draws: the theme's arrangement for it, else
+ * the module's own. The same rules hold as on the homepage, without the
+ * widget settings, which were only ever the homepage's: a block the page does
+ * not declare is not drawn, a block stands only where it fits, every setting
+ * is one its field allows, and a block nobody placed or hid goes to the
+ * `rest` cell or to rows of its own.
+ */
+export function resolvePageLayout(input: {
+    page: ModulePage;
+    themeLayout: LayoutDocument | undefined;
+    themeSettings?: Record<string, Record<string, unknown>>;
+}): ResolvedPageLayout {
+    const usable = sortBlocks(input.page.blocks);
+    const doc = input.themeLayout ?? input.page.layout;
+    const named = new Set(doc.rows.flatMap((row) => row.cells.flat().map((i) => i.block)));
+    const hidden = new Set(doc.hidden ?? []);
+    const unnamed = usable.filter((b) => !named.has(b.id) && !hidden.has(b.id));
+    const rows = arrange({ doc, usable, unnamed, skip: () => false, themeSettings: input.themeSettings });
+    return { rows, header: doc.header ?? "shown" };
+}
+
+/**
+ * The rows a document draws from the blocks a page may use: each placement
+ * that names a usable block in a cell it fits, then the blocks nobody placed
+ * in the `rest` cell, dealt across the cells of that width, or in rows of
+ * their own.
+ */
+function arrange(input: {
+    doc: LayoutDocument;
+    usable: CatalogBlock[];
+    /** In the order they are added. */
+    unnamed: CatalogBlock[];
+    skip: (block: CatalogBlock) => boolean;
+    themeSettings: Record<string, Record<string, unknown>> | undefined;
+}): ResolvedRow[] {
+    const { doc } = input;
+    const byId = new Map(input.usable.map((b) => [b.id, b]));
+    let unnamed = input.unnamed;
     // A block the page adds is keyed by its id, unless a placement the
     // document made already holds that key.
     const keys = new Set(doc.rows.flatMap((row) => row.cells.flat().map((i) => i.key)));
@@ -130,7 +183,7 @@ export function resolveLayout(input: ResolveInput): ResolvedLayout {
         const widths = cellWidths(row.split);
         const cells = row.cells.map((cell, c) => cell.flatMap((instance) => {
             const block = byId.get(instance.block);
-            if (!block || !block.widths.includes(widths[c]) || switchedOff(block)) return [];
+            if (!block || !block.widths.includes(widths[c]) || input.skip(block)) return [];
             return [{ key: instance.key, block, settings: settingsOf(block, instance.settings, input.themeSettings), width: widths[c] }];
         }));
         if (row.rest !== undefined) {
@@ -151,10 +204,5 @@ export function resolveLayout(input: ResolveInput): ResolvedLayout {
 
     const rows = draw(doc.rows);
     if (unnamed.length > 0) rows.push(...draw(rowsFor(unnamed, freshKey)));
-
-    const welcome = !rows.some((row) => {
-        const widths = cellWidths(row.split);
-        return row.cells.some((cell, c) => widths[c] !== "narrow" && cell.length > 0);
-    });
-    return { rows, welcome };
+    return rows;
 }

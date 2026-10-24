@@ -6,7 +6,7 @@ import type { ModuleSetting } from '../src/core/lib/module-types';
 import { exportedHttpMethods } from '../src/core/lib/http-methods';
 import { CORE_ADMIN_SCREENS } from '../src/core/lib/admin-screens';
 import { CORE_ADMIN_API, MEMBER_MUTATIONS } from '../src/core/lib/admin-api';
-import { blocksOf, sortBlocks, type CatalogBlock } from '../src/core/lib/page-blocks';
+import { blocksOf, pagesOf, sortBlocks, type CatalogBlock, type ModulePage } from '../src/core/lib/page-blocks';
 
 function toComponentName(basename: string): string {
     return basename
@@ -81,7 +81,7 @@ function generateRegistry() {
     // No `next/dynamic` here any more: every registry in this file holds a
     // component that is part of a page already rendering. The page registry
     // next door still uses it, because a module page is a route of its own.
-    const imports = `/* eslint-disable */\nimport type { ComponentType } from 'react';\nimport type { CatalogBlock } from '@/core/lib/page-blocks';\n\n`;
+    const imports = `/* eslint-disable */\nimport type { ComponentType } from 'react';\nimport type { CatalogBlock, ModulePage } from '@/core/lib/page-blocks';\n\n`;
     /*
      * A module page is imported for real, not through `next/dynamic`.
      *
@@ -188,6 +188,7 @@ function generateRegistry() {
     const allDashboardCards: ManifestItem[] = [];
     const allDashboardSections: ManifestItem[] = [];
     const allBlocks: CatalogBlock[] = [];
+    const allPages: ModulePage[] = [];
     const allHomepageSections: ({ id: string; type: 'content' | 'widget'; component: string; order: number; module: string })[] = [];
     const allLayoutComponents: ({ id: string; component: string; include?: string[]; exclude?: string[]; module: string })[] = [];
     const allNavbarComponents: ({ id: string; component: string; order: number; module: string })[] = [];
@@ -261,6 +262,7 @@ function generateRegistry() {
         manifest.notificationTypes?.forEach((nt) => allNotificationTypes.push({ ...nt, module: moduleName }));
         manifest.homepageSections?.forEach((section) => allHomepageSections.push({ ...section, module: moduleName }));
         allBlocks.push(...blocksOf(moduleName, manifest));
+        allPages.push(...pagesOf(moduleName, manifest));
         if (manifest.seoRoutes?.handler) {
             allSeoRoutes.push({ module: moduleName, handler: manifest.seoRoutes.handler });
         }
@@ -346,6 +348,9 @@ function generateRegistry() {
 
     let widgetRegistry = `// Every block a page can be arranged from: declared blocks, and each widget and section read as one (page-blocks.ts).
 export const ModuleBlocks: CatalogBlock[] = ${JSON.stringify(sortedBlocks, null, 2)};
+
+// Every page a module builds from blocks a theme may arrange (page-blocks.ts).
+export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)), null, 2)};
 
 `;
     widgetRegistry += `export const ModuleWidgets: { id: string; label?: string; labelKey?: string; component: string; module: string; defaultOrder: number; defaultVisible: boolean }[] = ${JSON.stringify(allWidgets, null, 2)};\n\n`;

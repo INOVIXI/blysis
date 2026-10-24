@@ -28,7 +28,7 @@
 import { z } from "zod";
 import { CRON_SCHEDULES } from "./cron-schedules";
 import { isValidRange } from "./semver-range";
-import { WIDTH_CLASSES } from "./page-layout-schema";
+import { layoutDocumentSchema, WIDTH_CLASSES } from "./page-layout-schema";
 import { settingFieldSchema } from "./theme-manifest-schema";
 
 const SAFE_ID = /^[a-z0-9][a-z0-9-]*$/;
@@ -728,6 +728,27 @@ const blockEntry = z.object({
     replaces: z.array(z.string().min(1).max(64).regex(SAFE_SLUG)).max(8).optional(),
 });
 
+/**
+ * One of the module's own pages, built from blocks a theme may arrange.
+ *
+ * The page reads what it shows once and draws each block itself, so a block
+ * here is only a name, the widths it can stand in and the settings a theme
+ * may give it. `layout` is how the page stands under a theme that has no
+ * arrangement for it, which is the page as it was before it had blocks; a
+ * block meant only for themes that ask for it is listed in `hidden` there.
+ */
+const pageEntry = z.object({
+    id: z.string().min(1).max(64).regex(SAFE_SLUG),
+    blocks: z.array(z.object({
+        id: z.string().min(1).max(64).regex(SAFE_SLUG),
+        widths: z.array(z.enum(WIDTH_CLASSES)).min(1).max(WIDTH_CLASSES.length),
+        settings: z.record(z.string().regex(SAFE_SLUG), settingFieldSchema)
+            .refine((r) => Object.keys(r).length <= 20, "max 20 settings per page block")
+            .optional(),
+    })).min(1).max(30),
+    layout: layoutDocumentSchema,
+});
+
 const homepageSection = z.object({
     id: z.string().min(1).max(64).regex(SAFE_SLUG),
     type: z.enum(["content", "widget"]),
@@ -1095,6 +1116,7 @@ export const moduleManifestSchema = z.object({
     settingsCards: z.array(settingsCard).max(50).optional(),
     homepageSections: z.array(homepageSection).max(50).optional(),
     blocks: z.array(blockEntry).max(50).optional(),
+    pages: z.array(pageEntry).max(20).optional(),
     dashboardCards: z.array(dashboardCard).max(50).optional(),
     dashboardSections: z.array(dashboardSection).max(20).optional(),
     statsApi: routePath.optional(),
@@ -1116,6 +1138,23 @@ export const moduleManifestSchema = z.object({
         if (seen.has(id)) ctx.addIssue({ code: "custom", path: ["blocks"], message: `"${id}" names two blocks, widgets or sections` });
         seen.add(id);
     }
+
+    // A page's own arrangement names only the blocks that page declares,
+    // under this module's id, the way a theme's arrangement has to.
+    const pageIds = new Set<string>();
+    (m.pages ?? []).forEach((page, p) => {
+        if (pageIds.has(page.id)) ctx.addIssue({ code: "custom", path: ["pages", p, "id"], message: `"${page.id}" names two pages` });
+        pageIds.add(page.id);
+        const declared = new Set(page.blocks.map((b) => `${m.id}.${b.id}`));
+        if (declared.size !== page.blocks.length) ctx.addIssue({ code: "custom", path: ["pages", p, "blocks"], message: `page "${page.id}" declares a block twice` });
+        const named = [
+            ...page.layout.rows.flatMap((row) => row.cells.flat().map((instance) => instance.block)),
+            ...(page.layout.hidden ?? []),
+        ];
+        for (const id of named) {
+            if (!declared.has(id)) ctx.addIssue({ code: "custom", path: ["pages", p, "layout"], message: `page "${page.id}" names "${id}", which it does not declare` });
+        }
+    });
 });
 
 export type ValidatedModuleManifest = z.infer<typeof moduleManifestSchema>;

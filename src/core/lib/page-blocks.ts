@@ -1,5 +1,5 @@
 import type { ValidatedModuleManifest } from "./module-manifest-schema";
-import type { WidthClass } from "./page-layout-schema";
+import type { LayoutDocument, WidthClass } from "./page-layout-schema";
 import type { ThemeFieldDef } from "./theme-manifest-schema";
 
 /** One block a page can be arranged from, as the registry lists it. */
@@ -27,6 +27,18 @@ export interface CatalogBlock {
 export interface BlockProps {
     settings: Record<string, unknown>;
     width: WidthClass;
+}
+
+/**
+ * One of a module's own pages, as the registry lists it: the blocks it is
+ * built from and how they stand on a theme that has no word for the page.
+ */
+export interface ModulePage {
+    /** `<module>.<page>`, the name a theme's `layouts` gives it. */
+    id: string;
+    module: string;
+    blocks: CatalogBlock[];
+    layout: LayoutDocument;
 }
 
 type BlockSource = Partial<Pick<ValidatedModuleManifest, "blocks" | "widgets" | "homepageSections">>;
@@ -88,6 +100,31 @@ export function blocksOf(module: string, manifest: BlockSource): CatalogBlock[] 
         }));
 
     return [...declared, ...widgets, ...sections];
+}
+
+/**
+ * Every page one module arranges from blocks. A page block is drawn by the
+ * page that declares it, from what that page read, so it names no file and
+ * stands nowhere else; it is listed with the homepage's blocks' shape so one
+ * resolver arranges both.
+ */
+export function pagesOf(module: string, manifest: Partial<Pick<ValidatedModuleManifest, "pages">>): ModulePage[] {
+    return (manifest.pages ?? []).map((page) => ({
+        id: `${module}.${page.id}`,
+        module,
+        blocks: page.blocks.map((b, order) => ({
+            id: `${module}.${b.id}`,
+            module,
+            entryId: b.id,
+            component: "",
+            widths: [...b.widths],
+            defaultOrder: order,
+            defaultVisible: true,
+            settings: b.settings ?? {},
+            replaces: [],
+        })),
+        layout: page.layout,
+    }));
 }
 
 /**

@@ -81,3 +81,33 @@ describe("a module's blocks", () => {
         if (parsed.success) expect(collectManifestFileRefs(parsed.data)).toContain("blocks/NewsBlock");
     });
 });
+
+describe("a module's own pages", () => {
+    const POST = {
+        id: "post",
+        blocks: [{ id: "article", widths: ["wide", "full"] }, { id: "related", widths: ["narrow"] }],
+        layout: { rows: [{ split: "2-1", cells: [[{ key: "a", block: "sample.article" }], [{ key: "r", block: "sample.related" }]] }] },
+    };
+    const pages = (list: unknown) => moduleManifestSchema.safeParse({ ...BASE, pages: list });
+
+    it("are declared with their blocks and how they stand under a theme with no word for them", () => {
+        const parsed = pages([POST]);
+        expect(parsed.success, JSON.stringify(parsed.error?.issues)).toBe(true);
+    });
+
+    it("arrange only blocks they declare, under the module's own id", () => {
+        const naming = (block: string) => pages([{ ...POST, layout: { rows: [{ split: "1", cells: [[{ key: "x", block }]] }] } }]);
+        expect(naming("sample.nope").success).toBe(false);
+        expect(naming("other.article").success).toBe(false);
+        expect(pages([{ ...POST, layout: { ...POST.layout, hidden: ["sample.nope"] } }]).success).toBe(false);
+    });
+
+    it("each have a name of their own, and so does each of their blocks", () => {
+        expect(pages([POST, POST]).success).toBe(false);
+        expect(pages([{ ...POST, blocks: [...POST.blocks, POST.blocks[0]] }]).success).toBe(false);
+    });
+
+    it("are built from at least one block", () => {
+        expect(pages([{ ...POST, blocks: [], layout: { rows: [] } }]).success).toBe(false);
+    });
+});

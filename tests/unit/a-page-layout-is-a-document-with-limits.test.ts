@@ -94,4 +94,19 @@ describe("a theme", () => {
     it("may not ship one the page cannot draw", () => {
         expect(themeManifestSchema.safeParse({ ...flat, layouts: { home: { rows: [{ split: "3-1", cells: [[], []] }] } } }).success).toBe(false);
     });
+
+    it("may arrange a module's page under the page's name", () => {
+        expect(themeManifestSchema.safeParse({ ...flat, layouts: { "blog.post": { ...ONE_ROW, header: "hidden" } } }).success).toBe(true);
+    });
+
+    it("names a page only as home or <module>.<page>", () => {
+        for (const name of ["Blog.post", "blog", "blog.post.extra", "../post"]) {
+            expect(themeManifestSchema.safeParse({ ...flat, layouts: { [name]: ONE_ROW } }).success, name).toBe(false);
+        }
+    });
+
+    it("leaves to the operator only a setting it declares, on any page", () => {
+        const page = { rows: [{ split: "1", cells: [[{ key: "a", block: "sample.news", settings: { title: { $theme: "stats.missing" } } }]] }] };
+        expect(themeManifestSchema.safeParse({ ...flat, layouts: { "blog.post": page } }).success).toBe(false);
+    });
 });

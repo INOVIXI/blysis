@@ -156,12 +156,14 @@ export const themeManifestSchema = z.object({
     settings: z.record(z.string().regex(SAFE_KEY), settingsGroup).optional(),
 
     /**
-     * How the theme arranges a page until the operator arranges it their
-     * way: blocks by id, in rows and cells. A block whose module is not
-     * installed is skipped, and one the document does not name goes to its
-     * `rest` cell.
+     * How the theme arranges its pages: blocks by id, in rows and cells,
+     * under `home` for the homepage and `<module>.<page>` for a page a
+     * module builds from blocks. A block whose module is not installed is
+     * skipped, and one the document does not name goes to its `rest` cell.
      */
-    layouts: z.object({ home: layoutDocumentSchema.optional() }).strict().optional(),
+    layouts: z.record(z.string().regex(/^(home|[a-z0-9-]+\.[a-z0-9-]+)$/), layoutDocumentSchema)
+        .refine((r) => Object.keys(r).length <= 40, "max 40 arranged pages")
+        .optional(),
 
     components: z.record(
         z.string().regex(/^[A-Z][A-Za-z0-9]*$/),
@@ -221,18 +223,20 @@ export const themeManifestSchema = z.object({
 }).strict().superRefine((theme, ctx) => {
     // A setting its layout leaves to the operator is one of the theme's own,
     // or the operator would have nowhere to fill it in.
-    theme.layouts?.home?.rows.forEach((row, r) => row.cells.forEach((cell, c) => cell.forEach((instance, i) => {
-        for (const [key, value] of Object.entries(instance.settings ?? {})) {
-            const ref = themeSettingRef(value);
-            if (ref && !theme.settings?.[ref.group]?.fields[ref.field]) {
-                ctx.addIssue({
-                    code: "custom",
-                    path: ["layouts", "home", "rows", r, "cells", c, i, "settings", key],
-                    message: `"${ref.group}.${ref.field}" is not a setting this theme declares`,
-                });
+    for (const [page, layout] of Object.entries(theme.layouts ?? {})) {
+        layout.rows.forEach((row, r) => row.cells.forEach((cell, c) => cell.forEach((instance, i) => {
+            for (const [key, value] of Object.entries(instance.settings ?? {})) {
+                const ref = themeSettingRef(value);
+                if (ref && !theme.settings?.[ref.group]?.fields[ref.field]) {
+                    ctx.addIssue({
+                        code: "custom",
+                        path: ["layouts", page, "rows", r, "cells", c, i, "settings", key],
+                        message: `"${ref.group}.${ref.field}" is not a setting this theme declares`,
+                    });
+                }
             }
-        }
-    })));
+        })));
+    }
 });
 
 export type ThemeManifest = z.infer<typeof themeManifestSchema>;

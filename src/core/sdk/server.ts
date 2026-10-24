@@ -60,6 +60,11 @@ export { memberStanding, type MemberStanding } from "@/core/lib/member-standing"
 // render; until it was exported here, the SDK boundary made that impossible.
 export { ActivityFeedSection } from "@/core/components/homepage/ActivityFeedSection";
 
+// --- A module's page arranged from blocks a theme may place ---
+// Here rather than in `@/core/sdk/layout`: it reads the active theme on the
+// server, and that entry is imported by client pages too.
+export { ArrangedPage, type ArrangedPageProps } from "@/core/components/layout/ArrangedPage";
+
 // --- Module state: what a module calls to gate its own endpoints ---
 export { isModuleEnabled } from "@/core/lib/module-cache";
 

@@ -2,8 +2,8 @@
  * The words a page's arrangement is written in.
  *
  * A cell offers a block one of three widths: `full` runs edge to edge,
- * `wide` is the page column or two thirds of it, `narrow` is a third, a
- * quarter or half of it. A block says which of these it can be drawn in and
+ * `wide` is the page column, two thirds of it or the half between two
+ * quarters, `narrow` is a third, a quarter or half of it. A block says which of these it can be drawn in and
  * a cell says which it offers, so "this block fits here" is a question with
  * an answer rather than a screenshot.
  *
@@ -19,7 +19,7 @@ export type WidthClass = (typeof WIDTH_CLASSES)[number];
  * How a row divides the page column. `full` runs edge to edge; the others sit
  * in the column, a number per cell giving its share.
  */
-const ROW_SPLITS = ["full", "1", "1-1", "2-1", "1-2", "1-1-1", "1-1-1-1"] as const;
+const ROW_SPLITS = ["full", "1", "1-1", "2-1", "1-2", "1-1-1", "1-2-1", "1-1-1-1"] as const;
 
 export type RowSplit = (typeof ROW_SPLITS)[number];
 
@@ -30,6 +30,7 @@ const CELL_WIDTHS: Record<RowSplit, WidthClass[]> = {
     "2-1": ["wide", "narrow"],
     "1-2": ["narrow", "wide"],
     "1-1-1": ["narrow", "narrow", "narrow"],
+    "1-2-1": ["narrow", "wide", "narrow"],
     "1-1-1-1": ["narrow", "narrow", "narrow", "narrow"],
 };
 
@@ -84,8 +85,15 @@ const layoutRowSchema = z.object({
 
 export const layoutDocumentSchema = z.object({
     rows: z.array(layoutRowSchema).max(LAYOUT_LIMITS.rows),
-    /** Blocks the operator took off the page, so they are not added back. */
+    /** Blocks the arrangement leaves off the page, so they are not added back. */
     hidden: z.array(z.string().max(130)).max(LAYOUT_LIMITS.hidden).optional(),
+    /**
+     * Whether the band that names the page is drawn. A theme whose page opens
+     * on something that names it already, a product's own box or a showcase,
+     * hides it; the page's h1 is then read but not seen. The homepage has no
+     * such band and ignores it.
+     */
+    header: z.enum(["shown", "hidden"]).optional(),
 }).superRefine((doc, ctx) => {
     const keys = new Set<string>();
     let rests = 0;

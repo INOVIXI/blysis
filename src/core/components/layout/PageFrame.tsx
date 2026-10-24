@@ -14,6 +14,16 @@ export interface PageFrameProps {
     actions?: React.ReactNode;
     /** Widgets for the right column. Omitted, the content spans the page. */
     sidebar?: React.ReactNode;
+    /** Offered to a theme's header; see `PageHeaderProps`. */
+    picture?: string;
+    /** Offered to a theme's header; see `PageHeaderProps`. */
+    meta?: React.ReactNode;
+    /**
+     * `hidden` draws no band: the page opens on something that names it
+     * already, as a theme's arrangement may ask. The title is still the h1,
+     * read but not seen, so the page is never nameless.
+     */
+    header?: "shown" | "hidden";
     children: React.ReactNode;
 }
 
@@ -38,10 +48,14 @@ export interface PageFrameProps {
  * Both kinds of page exist and both need the same frame. The shell and the
  * header it draws through are the two parts a theme may redraw.
  */
-export function PageFrame({ title, description, trail, actions, sidebar, children }: PageFrameProps) {
+export function PageFrame({ title, description, trail, actions, sidebar, picture, meta, header = "shown", children }: PageFrameProps) {
     return (
         <SiteShell>
-            <PageHeader title={title} description={description} trail={trail} actions={actions} />
+            {header === "hidden" ? (
+                <h1 className="sr-only">{title}</h1>
+            ) : (
+                <PageHeader title={title} description={description} trail={trail} actions={actions} picture={picture} meta={meta} />
+            )}
             {sidebar ? <SidebarLayout sidebar={sidebar}>{children}</SidebarLayout> : children}
         </SiteShell>
     );

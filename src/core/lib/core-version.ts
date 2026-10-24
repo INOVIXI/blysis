@@ -12,6 +12,16 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.25.0 - a module may declare `pages`, each built from blocks with a
+ * default arrangement, and draw one with `ArrangedPage` from
+ * `@/core/sdk/server`; a theme arranges it under `layouts["<module>.<page>"]`
+ * as it arranges `home`. An arrangement may hide the header band
+ * (`header: "hidden"`) and place a row of a quarter, a half and a quarter
+ * (`1-2-1`), and `PageFrame` takes a `picture` and a `meta` line a theme's
+ * header may draw. The store's, a blog's or a forum's page had been the
+ * module's alone, so a theme could recolour it but never arrange it.
+ * Additive: a page with no theme arrangement stands as its module drew it.
+ *
  * 5.24.0 - `BlockHeading`, `StatTile`, `useBlockText` and the `BlockProps`
  * type join `@/core/sdk/ui`. A block is handed its settings and its width
  * class; its heading and a stats tile are core's, so every block and every
@@ -663,4 +673,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.24.0";
+export const CORE_API_VERSION = "5.25.0";

@@ -6,7 +6,8 @@ import { CORE_BLOCK_COMPONENTS } from "@/core/components/blocks";
 import { ModuleErrorBoundary } from "@/core/components/ModuleErrorBoundary";
 import StandardSidebarLayout from "@/core/components/layout/SidebarLayout";
 import type { ResolvedInstance, ResolvedLayout, ResolvedRow } from "@/core/lib/page-layout";
-import { cellWidths, type RowSplit } from "@/core/lib/page-layout-schema";
+import { cellWidths } from "@/core/lib/page-layout-schema";
+import { BlockBox, LAYOUT_GRID } from "@/core/components/layout/layout-rows";
 
 interface PageLayoutViewProps {
     layout: ResolvedLayout;
@@ -14,34 +15,17 @@ interface PageLayoutViewProps {
     welcome: React.ReactNode;
 }
 
-/**
- * One block in a box that names it, its variant and its width, so a theme
- * styles it by attribute, and that is an inline-size container, so the
- * block lays itself out by the width it was given rather than the screen's.
- * A block with nothing to show renders nothing and its box is `:empty`.
- */
 function Block({ instance }: { instance: ResolvedInstance }) {
     const Component = CORE_BLOCK_COMPONENTS[instance.block.id] ?? BlockComponentRegistry[instance.block.id];
     if (!Component) return null;
-    const variant = typeof instance.settings.variant === "string" ? instance.settings.variant : undefined;
     return (
-        <div data-block={instance.block.id} data-variant={variant} data-width={instance.width} className="@container">
+        <BlockBox instance={instance}>
             <ModuleErrorBoundary componentId={instance.block.id}>
                 <Component settings={instance.settings} width={instance.width} />
             </ModuleErrorBoundary>
-        </div>
+        </BlockBox>
     );
 }
-
-/** The grid each split other than two thirds and one third is drawn in. */
-const GRID: Record<Exclude<RowSplit, "2-1">, { row: string; cells: string[] }> = {
-    "full": { row: "grid grid-cols-1", cells: [""] },
-    "1": { row: "grid grid-cols-1", cells: [""] },
-    "1-1": { row: "grid grid-cols-1 lg:grid-cols-2 gap-6", cells: ["", ""] },
-    "1-2": { row: "grid grid-cols-1 lg:grid-cols-3 gap-6", cells: ["", "lg:col-span-2"] },
-    "1-1-1": { row: "grid grid-cols-1 lg:grid-cols-3 gap-6", cells: ["", "", ""] },
-    "1-1-1-1": { row: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6", cells: ["", "", "", ""] },
-};
 
 function Row({ row, welcomeAt, welcome }: { row: ResolvedRow; welcomeAt: number; welcome: React.ReactNode }) {
     // A gap, not `space-y`: a block that drew nothing is still a child, and
@@ -73,7 +57,7 @@ function Row({ row, welcomeAt, welcome }: { row: ResolvedRow; welcomeAt: number;
         );
     }
 
-    const grid = GRID[row.split];
+    const grid = LAYOUT_GRID[row.split];
     return (
         <div data-layout-row={row.split} className={grid.row}>
             {row.cells.map((_, index) => (

@@ -1,11 +1,11 @@
 import { cache } from "react";
-import { ModuleBlocks } from "@/core/generated/module-registry";
+import { ModuleBlocks, ModulePages } from "@/core/generated/module-registry";
 import { CORE_BLOCKS } from "@/core/lib/core-blocks";
 import { getModuleStates } from "@/core/lib/module-cache";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { readSettingValues } from "@/core/lib/setting-values";
 import { getActiveTheme } from "@/core/lib/theme-state";
-import { resolveLayout, type ResolvedLayout } from "@/core/lib/page-layout";
+import { resolveLayout, resolvePageLayout, type ResolvedLayout, type ResolvedPageLayout } from "@/core/lib/page-layout";
 
 /**
  * The homepage's arrangement under the active theme, read on the server so it is in
@@ -30,5 +30,22 @@ export const loadHomeLayout = cache(async function loadHomeLayout(): Promise<Res
         // Core's own blocks belong to no module, so nothing switches them off.
         enabled: (module) => module === "core" || isEnabledIn(states, module),
         settings,
+    });
+});
+
+/**
+ * One of a module's pages, arranged under the active theme: the theme's
+ * arrangement for it, else the module's own. Null for a page the registry
+ * does not list: a module asking under a name its manifest does not declare,
+ * or a module whose pages were never generated.
+ */
+export const loadPageLayout = cache(async function loadPageLayout(pageId: string): Promise<ResolvedPageLayout | null> {
+    const page = ModulePages.find((p) => p.id === pageId);
+    if (!page) return null;
+    const theme = await getActiveTheme();
+    return resolvePageLayout({
+        page,
+        themeLayout: theme.manifest.layouts?.[pageId],
+        themeSettings: theme.settings,
     });
 });
