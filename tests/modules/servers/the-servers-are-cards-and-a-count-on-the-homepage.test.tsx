@@ -43,6 +43,7 @@ const server = (name: string, over: Record<string, unknown> = {}) => ({
 
 const { ServerCards } = await import("@/modules/servers/components/ServerCards");
 const { default: PlayersTile } = await import("@/modules/servers/slots/PlayersTile");
+const { default: StatusTag } = await import("@/modules/servers/slots/StatusTag");
 
 function draw(node: React.ReactNode) {
     return render(<NextIntlClientProvider locale="en" messages={MESSAGES}>{node}</NextIntlClientProvider>);
@@ -101,6 +102,32 @@ describe("the players tile", () => {
     it("is not drawn when no server can be asked", async () => {
         answer.servers = [server("Hytale", { queryable: false })];
         const { container } = draw(<PlayersTile />);
+        await waitFor(() => expect(container.innerHTML).toBe(""));
+    });
+});
+
+describe("the status tag on the hero", () => {
+    it("is offered to the hero's tags", () => {
+        expect(MANIFEST.slotContents.find((s: { slot: string }) => s.slot === "hero.tags")).toBeTruthy();
+    });
+
+    it("says the server is open and how many play", async () => {
+        answer.servers = [server("A", { players: { online: 200, max: 1 } }), server("B", { players: { online: 14, max: 1 } })];
+        draw(<StatusTag />);
+        const tag = await screen.findByText(en.tag_open.replace("{count}", "214"));
+        expect(tag.closest("[data-hero-tag]")?.getAttribute("data-state")).toBe("open");
+    });
+
+    it("says it is closed when no server that can be asked answers", async () => {
+        answer.servers = [server("A", { online: false })];
+        draw(<StatusTag />);
+        const tag = await screen.findByText(en.tag_closed);
+        expect(tag.closest("[data-hero-tag]")?.getAttribute("data-state")).toBe("closed");
+    });
+
+    it("says nothing about a game it cannot ask", async () => {
+        answer.servers = [server("Hytale", { queryable: false })];
+        const { container } = draw(<StatusTag />);
         await waitFor(() => expect(container.innerHTML).toBe(""));
     });
 });

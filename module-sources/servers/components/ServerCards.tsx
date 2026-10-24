@@ -107,7 +107,7 @@ export function ServerCards({ settings }: BlockProps) {
             ) : servers === null ? (
                 <Waiting label={commonT("loading")} />
             ) : (
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-6">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-6">
                     {servers.map((server) => <Card key={server.id} server={server} onCopy={copy} />)}
                 </div>
             )}

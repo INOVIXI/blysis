@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-10-24",
-  "updatedAt": "2026-10-24T12:53:28Z",
+  "updatedAt": "2026-10-24T13:28:44Z",
   "modules": [
     {
       "id": "announcements",
@@ -5418,13 +5418,13 @@
           "description": "游戏服务器管理、RCON 和状态监控"
         }
       },
-      "version": "1.7.1",
+      "version": "1.8.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "Server",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-24T12:42:57Z",
+      "updatedAt": "2026-10-24T13:28:44Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -5948,13 +5948,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.49.0",
+      "version": "2.49.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-24T12:38:56Z",
+      "updatedAt": "2026-10-24T13:28:44Z",
       "screenshots": [],
       "tags": [
         "commerce"

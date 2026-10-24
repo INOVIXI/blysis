@@ -102,7 +102,7 @@ export function ProductsBlock({ settings }: BlockProps) {
                 <Waiting label={commonT("loading")} />
             ) : (
                 <>
-                    <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-6">
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-6">
                         {products.rows.map((product) => (
                             <ProductCard key={product.id} product={product} lowStockAt={products.lowStockAt} />
                         ))}

@@ -144,7 +144,7 @@ export function ProductCard({ product, lowStockAt = 0, showCategory = false }: P
                             </span>
                         )}
                     </div>
-                    <span className="whitespace-nowrap text-sm text-muted-foreground transition-colors group-hover:text-primary">
+                    <span data-product-more className="whitespace-nowrap text-sm text-muted-foreground transition-colors group-hover:text-primary">
                         {t("viewDetails")} →
                     </span>
                 </div>
