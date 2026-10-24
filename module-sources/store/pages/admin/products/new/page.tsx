@@ -16,7 +16,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "@/core/sdk/navigation";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, UrlOrFile, Input, Label, NativeSelect, RichTextEditor, useSiteSettings } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, UrlOrFile, Input, Label, NativeSelect, RichTextEditor, Textarea, useSiteSettings } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, X } from "lucide-react";
 import { writeError } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -45,6 +45,7 @@ export default function NewProductPage() {
     const [form, setForm] = useState({
         name: "",
         description: "",
+        shortDesc: "",
         price: "",
         comparePrice: "",
         image: "",
@@ -75,6 +76,7 @@ export default function NewProductPage() {
             const payload = {
                 name: form.name,
                 description: form.description || undefined,
+                shortDesc: form.shortDesc.trim() || undefined,
                 price: parseFloat(form.price),
                 comparePrice: form.comparePrice ? parseFloat(form.comparePrice) : null,
                 image: form.image || (form.images.length > 0 ? form.images[0] : null),
@@ -148,6 +150,17 @@ export default function NewProductPage() {
                                         onChange={(value: string) => setForm({ ...form, description: value })}
                                         placeholder={t("adm_productDescription")}
                                     />
+                                </div>
+                                <div>
+                                    <Label htmlFor="shortDesc">{t("adm_summary")}</Label>
+                                    <Textarea
+                                        id="shortDesc"
+                                        rows={2}
+                                        maxLength={500}
+                                        value={form.shortDesc}
+                                        onChange={(e) => setForm({ ...form, shortDesc: e.target.value })}
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-1">{t("adm_summaryHint")}</p>
                                 </div>
                                 <div>
                                     <UrlOrFile

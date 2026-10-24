@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Copy, Server } from "lucide-react";
 import { copyText, sharedJson } from "@/core/sdk";
-import { BlockHeading, Button, Waiting, useBlockText, type BlockProps } from "@/core/sdk/ui";
+import { BlockHeading, Button, LoadFailed, Waiting, useBlockText, type BlockProps } from "@/core/sdk/ui";
 
 interface ServerCard {
     id: string;
@@ -79,16 +79,20 @@ export function ServerCards({ settings }: BlockProps) {
     const commonT = useTranslations("common");
     const text = useBlockText();
     const [servers, setServers] = useState<ServerCard[] | null>(null);
+    // A read that did not come back says so rather than reading as a site
+    // with no server (an-empty-screen-says-which-empty).
+    const [failed, setFailed] = useState(false);
+    const [reloadKey, setReloadKey] = useState(0);
 
     useEffect(() => {
         let active = true;
         sharedJson<{ servers?: ServerCard[] }>("/api/v1/servers/status")
             .then((d) => { if (active) setServers(Array.isArray(d?.servers) ? d.servers : []); })
-            .catch(() => { if (active) setServers([]); });
+            .catch(() => { if (active) setFailed(true); });
         return () => { active = false; };
-    }, []);
+    }, [reloadKey]);
 
-    if (servers !== null && servers.length === 0) return null;
+    if (!failed && servers !== null && servers.length === 0) return null;
 
     const copy = async (address: string) => {
         if (await copyText(address)) toast.success(t("widget_copied"));
@@ -98,7 +102,9 @@ export function ServerCards({ settings }: BlockProps) {
     return (
         <div className={servers === null ? `${ROOM} flex flex-col` : undefined}>
             <BlockHeading kicker={text(settings.kicker) || undefined} title={text(settings.title) || t("widget_title")} />
-            {servers === null ? (
+            {failed ? (
+                <LoadFailed onRetry={() => { setFailed(false); setReloadKey((k) => k + 1); }} />
+            ) : servers === null ? (
                 <Waiting label={commonT("loading")} />
             ) : (
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-6">

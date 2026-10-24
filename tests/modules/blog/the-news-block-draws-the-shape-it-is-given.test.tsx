@@ -10,7 +10,7 @@
  */
 import React from "react";
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, within, fireEvent } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import fs from "node:fs";
 import path from "node:path";
@@ -99,6 +99,24 @@ describe("the news block", () => {
             const card = empty.closest(".border-dashed");
             expect(card, variant).not.toBeNull();
             expect(card!.contains(heading), variant).toBe(false);
+            unmount();
+        }
+    });
+
+    it("says a read that did not come back failed, not that there is no news", async () => {
+        for (const variant of ["grid", "featured"]) {
+            let down = true;
+            vi.stubGlobal("fetch", async () => (down ? new Response("{}", { status: 503 }) : new Response(JSON.stringify({ articles: [article(1)] }))));
+            const { unmount } = render(
+                <NextIntlClientProvider locale="en" messages={MESSAGES} timeZone="UTC">
+                    <NewsBlock settings={{ variant, kicker: "", title: "", allLink: false }} width="wide" />
+                </NextIntlClientProvider>,
+            );
+            expect(await screen.findByRole("alert"), variant).toBeTruthy();
+            expect(screen.queryByText(MESSAGES.news.empty), variant).toBeNull();
+            down = false;
+            fireEvent.click(screen.getByRole("button", { name: MESSAGES.common.retry }));
+            expect(await screen.findByText("Headline 1"), variant).toBeTruthy();
             unmount();
         }
     });

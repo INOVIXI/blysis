@@ -15,11 +15,14 @@ import fs from "node:fs";
 import path from "node:path";
 
 const copied = vi.hoisted(() => ({ values: [] as string[] }));
-const answer = vi.hoisted(() => ({ servers: [] as unknown[] }));
+const answer = vi.hoisted(() => ({ servers: [] as unknown[], down: false }));
 
 vi.mock("@/core/sdk", () => ({
     copyText: vi.fn(async (value: string) => { copied.values.push(value); return true; }),
-    sharedJson: vi.fn(async () => ({ servers: answer.servers })),
+    sharedJson: vi.fn(async () => {
+        if (answer.down) throw new Error("status answered 503");
+        return { servers: answer.servers };
+    }),
 }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams() }));
@@ -48,6 +51,7 @@ function draw(node: React.ReactNode) {
 beforeEach(() => {
     copied.values = [];
     answer.servers = [];
+    answer.down = false;
 });
 
 describe("the server cards", () => {
@@ -68,6 +72,16 @@ describe("the server cards", () => {
         expect(screen.getByText(en.offline)).toBeTruthy();
         fireEvent.click(screen.getByRole("button", { name: en.widget_copy.replace("{name}", "Survival") }));
         await waitFor(() => expect(copied.values).toEqual(["survival.example.com"]));
+    });
+
+    it("say a read that did not come back failed, and can ask again", async () => {
+        answer.down = true;
+        draw(<ServerCards settings={{}} width="full" />);
+        expect(await screen.findByRole("alert")).toBeTruthy();
+        answer.down = false;
+        answer.servers = [server("Survival")];
+        fireEvent.click(screen.getByRole("button", { name: MESSAGES.common.retry }));
+        expect(await screen.findByRole("heading", { level: 3, name: "Survival" })).toBeTruthy();
     });
 
     it("draw nothing on a site with no server", async () => {

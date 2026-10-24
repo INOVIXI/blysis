@@ -2,7 +2,7 @@
   "id": "servers",
   "name": "Game Servers",
   "description": "Game server management, RCON, and status monitoring",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "coreVersion": "^5.0.0",
   "category": "gaming",
   "author": "Blysis",

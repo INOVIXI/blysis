@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Newspaper } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
-import { Badge, BlockHeading, Pagination, Waiting, buttonClassName, useBlockText, useLocalDate, type BlockProps } from "@/core/sdk/ui";
+import { Badge, BlockHeading, LoadFailed, Pagination, Waiting, buttonClassName, useBlockText, useLocalDate, type BlockProps } from "@/core/sdk/ui";
 import { NewsCard, type BlogCardArticle } from "./news-card";
 
 interface Article extends BlogCardArticle {
@@ -150,16 +150,23 @@ export function NewsBlock({ settings }: BlockProps) {
     const commonT = useTranslations("common");
     const text = useBlockText();
     const [posts, setPosts] = useState<Article[] | null>(null);
+    // A read that did not come back says so: it used to read as "no news
+    // yet" (an-empty-screen-says-which-empty).
+    const [failed, setFailed] = useState(false);
+    const [reloadKey, setReloadKey] = useState(0);
     const featured = settings.variant === "featured";
 
     useEffect(() => {
         let active = true;
         fetch(`/api/v1/blog/articles?limit=${featured ? PER_PAGE : PER_PAGE * 2}`)
-            .then((res) => res.json())
+            .then((res) => {
+                if (!res.ok) throw new Error(`articles answered ${res.status}`);
+                return res.json();
+            })
             .then((data: { articles?: Article[] }) => { if (active) setPosts(data.articles ?? []); })
-            .catch(() => { if (active) setPosts([]); });
+            .catch(() => { if (active) setFailed(true); });
         return () => { active = false; };
-    }, [featured]);
+    }, [featured, reloadKey]);
 
     const heading = (
         <BlockHeading
@@ -178,8 +185,13 @@ export function NewsBlock({ settings }: BlockProps) {
         </div>
     );
 
-    if (posts === null || posts.length === 0) {
-        const shown = posts === null ? waiting : empty;
+    if (failed || posts === null || posts.length === 0) {
+        const retry = () => {
+            setFailed(false);
+            setPosts(null);
+            setReloadKey((k) => k + 1);
+        };
+        const shown = failed ? <LoadFailed onRetry={retry} /> : posts === null ? waiting : empty;
         return featured ? (
             <div>
                 {heading}
