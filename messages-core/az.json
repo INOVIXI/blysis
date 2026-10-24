@@ -1253,7 +1253,22 @@
     "theme_mode_system": "Sistemə uyğun",
     "theme_lockMode": "Ziyarətçilərin dəyişməsinə icazə vermə",
     "theme_lockModeHint": "Saytdakı işıqlı/qaranlıq düyməsini gizlədir və ziyarətçilərin əvvəlki seçimlərini nəzərə almır.",
-    "theme_siteModeSaved": "Sayt rejimi yadda saxlanıldı"
+    "theme_siteModeSaved": "Sayt rejimi yadda saxlanıldı",
+    "theme_color_primary": "Əsas rəng",
+    "theme_color_primaryForeground": "Əsas rəng üzərində mətn",
+    "theme_color_secondary": "İkinci dərəcəli rəng",
+    "theme_color_accent": "Vurğu rəngi",
+    "theme_color_accentForeground": "Vurğu üzərində mətn",
+    "theme_color_background": "Səhifə fonu",
+    "theme_color_foreground": "Mətn",
+    "theme_color_muted": "Solğun səth",
+    "theme_color_mutedForeground": "Solğun mətn",
+    "theme_color_border": "Haşiyə",
+    "theme_color_card": "Kart",
+    "theme_color_cardForeground": "Kart mətni",
+    "theme_color_destructive": "Təhlükə",
+    "theme_color_success": "Uğur",
+    "theme_color_warning": "Xəbərdarlıq"
   },
   "footer": {
     "quickLinks": "Sürətli keçidlər",

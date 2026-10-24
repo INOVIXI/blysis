@@ -1253,7 +1253,22 @@
     "theme_mode_system": "Systemeinstellung folgen",
     "theme_lockMode": "Besuchern keine Änderung erlauben",
     "theme_lockModeHint": "Blendet die Hell/Dunkel-Schaltfläche auf der Website aus und ignoriert frühere Auswahlen der Besucher.",
-    "theme_siteModeSaved": "Website-Modus gespeichert"
+    "theme_siteModeSaved": "Website-Modus gespeichert",
+    "theme_color_primary": "Primärfarbe",
+    "theme_color_primaryForeground": "Text auf der Primärfarbe",
+    "theme_color_secondary": "Sekundärfarbe",
+    "theme_color_accent": "Akzentfarbe",
+    "theme_color_accentForeground": "Text auf dem Akzent",
+    "theme_color_background": "Seitenhintergrund",
+    "theme_color_foreground": "Text",
+    "theme_color_muted": "Gedämpfte Fläche",
+    "theme_color_mutedForeground": "Gedämpfter Text",
+    "theme_color_border": "Rahmen",
+    "theme_color_card": "Karte",
+    "theme_color_cardForeground": "Text auf Karten",
+    "theme_color_destructive": "Gefahr",
+    "theme_color_success": "Erfolg",
+    "theme_color_warning": "Warnung"
   },
   "footer": {
     "quickLinks": "Schnelllinks",

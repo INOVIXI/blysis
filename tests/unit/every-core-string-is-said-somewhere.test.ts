@@ -81,6 +81,20 @@ function breadcrumbSlugs(): Set<string> {
 
 const SLUGS = breadcrumbSlugs();
 
+/** Every colour a theme declares without a key of its own, which core names. */
+function sharedThemeColors(): Set<string> {
+    const names = new Set<string>();
+    for (const theme of fs.readdirSync(path.join(ROOT, "src/themes"))) {
+        const manifest = path.join(ROOT, "src/themes", theme, "theme.json");
+        if (!fs.existsSync(manifest)) continue;
+        const colors: Record<string, { labelKey?: string }> = JSON.parse(fs.readFileSync(manifest, "utf8")).tokens?.colors ?? {};
+        for (const [name, def] of Object.entries(colors)) if (!def.labelKey) names.add(name);
+    }
+    return names;
+}
+
+const THEME_COLORS = sharedThemeColors();
+
 /**
  * A key nothing writes out in full, and the proof it is still reachable.
  * `built` is the template literal that assembles it; `resolves` decides
@@ -98,6 +112,8 @@ const CONSTRUCTED: { match: RegExp; built: string; resolves: (suffix: string) =>
         built: "`revisions_action_${action}`",
         resolves: (s) => BLOB.includes(`"${s}",`) || BLOB.includes(`"${s}" `),
     },
+    // The appearance screen, over a colour a theme declares with no key of its own.
+    { match: /^theme_color_(.+)$/, built: "`theme_color_${name}`", resolves: (s) => THEME_COLORS.has(s) },
     // The alerting screen, over a health status.
     { match: /^health_(.+)$/, built: "`health_${status}`", resolves: (s) => BLOB.includes(s) },
     { match: /^alerting_(.+)Hint$/, built: "`alerting_${status}Hint`", resolves: (s) => BLOB.includes(s) },

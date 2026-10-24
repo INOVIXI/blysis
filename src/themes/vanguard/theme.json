@@ -136,23 +136,28 @@
       },
       "stage": {
         "type": "color",
-        "group": "Stage"
+        "group": "Stage",
+        "labelKey": "theme_vanguard_color_stage"
       },
       "stageForeground": {
         "type": "color",
-        "group": "Stage"
+        "group": "Stage",
+        "labelKey": "theme_vanguard_color_stageForeground"
       },
       "stageMuted": {
         "type": "color",
-        "group": "Stage"
+        "group": "Stage",
+        "labelKey": "theme_vanguard_color_stageMuted"
       },
       "stageFar": {
         "type": "color",
-        "group": "Stage"
+        "group": "Stage",
+        "labelKey": "theme_vanguard_color_stageFar"
       },
       "stageNear": {
         "type": "color",
-        "group": "Stage"
+        "group": "Stage",
+        "labelKey": "theme_vanguard_color_stageNear"
       }
     },
     "fonts": {
@@ -321,7 +326,12 @@
         "theme_vanguard_auth": "Sign-in screen",
         "theme_vanguard_auth_tag": "Small label on the sign-in screen",
         "theme_vanguard_auth_title": "Heading on the sign-in screen",
-        "theme_vanguard_auth_subtitle": "Line under that heading"
+        "theme_vanguard_auth_subtitle": "Line under that heading",
+        "theme_vanguard_color_stage": "Hero background",
+        "theme_vanguard_color_stageForeground": "Hero text",
+        "theme_vanguard_color_stageMuted": "Hero muted text",
+        "theme_vanguard_color_stageFar": "Hero far layer",
+        "theme_vanguard_color_stageNear": "Hero near layer"
       },
       "vanguard": {
         "heroTag": "Now open",
@@ -345,7 +355,12 @@
         "theme_vanguard_auth": "Giriş ekranı",
         "theme_vanguard_auth_tag": "Giriş ekranındaki küçük etiket",
         "theme_vanguard_auth_title": "Giriş ekranındaki başlık",
-        "theme_vanguard_auth_subtitle": "O başlığın altındaki satır"
+        "theme_vanguard_auth_subtitle": "O başlığın altındaki satır",
+        "theme_vanguard_color_stage": "Hero arka planı",
+        "theme_vanguard_color_stageForeground": "Hero yazısı",
+        "theme_vanguard_color_stageMuted": "Hero soluk yazısı",
+        "theme_vanguard_color_stageFar": "Hero uzak katmanı",
+        "theme_vanguard_color_stageNear": "Hero yakın katmanı"
       },
       "vanguard": {
         "heroTag": "Şimdi açık",
@@ -369,7 +384,12 @@
         "theme_vanguard_auth": "Giriş ekranı",
         "theme_vanguard_auth_tag": "Giriş ekranındakı kiçik etiket",
         "theme_vanguard_auth_title": "Giriş ekranındakı başlıq",
-        "theme_vanguard_auth_subtitle": "Həmin başlığın altındakı sətir"
+        "theme_vanguard_auth_subtitle": "Həmin başlığın altındakı sətir",
+        "theme_vanguard_color_stage": "Hero fonu",
+        "theme_vanguard_color_stageForeground": "Hero mətni",
+        "theme_vanguard_color_stageMuted": "Hero solğun mətni",
+        "theme_vanguard_color_stageFar": "Hero uzaq qatı",
+        "theme_vanguard_color_stageNear": "Hero yaxın qatı"
       },
       "vanguard": {
         "heroTag": "İndi açıqdır",
@@ -393,7 +413,12 @@
         "theme_vanguard_auth": "Anmeldeseite",
         "theme_vanguard_auth_tag": "Kleines Etikett auf der Anmeldeseite",
         "theme_vanguard_auth_title": "Überschrift auf der Anmeldeseite",
-        "theme_vanguard_auth_subtitle": "Zeile unter dieser Überschrift"
+        "theme_vanguard_auth_subtitle": "Zeile unter dieser Überschrift",
+        "theme_vanguard_color_stage": "Hero-Hintergrund",
+        "theme_vanguard_color_stageForeground": "Hero-Text",
+        "theme_vanguard_color_stageMuted": "Gedämpfter Hero-Text",
+        "theme_vanguard_color_stageFar": "Hero, hintere Ebene",
+        "theme_vanguard_color_stageNear": "Hero, vordere Ebene"
       },
       "vanguard": {
         "heroTag": "Jetzt offen",
@@ -417,7 +442,12 @@
         "theme_vanguard_auth": "Pantalla de acceso",
         "theme_vanguard_auth_tag": "Etiqueta pequeña en la pantalla de acceso",
         "theme_vanguard_auth_title": "Título en la pantalla de acceso",
-        "theme_vanguard_auth_subtitle": "Línea debajo de ese título"
+        "theme_vanguard_auth_subtitle": "Línea debajo de ese título",
+        "theme_vanguard_color_stage": "Fondo del hero",
+        "theme_vanguard_color_stageForeground": "Texto del hero",
+        "theme_vanguard_color_stageMuted": "Texto atenuado del hero",
+        "theme_vanguard_color_stageFar": "Capa lejana del hero",
+        "theme_vanguard_color_stageNear": "Capa cercana del hero"
       },
       "vanguard": {
         "heroTag": "Ya abierto",
@@ -441,7 +471,12 @@
         "theme_vanguard_auth": "Sisselogimise vaade",
         "theme_vanguard_auth_tag": "Väike silt sisselogimise vaates",
         "theme_vanguard_auth_title": "Pealkiri sisselogimise vaates",
-        "theme_vanguard_auth_subtitle": "Rida selle pealkirja all"
+        "theme_vanguard_auth_subtitle": "Rida selle pealkirja all",
+        "theme_vanguard_color_stage": "Hero taust",
+        "theme_vanguard_color_stageForeground": "Hero tekst",
+        "theme_vanguard_color_stageMuted": "Hero summutatud tekst",
+        "theme_vanguard_color_stageFar": "Hero kauge kiht",
+        "theme_vanguard_color_stageNear": "Hero lähedane kiht"
       },
       "vanguard": {
         "heroTag": "Nüüd avatud",
@@ -465,7 +500,12 @@
         "theme_vanguard_auth": "Écran de connexion",
         "theme_vanguard_auth_tag": "Petite étiquette de l’écran de connexion",
         "theme_vanguard_auth_title": "Titre de l’écran de connexion",
-        "theme_vanguard_auth_subtitle": "Ligne sous ce titre"
+        "theme_vanguard_auth_subtitle": "Ligne sous ce titre",
+        "theme_vanguard_color_stage": "Fond du hero",
+        "theme_vanguard_color_stageForeground": "Texte du hero",
+        "theme_vanguard_color_stageMuted": "Texte atténué du hero",
+        "theme_vanguard_color_stageFar": "Plan éloigné du hero",
+        "theme_vanguard_color_stageNear": "Premier plan du hero"
       },
       "vanguard": {
         "heroTag": "Ouvert maintenant",
@@ -489,7 +529,12 @@
         "theme_vanguard_auth": "Schermata di accesso",
         "theme_vanguard_auth_tag": "Piccola etichetta nella schermata di accesso",
         "theme_vanguard_auth_title": "Titolo nella schermata di accesso",
-        "theme_vanguard_auth_subtitle": "Riga sotto quel titolo"
+        "theme_vanguard_auth_subtitle": "Riga sotto quel titolo",
+        "theme_vanguard_color_stage": "Sfondo dell'hero",
+        "theme_vanguard_color_stageForeground": "Testo dell'hero",
+        "theme_vanguard_color_stageMuted": "Testo attenuato dell'hero",
+        "theme_vanguard_color_stageFar": "Livello lontano dell'hero",
+        "theme_vanguard_color_stageNear": "Livello vicino dell'hero"
       },
       "vanguard": {
         "heroTag": "Ora aperto",
@@ -513,7 +558,12 @@
         "theme_vanguard_auth": "Ekran logowania",
         "theme_vanguard_auth_tag": "Mała etykieta na ekranie logowania",
         "theme_vanguard_auth_title": "Nagłówek na ekranie logowania",
-        "theme_vanguard_auth_subtitle": "Linia pod tym nagłówkiem"
+        "theme_vanguard_auth_subtitle": "Linia pod tym nagłówkiem",
+        "theme_vanguard_color_stage": "Tło hero",
+        "theme_vanguard_color_stageForeground": "Tekst hero",
+        "theme_vanguard_color_stageMuted": "Wyciszony tekst hero",
+        "theme_vanguard_color_stageFar": "Dalsza warstwa hero",
+        "theme_vanguard_color_stageNear": "Bliższa warstwa hero"
       },
       "vanguard": {
         "heroTag": "Już otwarte",
@@ -537,7 +587,12 @@
         "theme_vanguard_auth": "Tela de acesso",
         "theme_vanguard_auth_tag": "Etiqueta pequena na tela de acesso",
         "theme_vanguard_auth_title": "Título na tela de acesso",
-        "theme_vanguard_auth_subtitle": "Linha abaixo desse título"
+        "theme_vanguard_auth_subtitle": "Linha abaixo desse título",
+        "theme_vanguard_color_stage": "Fundo do hero",
+        "theme_vanguard_color_stageForeground": "Texto do hero",
+        "theme_vanguard_color_stageMuted": "Texto atenuado do hero",
+        "theme_vanguard_color_stageFar": "Camada distante do hero",
+        "theme_vanguard_color_stageNear": "Camada próxima do hero"
       },
       "vanguard": {
         "heroTag": "Já aberto",
@@ -561,7 +616,12 @@
         "theme_vanguard_auth": "Экран входа",
         "theme_vanguard_auth_tag": "Небольшая метка на экране входа",
         "theme_vanguard_auth_title": "Заголовок на экране входа",
-        "theme_vanguard_auth_subtitle": "Строка под этим заголовком"
+        "theme_vanguard_auth_subtitle": "Строка под этим заголовком",
+        "theme_vanguard_color_stage": "Фон hero",
+        "theme_vanguard_color_stageForeground": "Текст hero",
+        "theme_vanguard_color_stageMuted": "Приглушённый текст hero",
+        "theme_vanguard_color_stageFar": "Дальний слой hero",
+        "theme_vanguard_color_stageNear": "Ближний слой hero"
       },
       "vanguard": {
         "heroTag": "Уже открыто",
@@ -585,7 +645,12 @@
         "theme_vanguard_auth": "登录页面",
         "theme_vanguard_auth_tag": "登录页面上的小标签",
         "theme_vanguard_auth_title": "登录页面上的标题",
-        "theme_vanguard_auth_subtitle": "该标题下方的文字"
+        "theme_vanguard_auth_subtitle": "该标题下方的文字",
+        "theme_vanguard_color_stage": "主视觉背景",
+        "theme_vanguard_color_stageForeground": "主视觉文字",
+        "theme_vanguard_color_stageMuted": "主视觉柔和文字",
+        "theme_vanguard_color_stageFar": "主视觉远景层",
+        "theme_vanguard_color_stageNear": "主视觉近景层"
       },
       "vanguard": {
         "heroTag": "现已开放",

@@ -1253,7 +1253,22 @@
     "theme_mode_system": "Järgi süsteemi",
     "theme_lockMode": "Ära luba külastajatel seda muuta",
     "theme_lockModeHint": "Peidab saidil heleda/tumeda nupu ja eirab külastajate varasemaid valikuid.",
-    "theme_siteModeSaved": "Saidi režiim salvestatud"
+    "theme_siteModeSaved": "Saidi režiim salvestatud",
+    "theme_color_primary": "Põhivärv",
+    "theme_color_primaryForeground": "Tekst põhivärvil",
+    "theme_color_secondary": "Teisene värv",
+    "theme_color_accent": "Rõhuvärv",
+    "theme_color_accentForeground": "Tekst rõhuvärvil",
+    "theme_color_background": "Lehe taust",
+    "theme_color_foreground": "Tekst",
+    "theme_color_muted": "Summutatud pind",
+    "theme_color_mutedForeground": "Summutatud tekst",
+    "theme_color_border": "Ääris",
+    "theme_color_card": "Kaart",
+    "theme_color_cardForeground": "Kaardi tekst",
+    "theme_color_destructive": "Oht",
+    "theme_color_success": "Õnnestumine",
+    "theme_color_warning": "Hoiatus"
   },
   "footer": {
     "quickLinks": "Kiirlingid",

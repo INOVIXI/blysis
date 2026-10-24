@@ -1253,7 +1253,22 @@
     "theme_mode_system": "跟随系统",
     "theme_lockMode": "不允许访客更改",
     "theme_lockModeHint": "隐藏网站上的浅色/深色按钮，并忽略访客之前的选择。",
-    "theme_siteModeSaved": "网站模式已保存"
+    "theme_siteModeSaved": "网站模式已保存",
+    "theme_color_primary": "主色",
+    "theme_color_primaryForeground": "主色上的文字",
+    "theme_color_secondary": "次要色",
+    "theme_color_accent": "强调色",
+    "theme_color_accentForeground": "强调色上的文字",
+    "theme_color_background": "页面背景",
+    "theme_color_foreground": "文字",
+    "theme_color_muted": "柔和表面",
+    "theme_color_mutedForeground": "柔和文字",
+    "theme_color_border": "边框",
+    "theme_color_card": "卡片",
+    "theme_color_cardForeground": "卡片文字",
+    "theme_color_destructive": "危险",
+    "theme_color_success": "成功",
+    "theme_color_warning": "警告"
   },
   "footer": {
     "quickLinks": "快速链接",

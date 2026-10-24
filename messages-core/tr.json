@@ -1253,7 +1253,22 @@
     "theme_mode_system": "Sisteme uy",
     "theme_lockMode": "Ziyaretçilerin değiştirmesine izin verme",
     "theme_lockModeHint": "Sitedeki açık/koyu düğmesini gizler ve ziyaretçilerin daha önce yaptığı seçimleri yok sayar.",
-    "theme_siteModeSaved": "Site modu kaydedildi"
+    "theme_siteModeSaved": "Site modu kaydedildi",
+    "theme_color_primary": "Ana renk",
+    "theme_color_primaryForeground": "Ana renk üstündeki yazı",
+    "theme_color_secondary": "İkincil renk",
+    "theme_color_accent": "Vurgu rengi",
+    "theme_color_accentForeground": "Vurgu üstündeki yazı",
+    "theme_color_background": "Sayfa arka planı",
+    "theme_color_foreground": "Yazı",
+    "theme_color_muted": "Soluk yüzey",
+    "theme_color_mutedForeground": "Soluk yazı",
+    "theme_color_border": "Kenarlık",
+    "theme_color_card": "Kart",
+    "theme_color_cardForeground": "Kart yazısı",
+    "theme_color_destructive": "Tehlike",
+    "theme_color_success": "Başarı",
+    "theme_color_warning": "Uyarı"
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",

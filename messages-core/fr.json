@@ -1253,7 +1253,22 @@
     "theme_mode_system": "Suivre le système",
     "theme_lockMode": "Ne pas laisser les visiteurs le modifier",
     "theme_lockModeHint": "Masque le bouton clair/sombre du site et ignore les choix faits auparavant par les visiteurs.",
-    "theme_siteModeSaved": "Mode du site enregistré"
+    "theme_siteModeSaved": "Mode du site enregistré",
+    "theme_color_primary": "Couleur principale",
+    "theme_color_primaryForeground": "Texte sur la principale",
+    "theme_color_secondary": "Couleur secondaire",
+    "theme_color_accent": "Couleur d'accent",
+    "theme_color_accentForeground": "Texte sur l'accent",
+    "theme_color_background": "Fond de page",
+    "theme_color_foreground": "Texte",
+    "theme_color_muted": "Surface atténuée",
+    "theme_color_mutedForeground": "Texte atténué",
+    "theme_color_border": "Bordure",
+    "theme_color_card": "Carte",
+    "theme_color_cardForeground": "Texte des cartes",
+    "theme_color_destructive": "Danger",
+    "theme_color_success": "Succès",
+    "theme_color_warning": "Avertissement"
   },
   "footer": {
     "quickLinks": "Liens rapides",

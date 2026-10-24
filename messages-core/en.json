@@ -1253,7 +1253,22 @@
     "theme_mode_system": "Follow the system",
     "theme_lockMode": "Do not let visitors change it",
     "theme_lockModeHint": "Hides the light/dark button on the site and ignores choices visitors made earlier.",
-    "theme_siteModeSaved": "Site mode saved"
+    "theme_siteModeSaved": "Site mode saved",
+    "theme_color_primary": "Primary",
+    "theme_color_primaryForeground": "Text on primary",
+    "theme_color_secondary": "Secondary",
+    "theme_color_accent": "Accent",
+    "theme_color_accentForeground": "Text on accent",
+    "theme_color_background": "Page background",
+    "theme_color_foreground": "Text",
+    "theme_color_muted": "Muted surface",
+    "theme_color_mutedForeground": "Muted text",
+    "theme_color_border": "Border",
+    "theme_color_card": "Card",
+    "theme_color_cardForeground": "Text on cards",
+    "theme_color_destructive": "Danger",
+    "theme_color_success": "Success",
+    "theme_color_warning": "Warning"
   },
   "footer": {
     "quickLinks": "Quick Links",

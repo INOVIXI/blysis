@@ -1253,7 +1253,22 @@
     "theme_mode_system": "Как в системе",
     "theme_lockMode": "Не позволять посетителям менять",
     "theme_lockModeHint": "Скрывает кнопку светлого/тёмного режима на сайте и игнорирует прежний выбор посетителей.",
-    "theme_siteModeSaved": "Режим сайта сохранён"
+    "theme_siteModeSaved": "Режим сайта сохранён",
+    "theme_color_primary": "Основной цвет",
+    "theme_color_primaryForeground": "Текст на основном цвете",
+    "theme_color_secondary": "Дополнительный цвет",
+    "theme_color_accent": "Акцентный цвет",
+    "theme_color_accentForeground": "Текст на акценте",
+    "theme_color_background": "Фон страницы",
+    "theme_color_foreground": "Текст",
+    "theme_color_muted": "Приглушённая поверхность",
+    "theme_color_mutedForeground": "Приглушённый текст",
+    "theme_color_border": "Рамка",
+    "theme_color_card": "Карточка",
+    "theme_color_cardForeground": "Текст карточек",
+    "theme_color_destructive": "Опасность",
+    "theme_color_success": "Успех",
+    "theme_color_warning": "Предупреждение"
   },
   "footer": {
     "quickLinks": "Быстрые ссылки",
