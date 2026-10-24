@@ -79,6 +79,14 @@ describe("the latest topics card", () => {
         expect(answer.asked[0]).toContain("order=newest");
     });
 
+    it("says who and when, without an empty place for a section, of a topic in none", async () => {
+        answer.topics = [{ ...topic(1, null), category: null }];
+        draw();
+        const meta = (await screen.findByText("Topic 1")).closest("li")!.querySelector("span.block.text-xs")!;
+        expect(meta.textContent).not.toMatch(/·\s*·/);
+        expect(meta.textContent).toContain("author1");
+    });
+
     it("says the forum is empty rather than leaving a hole", async () => {
         draw();
         expect(await screen.findByText(en.noTopics)).toBeTruthy();

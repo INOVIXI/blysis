@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -20,11 +20,30 @@ interface ServerCard {
     image: string | null;
 }
 
+const GRID = "grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-6";
+
+/** A card with the most a card shows, to draw the row's outline while waiting. */
+const OUTLINE: ServerCard = {
+    id: "outline", name: "x", queryable: true, online: true, players: { online: 0, max: 0 },
+    address: "x", description: "x ".repeat(120), image: null,
+};
+
 /**
- * Room the cards hold until the statuses arrive: a heading over one row of
- * cards, whose picture is a ratio and whose text is a fixed number of lines.
+ * The room the cards hold until the statuses arrive: a row with one card
+ * drawn hidden under whatever is shown instead. A theme sizes a card as it
+ * likes, so no fixed number is its height; an outline of the real thing is
+ * right under every theme and at every width.
  */
-const ROOM = "min-h-[25rem]";
+function Room({ children }: { children: ReactNode }) {
+    return (
+        <div className="relative">
+            <div aria-hidden="true" className="invisible">
+                <div className={GRID}><Card server={OUTLINE} onCopy={() => {}} /></div>
+            </div>
+            <div className="absolute inset-0 flex flex-col">{children}</div>
+        </div>
+    );
+}
 
 function Card({ server, onCopy }: { server: ServerCard; onCopy: (address: string) => void }) {
     const t = useTranslations("servers");
@@ -100,14 +119,14 @@ export function ServerCards({ settings }: BlockProps) {
     };
 
     return (
-        <div className={servers === null ? `${ROOM} flex flex-col` : undefined}>
+        <div>
             <BlockHeading kicker={text(settings.kicker) || undefined} title={text(settings.title) || t("widget_title")} />
             {failed ? (
                 <LoadFailed onRetry={() => { setFailed(false); setReloadKey((k) => k + 1); }} />
             ) : servers === null ? (
-                <Waiting label={commonT("loading")} />
+                <Room><Waiting label={commonT("loading")} /></Room>
             ) : (
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-6">
+                <div className={GRID}>
                     {servers.map((server) => <Card key={server.id} server={server} onCopy={copy} />)}
                 </div>
             )}

@@ -88,9 +88,12 @@ export function LatestTopicsBlock({ settings }: BlockProps) {
                                         {topic.title}
                                     </Link>
                                     <span className="block text-xs text-muted-foreground">
-                                        {t("blk_topicMeta", {
+                                        {topic.category ? t("blk_topicMeta", {
                                             name: topic.author?.username ?? t("widget_latestNobody"),
-                                            section: topic.category?.name ?? "",
+                                            section: topic.category.name,
+                                            when: relative(topic.createdAt),
+                                        }) : t("widget_latestBy", {
+                                            name: topic.author?.username ?? t("widget_latestNobody"),
                                             when: relative(topic.createdAt),
                                         })}
                                     </span>

@@ -85,6 +85,16 @@ describe("the server cards", () => {
         expect(await screen.findByRole("heading", { level: 3, name: "Survival" })).toBeTruthy();
     });
 
+    it("hold the room of a row of cards while the statuses are on their way", () => {
+        answer.servers = [server("Survival")];
+        const { container } = draw(<ServerCards settings={{}} width="full" />);
+        // An outline of a card, drawn and hidden: its height is the real
+        // card's under whatever theme and width, where a fixed number is not.
+        const outline = container.querySelector('[aria-hidden="true"].invisible [data-server-card]');
+        expect(outline).toBeTruthy();
+        expect(screen.queryByRole("heading", { level: 3 })).toBeNull();
+    });
+
     it("draw nothing on a site with no server", async () => {
         const { container } = draw(<ServerCards settings={{}} width="full" />);
         await waitFor(() => expect(container.innerHTML).toBe(""));

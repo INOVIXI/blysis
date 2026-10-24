@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { sharedJson } from "@/core/sdk";
 import { FilterChips } from "@/core/sdk/admin";
@@ -17,11 +17,26 @@ interface Shelf {
 
 const DEFAULT_COUNT = 4;
 
+const GRID = "grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-6";
+
+/** A product with the most a card shows, to draw the row's outline while waiting. */
+const OUTLINE: CardProduct = { id: "outline", number: 0, name: "x", slug: "", price: 0, image: null, shortDesc: "x ".repeat(120), stock: null };
+
 /**
- * Room the block holds until its products arrive: a heading over one row of
- * cards, whose picture is a ratio and whose text is a fixed number of lines.
+ * The room the block holds until its products arrive: a row with one card
+ * drawn hidden under whatever is shown instead, which is the real card's
+ * height under every theme and at every width.
  */
-const ROOM = "min-h-[24rem]";
+function Room({ children }: { children: ReactNode }) {
+    return (
+        <div className="relative">
+            <div aria-hidden="true" className="invisible">
+                <div className={GRID}><ProductCard product={OUTLINE} /></div>
+            </div>
+            <div className="absolute inset-0 flex flex-col">{children}</div>
+        </div>
+    );
+}
 
 /**
  * `store.products`: a few products from one shelf at a time, in the store's
@@ -90,7 +105,7 @@ export function ProductsBlock({ settings }: BlockProps) {
     ) : undefined;
 
     return (
-        <div className={waiting || failed ? `${ROOM} flex flex-col` : undefined}>
+        <div>
             <BlockHeading
                 kicker={text(settings.kicker) || undefined}
                 title={text(settings.title) || t("title")}
@@ -99,10 +114,10 @@ export function ProductsBlock({ settings }: BlockProps) {
             {failed ? (
                 <LoadFailed onRetry={retry} />
             ) : waiting || !products ? (
-                <Waiting label={commonT("loading")} />
+                <Room><Waiting label={commonT("loading")} /></Room>
             ) : (
                 <>
-                    <div className="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-6">
+                    <div className={GRID}>
                         {products.rows.map((product) => (
                             <ProductCard key={product.id} product={product} lowStockAt={products.lowStockAt} />
                         ))}

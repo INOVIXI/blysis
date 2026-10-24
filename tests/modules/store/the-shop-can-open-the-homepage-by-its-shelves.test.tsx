@@ -94,6 +94,11 @@ describe("the products block", () => {
         expect(screen.getByRole("button", { name: "Gold" }).getAttribute("aria-pressed")).toBe("true");
     });
 
+    it("holds the room of a row of cards while the shelves are on their way", () => {
+        const { container } = draw({});
+        expect(container.querySelector('[aria-hidden="true"].invisible a[href^="/store/product/"]')).toBeTruthy();
+    });
+
     it("shows the newest products without chips in a shop with no shelves", async () => {
         shelf.products = { "": [product("Starter kit")] };
         draw({});
