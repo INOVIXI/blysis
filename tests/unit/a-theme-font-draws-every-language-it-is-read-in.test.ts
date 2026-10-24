@@ -123,20 +123,41 @@ function charactersOf(locale: string): Set<number> {
 interface Theme {
     id: string;
     fontFiles: Record<string, { file: string }[]>;
-    stacks: Record<string, string>;
+    /** The stack each role is drawn in, per mode. */
+    stacks: Record<string, Record<string, string>>;
+}
+
+interface Manifest {
+    id: string;
+    fontFiles?: Record<string, { file: string }[]>;
+    tokens?: { fonts?: Record<string, { default?: string }> };
+    modes: { available: Record<string, { tokens?: { fonts?: Record<string, string> } }> };
+}
+
+/**
+ * A mode's own font token replaces the theme's default for that role, the
+ * way `scripts/generate-theme-registry.ts` writes it. Vanguard's modes still
+ * named the stacks from before its Cyrillic face, so the default carried the
+ * new face and the page was drawn without it.
+ */
+export function stacksByMode(theme: Manifest): Record<string, Record<string, string>> {
+    const defaults = Object.fromEntries(Object.entries(theme.tokens?.fonts ?? {})
+        .filter(([, token]) => token.default)
+        .map(([role, token]) => [role, token.default as string]));
+    return Object.fromEntries(Object.entries(theme.modes.available)
+        .map(([mode, def]) => [mode, { ...defaults, ...(def.tokens?.fonts ?? {}) }]));
 }
 
 function themesWithFonts(): Theme[] {
     return fs.readdirSync(THEMES)
         .map((id) => path.join(THEMES, id, "theme.json"))
         .filter((file) => fs.existsSync(file))
-        .map((file) => JSON.parse(fs.readFileSync(file, "utf8")))
+        .map((file) => JSON.parse(fs.readFileSync(file, "utf8")) as Manifest)
         .filter((theme) => theme.fontFiles)
         .map((theme) => ({
             id: theme.id,
-            fontFiles: theme.fontFiles,
-            stacks: Object.fromEntries(Object.entries(theme.tokens?.fonts ?? {})
-                .map(([role, token]) => [role, (token as { default: string }).default])),
+            fontFiles: theme.fontFiles ?? {},
+            stacks: stacksByMode(theme),
         }));
 }
 
@@ -154,12 +175,22 @@ describe("a theme font draws every language it is read in", () => {
         expect(figtree.has(0x416)).toBe(false);
     });
 
+    it("reads the stack a mode draws in, not only the theme's default", () => {
+        const stacks = stacksByMode({
+            id: "sample",
+            tokens: { fonts: { heading: { default: "var(--font-sample-a), var(--font-sample-b)" } } },
+            modes: { available: { light: {}, dark: { tokens: { fonts: { heading: "var(--font-sample-a)" } } } } },
+        });
+        expect(stacks.light.heading).toBe("var(--font-sample-a), var(--font-sample-b)");
+        expect(stacks.dark.heading).toBe("var(--font-sample-a)");
+    });
+
     for (const theme of themes) {
-        for (const [role, stack] of Object.entries(theme.stacks)) {
+        for (const [mode, roles] of Object.entries(theme.stacks)) for (const [role, stack] of Object.entries(roles)) {
             const families = [...stack.matchAll(new RegExp(`--font-${theme.id}-([A-Za-z0-9_-]+)`, "g"))].map((m) => m[1]);
             if (families.length === 0) continue;
 
-            it(`${theme.id} ${role}: every locale's letters are in the theme's own faces`, () => {
+            it(`${theme.id} ${mode} ${role}: every locale's letters are in the theme's own faces`, () => {
                 const drawn = new Set<number>();
                 for (const family of families) {
                     for (const face of theme.fontFiles[family] ?? []) {
