@@ -121,6 +121,22 @@ describe("the homepage's arrangement", () => {
         expect(ids(layout.rows[0].cells[1])).toEqual(["m.a", "m.b"]);
     });
 
+    it("deals the blocks it adds across a row of equal cells, from the rest cell on", () => {
+        // A row of three cards with every leftover widget stacked under one
+        // of them was a column three times the height of its neighbours.
+        const theme: LayoutDocument = {
+            rows: [{ split: "1-1-1", cells: [[{ key: "a", block: "m.a" }], [], []], rest: 1 }],
+        };
+        const layout = resolve({ blocks: ["m.a", "m.b", "m.c", "m.d", "m.e"].map((id, n) => block(id, { defaultOrder: n })), themeLayout: theme });
+        expect(layout.rows[0].cells.map(ids)).toEqual([["m.a", "m.d"], ["m.b", "m.e"], ["m.c"]]);
+    });
+
+    it("keeps the blocks it adds out of a cell of another width", () => {
+        const theme: LayoutDocument = { rows: [{ split: "2-1", cells: [[], []], rest: 1 }] };
+        const layout = resolve({ blocks: [block("m.a"), block("m.b", { defaultOrder: 5 })], themeLayout: theme });
+        expect(layout.rows[0].cells.map(ids)).toEqual([[], ["m.a", "m.b"]]);
+    });
+
     it("gives a block it adds a key no placement on the page has", () => {
         const theme: LayoutDocument = {
             rows: [{ split: "2-1", cells: [[], [{ key: "m-b", block: "m.a" }]], rest: 1 }],

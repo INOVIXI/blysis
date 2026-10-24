@@ -75,7 +75,10 @@ const blockInstanceSchema = z.object({
 const layoutRowSchema = z.object({
     split: z.enum(ROW_SPLITS),
     cells: z.array(z.array(blockInstanceSchema).max(LAYOUT_LIMITS.instances)).min(1).max(4),
-    /** The cell blocks nobody placed go to: a module installed later lands here. */
+    /**
+     * The cell blocks nobody placed go to: a module installed later lands
+     * here. In a row of equal cells they are dealt across them from this one.
+     */
     rest: z.number().int().min(0).optional(),
 });
 

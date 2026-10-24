@@ -94,7 +94,7 @@ function settingsOf(
  * of a module that is gone or switched off is left out, a block is drawn only
  * in a cell whose width it declares, every setting is one its field allows,
  * and a block the document never named and did not hide goes to its `rest`
- * cell, or to rows of its own.
+ * cell, dealt across the cells of that width, or to rows of its own.
  *
  * Settings > Widgets holds over any arrangement, since it is all an operator
  * has: a widget switched off there is drawn nowhere, whoever placed it, and
@@ -134,9 +134,16 @@ export function resolveLayout(input: ResolveInput): ResolvedLayout {
             return [{ key: instance.key, block, settings: settingsOf(block, instance.settings, input.themeSettings), width: widths[c] }];
         }));
         if (row.rest !== undefined) {
-            const width = widths[row.rest];
+            const rest = row.rest;
+            const width = widths[rest];
             const fits = unnamed.filter((b) => b.widths.includes(width));
-            cells[row.rest].push(...fits.map((block) => ({ key: freshKey(block), block, settings: settingsOf(block, undefined, undefined), width })));
+            // Dealt across every cell as wide as the rest cell, from it on, so
+            // a row of three cards does not end with one column three times
+            // the height of the others; a 2-1 row has one such cell.
+            const deal = widths.map((_, c) => (rest + c) % widths.length).filter((c) => widths[c] === width);
+            fits.forEach((block, n) => {
+                cells[deal[n % deal.length]].push({ key: freshKey(block), block, settings: settingsOf(block, undefined, undefined), width });
+            });
             unnamed = unnamed.filter((b) => !fits.includes(b));
         }
         return { split: row.split, cells };
