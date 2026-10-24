@@ -6,9 +6,9 @@
  * sign-in screens). The panel wears this theme's colours and fonts but not
  * its capitals or its pressed buttons: an operator's tables are not a poster.
  *
- * Surfaces are flat colour. A strip of the brand colour closes the hero, a
- * page's header band and opens the footer; that strip and the buttons that
- * press down are the whole signature.
+ * Surfaces are flat colour. A strip of the brand colour closes a page's
+ * header band, the homepage's landscape sinks into the page, and the buttons
+ * press down: that is the whole signature.
  */
 
 html {
@@ -89,6 +89,18 @@ html {
   overflow-x: clip;
 }
 
+/* A column a poster can fill, a little narrower than the default one. */
+.qr-site .container {
+  max-width: 1200px;
+}
+
+@media (min-width: 40rem) {
+  .qr-site .container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
 .qr-bar > header {
   background: var(--blysis-color-background);
   border-bottom-color: var(--blysis-color-border);
@@ -111,10 +123,34 @@ html {
   padding-bottom: 48px;
 }
 
+/*
+ * The footer sits a shade under the page, drawn off by a hairline rather than
+ * the brand strip: the hero already closes on the strip, and two of them on
+ * one page made the footer read as a second hero.
+ */
 .qr-site > footer {
   margin-top: 0;
   border-top: 0;
-  box-shadow: inset 0 var(--qr-strip) 0 var(--blysis-color-primary);
+  background: color-mix(in srgb, var(--blysis-color-background) 70%, var(--blysis-color-edge));
+  box-shadow: inset 0 1px 0 var(--blysis-color-border);
+}
+
+.qr-site > footer h2 {
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+}
+
+/* The heading folds on a phone through a button, which does not inherit case. */
+.qr-site > footer h2 button {
+  text-transform: inherit;
+}
+
+/* The site's name in the brand column, set like the bar's. */
+.qr-site > footer .text-lg {
+  font-family: var(--blysis-font-heading);
+  font-weight: 900;
+  font-size: 1.25rem;
+  text-transform: uppercase;
 }
 
 /* The hero */
@@ -128,9 +164,18 @@ html {
   align-items: center;
   background: var(--blysis-color-stage);
   color: var(--blysis-color-stageForeground);
-  /* A border, not an inset shadow: the picture and the scene fill the
-     padding box and would paint over a shadow drawn inside it. */
-  border-bottom: var(--qr-strip) solid var(--blysis-color-primary);
+}
+
+/* The landscape sinks into the page under it rather than stopping on a line. */
+.qr-hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 120px;
+  background: linear-gradient(transparent, var(--blysis-color-background));
 }
 
 .qr-scene,
@@ -164,10 +209,13 @@ html {
     color-mix(in srgb, var(--blysis-color-stage) 10%, transparent) 78%);
 }
 
-/* On a phone the words cover the picture, so it is dimmed all over. */
+/* On a phone the words cover most of the picture, so the dark reaches further. */
 @media (max-width: 47.99rem) {
   .qr-hero::before {
-    background: color-mix(in srgb, var(--blysis-color-stage) 84%, transparent);
+    background: linear-gradient(90deg,
+      color-mix(in srgb, var(--blysis-color-stage) 88%, transparent) 0%,
+      color-mix(in srgb, var(--blysis-color-stage) 60%, transparent) 70%,
+      color-mix(in srgb, var(--blysis-color-stage) 30%, transparent) 100%);
   }
 }
 
@@ -178,10 +226,18 @@ html {
   align-items: flex-start;
   gap: 18px;
   padding-top: 64px;
-  padding-bottom: 72px;
+  /* Clear of the fade under it, which in the light mode turns pale. */
+  padding-bottom: 120px;
 }
 
-.qr-tag {
+.qr-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.qr-tag,
+.qr-hero-tags [data-hero-tag] {
   padding: 5px 10px;
   border-radius: 3px;
   background: var(--blysis-color-primary);
@@ -193,8 +249,44 @@ html {
   text-transform: uppercase;
 }
 
+/* What a module says of the server: a square of light, then the words. */
+.qr-hero-tags [data-hero-tag] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qr-hero-tags [data-hero-tag]::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: currentColor;
+}
+
+.qr-hero-tags [data-hero-tag][data-state="closed"] {
+  background: var(--blysis-color-muted);
+  color: var(--blysis-color-stageMuted);
+}
+
+/* Beside a module's tag, the operator's own label takes the second colour. */
+.qr-hero-tags:has([data-hero-tag]) > .qr-tag {
+  background: var(--blysis-color-warning);
+  color: var(--blysis-color-warningForeground);
+}
+
+.qr-hero-accent {
+  display: block;
+  color: var(--blysis-color-primary);
+}
+
+@media (min-width: 64rem) {
+  .qr-hero {
+    min-height: 600px;
+  }
+}
+
 .qr-hero-title {
-  max-width: 720px;
+  max-width: 620px;
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 900;
   line-height: 1.02;
@@ -250,6 +342,177 @@ html {
 
 .qr-hero-bottom:empty {
   display: none;
+}
+
+/* The homepage's blocks */
+
+/*
+ * Each section of the homepage stands well apart from the next, as the
+ * posters a game server's front page is made of do. The space is core's
+ * variable, so a row that drew nothing still takes none.
+ */
+.qr-main {
+  --blysis-row-gap: 72px;
+}
+
+@media (max-width: 47.99rem) {
+  .qr-main {
+    --blysis-row-gap: 48px;
+  }
+}
+
+.qr-site [data-block-heading] h2 {
+  font-size: clamp(1.75rem, 3.2vw, 2.125rem);
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+/* A short bar of the section's colour leads its label. */
+.qr-site [data-kicker] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.12em;
+}
+
+.qr-site [data-kicker]::before {
+  content: "";
+  width: 18px;
+  height: 4px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.qr-site [data-block="servers.cards"] [data-kicker] {
+  color: var(--blysis-color-accent);
+}
+
+.qr-site [data-block="store.products"] [data-kicker] {
+  color: var(--blysis-color-warning);
+}
+
+/* Every card a block draws stands on its edge, as the sidebar's do. */
+.qr-site [data-block] :is(.bg-card.rounded-xl, [data-stat-tile]) {
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+/* The numbers: each tile's icon is a block of its own colour. */
+.qr-site [data-stat-icon] {
+  --qr-tile: var(--blysis-color-primary);
+  border-radius: 4px;
+  background: var(--qr-tile);
+  color: var(--blysis-color-stageForeground);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--qr-tile) 55%, black);
+}
+
+.qr-site [data-stats] > :nth-child(4n + 2) [data-stat-icon] {
+  --qr-tile: var(--blysis-color-warning);
+}
+
+.qr-site [data-stats] > :nth-child(4n + 3) [data-stat-icon] {
+  --qr-tile: var(--blysis-color-accent);
+}
+
+.qr-site [data-stats] > :nth-child(4n + 4) [data-stat-icon] {
+  --qr-tile: var(--blysis-color-destructive);
+}
+
+.qr-site [data-stat-value] {
+  font-family: var(--blysis-font-heading);
+  font-weight: 900;
+}
+
+/* A game mode: how many play in a dark tag, and a cyan button that connects. */
+.qr-site [data-server-players] {
+  left: auto;
+  right: 12px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--blysis-color-edge) 88%, transparent);
+  font-family: var(--blysis-font-heading);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/*
+ * A card's picture is a band of a fixed height, as on a poster, rather than
+ * a ratio that grows with the card on a phone until it is most of a screen.
+ */
+.qr-site [data-server-card] .aspect-card {
+  aspect-ratio: auto;
+  height: 140px;
+}
+
+.qr-site [data-block="store.products"] .aspect-card {
+  aspect-ratio: auto;
+  height: 150px;
+}
+
+.qr-site [data-server-card] .blysis-button.bg-secondary {
+  --qr-edge: color-mix(in srgb, var(--blysis-color-accent) 55%, black);
+  align-self: stretch;
+  justify-content: center;
+  background: var(--blysis-color-accent);
+  color: var(--blysis-color-accentForeground);
+}
+
+/* A card's own name is set like a heading; a row in a list is not. */
+.qr-site :is([data-server-card], [data-news-lead]) h3,
+.qr-site [data-block="store.products"] h3 {
+  font-size: 1.125rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+/* The shop's shelves: the chosen one light, the rest dark, all pressable. */
+.qr-site [data-block="store.products"] [data-block-heading-action] .blysis-button {
+  --qr-edge: var(--blysis-color-edge);
+  min-height: 38px;
+  font-family: var(--blysis-font-body);
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  text-transform: none;
+  background: var(--blysis-color-muted);
+  color: var(--blysis-color-foreground);
+  border-color: transparent;
+}
+
+.qr-site [data-block="store.products"] [data-block-heading-action] .blysis-button[aria-pressed="true"] {
+  --qr-edge: var(--blysis-color-mutedForeground);
+  background: var(--blysis-color-foreground);
+  color: var(--blysis-color-background);
+}
+
+/* A product's way in reads as the button it is. */
+.qr-site [data-block="store.products"] [data-product-more] {
+  padding: 8px 12px;
+  border-radius: var(--blysis-radius);
+  background: var(--blysis-color-primary);
+  color: var(--blysis-color-primaryForeground);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--blysis-color-primary) 55%, black);
+  font-family: var(--blysis-font-heading);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/*
+ * The community row: three cards headed in capitals, without the icon the
+ * sidebar widgets carry, each line of a list on a bar of its own.
+ */
+.qr-site :is([data-block="leaderboard.board"], [data-block="staff.online"], [data-block="forum.latest-topics"]) > .bg-card > div:first-child > svg {
+  display: none;
+}
+
+.qr-site :is([data-block="leaderboard.board"], [data-block="staff.online"], [data-block="forum.latest-topics"]) h2 {
+  font-size: 1.125rem;
+}
+
+.qr-site [data-block="leaderboard.board"] ol > li,
+.qr-site [data-staff-member] {
+  border-radius: 4px;
+  background: var(--blysis-color-muted);
+  padding: 8px 10px;
 }
 
 /* The homepage's own crumb says "home" under a hero that already does. */

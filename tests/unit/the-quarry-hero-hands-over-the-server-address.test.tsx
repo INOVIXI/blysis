@@ -137,6 +137,23 @@ describe("the Quarry hero", () => {
         expect(screen.getByTestId("slot:hero.bottom")).toBeTruthy();
     });
 
+    it("places hero.tags before its own label, where a module says whether the server is open", () => {
+        const { container } = draw();
+        const tags = container.querySelector(".qr-hero-tags");
+        expect(tags?.firstElementChild?.getAttribute("data-testid")).toBe("slot:hero.tags");
+        expect(tags?.textContent).toContain(TR.heroTag);
+    });
+
+    it("draws the last sentence of a heading of several in the accent colour", () => {
+        state.config = { "hero.title": "Yeni harita. Sıfır ekonomi. Boş arsalar." };
+        const { container } = draw();
+        expect(screen.getByRole("heading", { level: 2 }).textContent).toBe("Yeni harita. Sıfır ekonomi. Boş arsalar.");
+        expect(container.querySelector(".qr-hero-accent")?.textContent).toBe("Boş arsalar.");
+        state.config = { "hero.title": "Başkası kurmadan sen kur" };
+        const single = draw();
+        expect(single.container.querySelector(".qr-hero-accent")).toBeNull();
+    });
+
     it("draws nothing once switched off", () => {
         state.config = { "hero.enabled": false };
         const { container } = draw();
