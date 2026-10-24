@@ -8,7 +8,7 @@ import { Slot } from "@/core/sdk/layout";
 import { Link } from "@/core/sdk/navigation";
 import { Button, buttonClassName, useSiteSettings } from "@/core/sdk/ui";
 import { linkTarget, useThemeConfig } from "@/core/sdk/theme";
-import { Scene } from "./Scene";
+import heroPicture from "@/themes/quarry/pictures/hero.jpg";
 
 type Copied = "idle" | "copied" | "failed";
 
@@ -24,7 +24,7 @@ function splitTitle(title: string): [string, string] {
 /**
  * The homepage's opening, edge to edge under the bar: a label, a heading, a
  * line under it, the server's address one press from the clipboard and up to
- * two more buttons, over the operator's picture or the drawn landscape.
+ * two more buttons, over the operator's picture or the theme's own.
  *
  * Every line falls back to the theme's own string in the reader's language
  * while the operator has not written one. The address button is drawn only
@@ -55,7 +55,7 @@ export default function Hero() {
     const cta = linkTarget(get<string>("hero.ctaHref", ""));
     const ctaText = text("hero.ctaText");
     const discord = linkTarget(settings.site_discord_url);
-    const picture = linkTarget(get<string>("hero.backgroundImage", ""));
+    const picture = linkTarget(get<string>("hero.backgroundImage", ""))?.href ?? heroPicture.src;
 
     const [head, tail] = splitTitle(text("hero.title") || t("heroTitle"));
 
@@ -64,12 +64,8 @@ export default function Hero() {
     }
 
     return (
-        <section className="qr-hero" data-picture={picture ? true : undefined}>
-            {picture ? (
-                <div aria-hidden="true" className="qr-hero-picture" style={{ backgroundImage: `url(${JSON.stringify(picture.href)})` }} />
-            ) : (
-                <Scene />
-            )}
+        <section className="qr-hero">
+            <div aria-hidden="true" className="qr-hero-picture" style={{ backgroundImage: `url(${JSON.stringify(picture)})` }} />
             <div className="qr-hero-inner container mx-auto px-4">
                 <div className="qr-hero-tags">
                     <Slot name="hero.tags" />

@@ -1,0 +1,11 @@
+The pictures in this folder are official Minecraft wallpapers published by
+Mojang Studios: hero.jpg from the Nether Update, sign-in.jpg from
+Wilderness Bound and sign-up.jpg from Tiny Takeover. They were resized for
+this theme and are otherwise unchanged.
+
+Minecraft and these pictures belong to Mojang AB and Microsoft. They are not
+covered by this repository's MIT licence, and nothing here grants any right
+to them. This theme is not an official Minecraft product and is not
+approved by or associated with Mojang or Microsoft.
+
+An operator replaces any of them from the theme's settings in the panel.

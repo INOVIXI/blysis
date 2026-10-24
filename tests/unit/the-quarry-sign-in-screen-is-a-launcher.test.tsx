@@ -3,8 +3,8 @@
  * menu in a rail, a picture with the server's state and something to read
  * on it, and the form beside them with the address one press away.
  *
- * Sign-in and sign-up each show the operator's own picture, or the drawn
- * landscape until there is one, and each hands its aside to modules under a
+ * Sign-in and sign-up each show the operator's own picture, or the theme's
+ * own until there is one, and each hands its aside to modules under a
  * name of its own: someone coming back is shown what changed, someone new
  * where they will play. The other account screens wear the sign-in picture
  * and no aside, since a reset link is not the moment for news.
@@ -40,6 +40,8 @@ vi.mock("@/core/sdk/ui", async () => {
     return { Button: button.Button, NavIcon: ({ name }: { name?: string }) => <i data-icon={name} /> };
 });
 vi.mock("@/core/sdk/layout", () => ({ Slot: ({ name }: { name: string }) => <div data-testid={`slot:${name}`} /> }));
+vi.mock("@/themes/quarry/pictures/sign-in.jpg", () => ({ default: { src: "/theme/sign-in.jpg" } }));
+vi.mock("@/themes/quarry/pictures/sign-up.jpg", () => ({ default: { src: "/theme/sign-up.jpg" } }));
 vi.mock("@/core/sdk/navigation", () => ({
     Link: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a>,
     usePathname: () => state.path,
@@ -107,13 +109,15 @@ describe("the Quarry sign-in screens", () => {
         expect(screen.queryByTestId("slot:auth.register.aside")).toBeNull();
     });
 
-    it("draw the landscape until there is a picture, and refuse one a link may not carry", () => {
-        const { container, unmount } = draw("/auth/login");
-        expect(picture(container)).toBeNull();
-        expect(container.querySelector(".qr-auth-scene .qr-scene")).toBeTruthy();
-        unmount();
+    it("wear the theme's own pictures until the operator sets one, and refuse one a link may not carry", () => {
+        const signIn = draw("/auth/login");
+        expect(picture(signIn.container)).toContain("/theme/sign-in.jpg");
+        signIn.unmount();
+        const signUp = draw("/auth/register");
+        expect(picture(signUp.container)).toContain("/theme/sign-up.jpg");
+        signUp.unmount();
         state.config = { "auth.loginImage": "javascript:alert(1)" };
-        expect(picture(draw("/auth/login").container)).toBeNull();
+        expect(picture(draw("/auth/login").container)).toContain("/theme/sign-in.jpg");
     });
 
     it("hand over the server's address in one press, once there is one", async () => {

@@ -5,8 +5,9 @@
  * The copy has to work on a fresh install reached over plain http, where the
  * clipboard API does not exist, and say so when it did not happen rather than
  * claim it did. Every line the operator has not written is the theme's in the
- * reader's language, and the picture and the button take only an address a
- * link may carry, so `javascript:` in a setting reaches nobody.
+ * reader's language, the picture is the theme's own until the operator sets
+ * one, and the picture and the button take only an address a link may carry,
+ * so `javascript:` in a setting reaches nobody.
  */
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -37,6 +38,7 @@ vi.mock("@/core/sdk/ui", async () => {
     return { Button: button.Button, buttonClassName: button.buttonClassName, useSiteSettings: () => ({ settings: state.site }) };
 });
 vi.mock("@/core/sdk/layout", () => ({ Slot: ({ name }: { name: string }) => <div data-testid={`slot:${name}`} /> }));
+vi.mock("@/themes/quarry/pictures/hero.jpg", () => ({ default: { src: "/theme/hero.jpg" } }));
 vi.mock("@/core/sdk/navigation", () => ({
     Link: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a>,
 }));
@@ -118,18 +120,19 @@ describe("the Quarry hero", () => {
         expect(screen.getByRole("link", { name: MANIFEST.translations.en.quarry.joinDiscord }).getAttribute("href")).toBe("https://discord.gg/example");
     });
 
-    it("stands on the operator's picture only when it is an address a page may load", () => {
+    it("stands on the theme's own picture until the operator gives one a page may load", () => {
+        const picture = (container: HTMLElement) => container.querySelector<HTMLElement>(".qr-hero-picture")?.style.backgroundImage;
+        const fresh = draw();
+        expect(picture(fresh.container)).toContain("/theme/hero.jpg");
+        fresh.unmount();
+
         state.config = { "hero.backgroundImage": "javascript:alert(1)" };
         const unsafe = draw();
-        expect(unsafe.container.querySelector(".qr-hero-picture")).toBeNull();
-        expect(unsafe.container.querySelector(".qr-scene")).not.toBeNull();
+        expect(picture(unsafe.container)).toContain("/theme/hero.jpg");
         unsafe.unmount();
 
         state.config = { "hero.backgroundImage": "/uploads/hero.png" };
-        const own = draw();
-        const picture = own.container.querySelector<HTMLElement>(".qr-hero-picture");
-        expect(picture?.style.backgroundImage).toContain("/uploads/hero.png");
-        expect(own.container.querySelector(".qr-scene")).toBeNull();
+        expect(picture(draw().container)).toContain("/uploads/hero.png");
     });
 
     it("places hero.bottom in the hero", () => {

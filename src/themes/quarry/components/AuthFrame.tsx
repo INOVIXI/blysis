@@ -8,7 +8,8 @@ import { Slot } from "@/core/sdk/layout";
 import { Link, usePathname } from "@/core/sdk/navigation";
 import { Button, NavIcon } from "@/core/sdk/ui";
 import { SiteMark, linkTarget, useNavLinks, useThemeConfig, type AuthFrameProps } from "@/core/sdk/theme";
-import { Scene } from "./Scene";
+import signInPicture from "@/themes/quarry/pictures/sign-in.jpg";
+import signUpPicture from "@/themes/quarry/pictures/sign-up.jpg";
 
 type Copied = "idle" | "copied" | "failed";
 
@@ -18,7 +19,7 @@ type Copied = "idle" | "copied" | "failed";
  * the hero's label on it, and the form in a panel beside it with the address one press away.
  *
  * Sign-in and sign-up each wear the operator's picture for that form, or the
- * drawn landscape until there is one, and each hands an aside to modules
+ * theme's own until there is one, and each hands an aside to modules
  * under its own name: `auth.login.aside` for someone coming back,
  * `auth.register.aside` for someone new. The other account screens wear the
  * sign-in picture and no aside. The panel holds whatever the page hands
@@ -41,7 +42,8 @@ export default function AuthFrame({ children }: AuthFrameProps) {
 
     const signUp = pathname.startsWith("/auth/register");
     const signIn = pathname.startsWith("/auth/login");
-    const picture = linkTarget(get<string>(signUp ? "auth.registerImage" : "auth.loginImage", ""));
+    const picture = linkTarget(get<string>(signUp ? "auth.registerImage" : "auth.loginImage", ""))?.href
+        ?? (signUp ? signUpPicture : signInPicture).src;
     const text = (key: string) => (get<string>(key, "") ?? "").trim();
     const address = text("hero.address");
     const aside = signUp ? "auth.register.aside" : signIn ? "auth.login.aside" : null;
@@ -67,11 +69,7 @@ export default function AuthFrame({ children }: AuthFrameProps) {
             </nav>
 
             <div className="qr-auth-scene">
-                {picture ? (
-                    <div aria-hidden="true" className="qr-auth-picture" style={{ backgroundImage: `url(${JSON.stringify(picture.href)})` }} />
-                ) : (
-                    <Scene />
-                )}
+                <div aria-hidden="true" className="qr-auth-picture" style={{ backgroundImage: `url(${JSON.stringify(picture)})` }} />
                 <div className="qr-hero-tags">
                     <Slot name="hero.tags" />
                     <span className="qr-tag">{text("hero.tag") || t("heroTag")}</span>
