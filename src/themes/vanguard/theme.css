@@ -77,7 +77,8 @@ html[data-mode="dark"] {
 }
 
 .vg-site .blysis-card,
-.vg-site [data-sidebar] > .bg-card {
+.vg-site [data-sidebar] > .bg-card,
+.vg-site [data-sidebar] > [data-block] > .bg-card {
   border-radius: var(--vg-card-radius);
   box-shadow: var(--vg-shadow);
 }

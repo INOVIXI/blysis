@@ -43,8 +43,11 @@ const GRID: Record<Exclude<RowSplit, "2-1">, { row: string; cells: string[] }> =
 };
 
 function Row({ row, welcomeAt, welcome }: { row: ResolvedRow; welcomeAt: number; welcome: React.ReactNode }) {
+    // A gap, not `space-y`: a block that drew nothing is still a child, and
+    // `space-y` left a margin under the last block that did
+    // (a-column-ends-where-its-last-card-does).
     const cell = (index: number) => (index === welcomeAt ? welcome : (
-        <div className="space-y-8">
+        <div className="flex flex-col gap-8">
             {row.cells[index].map((instance) => <Block key={instance.key} instance={instance} />)}
         </div>
     ));
