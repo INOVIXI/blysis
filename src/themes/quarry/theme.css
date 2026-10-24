@@ -827,7 +827,7 @@ html {
 }
 
 .qr-site [data-featured-picture] {
-  max-width: 300px;
+  max-width: 440px;
   border-radius: 8px;
   background: color-mix(in srgb, var(--blysis-color-primary) 22%, var(--blysis-color-stage));
   box-shadow: 0 8px 0 var(--blysis-color-edge), 0 0 0 6px color-mix(in srgb, var(--blysis-color-primary) 60%, var(--blysis-color-stage));
@@ -841,7 +841,7 @@ html {
   }
 
   .qr-site [data-featured-picture] {
-    max-width: 180px;
+    max-width: 280px;
     align-self: flex-start;
   }
 }
@@ -1372,6 +1372,17 @@ html {
   clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 50%, calc(100% - 26px) 100%, 0 100%);
 }
 
+/* The way each board points, drawn and not read. */
+.qr-lost-board[data-side="right"]::after {
+  content: "\2192" / "";
+  margin-left: 10px;
+}
+
+.qr-lost-board[data-side="left"]::before {
+  content: "\2190" / "";
+  margin-right: 10px;
+}
+
 .qr-lost-board[data-side="left"] {
   align-self: flex-end;
   margin-right: calc(50% - 12px);
@@ -1400,6 +1411,15 @@ html {
     font-size: 1.0625rem;
     white-space: nowrap;
     clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%);
+  }
+
+  .qr-lost-board[data-side="left"]::before {
+    content: none;
+  }
+
+  .qr-lost-board[data-side="left"]::after {
+    content: "\2192" / "";
+    margin-left: 10px;
   }
 }
 

@@ -193,7 +193,9 @@ describe("the public pages, core's own and the modules'", () => {
     }
 
     it("draws every one of them in the frame", () => {
-        const freehand = pages.filter((p) => !NOT_A_PAGE[p] && !frameSource(p).includes("<PageFrame"));
+        // `ArrangedPage` is the frame for a page built from blocks: it draws
+        // `PageFrame` around the rows a theme arranges.
+        const freehand = pages.filter((p) => !NOT_A_PAGE[p] && !/<(PageFrame|ArrangedPage)\b/.test(frameSource(p)));
         expect(freehand).toEqual([]);
     });
 

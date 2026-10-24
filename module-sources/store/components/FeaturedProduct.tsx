@@ -40,7 +40,7 @@ export function FeaturedProduct({ product }: { product: ShelfProduct }) {
                     <Link href={href} className={buttonClassName("secondary", "lg")}>{t("viewDetails")}</Link>
                 </div>
             </div>
-            <div data-featured-picture className="flex aspect-square w-full max-w-xs shrink-0 items-center justify-center self-center overflow-hidden rounded-lg bg-muted">
+            <div data-featured-picture className="flex aspect-card w-full max-w-md shrink-0 items-center justify-center self-center overflow-hidden rounded-lg bg-muted">
                 {product.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
