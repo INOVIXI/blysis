@@ -2,7 +2,7 @@
   "id": "forum",
   "name": "Forum Module",
   "description": "Community discussion forum with categories, topics, and replies",
-  "version": "1.13.1",
+  "version": "1.14.0",
   "coreVersion": "^5.0.0",
   "category": "community",
   "author": "Blysis Team",
@@ -359,7 +359,8 @@
         "widget_latestTitle": "New on the forum",
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "a former member",
-        "widget_latestAll": "Go to the forum"
+        "widget_latestAll": "Go to the forum",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "Actions",
@@ -550,7 +551,8 @@
         "widget_latestTitle": "Forumda yeni",
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "eski bir üye",
-        "widget_latestAll": "Foruma git"
+        "widget_latestAll": "Foruma git",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "İşlemler",
@@ -741,7 +743,8 @@
         "widget_latestTitle": "Forumda yeni",
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "keçmiş üzv",
-        "widget_latestAll": "Foruma keç"
+        "widget_latestAll": "Foruma keç",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "Əməliyyatlar",
@@ -932,7 +935,8 @@
         "widget_latestTitle": "Neu im Forum",
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "ein ehemaliges Mitglied",
-        "widget_latestAll": "Zum Forum"
+        "widget_latestAll": "Zum Forum",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "Aktionen",
@@ -1123,7 +1127,8 @@
         "widget_latestTitle": "Nuevo en el foro",
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "un antiguo miembro",
-        "widget_latestAll": "Ir al foro"
+        "widget_latestAll": "Ir al foro",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "Acciones",
@@ -1314,7 +1319,8 @@
         "widget_latestTitle": "Foorumis uut",
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "endine liige",
-        "widget_latestAll": "Mine foorumisse"
+        "widget_latestAll": "Mine foorumisse",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "Tegevused",
@@ -1505,7 +1511,8 @@
         "widget_latestTitle": "Nouveau sur le forum",
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "un ancien membre",
-        "widget_latestAll": "Aller au forum"
+        "widget_latestAll": "Aller au forum",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "Actions",
@@ -1696,7 +1703,8 @@
         "widget_latestTitle": "Novità sul forum",
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "un ex membro",
-        "widget_latestAll": "Vai al forum"
+        "widget_latestAll": "Vai al forum",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "Azioni",
@@ -1887,7 +1895,8 @@
         "widget_latestTitle": "Nowe na forum",
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "były członek",
-        "widget_latestAll": "Przejdź do forum"
+        "widget_latestAll": "Przejdź do forum",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "Działania",
@@ -2078,7 +2087,8 @@
         "widget_latestTitle": "Novo no fórum",
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "um ex-membro",
-        "widget_latestAll": "Ir para o fórum"
+        "widget_latestAll": "Ir para o fórum",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "Ações",
@@ -2269,7 +2279,8 @@
         "widget_latestTitle": "Новое на форуме",
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "бывший участник",
-        "widget_latestAll": "Перейти на форум"
+        "widget_latestAll": "Перейти на форум",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "Действия",
@@ -2460,7 +2471,8 @@
         "widget_latestTitle": "论坛新帖",
         "widget_latestBy": "{name}，{when}",
         "widget_latestNobody": "前成员",
-        "widget_latestAll": "前往论坛"
+        "widget_latestAll": "前往论坛",
+        "blk_topicMeta": "{name} · {section} · {when}"
       },
       "admin": {
         "actions": "操作",
@@ -2646,6 +2658,24 @@
       "hook": "leaderboard.boards",
       "type": "filter",
       "handler": "hooks/leaderboard-board.ts"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "latest-topics",
+      "component": "components/LatestTopicsBlock",
+      "widths": [
+        "narrow",
+        "wide"
+      ],
+      "defaultOrder": 60,
+      "defaultVisible": false,
+      "settings": {
+        "title": {
+          "type": "text",
+          "max": 80
+        }
+      }
     }
   ]
 }
