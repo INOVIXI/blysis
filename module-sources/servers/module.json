@@ -2,7 +2,7 @@
   "id": "servers",
   "name": "Game Servers",
   "description": "Game server management, RCON, and status monitoring",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "coreVersion": "^5.0.0",
   "category": "gaming",
   "author": "Blysis",
@@ -125,7 +125,12 @@
         "widget_playing": "{online} of {max} playing",
         "widget_copy": "Copy the address of {name}",
         "widget_copied": "Address copied",
-        "widget_copyFailed": "The address could not be copied"
+        "widget_copyFailed": "The address could not be copied",
+        "cards_players": "{count} playing",
+        "tile_players": "Players online",
+        "svr_description": "Description",
+        "svr_descriptionPlaceholder": "One line about this server, shown on its card",
+        "svr_image": "Picture"
       },
       "admin": {
         "menu_servers": "Servers",
@@ -185,7 +190,12 @@
         "widget_playing": "{max} kişiden {online} kişi oynuyor",
         "widget_copy": "{name} adresini kopyala",
         "widget_copied": "Adres kopyalandı",
-        "widget_copyFailed": "Adres kopyalanamadı"
+        "widget_copyFailed": "Adres kopyalanamadı",
+        "cards_players": "{count} oyuncu",
+        "tile_players": "Çevrimiçi oyuncu",
+        "svr_description": "Açıklama",
+        "svr_descriptionPlaceholder": "Bu sunucuyu anlatan, kartında görünen bir satır",
+        "svr_image": "Görsel"
       },
       "admin": {
         "menu_servers": "Sunucular",
@@ -245,7 +255,12 @@
         "widget_playing": "{max} nəfərdən {online} nəfər oynayır",
         "widget_copy": "{name} ünvanını kopyala",
         "widget_copied": "Ünvan kopyalandı",
-        "widget_copyFailed": "Ünvanı kopyalamaq olmadı"
+        "widget_copyFailed": "Ünvanı kopyalamaq olmadı",
+        "cards_players": "{count} oyunçu",
+        "tile_players": "Onlayn oyunçular",
+        "svr_description": "Təsvir",
+        "svr_descriptionPlaceholder": "Bu server haqqında kartında görünən bir sətir",
+        "svr_image": "Şəkil"
       },
       "admin": {
         "menu_servers": "Serverlər",
@@ -305,7 +320,12 @@
         "widget_playing": "{online} von {max} spielen",
         "widget_copy": "Adresse von {name} kopieren",
         "widget_copied": "Adresse kopiert",
-        "widget_copyFailed": "Die Adresse konnte nicht kopiert werden"
+        "widget_copyFailed": "Die Adresse konnte nicht kopiert werden",
+        "cards_players": "{count} spielen",
+        "tile_players": "Spieler online",
+        "svr_description": "Beschreibung",
+        "svr_descriptionPlaceholder": "Eine Zeile über diesen Server, auf seiner Karte gezeigt",
+        "svr_image": "Bild"
       },
       "admin": {
         "menu_servers": "Server",
@@ -365,7 +385,12 @@
         "widget_playing": "{online} de {max} jugando",
         "widget_copy": "Copiar la dirección de {name}",
         "widget_copied": "Dirección copiada",
-        "widget_copyFailed": "No se pudo copiar la dirección"
+        "widget_copyFailed": "No se pudo copiar la dirección",
+        "cards_players": "{count} jugando",
+        "tile_players": "Jugadores en línea",
+        "svr_description": "Descripción",
+        "svr_descriptionPlaceholder": "Una línea sobre este servidor, mostrada en su tarjeta",
+        "svr_image": "Imagen"
       },
       "admin": {
         "menu_servers": "Servidores",
@@ -425,7 +450,12 @@
         "widget_playing": "{online} / {max} mängib",
         "widget_copy": "Kopeeri serveri {name} aadress",
         "widget_copied": "Aadress kopeeritud",
-        "widget_copyFailed": "Aadressi ei õnnestunud kopeerida"
+        "widget_copyFailed": "Aadressi ei õnnestunud kopeerida",
+        "cards_players": "{count} mängib",
+        "tile_players": "Mängijaid võrgus",
+        "svr_description": "Kirjeldus",
+        "svr_descriptionPlaceholder": "Üks rida selle serveri kohta, näidatakse tema kaardil",
+        "svr_image": "Pilt"
       },
       "admin": {
         "menu_servers": "Serverid",
@@ -485,7 +515,12 @@
         "widget_playing": "{online} sur {max} en jeu",
         "widget_copy": "Copier l’adresse de {name}",
         "widget_copied": "Adresse copiée",
-        "widget_copyFailed": "L’adresse n’a pas pu être copiée"
+        "widget_copyFailed": "L’adresse n’a pas pu être copiée",
+        "cards_players": "{count} en jeu",
+        "tile_players": "Joueurs en ligne",
+        "svr_description": "Description",
+        "svr_descriptionPlaceholder": "Une ligne sur ce serveur, affichée sur sa carte",
+        "svr_image": "Image"
       },
       "admin": {
         "menu_servers": "Serveurs",
@@ -545,7 +580,12 @@
         "widget_playing": "{online} su {max} in gioco",
         "widget_copy": "Copia l’indirizzo di {name}",
         "widget_copied": "Indirizzo copiato",
-        "widget_copyFailed": "Impossibile copiare l’indirizzo"
+        "widget_copyFailed": "Impossibile copiare l’indirizzo",
+        "cards_players": "{count} in gioco",
+        "tile_players": "Giocatori online",
+        "svr_description": "Descrizione",
+        "svr_descriptionPlaceholder": "Una riga su questo server, mostrata sulla sua scheda",
+        "svr_image": "Immagine"
       },
       "admin": {
         "menu_servers": "Server",
@@ -605,7 +645,12 @@
         "widget_playing": "Gra {online} z {max}",
         "widget_copy": "Skopiuj adres serwera {name}",
         "widget_copied": "Adres skopiowany",
-        "widget_copyFailed": "Nie udało się skopiować adresu"
+        "widget_copyFailed": "Nie udało się skopiować adresu",
+        "cards_players": "{count} gra",
+        "tile_players": "Graczy online",
+        "svr_description": "Opis",
+        "svr_descriptionPlaceholder": "Jedna linijka o tym serwerze, widoczna na jego karcie",
+        "svr_image": "Obraz"
       },
       "admin": {
         "menu_servers": "Serwery",
@@ -665,7 +710,12 @@
         "widget_playing": "{online} de {max} jogando",
         "widget_copy": "Copiar o endereço de {name}",
         "widget_copied": "Endereço copiado",
-        "widget_copyFailed": "Não foi possível copiar o endereço"
+        "widget_copyFailed": "Não foi possível copiar o endereço",
+        "cards_players": "{count} jogando",
+        "tile_players": "Jogadores online",
+        "svr_description": "Descrição",
+        "svr_descriptionPlaceholder": "Uma linha sobre este servidor, mostrada no seu cartão",
+        "svr_image": "Imagem"
       },
       "admin": {
         "menu_servers": "Servidores",
@@ -725,7 +775,12 @@
         "widget_playing": "Играют {online} из {max}",
         "widget_copy": "Скопировать адрес сервера {name}",
         "widget_copied": "Адрес скопирован",
-        "widget_copyFailed": "Не удалось скопировать адрес"
+        "widget_copyFailed": "Не удалось скопировать адрес",
+        "cards_players": "{count} в игре",
+        "tile_players": "Игроков онлайн",
+        "svr_description": "Описание",
+        "svr_descriptionPlaceholder": "Одна строка об этом сервере, показывается на его карточке",
+        "svr_image": "Изображение"
       },
       "admin": {
         "menu_servers": "Серверы",
@@ -785,7 +840,12 @@
         "widget_playing": "{online} / {max} 人在线",
         "widget_copy": "复制 {name} 的地址",
         "widget_copied": "地址已复制",
-        "widget_copyFailed": "无法复制地址"
+        "widget_copyFailed": "无法复制地址",
+        "cards_players": "{count} 人在玩",
+        "tile_players": "在线玩家",
+        "svr_description": "描述",
+        "svr_descriptionPlaceholder": "一句话介绍这个服务器，显示在它的卡片上",
+        "svr_image": "图片"
       },
       "admin": {
         "menu_servers": "服务器",
@@ -817,6 +877,36 @@
       "label": "Gaming",
       "icon": "Gamepad2",
       "order": 50
+    }
+  ],
+  "blocks": [
+    {
+      "id": "cards",
+      "component": "components/ServerCards",
+      "widths": [
+        "wide",
+        "full"
+      ],
+      "defaultOrder": 20,
+      "defaultVisible": false,
+      "settings": {
+        "kicker": {
+          "type": "text",
+          "max": 60
+        },
+        "title": {
+          "type": "text",
+          "max": 80
+        }
+      }
+    }
+  ],
+  "slotContents": [
+    {
+      "id": "players-tile",
+      "slot": "home.stats",
+      "component": "slots/PlayersTile",
+      "order": 10
     }
   ]
 }

@@ -40,6 +40,8 @@ export default function Page() {
                 { key: "queryPort", label: t("svr_queryPort"), type: "number", placeholder: t("svr_queryPortPlaceholder") },
                 { key: "rconPort", label: t("svr_rconPort"), type: "number", placeholder: t("svr_rconPortPlaceholder") },
                 { key: "rconPassword", label: t("svr_rconPassword"), type: "password", placeholder: t("svr_rconPasswordPlaceholder") },
+                { key: "description", label: t("svr_description"), type: "textarea", placeholder: t("svr_descriptionPlaceholder") },
+                { key: "image", label: t("svr_image"), type: "image" },
                 { key: "isDefault", label: t("svr_isDefault"), type: "toggle", defaultValue: "false" },
                 { key: "isActive", label: t("svr_isActive"), type: "toggle", defaultValue: "true" },
             ]}

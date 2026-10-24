@@ -48,7 +48,7 @@ function Row({ row, welcomeAt, welcome }: { row: ResolvedRow; welcomeAt: number;
     // `space-y` left a margin under the last block that did
     // (a-column-ends-where-its-last-card-does).
     const cell = (index: number) => (index === welcomeAt ? welcome : (
-        <div className="flex flex-col gap-8">
+        <div data-layout-blocks className="flex flex-col gap-8">
             {row.cells[index].map((instance) => <Block key={instance.key} instance={instance} />)}
         </div>
     ));

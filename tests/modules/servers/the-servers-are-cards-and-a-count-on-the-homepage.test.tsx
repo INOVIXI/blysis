@@ -1,0 +1,92 @@
+/**
+ * The servers can open the homepage as cards and as a count of players.
+ *
+ * `servers.cards` draws a card for every active server: its picture, how
+ * many are playing, its name, the line the operator wrote about it and a
+ * button that copies its address, which must work over plain http where the
+ * clipboard API does not exist. The `home.stats` tile is everyone playing on
+ * the servers that can be asked, and nothing at all when none can.
+ */
+import React from "react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
+import fs from "node:fs";
+import path from "node:path";
+
+const copied = vi.hoisted(() => ({ values: [] as string[] }));
+const answer = vi.hoisted(() => ({ servers: [] as unknown[] }));
+
+vi.mock("@/core/sdk", () => ({
+    copyText: vi.fn(async (value: string) => { copied.values.push(value); return true; }),
+    sharedJson: vi.fn(async () => ({ servers: answer.servers })),
+}));
+vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
+vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams() }));
+vi.mock("@/core/lib/i18n/navigation", () => ({
+    Link: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
+    usePathname: () => "/",
+    useRouter: () => ({ push: () => {} }),
+}));
+
+const MANIFEST = JSON.parse(fs.readFileSync(path.join(process.cwd(), "module-sources/servers/module.json"), "utf8"));
+const MESSAGES = { ...JSON.parse(fs.readFileSync(path.join(process.cwd(), "messages-core/en.json"), "utf8")), ...MANIFEST.translations.en };
+const en = MANIFEST.translations.en.servers;
+
+const server = (name: string, over: Record<string, unknown> = {}) => ({
+    id: name, name, type: "minecraft", queryable: true, online: true, players: { online: 0, max: 100 },
+    address: `${name.toLowerCase()}.example.com`, description: null, image: null, version: "", motd: "", ...over,
+});
+
+const { ServerCards } = await import("@/modules/servers/components/ServerCards");
+const { default: PlayersTile } = await import("@/modules/servers/slots/PlayersTile");
+
+function draw(node: React.ReactNode) {
+    return render(<NextIntlClientProvider locale="en" messages={MESSAGES}>{node}</NextIntlClientProvider>);
+}
+
+beforeEach(() => {
+    copied.values = [];
+    answer.servers = [];
+});
+
+describe("the server cards", () => {
+    it("are declared as a block, with the count as a tile for the stats row", () => {
+        expect(MANIFEST.blocks.find((b: { id: string }) => b.id === "cards")).toBeTruthy();
+        expect(MANIFEST.slotContents.find((s: { slot: string }) => s.slot === "home.stats")).toBeTruthy();
+    });
+
+    it("draw each server with how many play, what it is, and a way in", async () => {
+        answer.servers = [
+            server("Survival", { players: { online: 128, max: 500 }, description: "One world, a real economy." }),
+            server("Creative", { online: false }),
+        ];
+        draw(<ServerCards settings={{ kicker: "", title: "" }} width="full" />);
+        expect(await screen.findByRole("heading", { level: 3, name: "Survival" })).toBeTruthy();
+        expect(screen.getByText("One world, a real economy.")).toBeTruthy();
+        expect(screen.getByText(en.cards_players.replace("{count}", "128"))).toBeTruthy();
+        expect(screen.getByText(en.offline)).toBeTruthy();
+        fireEvent.click(screen.getByRole("button", { name: en.widget_copy.replace("{name}", "Survival") }));
+        await waitFor(() => expect(copied.values).toEqual(["survival.example.com"]));
+    });
+
+    it("draw nothing on a site with no server", async () => {
+        const { container } = draw(<ServerCards settings={{}} width="full" />);
+        await waitFor(() => expect(container.innerHTML).toBe(""));
+    });
+});
+
+describe("the players tile", () => {
+    it("counts everyone playing on the servers that can be asked", async () => {
+        answer.servers = [server("A", { players: { online: 100, max: 1 } }), server("B", { players: { online: 14, max: 1 } }), server("C", { online: false, players: { online: 9, max: 1 } })];
+        draw(<PlayersTile />);
+        expect(await screen.findByText("114")).toBeTruthy();
+        expect(screen.getByText(en.tile_players)).toBeTruthy();
+    });
+
+    it("is not drawn when no server can be asked", async () => {
+        answer.servers = [server("Hytale", { queryable: false })];
+        const { container } = draw(<PlayersTile />);
+        await waitFor(() => expect(container.innerHTML).toBe(""));
+    });
+});

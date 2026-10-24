@@ -22,6 +22,8 @@ export const SERVER_PUBLIC_FIELDS = {
     isDefault: true,
     isActive: true,
     order: true,
+    description: true,
+    image: true,
     createdAt: true,
     updatedAt: true,
 } satisfies Prisma.GameServerSelect;

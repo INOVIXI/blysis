@@ -23,6 +23,8 @@ interface ServerRow {
     isActive: boolean;
     order: number;
     createdAt: Date;
+    description?: string | null;
+    image?: string | null;
 }
 
 const db = { servers: [] as ServerRow[] };
@@ -272,6 +274,14 @@ describe("every server at once", () => {
         expect(statuses[1]).toMatchObject({ name: "Rust EU", online: true, players: { online: 5 } });
         // Not asked at all, and honest about it rather than reported as down.
         expect(statuses[2]).toMatchObject({ name: "Hytale", queryable: false, online: false });
+    });
+
+    it("says what each server is, as the operator described and pictured it", async () => {
+        db.servers.push(server({ port: 1, isDefault: true, description: "One world, a real economy.", image: "/uploads/survival.png" }));
+        db.servers.push(server({ port: 1 }));
+        const [described, plain] = await getAllServerStatuses();
+        expect(described).toMatchObject({ description: "One world, a real economy.", image: "/uploads/survival.png" });
+        expect(plain).toMatchObject({ description: null, image: null });
     });
 
     it("leaves out the servers an admin disabled", async () => {

@@ -41,6 +41,8 @@ export interface ServerQueryResult extends ServerStatus {
     queryable: boolean;
     /** Where a player connects, written the way their game client wants it typed; null when it is not to be published. */
     address: string | null;
+    description: string | null;
+    image: string | null;
 }
 
 /** The port a game's client fills in by itself when a player types none. */
@@ -71,6 +73,8 @@ interface GameServerRow {
     port: number;
     queryPort: number | null;
     isDefault: boolean;
+    description?: string | null;
+    image?: string | null;
 }
 
 const OFFLINE: ServerStatus = {
@@ -409,7 +413,7 @@ async function activeServers(): Promise<GameServerRow[]> {
     return prisma.gameServer.findMany({
         where: { isActive: true },
         orderBy: [{ isDefault: "desc" }, { order: "asc" }, { createdAt: "asc" }],
-        select: { id: true, name: true, type: true, host: true, port: true, queryPort: true, isDefault: true },
+        select: { id: true, name: true, type: true, host: true, port: true, queryPort: true, isDefault: true, description: true, image: true },
     });
 }
 
@@ -423,6 +427,8 @@ export async function getAllServerStatuses(): Promise<ServerQueryResult[]> {
             type: server.type,
             queryable: isQueryable(server.type),
             address: connectAddress(server.type, server.host, server.port),
+            description: server.description ?? null,
+            image: server.image ?? null,
             ...(isQueryable(server.type) ? await cachedQuery(server) : OFFLINE),
         })),
     );

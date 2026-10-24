@@ -158,6 +158,9 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [form, setForm] = useState<Record<string, string>>({});
+    // What the row held when the form opened on it, to tell a field the
+    // admin emptied from one that was always empty (a-cleared-field-is-saved-cleared).
+    const [loaded, setLoaded] = useState<Record<string, string>>({});
     const [selected, setSelected] = useState<Selection>(new Set());
     const [search, setSearch] = useState("");
     const { confirm } = useConfirm();
@@ -186,6 +189,7 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
         fields.forEach((f) => { defaults[f.key] = f.defaultValue || ""; });
         if (!editingId) {
             setForm(defaults);
+            setLoaded({});
             return;
         }
         const item = items.find((row) => row.id === editingId);
@@ -212,6 +216,7 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
             }
         });
         setForm(vals);
+        setLoaded(vals);
         // `fields` is a literal rebuilt on every render by every caller, so it
         // cannot be a dependency without looping.
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -228,7 +233,10 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
             else if (f.type === "number") payload[f.key] = v ? Number(v) : undefined;
             else if (f.type === "toggle") payload[f.key] = v === "true";
             else if (f.type === "datetime") payload[f.key] = v ? new Date(v).toISOString() : null;
-            else payload[f.key] = v || undefined;
+            // A PATCH keeps what it is not sent, so an emptied field is sent
+            // as its default, or null when it has none; one that was empty
+            // all along is still left out.
+            else payload[f.key] = v || (editingId && loaded[f.key] ? (f.defaultValue || null) : undefined);
         });
 
         const url = editingId ? `${apiPath}/${editingId}` : apiPath;
