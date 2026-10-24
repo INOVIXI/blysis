@@ -58,6 +58,7 @@ function coreRoots(): string[] {
         join(ROOT, "src/app/[locale]/(admin)"),
         join(ROOT, "src/app/[locale]/(public)"),
         join(ROOT, "src/app/[locale]/page.tsx"),
+        join(ROOT, "src/app/[locale]/HomeWelcome.tsx"),
         join(ROOT, "src/core/components/admin"),
         join(ROOT, "src/core/components/layout"),
         join(ROOT, "src/core/components/ui"),
