@@ -10,9 +10,13 @@
  * The rules about who may read a topic are in `readTopic`, which the endpoint
  * calls too. Written once, because a private section hidden by one caller and
  * not the other is worse than one nobody hid.
+ *
+ * The page is the forum's `topic` page: one block, the topic, whose `posts`
+ * setting lets a theme set each author in a column beside their post.
  */
 import { notFound } from "next/navigation";
-import { hasPermission } from "@/core/sdk/server";
+import { getTranslations } from "next-intl/server";
+import { ArrangedPage, hasPermission } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { countTopicView, readTopic } from "../../../../lib/read-topic";
 import { TopicView } from "../../../../components/TopicView";
@@ -26,6 +30,11 @@ function topicIdFrom(raw: string | string[] | undefined): string {
     const segments = typeof raw === "string" ? raw.split("/") : Array.isArray(raw) ? raw : [];
     const marker = segments.indexOf("topic");
     return marker >= 0 && segments[marker + 1] ? segments[marker + 1] : (segments[0] ?? "");
+}
+
+/** An author's joining date as the string the screen reads from the endpoint too. */
+function authorOut<A extends { createdAt: Date }>(author: A | null) {
+    return author ? { ...author, createdAt: author.createdAt.toISOString() } : null;
 }
 
 export default async function TopicPage({ params }: PageProps) {
@@ -45,7 +54,8 @@ export default async function TopicPage({ params }: PageProps) {
     const topic = {
         ...read.topic,
         createdAt: read.topic.createdAt.toISOString(),
-        posts: read.topic.posts.map((post) => ({ ...post, createdAt: post.createdAt.toISOString() })),
+        author: authorOut(read.topic.author),
+        posts: read.topic.posts.map((post) => ({ ...post, createdAt: post.createdAt.toISOString(), author: authorOut(post.author) })),
     };
 
     /*
@@ -59,11 +69,22 @@ export default async function TopicPage({ params }: PageProps) {
         ? await hasPermission(session.user.id, "forum.edit-any")
         : false;
 
+    const t = await getTranslations("forum");
+
     return (
-        <TopicView
-            initialTopic={topic}
-            initialPostsPages={read.postsPages}
-            canModerate={canModerate}
+        <ArrangedPage
+            page="forum.topic"
+            frame={{ title: topic.title, trail: [{ label: t("title"), href: "/forum" }] }}
+            blocks={{
+                topic: ({ settings }) => (
+                    <TopicView
+                        initialTopic={topic}
+                        initialPostsPages={read.postsPages}
+                        canModerate={canModerate}
+                        postsVariant={settings.posts === "columns" ? "columns" : "stacked"}
+                    />
+                ),
+            }}
         />
     );
 }

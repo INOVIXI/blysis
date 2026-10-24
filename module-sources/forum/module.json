@@ -2,8 +2,8 @@
   "id": "forum",
   "name": "Forum Module",
   "description": "Community discussion forum with categories, topics, and replies",
-  "version": "1.14.1",
-  "coreVersion": "^5.0.0",
+  "version": "1.15.0",
+  "coreVersion": "^5.25.0",
   "category": "community",
   "author": "Blysis Team",
   "icon": "MessageSquare",
@@ -360,7 +360,8 @@
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "a former member",
         "widget_latestAll": "Go to the forum",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Member since {date}"
       },
       "admin": {
         "actions": "Actions",
@@ -552,7 +553,8 @@
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "eski bir üye",
         "widget_latestAll": "Foruma git",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "{date} tarihinden beri üye"
       },
       "admin": {
         "actions": "İşlemler",
@@ -744,7 +746,8 @@
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "keçmiş üzv",
         "widget_latestAll": "Foruma keç",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "{date} tarixindən üzv"
       },
       "admin": {
         "actions": "Əməliyyatlar",
@@ -936,7 +939,8 @@
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "ein ehemaliges Mitglied",
         "widget_latestAll": "Zum Forum",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Mitglied seit {date}"
       },
       "admin": {
         "actions": "Aktionen",
@@ -1128,7 +1132,8 @@
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "un antiguo miembro",
         "widget_latestAll": "Ir al foro",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Miembro desde {date}"
       },
       "admin": {
         "actions": "Acciones",
@@ -1320,7 +1325,8 @@
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "endine liige",
         "widget_latestAll": "Mine foorumisse",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Liige alates {date}"
       },
       "admin": {
         "actions": "Tegevused",
@@ -1512,7 +1518,8 @@
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "un ancien membre",
         "widget_latestAll": "Aller au forum",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Membre depuis {date}"
       },
       "admin": {
         "actions": "Actions",
@@ -1704,7 +1711,8 @@
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "un ex membro",
         "widget_latestAll": "Vai al forum",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Membro da {date}"
       },
       "admin": {
         "actions": "Azioni",
@@ -1896,7 +1904,8 @@
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "były członek",
         "widget_latestAll": "Przejdź do forum",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Członek od {date}"
       },
       "admin": {
         "actions": "Działania",
@@ -2088,7 +2097,8 @@
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "um ex-membro",
         "widget_latestAll": "Ir para o fórum",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Membro desde {date}"
       },
       "admin": {
         "actions": "Ações",
@@ -2280,7 +2290,8 @@
         "widget_latestBy": "{name}, {when}",
         "widget_latestNobody": "бывший участник",
         "widget_latestAll": "Перейти на форум",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Участник с {date}"
       },
       "admin": {
         "actions": "Действия",
@@ -2472,7 +2483,8 @@
         "widget_latestBy": "{name}，{when}",
         "widget_latestNobody": "前成员",
         "widget_latestAll": "前往论坛",
-        "blk_topicMeta": "{name} · {section} · {when}"
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "{date} 加入"
       },
       "admin": {
         "actions": "操作",
@@ -2675,6 +2687,51 @@
           "type": "text",
           "max": 80
         }
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "topic",
+      "blocks": [
+        {
+          "id": "topic",
+          "widths": [
+            "wide",
+            "full"
+          ],
+          "settings": {
+            "posts": {
+              "type": "select",
+              "default": "stacked",
+              "options": [
+                {
+                  "value": "stacked",
+                  "label": "Author above the post"
+                },
+                {
+                  "value": "columns",
+                  "label": "Author in a column beside the post"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "topic",
+                  "block": "forum.topic"
+                }
+              ]
+            ]
+          }
+        ]
       }
     }
   ]
