@@ -102,7 +102,8 @@
   "notFound": {
     "title": "Nie znaleziono strony",
     "description": "Strona, której szukasz, nie istnieje albo została przeniesiona.",
-    "goHome": "Wróć na stronę główną"
+    "goHome": "Wróć na stronę główną",
+    "search": "Szukaj w serwisie"
   },
   "activity": {
     "auditAccountUnlocked": "Odblokowano konto",

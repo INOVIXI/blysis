@@ -102,7 +102,8 @@
   "notFound": {
     "title": "Səhifə tapılmadı",
     "description": "Axtardığınız səhifə mövcud deyil və ya başqa yerə köçürülüb.",
-    "goHome": "Ana səhifəyə keç"
+    "goHome": "Ana səhifəyə keç",
+    "search": "Saytda axtar"
   },
   "activity": {
     "auditAccountUnlocked": "Hesabın kilidi açıldı",

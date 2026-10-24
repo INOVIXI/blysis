@@ -1,5 +1,6 @@
 import { resolveLocaleFromRequest, notFoundStrings } from "@/core/lib/i18n/resolve-locale";
-import { buttonClassName } from "@/core/components/ui/button";
+import { SiteShell } from "@/core/components/layout/SiteShell";
+import { NotFoundContent } from "@/core/components/layout/NotFoundContent";
 
 /**
  * The 404 for a `notFound()` thrown anywhere under a locale.
@@ -17,26 +18,25 @@ import { buttonClassName } from "@/core/components/ui/button";
  * It reads its strings through `notFoundStrings` rather than `useTranslations`
  * so that a 404 still renders when the database is the reason for it, and asks
  * for the locale by cookie and header rather than by a segment it cannot see.
+ *
+ * It stands in the site's shell, bar and footer included: a reader who
+ * followed a stale link lands on the site, with somewhere to go from it,
+ * rather than on a bare card. A theme draws the content as `NotFound`.
  */
 export default async function NotFound() {
     const locale = await resolveLocaleFromRequest();
     const t = await notFoundStrings(locale);
 
     return (
-        <main className="flex flex-col items-center justify-center min-h-screen px-4">
-            <div className="text-center max-w-md">
-                <div className="text-[120px] font-black text-muted leading-none select-none mb-4" aria-hidden="true">
-                    404
-                </div>
-                <h1 className="text-2xl font-bold text-foreground mb-2">{t.title}</h1>
-                {t.description && <p className="text-muted-foreground mb-8">{t.description}</p>}
-                <a
-                    href={`/${locale}`}
-                    className={buttonClassName()}
-                >
-                    {t.goHome}
-                </a>
-            </div>
-        </main>
+        <SiteShell>
+            <NotFoundContent
+                title={t.title}
+                description={t.description}
+                goHome={t.goHome}
+                homeHref={`/${locale}`}
+                search={t.search}
+                searchHref={`/${locale}/search`}
+            />
+        </SiteShell>
     );
 }

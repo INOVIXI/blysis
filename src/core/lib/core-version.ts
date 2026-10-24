@@ -19,8 +19,10 @@
  * (`header: "hidden"`) and place a row of a quarter, a half and a quarter
  * (`1-2-1`), and `PageFrame` takes a `picture` and a `meta` line a theme's
  * header may draw. The store's, a blog's or a forum's page had been the
- * module's alone, so a theme could recolour it but never arrange it.
- * Additive: a page with no theme arrangement stands as its module drew it.
+ * module's alone, so a theme could recolour it but never arrange it. The 404
+ * stands in the site's shell, and a theme may draw it as `NotFound`, typed by
+ * `NotFoundProps` in `@/core/sdk/theme`. Additive: a page with no theme
+ * arrangement stands as its module drew it.
  *
  * 5.24.0 - `BlockHeading`, `StatTile`, `useBlockText` and the `BlockProps`
  * type join `@/core/sdk/ui`. A block is handed its settings and its width

@@ -102,7 +102,8 @@
   "notFound": {
     "title": "Page introuvable",
     "description": "La page que vous recherchez n’existe pas ou a été déplacée.",
-    "goHome": "Retour à l’accueil"
+    "goHome": "Retour à l’accueil",
+    "search": "Rechercher sur le site"
   },
   "activity": {
     "auditAccountUnlocked": "Compte déverrouillé",

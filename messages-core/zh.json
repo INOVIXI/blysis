@@ -102,7 +102,8 @@
   "notFound": {
     "title": "页面未找到",
     "description": "你访问的页面不存在或已被移动。",
-    "goHome": "返回首页"
+    "goHome": "返回首页",
+    "search": "搜索本站"
   },
   "activity": {
     "auditAccountUnlocked": "账户已解锁",

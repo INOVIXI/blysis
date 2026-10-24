@@ -102,7 +102,8 @@
   "notFound": {
     "title": "Lehte ei leitud",
     "description": "Otsitavat lehte ei ole olemas või see on teisaldatud.",
-    "goHome": "Mine avalehele"
+    "goHome": "Mine avalehele",
+    "search": "Otsi saidilt"
   },
   "activity": {
     "auditAccountUnlocked": "Konto avati lukust",

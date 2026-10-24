@@ -37,15 +37,16 @@ export async function notFoundStrings(locale: Locale): Promise<{
     title: string;
     description: string;
     goHome: string;
+    search: string;
 }> {
-    const fallback = { title: "Page not found", description: "", goHome: "Go home" };
+    const fallback = { title: "Page not found", description: "", goHome: "Go home", search: "Search the site" };
     try {
         const { getMessages } = await import("./translation-service");
         const messages = await getMessages(locale);
         const ns = (messages.notFound ?? {}) as Record<string, unknown>;
         const pick = (key: keyof typeof fallback) =>
             typeof ns[key] === "string" && ns[key] ? (ns[key] as string) : fallback[key];
-        return { title: pick("title"), description: pick("description"), goHome: pick("goHome") };
+        return { title: pick("title"), description: pick("description"), goHome: pick("goHome"), search: pick("search") };
     } catch {
         // A 404 has to render even when the database is the reason for it.
         return fallback;

@@ -102,7 +102,8 @@
   "notFound": {
     "title": "Page not found",
     "description": "The page you’re looking for doesn’t exist or has been moved.",
-    "goHome": "Go home"
+    "goHome": "Go home",
+    "search": "Search the site"
   },
   "activity": {
     "auditAccountUnlocked": "Account unlocked",

@@ -22,6 +22,7 @@ export { ThemeComponentSlot } from "@/core/components/theme/ThemeComponentSlot";
  */
 export type { SiteShellProps } from "@/core/components/layout/SiteShell";
 export type { PageHeaderProps } from "@/core/components/layout/PageHeader";
+export type { NotFoundProps } from "@/core/components/layout/NotFoundContent";
 export type { AuthFrameProps } from "@/core/components/layout/AuthFrame";
 
 /** The site's navigation as the bar sees it, for a theme that draws its own. */
