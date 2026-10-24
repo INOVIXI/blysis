@@ -403,12 +403,12 @@ html {
  * posters a game server's front page is made of do. The space is core's
  * variable, so a row that drew nothing still takes none.
  */
-.qr-main {
+.qr-hero + .qr-main {
   --blysis-row-gap: 72px;
 }
 
 @media (max-width: 47.99rem) {
-  .qr-main {
+  .qr-hero + .qr-main {
     --blysis-row-gap: 48px;
   }
 }
@@ -664,6 +664,749 @@ html {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+}
+
+/* A page with a picture behind its header: taller, the title low over the dark. */
+.qr-page-header[data-picture] {
+  min-height: 520px;
+  justify-content: flex-end;
+}
+
+.qr-page-header[data-picture] .qr-page-trail {
+  margin-bottom: auto;
+}
+
+.qr-page-picture {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: var(--qr-strip);
+  left: calc(50% - 50vw);
+  width: 100vw;
+  background-size: cover;
+  background-position: center;
+}
+
+.qr-page-picture::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--blysis-color-stage) 20%, transparent) 0%,
+    color-mix(in srgb, var(--blysis-color-stage) 0%, transparent) 30%,
+    color-mix(in srgb, var(--blysis-color-stage) 95%, transparent) 92%);
+}
+
+.qr-page-header[data-picture] .qr-page-title {
+  max-width: 900px;
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  line-height: 1;
+}
+
+/* What the page says of itself, its section first, above the title it belongs to. */
+.qr-page-heading > .min-w-0 {
+  display: flex;
+  flex-direction: column;
+}
+
+.qr-page-meta {
+  order: -1;
+  margin-bottom: 14px;
+  color: var(--blysis-color-stageMuted);
+  font-size: 0.875rem;
+}
+
+.qr-page-meta [data-article-meta] > a {
+  padding: 4px 9px;
+  border-radius: 3px;
+  background: var(--blysis-color-primary);
+  color: var(--blysis-color-primaryForeground);
+  font-family: var(--blysis-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.qr-page-meta [data-article-author] {
+  color: var(--blysis-color-stageForeground);
+  font-weight: 700;
+}
+
+/* A module's page */
+
+/*
+ * The rows of a module's page stand closer than the homepage's posters: they
+ * are parts of one thing. A page's crumb trail sits right over what it leads to.
+ */
+.qr-main {
+  --blysis-row-gap: 40px;
+}
+
+.qr-site [data-layout-row]:has([data-block="store.crumbs"]) + * {
+  margin-top: 20px;
+}
+
+.qr-site [data-block="store.crumbs"] nav {
+  font-size: 0.8125rem;
+}
+
+/*
+ * A block that opens a page with no header comes up against the bar, as the
+ * header band would: the shop's showcase and a member's band.
+ */
+.qr-main > h1.sr-only + [data-layout-row] :is([data-block="store.featured"], [data-block="member-profiles.band"]):first-child {
+  margin-top: -32px;
+}
+
+/*
+ * The shop's showcase: a band across the whole width on the theme's own
+ * landscape, dark where its words are, as the homepage's hero is.
+ */
+.qr-site [data-block="store.featured"] {
+  position: relative;
+  isolation: isolate;
+}
+
+.qr-site [data-block="store.featured"]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  background:
+    linear-gradient(90deg,
+      var(--blysis-color-stage) 0%,
+      color-mix(in srgb, var(--blysis-color-stage) 85%, transparent) 45%,
+      color-mix(in srgb, var(--blysis-color-stage) 20%, transparent) 100%),
+    var(--qr-cover) center / cover,
+    var(--blysis-color-stage);
+}
+
+.qr-site [data-featured-product] {
+  gap: 40px;
+  padding: 64px 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-site [data-featured-product] .text-foreground {
+  color: inherit;
+}
+
+.qr-site [data-featured-product] .text-muted-foreground {
+  color: var(--blysis-color-stageMuted);
+}
+
+.qr-site [data-featured-name] {
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.qr-site [data-featured-product] p {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+.qr-site [data-featured-price] {
+  font-family: var(--blysis-font-heading);
+  font-size: 2.25rem;
+  font-weight: 900;
+}
+
+.qr-site [data-featured-product] .blysis-button.bg-secondary {
+  --qr-edge: var(--blysis-color-edge);
+  background: color-mix(in srgb, var(--blysis-color-stageForeground) 14%, var(--blysis-color-stage));
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-site [data-featured-picture] {
+  max-width: 300px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--blysis-color-primary) 22%, var(--blysis-color-stage));
+  box-shadow: 0 8px 0 var(--blysis-color-edge), 0 0 0 6px color-mix(in srgb, var(--blysis-color-primary) 60%, var(--blysis-color-stage));
+}
+
+/* On a phone the picture is a token above the words, not a screen of its own. */
+@media (max-width: 47.99rem) {
+  .qr-site [data-featured-product] {
+    gap: 24px;
+    padding: 40px 0;
+  }
+
+  .qr-site [data-featured-picture] {
+    max-width: 180px;
+    align-self: flex-start;
+  }
+}
+
+/* The shop's sections as a row of tabs that press, the open one light. */
+.qr-site [data-store-chips] {
+  gap: 10px;
+}
+
+.qr-site [data-store-chips] a {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--blysis-color-card);
+  color: var(--blysis-color-mutedForeground);
+  font-weight: 700;
+  box-shadow: 0 3px 0 var(--blysis-color-edge);
+}
+
+.qr-site [data-store-chips] a:hover {
+  color: var(--blysis-color-foreground);
+}
+
+.qr-site [data-store-chips] a[aria-current="page"] {
+  background: var(--blysis-color-foreground);
+  color: var(--blysis-color-background);
+}
+
+/*
+ * The shelves: the first one big, a poster for each product, the rest in
+ * short rows of a picture, a name and a price, as is the product page's
+ * list of others on its shelf.
+ */
+.qr-site [data-store-shelves] {
+  gap: 48px;
+}
+
+.qr-site [data-store-shelf] h2 {
+  font-size: 1.625rem;
+}
+
+.qr-site :is([data-store-shelf], [data-product-related]) a.group {
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.qr-site :is([data-store-shelf], [data-product-related], [data-block="store.products"]) a.group .mt-auto span.text-lg {
+  font-family: var(--blysis-font-heading);
+  font-size: 1.375rem;
+  font-weight: 900;
+}
+
+.qr-site [data-store-shelf]:first-child a.group > .aspect-card {
+  aspect-ratio: auto;
+  height: 200px;
+}
+
+.qr-site [data-store-shelf]:first-child a.group > div + div {
+  gap: 12px;
+  padding: 24px;
+}
+
+.qr-site [data-store-shelf]:first-child a.group h3 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.qr-site [data-store-shelf]:first-child [data-product-more] {
+  padding: 10px 16px;
+  border-radius: var(--blysis-radius);
+  background: var(--blysis-color-primary);
+  color: var(--blysis-color-primaryForeground);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--blysis-color-primary) 55%, black);
+  font-family: var(--blysis-font-heading);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group > .aspect-card {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  aspect-ratio: auto;
+  border-radius: 4px;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group > .aspect-card > .absolute {
+  display: none;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group > div + div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2px 12px;
+  padding: 0;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group > div + div > :not(.mt-auto) {
+  grid-column: 1;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group h3 {
+  font-family: var(--blysis-font-heading);
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group h3 + p {
+  -webkit-line-clamp: 1;
+  font-size: 0.8125rem;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group .mt-auto {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  margin: 0;
+  padding: 0;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group .mt-auto span.text-lg {
+  font-size: 1.125rem;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) [data-product-more] {
+  display: none;
+}
+
+.qr-site [data-product-related] > .grid {
+  gap: 14px;
+}
+
+/* A product: the picture large on the ground, the box beside it a poster's card. */
+.qr-site [data-block="store.gallery"] .aspect-card {
+  border-radius: 6px;
+  background: radial-gradient(circle at 50% 45%,
+    color-mix(in srgb, var(--blysis-color-primary) 30%, var(--blysis-color-stage)) 0%,
+    color-mix(in srgb, var(--blysis-color-primary) 14%, var(--blysis-color-stage)) 60%);
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.qr-site [data-product-box] {
+  padding: 28px;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.qr-site [data-product-title] > p:not(.text-sm) {
+  font-family: var(--blysis-font-heading);
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.qr-site [data-product-box] span:is(.text-3xl, .text-xl).font-bold {
+  font-family: var(--blysis-font-heading);
+  font-weight: 900;
+}
+
+.qr-site [data-product-title] > .text-sm {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.qr-site :is([data-product-related], [data-block="blog.related"]) h2 {
+  font-size: 1.25rem;
+}
+
+/*
+ * An article: its sections in a narrow column on the left that follows the
+ * reader down, the words in a reading measure with no card around them, and
+ * the latest others on the right.
+ */
+@media (min-width: 64rem) {
+  .qr-site [data-layout-row="1-2-1"]:has([data-block="blog.article"]) {
+    grid-template-columns: 200px minmax(0, 1fr) 300px;
+    column-gap: 56px;
+  }
+
+  .qr-site [data-layout-row="1-2-1"]:has([data-block="blog.article"]) > [data-layout-cell] {
+    grid-column: auto;
+  }
+}
+
+.qr-site [data-layout-cell] > [data-layout-blocks]:has(> [data-block="blog.contents"]) {
+  position: sticky;
+  top: 24px;
+}
+
+.qr-site :is([data-block="blog.contents"], [data-block="blog.related"]) > div {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.qr-site [data-article-contents] > p {
+  font-family: var(--blysis-font-heading);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.qr-site [data-article-contents] a {
+  display: block;
+  padding: 8px 12px;
+  color: var(--blysis-color-mutedForeground);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--blysis-color-muted);
+}
+
+.qr-site [data-article-contents] a:hover {
+  color: var(--blysis-color-foreground);
+  box-shadow: inset 3px 0 0 var(--blysis-color-primary);
+}
+
+.qr-site [data-block="blog.article"] > article {
+  max-width: 700px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.qr-site [data-block="blog.article"] > article > div {
+  padding: 0;
+}
+
+.qr-site [data-article-body] .blysis-content {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+/* The article opens on a large first letter in the brand colour. */
+.qr-site [data-article-body] .blysis-content > p:first-child::first-letter {
+  float: left;
+  margin: 6px 10px 0 0;
+  color: var(--blysis-color-primary);
+  font-family: var(--blysis-font-heading);
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 0.9;
+}
+
+.qr-site [data-block="blog.related"] a:has(> div) {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+}
+
+.qr-site [data-block="blog.related"] a > div {
+  grid-row: 1 / span 2;
+  height: 54px;
+  margin: 0;
+  border-radius: 4px;
+}
+
+.qr-site [data-block="blog.related"] a > :is(h3, p) {
+  grid-column: 2;
+}
+
+.qr-site [data-block="blog.related"] h3 {
+  font-family: var(--blysis-font-body);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+/* A topic: each post's author in a darker column of their own. */
+.qr-site [data-post-card] {
+  overflow: hidden;
+  border: 0;
+  border-radius: 6px;
+}
+
+.qr-site [data-author-column] {
+  gap: 8px;
+  padding: 22px;
+  background: color-mix(in srgb, var(--blysis-color-background) 55%, var(--blysis-color-card));
+}
+
+.qr-site [data-author-column] > :first-child {
+  border-radius: 4px;
+}
+
+.qr-site [data-author-column] p.font-medium {
+  font-weight: 800;
+}
+
+/*
+ * A member's profile opens on a band of the theme's landscape, their picture
+ * standing on its lower edge with their name beside it, then their numbers
+ * in a row and the sections of what they have written.
+ */
+.qr-site [data-profile-band] {
+  position: relative;
+  isolation: isolate;
+  padding-top: 148px;
+}
+
+.qr-site [data-profile-band]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  height: 220px;
+  background:
+    linear-gradient(180deg, transparent 40%, var(--blysis-color-background) 100%),
+    var(--qr-cover) center / cover,
+    var(--blysis-color-stage);
+}
+
+.qr-site [data-profile-band] > div:first-child {
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.qr-site [data-profile-band] > div:first-child > :first-child {
+  min-width: 132px;
+  min-height: 132px;
+  border-radius: 6px;
+  box-shadow: 0 0 0 5px var(--blysis-color-background), 0 9px 0 5px var(--blysis-color-edge);
+}
+
+.qr-site [data-profile-band] > div:first-child > div {
+  padding-bottom: 8px;
+}
+
+.qr-site [data-profile-name] {
+  font-family: var(--blysis-font-heading);
+  font-size: clamp(1.875rem, 4vw, 2.375rem);
+  font-weight: 900;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.qr-site [data-profile-stats] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 40px;
+}
+
+.qr-site [data-profile-stats] .blysis-card {
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.qr-site [data-profile-stats] .blysis-card > div {
+  padding: 0;
+  text-align: left;
+}
+
+.qr-site [data-profile-stats] .blysis-card svg {
+  display: none;
+}
+
+.qr-site [data-profile-stats] .text-xl {
+  font-family: var(--blysis-font-heading);
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.qr-site [data-profile-stats] .text-xs {
+  font-size: 0.8125rem;
+}
+
+.qr-site [data-profile-stats] a:hover .text-xs {
+  color: var(--blysis-color-primary);
+}
+
+/* One row that scrolls on a phone rather than tabs stacked in two. */
+.qr-site [data-profile-tabs] {
+  flex-wrap: nowrap;
+  gap: 28px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.qr-site [data-profile-tabs] > * {
+  padding: 14px 2px;
+  font-family: var(--blysis-font-heading);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+/*
+ * A page that is not there: a wrong turn on a path, what happened on the
+ * left, and on the right a signpost of wooden boards pointing both ways,
+ * planted in the ground the page stands on.
+ */
+.qr-lost {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 56px;
+  /* From the bar to the footer, across the main column's padding. */
+  margin: -32px 0 -48px;
+  padding: 72px 0 150px;
+}
+
+.qr-lost::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  background: linear-gradient(180deg,
+    var(--blysis-color-background) 0%,
+    color-mix(in srgb, var(--blysis-color-primary) 8%, var(--blysis-color-background)) calc(100% - 110px),
+    color-mix(in srgb, var(--blysis-color-primary) 45%, var(--blysis-color-stage)) calc(100% - 110px),
+    color-mix(in srgb, var(--blysis-color-primary) 45%, var(--blysis-color-stage)) calc(100% - 94px),
+    color-mix(in srgb, var(--blysis-color-warning) 25%, var(--blysis-color-stage)) calc(100% - 94px));
+}
+
+.qr-lost-words {
+  display: flex;
+  flex: 1 1 420px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.qr-lost-code {
+  color: var(--blysis-color-muted);
+  font-family: var(--blysis-font-heading);
+  font-size: clamp(5rem, 12vw, 7.5rem);
+  font-weight: 900;
+  line-height: 0.9;
+  text-shadow: 0 6px 0 var(--blysis-color-edge);
+}
+
+.qr-lost-title {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.qr-lost-lede {
+  max-width: 440px;
+  color: var(--blysis-color-mutedForeground);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.qr-lost-search {
+  display: flex;
+  gap: 10px;
+  max-width: 440px;
+}
+
+.qr-lost-search .blysis-input,
+.qr-lost-search input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+}
+
+.qr-lost-search button {
+  min-height: 48px;
+}
+
+.qr-lost-post {
+  position: relative;
+  display: flex;
+  flex: 1 1 420px;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.qr-lost-pole {
+  position: absolute;
+  top: -20px;
+  bottom: -120px;
+  left: 50%;
+  width: 30px;
+  margin-left: -15px;
+  background: color-mix(in srgb, var(--blysis-color-warning) 30%, var(--blysis-color-stage));
+  box-shadow: inset -8px 0 0 color-mix(in srgb, var(--blysis-color-warning) 18%, var(--blysis-color-stage));
+}
+
+.qr-lost-board {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 58px;
+  padding: 0 26px;
+  background: color-mix(in srgb, var(--blysis-color-warning) 60%, var(--blysis-color-stage));
+  color: color-mix(in srgb, var(--blysis-color-warning) 12%, var(--blysis-color-stage));
+  font-family: var(--blysis-font-heading);
+  font-size: 1.25rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  box-shadow: inset 0 -8px 0 color-mix(in srgb, var(--blysis-color-warning) 42%, var(--blysis-color-stage));
+}
+
+.qr-lost-board:hover {
+  background: color-mix(in srgb, var(--blysis-color-warning) 72%, var(--blysis-color-stage));
+}
+
+.qr-lost-board[data-side="right"] {
+  align-self: flex-start;
+  margin-left: calc(50% - 12px);
+  padding-right: 48px;
+  clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 50%, calc(100% - 26px) 100%, 0 100%);
+}
+
+.qr-lost-board[data-side="left"] {
+  align-self: flex-end;
+  margin-right: calc(50% - 12px);
+  padding-left: 48px;
+  clip-path: polygon(26px 0, 100% 0, 100% 100%, 26px 100%, 0 50%);
+}
+
+/*
+ * On a phone there is no room for boards on both sides of the post: it
+ * stands at the left and every board points right from it.
+ */
+@media (max-width: 47.99rem) {
+  .qr-lost-post {
+    align-items: flex-start;
+  }
+
+  .qr-lost-pole {
+    left: 24px;
+  }
+
+  .qr-lost-board[data-side] {
+    align-self: flex-start;
+    height: 50px;
+    margin: 0 0 0 12px;
+    padding: 0 44px 0 22px;
+    font-size: 1.0625rem;
+    white-space: nowrap;
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%);
+  }
+}
+
+.qr-lost-board:focus-visible {
+  outline: 3px solid var(--blysis-color-foreground);
+  outline-offset: 3px;
+  clip-path: none;
 }
 
 /*

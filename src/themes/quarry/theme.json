@@ -3,7 +3,7 @@
   "id": "quarry",
   "name": "Quarry",
   "description": "Flat charcoal panels, chunky buttons that press down and heavy block capitals: a game-server look with the server's address one click from the homepage. Dark and light.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "Blysis",
   "modes": {
     "default": "dark",
@@ -484,12 +484,229 @@
         "leaderboard.LeaderboardWidget",
         "forum.LatestTopicsWidget"
       ]
+    },
+    "store.home": {
+      "header": "hidden",
+      "rows": [
+        {
+          "split": "full",
+          "cells": [
+            [
+              {
+                "key": "featured",
+                "block": "store.featured"
+              }
+            ]
+          ]
+        },
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "categories",
+                "block": "store.categories",
+                "settings": {
+                  "style": "chips"
+                }
+              },
+              {
+                "key": "shelves",
+                "block": "store.shelves",
+                "settings": {
+                  "limit": 3
+                }
+              }
+            ]
+          ]
+        }
+      ],
+      "hidden": [
+        "store.search"
+      ]
+    },
+    "store.shelf": {
+      "rows": [
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "categories",
+                "block": "store.categories"
+              },
+              {
+                "key": "subcategories",
+                "block": "store.subcategories"
+              },
+              {
+                "key": "products",
+                "block": "store.products"
+              }
+            ]
+          ]
+        }
+      ],
+      "hidden": [
+        "store.crumbs",
+        "store.search"
+      ]
+    },
+    "store.product": {
+      "header": "hidden",
+      "rows": [
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "crumbs",
+                "block": "store.crumbs"
+              }
+            ]
+          ]
+        },
+        {
+          "split": "2-1",
+          "cells": [
+            [
+              {
+                "key": "gallery",
+                "block": "store.gallery"
+              }
+            ],
+            [
+              {
+                "key": "buy",
+                "block": "store.buy",
+                "settings": {
+                  "title": true
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "split": "2-1",
+          "cells": [
+            [
+              {
+                "key": "details",
+                "block": "store.details"
+              }
+            ],
+            [
+              {
+                "key": "related",
+                "block": "store.related"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "blog.post": {
+      "rows": [
+        {
+          "split": "1-2-1",
+          "cells": [
+            [
+              {
+                "key": "contents",
+                "block": "blog.contents"
+              }
+            ],
+            [
+              {
+                "key": "article",
+                "block": "blog.article",
+                "settings": {
+                  "cover": false,
+                  "meta": false
+                }
+              }
+            ],
+            [
+              {
+                "key": "related",
+                "block": "blog.related"
+              }
+            ]
+          ]
+        }
+      ],
+      "hidden": [
+        "blog.share"
+      ]
+    },
+    "forum.topic": {
+      "rows": [
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "topic",
+                "block": "forum.topic",
+                "settings": {
+                  "posts": "columns"
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "member-profiles.profile": {
+      "header": "hidden",
+      "rows": [
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "band",
+                "block": "member-profiles.band",
+                "settings": {
+                  "name": true
+                }
+              },
+              {
+                "key": "tabs",
+                "block": "member-profiles.tabs"
+              }
+            ]
+          ]
+        },
+        {
+          "split": "2-1",
+          "cells": [
+            [
+              {
+                "key": "activity",
+                "block": "member-profiles.activity"
+              },
+              {
+                "key": "more",
+                "block": "member-profiles.more"
+              }
+            ],
+            [
+              {
+                "key": "accounts",
+                "block": "member-profiles.accounts"
+              }
+            ]
+          ]
+        }
+      ]
     }
   },
   "components": {
     "SiteShell": "components/SiteShell.tsx",
     "PageHeader": "components/PageHeader.tsx",
-    "AuthFrame": "components/AuthFrame.tsx"
+    "AuthFrame": "components/AuthFrame.tsx",
+    "NotFound": "components/NotFound.tsx"
   },
   "translations": {
     "en": {
