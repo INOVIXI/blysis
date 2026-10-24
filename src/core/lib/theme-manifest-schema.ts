@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { layoutDocumentSchema } from "./page-layout-schema";
 
 const HEX = /^#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
 const SAFE_ID = /^[a-z0-9][a-z0-9-]*$/;
@@ -153,6 +154,14 @@ export const themeManifestSchema = z.object({
     }).default({}),
 
     settings: z.record(z.string().regex(SAFE_KEY), settingsGroup).optional(),
+
+    /**
+     * How the theme arranges a page until the operator arranges it their
+     * way: blocks by id, in rows and cells. A block whose module is not
+     * installed is skipped, and one the document does not name goes to its
+     * `rest` cell.
+     */
+    layouts: z.object({ home: layoutDocumentSchema.optional() }).strict().optional(),
 
     components: z.record(
         z.string().regex(/^[A-Z][A-Za-z0-9]*$/),
