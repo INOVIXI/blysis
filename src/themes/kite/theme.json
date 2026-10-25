@@ -489,6 +489,11 @@
       ]
     },
     "store.home": {
+      "heading": {
+        "kicker": "kite.storeKicker",
+        "title": "kite.storeTitle",
+        "description": "kite.storeLede"
+      },
       "rows": [
         {
           "split": "1",
@@ -522,6 +527,9 @@
       ]
     },
     "store.shelf": {
+      "heading": {
+        "kicker": "kite.storeKicker"
+      },
       "rows": [
         {
           "split": "1",
@@ -627,6 +635,19 @@
       "hidden": [
         "blog.contents"
       ]
+    },
+    "store.cart": {
+      "heading": {
+        "kicker": "kite.storeKicker",
+        "title": "kite.cartTitle",
+        "description": "kite.cartLede"
+      }
+    },
+    "forum.board": {
+      "heading": {
+        "kicker": "kite.forumKicker",
+        "description": "kite.forumLede"
+      }
     },
     "forum.topic": {
       "rows": [
@@ -765,7 +786,24 @@
         "forumTitle": "What the forum is talking about",
         "authHeadline": "{servers.online|Lots of} people are playing right now.",
         "authKickerLogin": "Your island is waiting",
-        "authKickerRegister": "A new island"
+        "authKickerRegister": "A new island",
+        "storeKicker": "Shop",
+        "storeTitle": "Market day",
+        "storeLede": "Ranks, cosmetics and coins. In the game as soon as payment goes through.",
+        "forumKicker": "Community",
+        "forumLede": "Ask, show what you built, leave an idea. The rules are short: be kind, post in the right place.",
+        "cartTitle": "Your basket",
+        "cartLede": "What you picked is waiting here."
+      },
+      "store": {
+        "categories": "What are you after?"
+      },
+      "auth": {
+        "loginSubtitle": "Your island is just as you left it."
+      },
+      "notFound": {
+        "title": "This page's string snapped.",
+        "description": "The page you were after blew away on the wind, or never was. Check the address or carry on below."
       }
     },
     "tr": {
@@ -828,7 +866,24 @@
         "forumTitle": "Forumda neler konuşuluyor",
         "authHeadline": "Şu an {servers.online|birçok} kişi oyunda.",
         "authKickerLogin": "Adan seni bekliyor",
-        "authKickerRegister": "Yeni bir ada"
+        "authKickerRegister": "Yeni bir ada",
+        "storeKicker": "Mağaza",
+        "storeTitle": "Pazar yeri",
+        "storeLede": "Rütbe, kozmetik ve oyun parası. Ödeme biter bitmez oyunda.",
+        "forumKicker": "Topluluk",
+        "forumLede": "Soru sor, yapını göster, öneri bırak. Kurallar kısa: nazik ol, konuyu yerinde aç.",
+        "cartTitle": "Sepetin",
+        "cartLede": "Seçtiklerin burada seni bekliyor."
+      },
+      "store": {
+        "categories": "Ne arıyorsun?"
+      },
+      "auth": {
+        "loginSubtitle": "Adan seni bıraktığın gibi bekliyor."
+      },
+      "notFound": {
+        "title": "Bu sayfanın ipi kopmuş.",
+        "description": "Aradığın sayfa rüzgârla uçup gitmiş ya da hiç var olmamış. Adresi kontrol et veya aşağıdan devam et."
       }
     },
     "az": {
@@ -891,7 +946,24 @@
         "forumTitle": "Forumda nələr danışılır",
         "authHeadline": "Hazırda {servers.online|çoxlu} nəfər oyundadır.",
         "authKickerLogin": "Adan səni gözləyir",
-        "authKickerRegister": "Yeni bir ada"
+        "authKickerRegister": "Yeni bir ada",
+        "storeKicker": "Mağaza",
+        "storeTitle": "Bazar yeri",
+        "storeLede": "Rütbə, kosmetika və oyun pulu. Ödəniş bitən kimi oyunda.",
+        "forumKicker": "İcma",
+        "forumLede": "Sual ver, tikdiyini göstər, təklif yaz. Qaydalar qısadır: nəzakətli ol, mövzunu yerində aç.",
+        "cartTitle": "Səbətin",
+        "cartLede": "Seçdiklərin burada səni gözləyir."
+      },
+      "store": {
+        "categories": "Nə axtarırsan?"
+      },
+      "auth": {
+        "loginSubtitle": "Adan səni qoyduğun kimi gözləyir."
+      },
+      "notFound": {
+        "title": "Bu səhifənin ipi qırılıb.",
+        "description": "Axtardığın səhifə küləklə uçub gedib, ya da heç olmayıb. Ünvanı yoxla və ya aşağıdan davam et."
       }
     },
     "de": {
@@ -954,7 +1026,24 @@
         "forumTitle": "Worüber im Forum geredet wird",
         "authHeadline": "Gerade spielen {servers.online|viele} Leute.",
         "authKickerLogin": "Deine Insel wartet",
-        "authKickerRegister": "Eine neue Insel"
+        "authKickerRegister": "Eine neue Insel",
+        "storeKicker": "Shop",
+        "storeTitle": "Marktplatz",
+        "storeLede": "Ränge, Kosmetik und Spielgeld. Sobald die Zahlung durch ist, im Spiel.",
+        "forumKicker": "Community",
+        "forumLede": "Frag, zeig, was du gebaut hast, lass eine Idee da. Die Regeln sind kurz: sei freundlich, poste am richtigen Ort.",
+        "cartTitle": "Dein Warenkorb",
+        "cartLede": "Was du ausgesucht hast, wartet hier."
+      },
+      "store": {
+        "categories": "Was suchst du?"
+      },
+      "auth": {
+        "loginSubtitle": "Deine Insel wartet, wie du sie verlassen hast."
+      },
+      "notFound": {
+        "title": "Bei dieser Seite ist die Schnur gerissen.",
+        "description": "Die gesuchte Seite hat der Wind davongetragen, oder es gab sie nie. Prüf die Adresse oder mach unten weiter."
       }
     },
     "es": {
@@ -1017,7 +1106,24 @@
         "forumTitle": "De qué se habla en el foro",
         "authHeadline": "Ahora mismo juegan {servers.online|muchas} personas.",
         "authKickerLogin": "Tu isla te espera",
-        "authKickerRegister": "Una isla nueva"
+        "authKickerRegister": "Una isla nueva",
+        "storeKicker": "Tienda",
+        "storeTitle": "Mercado",
+        "storeLede": "Rangos, cosméticos y monedas. En el juego en cuanto se completa el pago.",
+        "forumKicker": "Comunidad",
+        "forumLede": "Pregunta, enseña lo que has construido, deja una idea. Las reglas son breves: sé amable y publica en su sitio.",
+        "cartTitle": "Tu carrito",
+        "cartLede": "Lo que elegiste te espera aquí."
+      },
+      "store": {
+        "categories": "¿Qué buscas?"
+      },
+      "auth": {
+        "loginSubtitle": "Tu isla te espera tal como la dejaste."
+      },
+      "notFound": {
+        "title": "A esta página se le rompió el hilo.",
+        "description": "La página que buscabas se la llevó el viento, o nunca existió. Revisa la dirección o sigue abajo."
       }
     },
     "et": {
@@ -1080,7 +1186,24 @@
         "forumTitle": "Millest foorumis räägitakse",
         "authHeadline": "Praegu mängib {servers.online|palju} inimesi.",
         "authKickerLogin": "Sinu saar ootab",
-        "authKickerRegister": "Uus saar"
+        "authKickerRegister": "Uus saar",
+        "storeKicker": "Pood",
+        "storeTitle": "Turuplats",
+        "storeLede": "Auastmed, kosmeetika ja mänguraha. Mängus kohe, kui makse on tehtud.",
+        "forumKicker": "Kogukond",
+        "forumLede": "Küsi, näita oma ehitist, jäta idee. Reeglid on lühikesed: ole sõbralik ja ava teema õiges kohas.",
+        "cartTitle": "Sinu ostukorv",
+        "cartLede": "Sinu valik ootab siin."
+      },
+      "store": {
+        "categories": "Mida otsid?"
+      },
+      "auth": {
+        "loginSubtitle": "Su saar ootab sind täpselt nii, nagu selle jätsid."
+      },
+      "notFound": {
+        "title": "Selle lehe nöör on katkenud.",
+        "description": "Otsitud lehe viis tuul minema või seda polnudki. Kontrolli aadressi või jätka allpool."
       }
     },
     "fr": {
@@ -1143,7 +1266,24 @@
         "forumTitle": "Ce dont parle le forum",
         "authHeadline": "{servers.online|Beaucoup de} joueurs sont en ligne en ce moment.",
         "authKickerLogin": "Ton île t'attend",
-        "authKickerRegister": "Une nouvelle île"
+        "authKickerRegister": "Une nouvelle île",
+        "storeKicker": "Boutique",
+        "storeTitle": "Place du marché",
+        "storeLede": "Rangs, cosmétiques et monnaie du jeu. En jeu dès que le paiement passe.",
+        "forumKicker": "Communauté",
+        "forumLede": "Pose une question, montre ta construction, laisse une idée. Les règles sont courtes : sois aimable, poste au bon endroit.",
+        "cartTitle": "Ton panier",
+        "cartLede": "Ce que tu as choisi t'attend ici."
+      },
+      "store": {
+        "categories": "Tu cherches quoi ?"
+      },
+      "auth": {
+        "loginSubtitle": "Ton île t'attend telle que tu l'as laissée."
+      },
+      "notFound": {
+        "title": "Le fil de cette page a cassé.",
+        "description": "La page que tu cherchais s'est envolée, ou n'a jamais existé. Vérifie l'adresse ou continue ci-dessous."
       }
     },
     "it": {
@@ -1206,7 +1346,24 @@
         "forumTitle": "Di cosa si parla nel forum",
         "authHeadline": "In questo momento giocano {servers.online|molte} persone.",
         "authKickerLogin": "La tua isola ti aspetta",
-        "authKickerRegister": "Una nuova isola"
+        "authKickerRegister": "Una nuova isola",
+        "storeKicker": "Negozio",
+        "storeTitle": "Mercato",
+        "storeLede": "Gradi, cosmetici e monete. Nel gioco appena il pagamento va a buon fine.",
+        "forumKicker": "Comunità",
+        "forumLede": "Chiedi, mostra cosa hai costruito, lascia un'idea. Le regole sono brevi: sii gentile, scrivi nel posto giusto.",
+        "cartTitle": "Il tuo carrello",
+        "cartLede": "Quello che hai scelto ti aspetta qui."
+      },
+      "store": {
+        "categories": "Cosa cerchi?"
+      },
+      "auth": {
+        "loginSubtitle": "La tua isola ti aspetta come l'hai lasciata."
+      },
+      "notFound": {
+        "title": "Il filo di questa pagina si è spezzato.",
+        "description": "La pagina che cercavi è volata via col vento, o non è mai esistita. Controlla l'indirizzo o continua qui sotto."
       }
     },
     "pl": {
@@ -1269,7 +1426,24 @@
         "forumTitle": "O czym mówi forum",
         "authHeadline": "Teraz gra {servers.online|wiele} osób.",
         "authKickerLogin": "Twoja wyspa czeka",
-        "authKickerRegister": "Nowa wyspa"
+        "authKickerRegister": "Nowa wyspa",
+        "storeKicker": "Sklep",
+        "storeTitle": "Targowisko",
+        "storeLede": "Rangi, kosmetyki i waluta gry. W grze, gdy tylko płatność przejdzie.",
+        "forumKicker": "Społeczność",
+        "forumLede": "Zapytaj, pokaż swoją budowlę, zostaw pomysł. Zasady są krótkie: bądź miły i pisz we właściwym miejscu.",
+        "cartTitle": "Twój koszyk",
+        "cartLede": "To, co wybrałeś, czeka tutaj."
+      },
+      "store": {
+        "categories": "Czego szukasz?"
+      },
+      "auth": {
+        "loginSubtitle": "Twoja wyspa czeka taka, jaką ją zostawiłeś."
+      },
+      "notFound": {
+        "title": "Tej stronie urwał się sznurek.",
+        "description": "Strona, której szukasz, odleciała z wiatrem albo nigdy nie istniała. Sprawdź adres lub przejdź dalej poniżej."
       }
     },
     "pt": {
@@ -1332,7 +1506,24 @@
         "forumTitle": "Do que o fórum está falando",
         "authHeadline": "Agora mesmo {servers.online|muitas} pessoas estão jogando.",
         "authKickerLogin": "Sua ilha está esperando",
-        "authKickerRegister": "Uma nova ilha"
+        "authKickerRegister": "Uma nova ilha",
+        "storeKicker": "Loja",
+        "storeTitle": "Mercado",
+        "storeLede": "Ranks, cosméticos e moedas. No jogo assim que o pagamento é concluído.",
+        "forumKicker": "Comunidade",
+        "forumLede": "Pergunte, mostre o que você construiu, deixe uma ideia. As regras são curtas: seja gentil e poste no lugar certo.",
+        "cartTitle": "Seu carrinho",
+        "cartLede": "O que você escolheu está esperando aqui."
+      },
+      "store": {
+        "categories": "O que você procura?"
+      },
+      "auth": {
+        "loginSubtitle": "Sua ilha espera do jeito que você deixou."
+      },
+      "notFound": {
+        "title": "O fio desta página se rompeu.",
+        "description": "A página que você procurava voou com o vento, ou nunca existiu. Confira o endereço ou continue abaixo."
       }
     },
     "ru": {
@@ -1395,7 +1586,24 @@
         "forumTitle": "О чём говорят на форуме",
         "authHeadline": "Сейчас играют {servers.online|многие}.",
         "authKickerLogin": "Твой остров ждёт",
-        "authKickerRegister": "Новый остров"
+        "authKickerRegister": "Новый остров",
+        "storeKicker": "Магазин",
+        "storeTitle": "Рыночная площадь",
+        "storeLede": "Ранги, косметика и игровая валюта. В игре сразу после оплаты.",
+        "forumKicker": "Сообщество",
+        "forumLede": "Спрашивай, показывай постройки, делись идеями. Правила короткие: будь вежлив и пиши в нужном разделе.",
+        "cartTitle": "Твоя корзина",
+        "cartLede": "Всё, что ты выбрал, ждёт здесь."
+      },
+      "store": {
+        "categories": "Что ищешь?"
+      },
+      "auth": {
+        "loginSubtitle": "Твой остров ждёт тебя таким, каким ты его оставил."
+      },
+      "notFound": {
+        "title": "У этой страницы оборвалась нить.",
+        "description": "Страницу, которую ты искал, унёс ветер, или её никогда не было. Проверь адрес или продолжи ниже."
       }
     },
     "zh": {
@@ -1458,7 +1666,24 @@
         "forumTitle": "论坛里在聊什么",
         "authHeadline": "此刻有 {servers.online|许多} 人在玩。",
         "authKickerLogin": "你的岛屿在等你",
-        "authKickerRegister": "一座新岛"
+        "authKickerRegister": "一座新岛",
+        "storeKicker": "商店",
+        "storeTitle": "集市",
+        "storeLede": "等级、外观和游戏币。付款完成即刻到账。",
+        "forumKicker": "社区",
+        "forumLede": "提问、展示你的建筑、留下建议。规则很简单：友善待人，在合适的版块发帖。",
+        "cartTitle": "你的购物车",
+        "cartLede": "你挑选的商品都在这里。"
+      },
+      "store": {
+        "categories": "你在找什么？"
+      },
+      "auth": {
+        "loginSubtitle": "你的岛屿一切如旧，等你回来。"
+      },
+      "notFound": {
+        "title": "这个页面的线断了。",
+        "description": "你要找的页面被风吹走了，或者从未存在。请检查地址，或在下方继续。"
       }
     }
   }

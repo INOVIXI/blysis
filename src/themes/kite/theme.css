@@ -1091,6 +1091,11 @@ html[data-mode="dark"] {
   overflow-wrap: anywhere;
 }
 
+.kt-page-kicker {
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
 .kt-page-lede {
   max-width: 660px;
   margin-top: 12px;
