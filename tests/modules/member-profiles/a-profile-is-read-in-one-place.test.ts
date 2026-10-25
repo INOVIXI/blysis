@@ -23,23 +23,17 @@ const prisma = {
             users.find((u) => u.username.toLowerCase() === where.username.equals.toLowerCase()) ?? null,
     },
     // A forum and a store are installed here; a blog and suggestions are not.
-    // Counted here, but never listed: which topics a visitor may see is the
-    // forum's to say, and it answers `profile.recentTopics`.
-    forumTopic: { count: async () => 2 },
+    forumTopic: {
+        count: async () => 2,
+        findMany: async () => [{ id: "t1", title: "Adada uçuş açılmıyor", slug: "adada-ucus", createdAt: new Date("2026-10-21T19:04:00Z") }],
+    },
     forumPost: { count: async () => 40 },
     order: { count: async () => 3 },
 };
 
 vi.mock("@/core/sdk/server", () => ({ prisma }));
-const asked = vi.hoisted(() => ({ hooks: [] as { hook: string; context: unknown }[] }));
-vi.mock("@/core/sdk", () => ({
-    applyFiltersAsync: async (hook: string, initial: unknown[], context: unknown) => {
-        asked.hooks.push({ hook, context });
-        return hook === "profile.recentTopics"
-            ? [{ id: "t1", title: "Adada uçuş açılmıyor", slug: "adada-ucus", createdAt: new Date("2026-10-21T19:04:00Z") }]
-            : initial;
-    },
-}));
+// No module narrows anything here; what one may narrow has a file of its own.
+vi.mock("@/core/sdk", () => ({ applyFiltersAsync: async (_hook: string, initial: unknown) => initial }));
 vi.mock("@/modules/member-profiles/lib/read-linked-accounts", () => ({
     readLinkedAccounts: async () => [{ provider: "minecraft", username: "Mavikaplan", avatar: null }],
 }));
@@ -65,11 +59,5 @@ describe("a member's profile", () => {
         expect(member?.role?.displayName).toBe("Elmas");
         expect(member?.recentTopics.map((t) => t.title)).toEqual(["Adada uçuş açılmıyor"]);
         expect(member?.linkedAccounts).toEqual([{ provider: "minecraft", username: "Mavikaplan", avatar: null }]);
-    });
-
-    it("asks the forum for the newest topics a visitor may open", async () => {
-        asked.hooks = [];
-        await readMember("Mavikaplan");
-        expect(asked.hooks).toContainEqual({ hook: "profile.recentTopics", context: { userId: "u1" } });
     });
 });

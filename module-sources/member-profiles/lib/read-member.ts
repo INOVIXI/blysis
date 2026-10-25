@@ -15,12 +15,23 @@
  * Each optional total is therefore counted on its own model, and a model that
  * is not there counts zero.
  */
-import { applyFiltersAsync } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
 import { readLinkedAccounts } from "./read-linked-accounts";
+import { strangerWhere } from "./stranger-where";
 
 interface CountDelegate {
     count(args: { where: Record<string, unknown> }): Promise<number>;
+}
+
+interface RecentTopic {
+    id: string;
+    title: string;
+    slug: string;
+    createdAt: Date;
+}
+
+interface TopicDelegate {
+    findMany(args: Record<string, unknown>): Promise<RecentTopic[]>;
 }
 
 /** One profile statistic, and the model that can answer it. */
@@ -37,20 +48,39 @@ const STATISTICS: ReadonlyArray<{ key: string; model: string; field: string }> =
  *
  * A statistic whose module is absent is left out entirely rather than reported
  * as zero: "0 topics" on a site with no forum is a wrong answer dressed as a
- * real one, and the page renders only the keys it is given.
+ * real one, and the page renders only the keys it is given. So is one a
+ * stranger may read none of. What is counted is what the list behind the
+ * count shows (`strangerWhere`); orders have no list and are counted whole.
  */
 async function countStatistics(userId: string): Promise<Record<string, number>> {
     const available = STATISTICS.filter(
         (s) => (prisma as unknown as Record<string, unknown>)[s.model] !== undefined,
     );
     const counts = await Promise.all(
-        available.map((s) =>
-            ((prisma as unknown as Record<string, CountDelegate>)[s.model]).count({
-                where: { [s.field]: userId },
-            }),
-        ),
+        available.map(async (s): Promise<[string, number] | null> => {
+            const narrowed = s.key === "orders" ? {} : await strangerWhere(s.key);
+            if (narrowed === null) return null;
+            const count = await (prisma as unknown as Record<string, CountDelegate>)[s.model].count({
+                where: { AND: [{ [s.field]: userId }, narrowed] },
+            });
+            return [s.key, count];
+        }),
     );
-    return Object.fromEntries(available.map((s, i) => [s.key, counts[i]]));
+    return Object.fromEntries(counts.filter((entry) => entry !== null));
+}
+
+/** The member's newest topics a stranger may open, where a forum is installed. */
+async function recentForumTopics(userId: string): Promise<RecentTopic[]> {
+    const delegate = (prisma as unknown as Record<string, unknown>).forumTopic;
+    if (!delegate) return [];
+    const narrowed = await strangerWhere("topics");
+    if (narrowed === null) return [];
+    return (delegate as TopicDelegate).findMany({
+        where: { AND: [{ authorId: userId }, narrowed] },
+        select: { id: true, title: true, slug: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+    });
 }
 
 /** The member by name, whatever its case, or null when nobody has it. */
@@ -74,10 +104,7 @@ export async function readMember(username: string) {
     // every one of these modules gets exactly the object it got before.
     const [counts, recentTopics, linkedAccounts] = await Promise.all([
         countStatistics(user.id),
-        // Asked for too: this read the table and listed a topic waiting for a
-        // moderator, or in a section only the staff may open, by its title.
-        // Which topics a visitor may see is the forum's rule to apply.
-        applyFiltersAsync("profile.recentTopics", [], { userId: user.id }),
+        recentForumTopics(user.id),
         // Asked for rather than read: the module that proved the account is
         // the only one that can say it is this member's, and this used to
         // publish whatever they had typed into a box. A picture still travels

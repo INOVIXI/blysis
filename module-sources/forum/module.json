@@ -2672,9 +2672,9 @@
       "handler": "hooks/leaderboard-board.ts"
     },
     {
-      "hook": "profile.recentTopics",
+      "hook": "profile.contentWhere",
       "type": "filter",
-      "handler": "hooks/profile-recent-topics.ts"
+      "handler": "hooks/profile-content-where.ts"
     }
   ],
   "blocks": [

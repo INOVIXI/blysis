@@ -2180,7 +2180,7 @@
         ],
         "listens": [
           "leaderboard.boards",
-          "profile.recentTopics"
+          "profile.contentWhere"
         ]
       },
       "stats": {
@@ -3435,7 +3435,7 @@
       "hooks": {
         "emits": [
           "profile.linkedAccounts",
-          "profile.recentTopics"
+          "profile.contentWhere"
         ],
         "listens": []
       },
