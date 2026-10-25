@@ -54,7 +54,7 @@ function Lead({ post }: { post: Article }) {
             <div className="flex flex-1 flex-col gap-2.5 p-5">
                 <p className="text-xs font-semibold text-muted-foreground">
                     {date ? <time data-news-date dateTime={new Date(date).toISOString()}>{formatDate(date)}</time> : null}
-                    {date ? " · " : null}
+                    {date ? <span data-news-separator aria-hidden="true"> · </span> : null}
                     {t("readingTime", { minutes: readingMinutes(post.content) })}
                 </p>
                 <h3 className="line-clamp-2 min-h-[3.5rem] text-xl font-bold leading-7 text-foreground">

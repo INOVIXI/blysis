@@ -98,6 +98,11 @@ describe("the news block", () => {
             ["October 24, 2026", "2026-10-24T10:00:00.000Z"],
             ["October 24, 2026", "2026-10-24T10:00:00.000Z"],
         ]);
+        // The dot between the lead's date and its reading time goes with the
+        // date, so a theme that sets the date elsewhere can take it away too.
+        const dot = dates[0].nextElementSibling;
+        expect(dot?.hasAttribute("data-news-separator")).toBe(true);
+        expect(dot?.getAttribute("aria-hidden")).toBe("true");
     });
 
     it("says its heading in the reader's language and links to every article", async () => {
