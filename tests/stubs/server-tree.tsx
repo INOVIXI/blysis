@@ -46,7 +46,7 @@ function drawArranged(module: string, manifest: Parameters<typeof pagesOf>[1], t
             {blocks[instance.block.entryId]?.({ settings: instance.settings, width: instance.width })}
         </div>
     ));
-    return <main><h1>{frame.title}</h1>{children}{drawn}</main>;
+    return <main><h1>{frame.title}</h1>{frame.description ? <p data-frame-description="">{frame.description}</p> : null}{children}{drawn}</main>;
 }
 
 export function arrangedPageStub(module: string, manifest: Parameters<typeof pagesOf>[1], themeLayouts: Record<string, LayoutDocument> = {}) {

@@ -86,7 +86,7 @@ export default async function StorePage({ searchParams }: PageProps) {
         return (
             <ArrangedPage
                 page="store.home"
-                frame={{ title: t("title") }}
+                frame={{ title: t("title"), description: t("subtitle") }}
                 blocks={{
                     search: () => <StoreSearch initial="" />,
                     categories: ({ settings }) => (settings.style === "chips"

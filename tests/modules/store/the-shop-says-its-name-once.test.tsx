@@ -65,6 +65,14 @@ describe("the shop says its name once", () => {
         expect(sections).toContain(MESSAGES.store.categories);
     });
 
+    // Every other page with a heading of its own says under it what the page
+    // is; the front of the shop said only its name.
+    it("says under its name what the shop is", async () => {
+        render(await serverTree(StorePage({})));
+        expect(MESSAGES.store.subtitle).toBeTruthy();
+        expect(document.querySelector("[data-frame-description]")?.textContent).toBe(MESSAGES.store.subtitle);
+    });
+
     it("shows a showcase and a taste of every shelf only where a theme asks for them", async () => {
         render(await serverTree(StorePage({})));
         const drawn = [...document.querySelectorAll("[data-block]")].map((b) => b.getAttribute("data-block"));
