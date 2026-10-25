@@ -192,7 +192,10 @@ export function PunishmentList({ initial, initialPages, scopes }: {
                         <Card><CardContent className="py-12 text-center text-muted-foreground">{t("noPunishments")}</CardContent></Card>
                     ) : (
                         <>
-                            <div className="overflow-x-auto">
+                            {/* Positioned, so the text read but not seen in the
+                                last column is placed in the box that scrolls
+                                and not against the page, which it widened. */}
+                            <div className="relative overflow-x-auto">
                                 <table className="w-full bg-card rounded-xl border border-border">
                                     <thead>
                                         <tr className="border-b">
