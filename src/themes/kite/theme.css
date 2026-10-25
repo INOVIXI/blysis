@@ -1092,10 +1092,10 @@ html[data-mode="dark"] {
 }
 
 .kt-page-lede {
-  max-width: 620px;
+  max-width: 660px;
   margin-top: 12px;
   color: color-mix(in srgb, var(--blysis-color-foreground) 80%, var(--blysis-color-mutedForeground));
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: 1.55;
 }
 
