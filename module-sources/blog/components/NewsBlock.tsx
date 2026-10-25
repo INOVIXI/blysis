@@ -53,7 +53,7 @@ function Lead({ post }: { post: Article }) {
             </div>
             <div className="flex flex-1 flex-col gap-2.5 p-5">
                 <p className="text-xs font-semibold text-muted-foreground">
-                    {date ? formatDate(date) : null}
+                    {date ? <time data-news-date dateTime={new Date(date).toISOString()}>{formatDate(date)}</time> : null}
                     {date ? " · " : null}
                     {t("readingTime", { minutes: readingMinutes(post.content) })}
                 </p>
@@ -81,7 +81,7 @@ function Row({ post }: { post: Article }) {
                 <h3 className="line-clamp-2 font-bold leading-6 text-foreground">
                     <Link href={href(post)} className="hover:text-primary">{post.title}</Link>
                 </h3>
-                {date ? <p className="text-xs text-muted-foreground">{formatDate(date)}</p> : null}
+                {date ? <p className="text-xs text-muted-foreground"><time data-news-date dateTime={new Date(date).toISOString()}>{formatDate(date)}</time></p> : null}
             </div>
         </article>
     );

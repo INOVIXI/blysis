@@ -24,7 +24,7 @@ const GRID = "grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-6";
 
 /** A card with the most a card shows, to draw the row's outline while waiting. */
 const OUTLINE: ServerCard = {
-    id: "outline", name: "x", queryable: true, online: true, players: { online: 0, max: 0 },
+    id: "outline", name: "x", queryable: true, online: true, players: { online: 0, max: 1 },
     address: "x", description: "x ".repeat(120), image: null,
 };
 
@@ -34,18 +34,23 @@ const OUTLINE: ServerCard = {
  * likes, so no fixed number is its height; an outline of the real thing is
  * right under every theme and at every width.
  */
-function Room({ children }: { children: ReactNode }) {
+function Room({ capacity, children }: { capacity: boolean; children: ReactNode }) {
     return (
         <div className="relative">
             <div aria-hidden="true" className="invisible">
-                <div className={GRID}><Card server={OUTLINE} onCopy={() => {}} /></div>
+                <div className={GRID}><Card server={OUTLINE} capacity={capacity} onCopy={() => {}} /></div>
             </div>
             <div className="absolute inset-0 flex flex-col">{children}</div>
         </div>
     );
 }
 
-function Card({ server, onCopy }: { server: ServerCard; onCopy: (address: string) => void }) {
+/** How much of a server's room is taken, to a tenth of a percent and never past full. */
+function filled(players: { online: number; max: number }): number {
+    return Math.round(Math.min(1, players.online / players.max) * 1000) / 10;
+}
+
+function Card({ server, capacity, onCopy }: { server: ServerCard; capacity: boolean; onCopy: (address: string) => void }) {
     const t = useTranslations("servers");
     return (
         <article data-server-card className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
@@ -67,6 +72,14 @@ function Card({ server, onCopy }: { server: ServerCard; onCopy: (address: string
             <div className="flex flex-1 flex-col gap-2 p-5">
                 <h3 className="truncate text-lg font-bold text-foreground">{server.name}</h3>
                 {server.description ? <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">{server.description}</p> : null}
+                {capacity && server.queryable && server.online && server.players.max > 0 ? (
+                    <div data-server-capacity className="flex flex-col gap-1.5 text-sm font-semibold text-muted-foreground">
+                        <span>{t("cards_capacity", { online: server.players.online, max: server.players.max })}</span>
+                        <span aria-hidden="true" className="block h-2 overflow-hidden rounded-full bg-muted">
+                            <span data-server-fill className="block h-full rounded-full bg-success" style={{ width: `${filled(server.players)}%` }} />
+                        </span>
+                    </div>
+                ) : null}
                 {server.address ? (
                     <Button
                         type="button"
@@ -91,7 +104,8 @@ function Card({ server, onCopy }: { server: ServerCard; onCopy: (address: string
  * works over the plain http a fresh install is served on.
  *
  * A site with no server draws nothing rather than an empty section, the way
- * the status widget always has.
+ * the status widget always has. With `capacity` each open server also says
+ * how much of its room is taken, for a theme whose cards have space for it.
  */
 export function ServerCards({ settings }: BlockProps) {
     const t = useTranslations("servers");
@@ -102,6 +116,7 @@ export function ServerCards({ settings }: BlockProps) {
     // with no server (an-empty-screen-says-which-empty).
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
+    const capacity = settings.capacity === true;
 
     useEffect(() => {
         let active = true;
@@ -124,10 +139,10 @@ export function ServerCards({ settings }: BlockProps) {
             {failed ? (
                 <LoadFailed onRetry={() => { setFailed(false); setReloadKey((k) => k + 1); }} />
             ) : servers === null ? (
-                <Room><Waiting label={commonT("loading")} /></Room>
+                <Room capacity={capacity}><Waiting label={commonT("loading")} /></Room>
             ) : (
                 <div className={GRID}>
-                    {servers.map((server) => <Card key={server.id} server={server} onCopy={copy} />)}
+                    {servers.map((server) => <Card key={server.id} server={server} capacity={capacity} onCopy={copy} />)}
                 </div>
             )}
         </div>

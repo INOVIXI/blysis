@@ -76,6 +76,26 @@ describe("the server cards", () => {
         await waitFor(() => expect(copied.values).toEqual(["survival.example.com"]));
     });
 
+    // A theme that wants the room on each server shown asks for it in its
+    // arrangement; every other theme's cards stay as they were.
+    it("say how full each open server is, when the arrangement asks", async () => {
+        answer.servers = [
+            server("Survival", { players: { online: 128, max: 500 } }),
+            server("Creative", { online: false }),
+        ];
+        const asked = draw(<ServerCards settings={{ capacity: true }} width="full" />);
+        await screen.findByRole("heading", { level: 3, name: "Survival" });
+        const lines = asked.container.querySelectorAll("[data-server-capacity]");
+        expect(lines).toHaveLength(1);
+        expect(lines[0].textContent).toBe(en.cards_capacity.replace("{online}", "128").replace("{max}", "500"));
+        expect((lines[0].querySelector("[data-server-fill]") as HTMLElement).style.width).toBe("25.6%");
+        asked.unmount();
+
+        const plain = draw(<ServerCards settings={{}} width="full" />);
+        await screen.findByRole("heading", { level: 3, name: "Survival" });
+        expect(plain.container.querySelector("[data-server-capacity]")).toBeNull();
+    });
+
     it("say a read that did not come back failed, and can ask again", async () => {
         answer.down = true;
         draw(<ServerCards settings={{}} width="full" />);

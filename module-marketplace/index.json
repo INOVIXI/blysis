@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-10-25",
-  "updatedAt": "2026-10-25T13:54:00Z",
+  "updatedAt": "2026-10-25T16:14:40Z",
   "modules": [
     {
       "id": "announcements",
@@ -365,13 +365,13 @@
           "description": "新闻与公告系统"
         }
       },
-      "version": "1.13.0",
+      "version": "1.13.1",
       "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-24T19:27:02Z",
+      "updatedAt": "2026-10-25T16:14:40Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -846,13 +846,13 @@
           "description": "以任何人都能阅读的表格，逐项对比多个对象"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Table",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-10-25T16:14:40Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -5420,13 +5420,13 @@
           "description": "游戏服务器管理、RCON 和状态监控"
         }
       },
-      "version": "1.10.0",
+      "version": "1.11.0",
       "coreVersion": "^5.27.0",
       "author": "Blysis",
       "icon": "Server",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-25T13:54:00Z",
+      "updatedAt": "2026-10-25T16:14:40Z",
       "screenshots": [],
       "tags": [
         "gaming"

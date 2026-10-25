@@ -88,6 +88,18 @@ describe("the news block", () => {
         expect(within(row).getByText("October 24, 2026")).toBeTruthy();
     });
 
+    // The date is a time of its own, apart from the reading time beside it,
+    // so a theme can set it on its own: Kite prints it on a postage stamp.
+    it("gives each article's date a time of its own", async () => {
+        draw({ variant: "featured" }, [1, 2].map(article));
+        await screen.findByRole("heading", { level: 3, name: "Headline 1" });
+        const dates = document.querySelectorAll("time[data-news-date]");
+        expect(Array.from(dates, (d) => [d.textContent, d.getAttribute("datetime")])).toEqual([
+            ["October 24, 2026", "2026-10-24T10:00:00.000Z"],
+            ["October 24, 2026", "2026-10-24T10:00:00.000Z"],
+        ]);
+    });
+
     it("says its heading in the reader's language and links to every article", async () => {
         draw({ variant: "featured", kicker: "sample.kicker", allLink: true }, [1].map(article));
         expect(await screen.findByText("Latest")).toBeTruthy();
