@@ -7,6 +7,13 @@ import { isEnabledIn } from "@/core/lib/module-enabled";
 import { readSettingValues } from "@/core/lib/setting-values";
 import { getActiveTheme } from "@/core/lib/theme-state";
 import { resolveLayout, resolvePageLayout, type ResolvedLayout, type ResolvedPageLayout } from "@/core/lib/page-layout";
+import type { LayoutDocument, PageArrangement } from "@/core/lib/page-layout-schema";
+
+/** The theme's homepage, which its manifest schema keeps arranged in rows. */
+function homeOf(layouts: Record<string, PageArrangement> | undefined): LayoutDocument | undefined {
+    const home = layouts?.home;
+    return home && "rows" in home ? home : undefined;
+}
 
 /**
  * The homepage's arrangement under the active theme, read on the server so it is in
@@ -25,7 +32,7 @@ export const loadHomeLayout = cache(async function loadHomeLayout(): Promise<Res
         readSettingValues(["widget_visibility", "widget_order"]).catch(() => ({})),
     ]);
     return resolveLayout({
-        themeLayout: theme.manifest.layouts?.home,
+        themeLayout: homeOf(theme.manifest.layouts),
         themeSettings: theme.settings,
         blocks: [...CORE_BLOCKS, ...ModuleBlocks],
         // Core's own blocks belong to no module, so nothing switches them off.

@@ -12,6 +12,12 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.28.0 - a theme speaks in its own voice. The active theme's strings speak
+ * over core's and every module's, under the site's own edits; a theme's
+ * arrangement for a page may give its heading words (`heading`: a label, a
+ * title and a line), and `PageHeaderProps` gains `kicker` and `pageName`,
+ * where the crumb trail ends when the title was worded. Additive.
+ *
  * 5.27.0 - site placeholders. A module declares `placeholders` in its
  * manifest, each a live public value under its id, `{servers.online}`, with a
  * handler that answers for every visitor. `@/core/sdk/theme` gains
@@ -697,4 +703,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.27.0";
+export const CORE_API_VERSION = "5.28.0";

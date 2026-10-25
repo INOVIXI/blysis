@@ -19,7 +19,7 @@ import path from "node:path";
 import { CORE_PAGES } from "@/core/lib/arrangeable-pages";
 import { blocksOf, pagesOf, type CatalogBlock, type ModulePage } from "@/core/lib/page-blocks";
 import { CORE_BLOCKS } from "@/core/lib/core-blocks";
-import { cellWidths, type LayoutDocument } from "@/core/lib/page-layout-schema";
+import { cellWidths, type LayoutDocument, type PageArrangement } from "@/core/lib/page-layout-schema";
 
 const ROOT = process.cwd();
 
@@ -35,12 +35,12 @@ const HOME = new Map([
 // Core's own pages beside every module's, as a theme may arrange either.
 const PAGES = new Map([...CORE_PAGES, ...MANIFESTS.flatMap(({ id, manifest }) => pagesOf(id, manifest))].map((p) => [p.id, p]));
 
-interface Arrangement { theme: string; page: string; layout: LayoutDocument }
+interface Arrangement { theme: string; page: string; layout: PageArrangement }
 
 const ARRANGEMENTS: Arrangement[] = fs.readdirSync(path.join(ROOT, "src/themes"))
     .map((id) => path.join(ROOT, "src/themes", id, "theme.json"))
     .filter((file) => fs.existsSync(file))
-    .flatMap((file) => Object.entries((JSON.parse(fs.readFileSync(file, "utf8")).layouts ?? {}) as Record<string, LayoutDocument>)
+    .flatMap((file) => Object.entries((JSON.parse(fs.readFileSync(file, "utf8")).layouts ?? {}) as Record<string, PageArrangement>)
         .map(([page, layout]) => ({ theme: path.basename(path.dirname(file)), page, layout })));
 
 function catalogFor(page: string, pages: Map<string, ModulePage>): Map<string, CatalogBlock> | null {
@@ -54,6 +54,8 @@ function problems({ theme, page, layout }: Arrangement, pages: Map<string, Modul
     if (!catalog) return [`${theme} arranges ${page}: nothing declares that page`];
     const where = page === "home" ? theme : `${theme} ${page}`;
     const found: string[] = [];
+    // Words for a page's heading place nothing; the page keeps its module's rows.
+    if (!("rows" in layout)) return found;
     layout.rows.forEach((row, r) => row.cells.forEach((cell, c) => cell.forEach((instance) => {
         const at = `${where} row ${r} cell ${c} ${instance.block}`;
         const block = catalog.get(instance.block);
@@ -82,6 +84,7 @@ describe("a theme's arrangement", () => {
         const results: LayoutDocument = { header: "hidden", rows: [{ split: "1", cells: [[{ key: "r", block: "core.results" }]] }] };
         expect(problems({ theme: "fixture", page: "core.search", layout: results })).toEqual([]);
         expect(problems({ theme: "fixture", page: "core.nowhere", layout: results })).toEqual(["fixture arranges core.nowhere: nothing declares that page"]);
+        expect(problems({ theme: "fixture", page: "core.nowhere", layout: { heading: { title: "Words" } } })).toEqual(["fixture arranges core.nowhere: nothing declares that page"]);
     });
 
     it("would say so if one did not", () => {

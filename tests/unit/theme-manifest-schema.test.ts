@@ -66,6 +66,13 @@ describe("themeManifestSchema v2", () => {
         expect(res.success).toBe(false);
     });
 
+    it("lets a module's page be given only words for its heading, and never the homepage", () => {
+        const words = { heading: { kicker: "kite.storeKicker", title: "Pazar yeri" } };
+        expect(themeManifestSchema.safeParse({ ...minimal, layouts: { "store.home": words } }).success).toBe(true);
+        expect(themeManifestSchema.safeParse({ ...minimal, layouts: { home: words } }).success).toBe(false);
+        expect(themeManifestSchema.safeParse({ ...minimal, layouts: { "store.home": { heading: { subtitle: "x" } } } }).success).toBe(false);
+    });
+
     it("accepts suggestedModules", () => {
         const res = themeManifestSchema.safeParse({
             ...minimal,

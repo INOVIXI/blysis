@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import type { CatalogBlock, ModulePage } from "@/core/lib/page-blocks";
-import type { LayoutDocument } from "@/core/lib/page-layout-schema";
+import type { PageArrangement } from "@/core/lib/page-layout-schema";
 
 vi.mock("@/core/lib/logger", () => ({ log: { warn: vi.fn(), info: vi.fn(), error: vi.fn() } }));
 
@@ -41,7 +41,7 @@ const PAGE: ModulePage = {
 
 const ids = (cell: { block: CatalogBlock }[]) => cell.map((i) => i.block.id);
 
-function resolve(themeLayout?: LayoutDocument, page: ModulePage = PAGE) {
+function resolve(themeLayout?: PageArrangement, page: ModulePage = PAGE) {
     return resolvePageLayout({ page, themeLayout });
 }
 
@@ -105,5 +105,18 @@ describe("a module's page", () => {
 
     it("lets a theme take the visible header away", () => {
         expect(resolve({ header: "hidden", rows: [{ split: "1", cells: [[{ key: "a", block: "m.article" }]] }] }).header).toBe("hidden");
+    });
+
+    it("carries the words a theme gives the page's heading, and none when it gives none", () => {
+        const heading = { kicker: "kite.storeKicker", title: "Pazar yeri", description: "kite.storeLede" };
+        expect(resolve({ heading, rows: [{ split: "1", cells: [[{ key: "a", block: "m.article" }]] }] }).heading).toEqual(heading);
+        expect(resolve().heading).toBeUndefined();
+    });
+
+    it("keeps the module's own arrangement when a theme only words the heading", () => {
+        const layout = resolve({ heading: { title: "Pazar yeri" } });
+        expect(layout.heading).toEqual({ title: "Pazar yeri" });
+        expect(layout.rows.map((row) => row.cells.map(ids))).toEqual(resolve().rows.map((row) => row.cells.map(ids)));
+        expect(layout.rows.flatMap((row) => row.cells.flat()).map((i) => i.block.id)).not.toContain("m.contents");
     });
 });

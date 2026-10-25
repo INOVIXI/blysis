@@ -8,7 +8,7 @@ export interface ArrangedPageProps {
     /** `<module>.<page>`, as the module's manifest declares the page. */
     page: string;
     /** What names the page, as `PageFrame` takes it. */
-    frame: Omit<PageFrameProps, "children" | "sidebar" | "header">;
+    frame: Omit<PageFrameProps, "children" | "sidebar" | "header" | "heading">;
     /**
      * How each block the manifest declares for the page is drawn, by its id
      * there. Called only for a block the arrangement places, with the
@@ -40,7 +40,7 @@ export async function ArrangedPage({ page, frame, blocks, children, sidebar = tr
     const layout = await loadPageLayout(page);
     if (!layout) log.error(`page "${page}" is not one any installed module declares, so none of its blocks is drawn`);
     return (
-        <PageFrame {...frame} header={layout?.header ?? "shown"}>
+        <PageFrame {...frame} header={layout?.header ?? "shown"} heading={layout?.heading}>
             {children}
             <PageRows rows={layout?.rows ?? []} draw={blocks} sidebar={sidebar} />
         </PageFrame>

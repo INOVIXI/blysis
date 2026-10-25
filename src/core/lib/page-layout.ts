@@ -1,6 +1,6 @@
 import { isWidgetVisible, orderWidgets } from "@/core/lib/homepage-widgets";
 import { sortBlocks, type CatalogBlock, type ModulePage } from "@/core/lib/page-blocks";
-import { cellWidths, themeSettingRef, type LayoutDocument, type RowSplit, type WidthClass } from "@/core/lib/page-layout-schema";
+import { cellWidths, themeSettingRef, type LayoutDocument, type PageArrangement, type PageHeading, type RowSplit, type WidthClass } from "@/core/lib/page-layout-schema";
 import { sanitizeSettingValue, settingDefault } from "@/core/lib/setting-field-value";
 
 /** One block as the page draws it: where it stands and what it was told. */
@@ -22,10 +22,11 @@ export interface ResolvedLayout {
     welcome: boolean;
 }
 
-/** A module's page as it is drawn, and whether its header band is. */
+/** A module's page as it is drawn, whether its header band is, and the words it is given. */
 export interface ResolvedPageLayout {
     rows: ResolvedRow[];
     header: "shown" | "hidden";
+    heading?: PageHeading;
 }
 
 interface ResolveInput {
@@ -140,16 +141,20 @@ export function resolveLayout(input: ResolveInput): ResolvedLayout {
  */
 export function resolvePageLayout(input: {
     page: ModulePage;
-    themeLayout: LayoutDocument | undefined;
+    themeLayout: PageArrangement | undefined;
     themeSettings?: Record<string, Record<string, unknown>>;
 }): ResolvedPageLayout {
     const usable = sortBlocks(input.page.blocks);
-    const doc = input.themeLayout ?? input.page.layout;
+    // A theme that only words the page leaves the arrangement to the module.
+    const theme = input.themeLayout;
+    const doc: LayoutDocument = theme && "rows" in theme
+        ? theme
+        : { ...input.page.layout, header: theme?.header ?? input.page.layout.header, heading: theme?.heading ?? input.page.layout.heading };
     const named = new Set(doc.rows.flatMap((row) => row.cells.flat().map((i) => i.block)));
     const hidden = new Set(doc.hidden ?? []);
     const unnamed = usable.filter((b) => !named.has(b.id) && !hidden.has(b.id));
     const rows = arrange({ doc, usable, unnamed, skip: () => false, themeSettings: input.themeSettings });
-    return { rows, header: doc.header ?? "shown" };
+    return { rows, header: doc.header ?? "shown", ...(doc.heading ? { heading: doc.heading } : {}) };
 }
 
 /**

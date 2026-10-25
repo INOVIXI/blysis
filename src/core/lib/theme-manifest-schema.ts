@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { layoutDocumentSchema, themeSettingRef } from "./page-layout-schema";
+import { pageArrangementSchema, themeSettingRef } from "./page-layout-schema";
 
 const HEX = /^#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
 const SAFE_ID = /^[a-z0-9][a-z0-9-]*$/;
@@ -166,8 +166,10 @@ export const themeManifestSchema = z.object({
      * under `home` for the homepage and `<module>.<page>` for a page a
      * module builds from blocks. A block whose module is not installed is
      * skipped, and one the document does not name goes to its `rest` cell.
+     * A module's page may instead be given only words for its heading, and
+     * keeps its module's arrangement; the homepage is always arranged.
      */
-    layouts: z.record(z.string().regex(/^(home|[a-z0-9-]+\.[a-z0-9-]+)$/), layoutDocumentSchema)
+    layouts: z.record(z.string().regex(/^(home|[a-z0-9-]+\.[a-z0-9-]+)$/), pageArrangementSchema)
         .refine((r) => Object.keys(r).length <= 40, "max 40 arranged pages")
         .optional(),
 
@@ -230,6 +232,10 @@ export const themeManifestSchema = z.object({
     // A setting its layout leaves to the operator is one of the theme's own,
     // or the operator would have nowhere to fill it in.
     for (const [page, layout] of Object.entries(theme.layouts ?? {})) {
+        if (!("rows" in layout)) {
+            if (page === "home") ctx.addIssue({ code: "custom", path: ["layouts", page], message: "the homepage is arranged in rows" });
+            continue;
+        }
         layout.rows.forEach((row, r) => row.cells.forEach((cell, c) => cell.forEach((instance, i) => {
             for (const [key, value] of Object.entries(instance.settings ?? {})) {
                 const ref = themeSettingRef(value);

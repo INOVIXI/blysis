@@ -83,17 +83,33 @@ const layoutRowSchema = z.object({
     rest: z.number().int().min(0).optional(),
 });
 
+/**
+ * Words for the band that names a page, drawn over the page's own: a small
+ * label over the title, a title and the line under it. Each is a message key
+ * or words as written, read the way a block's text setting is, so a theme
+ * words the page in every language. The crumb trail still ends on the page's
+ * own name. The homepage has no band and ignores it.
+ */
+const pageHeadingSchema = z.strictObject({
+    kicker: z.string().min(1).max(200).optional(),
+    title: z.string().min(1).max(200).optional(),
+    description: z.string().min(1).max(500).optional(),
+});
+
+/**
+ * Whether the band that names the page is drawn. A theme whose page opens on
+ * something that names it already, a product's own box or a showcase, hides
+ * it; the page's h1 is then read but not seen. The homepage has no such band
+ * and ignores it.
+ */
+const headerSchema = z.enum(["shown", "hidden"]);
+
 export const layoutDocumentSchema = z.object({
     rows: z.array(layoutRowSchema).max(LAYOUT_LIMITS.rows),
     /** Blocks the arrangement leaves off the page, so they are not added back. */
     hidden: z.array(z.string().max(130)).max(LAYOUT_LIMITS.hidden).optional(),
-    /**
-     * Whether the band that names the page is drawn. A theme whose page opens
-     * on something that names it already, a product's own box or a showcase,
-     * hides it; the page's h1 is then read but not seen. The homepage has no
-     * such band and ignores it.
-     */
-    header: z.enum(["shown", "hidden"]).optional(),
+    header: headerSchema.optional(),
+    heading: pageHeadingSchema.optional(),
 }).superRefine((doc, ctx) => {
     const keys = new Set<string>();
     let rests = 0;
@@ -113,6 +129,22 @@ export const layoutDocumentSchema = z.object({
     if (rests > 1) ctx.addIssue({ code: "custom", path: ["rows"], message: "only one row may take the blocks nobody placed" });
 });
 
+/**
+ * A theme that only words a module's page: its heading, and whether the band
+ * is drawn. The page keeps the arrangement its module declares, so a theme
+ * never copies rows that would go stale when the module changes them.
+ */
+const pageWordsSchema = z.strictObject({
+    header: headerSchema.optional(),
+    heading: pageHeadingSchema,
+});
+
+/** What a theme may say about one of its pages: a whole arrangement, or only its words. */
+export const pageArrangementSchema = z.union([layoutDocumentSchema, pageWordsSchema]);
+
 export type LayoutDocument = z.infer<typeof layoutDocumentSchema>;
+export type PageArrangement = z.infer<typeof pageArrangementSchema>;
+/** The words a theme gives a page's heading; see `pageHeadingSchema`. */
+export type PageHeading = z.infer<typeof pageHeadingSchema>;
 export type LayoutRow = LayoutDocument["rows"][number];
 export type BlockInstance = LayoutRow["cells"][number][number];

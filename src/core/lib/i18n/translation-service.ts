@@ -3,7 +3,8 @@
  *
  * Translations live in the `Translation` table. Core translations are seeded
  * from `messages-core/*.json`. Module translations are written on install and
- * deleted on uninstall. Admin overrides (`isCustom = true`) always win.
+ * deleted on uninstall. The active theme's rows speak over core and every
+ * module, and admin overrides (`isCustom = true`) always win.
  *
  * The merged message object is cached (Redis or in-memory) and invalidated
  * on module install/uninstall/enable/disable or admin edit.
@@ -95,15 +96,16 @@ export async function getMessages(locale: string): Promise<Record<string, unknow
         },
     });
 
-    // 3. Sort with explicit priority then merge: later writes win.
-    //    Priority (lowest first): core non-custom, module non-custom, any custom.
-    //    Plain alphabetical `module ASC` would put "blog" before "core" and
-    //    let blog overwrite core, which is the opposite of the intent.
+    // 3. Sort by voice, then merge: later writes win. Core, then the module
+    //    that ships a string, then the theme the site is wearing, then
+    //    anything the site edited, on whichever row it edited. The theme's
+    //    place used to come out of an alphabetical sort of module ids, which
+    //    let it word "store" and not "wiki", since "theme:" sorts between.
+    //    `a-theme-speaks-over-every-module-and-under-the-site` holds it.
     rows.sort((a, b) => {
         if (a.isCustom !== b.isCustom) return a.isCustom ? 1 : -1;
-        const aIsCore = a.module === "core";
-        const bIsCore = b.module === "core";
-        if (aIsCore !== bIsCore) return aIsCore ? -1 : 1;
+        const voice = voiceOf(a.module) - voiceOf(b.module);
+        if (voice !== 0) return voice;
         return a.module.localeCompare(b.module);
     });
 
@@ -224,6 +226,12 @@ export async function invalidateTranslationCache(): Promise<void> {
 // ---------------------------------------------------------------------------
 // Internals
 // ---------------------------------------------------------------------------
+
+/** Where a row's source speaks: core first, a module over it, a theme over both. */
+function voiceOf(source: string): number {
+    if (source === "core") return 0;
+    return source.startsWith("theme:") ? 2 : 1;
+}
 
 /**
  * The modules an admin has switched off.

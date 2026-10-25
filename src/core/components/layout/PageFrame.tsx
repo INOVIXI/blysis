@@ -3,6 +3,7 @@ import SidebarLayout from "@/core/components/layout/SidebarLayout";
 import { SiteShell } from "@/core/components/layout/SiteShell";
 import { PageHeader } from "@/core/components/layout/PageHeader";
 import type { Crumb } from "@/core/components/layout/PageBreadcrumb";
+import type { PageHeading } from "@/core/lib/page-layout-schema";
 
 export interface PageFrameProps {
     /** Names the page. Drawn as the only h1 and closing the crumb trail. */
@@ -24,6 +25,8 @@ export interface PageFrameProps {
      * read but not seen, so the page is never nameless.
      */
     header?: "shown" | "hidden";
+    /** Words the theme's arrangement gives the band; see `PageHeader`. */
+    heading?: PageHeading;
     children: React.ReactNode;
 }
 
@@ -48,13 +51,13 @@ export interface PageFrameProps {
  * Both kinds of page exist and both need the same frame. The shell and the
  * header it draws through are the two parts a theme may redraw.
  */
-export function PageFrame({ title, description, trail, actions, sidebar, picture, meta, header = "shown", children }: PageFrameProps) {
+export function PageFrame({ title, description, trail, actions, sidebar, picture, meta, header = "shown", heading, children }: PageFrameProps) {
     return (
         <SiteShell>
             {header === "hidden" ? (
                 <h1 className="sr-only">{title}</h1>
             ) : (
-                <PageHeader title={title} description={description} trail={trail} actions={actions} picture={picture} meta={meta} />
+                <PageHeader title={title} description={description} trail={trail} actions={actions} picture={picture} meta={meta} heading={heading} />
             )}
             {sidebar ? <SidebarLayout sidebar={sidebar}>{children}</SidebarLayout> : children}
         </SiteShell>

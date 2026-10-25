@@ -17,7 +17,7 @@ export type ArrangedClientPageProps = ArrangedPageProps;
 export function ArrangedClientPage({ page, frame, blocks, children, sidebar = true }: ArrangedClientPageProps) {
     const layout = usePageLayout(page);
     return (
-        <PageFrame {...frame} header={layout?.header ?? "shown"}>
+        <PageFrame {...frame} header={layout?.header ?? "shown"} heading={layout?.heading}>
             {children}
             <PageRows rows={layout?.rows ?? []} draw={blocks} sidebar={sidebar} />
         </PageFrame>
