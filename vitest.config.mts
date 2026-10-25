@@ -112,7 +112,7 @@ export default defineConfig({
             // installed, so `npm run test:coverage` failed on the missing
             // provider and CI ran `npm test` without it.
             thresholds: {
-                statements: 90,
+                statements: 91,
                 branches: 85,
                 functions: 91,
                 lines: 92,

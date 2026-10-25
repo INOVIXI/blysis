@@ -16,7 +16,7 @@
  * apart for the reason in its own comment.
  */
 import { headers } from "next/headers";
-import { isAdmin, moduleSettings, prisma } from "@/core/sdk/server";
+import { isAdmin, moduleSettings, prisma, textContains } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { accessToCategory, visibleCategoryIds } from "./visible-categories";
 import { mayViewForum } from "./guest-view";
@@ -217,7 +217,7 @@ export async function readTopicList(options: {
         : undefined;
     if (options.categorySlug && !chosen) return null;
     if (chosen) where.categoryId = chosen.id;
-    if (options.search) where.title = { contains: options.search, mode: "insensitive" };
+    if (options.search) where.OR = textContains(["title"], options.search);
     if (!readerIsAdmin) where.moderationState = "APPROVED";
 
     const narrowed = readable.everything

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { slugify } from "@/core/sdk";
-import { isAdmin, moduleSettings, pageParams, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { isAdmin, moduleSettings, pageParams, prisma, rateLimitForRole, readJsonBody, textContains } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { helpArticleSchema } from "../../../lib/validations";
 
@@ -35,10 +35,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-        where.OR = [
-            { title: { contains: search, mode: "insensitive" } },
-            { content: { contains: search, mode: "insensitive" } },
-        ];
+        where.OR = textContains(["title", "content"], search);
     }
 
     const articles = await prisma.helpArticle.findMany({
@@ -81,7 +78,7 @@ async function adminList(searchParams: URLSearchParams) {
     if (categoryId) where.categoryId = categoryId;
     if (search) {
         where.OR = [
-            { title: { contains: search, mode: "insensitive" } },
+            ...textContains(["title"], search),
             { slug: { contains: search, mode: "insensitive" } },
         ];
     }

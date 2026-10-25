@@ -31,3 +31,7 @@ A core migration never reads a module's table, because core cannot know which mo
 ## Going backwards
 
 Updates are additive and migrations forward-only, which is what makes going back to the previous release safe: the older image runs against the newer schema. A change that only works if the old code never runs again needs a release of its own that the old code tolerates first.
+
+## Searching text a person wrote
+
+Postgres keeps the Turkish dotless ı apart from i and lowers I and İ to the dotted i, so `ILIKE`, which is what Prisma's `contains` with `mode: "insensitive"` runs, never finds "Altın" for a reader who types "altin". A list's search box takes its `OR` from `textContains` in `src/core/lib/search-text.ts`, which asks for every spelling of each i typed. A search provider's full-text match uses `searchMatches` and `searchRank` from the same file, because Postgres uses an expression index only for the identical expression and `scripts/ensure-search-indexes.ts` builds the index from it. A name, an address, a code or a slug is matched as typed.

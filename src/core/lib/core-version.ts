@@ -17,7 +17,12 @@
  * manifest declares as `ArrangedPage` arranges a server page, from the active
  * theme's manifest the browser already holds. A block the page hands no way
  * to draw is not drawn, so a page that is still reading passes none and
- * stands as the page with only what it says while it waits. Additive.
+ * stands as the page with only what it says while it waits. `searchMatches`
+ * and `searchRank` join `@/core/sdk/server`: a search provider matches and
+ * orders through the document its declared index was built from, which folds
+ * the Turkish ı and İ, so "altin" and "ALTIN" find "Altın". `textContains`
+ * joins it too, for a list's search box: the `OR` that asks each field for
+ * every spelling of what was typed. Additive.
  *
  * 5.25.0 - a module may declare `pages`, each built from blocks with a
  * default arrangement, and draw one with `ArrangedPage` from

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { refuseSilenced, isRestrictedFrom } from "@/core/sdk/server";
+import { isRestrictedFrom, refuseSilenced, textContains } from "@/core/sdk/server";
 import { visibleCategoryIds } from "../../lib/visible-categories";
 import { generateSlug } from "@/core/sdk";
 import { pageParams, isAdmin, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     const where: Record<string, unknown> = {};
     if (categoryId) where.categoryId = categoryId;
-    if (search) where.title = { contains: search, mode: "insensitive" };
+    if (search) where.OR = textContains(["title"], search);
     if (!adminCheck) where.moderationState = "APPROVED";
 
     // Narrowed to what this reader may open. Without it a private section's

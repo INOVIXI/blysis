@@ -14,7 +14,7 @@
  * a filter rather than a check after the fact, and the hour of a weekly window
  * is applied in `hideShut` rather than in SQL.
  */
-import { moduleSettings, prisma, siteTimeZone } from "@/core/sdk/server";
+import { moduleSettings, prisma, siteTimeZone, textContains } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
 import { creditingPurchases } from "./upgrade-credit-server";
@@ -143,13 +143,10 @@ export async function readStoreProducts(options: {
         ...(options.categorySlug ? { category: { slug: options.categorySlug } } : {}),
         ...(options.featured ? { isFeatured: true } : {}),
         ...(options.exceptId ? { id: { not: options.exceptId } } : {}),
+        // Inside an AND: the shelf's own window is the top-level OR, and a
+        // search spread beside it replaced it.
         ...(options.search
-            ? {
-                OR: [
-                    { name: { contains: options.search, mode: "insensitive" as const } },
-                    { description: { contains: options.search, mode: "insensitive" as const } },
-                ],
-            }
+            ? { AND: [{ OR: textContains(["name", "description"], options.search) }] }
             : {}),
     };
 

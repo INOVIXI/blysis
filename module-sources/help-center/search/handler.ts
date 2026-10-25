@@ -1,4 +1,7 @@
-import { log, moduleSettings, prisma } from "@/core/sdk/server";
+import { log, moduleSettings, prisma, searchMatches, searchRank } from "@/core/sdk/server";
+
+/** The columns the manifest's search index is built over, in its order. */
+const COLUMNS = ["title", "content"];
 
 interface SearchResult {
     type: string;
@@ -36,12 +39,8 @@ export default async function search(q: string): Promise<SearchResult[]> {
             SELECT title, slug, content
             FROM "HelpArticle"
             WHERE "isActive" = true
-              AND to_tsvector('english', coalesce(title, '') || ' ' || coalesce(content, ''))
-                  @@ plainto_tsquery('english', ${q})
-            ORDER BY ts_rank(
-                to_tsvector('english', coalesce(title, '') || ' ' || coalesce(content, '')),
-                plainto_tsquery('english', ${q})
-            ) DESC
+              AND ${searchMatches(COLUMNS, q)}
+            ORDER BY ${searchRank(COLUMNS, q)} DESC
             LIMIT 5
         `;
         return rows.map((r) => ({

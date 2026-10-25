@@ -366,7 +366,7 @@
         }
       },
       "version": "1.13.0",
-      "coreVersion": "^5.25.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",

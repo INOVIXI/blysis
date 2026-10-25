@@ -1,5 +1,6 @@
 import { prisma } from "@/core/lib/db";
 import { ModuleSearchIndexes } from "@/core/generated/module-search";
+import { searchDocument } from "@/core/lib/search-text";
 
 /**
  * Idempotent creation of GIN tsvector indexes for module searchable tables.
@@ -15,25 +16,23 @@ import { ModuleSearchIndexes } from "@/core/generated/module-search";
  * Identifiers reach here from `module.json`, validated against
  * `^[A-Za-z][A-Za-z0-9_]*$` by the manifest schema before a module can be
  * installed. That is what makes the interpolation below safe; the expression
- * itself is built by core, so a module never supplies SQL.
+ * itself is built by core in `search-text.ts`, so a module never supplies SQL.
  */
-function ftsExpression(columns: string[]): string {
-    return `to_tsvector('english', ${columns
-        .map((c) => `coalesce("${c}", '')`)
-        .join(" || ' ' || ")})`;
-}
-
 async function ensureIndexes(): Promise<void> {
     for (const idx of ModuleSearchIndexes) {
         const table = `"${idx.table}"`;
-        const name = `"${idx.table}_fts_idx"`;
+        // Named for the folding document: an index on the expression before it
+        // folded ı and İ is one no search uses any more, and goes.
+        const name = `"${idx.table}_fts_fold_idx"`;
+        const before = `"${idx.table}_fts_idx"`;
         try {
             // A module can be installed but not yet migrated. Probe first so a
             // missing table is a skip rather than a failed CREATE INDEX.
             await prisma.$executeRawUnsafe(`SELECT 1 FROM ${table} LIMIT 1`);
             await prisma.$executeRawUnsafe(
-                `CREATE INDEX IF NOT EXISTS ${name} ON ${table} USING GIN (${ftsExpression(idx.columns)})`
+                `CREATE INDEX IF NOT EXISTS ${name} ON ${table} USING GIN (${searchDocument(idx.columns)})`
             );
+            await prisma.$executeRawUnsafe(`DROP INDEX IF EXISTS ${before}`);
             console.log(`[search-indexes] ensured ${name} for ${idx.module}`);
         } catch (err) {
             console.warn(
@@ -54,4 +53,4 @@ if (require.main === module) {
         });
 }
 
-export { ensureIndexes, ftsExpression };
+export { ensureIndexes };

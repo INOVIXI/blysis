@@ -29,18 +29,24 @@ const queryRaw = vi.fn(async () => [
     { title: "Secret roadmap discussion", slug: "secret-roadmap", content: "Internal only." },
 ]);
 
-vi.mock("@/core/sdk/server", () => ({
-    prisma: {
-        $queryRaw: (...args: unknown[]) => queryRaw(...(args as [])),
-        // Read before the query, to narrow it to the sections this reader may
-        // open. Empty here: this file is about the other visibility rule, and
-        // a site with no matrix hides nothing.
-        forumCategory: { findMany: async () => [] },
-        forumCategoryPermission: { findMany: async () => [] },
-    },
-    log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
-    moduleSettings: async () => ({ allowGuestView }),
-}));
+vi.mock("@/core/sdk/server", async () => {
+    // The real SQL, so a provider builds its query as it does on a site.
+    const { searchMatches, searchRank } = await import("@/core/lib/search-text");
+    return {
+        searchMatches,
+        searchRank,
+        prisma: {
+            $queryRaw: (...args: unknown[]) => queryRaw(...(args as [])),
+            // Read before the query, to narrow it to the sections this reader may
+            // open. Empty here: this file is about the other visibility rule, and
+            // a site with no matrix hides nothing.
+            forumCategory: { findMany: async () => [] },
+            forumCategoryPermission: { findMany: async () => [] },
+        },
+        log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
+        moduleSettings: async () => ({ allowGuestView }),
+    };
+});
 vi.mock("@/core/sdk/auth", () => ({
     auth: async () => (signedIn ? { user: { id: "u1" } } : null),
 }));

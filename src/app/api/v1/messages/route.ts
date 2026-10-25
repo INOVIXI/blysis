@@ -6,6 +6,7 @@ import { oneToOneConversationWhere } from "@/core/lib/conversations";
 import { rateLimitForRole } from "@/core/lib/rate-limit";
 import { readJsonBody } from "@/core/lib/api-body";
 import { pageParams } from "@/core/lib/page-params";
+import { textContains } from "@/core/lib/search-text";
 import { refuseSilenced } from "@/core/lib/write-guard";
 
 /**
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
             ? {
                   conversation: {
                       OR: [
-                          { title: { contains: term, mode: "insensitive" as const } },
+                          ...textContains(["title"], term),
                           {
                               participants: {
                                   some: {
@@ -47,7 +48,7 @@ export async function GET(request: NextRequest) {
                                   },
                               },
                           },
-                          { messages: { some: { body: { contains: term, mode: "insensitive" as const } } } },
+                          { messages: { some: { OR: textContains(["body"], term) } } },
                       ],
                   },
               }
