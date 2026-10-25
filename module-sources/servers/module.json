@@ -2,8 +2,8 @@
   "id": "servers",
   "name": "Game Servers",
   "description": "Game server management, RCON, and status monitoring",
-  "version": "1.9.0",
-  "coreVersion": "^5.0.0",
+  "version": "1.10.0",
+  "coreVersion": "^5.27.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Server",
@@ -77,6 +77,22 @@
       "defaultOrder": 5
     }
   ],
+  "placeholders": [
+    {
+      "name": "online",
+      "handler": "placeholders/online.ts",
+      "labelKey": "placeholder_servers_online",
+      "example": "214",
+      "maxAgeSeconds": 20
+    },
+    {
+      "name": "max",
+      "handler": "placeholders/max.ts",
+      "labelKey": "placeholder_servers_max",
+      "example": "500",
+      "maxAgeSeconds": 20
+    }
+  ],
   "translations": {
     "en": {
       "servers": {
@@ -143,7 +159,9 @@
         "navGroup_gaming": "Gaming",
         "module_servers_name": "Game Servers",
         "module_servers_description": "Game server management, RCON, and status monitoring",
-        "widget_serverStatus": "Server status"
+        "widget_serverStatus": "Server status",
+        "placeholder_servers_online": "Players online",
+        "placeholder_servers_max": "Player slots"
       }
     },
     "tr": {
@@ -211,7 +229,9 @@
         "navGroup_gaming": "Oyun",
         "module_servers_name": "Oyun Sunucuları",
         "module_servers_description": "Oyun sunucusu yönetimi, RCON ve durum izleme",
-        "widget_serverStatus": "Sunucu durumu"
+        "widget_serverStatus": "Sunucu durumu",
+        "placeholder_servers_online": "Çevrimiçi oyuncu sayısı",
+        "placeholder_servers_max": "Toplam oyuncu kapasitesi"
       }
     },
     "az": {
@@ -279,7 +299,9 @@
         "navGroup_gaming": "Oyunlar",
         "module_servers_name": "Oyun serverləri",
         "module_servers_description": "Oyun serveri idarəetməsi, RCON və status monitorinqi",
-        "widget_serverStatus": "Server vəziyyəti"
+        "widget_serverStatus": "Server vəziyyəti",
+        "placeholder_servers_online": "Onlayn oyunçular",
+        "placeholder_servers_max": "Oyunçu yerləri"
       }
     },
     "de": {
@@ -347,7 +369,9 @@
         "navGroup_gaming": "Gaming",
         "module_servers_name": "Spielserver",
         "module_servers_description": "Verwaltung von Spielservern, RCON und Statusüberwachung",
-        "widget_serverStatus": "Serverstatus"
+        "widget_serverStatus": "Serverstatus",
+        "placeholder_servers_online": "Spieler online",
+        "placeholder_servers_max": "Spielerplätze"
       }
     },
     "es": {
@@ -415,7 +439,9 @@
         "navGroup_gaming": "Juegos",
         "module_servers_name": "Servidores de juego",
         "module_servers_description": "Gestión de servidores de juego, RCON y supervisión del estado",
-        "widget_serverStatus": "Estado del servidor"
+        "widget_serverStatus": "Estado del servidor",
+        "placeholder_servers_online": "Jugadores en línea",
+        "placeholder_servers_max": "Plazas de jugadores"
       }
     },
     "et": {
@@ -483,7 +509,9 @@
         "navGroup_gaming": "Mängimine",
         "module_servers_name": "Mängaserverid",
         "module_servers_description": "Mänguserverite haldus, RCON ja staatuse jälgimine",
-        "widget_serverStatus": "Serveri olek"
+        "widget_serverStatus": "Serveri olek",
+        "placeholder_servers_online": "Mängijaid võrgus",
+        "placeholder_servers_max": "Mängijakohti"
       }
     },
     "fr": {
@@ -551,7 +579,9 @@
         "navGroup_gaming": "Jeux",
         "module_servers_name": "Serveurs de jeu",
         "module_servers_description": "Gestion des serveurs de jeu, RCON et suivi de l’état",
-        "widget_serverStatus": "État du serveur"
+        "widget_serverStatus": "État du serveur",
+        "placeholder_servers_online": "Joueurs en ligne",
+        "placeholder_servers_max": "Places de joueurs"
       }
     },
     "it": {
@@ -619,7 +649,9 @@
         "navGroup_gaming": "Gaming",
         "module_servers_name": "Server di gioco",
         "module_servers_description": "Gestione dei server di gioco, RCON e monitoraggio dello stato",
-        "widget_serverStatus": "Stato del server"
+        "widget_serverStatus": "Stato del server",
+        "placeholder_servers_online": "Giocatori online",
+        "placeholder_servers_max": "Posti giocatore"
       }
     },
     "pl": {
@@ -687,7 +719,9 @@
         "navGroup_gaming": "Gry",
         "module_servers_name": "Serwery gier",
         "module_servers_description": "Zarządzanie serwerami gier, RCON i monitorowanie statusu",
-        "widget_serverStatus": "Stan serwera"
+        "widget_serverStatus": "Stan serwera",
+        "placeholder_servers_online": "Gracze online",
+        "placeholder_servers_max": "Miejsca dla graczy"
       }
     },
     "pt": {
@@ -755,7 +789,9 @@
         "navGroup_gaming": "Jogos",
         "module_servers_name": "Servidores de jogos",
         "module_servers_description": "Gerenciamento de servidores de jogos, RCON e monitoramento de status",
-        "widget_serverStatus": "Status do servidor"
+        "widget_serverStatus": "Status do servidor",
+        "placeholder_servers_online": "Jogadores online",
+        "placeholder_servers_max": "Vagas de jogadores"
       }
     },
     "ru": {
@@ -823,7 +859,9 @@
         "navGroup_gaming": "Игры",
         "module_servers_name": "Игровые серверы",
         "module_servers_description": "Управление игровыми серверами, RCON и мониторинг статуса",
-        "widget_serverStatus": "Статус сервера"
+        "widget_serverStatus": "Статус сервера",
+        "placeholder_servers_online": "Игроков онлайн",
+        "placeholder_servers_max": "Мест для игроков"
       }
     },
     "zh": {
@@ -891,7 +929,9 @@
         "navGroup_gaming": "游戏",
         "module_servers_name": "游戏服务器",
         "module_servers_description": "游戏服务器管理、RCON 和状态监控",
-        "widget_serverStatus": "服务器状态"
+        "widget_serverStatus": "服务器状态",
+        "placeholder_servers_online": "在线玩家",
+        "placeholder_servers_max": "玩家容量"
       }
     }
   },

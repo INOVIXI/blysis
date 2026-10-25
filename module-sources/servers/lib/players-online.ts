@@ -22,3 +22,14 @@ export function playersOnline(servers: CountedServer[]): number | null {
 export function anyOnline(servers: CountedServer[]): boolean {
     return servers.some((s) => s.queryable && s.online);
 }
+
+/**
+ * The room on the servers that can be asked and answered, or null when none
+ * can be asked: the same servers `playersOnline` counts, so "128 of 500" adds
+ * up.
+ */
+export function playerSlots(servers: (CountedServer & { players: { max: number } })[]): number | null {
+    const asked = servers.filter((s) => s.queryable);
+    if (asked.length === 0) return null;
+    return asked.reduce((sum, s) => sum + (s.online ? s.players.max : 0), 0);
+}
