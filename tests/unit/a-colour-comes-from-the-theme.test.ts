@@ -31,7 +31,13 @@ import { stripComments } from "./source-text";
 
 const ROOT = join(__dirname, "..", "..");
 
-const TREES = ["src/app", "src/core", "module-sources"];
+/*
+ * The themes too. They were left out as the ones that choose colours, but a
+ * theme chooses them as tokens, which is what lets an operator and dark mode
+ * change them: Flat's hero drew a `bg-white text-slate-900` button that
+ * neither could reach.
+ */
+const TREES = ["src/app", "src/core", "src/themes", "module-sources"];
 
 /**
  * Codegen, not source.

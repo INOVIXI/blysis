@@ -21,6 +21,13 @@ import { ArrowRight } from "lucide-react";
  * is where modules that declare it expect to be: nothing else on the page
  * places that slot, and a contribution brings no margins of its own.
  */
+
+/**
+ * Laid over a background photo so the words on it can be read: the brand
+ * colour the words are drawn against everywhere else, in light mode and dark.
+ */
+const VEIL = "color-mix(in srgb, var(--blysis-color-primary) 75%, transparent)";
+
 export default function Hero() {
     const get = useThemeConfig();
     const pathname = usePathname();
@@ -37,15 +44,15 @@ export default function Hero() {
 
     const style: React.CSSProperties = bgImage
         ? {
-              backgroundImage: `linear-gradient(rgba(15,23,42,0.65), rgba(15,23,42,0.65)), url(${bgImage})`,
+              backgroundImage: `linear-gradient(${VEIL}, ${VEIL}), url(${bgImage})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
-              color: "#ffffff",
+              color: "var(--blysis-color-primaryForeground)",
           }
         : {
               background:
                   "linear-gradient(135deg, var(--blysis-color-primary) 0%, var(--blysis-color-accent) 100%)",
-              color: "#ffffff",
+              color: "var(--blysis-color-primaryForeground)",
           };
 
     return (
@@ -66,7 +73,7 @@ export default function Hero() {
                         <div className="mt-8">
                             <Link
                                 href={ctaHref}
-                                className="inline-flex items-center gap-2 rounded-md bg-white text-slate-900 px-6 py-2.5 font-medium shadow-sm hover:bg-slate-100 transition-colors"
+                                className="inline-flex items-center gap-2 rounded-md bg-primary-foreground text-primary px-6 py-2.5 font-medium shadow-sm hover:bg-primary-foreground/90 transition-colors"
                             >
                                 {ctaText}
                                 <ArrowRight className="w-4 h-4" />
