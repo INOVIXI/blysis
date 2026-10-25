@@ -19,11 +19,11 @@ import {
     UserCog,
     UserPlus,
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
 import { Card, CardContent } from "@/core/components/ui/card";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { localizeActivityTitle } from "@/core/lib/activity-title";
 import { userProfilePath } from "@/core/lib/user-profile-link";
+import { formatRelativeTime } from "@/core/lib/utils";
 
 type IconComponent = React.ComponentType<{ className?: string }>;
 
@@ -70,17 +70,19 @@ export interface ActivityItem {
  * arrives as a prop rather than from `useAllModules` because two of the three
  * callers are server components, where a context read is not available.
  */
-export function ActivityFeedList({ items, moduleStates, emptyMessage = "No recent activity yet." }: {
+export function ActivityFeedList({ items, moduleStates, emptyMessage }: {
     items: ActivityItem[];
     moduleStates: Record<string, boolean>;
     emptyMessage?: string;
 }) {
     const activityT = useTranslations("activity");
+    const profileT = useTranslations("profile");
+    const locale = useLocale();
     if (items.length === 0) {
         return (
             <Card>
                 <CardContent className="py-12 text-center text-muted-foreground text-sm">
-                    {emptyMessage}
+                    {emptyMessage ?? profileT("noRecentActivity")}
                 </CardContent>
             </Card>
         );
@@ -90,7 +92,7 @@ export function ActivityFeedList({ items, moduleStates, emptyMessage = "No recen
         <div className="space-y-2">
             {items.map((item) => {
                 const Icon = getActivityIcon(item.icon);
-                const when = formatDistanceToNow(new Date(item.createdAt), { addSuffix: true });
+                const when = formatRelativeTime(item.createdAt, locale);
                 const profilePath = userProfilePath(item.actor?.username, moduleStates);
                 return (
                     <Card key={item.id} className="hover:border-primary/50 transition-colors">
