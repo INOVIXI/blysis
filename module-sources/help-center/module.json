@@ -2,8 +2,8 @@
   "id": "help-center",
   "name": "Help Center",
   "description": "Knowledge base with categories and searchable articles",
-  "version": "1.9.1",
-  "coreVersion": "^5.0.0",
+  "version": "1.10.0",
+  "coreVersion": "^5.26.0",
   "category": "management",
   "author": "Blysis Team",
   "icon": "HelpCircle",
@@ -1738,6 +1738,125 @@
     {
       "action": "help_category.delete",
       "nameKey": "auditHelpCategoryDelete"
+    }
+  ],
+  "pages": [
+    {
+      "id": "home",
+      "blocks": [
+        {
+          "id": "search",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "browse",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "search",
+                  "block": "help-center.search"
+                },
+                {
+                  "key": "browse",
+                  "block": "help-center.browse"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "category",
+      "blocks": [
+        {
+          "id": "articles",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "articles",
+                  "block": "help-center.articles"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "article",
+      "blocks": [
+        {
+          "id": "article",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "contact",
+          "widths": [
+            "wide",
+            "narrow",
+            "full"
+          ]
+        },
+        {
+          "id": "neighbours",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "article",
+                  "block": "help-center.article"
+                },
+                {
+                  "key": "contact",
+                  "block": "help-center.contact"
+                }
+              ],
+              [
+                {
+                  "key": "neighbours",
+                  "block": "help-center.neighbours"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

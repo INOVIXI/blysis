@@ -2,8 +2,8 @@
   "id": "manual-payment-gateway",
   "name": "Pay by Hand",
   "description": "Take a payment nobody processes: a bank transfer, cash at the counter, an invoice settled later. The order waits unpaid until an operator confirms the money arrived.",
-  "version": "1.4.0",
-  "coreVersion": "^5.0.0",
+  "version": "1.5.0",
+  "coreVersion": "^5.26.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Landmark",
@@ -409,6 +409,36 @@
     {
       "name": "manual-payment-gateway.manage",
       "labelKey": "manualPaymentGateway.perm_manage"
+    }
+  ],
+  "pages": [
+    {
+      "id": "instructions",
+      "blocks": [
+        {
+          "id": "instructions",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "instructions",
+                  "block": "manual-payment-gateway.instructions"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

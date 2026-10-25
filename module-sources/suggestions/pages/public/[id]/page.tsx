@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/core/sdk/navigation";
 import { Button, Card, CardContent, LoadFailed, RichContent, Textarea, useConfirm, useLocalDate } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { writeError } from "@/core/sdk";
 import { toast } from "sonner";
 import { Loader2, MessageSquare, ThumbsUp, Trash2 } from "lucide-react";
@@ -145,55 +145,38 @@ export default function SuggestionPage({ params }: { params: Promise<{ id: strin
         setSuggestion((prev) => (prev ? { ...prev, upvotes: data.upvotes ?? prev.upvotes } : prev));
     };
 
+    const waiting = loading ? (
+        <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
+    ) : failed ? (
+        <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
+    ) : !suggestion ? (
+        <Card><CardContent className="py-12 text-center space-y-3">
+            <p className="text-muted-foreground">{t("notFound")}</p>
+            <Link href="/suggestions" className="text-sm text-primary hover:underline">{t("backToBoard")}</Link>
+        </CardContent></Card>
+    ) : null;
+
+    if (waiting || !suggestion) {
+        return (
+            <ArrangedClientPage page="suggestions.suggestion" frame={{ title: suggestion?.title ?? t("title"), trail: [{ label: t("title"), href: "/suggestions" }] }} blocks={{}}>
+                {waiting}
+            </ArrangedClientPage>
+        );
+    }
+
     return (
-        <PageFrame
-            title={suggestion?.title ?? t("title")}
-            trail={[{ label: t("title"), href: "/suggestions" }]}
-            sidebar={suggestion ? (
-                <div className="bg-card rounded-xl border border-border p-5 space-y-4">
-                    <div>
-                        <p className="text-sm text-muted-foreground">{t("status")}</p>
-                        <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded ${badgeClass(suggestion.status)}`}>
-                            {statusLabel(t, suggestion.status)}
-                        </span>
-                    </div>
-                    <div>
-                        <p className="text-sm text-muted-foreground">{t("votes")}</p>
-                        <p className="text-2xl font-bold text-foreground">{suggestion.upvotes}</p>
-                    </div>
-                    {session?.user && (
-                        <Button
-                            variant={voted ? "default" : "outline"}
-                            aria-pressed={voted}
-                            className="w-full"
-                            onClick={vote}
-                        >
-                            <ThumbsUp className="w-4 h-4" /> {voted ? t("removeVote") : t("upvote")}
-                        </Button>
-                    )}
-                    <p className="text-xs text-muted-foreground">
-                        {t("submittedBy")} {suggestion.author?.username ?? t("deletedUser")} · {formatLocalDate(suggestion.createdAt)}
-                    </p>
-                </div>
-            ) : null}
-        >
-            {loading ? (
-                <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
-            ) : failed ? (
-                <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
-            ) : !suggestion ? (
-                <Card><CardContent className="py-12 text-center space-y-3">
-                    <p className="text-muted-foreground">{t("notFound")}</p>
-                    <Link href="/suggestions" className="text-sm text-primary hover:underline">{t("backToBoard")}</Link>
-                </CardContent></Card>
-            ) : (
-                <div className="space-y-6">
+        <ArrangedClientPage
+            page="suggestions.suggestion"
+            frame={{ title: suggestion.title, trail: [{ label: t("title"), href: "/suggestions" }] }}
+            blocks={{
+                body: () => (
                     <Card>
                         <CardContent className="p-6">
                             <RichContent markdown={suggestion.content} keepLineBreaks />
                         </CardContent>
                     </Card>
-
+                ),
+                discussion: () => (
                     <section aria-labelledby="discussion">
                         <h2 id="discussion" className="text-xl font-bold text-foreground mb-4">
                             {t("discussion", { count: comments.length })}
@@ -270,8 +253,35 @@ export default function SuggestionPage({ params }: { params: Promise<{ id: strin
                             </CardContent>
                         </Card>
                     </section>
-                </div>
-            )}
-        </PageFrame>
+                ),
+                summary: () => (
+                    <div className="bg-card rounded-xl border border-border p-5 space-y-4">
+                        <div>
+                            <p className="text-sm text-muted-foreground">{t("status")}</p>
+                            <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded ${badgeClass(suggestion.status)}`}>
+                                {statusLabel(t, suggestion.status)}
+                            </span>
+                        </div>
+                        <div>
+                            <p className="text-sm text-muted-foreground">{t("votes")}</p>
+                            <p className="text-2xl font-bold text-foreground">{suggestion.upvotes}</p>
+                        </div>
+                        {session?.user && (
+                            <Button
+                                variant={voted ? "default" : "outline"}
+                                aria-pressed={voted}
+                                className="w-full"
+                                onClick={vote}
+                            >
+                                <ThumbsUp className="w-4 h-4" /> {voted ? t("removeVote") : t("upvote")}
+                            </Button>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                            {t("submittedBy")} {suggestion.author?.username ?? t("deletedUser")} · {formatLocalDate(suggestion.createdAt)}
+                        </p>
+                    </div>
+                ),
+            }}
+        />
     );
 }

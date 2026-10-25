@@ -2,8 +2,8 @@
   "id": "wheel",
   "name": "Wheel of Fortune",
   "description": "Spin-to-win game with configurable prizes and cooldowns",
-  "version": "1.10.1",
-  "coreVersion": "^5.21.0",
+  "version": "1.11.0",
+  "coreVersion": "^5.26.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Dices",
@@ -1342,6 +1342,59 @@
           "key": "prizeWon"
         }
       ]
+    }
+  ],
+  "pages": [
+    {
+      "id": "wheel",
+      "blocks": [
+        {
+          "id": "wheel",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "facts",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        },
+        {
+          "id": "prizes",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "wheel",
+                  "block": "wheel.wheel"
+                }
+              ],
+              [
+                {
+                  "key": "facts",
+                  "block": "wheel.facts"
+                },
+                {
+                  "key": "prizes",
+                  "block": "wheel.prizes"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

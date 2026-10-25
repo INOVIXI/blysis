@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { Link, useRouter } from "@/core/sdk/navigation";
 import { Button, Card, CardContent, Input, LoadFailed, NativeSelect, Pagination, Textarea, usePagedRows } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { stripHtmlTags } from "@/core/sdk";
 import { useLocalDate } from "@/core/sdk/ui";
 import { toast } from "sonner";
@@ -147,107 +147,114 @@ export function SuggestionBoard({ initial }: { initial: { id: string }[] }) {
         }
     };
 
+    const actions = session?.user ? (
+        <Button onClick={() => setShowForm(!showForm)}>
+            {showForm ? <><X className="w-4 h-4" /> {commonT("cancel")}</> : <><Plus className="w-4 h-4" /> {t("newSuggestion")}</>}
+        </Button>
+    ) : null;
+
     return (
-        <PageFrame
-            title={t("title")}
-            description={t("description")}
-            actions={session?.user ? (
-                <Button onClick={() => setShowForm(!showForm)}>
-                    {showForm ? <><X className="w-4 h-4" /> {commonT("cancel")}</> : <><Plus className="w-4 h-4" /> {t("newSuggestion")}</>}
-                </Button>
-            ) : null}
-        >
-            {showForm && (
-                <Card className="mb-6">
-                    <CardContent className="p-5">
-                        <form onSubmit={handleSubmit} className="space-y-3">
-                            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("suggestionTitlePlaceholder")} aria-label={t("suggestionTitlePlaceholder")} required minLength={3} maxLength={200} />
-                            <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder={t("suggestionDescriptionPlaceholder")} aria-label={t("suggestionDescriptionPlaceholder")} rows={4} required minLength={10} maxLength={5000} />
-                            <div className="flex items-center justify-between gap-3 pt-1">
-                                <NativeSelect
-                                    value={visibility}
-                                    onChange={(e) => setVisibility(e.target.value)}
-                                    aria-label={t("visibility")}
-                                >
-                                    <option value="public">{t("open")}</option>
-                                    <option value="private">{t("other")}</option>
-                                </NativeSelect>
-                                <Button type="submit" disabled={saving}>
-                                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                                    {t("submitSuggestion")}
-                                </Button>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card>
-            )}
-
-            {/* Filters */}
-            {/* One row, one height. The sort control used to be pushed to
-                the far edge by ml-auto, which on a wrapped row left it alone
-                on a line of its own. */}
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-                {["", ...SUGGESTION_STATUSES].map((s) => (
-                    <Button key={s} variant={filter === s ? "default" : "outline"} onClick={() => setFilter(s)}>
-                        {s === "" ? t("status") : t(s)}
-                    </Button>
-                ))}
-                <Button variant="outline" onClick={() => setSort(sort === "newest" ? "popular" : "newest")}>
-                    {t("sortBy")}: {sort === "newest" ? t("newest") : t("mostVoted")}
-                </Button>
-            </div>
-
-            {loading ? (
-                <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
-            ) : failed ? (
-                <LoadFailed onRetry={fetchSuggestions} />
-            ) : suggestions.length === 0 ? (
-                <Card><CardContent className="py-12 text-center">
-                    <MessageSquare className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground">{t("noSuggestions")}</p>
-                </CardContent></Card>
-            ) : (
-                <div className="space-y-3">
-                    {paged.rows.map((s) => (
-                        <Card key={s.id}>
-                            <CardContent className="p-4">
-                                <div className="flex gap-4">
-                                    <button
-                                        onClick={() => toggleVote(s.id)}
-                                        aria-label={!session?.user ? t("loginToVote") : s.voted ? t("removeVote") : t("upvote")}
-                                        aria-pressed={session?.user ? s.voted : undefined}
-                                        className={`flex flex-col items-center justify-center px-3 py-2 rounded-lg transition-colors min-w-[60px] cursor-pointer ${
-                                            s.voted ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground hover:bg-primary/20 hover:text-primary"
-                                        }`}
-                                    >
-                                        <ThumbsUp className={`w-4 h-4 ${s.voted ? "fill-primary" : ""}`} />
-                                        <span className="text-sm font-bold mt-0.5">{s.upvotes}</span>
-                                    </button>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <h2 className="font-medium text-foreground">
-                                                <Link href={`/suggestions/${s.id}`} className="hover:text-primary transition-colors">
-                                                    {s.title}
-                                                </Link>
-                                            </h2>
-                                            <span className={`text-xs px-2 py-0.5 rounded ${badgeClass(s.status)}`}>
-                                                {statusLabel(t, s.status)}
-                                            </span>
-                                        </div>
-                                        <p className="text-sm text-muted-foreground line-clamp-2">{plainText(s.content)}</p>
-                                        <p className="text-xs text-muted-foreground mt-2">
-                                            {t("submittedBy")} {s.author?.username ?? t("deletedUser")} · {formatLocalDate(s.createdAt)}
-                                        </p>
+        <ArrangedClientPage
+            page="suggestions.board"
+            frame={{ title: t("title"), description: t("description"), actions }}
+            blocks={{
+                form: () => (
+                    showForm ? (
+                        <Card>
+                            <CardContent className="p-5">
+                                <form onSubmit={handleSubmit} className="space-y-3">
+                                    <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("suggestionTitlePlaceholder")} aria-label={t("suggestionTitlePlaceholder")} required minLength={3} maxLength={200} />
+                                    <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder={t("suggestionDescriptionPlaceholder")} aria-label={t("suggestionDescriptionPlaceholder")} rows={4} required minLength={10} maxLength={5000} />
+                                    <div className="flex items-center justify-between gap-3 pt-1">
+                                        <NativeSelect
+                                            value={visibility}
+                                            onChange={(e) => setVisibility(e.target.value)}
+                                            aria-label={t("visibility")}
+                                        >
+                                            <option value="public">{t("open")}</option>
+                                            <option value="private">{t("other")}</option>
+                                        </NativeSelect>
+                                        <Button type="submit" disabled={saving}>
+                                            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                                            {t("submitSuggestion")}
+                                        </Button>
                                     </div>
-                                </div>
+                                </form>
                             </CardContent>
                         </Card>
-                    ))}
-                    {paged.pages > 1 && (
-                        <Pagination page={paged.page} pages={paged.pages} total={paged.total} onPageChange={paged.setPage} />
-                    )}
-                </div>
-            )}
-        </PageFrame>
+                    ) : null
+                ),
+                list: () => (
+                    <>
+                        {/* Filters */}
+                        {/* One row, one height. The sort control used to be pushed to
+                            the far edge by ml-auto, which on a wrapped row left it alone
+                            on a line of its own. */}
+                        <div className="flex flex-wrap items-center gap-2 mb-4">
+                            {["", ...SUGGESTION_STATUSES].map((s) => (
+                                <Button key={s} variant={filter === s ? "default" : "outline"} onClick={() => setFilter(s)}>
+                                    {s === "" ? t("status") : t(s)}
+                                </Button>
+                            ))}
+                            <Button variant="outline" onClick={() => setSort(sort === "newest" ? "popular" : "newest")}>
+                                {t("sortBy")}: {sort === "newest" ? t("newest") : t("mostVoted")}
+                            </Button>
+                        </div>
+
+                        {loading ? (
+                            <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
+                        ) : failed ? (
+                            <LoadFailed onRetry={fetchSuggestions} />
+                        ) : suggestions.length === 0 ? (
+                            <Card><CardContent className="py-12 text-center">
+                                <MessageSquare className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
+                                <p className="text-muted-foreground">{t("noSuggestions")}</p>
+                            </CardContent></Card>
+                        ) : (
+                            <div className="space-y-3">
+                                {paged.rows.map((s) => (
+                                    <Card key={s.id}>
+                                        <CardContent className="p-4">
+                                            <div className="flex gap-4">
+                                                <button
+                                                    onClick={() => toggleVote(s.id)}
+                                                    aria-label={!session?.user ? t("loginToVote") : s.voted ? t("removeVote") : t("upvote")}
+                                                    aria-pressed={session?.user ? s.voted : undefined}
+                                                    className={`flex flex-col items-center justify-center px-3 py-2 rounded-lg transition-colors min-w-[60px] cursor-pointer ${
+                                                        s.voted ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground hover:bg-primary/20 hover:text-primary"
+                                                    }`}
+                                                >
+                                                    <ThumbsUp className={`w-4 h-4 ${s.voted ? "fill-primary" : ""}`} />
+                                                    <span className="text-sm font-bold mt-0.5">{s.upvotes}</span>
+                                                </button>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <h2 className="font-medium text-foreground">
+                                                            <Link href={`/suggestions/${s.id}`} className="hover:text-primary transition-colors">
+                                                                {s.title}
+                                                            </Link>
+                                                        </h2>
+                                                        <span className={`text-xs px-2 py-0.5 rounded ${badgeClass(s.status)}`}>
+                                                            {statusLabel(t, s.status)}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm text-muted-foreground line-clamp-2">{plainText(s.content)}</p>
+                                                    <p className="text-xs text-muted-foreground mt-2">
+                                                        {t("submittedBy")} {s.author?.username ?? t("deletedUser")} · {formatLocalDate(s.createdAt)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                                {paged.pages > 1 && (
+                                    <Pagination page={paged.page} pages={paged.pages} total={paged.total} onPageChange={paged.setPage} />
+                                )}
+                            </div>
+                        )}
+                    </>
+                ),
+            }}
+        />
     );
 }

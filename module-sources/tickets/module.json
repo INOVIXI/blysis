@@ -2,8 +2,8 @@
   "id": "tickets",
   "name": "Support Tickets",
   "description": "Customer support ticket system with departments and priority levels",
-  "version": "1.8.2",
-  "coreVersion": "^5.0.0",
+  "version": "1.9.0",
+  "coreVersion": "^5.26.0",
   "category": "management",
   "author": "Blysis Team",
   "icon": "Ticket",
@@ -2988,6 +2988,102 @@
     {
       "action": "tickets.department.setup",
       "nameKey": "auditTicketDepartmentSetup"
+    }
+  ],
+  "pages": [
+    {
+      "id": "list",
+      "blocks": [
+        {
+          "id": "tickets",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "tickets",
+                  "block": "tickets.tickets"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "new",
+      "blocks": [
+        {
+          "id": "form",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "form",
+                  "block": "tickets.form"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket",
+      "blocks": [
+        {
+          "id": "thread",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "details",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "thread",
+                  "block": "tickets.thread"
+                }
+              ],
+              [
+                {
+                  "key": "details",
+                  "block": "tickets.details"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

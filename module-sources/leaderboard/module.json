@@ -3,7 +3,7 @@
   "name": "Leaderboard",
   "description": "Member rankings by purchases, votes and activity",
   "version": "1.7.0",
-  "coreVersion": "^5.0.0",
+  "coreVersion": "^5.26.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Trophy",
@@ -526,6 +526,57 @@
           "type": "text",
           "max": 80
         }
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "boards",
+      "blocks": [
+        {
+          "id": "tabs",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "controls",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "board",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "tabs",
+                  "block": "leaderboard.tabs"
+                },
+                {
+                  "key": "controls",
+                  "block": "leaderboard.controls"
+                },
+                {
+                  "key": "board",
+                  "block": "leaderboard.board"
+                }
+              ]
+            ]
+          }
+        ]
       }
     }
   ]

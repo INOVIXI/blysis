@@ -2,8 +2,8 @@
   "id": "downloads",
   "name": "Downloads",
   "description": "A file library: releases, guides and anything else worth handing out",
-  "version": "1.6.0",
-  "coreVersion": "^5.0.0",
+  "version": "1.7.0",
+  "coreVersion": "^5.26.0",
   "category": "content",
   "author": "Blysis",
   "icon": "Download",
@@ -964,6 +964,100 @@
       "href": "/downloads",
       "icon": "Download",
       "position": 110
+    }
+  ],
+  "pages": [
+    {
+      "id": "files",
+      "blocks": [
+        {
+          "id": "files",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "files",
+                  "block": "downloads.files"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "guide",
+      "blocks": [
+        {
+          "id": "back",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "cover",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "file",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "guide",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "back",
+                  "block": "downloads.back"
+                },
+                {
+                  "key": "cover",
+                  "block": "downloads.cover"
+                },
+                {
+                  "key": "file",
+                  "block": "downloads.file"
+                },
+                {
+                  "key": "guide",
+                  "block": "downloads.guide"
+                },
+                {
+                  "key": "back-below",
+                  "block": "downloads.back"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

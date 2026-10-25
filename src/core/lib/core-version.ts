@@ -12,6 +12,13 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.26.0 - `ArrangedClientPage` joins `@/core/sdk/layout`: a page drawn in
+ * the browser, a ticket or the cart, is arranged from the blocks its
+ * manifest declares as `ArrangedPage` arranges a server page, from the active
+ * theme's manifest the browser already holds. A block the page hands no way
+ * to draw is not drawn, so a page that is still reading passes none and
+ * stands as the page with only what it says while it waits. Additive.
+ *
  * 5.25.0 - a module may declare `pages`, each built from blocks with a
  * default arrangement, and draw one with `ArrangedPage` from
  * `@/core/sdk/page` (`sidebar: false` for a page whose third beside two
@@ -676,4 +683,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.25.0";
+export const CORE_API_VERSION = "5.26.0";

@@ -2,8 +2,8 @@
   "id": "suggestions",
   "name": "Suggestions",
   "description": "Community feature suggestions with voting",
-  "version": "1.8.0",
-  "coreVersion": "^5.0.0",
+  "version": "1.9.0",
+  "coreVersion": "^5.26.0",
   "category": "community",
   "author": "Blysis",
   "icon": "MessageSquare",
@@ -1269,6 +1269,97 @@
       "nameKey": "kindSuggestionCommented",
       "prefix": "Commented on: ",
       "key": "suggestionCommented"
+    }
+  ],
+  "pages": [
+    {
+      "id": "board",
+      "blocks": [
+        {
+          "id": "form",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "list",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "form",
+                  "block": "suggestions.form"
+                },
+                {
+                  "key": "list",
+                  "block": "suggestions.list"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "suggestion",
+      "blocks": [
+        {
+          "id": "body",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "discussion",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "summary",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "body",
+                  "block": "suggestions.body"
+                },
+                {
+                  "key": "discussion",
+                  "block": "suggestions.discussion"
+                }
+              ],
+              [
+                {
+                  "key": "summary",
+                  "block": "suggestions.summary"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

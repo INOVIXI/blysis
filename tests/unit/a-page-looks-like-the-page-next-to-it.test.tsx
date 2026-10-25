@@ -192,11 +192,19 @@ describe("the public pages, core's own and the modules'", () => {
         return stripComments(fs.readFileSync(path.join(ROOT, page), "utf8"));
     }
 
-    it("draws every one of them in the frame", () => {
-        // `ArrangedPage` is the frame for a page built from blocks: it draws
-        // `PageFrame` around the rows a theme arranges.
-        const freehand = pages.filter((p) => !NOT_A_PAGE[p] && !/<(PageFrame|ArrangedPage)\b/.test(frameSource(p)));
-        expect(freehand).toEqual([]);
+    it("draws every one of them in the frame, arranged by the active theme", () => {
+        // `ArrangedPage` and `ArrangedClientPage` draw `PageFrame` around the
+        // rows a theme arranges. A page drawn straight into `PageFrame` is one
+        // a theme can recolour and never arrange: on 2026-10-25 that was 36 of
+        // the public pages, the tickets, the cart and the wheel among them.
+        // Every state of a page, the one it shows while it reads and the one
+        // it shows when what it was asked for is gone, stands in the same
+        // arrangement, so a theme that hides the header hides it on all of
+        // them.
+        const unarranged = pages.filter((p) => !NOT_A_PAGE[p] && (
+            /<PageFrame\b/.test(frameSource(p)) || !/<(ArrangedPage|ArrangedClientPage)\b/.test(frameSource(p))
+        ));
+        expect(unarranged).toEqual([]);
     });
 
     it("lets none of them set a width of its own", () => {

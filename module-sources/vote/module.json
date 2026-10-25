@@ -2,8 +2,8 @@
   "id": "vote",
   "name": "Vote Sites",
   "description": "Send players to the server listings you are ranked on, and count how often they go",
-  "version": "1.6.5",
-  "coreVersion": "^5.21.0",
+  "version": "1.7.0",
+  "coreVersion": "^5.26.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Vote",
@@ -764,6 +764,47 @@
           "key": "voteCast"
         }
       ]
+    }
+  ],
+  "pages": [
+    {
+      "id": "sites",
+      "blocks": [
+        {
+          "id": "prompt",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "sites",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "prompt",
+                  "block": "vote.prompt"
+                },
+                {
+                  "key": "sites",
+                  "block": "vote.sites"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Badge, Button, Card, CardContent, LoadFailed, useLocalDate, SegmentedTabs } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Coins, Gift, Loader2, PartyPopper, Timer } from "lucide-react";
 import { errorMessage } from "@/core/sdk";
 import { inkFor } from "../../lib/wheels";
@@ -191,12 +191,228 @@ export default function WheelPage() {
         return t.has(`refusal_wheel_${w.refusal}`) ? t(`refusal_wheel_${w.refusal}`) : null;
     };
 
+    const waiting = loading ? (
+        <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
+    ) : failed ? (
+        <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
+    ) : wheels.length === 0 ? (
+        <Card><CardContent className="py-12 text-center text-muted-foreground">{t("noWheels")}</CardContent></Card>
+    ) : null;
+
+    if (waiting || !wheel) {
+        return (
+            <ArrangedClientPage page="wheel.wheel" frame={{ title: t("title"), description: t("description") }} blocks={{}}>
+                {waiting}
+            </ArrangedClientPage>
+        );
+    }
+
     return (
-        <PageFrame
-            title={t("title")}
-            description={t("description")}
-            sidebar={wheel ? (
-                <div className="space-y-5">
+        <ArrangedClientPage
+            page="wheel.wheel"
+            frame={{ title: t("title"), description: t("description") }}
+            blocks={{
+                wheel: () => (
+                    <Card>
+                        {wheels.length > 1 && (
+                            /* Inside the card rather than above it: a control row
+                               above the panel pushes the first card down a row,
+                               which leaves every widget beside it floating that
+                               much higher than the thing it sits next to. */
+                            <SegmentedTabs
+                                label={t("pickAWheel")}
+                                activeId={wheel?.slug ?? ""}
+                                onChange={(slug) => { setActiveSlug(slug); setResult(null); setRefused(null); }}
+                                className="px-2"
+                                tabs={wheels.map((w) => ({
+                                    id: w.slug,
+                                    label: w.name,
+                                    icon: w.restricted ? "Lock" : null,
+                                    trailing: w.cost > 0 ? (
+                                        <span className="inline-flex items-center gap-1 text-xs opacity-80">
+                                            <Coins className="w-3 h-3" aria-hidden="true" />{w.cost}
+                                        </span>
+                                    ) : null,
+                                }))}
+                            />
+                        )}
+
+                        {wheel && wheel.prizes.length === 0 && (
+                            <CardContent className="py-12 text-center text-muted-foreground">
+                                <Gift className="w-8 h-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
+                                <p>{t("refusal_wheel_no_prizes")}</p>
+                            </CardContent>
+                        )}
+
+                        {wheel && wheel.prizes.length > 0 && (
+                            <CardContent className="p-6">
+                                <div className="flex flex-col items-center gap-6">
+                                    {wheel.description && (
+                                        <p className="max-w-md text-center text-muted-foreground">{wheel.description}</p>
+                                    )}
+
+                                    <div className="relative w-full max-w-[420px] aspect-square">
+                                        {/* Over the wheel rather than on it, so it
+                                            stays put while the wheel turns under
+                                            it. It overlaps the rim by a couple of
+                                            units: a pointer with daylight under it
+                                            is not pointing at anything. */}
+                                        <svg
+                                            viewBox="0 0 200 200"
+                                            className="absolute inset-0 z-10 h-full w-full"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                d="M 100 22 L 90 0 L 110 0 Z"
+                                                fill="var(--color-primary)"
+                                                stroke="var(--color-card)"
+                                                strokeWidth="2"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+
+                                        <svg
+                                            viewBox="0 0 200 200"
+                                            className="h-full w-full"
+                                            style={{
+                                                transform: `rotate(${rotation}deg)`,
+                                                transition: turning ? "transform 4s cubic-bezier(0.16, 1, 0.3, 1)" : "none",
+                                            }}
+                                            role="img"
+                                            aria-label={t("wheelWith", { count: wheel.prizes.length })}
+                                        >
+                                            {/* The rim, drawn first so the slices
+                                                sit inside it, and given an edge of
+                                                its own: an unbounded pale ring
+                                                reads as a margin rather than as
+                                                part of the wheel. */}
+                                            <circle
+                                                cx={WHEEL.centre}
+                                                cy={WHEEL.centre}
+                                                r={WHEEL.edge}
+                                                fill="var(--color-muted)"
+                                                stroke="var(--color-border)"
+                                                strokeWidth="1"
+                                            />
+
+                                            {wheel.prizes.map((prize, index) => {
+                                                const slice = 360 / wheel.prizes.length;
+                                                const from = index * slice;
+                                                const mid = from + slice / 2;
+                                                const label = labelAt(mid);
+                                                const won = result?.index === index;
+                                                // Only once a prize has landed:
+                                                // dimming the others before there
+                                                // is a winner dims all of them.
+                                                const faded = result !== null && !won;
+                                                return (
+                                                    <g key={prize.id} opacity={faded ? 0.45 : 1}>
+                                                        <path
+                                                            d={slicePath(WHEEL.centre, WHEEL.centre, WHEEL.slices, from, from + slice)}
+                                                            fill={prize.color}
+                                                        />
+                                                        <text
+                                                            x={label.x}
+                                                            y={label.y}
+                                                            fill={inkFor(prize.color) === "dark" ? "#111827" : "#ffffff"}
+                                                            fontSize="7"
+                                                            fontWeight="600"
+                                                            textAnchor={label.anchor}
+                                                            dominantBaseline="middle"
+                                                            transform={label.turn}
+                                                        >
+                                                            {short(prize.name)}
+                                                        </text>
+                                                    </g>
+                                                );
+                                            })}
+
+                                            {/* A peg on every seam, on the rim.
+                                                They are what the eye counts, and
+                                                what the pointer appears to click
+                                                past on the way round. */}
+                                            {wheel.prizes.map((prize, index) => {
+                                                const at = polarToCartesian(
+                                                    WHEEL.centre,
+                                                    WHEEL.centre,
+                                                    WHEEL.rim,
+                                                    index * (360 / wheel.prizes.length),
+                                                );
+                                                return (
+                                                    <circle
+                                                        key={`peg-${prize.id}`}
+                                                        cx={at.x}
+                                                        cy={at.y}
+                                                        r="2"
+                                                        fill="var(--color-border)"
+                                                    />
+                                                );
+                                            })}
+
+                                            {/* Where the slices end. Without it
+                                                the colours fade into the rim and
+                                                the wheel has no edge. */}
+                                            <circle
+                                                cx={WHEEL.centre}
+                                                cy={WHEEL.centre}
+                                                r={WHEEL.slices}
+                                                fill="none"
+                                                stroke="var(--color-border)"
+                                                strokeWidth="1"
+                                            />
+
+                                            <circle
+                                                cx={WHEEL.centre}
+                                                cy={WHEEL.centre}
+                                                r={WHEEL.hub}
+                                                fill="var(--color-card)"
+                                                stroke="var(--color-border)"
+                                                strokeWidth="2"
+                                            />
+                                            <circle
+                                                cx={WHEEL.centre}
+                                                cy={WHEEL.centre}
+                                                r="4"
+                                                fill="var(--color-primary)"
+                                            />
+                                        </svg>
+                                    </div>
+
+                                    {result ? (
+                                        <div className="text-center space-y-2" role="status">
+                                            <PartyPopper className="w-8 h-8 text-primary mx-auto" aria-hidden="true" />
+                                            <p className="text-lg font-bold text-foreground">{result.name}</p>
+                                            {result.code && (
+                                                <p className="text-sm text-muted-foreground">
+                                                    {t("couponCode")}: <span className="font-mono text-foreground">{result.code}</span>
+                                                </p>
+                                            )}
+                                        </div>
+                                    ) : refused ? (
+                                        <p role="alert" className="text-center text-sm text-destructive">{refused}</p>
+                                    ) : null}
+
+                                    <div className="flex flex-col items-center gap-2">
+                                        <Button size="lg" onClick={turn} disabled={turning || !wheel.canTurn}>
+                                            {turning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Gift className="w-4 h-4" />}
+                                            {wheel.cost > 0 ? t("turnForCredits", { count: wheel.cost }) : t("turn")}
+                                        </Button>
+                                        {!wheel.canTurn && refusalLabel(wheel) && (
+                                            <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                                {wheel.refusal === "too_soon" ? <Timer className="w-3.5 h-3.5" aria-hidden="true" /> : null}
+                                                {refusalLabel(wheel)}
+                                            </p>
+                                        )}
+                                        {wheel.restricted && (
+                                            <Badge tone="info">{t("membersOnly")}</Badge>
+                                        )}
+                                    </div>
+                                </div>
+                            </CardContent>
+                        )}
+                    </Card>
+                ),
+                facts: () => (
                     <div className="bg-card rounded-xl border border-border p-5">
                         <h2 className="font-bold text-foreground mb-3">{t("thisWheel")}</h2>
                         <dl className="space-y-2 text-sm">
@@ -218,8 +434,8 @@ export default function WheelPage() {
                             )}
                         </dl>
                     </div>
-
-                    {wheel.prizes.length > 0 && (
+                ),
+                prizes: () => (wheel.prizes.length > 0 ? (
                     <div className="bg-card rounded-xl border border-border p-5">
                         <h2 className="font-bold text-foreground mb-3">{t("whatIsOnIt")}</h2>
                         <ul className="space-y-2 text-sm">
@@ -235,216 +451,8 @@ export default function WheelPage() {
                             ))}
                         </ul>
                     </div>
-                    )}
-                </div>
-            ) : null}
-        >
-            {loading ? (
-                <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
-            ) : failed ? (
-                <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
-            ) : wheels.length === 0 ? (
-                <Card><CardContent className="py-12 text-center text-muted-foreground">{t("noWheels")}</CardContent></Card>
-            ) : (
-                <Card>
-                    {wheels.length > 1 && (
-                        /* Inside the card rather than above it: a control row
-                           above the panel pushes the first card down a row,
-                           which leaves every widget beside it floating that
-                           much higher than the thing it sits next to. */
-                        <SegmentedTabs
-                            label={t("pickAWheel")}
-                            activeId={wheel?.slug ?? ""}
-                            onChange={(slug) => { setActiveSlug(slug); setResult(null); setRefused(null); }}
-                            className="px-2"
-                            tabs={wheels.map((w) => ({
-                                id: w.slug,
-                                label: w.name,
-                                icon: w.restricted ? "Lock" : null,
-                                trailing: w.cost > 0 ? (
-                                    <span className="inline-flex items-center gap-1 text-xs opacity-80">
-                                        <Coins className="w-3 h-3" aria-hidden="true" />{w.cost}
-                                    </span>
-                                ) : null,
-                            }))}
-                        />
-                    )}
-
-                    {wheel && wheel.prizes.length === 0 && (
-                        <CardContent className="py-12 text-center text-muted-foreground">
-                            <Gift className="w-8 h-8 mx-auto mb-3 opacity-40" aria-hidden="true" />
-                            <p>{t("refusal_wheel_no_prizes")}</p>
-                        </CardContent>
-                    )}
-
-                    {wheel && wheel.prizes.length > 0 && (
-                        <CardContent className="p-6">
-                            <div className="flex flex-col items-center gap-6">
-                                {wheel.description && (
-                                    <p className="max-w-md text-center text-muted-foreground">{wheel.description}</p>
-                                )}
-
-                                <div className="relative w-full max-w-[420px] aspect-square">
-                                    {/* Over the wheel rather than on it, so it
-                                        stays put while the wheel turns under
-                                        it. It overlaps the rim by a couple of
-                                        units: a pointer with daylight under it
-                                        is not pointing at anything. */}
-                                    <svg
-                                        viewBox="0 0 200 200"
-                                        className="absolute inset-0 z-10 h-full w-full"
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            d="M 100 22 L 90 0 L 110 0 Z"
-                                            fill="var(--color-primary)"
-                                            stroke="var(--color-card)"
-                                            strokeWidth="2"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
-
-                                    <svg
-                                        viewBox="0 0 200 200"
-                                        className="h-full w-full"
-                                        style={{
-                                            transform: `rotate(${rotation}deg)`,
-                                            transition: turning ? "transform 4s cubic-bezier(0.16, 1, 0.3, 1)" : "none",
-                                        }}
-                                        role="img"
-                                        aria-label={t("wheelWith", { count: wheel.prizes.length })}
-                                    >
-                                        {/* The rim, drawn first so the slices
-                                            sit inside it, and given an edge of
-                                            its own: an unbounded pale ring
-                                            reads as a margin rather than as
-                                            part of the wheel. */}
-                                        <circle
-                                            cx={WHEEL.centre}
-                                            cy={WHEEL.centre}
-                                            r={WHEEL.edge}
-                                            fill="var(--color-muted)"
-                                            stroke="var(--color-border)"
-                                            strokeWidth="1"
-                                        />
-
-                                        {wheel.prizes.map((prize, index) => {
-                                            const slice = 360 / wheel.prizes.length;
-                                            const from = index * slice;
-                                            const mid = from + slice / 2;
-                                            const label = labelAt(mid);
-                                            const won = result?.index === index;
-                                            // Only once a prize has landed:
-                                            // dimming the others before there
-                                            // is a winner dims all of them.
-                                            const faded = result !== null && !won;
-                                            return (
-                                                <g key={prize.id} opacity={faded ? 0.45 : 1}>
-                                                    <path
-                                                        d={slicePath(WHEEL.centre, WHEEL.centre, WHEEL.slices, from, from + slice)}
-                                                        fill={prize.color}
-                                                    />
-                                                    <text
-                                                        x={label.x}
-                                                        y={label.y}
-                                                        fill={inkFor(prize.color) === "dark" ? "#111827" : "#ffffff"}
-                                                        fontSize="7"
-                                                        fontWeight="600"
-                                                        textAnchor={label.anchor}
-                                                        dominantBaseline="middle"
-                                                        transform={label.turn}
-                                                    >
-                                                        {short(prize.name)}
-                                                    </text>
-                                                </g>
-                                            );
-                                        })}
-
-                                        {/* A peg on every seam, on the rim.
-                                            They are what the eye counts, and
-                                            what the pointer appears to click
-                                            past on the way round. */}
-                                        {wheel.prizes.map((prize, index) => {
-                                            const at = polarToCartesian(
-                                                WHEEL.centre,
-                                                WHEEL.centre,
-                                                WHEEL.rim,
-                                                index * (360 / wheel.prizes.length),
-                                            );
-                                            return (
-                                                <circle
-                                                    key={`peg-${prize.id}`}
-                                                    cx={at.x}
-                                                    cy={at.y}
-                                                    r="2"
-                                                    fill="var(--color-border)"
-                                                />
-                                            );
-                                        })}
-
-                                        {/* Where the slices end. Without it
-                                            the colours fade into the rim and
-                                            the wheel has no edge. */}
-                                        <circle
-                                            cx={WHEEL.centre}
-                                            cy={WHEEL.centre}
-                                            r={WHEEL.slices}
-                                            fill="none"
-                                            stroke="var(--color-border)"
-                                            strokeWidth="1"
-                                        />
-
-                                        <circle
-                                            cx={WHEEL.centre}
-                                            cy={WHEEL.centre}
-                                            r={WHEEL.hub}
-                                            fill="var(--color-card)"
-                                            stroke="var(--color-border)"
-                                            strokeWidth="2"
-                                        />
-                                        <circle
-                                            cx={WHEEL.centre}
-                                            cy={WHEEL.centre}
-                                            r="4"
-                                            fill="var(--color-primary)"
-                                        />
-                                    </svg>
-                                </div>
-
-                                {result ? (
-                                    <div className="text-center space-y-2" role="status">
-                                        <PartyPopper className="w-8 h-8 text-primary mx-auto" aria-hidden="true" />
-                                        <p className="text-lg font-bold text-foreground">{result.name}</p>
-                                        {result.code && (
-                                            <p className="text-sm text-muted-foreground">
-                                                {t("couponCode")}: <span className="font-mono text-foreground">{result.code}</span>
-                                            </p>
-                                        )}
-                                    </div>
-                                ) : refused ? (
-                                    <p role="alert" className="text-center text-sm text-destructive">{refused}</p>
-                                ) : null}
-
-                                <div className="flex flex-col items-center gap-2">
-                                    <Button size="lg" onClick={turn} disabled={turning || !wheel.canTurn}>
-                                        {turning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Gift className="w-4 h-4" />}
-                                        {wheel.cost > 0 ? t("turnForCredits", { count: wheel.cost }) : t("turn")}
-                                    </Button>
-                                    {!wheel.canTurn && refusalLabel(wheel) && (
-                                        <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                                            {wheel.refusal === "too_soon" ? <Timer className="w-3.5 h-3.5" aria-hidden="true" /> : null}
-                                            {refusalLabel(wheel)}
-                                        </p>
-                                    )}
-                                    {wheel.restricted && (
-                                        <Badge tone="info">{t("membersOnly")}</Badge>
-                                    )}
-                                </div>
-                            </div>
-                        </CardContent>
-                    )}
-                </Card>
-            )}
-        </PageFrame>
+                ) : null),
+            }}
+        />
     );
 }

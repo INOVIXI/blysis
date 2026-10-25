@@ -16,6 +16,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { CORE_PAGES } from "@/core/lib/arrangeable-pages";
 import { blocksOf, pagesOf, type CatalogBlock, type ModulePage } from "@/core/lib/page-blocks";
 import { CORE_BLOCKS } from "@/core/lib/core-blocks";
 import { cellWidths, type LayoutDocument } from "@/core/lib/page-layout-schema";
@@ -31,7 +32,8 @@ const HOME = new Map([
     ...MANIFESTS.flatMap(({ id, manifest }) => blocksOf(id, manifest)),
 ].map((b) => [b.id, b]));
 
-const PAGES = new Map(MANIFESTS.flatMap(({ id, manifest }) => pagesOf(id, manifest)).map((p) => [p.id, p]));
+// Core's own pages beside every module's, as a theme may arrange either.
+const PAGES = new Map([...CORE_PAGES, ...MANIFESTS.flatMap(({ id, manifest }) => pagesOf(id, manifest))].map((p) => [p.id, p]));
 
 interface Arrangement { theme: string; page: string; layout: LayoutDocument }
 
@@ -49,7 +51,7 @@ function catalogFor(page: string, pages: Map<string, ModulePage>): Map<string, C
 
 function problems({ theme, page, layout }: Arrangement, pages: Map<string, ModulePage> = PAGES): string[] {
     const catalog = catalogFor(page, pages);
-    if (!catalog) return [`${theme} arranges ${page}: no module declares that page`];
+    if (!catalog) return [`${theme} arranges ${page}: nothing declares that page`];
     const where = page === "home" ? theme : `${theme} ${page}`;
     const found: string[] = [];
     layout.rows.forEach((row, r) => row.cells.forEach((cell, c) => cell.forEach((instance) => {
@@ -76,6 +78,12 @@ describe("a theme's arrangement", () => {
         expect(ARRANGEMENTS.flatMap((a) => problems(a))).toEqual([]);
     });
 
+    it("knows core's own pages as well as the modules'", () => {
+        const results: LayoutDocument = { header: "hidden", rows: [{ split: "1", cells: [[{ key: "r", block: "core.results" }]] }] };
+        expect(problems({ theme: "fixture", page: "core.search", layout: results })).toEqual([]);
+        expect(problems({ theme: "fixture", page: "core.nowhere", layout: results })).toEqual(["fixture arranges core.nowhere: nothing declares that page"]);
+    });
+
     it("would say so if one did not", () => {
         const typo: LayoutDocument = {
             rows: [{ split: "1-1-1", cells: [[{ key: "a", block: "blog.nws" }], [{ key: "b", block: "blog.news" }], [{ key: "c", block: "core.stats", settings: { tile9Value: "x" } }]] }],
@@ -90,7 +98,7 @@ describe("a theme's arrangement", () => {
         ]);
     });
 
-    it("would say so on a module's page, and of a page no module declares", () => {
+    it("would say so on a module's page, and of a page nothing declares", () => {
         const pages = new Map<string, ModulePage>([["m.post", pagesOf("m", {
             pages: [{
                 id: "post",
@@ -107,6 +115,6 @@ describe("a theme's arrangement", () => {
             "fixture m.post row 0 cell 1 blog.news: no such block",
             "fixture m.post hides m.share: no such block",
         ]);
-        expect(problems({ theme: "fixture", page: "m.gone", layout }, pages)).toEqual(["fixture arranges m.gone: no module declares that page"]);
+        expect(problems({ theme: "fixture", page: "m.gone", layout }, pages)).toEqual(["fixture arranges m.gone: nothing declares that page"]);
     });
 });

@@ -7,7 +7,7 @@ import Image from "next/image";
 import { ArrowLeft, Download, FileText, Loader2 } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { Button, Card, CardContent, LoadFailed, RichContent, useLocalDate } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { downloadNumberFrom, formatFileSize } from "../../../../lib/guide";
 
 interface GuidedFile {
@@ -81,79 +81,83 @@ export default function DownloadGuidePage() {
 
     if (state === "loading") {
         return (
-            <PageFrame title={t("title")} description={t("subtitle")}>
+            <ArrangedClientPage page="downloads.guide" frame={{ title: t("title"), description: t("subtitle") }} blocks={{}}>
                 <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
-            </PageFrame>
+            </ArrangedClientPage>
         );
     }
 
     if (state === "failed") {
         return (
-            <PageFrame title={t("title")} description={t("subtitle")}>
+            <ArrangedClientPage page="downloads.guide" frame={{ title: t("title"), description: t("subtitle") }} blocks={{}}>
                 <LoadFailed onRetry={() => { setState("loading"); setReloadKey((k) => k + 1); }} />
-            </PageFrame>
+            </ArrangedClientPage>
         );
     }
 
     if (state === "missing" || !file) {
         return (
-            <PageFrame title={t("title")} description={t("subtitle")}>
+            <ArrangedClientPage page="downloads.guide" frame={{ title: t("title"), description: t("subtitle") }} blocks={{}}>
                 <Card>
                     <CardContent className="py-12 text-center space-y-3">
                         <p className="text-muted-foreground">{t("guideMissing")}</p>
                         {back}
                     </CardContent>
                 </Card>
-            </PageFrame>
+            </ArrangedClientPage>
         );
     }
 
     return (
-        <PageFrame title={file.title} description={t("subtitle")}>
-            <div className="space-y-6">
-                {back}
-
-                {file.coverImage && (
+        <ArrangedClientPage
+            page="downloads.guide"
+            frame={{ title: file.title, description: t("subtitle") }}
+            blocks={{
+                // The way back stands above the guide and again below it, as
+                // two placements of one block. In a box of its own, so the
+                // link is not set on a line of text taller than itself.
+                back: () => <div className="flex">{back}</div>,
+                cover: () => (file.coverImage ? (
                     <div className="relative aspect-card w-full overflow-hidden rounded-xl border border-border bg-muted">
                         <Image src={file.coverImage} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 768px" />
                     </div>
-                )}
-
-                {/* The file's own facts and the button, above the instructions:
-                    somebody who already knows what this is should not have to
-                    read past a tutorial to get it. */}
-                <Card>
-                    <CardContent className="p-4 flex flex-wrap items-center gap-4">
-                        <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <FileText className="w-6 h-6 text-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="font-medium text-foreground break-all">{file.fileName}</p>
-                            <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mt-1">
-                                <span>{formatFileSize(file.fileSize, t("unknownSize"))}</span>
-                                <span>{t("downloadsCount", { count: file.downloads })}</span>
-                                <span>{formatLocalDate(file.updatedAt)}</span>
+                ) : null),
+                // The file's own facts and the button, above the instructions:
+                // somebody who already knows what this is should not have to
+                // read past a tutorial to get it.
+                file: () => (
+                    <Card>
+                        <CardContent className="p-4 flex flex-wrap items-center gap-4">
+                            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <FileText className="w-6 h-6 text-primary" />
                             </div>
-                        </div>
-                        <Button onClick={take}>
-                            <Download className="w-4 h-4" /> {t("downloadAction")}
-                        </Button>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardContent className="p-5 space-y-4">
-                        {file.description && (
-                            <RichContent className="text-muted-foreground" markdown={file.description} />
-                        )}
-                        <div className={file.description ? "border-t border-border pt-4" : ""}>
-                            <RichContent markdown={file.details} />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {back}
-            </div>
-        </PageFrame>
+                            <div className="flex-1 min-w-0">
+                                <p className="font-medium text-foreground break-all">{file.fileName}</p>
+                                <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mt-1">
+                                    <span>{formatFileSize(file.fileSize, t("unknownSize"))}</span>
+                                    <span>{t("downloadsCount", { count: file.downloads })}</span>
+                                    <span>{formatLocalDate(file.updatedAt)}</span>
+                                </div>
+                            </div>
+                            <Button onClick={take}>
+                                <Download className="w-4 h-4" /> {t("downloadAction")}
+                            </Button>
+                        </CardContent>
+                    </Card>
+                ),
+                guide: () => (
+                    <Card>
+                        <CardContent className="p-5 space-y-4">
+                            {file.description && (
+                                <RichContent className="text-muted-foreground" markdown={file.description} />
+                            )}
+                            <div className={file.description ? "border-t border-border pt-4" : ""}>
+                                <RichContent markdown={file.details} />
+                            </div>
+                        </CardContent>
+                    </Card>
+                ),
+            }}
+        />
     );
 }

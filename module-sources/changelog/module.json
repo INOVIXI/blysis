@@ -2,8 +2,8 @@
   "id": "changelog",
   "name": "Changelog",
   "description": "Release notes and update history",
-  "version": "1.8.0",
-  "coreVersion": "^5.0.0",
+  "version": "1.9.0",
+  "coreVersion": "^5.26.0",
   "category": "community",
   "author": "Blysis",
   "icon": "History",
@@ -1233,6 +1233,101 @@
     {
       "action": "changelog_type.delete",
       "nameKey": "auditChangelogTypeDelete"
+    }
+  ],
+  "pages": [
+    {
+      "id": "timeline",
+      "blocks": [
+        {
+          "id": "timeline",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "timeline",
+                  "block": "changelog.timeline"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "entry",
+      "blocks": [
+        {
+          "id": "back",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "cover",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "meta",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "notes",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "back",
+                  "block": "changelog.back"
+                },
+                {
+                  "key": "cover",
+                  "block": "changelog.cover"
+                },
+                {
+                  "key": "meta",
+                  "block": "changelog.meta"
+                },
+                {
+                  "key": "notes",
+                  "block": "changelog.notes"
+                },
+                {
+                  "key": "back-below",
+                  "block": "changelog.back"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

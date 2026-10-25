@@ -3,7 +3,7 @@
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
   "version": "2.50.0",
-  "coreVersion": "^5.25.0",
+  "coreVersion": "^5.26.0",
   "category": "commerce",
   "author": "Blysis Team",
   "icon": "ShoppingBag",
@@ -11350,6 +11350,73 @@
         "hidden": [
           "store.crumbs",
           "store.related"
+        ]
+      }
+    },
+    {
+      "id": "cart",
+      "blocks": [
+        {
+          "id": "items",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "summary",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "items",
+                  "block": "store.items"
+                }
+              ],
+              [
+                {
+                  "key": "summary",
+                  "block": "store.summary"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "vip",
+      "blocks": [
+        {
+          "id": "ranks",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "ranks",
+                  "block": "store.ranks"
+                }
+              ]
+            ]
+          }
         ]
       }
     }

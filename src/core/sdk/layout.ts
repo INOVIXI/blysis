@@ -14,5 +14,12 @@ export { Navbar, Footer } from "@/core/components/layout";
  */
 export { PageFrame } from "@/core/components/layout/PageFrame";
 export type { PageFrameProps } from "@/core/components/layout/PageFrame";
+/**
+ * A page drawn in the browser, arranged from the blocks its manifest
+ * declares as the active theme says. A server page takes `ArrangedPage`
+ * from `@/core/sdk/page` instead.
+ */
+export { ArrangedClientPage } from "@/core/components/layout/ArrangedClientPage";
+export type { ArrangedClientPageProps } from "@/core/components/layout/ArrangedClientPage";
 export { default as StandardSidebarLayout } from "@/core/components/layout/SidebarLayout";
 export { Slot } from "@/core/components/Slot";

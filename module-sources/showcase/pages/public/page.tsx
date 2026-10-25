@@ -8,7 +8,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedPage } from "@/core/sdk/page";
 import { Card, CardContent } from "@/core/sdk/ui";
 import { readShowcaseCards } from "../../lib/read-cards";
 
@@ -46,29 +46,27 @@ export default async function ShowcasePage() {
     const t = await getTranslations("showcase");
     const cards = await readShowcaseCards();
 
-    return (
-        <PageFrame title={t("title")} description={t("subtitle")}>
-            {cards.length === 0 ? (
-                <Card><CardContent className="py-12 text-center"><p className="text-muted-foreground">{t("empty")}</p></CardContent></Card>
-            ) : (
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                    {cards.map((card) =>
-                        card.href ? (
-                            /*
-                             * Named, because the whole card is the link and its
-                             * picture is decorative: without this a screen
-                             * reader announces a link and then reads the
-                             * heading as if it were separate.
-                             */
-                            <Link key={card.id} href={card.href} aria-label={card.title} className="block focus-visible:outline-2">
-                                <CardFace card={card} />
-                            </Link>
-                        ) : (
-                            <CardFace key={card.id} card={card} />
-                        ),
-                    )}
-                </div>
+    const wall = cards.length === 0 ? (
+        <Card><CardContent className="py-12 text-center"><p className="text-muted-foreground">{t("empty")}</p></CardContent></Card>
+    ) : (
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {cards.map((card) =>
+                card.href ? (
+                    /*
+                     * Named, because the whole card is the link and its
+                     * picture is decorative: without this a screen
+                     * reader announces a link and then reads the
+                     * heading as if it were separate.
+                     */
+                    <Link key={card.id} href={card.href} aria-label={card.title} className="block focus-visible:outline-2">
+                        <CardFace card={card} />
+                    </Link>
+                ) : (
+                    <CardFace key={card.id} card={card} />
+                ),
             )}
-        </PageFrame>
+        </div>
     );
+
+    return <ArrangedPage page="showcase.showcase" frame={{ title: t("title"), description: t("subtitle") }} blocks={{ cards: () => wall }} />;
 }

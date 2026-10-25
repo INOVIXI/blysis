@@ -2,8 +2,8 @@
   "id": "punishments",
   "name": "Punishments",
   "description": "Bans, mutes and warnings against members, issued here or reported by a module that watches somewhere else",
-  "version": "1.7.5",
-  "coreVersion": "^5.21.0",
+  "version": "1.8.0",
+  "coreVersion": "^5.26.0",
   "category": "management",
   "author": "Blysis",
   "icon": "Shield",
@@ -1686,6 +1686,46 @@
     {
       "action": "punishments.scope.deleted",
       "nameKey": "auditPunishmentScopeDeleted"
+    }
+  ],
+  "pages": [
+    {
+      "id": "records",
+      "blocks": [
+        {
+          "id": "controls",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "records",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "controls",
+                  "block": "punishments.controls"
+                },
+                {
+                  "key": "records",
+                  "block": "punishments.records"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

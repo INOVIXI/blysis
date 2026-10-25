@@ -2,8 +2,8 @@
   "id": "showcase",
   "name": "Showcase",
   "description": "A grid of cards: a picture, a heading, a line of text and somewhere to go. What is being shown is the operator's business.",
-  "version": "1.7.1",
-  "coreVersion": "^5.0.0",
+  "version": "1.8.0",
+  "coreVersion": "^5.25.0",
   "category": "content",
   "author": "Blysis",
   "icon": "LayoutGrid",
@@ -554,6 +554,35 @@
     {
       "action": "showcase.card.deleted",
       "nameKey": "auditShowcaseCardDeleted"
+    }
+  ],
+  "pages": [
+    {
+      "id": "showcase",
+      "blocks": [
+        {
+          "id": "cards",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "cards",
+                  "block": "showcase.cards"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

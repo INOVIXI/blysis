@@ -3,7 +3,7 @@
   "name": "Member Profiles",
   "description": "Public profile pages, with what every installed module knows about a member",
   "version": "1.8.0",
-  "coreVersion": "^5.25.0",
+  "coreVersion": "^5.26.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Users",
@@ -674,6 +674,44 @@
         ],
         "hidden": [
           "member-profiles.tabs"
+        ]
+      }
+    },
+    {
+      "id": "content",
+      "blocks": [
+        {
+          "id": "controls",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "items",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "controls",
+                  "block": "member-profiles.controls"
+                },
+                {
+                  "key": "items",
+                  "block": "member-profiles.items"
+                }
+              ]
+            ]
+          }
         ]
       }
     }

@@ -29,3 +29,12 @@ export function useThemeConfig() {
         return (cur as T) ?? fallback;
     };
 }
+
+/**
+ * The active theme's settings by group, as the server read them, with the
+ * customizer's preview over them: what `resolvePageLayout` takes for the
+ * settings an arrangement leaves to the operator.
+ */
+export function useThemeSettings(): Record<string, Record<string, unknown>> {
+    return useContext(ThemeConfigContext) as Record<string, Record<string, unknown>>;
+}

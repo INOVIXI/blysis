@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
 import { Card, CardContent, CardHeader, CardTitle, MemberAvatar, RoleBadge } from "@/core/sdk/ui";
-import { PageFrame, Slot } from "@/core/sdk/layout";
+import { Slot } from "@/core/sdk/layout";
 import { ArrangedPage } from "@/core/sdk/page";
 import { MessageSquare, FileText, ShoppingCart, ThumbsUp, Calendar } from "lucide-react";
 import { isListable } from "../../../lib/member-content";
@@ -41,9 +41,9 @@ export default async function MemberProfilePage({ params }: PageProps) {
 
     if (!member) {
         return (
-            <PageFrame title={username}>
+            <ArrangedPage page="member-profiles.profile" frame={{ title: username }} blocks={{}}>
                 <Card><CardContent className="py-12 text-center text-muted-foreground">{t("memberNotFound")}</CardContent></Card>
-            </PageFrame>
+            </ArrangedPage>
         );
     }
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Button, Card, CardContent, LoadFailed } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Loader2, ExternalLink, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
 
@@ -79,57 +79,61 @@ export function VoteSites({ initial }: { initial: VoteSite[] }) {
     };
 
     return (
-        <PageFrame
-            title={t("title")}
-            description={t("description")}
-        >
-            {!session?.user && (
-                <p className="mb-6 text-sm text-muted-foreground">{t("loginToVote")}</p>
-            )}
-
-            {loading ? (
-                <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
-            ) : failed ? (
-                <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
-            ) : sites.length === 0 ? (
-                <Card><CardContent className="py-12 text-center text-muted-foreground">{t("noSites")}</CardContent></Card>
-            ) : (
-                <div className="space-y-3">
-                    {sites.map((site) => (
-                        <Card key={site.id} className="hover:shadow-md transition-shadow">
-                            <CardContent className="p-4 flex items-center gap-4">
-                                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <ThumbsUp className="w-6 h-6 text-primary" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <h2 className="font-medium truncate">{site.name}</h2>
-                                    {/*
-                                        Clicks, not votes, and the label says
-                                        so. Nothing here hears back from the
-                                        listing: the button opens it and the
-                                        row is written because somebody went,
-                                        not because they voted. Calling this a
-                                        vote count put a number on the screen
-                                        the site cannot know. The key is
-                                        already lower case - lowercasing it
-                                        here would be the Turkish I bug
-                                        waiting to happen.
-                                    */}
-                                    <p className="text-sm text-muted-foreground">
-                                        {site._count.votes} {t("totalVotes")}
-                                    </p>
-                                </div>
-                                <Button size="sm" onClick={() => vote(site)} disabled={voting === site.id}>
-                                    {voting === site.id
-                                        ? <Loader2 className="w-3 h-3 animate-spin" />
-                                        : <ExternalLink className="w-3 h-3" />}
-                                    {t("voteNow")}
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            )}
-        </PageFrame>
+        <ArrangedClientPage
+            page="vote.sites"
+            frame={{ title: t("title"), description: t("description") }}
+            blocks={{
+                prompt: () => (
+                    !session?.user ? (
+                        <p className="text-sm text-muted-foreground">{t("loginToVote")}</p>
+                    ) : null
+                ),
+                sites: () => (
+                    loading ? (
+                        <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
+                    ) : failed ? (
+                        <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
+                    ) : sites.length === 0 ? (
+                        <Card><CardContent className="py-12 text-center text-muted-foreground">{t("noSites")}</CardContent></Card>
+                    ) : (
+                        <div className="space-y-3">
+                            {sites.map((site) => (
+                                <Card key={site.id} className="hover:shadow-md transition-shadow">
+                                    <CardContent className="p-4 flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <ThumbsUp className="w-6 h-6 text-primary" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h2 className="font-medium truncate">{site.name}</h2>
+                                            {/*
+                                                Clicks, not votes, and the label says
+                                                so. Nothing here hears back from the
+                                                listing: the button opens it and the
+                                                row is written because somebody went,
+                                                not because they voted. Calling this a
+                                                vote count put a number on the screen
+                                                the site cannot know. The key is
+                                                already lower case - lowercasing it
+                                                here would be the Turkish I bug
+                                                waiting to happen.
+                                            */}
+                                            <p className="text-sm text-muted-foreground">
+                                                {site._count.votes} {t("totalVotes")}
+                                            </p>
+                                        </div>
+                                        <Button size="sm" onClick={() => vote(site)} disabled={voting === site.id}>
+                                            {voting === site.id
+                                                ? <Loader2 className="w-3 h-3 animate-spin" />
+                                                : <ExternalLink className="w-3 h-3" />}
+                                            {t("voteNow")}
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    )
+                ),
+            }}
+        />
     );
 }

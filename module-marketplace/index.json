@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-24",
-  "updatedAt": "2026-10-24T20:19:02Z",
+  "updated": "2026-10-25",
+  "updatedAt": "2026-10-25T09:40:22Z",
   "modules": [
     {
       "id": "announcements",
@@ -449,13 +449,13 @@
           "description": "版本说明与更新历史"
         }
       },
-      "version": "1.8.0",
-      "coreVersion": "^5.0.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "History",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-20T13:25:07Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -846,13 +846,13 @@
           "description": "以任何人都能阅读的表格，逐项对比多个对象"
         }
       },
-      "version": "1.6.1",
-      "coreVersion": "^5.0.0",
+      "version": "1.7.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Table",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -1314,13 +1314,13 @@
           "description": "带提交记录的动态表单构建器"
         }
       },
-      "version": "1.6.1",
-      "coreVersion": "^5.0.0",
+      "version": "1.7.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "FileEdit",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -1394,13 +1394,13 @@
           "description": "团队撰写、拥有独立地址的页面"
         }
       },
-      "version": "1.5.1",
-      "coreVersion": "^5.0.0",
+      "version": "1.6.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -1703,13 +1703,13 @@
           "description": "文件库：版本发布、指南以及其他值得分享的内容"
         }
       },
-      "version": "1.6.0",
-      "coreVersion": "^5.0.0",
+      "version": "1.7.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Download",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-09-20T10:48:52Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -2156,7 +2156,7 @@
         }
       },
       "version": "1.15.0",
-      "coreVersion": "^5.25.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
@@ -2239,13 +2239,13 @@
           "description": "让游戏服务器自行连接到本站：重启后依然保留的发货队列、实时状态、游戏内商店与积分，以及账户绑定，适用于任何有客户端的游戏"
         }
       },
-      "version": "1.0.1",
-      "coreVersion": "^5.0.0",
+      "version": "1.1.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Cable",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -2564,13 +2564,13 @@
           "description": "带分类和可搜索文章的知识库"
         }
       },
-      "version": "1.9.1",
-      "coreVersion": "^5.0.0",
+      "version": "1.10.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis Team",
       "icon": "HelpCircle",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -2641,13 +2641,13 @@
           "description": "带铃铛图标的站内通知系统"
         }
       },
-      "version": "1.6.0",
-      "coreVersion": "^5.0.0",
+      "version": "1.7.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Bell",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-20T10:44:45Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -3032,7 +3032,7 @@
         }
       },
       "version": "1.7.0",
-      "coreVersion": "^5.0.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Trophy",
       "category": "community",
@@ -3337,13 +3337,13 @@
           "description": "接收订单，并等待款项通过其他途径到账"
         }
       },
-      "version": "1.4.0",
-      "coreVersion": "^5.0.0",
+      "version": "1.5.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Landmark",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -3418,7 +3418,7 @@
         }
       },
       "version": "1.8.0",
-      "coreVersion": "^5.25.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "gaming",
@@ -4865,13 +4865,13 @@
           "description": "针对成员的封禁、禁言和警告，可在此发出，也可由其他位置的模块上报"
         }
       },
-      "version": "1.7.5",
-      "coreVersion": "^5.21.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Shield",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-23T20:29:33Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -5107,13 +5107,13 @@
           "description": "通过推荐新用户赚取积分"
         }
       },
-      "version": "1.6.4",
-      "coreVersion": "^5.0.0",
+      "version": "1.7.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "UserPlus",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -5496,13 +5496,13 @@
           "description": "社区作品的展示库"
         }
       },
-      "version": "1.7.1",
-      "coreVersion": "^5.0.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.25.0",
       "author": "Blysis",
       "icon": "LayoutGrid",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -5799,7 +5799,7 @@
         }
       },
       "version": "1.7.0",
-      "coreVersion": "^5.0.0",
+      "coreVersion": "^5.25.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "management",
@@ -5949,7 +5949,7 @@
         }
       },
       "version": "2.50.0",
-      "coreVersion": "^5.25.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
@@ -6152,13 +6152,13 @@
           "description": "带投票功能的社区功能建议"
         }
       },
-      "version": "1.8.0",
-      "coreVersion": "^5.0.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-09-20T13:25:07Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -6309,13 +6309,13 @@
           "description": "带部门和优先级的客户支持工单系统"
         }
       },
-      "version": "1.8.2",
-      "coreVersion": "^5.0.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis Team",
       "icon": "Ticket",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -6464,13 +6464,13 @@
           "description": "基于规则自动颁发的成就徽章"
         }
       },
-      "version": "1.7.2",
-      "coreVersion": "^5.0.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Trophy",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -6848,13 +6848,13 @@
           "description": "将玩家引导至你所在的服务器列表，并统计投票人数"
         }
       },
-      "version": "1.6.5",
-      "coreVersion": "^5.21.0",
+      "version": "1.7.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Vote",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-23T20:26:33Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -7004,13 +7004,13 @@
           "description": "可配置奖品和冷却时间的转动赢奖游戏"
         }
       },
-      "version": "1.10.1",
-      "coreVersion": "^5.21.0",
+      "version": "1.11.0",
+      "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Dices",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-23T20:22:50Z",
+      "updatedAt": "2026-10-25T09:40:22Z",
       "screenshots": [],
       "tags": [
         "commerce"

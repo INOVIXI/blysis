@@ -13,6 +13,7 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { serverTree } from "../../stubs/server-tree";
 import { createTranslator } from "next-intl";
 import fs from "node:fs";
 import path from "node:path";
@@ -29,15 +30,13 @@ vi.mock("@/core/sdk/navigation", () => ({
     Link: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
 }));
 
-vi.mock("@/core/sdk/layout", () => ({
-    PageFrame: ({ title, sidebar, children }: { title: string; sidebar?: React.ReactNode; children: React.ReactNode }) => (
-        <main>
-            <h1>{title}</h1>
-            {children}
-            {sidebar ? <div data-testid="sidebar">{sidebar}</div> : null}
-        </main>
-    ),
-}));
+// The list as a site whose theme does not arrange it sees it.
+vi.mock("@/core/sdk/page", async () => {
+    const { arrangedPageStub } = await import("../../stubs/server-tree");
+    const manifest = JSON.parse((await import("node:fs")).readFileSync(
+        (await import("node:path")).join(process.cwd(), "module-sources/blog/module.json"), "utf8"));
+    return { ArrangedPage: arrangedPageStub("blog", manifest) };
+});
 
 vi.mock("@/core/sdk/ui", () => ({ Pagination: () => null }));
 vi.mock("@/modules/blog/components/news-grid", () => ({ NewsGrid: () => null }));
@@ -77,16 +76,16 @@ beforeEach(() => {
 
 describe("the blog sidebar says only what is there", () => {
     it("draws no sidebar for a blog with no categories and nothing published", async () => {
-        render(await BlogPage({}));
+        render(await serverTree(BlogPage({})));
 
         expect(screen.queryByText(MESSAGES.blog.categories)).toBeNull();
         expect(screen.queryByText(MESSAGES.blog.recentPosts)).toBeNull();
-        expect(screen.queryByTestId("sidebar")).toBeNull();
+        expect(document.querySelector('[data-block="blog.sidebar"]')?.childElementCount).toBe(0);
     });
 
     it("draws the recent posts without an empty categories card", async () => {
         state.recent = [{ id: "a1", number: 1, slug: "one", title: "The first one", publishedAt: new Date(), createdAt: new Date() }];
-        render(await BlogPage({}));
+        render(await serverTree(BlogPage({})));
 
         expect(screen.getByText(MESSAGES.blog.recentPosts)).toBeTruthy();
         expect(screen.queryByText(MESSAGES.blog.categories)).toBeNull();
@@ -94,7 +93,7 @@ describe("the blog sidebar says only what is there", () => {
 
     it("counts only the articles a visitor can open in each category", async () => {
         state.categories = [{ id: "c1", name: "News", slug: "news", _count: { articles: 1 } }];
-        render(await BlogPage({}));
+        render(await serverTree(BlogPage({})));
 
         expect(screen.getByText(MESSAGES.blog.categories)).toBeTruthy();
         const counted = (state.categoryQuery as { include: { _count: { select: { articles: unknown } } } })

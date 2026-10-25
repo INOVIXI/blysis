@@ -3,7 +3,7 @@
   "name": "Forum Module",
   "description": "Community discussion forum with categories, topics, and replies",
   "version": "1.15.0",
-  "coreVersion": "^5.25.0",
+  "coreVersion": "^5.26.0",
   "category": "community",
   "author": "Blysis Team",
   "icon": "MessageSquare",
@@ -2727,6 +2727,72 @@
                 {
                   "key": "topic",
                   "block": "forum.topic"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "board",
+      "blocks": [
+        {
+          "id": "search",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "board",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "search",
+                  "block": "forum.search"
+                },
+                {
+                  "key": "board",
+                  "block": "forum.board"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "new",
+      "blocks": [
+        {
+          "id": "form",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "form",
+                  "block": "forum.form"
                 }
               ]
             ]

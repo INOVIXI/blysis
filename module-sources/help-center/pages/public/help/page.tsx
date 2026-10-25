@@ -12,7 +12,8 @@
  */
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
-import { PageFrame, StandardSidebarLayout } from "@/core/sdk/layout";
+import { StandardSidebarLayout } from "@/core/sdk/layout";
+import { ArrangedPage } from "@/core/sdk/page";
 import { BookOpen, CreditCard, Info, Package, User, Wrench, type LucideIcon } from "lucide-react";
 import { readHelpIndex, searchHelpArticles } from "../../../lib/read-article";
 import { HelpSearch } from "../../../components/HelpSearch";
@@ -41,19 +42,23 @@ export default async function HelpCenterPage({ searchParams }: PageProps) {
         searchHelpArticles(term),
     ]);
 
-    return (
-        <PageFrame title={t("title")}>
+    // The search and what it found, then the sections beside the most read
+    // articles: the two blocks of the `home` page in `module.json`. The band
+    // always stood 2rem above the sections and a page's blocks stand 1.5rem
+    // apart, so the search keeps the difference under itself.
+    const search = (
+        <div className="space-y-8 pb-2">
             {/* The band is the search, and it is drawn on the primary colour:
                 a line of text-primary on it was the colour it was printed on,
                 so the invitation to search was invisible. */}
-            <div className="bg-gradient-to-r from-primary to-accent rounded-2xl p-8 text-white mb-8">
+            <div className="bg-gradient-to-r from-primary to-accent rounded-2xl p-8 text-white">
                 <h2 className="text-2xl font-bold mb-2">{t("heading")}</h2>
                 <p className="text-white/80 mb-6">{t("subtitle")}</p>
                 <HelpSearch initial={term} />
             </div>
 
             {term && (
-                <div className="bg-card rounded-xl border border-border p-6 mb-8">
+                <div className="bg-card rounded-xl border border-border p-6">
                     <h2 className="font-bold text-lg mb-4">{t("searchResults")} ({results.length})</h2>
                     {results.length === 0 ? (
                         <p className="text-sm text-muted-foreground">{t("noArticlesYet")}</p>
@@ -75,70 +80,74 @@ export default async function HelpCenterPage({ searchParams }: PageProps) {
                     )}
                 </div>
             )}
+        </div>
+    );
 
-            <StandardSidebarLayout
-                heading={t("browseCategories")}
-                sidebar={(
-                    <div>
-                        <div className="bg-card rounded-xl border border-border p-6">
-                            <h3 className="font-bold text-foreground mb-4">{t("popularArticles")}</h3>
-                            {popular.length > 0 ? (
-                                <ul className="space-y-3">
-                                    {popular.map((article) => (
-                                        <li key={article.id}>
-                                            <Link href={`/help/${article.slug}`} className="text-primary hover:underline text-sm">
-                                                {article.title}
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p className="text-sm text-muted-foreground">{t("noArticlesYet")}</p>
-                            )}
-                        </div>
-
-                        <div className="bg-card rounded-xl border border-border p-6 mt-4">
-                            <h3 className="font-bold text-foreground mb-2">{t("needHelp")}</h3>
-                            <p className="text-sm text-muted-foreground mb-4">{t("cantFind")}</p>
-                            <Link href="/support/new" className="text-primary hover:underline text-sm font-medium">
-                                {t("createTicket")} →
-                            </Link>
-                        </div>
-                    </div>
-                )}
-            >
+    const browse = (
+        <StandardSidebarLayout
+            heading={t("browseCategories")}
+            sidebar={(
                 <div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {categories.map((category) => {
-                            const Icon = ICONS[category.icon || ""] || BookOpen;
-                            return (
-                                <Link key={category.id} href={`/help/category/${category.slug}`}>
-                                    <div className="bg-card rounded-xl border border-border p-6 hover:shadow-md transition-shadow">
-                                        <div className="flex items-start gap-4">
-                                            <Icon className="w-8 h-8 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
-                                            <div>
-                                                <h3 className="font-bold text-foreground">{category.name}</h3>
-                                                {category.description && (
-                                                    <p className="text-sm text-muted-foreground mt-1">{category.description}</p>
-                                                )}
-                                                <p className="text-xs text-muted-foreground mt-2">
-                                                    {t("articles", { count: category.articleCount })}
-                                                </p>
-                                            </div>
+                    <div className="bg-card rounded-xl border border-border p-6">
+                        <h3 className="font-bold text-foreground mb-4">{t("popularArticles")}</h3>
+                        {popular.length > 0 ? (
+                            <ul className="space-y-3">
+                                {popular.map((article) => (
+                                    <li key={article.id}>
+                                        <Link href={`/help/${article.slug}`} className="text-primary hover:underline text-sm">
+                                            {article.title}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-sm text-muted-foreground">{t("noArticlesYet")}</p>
+                        )}
+                    </div>
+
+                    <div className="bg-card rounded-xl border border-border p-6 mt-4">
+                        <h3 className="font-bold text-foreground mb-2">{t("needHelp")}</h3>
+                        <p className="text-sm text-muted-foreground mb-4">{t("cantFind")}</p>
+                        <Link href="/support/new" className="text-primary hover:underline text-sm font-medium">
+                            {t("createTicket")} →
+                        </Link>
+                    </div>
+                </div>
+            )}
+        >
+            <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {categories.map((category) => {
+                        const Icon = ICONS[category.icon || ""] || BookOpen;
+                        return (
+                            <Link key={category.id} href={`/help/category/${category.slug}`}>
+                                <div className="bg-card rounded-xl border border-border p-6 hover:shadow-md transition-shadow">
+                                    <div className="flex items-start gap-4">
+                                        <Icon className="w-8 h-8 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
+                                        <div>
+                                            <h3 className="font-bold text-foreground">{category.name}</h3>
+                                            {category.description && (
+                                                <p className="text-sm text-muted-foreground mt-1">{category.description}</p>
+                                            )}
+                                            <p className="text-xs text-muted-foreground mt-2">
+                                                {t("articles", { count: category.articleCount })}
+                                            </p>
                                         </div>
                                     </div>
-                                </Link>
-                            );
-                        })}
-                    </div>
-
-                    {categories.length === 0 && (
-                        <div className="bg-card rounded-xl p-8 text-center">
-                            <p className="text-muted-foreground">{t("noCategories")}</p>
-                        </div>
-                    )}
+                                </div>
+                            </Link>
+                        );
+                    })}
                 </div>
-            </StandardSidebarLayout>
-        </PageFrame>
+
+                {categories.length === 0 && (
+                    <div className="bg-card rounded-xl p-8 text-center">
+                        <p className="text-muted-foreground">{t("noCategories")}</p>
+                    </div>
+                )}
+            </div>
+        </StandardSidebarLayout>
     );
+
+    return <ArrangedPage page="help-center.home" frame={{ title: t("title") }} blocks={{ search: () => search, browse: () => browse }} />;
 }

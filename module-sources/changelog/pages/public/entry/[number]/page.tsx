@@ -7,7 +7,7 @@ import Image from "next/image";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { Badge, Card, CardContent, LoadFailed, RichContent, useLocalDate } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { changelogTone, changelogKindLabel, type ChangelogKind } from "../../../../lib/types";
 import { entryNumberFrom } from "../../../../lib/entry-page";
 
@@ -82,66 +82,70 @@ export default function ChangelogEntryPage() {
 
     if (state === "loading") {
         return (
-            <PageFrame title={t("title")} description={t("subtitle")}>
+            <ArrangedClientPage page="changelog.entry" frame={{ title: t("title"), description: t("subtitle") }} blocks={{}}>
                 <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
-            </PageFrame>
+            </ArrangedClientPage>
         );
     }
 
     if (state === "failed") {
         return (
-            <PageFrame title={t("title")} description={t("subtitle")}>
+            <ArrangedClientPage page="changelog.entry" frame={{ title: t("title"), description: t("subtitle") }} blocks={{}}>
                 <LoadFailed onRetry={() => { setState("loading"); setReloadKey((k) => k + 1); }} />
-            </PageFrame>
+            </ArrangedClientPage>
         );
     }
 
     if (state === "missing" || !entry) {
         return (
-            <PageFrame title={t("title")} description={t("subtitle")}>
+            <ArrangedClientPage page="changelog.entry" frame={{ title: t("title"), description: t("subtitle") }} blocks={{}}>
                 <Card>
                     <CardContent className="py-12 text-center space-y-3">
                         <p className="text-muted-foreground">{t("entryMissing")}</p>
                         {back}
                     </CardContent>
                 </Card>
-            </PageFrame>
+            </ArrangedClientPage>
         );
     }
 
     return (
-        <PageFrame title={entry.title} description={t("subtitle")}>
-            <div className="space-y-6">
-                {back}
-
-                {entry.coverImage && (
+        <ArrangedClientPage
+            page="changelog.entry"
+            frame={{ title: entry.title, description: t("subtitle") }}
+            blocks={{
+                // The way back stands above the entry and again below it, as
+                // two placements of one block. In a box of its own, so the
+                // link is not set on a line of text taller than itself.
+                back: () => <div className="flex">{back}</div>,
+                cover: () => (entry.coverImage ? (
                     <div className="relative aspect-card w-full overflow-hidden rounded-xl border border-border bg-muted">
                         <Image src={entry.coverImage} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 768px" />
                     </div>
-                )}
-
-                <div className="flex flex-wrap items-center gap-2">
-                    <Badge tone={changelogTone(entry.type, kinds)}>{changelogKindLabel(t, entry.type, kinds)}</Badge>
-                    <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded font-mono">
-                        v{entry.version}
-                    </span>
-                    <span className="text-xs text-muted-foreground">{formatLocalDate(entry.createdAt)}</span>
-                </div>
-
-                {/* The summary is repeated once, above the long form, because a
-                    reader arriving from a shared link has not seen the
-                    timeline and would otherwise start halfway through. */}
-                <Card>
-                    <CardContent className="p-5 space-y-4">
-                        <RichContent className="text-muted-foreground" markdown={entry.content} />
-                        <div className="border-t border-border pt-4">
-                            <RichContent markdown={entry.details} />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {back}
-            </div>
-        </PageFrame>
+                ) : null),
+                meta: () => (
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Badge tone={changelogTone(entry.type, kinds)}>{changelogKindLabel(t, entry.type, kinds)}</Badge>
+                        <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded font-mono">
+                            v{entry.version}
+                        </span>
+                        <span className="text-xs text-muted-foreground">{formatLocalDate(entry.createdAt)}</span>
+                    </div>
+                ),
+                // The summary is repeated once, above the long form, because a
+                // reader arriving from a shared link has not seen the timeline
+                // and would otherwise start halfway through.
+                notes: () => (
+                    <Card>
+                        <CardContent className="p-5 space-y-4">
+                            <RichContent className="text-muted-foreground" markdown={entry.content} />
+                            <div className="border-t border-border pt-4">
+                                <RichContent markdown={entry.details} />
+                            </div>
+                        </CardContent>
+                    </Card>
+                ),
+            }}
+        />
     );
 }

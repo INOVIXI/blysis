@@ -13,6 +13,7 @@
  * the title as the h1. A test of the page therefore draws what a visitor to
  * such a site sees, hidden blocks left out. Given a theme's arrangements by
  * page, it draws a page the way that theme arranges it instead.
+ * `arrangedClientPageStub` does the same for `ArrangedClientPage`.
  */
 import React from "react";
 import { pagesOf } from "@/core/lib/page-blocks";
@@ -36,16 +37,27 @@ export async function serverTree(node: React.ReactNode | Promise<React.ReactNode
     return React.cloneElement(awaited, undefined, await serverTree(props.children));
 }
 
+function drawArranged(module: string, manifest: Parameters<typeof pagesOf>[1], themeLayouts: Record<string, LayoutDocument>, { page, frame, blocks, children }: ArrangedPageProps) {
+    const declared = pagesOf(module, manifest).find((p) => p.id === page);
+    if (!declared) throw new Error(`${module} declares no page ${page}`);
+    const layout = resolvePageLayout({ page: declared, themeLayout: themeLayouts[page] });
+    const drawn = layout.rows.flatMap((row) => row.cells.flat()).map((instance) => (
+        <div key={instance.key} data-block={instance.block.id}>
+            {blocks[instance.block.entryId]?.({ settings: instance.settings, width: instance.width })}
+        </div>
+    ));
+    return <main><h1>{frame.title}</h1>{children}{drawn}</main>;
+}
+
 export function arrangedPageStub(module: string, manifest: Parameters<typeof pagesOf>[1], themeLayouts: Record<string, LayoutDocument> = {}) {
-    return async function ArrangedPage({ page, frame, blocks, children }: ArrangedPageProps) {
-        const declared = pagesOf(module, manifest).find((p) => p.id === page);
-        if (!declared) throw new Error(`${module} declares no page ${page}`);
-        const layout = resolvePageLayout({ page: declared, themeLayout: themeLayouts[page] });
-        const drawn = layout.rows.flatMap((row) => row.cells.flat()).map((instance) => (
-            <div key={instance.key} data-block={instance.block.id}>
-                {blocks[instance.block.entryId]?.({ settings: instance.settings, width: instance.width })}
-            </div>
-        ));
-        return <main><h1>{frame.title}</h1>{children}{drawn}</main>;
+    return async function ArrangedPage(props: ArrangedPageProps) {
+        return drawArranged(module, manifest, themeLayouts, props);
+    };
+}
+
+/** `arrangedPageStub` for a page drawn in the browser, which `ArrangedClientPage` draws. */
+export function arrangedClientPageStub(module: string, manifest: Parameters<typeof pagesOf>[1], themeLayouts: Record<string, LayoutDocument> = {}) {
+    return function ArrangedClientPage(props: ArrangedPageProps) {
+        return drawArranged(module, manifest, themeLayouts, props);
     };
 }

@@ -2,8 +2,8 @@
   "id": "custom-pages",
   "name": "Custom Pages",
   "description": "Pages the team writes, at an address of their own",
-  "version": "1.5.1",
-  "coreVersion": "^5.0.0",
+  "version": "1.6.0",
+  "coreVersion": "^5.26.0",
   "category": "content",
   "author": "Blysis",
   "icon": "FileText",
@@ -956,6 +956,35 @@
     {
       "name": "custom-pages.manage",
       "labelKey": "customPages.perm_manage"
+    }
+  ],
+  "pages": [
+    {
+      "id": "page",
+      "blocks": [
+        {
+          "id": "content",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "content",
+                  "block": "custom-pages.content"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

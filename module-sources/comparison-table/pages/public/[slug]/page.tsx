@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Card, CardContent, LoadFailed } from "@/core/sdk/ui";
 import { Loader2 } from "lucide-react";
 import { ComparisonGrid, type GridTable } from "../../../components/ComparisonGrid";
@@ -44,36 +44,44 @@ export default function ComparisonTablePage() {
 
     if (loading) {
         return (
-            <PageFrame title={t("title")}>
+            <ArrangedClientPage page="comparison-table.table" frame={{ title: t("title") }} blocks={{}}>
                 <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
-            </PageFrame>
+            </ArrangedClientPage>
         );
     }
 
     if (failed) {
         return (
-            <PageFrame title={t("title")}>
+            <ArrangedClientPage page="comparison-table.table" frame={{ title: t("title") }} blocks={{}}>
                 <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
-            </PageFrame>
+            </ArrangedClientPage>
         );
     }
 
     if (!table) {
         return (
-            <PageFrame title={t("title")}>
+            <ArrangedClientPage page="comparison-table.table" frame={{ title: t("title") }} blocks={{}}>
                 <Card><CardContent className="py-12 text-center"><p className="text-muted-foreground">{t("notFound")}</p></CardContent></Card>
-            </PageFrame>
+            </ArrangedClientPage>
         );
     }
 
     return (
-        <PageFrame title={table.title} description={table.description ?? undefined}>
-            <Card>
-                <CardContent className="p-0">
-                    <ComparisonGrid table={table} />
-                </CardContent>
-            </Card>
-            <p className="mt-3 text-xs text-muted-foreground">{t("unstatedNote")}</p>
-        </PageFrame>
+        <ArrangedClientPage
+            page="comparison-table.table"
+            frame={{ title: table.title, description: table.description ?? undefined }}
+            blocks={{
+                table: () => (
+                    <>
+                        <Card>
+                            <CardContent className="p-0">
+                                <ComparisonGrid table={table} />
+                            </CardContent>
+                        </Card>
+                        <p className="mt-3 text-xs text-muted-foreground">{t("unstatedNote")}</p>
+                    </>
+                ),
+            }}
+        />
     );
 }

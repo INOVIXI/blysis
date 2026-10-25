@@ -29,7 +29,7 @@ export function TopicSearch({ initial, categorySlug }: { initial: string; catego
     };
 
     return (
-        <form onSubmit={submit} className="relative w-full mb-6" role="search">
+        <form onSubmit={submit} className="relative w-full" role="search">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
                 value={value}

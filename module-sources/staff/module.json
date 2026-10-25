@@ -3,7 +3,7 @@
   "name": "Staff",
   "description": "Staff member listing and applications",
   "version": "1.7.0",
-  "coreVersion": "^5.0.0",
+  "coreVersion": "^5.25.0",
   "category": "management",
   "author": "Blysis",
   "icon": "Users",
@@ -585,6 +585,35 @@
           "type": "text",
           "max": 80
         }
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "team",
+      "blocks": [
+        {
+          "id": "members",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "members",
+                  "block": "staff.members"
+                }
+              ]
+            ]
+          }
+        ]
       }
     }
   ]

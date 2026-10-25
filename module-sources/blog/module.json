@@ -2015,6 +2015,58 @@
           "blog.contents"
         ]
       }
+    },
+    {
+      "id": "list",
+      "blocks": [
+        {
+          "id": "back",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "articles",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "sidebar",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "back",
+                  "block": "blog.back"
+                },
+                {
+                  "key": "articles",
+                  "block": "blog.articles"
+                }
+              ],
+              [
+                {
+                  "key": "sidebar",
+                  "block": "blog.sidebar"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

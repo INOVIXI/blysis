@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Badge, Card, CardContent, ListControls, LoadFailed, Pagination, SegmentedTabs, useLocalDate, type BadgeTone } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Loader2, Ban, VolumeX, LogOut, AlertTriangle } from "lucide-react";
 import { punishmentStatus, type PunishmentStatus } from "../lib/status";
 import { PUNISHMENT_TYPES, canonicalType, type PunishmentType } from "../lib/punishment-types";
@@ -122,132 +122,135 @@ export function PunishmentList({ initial, initialPages, scopes }: {
     const narrow = (apply: () => void) => { apply(); setPage(1); };
 
     return (
-        <PageFrame
-            title={t("title")}
-            description={t("description")}
-        >
-            {/*
-             * Two layers, because there are two questions. Which record am I
-             * reading - a place is a different list, so it is a tab. Then:
-             * narrow it, which is the strip every other list a member meets
-             * already has. They used to be two identical rows of pills with
-             * nothing to say which was which.
-             *
-             * The rail only appears where an operator has actually divided
-             * the record. A site with one server should not be asked to
-             * choose between one thing and everything.
-             */}
-            {scopes.length > 0 ? (
-                <SegmentedTabs
-                    label={t("places")}
-                    activeId={scopeFilter}
-                    onChange={(id) => narrow(() => setScopeFilter(id))}
-                    className="mb-4"
-                    tabs={[{ id: "", label: t("allScopes") }, ...scopes.map((sc) => ({ id: sc.id, label: sc.name }))]}
-                />
-            ) : null}
+        <ArrangedClientPage
+            page="punishments.records"
+            frame={{ title: t("title"), description: t("description") }}
+            blocks={{
+                // Two layers, because there are two questions. Which record am I
+                // reading - a place is a different list, so it is a tab. Then:
+                // narrow it, which is the strip every other list a member meets
+                // already has. They used to be two identical rows of pills with
+                // nothing to say which was which.
+                //
+                // The rail only appears where an operator has actually divided
+                // the record. A site with one server should not be asked to
+                // choose between one thing and everything.
+                controls: () => (
+                    <>
+                        {scopes.length > 0 ? (
+                            <SegmentedTabs
+                                label={t("places")}
+                                activeId={scopeFilter}
+                                onChange={(id) => narrow(() => setScopeFilter(id))}
+                                className="mb-4"
+                                tabs={[{ id: "", label: t("allScopes") }, ...scopes.map((sc) => ({ id: sc.id, label: sc.name }))]}
+                            />
+                        ) : null}
 
-            <ListControls
-                className="mb-6"
-                search={{
-                    value: search,
-                    onChange: (value) => narrow(() => setSearch(value)),
-                    placeholder: t("searchPlaceholder"),
-                }}
-                filters={[
-                    {
-                        id: "type",
-                        label: t("type"),
-                        value: typeFilter,
-                        onChange: (value) => narrow(() => setTypeFilter(value)),
-                        options: [
-                            { value: "", label: t("allTypes") },
-                            ...PUNISHMENT_TYPES.map((tf) => ({ value: tf, label: typeLabel(t, tf) })),
-                        ],
-                    },
-                    {
-                        // The endpoint has answered this since it was written
-                        // and no screen ever asked: a reader could see that a
-                        // punishment was lifted and not ask for the lifted ones.
-                        id: "status",
-                        label: t("status"),
-                        value: status,
-                        onChange: (value) => narrow(() => setStatus(value)),
-                        options: [
-                            { value: "", label: t("allStatuses") },
-                            { value: "active", label: t("active") },
-                            { value: "expired", label: t("expired") },
-                            { value: "revoked", label: t("revoked") },
-                        ],
-                    },
-                ]}
-            />
-
-            {loading ? (
-                <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
-            ) : failed ? (
-                <LoadFailed onRetry={fetchData} />
-            ) : punishments.length === 0 ? (
-                <Card><CardContent className="py-12 text-center text-muted-foreground">{t("noPunishments")}</CardContent></Card>
-            ) : (
-                <>
-                    <div className="overflow-x-auto">
-                        <table className="w-full bg-card rounded-xl border border-border">
-                            <thead>
-                                <tr className="border-b">
-                                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("player")}</th>
-                                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("type")}</th>
-                                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("reason")}</th>
-                                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("punishedBy")}</th>
-                                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("duration")}</th>
-                                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("date")}</th>
-                                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("status")}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {punishments.map((p) => {
-                                    const known = canonicalType(p.type);
-                                    const Icon = known ? typeIcons[known] : Ban;
-                                    const status = punishmentStatus(p);
-                                    return (
-                                        <tr key={p.id} className="border-b last:border-0 hover:bg-muted">
-                                            <td className="py-3 px-4 font-medium">
-                                                {p.playerName}
-                                                {p.scope ? (
-                                                    <span className="block text-xs font-normal text-muted-foreground">{p.scope.name}</span>
-                                                ) : null}
-                                            </td>
-                                            <td className="py-3 px-4">
-                                                <Badge tone={known ? TYPE_TONES[known] : "neutral"}>
-                                                    <Icon className="w-3 h-3" aria-hidden="true" /> {typeLabel(t, p.type)}
-                                                </Badge>
-                                            </td>
-                                            <td className="py-3 px-4 text-sm text-muted-foreground max-w-[200px] truncate">{p.reason || "-"}</td>
-                                            <td className="py-3 px-4 text-sm text-muted-foreground">{p.punishedBy || t("console")}</td>
-                                            <td className="py-3 px-4 text-sm">{p.duration || t("permanent")}</td>
-                                            <td className="py-3 px-4 text-sm text-muted-foreground">{formatDate(p.createdAt)}</td>
-                                            <td className="py-3 px-4">
-                                                <Badge tone={STATUS_TONES[status]}>{t(status)}</Badge>
-                                                {/* Under the chip rather than in a column of its own:
-                                                    seven columns already crowd a phone, and this is
-                                                    empty on every punishment nobody has lifted. */}
-                                                {status === "revoked" && p.liftedBy ? (
-                                                    <p className="text-xs text-muted-foreground mt-1">
-                                                        <span className="sr-only">{t("liftedBy")}: </span>
-                                                        {p.liftReason ? `${p.liftedBy} - ${p.liftReason}` : p.liftedBy}
-                                                    </p>
-                                                ) : null}
-                                            </td>
+                        <ListControls
+                            search={{
+                                value: search,
+                                onChange: (value) => narrow(() => setSearch(value)),
+                                placeholder: t("searchPlaceholder"),
+                            }}
+                            filters={[
+                                {
+                                    id: "type",
+                                    label: t("type"),
+                                    value: typeFilter,
+                                    onChange: (value) => narrow(() => setTypeFilter(value)),
+                                    options: [
+                                        { value: "", label: t("allTypes") },
+                                        ...PUNISHMENT_TYPES.map((tf) => ({ value: tf, label: typeLabel(t, tf) })),
+                                    ],
+                                },
+                                {
+                                    // The endpoint has answered this since it was written
+                                    // and no screen ever asked: a reader could see that a
+                                    // punishment was lifted and not ask for the lifted ones.
+                                    id: "status",
+                                    label: t("status"),
+                                    value: status,
+                                    onChange: (value) => narrow(() => setStatus(value)),
+                                    options: [
+                                        { value: "", label: t("allStatuses") },
+                                        { value: "active", label: t("active") },
+                                        { value: "expired", label: t("expired") },
+                                        { value: "revoked", label: t("revoked") },
+                                    ],
+                                },
+                            ]}
+                        />
+                    </>
+                ),
+                records: () => (
+                    loading ? (
+                        <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
+                    ) : failed ? (
+                        <LoadFailed onRetry={fetchData} />
+                    ) : punishments.length === 0 ? (
+                        <Card><CardContent className="py-12 text-center text-muted-foreground">{t("noPunishments")}</CardContent></Card>
+                    ) : (
+                        <>
+                            <div className="overflow-x-auto">
+                                <table className="w-full bg-card rounded-xl border border-border">
+                                    <thead>
+                                        <tr className="border-b">
+                                            <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("player")}</th>
+                                            <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("type")}</th>
+                                            <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("reason")}</th>
+                                            <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("punishedBy")}</th>
+                                            <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("duration")}</th>
+                                            <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("date")}</th>
+                                            <th className="text-left py-3 px-4 font-medium text-muted-foreground text-sm">{t("status")}</th>
                                         </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
+                                    </thead>
+                                    <tbody>
+                                        {punishments.map((p) => {
+                                            const known = canonicalType(p.type);
+                                            const Icon = known ? typeIcons[known] : Ban;
+                                            const status = punishmentStatus(p);
+                                            return (
+                                                <tr key={p.id} className="border-b last:border-0 hover:bg-muted">
+                                                    <td className="py-3 px-4 font-medium">
+                                                        {p.playerName}
+                                                        {p.scope ? (
+                                                            <span className="block text-xs font-normal text-muted-foreground">{p.scope.name}</span>
+                                                        ) : null}
+                                                    </td>
+                                                    <td className="py-3 px-4">
+                                                        <Badge tone={known ? TYPE_TONES[known] : "neutral"}>
+                                                            <Icon className="w-3 h-3" aria-hidden="true" /> {typeLabel(t, p.type)}
+                                                        </Badge>
+                                                    </td>
+                                                    <td className="py-3 px-4 text-sm text-muted-foreground max-w-[200px] truncate">{p.reason || "-"}</td>
+                                                    <td className="py-3 px-4 text-sm text-muted-foreground">{p.punishedBy || t("console")}</td>
+                                                    <td className="py-3 px-4 text-sm">{p.duration || t("permanent")}</td>
+                                                    <td className="py-3 px-4 text-sm text-muted-foreground">{formatDate(p.createdAt)}</td>
+                                                    <td className="py-3 px-4">
+                                                        <Badge tone={STATUS_TONES[status]}>{t(status)}</Badge>
+                                                        {/* Under the chip rather than in a column of its own:
+                                                            seven columns already crowd a phone, and this is
+                                                            empty on every punishment nobody has lifted. */}
+                                                        {status === "revoked" && p.liftedBy ? (
+                                                            <p className="text-xs text-muted-foreground mt-1">
+                                                                <span className="sr-only">{t("liftedBy")}: </span>
+                                                                {p.liftReason ? `${p.liftedBy} - ${p.liftReason}` : p.liftedBy}
+                                                            </p>
+                                                        ) : null}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
 
-                    <Pagination page={page} pages={totalPages} onPageChange={setPage} />
-                </>
-            )}
-        </PageFrame>
+                            <Pagination page={page} pages={totalPages} onPageChange={setPage} />
+                        </>
+                    )
+                ),
+            }}
+        />
     );
 }
