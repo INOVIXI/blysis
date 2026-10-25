@@ -203,7 +203,7 @@
     "fonts": {
       "heading": {
         "type": "font",
-        "default": "var(--font-kite-heading), var(--font-kite-body), system-ui, sans-serif"
+        "default": "var(--font-kite-heading), var(--font-kite-headingExtra), var(--font-kite-body), sans-serif"
       },
       "body": {
         "type": "font",
@@ -240,7 +240,24 @@
   "fontFiles": {
     "heading": [
       {
-        "file": "fonts/Kite-Heading.woff2",
+        "file": "fonts/Kite-Heading-500.woff2",
+        "weight": "500",
+        "style": "normal"
+      },
+      {
+        "file": "fonts/Kite-Heading-600.woff2",
+        "weight": "600",
+        "style": "normal"
+      },
+      {
+        "file": "fonts/Kite-Heading-700.woff2",
+        "weight": "700",
+        "style": "normal"
+      }
+    ],
+    "headingExtra": [
+      {
+        "file": "fonts/Kite-Heading-Extra.woff2",
         "weight": "400 800",
         "style": "normal"
       }
