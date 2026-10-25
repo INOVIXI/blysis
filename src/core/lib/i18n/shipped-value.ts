@@ -14,12 +14,10 @@ import { themeRegistry } from "@/core/generated/theme-registry";
 import { moduleLoader } from "@/core/lib/module-loader";
 import { isUnsafeKey } from "@/core/lib/safe-object";
 import { messageAt, shippedMessages } from "./shipped-messages";
+import { THEME_SOURCE_PREFIX } from "./translation-layers";
 
 /** The id the `Translation` table gives rows that are not a module's. */
 const CORE_MODULE = "core";
-
-/** The prefix the `Translation` table files a theme's rows under. */
-const THEME_PREFIX = "theme:";
 
 /** A namespace holding one string rather than a tree writes it under this. */
 const ROOT_KEY = "_root";
@@ -46,8 +44,8 @@ export function shippedValue(
 ): string | null {
     const catalogue = moduleId === CORE_MODULE
         ? (shippedMessages(locale) as Record<string, unknown>)
-        : moduleId.startsWith(THEME_PREFIX)
-            ? themeCatalogue(moduleId.slice(THEME_PREFIX.length), locale)
+        : moduleId.startsWith(THEME_SOURCE_PREFIX)
+            ? themeCatalogue(moduleId.slice(THEME_SOURCE_PREFIX.length), locale)
             : (moduleLoader.getModule(moduleId)?.manifest.translations?.[locale] as Record<string, unknown> | undefined);
 
     const found = namespaceOf(catalogue, namespace);

@@ -20,9 +20,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { translation, transaction } = vi.hoisted(() => ({
     translation: {
-        findMany: vi.fn(async () => [] as unknown[]),
+        // The string is core's, with a row in English only.
+        findMany: vi.fn(async (args: { where?: { AND?: unknown[] } }) => args.where?.AND
+            ? [{ id: "r1", locale: "en", module: "core", namespace: "admin", key: "known", value: "{count} orders", isCustom: false }]
+            : []),
         upsert: vi.fn((args: unknown) => args),
         update: vi.fn((args: unknown) => args),
+        delete: vi.fn((args: unknown) => args),
     },
     transaction: vi.fn(async (calls: unknown[]) => calls),
 }));
@@ -34,7 +38,10 @@ vi.mock("@/core/lib/db", () => ({
 vi.mock("@/core/lib/auth", () => ({ auth: async () => ({ user: { id: "u1", role: "admin" } }) }));
 vi.mock("@/core/lib/permissions", () => ({ isAdmin: async () => true }));
 vi.mock("@/core/lib/activity-log", () => ({ logActivity: async () => undefined }));
-vi.mock("@/core/lib/i18n/translation-service", () => ({ invalidateTranslationCache: async () => undefined }));
+vi.mock("@/core/lib/i18n/translation-service", () => ({
+    invalidateTranslationCache: async () => undefined,
+    activeThemeId: async () => "kite",
+}));
 vi.mock("@/core/lib/i18n/shipped-value", () => ({
     shippedValue: (_module: string, _locale: string, _namespace: string, key: string) =>
         key === "known" ? "{count} orders" : null,
@@ -52,7 +59,7 @@ async function save(values: Record<string, string>, key = "known"): Promise<Answ
         new Request("http://localhost/api/v1/admin/translations", {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ module: "core", namespace: "admin", key, values }),
+            body: JSON.stringify({ namespace: "admin", key, values }),
         }) as never,
     );
     return { status: res.status, body: await res.json() };
@@ -95,6 +102,27 @@ describe("saving one string", () => {
         const answer = await save({ en: "{count} orders", tr: "{count} / {total}" });
         expect(answer.status).toBe(400);
         expect(answer.body.details?.locale).toBe("tr");
+        expect(transaction).not.toHaveBeenCalled();
+    });
+
+    it("files the edit on the string's owner and undoes an older one on the theme's row", async () => {
+        translation.findMany.mockResolvedValueOnce([
+            { id: "r1", locale: "en", module: "core", namespace: "admin", key: "known", value: "{count} orders", isCustom: false },
+            { id: "r2", locale: "en", module: "theme:kite", namespace: "admin", key: "known", value: "{count} kites", isCustom: true },
+        ]);
+        const answer = await save({ en: "{count} sales" });
+        expect(answer.status).toBe(200);
+        expect(translation.upsert).toHaveBeenCalledWith(expect.objectContaining({
+            create: expect.objectContaining({ module: "core", value: "{count} sales", isCustom: true }),
+        }));
+        expect(translation.update).toHaveBeenCalledWith({ where: { id: "r2" }, data: { value: "{count} orders", isCustom: false } });
+    });
+
+    it("refuses a string the site does not have", async () => {
+        translation.findMany.mockResolvedValueOnce([]);
+        const answer = await save({ en: "{count} orders" }, "unknown");
+        expect(answer.status).toBe(404);
+        expect(answer.body.code).toBe("translation_not_found");
         expect(transaction).not.toHaveBeenCalled();
     });
 

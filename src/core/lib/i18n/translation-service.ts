@@ -14,6 +14,7 @@
 
 import { prisma } from "@/core/lib/db";
 import { shippedMessages } from "@/core/lib/i18n/shipped-messages";
+import { sortByVoice } from "@/core/lib/i18n/translation-layers";
 import { defaultThemeId } from "@/core/generated/theme-registry";
 import { cacheGet, cacheSet, cacheDel } from "@/core/lib/redis";
 import { isUnsafeKey, emptyRecord } from "@/core/lib/safe-object";
@@ -25,12 +26,8 @@ const CACHE_TTL_SECONDS = 120;
 // Public API
 // ---------------------------------------------------------------------------
 
-/**
- * Get the full nested message object for a locale.
- * Called by next-intl's `getRequestConfig` on every request.
- */
 /** The theme id alone, without the mode, the customization or the cookie. */
-async function activeThemeId(): Promise<string> {
+export async function activeThemeId(): Promise<string> {
     try {
         const state = await prisma.themeState.findFirst({ select: { themeId: true } });
         return state?.themeId ?? defaultThemeId;
@@ -41,6 +38,10 @@ async function activeThemeId(): Promise<string> {
     }
 }
 
+/**
+ * Get the full nested message object for a locale.
+ * Called by next-intl's `getRequestConfig` on every request.
+ */
 export async function getMessages(locale: string): Promise<Record<string, unknown>> {
     const cacheKey = CACHE_PREFIX + locale;
 
@@ -102,12 +103,7 @@ export async function getMessages(locale: string): Promise<Record<string, unknow
     //    place used to come out of an alphabetical sort of module ids, which
     //    let it word "store" and not "wiki", since "theme:" sorts between.
     //    `a-theme-speaks-over-every-module-and-under-the-site` holds it.
-    rows.sort((a, b) => {
-        if (a.isCustom !== b.isCustom) return a.isCustom ? 1 : -1;
-        const voice = voiceOf(a.module) - voiceOf(b.module);
-        if (voice !== 0) return voice;
-        return a.module.localeCompare(b.module);
-    });
+    const heard = sortByVoice(rows);
 
     // What this version ships, then what the database says. A row wins
     // wherever there is one; a string nobody has seeded yet is still a string.
@@ -126,7 +122,7 @@ export async function getMessages(locale: string): Promise<Record<string, unknow
         messages[namespace] = target;
     }
 
-    for (const row of rows) {
+    for (const row of heard) {
         if (!messages[row.namespace]) messages[row.namespace] = emptyRecord();
         setNestedValue(messages[row.namespace], row.key, row.value);
     }
@@ -226,12 +222,6 @@ export async function invalidateTranslationCache(): Promise<void> {
 // ---------------------------------------------------------------------------
 // Internals
 // ---------------------------------------------------------------------------
-
-/** Where a row's source speaks: core first, a module over it, a theme over both. */
-function voiceOf(source: string): number {
-    if (source === "core") return 0;
-    return source.startsWith("theme:") ? 2 : 1;
-}
 
 /**
  * The modules an admin has switched off.

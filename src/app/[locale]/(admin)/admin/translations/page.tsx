@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Replace, Search } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { Card, CardContent } from "@/core/components/ui/card";
+import { buttonClassName } from "@/core/components/ui/button";
 import { Checkbox } from "@/core/components/ui/checkbox";
 import { Input } from "@/core/components/ui/input";
 import { NativeSelect } from "@/core/components/ui/native-select";
@@ -14,15 +15,17 @@ import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { errorMessage } from "@/core/lib/write-result";
 import { Label } from "@/core/components/ui/label";
 import { defaultLocale, localeNames, locales, type Locale } from "@/core/lib/i18n/config";
-import { Entry, TranslationEntry } from "./TranslationEntry";
+import { Link } from "@/core/lib/i18n/navigation";
+import { type Entry, type Source, TranslationEntry, useSourceLabel } from "./TranslationEntry";
 
 /**
  * Every string the site renders, and a box to change it in.
  *
  * The catalogue is thousands of keys and grows with every module installed,
- * so the screen is a search rather than a list: a page of keys at a time,
- * narrowed by what a string says, which module ships it, or whether anybody
- * has already changed it.
+ * so the screen is a search rather than a list: a page of strings at a time,
+ * narrowed by what a string says in any language, which source has a row for
+ * it, or whether anybody has already changed it. A string is one line
+ * whoever ships it, so the operator edits what a visitor reads.
  *
  * The endpoint refuses an edit that would name a value the calling code never
  * passes, and says which name it objected to. Those refusals are shown as
@@ -45,6 +48,7 @@ const REFUSALS: Record<string, string> = {
     translation_too_long: "translations_errTooLong",
     translation_no_shipped_value: "translations_errNoShipped",
     translation_not_custom: "translations_errNotCustom",
+    translation_not_found: "translations_errNotFound",
 };
 
 /** What everything else is translated from. */
@@ -63,7 +67,7 @@ export default function TranslationsPage() {
 
     const [typed, setTyped] = useState("");
     const [query, setQuery] = useState("");
-    const [moduleId, setModuleId] = useState("");
+    const [source, setSource] = useState("");
     const [namespace, setNamespace] = useState("");
     const [onlyEdited, setOnlyEdited] = useState(false);
     const [onlyMissing, setOnlyMissing] = useState(false);
@@ -79,10 +83,10 @@ export default function TranslationsPage() {
     const [target, setTarget] = useState<Locale>(() =>
         locale !== SOURCE ? (locale as Locale) : (locales.find((l) => l !== SOURCE) ?? SOURCE));
     const [facets, setFacets] = useState<{
-        modules: string[];
+        sources: Source[];
         namespaces: string[];
         locales: { locale: string; held: number; missing: number }[];
-    }>({ modules: [], namespaces: [], locales: [] });
+    }>({ sources: [], namespaces: [], locales: [] });
 
     // Typing is not a request. Without this the endpoint runs a distinct
     // count over the whole catalogue on every keystroke.
@@ -104,7 +108,7 @@ export default function TranslationsPage() {
                 const body = await res.json();
                 if (body?.ok) setFacets(body.data);
             } catch {
-                setFacets({ modules: [], namespaces: [], locales: [] });
+                setFacets({ sources: [], namespaces: [], locales: [] });
             }
         };
         loadFacets();
@@ -114,7 +118,7 @@ export default function TranslationsPage() {
         setLoading(true);
         const params = new URLSearchParams({ page: String(page) });
         if (query) params.set("q", query);
-        if (moduleId) params.set("module", moduleId);
+        if (source) params.set("module", source);
         if (namespace) params.set("namespace", namespace);
         if (onlyEdited) params.set("custom", "1");
         params.set("locale", target);
@@ -134,7 +138,7 @@ export default function TranslationsPage() {
         } finally {
             setLoading(false);
         }
-    }, [page, query, moduleId, namespace, onlyEdited, onlyMissing, target, t]);
+    }, [page, query, source, namespace, onlyEdited, onlyMissing, target, t]);
 
     useEffect(() => {
         load();
@@ -154,13 +158,10 @@ export default function TranslationsPage() {
 
     const replace = (item: Entry) => {
         setItems((current) =>
-            current.map((row) =>
-                row.module === item.module && row.namespace === item.namespace && row.key === item.key
-                    ? item
-                    : row,
-            ),
+            current.map((row) => (row.namespace === item.namespace && row.key === item.key ? item : row)),
         );
     };
+    const labelOf = useSourceLabel(facets.sources);
 
     const send = async (entry: Entry, method: "PATCH" | "DELETE", extra: Record<string, unknown>) => {
         try {
@@ -168,7 +169,6 @@ export default function TranslationsPage() {
                 method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    module: entry.module,
                     namespace: entry.namespace,
                     key: entry.key,
                     ...extra,
@@ -194,6 +194,11 @@ export default function TranslationsPage() {
             <AdminPageHeader
                 title={t("translations_title")}
                 description={t("translations_description", { count: total })}
+                actions={
+                    <Link href="/admin/translations/replace" className={buttonClassName("outline", "default")}>
+                        <Replace className="w-4 h-4" aria-hidden="true" /> {t("translations_replaceOpen")}
+                    </Link>
+                }
             />
 
             <Card className="mb-6">
@@ -213,16 +218,16 @@ export default function TranslationsPage() {
                     </div>
                     <NativeSelect
                         aria-label={t("translations_module")}
-                        value={moduleId}
+                        value={source}
                         onChange={(event) => {
-                            setModuleId(event.target.value);
+                            setSource(event.target.value);
                             setPage(1);
                         }}
                     >
                         <option value="">{t("translations_allModules")}</option>
-                        {facets.modules.map((id) => (
-                            <option key={id} value={id}>
-                                {id}
+                        {facets.sources.map((row) => (
+                            <option key={row.id} value={row.id}>
+                                {labelOf(row.id)}
                             </option>
                         ))}
                     </NativeSelect>
@@ -305,8 +310,9 @@ export default function TranslationsPage() {
                 <div className="space-y-3">
                     {items.map((entry) => (
                         <TranslationEntry
-                            key={`${entry.module}/${entry.namespace}/${entry.key}`}
+                            key={`${entry.namespace}/${entry.key}`}
                             entry={entry}
+                            labelOf={labelOf}
                             source={SOURCE}
                             target={target}
                             onSave={(values) => send(entry, "PATCH", { values })}

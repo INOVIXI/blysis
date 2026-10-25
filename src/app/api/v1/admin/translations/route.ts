@@ -8,7 +8,8 @@ import { auth } from "@/core/lib/auth";
 import { prisma } from "@/core/lib/db";
 import { defaultLocale, locales } from "@/core/lib/i18n/config";
 import { shippedValue } from "@/core/lib/i18n/shipped-value";
-import { invalidateTranslationCache } from "@/core/lib/i18n/translation-service";
+import { type LineRef, editCalls, editOps, heardBy, heardSql, lineOf, lineRows } from "@/core/lib/i18n/translation-lines";
+import { activeThemeId, invalidateTranslationCache } from "@/core/lib/i18n/translation-service";
 import { MAX_MESSAGE_LENGTH, checkMessageEdit } from "@/core/lib/message-edit";
 import { isAdmin } from "@/core/lib/permissions";
 import { prismaErrorOrThrow } from "@/core/lib/prisma-errors";
@@ -16,19 +17,21 @@ import { prismaErrorOrThrow } from "@/core/lib/prisma-errors";
 /**
  * The strings the site renders, and an operator's edits to them.
  *
- * A key is one thing across every locale, so this answers in keys rather than
- * in rows: an operator who fixes the English and leaves the Turkish is how a
- * site ends up half translated. Both sit on the same line, and both are
- * checked before either is written.
+ * A string is one line across every source and every locale. The store ships
+ * `store.title`, the theme being worn may reword it, and the site may edit
+ * it; the operator sees what a visitor reads and who says it, not one line
+ * per row. Every locale of an edit is checked before any is written, so an
+ * operator who fixes the English and leaves the Turkish is not refused for
+ * the Turkish, and one who breaks the Turkish writes neither.
  *
- * An edit is measured against what the software ships, not against the row it
- * replaces, so editing a string twice cannot walk it away from the values the
- * calling code passes. Reverting puts the shipped string back for the same
- * reason, and refuses when nothing ships it: a string with no origin cannot
- * be restored to one, and dropping the row instead would take the string off
- * the site while reading to an operator as a restore.
+ * An edit is measured against what the site would say without it, not
+ * against the row it replaces, so editing a string twice cannot walk it away
+ * from the values the calling code passes. Reverting puts the shipped string
+ * back for the same reason, and refuses when nothing ships it: a string with
+ * no origin cannot be restored to one, and dropping the row instead would
+ * take the string off the site while reading to an operator as a restore.
  *
- * Core names no module here. Module ids arrive as data, out of a column.
+ * Core names no module here. Sources arrive as data, out of a column.
  */
 
 const PAGE_SIZE = 50;
@@ -40,17 +43,6 @@ async function requireAdmin() {
     return { session };
 }
 
-interface KeyRef {
-    module: string;
-    namespace: string;
-    key: string;
-}
-
-function refOf(ref: KeyRef, locale: string): string {
-    return [ref.module, ref.namespace, ref.key, locale].join(" ");
-}
-
-/** One line of the editor: a key, and what every locale says for it. */
 /**
  * What everything else is translated from.
  *
@@ -60,33 +52,14 @@ function refOf(ref: KeyRef, locale: string): string {
  */
 const SOURCE_LOCALE = defaultLocale;
 
-async function describe(refs: KeyRef[], wanted: readonly string[]) {
-    if (refs.length === 0) return [];
-
-    const rows = await prisma.translation.findMany({
-        where: { OR: refs.map((r) => ({ module: r.module, namespace: r.namespace, key: r.key })) },
-        select: { locale: true, module: true, namespace: true, key: true, value: true, isCustom: true },
-    });
-    const byRef = new Map(rows.map((row) => [refOf(row, row.locale), row]));
-
-    return refs.map((ref) => ({
-        module: ref.module,
-        namespace: ref.namespace,
-        key: ref.key,
-        locales: Object.fromEntries(
-            wanted.map((locale) => {
-                const row = byRef.get(refOf(ref, locale));
-                return [locale, {
-                    value: row?.value ?? null,
-                    isCustom: row?.isCustom ?? false,
-                    shipped: shippedValue(ref.module, locale, ref.namespace, ref.key),
-                }];
-            }),
-        ),
-    }));
+/** The lines for these strings, in the order asked. */
+async function describe(refs: LineRef[], wanted: readonly string[], themeId: string) {
+    const rows = await lineRows(refs, themeId, wanted);
+    return refs.map((ref) => lineOf(ref, rows, wanted));
 }
 
 const listSchema = z.object({
+    /** Only strings this source has a row for: `core`, a module, or the worn theme. */
     module: z.string().max(64).optional(),
     namespace: z.string().max(120).optional(),
     q: z.string().max(200).optional(),
@@ -101,7 +74,7 @@ const listSchema = z.object({
      * every string missing.
      */
     locale: z.enum(locales).optional(),
-    /** Only the keys this language has nothing for. */
+    /** Only the strings this language has nothing for. */
     missing: z.enum(["1"]).optional(),
     page: z.coerce.number().int().min(1).max(10000).default(1),
 });
@@ -113,7 +86,7 @@ export async function GET(request: NextRequest) {
     const params = Object.fromEntries(new URL(request.url).searchParams);
     const parsed = listSchema.safeParse(params);
     if (!parsed.success) return apiError(parsed.error.issues[0]?.message || "Invalid filter", 400);
-    const { module: moduleId, namespace, q, custom, page, missing } = parsed.data;
+    const { module: source, namespace, q, custom, page, missing } = parsed.data;
     // The source is what the software ships and what everything else is
     // translated from; the target is what the operator is working in. Asking
     // for the source as the target is asking for one column twice.
@@ -121,60 +94,50 @@ export async function GET(request: NextRequest) {
     const wanted = listSchema.shape.locale.safeParse(target).success
         ? [SOURCE_LOCALE, target as (typeof locales)[number]].filter((l, i, a) => a.indexOf(l) === i)
         : [...locales];
+    const themeId = await activeThemeId();
+
+    // A line is a string, whoever has a row for it, so each filter asks
+    // whether any row the site hears for it qualifies. Only the worn theme's
+    // rows count: another theme's wording is nothing a visitor reads.
+    const heard = heardSql(themeId);
+    const rowFilter = namespace ? Prisma.sql`${heard} AND "namespace" = ${namespace}` : heard;
+    const having: Prisma.Sql[] = [Prisma.sql`TRUE`];
+    if (source) having.push(Prisma.sql`bool_or("module" = ${source})`);
+    if (custom === "1") having.push(Prisma.sql`bool_or("isCustom")`);
+    if (q) {
+        // What the string says in any language, or its name, `store.title`.
+        const like = `%${q}%`;
+        having.push(Prisma.sql`bool_or("value" ILIKE ${like} OR ("namespace" || '.' || "key") ILIKE ${like})`);
+    }
+    if (missing === "1" && wanted.length === 2) having.push(Prisma.sql`NOT bool_or("locale" = ${wanted[1]})`);
+    const groups = Prisma.sql`
+        SELECT "namespace", "key" FROM "Translation" WHERE ${rowFilter}
+        GROUP BY "namespace", "key" HAVING ${Prisma.join(having, " AND ")}
+    `;
 
     // The page and the count are two questions about one filter, so the
     // filter is written once. Two hand-kept copies of the same clause is how
     // a list ends up showing a page of rows a count says are not there.
-    const conditions: Prisma.Sql[] = [Prisma.sql`TRUE`];
-    if (moduleId) conditions.push(Prisma.sql`"module" = ${moduleId}`);
-    if (namespace) conditions.push(Prisma.sql`"namespace" = ${namespace}`);
-    if (custom === "1") conditions.push(Prisma.sql`"isCustom" = TRUE`);
-    if (q) {
-        const like = `%${q}%`;
-        conditions.push(Prisma.sql`("key" ILIKE ${like} OR "value" ILIKE ${like})`);
-    }
-    if (missing === "1" && wanted.length === 2) {
-        // Keys this language has no row for at all. `NOT EXISTS` rather than
-        // a join, so a key with fifty locales is still one index probe.
-        const locale = wanted[1];
-        conditions.push(Prisma.sql`NOT EXISTS (
-            SELECT 1 FROM "Translation" AS have
-            WHERE have."module" = "Translation"."module"
-              AND have."namespace" = "Translation"."namespace"
-              AND have."key" = "Translation"."key"
-              AND have."locale" = ${locale}
-        )`);
-    }
-    const filter = Prisma.join(conditions, " AND ");
-
-    // A key is one line whatever it says in each locale, so the page is a
-    // page of keys. Prisma cannot count distinct across three columns, and
-    // reading every group to measure its length is the unbounded read this
-    // avoids.
     const [counted, refs] = await Promise.all([
-        prisma.$queryRaw<{ total: number }[]>`
-            SELECT COUNT(*)::int AS total
-            FROM (SELECT DISTINCT "module", "namespace", "key" FROM "Translation" WHERE ${filter}) AS keys
-        `,
-        prisma.$queryRaw<KeyRef[]>`
-            SELECT DISTINCT "module", "namespace", "key" FROM "Translation" WHERE ${filter}
-            ORDER BY "module", "namespace", "key"
+        prisma.$queryRaw<{ total: number }[]>`SELECT COUNT(*)::int AS total FROM (${groups}) AS lines`,
+        prisma.$queryRaw<LineRef[]>`
+            ${groups}
+            ORDER BY "namespace", "key"
             LIMIT ${PAGE_SIZE} OFFSET ${(page - 1) * PAGE_SIZE}
         `,
     ]);
 
     const total = counted[0]?.total ?? 0;
-    const items = await describe(refs, wanted);
+    const items = await describe(refs, wanted, themeId);
     return apiSuccess({ items, page, total, pages: Math.max(1, Math.ceil(total / PAGE_SIZE)) });
 }
 
-const keySchema = z.object({
-    module: z.string().min(1).max(64),
+const lineSchema = z.object({
     namespace: z.string().min(1).max(120),
     key: z.string().min(1).max(300),
 });
 
-const editSchema = keySchema.extend({
+const editSchema = lineSchema.extend({
     /**
      * Partial, and deliberately: correcting one word of English must not
      * require retyping the Turkish. `z.record` over an enum is exhaustive in
@@ -197,23 +160,30 @@ export async function PATCH(request: NextRequest) {
     if (body instanceof NextResponse) return body;
     const parsed = editSchema.safeParse(body);
     if (!parsed.success) return apiError(parsed.error.issues[0]?.message || "Invalid input", 400);
-    const { module: moduleId, namespace, key, values } = parsed.data;
+    const { namespace, key, values } = parsed.data;
+    const ref = { namespace, key };
 
-    const existing = await prisma.translation.findMany({
-        where: { module: moduleId, namespace, key },
-        select: { locale: true, value: true },
-    });
-    const before = new Map(existing.map((row) => [row.locale, row.value]));
+    const themeId = await activeThemeId();
+    const rows = await lineRows([ref], themeId);
+    // A string nothing has a row for is no string of this site's; writing
+    // one would invent a key no page asks for.
+    if (rows.length === 0) return apiError("No such string", 404, { code: "translation_not_found" });
+    const line = lineOf(ref, rows, locales);
 
     // Every locale is judged before any of them is written, so a refusal in
     // one does not leave the site half edited.
     const writes: { locale: string; value: string }[] = [];
     for (const [locale, typed] of Object.entries(values)) {
         if (typeof typed !== "string") continue;
-        // What the software ships is the yardstick. Falling back to the row
-        // keeps a string editable after its origin is gone - an uninstalled
-        // module, a key dropped in an upgrade - instead of freezing it.
-        const reference = shippedValue(moduleId, locale, namespace, key) ?? before.get(locale) ?? "";
+        // What the site says without the edit is the yardstick. Falling back
+        // to what it says now keeps a string editable after its origin is
+        // gone - an uninstalled module, a key dropped in an upgrade - and a
+        // language nothing ships yet is measured against the one everything
+        // is translated from, so a first translation may use its values.
+        const said = line.locales[locale];
+        const source = line.locales[SOURCE_LOCALE];
+        const reference = said?.shipped ?? said?.value ?? shippedValue(line.owner, locale, namespace, key)
+            ?? source?.shipped ?? source?.value ?? "";
         const refusal = checkMessageEdit(reference, typed);
         if (refusal) {
             return apiError("The string was not saved", 400, {
@@ -227,35 +197,25 @@ export async function PATCH(request: NextRequest) {
 
     // One transaction, so a site is never left saying the new thing in one
     // language and the old thing in the other.
-    await prisma.$transaction(
-        writes.map((write) =>
-            prisma.translation.upsert({
-                where: {
-                    locale_namespace_key_module: { locale: write.locale, namespace, key, module: moduleId },
-                },
-                update: { value: write.value, isCustom: true },
-                create: { locale: write.locale, namespace, key, module: moduleId, value: write.value, isCustom: true },
-            }),
-        ),
-    );
+    await prisma.$transaction(writes.flatMap((w) => editCalls(ref, editOps(ref, line.owner, rows, w.locale, w.value))));
     await invalidateTranslationCache();
 
     logActivity({
         userId: guard.session?.user?.id,
         action: "translation.edit",
         entity: "translation",
-        entityId: `${moduleId}:${namespace}:${key}`,
+        entityId: `${line.owner}:${namespace}:${key}`,
         // The strings themselves stay out of the log. An activity row is read
         // in more places than the editor is, and a message can carry anything
         // an operator typed into it.
-        metadata: { module: moduleId, namespace, key, locales: writes.map((w) => w.locale) },
+        metadata: { module: line.owner, namespace, key, locales: writes.map((w) => w.locale) },
     }).catch(() => {});
 
-    const [item] = await describe([{ module: moduleId, namespace, key }], locales);
+    const [item] = await describe([ref], locales, themeId);
     return apiSuccess({ item });
 }
 
-const revertSchema = keySchema.extend({
+const revertSchema = lineSchema.extend({
     locale: z.enum(locales).optional(),
 });
 
@@ -267,18 +227,20 @@ export async function DELETE(request: NextRequest) {
     if (body instanceof NextResponse) return body;
     const parsed = revertSchema.safeParse(body);
     if (!parsed.success) return apiError(parsed.error.issues[0]?.message || "Invalid input", 400);
-    const { module: moduleId, namespace, key, locale } = parsed.data;
+    const { namespace, key, locale } = parsed.data;
 
-    const wanted = locale ? [locale] : [...locales];
+    // Every edit the site hears for the string, on whichever source the
+    // editor filed it, since an older one may sit on the theme's row.
+    const themeId = await activeThemeId();
     const rows = await prisma.translation.findMany({
-        where: { module: moduleId, namespace, key, locale: { in: wanted }, isCustom: true },
-        select: { id: true, locale: true },
+        where: { AND: [heardBy(themeId), { namespace, key, isCustom: true, locale: { in: locale ? [locale] : [...locales] } }] },
+        select: { id: true, locale: true, module: true },
     });
     if (rows.length === 0) return apiError("Nothing to restore", 404, { code: "translation_not_custom" });
 
     const restores: { id: string; value: string }[] = [];
     for (const row of rows) {
-        const shipped = shippedValue(moduleId, row.locale, namespace, key);
+        const shipped = shippedValue(row.module, row.locale, namespace, key);
         if (shipped === null) {
             return apiError("This string has nothing to restore to", 409, {
                 code: "translation_no_shipped_value",
@@ -308,10 +270,10 @@ export async function DELETE(request: NextRequest) {
         userId: guard.session?.user?.id,
         action: "translation.revert",
         entity: "translation",
-        entityId: `${moduleId}:${namespace}:${key}`,
-        metadata: { module: moduleId, namespace, key, locales: rows.map((r) => r.locale) },
+        entityId: `${namespace}:${key}`,
+        metadata: { namespace, key, locales: rows.map((r) => r.locale) },
     }).catch(() => {});
 
-    const [item] = await describe([{ module: moduleId, namespace, key }], locales);
+    const [item] = await describe([{ namespace, key }], locales, themeId);
     return apiSuccess({ item });
 }

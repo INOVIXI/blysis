@@ -66,6 +66,7 @@ const CORE_AUDIT_NAMES: Record<string, string> = {
     "theme.state.update": "auditThemeStateUpdate",
     "translation.edit": "auditTranslationEdit",
     "translation.revert": "auditTranslationRevert",
+    "translation.replace": "auditTranslationReplace",
     "user.account.deleted": "auditOwnAccountDeleted",
     "user.data.exported": "auditOwnDataExported",
     "user.register": "auditUserRegister",
