@@ -37,6 +37,13 @@ export async function login(
     const email = username.includes('@') ? username : ADMIN_EMAIL;
 
     await page.goto('/tr/auth/login');
+    // Pressed before React has taken the form over, the button is the
+    // browser's own submit: the page reloads at `/tr/auth/login?` with
+    // nothing sent, and on a busy run that read as a wrong password.
+    await page.waitForFunction(() => {
+        const form = document.querySelector('form');
+        return form !== null && Object.keys(form).some((key) => key.startsWith('__reactProps'));
+    });
     await page.locator('input#email, input[type="email"]').first().fill(email);
     await page.locator('input#password, input[type="password"]').first().fill(password);
 
