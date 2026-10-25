@@ -74,7 +74,10 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="p-6">
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* POST although the script submits it: pressed before the
+                        script has loaded, the browser sends it itself, and a
+                        GET put the new password in the URL. */}
+                    <form method="post" onSubmit={handleSubmit} className="space-y-4">
                         {error && (
                             <div role="alert" className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
                                 {error}
