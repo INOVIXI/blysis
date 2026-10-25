@@ -432,3 +432,30 @@ describe("route noindex flag", () => {
         expect(result.success).toBe(false);
     });
 });
+
+describe("moduleManifestSchema - placeholders", () => {
+    const online = { name: "online", handler: "placeholders/online.ts", labelKey: "placeholder_demo_online" };
+
+    it("accepts a placeholder with a handler and a label", () => {
+        const r = moduleManifestSchema.safeParse({ ...base, placeholders: [{ ...online, example: "214", maxAgeSeconds: 20 }] });
+        expect(r.success).toBe(true);
+    });
+
+    it("takes a name that fits in a token, and no other", () => {
+        for (const name of ["Online", "on-line", "on.line", "1st", ""]) {
+            expect(moduleManifestSchema.safeParse({ ...base, placeholders: [{ ...online, name }] }).success, name).toBe(false);
+        }
+    });
+
+    it("refuses a name declared twice and an age outside its bounds", () => {
+        expect(moduleManifestSchema.safeParse({ ...base, placeholders: [online, online] }).success).toBe(false);
+        expect(moduleManifestSchema.safeParse({ ...base, placeholders: [{ ...online, maxAgeSeconds: 1 }] }).success).toBe(false);
+        expect(moduleManifestSchema.safeParse({ ...base, placeholders: [{ ...online, maxAgeSeconds: 86400 }] }).success).toBe(false);
+    });
+
+    it("counts the handler among the files the archive must hold", async () => {
+        const { collectManifestFileRefs } = await import("@/core/lib/module-manifest-schema");
+        const r = moduleManifestSchema.safeParse({ ...base, placeholders: [online] });
+        expect(r.success && collectManifestFileRefs(r.data)).toContain("placeholders/online.ts");
+    });
+});

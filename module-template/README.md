@@ -111,6 +111,7 @@ The template manifest enumerates every common UI registration so you can see all
 | `webhookReceivers` | Inbound webhook endpoints (HMAC verification supported) |
 | `hookListeners` | Action/filter listeners auto-wired at build time |
 | `searchProviders` | Contributors to `GET /api/v1/search` |
+| `placeholders` | Live public values written `{<module>.<name>}` in a theme's text; the handler default-exports `async () => string \| number \| null` and answers for every visitor |
 | `storageProviders` | File-storage backends implementing `StorageProvider` |
 | `seoRoutes` | Sitemap contribution handler |
 | `notificationTypes` | Event types surfaced in user notification preferences |

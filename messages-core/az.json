@@ -1269,7 +1269,12 @@
     "theme_color_cardForeground": "Kart mətni",
     "theme_color_destructive": "Təhlükə",
     "theme_color_success": "Uğur",
-    "theme_color_warning": "Xəbərdarlıq"
+    "theme_color_warning": "Xəbərdarlıq",
+    "placeholder_insert": "Yer tutucu əlavə et",
+    "placeholder_list": "Bu saytın yer tutucuları",
+    "placeholder_noValue": "hazırda dəyər yoxdur",
+    "placeholder_unknown": "Bu saytda {names} üçün cavab yoxdur, ziyarətçi orada tire görür.",
+    "placeholder_site_name": "Sayt adı"
   },
   "footer": {
     "quickLinks": "Sürətli keçidlər",

@@ -26,6 +26,12 @@ export { prisma } from "@/core/lib/db";
  */
 export { searchMatches, searchRank, textContains } from "@/core/lib/search-text";
 /**
+ * Every site placeholder's value, as far as the time given allows, for a
+ * module that fills `{servers.online}` in text of its own on the server with
+ * `fillPlaceholderText`.
+ */
+export { resolvePlaceholders } from "@/core/lib/placeholders";
+/**
  * The client inside `prisma.$transaction(async (tx) => ...)`.
  *
  * Exported because money moves in one transaction or not at all, and the

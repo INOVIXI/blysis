@@ -1119,6 +1119,47 @@
         ]
       }
     },
+    "placeholders": {
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40,
+            "pattern": "^[a-z][a-zA-Z0-9]*$"
+          },
+          "handler": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "labelKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-zA-Z0-9._-]+$"
+          },
+          "example": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "maxAgeSeconds": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 3600
+          }
+        },
+        "required": [
+          "name",
+          "handler",
+          "labelKey"
+        ],
+        "additionalProperties": false
+      }
+    },
     "searchProviders": {
       "maxItems": 20,
       "type": "array",
@@ -1730,6 +1771,10 @@
                       "type": "string",
                       "maxLength": 128,
                       "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                    },
+                    "placeholders": {
+                      "type": "boolean",
+                      "const": true
                     }
                   },
                   "required": [
@@ -2123,6 +2168,10 @@
                             "type": "string",
                             "maxLength": 128,
                             "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                          },
+                          "placeholders": {
+                            "type": "boolean",
+                            "const": true
                           }
                         },
                         "required": [

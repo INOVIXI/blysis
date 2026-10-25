@@ -204,6 +204,7 @@ function generateRegistry() {
     const allHookListeners: ({ hook: string; type: 'action' | 'filter'; handler: string; priority?: number; module: string })[] = [];
     const allSlotContents: ({ id: string; slot: string; component: string; order?: number; module: string })[] = [];
     const allCronJobs: ({ id: string; schedule: string; handler: string; module: string })[] = [];
+    const allPlaceholders: ({ name: string; handler: string; labelKey: string; example?: string; maxAgeSeconds?: number; module: string })[] = [];
     const allSearchProviders: ({ id: string; label: string; handler: string; icon?: string; indexes?: { table: string; columns: string[] }[]; module: string })[] = [];
     const allActivityTitles: ({ type: string; nameKey: string; prefix?: string; key?: string; patterns?: { pattern: string; key: string }[]; module: string })[] = [];
     const allAuditActions: ({ action: string; nameKey: string; module: string })[] = [];
@@ -254,6 +255,7 @@ function generateRegistry() {
         manifest.hookListeners?.forEach((hl) => allHookListeners.push({ ...hl, module: moduleName }));
         manifest.slotContents?.forEach((sc) => allSlotContents.push({ ...sc, module: moduleName }));
         manifest.cronJobs?.forEach((cj) => allCronJobs.push({ ...cj, module: moduleName }));
+        manifest.placeholders?.forEach((p) => allPlaceholders.push({ ...p, module: moduleName }));
         manifest.searchProviders?.forEach((sp) => allSearchProviders.push({ ...sp, module: moduleName }));
         manifest.activityTitles?.forEach((at) => allActivityTitles.push({ ...at, module: moduleName }));
         manifest.auditActions?.forEach((aa) => allAuditActions.push({ ...aa, module: moduleName }));
@@ -687,6 +689,21 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
     }
     cronsContent += '];\n';
     fs.writeFileSync(CRONS_FILE, cronsContent);
+
+    // Site placeholders, by their full name `<module>.<name>`. Server only: the
+    // loaders reach each module's handler, and the page asks for values
+    // through core's resolver rather than importing anything here.
+    const PLACEHOLDERS_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-placeholders.ts');
+    let placeholdersContent = '// Auto-generated site placeholder registry - server only\n\n';
+    placeholdersContent += 'import type { PlaceholderSource } from "@/core/lib/placeholders";\n\n';
+    placeholdersContent += 'export const ModulePlaceholders: PlaceholderSource[] = [\n';
+    for (const p of [...allPlaceholders].sort((a, b) => `${a.module}.${a.name}`.localeCompare(`${b.module}.${b.name}`))) {
+        const handlerPath = p.handler.replace(/\.tsx?$/, '');
+        const importPath = `@/modules/${p.module}/${handlerPath}`;
+        placeholdersContent += `  { name: ${JSON.stringify(`${p.module}.${p.name}`)}, module: ${JSON.stringify(p.module)}, labelKey: ${JSON.stringify(p.labelKey)}, example: ${JSON.stringify(p.example ?? null)}, maxAgeSeconds: ${p.maxAgeSeconds ?? 60}, loader: () => import('${importPath}') },\n`;
+    }
+    placeholdersContent += '];\n';
+    fs.writeFileSync(PLACEHOLDERS_FILE, placeholdersContent);
 
     // Existence checks for dynamic module routes. Core's catch-all awaits the
     // one matching the route it is about to render and calls notFound() when it

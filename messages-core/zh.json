@@ -1269,7 +1269,12 @@
     "theme_color_cardForeground": "卡片文字",
     "theme_color_destructive": "危险",
     "theme_color_success": "成功",
-    "theme_color_warning": "警告"
+    "theme_color_warning": "警告",
+    "placeholder_insert": "插入占位符",
+    "placeholder_list": "本站可用的占位符",
+    "placeholder_noValue": "当前没有值",
+    "placeholder_unknown": "本站没有任何内容响应 {names}，访客在此处会看到一条短横线。",
+    "placeholder_site_name": "站点名称"
   },
   "footer": {
     "quickLinks": "快速链接",

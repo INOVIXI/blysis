@@ -20,6 +20,8 @@ import { ServerSlot } from "@/core/components/ServerSlot";
 import { ModuleContextProviders } from "@/core/components/layout/ModuleContextProviders";
 import { SiteCurrencyProvider } from "@/core/components/currency/site-currency";
 import { ConfirmProvider } from "@/core/components/ui/confirm-dialog";
+import { PlaceholderProvider } from "@/core/components/placeholders/PlaceholderProvider";
+import { resolvePlaceholders } from "@/core/lib/placeholders";
 import { ProgressBar } from "@/core/components/layout/ProgressBar";
 import { Toaster } from "sonner";
 import { ErrorBoundary } from "@/core/components/ErrorBoundary";
@@ -112,6 +114,12 @@ export default async function RootLayout({
   // rewrites itself once the request lands.
   const session = await getSession();
 
+  // The site placeholders a theme's text may name, as far as the cache has
+  // them in a moment: a value that is not ready is asked for by the browser
+  // after the page paints, rather than holding up every page for it.
+  const placeholders = await resolvePlaceholders({ budgetMs: 200 })
+    .catch(() => ({ values: {}, pending: [] as string[] }));
+
   // An override <style> block so admin-saved colour customizations take
   // effect: the generated theme-tokens.css sets the manifest defaults at
   // [data-theme][data-mode], and this appends the operator's at the same
@@ -164,6 +172,7 @@ export default async function RootLayout({
       <body className="antialiased bg-background">
         <SessionProvider session={session}>
           <NextIntlClientProvider messages={publicMessages(messages)}>
+            <PlaceholderProvider values={placeholders.values} pending={placeholders.pending}>
               <AppThemeProvider
                 themeId={active.themeId}
                 mode={active.mode}
@@ -207,6 +216,7 @@ export default async function RootLayout({
                 </SiteCurrencyProvider>
                 </ModuleProvider>
               </AppThemeProvider>
+            </PlaceholderProvider>
           </NextIntlClientProvider>
         </SessionProvider>
       </body>

@@ -1269,7 +1269,12 @@
     "theme_color_cardForeground": "Kaardi tekst",
     "theme_color_destructive": "Oht",
     "theme_color_success": "Õnnestumine",
-    "theme_color_warning": "Hoiatus"
+    "theme_color_warning": "Hoiatus",
+    "placeholder_insert": "Lisa kohatäide",
+    "placeholder_list": "Selle saidi kohatäited",
+    "placeholder_noValue": "praegu väärtus puudub",
+    "placeholder_unknown": "Miski sellel saidil ei vasta kohatäitele {names}, külastaja näeb seal kriipsu.",
+    "placeholder_site_name": "Saidi nimi"
   },
   "footer": {
     "quickLinks": "Kiirlingid",

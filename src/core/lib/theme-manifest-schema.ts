@@ -71,6 +71,12 @@ const textDef = z.object({
     max: z.number().int().positive().max(10000).optional(),
     label: z.string().max(100).optional(),
     labelKey: z.string().max(128).regex(SAFE_TRANSLATION_KEY).optional(),
+    /**
+     * The operator may write site placeholders here, `{servers.online}`, and
+     * `useThemeConfig` hands the theme the text with them filled. Only for a
+     * sentence a visitor reads: an address or an invite is not one.
+     */
+    placeholders: z.literal(true).optional(),
 });
 const urlDef = z.object({
     type: z.literal("url"),

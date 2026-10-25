@@ -33,6 +33,13 @@ The homepage's arrangement comes with the theme: which sections it shows, in whi
 - **Admin > Settings > Widgets** switches a section or widget off everywhere, whichever theme placed it, and orders the ones the theme leaves to the page. Under a theme that arranges its own homepage the screen says so; the switches still work.
 - A module you install later shows up at the end of the page, in the place the theme keeps for it.
 
+### Live values in your text
+
+Some of a theme's texts, such as its hero headline or a tile in its row of numbers, can show a live value from the site: write `{servers.online} players online` and visitors read how many are playing right now. You do not need to remember the names: **Insert placeholder** under the text lists what your site offers, with each one's current value, and puts the one you pick where the cursor is.
+
+- A value with nothing to show, such as players online when no game server can be reached, appears as a dash. To show your own words instead, add them after a bar: `{servers.online|a few}`.
+- If the text names something your site does not offer, for example after you remove a module, the settings screen names it under the text.
+
 ### The shop, articles, topics and profiles
 
 A theme can also lay out some pages a module draws: the shop, a product, an article, a forum topic and a member's profile. One theme may open the shop on a showcase and set a topic's authors in a column of their own; another shows them as the module draws them. The content is the same either way, and switching themes changes only where things stand.

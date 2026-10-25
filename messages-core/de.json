@@ -1269,7 +1269,12 @@
     "theme_color_cardForeground": "Text auf Karten",
     "theme_color_destructive": "Gefahr",
     "theme_color_success": "Erfolg",
-    "theme_color_warning": "Warnung"
+    "theme_color_warning": "Warnung",
+    "placeholder_insert": "Platzhalter einfügen",
+    "placeholder_list": "Die Platzhalter dieser Seite",
+    "placeholder_noValue": "derzeit kein Wert",
+    "placeholder_unknown": "Auf dieser Seite beantwortet nichts {names}, Besucher sehen dort einen Strich.",
+    "placeholder_site_name": "Seitenname"
   },
   "footer": {
     "quickLinks": "Schnelllinks",

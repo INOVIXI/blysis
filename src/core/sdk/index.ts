@@ -64,6 +64,8 @@ export {
  * where there is not, and returns whether the text actually landed.
  */
 export { sharedJson, peekShared, invalidateShared } from "@/core/lib/shared-request";
+/** Site placeholders in text, `{servers.online}`: filled once and as text. */
+export { fillPlaceholderText, placeholderTokens, type PlaceholderValue } from "@/core/lib/placeholder-text";
 
 export { copyText } from "@/core/lib/copy-text";
 

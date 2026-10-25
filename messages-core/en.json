@@ -1269,7 +1269,12 @@
     "theme_color_cardForeground": "Text on cards",
     "theme_color_destructive": "Danger",
     "theme_color_success": "Success",
-    "theme_color_warning": "Warning"
+    "theme_color_warning": "Warning",
+    "placeholder_insert": "Insert placeholder",
+    "placeholder_list": "The placeholders this site answers",
+    "placeholder_noValue": "no value right now",
+    "placeholder_unknown": "Nothing on this site answers {names}, so visitors see a dash there.",
+    "placeholder_site_name": "Site name"
   },
   "footer": {
     "quickLinks": "Quick Links",

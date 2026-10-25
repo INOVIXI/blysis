@@ -1269,7 +1269,12 @@
     "theme_color_cardForeground": "Текст карточек",
     "theme_color_destructive": "Опасность",
     "theme_color_success": "Успех",
-    "theme_color_warning": "Предупреждение"
+    "theme_color_warning": "Предупреждение",
+    "placeholder_insert": "Вставить подстановку",
+    "placeholder_list": "Подстановки этого сайта",
+    "placeholder_noValue": "сейчас нет значения",
+    "placeholder_unknown": "На этом сайте ничто не отвечает на {names}, посетители увидят там прочерк.",
+    "placeholder_site_name": "Название сайта"
   },
   "footer": {
     "quickLinks": "Быстрые ссылки",

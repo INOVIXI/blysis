@@ -1269,7 +1269,12 @@
     "theme_color_cardForeground": "Kart yazısı",
     "theme_color_destructive": "Tehlike",
     "theme_color_success": "Başarı",
-    "theme_color_warning": "Uyarı"
+    "theme_color_warning": "Uyarı",
+    "placeholder_insert": "Yer tutucu ekle",
+    "placeholder_list": "Bu sitenin yer tutucuları",
+    "placeholder_noValue": "şu an değer yok",
+    "placeholder_unknown": "Bu sitede {names} karşılığı yok, ziyaretçi orada bir çizgi görür.",
+    "placeholder_site_name": "Site adı"
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",

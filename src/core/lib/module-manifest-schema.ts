@@ -572,6 +572,25 @@ const slotContribution = z.object({
     id: z.string().min(1).max(64).regex(SAFE_SLUG).optional(),
 });
 
+/**
+ * A live value this module lets anyone writing for the site drop into a
+ * sentence: `{servers.online}` in a theme's headline. Named under the
+ * module's id, so the name here is only the part after the dot.
+ *
+ * Public by definition. The handler is called with no session and its answer
+ * is shown to every visitor, so it never answers about whoever is asking.
+ * `labelKey` is a key in this module's `admin` translations, the words the
+ * panel lists it under; `example` is what the panel shows when there is no
+ * live value to show.
+ */
+const placeholderEntry = z.object({
+    name: z.string().min(1).max(40).regex(/^[a-z][a-zA-Z0-9]*$/, "a placeholder name is camelCase letters and digits"),
+    handler: relativePath("handler"),
+    labelKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
+    example: z.string().max(60).optional(),
+    maxAgeSeconds: z.number().int().min(5).max(3600).optional(),
+}).strict();
+
 const cronJob = z.object({
     id: z.string().min(1).max(64).regex(SAFE_SLUG),
     // A name the scheduler cannot turn into an interval is a job that never
@@ -1106,6 +1125,7 @@ export const moduleManifestSchema = z.object({
     slotContents: z.array(slotContent).max(100).optional(),
     slots: z.array(slotContribution).max(200).optional(),
     cronJobs: z.array(cronJob).max(50).optional(),
+    placeholders: z.array(placeholderEntry).max(50).optional(),
     searchProviders: z.array(searchProvider).max(20).optional(),
     activityTitles: z.array(activityTitle).max(50).optional(),
     auditActions: z.array(auditAction).max(100).optional(),
@@ -1138,6 +1158,14 @@ export const moduleManifestSchema = z.object({
         if (seen.has(id)) ctx.addIssue({ code: "custom", path: ["blocks"], message: `"${id}" names two blocks, widgets or sections` });
         seen.add(id);
     }
+
+    const placeholderNames = new Set<string>();
+    (m.placeholders ?? []).forEach((placeholder, p) => {
+        if (placeholderNames.has(placeholder.name)) {
+            ctx.addIssue({ code: "custom", path: ["placeholders", p, "name"], message: `"${placeholder.name}" names two placeholders` });
+        }
+        placeholderNames.add(placeholder.name);
+    });
 
     // A page's own arrangement names only the blocks that page declares,
     // under this module's id, the way a theme's arrangement has to.
@@ -1210,6 +1238,7 @@ export function collectManifestFileRefs(m: ValidatedModuleManifest): string[] {
     m.slotContents?.forEach((r) => push(r.component));
     m.slots?.forEach((s) => push(s.component));
     m.cronJobs?.forEach((r) => push(r.handler));
+    m.placeholders?.forEach((r) => push(r.handler));
     m.searchProviders?.forEach((r) => push(r.handler));
     m.webhookReceivers?.forEach((r) => push(r.handler));
     m.layoutComponents?.forEach((r) => push(r.component));

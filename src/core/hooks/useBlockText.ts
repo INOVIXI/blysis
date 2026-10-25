@@ -1,6 +1,7 @@
 "use client";
 
 import { useMessages, useTranslations } from "next-intl";
+import { usePlaceholderFill } from "@/core/hooks/usePlaceholder";
 
 /**
  * Words a block was given, in the reader's language.
@@ -12,6 +13,9 @@ import { useMessages, useTranslations } from "next-intl";
  * A name that leads to a group of messages rather than to one is not a
  * message, and is shown as written too.
  *
+ * Either way its site placeholders are filled: a numbers tile an operator
+ * gave `{servers.online}` shows how many are playing.
+ *
  * Example:
  *   const text = useBlockText();
  *   <h2>{text(settings.title)}</h2>
@@ -19,13 +23,14 @@ import { useMessages, useTranslations } from "next-intl";
 export function useBlockText() {
     const t = useTranslations();
     const messages = useMessages();
+    const fill = usePlaceholderFill();
     return (value: unknown): string => {
         if (typeof value !== "string") return "";
         let node: unknown = messages;
         for (const part of value.split(".")) {
-            if (!node || typeof node !== "object" || !Object.prototype.hasOwnProperty.call(node, part)) return value;
+            if (!node || typeof node !== "object" || !Object.prototype.hasOwnProperty.call(node, part)) return fill(value);
             node = (node as Record<string, unknown>)[part];
         }
-        return typeof node === "string" ? t(value) : value;
+        return fill(typeof node === "string" ? t(value) : value);
     };
 }

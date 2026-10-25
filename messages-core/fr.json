@@ -1269,7 +1269,12 @@
     "theme_color_cardForeground": "Texte des cartes",
     "theme_color_destructive": "Danger",
     "theme_color_success": "Succès",
-    "theme_color_warning": "Avertissement"
+    "theme_color_warning": "Avertissement",
+    "placeholder_insert": "Insérer un espace réservé",
+    "placeholder_list": "Les espaces réservés de ce site",
+    "placeholder_noValue": "aucune valeur pour l'instant",
+    "placeholder_unknown": "Rien sur ce site ne répond à {names}, les visiteurs y voient un tiret.",
+    "placeholder_site_name": "Nom du site"
   },
   "footer": {
     "quickLinks": "Liens rapides",

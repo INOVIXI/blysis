@@ -1269,7 +1269,12 @@
     "theme_color_cardForeground": "Testo delle schede",
     "theme_color_destructive": "Pericolo",
     "theme_color_success": "Successo",
-    "theme_color_warning": "Avviso"
+    "theme_color_warning": "Avviso",
+    "placeholder_insert": "Inserisci segnaposto",
+    "placeholder_list": "I segnaposto di questo sito",
+    "placeholder_noValue": "nessun valore al momento",
+    "placeholder_unknown": "Niente su questo sito risponde a {names}, i visitatori vedono un trattino.",
+    "placeholder_site_name": "Nome del sito"
   },
   "footer": {
     "quickLinks": "Link rapidi",

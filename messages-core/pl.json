@@ -1269,7 +1269,12 @@
     "theme_color_cardForeground": "Tekst na kartach",
     "theme_color_destructive": "Zagrożenie",
     "theme_color_success": "Sukces",
-    "theme_color_warning": "Ostrzeżenie"
+    "theme_color_warning": "Ostrzeżenie",
+    "placeholder_insert": "Wstaw symbol zastępczy",
+    "placeholder_list": "Symbole zastępcze tej witryny",
+    "placeholder_noValue": "obecnie brak wartości",
+    "placeholder_unknown": "Nic na tej witrynie nie odpowiada na {names}, odwiedzający widzą tam kreskę.",
+    "placeholder_site_name": "Nazwa witryny"
   },
   "footer": {
     "quickLinks": "Szybkie linki",

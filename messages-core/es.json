@@ -1269,7 +1269,12 @@
     "theme_color_cardForeground": "Texto de las tarjetas",
     "theme_color_destructive": "Peligro",
     "theme_color_success": "Éxito",
-    "theme_color_warning": "Advertencia"
+    "theme_color_warning": "Advertencia",
+    "placeholder_insert": "Insertar marcador",
+    "placeholder_list": "Los marcadores de este sitio",
+    "placeholder_noValue": "sin valor ahora mismo",
+    "placeholder_unknown": "Nada en este sitio responde a {names}, así que los visitantes ven un guion.",
+    "placeholder_site_name": "Nombre del sitio"
   },
   "footer": {
     "quickLinks": "Enlaces rápidos",

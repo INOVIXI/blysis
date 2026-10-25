@@ -26,6 +26,14 @@ Only through `src/core/sdk/`, a set of explicit named re-exports. That boundary 
 
 They do not import each other. A module that has something to say emits a hook (`src/core/lib/hooks.ts`) and declares it in its manifest's `hooksEmitted`; another lists it in `hookListeners`. A module that wants to render into another's page fills a slot (`src/core/lib/slot-registry.ts`). The marketplace build fails a listener on a hook nothing emits, because at runtime such a listener simply never fires.
 
+## Site placeholders
+
+A module can also publish a live value for anyone writing for the site: `placeholders` in its manifest, each answered by a handler and written `{<module>.<name>}`, core's own under `site`. The generator lists them, `src/core/lib/placeholders.ts` asks them through the cache, and the page fills them in a theme's marked text settings and in a block's words. Three things are easy to get wrong:
+
+- A value is public. The handler is called with no session and every visitor sees its answer, so it never answers about whoever is asking.
+- The dot is what separates these from an event's blanks, `{player}` in a delivery command or a Discord message. Those are filled by the module sending the event and escaped for where it goes; they are not site placeholders and do not become them.
+- The root layout waits only 200 ms for the values. One that is not ready is fetched by the browser from `/api/v1/placeholders` after the page paints, so a slow handler costs its own value a moment and never the page.
+
 ## Compiled, not loaded
 
 A module ships React server components, and Next.js compiles those at build time. There is no runtime loader, so installing a module rebuilds the site and restarts it. That decision has operational consequences, from the restart window to a single app process per installation; they are in [How an install becomes a build](./build-lifecycle.md).

@@ -36,5 +36,13 @@ export { PageBreadcrumb } from "@/core/components/layout/PageBreadcrumb";
 export type { Crumb } from "@/core/components/layout/PageBreadcrumb";
 export { SiteName, SiteMark } from "@/core/components/ui/site-name";
 
+/**
+ * A site placeholder where a theme puts it, `servers.online` in a badge, or a
+ * sentence of the theme's own with some in it. A text setting the manifest
+ * marks `"placeholders": true` needs neither: `useThemeConfig` fills it.
+ */
+export { Placeholder, PlaceholderText } from "@/core/components/placeholders/Placeholder";
+export { usePlaceholder } from "@/core/hooks/usePlaceholder";
+
 /** An address from a theme setting, only as a link a visitor may follow. */
 export { linkTarget } from "@/core/lib/setting-link";

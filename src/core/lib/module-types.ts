@@ -239,6 +239,17 @@ export interface ModuleManifest {
         handler: string;      // path to file exporting default async fn
     }[];
 
+    // Site placeholders - live public values, written `{<module>.<name>}` in a
+    // theme's text or drawn by a theme. Handler default-exports
+    // async () => string | number | null; see module-manifest-schema.ts.
+    placeholders?: {
+        name: string;
+        handler: string;
+        labelKey: string;
+        example?: string;
+        maxAgeSeconds?: number;
+    }[];
+
     // Public search providers - handlers the /search endpoint queries
     // when a user searches the site. Handler default-exports an async
     // function: (query: string) => Promise<SearchResult[]>

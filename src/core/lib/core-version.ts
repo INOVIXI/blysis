@@ -12,6 +12,15 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.27.0 - site placeholders. A module declares `placeholders` in its
+ * manifest, each a live public value under its id, `{servers.online}`, with a
+ * handler that answers for every visitor. `@/core/sdk/theme` gains
+ * `Placeholder`, `PlaceholderText` and `usePlaceholder` for a theme to draw
+ * one, a theme's text setting may say `"placeholders": true` for its operator
+ * to write them, and `useBlockText` fills them in a block's words.
+ * `resolvePlaceholders` joins `@/core/sdk/server` and `fillPlaceholderText`
+ * the isomorphic barrel, for a module's own text. Additive.
+ *
  * 5.26.0 - `ArrangedClientPage` joins `@/core/sdk/layout`: a page drawn in
  * the browser, a ticket or the cart, is arranged from the blocks its
  * manifest declares as `ArrangedPage` arranges a server page, from the active
@@ -688,4 +697,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.26.0";
+export const CORE_API_VERSION = "5.27.0";
