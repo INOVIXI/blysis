@@ -824,8 +824,16 @@ html {
   font-weight: 900;
 }
 
+/*
+ * The band is the stage colour in either mode, so what stands on it takes its
+ * edge from the stage: the page's own edge is a light grey in light mode.
+ */
+.qr-site [data-featured-product] {
+  --qr-stage-edge: color-mix(in srgb, var(--blysis-color-stage) 55%, black);
+}
+
 .qr-site [data-featured-product] .blysis-button.bg-secondary {
-  --qr-edge: var(--blysis-color-edge);
+  --qr-edge: var(--qr-stage-edge);
   background: color-mix(in srgb, var(--blysis-color-stageForeground) 14%, var(--blysis-color-stage));
   color: var(--blysis-color-stageForeground);
 }
@@ -834,7 +842,7 @@ html {
   max-width: 440px;
   border-radius: 8px;
   background: color-mix(in srgb, var(--blysis-color-primary) 22%, var(--blysis-color-stage));
-  box-shadow: 0 8px 0 var(--blysis-color-edge), 0 0 0 6px color-mix(in srgb, var(--blysis-color-primary) 60%, var(--blysis-color-stage));
+  box-shadow: 0 8px 0 var(--qr-stage-edge), 0 0 0 6px color-mix(in srgb, var(--blysis-color-primary) 60%, var(--blysis-color-stage));
 }
 
 /* On a phone the picture is a token above the words, not a screen of its own. */
@@ -1057,6 +1065,12 @@ html {
   background: none;
 }
 
+/* With no surface of their own they stand on no edge either. */
+.qr-site :is([data-block="blog.contents"], [data-block="blog.related"]) > .bg-card.rounded-xl,
+.qr-site [data-block="blog.article"] > article.bg-card.rounded-xl {
+  box-shadow: none;
+}
+
 .qr-site [data-article-contents] > p {
   font-family: var(--blysis-font-heading);
   font-size: 0.8125rem;
@@ -1209,6 +1223,10 @@ html {
 .qr-site [data-profile-stats] .blysis-card {
   border: 0;
   background: none;
+}
+
+/* As specific as the edge every block's card stands on, and later. */
+.qr-site [data-profile-stats] .blysis-card.bg-card.rounded-xl {
   box-shadow: none;
 }
 
