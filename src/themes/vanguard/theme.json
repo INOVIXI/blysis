@@ -254,25 +254,29 @@
           "type": "text",
           "label": "Small label above the heading",
           "max": 60,
-          "labelKey": "theme_vanguard_hero_tag"
+          "labelKey": "theme_vanguard_hero_tag",
+          "placeholders": true
         },
         "title": {
           "type": "text",
           "label": "Heading",
           "max": 120,
-          "labelKey": "theme_vanguard_hero_title"
+          "labelKey": "theme_vanguard_hero_title",
+          "placeholders": true
         },
         "subtitle": {
           "type": "text",
           "label": "Line under the heading",
           "max": 300,
-          "labelKey": "theme_vanguard_hero_subtitle"
+          "labelKey": "theme_vanguard_hero_subtitle",
+          "placeholders": true
         },
         "ctaText": {
           "type": "text",
           "label": "Button text",
           "max": 40,
-          "labelKey": "theme_vanguard_hero_ctaText"
+          "labelKey": "theme_vanguard_hero_ctaText",
+          "placeholders": true
         },
         "ctaHref": {
           "type": "text",
@@ -291,19 +295,22 @@
           "type": "text",
           "label": "Small label on the sign-in screen",
           "max": 60,
-          "labelKey": "theme_vanguard_auth_tag"
+          "labelKey": "theme_vanguard_auth_tag",
+          "placeholders": true
         },
         "title": {
           "type": "text",
           "label": "Heading on the sign-in screen",
           "max": 120,
-          "labelKey": "theme_vanguard_auth_title"
+          "labelKey": "theme_vanguard_auth_title",
+          "placeholders": true
         },
         "subtitle": {
           "type": "text",
           "label": "Line under that heading",
           "max": 300,
-          "labelKey": "theme_vanguard_auth_subtitle"
+          "labelKey": "theme_vanguard_auth_subtitle",
+          "placeholders": true
         }
       }
     }

@@ -235,19 +235,22 @@
           "type": "text",
           "label": "Small label above the heading",
           "max": 60,
-          "labelKey": "theme_quarry_hero_tag"
+          "labelKey": "theme_quarry_hero_tag",
+          "placeholders": true
         },
         "title": {
           "type": "text",
           "label": "Heading",
           "max": 120,
-          "labelKey": "theme_quarry_hero_title"
+          "labelKey": "theme_quarry_hero_title",
+          "placeholders": true
         },
         "subtitle": {
           "type": "text",
           "label": "Line under the heading",
           "max": 300,
-          "labelKey": "theme_quarry_hero_subtitle"
+          "labelKey": "theme_quarry_hero_subtitle",
+          "placeholders": true
         },
         "address": {
           "type": "text",
@@ -259,7 +262,8 @@
           "type": "text",
           "label": "Button text",
           "max": 40,
-          "labelKey": "theme_quarry_hero_ctaText"
+          "labelKey": "theme_quarry_hero_ctaText",
+          "placeholders": true
         },
         "ctaHref": {
           "type": "text",
@@ -283,13 +287,15 @@
           "type": "text",
           "label": "Tile 1: the number",
           "max": 40,
-          "labelKey": "theme_quarry_stats_tile1Value"
+          "labelKey": "theme_quarry_stats_tile1Value",
+          "placeholders": true
         },
         "tile1Label": {
           "type": "text",
           "label": "Tile 1: what it counts",
           "max": 80,
-          "labelKey": "theme_quarry_stats_tile1Label"
+          "labelKey": "theme_quarry_stats_tile1Label",
+          "placeholders": true
         },
         "tile1Icon": {
           "type": "text",
@@ -301,13 +307,15 @@
           "type": "text",
           "label": "Tile 2: the number",
           "max": 40,
-          "labelKey": "theme_quarry_stats_tile2Value"
+          "labelKey": "theme_quarry_stats_tile2Value",
+          "placeholders": true
         },
         "tile2Label": {
           "type": "text",
           "label": "Tile 2: what it counts",
           "max": 80,
-          "labelKey": "theme_quarry_stats_tile2Label"
+          "labelKey": "theme_quarry_stats_tile2Label",
+          "placeholders": true
         },
         "tile2Icon": {
           "type": "text",
@@ -319,13 +327,15 @@
           "type": "text",
           "label": "Tile 3: the number",
           "max": 40,
-          "labelKey": "theme_quarry_stats_tile3Value"
+          "labelKey": "theme_quarry_stats_tile3Value",
+          "placeholders": true
         },
         "tile3Label": {
           "type": "text",
           "label": "Tile 3: what it counts",
           "max": 80,
-          "labelKey": "theme_quarry_stats_tile3Label"
+          "labelKey": "theme_quarry_stats_tile3Label",
+          "placeholders": true
         },
         "tile3Icon": {
           "type": "text",
