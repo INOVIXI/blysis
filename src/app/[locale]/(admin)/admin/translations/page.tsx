@@ -13,7 +13,6 @@ import { NativeSelect } from "@/core/components/ui/native-select";
 import { Pagination } from "@/core/components/ui/pagination";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { errorMessage } from "@/core/lib/write-result";
-import { Label } from "@/core/components/ui/label";
 import { defaultLocale, localeNames, locales, type Locale } from "@/core/lib/i18n/config";
 import { Link } from "@/core/lib/i18n/navigation";
 import { type Entry, type Source, TranslationEntry, useSourceLabel } from "./TranslationEntry";
@@ -202,19 +201,20 @@ export default function TranslationsPage() {
             />
 
             <Card className="mb-6">
-                <CardContent className="p-4 grid grid-cols-1 gap-3 md:grid-cols-4 md:items-end">
-                    <div className="relative md:col-span-2">
-                        <Search
-                            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
-                            aria-hidden="true"
-                        />
-                        <Input
-                            className="pl-9"
-                            value={typed}
-                            aria-label={t("translations_search")}
-                            placeholder={t("translations_search")}
-                            onChange={(event) => setTyped(event.target.value)}
-                        />
+                <CardContent className="p-4 space-y-3">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+                        <div className="relative md:col-span-2">
+                            <Search
+                                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
+                                aria-hidden="true"
+                            />
+                            <Input
+                                className="pl-9"
+                                value={typed}
+                                aria-label={t("translations_search")}
+                                placeholder={t("translations_search")}
+                                onChange={(event) => setTyped(event.target.value)}
+                            />
                     </div>
                     <NativeSelect
                         aria-label={t("translations_module")}
@@ -246,53 +246,56 @@ export default function TranslationsPage() {
                             </option>
                         ))}
                     </NativeSelect>
+                    </div>
                     {/*
                       * Which language is being worked in, and how far behind
                       * each one is - the question the old screen could not
                       * answer at all, because it showed every language on
                       * every row and you found out by scrolling.
                       */}
-                    <div className="md:col-span-2">
-                        <Label>{t("translations_workingIn")}</Label>
-                        <NativeSelect
-                            aria-label={t("translations_workingIn")}
-                            value={target}
-                            onChange={(event) => {
-                                setTarget(event.target.value as Locale);
-                                setPage(1);
-                            }}
-                        >
-                            {locales.filter((l) => l !== SOURCE).map((l) => {
-                                const behind = facets.locales.find((row) => row.locale === l)?.missing;
-                                return (
-                                    <option key={l} value={l}>
-                                        {localeNames[l]}
-                                        {behind === undefined ? "" : ` - ${t("translations_behind", { count: behind })}`}
-                                    </option>
-                                );
-                            })}
-                        </NativeSelect>
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
+                        <label className="flex items-center gap-2 text-sm md:w-[calc(50%-0.375rem)] md:shrink-0">
+                            <span className="shrink-0 text-muted-foreground">{t("translations_workingIn")}</span>
+                            <NativeSelect
+                                aria-label={t("translations_workingIn")}
+                                value={target}
+                                onChange={(event) => {
+                                    setTarget(event.target.value as Locale);
+                                    setPage(1);
+                                }}
+                            >
+                                {locales.filter((l) => l !== SOURCE).map((l) => {
+                                    const behind = facets.locales.find((row) => row.locale === l)?.missing;
+                                    return (
+                                        <option key={l} value={l}>
+                                            {localeNames[l]}
+                                            {behind === undefined ? "" : ` - ${t("translations_behind", { count: behind })}`}
+                                        </option>
+                                    );
+                                })}
+                            </NativeSelect>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm">
+                            <Checkbox
+                                checked={onlyEdited}
+                                onChange={(event) => {
+                                    setOnlyEdited(event.target.checked);
+                                    setPage(1);
+                                }}
+                            />
+                            {t("translations_onlyEdited")}
+                        </label>
+                        <label className="flex items-center gap-2 text-sm">
+                            <Checkbox
+                                checked={onlyMissing}
+                                onChange={(event) => {
+                                    setOnlyMissing(event.target.checked);
+                                    setPage(1);
+                                }}
+                            />
+                            {t("translations_onlyMissing")}
+                        </label>
                     </div>
-                    <label className="flex items-center gap-2 text-sm md:col-span-2">
-                        <Checkbox
-                            checked={onlyEdited}
-                            onChange={(event) => {
-                                setOnlyEdited(event.target.checked);
-                                setPage(1);
-                            }}
-                        />
-                        {t("translations_onlyEdited")}
-                    </label>
-                    <label className="flex items-center gap-2 text-sm md:col-span-2">
-                        <Checkbox
-                            checked={onlyMissing}
-                            onChange={(event) => {
-                                setOnlyMissing(event.target.checked);
-                                setPage(1);
-                            }}
-                        />
-                        {t("translations_onlyMissing")}
-                    </label>
                 </CardContent>
             </Card>
 
