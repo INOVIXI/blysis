@@ -71,6 +71,10 @@ vi.mock("@/core/lib/hooks-bootstrap", () => ({
     ensureHooks: async () => {},
     bootstrapHooks: async () => {},
 }));
+// Every tick imports this, and after `vi.resetModules` the real file is read
+// and compiled again: on a loaded machine that outlasted the microtasks
+// `drain` waits for, and the handler had not run yet when it was asked.
+vi.mock("@/core/lib/module-cache", () => ({ getModuleStates: async () => ({}) }));
 vi.mock("@/core/lib/revisions", () => ({ pruneOldRevisions: async () => 0 }));
 vi.mock("@/core/lib/timed-roles", () => ({ sweepLapsedRoles: async () => 0 }));
 vi.mock("@/core/lib/broadcasts", () => ({ processQueuedBroadcasts: async () => undefined }));
