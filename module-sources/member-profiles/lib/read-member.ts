@@ -15,6 +15,7 @@
  * Each optional total is therefore counted on its own model, and a model that
  * is not there counts zero.
  */
+import { applyFiltersAsync } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
 import { readLinkedAccounts } from "./read-linked-accounts";
 
@@ -52,33 +53,6 @@ async function countStatistics(userId: string): Promise<Record<string, number>> 
     return Object.fromEntries(available.map((s, i) => [s.key, counts[i]]));
 }
 
-interface RecentTopic {
-    id: string;
-    title: string;
-    slug: string;
-    createdAt: Date;
-}
-
-interface TopicDelegate {
-    findMany(args: {
-        where: Record<string, unknown>;
-        select: Record<string, boolean>;
-        orderBy: Record<string, "desc">;
-        take: number;
-    }): Promise<RecentTopic[]>;
-}
-
-async function recentForumTopics(userId: string): Promise<RecentTopic[]> {
-    const delegate = (prisma as unknown as Record<string, unknown>).forumTopic;
-    if (!delegate) return [];
-    return (delegate as TopicDelegate).findMany({
-        where: { authorId: userId },
-        select: { id: true, title: true, slug: true, createdAt: true },
-        orderBy: { createdAt: "desc" },
-        take: 5,
-    });
-}
-
 /** The member by name, whatever its case, or null when nobody has it. */
 export async function readMember(username: string) {
     const user = await prisma.user.findFirst({
@@ -100,7 +74,10 @@ export async function readMember(username: string) {
     // every one of these modules gets exactly the object it got before.
     const [counts, recentTopics, linkedAccounts] = await Promise.all([
         countStatistics(user.id),
-        recentForumTopics(user.id),
+        // Asked for too: this read the table and listed a topic waiting for a
+        // moderator, or in a section only the staff may open, by its title.
+        // Which topics a visitor may see is the forum's rule to apply.
+        applyFiltersAsync("profile.recentTopics", [], { userId: user.id }),
         // Asked for rather than read: the module that proved the account is
         // the only one that can say it is this member's, and this used to
         // publish whatever they had typed into a box. A picture still travels

@@ -20,15 +20,27 @@ export interface LinkedAccountSummary {
     avatar: string | null;
 }
 
+/** A topic a profile lists among the member's newest. */
+export interface RecentTopicSummary {
+    id: string;
+    title: string;
+    slug: string;
+    createdAt: Date;
+}
+
 declare global {
     interface BlysisFilterPayloads {
         /** Every account somebody has proved is theirs. */
         "profile.linkedAccounts": LinkedAccountSummary[];
+        /** The member's newest topics, as many as a visitor may open. */
+        "profile.recentTopics": RecentTopicSummary[];
     }
 
     interface BlysisFilterContexts {
         /** The member being looked at, who is not always the one looking. */
         "profile.linkedAccounts": { userId: string };
+        /** The member whose topics these are. */
+        "profile.recentTopics": { userId: string };
     }
 }
 

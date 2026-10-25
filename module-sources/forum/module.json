@@ -2670,6 +2670,11 @@
       "hook": "leaderboard.boards",
       "type": "filter",
       "handler": "hooks/leaderboard-board.ts"
+    },
+    {
+      "hook": "profile.recentTopics",
+      "type": "filter",
+      "handler": "hooks/profile-recent-topics.ts"
     }
   ],
   "blocks": [

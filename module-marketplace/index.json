@@ -2179,7 +2179,8 @@
           "forum.topic.updated"
         ],
         "listens": [
-          "leaderboard.boards"
+          "leaderboard.boards",
+          "profile.recentTopics"
         ]
       },
       "stats": {
@@ -3433,7 +3434,8 @@
       "conflicts": [],
       "hooks": {
         "emits": [
-          "profile.linkedAccounts"
+          "profile.linkedAccounts",
+          "profile.recentTopics"
         ],
         "listens": []
       },

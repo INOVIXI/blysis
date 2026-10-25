@@ -582,6 +582,10 @@
     {
       "hook": "profile.linkedAccounts",
       "type": "filter"
+    },
+    {
+      "hook": "profile.recentTopics",
+      "type": "filter"
     }
   ],
   "pages": [
