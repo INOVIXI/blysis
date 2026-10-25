@@ -1,0 +1,1913 @@
+/*
+ * Kite. Every selector here is scoped to [data-theme="kite"] by the theme
+ * generator, so nothing below draws on a site wearing another theme.
+ *
+ * The look lives under `.kt-site`, the public frame and the sign-in screens
+ * alike. A day passes down the page: the morning sky behind the bar, the
+ * evening towards the bottom, the night in the footer. Surfaces are white
+ * cards with soft corners; what can be pressed stands on a raised edge of a
+ * darker shade and sinks onto it. Every colour, the drawings' included, is a
+ * token, so the operator's colours and the dark mode reach all of it.
+ */
+
+html {
+  --kt-press: 5px;
+  --kt-round: 28px;
+  --kt-shadow: 0 12px 28px color-mix(in srgb, var(--blysis-color-ink) 10%, transparent);
+  --kt-pale-sky: color-mix(in srgb, var(--blysis-color-edge) 80%, var(--blysis-color-card));
+}
+
+/* At night the sky's edge is near black, so what is drawn in it turns lilac. */
+html[data-mode="dark"] {
+  --kt-pale-sky: color-mix(in srgb, var(--blysis-color-accent) 55%, var(--blysis-color-mint));
+}
+
+/* Type */
+
+.kt-site {
+  font-family: var(--blysis-font-body);
+}
+
+.kt-site :is(h1, h2, h3, h4) {
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+/* Primitives on the public pages */
+
+/*
+ * A filled button stands on an edge of its own colour, darker, and sinks
+ * onto it when pressed. The outline button is ink on white with an ink edge.
+ * The link and ghost variants have no surface to stand on.
+ */
+.kt-site .blysis-button[class*=" bg-"],
+.kt-site .blysis-button.border-input,
+.kt-site .blysis-button.border {
+  --kt-edge: color-mix(in srgb, var(--blysis-color-secondary) 70%, var(--blysis-color-ink));
+  border-radius: 16px;
+  font-weight: 800;
+  box-shadow: 0 var(--kt-press) 0 var(--kt-edge);
+  transition: transform 90ms, box-shadow 90ms, background-color 150ms;
+}
+
+.kt-site .blysis-button.bg-primary {
+  --kt-edge: color-mix(in srgb, var(--blysis-color-primary) 72%, black);
+}
+
+.kt-site .blysis-button.bg-destructive {
+  --kt-edge: color-mix(in srgb, var(--blysis-color-destructive) 65%, black);
+}
+
+.kt-site .blysis-button:is(.border-input, .border):not([class*=" bg-primary"]) {
+  --kt-edge: var(--blysis-color-ink);
+  border: 2px solid var(--blysis-color-ink);
+  background: var(--blysis-color-card);
+  color: var(--blysis-color-foreground);
+}
+
+.kt-site .blysis-button:is([class*=" bg-"], .border-input, .border):active:not(:disabled) {
+  transform: translateY(calc(var(--kt-press) - 2px));
+  box-shadow: 0 2px 0 var(--kt-edge);
+}
+
+.kt-site .blysis-card,
+.kt-site [data-sidebar] > .bg-card,
+.kt-site [data-sidebar] > [data-block] > .bg-card,
+.kt-site [data-block] .bg-card.rounded-xl {
+  border-color: transparent;
+  border-radius: var(--kt-round);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-site .blysis-badge {
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-weight: 800;
+}
+
+.kt-site :is(.blysis-input, input[type="text"], input[type="email"], input[type="password"], input[type="search"], textarea, select) {
+  border-radius: 14px;
+}
+
+/* The frame */
+
+.kt-site {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  /* Each stop gives way on a short page, so they stay in order and no two
+     meet at one height, where the sky would end on a hard line. */
+  background: linear-gradient(180deg,
+    var(--blysis-color-sky) 0,
+    color-mix(in srgb, var(--blysis-color-sky) 45%, var(--blysis-color-background)) min(760px, 25%),
+    var(--blysis-color-background) min(1500px, 45%),
+    color-mix(in srgb, var(--blysis-color-dusk) 55%, var(--blysis-color-background)) max(calc(100% - 700px), 60%),
+    var(--blysis-color-dusk) 100%);
+}
+
+/* A column of 1240px between 24px gutters, which a border-box column counts in. */
+.kt-site .container {
+  max-width: 1288px;
+}
+
+@media (min-width: 40rem) {
+  .kt-site .container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* Clouds drift behind the bar and the hero, never over what is written. */
+.kt-sky {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  height: 680px;
+  pointer-events: none;
+}
+
+.kt-sky-cloud {
+  position: absolute;
+  width: 190px;
+  height: auto;
+}
+
+.kt-sky-cloud:nth-child(1) { left: 6%; top: 190px; }
+.kt-sky-cloud:nth-child(2) { right: 8%; top: 96px; width: 170px; }
+.kt-sky-cloud:nth-child(3) { left: 44%; top: 72px; width: 120px; opacity: 0.7; }
+.kt-sky-cloud:nth-child(4) { right: -2%; top: 430px; width: 160px; opacity: 0.55; }
+
+@media (max-width: 47.99rem) {
+  .kt-sky-cloud:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+/* The bar: a white band with round ends floating on the sky, on a raised edge. */
+.kt-bar {
+  padding: 22px 0 0;
+}
+
+.kt-bar > header {
+  max-width: 1240px;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 24px;
+  background: var(--blysis-color-card);
+  box-shadow: 0 6px 0 var(--blysis-color-edge);
+}
+
+@media (max-width: 1287.98px) {
+  .kt-bar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (min-width: 40rem) and (max-width: 1287.98px) {
+  .kt-bar {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+.kt-bar > header > .container {
+  max-width: none;
+}
+
+.kt-bar > header > .container > div {
+  height: 68px;
+}
+
+/* The site's name beside its mark, in the heading face. */
+.kt-bar header a.font-semibold {
+  gap: 10px;
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+
+.kt-bar header a.font-semibold > img {
+  min-width: 34px;
+  min-height: 34px;
+}
+
+/* Words, not icons: the links are read as a row of names, each a soft pill. */
+.kt-bar header :is(a[data-nav-item], [data-nav-item] > button) {
+  border-radius: 14px;
+  padding-left: 14px;
+  padding-right: 14px;
+  color: var(--blysis-color-foreground);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.kt-bar header .blysis-button:not([class*=" bg-"]) {
+  color: var(--blysis-color-foreground);
+  font-weight: 700;
+}
+
+.kt-bar header :is(a[data-nav-item], [data-nav-item] > button) > svg:first-child {
+  display: none;
+}
+
+.kt-bar header :is(a[data-nav-item], [data-nav-item] > button):hover,
+.kt-bar header a[data-nav-item][aria-current="page"] {
+  background: var(--blysis-color-secondary);
+}
+
+.kt-bar header .blysis-button.bg-primary {
+  height: 40px;
+  padding: 0 14px;
+}
+
+/* A phone keeps the core's smaller type, or the account buttons cover the name. */
+@media (min-width: 48rem) {
+  .kt-bar header .blysis-button:not([class*=" bg-"]) {
+    font-size: 1rem;
+  }
+
+  .kt-bar header .blysis-button.bg-primary {
+    height: 44px;
+    margin-left: 6px;
+    padding: 0 20px;
+    font-size: 1rem;
+  }
+}
+
+.kt-main {
+  padding-top: 32px;
+  padding-bottom: 72px;
+  --blysis-row-gap: 40px;
+}
+
+/*
+ * The footer is the night sky: it opens on a row of clouds the colour of the
+ * night, carries a scatter of stars, and its text and controls take the
+ * night's colours. The row of clouds reaches both edges of the window; it is
+ * drawn as a mask over the night's colour, so it is the same colour by
+ * construction and never shows a seam.
+ */
+.kt-site > footer {
+  position: relative;
+  margin-top: 90px;
+  border-top: 0;
+  background:
+    radial-gradient(circle at 8% 22%, var(--blysis-color-nightForeground) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 18% 64%, var(--blysis-color-nightForeground) 0 1px, transparent 2px),
+    radial-gradient(circle at 31% 16%, var(--blysis-color-nightForeground) 0 2px, transparent 3px),
+    radial-gradient(circle at 47% 72%, var(--blysis-color-nightForeground) 0 1px, transparent 2px),
+    radial-gradient(circle at 58% 26%, var(--blysis-color-nightForeground) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 72% 60%, var(--blysis-color-nightForeground) 0 1px, transparent 2px),
+    radial-gradient(circle at 84% 18%, var(--blysis-color-nightForeground) 0 2px, transparent 3px),
+    radial-gradient(circle at 94% 50%, var(--blysis-color-nightForeground) 0 1.5px, transparent 2.5px),
+    var(--blysis-color-night);
+  color: var(--blysis-color-nightForeground);
+  --blysis-color-card: var(--blysis-color-night);
+  --blysis-color-cardForeground: var(--blysis-color-nightForeground);
+  --blysis-color-foreground: var(--blysis-color-nightForeground);
+  --blysis-color-mutedForeground: color-mix(in srgb, var(--blysis-color-nightForeground) 82%, var(--blysis-color-night));
+  --blysis-color-muted: color-mix(in srgb, var(--blysis-color-nightForeground) 14%, var(--blysis-color-night));
+  --blysis-color-border: color-mix(in srgb, var(--blysis-color-nightForeground) 22%, var(--blysis-color-night));
+  --blysis-color-background: var(--blysis-color-night);
+  --blysis-color-primary: var(--blysis-color-sun);
+  --blysis-color-primaryForeground: var(--blysis-color-ink);
+}
+
+.kt-site > footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -89px;
+  height: 90px;
+  background: var(--blysis-color-night);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 90' preserveAspectRatio='none'%3E%3Cpath d='M0 90V60c60-30 120-30 170 0 40-40 110-46 160-8 50-38 130-34 170 6 50-30 110-30 160 0 40-34 110-40 160-4 50-30 120-28 170 4 50-36 130-36 180 0 60-26 120-22 170 4c34-30 76-32 100-2V90z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 90' preserveAspectRatio='none'%3E%3Cpath d='M0 90V60c60-30 120-30 170 0 40-40 110-46 160-8 50-38 130-34 170 6 50-30 110-30 160 0 40-34 110-40 160-4 50-30 120-28 170 4 50-36 130-36 180 0 60-26 120-22 170 4c34-30 76-32 100-2V90z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+}
+
+.kt-site > footer h2 {
+  color: var(--blysis-color-sun);
+  font-size: 1.125rem;
+}
+
+.kt-site > footer h2 button {
+  color: inherit;
+}
+
+.kt-site > footer .text-lg {
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  font-size: 1.625rem;
+}
+
+.kt-site > footer a:hover {
+  color: var(--blysis-color-sun);
+}
+
+.kt-site > footer .border-t {
+  border-top: 2px dashed var(--blysis-color-border);
+}
+
+/* The drawings, coloured from the theme's tokens */
+
+.kt-sun { fill: var(--blysis-color-sun); }
+.kt-sun-glow { fill: color-mix(in srgb, var(--blysis-color-sun) 25%, transparent); }
+.kt-cloud { fill: var(--blysis-color-cloud); opacity: 0.92; }
+.kt-cloud-far { opacity: 0.75; }
+.kt-kite { fill: var(--blysis-color-primary); }
+.kt-kite-spar { fill: none; stroke: var(--blysis-color-card); stroke-width: 3; }
+.kt-kite-tail { fill: none; stroke: var(--blysis-color-sun); stroke-width: 4; stroke-linecap: round; }
+.kt-kite-bow { fill: none; stroke: var(--blysis-color-accent); stroke-width: 5; stroke-linecap: round; }
+.kt-string { fill: none; stroke: var(--blysis-color-accent); stroke-width: 2.5; stroke-dasharray: 2 7; stroke-linecap: round; }
+.kt-string-break { fill: none; stroke: var(--blysis-color-accent); stroke-width: 2.5; stroke-linecap: round; }
+.kt-soil { fill: var(--blysis-color-soil); }
+.kt-soil-seam { fill: none; stroke: color-mix(in srgb, var(--blysis-color-soil) 80%, black); stroke-width: 6; stroke-dasharray: 26 18; }
+.kt-grass { fill: var(--blysis-color-grass); }
+.kt-grass-shade { fill: color-mix(in srgb, var(--blysis-color-grass) 82%, black); }
+.kt-wood { fill: color-mix(in srgb, var(--blysis-color-soil) 72%, black); }
+.kt-leaf { fill: color-mix(in srgb, var(--blysis-color-grass) 66%, black); }
+.kt-leaf-light { fill: color-mix(in srgb, var(--blysis-color-grass) 84%, black); }
+.kt-wall { fill: color-mix(in srgb, var(--blysis-color-sun) 14%, var(--blysis-color-card)); }
+.kt-roof { fill: var(--blysis-color-primary); }
+.kt-door { fill: var(--blysis-color-accent); }
+.kt-window { fill: color-mix(in srgb, var(--blysis-color-sky) 70%, var(--blysis-color-edge)); }
+
+/* The hero */
+
+.kt-hero {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px 40px;
+  padding-top: 56px;
+  padding-bottom: 150px;
+}
+
+.kt-hero-words {
+  flex: 1 1 480px;
+  min-width: 0;
+}
+
+.kt-hero-art {
+  flex: 1 1 420px;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.kt-island {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+}
+
+.kt-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.kt-tag,
+.kt-hero-tags [data-hero-tag] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--blysis-color-card);
+  color: var(--blysis-color-foreground);
+  font-weight: 800;
+  font-size: 0.8125rem;
+}
+
+/* What a module says of the server: a dot of light, then the words. */
+.kt-hero-tags [data-hero-tag] {
+  background: color-mix(in srgb, var(--blysis-color-success) 16%, var(--blysis-color-card));
+  color: var(--blysis-color-success);
+}
+
+.kt-hero-tags [data-hero-tag]::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.kt-hero-tags [data-hero-tag][data-state="closed"] {
+  background: var(--blysis-color-muted);
+  color: var(--blysis-color-mutedForeground);
+}
+
+.kt-hero-title {
+  margin-top: 20px;
+  font-size: clamp(2.75rem, 6vw, 4.25rem);
+  line-height: 1.02;
+  overflow-wrap: anywhere;
+}
+
+/* The first word of the second line has a stroke of sunshine under it. */
+.kt-hero-stroke {
+  position: relative;
+  white-space: nowrap;
+}
+
+.kt-hero-stroke > svg {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: -1;
+  width: 100%;
+  height: 18px;
+}
+
+.kt-hero-stroke > svg path {
+  fill: none;
+  stroke: var(--blysis-color-sun);
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+.kt-hero-lede {
+  max-width: 540px;
+  margin-top: 26px;
+  color: color-mix(in srgb, var(--blysis-color-foreground) 82%, var(--blysis-color-mutedForeground));
+  font-size: 1.25rem;
+  line-height: 1.55;
+}
+
+.kt-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+/* The address on a white pill, with the button that copies it inside. */
+.kt-address-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  padding: 6px 6px 6px 18px;
+  border-radius: 20px;
+  background: var(--blysis-color-card);
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.kt-address {
+  color: var(--blysis-color-foreground);
+  font-family: var(--blysis-font-mono);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  user-select: all;
+}
+
+.kt-site .blysis-button.kt-discord {
+  --kt-edge: color-mix(in srgb, var(--blysis-color-accent) 70%, black);
+  background: var(--blysis-color-accent);
+  color: var(--blysis-color-accentForeground);
+}
+
+.kt-hero-note:empty {
+  display: none;
+}
+
+.kt-hero-note {
+  margin-top: 14px;
+  color: var(--blysis-color-foreground);
+  font-weight: 700;
+}
+
+/* The three steps on a card that sits over the hero's lower edge. */
+.kt-steps {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: -70px;
+  padding: 26px 30px;
+  border-radius: var(--kt-round);
+  background: var(--blysis-color-card);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-steps-title {
+  margin-bottom: 18px;
+  color: var(--blysis-color-mutedForeground);
+  font-size: 0.9375rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.kt-steps-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 28px;
+}
+
+.kt-step {
+  display: flex;
+  flex: 1 1 240px;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.kt-step-number {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--blysis-color-sun);
+  color: var(--blysis-color-ink);
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  font-size: 1.375rem;
+  transform: rotate(-6deg);
+}
+
+.kt-step:nth-child(2) .kt-step-number {
+  background: var(--blysis-color-mint);
+  transform: rotate(5deg);
+}
+
+.kt-step:nth-child(3) .kt-step-number {
+  background: color-mix(in srgb, var(--blysis-color-accent) 40%, var(--blysis-color-card));
+  transform: rotate(-4deg);
+}
+
+.kt-step-title {
+  display: block;
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.kt-step-line {
+  color: var(--blysis-color-mutedForeground);
+  overflow-wrap: anywhere;
+}
+
+/* On a narrow screen the steps follow the hero rather than overlap it. */
+@media (max-width: 63.99rem) {
+  .kt-hero {
+    padding-bottom: 32px;
+  }
+
+  .kt-steps {
+    position: static;
+    flex: 1 1 100%;
+    padding: 22px;
+  }
+}
+
+/* The homepage's blocks */
+
+.kt-hero + .kt-main {
+  padding-top: 120px;
+  --blysis-row-gap: 72px;
+}
+
+@media (max-width: 63.99rem) {
+  .kt-hero + .kt-main {
+    padding-top: 32px;
+    --blysis-row-gap: 48px;
+  }
+}
+
+/* The homepage's own crumb says "home" under a hero that already does. */
+.kt-hero + .kt-main [data-home-trail] {
+  display: none;
+}
+
+.kt-site [data-block-heading] h2 {
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  line-height: 1.1;
+}
+
+/* A section's label in the brand colour, after a small kite. */
+.kt-site [data-kicker] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: color-mix(in srgb, var(--blysis-color-primary) 70%, var(--blysis-color-foreground));
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.kt-site [data-kicker]::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--blysis-color-primary);
+  transform: rotate(45deg);
+}
+
+/* Game modes: stickers, each a little askew and a colour of its own. */
+.kt-site [data-server-card] {
+  --kt-card: color-mix(in srgb, var(--blysis-color-primary) 72%, var(--blysis-color-card));
+  --kt-fill: var(--blysis-color-primary);
+  padding: 12px;
+  border: 0;
+  border-radius: var(--kt-round);
+  box-shadow: var(--kt-shadow);
+  transform: rotate(-1.2deg);
+  transition: transform 180ms;
+}
+
+.kt-site [data-server-card]:nth-child(4n + 2) {
+  --kt-card: color-mix(in srgb, var(--blysis-color-sky) 55%, var(--blysis-color-edge));
+  --kt-fill: color-mix(in srgb, var(--blysis-color-edge) 40%, var(--blysis-color-accent));
+  transform: rotate(1deg);
+}
+
+.kt-site [data-server-card]:nth-child(4n + 3) {
+  --kt-card: color-mix(in srgb, var(--blysis-color-accent) 45%, var(--blysis-color-card));
+  --kt-fill: var(--blysis-color-accent);
+  transform: rotate(-0.6deg);
+}
+
+.kt-site [data-server-card]:nth-child(4n + 4) {
+  --kt-card: var(--blysis-color-mint);
+  --kt-fill: var(--blysis-color-success);
+  transform: rotate(1.4deg);
+}
+
+.kt-site [data-server-card]:hover {
+  transform: rotate(0deg) translateY(-6px);
+}
+
+.kt-site [data-server-card] .aspect-card {
+  aspect-ratio: auto;
+  height: 150px;
+  border-radius: 20px;
+  background: var(--kt-card);
+}
+
+/* A server with no picture of its own shows its colour and a kite. */
+.kt-site [data-server-card] .aspect-card > .bg-gradient-to-b {
+  background: var(--kt-card);
+}
+
+.kt-site [data-server-card] .aspect-card > .bg-gradient-to-b > svg {
+  display: none;
+}
+
+.kt-site [data-server-card] .aspect-card > .bg-gradient-to-b::after {
+  content: "";
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  background: var(--blysis-color-card);
+  opacity: 0.85;
+  transform: rotate(45deg);
+}
+
+.kt-site [data-server-players] {
+  border-radius: 999px;
+  background: var(--blysis-color-card);
+  padding: 6px 11px;
+}
+
+.kt-site [data-server-card] > div + div {
+  padding: 16px 8px 8px;
+}
+
+.kt-site [data-server-card] h3 {
+  font-size: 1.5rem;
+}
+
+.kt-site [data-server-capacity] {
+  color: var(--blysis-color-foreground);
+  font-weight: 800;
+}
+
+.kt-site [data-server-capacity] > span[aria-hidden] {
+  height: 10px;
+  background: color-mix(in srgb, var(--kt-card) 40%, var(--blysis-color-muted));
+}
+
+.kt-site [data-server-fill] {
+  background: var(--kt-fill);
+}
+
+.kt-site [data-server-card] .blysis-button {
+  align-self: stretch;
+  justify-content: center;
+}
+
+/*
+ * The news: the newest article as a postcard across the column, the next
+ * ones as smaller postcards side by side under it, each dated on a postage
+ * stamp in its corner.
+ */
+.kt-site [data-block="blog.news"] .grid:has(> [data-news-lead]) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.kt-site [data-block="blog.news"] .grid:has(> [data-news-lead]) > div.flex-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+}
+
+.kt-site :is([data-news-lead], [data-news-row]) {
+  position: relative;
+  overflow: visible;
+  padding: 14px;
+  border: 0;
+  border-radius: var(--kt-round);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-site [data-news-lead] > .aspect-card {
+  aspect-ratio: auto;
+  height: 320px;
+  border-radius: 20px;
+}
+
+.kt-site [data-news-row] {
+  flex-direction: column;
+  padding: 12px;
+}
+
+.kt-site [data-news-row] > div:first-child {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.kt-site :is([data-news-lead], [data-news-row]) > div + div {
+  padding: 18px 10px 8px;
+}
+
+.kt-site [data-news-lead] h3 {
+  min-height: 0;
+  font-size: 1.875rem;
+  line-height: 1.15;
+}
+
+.kt-site [data-news-lead] h3 + p {
+  min-height: 0;
+  color: color-mix(in srgb, var(--blysis-color-foreground) 80%, var(--blysis-color-mutedForeground));
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+.kt-site [data-news-row] h3 {
+  font-family: var(--blysis-font-heading);
+  font-size: 1.3125rem;
+}
+
+/* The stamp: a date on a perforated square, the day large, tilted. */
+.kt-site [data-news-date] {
+  position: absolute;
+  z-index: 1;
+  top: 2px;
+  right: 26px;
+  width: 92px;
+  padding: 10px 4px;
+  border: 3px dashed var(--blysis-color-primary);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--blysis-color-sun) 8%, var(--blysis-color-card));
+  color: var(--blysis-color-foreground);
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--blysis-color-ink) 18%, transparent);
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  line-height: 1.15;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  word-spacing: 100vw;
+  overflow-wrap: anywhere;
+  transform: rotate(7deg);
+}
+
+.kt-site [data-news-date]::first-line {
+  color: color-mix(in srgb, var(--blysis-color-primary) 70%, var(--blysis-color-foreground));
+  font-size: 1.875rem;
+  letter-spacing: 0;
+}
+
+.kt-site [data-news-row] [data-news-date] {
+  top: 0;
+  right: 20px;
+  width: 74px;
+  padding: 7px 3px;
+  border-color: var(--blysis-color-accent);
+  font-size: 0.6875rem;
+  transform: rotate(-6deg);
+}
+
+.kt-site [data-news-row]:nth-child(2n) [data-news-date] {
+  border-color: var(--blysis-color-success);
+  transform: rotate(5deg);
+}
+
+.kt-site [data-news-row] [data-news-date]::first-line {
+  font-size: 1.375rem;
+}
+
+.kt-site [data-news-separator] {
+  display: none;
+}
+
+/* The team: a face, a name and the role on a pill of its own colour. */
+.kt-site [data-staff-member] {
+  gap: 12px;
+  padding: 6px 0;
+  background: none;
+}
+
+.kt-site [data-staff-member] > span:first-child {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+.kt-site [data-staff-member] > .min-w-0 {
+  display: contents;
+}
+
+.kt-site [data-staff-member] > .min-w-0 > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.kt-site [data-staff-role] {
+  flex: none;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--blysis-color-primary) 18%, var(--blysis-color-card));
+  color: var(--blysis-color-foreground);
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+
+.kt-site [data-staff-member]:nth-child(3n + 2) [data-staff-role] {
+  background: color-mix(in srgb, var(--blysis-color-accent) 18%, var(--blysis-color-card));
+}
+
+.kt-site [data-staff-member]:nth-child(3n + 3) [data-staff-role] {
+  background: color-mix(in srgb, var(--blysis-color-mint) 45%, var(--blysis-color-card));
+}
+
+/* The month's voters: the first three on bands of their own, ranked on kites. */
+.kt-site [data-block="leaderboard.board"] ol > li {
+  border-radius: 16px;
+  padding: 9px 14px;
+}
+
+.kt-site [data-block="leaderboard.board"] ol > li:nth-child(1) {
+  background: color-mix(in srgb, var(--blysis-color-sun) 28%, var(--blysis-color-card));
+}
+
+.kt-site [data-block="leaderboard.board"] ol > li:nth-child(2) {
+  background: color-mix(in srgb, var(--blysis-color-sky) 45%, var(--blysis-color-card));
+}
+
+.kt-site [data-block="leaderboard.board"] ol > li:nth-child(3) {
+  background: color-mix(in srgb, var(--blysis-color-dusk) 70%, var(--blysis-color-card));
+}
+
+.kt-site [data-block="leaderboard.board"] ol > li > span:first-child {
+  width: 34px;
+  height: 34px;
+  border-radius: 0;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  background: color-mix(in srgb, var(--blysis-color-mutedForeground) 35%, var(--blysis-color-card));
+  color: var(--blysis-color-foreground);
+  font-family: var(--blysis-font-heading);
+}
+
+.kt-site [data-block="leaderboard.board"] ol > li:nth-child(-n + 3) > span:first-child { color: var(--blysis-color-ink); }
+.kt-site [data-block="leaderboard.board"] ol > li:nth-child(1) > span:first-child { background: var(--blysis-color-sun); }
+.kt-site [data-block="leaderboard.board"] ol > li:nth-child(2) > span:first-child { background: var(--blysis-color-mint); }
+.kt-site [data-block="leaderboard.board"] ol > li:nth-child(3) > span:first-child { background: var(--blysis-color-primary); }
+
+/* The cards of the community blocks lead with words, not the widget's icon. */
+.kt-site :is([data-block="leaderboard.board"], [data-block="staff.online"], [data-block="forum.latest-topics"]) > .bg-card {
+  padding: 24px;
+}
+
+.kt-site :is([data-block="leaderboard.board"], [data-block="staff.online"], [data-block="forum.latest-topics"]) > .bg-card > div:first-child > svg {
+  display: none;
+}
+
+.kt-site :is([data-block="leaderboard.board"], [data-block="staff.online"], [data-block="forum.latest-topics"]) h2 {
+  font-size: 1.375rem;
+}
+
+/* The shop's window: each product with its price on a tag hung on a string. */
+.kt-site :is([data-block="store.products"], [data-store-shelf], [data-product-related]) a.group {
+  position: relative;
+  padding: 12px;
+  border: 0;
+  border-radius: var(--kt-round);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group > .aspect-card {
+  aspect-ratio: auto;
+  height: 170px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--blysis-color-sun) 22%, var(--blysis-color-card));
+}
+
+/* The price tag hangs at the top right, so a featured badge flies on the left. */
+.kt-site :is([data-block="store.products"], [data-store-shelf], [data-product-related]) a.group > .aspect-card > .blysis-badge {
+  right: auto;
+  left: 10px;
+  top: 10px;
+  transform: rotate(-4deg);
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group:nth-child(4n + 2) > .aspect-card {
+  background: color-mix(in srgb, var(--blysis-color-accent) 16%, var(--blysis-color-card));
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group:nth-child(4n + 3) > .aspect-card {
+  background: color-mix(in srgb, var(--blysis-color-mint) 40%, var(--blysis-color-card));
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group:nth-child(4n + 4) > .aspect-card {
+  background: color-mix(in srgb, var(--blysis-color-sky) 50%, var(--blysis-color-card));
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group > div + div {
+  padding: 16px 8px 8px;
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group h3 {
+  font-family: var(--blysis-font-heading);
+  font-size: 1.4375rem;
+  font-weight: 700;
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group .mt-auto {
+  padding-top: 8px;
+}
+
+/* The price: a tag on a string from the card's top corner. */
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group .mt-auto > div:first-child {
+  position: absolute;
+  top: 36px;
+  right: 18px;
+  padding: 8px 12px 8px 24px;
+  border: 2px solid var(--blysis-color-ink);
+  border-radius: 8px;
+  background: var(--blysis-color-card);
+  transform: rotate(-6deg);
+  transform-origin: top right;
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group .mt-auto > div:first-child::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin-top: -4.5px;
+  border: 2px solid var(--blysis-color-ink);
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group .mt-auto > div:first-child::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  bottom: 100%;
+  width: 2px;
+  height: 20px;
+  background: var(--blysis-color-ink);
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group:nth-child(2n) .mt-auto > div:first-child {
+  background: var(--blysis-color-sun);
+  transform: rotate(7deg);
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group:nth-child(2n) .mt-auto > div:first-child span {
+  color: var(--blysis-color-ink);
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf], [data-product-related]) a.group .mt-auto span.text-lg {
+  font-family: var(--blysis-font-heading);
+  font-size: 1.1875rem;
+  font-weight: 700;
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) [data-product-more] {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid var(--blysis-color-ink);
+  border-radius: 16px;
+  color: var(--blysis-color-foreground);
+  box-shadow: 0 4px 0 var(--blysis-color-ink);
+  font-weight: 800;
+  text-align: center;
+}
+
+.kt-site :is([data-block="store.products"], [data-store-shelf]) a.group:hover [data-product-more] {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--blysis-color-ink);
+}
+
+/* The forum: a line per topic, a small kite of the section's colour first. */
+.kt-site [data-block="forum.latest-topics"] ul {
+  gap: 0;
+}
+
+.kt-site [data-block="forum.latest-topics"] li {
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 2px dashed var(--blysis-color-border);
+}
+
+.kt-site [data-block="forum.latest-topics"] li:last-child {
+  border-bottom: 0;
+}
+
+.kt-site [data-topic-colour] {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  transform: rotate(45deg);
+}
+
+.kt-site [data-block="forum.latest-topics"] li a {
+  font-weight: 800;
+}
+
+/* A page's header */
+
+.kt-page-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 36px;
+  padding-top: 20px;
+}
+
+.kt-page-trail :is(nav, ol, li, a, span) {
+  font-weight: 700;
+}
+
+.kt-page-trail a {
+  color: color-mix(in srgb, var(--blysis-color-accent) 60%, var(--blysis-color-foreground));
+}
+
+.kt-page-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: calc(100% - 260px);
+}
+
+.kt-page-words {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.kt-page-title {
+  font-size: clamp(2.375rem, 5vw, 3.5rem);
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.kt-page-lede {
+  max-width: 620px;
+  margin-top: 12px;
+  color: color-mix(in srgb, var(--blysis-color-foreground) 80%, var(--blysis-color-mutedForeground));
+  font-size: 1.125rem;
+  line-height: 1.55;
+}
+
+.kt-page-meta {
+  order: -1;
+  margin-bottom: 12px;
+  color: var(--blysis-color-mutedForeground);
+  font-size: 0.9375rem;
+}
+
+.kt-page-meta [data-article-meta] > a {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--blysis-color-primary) 20%, var(--blysis-color-card));
+  color: var(--blysis-color-foreground);
+  font-weight: 800;
+  font-size: 0.8125rem;
+}
+
+.kt-page-meta [data-article-author] {
+  color: var(--blysis-color-foreground);
+  font-weight: 800;
+}
+
+.kt-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* The kite flies to the right of the title, its string down to the page. */
+.kt-page-kite {
+  position: absolute;
+  right: 40px;
+  bottom: -10px;
+  width: 70px;
+  height: auto;
+  transform: rotate(16deg);
+}
+
+@media (max-width: 47.99rem) {
+  .kt-page-heading {
+    max-width: none;
+  }
+
+  .kt-page-kite {
+    display: none;
+  }
+}
+
+/* A page with a picture: a postcard, the picture framed and stamped. */
+.kt-page-header[data-picture] .kt-page-heading {
+  max-width: none;
+  padding: 26px 22px 8px;
+}
+
+.kt-postcard {
+  position: relative;
+  padding: 16px;
+  border-radius: var(--kt-round);
+  background: var(--blysis-color-card);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-postcard-picture {
+  height: clamp(220px, 34vw, 400px);
+  border-radius: 22px;
+  background-size: cover;
+  background-position: center;
+}
+
+.kt-stamp {
+  position: absolute;
+  top: 0;
+  right: 34px;
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 110px;
+  border: 3px dashed var(--blysis-color-primary);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--blysis-color-sun) 8%, var(--blysis-color-card));
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--blysis-color-ink) 18%, transparent);
+  transform: rotate(7deg);
+}
+
+.kt-stamp-kite {
+  width: 46px;
+  height: auto;
+}
+
+/* A module's page */
+
+.kt-site [data-layout-row]:has([data-block="store.crumbs"]) + * {
+  margin-top: 20px;
+}
+
+/* The shop's showcase: the week's star, its picture on a sunny panel. */
+.kt-site [data-featured-product] {
+  gap: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--kt-round);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-site [data-featured-picture] {
+  border-radius: 0;
+  background: var(--blysis-color-sun);
+}
+
+.kt-site [data-featured-name] {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1.05;
+}
+
+.kt-site [data-featured-price] {
+  font-family: var(--blysis-font-heading);
+  font-size: 2.125rem;
+  font-weight: 800;
+}
+
+/* The shop's sections as stickers, a little askew. */
+.kt-site [data-store-chips] {
+  gap: 10px;
+}
+
+.kt-site [data-store-chips] a {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--blysis-color-card);
+  color: var(--blysis-color-foreground);
+  font-weight: 800;
+  box-shadow: 0 4px 0 var(--blysis-color-edge);
+}
+
+.kt-site [data-store-chips] a[aria-current="page"] {
+  background: var(--blysis-color-ink);
+  color: var(--blysis-color-card);
+}
+
+/* A search is a wide white bar standing on its edge, as the hero's address is. */
+.kt-main form[role="search"]:not(.kt-lost-search) > .relative {
+  max-width: none;
+}
+
+.kt-main form[role="search"]:not(.kt-lost-search) input {
+  height: 52px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--blysis-color-card);
+  font-size: 1rem;
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+/* The shop's sections as stickers: a coloured panel on a white card, askew. */
+.kt-site [data-block="store.categories"] h2 {
+  font-size: 2rem;
+}
+
+.kt-site [data-block="store.categories"] .grid {
+  gap: 22px;
+}
+
+@media (min-width: 64rem) {
+  .kt-site [data-block="store.categories"] .grid,
+  .kt-site [data-block="store.shelves"] [data-store-shelf] > .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.kt-site [data-block="store.categories"] .grid > a {
+  padding: 8px;
+  border: 0;
+  border-radius: 26px;
+  box-shadow: var(--kt-shadow);
+  transform: rotate(-2deg);
+  transition: transform 0.2s;
+}
+
+.kt-site [data-block="store.categories"] .grid > a:nth-child(2n) {
+  transform: rotate(1.5deg);
+}
+
+.kt-site [data-block="store.categories"] .grid > a:hover {
+  transform: translateY(-4px);
+}
+
+.kt-site [data-block="store.categories"] .grid > a > .aspect-card {
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--blysis-color-accent) 55%, var(--blysis-color-card));
+}
+
+.kt-site [data-block="store.categories"] .grid > a:nth-child(4n + 2) > .aspect-card {
+  background: color-mix(in srgb, var(--blysis-color-primary) 70%, var(--blysis-color-card));
+}
+
+.kt-site [data-block="store.categories"] .grid > a:nth-child(4n + 3) > .aspect-card {
+  background: var(--kt-pale-sky);
+}
+
+.kt-site [data-block="store.categories"] .grid > a:nth-child(4n + 4) > .aspect-card {
+  background: var(--blysis-color-mint);
+}
+
+.kt-site [data-block="store.categories"] .grid > a > .aspect-card > svg {
+  width: 56px;
+  height: 56px;
+  color: var(--blysis-color-card);
+}
+
+.kt-site [data-block="store.categories"] .grid > a > .p-4 {
+  padding: 12px 10px 6px;
+}
+
+.kt-site [data-block="store.categories"] h3 {
+  font-family: var(--blysis-font-heading);
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.kt-site [data-store-shelves] {
+  gap: 56px;
+}
+
+.kt-site [data-store-shelf] h2 {
+  font-size: 2rem;
+}
+
+/* A product: the picture on a sunny panel, the box beside it a white card. */
+.kt-site [data-block="store.gallery"] .aspect-card {
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--blysis-color-sun) 70%, var(--blysis-color-card));
+}
+
+.kt-site [data-product-box] {
+  padding: 28px;
+  border: 0;
+  border-radius: var(--kt-round);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-site [data-product-title] > p:not(.text-sm) {
+  font-family: var(--blysis-font-heading);
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.kt-site [data-product-box] span:is(.text-3xl, .text-xl).font-bold {
+  display: inline-block;
+  padding: 10px 16px 10px 30px;
+  border: 2px solid var(--blysis-color-ink);
+  border-radius: 10px;
+  background: var(--blysis-color-sun);
+  color: var(--blysis-color-ink);
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  transform: rotate(-4deg);
+}
+
+.kt-site :is([data-product-related], [data-block="blog.related"]) h2 {
+  font-size: 1.5rem;
+}
+
+/* A comparison: one white card, its rows banded, the chosen column warm. */
+.kt-site table:has([data-column-buy]) {
+  overflow: hidden;
+  border-radius: var(--kt-round);
+  background: var(--blysis-color-card);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-site table:has([data-column-buy]) thead th {
+  padding-top: 26px;
+  font-family: var(--blysis-font-heading);
+  font-size: 1.5rem;
+}
+
+/* Each plan's kite flies higher than the one before it. */
+.kt-site table:has([data-column-buy]) thead th:not(:first-child)::before {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 58px;
+  margin: 0 auto 12px;
+  background: var(--blysis-color-mint);
+  clip-path: polygon(50% 0, 100% 36%, 50% 100%, 0 36%);
+  transform: scale(0.85);
+}
+
+.kt-site table:has([data-column-buy]) thead th:nth-child(3)::before {
+  background: var(--blysis-color-primary);
+  transform: translateY(-12px);
+}
+
+.kt-site table:has([data-column-buy]) thead th:nth-child(4)::before {
+  background: var(--blysis-color-accent);
+  transform: translateY(-22px) scale(1.1);
+}
+
+.kt-site table:has([data-column-buy]) thead th:nth-child(n + 5)::before {
+  background: var(--blysis-color-grass);
+  transform: translateY(-32px) scale(1.2);
+}
+
+.kt-site table:has([data-column-buy]) thead span.text-sm .font-bold {
+  font-family: var(--blysis-font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.kt-site table:has([data-column-buy]) th[data-column-highlight],
+.kt-site table:has([data-column-buy]) td.bg-primary\/5 {
+  background: color-mix(in srgb, var(--blysis-color-primary) 9%, var(--blysis-color-card));
+}
+
+.kt-site table:has([data-column-buy]) tbody tr:nth-child(2n) > * {
+  background-color: color-mix(in srgb, var(--blysis-color-sky) 22%, var(--blysis-color-card));
+}
+
+.kt-site table:has([data-column-buy]) tbody tr {
+  border: 0;
+}
+
+.kt-site table:has([data-column-buy]) tbody th {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  font-weight: 700;
+}
+
+.kt-site [data-column-buy] {
+  margin-top: 16px;
+}
+
+/* An article: its body on a card under the postcard, related ones beside it. */
+.kt-site [data-block="blog.article"] > article {
+  padding: 14px 18px;
+  border: 0;
+  border-radius: var(--kt-round);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-site [data-article-body] .blysis-content {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.kt-site [data-article-body] .blysis-content blockquote {
+  padding: 18px 22px;
+  border: 0;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--blysis-color-sun) 26%, var(--blysis-color-card));
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--blysis-color-sun) 50%, var(--blysis-color-card));
+  font-family: var(--blysis-font-heading);
+  font-style: normal;
+  transform: rotate(-0.6deg);
+}
+
+.kt-site [data-block="blog.related"] a > div {
+  border-radius: 14px;
+}
+
+/* Sharing is a pair of soft sky keys, not two more calls to buy. */
+.kt-site [data-block="blog.share"] .blysis-button.bg-primary {
+  --kt-edge: var(--blysis-color-edge);
+  background: color-mix(in srgb, var(--blysis-color-sky) 60%, var(--blysis-color-card));
+  color: var(--blysis-color-foreground);
+}
+
+/* A product's picture sits on a white card, its words on another under it. */
+.kt-site [data-block="store.gallery"] {
+  padding: 10px;
+  border-radius: var(--kt-round);
+  background: var(--blysis-color-card);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-site [data-block="store.details"] > .bg-card {
+  padding: 28px;
+  border: 0;
+  border-radius: var(--kt-round);
+  box-shadow: var(--kt-shadow);
+}
+
+/* What goes with it, as small cards: a square picture beside the name and price. */
+.kt-site [data-product-related] a.group {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 8px;
+}
+
+.kt-site [data-product-related] a.group > .aspect-card {
+  width: 72px;
+  height: 72px;
+  aspect-ratio: auto;
+  border-radius: 16px;
+}
+
+.kt-site [data-product-related] a.group > .aspect-card > .blysis-badge,
+.kt-site [data-product-related] a.group p,
+.kt-site [data-product-related] [data-product-more] {
+  display: none;
+}
+
+.kt-site [data-product-related] a.group > div + div {
+  gap: 2px;
+  padding: 0;
+}
+
+.kt-site [data-product-related] a.group h3 {
+  font-family: var(--blysis-font-heading);
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.kt-site [data-product-related] a.group .mt-auto {
+  padding-top: 0;
+}
+
+/* A topic: each post a speech bubble, its author outside it on the left. */
+.kt-site [data-post-card] {
+  overflow: visible;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.kt-site [data-author-column] {
+  gap: 8px;
+  padding: 4px 18px 0 0;
+  border: 0;
+  background: none;
+}
+
+.kt-site [data-author-column] > :first-child {
+  border-radius: 20px;
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.kt-site [data-author-column] + * {
+  position: relative;
+  border-radius: 26px;
+  background: var(--blysis-color-card);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-site [data-author-column] + *::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: 28px;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: var(--blysis-color-card);
+  transform: rotate(45deg);
+}
+
+/* A member's profile: a band of sky and island, their picture standing on it. */
+.kt-site [data-profile-band] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 150px 30px 26px;
+  border-radius: var(--kt-round);
+  background: var(--blysis-color-card);
+  box-shadow: var(--kt-shadow);
+}
+
+.kt-site [data-profile-band]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 210px;
+  background:
+    radial-gradient(circle at 88% 30%, var(--blysis-color-sun) 0 34px, transparent 35px),
+    linear-gradient(transparent 76%, var(--blysis-color-grass) 76% 84%, var(--blysis-color-card) 84%),
+    var(--blysis-color-sky);
+}
+
+/* Who they are on the left, what they have done as pills on the right. */
+@media (min-width: 64rem) {
+  .kt-site [data-profile-band] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: 24px;
+  }
+
+  .kt-site [data-profile-band] > div:first-child {
+    margin-bottom: 0;
+  }
+}
+
+.kt-site [data-profile-band] > div:first-child {
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.kt-site [data-profile-band] > div:first-child > :first-child {
+  min-width: 128px;
+  min-height: 128px;
+  border-radius: 30px;
+  box-shadow: 0 0 0 6px var(--blysis-color-card), 0 11px 0 6px var(--blysis-color-edge);
+}
+
+.kt-site [data-profile-band] > div:first-child > :last-child {
+  min-width: 0;
+}
+
+/* On a phone the picture shrinks so a long name still fits beside it. */
+@media (max-width: 40rem) {
+  .kt-site [data-profile-band] {
+    padding: 120px 18px 22px;
+  }
+
+  /* The grass ends above the name, which sits higher beside a smaller picture. */
+  .kt-site [data-profile-band]::before {
+    height: 140px;
+  }
+
+  .kt-site [data-profile-band] > div:first-child {
+    gap: 16px;
+  }
+
+  .kt-site [data-profile-band] > div:first-child > :first-child {
+    min-width: 84px;
+    min-height: 84px;
+    width: 84px;
+    height: 84px;
+    border-radius: 22px;
+  }
+
+  .kt-site [data-profile-name] {
+    font-size: 1.625rem;
+    overflow-wrap: anywhere;
+  }
+}
+
+.kt-site [data-profile-name] {
+  font-family: var(--blysis-font-heading);
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.kt-site [data-profile-stats] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.kt-site [data-profile-stats] > * {
+  min-width: 84px;
+}
+
+.kt-site [data-profile-stats] svg {
+  display: none;
+}
+
+.kt-site [data-profile-stats] .blysis-card {
+  border: 0;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--blysis-color-sun) 26%, var(--blysis-color-card));
+  transform: rotate(-2deg);
+}
+
+.kt-site [data-profile-stats] > :nth-child(3n + 2) .blysis-card {
+  background: color-mix(in srgb, var(--blysis-color-sky) 45%, var(--blysis-color-card));
+  transform: rotate(1.5deg);
+}
+
+.kt-site [data-profile-stats] > :nth-child(3n + 3) .blysis-card {
+  background: color-mix(in srgb, var(--blysis-color-primary) 18%, var(--blysis-color-card));
+  transform: rotate(-1deg);
+}
+
+/* As specific as the shadow every block's card stands on, and later. */
+.kt-site [data-profile-stats] .blysis-card.bg-card.rounded-xl {
+  box-shadow: none;
+}
+
+.kt-site [data-profile-stats] .text-xl {
+  font-family: var(--blysis-font-heading);
+  font-size: 1.625rem;
+  font-weight: 800;
+}
+
+/* The profile's sections as pills in one white bar; the open one is ink. */
+.kt-site [data-profile-tabs] {
+  flex-wrap: nowrap;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 6px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--blysis-color-card);
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+  white-space: nowrap;
+}
+
+.kt-site [data-profile-tabs] > * {
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 14px;
+  font-weight: 800;
+}
+
+.kt-site [data-profile-tabs] > [aria-current="page"],
+.kt-site [data-profile-tabs] > [aria-selected="true"] {
+  background: var(--blysis-color-ink);
+  color: var(--blysis-color-card);
+}
+
+/* The sign-in screens: one wide card, the form and a piece of sky. */
+.kt-auth {
+  padding-top: 48px;
+  padding-bottom: 40px;
+}
+
+.kt-auth-card {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 32px;
+  background: var(--blysis-color-card);
+  box-shadow: 0 16px 36px color-mix(in srgb, var(--blysis-color-ink) 12%, transparent);
+}
+
+.kt-auth-form {
+  flex: 1 1 400px;
+  min-width: 0;
+  padding: 44px 48px;
+}
+
+.kt-auth-kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: color-mix(in srgb, var(--blysis-color-primary) 70%, var(--blysis-color-foreground));
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.kt-auth-kicker::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--blysis-color-primary);
+  transform: rotate(45deg);
+}
+
+/* The page hands over a card; inside this one its words stand on the card. */
+.kt-auth-form .blysis-card {
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.kt-auth-form .blysis-card > div {
+  padding: 0;
+  border: 0;
+}
+
+.kt-auth-form .blysis-card > div + div {
+  margin-top: 26px;
+}
+
+.kt-auth-form .blysis-card > div:first-child > * {
+  text-align: left;
+}
+
+.kt-auth-form h1 {
+  font-size: 2.5rem;
+  line-height: 1.05;
+}
+
+.kt-auth-form .blysis-card p.text-center {
+  text-align: left;
+}
+
+.kt-auth-form button[type="submit"] {
+  min-height: 54px;
+  font-size: 1.0625rem;
+}
+
+.kt-auth-sky {
+  display: flex;
+  flex: 1 1 400px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  min-width: 0;
+  min-height: 520px;
+  padding: 40px 44px;
+  background: color-mix(in srgb, var(--blysis-color-sky) 70%, var(--blysis-color-edge));
+  color: var(--blysis-color-foreground);
+}
+
+.kt-auth-island {
+  width: 100%;
+  height: auto;
+}
+
+.kt-auth-headline {
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.kt-auth-aside :is([data-latest-article], [data-where-to-play]) {
+  border-radius: 20px;
+  background: var(--blysis-color-card);
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+@media (max-width: 47.99rem) {
+  .kt-auth-form,
+  .kt-auth-sky {
+    padding: 28px 22px;
+  }
+
+  .kt-auth-sky {
+    min-height: 0;
+  }
+}
+
+/* A page that is not there: the kite whose string broke, and the way back. */
+.kt-lost {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 32px;
+  padding: 40px 0 20px;
+}
+
+.kt-lost-words {
+  display: flex;
+  flex: 1 1 440px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.kt-lost-code {
+  color: color-mix(in srgb, var(--blysis-color-primary) 70%, var(--blysis-color-foreground));
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.kt-lost-title {
+  font-size: clamp(2.5rem, 5.5vw, 3.875rem);
+  line-height: 1.05;
+}
+
+.kt-lost-lede {
+  max-width: 480px;
+  color: color-mix(in srgb, var(--blysis-color-foreground) 80%, var(--blysis-color-mutedForeground));
+  font-size: 1.1875rem;
+  line-height: 1.6;
+}
+
+.kt-lost-search {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 480px;
+  padding: 6px;
+  border-radius: 20px;
+  background: var(--blysis-color-card);
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.kt-lost-search input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  border: 0;
+  background: transparent;
+}
+
+.kt-lost-search button {
+  min-height: 46px;
+}
+
+.kt-lost-art {
+  display: flex;
+  flex: 1 1 440px;
+  justify-content: center;
+}
+
+.kt-lost-kite {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+}

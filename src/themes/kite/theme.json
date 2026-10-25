@@ -1,0 +1,1448 @@
+{
+  "schemaVersion": 2,
+  "id": "kite",
+  "name": "Kite",
+  "description": "A bright sky that turns to night as you scroll: white rounded cards on a raised edge, chunky friendly type, sticker game modes, postcard news and price tags on a string. Light and dark.",
+  "version": "1.0.0",
+  "author": "Blysis",
+  "modes": {
+    "default": "light",
+    "available": {
+      "light": {
+        "tokens": {
+          "colors": {
+            "primary": "#ff6b57",
+            "primaryForeground": "#1d2547",
+            "secondary": "#e3f2ff",
+            "secondaryForeground": "#1d2547",
+            "accent": "#6a48f0",
+            "accentForeground": "#ffffff",
+            "background": "#f3f9ff",
+            "foreground": "#1d2547",
+            "muted": "#e6f1fd",
+            "mutedForeground": "#4d5785",
+            "border": "#d4e1f2",
+            "card": "#ffffff",
+            "cardForeground": "#1d2547",
+            "destructive": "#c0262d",
+            "destructiveForeground": "#ffffff",
+            "success": "#0b7a55",
+            "successForeground": "#ffffff",
+            "warning": "#a15c00",
+            "warningForeground": "#ffffff",
+            "sky": "#bfe4ff",
+            "dusk": "#ffe2c9",
+            "edge": "#9fcff5",
+            "cloud": "#ffffff",
+            "sun": "#ffc93c",
+            "grass": "#59c94f",
+            "soil": "#b7794a",
+            "mint": "#8be3c6",
+            "night": "#1b2152",
+            "nightForeground": "#d9e2ff",
+            "ink": "#1d2547"
+          }
+        }
+      },
+      "dark": {
+        "tokens": {
+          "colors": {
+            "primary": "#ff7a66",
+            "primaryForeground": "#10163a",
+            "secondary": "#242d63",
+            "secondaryForeground": "#e9eeff",
+            "accent": "#a08bff",
+            "accentForeground": "#10163a",
+            "background": "#10163a",
+            "foreground": "#e9eeff",
+            "muted": "#1f2858",
+            "mutedForeground": "#aab4e0",
+            "border": "#2e3872",
+            "card": "#19214d",
+            "cardForeground": "#e9eeff",
+            "destructive": "#f87171",
+            "destructiveForeground": "#10163a",
+            "success": "#4ade9a",
+            "successForeground": "#10163a",
+            "warning": "#fbbf24",
+            "warningForeground": "#10163a",
+            "sky": "#18205a",
+            "dusk": "#2a1d52",
+            "edge": "#0a0f2c",
+            "cloud": "#2b3570",
+            "sun": "#f4ecc2",
+            "grass": "#2f7d4a",
+            "soil": "#6b4a35",
+            "mint": "#3aa888",
+            "night": "#090d26",
+            "nightForeground": "#c9d3ff",
+            "ink": "#10163a"
+          }
+        }
+      }
+    }
+  },
+  "tokens": {
+    "colors": {
+      "primary": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "primaryForeground": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "accent": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "accentForeground": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "secondary": {
+        "type": "color",
+        "group": "Brand"
+      },
+      "background": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "foreground": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "muted": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "mutedForeground": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "border": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "card": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "cardForeground": {
+        "type": "color",
+        "group": "Surface"
+      },
+      "destructive": {
+        "type": "color",
+        "group": "State"
+      },
+      "success": {
+        "type": "color",
+        "group": "State"
+      },
+      "warning": {
+        "type": "color",
+        "group": "State"
+      },
+      "sky": {
+        "type": "color",
+        "group": "Sky",
+        "labelKey": "theme_kite_color_sky"
+      },
+      "dusk": {
+        "type": "color",
+        "group": "Sky",
+        "labelKey": "theme_kite_color_dusk"
+      },
+      "edge": {
+        "type": "color",
+        "group": "Sky",
+        "labelKey": "theme_kite_color_edge"
+      },
+      "cloud": {
+        "type": "color",
+        "group": "Sky",
+        "labelKey": "theme_kite_color_cloud"
+      },
+      "sun": {
+        "type": "color",
+        "group": "Sky",
+        "labelKey": "theme_kite_color_sun"
+      },
+      "grass": {
+        "type": "color",
+        "group": "Sky",
+        "labelKey": "theme_kite_color_grass"
+      },
+      "soil": {
+        "type": "color",
+        "group": "Sky",
+        "labelKey": "theme_kite_color_soil"
+      },
+      "mint": {
+        "type": "color",
+        "group": "Sky",
+        "labelKey": "theme_kite_color_mint"
+      },
+      "ink": {
+        "type": "color",
+        "group": "Sky",
+        "labelKey": "theme_kite_color_ink"
+      },
+      "night": {
+        "type": "color",
+        "group": "Footer",
+        "labelKey": "theme_kite_color_night"
+      },
+      "nightForeground": {
+        "type": "color",
+        "group": "Footer",
+        "labelKey": "theme_kite_color_nightForeground"
+      }
+    },
+    "fonts": {
+      "heading": {
+        "type": "font",
+        "default": "var(--font-kite-heading), var(--font-kite-body), system-ui, sans-serif"
+      },
+      "body": {
+        "type": "font",
+        "default": "var(--font-kite-body), var(--font-inter), system-ui, sans-serif"
+      },
+      "mono": {
+        "type": "font",
+        "default": "var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace"
+      }
+    },
+    "radius": {
+      "type": "select",
+      "default": "lg",
+      "options": [
+        {
+          "value": "none",
+          "label": "Square (0)"
+        },
+        {
+          "value": "sm",
+          "label": "Subtle (0.25rem)"
+        },
+        {
+          "value": "md",
+          "label": "Rounded (0.5rem)"
+        },
+        {
+          "value": "lg",
+          "label": "Soft (0.75rem)"
+        }
+      ]
+    }
+  },
+  "fontFiles": {
+    "heading": [
+      {
+        "file": "fonts/Kite-Heading.woff2",
+        "weight": "400 800",
+        "style": "normal"
+      }
+    ],
+    "body": [
+      {
+        "file": "fonts/Kite-Body.woff2",
+        "weight": "200 900",
+        "style": "normal"
+      }
+    ]
+  },
+  "stylesheet": "theme.css",
+  "settings": {
+    "hero": {
+      "label": "Hero",
+      "icon": "Image",
+      "labelKey": "theme_kite_hero",
+      "fields": {
+        "enabled": {
+          "type": "toggle",
+          "label": "Show the hero on the homepage",
+          "default": true,
+          "labelKey": "theme_kite_hero_enabled"
+        },
+        "tag": {
+          "type": "text",
+          "label": "Small label above the heading",
+          "max": 60,
+          "labelKey": "theme_kite_hero_tag",
+          "placeholders": true
+        },
+        "title": {
+          "type": "text",
+          "label": "Heading (a comma starts its second line)",
+          "max": 120,
+          "labelKey": "theme_kite_hero_title",
+          "placeholders": true
+        },
+        "subtitle": {
+          "type": "text",
+          "label": "Line under the heading",
+          "max": 300,
+          "labelKey": "theme_kite_hero_subtitle",
+          "placeholders": true
+        },
+        "address": {
+          "type": "text",
+          "label": "Server address visitors can copy",
+          "max": 120,
+          "labelKey": "theme_kite_hero_address"
+        },
+        "ctaText": {
+          "type": "text",
+          "label": "Extra button text",
+          "max": 40,
+          "labelKey": "theme_kite_hero_ctaText",
+          "placeholders": true
+        },
+        "ctaHref": {
+          "type": "text",
+          "label": "Where the extra button goes",
+          "max": 300,
+          "labelKey": "theme_kite_hero_ctaHref"
+        }
+      }
+    },
+    "steps": {
+      "label": "How to join",
+      "icon": "ListOrdered",
+      "labelKey": "theme_kite_steps",
+      "fields": {
+        "enabled": {
+          "type": "toggle",
+          "label": "Show the three steps under the hero",
+          "default": true,
+          "labelKey": "theme_kite_steps_enabled"
+        },
+        "step1Title": {
+          "type": "text",
+          "label": "Step 1: title",
+          "max": 60,
+          "labelKey": "theme_kite_steps_step1Title",
+          "placeholders": true
+        },
+        "step1Text": {
+          "type": "text",
+          "label": "Step 1: line",
+          "max": 120,
+          "labelKey": "theme_kite_steps_step1Text",
+          "placeholders": true
+        },
+        "step2Title": {
+          "type": "text",
+          "label": "Step 2: title",
+          "max": 60,
+          "labelKey": "theme_kite_steps_step2Title",
+          "placeholders": true
+        },
+        "step2Text": {
+          "type": "text",
+          "label": "Step 2: line",
+          "max": 120,
+          "labelKey": "theme_kite_steps_step2Text",
+          "placeholders": true
+        },
+        "step3Title": {
+          "type": "text",
+          "label": "Step 3: title",
+          "max": 60,
+          "labelKey": "theme_kite_steps_step3Title",
+          "placeholders": true
+        },
+        "step3Text": {
+          "type": "text",
+          "label": "Step 3: line",
+          "max": 120,
+          "labelKey": "theme_kite_steps_step3Text",
+          "placeholders": true
+        }
+      }
+    },
+    "auth": {
+      "label": "Sign-in screens",
+      "icon": "LogIn",
+      "labelKey": "theme_kite_auth",
+      "fields": {
+        "headline": {
+          "type": "text",
+          "label": "Line on the sky beside the forms",
+          "max": 120,
+          "labelKey": "theme_kite_auth_headline",
+          "placeholders": true
+        }
+      }
+    }
+  },
+  "layouts": {
+    "home": {
+      "rows": [
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "modes",
+                "block": "servers.cards",
+                "settings": {
+                  "kicker": "kite.modesKicker",
+                  "title": "kite.modesTitle",
+                  "capacity": true
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "split": "2-1",
+          "rest": 1,
+          "cells": [
+            [
+              {
+                "key": "news",
+                "block": "blog.news",
+                "settings": {
+                  "variant": "featured",
+                  "kicker": "kite.newsKicker",
+                  "title": "kite.newsTitle",
+                  "allLink": true
+                }
+              }
+            ],
+            [
+              {
+                "key": "team",
+                "block": "staff.online",
+                "settings": {
+                  "title": "kite.teamTitle"
+                }
+              },
+              {
+                "key": "voters",
+                "block": "leaderboard.board",
+                "settings": {
+                  "board": "voters",
+                  "title": "kite.votersTitle"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "shop",
+                "block": "store.products",
+                "settings": {
+                  "kicker": "kite.shopKicker",
+                  "title": "kite.shopTitle",
+                  "count": 4,
+                  "allLink": true
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "forum",
+                "block": "forum.latest-topics",
+                "settings": {
+                  "title": "kite.forumTitle"
+                }
+              }
+            ]
+          ]
+        }
+      ],
+      "hidden": [
+        "core.stats",
+        "servers.ServerStatusWidget",
+        "leaderboard.LeaderboardWidget",
+        "forum.LatestTopicsWidget"
+      ]
+    },
+    "store.home": {
+      "rows": [
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "search",
+                "block": "store.search"
+              },
+              {
+                "key": "categories",
+                "block": "store.categories",
+                "settings": {
+                  "style": "cards"
+                }
+              },
+              {
+                "key": "featured",
+                "block": "store.featured"
+              },
+              {
+                "key": "shelves",
+                "block": "store.shelves",
+                "settings": {
+                  "limit": 4
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "store.shelf": {
+      "rows": [
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "subcategories",
+                "block": "store.subcategories"
+              },
+              {
+                "key": "products",
+                "block": "store.products"
+              }
+            ]
+          ]
+        }
+      ],
+      "hidden": [
+        "store.crumbs",
+        "store.search",
+        "store.categories"
+      ]
+    },
+    "store.product": {
+      "header": "hidden",
+      "rows": [
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "crumbs",
+                "block": "store.crumbs"
+              }
+            ]
+          ]
+        },
+        {
+          "split": "2-1",
+          "cells": [
+            [
+              {
+                "key": "gallery",
+                "block": "store.gallery"
+              },
+              {
+                "key": "details",
+                "block": "store.details"
+              }
+            ],
+            [
+              {
+                "key": "buy",
+                "block": "store.buy",
+                "settings": {
+                  "title": true
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "related",
+                "block": "store.related"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "blog.post": {
+      "rows": [
+        {
+          "split": "2-1",
+          "cells": [
+            [
+              {
+                "key": "article",
+                "block": "blog.article",
+                "settings": {
+                  "cover": false,
+                  "meta": false
+                }
+              }
+            ],
+            [
+              {
+                "key": "related",
+                "block": "blog.related"
+              },
+              {
+                "key": "share",
+                "block": "blog.share"
+              }
+            ]
+          ]
+        }
+      ],
+      "hidden": [
+        "blog.contents"
+      ]
+    },
+    "forum.topic": {
+      "rows": [
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "topic",
+                "block": "forum.topic",
+                "settings": {
+                  "posts": "columns"
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "member-profiles.profile": {
+      "header": "hidden",
+      "rows": [
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "band",
+                "block": "member-profiles.band",
+                "settings": {
+                  "name": true
+                }
+              },
+              {
+                "key": "tabs",
+                "block": "member-profiles.tabs"
+              }
+            ]
+          ]
+        },
+        {
+          "split": "1-1",
+          "cells": [
+            [
+              {
+                "key": "accounts",
+                "block": "member-profiles.accounts"
+              }
+            ],
+            [
+              {
+                "key": "activity",
+                "block": "member-profiles.activity"
+              }
+            ]
+          ]
+        },
+        {
+          "split": "1",
+          "cells": [
+            [
+              {
+                "key": "more",
+                "block": "member-profiles.more"
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "components": {
+    "SiteShell": "components/SiteShell.tsx",
+    "PageHeader": "components/PageHeader.tsx",
+    "AuthFrame": "components/AuthFrame.tsx",
+    "NotFound": "components/NotFound.tsx"
+  },
+  "translations": {
+    "en": {
+      "admin": {
+        "theme_kite_hero": "Hero",
+        "theme_kite_hero_enabled": "Show the hero on the homepage",
+        "theme_kite_hero_tag": "Small label above the heading",
+        "theme_kite_hero_title": "Heading (a comma starts its second line)",
+        "theme_kite_hero_subtitle": "Line under the heading",
+        "theme_kite_hero_address": "Server address visitors can copy",
+        "theme_kite_hero_ctaText": "Extra button text",
+        "theme_kite_hero_ctaHref": "Where the extra button goes",
+        "theme_kite_steps": "How to join",
+        "theme_kite_steps_enabled": "Show the three steps under the hero",
+        "theme_kite_steps_step1Title": "Step 1: title",
+        "theme_kite_steps_step1Text": "Step 1: line",
+        "theme_kite_steps_step2Title": "Step 2: title",
+        "theme_kite_steps_step2Text": "Step 2: line",
+        "theme_kite_steps_step3Title": "Step 3: title",
+        "theme_kite_steps_step3Text": "Step 3: line",
+        "theme_kite_auth": "Sign-in screens",
+        "theme_kite_auth_headline": "Line on the sky beside the forms",
+        "theme_kite_color_sky": "Morning sky",
+        "theme_kite_color_dusk": "Evening sky",
+        "theme_kite_color_edge": "Raised edge",
+        "theme_kite_color_cloud": "Clouds",
+        "theme_kite_color_sun": "Sun",
+        "theme_kite_color_grass": "Grass",
+        "theme_kite_color_soil": "Earth",
+        "theme_kite_color_mint": "Mint",
+        "theme_kite_color_night": "Night sky (footer)",
+        "theme_kite_color_nightForeground": "Text on the night sky",
+        "theme_kite_color_ink": "Text on bright colours"
+      },
+      "kite": {
+        "heroTag": "New season",
+        "heroTitle": "Build your island, catch the wind.",
+        "heroSubtitle": "{servers.online|Lots of} people are playing right now. Pick an island, call your friends and finish your first house before dark.",
+        "copyAddress": "Copy and play",
+        "addressCopied": "Copied, see you in game",
+        "copyFailed": "Select the address and copy it yourself",
+        "addressLabel": "Server address",
+        "joinDiscord": "Join Discord",
+        "stepsTitle": "Three steps to play",
+        "step1Title": "Open the game",
+        "step1Text": "Java or Bedrock, the latest version",
+        "step2Title": "Add the server",
+        "step2Text": "Multiplayer, then Add Server",
+        "step3Title": "Paste the address",
+        "step3Text": "Type {address} and connect",
+        "step3TextPlain": "Type the address and connect",
+        "modesKicker": "Game modes",
+        "modesTitle": "Which island are you flying to?",
+        "newsKicker": "News",
+        "newsTitle": "Fresh from the post",
+        "teamTitle": "On the team right now",
+        "votersTitle": "This month's vote stars",
+        "shopKicker": "Shop",
+        "shopTitle": "In the window this week",
+        "forumTitle": "What the forum is talking about",
+        "authHeadline": "{servers.online|Lots of} people are playing right now.",
+        "authKickerLogin": "Your island is waiting",
+        "authKickerRegister": "A new island"
+      }
+    },
+    "tr": {
+      "admin": {
+        "theme_kite_hero": "Hero",
+        "theme_kite_hero_enabled": "Hero'yu ana sayfada göster",
+        "theme_kite_hero_tag": "Başlığın üstündeki küçük etiket",
+        "theme_kite_hero_title": "Başlık (virgülden sonrası ikinci satıra geçer)",
+        "theme_kite_hero_subtitle": "Başlığın altındaki satır",
+        "theme_kite_hero_address": "Ziyaretçilerin kopyalayacağı sunucu adresi",
+        "theme_kite_hero_ctaText": "Ek düğme metni",
+        "theme_kite_hero_ctaHref": "Ek düğmenin gittiği yer",
+        "theme_kite_steps": "Nasıl katılınır",
+        "theme_kite_steps_enabled": "Hero'nun altında üç adımı göster",
+        "theme_kite_steps_step1Title": "1. adım: başlık",
+        "theme_kite_steps_step1Text": "1. adım: açıklama",
+        "theme_kite_steps_step2Title": "2. adım: başlık",
+        "theme_kite_steps_step2Text": "2. adım: açıklama",
+        "theme_kite_steps_step3Title": "3. adım: başlık",
+        "theme_kite_steps_step3Text": "3. adım: açıklama",
+        "theme_kite_auth": "Giriş ekranları",
+        "theme_kite_auth_headline": "Formların yanındaki gökyüzünde yazan satır",
+        "theme_kite_color_sky": "Sabah gökyüzü",
+        "theme_kite_color_dusk": "Akşam gökyüzü",
+        "theme_kite_color_edge": "Kabarık kenar",
+        "theme_kite_color_cloud": "Bulutlar",
+        "theme_kite_color_sun": "Güneş",
+        "theme_kite_color_grass": "Çimen",
+        "theme_kite_color_soil": "Toprak",
+        "theme_kite_color_mint": "Nane",
+        "theme_kite_color_night": "Gece gökyüzü (alt bilgi)",
+        "theme_kite_color_nightForeground": "Gece gökyüzündeki yazı",
+        "theme_kite_color_ink": "Parlak renklerin üstündeki yazı"
+      },
+      "kite": {
+        "heroTag": "Yeni sezon",
+        "heroTitle": "Adanı kur, rüzgârı yakala.",
+        "heroSubtitle": "Şu an {servers.online|birçok} kişi oyunda. Bir ada seç, arkadaşlarını çağır, ilk evini akşam olmadan bitir.",
+        "copyAddress": "Kopyala, oyna",
+        "addressCopied": "Kopyalandı, oyunda görüşürüz",
+        "copyFailed": "Adresi seçip kendin kopyala",
+        "addressLabel": "Sunucu adresi",
+        "joinDiscord": "Discord'a katıl",
+        "stepsTitle": "Üç adımda oyundasın",
+        "step1Title": "Oyunu aç",
+        "step1Text": "Java ya da Bedrock, en yeni sürüm",
+        "step2Title": "Sunucu ekle",
+        "step2Text": "Çok Oyunculu, sonra Sunucu Ekle",
+        "step3Title": "Adresi yapıştır",
+        "step3Text": "{address} yaz ve bağlan",
+        "step3TextPlain": "Adresi yaz ve bağlan",
+        "modesKicker": "Oyun modları",
+        "modesTitle": "Hangi adaya uçuyorsun?",
+        "newsKicker": "Haberler",
+        "newsTitle": "Postadan yeni gelenler",
+        "teamTitle": "Şu an ekipte",
+        "votersTitle": "Bu ayın oy yıldızları",
+        "shopKicker": "Mağaza",
+        "shopTitle": "Bu hafta vitrinde",
+        "forumTitle": "Forumda neler konuşuluyor",
+        "authHeadline": "Şu an {servers.online|birçok} kişi oyunda.",
+        "authKickerLogin": "Adan seni bekliyor",
+        "authKickerRegister": "Yeni bir ada"
+      }
+    },
+    "az": {
+      "admin": {
+        "theme_kite_hero": "Hero",
+        "theme_kite_hero_enabled": "Hero-nu ana səhifədə göstər",
+        "theme_kite_hero_tag": "Başlığın üstündəki kiçik etiket",
+        "theme_kite_hero_title": "Başlıq (vergüldən sonrası ikinci sətrə keçir)",
+        "theme_kite_hero_subtitle": "Başlığın altındakı sətir",
+        "theme_kite_hero_address": "Ziyarətçilərin kopyalayacağı server ünvanı",
+        "theme_kite_hero_ctaText": "Əlavə düymə mətni",
+        "theme_kite_hero_ctaHref": "Əlavə düymənin getdiyi yer",
+        "theme_kite_steps": "Necə qoşulmaq olar",
+        "theme_kite_steps_enabled": "Hero-nun altında üç addımı göstər",
+        "theme_kite_steps_step1Title": "1-ci addım: başlıq",
+        "theme_kite_steps_step1Text": "1-ci addım: izah",
+        "theme_kite_steps_step2Title": "2-ci addım: başlıq",
+        "theme_kite_steps_step2Text": "2-ci addım: izah",
+        "theme_kite_steps_step3Title": "3-cü addım: başlıq",
+        "theme_kite_steps_step3Text": "3-cü addım: izah",
+        "theme_kite_auth": "Giriş ekranları",
+        "theme_kite_auth_headline": "Formların yanındakı səmada yazılan sətir",
+        "theme_kite_color_sky": "Səhər səması",
+        "theme_kite_color_dusk": "Axşam səması",
+        "theme_kite_color_edge": "Qabarıq kənar",
+        "theme_kite_color_cloud": "Buludlar",
+        "theme_kite_color_sun": "Günəş",
+        "theme_kite_color_grass": "Çəmən",
+        "theme_kite_color_soil": "Torpaq",
+        "theme_kite_color_mint": "Nanə",
+        "theme_kite_color_night": "Gecə səması (alt hissə)",
+        "theme_kite_color_nightForeground": "Gecə səmasındakı yazı",
+        "theme_kite_color_ink": "Parlaq rənglərin üstündəki yazı"
+      },
+      "kite": {
+        "heroTag": "Yeni mövsüm",
+        "heroTitle": "Adanı qur, küləyi tut.",
+        "heroSubtitle": "Hazırda {servers.online|çoxlu} nəfər oyundadır. Bir ada seç, dostlarını çağır, ilk evini qaranlıq düşməmiş bitir.",
+        "copyAddress": "Kopyala, oyna",
+        "addressCopied": "Kopyalandı, oyunda görüşərik",
+        "copyFailed": "Ünvanı seçib özün kopyala",
+        "addressLabel": "Server ünvanı",
+        "joinDiscord": "Discord-a qoşul",
+        "stepsTitle": "Üç addımda oyundasan",
+        "step1Title": "Oyunu aç",
+        "step1Text": "Java və ya Bedrock, ən yeni versiya",
+        "step2Title": "Server əlavə et",
+        "step2Text": "Çoxoyunçulu, sonra Server Əlavə Et",
+        "step3Title": "Ünvanı yapışdır",
+        "step3Text": "{address} yaz və qoşul",
+        "step3TextPlain": "Ünvanı yaz və qoşul",
+        "modesKicker": "Oyun rejimləri",
+        "modesTitle": "Hansı adaya uçursan?",
+        "newsKicker": "Xəbərlər",
+        "newsTitle": "Poçtdan təzə gələnlər",
+        "teamTitle": "İndi komandada",
+        "votersTitle": "Bu ayın səs ulduzları",
+        "shopKicker": "Mağaza",
+        "shopTitle": "Bu həftə vitrində",
+        "forumTitle": "Forumda nələr danışılır",
+        "authHeadline": "Hazırda {servers.online|çoxlu} nəfər oyundadır.",
+        "authKickerLogin": "Adan səni gözləyir",
+        "authKickerRegister": "Yeni bir ada"
+      }
+    },
+    "de": {
+      "admin": {
+        "theme_kite_hero": "Hero",
+        "theme_kite_hero_enabled": "Hero auf der Startseite zeigen",
+        "theme_kite_hero_tag": "Kleines Etikett über der Überschrift",
+        "theme_kite_hero_title": "Überschrift (nach dem Komma beginnt die zweite Zeile)",
+        "theme_kite_hero_subtitle": "Zeile unter der Überschrift",
+        "theme_kite_hero_address": "Serveradresse zum Kopieren",
+        "theme_kite_hero_ctaText": "Text der zusätzlichen Schaltfläche",
+        "theme_kite_hero_ctaHref": "Ziel der zusätzlichen Schaltfläche",
+        "theme_kite_steps": "So spielst du mit",
+        "theme_kite_steps_enabled": "Die drei Schritte unter dem Hero zeigen",
+        "theme_kite_steps_step1Title": "Schritt 1: Titel",
+        "theme_kite_steps_step1Text": "Schritt 1: Zeile",
+        "theme_kite_steps_step2Title": "Schritt 2: Titel",
+        "theme_kite_steps_step2Text": "Schritt 2: Zeile",
+        "theme_kite_steps_step3Title": "Schritt 3: Titel",
+        "theme_kite_steps_step3Text": "Schritt 3: Zeile",
+        "theme_kite_auth": "Anmeldeseiten",
+        "theme_kite_auth_headline": "Zeile am Himmel neben den Formularen",
+        "theme_kite_color_sky": "Morgenhimmel",
+        "theme_kite_color_dusk": "Abendhimmel",
+        "theme_kite_color_edge": "Erhabene Kante",
+        "theme_kite_color_cloud": "Wolken",
+        "theme_kite_color_sun": "Sonne",
+        "theme_kite_color_grass": "Gras",
+        "theme_kite_color_soil": "Erde",
+        "theme_kite_color_mint": "Minze",
+        "theme_kite_color_night": "Nachthimmel (Fußzeile)",
+        "theme_kite_color_nightForeground": "Text am Nachthimmel",
+        "theme_kite_color_ink": "Text auf hellen Farben"
+      },
+      "kite": {
+        "heroTag": "Neue Saison",
+        "heroTitle": "Bau deine Insel, fang den Wind.",
+        "heroSubtitle": "Gerade spielen {servers.online|viele} Leute. Such dir eine Insel aus, ruf deine Freunde und bau dein erstes Haus vor Einbruch der Nacht.",
+        "copyAddress": "Kopieren und spielen",
+        "addressCopied": "Kopiert, bis gleich im Spiel",
+        "copyFailed": "Markiere die Adresse und kopiere sie selbst",
+        "addressLabel": "Serveradresse",
+        "joinDiscord": "Discord beitreten",
+        "stepsTitle": "In drei Schritten im Spiel",
+        "step1Title": "Öffne das Spiel",
+        "step1Text": "Java oder Bedrock, die neueste Version",
+        "step2Title": "Server hinzufügen",
+        "step2Text": "Mehrspieler, dann Server hinzufügen",
+        "step3Title": "Adresse einfügen",
+        "step3Text": "Gib {address} ein und verbinde dich",
+        "step3TextPlain": "Gib die Adresse ein und verbinde dich",
+        "modesKicker": "Spielmodi",
+        "modesTitle": "Zu welcher Insel fliegst du?",
+        "newsKicker": "Neuigkeiten",
+        "newsTitle": "Frisch aus der Post",
+        "teamTitle": "Gerade im Team",
+        "votersTitle": "Die Abstimmungsstars des Monats",
+        "shopKicker": "Shop",
+        "shopTitle": "Diese Woche im Schaufenster",
+        "forumTitle": "Worüber im Forum geredet wird",
+        "authHeadline": "Gerade spielen {servers.online|viele} Leute.",
+        "authKickerLogin": "Deine Insel wartet",
+        "authKickerRegister": "Eine neue Insel"
+      }
+    },
+    "es": {
+      "admin": {
+        "theme_kite_hero": "Hero",
+        "theme_kite_hero_enabled": "Mostrar el hero en la página de inicio",
+        "theme_kite_hero_tag": "Etiqueta pequeña sobre el título",
+        "theme_kite_hero_title": "Título (tras la coma empieza la segunda línea)",
+        "theme_kite_hero_subtitle": "Línea bajo el título",
+        "theme_kite_hero_address": "Dirección del servidor que se puede copiar",
+        "theme_kite_hero_ctaText": "Texto del botón adicional",
+        "theme_kite_hero_ctaHref": "Adónde lleva el botón adicional",
+        "theme_kite_steps": "Cómo unirse",
+        "theme_kite_steps_enabled": "Mostrar los tres pasos bajo el hero",
+        "theme_kite_steps_step1Title": "Paso 1: título",
+        "theme_kite_steps_step1Text": "Paso 1: línea",
+        "theme_kite_steps_step2Title": "Paso 2: título",
+        "theme_kite_steps_step2Text": "Paso 2: línea",
+        "theme_kite_steps_step3Title": "Paso 3: título",
+        "theme_kite_steps_step3Text": "Paso 3: línea",
+        "theme_kite_auth": "Pantallas de acceso",
+        "theme_kite_auth_headline": "Línea en el cielo junto a los formularios",
+        "theme_kite_color_sky": "Cielo de la mañana",
+        "theme_kite_color_dusk": "Cielo del atardecer",
+        "theme_kite_color_edge": "Borde en relieve",
+        "theme_kite_color_cloud": "Nubes",
+        "theme_kite_color_sun": "Sol",
+        "theme_kite_color_grass": "Césped",
+        "theme_kite_color_soil": "Tierra",
+        "theme_kite_color_mint": "Menta",
+        "theme_kite_color_night": "Cielo nocturno (pie)",
+        "theme_kite_color_nightForeground": "Texto sobre el cielo nocturno",
+        "theme_kite_color_ink": "Texto sobre colores vivos"
+      },
+      "kite": {
+        "heroTag": "Nueva temporada",
+        "heroTitle": "Construye tu isla, atrapa el viento.",
+        "heroSubtitle": "Ahora mismo juegan {servers.online|muchas} personas. Elige una isla, llama a tus amigos y termina tu primera casa antes de que oscurezca.",
+        "copyAddress": "Copiar y jugar",
+        "addressCopied": "Copiado, nos vemos en el juego",
+        "copyFailed": "Selecciona la dirección y cópiala tú",
+        "addressLabel": "Dirección del servidor",
+        "joinDiscord": "Únete a Discord",
+        "stepsTitle": "Tres pasos para jugar",
+        "step1Title": "Abre el juego",
+        "step1Text": "Java o Bedrock, la última versión",
+        "step2Title": "Añade el servidor",
+        "step2Text": "Multijugador, luego Añadir servidor",
+        "step3Title": "Pega la dirección",
+        "step3Text": "Escribe {address} y conéctate",
+        "step3TextPlain": "Escribe la dirección y conéctate",
+        "modesKicker": "Modos de juego",
+        "modesTitle": "¿A qué isla vuelas?",
+        "newsKicker": "Noticias",
+        "newsTitle": "Recién llegado del correo",
+        "teamTitle": "Del equipo, ahora",
+        "votersTitle": "Las estrellas del voto de este mes",
+        "shopKicker": "Tienda",
+        "shopTitle": "En el escaparate esta semana",
+        "forumTitle": "De qué se habla en el foro",
+        "authHeadline": "Ahora mismo juegan {servers.online|muchas} personas.",
+        "authKickerLogin": "Tu isla te espera",
+        "authKickerRegister": "Una isla nueva"
+      }
+    },
+    "et": {
+      "admin": {
+        "theme_kite_hero": "Hero",
+        "theme_kite_hero_enabled": "Näita hero't avalehel",
+        "theme_kite_hero_tag": "Väike silt pealkirja kohal",
+        "theme_kite_hero_title": "Pealkiri (koma järel algab teine rida)",
+        "theme_kite_hero_subtitle": "Rida pealkirja all",
+        "theme_kite_hero_address": "Serveri aadress, mida külastajad kopeerivad",
+        "theme_kite_hero_ctaText": "Lisanupu tekst",
+        "theme_kite_hero_ctaHref": "Kuhu lisanupp viib",
+        "theme_kite_steps": "Kuidas liituda",
+        "theme_kite_steps_enabled": "Näita kolme sammu hero all",
+        "theme_kite_steps_step1Title": "1. samm: pealkiri",
+        "theme_kite_steps_step1Text": "1. samm: rida",
+        "theme_kite_steps_step2Title": "2. samm: pealkiri",
+        "theme_kite_steps_step2Text": "2. samm: rida",
+        "theme_kite_steps_step3Title": "3. samm: pealkiri",
+        "theme_kite_steps_step3Text": "3. samm: rida",
+        "theme_kite_auth": "Sisselogimise vaated",
+        "theme_kite_auth_headline": "Rida taevas vormide kõrval",
+        "theme_kite_color_sky": "Hommikune taevas",
+        "theme_kite_color_dusk": "Õhtune taevas",
+        "theme_kite_color_edge": "Kõrgendatud serv",
+        "theme_kite_color_cloud": "Pilved",
+        "theme_kite_color_sun": "Päike",
+        "theme_kite_color_grass": "Muru",
+        "theme_kite_color_soil": "Muld",
+        "theme_kite_color_mint": "Münt",
+        "theme_kite_color_night": "Öötaevas (jalus)",
+        "theme_kite_color_nightForeground": "Tekst öötaevas",
+        "theme_kite_color_ink": "Tekst erksatel värvidel"
+      },
+      "kite": {
+        "heroTag": "Uus hooaeg",
+        "heroTitle": "Ehita oma saar, püüa tuult.",
+        "heroSubtitle": "Praegu mängib {servers.online|palju} inimesi. Vali saar, kutsu sõbrad ja ehita esimene maja enne pimedat valmis.",
+        "copyAddress": "Kopeeri ja mängi",
+        "addressCopied": "Kopeeritud, näeme mängus",
+        "copyFailed": "Vali aadress ja kopeeri see ise",
+        "addressLabel": "Serveri aadress",
+        "joinDiscord": "Liitu Discordiga",
+        "stepsTitle": "Kolm sammu mänguni",
+        "step1Title": "Ava mäng",
+        "step1Text": "Java või Bedrock, uusim versioon",
+        "step2Title": "Lisa server",
+        "step2Text": "Mitmikmäng, siis Lisa server",
+        "step3Title": "Kleebi aadress",
+        "step3Text": "Kirjuta {address} ja ühenda",
+        "step3TextPlain": "Kirjuta aadress ja ühenda",
+        "modesKicker": "Mängurežiimid",
+        "modesTitle": "Millisele saarele sa lendad?",
+        "newsKicker": "Uudised",
+        "newsTitle": "Värskelt postist",
+        "teamTitle": "Praegu meeskonnas",
+        "votersTitle": "Selle kuu häälestaarid",
+        "shopKicker": "Pood",
+        "shopTitle": "Sel nädalal vaateaknal",
+        "forumTitle": "Millest foorumis räägitakse",
+        "authHeadline": "Praegu mängib {servers.online|palju} inimesi.",
+        "authKickerLogin": "Sinu saar ootab",
+        "authKickerRegister": "Uus saar"
+      }
+    },
+    "fr": {
+      "admin": {
+        "theme_kite_hero": "Hero",
+        "theme_kite_hero_enabled": "Afficher le hero sur l'accueil",
+        "theme_kite_hero_tag": "Petite étiquette au-dessus du titre",
+        "theme_kite_hero_title": "Titre (la virgule ouvre la deuxième ligne)",
+        "theme_kite_hero_subtitle": "Ligne sous le titre",
+        "theme_kite_hero_address": "Adresse du serveur à copier",
+        "theme_kite_hero_ctaText": "Texte du bouton supplémentaire",
+        "theme_kite_hero_ctaHref": "Destination du bouton supplémentaire",
+        "theme_kite_steps": "Comment rejoindre",
+        "theme_kite_steps_enabled": "Afficher les trois étapes sous le hero",
+        "theme_kite_steps_step1Title": "Étape 1 : titre",
+        "theme_kite_steps_step1Text": "Étape 1 : ligne",
+        "theme_kite_steps_step2Title": "Étape 2 : titre",
+        "theme_kite_steps_step2Text": "Étape 2 : ligne",
+        "theme_kite_steps_step3Title": "Étape 3 : titre",
+        "theme_kite_steps_step3Text": "Étape 3 : ligne",
+        "theme_kite_auth": "Écrans de connexion",
+        "theme_kite_auth_headline": "Ligne dans le ciel à côté des formulaires",
+        "theme_kite_color_sky": "Ciel du matin",
+        "theme_kite_color_dusk": "Ciel du soir",
+        "theme_kite_color_edge": "Bord en relief",
+        "theme_kite_color_cloud": "Nuages",
+        "theme_kite_color_sun": "Soleil",
+        "theme_kite_color_grass": "Herbe",
+        "theme_kite_color_soil": "Terre",
+        "theme_kite_color_mint": "Menthe",
+        "theme_kite_color_night": "Ciel de nuit (pied de page)",
+        "theme_kite_color_nightForeground": "Texte sur le ciel de nuit",
+        "theme_kite_color_ink": "Texte sur les couleurs vives"
+      },
+      "kite": {
+        "heroTag": "Nouvelle saison",
+        "heroTitle": "Bâtis ton île, attrape le vent.",
+        "heroSubtitle": "{servers.online|Beaucoup de} joueurs sont en ligne en ce moment. Choisis une île, appelle tes amis et termine ta première maison avant la nuit.",
+        "copyAddress": "Copier et jouer",
+        "addressCopied": "Copié, à tout de suite en jeu",
+        "copyFailed": "Sélectionne l'adresse et copie-la toi-même",
+        "addressLabel": "Adresse du serveur",
+        "joinDiscord": "Rejoindre Discord",
+        "stepsTitle": "Trois étapes pour jouer",
+        "step1Title": "Ouvre le jeu",
+        "step1Text": "Java ou Bedrock, la dernière version",
+        "step2Title": "Ajoute le serveur",
+        "step2Text": "Multijoueur, puis Ajouter un serveur",
+        "step3Title": "Colle l'adresse",
+        "step3Text": "Tape {address} et connecte-toi",
+        "step3TextPlain": "Tape l'adresse et connecte-toi",
+        "modesKicker": "Modes de jeu",
+        "modesTitle": "Vers quelle île t'envoles-tu ?",
+        "newsKicker": "Actualités",
+        "newsTitle": "Tout frais du courrier",
+        "teamTitle": "En ce moment dans l'équipe",
+        "votersTitle": "Les stars du vote du mois",
+        "shopKicker": "Boutique",
+        "shopTitle": "En vitrine cette semaine",
+        "forumTitle": "Ce dont parle le forum",
+        "authHeadline": "{servers.online|Beaucoup de} joueurs sont en ligne en ce moment.",
+        "authKickerLogin": "Ton île t'attend",
+        "authKickerRegister": "Une nouvelle île"
+      }
+    },
+    "it": {
+      "admin": {
+        "theme_kite_hero": "Hero",
+        "theme_kite_hero_enabled": "Mostra l'hero nella home",
+        "theme_kite_hero_tag": "Piccola etichetta sopra il titolo",
+        "theme_kite_hero_title": "Titolo (dopo la virgola inizia la seconda riga)",
+        "theme_kite_hero_subtitle": "Riga sotto il titolo",
+        "theme_kite_hero_address": "Indirizzo del server da copiare",
+        "theme_kite_hero_ctaText": "Testo del pulsante aggiuntivo",
+        "theme_kite_hero_ctaHref": "Dove porta il pulsante aggiuntivo",
+        "theme_kite_steps": "Come unirsi",
+        "theme_kite_steps_enabled": "Mostra i tre passi sotto l'hero",
+        "theme_kite_steps_step1Title": "Passo 1: titolo",
+        "theme_kite_steps_step1Text": "Passo 1: riga",
+        "theme_kite_steps_step2Title": "Passo 2: titolo",
+        "theme_kite_steps_step2Text": "Passo 2: riga",
+        "theme_kite_steps_step3Title": "Passo 3: titolo",
+        "theme_kite_steps_step3Text": "Passo 3: riga",
+        "theme_kite_auth": "Schermate di accesso",
+        "theme_kite_auth_headline": "Riga nel cielo accanto ai moduli",
+        "theme_kite_color_sky": "Cielo del mattino",
+        "theme_kite_color_dusk": "Cielo della sera",
+        "theme_kite_color_edge": "Bordo in rilievo",
+        "theme_kite_color_cloud": "Nuvole",
+        "theme_kite_color_sun": "Sole",
+        "theme_kite_color_grass": "Erba",
+        "theme_kite_color_soil": "Terra",
+        "theme_kite_color_mint": "Menta",
+        "theme_kite_color_night": "Cielo notturno (piè di pagina)",
+        "theme_kite_color_nightForeground": "Testo sul cielo notturno",
+        "theme_kite_color_ink": "Testo sui colori vivaci"
+      },
+      "kite": {
+        "heroTag": "Nuova stagione",
+        "heroTitle": "Costruisci la tua isola, cattura il vento.",
+        "heroSubtitle": "In questo momento giocano {servers.online|molte} persone. Scegli un'isola, chiama gli amici e finisci la tua prima casa prima che faccia buio.",
+        "copyAddress": "Copia e gioca",
+        "addressCopied": "Copiato, ci vediamo in gioco",
+        "copyFailed": "Seleziona l'indirizzo e copialo tu",
+        "addressLabel": "Indirizzo del server",
+        "joinDiscord": "Unisciti a Discord",
+        "stepsTitle": "Tre passi per giocare",
+        "step1Title": "Apri il gioco",
+        "step1Text": "Java o Bedrock, l'ultima versione",
+        "step2Title": "Aggiungi il server",
+        "step2Text": "Multigiocatore, poi Aggiungi server",
+        "step3Title": "Incolla l'indirizzo",
+        "step3Text": "Scrivi {address} e collegati",
+        "step3TextPlain": "Scrivi l'indirizzo e collegati",
+        "modesKicker": "Modalità di gioco",
+        "modesTitle": "Verso quale isola voli?",
+        "newsKicker": "Notizie",
+        "newsTitle": "Appena arrivate per posta",
+        "teamTitle": "Ora nello staff",
+        "votersTitle": "Le stelle del voto del mese",
+        "shopKicker": "Negozio",
+        "shopTitle": "In vetrina questa settimana",
+        "forumTitle": "Di cosa si parla nel forum",
+        "authHeadline": "In questo momento giocano {servers.online|molte} persone.",
+        "authKickerLogin": "La tua isola ti aspetta",
+        "authKickerRegister": "Una nuova isola"
+      }
+    },
+    "pl": {
+      "admin": {
+        "theme_kite_hero": "Hero",
+        "theme_kite_hero_enabled": "Pokaż hero na stronie głównej",
+        "theme_kite_hero_tag": "Mała etykieta nad nagłówkiem",
+        "theme_kite_hero_title": "Nagłówek (po przecinku zaczyna się druga linia)",
+        "theme_kite_hero_subtitle": "Linia pod nagłówkiem",
+        "theme_kite_hero_address": "Adres serwera do skopiowania",
+        "theme_kite_hero_ctaText": "Tekst dodatkowego przycisku",
+        "theme_kite_hero_ctaHref": "Dokąd prowadzi dodatkowy przycisk",
+        "theme_kite_steps": "Jak dołączyć",
+        "theme_kite_steps_enabled": "Pokaż trzy kroki pod hero",
+        "theme_kite_steps_step1Title": "Krok 1: tytuł",
+        "theme_kite_steps_step1Text": "Krok 1: opis",
+        "theme_kite_steps_step2Title": "Krok 2: tytuł",
+        "theme_kite_steps_step2Text": "Krok 2: opis",
+        "theme_kite_steps_step3Title": "Krok 3: tytuł",
+        "theme_kite_steps_step3Text": "Krok 3: opis",
+        "theme_kite_auth": "Ekrany logowania",
+        "theme_kite_auth_headline": "Linia na niebie obok formularzy",
+        "theme_kite_color_sky": "Poranne niebo",
+        "theme_kite_color_dusk": "Wieczorne niebo",
+        "theme_kite_color_edge": "Wypukła krawędź",
+        "theme_kite_color_cloud": "Chmury",
+        "theme_kite_color_sun": "Słońce",
+        "theme_kite_color_grass": "Trawa",
+        "theme_kite_color_soil": "Ziemia",
+        "theme_kite_color_mint": "Mięta",
+        "theme_kite_color_night": "Nocne niebo (stopka)",
+        "theme_kite_color_nightForeground": "Tekst na nocnym niebie",
+        "theme_kite_color_ink": "Tekst na jaskrawych kolorach"
+      },
+      "kite": {
+        "heroTag": "Nowy sezon",
+        "heroTitle": "Zbuduj wyspę, złap wiatr.",
+        "heroSubtitle": "Teraz gra {servers.online|wiele} osób. Wybierz wyspę, zawołaj znajomych i skończ pierwszy dom przed zmrokiem.",
+        "copyAddress": "Skopiuj i graj",
+        "addressCopied": "Skopiowano, do zobaczenia w grze",
+        "copyFailed": "Zaznacz adres i skopiuj go sam",
+        "addressLabel": "Adres serwera",
+        "joinDiscord": "Dołącz do Discorda",
+        "stepsTitle": "Trzy kroki do gry",
+        "step1Title": "Otwórz grę",
+        "step1Text": "Java lub Bedrock, najnowsza wersja",
+        "step2Title": "Dodaj serwer",
+        "step2Text": "Gra wieloosobowa, potem Dodaj serwer",
+        "step3Title": "Wklej adres",
+        "step3Text": "Wpisz {address} i połącz się",
+        "step3TextPlain": "Wpisz adres i połącz się",
+        "modesKicker": "Tryby gry",
+        "modesTitle": "Na którą wyspę lecisz?",
+        "newsKicker": "Aktualności",
+        "newsTitle": "Świeżo z poczty",
+        "teamTitle": "Teraz w ekipie",
+        "votersTitle": "Gwiazdy głosowania w tym miesiącu",
+        "shopKicker": "Sklep",
+        "shopTitle": "W tym tygodniu na wystawie",
+        "forumTitle": "O czym mówi forum",
+        "authHeadline": "Teraz gra {servers.online|wiele} osób.",
+        "authKickerLogin": "Twoja wyspa czeka",
+        "authKickerRegister": "Nowa wyspa"
+      }
+    },
+    "pt": {
+      "admin": {
+        "theme_kite_hero": "Hero",
+        "theme_kite_hero_enabled": "Mostrar o hero na página inicial",
+        "theme_kite_hero_tag": "Pequena etiqueta acima do título",
+        "theme_kite_hero_title": "Título (depois da vírgula começa a segunda linha)",
+        "theme_kite_hero_subtitle": "Linha abaixo do título",
+        "theme_kite_hero_address": "Endereço do servidor para copiar",
+        "theme_kite_hero_ctaText": "Texto do botão adicional",
+        "theme_kite_hero_ctaHref": "Para onde vai o botão adicional",
+        "theme_kite_steps": "Como entrar",
+        "theme_kite_steps_enabled": "Mostrar os três passos abaixo do hero",
+        "theme_kite_steps_step1Title": "Passo 1: título",
+        "theme_kite_steps_step1Text": "Passo 1: linha",
+        "theme_kite_steps_step2Title": "Passo 2: título",
+        "theme_kite_steps_step2Text": "Passo 2: linha",
+        "theme_kite_steps_step3Title": "Passo 3: título",
+        "theme_kite_steps_step3Text": "Passo 3: linha",
+        "theme_kite_auth": "Telas de entrada",
+        "theme_kite_auth_headline": "Linha no céu ao lado dos formulários",
+        "theme_kite_color_sky": "Céu da manhã",
+        "theme_kite_color_dusk": "Céu do entardecer",
+        "theme_kite_color_edge": "Borda em relevo",
+        "theme_kite_color_cloud": "Nuvens",
+        "theme_kite_color_sun": "Sol",
+        "theme_kite_color_grass": "Grama",
+        "theme_kite_color_soil": "Terra",
+        "theme_kite_color_mint": "Menta",
+        "theme_kite_color_night": "Céu noturno (rodapé)",
+        "theme_kite_color_nightForeground": "Texto no céu noturno",
+        "theme_kite_color_ink": "Texto sobre cores vivas"
+      },
+      "kite": {
+        "heroTag": "Nova temporada",
+        "heroTitle": "Construa sua ilha, pegue o vento.",
+        "heroSubtitle": "Agora mesmo {servers.online|muitas} pessoas estão jogando. Escolha uma ilha, chame seus amigos e termine sua primeira casa antes de escurecer.",
+        "copyAddress": "Copiar e jogar",
+        "addressCopied": "Copiado, até já no jogo",
+        "copyFailed": "Selecione o endereço e copie você mesmo",
+        "addressLabel": "Endereço do servidor",
+        "joinDiscord": "Entrar no Discord",
+        "stepsTitle": "Três passos para jogar",
+        "step1Title": "Abra o jogo",
+        "step1Text": "Java ou Bedrock, a versão mais recente",
+        "step2Title": "Adicione o servidor",
+        "step2Text": "Multijogador, depois Adicionar servidor",
+        "step3Title": "Cole o endereço",
+        "step3Text": "Digite {address} e conecte",
+        "step3TextPlain": "Digite o endereço e conecte",
+        "modesKicker": "Modos de jogo",
+        "modesTitle": "Para qual ilha você vai voar?",
+        "newsKicker": "Notícias",
+        "newsTitle": "Acabou de chegar pelo correio",
+        "teamTitle": "Na equipe agora",
+        "votersTitle": "As estrelas do voto do mês",
+        "shopKicker": "Loja",
+        "shopTitle": "Na vitrine esta semana",
+        "forumTitle": "Do que o fórum está falando",
+        "authHeadline": "Agora mesmo {servers.online|muitas} pessoas estão jogando.",
+        "authKickerLogin": "Sua ilha está esperando",
+        "authKickerRegister": "Uma nova ilha"
+      }
+    },
+    "ru": {
+      "admin": {
+        "theme_kite_hero": "Hero",
+        "theme_kite_hero_enabled": "Показывать hero на главной",
+        "theme_kite_hero_tag": "Маленькая метка над заголовком",
+        "theme_kite_hero_title": "Заголовок (после запятой начинается вторая строка)",
+        "theme_kite_hero_subtitle": "Строка под заголовком",
+        "theme_kite_hero_address": "Адрес сервера для копирования",
+        "theme_kite_hero_ctaText": "Текст дополнительной кнопки",
+        "theme_kite_hero_ctaHref": "Куда ведёт дополнительная кнопка",
+        "theme_kite_steps": "Как присоединиться",
+        "theme_kite_steps_enabled": "Показывать три шага под hero",
+        "theme_kite_steps_step1Title": "Шаг 1: заголовок",
+        "theme_kite_steps_step1Text": "Шаг 1: строка",
+        "theme_kite_steps_step2Title": "Шаг 2: заголовок",
+        "theme_kite_steps_step2Text": "Шаг 2: строка",
+        "theme_kite_steps_step3Title": "Шаг 3: заголовок",
+        "theme_kite_steps_step3Text": "Шаг 3: строка",
+        "theme_kite_auth": "Экраны входа",
+        "theme_kite_auth_headline": "Строка на небе рядом с формами",
+        "theme_kite_color_sky": "Утреннее небо",
+        "theme_kite_color_dusk": "Вечернее небо",
+        "theme_kite_color_edge": "Выпуклый край",
+        "theme_kite_color_cloud": "Облака",
+        "theme_kite_color_sun": "Солнце",
+        "theme_kite_color_grass": "Трава",
+        "theme_kite_color_soil": "Земля",
+        "theme_kite_color_mint": "Мята",
+        "theme_kite_color_night": "Ночное небо (подвал)",
+        "theme_kite_color_nightForeground": "Текст на ночном небе",
+        "theme_kite_color_ink": "Текст на ярких цветах"
+      },
+      "kite": {
+        "heroTag": "Новый сезон",
+        "heroTitle": "Построй остров, поймай ветер.",
+        "heroSubtitle": "Сейчас играют {servers.online|многие}. Выбери остров, позови друзей и дострой первый дом до темноты.",
+        "copyAddress": "Скопировать и играть",
+        "addressCopied": "Скопировано, увидимся в игре",
+        "copyFailed": "Выдели адрес и скопируй его сам",
+        "addressLabel": "Адрес сервера",
+        "joinDiscord": "Войти в Discord",
+        "stepsTitle": "Три шага до игры",
+        "step1Title": "Открой игру",
+        "step1Text": "Java или Bedrock, последняя версия",
+        "step2Title": "Добавь сервер",
+        "step2Text": "Сетевая игра, затем Добавить сервер",
+        "step3Title": "Вставь адрес",
+        "step3Text": "Введи {address} и подключись",
+        "step3TextPlain": "Введи адрес и подключись",
+        "modesKicker": "Режимы игры",
+        "modesTitle": "На какой остров летишь?",
+        "newsKicker": "Новости",
+        "newsTitle": "Свежее с почты",
+        "teamTitle": "Сейчас в команде",
+        "votersTitle": "Звёзды голосования месяца",
+        "shopKicker": "Магазин",
+        "shopTitle": "На витрине на этой неделе",
+        "forumTitle": "О чём говорят на форуме",
+        "authHeadline": "Сейчас играют {servers.online|многие}.",
+        "authKickerLogin": "Твой остров ждёт",
+        "authKickerRegister": "Новый остров"
+      }
+    },
+    "zh": {
+      "admin": {
+        "theme_kite_hero": "首屏横幅",
+        "theme_kite_hero_enabled": "在首页显示首屏横幅",
+        "theme_kite_hero_tag": "标题上方的小标签",
+        "theme_kite_hero_title": "标题（逗号后另起一行）",
+        "theme_kite_hero_subtitle": "标题下方的一行",
+        "theme_kite_hero_address": "访客可复制的服务器地址",
+        "theme_kite_hero_ctaText": "附加按钮文字",
+        "theme_kite_hero_ctaHref": "附加按钮的链接",
+        "theme_kite_steps": "如何加入",
+        "theme_kite_steps_enabled": "在首屏横幅下显示三个步骤",
+        "theme_kite_steps_step1Title": "第 1 步：标题",
+        "theme_kite_steps_step1Text": "第 1 步：说明",
+        "theme_kite_steps_step2Title": "第 2 步：标题",
+        "theme_kite_steps_step2Text": "第 2 步：说明",
+        "theme_kite_steps_step3Title": "第 3 步：标题",
+        "theme_kite_steps_step3Text": "第 3 步：说明",
+        "theme_kite_auth": "登录页面",
+        "theme_kite_auth_headline": "表单旁天空中的文字",
+        "theme_kite_color_sky": "清晨天空",
+        "theme_kite_color_dusk": "傍晚天空",
+        "theme_kite_color_edge": "凸起边缘",
+        "theme_kite_color_cloud": "云朵",
+        "theme_kite_color_sun": "太阳",
+        "theme_kite_color_grass": "草地",
+        "theme_kite_color_soil": "泥土",
+        "theme_kite_color_mint": "薄荷绿",
+        "theme_kite_color_night": "夜空（页脚）",
+        "theme_kite_color_nightForeground": "夜空上的文字",
+        "theme_kite_color_ink": "亮色上的文字"
+      },
+      "kite": {
+        "heroTag": "新赛季",
+        "heroTitle": "建起你的岛屿，乘上清风。",
+        "heroSubtitle": "此刻有 {servers.online|许多} 人在玩。选一座岛，叫上朋友，天黑前建好第一座房子。",
+        "copyAddress": "复制并开玩",
+        "addressCopied": "已复制，游戏里见",
+        "copyFailed": "请选中地址后自行复制",
+        "addressLabel": "服务器地址",
+        "joinDiscord": "加入 Discord",
+        "stepsTitle": "三步开始游戏",
+        "step1Title": "打开游戏",
+        "step1Text": "Java 或基岩版，最新版本",
+        "step2Title": "添加服务器",
+        "step2Text": "多人游戏，然后添加服务器",
+        "step3Title": "粘贴地址",
+        "step3Text": "输入 {address} 并连接",
+        "step3TextPlain": "输入地址并连接",
+        "modesKicker": "游戏模式",
+        "modesTitle": "你要飞往哪座岛？",
+        "newsKicker": "新闻",
+        "newsTitle": "刚寄到的消息",
+        "teamTitle": "此刻在线的团队成员",
+        "votersTitle": "本月投票之星",
+        "shopKicker": "商店",
+        "shopTitle": "本周橱窗",
+        "forumTitle": "论坛里在聊什么",
+        "authHeadline": "此刻有 {servers.online|许多} 人在玩。",
+        "authKickerLogin": "你的岛屿在等你",
+        "authKickerRegister": "一座新岛"
+      }
+    }
+  }
+}
