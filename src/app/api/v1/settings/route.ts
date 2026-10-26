@@ -24,13 +24,31 @@ const settingsBodySchema = z.record(settingKeySchema, z.unknown()).refine(
 // Per-key max length for public-facing settings. These values are
 // served to every visitor via /api/v1/public-settings, so a careless admin
 // (or a compromised account) could otherwise inflate the anonymous response
-// to tens of MB. Keys not listed here fall back to the 100KB overall cap.
+// to tens of MB. Every key that list serves has one here
+// (a-setting-s-limit-holds-whatever-shape-it-is-sent-in); others fall back
+// to the 100KB overall cap.
 const PER_KEY_LIMITS: Record<string, number> = {
     custom_css: 200_000,      // 200KB - stylesheets can be legitimately big
     site_name: 100,
     site_description: 500,
     site_email: 254,
     site_discord_url: 500,
+    hero_discord_url: 500,
+    site_logo: 2_000,
+    // Twelve codes as JSON is under a hundred characters.
+    site_languages: 200,
+    default_locale: 16,
+    site_timezone: 64,
+    default_currency: 16,
+    member_avatar_uploads: 32,
+    member_username_changes: 32,
+    member_email_changes: 32,
+    identity_requires_password: 32,
+    theme_color_primary: 64,
+    theme_color_secondary: 64,
+    theme_color_accent: 64,
+    theme_overrides: 16_000,
+    navbar_links: 24_000,
     footer_about_text: 2_000,
     footer_columns: 24_000,
     footer_hidden_links: 8_000,

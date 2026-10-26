@@ -1,5 +1,7 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import fs from "node:fs";
+import path from "node:path";
 
 /**
  * A public setting's size limit holds whether the value arrives as a string
@@ -64,5 +66,35 @@ describe("a public setting sent as JSON", () => {
 
         expect(res.status).toBe(200);
         expect(transaction).toHaveBeenCalledOnce();
+    });
+});
+
+describe("every setting served to visitors", () => {
+    beforeEach(() => transaction.mockClear());
+
+    // The list `/api/v1/public-settings` serves, read off its route: a route
+    // file may export nothing but its handlers. Two of them, the languages
+    // the site offers and the one it opens in, were added without a limit,
+    // and thirteen older ones never had one, so each could carry a whole
+    // request's 100KB into every visitor's answer.
+    const source = fs.readFileSync(path.join(process.cwd(), "src/app/api/v1/public-settings/route.ts"), "utf8");
+    const list = source.slice(source.indexOf("const PUBLIC_KEYS"), source.indexOf("];", source.indexOf("const PUBLIC_KEYS")));
+    const keys = [...list.matchAll(/^\s+"([a-z0-9_]+)",/gm)].map((m) => m[1]);
+
+    it("is read off the route", () => {
+        expect(keys).toContain("site_languages");
+        expect(keys.length).toBeGreaterThan(20);
+    });
+
+    it("has a limit of its own, short of a whole request", async () => {
+        const unbounded: string[] = [];
+        // A stylesheet is the one public value meant to be large; its limit
+        // is above a request, so the request's own cap is what holds it.
+        for (const key of keys.filter((k) => k !== "custom_css")) {
+            const res = await patch({ [key]: "x".repeat(60_000) });
+            if (res.status !== 400) unbounded.push(key);
+        }
+        expect(unbounded).toEqual([]);
+        expect(transaction).not.toHaveBeenCalled();
     });
 });
