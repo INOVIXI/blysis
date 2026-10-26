@@ -614,16 +614,40 @@ html[data-mode="dark"] {
   margin-top: 32px;
 }
 
-/* The address on a white pill, with the button that copies it inside. */
+/*
+ * The address on a white pill, with the button that copies it inside. The
+ * button stands on its edge like every filled button, so the pill keeps that
+ * edge's depth free under it: an even padding let the edge eat the bottom
+ * one and the button sat on the pill's rim. Its corners follow the pill's at
+ * the same distance.
+ */
 .kt-address-box {
+  --kt-inset: 7px;
+  --kt-pill-round: 22px;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 6px 14px;
-  padding: 6px 6px 6px 18px;
-  border-radius: 20px;
+  gap: 14px;
+  padding: var(--kt-inset) var(--kt-inset) calc(var(--kt-inset) + var(--kt-press)) 20px;
+  border-radius: var(--kt-pill-round);
   background: var(--blysis-color-card);
   box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.kt-site .kt-address-box .blysis-button {
+  border-radius: calc(var(--kt-pill-round) - var(--kt-inset));
+}
+
+/* Too narrow for one row: the address above, the button the pill's width. */
+@media (max-width: 39.99rem) {
+  .kt-address-box {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+    padding-top: 16px;
+    padding-left: var(--kt-inset);
+    text-align: center;
+  }
 }
 
 .kt-address {
