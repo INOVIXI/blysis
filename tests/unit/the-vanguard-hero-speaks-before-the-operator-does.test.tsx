@@ -15,14 +15,17 @@ import { NextIntlClientProvider } from "next-intl";
 import fs from "node:fs";
 import path from "node:path";
 
-const state = vi.hoisted(() => ({ config: {} as Record<string, unknown>, site: {} as Record<string, unknown> }));
+const state = vi.hoisted(() => ({ config: {} as Record<string, unknown>, site: {} as Record<string, unknown>, slotted: true }));
 
 vi.mock("@/core/sdk/theme", async () => ({
     useThemeConfig: () => (key: string, fallback?: unknown) => (key in state.config ? state.config[key] : fallback),
     linkTarget: (await import("@/core/lib/setting-link")).linkTarget,
 }));
 vi.mock("@/core/sdk/ui", () => ({ useSiteSettings: () => ({ settings: state.site }) }));
-vi.mock("@/core/sdk/layout", () => ({ Slot: ({ name }: { name: string }) => <div data-testid={`slot:${name}`} /> }));
+vi.mock("@/core/sdk/layout", () => ({
+    Slot: ({ name }: { name: string }) => <div data-testid={`slot:${name}`} />,
+    useSlotHasContent: () => state.slotted,
+}));
 vi.mock("@/core/sdk/navigation", () => ({
     Link: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a>,
 }));
@@ -42,6 +45,7 @@ function draw(locale: string) {
 beforeEach(() => {
     state.config = {};
     state.site = {};
+    state.slotted = true;
 });
 
 describe("the Vanguard hero", () => {
@@ -76,6 +80,19 @@ describe("the Vanguard hero", () => {
     it("places hero.bottom on the stage", () => {
         draw("en");
         expect(screen.getByTestId("slot:hero.bottom")).toBeTruthy();
+    });
+
+    it("keeps the line under it only for a module that draws there", () => {
+        // What a module draws there arrives after the page, and the hero grew
+        // by it: everything under the hero moved 69px on a load
+        // (a-page-settles-and-asks-once). The line's room is held from the
+        // first paint when a module will draw in it, and not at all when none
+        // will.
+        const { container } = draw("en");
+        expect(container.querySelector(".vg-hero-bottom")).not.toBeNull();
+        state.slotted = false;
+        const bare = draw("en").container;
+        expect(bare.querySelector(".vg-hero-bottom")).toBeNull();
     });
 
     it("draws nothing once switched off", () => {

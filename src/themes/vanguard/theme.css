@@ -85,9 +85,11 @@ html[data-mode="dark"] {
 
 /* The frame */
 
+/* A container so the stage can be measured against the screen it spans. */
 .vg-site {
   isolation: isolate;
   overflow-x: clip;
+  container-type: inline-size;
 }
 
 .vg-frame {
@@ -218,8 +220,17 @@ html[data-mode="dark"] {
   flex-wrap: wrap;
 }
 
-/* On a phone the rail is a band across the top and its links scroll sideways. */
+/*
+ * Below the width the rail stands beside the page at, it is a band across
+ * the top and its links scroll sideways. A whole row of its own, or between
+ * 864px and 1024px it took a 236px column beside the page and scrolled its
+ * links inside that.
+ */
 @media (max-width: 63.99rem) {
+  .vg-rail {
+    flex-basis: 100%;
+  }
+
   .vg-rail-nav {
     flex-direction: row;
     overflow-x: auto;
@@ -238,24 +249,43 @@ html[data-mode="dark"] {
 
 /* The stage */
 
+/*
+ * The stage spans the screen, edge to edge, behind the rail too, while it
+ * belongs to the section at the top of the page column. It reaches out by
+ * exactly the distance from that column to each edge: the frame's padding
+ * on a phone; beside the rail, also the rail, the gap and the margin that
+ * centres the frame. It once reached a screen's width past both sides and
+ * left the clip to hide the rest, and on a 320px phone its ridges were
+ * 912px wide (a-page-fits-the-phone-it-is-read-on).
+ */
 .vg-stage {
+  --vg-reach-left: 24px;
+  --vg-reach-right: 24px;
   position: absolute;
   z-index: -1;
   top: -24px;
   bottom: 0;
-  left: -100vw;
-  right: -100vw;
+  left: calc(-1 * var(--vg-reach-left));
+  right: calc(-1 * var(--vg-reach-right));
   overflow: hidden;
   background: var(--blysis-color-stage);
   pointer-events: none;
 }
 
+@media (min-width: 64rem) {
+  .vg-stage {
+    --vg-reach-right: calc(max(0px, (100cqw - 1360px) / 2) + 24px);
+    --vg-reach-left: calc(var(--vg-reach-right) + 236px + 20px);
+  }
+}
+
+/* The glow is centred on the section, not on the screen. */
 .vg-stage-sky {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 100vw;
-  right: 100vw;
+  left: var(--vg-reach-left);
+  right: var(--vg-reach-right);
   background-image: radial-gradient(ellipse 55% 60% at 42% 38%, var(--blysis-color-stageGlow), transparent 70%);
 }
 
@@ -394,6 +424,8 @@ html[data-mode="dark"] {
 .vg-hero-bottom {
   margin-top: auto;
   max-width: 640px;
+  /* One line of what is drawn here, the staff strip's, under its rule. */
+  min-height: calc(18px + 1px + 2rem);
   padding-top: 18px;
   border-top: 1px solid color-mix(in srgb, var(--blysis-color-stageForeground) 18%, transparent);
   --blysis-color-background: var(--blysis-color-stage);
@@ -405,8 +437,9 @@ html[data-mode="dark"] {
   --blysis-color-border: color-mix(in srgb, var(--blysis-color-stageForeground) 18%, transparent);
 }
 
+/* Held for a module that has not drawn yet, or drew nothing: no rule over nothing. */
 .vg-hero-bottom:empty {
-  display: none;
+  border-top-color: transparent;
 }
 
 .vg-home {

@@ -12,6 +12,12 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.32.0 - a theme can ask whether a slot will be drawn into.
+ * `useSlotHasContent` from `@/core/sdk/layout` answers from the registry,
+ * before any contribution has run, so a theme holds the room for what a
+ * module will draw after the page instead of growing when it arrives.
+ * Additive.
+ *
  * 5.31.0 - a site placeholder reaches the site's own words. The translation
  * catalogue a page is given has each `{module.name}` token filled, and
  * `fillPlaceholderText` takes an optional `quote` that wraps whatever
@@ -722,4 +728,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.31.0";
+export const CORE_API_VERSION = "5.32.0";

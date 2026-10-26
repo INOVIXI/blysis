@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Slot } from "@/core/sdk/layout";
+import { Slot, useSlotHasContent } from "@/core/sdk/layout";
 import { Link } from "@/core/sdk/navigation";
 import { useSiteSettings } from "@/core/sdk/ui";
 import { linkTarget, useThemeConfig } from "@/core/sdk/theme";
@@ -16,7 +16,9 @@ import { Stage } from "./Stage";
  * English. The first button is drawn only once it has somewhere to go; the
  * second is the site's Discord address from General settings, the same one
  * the footer links to. `hero.bottom` sits on the stage under them, where
- * modules that declare it expect to be.
+ * modules that declare it expect to be, and holds its line's room from the
+ * first paint when a module will draw there: what it draws arrives after the
+ * page, and the hero grew by it and moved everything under it.
  *
  * The heading is an h2: the homepage names itself in an h1 already.
  */
@@ -24,6 +26,7 @@ export default function Hero() {
     const t = useTranslations("vanguard");
     const get = useThemeConfig();
     const { settings } = useSiteSettings();
+    const bottom = useSlotHasContent("hero.bottom");
     if (!get<boolean>("hero.enabled", true)) return null;
 
     const text = (key: string) => (get<string>(key, "") ?? "").trim();
@@ -54,9 +57,11 @@ export default function Hero() {
                     ) : null}
                 </div>
             ) : null}
-            <div className="vg-hero-bottom">
-                <Slot name="hero.bottom" />
-            </div>
+            {bottom ? (
+                <div className="vg-hero-bottom">
+                    <Slot name="hero.bottom" />
+                </div>
+            ) : null}
         </section>
     );
 }
