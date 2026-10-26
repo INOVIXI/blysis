@@ -6,6 +6,8 @@ import { apiError, apiSuccess } from "@/core/lib/api-utils";
 import { auth } from "@/core/lib/auth";
 import { prisma } from "@/core/lib/db";
 import { locales } from "@/core/lib/i18n/config";
+import { flagCalls } from "@/core/lib/i18n/translation-flags";
+import { historyCall } from "@/core/lib/i18n/translation-history";
 import { type LineRef, editCalls, editOps, heardBy, lineOf, lineRows } from "@/core/lib/i18n/translation-lines";
 import { activeThemeId, invalidateTranslationCache } from "@/core/lib/i18n/translation-service";
 import { checkMessageEdit } from "@/core/lib/message-edit";
@@ -60,7 +62,9 @@ export async function POST(request: NextRequest) {
         .sort((a, b) => a.namespace.localeCompare(b.namespace) || a.key.localeCompare(b.key));
     const truncated = refs.length > MAX_MATCHES;
     const seen = refs.slice(0, MAX_MATCHES);
-    const rows = await lineRows(seen, themeId, [locale]);
+    // Every language of each string, since a change in this one asks the
+    // others to follow it.
+    const rows = await lineRows(seen, themeId);
 
     const matches = seen.flatMap((ref) => {
         const line = lineOf(ref, rows, [locale]);
@@ -90,8 +94,16 @@ export async function POST(request: NextRequest) {
     const writing = matches.filter((m) => !m.refused && kept.has(`${m.namespace}\u0000${m.key}`));
     if (writing.length === 0) return apiError("Nothing to change", 400, { code: "translation_nothing_to_replace" });
 
-    await prisma.$transaction(writing.flatMap((m) =>
-        editCalls(m, editOps(m, m.owner, rows, locale, m.after.trim()))));
+    // Each string leaves a version and marks its other languages, as a hand
+    // edit of it would.
+    await prisma.$transaction(writing.flatMap((m) => {
+        const line = lineOf(m, rows, locales);
+        return [
+            historyCall(m, line, [locale], "replace", session.user.id),
+            ...editCalls(m, editOps(m, m.owner, rows, locale, m.after.trim())),
+            ...flagCalls(m, line, [locale], [{ locale, toShipped: false }]),
+        ];
+    }));
     await invalidateTranslationCache();
 
     logActivity({

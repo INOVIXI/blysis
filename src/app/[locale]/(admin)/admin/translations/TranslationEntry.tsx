@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Loader2, RotateCcw, Save } from "lucide-react";
+import { type ReactNode, useEffect, useState } from "react";
+import { Check, History, Loader2, RotateCcw, Save } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Badge } from "@/core/components/ui/badge";
 import { Button } from "@/core/components/ui/button";
@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/core/components/ui/card";
 import { Textarea } from "@/core/components/ui/textarea";
 import { localeNames, locales, type Locale } from "@/core/lib/i18n/config";
 import { moduleName } from "@/core/lib/module-label";
+import { TranslationHistory } from "./TranslationHistory";
 
 /**
  * One string: what it says in the source language, and what it says in the
@@ -36,6 +37,12 @@ import { moduleName } from "@/core/lib/module-label";
  * from without leaving the screen, and so "restore" has a visible meaning.
  * Beside the name is who says the string now: core, a module, the theme
  * being worn, which may word a module's string in its own voice.
+ *
+ * A string that wants looking at says so above its boxes: an update that
+ * moved the original under the site's edit, with both originals side by
+ * side, or a change in another language since this one was written. Each
+ * notice carries its two answers, and the history holds the way back from
+ * any change.
  */
 
 export interface EntryLocale {
@@ -45,6 +52,10 @@ export interface EntryLocale {
     isCustom: boolean;
     /** What the site would say without its own edit. */
     shipped: string | null;
+    /** An update moved the original under the site's edit. */
+    review: { was: string; now: string } | null;
+    /** The string changed in another language after this one was written. */
+    awaiting: boolean;
 }
 
 export interface Entry {
@@ -87,16 +98,24 @@ interface TranslationEntryProps {
     target: Locale;
     onSave: (values: Record<string, string>) => Promise<boolean>;
     onRestore: () => Promise<boolean>;
+    /** Take the new original in the working language. */
+    onAdopt: () => Promise<boolean>;
+    /** The working language has been looked at and stands. */
+    onMark: (reason: "review" | "translate") => Promise<boolean>;
+    onUndo: (version: string) => Promise<boolean>;
 }
+
+type Action = "save" | "restore" | "adopt" | "review" | "translate";
 
 function draftOf(entry: Entry, target: Locale): Record<string, string> {
     return { [target]: entry.locales[target]?.value ?? "" };
 }
 
-export function TranslationEntry({ entry, labelOf, source, target, onSave, onRestore }: TranslationEntryProps) {
+export function TranslationEntry({ entry, labelOf, source, target, onSave, onRestore, onAdopt, onMark, onUndo }: TranslationEntryProps) {
     const t = useTranslations("admin");
     const [draft, setDraft] = useState(() => draftOf(entry, target));
-    const [busy, setBusy] = useState<"save" | "restore" | null>(null);
+    const [busy, setBusy] = useState<Action | null>(null);
+    const [showHistory, setShowHistory] = useState(false);
 
     // A page of keys is replaced wholesale when the filter or the page moves,
     // so the boxes follow the row they belong to rather than keeping what was
@@ -114,12 +133,17 @@ export function TranslationEntry({ entry, labelOf, source, target, onSave, onRes
     // An edited string is the site's own words, which the badge says.
     const saidBy = state?.isCustom ? null : (state?.from ?? entry.sources.at(-1) ?? null);
 
-    const send = async (which: "save" | "restore") => {
+    const send = async (which: Action) => {
         setBusy(which);
-        const done = which === "save" ? await onSave(draft) : await onRestore();
+        const done = which === "save" ? await onSave(draft)
+            : which === "restore" ? await onRestore()
+                : which === "adopt" ? await onAdopt()
+                    : await onMark(which);
         setBusy(null);
         return done;
     };
+    const spinner = (which: Action, icon: ReactNode) =>
+        busy === which ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : icon;
 
     return (
         <Card>
@@ -141,8 +165,19 @@ export function TranslationEntry({ entry, labelOf, source, target, onSave, onRes
                             </span>
                         ) : null}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        {state?.review ? <Badge tone="warning">{t("translations_toReview")}</Badge> : null}
+                        {state?.awaiting ? <Badge tone="warning">{t("translations_awaiting")}</Badge> : null}
                         {edited ? <Badge tone="info">{t("translations_edited")}</Badge> : null}
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            aria-expanded={showHistory}
+                            onClick={() => setShowHistory(!showHistory)}
+                        >
+                            <History className="w-4 h-4" aria-hidden="true" />
+                            {t("translations_history")}
+                        </Button>
                         {edited ? (
                             <Button
                                 variant="outline"
@@ -150,24 +185,43 @@ export function TranslationEntry({ entry, labelOf, source, target, onSave, onRes
                                 disabled={busy !== null}
                                 onClick={() => send("restore")}
                             >
-                                {busy === "restore" ? (
-                                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                                ) : (
-                                    <RotateCcw className="w-4 h-4" aria-hidden="true" />
-                                )}
+                                {spinner("restore", <RotateCcw className="w-4 h-4" aria-hidden="true" />)}
                                 {t("translations_restore")}
                             </Button>
                         ) : null}
                         <Button size="sm" disabled={!dirty || busy !== null} onClick={() => send("save")}>
-                            {busy === "save" ? (
-                                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                            ) : (
-                                <Save className="w-4 h-4" aria-hidden="true" />
-                            )}
+                            {spinner("save", <Save className="w-4 h-4" aria-hidden="true" />)}
                             {t("translations_save")}
                         </Button>
                     </div>
                 </div>
+
+                {state?.review ? (
+                    <div className="rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-sm space-y-2">
+                        <p>{t("translations_reviewNote")}</p>
+                        <p className="break-words text-muted-foreground">{t("translations_reviewWas", { value: state.review.was })}</p>
+                        <p className="break-words">{t("translations_reviewNow", { value: state.review.now })}</p>
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => send("review")}>
+                                {spinner("review", <Check className="w-4 h-4" aria-hidden="true" />)}
+                                {t("translations_keepMine")}
+                            </Button>
+                            <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => send("adopt")}>
+                                {spinner("adopt", <RotateCcw className="w-4 h-4" aria-hidden="true" />)}
+                                {t("translations_useNew")}
+                            </Button>
+                        </div>
+                    </div>
+                ) : null}
+                {state?.awaiting ? (
+                    <div className="rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-sm flex items-center justify-between gap-3 flex-wrap">
+                        <p>{t("translations_awaitingNote")}</p>
+                        <Button variant="outline" size="sm" disabled={busy !== null} onClick={() => send("translate")}>
+                            {spinner("translate", <Check className="w-4 h-4" aria-hidden="true" />)}
+                            {t("translations_stillRight")}
+                        </Button>
+                    </div>
+                ) : null}
 
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                     <div className="space-y-1">
@@ -199,6 +253,16 @@ export function TranslationEntry({ entry, labelOf, source, target, onSave, onRes
                     </div>
                 </div>
 
+                {showHistory ? (
+                    <TranslationHistory
+                        namespace={entry.namespace}
+                        stringKey={entry.key}
+                        source={source}
+                        target={target}
+                        version={entry}
+                        onUndo={onUndo}
+                    />
+                ) : null}
             </CardContent>
         </Card>
     );

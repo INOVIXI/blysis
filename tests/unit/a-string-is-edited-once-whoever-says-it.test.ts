@@ -41,19 +41,19 @@ describe("a line of the editor", () => {
         ], ["en", "tr", "de"]);
         expect(line.owner).toBe("store");
         expect(line.sources).toEqual(["store", "theme:kite"]);
-        expect(line.locales.tr).toEqual({ value: "Pazar yeri", from: "theme:kite", isCustom: false, shipped: "Pazar yeri" });
-        expect(line.locales.en).toEqual({ value: "Store", from: "store", isCustom: false, shipped: "Store" });
-        expect(line.locales.de).toEqual({ value: null, from: null, isCustom: false, shipped: null });
+        expect(line.locales.tr).toEqual({ value: "Pazar yeri", from: "theme:kite", isCustom: false, shipped: "Pazar yeri", review: null, awaiting: false });
+        expect(line.locales.en).toEqual({ value: "Store", from: "store", isCustom: false, shipped: "Store", review: null, awaiting: false });
+        expect(line.locales.de).toEqual({ value: null, from: null, isCustom: false, shipped: null, review: null, awaiting: false });
     });
 
     it("hears the site's edit over the theme, and keeps the theme's words beneath it", () => {
         const line = lineOf(REF, [row("store", "tr", "Market", true), row("theme:kite", "tr", "Pazar yeri")], ["tr"]);
-        expect(line.locales.tr).toEqual({ value: "Market", from: "store", isCustom: true, shipped: "Pazar yeri" });
+        expect(line.locales.tr).toEqual({ value: "Market", from: "store", isCustom: true, shipped: "Pazar yeri", review: null, awaiting: false });
     });
 
     it("reads an edit filed on the theme's row, as the editor used to file them", () => {
         const line = lineOf(REF, [row("store", "tr", "Mağaza"), row("theme:kite", "tr", "Çarşı", true)], ["tr"]);
-        expect(line.locales.tr).toEqual({ value: "Çarşı", from: "theme:kite", isCustom: true, shipped: "Pazar yeri" });
+        expect(line.locales.tr).toEqual({ value: "Çarşı", from: "theme:kite", isCustom: true, shipped: "Pazar yeri", review: null, awaiting: false });
     });
 });
 
@@ -62,7 +62,7 @@ describe("an edit", () => {
         const kite = row("theme:kite", "tr", "Çarşı", true);
         const ops = editOps(REF, "store", [row("store", "tr", "Mağaza"), kite], "tr", "Market");
         expect(ops).toEqual([
-            { upsert: { locale: "tr", module: "store", value: "Market" } },
+            { upsert: { locale: "tr", module: "store", value: "Market", basis: "Mağaza" } },
             { restore: { id: kite.id, value: "Pazar yeri" } },
         ]);
     });
@@ -71,13 +71,13 @@ describe("an edit", () => {
         const stray = row("theme:kite", "en", "Shop", true);
         const ops = editOps(REF, "store", [row("store", "en", "Store"), stray], "en", "Market");
         expect(ops).toEqual([
-            { upsert: { locale: "en", module: "store", value: "Market" } },
+            { upsert: { locale: "en", module: "store", value: "Market", basis: "Store" } },
             { drop: { id: stray.id } },
         ]);
     });
 
     it("leaves other languages and shipped rows alone", () => {
         const ops = editOps(REF, "store", [row("theme:kite", "tr", "Pazar yeri"), row("store", "en", "Shop", true)], "tr", "Market");
-        expect(ops).toEqual([{ upsert: { locale: "tr", module: "store", value: "Market" } }]);
+        expect(ops).toEqual([{ upsert: { locale: "tr", module: "store", value: "Market", basis: "Mağaza" } }]);
     });
 });

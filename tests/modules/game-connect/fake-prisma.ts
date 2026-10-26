@@ -127,6 +127,12 @@ export function fakeTable(defaults: () => Row = () => ({}), idField = "id", uniq
             Object.assign(row, data);
             return { ...row };
         }),
+        upsert: vi.fn(async ({ where, create, update }: { where: Where; create: Row; update: Row }) => {
+            const row = table.rows.find((r) => matches(r, where));
+            if (!row) return api.create({ data: create });
+            Object.assign(row, update);
+            return { ...row };
+        }),
         updateMany: vi.fn(async ({ where, data }: { where?: Where; data: Row }) => {
             const hit = table.rows.filter((r) => matches(r, where));
             for (const row of hit) Object.assign(row, data);

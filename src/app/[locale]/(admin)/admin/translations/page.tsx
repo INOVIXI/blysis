@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { buttonClassName } from "@/core/components/ui/button";
-import { Checkbox } from "@/core/components/ui/checkbox";
 import { Input } from "@/core/components/ui/input";
 import { NativeSelect } from "@/core/components/ui/native-select";
 import { Pagination } from "@/core/components/ui/pagination";
@@ -30,6 +29,12 @@ import { type Entry, type Source, TranslationEntry, useSourceLabel } from "./Tra
  * passes, and says which name it objected to. Those refusals are shown as
  * sentences here rather than as codes, because the operator who typed the
  * brace is the one who can fix it.
+ *
+ * Which strings are shown is one choice beside the language being worked in:
+ * every one, what somebody changed, what the language is missing, what an
+ * update changed under the site's edit, or what changed in another language
+ * after this one was written. Four checkboxes in that row wrapped their labels
+ * onto four lines each, and two of them together asked a question nobody has.
  */
 
 interface ListResponse {
@@ -48,10 +53,27 @@ const REFUSALS: Record<string, string> = {
     translation_no_shipped_value: "translations_errNoShipped",
     translation_not_custom: "translations_errNotCustom",
     translation_not_found: "translations_errNotFound",
+    translation_history_not_found: "translations_errHistoryNotFound",
+    translation_flag_not_found: "translations_errFlagNotFound",
 };
 
 /** What everything else is translated from. */
 const SOURCE = defaultLocale;
+
+/** Which strings are shown, and what each asks the endpoint for. */
+const SHOWS = {
+    all: { label: "translations_showAll", param: null },
+    edited: { label: "translations_onlyEdited", param: "custom" },
+    missing: { label: "translations_onlyMissing", param: "missing" },
+    review: { label: "translations_onlyReview", param: "review" },
+    awaiting: { label: "translations_onlyAwaiting", param: "awaiting" },
+} as const;
+type Show = keyof typeof SHOWS;
+
+/** What every write to a string names it by. */
+function nameOf(entry: Entry) {
+    return { namespace: entry.namespace, key: entry.key };
+}
 
 export default function TranslationsPage() {
     const t = useTranslations("admin");
@@ -68,8 +90,7 @@ export default function TranslationsPage() {
     const [query, setQuery] = useState("");
     const [source, setSource] = useState("");
     const [namespace, setNamespace] = useState("");
-    const [onlyEdited, setOnlyEdited] = useState(false);
-    const [onlyMissing, setOnlyMissing] = useState(false);
+    const [show, setShow] = useState<Show>("all");
     /*
      * The language being worked in.
      *
@@ -119,9 +140,9 @@ export default function TranslationsPage() {
         if (query) params.set("q", query);
         if (source) params.set("module", source);
         if (namespace) params.set("namespace", namespace);
-        if (onlyEdited) params.set("custom", "1");
         params.set("locale", target);
-        if (onlyMissing) params.set("missing", "1");
+        const only = SHOWS[show].param;
+        if (only) params.set(only, "1");
         try {
             const res = await fetch(`/api/v1/admin/translations?${params}`);
             const body = (await res.json()) as ListResponse;
@@ -137,7 +158,7 @@ export default function TranslationsPage() {
         } finally {
             setLoading(false);
         }
-    }, [page, query, source, namespace, onlyEdited, onlyMissing, target, t]);
+    }, [page, query, source, namespace, show, target, t]);
 
     useEffect(() => {
         load();
@@ -162,16 +183,12 @@ export default function TranslationsPage() {
     };
     const labelOf = useSourceLabel(facets.sources);
 
-    const send = async (entry: Entry, method: "PATCH" | "DELETE", extra: Record<string, unknown>) => {
+    const send = async (path: string, method: "PATCH" | "DELETE" | "POST", payload: Record<string, unknown>, done: string) => {
         try {
-            const res = await fetch("/api/v1/admin/translations", {
+            const res = await fetch(`/api/v1/admin/translations${path}`, {
                 method,
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    namespace: entry.namespace,
-                    key: entry.key,
-                    ...extra,
-                }),
+                body: JSON.stringify(payload),
             });
             const body = (await res.json()) as ListResponse & { data?: { item: Entry } };
             if (!body.ok) {
@@ -180,7 +197,7 @@ export default function TranslationsPage() {
             }
             const item = (body.data as unknown as { item?: Entry })?.item;
             if (item) replace(item);
-            toast.success(method === "PATCH" ? t("translations_saved") : t("translations_restored"));
+            toast.success(t(done));
             return true;
         } catch {
             toast.error(t("translations_errGeneric"));
@@ -253,7 +270,7 @@ export default function TranslationsPage() {
                       * answer at all, because it showed every language on
                       * every row and you found out by scrolling.
                       */}
-                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center">
                         <label className="flex items-center gap-2 text-sm md:w-[calc(50%-0.375rem)] md:shrink-0">
                             <span className="shrink-0 text-muted-foreground">{t("translations_workingIn")}</span>
                             <NativeSelect
@@ -275,25 +292,22 @@ export default function TranslationsPage() {
                                 })}
                             </NativeSelect>
                         </label>
-                        <label className="flex items-center gap-2 text-sm">
-                            <Checkbox
-                                checked={onlyEdited}
+                        <label className="flex items-center gap-2 text-sm md:flex-1">
+                            <span className="shrink-0 text-muted-foreground">{t("translations_show")}</span>
+                            <NativeSelect
+                                aria-label={t("translations_show")}
+                                value={show}
                                 onChange={(event) => {
-                                    setOnlyEdited(event.target.checked);
+                                    setShow(event.target.value as Show);
                                     setPage(1);
                                 }}
-                            />
-                            {t("translations_onlyEdited")}
-                        </label>
-                        <label className="flex items-center gap-2 text-sm">
-                            <Checkbox
-                                checked={onlyMissing}
-                                onChange={(event) => {
-                                    setOnlyMissing(event.target.checked);
-                                    setPage(1);
-                                }}
-                            />
-                            {t("translations_onlyMissing")}
+                            >
+                                {(Object.keys(SHOWS) as Show[]).map((each) => (
+                                    <option key={each} value={each}>
+                                        {t(SHOWS[each].label)}
+                                    </option>
+                                ))}
+                            </NativeSelect>
                         </label>
                     </div>
                 </CardContent>
@@ -306,7 +320,7 @@ export default function TranslationsPage() {
             ) : items.length === 0 ? (
                 <Card>
                     <CardContent className="py-12 text-center text-muted-foreground">
-                        {onlyMissing ? t("translations_noneMissing") : t("translations_none")}
+                        {show === "missing" ? t("translations_noneMissing") : t("translations_none")}
                     </CardContent>
                 </Card>
             ) : (
@@ -318,14 +332,24 @@ export default function TranslationsPage() {
                             labelOf={labelOf}
                             source={SOURCE}
                             target={target}
-                            onSave={(values) => send(entry, "PATCH", { values })}
+                            onSave={(values) => send("", "PATCH", { ...nameOf(entry), values }, "translations_saved")}
                             onRestore={async () => {
                                 const sure = await confirm({
                                     title: t("translations_restore"),
                                     message: t("translations_restoreConfirm"),
                                 });
                                 if (!sure) return false;
-                                return send(entry, "DELETE", {});
+                                return send("", "DELETE", nameOf(entry), "translations_restored");
+                            }}
+                            onAdopt={() => send("", "DELETE", { ...nameOf(entry), locale: target }, "translations_restored")}
+                            onMark={(reason) => send("/flags", "POST", { ...nameOf(entry), locale: target, reason }, "translations_lookedAt")}
+                            onUndo={async (version) => {
+                                const sure = await confirm({
+                                    title: t("translations_undo"),
+                                    message: t("translations_undoConfirm"),
+                                });
+                                if (!sure) return false;
+                                return send("/history", "POST", { id: version }, "translations_undone");
                             }}
                         />
                     ))}

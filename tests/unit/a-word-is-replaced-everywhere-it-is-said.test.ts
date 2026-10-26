@@ -34,9 +34,20 @@ const { translation, transaction, ROWS } = vi.hoisted(() => {
     };
 });
 
+// A change also leaves a version and marks the string's other languages,
+// in the same write; neither is what these tests are about.
+const LOOKED_AFTER = vi.hoisted(() => ({
+    revision: { create: vi.fn((args: unknown) => args) },
+    translationFlag: {
+        findMany: vi.fn(async () => []),
+        deleteMany: vi.fn((args: unknown) => args),
+        upsert: vi.fn((args: unknown) => args),
+    },
+}));
+
 vi.mock("@/core/lib/db", () => ({
-    prisma: { translation, $transaction: transaction },
-    default: { translation, $transaction: transaction },
+    prisma: { translation, ...LOOKED_AFTER, $transaction: transaction },
+    default: { translation, ...LOOKED_AFTER, $transaction: transaction },
 }));
 vi.mock("@/core/lib/auth", () => ({ auth: async () => ({ user: { id: "u1", role: "admin" } }) }));
 vi.mock("@/core/lib/permissions", () => ({ isAdmin: async () => true }));

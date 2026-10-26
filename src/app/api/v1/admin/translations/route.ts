@@ -7,8 +7,21 @@ import { apiError, apiSuccess } from "@/core/lib/api-utils";
 import { auth } from "@/core/lib/auth";
 import { prisma } from "@/core/lib/db";
 import { defaultLocale, locales } from "@/core/lib/i18n/config";
-import { shippedValue } from "@/core/lib/i18n/shipped-value";
-import { type LineRef, editCalls, editOps, heardBy, heardSql, lineOf, lineRows } from "@/core/lib/i18n/translation-lines";
+import { FLAG_REVIEW, FLAG_TRANSLATE } from "@/core/lib/i18n/flag-reasons";
+import { flagCalls } from "@/core/lib/i18n/translation-flags";
+import { historyCall } from "@/core/lib/i18n/translation-history";
+import {
+    type EditOp,
+    type LineRef,
+    editCalls,
+    editOps,
+    heardSql,
+    lineFlags,
+    lineOf,
+    lineRows,
+    measureOf,
+    restoreOps,
+} from "@/core/lib/i18n/translation-lines";
 import { activeThemeId, invalidateTranslationCache } from "@/core/lib/i18n/translation-service";
 import { MAX_MESSAGE_LENGTH, checkMessageEdit } from "@/core/lib/message-edit";
 import { isAdmin } from "@/core/lib/permissions";
@@ -54,8 +67,17 @@ const SOURCE_LOCALE = defaultLocale;
 
 /** The lines for these strings, in the order asked. */
 async function describe(refs: LineRef[], wanted: readonly string[], themeId: string) {
-    const rows = await lineRows(refs, themeId, wanted);
-    return refs.map((ref) => lineOf(ref, rows, wanted));
+    const [rows, flags] = await Promise.all([lineRows(refs, themeId, wanted), lineFlags(refs, wanted)]);
+    return refs.map((ref) => lineOf(ref, rows, wanted, flags));
+}
+
+/** Whether this language of the string has been asked to be looked at, for a `HAVING`. */
+function askedSql(locale: string, reason: string): Prisma.Sql {
+    return Prisma.sql`bool_or(EXISTS (
+        SELECT 1 FROM "TranslationFlag" AS f
+        WHERE f."namespace" = "Translation"."namespace" AND f."key" = "Translation"."key"
+            AND f."locale" = ${locale} AND f."reason" = ${reason}
+    ))`;
 }
 
 const listSchema = z.object({
@@ -76,6 +98,10 @@ const listSchema = z.object({
     locale: z.enum(locales).optional(),
     /** Only the strings this language has nothing for. */
     missing: z.enum(["1"]).optional(),
+    /** Only the strings an update changed under the site's edit, in this language. */
+    review: z.enum(["1"]).optional(),
+    /** Only the strings that changed in another language after this one was written. */
+    awaiting: z.enum(["1"]).optional(),
     page: z.coerce.number().int().min(1).max(10000).default(1),
 });
 
@@ -86,7 +112,7 @@ export async function GET(request: NextRequest) {
     const params = Object.fromEntries(new URL(request.url).searchParams);
     const parsed = listSchema.safeParse(params);
     if (!parsed.success) return apiError(parsed.error.issues[0]?.message || "Invalid filter", 400);
-    const { module: source, namespace, q, custom, page, missing } = parsed.data;
+    const { module: source, namespace, q, custom, page, missing, review, awaiting } = parsed.data;
     // The source is what the software ships and what everything else is
     // translated from; the target is what the operator is working in. Asking
     // for the source as the target is asking for one column twice.
@@ -110,6 +136,8 @@ export async function GET(request: NextRequest) {
         having.push(Prisma.sql`bool_or("value" ILIKE ${like} OR ("namespace" || '.' || "key") ILIKE ${like})`);
     }
     if (missing === "1" && wanted.length === 2) having.push(Prisma.sql`NOT bool_or("locale" = ${wanted[1]})`);
+    if (review === "1" && wanted.length === 2) having.push(askedSql(wanted[1], FLAG_REVIEW));
+    if (awaiting === "1" && wanted.length === 2) having.push(askedSql(wanted[1], FLAG_TRANSLATE));
     const groups = Prisma.sql`
         SELECT "namespace", "key" FROM "Translation" WHERE ${rowFilter}
         GROUP BY "namespace", "key" HAVING ${Prisma.join(having, " AND ")}
@@ -180,11 +208,7 @@ export async function PATCH(request: NextRequest) {
         // gone - an uninstalled module, a key dropped in an upgrade - and a
         // language nothing ships yet is measured against the one everything
         // is translated from, so a first translation may use its values.
-        const said = line.locales[locale];
-        const source = line.locales[SOURCE_LOCALE];
-        const reference = said?.shipped ?? said?.value ?? shippedValue(line.owner, locale, namespace, key)
-            ?? source?.shipped ?? source?.value ?? "";
-        const refusal = checkMessageEdit(reference, typed);
+        const refusal = checkMessageEdit(measureOf(line, locale, SOURCE_LOCALE), typed);
         if (refusal) {
             return apiError("The string was not saved", 400, {
                 code: `translation_${refusal.reason}`,
@@ -196,8 +220,14 @@ export async function PATCH(request: NextRequest) {
     if (writes.length === 0) return apiError("Nothing to save", 400);
 
     // One transaction, so a site is never left saying the new thing in one
-    // language and the old thing in the other.
-    await prisma.$transaction(writes.flatMap((w) => editCalls(ref, editOps(ref, line.owner, rows, w.locale, w.value))));
+    // language and the old thing in the other, and never changed without the
+    // version that takes it back or the languages it leaves behind marked.
+    const changed = writes.filter((w) => w.value !== line.locales[w.locale]?.value).map((w) => w.locale);
+    await prisma.$transaction([
+        ...(changed.length > 0 ? [historyCall(ref, line, changed, "edit", guard.session?.user?.id)] : []),
+        ...writes.flatMap((w) => editCalls(ref, editOps(ref, line.owner, rows, w.locale, w.value))),
+        ...flagCalls(ref, line, writes.map((w) => w.locale), changed.map((locale) => ({ locale, toShipped: false }))),
+    ]);
     await invalidateTranslationCache();
 
     logActivity({
@@ -231,34 +261,33 @@ export async function DELETE(request: NextRequest) {
 
     // Every edit the site hears for the string, on whichever source the
     // editor filed it, since an older one may sit on the theme's row.
+    const ref = { namespace, key };
     const themeId = await activeThemeId();
-    const rows = await prisma.translation.findMany({
-        where: { AND: [heardBy(themeId), { namespace, key, isCustom: true, locale: { in: locale ? [locale] : [...locales] } }] },
-        select: { id: true, locale: true, module: true },
-    });
-    if (rows.length === 0) return apiError("Nothing to restore", 404, { code: "translation_not_custom" });
+    const rows = await lineRows([ref], themeId);
+    const edited = [...new Set(rows
+        .filter((row) => row.isCustom && (locale ? row.locale === locale : (locales as readonly string[]).includes(row.locale)))
+        .map((row) => row.locale))];
+    if (edited.length === 0) return apiError("Nothing to restore", 404, { code: "translation_not_custom" });
+    const line = lineOf(ref, rows, locales);
 
-    const restores: { id: string; value: string }[] = [];
-    for (const row of rows) {
-        const shipped = shippedValue(row.module, row.locale, namespace, key);
-        if (shipped === null) {
+    const ops: EditOp[] = [];
+    for (const each of edited) {
+        const restore = restoreOps(ref, rows, each);
+        if (restore === null) {
             return apiError("This string has nothing to restore to", 409, {
                 code: "translation_no_shipped_value",
-                details: { locale: row.locale },
+                details: { locale: each },
             });
         }
-        restores.push({ id: row.id, value: shipped });
+        ops.push(...restore);
     }
 
     try {
-        await prisma.$transaction(
-            restores.map((restore) =>
-                prisma.translation.update({
-                    where: { id: restore.id },
-                    data: { value: restore.value, isCustom: false },
-                }),
-            ),
-        );
+        await prisma.$transaction([
+            historyCall(ref, line, edited, "restore", guard.session?.user?.id),
+            ...editCalls(ref, ops),
+            ...flagCalls(ref, line, edited, edited.map((each) => ({ locale: each, toShipped: true }))),
+        ]);
     } catch (error) {
         // The rows were read a moment ago, so the one thing that gets here is
         // a second admin having reverted or reinstalled in between.
@@ -271,7 +300,7 @@ export async function DELETE(request: NextRequest) {
         action: "translation.revert",
         entity: "translation",
         entityId: `${namespace}:${key}`,
-        metadata: { namespace, key, locales: rows.map((r) => r.locale) },
+        metadata: { namespace, key, locales: edited },
     }).catch(() => {});
 
     const [item] = await describe([{ namespace, key }], locales, themeId);
