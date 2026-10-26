@@ -1090,6 +1090,7 @@
     "translations_saved": "已保存。",
     "translations_search": "搜索键或其内容",
     "translations_shipsAs": "软件内置：{value}",
+    "translations_preview": "访客看到：{text}",
     "translations_title": "翻译",
     "updates_available": "版本 {version} 可用",
     "updates_confirmMessage": "站点将进入维护模式，系统会备份数据库，然后应用以新版本重新启动。安装了模块的情况下，重启可能需要几分钟。",
@@ -1353,6 +1354,7 @@
     "placeholder_list": "本站可用的占位符",
     "placeholder_noValue": "当前没有值",
     "placeholder_unknown": "本站没有任何内容响应 {names}，访客在此处会看到一条短横线。",
+    "placeholder_refused": "本站没有任何内容响应 {names}，因此文本无法保存。",
     "placeholder_site_name": "站点名称"
   },
   "footer": {

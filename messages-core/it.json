@@ -1090,6 +1090,7 @@
     "translations_saved": "Salvato.",
     "translations_search": "Cerca una chiave o il suo testo",
     "translations_shipsAs": "Incluso come: {value}",
+    "translations_preview": "I visitatori leggono: {text}",
     "translations_title": "Traduzioni",
     "updates_available": "È disponibile la versione {version}",
     "updates_confirmMessage": "Il sito entra in manutenzione, viene creato un backup del database e l’app si riavvia sulla nuova versione. Con dei moduli installati il riavvio può richiedere diversi minuti.",
@@ -1353,6 +1354,7 @@
     "placeholder_list": "I segnaposto di questo sito",
     "placeholder_noValue": "nessun valore al momento",
     "placeholder_unknown": "Niente su questo sito risponde a {names}, i visitatori vedono un trattino.",
+    "placeholder_refused": "Niente su questo sito risponde a {names}, quindi il testo non verrà salvato.",
     "placeholder_site_name": "Nome del sito"
   },
   "footer": {

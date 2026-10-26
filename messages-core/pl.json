@@ -1090,6 +1090,7 @@
     "translations_saved": "Zapisano.",
     "translations_search": "Szukaj klucza albo jego tekstu",
     "translations_shipsAs": "Domyślnie: {value}",
+    "translations_preview": "Odwiedzający czytają: {text}",
     "translations_title": "Tłumaczenia",
     "updates_available": "Dostępna jest wersja {version}",
     "updates_confirmMessage": "Strona przejdzie w tryb konserwacji, zostanie wykonana kopia bazy danych, a aplikacja uruchomi się ponownie w nowej wersji. Przy zainstalowanych modułach restart może potrwać kilka minut.",
@@ -1353,6 +1354,7 @@
     "placeholder_list": "Symbole zastępcze tej witryny",
     "placeholder_noValue": "obecnie brak wartości",
     "placeholder_unknown": "Nic na tej witrynie nie odpowiada na {names}, odwiedzający widzą tam kreskę.",
+    "placeholder_refused": "Nic na tej witrynie nie odpowiada na {names}, więc tekst się nie zapisze.",
     "placeholder_site_name": "Nazwa witryny"
   },
   "footer": {

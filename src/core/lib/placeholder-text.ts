@@ -38,16 +38,19 @@ export function placeholderTokens(text: string): PlaceholderToken[] {
  * `formatNumber` so they read the way the page's language writes them. A
  * token with no value, or one nothing on this site answers, shows its
  * fallback. Anything that is not a token is left as it was written.
+ * `quote` wraps whatever replaces a token, for text that is read again as
+ * syntax, as a translation is.
  */
 export function fillPlaceholderText(
     text: string,
     values: Record<string, PlaceholderValue | undefined>,
     formatNumber: (value: number) => string,
+    quote: (filled: string) => string = (filled) => filled,
 ): string {
     return text.replace(TOKEN, (_whole, name: string, fallback: string | undefined) => {
         const value = Object.prototype.hasOwnProperty.call(values, name) ? values[name] : undefined;
-        if (typeof value === "number") return formatNumber(value);
-        if (typeof value === "string") return value;
-        return fallback ?? PLACEHOLDER_FALLBACK;
+        if (typeof value === "number") return quote(formatNumber(value));
+        if (typeof value === "string") return quote(value);
+        return quote(fallback ?? PLACEHOLDER_FALLBACK);
     });
 }

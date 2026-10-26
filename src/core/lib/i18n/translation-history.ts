@@ -66,7 +66,14 @@ export type UndoPlan =
  * Words that shipped go back as a restore, and a language that said nothing
  * loses what the site wrote into it.
  */
-export function undoOps(ref: LineRef, line: Line, rows: LineRow[], snapshot: HistorySnapshot, sourceLocale: string): UndoPlan {
+export function undoOps(
+    ref: LineRef,
+    line: Line,
+    rows: LineRow[],
+    snapshot: HistorySnapshot,
+    sourceLocale: string,
+    sitePlaceholders: ReadonlySet<string>,
+): UndoPlan {
     const ops: EditOp[] = [];
     const changes: FlagChange[] = [];
     for (const [locale, before] of Object.entries(snapshot.locales)) {
@@ -78,7 +85,7 @@ export function undoOps(ref: LineRef, line: Line, rows: LineRow[], snapshot: His
                 }
             }
         } else if (before.isCustom) {
-            const refusal = checkMessageEdit(measureOf(line, locale, sourceLocale), before.value);
+            const refusal = checkMessageEdit(measureOf(line, locale, sourceLocale), before.value, sitePlaceholders);
             if (refusal) return { refusal: { code: `translation_${refusal.reason}`, locale, names: refusal.names ?? [] } };
             ops.push(...editOps(ref, line.owner, rows, locale, before.value));
         } else {

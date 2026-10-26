@@ -1090,6 +1090,7 @@
     "translations_saved": "Salvestatud.",
     "translations_search": "Otsi võtit või selle sisu järgi",
     "translations_shipsAs": "Kaasas kujul: {value}",
+    "translations_preview": "Külastajad loevad: {text}",
     "translations_title": "Tõlked",
     "updates_available": "Versioon {version} on saadaval",
     "updates_confirmMessage": "Sait läheb hooldusrežiimi, tehakse andmebaasi varukoopia ja rakendus taaskäivitub uue versiooniga. Kui mooduleid on paigaldatud, võib taaskäivitus võtta mitu minutit.",
@@ -1353,6 +1354,7 @@
     "placeholder_list": "Selle saidi kohatäited",
     "placeholder_noValue": "praegu väärtus puudub",
     "placeholder_unknown": "Miski sellel saidil ei vasta kohatäitele {names}, külastaja näeb seal kriipsu.",
+    "placeholder_refused": "Miski sellel saidil ei vasta kohatäitele {names}, nii tekst ei salvestu.",
     "placeholder_site_name": "Saidi nimi"
   },
   "footer": {

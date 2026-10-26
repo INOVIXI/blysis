@@ -55,6 +55,11 @@ export async function placeholderSources(): Promise<PlaceholderSource[]> {
     return [...CORE_PLACEHOLDERS, ...ModulePlaceholders.filter((source) => isEnabledIn(states, source.module))];
 }
 
+/** The names an edit to the site's words may use: what this install answers. */
+export async function placeholderNames(): Promise<Set<string>> {
+    return new Set((await placeholderSources()).map((source) => source.name));
+}
+
 /** Said once per process: a broken handler would otherwise log every page. */
 const reported = new Set<string>();
 

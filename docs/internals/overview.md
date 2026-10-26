@@ -28,11 +28,12 @@ They do not import each other. A module that has something to say emits a hook (
 
 ## Site placeholders
 
-A module can also publish a live value for anyone writing for the site: `placeholders` in its manifest, each answered by a handler and written `{<module>.<name>}`, core's own under `site`. The generator lists them, `src/core/lib/placeholders.ts` asks them through the cache, and the page fills them in a theme's marked text settings and in a block's words. Three things are easy to get wrong:
+A module can also publish a live value for anyone writing for the site: `placeholders` in its manifest, each answered by a handler and written `{<module>.<name>}`, core's own under `site`. The generator lists them, `src/core/lib/placeholders.ts` asks them through the cache, and the page fills them in a theme's marked text settings, in a block's words and in the site's own translations. Four things are easy to get wrong:
 
 - A value is public. The handler is called with no session and every visitor sees its answer, so it never answers about whoever is asking.
 - The dot is what separates these from an event's blanks, `{player}` in a delivery command or a Discord message. Those are filled by the module sending the event and escaped for where it goes; they are not site placeholders and do not become them.
 - The root layout waits only 200 ms for the values. One that is not ready is fetched by the browser from `/api/v1/placeholders` after the page paints, so a slow handler costs its own value a moment and never the page.
+- The translation catalogue is filled on the server, after the cached catalogue is read and never into it, each value quoted so the message formatter prints it as text. The browser's second ask does not reach it: a value that was not ready shows its fallback in a translated string until the next page.
 
 ## Compiled, not loaded
 

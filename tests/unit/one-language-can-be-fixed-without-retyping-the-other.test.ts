@@ -58,6 +58,9 @@ vi.mock("@/core/lib/i18n/shipped-value", () => ({
         key === "known" ? "{count} orders" : null,
 }));
 
+// The site placeholders this install answers: an edit may name these.
+vi.mock("@/core/lib/placeholders", () => ({ placeholderNames: async () => new Set(["servers.online"]) }));
+
 import { PATCH } from "@/app/api/v1/admin/translations/route";
 
 interface Answer {
@@ -101,6 +104,18 @@ describe("saving one string", () => {
         expect(answer.body.code).toBe("translation_new_placeholder");
         expect(answer.body.details).toEqual({ locale: "en", names: ["total"] });
         expect(translation.upsert).not.toHaveBeenCalled();
+    });
+
+    it("takes a live value this site answers", async () => {
+        const answer = await save({ en: "{count} orders, {servers.online} online" });
+        expect(answer.status).toBe(200);
+    });
+
+    it("refuses a live value nothing on this site answers, by its name", async () => {
+        const answer = await save({ en: "{count} orders, {servers.onlin} online" });
+        expect(answer.status).toBe(400);
+        expect(answer.body.code).toBe("translation_new_placeholder");
+        expect(answer.body.details?.names).toEqual(["servers.onlin"]);
     });
 
     it("refuses a brace that closes nothing, and says so by name", async () => {

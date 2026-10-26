@@ -39,6 +39,7 @@ Some of a theme's texts, such as its hero headline or a tile in its row of numbe
 
 - A value with nothing to show, such as players online when no game server can be reached, appears as a dash. To show your own words instead, add them after a bar: `{servers.online|a few}`.
 - If the text names something your site does not offer, for example after you remove a module, the settings screen names it under the text.
+- The site's own words take them too. In **Admin > Translations**, click into a text and **Insert placeholder** appears under it; a text that names one shows what visitors read now. A name your site does not offer is refused when you save.
 
 ### The shop, articles, topics and profiles
 

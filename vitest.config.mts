@@ -114,7 +114,7 @@ export default defineConfig({
             thresholds: {
                 statements: 91,
                 branches: 86,
-                functions: 91,
+                functions: 92,
                 lines: 92,
                 'src/core/lib/permissions.ts': {
                     statements: 85, branches: 90, functions: 72, lines: 80,

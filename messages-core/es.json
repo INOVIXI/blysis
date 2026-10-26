@@ -1090,6 +1090,7 @@
     "translations_saved": "Guardado.",
     "translations_search": "Busca una clave o su texto",
     "translations_shipsAs": "Incluido como: {value}",
+    "translations_preview": "Los visitantes leen: {text}",
     "translations_title": "Traducciones",
     "updates_available": "La versión {version} está disponible",
     "updates_confirmMessage": "El sitio pasará a mantenimiento, se hará una copia de seguridad de la base de datos y la aplicación se reiniciará con la nueva versión. Con módulos instalados, el reinicio puede tardar varios minutos.",
@@ -1353,6 +1354,7 @@
     "placeholder_list": "Los marcadores de este sitio",
     "placeholder_noValue": "sin valor ahora mismo",
     "placeholder_unknown": "Nada en este sitio responde a {names}, así que los visitantes ven un guion.",
+    "placeholder_refused": "Nada en este sitio responde a {names}, así que el texto no se guardará.",
     "placeholder_site_name": "Nombre del sitio"
   },
   "footer": {

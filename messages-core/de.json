@@ -1090,6 +1090,7 @@
     "translations_saved": "Gespeichert.",
     "translations_search": "Schlüssel oder Text suchen",
     "translations_shipsAs": "Ausgeliefert als: {value}",
+    "translations_preview": "Besucher lesen: {text}",
     "translations_title": "Übersetzungen",
     "updates_available": "Version {version} ist verfügbar",
     "updates_confirmMessage": "Die Seite geht in den Wartungsmodus, ein Datenbank-Backup wird erstellt, und die App startet mit der neuen Version neu. Bei installierten Modulen kann der Neustart mehrere Minuten dauern.",
@@ -1353,6 +1354,7 @@
     "placeholder_list": "Die Platzhalter dieser Seite",
     "placeholder_noValue": "derzeit kein Wert",
     "placeholder_unknown": "Auf dieser Seite beantwortet nichts {names}, Besucher sehen dort einen Strich.",
+    "placeholder_refused": "Auf dieser Seite beantwortet nichts {names}, so lässt sich der Text nicht speichern.",
     "placeholder_site_name": "Seitenname"
   },
   "footer": {

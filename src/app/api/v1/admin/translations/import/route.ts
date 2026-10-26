@@ -13,6 +13,7 @@ import { activeThemeId, invalidateTranslationCache } from "@/core/lib/i18n/trans
 import { MAX_FILE_STRINGS, wordsFileSchema } from "@/core/lib/i18n/words-file";
 import { checkMessageEdit } from "@/core/lib/message-edit";
 import { isAdmin } from "@/core/lib/permissions";
+import { placeholderNames } from "@/core/lib/placeholders";
 
 /**
  * A file of the site's words, read back in.
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
     const entries = [...new Map(words.data.strings.map((e) => [`${e.namespace}\u0000${e.key}\u0000${e.locale}`, e])).values()];
     const refs = [...new Map(entries.map((e) => [refName(e), { namespace: e.namespace, key: e.key }])).values()];
     const themeId = await activeThemeId();
-    const rows = await lineRows(refs, themeId);
+    const [rows, sitePlaceholders] = await Promise.all([lineRows(refs, themeId), placeholderNames()]);
     const byRef = new Map<string, LineRow[]>();
     for (const row of rows) byRef.set(refName(row), [...(byRef.get(refName(row)) ?? []), row]);
 
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
             same += 1;
             return [];
         }
-        const refusal = checkMessageEdit(measureOf(line, entry.locale, defaultLocale), entry.value);
+        const refusal = checkMessageEdit(measureOf(line, entry.locale, defaultLocale), entry.value, sitePlaceholders);
         return [{
             namespace: entry.namespace,
             key: entry.key,

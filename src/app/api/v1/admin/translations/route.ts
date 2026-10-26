@@ -25,6 +25,7 @@ import {
 import { activeThemeId, invalidateTranslationCache } from "@/core/lib/i18n/translation-service";
 import { MAX_MESSAGE_LENGTH, checkMessageEdit } from "@/core/lib/message-edit";
 import { isAdmin } from "@/core/lib/permissions";
+import { placeholderNames } from "@/core/lib/placeholders";
 import { prismaErrorOrThrow } from "@/core/lib/prisma-errors";
 
 /**
@@ -192,7 +193,7 @@ export async function PATCH(request: NextRequest) {
     const ref = { namespace, key };
 
     const themeId = await activeThemeId();
-    const rows = await lineRows([ref], themeId);
+    const [rows, sitePlaceholders] = await Promise.all([lineRows([ref], themeId), placeholderNames()]);
     // A string nothing has a row for is no string of this site's; writing
     // one would invent a key no page asks for.
     if (rows.length === 0) return apiError("No such string", 404, { code: "translation_not_found" });
@@ -208,7 +209,7 @@ export async function PATCH(request: NextRequest) {
         // gone - an uninstalled module, a key dropped in an upgrade - and a
         // language nothing ships yet is measured against the one everything
         // is translated from, so a first translation may use its values.
-        const refusal = checkMessageEdit(measureOf(line, locale, SOURCE_LOCALE), typed);
+        const refusal = checkMessageEdit(measureOf(line, locale, SOURCE_LOCALE), typed, sitePlaceholders);
         if (refusal) {
             return apiError("The string was not saved", 400, {
                 code: `translation_${refusal.reason}`,

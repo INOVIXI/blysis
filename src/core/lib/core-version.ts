@@ -12,6 +12,11 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.31.0 - a site placeholder reaches the site's own words. The translation
+ * catalogue a page is given has each `{module.name}` token filled, and
+ * `fillPlaceholderText` takes an optional `quote` that wraps whatever
+ * replaces a token, for text read again as syntax. Additive.
+ *
  * 5.30.0 - a module's footer link names its own section. `section` in a
  * `footerLinks` entry is any lowercase word rather than `quick` or `legal`,
  * and `sectionLabelKey` is a `footer` key the module ships for the column's
@@ -717,4 +722,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.30.0";
+export const CORE_API_VERSION = "5.31.0";

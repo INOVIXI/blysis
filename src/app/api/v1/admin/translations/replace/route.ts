@@ -12,6 +12,7 @@ import { type LineRef, editCalls, editOps, heardBy, lineOf, lineRows } from "@/c
 import { activeThemeId, invalidateTranslationCache } from "@/core/lib/i18n/translation-service";
 import { checkMessageEdit } from "@/core/lib/message-edit";
 import { isAdmin } from "@/core/lib/permissions";
+import { placeholderNames } from "@/core/lib/placeholders";
 
 /**
  * One word replaced in every string the site says it in, one language at a
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
     const seen = refs.slice(0, MAX_MATCHES);
     // Every language of each string, since a change in this one asks the
     // others to follow it.
-    const rows = await lineRows(seen, themeId);
+    const [rows, sitePlaceholders] = await Promise.all([lineRows(seen, themeId), placeholderNames()]);
 
     const matches = seen.flatMap((ref) => {
         const line = lineOf(ref, rows, [locale]);
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
         // A row beneath the theme's wording says the word; the site does not.
         if (!said?.value?.includes(find)) return [];
         const after = said.value.split(find).join(replace);
-        const refusal = checkMessageEdit(said.shipped ?? said.value, after);
+        const refusal = checkMessageEdit(said.shipped ?? said.value, after, sitePlaceholders);
         return [{
             namespace: ref.namespace,
             key: ref.key,

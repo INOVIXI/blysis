@@ -1,3 +1,5 @@
+import { fillPlaceholderText, placeholderTokens } from "@/core/lib/placeholder-text";
+
 /**
  * Judging an operator's edit to a message before it is stored.
  *
@@ -194,19 +196,41 @@ export function readPlaceholders(message: string): MessageReading {
 }
 
 /**
+ * A site placeholder, `{servers.online}`, reads to the formatter as a blank
+ * with a name it does not accept. The catalogue fills each one before the
+ * formatter sees it (`withLiveValues`), so it is set aside here as the
+ * plain text it becomes.
+ */
+function withoutSitePlaceholders(message: string): string {
+    return fillPlaceholderText(message, {}, String, () => "x");
+}
+
+/**
  * Null when the edit may be stored, a refusal naming the problem when not.
  * The caller stores the trimmed string; the surrounding whitespace is ignored
- * here for the same reason.
+ * here for the same reason. `sitePlaceholders` are the site placeholders
+ * this install answers: an edit may name any of them, and one the shipped
+ * string already named, but no other, since a typo would show its fallback
+ * to every visitor and nobody would be told.
  */
-export function checkMessageEdit(shipped: string, typed: string): EditRefusal | null {
+export function checkMessageEdit(
+    shipped: string,
+    typed: string,
+    sitePlaceholders: ReadonlySet<string> = new Set(),
+): EditRefusal | null {
     const text = typed.trim();
     if (text === "") return { reason: "empty" };
     if (text.length > MAX_MESSAGE_LENGTH) return { reason: "too_long" };
 
-    const after = readPlaceholders(text);
-    if (!after.wellFormed) return { reason: "malformed" };
+    const shippedTokens = new Set(placeholderTokens(shipped).map((token) => token.name));
+    const unanswered = [...new Set(placeholderTokens(text).map((token) => token.name))]
+        .filter((name) => !sitePlaceholders.has(name) && !shippedTokens.has(name));
 
-    const before = readPlaceholders(shipped);
+    const after = readPlaceholders(withoutSitePlaceholders(text));
+    if (!after.wellFormed) return { reason: "malformed" };
+    if (unanswered.length > 0) return { reason: "new_placeholder", names: unanswered.sort() };
+
+    const before = readPlaceholders(withoutSitePlaceholders(shipped));
     // A shipped string a formatter would reject cannot say what an edit is
     // allowed to name, and refusing on its account would make the one screen
     // that can repair it the one screen that will not.

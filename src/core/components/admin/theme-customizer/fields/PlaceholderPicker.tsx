@@ -22,8 +22,11 @@ interface Listed {
  * One request for every field on the screen: the list is the site's, not the
  * field's. A label is a key in the panel's translations, a module's under its
  * own `admin` keys, translated here as the sidebar translates a menu entry.
+ *
+ * A token nothing answers is shown as a dash in a theme's text, and refused
+ * outright in a translation, whose `refuses` says so instead.
  */
-export function PlaceholderPicker({ text, onPick }: { text: string; onPick: (token: string) => void }) {
+export function PlaceholderPicker({ text, onPick, refuses = false }: { text: string; onPick: (token: string) => void; refuses?: boolean }) {
     const t = useTranslations("admin");
     const format = useFormatter();
     const listId = useId();
@@ -60,7 +63,9 @@ export function PlaceholderPicker({ text, onPick }: { text: string; onPick: (tok
                             >
                                 <span className="min-w-0">
                                     <span className="block text-foreground">{t.has(p.labelKey) ? t(p.labelKey) : p.name}</span>
-                                    <code className="block text-xs text-muted-foreground">{`{${p.name}}`}</code>
+                                    {/* Not `code`: dark mode paints every one of those as a
+                                        block of muted colour, which light mode does not. */}
+                                    <span className="block font-mono text-xs text-muted-foreground">{`{${p.name}}`}</span>
                                 </span>
                                 <span className="shrink-0 text-muted-foreground">{shown(p.value)}</span>
                             </button>
@@ -69,7 +74,7 @@ export function PlaceholderPicker({ text, onPick }: { text: string; onPick: (tok
                 </ul>
             )}
             {unknown.length > 0 && (
-                <p className="text-xs text-warning">{t("placeholder_unknown", { names: unknown.map((name) => `{${name}}`).join(", ") })}</p>
+                <p className="text-xs text-warning">{t(refuses ? "placeholder_refused" : "placeholder_unknown", { names: unknown.map((name) => `{${name}}`).join(", ") })}</p>
             )}
         </div>
     );

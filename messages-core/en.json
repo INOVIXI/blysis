@@ -1090,6 +1090,7 @@
     "translations_saved": "Saved.",
     "translations_search": "Search a key or what it says",
     "translations_shipsAs": "Ships as: {value}",
+    "translations_preview": "Visitors read: {text}",
     "translations_title": "Translations",
     "updates_available": "Version {version} is available",
     "updates_confirmMessage": "The site goes into maintenance, a database backup is taken, and the app restarts on the new version. With modules installed the restart can take several minutes.",
@@ -1353,6 +1354,7 @@
     "placeholder_list": "The placeholders this site answers",
     "placeholder_noValue": "no value right now",
     "placeholder_unknown": "Nothing on this site answers {names}, so visitors see a dash there.",
+    "placeholder_refused": "Nothing on this site answers {names}, so the text will not save with it.",
     "placeholder_site_name": "Site name"
   },
   "footer": {

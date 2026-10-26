@@ -11,6 +11,7 @@ import { HISTORY_RESOURCE, historyCall, historyId, parseSnapshot, undoOps } from
 import { editCalls, lineFlags, lineOf, lineRows } from "@/core/lib/i18n/translation-lines";
 import { activeThemeId, invalidateTranslationCache } from "@/core/lib/i18n/translation-service";
 import { isAdmin } from "@/core/lib/permissions";
+import { placeholderNames } from "@/core/lib/placeholders";
 import { prismaErrorOrThrow } from "@/core/lib/prisma-errors";
 
 /**
@@ -86,10 +87,10 @@ export async function POST(request: NextRequest) {
     const split = version.resourceId.indexOf(":");
     const ref = { namespace: version.resourceId.slice(0, split), key: version.resourceId.slice(split + 1) };
     const themeId = await activeThemeId();
-    const [rows, flags] = await Promise.all([lineRows([ref], themeId), lineFlags([ref], locales)]);
+    const [rows, flags, sitePlaceholders] = await Promise.all([lineRows([ref], themeId), lineFlags([ref], locales), placeholderNames()]);
     const line = lineOf(ref, rows, locales, flags);
 
-    const plan = undoOps(ref, line, rows, snapshot, defaultLocale);
+    const plan = undoOps(ref, line, rows, snapshot, defaultLocale, sitePlaceholders);
     if ("refusal" in plan) {
         return apiError("The version was not put back", 400, {
             code: plan.refusal.code,

@@ -1090,6 +1090,7 @@
     "translations_saved": "Yadda saxlanıldı.",
     "translations_search": "Açarı və ya onun mənasını axtarın",
     "translations_shipsAs": "Təqdim olunan: {value}",
+    "translations_preview": "Ziyarətçilər bunu oxuyur: {text}",
     "translations_title": "Tərcümələr",
     "updates_available": "{version} versiyası mövcuddur",
     "updates_confirmMessage": "Sayt texniki iş rejiminə keçəcək, verilənlər bazasının ehtiyat nüsxəsi alınacaq və tətbiq yeni versiyada yenidən başlayacaq. Modullar quraşdırılıbsa, yenidənbaşlatma bir neçə dəqiqə çəkə bilər.",
@@ -1353,6 +1354,7 @@
     "placeholder_list": "Bu saytın yer tutucuları",
     "placeholder_noValue": "hazırda dəyər yoxdur",
     "placeholder_unknown": "Bu saytda {names} üçün cavab yoxdur, ziyarətçi orada tire görür.",
+    "placeholder_refused": "Bu saytda {names} üçün cavab yoxdur, mətn bununla yadda saxlanılmır.",
     "placeholder_site_name": "Sayt adı"
   },
   "footer": {

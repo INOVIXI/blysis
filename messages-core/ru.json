@@ -1090,6 +1090,7 @@
     "translations_saved": "Сохранено.",
     "translations_search": "Поиск по ключу или тексту",
     "translations_shipsAs": "Поставляется как: {value}",
+    "translations_preview": "Посетители видят: {text}",
     "translations_title": "Переводы",
     "updates_available": "Доступна версия {version}",
     "updates_confirmMessage": "Сайт перейдёт в режим обслуживания, будет создана резервная копия базы данных, а приложение перезапустится на новой версии. Если установлены модули, перезапуск может занять несколько минут.",
@@ -1353,6 +1354,7 @@
     "placeholder_list": "Подстановки этого сайта",
     "placeholder_noValue": "сейчас нет значения",
     "placeholder_unknown": "На этом сайте ничто не отвечает на {names}, посетители увидят там прочерк.",
+    "placeholder_refused": "На этом сайте ничто не отвечает на {names}, поэтому текст не сохранится.",
     "placeholder_site_name": "Название сайта"
   },
   "footer": {

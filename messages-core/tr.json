@@ -1090,6 +1090,7 @@
     "translations_saved": "Kaydedildi.",
     "translations_search": "Anahtar veya metin ara",
     "translations_shipsAs": "Ürünle gelen: {value}",
+    "translations_preview": "Ziyaretçiler şunu okur: {text}",
     "translations_title": "Çeviriler",
     "updates_available": "{version} sürümü yayınlandı",
     "updates_confirmMessage": "Site bakım moduna alınır, veritabanının yedeği alınır ve uygulama yeni sürümle yeniden başlar. Modüller kuruluysa yeniden başlama birkaç dakika sürebilir.",
@@ -1353,6 +1354,7 @@
     "placeholder_list": "Bu sitenin yer tutucuları",
     "placeholder_noValue": "şu an değer yok",
     "placeholder_unknown": "Bu sitede {names} karşılığı yok, ziyaretçi orada bir çizgi görür.",
+    "placeholder_refused": "Bu sitede {names} karşılığı yok, metin bununla kaydedilmez.",
     "placeholder_site_name": "Site adı"
   },
   "footer": {

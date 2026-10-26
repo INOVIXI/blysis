@@ -13,6 +13,7 @@
  */
 
 import { prisma } from "@/core/lib/db";
+import { withLiveValues } from "@/core/lib/i18n/catalogue-placeholders";
 import { shippedMessages } from "@/core/lib/i18n/shipped-messages";
 import { sortByVoice } from "@/core/lib/i18n/translation-layers";
 import { defaultThemeId } from "@/core/generated/theme-registry";
@@ -39,10 +40,16 @@ export async function activeThemeId(): Promise<string> {
 }
 
 /**
- * Get the full nested message object for a locale.
+ * Get the full nested message object for a locale, with the site
+ * placeholders its strings name filled with what they say now.
  * Called by next-intl's `getRequestConfig` on every request.
  */
 export async function getMessages(locale: string): Promise<Record<string, unknown>> {
+    return withLiveValues(await storedMessages(locale), locale);
+}
+
+/** The merged catalogue as it is cached: tokens still as the site wrote them. */
+async function storedMessages(locale: string): Promise<Record<string, unknown>> {
     const cacheKey = CACHE_PREFIX + locale;
 
     // 1. Try cache

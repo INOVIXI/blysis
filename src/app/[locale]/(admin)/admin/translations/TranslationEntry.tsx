@@ -1,14 +1,17 @@
 "use client";
 
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Check, History, Loader2, RotateCcw, Save } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { PlaceholderPicker } from "@/core/components/admin/theme-customizer/fields/PlaceholderPicker";
 import { Badge } from "@/core/components/ui/badge";
 import { Button } from "@/core/components/ui/button";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Textarea } from "@/core/components/ui/textarea";
+import { usePlaceholderFill } from "@/core/hooks/usePlaceholder";
 import { localeNames, locales, type Locale } from "@/core/lib/i18n/config";
 import { moduleName } from "@/core/lib/module-label";
+import { placeholderTokens } from "@/core/lib/placeholder-text";
 import { TranslationHistory } from "./TranslationHistory";
 
 /**
@@ -43,6 +46,11 @@ import { TranslationHistory } from "./TranslationHistory";
  * side, or a change in another language since this one was written. Each
  * notice carries its two answers, and the history holds the way back from
  * any change.
+ *
+ * A string may say a live value, `{servers.online}`, as a theme's texts can.
+ * The picker to insert one appears once the box is in use, rather than fifty
+ * times down a page nobody is typing in, and a string that names one says
+ * underneath what a visitor reads now.
  */
 
 export interface EntryLocale {
@@ -116,11 +124,22 @@ export function TranslationEntry({ entry, labelOf, source, target, onSave, onRes
     const [draft, setDraft] = useState(() => draftOf(entry, target));
     const [busy, setBusy] = useState<Action | null>(null);
     const [showHistory, setShowHistory] = useState(false);
+    const [engaged, setEngaged] = useState(false);
+    const box = useRef<HTMLTextAreaElement>(null);
+    const fill = usePlaceholderFill();
 
     // A page of keys is replaced wholesale when the filter or the page moves,
     // so the boxes follow the row they belong to rather than keeping what was
     // typed into the row that used to be in this position.
     useEffect(() => setDraft(draftOf(entry, target)), [entry, target]);
+
+    const typed = draft[target] ?? "";
+    // Where the caret is, or at the end when the box lost it.
+    const insert = (token: string) => {
+        const start = box.current?.selectionStart ?? typed.length;
+        const end = box.current?.selectionEnd ?? start;
+        setDraft({ [target]: typed.slice(0, start) + token + typed.slice(end) });
+    };
 
     const saved = draftOf(entry, target);
     const dirty = draft[target] !== saved[target];
@@ -239,17 +258,25 @@ export function TranslationEntry({ entry, labelOf, source, target, onSave, onRes
                             {localeNames[target]}
                         </label>
                         <Textarea
+                            ref={box}
                             id={boxId}
                             rows={2}
-                            value={draft[target] ?? ""}
+                            value={typed}
                             placeholder={shipped ?? t("translations_missing")}
+                            onFocus={() => setEngaged(true)}
                             onChange={(event) => setDraft({ [target]: event.target.value })}
                         />
+                        {placeholderTokens(typed).length > 0 ? (
+                            <p className="text-xs text-muted-foreground break-words">
+                                {t("translations_preview", { text: fill(typed) })}
+                            </p>
+                        ) : null}
                         {shipped !== null && shipped !== (state?.value ?? "") ? (
                             <p className="text-xs text-muted-foreground break-words">
                                 {t("translations_shipsAs", { value: shipped })}
                             </p>
                         ) : null}
+                        {engaged ? <PlaceholderPicker text={typed} onPick={insert} refuses /> : null}
                     </div>
                 </div>
 
