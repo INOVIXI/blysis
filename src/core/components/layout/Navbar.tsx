@@ -4,7 +4,7 @@ import { Link } from "@/core/lib/i18n/navigation";
 import { ChevronDown } from "lucide-react";
 import { NavIcon } from "@/core/components/ui/NavIcon";
 import { useTranslations } from "next-intl";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type CSSProperties } from "react";
 import { SiteMark, SiteName } from "@/core/components/ui/site-name";
 import { useNavLinks } from "@/core/hooks/useNavLinks";
 import { Slot } from "@/core/components/Slot";
@@ -16,9 +16,35 @@ import { NavbarActions } from "@/core/components/layout/NavbarActions";
 // were here first.
 export { INLINE_NAV_LINKS } from "@/core/lib/navbar-links";
 
+/**
+ * Where a bar's menu hangs: its transparent top starts on the trigger's
+ * bottom edge, a pixel or two up so no rounding parts them, and its card
+ * starts just under the bar.
+ *
+ * The bar's menus hang from the bar rather than their trigger, because the
+ * nav clips what it holds, and a strip between the trigger and the panel
+ * belonged to neither: crossing it left the item and shut the menu before
+ * the pointer reached a link. A fixed reach of three quarters of a rem
+ * closed the strip on core's 48px bar and left 6px of it on a theme's 68px
+ * one, so the reach is measured from where the trigger is.
+ * `tests/e2e/a-menu-stays-open-on-the-way-into-it.spec.ts`.
+ */
+function hangBelow(trigger: HTMLElement, bar: HTMLElement | null): CSSProperties | undefined {
+    if (!bar) return undefined;
+    const box = bar.getBoundingClientRect();
+    const top = trigger.getBoundingClientRect().bottom - box.top - bar.clientTop - 2;
+    return { top, paddingTop: Math.max(0, bar.clientHeight - top) + 4 };
+}
+
 function DefaultNavbar() {
     const t = useTranslations('nav');
     const [navDropdown, setNavDropdown] = useState<string | null>(null);
+    const barRef = useRef<HTMLDivElement>(null);
+    const [hang, setHang] = useState<CSSProperties>();
+    const openMenu = (label: string, trigger: HTMLElement) => {
+        setHang(hangBelow(trigger, barRef.current));
+        setNavDropdown(label);
+    };
 
     const { links: navLinks, arranged: adminConfigured, isActive } = useNavLinks();
 
@@ -77,7 +103,7 @@ function DefaultNavbar() {
                 {/* `relative` is what the nav's dropdowns hang from: the nav
                     clips its second line, and a panel positioned inside it
                     would be clipped with it. */}
-                <div className="relative flex items-center justify-between h-12 gap-2">
+                <div ref={barRef} className="relative flex items-center justify-between h-12 gap-2">
                     {/* A phone gets the whole list through here, not the
                         eight that fit the bar: see MobileMenu. */}
                     <div className="sm:hidden flex items-center gap-1 min-w-0">
@@ -116,21 +142,22 @@ function DefaultNavbar() {
                                     // horizontal place from here and its top
                                     // from the bar, outside the clip.
                                     <div key={link.label} data-nav-item inert={clipped}
-                                        onMouseEnter={() => setNavDropdown(link.label)}
+                                        onMouseEnter={(e) => openMenu(link.label, e.currentTarget.querySelector("button") ?? e.currentTarget)}
                                         onMouseLeave={() => setNavDropdown(null)}
                                     >
                                         <button
                                             type="button"
                                             aria-haspopup="menu"
                                             aria-expanded={navDropdown === link.label}
-                                            onClick={() => setNavDropdown(navDropdown === link.label ? null : link.label)}
+                                            onClick={(e) => (navDropdown === link.label ? setNavDropdown(null) : openMenu(link.label, e.currentTarget))}
                                             onKeyDown={(e) => {
                                                 // Hover was the only way in, so the trigger took
                                                 // focus and did nothing: every folded link was
                                                 // unreachable without a mouse.
                                                 if (e.key === "Enter" || e.key === " ") {
                                                     e.preventDefault();
-                                                    setNavDropdown(navDropdown === link.label ? null : link.label);
+                                                    if (navDropdown === link.label) setNavDropdown(null);
+                                                    else openMenu(link.label, e.currentTarget);
                                                 } else if (e.key === "Escape") {
                                                     setNavDropdown(null);
                                                 }
@@ -142,14 +169,8 @@ function DefaultNavbar() {
                                             <ChevronDown className={`w-3 h-3 transition-transform ${navDropdown === link.label ? "rotate-180" : ""}`} />
                                         </button>
                                         {navDropdown === link.label && (
-                                            // Hung from the bar, the panel began 8px below the
-                                            // trigger's bottom edge, and the pointer crossing
-                                            // that strip left the item and shut the menu before
-                                            // it reached a link. Its transparent top padding now
-                                            // reaches up over the trigger, so the way down never
-                                            // leaves the item; the card itself sits where it
-                                            // did. `tests/e2e/a-menu-stays-open-on-the-way-into-it.spec.ts`.
-                                            <div className="absolute top-[calc(100%-0.75rem)] pt-4 z-50">
+                                            // `hangBelow` says where.
+                                            <div className="absolute top-full pt-1 z-50" style={hang}>
                                                 <div className="w-52 bg-card border border-[var(--color-border)] rounded-lg shadow-lg py-1 animate-fade-in">
                                                     {link.children.map((child: { label: string; href: string; icon?: string }) => (
                                                         <Link key={child.href} href={child.href}
