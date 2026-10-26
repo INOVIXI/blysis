@@ -37,6 +37,11 @@ const PUBLIC_KEYS = [
     "identity_requires_password",
     "site_email",
     "site_discord_url",
+    // Which languages the footer offers a visitor, and which the site opens
+    // in. The proxy keeps a visitor out of the others either way; this stops
+    // the picker offering a language that would only redirect.
+    "site_languages",
+    "default_locale",
     // Rendered by the footer. Core hardcodes no column at all: the headings,
     // the links and which module section each column adopts are the
     // operator's, in `footer_columns`. The two older keys stay on the list

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ensureHooks } from "@/core/lib/hooks-bootstrap";
 import { z } from "zod";
+import { locales } from "@/core/lib/i18n/config";
 import fs from "fs/promises";
 import path from "path";
 import { execFileSync } from "child_process";
@@ -51,7 +52,9 @@ const setupSchema = z.object({
     site: z.object({
         siteName: z.string().min(1).max(100),
         siteDescription: z.string().max(500).optional().default(""),
-        defaultLocale: z.string().min(2).max(5),
+        // A language the software ships, or the site would be told to open
+        // in one the proxy cannot serve.
+        defaultLocale: z.enum(locales),
     }),
     theme: z.string().min(1).max(50),
     // 50, not 20: the largest preset plus manual additions plus everything

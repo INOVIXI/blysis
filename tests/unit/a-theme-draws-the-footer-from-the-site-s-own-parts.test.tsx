@@ -96,6 +96,12 @@ describe("the language a visitor reads in", () => {
         act(() => result.current.choose("tr"));
         expect(state.replace).toHaveBeenCalledWith("/store", { locale: "tr" });
     });
+
+    it("offers only the languages the operator offers", () => {
+        state.settings = { site_languages: ["tr", "en"], default_locale: "tr" };
+        const { result } = renderHook(() => useLanguageChoice(), { wrapper });
+        expect(result.current.options.map((o) => o.value)).toEqual(["en", "tr"]);
+    });
 });
 
 describe("the footer a theme draws", () => {

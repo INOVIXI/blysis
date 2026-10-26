@@ -81,6 +81,9 @@ export const CORE_ADMIN_SCREENS: AdminScreen[] = [
     // category or the department being edited, not in a page of abstractions.
 
     { path: "/settings", permission: "admin.settings" },
+    // Which languages the site offers is a decision about the site, not a
+    // word in it, so it is opened with the settings rather than the wording.
+    { path: "/languages", permission: "admin.settings" },
     { path: "/settings/general", permission: "admin.settings" },
     { path: "/settings/site", permission: "admin.settings" },
     { path: "/settings/maintenance", permission: "admin.settings" },

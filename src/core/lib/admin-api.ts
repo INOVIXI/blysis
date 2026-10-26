@@ -32,6 +32,7 @@ export const API_DISPATCHER = "/v1/[...path]";
 export const CORE_ADMIN_API: AdminApiRoute[] = [
     // Configuration of the installation.
     { path: "/v1/settings", permission: "admin.settings" },
+    { path: "/v1/admin/languages", permission: "admin.settings" },
     { path: "/v1/admin/maintenance", permission: "admin.settings" },
     { path: "/v1/admin/rate-limits", permission: "admin.settings" },
     { path: "/v1/admin/alerting", permission: "admin.settings" },

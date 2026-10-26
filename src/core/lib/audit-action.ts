@@ -64,6 +64,7 @@ const CORE_AUDIT_NAMES: Record<string, string> = {
     "theme.customization.update": "auditThemeCustomizationUpdate",
     "theme.install": "auditThemeInstall",
     "theme.state.update": "auditThemeStateUpdate",
+    "languages.update": "auditLanguagesUpdate",
     "translation.edit": "auditTranslationEdit",
     "translation.revert": "auditTranslationRevert",
     "translation.replace": "auditTranslationReplace",

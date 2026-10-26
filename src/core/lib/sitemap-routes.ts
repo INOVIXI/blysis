@@ -1,4 +1,5 @@
-import { locales, defaultLocale, type Locale } from "@/core/lib/i18n/config";
+import { locales, type Locale } from "@/core/lib/i18n/config";
+import { type SiteLanguages, siteLanguagesOf } from "@/core/lib/i18n/site-languages";
 
 /**
  * What the sitemap and robots.txt agree to publish.
@@ -21,7 +22,14 @@ import { locales, defaultLocale, type Locale } from "@/core/lib/i18n/config";
  * URL in it a redirect, and robots.txt disallowed bare `/admin`, `/auth` and
  * `/profile`, which are prefixes no crawlable URL on this site begins with. It
  * blocked nothing. Both are built from `localizedPaths` now.
+ *
+ * A path is published in the languages the site offers, and `x-default`
+ * names the one it opens in: a sitemap that listed all twelve sent crawlers
+ * to pages the site redirects away from.
  */
+
+/** Every language the software ships, opening in its own; what a caller that knows no better gets. */
+const EVERY_LANGUAGE = siteLanguagesOf(undefined, undefined);
 
 /** Path prefixes robots.txt tells crawlers to skip. */
 export const DISALLOWED_PREFIXES = ["/admin", "/api", "/auth", "/profile"] as const;
@@ -39,13 +47,13 @@ export const CORE_STATIC_ROUTES: CoreStaticRoute[] = [
 ];
 
 /**
- * The same path under every locale the site serves, in `locales` order.
+ * The same path under every language the site offers, in `locales` order.
  *
  * The home page is `/en`, not `/en/`: a trailing slash would be a second URL
  * for the same page and Next redirects it away.
  */
-export function localizedPaths(path: string): string[] {
-    return locales.map((locale) => localizedPath(path, locale));
+export function localizedPaths(path: string, site: SiteLanguages = EVERY_LANGUAGE): string[] {
+    return site.offered.map((locale) => localizedPath(path, locale));
 }
 
 export function localizedPath(path: string, locale: Locale | string): string {
@@ -53,13 +61,14 @@ export function localizedPath(path: string, locale: Locale | string): string {
 }
 
 /**
- * `hreflang` alternates for one path: every locale, plus the `x-default` that
- * tells a crawler which one to show a visitor whose language matches none.
+ * `hreflang` alternates for one path: every language offered, plus the
+ * `x-default` that tells a crawler which one to show a visitor whose
+ * language matches none.
  */
-export function localeAlternates(siteUrl: string, path: string): Record<string, string> {
+export function localeAlternates(siteUrl: string, path: string, site: SiteLanguages = EVERY_LANGUAGE): Record<string, string> {
     const languages: Record<string, string> = {};
-    for (const locale of locales) languages[locale] = `${siteUrl}${localizedPath(path, locale)}`;
-    languages["x-default"] = `${siteUrl}${localizedPath(path, defaultLocale)}`;
+    for (const locale of site.offered) languages[locale] = `${siteUrl}${localizedPath(path, locale)}`;
+    languages["x-default"] = `${siteUrl}${localizedPath(path, site.preferred)}`;
     return languages;
 }
 

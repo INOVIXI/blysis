@@ -4,6 +4,7 @@ import { ModuleSeoRoutes, type SitemapEntry } from "@/core/generated/module-seo"
 import { safeCall } from "@/core/lib/module-safe-call";
 import { connection } from "next/server";
 import { resolveAppUrl } from "@/core/lib/app-url";
+import { getSiteLanguages } from "@/core/lib/i18n/site-languages-setting";
 import { ModuleRoutes } from "@/core/generated/module-registry";
 import {
     CORE_STATIC_ROUTES,
@@ -20,7 +21,7 @@ import {
 // what `revalidate` was protecting: bots hitting /sitemap.xml still do not
 // force a DB query per request.
 const SITEMAP_TTL_MS = 3_600_000;
-let sitemapMemo: { at: number; siteUrl: string; entries: MetadataRoute.Sitemap } | null = null;
+let sitemapMemo: { at: number; siteUrl: string; languages: string; entries: MetadataRoute.Sitemap } | null = null;
 
 function mapChangeFreq(freq: SitemapEntry["changeFreq"]): MetadataRoute.Sitemap[number]["changeFrequency"] {
     return freq;
@@ -37,12 +38,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Runtime-resolved from AUTH_URL - a NEXT_PUBLIC_* read here would be
     // frozen at build time and emit localhost URLs from the prebuilt image.
     const siteUrl = resolveAppUrl();
+    // Only the languages the site offers: a page in another is a redirect.
+    const site = await getSiteLanguages();
+    const languages = `${site.offered.join(",")}:${site.preferred}`;
 
     // Keyed on siteUrl as well as age: an operator who changes AUTH_URL and
     // restarts must not be served an hour of stale, wrong-host URLs.
     if (
         sitemapMemo &&
         sitemapMemo.siteUrl === siteUrl &&
+        sitemapMemo.languages === languages &&
         Date.now() - sitemapMemo.at < SITEMAP_TTL_MS
     ) {
         return sitemapMemo.entries;
@@ -57,11 +62,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // crawler to ignore the field. A module's own contributor supplies a real
     // one below.
     const entries: MetadataRoute.Sitemap = CORE_STATIC_ROUTES.flatMap((r) =>
-        localizedPaths(r.path).map((path) => ({
+        localizedPaths(r.path, site).map((path) => ({
             url: `${siteUrl}${path}`,
             changeFrequency: r.changeFrequency,
             priority: r.priority,
-            alternates: { languages: localeAlternates(siteUrl, r.path) },
+            alternates: { languages: localeAlternates(siteUrl, r.path, site) },
         })),
     );
 
@@ -78,12 +83,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // below can still add detail URLs core cannot enumerate, and a duplicate
     // there simply overwrites this entry's defaults.
     for (const routePath of staticModuleRoutes(ModuleRoutes, enabledStates)) {
-        for (const path of localizedPaths(routePath)) {
+        for (const path of localizedPaths(routePath, site)) {
             entries.push({
                 url: `${siteUrl}${path}`,
                 changeFrequency: "weekly",
                 priority: 0.7,
-                alternates: { languages: localeAlternates(siteUrl, routePath) },
+                alternates: { languages: localeAlternates(siteUrl, routePath, site) },
             });
         }
     }
@@ -123,11 +128,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             }
 
             const routePath = e.url.startsWith("/") ? e.url : `/${e.url}`;
-            for (const path of localizedPaths(routePath)) {
+            for (const path of localizedPaths(routePath, site)) {
                 entries.push({
                     url: `${siteUrl}${path}`,
                     ...shared,
-                    alternates: { languages: localeAlternates(siteUrl, routePath) },
+                    alternates: { languages: localeAlternates(siteUrl, routePath, site) },
                 });
             }
         }
@@ -137,6 +142,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // twice; the module's own entry wins, since it carries the real lastmod.
     const deduped = [...new Map(entries.map((e) => [e.url, e])).values()];
 
-    sitemapMemo = { at: Date.now(), siteUrl, entries: deduped };
+    sitemapMemo = { at: Date.now(), siteUrl, languages, entries: deduped };
     return deduped;
 }

@@ -24,6 +24,8 @@ import { isBlockedInDemo } from '@/core/lib/demo-guard';
 import { panelReaderFor } from '@/core/lib/permissions';
 import { mayEnterPanel, mayOpenAdminPath } from '@/core/lib/admin-access';
 import { SURFACE_HEADER } from '@/core/lib/color-mode';
+import { languageRedirect } from '@/core/lib/i18n/site-languages';
+import { getSiteLanguages } from '@/core/lib/i18n/site-languages-setting';
 
 const intlMiddleware = createIntlMiddleware({
     locales: locales,
@@ -389,6 +391,25 @@ async function proxyImpl(request: NextRequest, correlationId: string): Promise<N
             }
         } catch {
             // Fail-open: a loader error must not block visitors.
+        }
+    }
+
+    // ===== The languages the site offers =====
+    // next-intl would send a visitor with no language in the path to any of
+    // the twelve the software ships, and serve a page in a language the
+    // operator never offered to anybody who typed its code. A path with no
+    // language goes to the visitor's, if the site offers it, or the site's;
+    // one in a language it does not offer goes to the same page in the
+    // site's. The panel keeps every language. See `site-languages`.
+    if (!isStaticAsset(pathname) && !pathname.startsWith('/api/')) {
+        const target = languageRedirect(pathname, await getSiteLanguages(), {
+            cookie: request.cookies.get('NEXT_LOCALE')?.value,
+            acceptLanguage: request.headers.get('accept-language'),
+        });
+        if (target) {
+            const url = new URL(target, request.url);
+            url.search = request.nextUrl.search;
+            return NextResponse.redirect(url);
         }
     }
 
