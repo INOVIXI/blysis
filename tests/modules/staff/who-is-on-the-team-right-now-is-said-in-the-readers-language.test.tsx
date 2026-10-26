@@ -17,9 +17,11 @@ import path from "node:path";
 const MANIFEST = JSON.parse(fs.readFileSync(path.join(process.cwd(), "module-sources/staff/module.json"), "utf8"));
 const { default: OnlineStaff } = await import("@/modules/staff/slots/OnlineStaff");
 
+const { invalidateShared } = await import("@/core/lib/shared-request");
 const members = { current: [] as unknown[] };
 
 beforeEach(() => {
+    invalidateShared();
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ members: members.current }) })));
 });
 

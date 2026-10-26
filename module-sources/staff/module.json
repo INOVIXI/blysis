@@ -2,7 +2,7 @@
   "id": "staff",
   "name": "Staff",
   "description": "Staff member listing and applications",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "coreVersion": "^5.25.0",
   "category": "management",
   "author": "Blysis",

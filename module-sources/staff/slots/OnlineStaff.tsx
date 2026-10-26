@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { sharedJson } from "@/core/sdk";
 
 interface StaffMember {
     id: string;
@@ -28,9 +29,9 @@ export default function OnlineStaff() {
 
     useEffect(() => {
         let active = true;
-        fetch("/api/v1/staff?online=1")
-            .then((r) => (r.ok ? r.json() : { members: [] }))
-            .then((d: { members?: StaffMember[] }) => {
+        // The same request the `staff.online` card makes, shared with it.
+        sharedJson<{ members?: StaffMember[] }>("/api/v1/staff?online=1")
+            .then((d) => {
                 if (active) setMembers(d.members || []);
             })
             .catch(() => {});

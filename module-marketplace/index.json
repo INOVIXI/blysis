@@ -5800,13 +5800,13 @@
           "description": "运营这里的人，以及管理他们的界面。"
         }
       },
-      "version": "1.7.0",
+      "version": "1.7.1",
       "coreVersion": "^5.25.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-24T12:50:10Z",
+      "updatedAt": "2026-10-26T17:03:52Z",
       "screenshots": [],
       "tags": [
         "management"

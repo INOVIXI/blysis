@@ -32,7 +32,10 @@ const en = MANIFEST.translations.en.staff;
 
 const answer = { members: [] as unknown[], down: false };
 
+const { invalidateShared } = await import("@/core/lib/shared-request");
+
 beforeEach(() => {
+    invalidateShared();
     answer.members = [];
     answer.down = false;
     vi.stubGlobal("fetch", vi.fn(async () => (answer.down
@@ -41,10 +44,12 @@ beforeEach(() => {
 });
 
 const { OnlineCard } = await import("@/modules/staff/components/OnlineCard");
+const { default: OnlineStaff } = await import("@/modules/staff/slots/OnlineStaff");
 
-function draw(settings: Record<string, unknown> = {}) {
+function draw(settings: Record<string, unknown> = {}, strip = false) {
     return render(
         <NextIntlClientProvider locale="en" messages={MESSAGES}>
+            {strip && <OnlineStaff />}
             <OnlineCard settings={settings} width="narrow" />
         </NextIntlClientProvider>,
     );
@@ -70,6 +75,15 @@ describe("the team online card", () => {
         expect(list.textContent).toContain("Moderator");
         expect(list.querySelector("img")?.getAttribute("src")).toBe("/a.png");
         expect(list.textContent).toContain("G");
+    });
+
+    it("asks once when the strip under the hero is on the same page", async () => {
+        // Quarry draws both, and the homepage asked for the team twice
+        // (tests/e2e/a-page-settles-and-asks-once.spec.ts).
+        answer.members = [{ id: "m1", name: "Ada", role: "Admin", avatar: null, user: null }];
+        draw({}, true);
+        expect((await screen.findAllByText("Ada")).length).toBe(2);
+        expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
     });
 
     it("says nobody is online rather than leaving a hole", async () => {

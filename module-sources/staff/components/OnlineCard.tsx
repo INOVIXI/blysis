@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Users } from "lucide-react";
+import { sharedJson } from "@/core/sdk";
 import { LoadFailed, Waiting, useBlockText, type BlockProps } from "@/core/sdk/ui";
 
 interface StaffMember {
@@ -37,9 +38,10 @@ export function OnlineCard({ settings }: BlockProps) {
 
     useEffect(() => {
         let active = true;
-        fetch("/api/v1/staff?online=1")
-            .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
-            .then((d: { members?: StaffMember[] }) => { if (active) setMembers(d.members ?? []); })
+        // Shared with the strip under the hero, which a theme may draw on
+        // the same page: one request for both (a-page-settles-and-asks-once).
+        sharedJson<{ members?: StaffMember[] }>("/api/v1/staff?online=1")
+            .then((d) => { if (active) setMembers(d.members ?? []); })
             .catch(() => { if (active) setFailed(true); });
         return () => { active = false; };
     }, [reloadKey]);
