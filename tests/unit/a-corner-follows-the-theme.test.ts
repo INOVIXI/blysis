@@ -39,7 +39,9 @@ async function ruleFor(className: string): Promise<string> {
     const css = fs.readFileSync(GLOBALS, "utf8").replace(/@source[^;]*;/g, "");
     const compiler = await compile(css, { base: path.dirname(GLOBALS), onDependency: () => {} });
     const out = compiler.build([className]);
-    const m = new RegExp(`\\.${className.replace(/[-]/g, "\\-")}\\s*\\{\\s*border-radius:\\s*([^;]+);`).exec(out);
+    // Every character a pattern reads as syntax, not only the hyphen:
+    // CodeQL flagged a backslash in a class name going through unescaped.
+    const m = new RegExp(`\\.${className.replace(/[.*+?^${}()|[\]\\-]/g, "\\$&")}\\s*\\{\\s*border-radius:\\s*([^;]+);`).exec(out);
     expect(m, `no border-radius rule was written for .${className}`).toBeTruthy();
     return m![1].trim();
 }
