@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { PageFrame } from "@/core/components/layout/PageFrame";
+import { ArrangedPage } from "@/core/components/layout/ArrangedPage";
 import { ActivityFeedList, type ActivityItem } from "@/core/components/activity/ActivityFeedList";
 import { prisma } from "@/core/lib/db";
 import { getModuleStates } from "@/core/lib/module-cache";
@@ -51,8 +51,10 @@ export default async function ActivityFeedPage() {
      * title wears one.
      */
     return (
-        <PageFrame title={t("title")} description={t("description")}>
-            <ActivityFeedList items={items} moduleStates={moduleStates} />
-        </PageFrame>
+        <ArrangedPage
+            page="core.activity"
+            frame={{ title: t("title"), description: t("description") }}
+            blocks={{ feed: () => <ActivityFeedList items={items} moduleStates={moduleStates} /> }}
+        />
     );
 }

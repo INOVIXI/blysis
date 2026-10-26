@@ -12,7 +12,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedPage } from "@/core/sdk/page";
 import { Pagination } from "@/core/sdk/ui";
 import { Eye } from "lucide-react";
 import { readHelpCategory } from "../../../../../lib/read-article";
@@ -38,44 +38,48 @@ export default async function HelpCategoryPage({ params, searchParams }: PagePro
     const pages = Math.max(1, Math.ceil(read.articles.length / PER_PAGE));
     const rows = read.articles.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
+    const articles = rows.length === 0 ? (
+        <div className="bg-card rounded-xl p-8 text-center">
+            <p className="text-muted-foreground">{t("noArticlesInCategory")}</p>
+        </div>
+    ) : (
+        <>
+            {/* One card per article rather than a stack of links: a row
+                that only carries a title reads as a list of the same
+                thing, and a category with thirty of them had no way to
+                stop scrolling. */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {rows.map((article) => (
+                    <Link
+                        key={article.id}
+                        href={`/help/${article.slug}`}
+                        className="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/40 hover:bg-muted"
+                    >
+                        <span className="font-medium text-foreground group-hover:text-primary transition-colors">
+                            {article.title}
+                        </span>
+                        {article.views !== null && (
+                            <span className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+                                <Eye className="w-3 h-3" aria-hidden="true" />
+                                {t("views", { count: article.views })}
+                            </span>
+                        )}
+                    </Link>
+                ))}
+            </div>
+            {pages > 1 && <Pagination className="mt-6" page={page} pages={pages} total={read.articles.length} pageParam="page" />}
+        </>
+    );
+
     return (
-        <PageFrame
-            title={read.category.name}
-            description={read.category.description || undefined}
-            trail={[{ label: t("title"), href: "/help" }]}
-        >
-            {rows.length === 0 ? (
-                <div className="bg-card rounded-xl p-8 text-center">
-                    <p className="text-muted-foreground">{t("noArticlesInCategory")}</p>
-                </div>
-            ) : (
-                <>
-                    {/* One card per article rather than a stack of links: a row
-                        that only carries a title reads as a list of the same
-                        thing, and a category with thirty of them had no way to
-                        stop scrolling. */}
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {rows.map((article) => (
-                            <Link
-                                key={article.id}
-                                href={`/help/${article.slug}`}
-                                className="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/40 hover:bg-muted"
-                            >
-                                <span className="font-medium text-foreground group-hover:text-primary transition-colors">
-                                    {article.title}
-                                </span>
-                                {article.views !== null && (
-                                    <span className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-                                        <Eye className="w-3 h-3" aria-hidden="true" />
-                                        {t("views", { count: article.views })}
-                                    </span>
-                                )}
-                            </Link>
-                        ))}
-                    </div>
-                    {pages > 1 && <Pagination className="mt-6" page={page} pages={pages} total={read.articles.length} pageParam="page" />}
-                </>
-            )}
-        </PageFrame>
+        <ArrangedPage
+            page="help-center.category"
+            frame={{
+                title: read.category.name,
+                description: read.category.description || undefined,
+                trail: [{ label: t("title"), href: "/help" }],
+            }}
+            blocks={{ articles: () => articles }}
+        />
     );
 }

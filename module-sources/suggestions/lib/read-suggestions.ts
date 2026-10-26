@@ -10,7 +10,7 @@
  * sees the rest. A private suggestion listed by one caller and hidden by the
  * other is worse than one nobody hid.
  */
-import { isAdmin, prisma } from "@/core/sdk/server";
+import { isAdmin, prisma, textContains } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { canonicalStatus, spellingsOf } from "./statuses";
 
@@ -89,10 +89,7 @@ export async function readSuggestions(options: {
      */
     const term = (options.search ?? "").trim();
     if (term !== "") {
-        where.OR = [
-            { title: { contains: term, mode: "insensitive" as const } },
-            { content: { contains: term, mode: "insensitive" as const } },
-        ];
+        where.OR = textContains(["title", "content"], term);
     }
 
     const orderBy = options.sort === "popular"

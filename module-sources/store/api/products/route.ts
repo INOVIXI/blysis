@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { slugify } from "@/core/sdk";
-import { hasPermission, log, moduleSettings, pageParams, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, log, moduleSettings, pageParams, prisma, readJsonBody, textContains } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../lib/validations";
 import { availabilityData } from "../../lib/availability-input";
@@ -41,12 +41,7 @@ export async function GET(request: NextRequest) {
             ...onTheShelfWhere(now),
             ...(category && { category: { slug: category } }),
             ...(featured && { isFeatured: true }),
-            ...(search && {
-                OR: [
-                    { name: { contains: search, mode: "insensitive" as const } },
-                    { description: { contains: search, mode: "insensitive" as const } },
-                ],
-            }),
+            ...(search && { OR: textContains(["name", "description"], search) }),
         };
 
         const [products, total] = await Promise.all([

@@ -122,7 +122,7 @@ export default function CloudflareR2AdminPage() {
                 different jobs, done on two different Cloudflare screens, so
                 they are two cards side by side instead of one column of five
                 fields against the left edge of the panel. */}
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <Card>
                     <CardHeader>
                         <CardTitle>{t("credentialsTitle")}</CardTitle>

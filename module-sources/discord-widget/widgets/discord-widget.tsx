@@ -14,10 +14,11 @@ export function DiscordWidget() {
     }, []);
 
     useEffect(() => {
-        setIsDark(document.documentElement.hasAttribute("data-mode"));
-        const observer = new MutationObserver(() => {
-            setIsDark(document.documentElement.hasAttribute("data-mode"));
-        });
+        // `data-mode` is always there, `light` or `dark`: asking whether it
+        // was set at all drew Discord's dark widget on every light page.
+        const read = () => setIsDark(document.documentElement.getAttribute("data-mode") === "dark");
+        read();
+        const observer = new MutationObserver(read);
         observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] });
         return () => observer.disconnect();
     }, []);

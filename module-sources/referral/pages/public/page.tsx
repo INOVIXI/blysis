@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, LoadFailed, Pagination, usePagedRows, useLocalDate } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Loader2, UserPlus, Users, Coins, Clock, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { copyText } from "@/core/sdk";
@@ -114,31 +114,41 @@ export default function ReferralPage() {
         return t("pending");
     };
 
+    // Until there is something of the member's to show, the page says why
+    // there is not, in the frame the page stands in.
+    const waiting = loading ? (
+        <div className="flex justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+        </div>
+    ) : !session?.user ? (
+        <Card>
+            <CardContent className="py-12 text-center">
+                <UserPlus className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">{t("notLoggedIn")}</p>
+            </CardContent>
+        </Card>
+    ) : !data ? (
+        <Card>
+            <CardContent className="py-12 text-center text-muted-foreground">
+                {t("failedToLoad")}
+            </CardContent>
+        </Card>
+    ) : null;
+
+    if (waiting || !data) {
+        return (
+            <ArrangedClientPage page="referral.referrals" frame={{ title: t("title"), description: t("subtitle") }} blocks={{}}>
+                {waiting}
+            </ArrangedClientPage>
+        );
+    }
+
     return (
-        <PageFrame
-            title={t("title")}
-            description={t("subtitle")}
-        >
-            {loading ? (
-                <div className="flex justify-center py-12">
-                    <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-                </div>
-            ) : !session?.user ? (
-                <Card>
-                    <CardContent className="py-12 text-center">
-                        <UserPlus className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <p className="text-muted-foreground">{t("notLoggedIn")}</p>
-                    </CardContent>
-                </Card>
-            ) : !data ? (
-                <Card>
-                    <CardContent className="py-12 text-center text-muted-foreground">
-                        {t("failedToLoad")}
-                    </CardContent>
-                </Card>
-            ) : (
-                <div className="space-y-6">
-                    {/* Referral Link */}
+        <ArrangedClientPage
+            page="referral.referrals"
+            frame={{ title: t("title"), description: t("subtitle") }}
+            blocks={{
+                link: () => (
                     <Card>
                         <CardHeader>
                             <CardTitle>{t("yourLink")}</CardTitle>
@@ -167,8 +177,8 @@ export default function ReferralPage() {
                             </p>
                         </CardContent>
                     </Card>
-
-                    {/* Apply Referral Code */}
+                ),
+                apply: () => (
                     <Card>
                         <CardHeader>
                             <CardTitle>{t("haveCode")}</CardTitle>
@@ -187,8 +197,8 @@ export default function ReferralPage() {
                             </div>
                         </CardContent>
                     </Card>
-
-                    {/* Stats */}
+                ),
+                stats: () => (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <Card>
                             <CardContent className="p-4 text-center">
@@ -219,8 +229,8 @@ export default function ReferralPage() {
                             </CardContent>
                         </Card>
                     </div>
-
-                    {/* Referral History */}
+                ),
+                history: () => (
                     <Card>
                         <CardHeader>
                             <CardTitle>{t("referralHistory")}</CardTitle>
@@ -267,8 +277,8 @@ export default function ReferralPage() {
                             )}
                         </CardContent>
                     </Card>
-                </div>
-            )}
-        </PageFrame>
+                ),
+            }}
+        />
     );
 }

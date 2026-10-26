@@ -1,7 +1,7 @@
 import { formatDate } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
 import { Link } from "@/core/sdk/navigation";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedPage } from "@/core/sdk/page";
 import { Pagination } from "@/core/sdk/ui";
 import { NewsGrid } from "../components/news-grid";
 import { getTranslations, getLocale } from "next-intl/server";
@@ -55,9 +55,12 @@ async function getBlogArticles(page: number, filter: Filter) {
             },
         }),
         prisma.blogArticle.count({ where }),
+        // The number beside a category is what opening it shows, so it counts
+        // what the listing counts: drafts and scheduled articles made a
+        // category read "3" over a page of one.
         prisma.blogCategory.findMany({
             include: {
-                _count: { select: { articles: true } },
+                _count: { select: { articles: { where: publishedArticle() } } },
             },
         }),
         // The sidebar wants the five newest on every page, not the five that
@@ -120,73 +123,87 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     const dateTag = dateLocaleTag(await getLocale());
 
     return (
-        <PageFrame
-            title={activeName ?? t('title')}
-            trail={activeName ? [{ label: t('title'), href: '/blog' }] : []}
-            sidebar={(
-                <aside className="space-y-6">
-                    {/* Categories */}
-                    <div className="bg-card rounded-xl border border-border p-5">
-                        <h2 className="font-bold text-foreground mb-4">{t('categories')}</h2>
-                        <div className="space-y-2">
-                            {categories.map((category) => (
-                                <Link
-                                    key={category.id}
-                                    href={blogHref({ category: category.slug })}
-                                    aria-current={filter.category === category.slug ? "page" : undefined}
-                                    className={`flex items-center justify-between p-2 rounded-lg transition-colors ${filter.category === category.slug ? "bg-muted font-medium" : "hover:bg-muted"}`}
-                                >
-                                    <span className="text-foreground">{category.name}</span>
-                                    <span className="text-sm text-muted-foreground">
-                                        {category._count.articles}
-                                    </span>
-                                </Link>
-                            ))}
+        <ArrangedPage
+            page="blog.list"
+            frame={{
+                title: activeName ?? t('title'),
+                trail: activeName ? [{ label: t('title'), href: '/blog' }] : [],
+            }}
+            blocks={{
+                back: () => (
+                    filter.category || filter.tag ? (
+                        <p className="text-sm text-muted-foreground">
+                            <Link href="/blog" className="text-primary hover:underline">{t('allArticles')}</Link>
+                        </p>
+                    ) : null
+                ),
+                articles: () => (
+                    articles.length === 0 ? (
+                        <div className="bg-card rounded-xl p-12 text-center space-y-3">
+                            <p className="text-muted-foreground">{t('noArticles')}</p>
+                            {(filter.category || filter.tag) && (
+                                <Link href="/blog" className="text-sm text-primary hover:underline">{t('allArticles')}</Link>
+                            )}
                         </div>
-                    </div>
+                    ) : (
+                        <>
+                            <NewsGrid posts={articles} />
+                            <Pagination page={page} pages={pages} pageParam="page" className="mt-4" />
+                        </>
+                    )
+                ),
+                // A card with a heading and nothing under it is what a new blog
+                // showed twice, below the articles on a phone. Each card draws
+                // only with something in it, and no sidebar at all without either.
+                sidebar: () => (
+                    categories.length > 0 || recent.length > 0 ? (
+                        <aside className="space-y-6">
+                            {categories.length > 0 && (
+                                <div className="bg-card rounded-xl border border-border p-5">
+                                    <h2 className="font-bold text-foreground mb-4">{t('categories')}</h2>
+                                    <div className="space-y-2">
+                                        {categories.map((category) => (
+                                            <Link
+                                                key={category.id}
+                                                href={blogHref({ category: category.slug })}
+                                                aria-current={filter.category === category.slug ? "page" : undefined}
+                                                className={`flex items-center justify-between p-2 rounded-lg transition-colors ${filter.category === category.slug ? "bg-muted font-medium" : "hover:bg-muted"}`}
+                                            >
+                                                <span className="text-foreground">{category.name}</span>
+                                                <span className="text-sm text-muted-foreground">
+                                                    {category._count.articles}
+                                                </span>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
-                    {/* Recent Posts */}
-                    <div className="bg-card rounded-xl border border-border p-5">
-                        <h2 className="font-bold text-foreground mb-4">{t('recentPosts')}</h2>
-                        <div className="space-y-4">
-                            {recent.map((article) => (
-                                <Link
-                                    key={article.id}
-                                    href={`/blog/${article.number}/${article.slug}`}
-                                    className="block group"
-                                >
-                                    <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                                        {article.title}
-                                    </h3>
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                        {formatDate(article.publishedAt || article.createdAt, undefined, dateTag)}
-                                    </p>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </aside>
-            )}
-        >
-            {(filter.category || filter.tag) && (
-                <p className="mb-6 text-sm text-muted-foreground">
-                    <Link href="/blog" className="text-primary hover:underline">{t('allArticles')}</Link>
-                </p>
-            )}
-
-            {articles.length === 0 ? (
-                <div className="bg-card rounded-xl p-12 text-center space-y-3">
-                    <p className="text-muted-foreground">{t('noArticles')}</p>
-                    {(filter.category || filter.tag) && (
-                        <Link href="/blog" className="text-sm text-primary hover:underline">{t('allArticles')}</Link>
-                    )}
-                </div>
-            ) : (
-                <>
-                    <NewsGrid posts={articles} />
-                    <Pagination page={page} pages={pages} pageParam="page" className="mt-4" />
-                </>
-            )}
-        </PageFrame>
+                            {recent.length > 0 && (
+                                <div className="bg-card rounded-xl border border-border p-5">
+                                    <h2 className="font-bold text-foreground mb-4">{t('recentPosts')}</h2>
+                                    <div className="space-y-4">
+                                        {recent.map((article) => (
+                                            <Link
+                                                key={article.id}
+                                                href={`/blog/${article.number}/${article.slug}`}
+                                                className="block group"
+                                            >
+                                                <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                                                    {article.title}
+                                                </h3>
+                                                <p className="text-xs text-muted-foreground mt-1">
+                                                    {formatDate(article.publishedAt || article.createdAt, undefined, dateTag)}
+                                                </p>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </aside>
+                    ) : null
+                ),
+            }}
+        />
     );
 }

@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useRouter, usePathname } from "@/core/lib/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
-import { PageFrame } from "@/core/components/layout/PageFrame";
+import { ArrangedClientPage } from "@/core/components/layout/ArrangedClientPage";
 import { ModuleProfileTabs } from "@/core/generated/module-registry";
 import { ProfileTabRegistry } from "@/core/generated/module-components";
 import { useAllModules } from "@/core/providers/module-provider";
@@ -125,58 +125,64 @@ export default function ProfilePage() {
 
     if (authStatus === "loading" || loading || !profile) {
         return (
-            <PageFrame title={t("title")}>
+            <ArrangedClientPage page="core.profile" frame={{ title: t("title") }} blocks={{}}>
                 <div className="flex items-center justify-center py-24">
                     <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" aria-label={t("loadingProfile")} />
                 </div>
-            </PageFrame>
+            </ArrangedClientPage>
         );
     }
 
     return (
-        <PageFrame title={t("title")}>
-            {/* The nav column is a fixed measure so the panel beside it keeps
-                the same width from section to section; a column sized by its
-                longest label moves the content every time a module adds one. */}
-            <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)] items-start">
-                <AccountNav
-                    sections={sections}
-                    active={active}
-                    href={sectionHref}
-                    identity={{
-                        username: profile.username,
-                        email: profile.email,
-                        avatar: profile.avatar,
-                        role: profile.role,
-                    }}
-                />
+        <ArrangedClientPage
+            page="core.profile"
+            frame={{ title: t("title") }}
+            blocks={{
+                // The nav column is a fixed measure so the panel beside it keeps
+                // the same width from section to section; a column sized by its
+                // longest label moves the content every time a module adds one.
+                account: () => (
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_minmax(0,1fr)] items-start">
+                        <AccountNav
+                            sections={sections}
+                            active={active}
+                            href={sectionHref}
+                            identity={{
+                                username: profile.username,
+                                email: profile.email,
+                                avatar: profile.avatar,
+                                role: profile.role,
+                            }}
+                        />
 
-                <div className="space-y-6 min-w-0">
-                    {active === "profile" && (
-                        <>
-                            <AccountSettings
-                                identity={profile}
-                                onSaved={(next) => setProfile({ ...profile, ...next })}
-                            />
-                            <PrivacyPanel />
-                        </>
-                    )}
-                    {active === "activity" && <ActivityTab />}
-                    {active === "messages" && <MessagesTab />}
-                    {active === "notifications" && <NotificationPrefsTab />}
-                    {active === "sessions" && <SessionsTab />}
-                    {moduleSections.map((tab) => {
-                        if (active !== tab.id) return null;
-                        const Section = ProfileTabRegistry[tab.id];
-                        if (typeof Section !== "function") return null;
-                        return (
-                            <ModuleErrorBoundary key={tab.id}>
-                                <Section />
-                            </ModuleErrorBoundary>
-                        );
-                    })}
-                </div>
-            </div>
-        </PageFrame>
+                        <div className="space-y-6 min-w-0">
+                            {active === "profile" && (
+                                <>
+                                    <AccountSettings
+                                        identity={profile}
+                                        onSaved={(next) => setProfile({ ...profile, ...next })}
+                                    />
+                                    <PrivacyPanel />
+                                </>
+                            )}
+                            {active === "activity" && <ActivityTab />}
+                            {active === "messages" && <MessagesTab />}
+                            {active === "notifications" && <NotificationPrefsTab />}
+                            {active === "sessions" && <SessionsTab />}
+                            {moduleSections.map((tab) => {
+                                if (active !== tab.id) return null;
+                                const Section = ProfileTabRegistry[tab.id];
+                                if (typeof Section !== "function") return null;
+                                return (
+                                    <ModuleErrorBoundary key={tab.id}>
+                                        <Section />
+                                    </ModuleErrorBoundary>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ),
+            }}
+        />
     );
 }

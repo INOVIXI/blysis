@@ -2,8 +2,8 @@
   "id": "leaderboard",
   "name": "Leaderboard",
   "description": "Member rankings by purchases, votes and activity",
-  "version": "1.5.2",
-  "coreVersion": "^5.0.0",
+  "version": "1.7.0",
+  "coreVersion": "^5.26.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Trophy",
@@ -21,6 +21,16 @@
       "handler": "api/route.ts",
       "description": "Get the top players leaderboard ranking.",
       "openTo": "public"
+    }
+  ],
+  "widgets": [
+    {
+      "id": "LeaderboardWidget",
+      "component": "widgets/leaderboard-widget",
+      "label": "Leaderboard",
+      "labelKey": "widget_leaderboard",
+      "defaultVisible": true,
+      "defaultOrder": 40
     }
   ],
   "translations": {
@@ -42,14 +52,18 @@
         "periodAll": "All time",
         "periodWeek": "Last 7 days",
         "periodMonth": "Last 30 days",
-        "periodYear": "Last year"
+        "periodYear": "Last year",
+        "widget_title": "Leading this month",
+        "widget_all": "See the whole leaderboard",
+        "widget_empty": "Nobody on this board in the last 30 days yet."
       },
       "pageTitles": {
         "leaderboard": "Leaderboard"
       },
       "admin": {
         "module_leaderboard_name": "Leaderboard",
-        "module_leaderboard_description": "Member rankings by purchases, votes and activity"
+        "module_leaderboard_description": "Member rankings by purchases, votes and activity",
+        "widget_leaderboard": "Leaderboard"
       },
       "nav": {
         "leaderboard": "Leaderboard"
@@ -76,14 +90,18 @@
         "periodAll": "Tüm zamanlar",
         "periodWeek": "Son 7 gün",
         "periodMonth": "Son 30 gün",
-        "periodYear": "Son bir yıl"
+        "periodYear": "Son bir yıl",
+        "widget_title": "Bu ay önde olanlar",
+        "widget_all": "Sıralamanın tamamını gör",
+        "widget_empty": "Son 30 günde bu tabloda henüz kimse yok."
       },
       "pageTitles": {
         "leaderboard": "Sıralama"
       },
       "admin": {
         "module_leaderboard_name": "Liderlik Tablosu",
-        "module_leaderboard_description": "Satın alma, oy ve etkinliğe göre üye sıralamaları"
+        "module_leaderboard_description": "Satın alma, oy ve etkinliğe göre üye sıralamaları",
+        "widget_leaderboard": "Sıralama"
       },
       "nav": {
         "leaderboard": "Sıralama"
@@ -110,14 +128,18 @@
         "periodAll": "Bütün vaxt",
         "periodWeek": "Son 7 gün",
         "periodMonth": "Son 30 gün",
-        "periodYear": "Son il"
+        "periodYear": "Son il",
+        "widget_title": "Bu ay öndə olanlar",
+        "widget_all": "Bütün reytinqə bax",
+        "widget_empty": "Son 30 gündə bu cədvəldə hələ heç kim yoxdur."
       },
       "pageTitles": {
         "leaderboard": "Liderlər cədvəli"
       },
       "admin": {
         "module_leaderboard_name": "Liderlər cədvəli",
-        "module_leaderboard_description": "Alışlara, səslərə və fəaliyyətə görə üzv reytinqləri"
+        "module_leaderboard_description": "Alışlara, səslərə və fəaliyyətə görə üzv reytinqləri",
+        "widget_leaderboard": "Reytinq"
       },
       "nav": {
         "leaderboard": "Liderlər cədvəli"
@@ -144,14 +166,18 @@
         "periodAll": "Gesamt",
         "periodWeek": "Letzte 7 Tage",
         "periodMonth": "Letzte 30 Tage",
-        "periodYear": "Letztes Jahr"
+        "periodYear": "Letztes Jahr",
+        "widget_title": "Vorne in diesem Monat",
+        "widget_all": "Die ganze Bestenliste ansehen",
+        "widget_empty": "In den letzten 30 Tagen steht hier noch niemand."
       },
       "pageTitles": {
         "leaderboard": "Rangliste"
       },
       "admin": {
         "module_leaderboard_name": "Rangliste",
-        "module_leaderboard_description": "Mitgliederrangliste nach Käufen, Stimmen und Aktivität"
+        "module_leaderboard_description": "Mitgliederrangliste nach Käufen, Stimmen und Aktivität",
+        "widget_leaderboard": "Bestenliste"
       },
       "nav": {
         "leaderboard": "Rangliste"
@@ -178,14 +204,18 @@
         "periodAll": "Todo el tiempo",
         "periodWeek": "Últimos 7 días",
         "periodMonth": "Últimos 30 días",
-        "periodYear": "Último año"
+        "periodYear": "Último año",
+        "widget_title": "Al frente este mes",
+        "widget_all": "Ver la clasificación completa",
+        "widget_empty": "Nadie en esta tabla en los últimos 30 días todavía."
       },
       "pageTitles": {
         "leaderboard": "Clasificación"
       },
       "admin": {
         "module_leaderboard_name": "Clasificación",
-        "module_leaderboard_description": "Clasificación de miembros por compras, votos y actividad"
+        "module_leaderboard_description": "Clasificación de miembros por compras, votos y actividad",
+        "widget_leaderboard": "Clasificación"
       },
       "nav": {
         "leaderboard": "Clasificación"
@@ -212,14 +242,18 @@
         "periodAll": "Kõik ajad",
         "periodWeek": "Viimased 7 päeva",
         "periodMonth": "Viimased 30 päeva",
-        "periodYear": "Viimane aasta"
+        "periodYear": "Viimane aasta",
+        "widget_title": "Selle kuu eesotsas",
+        "widget_all": "Vaata kogu edetabelit",
+        "widget_empty": "Viimase 30 päeva jooksul pole siin veel kedagi."
       },
       "pageTitles": {
         "leaderboard": "Edetabel"
       },
       "admin": {
         "module_leaderboard_name": "Edetabel",
-        "module_leaderboard_description": "Liikmete järjestus ostude, häälte ja tegevuse järgi"
+        "module_leaderboard_description": "Liikmete järjestus ostude, häälte ja tegevuse järgi",
+        "widget_leaderboard": "Edetabel"
       },
       "nav": {
         "leaderboard": "Edetabel"
@@ -246,14 +280,18 @@
         "periodAll": "Depuis toujours",
         "periodWeek": "7 derniers jours",
         "periodMonth": "30 derniers jours",
-        "periodYear": "Dernière année"
+        "periodYear": "Dernière année",
+        "widget_title": "En tête ce mois-ci",
+        "widget_all": "Voir tout le classement",
+        "widget_empty": "Personne dans ce classement ces 30 derniers jours."
       },
       "pageTitles": {
         "leaderboard": "Classement"
       },
       "admin": {
         "module_leaderboard_name": "Classement",
-        "module_leaderboard_description": "Classement des membres par achats, votes et activité"
+        "module_leaderboard_description": "Classement des membres par achats, votes et activité",
+        "widget_leaderboard": "Classement"
       },
       "nav": {
         "leaderboard": "Classement"
@@ -280,14 +318,18 @@
         "periodAll": "Di sempre",
         "periodWeek": "Ultimi 7 giorni",
         "periodMonth": "Ultimi 30 giorni",
-        "periodYear": "Ultimo anno"
+        "periodYear": "Ultimo anno",
+        "widget_title": "In testa questo mese",
+        "widget_all": "Vedi la classifica completa",
+        "widget_empty": "Nessuno in questa classifica negli ultimi 30 giorni."
       },
       "pageTitles": {
         "leaderboard": "Classifica"
       },
       "admin": {
         "module_leaderboard_name": "Classifica",
-        "module_leaderboard_description": "Classifiche dei membri per acquisti, voti e attività"
+        "module_leaderboard_description": "Classifiche dei membri per acquisti, voti e attività",
+        "widget_leaderboard": "Classifica"
       },
       "nav": {
         "leaderboard": "Classifica"
@@ -314,14 +356,18 @@
         "periodAll": "Cały czas",
         "periodWeek": "Ostatnie 7 dni",
         "periodMonth": "Ostatnie 30 dni",
-        "periodYear": "Ostatni rok"
+        "periodYear": "Ostatni rok",
+        "widget_title": "Na czele w tym miesiącu",
+        "widget_all": "Zobacz cały ranking",
+        "widget_empty": "W ostatnich 30 dniach nikogo tu jeszcze nie ma."
       },
       "pageTitles": {
         "leaderboard": "Ranking"
       },
       "admin": {
         "module_leaderboard_name": "Ranking",
-        "module_leaderboard_description": "Ranking członków według zakupów, głosów i aktywności"
+        "module_leaderboard_description": "Ranking członków według zakupów, głosów i aktywności",
+        "widget_leaderboard": "Ranking"
       },
       "nav": {
         "leaderboard": "Ranking"
@@ -348,14 +394,18 @@
         "periodAll": "Todo o período",
         "periodWeek": "Últimos 7 dias",
         "periodMonth": "Últimos 30 dias",
-        "periodYear": "Último ano"
+        "periodYear": "Último ano",
+        "widget_title": "Na frente este mês",
+        "widget_all": "Ver a classificação completa",
+        "widget_empty": "Ninguém nesta tabela nos últimos 30 dias ainda."
       },
       "pageTitles": {
         "leaderboard": "Ranking"
       },
       "admin": {
         "module_leaderboard_name": "Ranking",
-        "module_leaderboard_description": "Classificação de membros por compras, votos e atividade"
+        "module_leaderboard_description": "Classificação de membros por compras, votos e atividade",
+        "widget_leaderboard": "Classificação"
       },
       "nav": {
         "leaderboard": "Ranking"
@@ -382,14 +432,18 @@
         "periodAll": "За всё время",
         "periodWeek": "Последние 7 дней",
         "periodMonth": "Последние 30 дней",
-        "periodYear": "Последний год"
+        "periodYear": "Последний год",
+        "widget_title": "Лидеры месяца",
+        "widget_all": "Открыть весь рейтинг",
+        "widget_empty": "За последние 30 дней здесь пока никого нет."
       },
       "pageTitles": {
         "leaderboard": "Рейтинг"
       },
       "admin": {
         "module_leaderboard_name": "Рейтинг",
-        "module_leaderboard_description": "Места участников по покупкам, голосам и активности"
+        "module_leaderboard_description": "Места участников по покупкам, голосам и активности",
+        "widget_leaderboard": "Рейтинг"
       },
       "nav": {
         "leaderboard": "Рейтинг"
@@ -416,14 +470,18 @@
         "periodAll": "全部时间",
         "periodWeek": "最近 7 天",
         "periodMonth": "最近 30 天",
-        "periodYear": "最近一年"
+        "periodYear": "最近一年",
+        "widget_title": "本月领先",
+        "widget_all": "查看完整排行榜",
+        "widget_empty": "最近 30 天内这个榜单还没有人。"
       },
       "pageTitles": {
         "leaderboard": "排行榜"
       },
       "admin": {
         "module_leaderboard_name": "排行榜",
-        "module_leaderboard_description": "按购买、投票和活跃度排列的成员排名"
+        "module_leaderboard_description": "按购买、投票和活跃度排列的成员排名",
+        "widget_leaderboard": "排行榜"
       },
       "nav": {
         "leaderboard": "排行榜"
@@ -446,6 +504,80 @@
     {
       "hook": "leaderboard.boards",
       "type": "filter"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "board",
+      "component": "components/BoardBlock",
+      "widths": [
+        "narrow",
+        "wide",
+        "full"
+      ],
+      "defaultOrder": 40,
+      "defaultVisible": false,
+      "settings": {
+        "board": {
+          "type": "text",
+          "max": 64
+        },
+        "title": {
+          "type": "text",
+          "max": 80
+        }
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "boards",
+      "blocks": [
+        {
+          "id": "tabs",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "controls",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "board",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "tabs",
+                  "block": "leaderboard.tabs"
+                },
+                {
+                  "key": "controls",
+                  "block": "leaderboard.controls"
+                },
+                {
+                  "key": "board",
+                  "block": "leaderboard.board"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

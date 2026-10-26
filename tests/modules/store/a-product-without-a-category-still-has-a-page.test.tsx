@@ -98,13 +98,12 @@ describe("a product filed under nothing", () => {
     it("still has a page a shopper can read", async () => {
         render(
             <NextIntlClientProvider locale="en" messages={MESSAGES}>
-                <ProductView product={PRODUCT} />
+                <ProductView product={PRODUCT} title />
             </NextIntlClientProvider>,
         );
 
-        // The name appears twice: the frame titles the page with it and the
-        // panel repeats it, which is the page's own shape and not the point
-        // here.
+        // Drawn with its name, so the box's own heading, which also carries
+        // the section a product is filed under, is part of what is asked.
         await waitFor(() => {
             expect(screen.getAllByText("A thing with no category").length).toBeGreaterThan(0);
         });

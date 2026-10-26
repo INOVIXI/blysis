@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../core/generated/theme-tokens.css";
+@import "../core/generated/theme-styles.css";
 @source "../../src/modules";
 
 @layer base {
@@ -99,6 +100,23 @@
   --font-body:                    var(--blysis-font-body);
   --font-mono:                    var(--blysis-font-mono);
   --radius:                       var(--blysis-radius);
+
+  /*
+   * The scale every `rounded-*` class reads, as multiples of the theme's
+   * radius. Left to Tailwind these are fixed lengths, so a theme asking for
+   * square corners got square inputs inside round cards. The factors are the
+   * ones that make the default 0.5rem give Tailwind's own lengths, which is
+   * why a site on the default theme sees no change.
+   * `a-corner-follows-the-theme` compiles this and holds both halves.
+   */
+  --radius-xs:                    calc(var(--blysis-radius) * 0.25);
+  --radius-sm:                    calc(var(--blysis-radius) * 0.5);
+  --radius-md:                    calc(var(--blysis-radius) * 0.75);
+  --radius-lg:                    calc(var(--blysis-radius) * 1);
+  --radius-xl:                    calc(var(--blysis-radius) * 1.5);
+  --radius-2xl:                   calc(var(--blysis-radius) * 2);
+  --radius-3xl:                   calc(var(--blysis-radius) * 3);
+  --radius-4xl:                   calc(var(--blysis-radius) * 4);
 
   /*
    * The shape every cover picture is drawn in: `aspect-card`.
@@ -600,9 +618,12 @@ body {
 [data-mode="dark"] .bg-red-50 { background-color: rgba(239, 68, 68, 0.1) !important; }
 [data-mode="dark"] .bg-blue-50 { background-color: rgba(59, 130, 246, 0.1) !important; }
 [data-mode="dark"] .bg-yellow-50 { background-color: rgba(245, 158, 11, 0.1) !important; }
-/* Shadows */
-[data-mode="dark"] .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.3) !important; }
-[data-mode="dark"] .shadow-lg { box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important; }
+/* Shadows. Deepened through the utility's own variable rather than over it:
+   an `!important` box-shadow here beat every theme that draws a shadow of its
+   own, so a theme's button lost its edge in dark mode only.
+   `tests/e2e/a-theme-draws-its-own-shadow-in-the-dark.spec.ts`. */
+[data-mode="dark"] .shadow-sm { --tw-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+[data-mode="dark"] .shadow-lg { --tw-shadow: 0 4px 12px rgba(0,0,0,0.4); }
 /* ARIA roles */
 [data-mode="dark"] [role="menu"], [data-mode="dark"] [role="listbox"] {
   background-color: var(--blysis-color-card) !important;
@@ -644,9 +665,67 @@ body {
  * and `<template>` is excluded explicitly because that is what React streams
  * in place of a Suspense boundary it has not resolved yet: a plain `:empty`
  * would leave the column reserved until hydration and then collapse it.
+ *
+ * The heading spacer does not count either: it answers a heading beside it
+ * and draws nothing of its own, and while it counted, a homepage whose widgets
+ * all rendered null kept its empty third. A block's box counts only when the
+ * block drew something into it.
  */
-[data-sidebar-layout] > [data-sidebar]:not(:has(> :not(template))) {
+[data-block]:empty {
   display: none;
+}
+
+[data-sidebar-layout] > [data-sidebar]:not(:has(> :not(template, .blysis-heading-spacer, [data-block]:empty))) {
+  display: none;
+}
+
+/*
+ * The sidebar is spaced with `space-y`, a margin under every child but the
+ * last, and a block that drew nothing is hidden but still a child. So the
+ * last child that drew loses that margin too, or the column runs past it
+ * (a-column-ends-where-its-last-card-does). A gap would not need this, but it
+ * adds to the heading spacer's margin where `space-y` collapses into it.
+ */
+:where([data-sidebar] > :not(:has(~ :not(template, [data-block]:empty)))) {
+  margin-block-end: 0;
+}
+
+/*
+ * A block whose content is other modules' slot content is a frame they may
+ * all leave empty: the stats row is then a section with no child, which is
+ * nothing drawn although its box is not `:empty`.
+ */
+[data-block]:has(> [data-stats]:empty) {
+  display: none;
+}
+
+/*
+ * A row in which no block drew anything is hidden, as an empty sidebar is:
+ * a site with no server kept the row its server cards would have stood in,
+ * and the 2rem above it. A row holding the welcome card is never empty.
+ */
+[data-layout-row]:not(:has([data-block] > :not([data-stats]:empty), [data-layout-cell] > :not([data-layout-blocks]))) {
+  display: none;
+}
+
+/*
+ * The space between the rows of a page's arrangement (PageLayoutView),
+ * counted only between rows that drew: `~` rather than `+`, so a hidden row
+ * neither takes the space nor hands it to the row after it. A theme that wants
+ * more room sets `--blysis-row-gap` rather than writing a rule of its own,
+ * which would not know to skip a hidden row.
+ *
+ * A module's page (ArrangedPage) holds its rows in `data-page-rows`, and they
+ * stand 1.5rem apart, the space its blocks keep inside a cell, since they are
+ * the parts of one page; the pages they replaced spaced them so.
+ */
+:where([data-sidebar-layout], [data-layout-row]:has([data-block] > :not([data-stats]:empty), [data-layout-cell] > :not([data-layout-blocks]))) ~ :where([data-sidebar-layout], [data-layout-row]:has([data-block] > :not([data-stats]:empty), [data-layout-cell] > :not([data-layout-blocks]))) {
+  margin-top: var(--blysis-row-gap, var(--blysis-page-row-gap, 2rem));
+}
+
+[data-page-rows] {
+  display: contents;
+  --blysis-page-row-gap: 1.5rem;
 }
 
 @media (min-width: 64rem) {
@@ -656,12 +735,16 @@ body {
    * says the second thing directly is invalid, and an invalid selector is
    * dropped without a word: the column hid, the content stayed at two thirds,
    * and the page still looked off centre.
+   *
+   * Both weigh one attribute, the second winning by coming later, so a theme
+   * that places the columns itself always outranks them; see
+   * globals-css.test.ts.
    */
-  [data-sidebar-layout] > [data-sidebar-main] {
+  :where([data-sidebar-layout]) > [data-sidebar-main] {
     grid-column: 1 / -1;
   }
 
-  [data-sidebar-layout]:has(> [data-sidebar] > :not(template)) > [data-sidebar-main] {
+  :where([data-sidebar-layout]:has(> [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty))) > [data-sidebar-main] {
     grid-column: span 2 / span 2;
   }
 }

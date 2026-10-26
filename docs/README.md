@@ -5,6 +5,7 @@
 - [Install Blysis](./user/install.md)
 - [Keep it running: updates, backups, logs](./user/running.md)
 - [Modules and themes](./user/modules-and-themes.md)
+- [Languages and the site's words](./user/languages-and-words.md)
 
 ---
 
@@ -23,4 +24,5 @@ Internal notes keep the decisions, constraints and traps the source alone does n
 - [How an install becomes a build](./internals/build-lifecycle.md)
 - [Database: schema, additions and migrations](./internals/database.md)
 - [Conventions as tests](./internals/gates.md)
+- [Arranged pages](./internals/page-layouts.md)
 - [Dependencies held back](./internals/dependencies.md)

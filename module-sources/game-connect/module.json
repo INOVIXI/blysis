@@ -2,8 +2,8 @@
   "id": "game-connect",
   "name": "Game Connect",
   "description": "Let game servers connect to this site themselves: queued delivery that survives a restart, live status, the store and credits in game, and account linking, for any game with a client",
-  "version": "1.0.0",
-  "coreVersion": "^5.0.0",
+  "version": "1.1.0",
+  "coreVersion": "^5.26.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Cable",
@@ -2231,6 +2231,36 @@
       "href": "/link",
       "icon": "Link2",
       "position": 80
+    }
+  ],
+  "pages": [
+    {
+      "id": "link",
+      "blocks": [
+        {
+          "id": "link",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "link",
+                  "block": "game-connect.link"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

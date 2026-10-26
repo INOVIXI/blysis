@@ -248,7 +248,7 @@ export default function AdminPunishmentsPage() {
                         <h2 className="text-sm font-medium text-muted-foreground border-b border-border pb-2">
                             {t("adm_whoAndWhat")}
                         </h2>
-                        <div className="grid md:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
                                 <Label>{t("adm_playerName")}</Label>
                                 <Input aria-label={t("adm_playerName")} value={form.playerName} onChange={e => setForm(f => ({ ...f, playerName: e.target.value }))} />

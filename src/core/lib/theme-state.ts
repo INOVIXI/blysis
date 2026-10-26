@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { cookies, headers } from "next/headers";
 import { prisma } from "./db";
+import { invalidateTranslationCache } from "./i18n/translation-service";
 import { resolvePageMode, type Surface } from "./theme-mode";
 import {
     ADMIN_COLOR_MODE_COOKIE,
@@ -155,4 +156,8 @@ export async function setActiveTheme(themeId: string, mode: string): Promise<voi
         create: { id: 1, themeId, mode },
         update: { themeId, mode },
     });
+    // The catalogue carries the strings of the theme being worn and is held
+    // for two minutes; kept, the theme just picked drew its own lines as
+    // missing messages until it ran out.
+    await invalidateTranslationCache();
 }

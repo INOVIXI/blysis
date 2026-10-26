@@ -26,6 +26,7 @@ import path from "path";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
+import { FLAG_REVIEW } from "../src/core/lib/i18n/flag-reasons";
 import { locales } from "../src/core/lib/i18n/config";
 import { manifestHash } from "../src/core/lib/module-install-audit";
 import { themeRegistry } from "../src/core/generated/theme-registry";
@@ -76,6 +77,33 @@ export function staleTranslations<T extends { namespace: string; key: string }>(
 
     const names = new Set(shipped.map((r) => `${r.namespace}\u0000${r.key}`));
     return stored.filter((row) => !names.has(`${row.namespace}\u0000${row.key}`));
+}
+
+/**
+ * The edits an update has moved the original under.
+ *
+ * An operator's edit stands in for the words it replaced, and is written
+ * with them (`basis`). When this catalogue ships something else under it,
+ * the edit is replacing words that are no longer the ones it was written
+ * against, and asks to be looked at again. An edit made before anything
+ * remembered its original is given the one shipping now, so the next update
+ * is measured from it; a key that no longer ships is the stranded case
+ * below, not a review.
+ */
+export function reviewsDue(
+    shipped: { namespace: string; key: string; value: string }[],
+    edited: { id: string; namespace: string; key: string; basis: string | null }[],
+): { review: { namespace: string; key: string }[]; backfill: { id: string; basis: string }[] } {
+    const now = new Map(shipped.map((r) => [`${r.namespace}\u0000${r.key}`, r.value]));
+    const review: { namespace: string; key: string }[] = [];
+    const backfill: { id: string; basis: string }[] = [];
+    for (const row of edited) {
+        const value = now.get(`${row.namespace}\u0000${row.key}`);
+        if (value === undefined) continue;
+        if (row.basis === null) backfill.push({ id: row.id, basis: value });
+        else if (row.basis !== value) review.push({ namespace: row.namespace, key: row.key });
+    }
+    return { review, backfill };
 }
 
 async function seedLocale(
@@ -149,6 +177,22 @@ async function seedLocale(
      * without asking; the translations screen is where a stranded custom
      * belongs, not here.
      */
+    const edited = await prisma.translation.findMany({
+        where: { locale, module: moduleId, isCustom: true },
+        select: { id: true, namespace: true, key: true, basis: true },
+    });
+    const due = reviewsDue(rows, edited);
+    for (const fill of due.backfill) {
+        await prisma.translation.update({ where: { id: fill.id }, data: { basis: fill.basis } });
+    }
+    for (const ref of due.review) {
+        const name = { locale, namespace: ref.namespace, key: ref.key, reason: FLAG_REVIEW };
+        await prisma.translationFlag.upsert({ where: { locale_namespace_key_reason: name }, update: {}, create: name });
+    }
+    if (due.review.length > 0) {
+        console.log(`  ${moduleId}/${locale}: ${due.review.length} edited string(s) changed underneath, marked to review`);
+    }
+
     const stored = await prisma.translation.findMany({
         where: { locale, module: moduleId, isCustom: false },
         select: { id: true, namespace: true, key: true },

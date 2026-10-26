@@ -26,13 +26,24 @@ Only through `src/core/sdk/`, a set of explicit named re-exports. That boundary 
 
 They do not import each other. A module that has something to say emits a hook (`src/core/lib/hooks.ts`) and declares it in its manifest's `hooksEmitted`; another lists it in `hookListeners`. A module that wants to render into another's page fills a slot (`src/core/lib/slot-registry.ts`). The marketplace build fails a listener on a hook nothing emits, because at runtime such a listener simply never fires.
 
+## Site placeholders
+
+A module can also publish a live value for anyone writing for the site: `placeholders` in its manifest, each answered by a handler and written `{<module>.<name>}`, core's own under `site`. The generator lists them, `src/core/lib/placeholders.ts` asks them through the cache, and the page fills them in a theme's marked text settings, in a block's words and in the site's own translations. Four things are easy to get wrong:
+
+- A value is public. The handler is called with no session and every visitor sees its answer, so it never answers about whoever is asking.
+- The dot is what separates these from an event's blanks, `{player}` in a delivery command or a Discord message. Those are filled by the module sending the event and escaped for where it goes; they are not site placeholders and do not become them.
+- The root layout waits only 200 ms for the values. One that is not ready is fetched by the browser from `/api/v1/placeholders` after the page paints, so a slow handler costs its own value a moment and never the page.
+- The translation catalogue is filled on the server, after the cached catalogue is read and never into it, each value quoted so the message formatter prints it as text. The browser's second ask does not reach it: a value that was not ready shows its fallback in a translated string until the next page.
+
 ## Compiled, not loaded
 
 A module ships React server components, and Next.js compiles those at build time. There is no runtime loader, so installing a module rebuilds the site and restarts it. That decision has operational consequences, from the restart window to a single app process per installation; they are in [How an install becomes a build](./build-lifecycle.md).
 
 ## Themes
 
-A theme is a directory in `src/themes/<id>/` with a `theme.json`, validated by `src/core/lib/theme-manifest-schema.ts`, which is the reference for every field. Its modes (light, dark or any named variant) live in that one manifest; there are no separate dark themes and no inheritance between themes. Settings a theme declares are rendered by core at `/admin/theme/<group>`, so a theme author writes no React for them, and a theme overrides a core component only through a `ThemeComponentSlot` that core places.
+A theme is a directory in `src/themes/<id>/` with a `theme.json`, validated by `src/core/lib/theme-manifest-schema.ts`, which is the reference for every field. Its modes (light, dark or any named variant) live in that one manifest; there are no separate dark themes and no inheritance between themes. Settings a theme declares are rendered by core at `/admin/theme/<group>`, so a theme author writes no React for them, and a theme overrides a core component only through a `ThemeComponentSlot` that core places. Those slots include the whole frame of a public page (`SiteShell`, `PageHeader`, `AuthFrame`, `Footer`), so a theme changes where things sit by replacing the frame, never by editing a page. A theme that replaces the bar or the footer draws it from the parts `@/core/sdk/theme` offers (`useNavLinks`, `useFooter`, `FooterModuleControls` and the like) rather than copying core's rules, so what an operator or a module puts there survives the theme.
+
+Every installed theme is compiled into every build, and two things follow from that. A theme's `stylesheet` lands in the one stylesheet the site serves, so the generator prefixes every selector with `[data-theme="<id>"]` (`scripts/lib/theme-stylesheet.ts`); it is unlayered, which means it wins over Tailwind's utilities. A theme's `fontFiles` become `next/font/local` calls with preloading off, or a site would download the fonts of themes it is not wearing.
 
 The filesystem is the source of truth for which themes exist: there is no `Theme` table. `ThemeState` holds the active theme and mode, `ThemeCustomization` an admin's token overrides per theme and mode, and `ThemeSetting` the values of a theme's settings.
 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Link, useRouter } from "@/core/sdk/navigation";
 import { Button, Input, Label, Textarea, NativeSelect, buttonClassName } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { writeError } from "@/core/sdk";
@@ -88,111 +88,111 @@ export default function NewTicketPage() {
 
     if (!session?.user) {
         return (
-            <PageFrame
-                title={t('createNewTicket')}
-                trail={[{ label: t('title'), href: '/support' }]}
-            >
+            <ArrangedClientPage page="tickets.new" frame={{ title: t('createNewTicket'), trail: [{ label: t('title'), href: '/support' }] }} blocks={{}}>
                 <div className="bg-card rounded-xl p-8 text-center">
                     <p className="text-muted-foreground mb-4">{t('loginToCreate')}</p>
                     <Link href="/auth/login" className={buttonClassName("default", "default")}>{t('login')}</Link>
                 </div>
-            </PageFrame>
+            </ArrangedClientPage>
         );
     }
 
     return (
-        <PageFrame
-            title={t('createNewTicket')}
-            trail={[{ label: t('title'), href: '/support' }]}
-        >
-            {/* The card spans the page. It used to be max-w-3xl inside a
-                full-width one, which left the right half of every screen
-                empty beside a form that looked cut off. */}
-            <div className="bg-card rounded-xl border border-border p-6">
-                {departmentsLoaded && departments.length === 0 ? (
-                    <div className="text-center py-10">
-                        <p className="font-medium text-foreground">{t('noDepartmentsTitle')}</p>
-                        <p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">{t('noDepartmentsHelp')}</p>
-                    </div>
-                ) : (<>
-                {error && (
-                    <div role="alert" className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg text-sm">
-                        {error}
-                    </div>
-                )}
+        <ArrangedClientPage
+            page="tickets.new"
+            frame={{ title: t('createNewTicket'), trail: [{ label: t('title'), href: '/support' }] }}
+            blocks={{
+                // The card spans the page. It used to be max-w-3xl inside a
+                // full-width one, which left the right half of every screen
+                // empty beside a form that looked cut off.
+                form: () => (
+                    <div className="bg-card rounded-xl border border-border p-6">
+                        {departmentsLoaded && departments.length === 0 ? (
+                            <div className="text-center py-10">
+                                <p className="font-medium text-foreground">{t('noDepartmentsTitle')}</p>
+                                <p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">{t('noDepartmentsHelp')}</p>
+                            </div>
+                        ) : (<>
+                        {error && (
+                            <div role="alert" className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg text-sm">
+                                {error}
+                            </div>
+                        )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid gap-4 sm:grid-cols-2">
-                        <div>
-                            <Label htmlFor="department">{t('department')} *</Label>
-                            <NativeSelect
-                                id="department"
-                                value={formData.departmentId}
-                                onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })} className="w-full mt-1"
-                                required
-                            >
-                                <option value="">{t('selectDepartment')}</option>
-                                {departments.map((dept) => (
-                                    <option key={dept.id} value={dept.id}>
-                                        {dept.name}
-                                    </option>
-                                ))}
-                            </NativeSelect>
-                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div>
+                                    <Label htmlFor="department">{t('department')} *</Label>
+                                    <NativeSelect
+                                        id="department"
+                                        value={formData.departmentId}
+                                        onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })} className="w-full mt-1"
+                                        required
+                                    >
+                                        <option value="">{t('selectDepartment')}</option>
+                                        {departments.map((dept) => (
+                                            <option key={dept.id} value={dept.id}>
+                                                {dept.name}
+                                            </option>
+                                        ))}
+                                    </NativeSelect>
+                                </div>
 
-                        <div>
-                            <Label htmlFor="priority">{t('priority')}</Label>
-                            <NativeSelect
-                                id="priority"
-                                value={formData.priority}
-                                onChange={(e) => setFormData({ ...formData, priority: e.target.value })} className="w-full mt-1"
-                            >
-                                {/* The desk's own priorities: four were
-                                    written here, so one an operator added was
-                                    offered nowhere a member could pick it. */}
-                                {priorities.map((priority) => (
-                                    <option key={priority.key} value={priority.key}>
-                                        {stateLabel(t, priority.key, priorities)}
-                                    </option>
-                                ))}
-                            </NativeSelect>
-                        </div>
-                    </div>
+                                <div>
+                                    <Label htmlFor="priority">{t('priority')}</Label>
+                                    <NativeSelect
+                                        id="priority"
+                                        value={formData.priority}
+                                        onChange={(e) => setFormData({ ...formData, priority: e.target.value })} className="w-full mt-1"
+                                    >
+                                        {/* The desk's own priorities: four were
+                                            written here, so one an operator added was
+                                            offered nowhere a member could pick it. */}
+                                        {priorities.map((priority) => (
+                                            <option key={priority.key} value={priority.key}>
+                                                {stateLabel(t, priority.key, priorities)}
+                                            </option>
+                                        ))}
+                                    </NativeSelect>
+                                </div>
+                            </div>
 
-                    <div>
-                        <Label htmlFor="subject">{t('subject')} *</Label>
-                        <Input
-                            id="subject"
-                            type="text"
-                            value={formData.subject}
-                            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                            className="mt-1"
-                            placeholder={t('briefDescription')}
-                            required
-                        />
-                    </div>
+                            <div>
+                                <Label htmlFor="subject">{t('subject')} *</Label>
+                                <Input
+                                    id="subject"
+                                    type="text"
+                                    value={formData.subject}
+                                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                                    className="mt-1"
+                                    placeholder={t('briefDescription')}
+                                    required
+                                />
+                            </div>
 
-                    <div>
-                        <Label htmlFor="content">{t('message')} *</Label>
-                        <Textarea
-                            id="content"
-                            value={formData.content}
-                            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                            placeholder={t('describeIssue')}
-                            rows={8}
-                            required
-                        />
-                    </div>
+                            <div>
+                                <Label htmlFor="content">{t('message')} *</Label>
+                                <Textarea
+                                    id="content"
+                                    value={formData.content}
+                                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                                    placeholder={t('describeIssue')}
+                                    rows={8}
+                                    required
+                                />
+                            </div>
 
-                    <div className="flex gap-3">
-                        <Button type="submit" disabled={loading}>
-                            {loading ? t('creating') : t('createTicket')}
-                        </Button>
-                        <Link href="/support" className={buttonClassName("outline", "default")}>{t('cancel')}</Link>
+                            <div className="flex gap-3">
+                                <Button type="submit" disabled={loading}>
+                                    {loading ? t('creating') : t('createTicket')}
+                                </Button>
+                                <Link href="/support" className={buttonClassName("outline", "default")}>{t('cancel')}</Link>
+                            </div>
+                        </form>
+                        </>)}
                     </div>
-                </form>
-                </>)}
-            </div>
-        </PageFrame>
+                ),
+            }}
+        />
     );
 }

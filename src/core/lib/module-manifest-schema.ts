@@ -28,6 +28,8 @@
 import { z } from "zod";
 import { CRON_SCHEDULES } from "./cron-schedules";
 import { isValidRange } from "./semver-range";
+import { layoutDocumentSchema, WIDTH_CLASSES } from "./page-layout-schema";
+import { settingFieldSchema } from "./theme-manifest-schema";
 
 const SAFE_ID = /^[a-z0-9][a-z0-9-]*$/;
 const SAFE_SLUG = /^[A-Za-z0-9_-]+$/;
@@ -332,11 +334,19 @@ const navLink = z.object({
     position: z.number().int().optional(),
 });
 
+/**
+ * A link a module puts in the site's footer. `section` is the module's own
+ * word for the column it belongs in; core keeps no list of them. Every module
+ * once said `quick`, and the footer was one column of every page.
+ * `sectionLabelKey` names, in the `footer` catalogue the module ships, what
+ * that column is called; a footer nobody arranged draws a column for it.
+ */
 const footerLink = z.object({
     label: z.string().min(1).max(100),
     labelKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/).optional(),
     href: routePath,
-    section: z.enum(["quick", "legal"]).optional(),
+    section: z.string().min(1).max(48).regex(/^[a-z][a-z0-9-]*$/, "a section is one lowercase word").optional(),
+    sectionLabelKey: z.string().min(1).max(48).regex(/^[a-zA-Z0-9_]+$/).optional(),
 });
 
 /**
@@ -570,6 +580,25 @@ const slotContribution = z.object({
     id: z.string().min(1).max(64).regex(SAFE_SLUG).optional(),
 });
 
+/**
+ * A live value this module lets anyone writing for the site drop into a
+ * sentence: `{servers.online}` in a theme's headline. Named under the
+ * module's id, so the name here is only the part after the dot.
+ *
+ * Public by definition. The handler is called with no session and its answer
+ * is shown to every visitor, so it never answers about whoever is asking.
+ * `labelKey` is a key in this module's `admin` translations, the words the
+ * panel lists it under; `example` is what the panel shows when there is no
+ * live value to show.
+ */
+const placeholderEntry = z.object({
+    name: z.string().min(1).max(40).regex(/^[a-z][a-zA-Z0-9]*$/, "a placeholder name is camelCase letters and digits"),
+    handler: relativePath("handler"),
+    labelKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
+    example: z.string().max(60).optional(),
+    maxAgeSeconds: z.number().int().min(5).max(3600).optional(),
+}).strict();
+
 const cronJob = z.object({
     id: z.string().min(1).max(64).regex(SAFE_SLUG),
     // A name the scheduler cannot turn into an interval is a job that never
@@ -616,9 +645,11 @@ const searchProvider = z.object({
  * and a member reading their own account was shown `vote.vote.cast`.
  *
  * `prefix` and `key` translate the stored title, and they come as a pair or
- * not at all. Six events cannot use them: their English puts the entity in
- * the middle ("Received 40 credits") or after a clause, and `{ prefix, key }`
- * can only replace a head. Those declare a name and leave the title alone.
+ * not at all. They can only replace a head, so English that puts the entity
+ * in the middle ("Received 40 credits") or first ("Ban issued to Steve")
+ * declares `patterns` instead: the sentence with its blanks named, tried in
+ * order, each with the key whose message takes those names as parameters.
+ * A row no pattern describes keeps its English rather than losing its entity.
  */
 /** What one of this module's audit-log actions is called. */
 const auditAction = z.object({
@@ -626,14 +657,27 @@ const auditAction = z.object({
     nameKey: z.string().min(1).max(120),
 }).strict();
 
+const activityTitlePattern = z.object({
+    pattern: z.string().min(1).max(200)
+        .regex(/\{[a-zA-Z]+\}/, "a pattern names at least one blank, like {player}")
+        // Two blanks side by side have no words between them to say where
+        // one ends, so the split would be a guess.
+        .refine((pattern) => !/\}\{/.test(pattern), "two blanks need words between them"),
+    key: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
+}).strict();
+
 const activityTitle = z.object({
     type: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
     nameKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
     prefix: z.string().max(128).optional(),
     key: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/).optional(),
+    patterns: z.array(activityTitlePattern).min(1).max(4).optional(),
 }).refine(
     (entry) => (entry.prefix === undefined) === (entry.key === undefined),
     { message: "prefix and key describe one substitution: declare both or neither" },
+).refine(
+    (entry) => entry.prefix === undefined || entry.patterns === undefined,
+    { message: "a title is translated by a prefix or by patterns, not both" },
 );
 
 const webhookReceiver = z
@@ -688,6 +732,48 @@ const settingsCard = z.object({
     href: panelRelativePath,
     icon: iconName,
     color: z.string().min(1).max(64),
+});
+
+// What a page is built from. A widget could only stand in the homepage's
+// sidebar and a section only in its main column, because core decided where
+// each kind went; a block says which widths it can be drawn in, and whoever
+// arranges the page puts it in any cell that offers one of them. Its
+// settings are a theme's setting fields, so one form draws both. `replaces`
+// names the widget or section it used to be, so an arrangement saved under
+// the old name follows it.
+const blockEntry = z.object({
+    id: z.string().min(1).max(64).regex(SAFE_SLUG),
+    label: z.string().min(1).max(100).optional(),
+    labelKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/).optional(),
+    component: relativePath("component"),
+    widths: z.array(z.enum(WIDTH_CLASSES)).min(1).max(WIDTH_CLASSES.length),
+    defaultOrder: z.number().int(),
+    defaultVisible: z.boolean(),
+    settings: z.record(z.string().regex(SAFE_SLUG), settingFieldSchema)
+        .refine((r) => Object.keys(r).length <= 50, "max 50 settings per block")
+        .optional(),
+    replaces: z.array(z.string().min(1).max(64).regex(SAFE_SLUG)).max(8).optional(),
+});
+
+/**
+ * One of the module's own pages, built from blocks a theme may arrange.
+ *
+ * The page reads what it shows once and draws each block itself, so a block
+ * here is only a name, the widths it can stand in and the settings a theme
+ * may give it. `layout` is how the page stands under a theme that has no
+ * arrangement for it, which is the page as it was before it had blocks; a
+ * block meant only for themes that ask for it is listed in `hidden` there.
+ */
+const pageEntry = z.object({
+    id: z.string().min(1).max(64).regex(SAFE_SLUG),
+    blocks: z.array(z.object({
+        id: z.string().min(1).max(64).regex(SAFE_SLUG),
+        widths: z.array(z.enum(WIDTH_CLASSES)).min(1).max(WIDTH_CLASSES.length),
+        settings: z.record(z.string().regex(SAFE_SLUG), settingFieldSchema)
+            .refine((r) => Object.keys(r).length <= 20, "max 20 settings per page block")
+            .optional(),
+    })).min(1).max(30),
+    layout: layoutDocumentSchema,
 });
 
 const homepageSection = z.object({
@@ -872,7 +958,9 @@ const moduleSetting = z
     });
 
 export const moduleManifestSchema = z.object({
-    id: z.string().min(1).max(64).regex(SAFE_ID, "id must be lowercase alphanumeric + hyphens"),
+    // `core` names the blocks that belong to no module (core-blocks.ts).
+    id: z.string().min(1).max(64).regex(SAFE_ID, "id must be lowercase alphanumeric + hyphens")
+        .refine((id) => id !== "core", "core is the name of core's own blocks"),
     name: z.string().min(1).max(100),
     description: z.string().min(1).max(500),
     version: z.string().min(1).max(32).regex(/^\d+\.\d+\.\d+/, "version must be semver"),
@@ -1045,6 +1133,7 @@ export const moduleManifestSchema = z.object({
     slotContents: z.array(slotContent).max(100).optional(),
     slots: z.array(slotContribution).max(200).optional(),
     cronJobs: z.array(cronJob).max(50).optional(),
+    placeholders: z.array(placeholderEntry).max(50).optional(),
     searchProviders: z.array(searchProvider).max(20).optional(),
     activityTitles: z.array(activityTitle).max(50).optional(),
     auditActions: z.array(auditAction).max(100).optional(),
@@ -1054,6 +1143,8 @@ export const moduleManifestSchema = z.object({
     layoutComponents: z.array(layoutComponent).max(50).optional(),
     settingsCards: z.array(settingsCard).max(50).optional(),
     homepageSections: z.array(homepageSection).max(50).optional(),
+    blocks: z.array(blockEntry).max(50).optional(),
+    pages: z.array(pageEntry).max(20).optional(),
     dashboardCards: z.array(dashboardCard).max(50).optional(),
     dashboardSections: z.array(dashboardSection).max(20).optional(),
     statsApi: routePath.optional(),
@@ -1061,7 +1152,46 @@ export const moduleManifestSchema = z.object({
     userDataExport: z.array(userDataExportEntry).max(50).optional(),
     moderationProviders: z.array(moderationProvider).max(20).optional(),
     csp: cspContribution.optional(),
-}).strict();
+}).strict().superRefine((m, ctx) => {
+    // Every widget and section is also a block under its own id, unless a
+    // declared block replaces it (page-blocks.ts). Two of them under one id
+    // would be one block in the registry, drawing whichever was listed last.
+    const replaced = new Set((m.blocks ?? []).flatMap((b) => b.replaces ?? []));
+    const ids = [
+        ...(m.blocks ?? []).map((b) => b.id),
+        ...[...(m.widgets ?? []), ...(m.homepageSections ?? [])].map((e) => e.id).filter((id) => !replaced.has(id)),
+    ];
+    const seen = new Set<string>();
+    for (const id of ids) {
+        if (seen.has(id)) ctx.addIssue({ code: "custom", path: ["blocks"], message: `"${id}" names two blocks, widgets or sections` });
+        seen.add(id);
+    }
+
+    const placeholderNames = new Set<string>();
+    (m.placeholders ?? []).forEach((placeholder, p) => {
+        if (placeholderNames.has(placeholder.name)) {
+            ctx.addIssue({ code: "custom", path: ["placeholders", p, "name"], message: `"${placeholder.name}" names two placeholders` });
+        }
+        placeholderNames.add(placeholder.name);
+    });
+
+    // A page's own arrangement names only the blocks that page declares,
+    // under this module's id, the way a theme's arrangement has to.
+    const pageIds = new Set<string>();
+    (m.pages ?? []).forEach((page, p) => {
+        if (pageIds.has(page.id)) ctx.addIssue({ code: "custom", path: ["pages", p, "id"], message: `"${page.id}" names two pages` });
+        pageIds.add(page.id);
+        const declared = new Set(page.blocks.map((b) => `${m.id}.${b.id}`));
+        if (declared.size !== page.blocks.length) ctx.addIssue({ code: "custom", path: ["pages", p, "blocks"], message: `page "${page.id}" declares a block twice` });
+        const named = [
+            ...page.layout.rows.flatMap((row) => row.cells.flat().map((instance) => instance.block)),
+            ...(page.layout.hidden ?? []),
+        ];
+        for (const id of named) {
+            if (!declared.has(id)) ctx.addIssue({ code: "custom", path: ["pages", p, "layout"], message: `page "${page.id}" names "${id}", which it does not declare` });
+        }
+    });
+});
 
 export type ValidatedModuleManifest = z.infer<typeof moduleManifestSchema>;
 
@@ -1072,7 +1202,7 @@ export type ValidatedModuleManifest = z.infer<typeof moduleManifestSchema>;
 /**
  * The file extensions a manifest ref may be written without. The registry
  * generator strips any extension off a ref and emits a bare import specifier
- * (`@/modules/blog/components/BlogNewsSection`), leaving the bundler to pick
+ * (`@/modules/<id>/components/Foo`), leaving the bundler to pick
  * the file - so `components/Foo`, `components/Foo.tsx` and `components/Foo/`
  * all name the same module. Anything that validates refs against the disk has
  * to apply the same rule or it rejects manifests the build would have loaded
@@ -1116,10 +1246,12 @@ export function collectManifestFileRefs(m: ValidatedModuleManifest): string[] {
     m.slotContents?.forEach((r) => push(r.component));
     m.slots?.forEach((s) => push(s.component));
     m.cronJobs?.forEach((r) => push(r.handler));
+    m.placeholders?.forEach((r) => push(r.handler));
     m.searchProviders?.forEach((r) => push(r.handler));
     m.webhookReceivers?.forEach((r) => push(r.handler));
     m.layoutComponents?.forEach((r) => push(r.component));
     m.homepageSections?.forEach((r) => push(r.component));
+    m.blocks?.forEach((r) => push(r.component));
     push(m.hooks?.onEnable);
     push(m.hooks?.onDisable);
     push(m.seoRoutes?.handler);

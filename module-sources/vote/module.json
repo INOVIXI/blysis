@@ -2,8 +2,8 @@
   "id": "vote",
   "name": "Vote Sites",
   "description": "Send players to the server listings you are ranked on, and count how often they go",
-  "version": "1.6.3",
-  "coreVersion": "^5.0.0",
+  "version": "1.7.0",
+  "coreVersion": "^5.26.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Vote",
@@ -120,7 +120,8 @@
         "vote": "Vote for the server on the listing sites below, push it up the rankings and collect a reward for every vote."
       },
       "activity": {
-        "kindVoteCast": "Vote"
+        "kindVoteCast": "Vote",
+        "voteCast": "Opened {site} to vote"
       }
     },
     "tr": {
@@ -174,7 +175,8 @@
         "vote": "Aşağıdaki liste sitelerinde sunucuya oy verin, sıralamada yükselmesine yardım edin ve her oy için ödülünüzü alın."
       },
       "activity": {
-        "kindVoteCast": "Oy"
+        "kindVoteCast": "Oy",
+        "voteCast": "Oy vermek için {site} sitesini açtı"
       }
     },
     "az": {
@@ -228,7 +230,8 @@
         "vote": "Aşağıdakı siyahı saytlarında server üçün səs verin, onu reytinqdə yuxarı qaldırın və hər səs üçün mükafat toplayın."
       },
       "activity": {
-        "kindVoteCast": "Səs"
+        "kindVoteCast": "Səs",
+        "voteCast": "Səs vermək üçün {site} saytını açdı"
       }
     },
     "de": {
@@ -282,7 +285,8 @@
         "vote": "Vote für den Server auf den Listen-Seiten unten, bring ihn in der Rangliste nach oben und sammle für jeden Vote eine Belohnung."
       },
       "activity": {
-        "kindVoteCast": "Vote"
+        "kindVoteCast": "Vote",
+        "voteCast": "{site} zum Abstimmen geöffnet"
       }
     },
     "es": {
@@ -336,7 +340,8 @@
         "vote": "Vota por el servidor en los sitios de listado de abajo, súbelo en las clasificaciones y consigue una recompensa por cada voto."
       },
       "activity": {
-        "kindVoteCast": "Voto"
+        "kindVoteCast": "Voto",
+        "voteCast": "Abrió {site} para votar"
       }
     },
     "et": {
@@ -390,7 +395,8 @@
         "vote": "Hääleta serveri poolt allolevatel nimekirjasaitidel, tõsta teda edetabelis ja saa iga hääle eest preemia."
       },
       "activity": {
-        "kindVoteCast": "Hääl"
+        "kindVoteCast": "Hääl",
+        "voteCast": "Avas hääletamiseks saidi {site}"
       }
     },
     "fr": {
@@ -444,7 +450,8 @@
         "vote": "Votez pour le serveur sur les sites de classement ci-dessous, faites-le monter dans les classements et recevez une récompense pour chaque vote."
       },
       "activity": {
-        "kindVoteCast": "Vote"
+        "kindVoteCast": "Vote",
+        "voteCast": "A ouvert {site} pour voter"
       }
     },
     "it": {
@@ -498,7 +505,8 @@
         "vote": "Vota il server nei siti di classifica qui sotto, spingilo più in alto e ricevi una ricompensa per ogni voto."
       },
       "activity": {
-        "kindVoteCast": "Voto"
+        "kindVoteCast": "Voto",
+        "voteCast": "Ha aperto {site} per votare"
       }
     },
     "pl": {
@@ -552,7 +560,8 @@
         "vote": "Zagłosuj na serwer na listach poniżej, pnij się w rankingach i odbieraj nagrodę za każdy głos."
       },
       "activity": {
-        "kindVoteCast": "Głos"
+        "kindVoteCast": "Głos",
+        "voteCast": "Otwarto {site}, by zagłosować"
       }
     },
     "pt": {
@@ -606,7 +615,8 @@
         "vote": "Vote no servidor nos sites de listagem abaixo, suba no ranking e receba uma recompensa a cada voto."
       },
       "activity": {
-        "kindVoteCast": "Voto"
+        "kindVoteCast": "Voto",
+        "voteCast": "Abriu {site} para votar"
       }
     },
     "ru": {
@@ -660,7 +670,8 @@
         "vote": "Голосуйте за сервер на сайтах-рейтингах ниже, поднимайте его в списках и получайте награду за каждый голос."
       },
       "activity": {
-        "kindVoteCast": "Голос"
+        "kindVoteCast": "Голос",
+        "voteCast": "Открыт сайт {site} для голосования"
       }
     },
     "zh": {
@@ -714,7 +725,8 @@
         "vote": "在下方的列表站点为服务器投票，提升其排名，每投一票都可获得奖励。"
       },
       "activity": {
-        "kindVoteCast": "投票"
+        "kindVoteCast": "投票",
+        "voteCast": "打开 {site} 去投票"
       }
     }
   },
@@ -745,7 +757,54 @@
   "activityTitles": [
     {
       "type": "vote.vote.cast",
-      "nameKey": "kindVoteCast"
+      "nameKey": "kindVoteCast",
+      "patterns": [
+        {
+          "pattern": "Voted on {site}",
+          "key": "voteCast"
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "id": "sites",
+      "blocks": [
+        {
+          "id": "prompt",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "sites",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "prompt",
+                  "block": "vote.prompt"
+                },
+                {
+                  "key": "sites",
+                  "block": "vote.sites"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

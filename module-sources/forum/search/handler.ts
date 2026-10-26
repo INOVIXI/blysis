@@ -1,7 +1,10 @@
-import { log, prisma } from "@/core/sdk/server";
+import { log, prisma, searchMatches, searchRank } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { visibleCategoryIds } from "../lib/visible-categories";
 import { mayViewForum } from "../lib/guest-view";
+
+/** The columns the manifest's search index is built over, in its order. */
+const COLUMNS = ["title", "content"];
 
 interface SearchResult {
     type: string;
@@ -59,12 +62,8 @@ export default async function search(q: string): Promise<SearchResult[]> {
             FROM "ForumTopic"
             WHERE "moderationState" = 'APPROVED'
               AND (${!narrow} OR "categoryId" = ANY(${categoryIds}::text[]))
-              AND to_tsvector('english', coalesce(title, '') || ' ' || coalesce(content, ''))
-                  @@ plainto_tsquery('english', ${q})
-            ORDER BY ts_rank(
-                to_tsvector('english', coalesce(title, '') || ' ' || coalesce(content, '')),
-                plainto_tsquery('english', ${q})
-            ) DESC
+              AND ${searchMatches(COLUMNS, q)}
+            ORDER BY ${searchRank(COLUMNS, q)} DESC
             LIMIT 5
         `;
         return rows.map((r) => ({

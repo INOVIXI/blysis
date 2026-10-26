@@ -57,6 +57,17 @@ describe("a click is not a vote", () => {
         expect(reader("tr").voteRecorded.toLowerCase()).not.toContain("oyunuz sayıldı");
     });
 
+    it("tells the activity feed the listing was opened, not that a vote was cast", () => {
+        // The row is written as "Voted on <site>" and every reader is shown
+        // the message instead, so the message is the claim. It said "voted"
+        // in all twelve locales when the feed first spoke them.
+        const feed = (locale: string) => (manifest.translations[locale].activity.voteCast as string).toLocaleLowerCase(locale);
+        expect(feed("en")).not.toMatch(/\bvoted\b/);
+        expect(feed("en")).toContain("opened");
+        expect(feed("tr")).not.toMatch(/oy verdi/);
+        expect(feed("tr")).toContain("açtı");
+    });
+
     it("ranks by what it can see", () => {
         expect(reader("en").leaderboardVoters.toLowerCase()).toContain("click");
         expect(reader("tr").leaderboardVoters.toLowerCase()).toContain("tıklama");

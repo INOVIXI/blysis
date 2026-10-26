@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getSession } from "@/core/lib/auth";
 import { canOpenAdminPage } from "@/core/lib/permissions";
 import { prisma } from "@/core/lib/db";
@@ -21,6 +22,7 @@ export default async function ThemeSettingsPage({
     const groupDef = manifest.settings?.[group];
     if (!groupDef) notFound();
 
+    const t = await getTranslations("admin");
     const rows = await prisma.themeSetting.findMany({ where: { themeId, groupKey: group } });
     const initialValues = Object.fromEntries(rows.map(r => [r.key, r.value]));
 
@@ -37,7 +39,7 @@ export default async function ThemeSettingsPage({
                 group={group}
                 fields={groupDef.fields}
                 initialValues={initialValues}
-                title={groupDef.label}
+                title={groupDef.labelKey && t.has(groupDef.labelKey) ? t(groupDef.labelKey) : groupDef.label}
                 description={manifest.name}
                 backHref="/admin/theme/appearance"
                 backLabel={manifest.name}

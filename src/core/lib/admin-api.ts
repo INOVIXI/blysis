@@ -32,6 +32,7 @@ export const API_DISPATCHER = "/v1/[...path]";
 export const CORE_ADMIN_API: AdminApiRoute[] = [
     // Configuration of the installation.
     { path: "/v1/settings", permission: "admin.settings" },
+    { path: "/v1/admin/languages", permission: "admin.settings" },
     { path: "/v1/admin/maintenance", permission: "admin.settings" },
     { path: "/v1/admin/rate-limits", permission: "admin.settings" },
     { path: "/v1/admin/alerting", permission: "admin.settings" },
@@ -70,6 +71,10 @@ export const CORE_ADMIN_API: AdminApiRoute[] = [
     { path: "/v1/media/[id]", permission: "admin.content" },
     { path: "/v1/upload", permission: "admin.content" },
     { path: "/v1/admin/translations", permission: "admin.content" },
+    { path: "/v1/admin/translations/flags", permission: "admin.content" },
+    { path: "/v1/admin/translations/import", permission: "admin.content" },
+    { path: "/v1/admin/translations/history", permission: "admin.content" },
+    { path: "/v1/admin/translations/replace", permission: "admin.content" },
 
     // Writing to the members.
     { path: "/v1/broadcasts", permission: "admin.messaging" },

@@ -26,6 +26,8 @@ The words this codebase, its comments and its commit messages use, and what each
 
 **hook**: a named event (an action) or a value others may change (a filter) that one module emits and others listen to. **slot**: a named place in a page that modules render into.
 
+**block**: a piece of the homepage a module or core offers and a theme's arrangement places, declared in a manifest's `blocks`; a widget and a homepage section are read as blocks too. **arrangement**: a theme's `layouts.home`, rows of cells holding blocks.
+
 **marketplace**: `module-marketplace/`, the archives and catalogue sites install modules from.
 
 **install**: copying a module into `src/modules/`, adding its tables and rebuilding the site. **build** is that rebuild; a **staged** build is one finished beside the live build and not yet promoted to it.

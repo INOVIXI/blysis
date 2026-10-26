@@ -1,4 +1,5 @@
 import { prisma } from "@/core/lib/db";
+import { errorText, log } from "@/core/lib/logger";
 
 /**
  * Generic content revision tracker.
@@ -45,7 +46,7 @@ export async function recordRevision(
         });
     } catch (err) {
         // Non-fatal - revisions are best-effort. Don't break the actual mutation.
-        console.error(`[revisions] Failed to record ${resource}/${resourceId}:`, err);
+        log.error("[revisions] the revision was not recorded", { resource, resourceId, error: errorText(err) });
     }
 }
 

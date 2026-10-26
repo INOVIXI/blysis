@@ -23,6 +23,11 @@ import { Badge, buttonClassName, useSiteCurrency } from "@/core/sdk/ui";
  * The header is a price block when the column is something for sale, and a
  * name when it is not. Both come from the same place: whoever owns the column
  * answers, and what it answers with decides what is drawn.
+ *
+ * The way in is drawn twice, under the price at the top and again under the
+ * last row: a dozen rows is a long way to scroll for a reader who chose at
+ * the top. Each names the plan it is for, and the chosen column says so for
+ * a theme to set apart.
  */
 
 export interface GridCell {
@@ -68,6 +73,14 @@ function discount(price: number, was: number): number {
     return Math.round(((was - price) / was) * 100);
 }
 
+/** The link that buys or picks a column's plan, and the words it says it with. */
+function wayIn(column: GridColumn, t: (key: string, values?: Record<string, string>) => string) {
+    const href = column.buyHref ?? column.href;
+    if (!href) return null;
+    const forSale = column.price !== null;
+    return { href, text: forSale ? t("buy") : t("choose"), label: t(forSale ? "buyNamed" : "chooseNamed", { name: column.label }) };
+}
+
 export function ComparisonGrid({ table }: { table: GridTable }) {
     const t = useTranslations("comparisonTable");
     const { format: money } = useSiteCurrency();
@@ -95,10 +108,12 @@ export function ComparisonGrid({ table }: { table: GridTable }) {
                             const name = (
                                 <span className="block font-semibold text-foreground">{column.label}</span>
                             );
+                            const way = wayIn(column, t);
                             return (
                                 <th
                                     key={column.id}
                                     scope="col"
+                                    data-column-highlight={column.highlight ? "" : undefined}
                                     className={`px-4 py-5 text-center align-bottom ${column.highlight ? "bg-primary/5" : ""}`}
                                 >
                                     {column.image && (
@@ -135,6 +150,16 @@ export function ComparisonGrid({ table }: { table: GridTable }) {
                                         meaning. */}
                                     {column.note && (
                                         <span className="mt-0.5 block text-xs text-success">{column.note}</span>
+                                    )}
+                                    {way && (
+                                        <Link
+                                            href={way.href}
+                                            data-column-buy
+                                            aria-label={way.label}
+                                            className={`${buttonClassName(column.highlight ? "default" : "outline", "sm")} mt-3`}
+                                        >
+                                            {way.text}
+                                        </Link>
                                     )}
                                 </th>
                             );
@@ -173,15 +198,15 @@ export function ComparisonGrid({ table }: { table: GridTable }) {
                     <tr>
                         <td className="px-6 py-4" />
                         {table.columns.map((column) => {
-                            const href = column.buyHref ?? column.href;
+                            const way = wayIn(column, t);
                             return (
                                 <td key={column.id} className={`px-4 py-4 text-center ${column.highlight ? "bg-primary/5" : ""}`}>
-                                    {href && (
-                                        <Link href={href} className={buttonClassName("default", "sm")}>
-                                            {/* "Buy" where there is a price, "Choose" where there is
-                                                not: a table of plans that are not for sale here
-                                                should not put a shop's word on its footer. */}
-                                            {column.price !== null ? t("buy") : t("choose")}
+                                    {/* "Buy" where there is a price, "Choose" where there is
+                                        not: a table of plans that are not for sale here
+                                        should not put a shop's word on its footer. */}
+                                    {way && (
+                                        <Link href={way.href} aria-label={way.label} className={buttonClassName("default", "sm")}>
+                                            {way.text}
                                         </Link>
                                     )}
                                 </td>

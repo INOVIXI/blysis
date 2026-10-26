@@ -12,7 +12,7 @@
  * the site hides and the JSON still carries is not hidden.
  */
 import { headers } from "next/headers";
-import { moduleSettings, prisma } from "@/core/sdk/server";
+import { moduleSettings, prisma, textContains } from "@/core/sdk/server";
 
 export interface ArticleRead {
     article: {
@@ -151,10 +151,7 @@ export async function searchHelpArticles(query: string) {
     return prisma.helpArticle.findMany({
         where: {
             isActive: true,
-            OR: [
-                { title: { contains: term, mode: "insensitive" } },
-                { content: { contains: term, mode: "insensitive" } },
-            ],
+            OR: textContains(["title", "content"], term),
         },
         orderBy: { views: "desc" },
         take: 25,

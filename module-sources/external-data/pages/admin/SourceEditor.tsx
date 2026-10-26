@@ -156,7 +156,7 @@ export function SourceEditor({ value, onChange, onSaved, onCancel }: SourceEdito
                 <p className="text-sm text-muted-foreground">{t("adm_sourceHint")}</p>
             </CardHeader>
             <CardContent className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <Label htmlFor="source-title">{t("adm_sourceTitle")}</Label>
                         <Input id="source-title" value={value.title} onChange={(e) => onChange({ ...value, title: e.target.value })} />

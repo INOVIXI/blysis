@@ -3,7 +3,8 @@
  *
  * Translations live in the `Translation` table. Core translations are seeded
  * from `messages-core/*.json`. Module translations are written on install and
- * deleted on uninstall. Admin overrides (`isCustom = true`) always win.
+ * deleted on uninstall. The active theme's rows speak over core and every
+ * module, and admin overrides (`isCustom = true`) always win.
  *
  * The merged message object is cached (Redis or in-memory) and invalidated
  * on module install/uninstall/enable/disable or admin edit.
@@ -12,7 +13,9 @@
  */
 
 import { prisma } from "@/core/lib/db";
+import { withLiveValues } from "@/core/lib/i18n/catalogue-placeholders";
 import { shippedMessages } from "@/core/lib/i18n/shipped-messages";
+import { sortByVoice } from "@/core/lib/i18n/translation-layers";
 import { defaultThemeId } from "@/core/generated/theme-registry";
 import { cacheGet, cacheSet, cacheDel } from "@/core/lib/redis";
 import { isUnsafeKey, emptyRecord } from "@/core/lib/safe-object";
@@ -24,12 +27,8 @@ const CACHE_TTL_SECONDS = 120;
 // Public API
 // ---------------------------------------------------------------------------
 
-/**
- * Get the full nested message object for a locale.
- * Called by next-intl's `getRequestConfig` on every request.
- */
 /** The theme id alone, without the mode, the customization or the cookie. */
-async function activeThemeId(): Promise<string> {
+export async function activeThemeId(): Promise<string> {
     try {
         const state = await prisma.themeState.findFirst({ select: { themeId: true } });
         return state?.themeId ?? defaultThemeId;
@@ -40,7 +39,17 @@ async function activeThemeId(): Promise<string> {
     }
 }
 
+/**
+ * Get the full nested message object for a locale, with the site
+ * placeholders its strings name filled with what they say now.
+ * Called by next-intl's `getRequestConfig` on every request.
+ */
 export async function getMessages(locale: string): Promise<Record<string, unknown>> {
+    return withLiveValues(await storedMessages(locale), locale);
+}
+
+/** The merged catalogue as it is cached: tokens still as the site wrote them. */
+async function storedMessages(locale: string): Promise<Record<string, unknown>> {
     const cacheKey = CACHE_PREFIX + locale;
 
     // 1. Try cache
@@ -95,17 +104,13 @@ export async function getMessages(locale: string): Promise<Record<string, unknow
         },
     });
 
-    // 3. Sort with explicit priority then merge: later writes win.
-    //    Priority (lowest first): core non-custom, module non-custom, any custom.
-    //    Plain alphabetical `module ASC` would put "blog" before "core" and
-    //    let blog overwrite core, which is the opposite of the intent.
-    rows.sort((a, b) => {
-        if (a.isCustom !== b.isCustom) return a.isCustom ? 1 : -1;
-        const aIsCore = a.module === "core";
-        const bIsCore = b.module === "core";
-        if (aIsCore !== bIsCore) return aIsCore ? -1 : 1;
-        return a.module.localeCompare(b.module);
-    });
+    // 3. Sort by voice, then merge: later writes win. Core, then the module
+    //    that ships a string, then the theme the site is wearing, then
+    //    anything the site edited, on whichever row it edited. The theme's
+    //    place used to come out of an alphabetical sort of module ids, which
+    //    let it word "store" and not "wiki", since "theme:" sorts between.
+    //    `a-theme-speaks-over-every-module-and-under-the-site` holds it.
+    const heard = sortByVoice(rows);
 
     // What this version ships, then what the database says. A row wins
     // wherever there is one; a string nobody has seeded yet is still a string.
@@ -124,7 +129,7 @@ export async function getMessages(locale: string): Promise<Record<string, unknow
         messages[namespace] = target;
     }
 
-    for (const row of rows) {
+    for (const row of heard) {
         if (!messages[row.namespace]) messages[row.namespace] = emptyRecord();
         setNestedValue(messages[row.namespace], row.key, row.value);
     }

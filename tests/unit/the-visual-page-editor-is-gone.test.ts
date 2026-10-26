@@ -27,10 +27,15 @@ import path from "node:path";
 
 const ROOT = path.resolve(__dirname, "../..");
 
-/** Everything the repository is written in, minus what it copies or builds. */
+/**
+ * Everything the repository is written in, minus what it copies or builds.
+ * `.tmp` is the scratch directory `scripts/with-scratch.ts` gives the run:
+ * other tests create and delete folders in it while this one walks, and a
+ * folder gone between listing it and reading it failed the walk.
+ */
 function tree(): string[] {
     const out: string[] = [];
-    const skip = new Set(["node_modules", ".next", ".next-prod", ".git", "modules", "generated", ".claude", "module-marketplace", "coverage"]);
+    const skip = new Set(["node_modules", ".next", ".next-prod", ".git", ".tmp", "modules", "generated", ".claude", "module-marketplace", "coverage"]);
     const walk = (dir: string) => {
         for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
             if (skip.has(entry.name)) continue;
@@ -62,6 +67,10 @@ describe("the visual page editor", () => {
         expect(named).toEqual([]);
     });
 
+    // The builder's blocks lived in a `blocks/` folder and a `pageBlocks`
+    // field. A homepage block (a manifest's `blocks`) is another thing, the
+    // file a theme's arrangement draws, and it lives with the module's other
+    // components, so the folder stays a sign of the builder coming back.
     it("left no block for a module to contribute", () => {
         const offenders: string[] = [];
         for (const id of fs.readdirSync(path.join(ROOT, "module-sources"))) {

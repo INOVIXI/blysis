@@ -21,7 +21,8 @@
  * client component asked for, but `next dev` does not shake per name: it
  * compiles the whole barrel and everything it re-exports for the browser.
  * Anything needing the database, the logger or `next/headers` belongs in
- * `hooks-bootstrap.ts`.
+ * `hooks-bootstrap.ts`, which also hands this file the logger to report a
+ * failed listener with, through `setHookFailureReporter`.
  */
 
 export type ActionListener<T = unknown> = (payload: T) => void;
@@ -79,6 +80,19 @@ interface Registration {
 }
 
 const actionRegistry = new Map<string, Registration[]>();
+
+/**
+ * Where a failed listener is reported. The console until the server's
+ * bootstrap says otherwise, since a browser has nothing else; on the server
+ * it is the logger, so the line carries the request's correlation id.
+ */
+type HookFailureReporter = (message: string, err: unknown) => void;
+const toConsole: HookFailureReporter = (message, err) => console.error(message, err);
+let reportFailure = toConsole;
+
+export function setHookFailureReporter(reporter: HookFailureReporter): void {
+    reportFailure = reporter;
+}
 const filterRegistry = new Map<string, Registration[]>();
 
 /** Lower priority runs earlier. 10 is the conventional default. */
@@ -191,7 +205,7 @@ export function doAction<K extends string>(name: K, payload: ActionPayload<K>): 
         try {
             (reg.listener as ActionListener<ActionPayload<K>>)(payload);
         } catch (err) {
-            console.error(`[hooks] Action "${name}" listener failed:`, err);
+            reportFailure(`[hooks] Action "${name}" listener failed`, err);
         }
     }
 }
@@ -207,7 +221,7 @@ export async function doActionAsync<K extends string>(name: K, payload: ActionPa
                 `${name} (${reg.moduleId ?? "core"})`,
             );
         } catch (err) {
-            console.error(`[hooks] Async action "${name}" listener failed:`, err);
+            reportFailure(`[hooks] Async action "${name}" listener failed`, err);
         }
     }
 }
@@ -250,7 +264,7 @@ export function applyFilters<K extends string, V extends FilterValue<K>>(
         try {
             result = (reg.listener as FilterListener<V, unknown>)(result, context);
         } catch (err) {
-            console.error(`[hooks] Filter "${name}" listener failed:`, err);
+            reportFailure(`[hooks] Filter "${name}" listener failed`, err);
             // Keep the previous value on error (fail-safe).
         }
     }
@@ -273,7 +287,7 @@ export async function applyFiltersAsync<K extends string, V extends FilterValue<
             const answer = (reg.listener as AsyncFilterListener<V, unknown>)(result, context);
             result = waited ? await answer : await raceWithTimeout(answer, `${name} (${reg.moduleId ?? "core"})`);
         } catch (err) {
-            console.error(`[hooks] Async filter "${name}" listener failed:`, err);
+            reportFailure(`[hooks] Async filter "${name}" listener failed`, err);
             // Keep the previous value so a slow/broken listener doesn't
             // corrupt the chain - downstream listeners still get a value.
         }
@@ -391,6 +405,7 @@ export function resetHooks(): void {
     actionRegistry.clear();
     filterRegistry.clear();
     bootstrapped = false;
+    reportFailure = toConsole;
 }
 
 // ===== Standard hook names =====

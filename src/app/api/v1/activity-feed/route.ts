@@ -3,6 +3,7 @@ import { prisma } from "@/core/lib/db";
 import { getClientIP, rateLimitForRoleAsync } from "@/core/lib/rate-limit";
 import { auth } from "@/core/lib/auth";
 import { pageParams } from "@/core/lib/page-params";
+import { textContains } from "@/core/lib/search-text";
 
 /**
  * GET /api/v1/activity-feed
@@ -78,10 +79,7 @@ export async function GET(request: NextRequest) {
     // control; matching it here would make "store" find every order as well
     // as the word.
     if (term) {
-        where.OR = [
-            { title: { contains: term, mode: "insensitive" } },
-            { body: { contains: term, mode: "insensitive" } },
-        ];
+        where.OR = textContains(["title", "body"], term);
     }
 
     // A cursor and a page are two answers to "where do I start", so a request

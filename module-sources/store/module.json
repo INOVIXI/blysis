@@ -2,8 +2,8 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.48.1",
-  "coreVersion": "^5.0.0",
+  "version": "2.52.0",
+  "coreVersion": "^5.30.0",
   "category": "commerce",
   "author": "Blysis Team",
   "icon": "ShoppingBag",
@@ -1387,7 +1387,6 @@
         "save": "Save {amount}",
         "searchProducts": "Search products...",
         "searchResultsFor": "Results for \"{query}\" ({count})",
-        "secureCheckout": "Secure checkout powered by Blysis",
         "shoppingCart": "Shopping Cart",
         "sortBy": "Sort by",
         "state_closed": "Not on sale right now",
@@ -1429,6 +1428,7 @@
         "tab_orders_title": "My Orders",
         "tab_orders_total": "Total",
         "title": "Store",
+        "subtitle": "Everything on sale, in one place.",
         "total": "Total",
         "upgradeNote": "{amount} off: you own a lower rank",
         "viewDetails": "View Details",
@@ -1472,7 +1472,14 @@
         "dlv_delivered": "Delivered",
         "dlv_failed": "Not delivered",
         "dlv_review": "Being checked",
-        "dlv_cancelled": "Cancelled"
+        "dlv_cancelled": "Cancelled",
+        "blk_shelves": "Shelves",
+        "adm_summary": "Summary",
+        "adm_summaryHint": "One line shown on the product's card, in the shop and on the homepage.",
+        "shelfAll": "See all ({count})",
+        "discountTag": "{percent}% off",
+        "durationDays": "{days, plural, one {# day} other {# days}}",
+        "relatedProducts": "From the same shelf"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -1701,6 +1708,9 @@
         "product": "See what this product includes, what it costs and what you receive once the order is paid, then add it to your cart.",
         "orderSuccess": "Your order is complete: see what happens next, find it again in your order history or carry on shopping.",
         "vip": "Compare the VIP ranks side by side, see what each one unlocks and pick the one that suits you best."
+      },
+      "footer": {
+        "section_game": "Game"
       }
     },
     "tr": {
@@ -2217,7 +2227,6 @@
         "save": "{amount} tasarruf",
         "searchProducts": "Ürün ara...",
         "searchResultsFor": "\"{query}\" için sonuçlar ({count})",
-        "secureCheckout": "Blysis güvencesiyle güvenli ödeme",
         "shoppingCart": "Alışveriş Sepeti",
         "sortBy": "Sırala",
         "state_closed": "Şu an satışta değil",
@@ -2259,6 +2268,7 @@
         "tab_orders_title": "Siparişlerim",
         "tab_orders_total": "Toplam",
         "title": "Mağaza",
+        "subtitle": "Satıştaki her şey tek yerde.",
         "total": "Toplam",
         "upgradeNote": "{amount} indirim: alt bir rütben var",
         "viewDetails": "Detayları Gör",
@@ -2302,7 +2312,14 @@
         "dlv_delivered": "Teslim edildi",
         "dlv_failed": "Teslim edilemedi",
         "dlv_review": "İnceleniyor",
-        "dlv_cancelled": "İptal edildi"
+        "dlv_cancelled": "İptal edildi",
+        "blk_shelves": "Kategoriler",
+        "adm_summary": "Özet",
+        "adm_summaryHint": "Ürünün kartında, mağazada ve ana sayfada görünen tek satır.",
+        "shelfAll": "Hepsini gör ({count})",
+        "discountTag": "%{percent} indirim",
+        "durationDays": "{days} gün",
+        "relatedProducts": "Aynı raftan"
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -2531,6 +2548,9 @@
         "product": "Bu ürünün neleri kapsadığını, fiyatını ve ödeme tamamlandığında neler alacağınızı görün, sonra sepetinize ekleyin.",
         "orderSuccess": "Siparişiniz tamamlandı: sırada ne olduğunu görün, sipariş geçmişinizden tekrar bulun ya da alışverişe devam edin.",
         "vip": "VIP rütbelerini yan yana karşılaştırın, her birinin neleri açtığını görün ve size en uygun olanı seçin."
+      },
+      "footer": {
+        "section_game": "Oyun"
       }
     },
     "az": {
@@ -3047,7 +3067,6 @@
         "save": "{amount} qənaət et",
         "searchProducts": "Məhsulları axtarın...",
         "searchResultsFor": "«{query}» üzrə nəticələr ({count})",
-        "secureCheckout": "Blysis tərəfindən təmin olunan təhlükəsiz ödəniş",
         "shoppingCart": "Alış-veriş səbəti",
         "sortBy": "Sırala",
         "state_closed": "Hazırda satışda deyil",
@@ -3089,6 +3108,7 @@
         "tab_orders_title": "Sifarişlərim",
         "tab_orders_total": "Cəmi",
         "title": "Mağaza",
+        "subtitle": "Satışda olan hər şey bir yerdə.",
         "total": "Cəmi",
         "upgradeNote": "{amount} endirim: aşağı rütbəniz var",
         "viewDetails": "Təfərrüatlara bax",
@@ -3132,7 +3152,14 @@
         "dlv_delivered": "Çatdırıldı",
         "dlv_failed": "Çatdırılmadı",
         "dlv_review": "Yoxlanılır",
-        "dlv_cancelled": "Ləğv edildi"
+        "dlv_cancelled": "Ləğv edildi",
+        "blk_shelves": "Kateqoriyalar",
+        "adm_summary": "Xülasə",
+        "adm_summaryHint": "Məhsulun kartında, mağazada və ana səhifədə görünən bir sətir.",
+        "shelfAll": "Hamısına bax ({count})",
+        "discountTag": "%{percent} endirim",
+        "durationDays": "{days} gün",
+        "relatedProducts": "Eyni rəfdən"
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -3361,6 +3388,9 @@
         "product": "Bu məhsulun nəyi əhatə etdiyini, nə qədər olduğunu və sifarişə ödəniş edildikdən sonra nə alacağınızı görün, sonra onu səbətinizə əlavə edin.",
         "orderSuccess": "Sifarişiniz tamamlandı: növbəti addımların nə olduğunu görün, onu sifariş tarixçənizdə yenidən tapın və ya alış-verişə davam edin.",
         "vip": "VIP rütbələrini yan-yana müqayisə edin, hər birinin nə açdığını görün və sizə ən uyğun olanı seçin."
+      },
+      "footer": {
+        "section_game": "Oyun"
       }
     },
     "de": {
@@ -3877,7 +3907,6 @@
         "save": "{amount} sparen",
         "searchProducts": "Produkte suchen...",
         "searchResultsFor": "Ergebnisse für \"{query}\" ({count})",
-        "secureCheckout": "Sichere Kasse, bereitgestellt von Blysis",
         "shoppingCart": "Warenkorb",
         "sortBy": "Sortieren nach",
         "state_closed": "Gerade nicht im Verkauf",
@@ -3919,6 +3948,7 @@
         "tab_orders_title": "Meine Bestellungen",
         "tab_orders_total": "Gesamt",
         "title": "Shop",
+        "subtitle": "Alles, was es zu kaufen gibt, an einem Ort.",
         "total": "Gesamt",
         "upgradeNote": "{amount} Rabatt: Du besitzt bereits einen niedrigeren Rang",
         "viewDetails": "Details ansehen",
@@ -3962,7 +3992,14 @@
         "dlv_delivered": "Geliefert",
         "dlv_failed": "Nicht geliefert",
         "dlv_review": "Wird geprüft",
-        "dlv_cancelled": "Storniert"
+        "dlv_cancelled": "Storniert",
+        "blk_shelves": "Kategorien",
+        "adm_summary": "Kurzbeschreibung",
+        "adm_summaryHint": "Eine Zeile auf der Karte des Produkts, im Shop und auf der Startseite.",
+        "shelfAll": "Alle ansehen ({count})",
+        "discountTag": "{percent} % Rabatt",
+        "durationDays": "{days, plural, one {# Tag} other {# Tage}}",
+        "relatedProducts": "Aus demselben Regal"
       },
       "cart": {
         "title": "Warenkorb",
@@ -4191,6 +4228,9 @@
         "product": "Sieh dir an, was dieses Produkt enthält, was es kostet und was du nach der Bezahlung erhältst, und leg es dann in deinen Warenkorb.",
         "orderSuccess": "Deine Bestellung ist abgeschlossen: Sieh nach, was als Nächstes passiert, finde sie in deinem Bestellverlauf wieder oder stöbere weiter im Shop.",
         "vip": "Vergleiche die VIP-Ränge nebeneinander, sieh, was jeder freischaltet, und wähle den, der am besten zu dir passt."
+      },
+      "footer": {
+        "section_game": "Spiel"
       }
     },
     "es": {
@@ -4707,7 +4747,6 @@
         "save": "Guardar {amount}",
         "searchProducts": "Buscar productos...",
         "searchResultsFor": "Resultados para \"{query}\" ({count})",
-        "secureCheckout": "Pago seguro con Blysis",
         "shoppingCart": "Carrito de compra",
         "sortBy": "Ordenar por",
         "state_closed": "No está a la venta ahora mismo",
@@ -4749,6 +4788,7 @@
         "tab_orders_title": "Mis pedidos",
         "tab_orders_total": "Total",
         "title": "Tienda",
+        "subtitle": "Todo lo que está a la venta, en un solo lugar.",
         "total": "Total",
         "upgradeNote": "{amount} de descuento: ya tienes un rango inferior",
         "viewDetails": "Ver detalles",
@@ -4792,7 +4832,14 @@
         "dlv_delivered": "Entregado",
         "dlv_failed": "No entregado",
         "dlv_review": "En revisión",
-        "dlv_cancelled": "Cancelado"
+        "dlv_cancelled": "Cancelado",
+        "blk_shelves": "Categorías",
+        "adm_summary": "Resumen",
+        "adm_summaryHint": "Una línea que se muestra en la tarjeta del producto, en la tienda y en la portada.",
+        "shelfAll": "Ver todo ({count})",
+        "discountTag": "{percent} % de descuento",
+        "durationDays": "{days, plural, one {# día} other {# días}}",
+        "relatedProducts": "De la misma sección"
       },
       "cart": {
         "title": "Carrito de compra",
@@ -5021,6 +5068,9 @@
         "product": "Consulta qué incluye este producto, cuánto cuesta y qué recibirás una vez pagado el pedido, y después añádelo al carrito.",
         "orderSuccess": "Tu pedido está completo: mira qué pasa ahora, encuéntralo de nuevo en tu historial de pedidos o sigue comprando.",
         "vip": "Compara los rangos VIP lado a lado, mira qué desbloquea cada uno y elige el que mejor te convenga."
+      },
+      "footer": {
+        "section_game": "Juego"
       }
     },
     "et": {
@@ -5537,7 +5587,6 @@
         "save": "Säästa {amount}",
         "searchProducts": "Otsi tooteid...",
         "searchResultsFor": "Tulemused: „{query}“ ({count})",
-        "secureCheckout": "Turvaline vormistamine, mida toetab Blysis",
         "shoppingCart": "Ostukorv",
         "sortBy": "Sordi järgi",
         "state_closed": "Praegu pole müügil",
@@ -5579,6 +5628,7 @@
         "tab_orders_title": "Minu tellimused",
         "tab_orders_total": "Kokku",
         "title": "Pood",
+        "subtitle": "Kõik müügil olev ühes kohas.",
         "total": "Kokku",
         "upgradeNote": "{amount} soodsamalt: sul on juba madalam aste",
         "viewDetails": "Vaata üksikasju",
@@ -5622,7 +5672,14 @@
         "dlv_delivered": "Kohale toimetatud",
         "dlv_failed": "Kohale toimetamata",
         "dlv_review": "Kontrollimisel",
-        "dlv_cancelled": "Tühistatud"
+        "dlv_cancelled": "Tühistatud",
+        "blk_shelves": "Kategooriad",
+        "adm_summary": "Kokkuvõte",
+        "adm_summaryHint": "Üks rida toote kaardil, poes ja avalehel.",
+        "shelfAll": "Vaata kõiki ({count})",
+        "discountTag": "{percent}% soodsam",
+        "durationDays": "{days, plural, one {# päev} other {# päeva}}",
+        "relatedProducts": "Samast riiulist"
       },
       "cart": {
         "title": "Ostukorv",
@@ -5851,6 +5908,9 @@
         "product": "Vaata, mida see toode sisaldab, mis see maksab ja mida saad pärast tellimuse tasumist, ning lisa see seejärel ostukorvi.",
         "orderSuccess": "Sinu tellimus on tehtud: vaata, mis edasi saab, leia see tellimuste ajaloost uuesti üles või jätka ostlemist.",
         "vip": "Võrdle VIP-astmeid kõrvuti, vaata, mida iga aste avab, ja vali endale sobivaim."
+      },
+      "footer": {
+        "section_game": "Mäng"
       }
     },
     "fr": {
@@ -6367,7 +6427,6 @@
         "save": "Économisez {amount}",
         "searchProducts": "Rechercher des produits…",
         "searchResultsFor": "Résultats pour « {query} » ({count})",
-        "secureCheckout": "Paiement sécurisé par Blysis",
         "shoppingCart": "Panier",
         "sortBy": "Trier par",
         "state_closed": "Pas en vente pour le moment",
@@ -6409,6 +6468,7 @@
         "tab_orders_title": "Mes commandes",
         "tab_orders_total": "Total",
         "title": "Boutique",
+        "subtitle": "Tout ce qui est en vente, au même endroit.",
         "total": "Total",
         "upgradeNote": "{amount} de réduction : vous possédez déjà un rang inférieur",
         "viewDetails": "Voir les détails",
@@ -6452,7 +6512,14 @@
         "dlv_delivered": "Livré",
         "dlv_failed": "Non livré",
         "dlv_review": "En vérification",
-        "dlv_cancelled": "Annulé"
+        "dlv_cancelled": "Annulé",
+        "blk_shelves": "Catégories",
+        "adm_summary": "Résumé",
+        "adm_summaryHint": "Une ligne affichée sur la carte du produit, dans la boutique et sur l'accueil.",
+        "shelfAll": "Tout voir ({count})",
+        "discountTag": "-{percent} %",
+        "durationDays": "{days, plural, one {# jour} other {# jours}}",
+        "relatedProducts": "Du même rayon"
       },
       "cart": {
         "title": "Panier",
@@ -6681,6 +6748,9 @@
         "product": "Découvrez ce que comprend ce produit, son prix et ce que vous recevez une fois la commande réglée, puis ajoutez-le à votre panier.",
         "orderSuccess": "Votre commande est validée : découvrez la suite, retrouvez-la dans votre historique de commandes ou poursuivez vos achats.",
         "vip": "Comparez les rangs VIP côte à côte, découvrez ce que débloque chacun et choisissez celui qui vous convient le mieux."
+      },
+      "footer": {
+        "section_game": "Jeu"
       }
     },
     "it": {
@@ -7197,7 +7267,6 @@
         "save": "Salva {amount}",
         "searchProducts": "Cerca prodotti...",
         "searchResultsFor": "Risultati per «{query}» ({count})",
-        "secureCheckout": "Cassa sicura offerta da Blysis",
         "shoppingCart": "Carrello",
         "sortBy": "Ordina per",
         "state_closed": "Non in vendita in questo momento",
@@ -7239,6 +7308,7 @@
         "tab_orders_title": "I miei ordini",
         "tab_orders_total": "Totale",
         "title": "Store",
+        "subtitle": "Tutto ciò che è in vendita, in un unico posto.",
         "total": "Totale",
         "upgradeNote": "{amount} di sconto: possiedi già un grado inferiore",
         "viewDetails": "Vedi dettagli",
@@ -7282,7 +7352,14 @@
         "dlv_delivered": "Consegnato",
         "dlv_failed": "Non consegnato",
         "dlv_review": "In verifica",
-        "dlv_cancelled": "Annullato"
+        "dlv_cancelled": "Annullato",
+        "blk_shelves": "Categorie",
+        "adm_summary": "Riepilogo",
+        "adm_summaryHint": "Una riga mostrata sulla scheda del prodotto, nel negozio e nella home.",
+        "shelfAll": "Vedi tutti ({count})",
+        "discountTag": "-{percent}%",
+        "durationDays": "{days, plural, one {# giorno} other {# giorni}}",
+        "relatedProducts": "Dallo stesso scaffale"
       },
       "cart": {
         "title": "Carrello",
@@ -7511,6 +7588,9 @@
         "product": "Scopri cosa comprende questo prodotto, quanto costa e cosa ricevi una volta pagato l’ordine, poi aggiungilo al carrello.",
         "orderSuccess": "Il tuo ordine è completato: scopri cosa succede ora, ritrovalo nello storico ordini o continua a fare acquisti.",
         "vip": "Confronta i rank VIP uno accanto all’altro, scopri cosa sblocca ciascuno e scegli quello più adatto a te."
+      },
+      "footer": {
+        "section_game": "Gioco"
       }
     },
     "pl": {
@@ -8027,7 +8107,6 @@
         "save": "Oszczędzasz {amount}",
         "searchProducts": "Szukaj produktów...",
         "searchResultsFor": "Wyniki dla \"{query}\" ({count})",
-        "secureCheckout": "Bezpieczna płatność dzięki Blysis",
         "shoppingCart": "Koszyk",
         "sortBy": "Sortuj wg",
         "state_closed": "Obecnie nie w sprzedaży",
@@ -8069,6 +8148,7 @@
         "tab_orders_title": "Moje zamówienia",
         "tab_orders_total": "Razem",
         "title": "Sklep",
+        "subtitle": "Wszystko, co jest w sprzedaży, w jednym miejscu.",
         "total": "Razem",
         "upgradeNote": "{amount} zniżki: posiadasz niższą rangę",
         "viewDetails": "Zobacz szczegóły",
@@ -8112,7 +8192,14 @@
         "dlv_delivered": "Dostarczono",
         "dlv_failed": "Nie dostarczono",
         "dlv_review": "W trakcie sprawdzania",
-        "dlv_cancelled": "Anulowano"
+        "dlv_cancelled": "Anulowano",
+        "blk_shelves": "Kategorie",
+        "adm_summary": "Podsumowanie",
+        "adm_summaryHint": "Jedna linijka na karcie produktu, w sklepie i na stronie głównej.",
+        "shelfAll": "Zobacz wszystkie ({count})",
+        "discountTag": "-{percent}%",
+        "durationDays": "{days, plural, one {# dzień} other {# dni}}",
+        "relatedProducts": "Z tej samej półki"
       },
       "cart": {
         "title": "Koszyk",
@@ -8341,6 +8428,9 @@
         "product": "Zobacz, co zawiera ten produkt, ile kosztuje i co dostaniesz po opłaceniu zamówienia, a potem dodaj go do koszyka.",
         "orderSuccess": "Zamówienie zostało zrealizowane: zobacz, co dalej, znajdź je w historii zamówień albo kontynuuj zakupy.",
         "vip": "Porównaj rangi VIP obok siebie, zobacz, co każda z nich odblokowuje, i wybierz tę, która najbardziej Ci odpowiada."
+      },
+      "footer": {
+        "section_game": "Gra"
       }
     },
     "pt": {
@@ -8857,7 +8947,6 @@
         "save": "Salvar {amount}",
         "searchProducts": "Pesquisar produtos...",
         "searchResultsFor": "Resultados para \"{query}\" ({count})",
-        "secureCheckout": "Pagamento seguro por tecnologia Blysis",
         "shoppingCart": "Carrinho de compras",
         "sortBy": "Ordenar por",
         "state_closed": "Fora de venda no momento",
@@ -8899,6 +8988,7 @@
         "tab_orders_title": "Meus pedidos",
         "tab_orders_total": "Total",
         "title": "Loja",
+        "subtitle": "Tudo o que está à venda, num só lugar.",
         "total": "Total",
         "upgradeNote": "{amount} de desconto: você já tem um cargo inferior",
         "viewDetails": "Ver detalhes",
@@ -8942,7 +9032,14 @@
         "dlv_delivered": "Entregue",
         "dlv_failed": "Não entregue",
         "dlv_review": "Em verificação",
-        "dlv_cancelled": "Cancelado"
+        "dlv_cancelled": "Cancelado",
+        "blk_shelves": "Categorias",
+        "adm_summary": "Resumo",
+        "adm_summaryHint": "Uma linha mostrada no cartão do produto, na loja e na página inicial.",
+        "shelfAll": "Ver todos ({count})",
+        "discountTag": "{percent}% de desconto",
+        "durationDays": "{days, plural, one {# dia} other {# dias}}",
+        "relatedProducts": "Da mesma seção"
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -9171,6 +9268,9 @@
         "product": "Veja o que este produto inclui, quanto custa e o que você recebe depois que o pedido for pago, e então adicione-o ao carrinho.",
         "orderSuccess": "Seu pedido foi concluído: veja o que acontece agora, encontre-o novamente no histórico de pedidos ou continue comprando.",
         "vip": "Compare os cargos VIP lado a lado, veja o que cada um libera e escolha o que mais combina com você."
+      },
+      "footer": {
+        "section_game": "Jogo"
       }
     },
     "ru": {
@@ -9687,7 +9787,6 @@
         "save": "Экономия {amount}",
         "searchProducts": "Поиск товаров...",
         "searchResultsFor": "Результаты по запросу «{query}» ({count})",
-        "secureCheckout": "Безопасная оплата от Blysis",
         "shoppingCart": "Корзина",
         "sortBy": "Сортировка",
         "state_closed": "Сейчас не в продаже",
@@ -9729,6 +9828,7 @@
         "tab_orders_title": "Мои заказы",
         "tab_orders_total": "Итого",
         "title": "Магазин",
+        "subtitle": "Всё, что есть в продаже, в одном месте.",
         "total": "Итого",
         "upgradeNote": "Скидка {amount}: у вас уже есть ранг ниже",
         "viewDetails": "Подробнее",
@@ -9772,7 +9872,14 @@
         "dlv_delivered": "Доставлено",
         "dlv_failed": "Не доставлено",
         "dlv_review": "На проверке",
-        "dlv_cancelled": "Отменено"
+        "dlv_cancelled": "Отменено",
+        "blk_shelves": "Категории",
+        "adm_summary": "Краткое описание",
+        "adm_summaryHint": "Одна строка на карточке товара, в магазине и на главной.",
+        "shelfAll": "Смотреть все ({count})",
+        "discountTag": "Скидка {percent}%",
+        "durationDays": "{days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
+        "relatedProducts": "С той же полки"
       },
       "cart": {
         "title": "Корзина",
@@ -10001,6 +10108,9 @@
         "product": "Посмотрите, что входит в этот товар, сколько он стоит и что вы получите после оплаты заказа, затем добавьте его в корзину.",
         "orderSuccess": "Заказ оформлен: узнайте, что будет дальше, найдите его в истории заказов или продолжайте покупки.",
         "vip": "Сравните VIP-ранги рядом, посмотрите, что открывает каждый из них, и выберите тот, который подходит вам лучше всего."
+      },
+      "footer": {
+        "section_game": "Игра"
       }
     },
     "zh": {
@@ -10517,7 +10627,6 @@
         "save": "节省 {amount}",
         "searchProducts": "搜索商品…",
         "searchResultsFor": "“{query}”的搜索结果（{count}）",
-        "secureCheckout": "由 Blysis 提供安全结算",
         "shoppingCart": "购物车",
         "sortBy": "排序方式",
         "state_closed": "当前未开售",
@@ -10559,6 +10668,7 @@
         "tab_orders_title": "我的订单",
         "tab_orders_total": "总计",
         "title": "商店",
+        "subtitle": "所有在售商品，尽在此处。",
         "total": "总计",
         "upgradeNote": "减 {amount}：你已拥有较低等级",
         "viewDetails": "查看详情",
@@ -10602,7 +10712,14 @@
         "dlv_delivered": "已发货",
         "dlv_failed": "未发货",
         "dlv_review": "检查中",
-        "dlv_cancelled": "已取消"
+        "dlv_cancelled": "已取消",
+        "blk_shelves": "分类",
+        "adm_summary": "摘要",
+        "adm_summaryHint": "显示在商品卡片上的一句话，商店和首页都会显示。",
+        "shelfAll": "查看全部（{count}）",
+        "discountTag": "优惠 {percent}%",
+        "durationDays": "{days} 天",
+        "relatedProducts": "同一货架"
       },
       "cart": {
         "title": "购物车",
@@ -10831,6 +10948,9 @@
         "product": "了解此商品包含的内容、价格，以及订单付款后你将获得的东西，然后将其加入购物车。",
         "orderSuccess": "订单已完成：了解接下来会发生什么，可在订单历史中再次找到它，或继续购物。",
         "vip": "并排比较各个 VIP 等级，了解每个等级解锁的内容，选出最适合你的一个。"
+      },
+      "footer": {
+        "section_game": "游戏"
       }
     }
   },
@@ -10975,7 +11095,8 @@
       "label": "Store",
       "labelKey": "store",
       "href": "/store",
-      "section": "quick"
+      "section": "game",
+      "sectionLabelKey": "section_game"
     }
   ],
   "activityTitles": [
@@ -11019,6 +11140,334 @@
     {
       "action": "store.credits.transferred",
       "nameKey": "auditCreditsTransferred"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "products",
+      "component": "components/ProductsBlock",
+      "widths": [
+        "wide",
+        "full"
+      ],
+      "defaultOrder": 30,
+      "defaultVisible": false,
+      "settings": {
+        "kicker": {
+          "type": "text",
+          "max": 60
+        },
+        "title": {
+          "type": "text",
+          "max": 80
+        },
+        "count": {
+          "type": "number",
+          "default": 4,
+          "min": 2,
+          "max": 12
+        },
+        "allLink": {
+          "type": "toggle",
+          "default": false
+        }
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "home",
+      "blocks": [
+        {
+          "id": "search",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "categories",
+          "widths": [
+            "full",
+            "wide"
+          ],
+          "settings": {
+            "style": {
+              "type": "select",
+              "default": "cards",
+              "options": [
+                {
+                  "value": "cards",
+                  "label": "Cards with pictures"
+                },
+                {
+                  "value": "chips",
+                  "label": "A row of links"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "featured",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "shelves",
+          "widths": [
+            "full",
+            "wide"
+          ],
+          "settings": {
+            "limit": {
+              "type": "number",
+              "default": 3,
+              "min": 1,
+              "max": 8
+            }
+          }
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "search",
+                  "block": "store.search"
+                },
+                {
+                  "key": "categories",
+                  "block": "store.categories"
+                }
+              ]
+            ]
+          }
+        ],
+        "hidden": [
+          "store.featured",
+          "store.shelves"
+        ]
+      }
+    },
+    {
+      "id": "shelf",
+      "blocks": [
+        {
+          "id": "crumbs",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "search",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "categories",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "subcategories",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "products",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "crumbs",
+                  "block": "store.crumbs"
+                },
+                {
+                  "key": "search",
+                  "block": "store.search"
+                },
+                {
+                  "key": "subcategories",
+                  "block": "store.subcategories"
+                },
+                {
+                  "key": "products",
+                  "block": "store.products"
+                }
+              ]
+            ]
+          }
+        ],
+        "hidden": [
+          "store.categories"
+        ]
+      }
+    },
+    {
+      "id": "product",
+      "blocks": [
+        {
+          "id": "crumbs",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "gallery",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "buy",
+          "widths": [
+            "narrow",
+            "wide"
+          ],
+          "settings": {
+            "title": {
+              "type": "toggle",
+              "default": false
+            }
+          }
+        },
+        {
+          "id": "details",
+          "widths": [
+            "full",
+            "wide",
+            "narrow"
+          ]
+        },
+        {
+          "id": "related",
+          "widths": [
+            "full",
+            "wide",
+            "narrow"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "gallery",
+                  "block": "store.gallery"
+                },
+                {
+                  "key": "details",
+                  "block": "store.details"
+                }
+              ],
+              [
+                {
+                  "key": "buy",
+                  "block": "store.buy"
+                }
+              ]
+            ]
+          }
+        ],
+        "hidden": [
+          "store.crumbs",
+          "store.related"
+        ]
+      }
+    },
+    {
+      "id": "cart",
+      "blocks": [
+        {
+          "id": "items",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "summary",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "items",
+                  "block": "store.items"
+                }
+              ],
+              [
+                {
+                  "key": "summary",
+                  "block": "store.summary"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "vip",
+      "blocks": [
+        {
+          "id": "ranks",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "ranks",
+                  "block": "store.ranks"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

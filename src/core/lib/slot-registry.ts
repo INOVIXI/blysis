@@ -48,6 +48,9 @@ export const CANONICAL_SLOTS = [
     // Auth forms - a module puts a check in front of signing in or up.
     // See core/lib/auth-challenge.ts for the server half.
     "auth.form.challenge",
+    // Core's stats block - a module hands it a live tile (`StatTile`), such
+    // as players online, ahead of the tiles the theme's layout gives it.
+    "home.stats",
 ] as const;
 
 export type CanonicalSlot = typeof CANONICAL_SLOTS[number];
@@ -56,7 +59,7 @@ const CANONICAL_SLOT_SET: Set<string> = new Set(CANONICAL_SLOTS);
 
 /**
  * Strict membership check against the canonical slot list. Returns true
- * only when `name` is exactly one of the 9 names core renders.
+ * only when `name` is exactly one of the names core renders.
  */
 export function isCanonicalSlot(name: string): name is CanonicalSlot {
     return CANONICAL_SLOT_SET.has(name);

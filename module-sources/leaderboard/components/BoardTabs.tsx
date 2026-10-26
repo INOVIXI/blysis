@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, ListControls, LoadFailed, SegmentedTabs, Waiting, useSiteCurrency } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 
 interface Row {
     username: string;
@@ -95,83 +95,89 @@ export function BoardTabs({ initialBoards, initialRows, initialId }: {
     const active = boards.find((b) => b.id === activeId) ?? null;
 
     return (
-        <PageFrame title={t("title")} description={t("subtitle")}>
-            {/* A board is a different list, not a narrower one, so it is a
-                tab. One board is not a choice and draws no rail. */}
-            {boards.length > 1 && (
-                <SegmentedTabs
-                    label={t("title")}
-                    activeId={activeId ?? ""}
-                    onChange={setActiveId}
-                    className="mb-6"
-                    tabs={boards.map((board) => ({
-                        id: board.id,
-                        label: everything(board.labelKey),
-                        icon: board.icon,
-                    }))}
-                />
-            )}
-
-            <ListControls
-                className="mb-6"
-                search={{ value: search, onChange: setSearch, placeholder: t("searchMembers") }}
-                filters={[{
-                    id: "period",
-                    label: t("period"),
-                    value: period,
-                    onChange: setPeriod,
-                    options: [
-                        { value: "", label: t("periodAll") },
-                        { value: "week", label: t("periodWeek") },
-                        { value: "month", label: t("periodMonth") },
-                        { value: "year", label: t("periodYear") },
-                    ],
-                }]}
-            />
-
-            <Card>
-                <CardContent className="p-0">
-                    {loading ? (
-                        <Waiting label={t("title")} />
-                    ) : failed ? (
-                        <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
-                    ) : rows.length === 0 ? (
-                        <p className="text-muted-foreground text-center py-12">{t("noData")}</p>
-                    ) : (
-                        <div className="divide-y">
-                            {rows.map((row, i) => (
-                                <div key={`${row.username}-${i}`} className="flex items-center gap-4 p-4">
-                                    {/* The rank the board gave it, not where it
-                                        landed in the array: a searched row is
-                                        still whatever it really came. */}
-                                    <div className={`w-10 text-center font-bold text-lg ${rankColours[row.rank - 1] || "text-muted-foreground"}`}>
-                                        #{row.rank}
-                                    </div>
-                                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center font-bold text-sm overflow-hidden">
-                                        {row.avatar ? (
-                                            <Image
-                                                src={row.avatar}
-                                                alt={row.username}
-                                                width={40}
-                                                height={40}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            row.username.charAt(0).toUpperCase()
-                                        )}
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="font-medium">{row.username}</p>
-                                    </div>
-                                    <div className="text-right font-bold">
-                                        {active?.unit === "currency" ? formatPrice(row.value) : row.value}
-                                    </div>
+        <ArrangedClientPage
+            page="leaderboard.boards"
+            frame={{ title: t("title"), description: t("subtitle") }}
+            blocks={{
+                // A board is a different list, not a narrower one, so it is a
+                // tab. One board is not a choice and draws no rail.
+                tabs: () => (
+                    boards.length > 1 ? (
+                        <SegmentedTabs
+                            label={t("title")}
+                            activeId={activeId ?? ""}
+                            onChange={setActiveId}
+                            tabs={boards.map((board) => ({
+                                id: board.id,
+                                label: everything(board.labelKey),
+                                icon: board.icon,
+                            }))}
+                        />
+                    ) : null
+                ),
+                controls: () => (
+                    <ListControls
+                        search={{ value: search, onChange: setSearch, placeholder: t("searchMembers") }}
+                        filters={[{
+                            id: "period",
+                            label: t("period"),
+                            value: period,
+                            onChange: setPeriod,
+                            options: [
+                                { value: "", label: t("periodAll") },
+                                { value: "week", label: t("periodWeek") },
+                                { value: "month", label: t("periodMonth") },
+                                { value: "year", label: t("periodYear") },
+                            ],
+                        }]}
+                    />
+                ),
+                board: () => (
+                    <Card>
+                        <CardContent className="p-0">
+                            {loading ? (
+                                <Waiting label={t("title")} />
+                            ) : failed ? (
+                                <LoadFailed onRetry={() => setReloadKey((k) => k + 1)} />
+                            ) : rows.length === 0 ? (
+                                <p className="text-muted-foreground text-center py-12">{t("noData")}</p>
+                            ) : (
+                                <div className="divide-y">
+                                    {rows.map((row, i) => (
+                                        <div key={`${row.username}-${i}`} className="flex items-center gap-4 p-4">
+                                            {/* The rank the board gave it, not where it
+                                                landed in the array: a searched row is
+                                                still whatever it really came. */}
+                                            <div className={`w-10 text-center font-bold text-lg ${rankColours[row.rank - 1] || "text-muted-foreground"}`}>
+                                                #{row.rank}
+                                            </div>
+                                            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center font-bold text-sm overflow-hidden">
+                                                {row.avatar ? (
+                                                    <Image
+                                                        src={row.avatar}
+                                                        alt={row.username}
+                                                        width={40}
+                                                        height={40}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    row.username.charAt(0).toUpperCase()
+                                                )}
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="font-medium">{row.username}</p>
+                                            </div>
+                                            <div className="text-right font-bold">
+                                                {active?.unit === "currency" ? formatPrice(row.value) : row.value}
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-        </PageFrame>
+                            )}
+                        </CardContent>
+                    </Card>
+                ),
+            }}
+        />
     );
 }

@@ -200,7 +200,7 @@ export default function DepartmentSetupPage() {
                     {fields.length === 0 ? (
                         <p className="text-sm text-muted-foreground">{t("adm_noQuestions")}</p>
                     ) : fields.map((field, index) => (
-                        <div key={index} className="grid sm:grid-cols-12 gap-2 items-end">
+                        <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
                             <div className="sm:col-span-3">
                                 <Label htmlFor={`field-key-${index}`}>{t("adm_questionKey")}</Label>
                                 <Input

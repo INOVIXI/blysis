@@ -161,6 +161,22 @@ describe("where a module's link ends up", () => {
         placeModuleLinks(columns, [moduleLink("Terms", "legal")]);
         expect(columns[1].links).toEqual([]);
     });
+
+    // An operator who listed the shop under "Server" read "Shop" twice in
+    // one footer, once in their words and once in the module's.
+    it("is not drawn again when the operator already links to its page, in any column", () => {
+        const withOwn: FooterColumn[] = [
+            { title: "Quick", titleKey: null, section: null, links: [] },
+            { title: "Server", titleKey: null, section: "server", links: [{ label: "Our shop", href: "/store", external: false, icon: null, source: "operator" }] },
+        ];
+        const placed = placeModuleLinks(withOwn, [moduleLink("Store", null), moduleLink("Blog", null)]);
+        expect(placed.flatMap((column) => column.links.map((l) => l.label))).toEqual(["Blog", "Our shop"]);
+    });
+
+    it("is drawn once when two modules link to the same page", () => {
+        const placed = placeModuleLinks(columns, [moduleLink("Support", null), { label: "Help desk", href: "/support", section: "support" }]);
+        expect(placed.flatMap((column) => column.links.map((l) => l.href))).toEqual(["/support"]);
+    });
 });
 
 describe("the way home", () => {

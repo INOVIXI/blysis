@@ -28,6 +28,7 @@
  *   `@/core/sdk/theme`       active theme config + component overrides
  *   `@/core/sdk/ui`          shared UI primitives (client)
  *   `@/core/sdk/layout`      navbar / footer / slots (page composition)
+ *   `@/core/sdk/page`        a module's page arranged from blocks (server)
  *   `@/core/sdk/admin`       admin CRUD and settings scaffolds
  *
  * Adding a symbol here is a minor CORE_API_VERSION bump; changing or removing
@@ -63,8 +64,17 @@ export {
  * where there is not, and returns whether the text actually landed.
  */
 export { sharedJson, peekShared, invalidateShared } from "@/core/lib/shared-request";
+/** Site placeholders in text, `{servers.online}`: filled once and as text. */
+export { fillPlaceholderText, placeholderTokens, type PlaceholderValue } from "@/core/lib/placeholder-text";
 
 export { copyText } from "@/core/lib/copy-text";
+
+/**
+ * Whether a host only exists inside the operator's own network. Ask it
+ * before telling the world an address an operator typed for the server's
+ * own use.
+ */
+export { isPrivateHost } from "@/core/lib/url-safety";
 
 export { writeError, errorMessage } from "@/core/lib/write-result";
 // Deleting several rows and saying what actually happened. There is no

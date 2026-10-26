@@ -114,7 +114,7 @@ export default function AdminForumCategoriesPage() {
                 <Card>
                     <CardContent className="p-6">
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <Label>{`${t("adm_name")} *`}</Label>
                                     <Input
@@ -147,7 +147,7 @@ export default function AdminForumCategoriesPage() {
                                     onChange={(v) => setForm({ ...form, description: v })}
                                 />
                             </div>
-                            <div className="grid md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <Label>{t("adm_color")}</Label>
                                     <div className="flex gap-2">
@@ -200,7 +200,7 @@ export default function AdminForumCategoriesPage() {
 
             {errorBanner}
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {categories.length === 0 ? (
                     <Card className="col-span-full">
                         <CardContent className="py-8 text-center">

@@ -3,6 +3,7 @@ import { auth } from "@/core/lib/auth";
 import { isAdmin } from "@/core/lib/permissions";
 import { prisma } from "@/core/lib/db";
 import { pageParams } from "@/core/lib/page-params";
+import { textContains } from "@/core/lib/search-text";
 
 const VALID_STATUSES = ["pending", "sending", "sent", "failed"] as const;
 type EmailStatus = (typeof VALID_STATUSES)[number];
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
             ? {
                 OR: [
                     { to: { contains: term, mode: "insensitive" as const } },
-                    { subject: { contains: term, mode: "insensitive" as const } },
+                    ...textContains(["subject"], term),
                 ],
             }
             : {}),

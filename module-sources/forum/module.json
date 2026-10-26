@@ -2,8 +2,8 @@
   "id": "forum",
   "name": "Forum Module",
   "description": "Community discussion forum with categories, topics, and replies",
-  "version": "1.12.1",
-  "coreVersion": "^5.0.0",
+  "version": "1.16.0",
+  "coreVersion": "^5.30.0",
   "category": "community",
   "author": "Blysis Team",
   "icon": "MessageSquare",
@@ -219,6 +219,16 @@
       "type": "action"
     }
   ],
+  "widgets": [
+    {
+      "id": "LatestTopicsWidget",
+      "component": "widgets/latest-topics-widget",
+      "label": "Latest forum topics",
+      "labelKey": "widget_forumLatest",
+      "defaultVisible": true,
+      "defaultOrder": 30
+    }
+  ],
   "translations": {
     "en": {
       "nav": {
@@ -345,7 +355,13 @@
         "topicsCount": "{count, plural, one {# topic} other {# topics}}",
         "views": "{count} views",
         "viewsCount": "{count, plural, one {# view} other {# views}}",
-        "writeYourReply": "Write your reply…"
+        "writeYourReply": "Write your reply…",
+        "widget_latestTitle": "New on the forum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "a former member",
+        "widget_latestAll": "Go to the forum",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Member since {date}"
       },
       "admin": {
         "actions": "Actions",
@@ -384,7 +400,8 @@
         "topic": "Topic",
         "menu_forum_forum_permissions": "Forum Permissions",
         "revision_forum_post": "Forum Post",
-        "revision_forum_topic": "Forum Topic"
+        "revision_forum_topic": "Forum Topic",
+        "widget_forumLatest": "Latest forum topics"
       },
       "activity": {
         "forumPostCreated": "replied to:",
@@ -404,6 +421,9 @@
         "forum": "Browse the discussion categories, see the newest topics and replies, and join the conversation with other members.",
         "topic": "Read the whole discussion, follow every reply in the order it was posted and add your own answer to the topic.",
         "newTopic": "Start a new discussion: pick a category, write your question or idea and post it for other members to reply to."
+      },
+      "footer": {
+        "section_community": "Community"
       }
     },
     "tr": {
@@ -531,7 +551,13 @@
         "topicsCount": "{count, plural, one {# konu} other {# konu}}",
         "views": "{count} görüntülenme",
         "viewsCount": "{count, plural, one {# görüntüleme} other {# görüntüleme}}",
-        "writeYourReply": "Yanıtınızı yazın…"
+        "writeYourReply": "Yanıtınızı yazın…",
+        "widget_latestTitle": "Forumda yeni",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "eski bir üye",
+        "widget_latestAll": "Foruma git",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "{date} tarihinden beri üye"
       },
       "admin": {
         "actions": "İşlemler",
@@ -570,7 +596,8 @@
         "topic": "Konu",
         "menu_forum_forum_permissions": "Forum İzinleri",
         "revision_forum_post": "Forum Mesajı",
-        "revision_forum_topic": "Forum Konusu"
+        "revision_forum_topic": "Forum Konusu",
+        "widget_forumLatest": "Forumdaki son konular"
       },
       "activity": {
         "forumPostCreated": "yanıt verdi:",
@@ -590,6 +617,9 @@
         "forum": "Tartışma kategorilerine göz atın, en yeni konuları ve yanıtları görün, diğer üyelerle sohbete katılın.",
         "topic": "Tartışmanın tamamını okuyun, her yanıtı gönderildiği sırayla takip edin ve konuya kendi cevabınızı ekleyin.",
         "newTopic": "Yeni bir tartışma başlatın: kategori seçin, sorunuzu ya da fikrinizi yazın ve diğer üyelerin yanıtlaması için paylaşın."
+      },
+      "footer": {
+        "section_community": "Topluluk"
       }
     },
     "az": {
@@ -717,7 +747,13 @@
         "topicsCount": "{count, plural, one {# mövzu} other {# mövzu}}",
         "views": "{count} baxış",
         "viewsCount": "{count, plural, one {# baxış} other {# baxış}}",
-        "writeYourReply": "Cavabınızı yazın…"
+        "writeYourReply": "Cavabınızı yazın…",
+        "widget_latestTitle": "Forumda yeni",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "keçmiş üzv",
+        "widget_latestAll": "Foruma keç",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "{date} tarixindən üzv"
       },
       "admin": {
         "actions": "Əməliyyatlar",
@@ -756,7 +792,8 @@
         "topic": "Mövzu",
         "menu_forum_forum_permissions": "Forum icazələri",
         "revision_forum_post": "Forum yazısı",
-        "revision_forum_topic": "Forum mövzusu"
+        "revision_forum_topic": "Forum mövzusu",
+        "widget_forumLatest": "Forumdakı son mövzular"
       },
       "activity": {
         "forumPostCreated": "cavab yazdı:",
@@ -776,6 +813,9 @@
         "forum": "Müzakirə kateqoriyalarına baxın, ən yeni mövzu və cavabları görün və digər üzvlərlə söhbətə qoşulun.",
         "topic": "Bütün müzakirəni oxuyun, hər cavabı yazılma sırası ilə izləyin və mövzuya öz cavabınızı əlavə edin.",
         "newTopic": "Yeni müzakirə başlayın: kateqoriya seçin, sualınızı və ya fikrinizi yazın və digər üzvlərin cavab verməsi üçün paylaşın."
+      },
+      "footer": {
+        "section_community": "İcma"
       }
     },
     "de": {
@@ -903,7 +943,13 @@
         "topicsCount": "{count, plural, one {# Thema} other {# Themen}}",
         "views": "{count} Aufrufe",
         "viewsCount": "{count, plural, one {# Aufruf} other {# Aufrufe}}",
-        "writeYourReply": "Schreibe deine Antwort…"
+        "writeYourReply": "Schreibe deine Antwort…",
+        "widget_latestTitle": "Neu im Forum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "ein ehemaliges Mitglied",
+        "widget_latestAll": "Zum Forum",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Mitglied seit {date}"
       },
       "admin": {
         "actions": "Aktionen",
@@ -942,7 +988,8 @@
         "topic": "Thema",
         "menu_forum_forum_permissions": "Forum-Berechtigungen",
         "revision_forum_post": "Forum-Beitrag",
-        "revision_forum_topic": "Forum-Thema"
+        "revision_forum_topic": "Forum-Thema",
+        "widget_forumLatest": "Neueste Forenthemen"
       },
       "activity": {
         "forumPostCreated": "hat geantwortet auf:",
@@ -962,6 +1009,9 @@
         "forum": "Durchsuche die Diskussionskategorien, sieh dir die neuesten Themen und Antworten an und mische dich mit anderen Mitgliedern ins Gespräch.",
         "topic": "Lies die ganze Diskussion, verfolge jede Antwort in der Reihenfolge, in der sie geschrieben wurde, und gib deine eigene Antwort auf das Thema.",
         "newTopic": "Starte eine neue Diskussion: Wähle eine Kategorie, schreibe deine Frage oder Idee und veröffentliche sie, damit andere Mitglieder antworten können."
+      },
+      "footer": {
+        "section_community": "Community"
       }
     },
     "es": {
@@ -1089,7 +1139,13 @@
         "topicsCount": "{count, plural, one {# tema} other {# temas}}",
         "views": "{count} visitas",
         "viewsCount": "{count, plural, one {# visita} other {# visitas}}",
-        "writeYourReply": "Escribe tu respuesta…"
+        "writeYourReply": "Escribe tu respuesta…",
+        "widget_latestTitle": "Nuevo en el foro",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "un antiguo miembro",
+        "widget_latestAll": "Ir al foro",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Miembro desde {date}"
       },
       "admin": {
         "actions": "Acciones",
@@ -1128,7 +1184,8 @@
         "topic": "Tema",
         "menu_forum_forum_permissions": "Permisos del foro",
         "revision_forum_post": "Mensaje del foro",
-        "revision_forum_topic": "Tema del foro"
+        "revision_forum_topic": "Tema del foro",
+        "widget_forumLatest": "Últimos temas del foro"
       },
       "activity": {
         "forumPostCreated": "respondió a:",
@@ -1148,6 +1205,9 @@
         "forum": "Explora las categorías de debate, mira los temas y respuestas más recientes y únete a la conversación con otros miembros.",
         "topic": "Lee todo el debate, sigue cada respuesta en el orden en que se publicó y añade tu propia respuesta al tema.",
         "newTopic": "Inicia un nuevo debate: elige una categoría, escribe tu pregunta o idea y publícala para que otros miembros puedan responder."
+      },
+      "footer": {
+        "section_community": "Comunidad"
       }
     },
     "et": {
@@ -1275,7 +1335,13 @@
         "topicsCount": "{count, plural, one {# teema} other {# teemat}}",
         "views": "{count} vaatamist",
         "viewsCount": "{count, plural, one {# vaatamine} other {# vaatamist}}",
-        "writeYourReply": "Kirjuta oma vastus…"
+        "writeYourReply": "Kirjuta oma vastus…",
+        "widget_latestTitle": "Foorumis uut",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "endine liige",
+        "widget_latestAll": "Mine foorumisse",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Liige alates {date}"
       },
       "admin": {
         "actions": "Tegevused",
@@ -1314,7 +1380,8 @@
         "topic": "Teema",
         "menu_forum_forum_permissions": "Foorumi õigused",
         "revision_forum_post": "Foorumi postitus",
-        "revision_forum_topic": "Foorumi teema"
+        "revision_forum_topic": "Foorumi teema",
+        "widget_forumLatest": "Foorumi uusimad teemad"
       },
       "activity": {
         "forumPostCreated": "vastas teemale:",
@@ -1334,6 +1401,9 @@
         "forum": "Sirvi arutelukategooriaid, vaata uusimaid teemasid ja vastuseid ning liitu vestlusega teiste liikmetega.",
         "topic": "Loe kogu arutelu, jälgi iga vastust selles järjekorras, milles see postitati, ja lisa teemale oma vastus.",
         "newTopic": "Alusta uut arutelu: vali kategooria, kirjuta oma küsimus või idee ja postita see, et teised liikmed saaksid vastata."
+      },
+      "footer": {
+        "section_community": "Kogukond"
       }
     },
     "fr": {
@@ -1461,7 +1531,13 @@
         "topicsCount": "{count, plural, one {# sujet} other {# sujets}}",
         "views": "{count} vues",
         "viewsCount": "{count, plural, one {# vue} other {# vues}}",
-        "writeYourReply": "Rédigez votre réponse…"
+        "writeYourReply": "Rédigez votre réponse…",
+        "widget_latestTitle": "Nouveau sur le forum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "un ancien membre",
+        "widget_latestAll": "Aller au forum",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Membre depuis {date}"
       },
       "admin": {
         "actions": "Actions",
@@ -1500,7 +1576,8 @@
         "topic": "Sujet",
         "menu_forum_forum_permissions": "Autorisations du forum",
         "revision_forum_post": "Message du forum",
-        "revision_forum_topic": "Sujet du forum"
+        "revision_forum_topic": "Sujet du forum",
+        "widget_forumLatest": "Derniers sujets du forum"
       },
       "activity": {
         "forumPostCreated": "a répondu à :",
@@ -1520,6 +1597,9 @@
         "forum": "Parcourez les catégories de discussion, consultez les derniers sujets et réponses, et rejoignez la conversation avec les autres membres.",
         "topic": "Lisez l’ensemble de la discussion, suivez chaque réponse dans l’ordre de publication et ajoutez votre propre réponse au sujet.",
         "newTopic": "Lancez une nouvelle discussion : choisissez une catégorie, rédigez votre question ou votre idée et publiez-la pour que les autres membres puissent répondre."
+      },
+      "footer": {
+        "section_community": "Communauté"
       }
     },
     "it": {
@@ -1647,7 +1727,13 @@
         "topicsCount": "{count, plural, one {# discussione} other {# discussioni}}",
         "views": "{count} visualizzazioni",
         "viewsCount": "{count, plural, one {# visualizzazione} other {# visualizzazioni}}",
-        "writeYourReply": "Scrivi la tua risposta…"
+        "writeYourReply": "Scrivi la tua risposta…",
+        "widget_latestTitle": "Novità sul forum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "un ex membro",
+        "widget_latestAll": "Vai al forum",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Membro da {date}"
       },
       "admin": {
         "actions": "Azioni",
@@ -1686,7 +1772,8 @@
         "topic": "Discussione",
         "menu_forum_forum_permissions": "Permessi del forum",
         "revision_forum_post": "Risposta del forum",
-        "revision_forum_topic": "Discussione del forum"
+        "revision_forum_topic": "Discussione del forum",
+        "widget_forumLatest": "Ultime discussioni del forum"
       },
       "activity": {
         "forumPostCreated": "ha risposto a:",
@@ -1706,6 +1793,9 @@
         "forum": "Sfoglia le categorie di discussione, leggi le discussioni e le risposte più recenti e partecipa alla conversazione con gli altri membri.",
         "topic": "Leggi l’intera discussione, segui ogni risposta nell’ordine in cui è stata pubblicata e aggiungi la tua risposta alla discussione.",
         "newTopic": "Avvia una nuova discussione: scegli una categoria, scrivi la tua domanda o idea e pubblicala perché gli altri membri possano rispondere."
+      },
+      "footer": {
+        "section_community": "Comunità"
       }
     },
     "pl": {
@@ -1833,7 +1923,13 @@
         "topicsCount": "{count, plural, one {# temat} few {# tematy} many {# tematów} other {# tematu}}",
         "views": "{count, plural, one {# wyświetlenie} few {# wyświetlenia} many {# wyświetleń} other {# wyświetlenia}}",
         "viewsCount": "{count, plural, one {# wyświetlenie} few {# wyświetlenia} many {# wyświetleń} other {# wyświetlenia}}",
-        "writeYourReply": "Napisz swoją odpowiedź…"
+        "writeYourReply": "Napisz swoją odpowiedź…",
+        "widget_latestTitle": "Nowe na forum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "były członek",
+        "widget_latestAll": "Przejdź do forum",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Członek od {date}"
       },
       "admin": {
         "actions": "Działania",
@@ -1872,7 +1968,8 @@
         "topic": "Temat",
         "menu_forum_forum_permissions": "Uprawnienia forum",
         "revision_forum_post": "Post na forum",
-        "revision_forum_topic": "Temat forum"
+        "revision_forum_topic": "Temat forum",
+        "widget_forumLatest": "Najnowsze tematy na forum"
       },
       "activity": {
         "forumPostCreated": "odpowiedział w temacie:",
@@ -1892,6 +1989,9 @@
         "forum": "Przeglądaj kategorie dyskusji, zobacz najnowsze tematy i odpowiedzi oraz dołącz do rozmowy z innymi członkami.",
         "topic": "Przeczytaj całą dyskusję, śledź każdą odpowiedź w kolejności, w jakiej została napisana, i dodaj własną odpowiedź do tematu.",
         "newTopic": "Zacznij nową dyskusję: wybierz kategorię, napisz pytanie lub pomysł i opublikuj go, aby inni członkowie mogli odpowiedzieć."
+      },
+      "footer": {
+        "section_community": "Społeczność"
       }
     },
     "pt": {
@@ -2019,7 +2119,13 @@
         "topicsCount": "{count, plural, one {# tópico} other {# tópicos}}",
         "views": "{count} visualizações",
         "viewsCount": "{count, plural, one {# visualização} other {# visualizações}}",
-        "writeYourReply": "Escreva sua resposta…"
+        "writeYourReply": "Escreva sua resposta…",
+        "widget_latestTitle": "Novo no fórum",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "um ex-membro",
+        "widget_latestAll": "Ir para o fórum",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Membro desde {date}"
       },
       "admin": {
         "actions": "Ações",
@@ -2058,7 +2164,8 @@
         "topic": "Tópico",
         "menu_forum_forum_permissions": "Permissões do fórum",
         "revision_forum_post": "Publicação do fórum",
-        "revision_forum_topic": "Tópico do fórum"
+        "revision_forum_topic": "Tópico do fórum",
+        "widget_forumLatest": "Tópicos mais recentes do fórum"
       },
       "activity": {
         "forumPostCreated": "respondeu a:",
@@ -2078,6 +2185,9 @@
         "forum": "Navegue pelas categorias de discussão, veja os tópicos e respostas mais recentes e participe da conversa com outros membros.",
         "topic": "Leia a discussão inteira, acompanhe cada resposta na ordem em que foi publicada e adicione sua própria resposta ao tópico.",
         "newTopic": "Inicie uma nova discussão: escolha uma categoria, escreva sua pergunta ou ideia e publique para que outros membros respondam."
+      },
+      "footer": {
+        "section_community": "Comunidade"
       }
     },
     "ru": {
@@ -2205,7 +2315,13 @@
         "topicsCount": "{count, plural, one {# тема} few {# темы} many {# тем} other {# темы}}",
         "views": "Просмотров: {count}",
         "viewsCount": "{count, plural, one {# просмотр} few {# просмотра} many {# просмотров} other {# просмотра}}",
-        "writeYourReply": "Напишите ответ…"
+        "writeYourReply": "Напишите ответ…",
+        "widget_latestTitle": "Новое на форуме",
+        "widget_latestBy": "{name}, {when}",
+        "widget_latestNobody": "бывший участник",
+        "widget_latestAll": "Перейти на форум",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "Участник с {date}"
       },
       "admin": {
         "actions": "Действия",
@@ -2244,7 +2360,8 @@
         "topic": "Тема",
         "menu_forum_forum_permissions": "Права форума",
         "revision_forum_post": "Сообщение форума",
-        "revision_forum_topic": "Тема форума"
+        "revision_forum_topic": "Тема форума",
+        "widget_forumLatest": "Новые темы форума"
       },
       "activity": {
         "forumPostCreated": "ответил(а) в теме:",
@@ -2264,6 +2381,9 @@
         "forum": "Просматривайте категории обсуждений, читайте новые темы и ответы и присоединяйтесь к беседе с другими участниками.",
         "topic": "Читайте всё обсуждение, следите за каждым ответом в порядке публикации и добавляйте свой ответ в тему.",
         "newTopic": "Начните новое обсуждение: выберите категорию, напишите вопрос или идею и опубликуйте ее, чтобы другие участники могли ответить."
+      },
+      "footer": {
+        "section_community": "Сообщество"
       }
     },
     "zh": {
@@ -2391,7 +2511,13 @@
         "topicsCount": "{count, plural, one {# 个主题} other {# 个主题}}",
         "views": "{count} 次浏览",
         "viewsCount": "{count, plural, one {# 次浏览} other {# 次浏览}}",
-        "writeYourReply": "写下你的回复…"
+        "writeYourReply": "写下你的回复…",
+        "widget_latestTitle": "论坛新帖",
+        "widget_latestBy": "{name}，{when}",
+        "widget_latestNobody": "前成员",
+        "widget_latestAll": "前往论坛",
+        "blk_topicMeta": "{name} · {section} · {when}",
+        "memberSince": "{date} 加入"
       },
       "admin": {
         "actions": "操作",
@@ -2430,7 +2556,8 @@
         "topic": "主题",
         "menu_forum_forum_permissions": "论坛权限",
         "revision_forum_post": "论坛帖子",
-        "revision_forum_topic": "论坛主题"
+        "revision_forum_topic": "论坛主题",
+        "widget_forumLatest": "论坛最新主题"
       },
       "activity": {
         "forumPostCreated": "回复了：",
@@ -2450,6 +2577,9 @@
         "forum": "浏览讨论分类，查看最新的主题和回复，并与其他成员一起加入讨论。",
         "topic": "阅读完整讨论，按发布顺序查看每条回复，并在主题下添加你自己的回答。",
         "newTopic": "发起新讨论：选择分类，写下你的问题或想法并发布，供其他成员回复。"
+      },
+      "footer": {
+        "section_community": "社区"
       }
     }
   },
@@ -2542,7 +2672,8 @@
       "label": "Forum",
       "labelKey": "forum",
       "href": "/forum",
-      "section": "quick"
+      "section": "community",
+      "sectionLabelKey": "section_community"
     }
   ],
   "activityTitles": [
@@ -2576,6 +2707,140 @@
       "hook": "leaderboard.boards",
       "type": "filter",
       "handler": "hooks/leaderboard-board.ts"
+    },
+    {
+      "hook": "profile.contentWhere",
+      "type": "filter",
+      "handler": "hooks/profile-content-where.ts"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "latest-topics",
+      "component": "components/LatestTopicsBlock",
+      "widths": [
+        "narrow",
+        "wide"
+      ],
+      "defaultOrder": 60,
+      "defaultVisible": false,
+      "settings": {
+        "title": {
+          "type": "text",
+          "max": 80
+        }
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "topic",
+      "blocks": [
+        {
+          "id": "topic",
+          "widths": [
+            "wide",
+            "full"
+          ],
+          "settings": {
+            "posts": {
+              "type": "select",
+              "default": "stacked",
+              "options": [
+                {
+                  "value": "stacked",
+                  "label": "Author above the post"
+                },
+                {
+                  "value": "columns",
+                  "label": "Author in a column beside the post"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "topic",
+                  "block": "forum.topic"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "board",
+      "blocks": [
+        {
+          "id": "search",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "board",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "search",
+                  "block": "forum.search"
+                },
+                {
+                  "key": "board",
+                  "block": "forum.board"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "new",
+      "blocks": [
+        {
+          "id": "form",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "form",
+                  "block": "forum.form"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

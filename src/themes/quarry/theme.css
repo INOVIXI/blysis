@@ -1,0 +1,1711 @@
+/*
+ * Quarry. Every selector here is scoped to [data-theme="quarry"] by the theme
+ * generator, so nothing below draws on a site wearing another theme.
+ *
+ * The look lives under `.qr-site` (the public frame) and `.qr-auth` (the
+ * sign-in screens). The panel wears this theme's colours and fonts but not
+ * its capitals or its pressed buttons: an operator's tables are not a poster.
+ *
+ * Surfaces are flat colour. A strip of the brand colour closes a page's
+ * header band, the homepage's landscape sinks into the page, and the buttons
+ * press down: that is the whole signature.
+ */
+
+html {
+  --qr-press: 4px;
+  --qr-strip: 6px;
+}
+
+/* Type */
+
+.qr-site,
+.qr-auth {
+  font-family: var(--blysis-font-body);
+}
+
+.qr-site :is(h1, h2, h3, h4),
+.qr-auth :is(h1, h2, h3) {
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+/* Capitals for the site's own headings, never for what a person wrote. */
+.qr-site :is(h1, h2):not(.blysis-content *),
+.qr-auth h1 {
+  text-transform: uppercase;
+}
+
+/* Primitives on the public pages */
+
+/*
+ * A filled or outlined button stands on an edge of its own colour, darker,
+ * and sinks onto it when pressed. The link and ghost variants have no
+ * surface to stand on, so the rule asks for a background class.
+ */
+.qr-site .blysis-button[class*=" bg-"],
+.qr-auth .blysis-button[class*=" bg-"] {
+  --qr-edge: var(--blysis-color-edge);
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 var(--qr-press) 0 var(--qr-edge);
+  transition: transform 80ms, box-shadow 80ms, background-color 150ms;
+}
+
+.qr-site .blysis-button.bg-primary,
+.qr-auth .blysis-button.bg-primary {
+  --qr-edge: color-mix(in srgb, var(--blysis-color-primary) 55%, black);
+}
+
+.qr-site .blysis-button.bg-destructive,
+.qr-auth .blysis-button.bg-destructive {
+  --qr-edge: color-mix(in srgb, var(--blysis-color-destructive) 55%, black);
+}
+
+.qr-site .blysis-button[class*=" bg-"]:active:not(:disabled),
+.qr-auth .blysis-button[class*=" bg-"]:active:not(:disabled) {
+  transform: translateY(calc(var(--qr-press) - 1px));
+  box-shadow: 0 1px 0 var(--qr-edge);
+}
+
+.qr-site .blysis-card,
+.qr-site [data-sidebar] > .bg-card,
+.qr-site [data-sidebar] > [data-block] > .bg-card {
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.qr-site .blysis-badge {
+  border-radius: 3px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* The frame */
+
+.qr-site {
+  overflow-x: clip;
+}
+
+/*
+ * A column a poster can fill, a little narrower than the default one: 1200px
+ * of content between the 24px gutters, which a border-box column counts in.
+ */
+.qr-site .container {
+  max-width: 1248px;
+}
+
+@media (min-width: 40rem) {
+  .qr-site .container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* The bar sits on the page's own ground, parted from the hero by a hairline. */
+.qr-bar > header {
+  border-bottom: 0;
+  background: var(--blysis-color-background);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--blysis-color-border) 50%, var(--blysis-color-background));
+}
+
+.qr-bar > header > .container > div {
+  height: 60px;
+}
+
+/*
+ * The site's name beside its mark, in the heading face. The mark is sized
+ * with min-width and min-height because core gives it an inline size, which
+ * a minimum outranks without `!important`.
+ */
+.qr-bar header a.font-semibold {
+  gap: 10px;
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  font-size: 1.125rem;
+  text-transform: uppercase;
+}
+
+.qr-bar header a.font-semibold > img {
+  min-width: 28px;
+  min-height: 28px;
+}
+
+/* Words, not icons: the links are read as a row of names. */
+.qr-bar header :is(a[data-nav-item], [data-nav-item] > button) {
+  padding-left: 10px;
+  padding-right: 10px;
+  font-weight: 700;
+}
+
+.qr-bar header :is(a[data-nav-item], [data-nav-item] > button) > svg:first-child {
+  display: none;
+}
+
+.qr-bar header :is(a[data-nav-item], [data-nav-item] > button, .blysis-button).text-muted-foreground:not(:hover) {
+  color: color-mix(in srgb, var(--blysis-color-foreground) 45%, var(--blysis-color-mutedForeground));
+}
+
+.qr-bar header .blysis-button:not([class*=" bg-"]) {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.qr-bar header .blysis-button.bg-primary {
+  height: 40px;
+  margin-left: 6px;
+  padding: 0 16px;
+  font-size: 0.8125rem;
+}
+
+@media (min-width: 40rem) {
+  .qr-bar > header > .container > div {
+    height: 68px;
+  }
+
+  /* The mark stands on the column's edge, as the hero's words below it do. */
+  .qr-bar header a.font-semibold {
+    margin-right: 6px;
+    padding-left: 0;
+    font-size: 1.375rem;
+  }
+
+  .qr-bar header a.font-semibold > img {
+    min-width: 34px;
+    min-height: 34px;
+  }
+}
+
+.qr-main {
+  padding-top: 32px;
+  padding-bottom: 48px;
+}
+
+/*
+ * The footer sits a shade under the page, drawn off by a hairline rather than
+ * the brand strip: the hero already closes on the strip, and two of them on
+ * one page made the footer read as a second hero.
+ */
+.qr-site > footer {
+  margin-top: 0;
+  border-top: 0;
+  background: color-mix(in srgb, var(--blysis-color-background) 70%, var(--blysis-color-edge));
+  box-shadow: inset 0 1px 0 var(--blysis-color-border);
+}
+
+.qr-site > footer h2 {
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+}
+
+/* The heading folds on a phone through a button, which does not inherit case. */
+.qr-site > footer h2 button {
+  text-transform: inherit;
+}
+
+/* The site's name in the brand column, set like the bar's. */
+.qr-site > footer .text-lg {
+  font-family: var(--blysis-font-heading);
+  font-weight: 900;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+}
+
+/* The hero */
+
+.qr-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  background: var(--blysis-color-stage);
+  color: var(--blysis-color-stageForeground);
+}
+
+/* The landscape sinks into the page under it rather than stopping on a line. */
+.qr-hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 120px;
+  background: linear-gradient(transparent, var(--blysis-color-background));
+}
+
+.qr-hero-picture {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Dark where the words are, the picture clear where they are not. */
+.qr-hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--blysis-color-stage) 94%, transparent) 0%,
+    color-mix(in srgb, var(--blysis-color-stage) 80%, transparent) 42%,
+    color-mix(in srgb, var(--blysis-color-stage) 10%, transparent) 78%);
+}
+
+/* On a phone the words cover most of the picture, so the dark reaches further. */
+@media (max-width: 47.99rem) {
+  .qr-hero::before {
+    background: linear-gradient(90deg,
+      color-mix(in srgb, var(--blysis-color-stage) 88%, transparent) 0%,
+      color-mix(in srgb, var(--blysis-color-stage) 60%, transparent) 70%,
+      color-mix(in srgb, var(--blysis-color-stage) 30%, transparent) 100%);
+  }
+}
+
+.qr-hero-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  padding-top: 64px;
+  /* Clear of the fade under it, which in the light mode turns pale. */
+  padding-bottom: 120px;
+}
+
+.qr-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.qr-tag,
+.qr-hero-tags [data-hero-tag] {
+  padding: 5px 10px;
+  border-radius: 3px;
+  background: var(--blysis-color-primary);
+  color: var(--blysis-color-primaryForeground);
+  font-family: var(--blysis-font-heading);
+  font-weight: 800;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* What a module says of the server: a square of light, then the words. */
+.qr-hero-tags [data-hero-tag] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qr-hero-tags [data-hero-tag]::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: currentColor;
+}
+
+.qr-hero-tags [data-hero-tag][data-state="closed"] {
+  background: var(--blysis-color-muted);
+  color: var(--blysis-color-stageMuted);
+}
+
+/* Beside a module's tag, the operator's own label takes the second colour. */
+.qr-hero-tags:has([data-hero-tag]) > .qr-tag {
+  background: var(--blysis-color-warning);
+  color: var(--blysis-color-warningForeground);
+}
+
+.qr-hero-accent {
+  display: block;
+  color: var(--blysis-color-primary);
+}
+
+@media (min-width: 64rem) {
+  .qr-hero {
+    min-height: 600px;
+  }
+}
+
+.qr-hero-title {
+  max-width: 620px;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1.02;
+  overflow-wrap: anywhere;
+}
+
+.qr-hero-lede {
+  max-width: 540px;
+  color: var(--blysis-color-stageMuted);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.qr-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.qr-hero-address {
+  color: var(--blysis-color-stageMuted);
+  font-size: 0.875rem;
+}
+
+.qr-address {
+  color: var(--blysis-color-stageForeground);
+  font-family: var(--blysis-font-heading);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  user-select: all;
+}
+
+/*
+ * What a module puts here is written for the page, with the page's tokens,
+ * and here the ground is the hero's in both modes. So the tokens are the
+ * hero's under it, as Vanguard learned when the staff strip's initial
+ * disappeared on its stage in the light mode.
+ * `what-a-module-draws-on-the-quarry-hero-can-be-read` measures each pair.
+ */
+.qr-hero-bottom {
+  width: 100%;
+  max-width: 720px;
+  padding-top: 18px;
+  border-top: 1px solid color-mix(in srgb, var(--blysis-color-stageForeground) 18%, transparent);
+  --blysis-color-background: var(--blysis-color-stage);
+  --blysis-color-foreground: var(--blysis-color-stageForeground);
+  --blysis-color-muted: color-mix(in srgb, var(--blysis-color-stageForeground) 12%, transparent);
+  --blysis-color-mutedForeground: var(--blysis-color-stageMuted);
+  --blysis-color-card: color-mix(in srgb, var(--blysis-color-stageForeground) 10%, transparent);
+  --blysis-color-cardForeground: var(--blysis-color-stageForeground);
+  --blysis-color-border: color-mix(in srgb, var(--blysis-color-stageForeground) 18%, transparent);
+}
+
+.qr-hero-bottom:empty {
+  display: none;
+}
+
+/* The homepage's blocks */
+
+/*
+ * Each section of the homepage stands well apart from the next, as the
+ * posters a game server's front page is made of do. The space is core's
+ * variable, so a row that drew nothing still takes none.
+ */
+.qr-hero + .qr-main {
+  --blysis-row-gap: 72px;
+}
+
+@media (max-width: 47.99rem) {
+  .qr-hero + .qr-main {
+    --blysis-row-gap: 48px;
+  }
+}
+
+.qr-site [data-block-heading] h2 {
+  font-size: clamp(1.75rem, 3.2vw, 2.125rem);
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+/* A short bar of the section's colour leads its label. */
+.qr-site [data-kicker] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.12em;
+}
+
+.qr-site [data-kicker]::before {
+  content: "";
+  width: 18px;
+  height: 4px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.qr-site [data-block="servers.cards"] [data-kicker] {
+  color: var(--blysis-color-accent);
+}
+
+.qr-site [data-block="store.products"] [data-kicker] {
+  color: var(--blysis-color-warning);
+}
+
+/*
+ * Every card a block draws stands on its edge, as the sidebar's do, and the
+ * edge is all that parts it from the page: an outline on top of it read as a
+ * second frame. A card that answers the pointer still shows its outline then.
+ */
+.qr-site [data-block] :is(.bg-card.rounded-xl, [data-stat-tile]) {
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.qr-site [data-block] :is(.bg-card.rounded-xl, [data-stat-tile]):not(:hover) {
+  border-color: transparent;
+}
+
+/* The numbers: each tile's icon is a block of its own colour. */
+.qr-site [data-stat-icon] {
+  --qr-tile: var(--blysis-color-primary);
+  border-radius: 4px;
+  background: var(--qr-tile);
+  color: var(--blysis-color-stageForeground);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--qr-tile) 55%, black);
+}
+
+.qr-site [data-stats] > :nth-child(4n + 2) [data-stat-icon] {
+  --qr-tile: var(--blysis-color-warning);
+}
+
+.qr-site [data-stats] > :nth-child(4n + 3) [data-stat-icon] {
+  --qr-tile: var(--blysis-color-accent);
+}
+
+.qr-site [data-stats] > :nth-child(4n + 4) [data-stat-icon] {
+  --qr-tile: var(--blysis-color-highlight);
+}
+
+.qr-site [data-stat-value] {
+  font-family: var(--blysis-font-heading);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+/* A game mode: how many play in a dark tag, and a cyan button that connects. */
+.qr-site [data-server-players] {
+  left: auto;
+  right: 12px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--blysis-color-edge) 88%, transparent);
+  font-family: var(--blysis-font-heading);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/*
+ * A card's picture is a band of a fixed height, as on a poster, rather than
+ * a ratio that grows with the card on a phone until it is most of a screen.
+ */
+.qr-site [data-server-card] .aspect-card {
+  aspect-ratio: auto;
+  height: 140px;
+}
+
+.qr-site [data-block="store.products"] .aspect-card {
+  aspect-ratio: auto;
+  height: 150px;
+}
+
+.qr-site [data-server-card] .blysis-button.bg-secondary {
+  --qr-edge: color-mix(in srgb, var(--blysis-color-accent) 55%, black);
+  align-self: stretch;
+  justify-content: center;
+  background: var(--blysis-color-accent);
+  color: var(--blysis-color-accentForeground);
+}
+
+/* A card's own name is set like a heading; a row in a list is not. */
+.qr-site :is([data-server-card], [data-news-lead]) h3,
+.qr-site [data-block="store.products"] h3 {
+  font-size: 1.125rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.qr-site [data-news-row] h3 {
+  font-family: var(--blysis-font-body);
+  font-size: 1.0625rem;
+}
+
+.qr-site [data-news-lead] h3 + p {
+  color: color-mix(in srgb, var(--blysis-color-foreground) 45%, var(--blysis-color-mutedForeground));
+  font-size: 0.9375rem;
+}
+
+/* The shop's shelves: the chosen one light, the rest dark, all pressable. */
+.qr-site [data-block="store.products"] [data-block-heading-action] .blysis-button {
+  --qr-edge: var(--blysis-color-edge);
+  min-height: 38px;
+  font-family: var(--blysis-font-body);
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  text-transform: none;
+  background: var(--blysis-color-muted);
+  color: var(--blysis-color-foreground);
+  border-color: transparent;
+}
+
+.qr-site [data-block="store.products"] [data-block-heading-action] .blysis-button[aria-pressed="true"] {
+  --qr-edge: var(--blysis-color-mutedForeground);
+  background: var(--blysis-color-foreground);
+  color: var(--blysis-color-background);
+}
+
+/* A product's way in reads as the button it is. */
+.qr-site [data-block="store.products"] [data-product-more] {
+  padding: 8px 12px;
+  border-radius: var(--blysis-radius);
+  background: var(--blysis-color-primary);
+  color: var(--blysis-color-primaryForeground);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--blysis-color-primary) 55%, black);
+  font-family: var(--blysis-font-heading);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/*
+ * The community row: three cards headed in capitals, without the icon the
+ * sidebar widgets carry, each line of a list on a bar of its own.
+ */
+.qr-site :is([data-block="leaderboard.board"], [data-block="staff.online"], [data-block="forum.latest-topics"]) > .bg-card > div:first-child > svg {
+  display: none;
+}
+
+.qr-site :is([data-block="leaderboard.board"], [data-block="staff.online"], [data-block="forum.latest-topics"]) h2 {
+  font-size: 1.125rem;
+}
+
+.qr-site [data-block="leaderboard.board"] ol > li,
+.qr-site [data-staff-member] {
+  border-radius: 4px;
+  background: var(--blysis-color-muted);
+  padding: 8px 10px;
+}
+
+/* The homepage's own crumb says "home" under a hero that already does. */
+.qr-hero + .qr-main [data-home-trail] {
+  display: none;
+}
+
+/* A page's header */
+
+.qr-page-header {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* Up against the bar, across the main column's top padding. */
+  margin: -32px 0 32px;
+  padding: 36px 0 calc(32px + var(--qr-strip));
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-page-header::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: -100vw;
+  right: -100vw;
+  background: var(--blysis-color-stage);
+  box-shadow: inset 0 calc(-1 * var(--qr-strip)) 0 var(--blysis-color-primary);
+}
+
+.qr-page-trail {
+  color: var(--blysis-color-stageMuted);
+}
+
+.qr-page-trail :is(nav, ol, li, a, span) {
+  color: inherit;
+}
+
+.qr-page-trail a:hover {
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-page-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.qr-page-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.qr-page-lede {
+  max-width: 600px;
+  margin-top: 8px;
+  color: var(--blysis-color-stageMuted);
+}
+
+.qr-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* A page with a picture behind its header: taller, the title low over the dark. */
+.qr-page-header[data-picture] {
+  min-height: 520px;
+  justify-content: flex-end;
+}
+
+.qr-page-header[data-picture] .qr-page-trail {
+  margin-bottom: auto;
+}
+
+.qr-page-picture {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: var(--qr-strip);
+  left: calc(50% - 50vw);
+  width: 100vw;
+  background-size: cover;
+  background-position: center;
+}
+
+.qr-page-picture::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--blysis-color-stage) 20%, transparent) 0%,
+    color-mix(in srgb, var(--blysis-color-stage) 0%, transparent) 30%,
+    color-mix(in srgb, var(--blysis-color-stage) 95%, transparent) 92%);
+}
+
+.qr-page-header[data-picture] .qr-page-title {
+  max-width: 900px;
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  line-height: 1;
+}
+
+/* What the page says of itself, its section first, above the title it belongs to. */
+.qr-page-heading > .min-w-0 {
+  display: flex;
+  flex-direction: column;
+}
+
+.qr-page-meta {
+  order: -1;
+  margin-bottom: 14px;
+  color: var(--blysis-color-stageMuted);
+  font-size: 0.875rem;
+}
+
+.qr-page-meta [data-article-meta] > a {
+  padding: 4px 9px;
+  border-radius: 3px;
+  background: var(--blysis-color-primary);
+  color: var(--blysis-color-primaryForeground);
+  font-family: var(--blysis-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.qr-page-meta [data-article-author] {
+  color: var(--blysis-color-stageForeground);
+  font-weight: 700;
+}
+
+/* A module's page */
+
+/*
+ * The rows of a module's page stand closer than the homepage's posters: they
+ * are parts of one thing. A page's crumb trail sits right over what it leads to.
+ */
+.qr-main {
+  --blysis-row-gap: 40px;
+}
+
+.qr-site [data-layout-row]:has([data-block="store.crumbs"]) + * {
+  margin-top: 20px;
+}
+
+.qr-site [data-block="store.crumbs"] nav {
+  font-size: 0.8125rem;
+}
+
+/*
+ * A block that opens a page with no header comes up against the bar, as the
+ * header band would: the shop's showcase and a member's band.
+ */
+.qr-main > h1.sr-only + [data-page-rows] > [data-layout-row]:first-child :is([data-block="store.featured"], [data-block="member-profiles.band"]):first-child {
+  margin-top: -32px;
+}
+
+/*
+ * The shop's showcase: a band across the whole width on the theme's own
+ * landscape, dark where its words are, as the homepage's hero is.
+ */
+.qr-site [data-block="store.featured"] {
+  position: relative;
+  isolation: isolate;
+}
+
+.qr-site [data-block="store.featured"]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  background:
+    linear-gradient(90deg,
+      var(--blysis-color-stage) 0%,
+      color-mix(in srgb, var(--blysis-color-stage) 85%, transparent) 45%,
+      color-mix(in srgb, var(--blysis-color-stage) 20%, transparent) 100%),
+    var(--qr-cover) center / cover,
+    var(--blysis-color-stage);
+}
+
+.qr-site [data-featured-product] {
+  gap: 40px;
+  padding: 64px 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--blysis-color-stageForeground);
+}
+
+/* A band, not a card: it stands on no edge of its own. */
+.qr-site [data-block="store.featured"] [data-featured-product].bg-card {
+  box-shadow: none;
+}
+
+.qr-site [data-featured-product] .text-foreground {
+  color: inherit;
+}
+
+.qr-site [data-featured-product] .text-muted-foreground {
+  color: var(--blysis-color-stageMuted);
+}
+
+.qr-site [data-featured-name] {
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.qr-site [data-featured-product] p {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+.qr-site [data-featured-price] {
+  font-family: var(--blysis-font-heading);
+  font-size: 2.25rem;
+  font-weight: 900;
+}
+
+/*
+ * The band is the stage colour in either mode, so what stands on it takes its
+ * edge from the stage: the page's own edge is a light grey in light mode.
+ */
+.qr-site [data-featured-product] {
+  --qr-stage-edge: color-mix(in srgb, var(--blysis-color-stage) 55%, black);
+}
+
+.qr-site [data-featured-product] .blysis-button.bg-secondary {
+  --qr-edge: var(--qr-stage-edge);
+  background: color-mix(in srgb, var(--blysis-color-stageForeground) 14%, var(--blysis-color-stage));
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-site [data-featured-picture] {
+  max-width: 440px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--blysis-color-primary) 22%, var(--blysis-color-stage));
+  box-shadow: 0 8px 0 var(--qr-stage-edge), 0 0 0 6px color-mix(in srgb, var(--blysis-color-primary) 60%, var(--blysis-color-stage));
+}
+
+/* On a phone the picture is a token above the words, not a screen of its own. */
+@media (max-width: 47.99rem) {
+  .qr-site [data-featured-product] {
+    gap: 24px;
+    padding: 40px 0;
+  }
+
+  .qr-site [data-featured-picture] {
+    max-width: 280px;
+    align-self: flex-start;
+  }
+}
+
+/* The shop's sections as a row of tabs that press, the open one light. */
+.qr-site [data-store-chips] {
+  gap: 10px;
+}
+
+.qr-site [data-store-chips] a {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--blysis-color-card);
+  color: var(--blysis-color-mutedForeground);
+  font-weight: 700;
+  box-shadow: 0 3px 0 var(--blysis-color-edge);
+}
+
+.qr-site [data-store-chips] a:hover {
+  color: var(--blysis-color-foreground);
+}
+
+.qr-site [data-store-chips] a[aria-current="page"] {
+  background: var(--blysis-color-foreground);
+  color: var(--blysis-color-background);
+}
+
+/*
+ * The shelves: the first one big, a poster for each product, the rest in
+ * short rows of a picture, a name and a price, as is the product page's
+ * list of others on its shelf.
+ */
+.qr-site [data-store-shelves] {
+  gap: 48px;
+}
+
+.qr-site [data-store-shelf] h2 {
+  font-size: 1.625rem;
+}
+
+.qr-site :is([data-store-shelf], [data-product-related]) a.group {
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.qr-site :is([data-store-shelf], [data-product-related], [data-block="store.products"]) a.group .mt-auto span.text-lg {
+  font-family: var(--blysis-font-heading);
+  font-size: 1.375rem;
+  font-weight: 900;
+}
+
+.qr-site [data-store-shelf]:first-child a.group > .aspect-card {
+  aspect-ratio: auto;
+  height: 200px;
+}
+
+.qr-site [data-store-shelf]:first-child a.group > div + div {
+  gap: 12px;
+  padding: 24px;
+}
+
+.qr-site [data-store-shelf]:first-child a.group h3 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.qr-site [data-store-shelf]:first-child [data-product-more] {
+  padding: 10px 16px;
+  border-radius: var(--blysis-radius);
+  background: var(--blysis-color-primary);
+  color: var(--blysis-color-primaryForeground);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--blysis-color-primary) 55%, black);
+  font-family: var(--blysis-font-heading);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group > .aspect-card {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  aspect-ratio: auto;
+  border-radius: 4px;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group > .aspect-card > .absolute {
+  display: none;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group > div + div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2px 12px;
+  padding: 0;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group > div + div > :not(.mt-auto) {
+  grid-column: 1;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group h3 {
+  font-family: var(--blysis-font-heading);
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group h3 + p {
+  -webkit-line-clamp: 1;
+  font-size: 0.8125rem;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group .mt-auto {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  margin: 0;
+  padding: 0;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) a.group .mt-auto span.text-lg {
+  font-size: 1.125rem;
+}
+
+.qr-site :is([data-store-shelf]:not(:first-child), [data-product-related]) [data-product-more] {
+  display: none;
+}
+
+.qr-site [data-product-related] > .grid {
+  gap: 14px;
+}
+
+/* A product: the picture large on the ground, the box beside it a poster's card. */
+.qr-site [data-block="store.gallery"] .aspect-card {
+  border-radius: 6px;
+  background: radial-gradient(circle at 50% 45%,
+    color-mix(in srgb, var(--blysis-color-primary) 30%, var(--blysis-color-stage)) 0%,
+    color-mix(in srgb, var(--blysis-color-primary) 14%, var(--blysis-color-stage)) 60%);
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.qr-site [data-product-box] {
+  padding: 28px;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.qr-site [data-product-title] > p:not(.text-sm) {
+  font-family: var(--blysis-font-heading);
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.qr-site [data-product-box] span:is(.text-3xl, .text-xl).font-bold {
+  font-family: var(--blysis-font-heading);
+  font-weight: 900;
+}
+
+.qr-site [data-product-title] > .text-sm {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.qr-site :is([data-product-related], [data-block="blog.related"]) h2 {
+  font-size: 1.25rem;
+}
+
+/*
+ * An article: its sections in a narrow column on the left that follows the
+ * reader down, the words in a reading measure with no card around them, and
+ * the latest others on the right.
+ */
+@media (min-width: 64rem) {
+  .qr-site [data-layout-row="1-2-1"]:has([data-block="blog.article"]) {
+    grid-template-columns: 200px minmax(0, 1fr) 300px;
+    column-gap: 56px;
+  }
+
+  .qr-site [data-layout-row="1-2-1"]:has([data-block="blog.article"]) > [data-layout-cell] {
+    grid-column: auto;
+  }
+}
+
+.qr-site [data-layout-cell] > [data-layout-blocks]:has(> [data-block="blog.contents"]) {
+  position: sticky;
+  top: 24px;
+}
+
+.qr-site :is([data-block="blog.contents"], [data-block="blog.related"]) > div {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+/* With no surface of their own they stand on no edge either. */
+.qr-site :is([data-block="blog.contents"], [data-block="blog.related"]) > .bg-card.rounded-xl,
+.qr-site [data-block="blog.article"] > article.bg-card.rounded-xl {
+  box-shadow: none;
+}
+
+.qr-site [data-article-contents] > p {
+  font-family: var(--blysis-font-heading);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.qr-site [data-article-contents] a {
+  display: block;
+  padding: 8px 12px;
+  color: var(--blysis-color-mutedForeground);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--blysis-color-muted);
+}
+
+.qr-site [data-article-contents] a:hover {
+  color: var(--blysis-color-foreground);
+  box-shadow: inset 3px 0 0 var(--blysis-color-primary);
+}
+
+.qr-site [data-block="blog.article"] > article {
+  max-width: 700px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.qr-site [data-block="blog.article"] > article > div {
+  padding: 0;
+}
+
+.qr-site [data-article-body] .blysis-content {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+/* The article opens on a large first letter in the brand colour. */
+.qr-site [data-article-body] .blysis-content > p:first-child::first-letter {
+  float: left;
+  margin: 6px 10px 0 0;
+  color: var(--blysis-color-primary);
+  font-family: var(--blysis-font-heading);
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 0.9;
+}
+
+.qr-site [data-block="blog.related"] a:has(> div) {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+}
+
+.qr-site [data-block="blog.related"] a > div {
+  grid-row: 1 / span 2;
+  height: 54px;
+  margin: 0;
+  border-radius: 4px;
+}
+
+.qr-site [data-block="blog.related"] a > :is(h3, p) {
+  grid-column: 2;
+}
+
+.qr-site [data-block="blog.related"] h3 {
+  font-family: var(--blysis-font-body);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+/* A topic: each post's author in a darker column of their own. */
+.qr-site [data-post-card] {
+  overflow: hidden;
+  border: 0;
+  border-radius: 6px;
+}
+
+.qr-site [data-author-column] {
+  gap: 8px;
+  padding: 22px;
+  background: color-mix(in srgb, var(--blysis-color-background) 55%, var(--blysis-color-card));
+}
+
+.qr-site [data-author-column] > :first-child {
+  border-radius: 4px;
+}
+
+.qr-site [data-author-column] p.font-medium {
+  font-weight: 800;
+}
+
+/*
+ * A member's profile opens on a band of the theme's landscape, their picture
+ * standing on its lower edge with their name beside it, then their numbers
+ * in a row and the sections of what they have written.
+ */
+.qr-site [data-profile-band] {
+  position: relative;
+  isolation: isolate;
+  padding-top: 148px;
+}
+
+.qr-site [data-profile-band]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  height: 220px;
+  background:
+    linear-gradient(180deg, transparent 40%, var(--blysis-color-background) 100%),
+    var(--qr-cover) center / cover,
+    var(--blysis-color-stage);
+}
+
+.qr-site [data-profile-band] > div:first-child {
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.qr-site [data-profile-band] > div:first-child > :first-child {
+  min-width: 132px;
+  min-height: 132px;
+  border-radius: 6px;
+  box-shadow: 0 0 0 5px var(--blysis-color-background), 0 9px 0 5px var(--blysis-color-edge);
+}
+
+.qr-site [data-profile-band] > div:first-child > div {
+  padding-bottom: 8px;
+}
+
+.qr-site [data-profile-name] {
+  font-family: var(--blysis-font-heading);
+  font-size: clamp(1.875rem, 4vw, 2.375rem);
+  font-weight: 900;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.qr-site [data-profile-stats] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 40px;
+}
+
+.qr-site [data-profile-stats] .blysis-card {
+  border: 0;
+  background: none;
+}
+
+/* As specific as the edge every block's card stands on, and later. */
+.qr-site [data-profile-stats] .blysis-card.bg-card.rounded-xl {
+  box-shadow: none;
+}
+
+.qr-site [data-profile-stats] .blysis-card > div {
+  padding: 0;
+  text-align: left;
+}
+
+.qr-site [data-profile-stats] .blysis-card svg {
+  display: none;
+}
+
+.qr-site [data-profile-stats] .text-xl {
+  font-family: var(--blysis-font-heading);
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.qr-site [data-profile-stats] .text-xs {
+  font-size: 0.8125rem;
+}
+
+.qr-site [data-profile-stats] a:hover .text-xs {
+  color: var(--blysis-color-primary);
+}
+
+/* One row that scrolls on a phone rather than tabs stacked in two. */
+.qr-site [data-profile-tabs] {
+  flex-wrap: nowrap;
+  gap: 28px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.qr-site [data-profile-tabs] > * {
+  padding: 14px 2px;
+  font-family: var(--blysis-font-heading);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+/*
+ * A page that is not there: a wrong turn on a path, what happened on the
+ * left, and on the right a signpost of wooden boards pointing both ways,
+ * planted in the ground the page stands on.
+ */
+.qr-lost {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 56px;
+  /* From the bar to the footer, across the main column's padding. */
+  margin: -32px 0 -48px;
+  padding: 72px 0 150px;
+}
+
+.qr-lost::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  width: 100vw;
+  background: linear-gradient(180deg,
+    var(--blysis-color-background) 0%,
+    color-mix(in srgb, var(--blysis-color-primary) 8%, var(--blysis-color-background)) calc(100% - 110px),
+    color-mix(in srgb, var(--blysis-color-primary) 45%, var(--blysis-color-stage)) calc(100% - 110px),
+    color-mix(in srgb, var(--blysis-color-primary) 45%, var(--blysis-color-stage)) calc(100% - 94px),
+    color-mix(in srgb, var(--blysis-color-warning) 25%, var(--blysis-color-stage)) calc(100% - 94px));
+}
+
+.qr-lost-words {
+  display: flex;
+  flex: 1 1 420px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.qr-lost-code {
+  color: var(--blysis-color-muted);
+  font-family: var(--blysis-font-heading);
+  font-size: clamp(5rem, 12vw, 7.5rem);
+  font-weight: 900;
+  line-height: 0.9;
+  text-shadow: 0 6px 0 var(--blysis-color-edge);
+}
+
+.qr-lost-title {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.qr-lost-lede {
+  max-width: 440px;
+  color: var(--blysis-color-mutedForeground);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.qr-lost-search {
+  display: flex;
+  gap: 10px;
+  max-width: 440px;
+}
+
+.qr-lost-search .blysis-input,
+.qr-lost-search input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+}
+
+.qr-lost-search button {
+  min-height: 48px;
+}
+
+.qr-lost-post {
+  position: relative;
+  display: flex;
+  flex: 1 1 420px;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.qr-lost-pole {
+  position: absolute;
+  top: -20px;
+  bottom: -120px;
+  left: 50%;
+  width: 30px;
+  margin-left: -15px;
+  background: color-mix(in srgb, var(--blysis-color-warning) 30%, var(--blysis-color-stage));
+  box-shadow: inset -8px 0 0 color-mix(in srgb, var(--blysis-color-warning) 18%, var(--blysis-color-stage));
+}
+
+.qr-lost-board {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 58px;
+  padding: 0 26px;
+  background: color-mix(in srgb, var(--blysis-color-warning) 60%, var(--blysis-color-stage));
+  color: color-mix(in srgb, var(--blysis-color-warning) 12%, var(--blysis-color-stage));
+  font-family: var(--blysis-font-heading);
+  font-size: 1.25rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  box-shadow: inset 0 -8px 0 color-mix(in srgb, var(--blysis-color-warning) 42%, var(--blysis-color-stage));
+}
+
+.qr-lost-board:hover {
+  background: color-mix(in srgb, var(--blysis-color-warning) 72%, var(--blysis-color-stage));
+}
+
+.qr-lost-board[data-side="right"] {
+  align-self: flex-start;
+  margin-left: calc(50% - 12px);
+  padding-right: 48px;
+  clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 50%, calc(100% - 26px) 100%, 0 100%);
+}
+
+/* The way each board points, drawn and not read. */
+.qr-lost-board[data-side="right"]::after {
+  content: "\2192" / "";
+  margin-left: 10px;
+}
+
+.qr-lost-board[data-side="left"]::before {
+  content: "\2190" / "";
+  margin-right: 10px;
+}
+
+.qr-lost-board[data-side="left"] {
+  align-self: flex-end;
+  margin-right: calc(50% - 12px);
+  padding-left: 48px;
+  clip-path: polygon(26px 0, 100% 0, 100% 100%, 26px 100%, 0 50%);
+}
+
+/*
+ * On a phone there is no room for boards on both sides of the post: it
+ * stands at the left and every board points right from it.
+ */
+@media (max-width: 47.99rem) {
+  .qr-lost-post {
+    align-items: flex-start;
+  }
+
+  .qr-lost-pole {
+    left: 24px;
+  }
+
+  .qr-lost-board[data-side] {
+    align-self: flex-start;
+    height: 50px;
+    margin: 0 0 0 12px;
+    padding: 0 44px 0 22px;
+    font-size: 1.0625rem;
+    white-space: nowrap;
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%);
+  }
+
+  .qr-lost-board[data-side="left"]::before {
+    content: none;
+  }
+
+  .qr-lost-board[data-side="left"]::after {
+    content: "\2192" / "";
+    margin-left: 10px;
+  }
+}
+
+.qr-lost-board:focus-visible {
+  outline: 3px solid var(--blysis-color-foreground);
+  outline-offset: 3px;
+  clip-path: none;
+}
+
+/*
+ * The sign-in screens, laid out like a game's launcher: the menu in a rail,
+ * the picture in the middle with the server's state and an aside on it, the
+ * form in a panel. The rail and the picture stand on the hero's ground in
+ * both modes; the panel is the page's.
+ */
+.qr-auth {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) minmax(360px, 460px);
+  min-height: 100vh;
+  background: var(--blysis-color-stage);
+}
+
+/* As tall as the window and no taller: a long menu scrolls in the rail. */
+/*
+ * A menu longer than the window scrolls down the rail, on a thin bar. The
+ * links take the width the bar leaves them rather than a fixed one: a fixed
+ * width plus a classic scrollbar was wider than the rail, so it scrolled
+ * sideways as well.
+ */
+.qr-auth-rail {
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--blysis-color-stageMuted) 35%, transparent) transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  /* Narrow sides, so a link keeps its 72px beside the bar. */
+  padding: 20px 6px;
+  background: color-mix(in srgb, var(--blysis-color-stage) 70%, black);
+}
+
+.qr-auth-rail-home {
+  margin-bottom: 16px;
+}
+
+.qr-auth-rail-home img {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.qr-auth-rail-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 72px;
+  padding: 10px 2px;
+  border-radius: 4px;
+  color: var(--blysis-color-stageMuted);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.qr-auth-rail-link:hover {
+  background: color-mix(in srgb, var(--blysis-color-stage) 85%, white);
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-auth-scene {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 32px 40px 40px;
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-auth-picture {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Dark under the aside, the picture clear above it. */
+.qr-auth-scene::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(0deg, color-mix(in srgb, var(--blysis-color-stage) 88%, transparent), transparent 55%);
+}
+
+.qr-auth-aside {
+  max-width: 480px;
+}
+
+.qr-auth-aside :is([data-latest-article], [data-where-to-play]) {
+  border-radius: 4px;
+  background: var(--blysis-color-background);
+  color: var(--blysis-color-foreground);
+  box-shadow: 0 5px 0 var(--blysis-color-edge);
+}
+
+.qr-auth-aside :is([data-latest-article], [data-where-to-play]) h2 {
+  font-size: 1.375rem;
+  text-transform: uppercase;
+}
+
+.qr-auth-aside [data-latest-article] h2 {
+  font-size: 1.625rem;
+}
+
+.qr-auth-aside [data-server-row] {
+  border-radius: 3px;
+  background: var(--blysis-color-card);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.qr-auth-aside [data-server-row] [data-state] {
+  font-family: var(--blysis-font-heading);
+  font-size: 0.8125rem;
+}
+
+.qr-auth-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px 40px;
+  background: var(--blysis-color-background);
+  color: var(--blysis-color-foreground);
+}
+
+.qr-auth-kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--blysis-color-primary);
+  font-family: var(--blysis-font-heading);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.qr-auth-kicker::before {
+  content: "";
+  width: 18px;
+  height: 6px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+/* The page hands over a card; in the panel its words stand on the panel. */
+.qr-auth-card .blysis-card {
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.qr-auth-card .blysis-card > div {
+  padding: 0;
+  border: 0;
+}
+
+.qr-auth-card .blysis-card > div + div {
+  margin-top: 24px;
+}
+
+.qr-auth-card .blysis-card > div:first-child > * {
+  text-align: left;
+}
+
+.qr-auth-card h1 {
+  font-size: 2.125rem;
+  line-height: 1.1;
+}
+
+/* The way to the other form reads on from the button, not centred under it. */
+.qr-auth-card .blysis-card p.text-center {
+  text-align: left;
+}
+
+.qr-auth-card button[type="submit"] {
+  min-height: 64px;
+  font-size: 1.25rem;
+}
+
+.qr-auth-address {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 4px;
+  background: var(--blysis-color-stage);
+  color: var(--blysis-color-stageForeground);
+}
+
+.qr-auth-address p {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  color: var(--blysis-color-stageMuted);
+  font-size: 0.75rem;
+}
+
+.qr-auth-address .qr-address {
+  font-size: 1rem;
+}
+
+.qr-auth-address .blysis-button.bg-secondary {
+  --qr-edge: color-mix(in srgb, var(--blysis-color-accent) 55%, black);
+  background: var(--blysis-color-accent);
+  color: var(--blysis-color-accentForeground);
+}
+
+/*
+ * A phone or a narrow window: the rail becomes a row across the top, the
+ * form comes next and the picture follows it as a band.
+ */
+@media (max-width: 63.999rem) {
+  .qr-auth {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: auto;
+  }
+
+  .qr-auth-rail {
+    position: static;
+    max-height: none;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 10px 12px;
+  }
+
+  .qr-auth-rail-home {
+    margin: 0 8px 0 0;
+  }
+
+  .qr-auth-rail-link {
+    flex: none;
+    width: 72px;
+  }
+
+  .qr-auth-panel {
+    order: 2;
+    padding: 28px 16px;
+  }
+
+  .qr-auth-scene {
+    order: 3;
+    min-height: 360px;
+    padding: 24px 16px;
+  }
+
+  .qr-auth-address {
+    margin-top: 0;
+  }
+}

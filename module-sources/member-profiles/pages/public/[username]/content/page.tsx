@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Card, CardContent, ListControls, Pagination, buttonClassName } from "@/core/sdk/ui";
 import { useRelativeTime } from "@/core/sdk/ui";
 import { CONTENT_KINDS, type ContentItem } from "../../../../lib/member-content";
@@ -71,83 +71,86 @@ export default function MemberContentPage({ params }: PageProps) {
 
     const kindOptions = CONTENT_KINDS.map((k) => ({ value: k.kind, label: t(`stat_${k.kind}`) }));
 
+    // The heading is what is being listed; the member is the crumb above it.
+    // Both were the username, so the trail read "Home / aeryn / aeryn".
     return (
-        <PageFrame
-            // The heading is what is being listed; the member is the crumb
-            // above it. Both were the username, so the trail read
-            // "Home / aeryn / aeryn".
-            title={t(`stat_${kind}`)}
-            trail={[{ label: username, href: `/u/${username}` }]}
-        >
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                <Link href={`/u/${username}`} className={buttonClassName("outline", "sm")}>
-                    <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                    {t("backToProfile")}
-                </Link>
-                <ListControls
-                    filters={[{
-                        id: "kind",
-                        label: t("contentKind"),
-                        value: kind,
-                        options: kindOptions,
-                        // The kind is the address, so changing it is navigation.
-                        onChange: (value) => { window.location.search = `?kind=${value}`; },
-                    }]}
-                />
-            </div>
-
-            {loading ? (
-                <div className="flex justify-center py-12">
-                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                </div>
-            ) : failed || items.length === 0 ? (
-                <Card>
-                    <CardContent className="py-12 text-center text-muted-foreground">
-                        {t("nothingOfThisKind")}
-                    </CardContent>
-                </Card>
-            ) : (
-                <>
-                    <ul className="space-y-2">
-                        {items.map((item) => {
-                            const body = (
-                                <>
-                                    <p className="font-medium text-foreground group-hover:text-primary">
-                                        {item.title || t("untitled")}
-                                    </p>
-                                    {item.excerpt && (
-                                        <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{item.excerpt}</p>
-                                    )}
-                                    <p className="mt-1 text-xs text-muted-foreground">{relativeTime(item.createdAt)}</p>
-                                </>
-                            );
-                            return (
-                                <li key={item.id}>
-                                    {item.href ? (
-                                        <Link
-                                            href={item.href}
-                                            className="group block rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
-                                        >
-                                            {body}
-                                        </Link>
-                                    ) : (
-                                        // The thing it hung off is gone. Still
-                                        // theirs, still counted, nowhere to go.
-                                        <div className="rounded-xl border border-border bg-card p-4 opacity-70">{body}</div>
-                                    )}
-                                </li>
-                            );
-                        })}
-                    </ul>
-                    <Pagination
-                        className="mt-4"
-                        page={paging.page}
-                        pages={paging.pages}
-                        total={paging.total}
-                        onPageChange={setPage}
-                    />
-                </>
-            )}
-        </PageFrame>
+        <ArrangedClientPage
+            page="member-profiles.content"
+            frame={{ title: t(`stat_${kind}`), trail: [{ label: username, href: `/u/${username}` }] }}
+            blocks={{
+                controls: () => (
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                        <Link href={`/u/${username}`} className={buttonClassName("outline", "sm")}>
+                            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                            {t("backToProfile")}
+                        </Link>
+                        <ListControls
+                            filters={[{
+                                id: "kind",
+                                label: t("contentKind"),
+                                value: kind,
+                                options: kindOptions,
+                                // The kind is the address, so changing it is navigation.
+                                onChange: (value) => { window.location.search = `?kind=${value}`; },
+                            }]}
+                        />
+                    </div>
+                ),
+                items: () => (
+                    loading ? (
+                        <div className="flex justify-center py-12">
+                            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                        </div>
+                    ) : failed || items.length === 0 ? (
+                        <Card>
+                            <CardContent className="py-12 text-center text-muted-foreground">
+                                {t("nothingOfThisKind")}
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <>
+                            <ul className="space-y-2">
+                                {items.map((item) => {
+                                    const body = (
+                                        <>
+                                            <p className="font-medium text-foreground group-hover:text-primary">
+                                                {item.title || t("untitled")}
+                                            </p>
+                                            {item.excerpt && (
+                                                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{item.excerpt}</p>
+                                            )}
+                                            <p className="mt-1 text-xs text-muted-foreground">{relativeTime(item.createdAt)}</p>
+                                        </>
+                                    );
+                                    return (
+                                        <li key={item.id}>
+                                            {item.href ? (
+                                                <Link
+                                                    href={item.href}
+                                                    className="group block rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
+                                                >
+                                                    {body}
+                                                </Link>
+                                            ) : (
+                                                // The thing it hung off is gone. Still
+                                                // theirs, still counted, nowhere to go.
+                                                <div className="rounded-xl border border-border bg-card p-4 opacity-70">{body}</div>
+                                            )}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                            <Pagination
+                                className="mt-4"
+                                page={paging.page}
+                                pages={paging.pages}
+                                total={paging.total}
+                                onPageChange={setPage}
+                            />
+                        </>
+                    )
+                ),
+            }}
+        />
     );
 }

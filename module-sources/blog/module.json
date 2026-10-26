@@ -2,8 +2,8 @@
   "id": "blog",
   "name": "Blog Module",
   "description": "News and announcements system",
-  "version": "1.10.1",
-  "coreVersion": "^5.0.0",
+  "version": "1.14.1",
+  "coreVersion": "^5.30.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Newspaper",
@@ -126,14 +126,6 @@
     }
   ],
   "statsApi": "/blog/stats",
-  "homepageSections": [
-    {
-      "id": "BlogNewsSection",
-      "type": "content",
-      "component": "components/BlogNewsSection",
-      "order": 10
-    }
-  ],
   "hooksEmitted": [
     {
       "hook": "blog.article.created",
@@ -254,10 +246,13 @@
         "tags": "Tags",
         "title": "Blog",
         "views": "{count} views",
-        "writeComment": "Write a comment..."
+        "writeComment": "Write a comment...",
+        "contents": "On this page"
       },
       "news": {
         "empty": "No posts yet - check back soon.",
+        "readMore": "Read more",
+        "readingTime": "{minutes} min read",
         "title": "News"
       },
       "admin": {
@@ -292,6 +287,9 @@
       "pageDescriptions": {
         "blog": "Read the latest news, updates and announcements from the community, with the newest posts at the top.",
         "article": "Read the full article, see when it was published and who wrote it, then browse the rest of the blog."
+      },
+      "footer": {
+        "section_community": "Community"
       }
     },
     "tr": {
@@ -387,10 +385,13 @@
         "tags": "Etiketler",
         "title": "Blog",
         "views": "{count} görüntülenme",
-        "writeComment": "Bir yorum yazın..."
+        "writeComment": "Bir yorum yazın...",
+        "contents": "Bu yazıda"
       },
       "news": {
         "empty": "Henüz gönderi yok - yakında tekrar bakın.",
+        "readMore": "Devamını oku",
+        "readingTime": "{minutes} dk okuma",
         "title": "Haberler"
       },
       "admin": {
@@ -425,6 +426,9 @@
       "pageDescriptions": {
         "blog": "Topluluktan gelen en yeni haberleri, duyuruları ve güncellemeleri, en yeni yazı en üstte olacak şekilde okuyun.",
         "article": "Yazının tamamını okuyun, ne zaman ve kim tarafından yayımlandığını görün, ardından diğer yazılara göz atın."
+      },
+      "footer": {
+        "section_community": "Topluluk"
       }
     },
     "az": {
@@ -520,10 +524,13 @@
         "tags": "Etiketlər",
         "title": "Bloq",
         "views": "{count} baxış",
-        "writeComment": "Şərh yazın..."
+        "writeComment": "Şərh yazın...",
+        "contents": "Bu yazıda"
       },
       "news": {
         "empty": "Hələ yazı yoxdur - tezliklə yenidən baxın.",
+        "readMore": "Davamını oxu",
+        "readingTime": "{minutes} dəq oxuma",
         "title": "Xəbərlər"
       },
       "admin": {
@@ -558,6 +565,9 @@
       "pageDescriptions": {
         "blog": "İcmanın ən son xəbərlərini, yeniliklərini və elanlarını oxuyun; ən yeni yazılar yuxarıda göstərilir.",
         "article": "Məqalənin tam mətnini oxuyun, nə vaxt dərc olunduğunu və kim tərəfindən yazıldığını görün, sonra bloqun qalan hissəsinə baxın."
+      },
+      "footer": {
+        "section_community": "İcma"
       }
     },
     "de": {
@@ -653,10 +663,13 @@
         "tags": "Tags",
         "title": "Blog",
         "views": "{count} Aufrufe",
-        "writeComment": "Schreibe einen Kommentar..."
+        "writeComment": "Schreibe einen Kommentar...",
+        "contents": "Auf dieser Seite"
       },
       "news": {
         "empty": "Noch keine Beiträge – schau bald wieder vorbei.",
+        "readMore": "Weiterlesen",
+        "readingTime": "{minutes} Min. Lesezeit",
         "title": "Neuigkeiten"
       },
       "admin": {
@@ -691,6 +704,9 @@
       "pageDescriptions": {
         "blog": "Lies die neuesten Neuigkeiten, Updates und Ankündigungen aus der Community, mit den neuesten Beiträgen ganz oben.",
         "article": "Lies den vollständigen Artikel, sieh, wann er veröffentlicht wurde und wer ihn geschrieben hat, und stöbere dann im restlichen Blog."
+      },
+      "footer": {
+        "section_community": "Community"
       }
     },
     "es": {
@@ -786,10 +802,13 @@
         "tags": "Etiquetas",
         "title": "Blog",
         "views": "{count} visualizaciones",
-        "writeComment": "Escribe un comentario..."
+        "writeComment": "Escribe un comentario...",
+        "contents": "En esta página"
       },
       "news": {
         "empty": "Aún no hay publicaciones; vuelve pronto.",
+        "readMore": "Leer más",
+        "readingTime": "{minutes} min de lectura",
         "title": "Noticias"
       },
       "admin": {
@@ -824,6 +843,9 @@
       "pageDescriptions": {
         "blog": "Lee las últimas noticias, novedades y anuncios de la comunidad, con las publicaciones más recientes arriba.",
         "article": "Lee el artículo completo, consulta cuándo se publicó y quién lo escribió, y luego explora el resto del blog."
+      },
+      "footer": {
+        "section_community": "Comunidad"
       }
     },
     "et": {
@@ -919,10 +941,13 @@
         "tags": "Sildid",
         "title": "Blogi",
         "views": "{count} vaatamist",
-        "writeComment": "Kirjuta kommentaar..."
+        "writeComment": "Kirjuta kommentaar...",
+        "contents": "Sellel lehel"
       },
       "news": {
         "empty": "Postitusi pole veel – vaata peagi uuesti.",
+        "readMore": "Loe edasi",
+        "readingTime": "{minutes} min lugemist",
         "title": "Uudised"
       },
       "admin": {
@@ -957,6 +982,9 @@
       "pageDescriptions": {
         "blog": "Loe kogukonna viimaseid uudiseid, uuendusi ja teadaandeid, uusimad postitused kõige ülemisena.",
         "article": "Loe artikkel tervikuna, vaata, millal see avaldati ja kes selle kirjutas, ning sirvi seejärel ülejäänud blogi."
+      },
+      "footer": {
+        "section_community": "Kogukond"
       }
     },
     "fr": {
@@ -1052,10 +1080,13 @@
         "tags": "Étiquettes",
         "title": "Blog",
         "views": "{count} vues",
-        "writeComment": "Écrivez un commentaire…"
+        "writeComment": "Écrivez un commentaire…",
+        "contents": "Sur cette page"
       },
       "news": {
         "empty": "Aucune publication pour le moment, revenez bientôt.",
+        "readMore": "Lire la suite",
+        "readingTime": "{minutes} min de lecture",
         "title": "Actualités"
       },
       "admin": {
@@ -1090,6 +1121,9 @@
       "pageDescriptions": {
         "blog": "Lisez les dernières actualités, mises à jour et annonces de la communauté, les publications les plus récentes en premier.",
         "article": "Lisez l’article complet, consultez sa date de publication et son auteur, puis parcourez le reste du blog."
+      },
+      "footer": {
+        "section_community": "Communauté"
       }
     },
     "it": {
@@ -1185,10 +1219,13 @@
         "tags": "Tag",
         "title": "Blog",
         "views": "{count} visualizzazioni",
-        "writeComment": "Scrivi un commento..."
+        "writeComment": "Scrivi un commento...",
+        "contents": "In questa pagina"
       },
       "news": {
         "empty": "Nessun articolo ancora: torna a trovarci presto.",
+        "readMore": "Continua a leggere",
+        "readingTime": "{minutes} min di lettura",
         "title": "Notizie"
       },
       "admin": {
@@ -1223,6 +1260,9 @@
       "pageDescriptions": {
         "blog": "Leggi le ultime notizie, aggiornamenti e annunci dalla community, con i post più recenti in cima.",
         "article": "Leggi l’articolo completo, scopri quando è stato pubblicato e chi lo ha scritto, poi sfoglia il resto del blog."
+      },
+      "footer": {
+        "section_community": "Comunità"
       }
     },
     "pl": {
@@ -1318,10 +1358,13 @@
         "tags": "Tagi",
         "title": "Blog",
         "views": "{count} wyświetleń",
-        "writeComment": "Napisz komentarz..."
+        "writeComment": "Napisz komentarz...",
+        "contents": "Na tej stronie"
       },
       "news": {
         "empty": "Nie ma jeszcze wpisów - zajrzyj wkrótce.",
+        "readMore": "Czytaj dalej",
+        "readingTime": "{minutes} min czytania",
         "title": "Aktualności"
       },
       "admin": {
@@ -1356,6 +1399,9 @@
       "pageDescriptions": {
         "blog": "Czytaj najnowsze wiadomości, aktualizacje i ogłoszenia społeczności, najnowsze wpisy na górze.",
         "article": "Przeczytaj cały artykuł, zobacz, kiedy został opublikowany i kto go napisał, a potem przejrzyj resztę bloga."
+      },
+      "footer": {
+        "section_community": "Społeczność"
       }
     },
     "pt": {
@@ -1451,10 +1497,13 @@
         "tags": "Tags",
         "title": "Blog",
         "views": "{count} visualizações",
-        "writeComment": "Escreva um comentário..."
+        "writeComment": "Escreva um comentário...",
+        "contents": "Nesta página"
       },
       "news": {
         "empty": "Nenhuma publicação ainda. Volte em breve.",
+        "readMore": "Ler mais",
+        "readingTime": "{minutes} min de leitura",
         "title": "Notícias"
       },
       "admin": {
@@ -1489,6 +1538,9 @@
       "pageDescriptions": {
         "blog": "Leia as últimas notícias, atualizações e anúncios da comunidade, com as publicações mais recentes no topo.",
         "article": "Leia o artigo completo, veja quando ele foi publicado e quem o escreveu, depois navegue pelo resto do blog."
+      },
+      "footer": {
+        "section_community": "Comunidade"
       }
     },
     "ru": {
@@ -1584,10 +1636,13 @@
         "tags": "Теги",
         "title": "Блог",
         "views": "{count, plural, one {# просмотр} few {# просмотра} many {# просмотров} other {# просмотра}}",
-        "writeComment": "Напишите комментарий..."
+        "writeComment": "Напишите комментарий...",
+        "contents": "На этой странице"
       },
       "news": {
         "empty": "Записей пока нет, загляните позже.",
+        "readMore": "Читать далее",
+        "readingTime": "{minutes} мин чтения",
         "title": "Новости"
       },
       "admin": {
@@ -1622,6 +1677,9 @@
       "pageDescriptions": {
         "blog": "Читайте последние новости, обновления и объявления сообщества: самые свежие записи вверху.",
         "article": "Читайте статью целиком, смотрите, когда она была опубликована и кто её написал, затем просмотрите остальные записи блога."
+      },
+      "footer": {
+        "section_community": "Сообщество"
       }
     },
     "zh": {
@@ -1717,10 +1775,13 @@
         "tags": "标签",
         "title": "博客",
         "views": "{count} 次浏览",
-        "writeComment": "写下你的评论……"
+        "writeComment": "写下你的评论……",
+        "contents": "本文目录"
       },
       "news": {
         "empty": "暂无内容，请稍后再来看看。",
+        "readMore": "阅读全文",
+        "readingTime": "阅读约 {minutes} 分钟",
         "title": "新闻"
       },
       "admin": {
@@ -1755,6 +1816,9 @@
       "pageDescriptions": {
         "blog": "阅读社区的最新新闻、更新和公告，最新文章排在最前。",
         "article": "阅读完整文章，了解发布时间和作者，然后浏览博客中的其他内容。"
+      },
+      "footer": {
+        "section_community": "社区"
       }
     }
   },
@@ -1832,7 +1896,8 @@
       "label": "Blog",
       "labelKey": "blog",
       "href": "/blog",
-      "section": "quick"
+      "section": "community",
+      "sectionLabelKey": "section_community"
     }
   ],
   "activityTitles": [
@@ -1863,6 +1928,182 @@
     {
       "name": "blog.moderate",
       "labelKey": "blog.perm_moderate"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "news",
+      "component": "components/NewsBlock",
+      "widths": [
+        "wide",
+        "full"
+      ],
+      "defaultOrder": 10,
+      "defaultVisible": true,
+      "settings": {
+        "variant": {
+          "type": "select",
+          "default": "grid",
+          "options": [
+            {
+              "value": "grid",
+              "label": "Grid"
+            },
+            {
+              "value": "featured",
+              "label": "Featured"
+            }
+          ]
+        },
+        "kicker": {
+          "type": "text",
+          "max": 60
+        },
+        "title": {
+          "type": "text",
+          "max": 80
+        },
+        "allLink": {
+          "type": "toggle",
+          "default": false
+        }
+      },
+      "replaces": [
+        "BlogNewsSection"
+      ]
+    }
+  ],
+  "slotContents": [
+    {
+      "id": "latest-article",
+      "slot": "auth.login.aside",
+      "component": "slots/LatestArticle",
+      "order": 10
+    }
+  ],
+  "pages": [
+    {
+      "id": "post",
+      "blocks": [
+        {
+          "id": "article",
+          "widths": [
+            "wide",
+            "full"
+          ],
+          "settings": {
+            "cover": {
+              "type": "toggle",
+              "default": true
+            },
+            "meta": {
+              "type": "toggle",
+              "default": true
+            }
+          }
+        },
+        {
+          "id": "contents",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        },
+        {
+          "id": "related",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        },
+        {
+          "id": "share",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "article",
+                  "block": "blog.article"
+                }
+              ],
+              [
+                {
+                  "key": "related",
+                  "block": "blog.related"
+                },
+                {
+                  "key": "share",
+                  "block": "blog.share"
+                }
+              ]
+            ]
+          }
+        ],
+        "hidden": [
+          "blog.contents"
+        ]
+      }
+    },
+    {
+      "id": "list",
+      "blocks": [
+        {
+          "id": "back",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "articles",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "sidebar",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "back",
+                  "block": "blog.back"
+                },
+                {
+                  "key": "articles",
+                  "block": "blog.articles"
+                }
+              ],
+              [
+                {
+                  "key": "sidebar",
+                  "block": "blog.sidebar"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

@@ -130,7 +130,7 @@ export default function RevisionsPage() {
             />
 
             <Card className="mb-4">
-                <CardContent className="p-4 grid gap-3 md:grid-cols-2">
+                <CardContent className="p-4 grid grid-cols-1 gap-3 md:grid-cols-2">
                     <div>
                         <Label>{t("revisions_filterResource")}</Label>
                         <NativeSelect

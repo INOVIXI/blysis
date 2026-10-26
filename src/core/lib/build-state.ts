@@ -83,8 +83,9 @@ const IMAGE_BUILD_ID_FILE = ".blysis-image-build-id";
 /** What `computeModuleFingerprint` returns when nothing is installed. */
 const EMPTY_FINGERPRINT = createHash("sha256").digest("hex");
 
+/** Opaque to the tracer for the reason `liveDir` in `staged-build.ts` gives. */
 function nextDir(root: string = process.cwd()): string {
-    return path.join(root, ".next");
+    return path.join(/* turbopackIgnore: true */ root, ".next");
 }
 
 /**

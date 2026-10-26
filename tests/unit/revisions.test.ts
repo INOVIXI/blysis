@@ -18,20 +18,24 @@ const { revision } = vi.hoisted(() => ({
 
 vi.mock("@/core/lib/db", () => ({ prisma: { revision }, default: { revision } }));
 
+const { logError } = vi.hoisted(() => ({ logError: vi.fn() }));
+vi.mock("@/core/lib/logger", () => ({
+    errorText: (e: unknown) => (e instanceof Error ? e.message : String(e)),
+    log: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: logError },
+}));
+
 import {
     recordRevision,
     listRevisions,
     pruneOldRevisions,
 } from "@/core/lib/revisions";
 
-let consoleError: ReturnType<typeof vi.spyOn>;
-
 beforeEach(() => {
     revision.create.mockReset().mockResolvedValue({ id: "r1" });
     revision.findMany.mockReset().mockResolvedValue([]);
     revision.findUnique.mockReset().mockResolvedValue(null);
     revision.deleteMany.mockReset().mockResolvedValue({ count: 0 });
-    consoleError = vi.spyOn(console, "error").mockImplementation(() => { });
+    logError.mockReset();
 });
 
 describe("recordRevision", () => {
@@ -71,14 +75,14 @@ describe("recordRevision", () => {
         revision.create.mockRejectedValue(new Error("db down"));
 
         await expect(recordRevision("blog.article", "a1", {})).resolves.toBeUndefined();
-        expect(consoleError).toHaveBeenCalled();
+        expect(logError).toHaveBeenCalled();
     });
 
     it("names the resource in the failure log", async () => {
         revision.create.mockRejectedValue(new Error("db down"));
         await recordRevision("blog.article", "a1", {});
 
-        expect(String(consoleError.mock.calls[0]![0])).toContain("blog.article/a1");
+        expect(logError.mock.calls[0]![1]).toEqual({ resource: "blog.article", resourceId: "a1", error: "db down" });
     });
 });
 

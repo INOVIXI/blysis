@@ -190,7 +190,7 @@ export default function ServersPage() {
                                         </div>
                                     </div>
                                     {connection && (
-                                        <div className="grid sm:grid-cols-2 gap-2">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                             {POWERS.map((power) => (
                                                 <CheckboxField
                                                     key={power}

@@ -15,7 +15,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, existsSync } from "fs";
 import { join } from "path";
 import { locales } from "@/core/lib/i18n/config";
-import { CORE_NAV_GROUPS } from "@/core/lib/admin-nav-groups";
+import { CORE_NAV_GROUPS, buildThemeNavGroup } from "@/core/lib/admin-nav-groups";
 
 const ROOT = join(__dirname, "../..");
 const SOURCES = join(ROOT, "module-sources");
@@ -132,5 +132,43 @@ describe("a module menu entry", () => {
         expect(source).toContain("`menu_${mod.id}_${entry.label.replace(/\\s+/g, \"_\").toLowerCase()}`");
         expect(source).toContain("`menu_${mod.id}`");
         expect(source).toContain("`navGroup_${declaration.id}`");
+    });
+});
+
+describe("a theme's own sidebar entries", () => {
+    /*
+     * The theme group lists the active theme's settings screens, and each
+     * entry carried only the English label from its manifest: a Turkish panel
+     * read "Numbers row" and "Sign-in screen" beside Turkish screens, and the
+     * Appearance entry above them was written in English in core. Each now
+     * carries the key the theme already declares for that screen.
+     */
+    const THEMES = join(ROOT, "src/themes");
+    const themes = readdirSync(THEMES).filter((id) => existsSync(join(THEMES, id, "theme.json")));
+    const core = (locale: string) => JSON.parse(readFileSync(join(ROOT, "messages-core", `${locale}.json`), "utf-8")).admin ?? {};
+
+    it("is read from at least one theme", () => {
+        expect(themes.length).toBeGreaterThan(0);
+    });
+
+    it("is named in every locale, from the theme's strings or core's", () => {
+        const missing: string[] = [];
+        for (const id of themes) {
+            const theme = JSON.parse(readFileSync(join(THEMES, id, "theme.json"), "utf-8")) as Manifest;
+            const items = buildThemeNavGroup(id)?.sections.flatMap((s) => s.items) ?? [];
+            expect(items.length, id).toBeGreaterThan(0);
+            for (const item of items) {
+                if (!item.labelKey) {
+                    missing.push(`${id}: ${item.label} has no key`);
+                    continue;
+                }
+                for (const locale of locales) {
+                    if (!theme.translations?.[locale]?.admin?.[item.labelKey] && !core(locale)[item.labelKey]) {
+                        missing.push(`${id}/${locale}: admin.${item.labelKey}`);
+                    }
+                }
+            }
+        }
+        expect(missing).toEqual([]);
     });
 });

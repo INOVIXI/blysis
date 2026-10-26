@@ -6,6 +6,7 @@ import type { ModuleSetting } from '../src/core/lib/module-types';
 import { exportedHttpMethods } from '../src/core/lib/http-methods';
 import { CORE_ADMIN_SCREENS } from '../src/core/lib/admin-screens';
 import { CORE_ADMIN_API, MEMBER_MUTATIONS } from '../src/core/lib/admin-api';
+import { blocksOf, pagesOf, sortBlocks, type CatalogBlock, type ModulePage } from '../src/core/lib/page-blocks';
 
 function toComponentName(basename: string): string {
     return basename
@@ -80,7 +81,7 @@ function generateRegistry() {
     // No `next/dynamic` here any more: every registry in this file holds a
     // component that is part of a page already rendering. The page registry
     // next door still uses it, because a module page is a route of its own.
-    const imports = `/* eslint-disable */\nimport type { ComponentType } from 'react';\n\n`;
+    const imports = `/* eslint-disable */\nimport type { ComponentType } from 'react';\nimport type { CatalogBlock, ModulePage } from '@/core/lib/page-blocks';\n\n`;
     /*
      * A module page is imported for real, not through `next/dynamic`.
      *
@@ -186,6 +187,8 @@ function generateRegistry() {
     const allChallengePoints: ManifestItem[] = [];
     const allDashboardCards: ManifestItem[] = [];
     const allDashboardSections: ManifestItem[] = [];
+    const allBlocks: CatalogBlock[] = [];
+    const allPages: ModulePage[] = [];
     const allHomepageSections: ({ id: string; type: 'content' | 'widget'; component: string; order: number; module: string })[] = [];
     const allLayoutComponents: ({ id: string; component: string; include?: string[]; exclude?: string[]; module: string })[] = [];
     const allNavbarComponents: ({ id: string; component: string; order: number; module: string })[] = [];
@@ -201,8 +204,9 @@ function generateRegistry() {
     const allHookListeners: ({ hook: string; type: 'action' | 'filter'; handler: string; priority?: number; module: string })[] = [];
     const allSlotContents: ({ id: string; slot: string; component: string; order?: number; module: string })[] = [];
     const allCronJobs: ({ id: string; schedule: string; handler: string; module: string })[] = [];
+    const allPlaceholders: ({ name: string; handler: string; labelKey: string; example?: string; maxAgeSeconds?: number; module: string })[] = [];
     const allSearchProviders: ({ id: string; label: string; handler: string; icon?: string; indexes?: { table: string; columns: string[] }[]; module: string })[] = [];
-    const allActivityTitles: ({ type: string; nameKey: string; prefix?: string; key?: string; module: string })[] = [];
+    const allActivityTitles: ({ type: string; nameKey: string; prefix?: string; key?: string; patterns?: { pattern: string; key: string }[]; module: string })[] = [];
     const allAuditActions: ({ action: string; nameKey: string; module: string })[] = [];
     const allPermissionResources: string[] = [];
     const allWebhookReceivers: ({ provider: string; handler: string; signatureHeader?: string; secretEnv?: string; verifiesInHandler?: boolean; timestampHeader?: string; module: string })[] = [];
@@ -251,6 +255,7 @@ function generateRegistry() {
         manifest.hookListeners?.forEach((hl) => allHookListeners.push({ ...hl, module: moduleName }));
         manifest.slotContents?.forEach((sc) => allSlotContents.push({ ...sc, module: moduleName }));
         manifest.cronJobs?.forEach((cj) => allCronJobs.push({ ...cj, module: moduleName }));
+        manifest.placeholders?.forEach((p) => allPlaceholders.push({ ...p, module: moduleName }));
         manifest.searchProviders?.forEach((sp) => allSearchProviders.push({ ...sp, module: moduleName }));
         manifest.activityTitles?.forEach((at) => allActivityTitles.push({ ...at, module: moduleName }));
         manifest.auditActions?.forEach((aa) => allAuditActions.push({ ...aa, module: moduleName }));
@@ -258,6 +263,8 @@ function generateRegistry() {
         manifest.webhookReceivers?.forEach((wr) => allWebhookReceivers.push({ ...wr, module: moduleName }));
         manifest.notificationTypes?.forEach((nt) => allNotificationTypes.push({ ...nt, module: moduleName }));
         manifest.homepageSections?.forEach((section) => allHomepageSections.push({ ...section, module: moduleName }));
+        allBlocks.push(...blocksOf(moduleName, manifest));
+        allPages.push(...pagesOf(moduleName, manifest));
         if (manifest.seoRoutes?.handler) {
             allSeoRoutes.push({ module: moduleName, handler: manifest.seoRoutes.handler });
         }
@@ -337,19 +344,25 @@ function generateRegistry() {
 
     emitStaticRegistry('Widget component registry', 'WidgetComponentRegistry', allWidgets);
     emitStaticRegistry('Homepage section component registry', 'HomepageSectionRegistry', allHomepageSections);
+    const sortedBlocks = sortBlocks(allBlocks);
+    emitStaticRegistry('Block component registry', 'BlockComponentRegistry', sortedBlocks);
     const homepageSectionImports = `export const ModuleHomepageSections: { id: string; type: string; component: string; order: number; module: string }[] = ${JSON.stringify(allHomepageSections, null, 2)};\n\n`;
 
-    let widgetRegistry = `export const ModuleWidgets: { id: string; label?: string; labelKey?: string; component: string; module: string; defaultOrder: number; defaultVisible: boolean }[] = ${JSON.stringify(allWidgets, null, 2)};\n\n`;
+    let widgetRegistry = `// Every block a page can be arranged from: declared blocks, and each widget and section read as one (page-blocks.ts).
+export const ModuleBlocks: CatalogBlock[] = ${JSON.stringify(sortedBlocks, null, 2)};
+
+`;
+    widgetRegistry += `export const ModuleWidgets: { id: string; label?: string; labelKey?: string; component: string; module: string; defaultOrder: number; defaultVisible: boolean }[] = ${JSON.stringify(allWidgets, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleNavLinks: { label: string; labelKey?: string; href: string; icon?: string; position?: number; module: string }[] = ${JSON.stringify(allNavLinks, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleDemoUnsafe: { path: string; module: string }[] = ${JSON.stringify(allDemoUnsafe.sort((a, b) => a.path.localeCompare(b.path)), null, 2)};\n\n`;
-    widgetRegistry += `export const ModuleFooterLinks: { label: string; labelKey?: string; href: string; section?: string; module: string }[] = ${JSON.stringify(allFooterLinks, null, 2)};\n\n`;
+    widgetRegistry += `export const ModuleFooterLinks: { label: string; labelKey?: string; href: string; section?: string; sectionLabelKey?: string; module: string }[] = ${JSON.stringify(allFooterLinks, null, 2)};\n\n`;
     // The forms a challenge module may be switched on for. Core's own three
     // are added beside these in `challenge-points.ts`.
     widgetRegistry += `export const ModuleChallengePoints: { id: string; labelKey: string; module: string }[] = ${JSON.stringify(allChallengePoints, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleDashboardCards: { id: string; label: string; labelKey?: string; icon: string; href: string; color: string; statKey: string; module: string }[] = ${JSON.stringify(allDashboardCards, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleDashboardSections: { id: string; label: string; labelKey?: string; module: string }[] = ${JSON.stringify(allDashboardSections, null, 2)};\n\n`;
     widgetRegistry += `// Activity-feed title localization entries contributed by modules.\n`;
-    widgetRegistry += `export const ModuleActivityTitles: { type: string; nameKey: string; prefix?: string; key?: string; module: string }[] = ${JSON.stringify(allActivityTitles, null, 2)};\n\n`;
+    widgetRegistry += `export const ModuleActivityTitles: { type: string; nameKey: string; prefix?: string; key?: string; patterns?: { pattern: string; key: string }[]; module: string }[] = ${JSON.stringify(allActivityTitles, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleAuditActions: { action: string; nameKey: string; module: string }[] = ${JSON.stringify(allAuditActions, null, 2)};\n\n`;
     widgetRegistry += `// RBAC resource strings modules own - surfaced in the admin permission matrix (flattened + deduped).\n`;
     widgetRegistry += `export const ModulePermissionResources: string[] = ${JSON.stringify([...new Set(allPermissionResources)], null, 2)};\n\n`;
@@ -491,6 +504,18 @@ function generateRegistry() {
             `"${conflict.loser}" declares "${conflict.losingValue}".`,
         );
     }
+
+    // The pages modules build from blocks, as plain data in a file of their
+    // own: a page drawn in the browser resolves its arrangement there, and
+    // the registry beside it imports every module's components.
+    const PAGES_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-pages.ts');
+    const pagesContent = `// Auto-generated by scripts/generate-registry.ts - do not edit.
+// Every page a module builds from blocks a theme may arrange (page-blocks.ts).
+import type { ModulePage } from "@/core/lib/page-blocks";
+
+export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)), null, 2)};
+`;
+    fs.writeFileSync(PAGES_FILE, pagesContent);
 
     const DATA_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-data.ts');
     let dataContent = '// Auto-generated server-safe module data - no dynamic imports\n';
@@ -664,6 +689,21 @@ function generateRegistry() {
     }
     cronsContent += '];\n';
     fs.writeFileSync(CRONS_FILE, cronsContent);
+
+    // Site placeholders, by their full name `<module>.<name>`. Server only: the
+    // loaders reach each module's handler, and the page asks for values
+    // through core's resolver rather than importing anything here.
+    const PLACEHOLDERS_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-placeholders.ts');
+    let placeholdersContent = '// Auto-generated site placeholder registry - server only\n\n';
+    placeholdersContent += 'import type { PlaceholderSource } from "@/core/lib/placeholders";\n\n';
+    placeholdersContent += 'export const ModulePlaceholders: PlaceholderSource[] = [\n';
+    for (const p of [...allPlaceholders].sort((a, b) => `${a.module}.${a.name}`.localeCompare(`${b.module}.${b.name}`))) {
+        const handlerPath = p.handler.replace(/\.tsx?$/, '');
+        const importPath = `@/modules/${p.module}/${handlerPath}`;
+        placeholdersContent += `  { name: ${JSON.stringify(`${p.module}.${p.name}`)}, module: ${JSON.stringify(p.module)}, labelKey: ${JSON.stringify(p.labelKey)}, example: ${JSON.stringify(p.example ?? null)}, maxAgeSeconds: ${p.maxAgeSeconds ?? 60}, loader: () => import('${importPath}') },\n`;
+    }
+    placeholdersContent += '];\n';
+    fs.writeFileSync(PLACEHOLDERS_FILE, placeholdersContent);
 
     // Existence checks for dynamic module routes. Core's catch-all awaits the
     // one matching the route it is about to render and calls notFound() when it

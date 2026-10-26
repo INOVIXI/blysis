@@ -68,9 +68,13 @@ const LONG = {
  * box again afterwards, so the component carries no attribute it would not
  * otherwise have and the two states are measured the same way.
  */
+// The section is the block's own box, `[data-block]`, now that its heading
+// may sit inside a wrapper of its own (`BlockHeading`). Before blocks there
+// was no such box, and the heading's parent was the section.
 const WAITING_SECTION = `(() => {
-    let box = document.querySelector('[aria-busy="true"]');
-    while (box && !box.querySelector('h2')) box = box.parentElement;
+    const waiting = document.querySelector('[aria-busy="true"]');
+    let box = waiting && waiting.closest('[data-block]');
+    if (!box) { box = waiting; while (box && !box.querySelector('h2')) box = box.parentElement; }
     const heading = box && box.querySelector('h2');
     return box && heading
         ? { heading: (heading.textContent || '').trim(), height: Math.round(box.getBoundingClientRect().height) }
@@ -80,9 +84,8 @@ const WAITING_SECTION = `(() => {
 const sectionUnder = (heading: string) => `(() => {
     const found = Array.from(document.querySelectorAll('h2'))
         .find((node) => (node.textContent || '').trim() === ${JSON.stringify(heading)});
-    return found && found.parentElement
-        ? Math.round(found.parentElement.getBoundingClientRect().height)
-        : null;
+    const box = found && (found.closest('[data-block]') || found.parentElement);
+    return box ? Math.round(box.getBoundingClientRect().height) : null;
 })()`;
 
 /**

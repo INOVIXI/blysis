@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { pageArrangementSchema, themeSettingRef } from "./page-layout-schema";
 
 const HEX = /^#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
 const SAFE_ID = /^[a-z0-9][a-z0-9-]*$/;
@@ -8,6 +9,11 @@ const SEMVER = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 const ADMIN_PATH = /^\/[a-z0-9][a-z0-9/-]*$/;
 const COMPONENT_PATH = /^[a-zA-Z0-9_./-]+\.(tsx|jsx|ts|js)$/;
 const SLOT_NAME = /^[a-zA-Z0-9.-]+$/;
+/** A file inside the theme's own directory: no `..`, no leading slash. */
+const STYLESHEET_PATH = /^(?!.*\.\.)[a-zA-Z0-9_-][a-zA-Z0-9_./-]*\.css$/;
+const FONT_PATH = /^(?!.*\.\.)[a-zA-Z0-9_-][a-zA-Z0-9_./-]*\.(woff2|woff|ttf|otf)$/;
+/** One weight, `400`, or a variable font's range, `300 900`. */
+const FONT_WEIGHT = /^[1-9]00(?: [1-9]00)?$/;
 /**
  * A key into the theme's own `translations` block.
  *
@@ -36,7 +42,11 @@ const fontDef = z.object({
 const selectDef = z.object({
     type: z.literal("select"),
     default: z.string().max(64).optional(),
-    options: z.array(z.object({ value: z.string().max(64), label: z.string().max(100) })).min(1).max(100),
+    options: z.array(z.object({
+        value: z.string().max(64),
+        label: z.string().max(100),
+        labelKey: z.string().max(128).regex(SAFE_TRANSLATION_KEY).optional(),
+    })).min(1).max(100),
     label: z.string().max(100).optional(),
     labelKey: z.string().max(128).regex(SAFE_TRANSLATION_KEY).optional(),
 });
@@ -61,6 +71,12 @@ const textDef = z.object({
     max: z.number().int().positive().max(10000).optional(),
     label: z.string().max(100).optional(),
     labelKey: z.string().max(128).regex(SAFE_TRANSLATION_KEY).optional(),
+    /**
+     * The operator may write site placeholders here, `{servers.online}`, and
+     * `useThemeConfig` hands the theme the text with them filled. Only for a
+     * sentence a visitor reads: an address or an invite is not one.
+     */
+    placeholders: z.literal(true).optional(),
 });
 const urlDef = z.object({
     type: z.literal("url"),
@@ -92,7 +108,11 @@ const numberDef = z.object({
     labelKey: z.string().max(128).regex(SAFE_TRANSLATION_KEY).optional(),
 });
 
-const fieldDef = z.discriminatedUnion("type", [
+/**
+ * One setting a manifest declares: a theme's settings group, and a module's
+ * block. Both screens draw it with the same form.
+ */
+export const settingFieldSchema = z.discriminatedUnion("type", [
     colorDef, fontDef, selectDef, sliderDef, toggleDef,
     textDef, urlDef, richTextDef, imageDef, numberDef,
 ]);
@@ -111,7 +131,7 @@ const settingsGroup = z.object({
     labelKey: z.string().max(128).regex(SAFE_TRANSLATION_KEY).optional(),
     icon: z.string().max(64).optional(),
     order: z.number().int().optional(),
-    fields: z.record(z.string().regex(SAFE_KEY), fieldDef)
+    fields: z.record(z.string().regex(SAFE_KEY), settingFieldSchema)
         .refine(r => Object.keys(r).length > 0, "at least one field required")
         .refine(r => Object.keys(r).length <= 50, "max 50 fields per group"),
 });
@@ -141,9 +161,41 @@ export const themeManifestSchema = z.object({
 
     settings: z.record(z.string().regex(SAFE_KEY), settingsGroup).optional(),
 
+    /**
+     * How the theme arranges its pages: blocks by id, in rows and cells,
+     * under `home` for the homepage and `<module>.<page>` for a page a
+     * module builds from blocks. A block whose module is not installed is
+     * skipped, and one the document does not name goes to its `rest` cell.
+     * A module's page may instead be given only words for its heading, and
+     * keeps its module's arrangement; the homepage is always arranged.
+     */
+    layouts: z.record(z.string().regex(/^(home|[a-z0-9-]+\.[a-z0-9-]+)$/), pageArrangementSchema)
+        .refine((r) => Object.keys(r).length <= 40, "max 40 arranged pages")
+        .optional(),
+
     components: z.record(
         z.string().regex(/^[A-Z][A-Za-z0-9]*$/),
         z.string().regex(COMPONENT_PATH),
+    ).optional(),
+
+    /**
+     * The theme's own CSS, compiled into the site's stylesheet with every
+     * selector scoped to this theme by `scripts/lib/theme-stylesheet.ts`.
+     */
+    stylesheet: z.string().max(256).regex(STYLESHEET_PATH).optional(),
+
+    /**
+     * Typefaces the theme ships, by family. Each is self-hosted through
+     * `next/font/local` and published as `--font-<theme id>-<family>`, which
+     * the theme's font tokens name like any other stack.
+     */
+    fontFiles: z.record(
+        z.string().regex(SAFE_KEY),
+        z.array(z.object({
+            file: z.string().max(256).regex(FONT_PATH),
+            weight: z.string().regex(FONT_WEIGHT),
+            style: z.enum(["normal", "italic"]),
+        })).min(1).max(12),
     ).optional(),
 
     slots: z.array(z.object({
@@ -176,9 +228,30 @@ export const themeManifestSchema = z.object({
         z.string().max(10),
         z.record(z.string().max(64), z.record(z.string().max(128), z.string().max(2000))),
     ).optional(),
-}).strict();
+}).strict().superRefine((theme, ctx) => {
+    // A setting its layout leaves to the operator is one of the theme's own,
+    // or the operator would have nowhere to fill it in.
+    for (const [page, layout] of Object.entries(theme.layouts ?? {})) {
+        if (!("rows" in layout)) {
+            if (page === "home") ctx.addIssue({ code: "custom", path: ["layouts", page], message: "the homepage is arranged in rows" });
+            continue;
+        }
+        layout.rows.forEach((row, r) => row.cells.forEach((cell, c) => cell.forEach((instance, i) => {
+            for (const [key, value] of Object.entries(instance.settings ?? {})) {
+                const ref = themeSettingRef(value);
+                if (ref && !theme.settings?.[ref.group]?.fields[ref.field]) {
+                    ctx.addIssue({
+                        code: "custom",
+                        path: ["layouts", page, "rows", r, "cells", c, i, "settings", key],
+                        message: `"${ref.group}.${ref.field}" is not a setting this theme declares`,
+                    });
+                }
+            }
+        })));
+    }
+});
 
 export type ThemeManifest = z.infer<typeof themeManifestSchema>;
-export type ThemeFieldDef = z.infer<typeof fieldDef>;
+export type ThemeFieldDef = z.infer<typeof settingFieldSchema>;
 export type ThemeModeDef = z.infer<typeof modeDef>;
 export type ThemeSettingsGroup = z.infer<typeof settingsGroup>;

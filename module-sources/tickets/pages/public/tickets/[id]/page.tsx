@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Badge, Button, RichContent, RichTextEditor, buttonClassName } from "@/core/sdk/ui";
-import { PageFrame, StandardSidebarLayout } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { useRelativeTime } from "@/core/sdk/ui";
 import { FIRST_STATUS, isOpenState, stateLabel, stateTone, type TicketState } from "../../../../lib/ticket-states";
 
@@ -111,144 +111,157 @@ export default function TicketDetailPage({ params }: PageProps) {
 
     if (!session?.user) {
         return (
-            <PageFrame
-                title={t("ticket")}
-                trail={[{ label: t("support"), href: '/support' }]}
-            >
+            <ArrangedClientPage page="tickets.ticket" frame={{ title: t("ticket"), trail: [{ label: t("support"), href: '/support' }] }} blocks={{}}>
                 <div className="bg-card rounded-xl p-8 text-center">
                     <p className="text-muted-foreground mb-4">{t("loginToView")}</p>
                     <Link href="/auth/login" className={buttonClassName("default", "default")}>{t("login")}</Link>
                 </div>
-            </PageFrame>
+            </ArrangedClientPage>
+        );
+    }
+
+    // Where a ticket stands is the first thing its owner came to read, so it
+    // sits beside the title rather than in a card of its own below it. That
+    // card held one short line across the full measure and nothing else.
+    const status = ticket ? (
+        <Badge tone={stateTone(ticket.status, states.statuses)}>
+            {stateLabel(t, ticket.status, states.statuses)}
+        </Badge>
+    ) : null;
+
+    const waiting = loading ? (
+        <div className="bg-card rounded-xl p-8 text-center">
+            <p className="text-muted-foreground">{t("loadingTicket")}</p>
+        </div>
+    ) : error ? (
+        <div className="bg-card rounded-xl p-8 text-center">
+            <p className="text-destructive mb-4">{error}</p>
+            <Link href="/support" className={buttonClassName("outline", "default")}>{t("backToSupport")}</Link>
+        </div>
+    ) : null;
+
+    if (waiting || !ticket) {
+        return (
+            <ArrangedClientPage
+                page="tickets.ticket"
+                frame={{ title: ticket?.subject ?? t("ticket"), trail: [{ label: t("support"), href: '/support' }], actions: status }}
+                blocks={{}}
+            >
+                {waiting}
+            </ArrangedClientPage>
         );
     }
 
     return (
-        <PageFrame
-            title={ticket?.subject ?? t("ticket")}
-            trail={[{ label: t("support"), href: '/support' }]}
-            /* Where a ticket stands is the first thing its owner came to
-               read, so it sits beside the title rather than in a card of its
-               own below it. That card held one short line across the full
-               measure and nothing else. */
-            actions={ticket ? (
-                <Badge tone={stateTone(ticket.status, states.statuses)}>
-                    {stateLabel(t, ticket.status, states.statuses)}
-                </Badge>
-            ) : null}
-        >
-            {loading ? (
-                <div className="bg-card rounded-xl p-8 text-center">
-                    <p className="text-muted-foreground">{t("loadingTicket")}</p>
-                </div>
-            ) : error ? (
-                <div className="bg-card rounded-xl p-8 text-center">
-                    <p className="text-destructive mb-4">{error}</p>
-                    <Link href="/support" className={buttonClassName("outline", "default")}>{t("backToSupport")}</Link>
-                </div>
-            ) : ticket ? (
-                <StandardSidebarLayout sidebar={(
-                            <div className="space-y-4">
-                                <div className="bg-card rounded-xl border border-border p-4">
-                                    <h2 className="font-bold text-foreground mb-3">{t("ticketInfo")}</h2>
-                                    <div className="space-y-2 text-sm">
-                                        <div className="flex justify-between gap-3">
-                                            <span className="text-muted-foreground">{t("priority")}</span>
-                                            <Badge tone={stateTone(ticket.priority, states.priorities)}>
-                                                {stateLabel(t, ticket.priority, states.priorities)}
-                                            </Badge>
+        <ArrangedClientPage
+            page="tickets.ticket"
+            frame={{
+                title: ticket.subject,
+                trail: [{ label: t("support"), href: '/support' }],
+                actions: status,
+            }}
+            blocks={{
+                thread: () => (
+                    <div className="space-y-4">
+                        {/* Messages */}
+                        <div className="space-y-4">
+                            {ticket.messages.map((message) => (
+                                <div
+                                    key={message.id}
+                                    className={`bg-card rounded-xl border p-4 ${message.isStaffReply
+                                        ? "border-primary/20 bg-primary/50"
+                                        : "border-border"
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold">
+                                            {message.user.avatar ? (
+                                                <>{/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img src={message.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /></>
+                                            ) : (
+                                                message.user.username.charAt(0).toUpperCase()
+                                            )}
                                         </div>
-                                        <div className="flex justify-between gap-3">
-                                            <span className="text-muted-foreground">{t("department")}</span>
-                                            <span className="text-foreground text-right">{ticket.department.name}</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span className="text-muted-foreground">{t("createdAt")}</span>
-                                            <span className="text-foreground">{relativeTime(ticket.createdAt)}</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span className="text-muted-foreground">{t("updatedAt")}</span>
-                                            <span className="text-foreground">{relativeTime(ticket.updatedAt)}</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span className="text-muted-foreground">{t("messages")}</span>
-                                            <span className="text-foreground">{ticket.messages.length}</span>
-                                        </div>
-                                        {ticket.assignedTo && (
-                                            <div className="flex justify-between">
-                                                <span className="text-muted-foreground">{t("assignedTo")}</span>
-                                                <span className="text-foreground">{ticket.assignedTo.username}</span>
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-medium text-foreground">{message.user.username}</span>
+                                                {message.isStaffReply && (
+                                                    <Badge tone="info">{t("staff")}</Badge>
+                                                )}
                                             </div>
-                                        )}
+                                            <span className="text-xs text-muted-foreground">{relativeTime(message.createdAt)}</span>
+                                        </div>
                                     </div>
+                                    <RichContent markdown={message.content} keepLineBreaks />
                                 </div>
-                            </div>
-                        )}>
-                    {(
-                            <div className="space-y-4">
-                                {/* Messages */}
-                                <div className="space-y-4">
-                                    {ticket.messages.map((message) => (
-                                        <div
-                                            key={message.id}
-                                            className={`bg-card rounded-xl border p-4 ${message.isStaffReply
-                                                ? "border-primary/20 bg-primary/50"
-                                                : "border-border"
-                                                }`}
-                                        >
-                                            <div className="flex items-center gap-3 mb-3">
-                                                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold">
-                                                    {message.user.avatar ? (
-                                                        <>{/* eslint-disable-next-line @next/next/no-img-element */}
-                                                        <img src={message.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /></>
-                                                    ) : (
-                                                        message.user.username.charAt(0).toUpperCase()
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="font-medium text-foreground">{message.user.username}</span>
-                                                        {message.isStaffReply && (
-                                                            <Badge tone="info">{t("staff")}</Badge>
-                                                        )}
-                                                    </div>
-                                                    <span className="text-xs text-muted-foreground">{relativeTime(message.createdAt)}</span>
-                                                </div>
-                                            </div>
-                                            <RichContent markdown={message.content} keepLineBreaks />
-                                        </div>
-                                    ))}
-                                </div>
+                            ))}
+                        </div>
 
-                                {/* Reply Form */}
-                                {/* Still open, by the state rather than by one name. */}
-                                {isOpenState(ticket.status, states.statuses) && (
-                                    <div className="bg-card rounded-xl border border-border p-4">
-                                        <form onSubmit={handleReply}>
-                                            {/* The same editor the staff
-                                                answer with. A reply typed as
-                                                plain text is still valid
-                                                Markdown, so a member who
-                                                ignores the toolbar loses
-                                                nothing. */}
-                                            <div className="mb-3">
-                                                <RichTextEditor
-                                                    value={reply}
-                                                    onChange={setReply}
-                                                    placeholder={t("replyPlaceholder")}
-                                                    minHeight="8rem"
-                                                />
-                                            </div>
-                                            <Button type="submit" disabled={sending || !reply.trim()}>
-                                                {sending ? t("sending") : t("sendReply")}
-                                            </Button>
-                                        </form>
+                        {/* Reply Form */}
+                        {/* Still open, by the state rather than by one name. */}
+                        {isOpenState(ticket.status, states.statuses) && (
+                            <div className="bg-card rounded-xl border border-border p-4">
+                                <form onSubmit={handleReply}>
+                                    {/* The same editor the staff
+                                        answer with. A reply typed as
+                                        plain text is still valid
+                                        Markdown, so a member who
+                                        ignores the toolbar loses
+                                        nothing. */}
+                                    <div className="mb-3">
+                                        <RichTextEditor
+                                            value={reply}
+                                            onChange={setReply}
+                                            placeholder={t("replyPlaceholder")}
+                                            minHeight="8rem"
+                                        />
+                                    </div>
+                                    <Button type="submit" disabled={sending || !reply.trim()}>
+                                        {sending ? t("sending") : t("sendReply")}
+                                    </Button>
+                                </form>
+                            </div>
+                        )}
+                    </div>
+                ),
+                details: () => (
+                    <div className="space-y-4">
+                        <div className="bg-card rounded-xl border border-border p-4">
+                            <h2 className="font-bold text-foreground mb-3">{t("ticketInfo")}</h2>
+                            <div className="space-y-2 text-sm">
+                                <div className="flex justify-between gap-3">
+                                    <span className="text-muted-foreground">{t("priority")}</span>
+                                    <Badge tone={stateTone(ticket.priority, states.priorities)}>
+                                        {stateLabel(t, ticket.priority, states.priorities)}
+                                    </Badge>
+                                </div>
+                                <div className="flex justify-between gap-3">
+                                    <span className="text-muted-foreground">{t("department")}</span>
+                                    <span className="text-foreground text-right">{ticket.department.name}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">{t("createdAt")}</span>
+                                    <span className="text-foreground">{relativeTime(ticket.createdAt)}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">{t("updatedAt")}</span>
+                                    <span className="text-foreground">{relativeTime(ticket.updatedAt)}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">{t("messages")}</span>
+                                    <span className="text-foreground">{ticket.messages.length}</span>
+                                </div>
+                                {ticket.assignedTo && (
+                                    <div className="flex justify-between">
+                                        <span className="text-muted-foreground">{t("assignedTo")}</span>
+                                        <span className="text-foreground">{ticket.assignedTo.username}</span>
                                     </div>
                                 )}
                             </div>
-                        )}
-                </StandardSidebarLayout>
-            ) : null}
-        </PageFrame>
+                        </div>
+                    </div>
+                ),
+            }}
+        />
     );
 }

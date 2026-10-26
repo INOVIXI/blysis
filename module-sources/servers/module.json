@@ -2,8 +2,8 @@
   "id": "servers",
   "name": "Game Servers",
   "description": "Game server management, RCON, and status monitoring",
-  "version": "1.5.0",
-  "coreVersion": "^5.0.0",
+  "version": "1.11.0",
+  "coreVersion": "^5.27.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Server",
@@ -67,6 +67,32 @@
       "permission": "servers.manage"
     }
   ],
+  "widgets": [
+    {
+      "id": "ServerStatusWidget",
+      "component": "widgets/server-status-widget",
+      "label": "Server status",
+      "labelKey": "widget_serverStatus",
+      "defaultVisible": true,
+      "defaultOrder": 5
+    }
+  ],
+  "placeholders": [
+    {
+      "name": "online",
+      "handler": "placeholders/online.ts",
+      "labelKey": "placeholder_servers_online",
+      "example": "214",
+      "maxAgeSeconds": 20
+    },
+    {
+      "name": "max",
+      "handler": "placeholders/max.ts",
+      "labelKey": "placeholder_servers_max",
+      "example": "500",
+      "maxAgeSeconds": 20
+    }
+  ],
   "translations": {
     "en": {
       "servers": {
@@ -110,7 +136,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Game Servers",
-        "version": "Version"
+        "version": "Version",
+        "widget_title": "Where to play",
+        "widget_playing": "{online} of {max} playing",
+        "widget_copy": "Copy the address of {name}",
+        "widget_copied": "Address copied",
+        "widget_copyFailed": "The address could not be copied",
+        "cards_players": "{count} playing",
+        "cards_capacity": "{online} / {max} players",
+        "tile_players": "Players online",
+        "svr_description": "Description",
+        "svr_descriptionPlaceholder": "One line about this server, shown on its card",
+        "svr_image": "Picture",
+        "tag_open": "Open · {count} playing",
+        "tag_closed": "Closed",
+        "slot_whereToPlay": "Where you will play"
       },
       "admin": {
         "menu_servers": "Servers",
@@ -119,7 +159,10 @@
         "menu_servers_game_servers": "Game Servers",
         "navGroup_gaming": "Gaming",
         "module_servers_name": "Game Servers",
-        "module_servers_description": "Game server management, RCON, and status monitoring"
+        "module_servers_description": "Game server management, RCON, and status monitoring",
+        "widget_serverStatus": "Server status",
+        "placeholder_servers_online": "Players online",
+        "placeholder_servers_max": "Player slots"
       }
     },
     "tr": {
@@ -164,7 +207,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Oyun Sunucuları",
-        "version": "Sürüm"
+        "version": "Sürüm",
+        "widget_title": "Nerede oynanır",
+        "widget_playing": "{max} kişiden {online} kişi oynuyor",
+        "widget_copy": "{name} adresini kopyala",
+        "widget_copied": "Adres kopyalandı",
+        "widget_copyFailed": "Adres kopyalanamadı",
+        "cards_players": "{count} oyuncu",
+        "cards_capacity": "{online} / {max} oyuncu",
+        "tile_players": "Çevrimiçi oyuncu",
+        "svr_description": "Açıklama",
+        "svr_descriptionPlaceholder": "Bu sunucuyu anlatan, kartında görünen bir satır",
+        "svr_image": "Görsel",
+        "tag_open": "Açık · {count} oyuncu",
+        "tag_closed": "Kapalı",
+        "slot_whereToPlay": "Nerede oynayacaksın"
       },
       "admin": {
         "menu_servers": "Sunucular",
@@ -173,7 +230,10 @@
         "menu_servers_game_servers": "Oyun Sunucuları",
         "navGroup_gaming": "Oyun",
         "module_servers_name": "Oyun Sunucuları",
-        "module_servers_description": "Oyun sunucusu yönetimi, RCON ve durum izleme"
+        "module_servers_description": "Oyun sunucusu yönetimi, RCON ve durum izleme",
+        "widget_serverStatus": "Sunucu durumu",
+        "placeholder_servers_online": "Çevrimiçi oyuncu sayısı",
+        "placeholder_servers_max": "Toplam oyuncu kapasitesi"
       }
     },
     "az": {
@@ -218,7 +278,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Oyun serverləri",
-        "version": "Versiya"
+        "version": "Versiya",
+        "widget_title": "Harada oynanır",
+        "widget_playing": "{max} nəfərdən {online} nəfər oynayır",
+        "widget_copy": "{name} ünvanını kopyala",
+        "widget_copied": "Ünvan kopyalandı",
+        "widget_copyFailed": "Ünvanı kopyalamaq olmadı",
+        "cards_players": "{count} oyunçu",
+        "cards_capacity": "{online} / {max} oyunçu",
+        "tile_players": "Onlayn oyunçular",
+        "svr_description": "Təsvir",
+        "svr_descriptionPlaceholder": "Bu server haqqında kartında görünən bir sətir",
+        "svr_image": "Şəkil",
+        "tag_open": "Açıq · {count} oyunçu",
+        "tag_closed": "Bağlı",
+        "slot_whereToPlay": "Harada oynayacaqsan"
       },
       "admin": {
         "menu_servers": "Serverlər",
@@ -227,7 +301,10 @@
         "menu_servers_game_servers": "Oyun serverləri",
         "navGroup_gaming": "Oyunlar",
         "module_servers_name": "Oyun serverləri",
-        "module_servers_description": "Oyun serveri idarəetməsi, RCON və status monitorinqi"
+        "module_servers_description": "Oyun serveri idarəetməsi, RCON və status monitorinqi",
+        "widget_serverStatus": "Server vəziyyəti",
+        "placeholder_servers_online": "Onlayn oyunçular",
+        "placeholder_servers_max": "Oyunçu yerləri"
       }
     },
     "de": {
@@ -272,7 +349,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Spielserver",
-        "version": "Version"
+        "version": "Version",
+        "widget_title": "Wo gespielt wird",
+        "widget_playing": "{online} von {max} spielen",
+        "widget_copy": "Adresse von {name} kopieren",
+        "widget_copied": "Adresse kopiert",
+        "widget_copyFailed": "Die Adresse konnte nicht kopiert werden",
+        "cards_players": "{count} spielen",
+        "cards_capacity": "{online} / {max} Spieler",
+        "tile_players": "Spieler online",
+        "svr_description": "Beschreibung",
+        "svr_descriptionPlaceholder": "Eine Zeile über diesen Server, auf seiner Karte gezeigt",
+        "svr_image": "Bild",
+        "tag_open": "Offen · {count} spielen",
+        "tag_closed": "Geschlossen",
+        "slot_whereToPlay": "Wo du spielen wirst"
       },
       "admin": {
         "menu_servers": "Server",
@@ -281,7 +372,10 @@
         "menu_servers_game_servers": "Spielserver",
         "navGroup_gaming": "Gaming",
         "module_servers_name": "Spielserver",
-        "module_servers_description": "Verwaltung von Spielservern, RCON und Statusüberwachung"
+        "module_servers_description": "Verwaltung von Spielservern, RCON und Statusüberwachung",
+        "widget_serverStatus": "Serverstatus",
+        "placeholder_servers_online": "Spieler online",
+        "placeholder_servers_max": "Spielerplätze"
       }
     },
     "es": {
@@ -326,7 +420,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Servidores de juego",
-        "version": "Versión"
+        "version": "Versión",
+        "widget_title": "Dónde jugar",
+        "widget_playing": "{online} de {max} jugando",
+        "widget_copy": "Copiar la dirección de {name}",
+        "widget_copied": "Dirección copiada",
+        "widget_copyFailed": "No se pudo copiar la dirección",
+        "cards_players": "{count} jugando",
+        "cards_capacity": "{online} / {max} jugadores",
+        "tile_players": "Jugadores en línea",
+        "svr_description": "Descripción",
+        "svr_descriptionPlaceholder": "Una línea sobre este servidor, mostrada en su tarjeta",
+        "svr_image": "Imagen",
+        "tag_open": "Abierto · {count} jugando",
+        "tag_closed": "Cerrado",
+        "slot_whereToPlay": "Dónde jugarás"
       },
       "admin": {
         "menu_servers": "Servidores",
@@ -335,7 +443,10 @@
         "menu_servers_game_servers": "Servidores de juego",
         "navGroup_gaming": "Juegos",
         "module_servers_name": "Servidores de juego",
-        "module_servers_description": "Gestión de servidores de juego, RCON y supervisión del estado"
+        "module_servers_description": "Gestión de servidores de juego, RCON y supervisión del estado",
+        "widget_serverStatus": "Estado del servidor",
+        "placeholder_servers_online": "Jugadores en línea",
+        "placeholder_servers_max": "Plazas de jugadores"
       }
     },
     "et": {
@@ -380,7 +491,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Mängaserverid",
-        "version": "Versioon"
+        "version": "Versioon",
+        "widget_title": "Kus mängida",
+        "widget_playing": "{online} / {max} mängib",
+        "widget_copy": "Kopeeri serveri {name} aadress",
+        "widget_copied": "Aadress kopeeritud",
+        "widget_copyFailed": "Aadressi ei õnnestunud kopeerida",
+        "cards_players": "{count} mängib",
+        "cards_capacity": "{online} / {max} mängijat",
+        "tile_players": "Mängijaid võrgus",
+        "svr_description": "Kirjeldus",
+        "svr_descriptionPlaceholder": "Üks rida selle serveri kohta, näidatakse tema kaardil",
+        "svr_image": "Pilt",
+        "tag_open": "Avatud · {count} mängib",
+        "tag_closed": "Suletud",
+        "slot_whereToPlay": "Kus sa mängima hakkad"
       },
       "admin": {
         "menu_servers": "Serverid",
@@ -389,7 +514,10 @@
         "menu_servers_game_servers": "Mängaserverid",
         "navGroup_gaming": "Mängimine",
         "module_servers_name": "Mängaserverid",
-        "module_servers_description": "Mänguserverite haldus, RCON ja staatuse jälgimine"
+        "module_servers_description": "Mänguserverite haldus, RCON ja staatuse jälgimine",
+        "widget_serverStatus": "Serveri olek",
+        "placeholder_servers_online": "Mängijaid võrgus",
+        "placeholder_servers_max": "Mängijakohti"
       }
     },
     "fr": {
@@ -434,7 +562,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Serveurs de jeu",
-        "version": "Version"
+        "version": "Version",
+        "widget_title": "Où jouer",
+        "widget_playing": "{online} sur {max} en jeu",
+        "widget_copy": "Copier l’adresse de {name}",
+        "widget_copied": "Adresse copiée",
+        "widget_copyFailed": "L’adresse n’a pas pu être copiée",
+        "cards_players": "{count} en jeu",
+        "cards_capacity": "{online} / {max} joueurs",
+        "tile_players": "Joueurs en ligne",
+        "svr_description": "Description",
+        "svr_descriptionPlaceholder": "Une ligne sur ce serveur, affichée sur sa carte",
+        "svr_image": "Image",
+        "tag_open": "Ouvert · {count} en jeu",
+        "tag_closed": "Fermé",
+        "slot_whereToPlay": "Où tu vas jouer"
       },
       "admin": {
         "menu_servers": "Serveurs",
@@ -443,7 +585,10 @@
         "menu_servers_game_servers": "Serveurs de jeu",
         "navGroup_gaming": "Jeux",
         "module_servers_name": "Serveurs de jeu",
-        "module_servers_description": "Gestion des serveurs de jeu, RCON et suivi de l’état"
+        "module_servers_description": "Gestion des serveurs de jeu, RCON et suivi de l’état",
+        "widget_serverStatus": "État du serveur",
+        "placeholder_servers_online": "Joueurs en ligne",
+        "placeholder_servers_max": "Places de joueurs"
       }
     },
     "it": {
@@ -488,7 +633,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Server di gioco",
-        "version": "Versione"
+        "version": "Versione",
+        "widget_title": "Dove si gioca",
+        "widget_playing": "{online} su {max} in gioco",
+        "widget_copy": "Copia l’indirizzo di {name}",
+        "widget_copied": "Indirizzo copiato",
+        "widget_copyFailed": "Impossibile copiare l’indirizzo",
+        "cards_players": "{count} in gioco",
+        "cards_capacity": "{online} / {max} giocatori",
+        "tile_players": "Giocatori online",
+        "svr_description": "Descrizione",
+        "svr_descriptionPlaceholder": "Una riga su questo server, mostrata sulla sua scheda",
+        "svr_image": "Immagine",
+        "tag_open": "Aperto · {count} in gioco",
+        "tag_closed": "Chiuso",
+        "slot_whereToPlay": "Dove giocherai"
       },
       "admin": {
         "menu_servers": "Server",
@@ -497,7 +656,10 @@
         "menu_servers_game_servers": "Server di gioco",
         "navGroup_gaming": "Gaming",
         "module_servers_name": "Server di gioco",
-        "module_servers_description": "Gestione dei server di gioco, RCON e monitoraggio dello stato"
+        "module_servers_description": "Gestione dei server di gioco, RCON e monitoraggio dello stato",
+        "widget_serverStatus": "Stato del server",
+        "placeholder_servers_online": "Giocatori online",
+        "placeholder_servers_max": "Posti giocatore"
       }
     },
     "pl": {
@@ -542,7 +704,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Serwery gier",
-        "version": "Wersja"
+        "version": "Wersja",
+        "widget_title": "Gdzie grać",
+        "widget_playing": "Gra {online} z {max}",
+        "widget_copy": "Skopiuj adres serwera {name}",
+        "widget_copied": "Adres skopiowany",
+        "widget_copyFailed": "Nie udało się skopiować adresu",
+        "cards_players": "{count} gra",
+        "cards_capacity": "{online} / {max} graczy",
+        "tile_players": "Graczy online",
+        "svr_description": "Opis",
+        "svr_descriptionPlaceholder": "Jedna linijka o tym serwerze, widoczna na jego karcie",
+        "svr_image": "Obraz",
+        "tag_open": "Otwarty · {count} gra",
+        "tag_closed": "Zamknięty",
+        "slot_whereToPlay": "Gdzie zagrasz"
       },
       "admin": {
         "menu_servers": "Serwery",
@@ -551,7 +727,10 @@
         "menu_servers_game_servers": "Serwery gier",
         "navGroup_gaming": "Gry",
         "module_servers_name": "Serwery gier",
-        "module_servers_description": "Zarządzanie serwerami gier, RCON i monitorowanie statusu"
+        "module_servers_description": "Zarządzanie serwerami gier, RCON i monitorowanie statusu",
+        "widget_serverStatus": "Stan serwera",
+        "placeholder_servers_online": "Gracze online",
+        "placeholder_servers_max": "Miejsca dla graczy"
       }
     },
     "pt": {
@@ -596,7 +775,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Servidores de jogos",
-        "version": "Versão"
+        "version": "Versão",
+        "widget_title": "Onde jogar",
+        "widget_playing": "{online} de {max} jogando",
+        "widget_copy": "Copiar o endereço de {name}",
+        "widget_copied": "Endereço copiado",
+        "widget_copyFailed": "Não foi possível copiar o endereço",
+        "cards_players": "{count} jogando",
+        "cards_capacity": "{online} / {max} jogadores",
+        "tile_players": "Jogadores online",
+        "svr_description": "Descrição",
+        "svr_descriptionPlaceholder": "Uma linha sobre este servidor, mostrada no seu cartão",
+        "svr_image": "Imagem",
+        "tag_open": "Aberto · {count} jogando",
+        "tag_closed": "Fechado",
+        "slot_whereToPlay": "Onde você vai jogar"
       },
       "admin": {
         "menu_servers": "Servidores",
@@ -605,7 +798,10 @@
         "menu_servers_game_servers": "Servidores de jogos",
         "navGroup_gaming": "Jogos",
         "module_servers_name": "Servidores de jogos",
-        "module_servers_description": "Gerenciamento de servidores de jogos, RCON e monitoramento de status"
+        "module_servers_description": "Gerenciamento de servidores de jogos, RCON e monitoramento de status",
+        "widget_serverStatus": "Status do servidor",
+        "placeholder_servers_online": "Jogadores online",
+        "placeholder_servers_max": "Vagas de jogadores"
       }
     },
     "ru": {
@@ -650,7 +846,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "Игровые серверы",
-        "version": "Версия"
+        "version": "Версия",
+        "widget_title": "Где играть",
+        "widget_playing": "Играют {online} из {max}",
+        "widget_copy": "Скопировать адрес сервера {name}",
+        "widget_copied": "Адрес скопирован",
+        "widget_copyFailed": "Не удалось скопировать адрес",
+        "cards_players": "{count} в игре",
+        "cards_capacity": "{online} / {max} игроков",
+        "tile_players": "Игроков онлайн",
+        "svr_description": "Описание",
+        "svr_descriptionPlaceholder": "Одна строка об этом сервере, показывается на его карточке",
+        "svr_image": "Изображение",
+        "tag_open": "Открыт · {count} в игре",
+        "tag_closed": "Закрыт",
+        "slot_whereToPlay": "Где ты будешь играть"
       },
       "admin": {
         "menu_servers": "Серверы",
@@ -659,7 +869,10 @@
         "menu_servers_game_servers": "Игровые серверы",
         "navGroup_gaming": "Игры",
         "module_servers_name": "Игровые серверы",
-        "module_servers_description": "Управление игровыми серверами, RCON и мониторинг статуса"
+        "module_servers_description": "Управление игровыми серверами, RCON и мониторинг статуса",
+        "widget_serverStatus": "Статус сервера",
+        "placeholder_servers_online": "Игроков онлайн",
+        "placeholder_servers_max": "Мест для игроков"
       }
     },
     "zh": {
@@ -704,7 +917,21 @@
         "svr_typeRust": "Rust",
         "svr_typeUnturned": "Unturned",
         "title": "游戏服务器",
-        "version": "版本"
+        "version": "版本",
+        "widget_title": "在哪里玩",
+        "widget_playing": "{online} / {max} 人在线",
+        "widget_copy": "复制 {name} 的地址",
+        "widget_copied": "地址已复制",
+        "widget_copyFailed": "无法复制地址",
+        "cards_players": "{count} 人在玩",
+        "cards_capacity": "{online} / {max} 名玩家",
+        "tile_players": "在线玩家",
+        "svr_description": "描述",
+        "svr_descriptionPlaceholder": "一句话介绍这个服务器，显示在它的卡片上",
+        "svr_image": "图片",
+        "tag_open": "开放中 · {count} 人在玩",
+        "tag_closed": "已关闭",
+        "slot_whereToPlay": "你将在哪里玩"
       },
       "admin": {
         "menu_servers": "服务器",
@@ -713,7 +940,10 @@
         "menu_servers_game_servers": "游戏服务器",
         "navGroup_gaming": "游戏",
         "module_servers_name": "游戏服务器",
-        "module_servers_description": "游戏服务器管理、RCON 和状态监控"
+        "module_servers_description": "游戏服务器管理、RCON 和状态监控",
+        "widget_serverStatus": "服务器状态",
+        "placeholder_servers_online": "在线玩家",
+        "placeholder_servers_max": "玩家容量"
       }
     }
   },
@@ -735,6 +965,52 @@
       "label": "Gaming",
       "icon": "Gamepad2",
       "order": 50
+    }
+  ],
+  "blocks": [
+    {
+      "id": "cards",
+      "component": "components/ServerCards",
+      "widths": [
+        "wide",
+        "full"
+      ],
+      "defaultOrder": 20,
+      "defaultVisible": false,
+      "settings": {
+        "kicker": {
+          "type": "text",
+          "max": 60
+        },
+        "title": {
+          "type": "text",
+          "max": 80
+        },
+        "capacity": {
+          "type": "toggle",
+          "default": false
+        }
+      }
+    }
+  ],
+  "slotContents": [
+    {
+      "id": "players-tile",
+      "slot": "home.stats",
+      "component": "slots/PlayersTile",
+      "order": 10
+    },
+    {
+      "id": "status-tag",
+      "slot": "hero.tags",
+      "component": "slots/StatusTag",
+      "order": 10
+    },
+    {
+      "id": "where-to-play",
+      "slot": "auth.register.aside",
+      "component": "slots/WhereToPlay",
+      "order": 10
     }
   ]
 }

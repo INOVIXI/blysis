@@ -189,7 +189,7 @@ export default function LicensesPage() {
                 <Card>
                     <CardContent className="p-6">
                         <form onSubmit={issue} className="space-y-4">
-                            <div className="grid md:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <Label>{t("adm_productName")}</Label>
                                     <Input aria-label={t("adm_productName")} value={productName} onChange={(e) => setProductName(e.target.value)} />

@@ -6,7 +6,7 @@ import type { BillingDetails } from "../../../lib/billing";
 import Image from "next/image";
 import { Link, useRouter } from "@/core/sdk/navigation";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, useConfirm, useSiteCurrency, buttonClassName, Waiting } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Loader2, Check, X, CreditCard, Coins, ShoppingCart } from "lucide-react";
 import { NavIcon } from "@/core/sdk/ui";
 import { useTranslations } from "next-intl";
@@ -281,40 +281,51 @@ export default function CartPage() {
 
     const finalTotal = cart ? cart.total - couponDiscount : 0;
 
+    const waiting = loading ? (
+        // The minimum height is the card below it, which is what a
+        // visitor with nothing in their cart gets: a mark, a heading,
+        // a line of explanation and a button. Left to itself the
+        // waiting box stood 128px tall against that card's 300px, so
+        // the answer arriving pushed the footer down by 174px. The
+        // number is measured rather than reasoned: `a-waiting-page-is
+        // -the-size-of-its-answer` reads the page length either side
+        // of the answer and wants the difference to be zero.
+        <Card>
+            <CardContent className="py-12 text-center">
+                <Waiting label={commonT("loading")} className="min-h-[204px]" />
+            </CardContent>
+        </Card>
+    ) : !cart || cart.items.length === 0 ? (
+        <Card>
+            <CardContent className="py-12 text-center">
+                <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h2 className="text-xl font-semibold mb-2">{t('cartEmpty')}</h2>
+                <p className="text-muted-foreground mb-6">
+                    {t('cartEmptyDesc')}
+                </p>
+                <Link href="/store" className={buttonClassName("default", "default")}>{t('browseStore')}</Link>
+            </CardContent>
+        </Card>
+    ) : null;
+
+    if (waiting || !cart) {
+        return (
+            <ArrangedClientPage page="store.cart" frame={{ title: t('shoppingCart'), trail: [{ label: t('title'), href: '/store' }] }} blocks={{}}>
+                {waiting}
+            </ArrangedClientPage>
+        );
+    }
+
     return (
-        <PageFrame
-            title={t('shoppingCart')}
-            trail={[{ label: t('title'), href: '/store' }]}
-        >
-            {loading ? (
-                // The minimum height is the card below it, which is what a
-                // visitor with nothing in their cart gets: a mark, a heading,
-                // a line of explanation and a button. Left to itself the
-                // waiting box stood 128px tall against that card's 300px, so
-                // the answer arriving pushed the footer down by 174px. The
-                // number is measured rather than reasoned: `a-waiting-page-is
-                // -the-size-of-its-answer` reads the page length either side
-                // of the answer and wants the difference to be zero.
-                <Card>
-                    <CardContent className="py-12 text-center">
-                        <Waiting label={commonT("loading")} className="min-h-[204px]" />
-                    </CardContent>
-                </Card>
-            ) : !cart || cart.items.length === 0 ? (
-                <Card>
-                    <CardContent className="py-12 text-center">
-                        <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                        <h2 className="text-xl font-semibold mb-2">{t('cartEmpty')}</h2>
-                        <p className="text-muted-foreground mb-6">
-                            {t('cartEmptyDesc')}
-                        </p>
-                        <Link href="/store" className={buttonClassName("default", "default")}>{t('browseStore')}</Link>
-                    </CardContent>
-                </Card>
-            ) : (
-                <div className="grid lg:grid-cols-3 gap-8">
-                    {/* Cart Items */}
-                    <div className="lg:col-span-2 space-y-4">
+        <ArrangedClientPage
+            page="store.cart"
+            frame={{ title: t('shoppingCart'), trail: [{ label: t('title'), href: '/store' }] }}
+            // The summary is the order being placed, not a sidebar: it stays
+            // beside the items at their spacing and is drawn as part of the page.
+            sidebar={false}
+            blocks={{
+                items: () => (
+                    <div className="space-y-4">
                         {cart.items.map((item) => (
                             <Card key={item.id}>
                                 <CardContent className="p-4">
@@ -404,8 +415,8 @@ export default function CartPage() {
                             {t('clearCart')}
                         </Button>
                     </div>
-
-                    {/* Order Summary */}
+                ),
+                summary: () => (
                     <div>
                         <Card className="sticky top-24">
                             <CardHeader>
@@ -601,15 +612,11 @@ export default function CartPage() {
                                         t('proceedToCheckout')
                                     )}
                                 </Button>
-
-                                <p className="text-xs text-muted-foreground text-center">
-                                    {t('secureCheckout')}
-                                </p>
                             </CardContent>
                         </Card>
                     </div>
-                </div>
-            )}
-        </PageFrame>
+                ),
+            }}
+        />
     );
 }

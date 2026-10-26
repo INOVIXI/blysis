@@ -77,8 +77,14 @@ export const STAGING_TSCONFIG = "tsconfig.staging.json";
 /** Entries of `.next` that are not part of a build and never move. */
 const NOT_A_BUILD = new Set([STAGING_DIRNAME, PREVIOUS_DIRNAME, "cache"]);
 
+/**
+ * The build Next serves. Opaque to the tracer on purpose: a dynamic `root`
+ * joined to `.next` matched every file of every build, and each rename below
+ * pulled the whole project into the bundles that import this file (the
+ * install routes and, through the SDK, the proxy). See `runtime-paths.ts`.
+ */
 function liveDir(root: string): string {
-    return path.join(root, ".next");
+    return path.join(/* turbopackIgnore: true */ root, ".next");
 }
 
 export function stagingDir(root: string = process.cwd()): string {

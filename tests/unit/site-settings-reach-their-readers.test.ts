@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { isWidgetVisible, orderWidgets, visibleWidgets } from "@/core/lib/homepage-widgets";
+import { isWidgetVisible, orderWidgets } from "@/core/lib/homepage-widgets";
 import { relativePath } from "./source-text";
 
 /**
@@ -67,7 +67,7 @@ describe("keys read through useSiteSettings", () => {
 
     it("finds the components that read them", () => {
         const files = consumers().map((c) => c.file);
-        expect(files).toContain("src/core/components/layout/Footer.tsx");
+        expect(files).toContain("src/core/hooks/useFooter.ts");
         expect(files.length).toBeGreaterThan(1);
     });
 
@@ -84,9 +84,17 @@ describe("keys read through useSiteSettings", () => {
         expect(unreachable).toEqual([]);
     });
 
-    it("includes the three keys that were unreachable", () => {
-        for (const key of ["widget_visibility", "widget_order", "hero_discord_url"]) {
-            expect(allowed.has(key)).toBe(true);
+    it("includes the key that was unreachable", () => {
+        expect(allowed.has("hero_discord_url")).toBe(true);
+    });
+
+    it("keeps the widget settings to the server, where the homepage now reads them", () => {
+        // They were published for a homepage that read them in the browser.
+        // `loadHomeLayout` reads them on the server, the admin screen reads
+        // them through the admin API, and nothing else needs a visitor to
+        // receive how the sidebar was arranged.
+        for (const key of ["widget_visibility", "widget_order"]) {
+            expect(allowed.has(key), key).toBe(false);
         }
     });
 
@@ -136,16 +144,5 @@ describe("homepage widget preferences", () => {
     it("survives a saved order naming widgets that are gone, or naming one twice", () => {
         const widgets = [w("A"), w("B")];
         expect(orderWidgets(widgets, ["Uninstalled", "B", "B", "A"]).map((x) => x.id)).toEqual(["B", "A"]);
-    });
-
-    it("hides and orders in one pass", () => {
-        const widgets = [w("A"), w("B"), w("C", false)];
-        const settings = { widget_visibility: { B: false, C: true }, widget_order: ["C", "A"] };
-        expect(visibleWidgets(widgets, settings).map((x) => x.id)).toEqual(["C", "A"]);
-    });
-
-    it("shows every declared-visible widget when the admin has saved nothing", () => {
-        const widgets = [w("A"), w("B")];
-        expect(visibleWidgets(widgets, {}).map((x) => x.id)).toEqual(["A", "B"]);
     });
 });

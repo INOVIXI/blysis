@@ -81,11 +81,11 @@ describe("a failing module component is named to the console, not to the visitor
 
     it("leaves no call site passing an English label", () => {
         const callers = [
-            "src/app/[locale]/page.tsx",
             "src/core/components/ServerSlot.tsx",
             "src/core/components/Slot.tsx",
             "src/core/components/layout/ModuleLayoutComponents.tsx",
-            "src/core/components/layout/Navbar.tsx",
+            "src/core/components/layout/NavbarActions.tsx",
+            "src/core/components/layout/PageLayoutView.tsx",
         ];
         for (const file of callers) {
             expect(read(file), file).not.toContain("fallbackLabel");

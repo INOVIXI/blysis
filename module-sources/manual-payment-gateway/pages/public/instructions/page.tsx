@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card, CardContent, LoadFailed, buttonClassName } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Link } from "@/core/sdk/navigation";
 import { Loader2 } from "lucide-react";
 
@@ -43,32 +43,38 @@ export default function PaymentInstructionsPage() {
     }, [reloadKey]);
 
     return (
-        <PageFrame title={t("title")} description={t("subtitle")}>
-            <Card>
-                <CardContent className="space-y-6 p-6">
-                    {failed ? (
-                        <LoadFailed onRetry={() => { setFailed(false); setReloadKey((k) => k + 1); }} />
-                    ) : instructions === null ? (
-                        <div className="flex items-center justify-center py-8">
-                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                        </div>
-                    ) : (
-                        <>
-                            {reference && (
-                                <div>
-                                    <p className="text-sm text-muted-foreground">{t("quoteThis")}</p>
-                                    <p className="mt-1 font-mono text-lg font-medium">{reference}</p>
+        <ArrangedClientPage
+            page="manual-payment-gateway.instructions"
+            frame={{ title: t("title"), description: t("subtitle") }}
+            blocks={{
+                instructions: () => (
+                    <Card>
+                        <CardContent className="space-y-6 p-6">
+                            {failed ? (
+                                <LoadFailed onRetry={() => { setFailed(false); setReloadKey((k) => k + 1); }} />
+                            ) : instructions === null ? (
+                                <div className="flex items-center justify-center py-8">
+                                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                                 </div>
+                            ) : (
+                                <>
+                                    {reference && (
+                                        <div>
+                                            <p className="text-sm text-muted-foreground">{t("quoteThis")}</p>
+                                            <p className="mt-1 font-mono text-lg font-medium">{reference}</p>
+                                        </div>
+                                    )}
+                                    <p className="whitespace-pre-wrap text-foreground">{instructions}</p>
+                                    <p className="text-sm text-muted-foreground">{t("thenWhat")}</p>
+                                    <Link href="/profile" className={buttonClassName("default", "default")}>
+                                        {t("myOrders")}
+                                    </Link>
+                                </>
                             )}
-                            <p className="whitespace-pre-wrap text-foreground">{instructions}</p>
-                            <p className="text-sm text-muted-foreground">{t("thenWhat")}</p>
-                            <Link href="/profile" className={buttonClassName("default", "default")}>
-                                {t("myOrders")}
-                            </Link>
-                        </>
-                    )}
-                </CardContent>
-            </Card>
-        </PageFrame>
+                        </CardContent>
+                    </Card>
+                ),
+            }}
+        />
     );
 }

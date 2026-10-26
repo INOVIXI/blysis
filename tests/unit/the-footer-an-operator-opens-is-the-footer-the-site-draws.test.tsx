@@ -35,6 +35,7 @@ vi.mock("@/core/generated/module-registry", () => ({
     ModuleFooterLinks: [
         { label: "Forum", labelKey: "forum", href: "/forum", section: "quick", module: "forum" },
         { label: "Terms", href: "/terms", section: "legal", module: "legal-pages" },
+        { label: "Shop", href: "/shop", section: "game", sectionLabelKey: "section_game", module: "shop" },
     ],
 }));
 
@@ -55,15 +56,17 @@ vi.mock("@/core/hooks/useSiteSettings", () => ({
 vi.mock("sonner", () => ({ toast: { success: () => {}, error: () => {} } }));
 
 const written: Record<string, unknown>[] = [];
+let stored: Record<string, unknown> = {};
 
 beforeEach(() => {
     written.length = 0;
+    stored = {};
     vi.stubGlobal("fetch", vi.fn(async (_url: string, init?: RequestInit) => {
         if (init?.method === "PATCH") {
             written.push(JSON.parse(String(init.body)));
             return new Response(JSON.stringify({ ok: true }), { status: 200 });
         }
-        return new Response(JSON.stringify({ settings: {}, secretsConfigured: [] }), { status: 200 });
+        return new Response(JSON.stringify({ settings: stored, secretsConfigured: [] }), { status: 200 });
     }));
 });
 
@@ -114,6 +117,34 @@ describe("what the editor saves", () => {
     });
 });
 
+describe("a module that names a section of its own", () => {
+    it("has a column of its own on a footer nobody arranged", async () => {
+        const lists = await open();
+        expect(lists).toHaveLength(3);
+        expect(within(lists[2]).getByText("Shop")).toBeTruthy();
+        expect(within(lists[0]).queryByText("Shop")).toBeNull();
+    });
+});
+
+describe("hiding what the site adds", () => {
+    it("saves the address of a link the operator hid", async () => {
+        const lists = await open();
+        within(lists[0]).getByRole("button", { name: "Hide Forum from the footer" }).click();
+        (await screen.findByText(EN.admin.footer_save)).click();
+        await waitFor(() => expect(written).toHaveLength(1));
+        expect(written[0].footer_hidden_links).toEqual(["/forum"]);
+    });
+
+    it("offers a hidden link back from the same line", async () => {
+        stored = { footer_hidden_links: JSON.stringify(["/forum"]) };
+        const lists = await open();
+        within(lists[0]).getByRole("button", { name: "Show Forum in the footer again" }).click();
+        (await screen.findByText(EN.admin.footer_save)).click();
+        await waitFor(() => expect(written).toHaveLength(1));
+        expect(written[0].footer_hidden_links).toEqual([]);
+    });
+});
+
 describe("the composition itself", () => {
     const words = { home: "Home", moduleLink: () => null };
     const moduleLinks = [
@@ -151,7 +182,7 @@ describe("the composition itself", () => {
 
 describe("the two screens that draw it", () => {
     it("both ask the one function", () => {
-        expect(read("src/core/components/layout/Footer.tsx")).toContain("drawnFooterColumns");
+        expect(read("src/core/hooks/useFooter.ts")).toContain("drawnFooterColumns");
         expect(read("src/app/[locale]/(admin)/admin/settings/footer/page.tsx")).toContain("drawnFooterColumns");
     });
 

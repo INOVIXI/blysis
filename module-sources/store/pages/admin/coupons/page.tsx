@@ -232,7 +232,7 @@ export default function AdminCouponsPage() {
                 <Card>
                     <CardContent className="p-6">
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid md:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <Label>{`${t("adm_code")} *`}</Label>
                                     <Input
@@ -284,7 +284,7 @@ export default function AdminCouponsPage() {
                                 product, which is what every coupon written
                                 before this meant, so an existing one keeps
                                 working untouched. */}
-                            <div className="grid md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <Label>{t("adm_couponProducts")}</Label>
                                     <ReferenceList
@@ -312,7 +312,7 @@ export default function AdminCouponsPage() {
                                 </div>
                             </div>
 
-                            <div className="grid md:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <Label>{t("adm_minPurchase")}</Label>
                                     <Input
@@ -357,7 +357,7 @@ export default function AdminCouponsPage() {
                               * could only be made through the API, or made
                               * live and switched off until Friday by hand.
                               */}
-                            <div className="grid md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <Label>{t("adm_couponStarts")}</Label>
                                     <Input

@@ -159,6 +159,12 @@ export function AppThemeProvider({
         [serverConfig, previewOverrides],
     );
 
+    const placeholderFields = useMemo(() => new Set(
+        Object.entries(activeTheme.settings ?? {}).flatMap(([group, def]) => Object.entries(def.fields)
+            .filter(([, field]) => field.type === "text" && field.placeholders === true)
+            .map(([key]) => `${group}.${key}`)),
+    ), [activeTheme]);
+
     // It wrote a `blysis_mode` cookie, which nothing has ever read: the mode a
     // page is drawn in is chosen by the toggles, and the site's default is
     // saved on the server. All this does is draw the page in a mode for now.
@@ -171,7 +177,7 @@ export function AppThemeProvider({
             activeTheme, currentThemeId: activeTheme.id, currentMode, setMode, refreshMode,
             surface, siteDefault: defaultMode, locked,
         }}>
-            <ThemeConfigProvider value={effectiveConfig}>{children}</ThemeConfigProvider>
+            <ThemeConfigProvider value={effectiveConfig} placeholderFields={placeholderFields}>{children}</ThemeConfigProvider>
         </ThemeContext.Provider>
     );
 }

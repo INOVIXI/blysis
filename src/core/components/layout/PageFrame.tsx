@@ -1,8 +1,9 @@
 import React from "react";
-import { Navbar, Footer } from "@/core/components/layout";
-import { ThemeComponentSlot } from "@/core/components/theme/ThemeComponentSlot";
 import SidebarLayout from "@/core/components/layout/SidebarLayout";
-import { PageBreadcrumb, type Crumb } from "@/core/components/layout/PageBreadcrumb";
+import { SiteShell } from "@/core/components/layout/SiteShell";
+import { PageHeader } from "@/core/components/layout/PageHeader";
+import type { Crumb } from "@/core/components/layout/PageBreadcrumb";
+import type { PageHeading } from "@/core/lib/page-layout-schema";
 
 export interface PageFrameProps {
     /** Names the page. Drawn as the only h1 and closing the crumb trail. */
@@ -14,6 +15,18 @@ export interface PageFrameProps {
     actions?: React.ReactNode;
     /** Widgets for the right column. Omitted, the content spans the page. */
     sidebar?: React.ReactNode;
+    /** Offered to a theme's header; see `PageHeaderProps`. */
+    picture?: string;
+    /** Offered to a theme's header; see `PageHeaderProps`. */
+    meta?: React.ReactNode;
+    /**
+     * `hidden` draws no band: the page opens on something that names it
+     * already, as a theme's arrangement may ask. The title is still the h1,
+     * read but not seen, so the page is never nameless.
+     */
+    header?: "shown" | "hidden";
+    /** Words the theme's arrangement gives the band; see `PageHeader`. */
+    heading?: PageHeading;
     children: React.ReactNode;
 }
 
@@ -35,36 +48,18 @@ export interface PageFrameProps {
  *
  * Deliberately not "use client": rendered from a server page it stays on the
  * server, and rendered from a page that says "use client" it compiles with it.
- * Both kinds of page exist and both need the same frame.
+ * Both kinds of page exist and both need the same frame. The shell and the
+ * header it draws through are the two parts a theme may redraw.
  */
-export function PageFrame({ title, description, trail, actions, sidebar, children }: PageFrameProps) {
+export function PageFrame({ title, description, trail, actions, sidebar, picture, meta, header = "shown", heading, children }: PageFrameProps) {
     return (
-        <div className="min-h-screen flex flex-col bg-background">
-            <ThemeComponentSlot name="Hero" />
-            <Navbar />
-
-            <main className="container mx-auto px-4 py-6 flex-1">
-                <header className="mb-6">
-                    <PageBreadcrumb trail={trail} current={title} />
-                    <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
-                        <div className="min-w-0">
-                            {/* `font-extrabold`, not `font-bold`: the page's
-                                name is the heaviest thing on it, and at 700 it
-                                sat level with the section headings inside the
-                                article below it. */}
-                            <h1 className="text-3xl font-extrabold text-foreground">{title}</h1>
-                            {description ? (
-                                <p className="text-muted-foreground mt-1">{description}</p>
-                            ) : null}
-                        </div>
-                        {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
-                    </div>
-                </header>
-
-                {sidebar ? <SidebarLayout sidebar={sidebar}>{children}</SidebarLayout> : children}
-            </main>
-
-            <Footer />
-        </div>
+        <SiteShell>
+            {header === "hidden" ? (
+                <h1 className="sr-only">{title}</h1>
+            ) : (
+                <PageHeader title={title} description={description} trail={trail} actions={actions} picture={picture} meta={meta} heading={heading} />
+            )}
+            {sidebar ? <SidebarLayout sidebar={sidebar}>{children}</SidebarLayout> : children}
+        </SiteShell>
     );
 }

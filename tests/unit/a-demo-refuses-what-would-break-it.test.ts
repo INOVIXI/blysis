@@ -30,6 +30,7 @@ const MUST_REFUSE: [string, string, string][] = [
     ["DELETE", "/api/v1/roles/admin-role-id", "deleting the role that opens the panel"],
     ["PATCH", "/api/v1/roles/admin-role-id", "taking the panel's permissions off it"],
     ["PATCH", "/api/v1/admin/translations", "rewriting every string on the site"],
+    ["POST", "/api/v1/admin/translations/replace", "the same, in one press"],
     ["POST", "/api/v1/auth/two-factor/setup", "locking the shared account"],
     ["POST", "/api/v1/auth/setup", "the same, under the other name it answers to"],
     ["POST", "/api/v1/url-redirects", "moving the front page elsewhere"],

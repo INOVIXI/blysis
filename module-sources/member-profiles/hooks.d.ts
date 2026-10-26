@@ -24,11 +24,18 @@ declare global {
     interface BlysisFilterPayloads {
         /** Every account somebody has proved is theirs. */
         "profile.linkedAccounts": LinkedAccountSummary[];
+        /**
+         * The Prisma `where` for the rows of one kind a stranger may read,
+         * narrowed by the module that owns them, or null for none of them.
+         */
+        "profile.contentWhere": Record<string, unknown> | null;
     }
 
     interface BlysisFilterContexts {
         /** The member being looked at, who is not always the one looking. */
         "profile.linkedAccounts": { userId: string };
+        /** Which kind is being read: a key of `CONTENT_KINDS`. */
+        "profile.contentWhere": { kind: string };
     }
 }
 

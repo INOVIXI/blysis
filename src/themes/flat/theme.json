@@ -171,19 +171,22 @@
           "type": "text",
           "label": "Title",
           "default": "Welcome",
-          "labelKey": "theme_flat_hero_title"
+          "labelKey": "theme_flat_hero_title",
+          "placeholders": true
         },
         "subtitle": {
           "type": "text",
           "label": "Subtitle",
           "default": "A clean starting point for your community.",
-          "labelKey": "theme_flat_hero_subtitle"
+          "labelKey": "theme_flat_hero_subtitle",
+          "placeholders": true
         },
         "ctaText": {
           "type": "text",
           "label": "Button text",
           "default": "Get started",
-          "labelKey": "theme_flat_hero_ctaText"
+          "labelKey": "theme_flat_hero_ctaText",
+          "placeholders": true
         },
         "ctaHref": {
           "type": "url",

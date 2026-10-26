@@ -10,7 +10,7 @@
  * on an install with no modules at all.
  */
 
-import { hostnameMatchesAllowlist } from "./url-safety";
+import { hostnameMatchesAllowlist, isPrivateHost } from "./url-safety";
 
 export type WebhookLayout = "json" | "embed" | "attachment";
 
@@ -79,65 +79,6 @@ export function resolveWebhookChannel(
     channels: readonly WebhookChannel[],
 ): WebhookChannel {
     return channels.find((c) => c.id === id) ?? GENERIC_CHANNEL;
-}
-
-/** Hostnames that must never be reachable through an admin-supplied webhook. */
-const PRIVATE_HOST_SUFFIXES = [".local", ".internal", ".localdomain", ".home.arpa"];
-
-function isPrivateIpv4(host: string): boolean {
-    const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(host);
-    if (!v4) return false;
-    const [a, b] = [Number(v4[1]), Number(v4[2])];
-    return (
-        a === 0 ||
-        a === 10 ||
-        a === 127 ||
-        (a === 169 && b === 254) ||
-        (a === 172 && b >= 16 && b <= 31) ||
-        (a === 192 && b === 168)
-    );
-}
-
-/**
- * The IPv4 inside an IPv4-mapped IPv6 literal, or null.
- *
- * `https://[::ffff:127.0.0.1]/` reaches the loopback exactly as
- * `https://127.0.0.1/` does, and the URL parser hands it back in its
- * normalized hex form, `::ffff:7f00:1`, which matches none of the IPv6
- * prefixes below. Both spellings are unpacked here and then checked against
- * the IPv4 rules.
- */
-function mappedIpv4(v6: string): string | null {
-    if (!v6.startsWith("::ffff:")) return null;
-    const rest = v6.slice("::ffff:".length);
-
-    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(rest)) return rest;
-
-    const groups = rest.split(":");
-    if (groups.length !== 2) return null;
-    const [hi, lo] = groups.map((g) => Number.parseInt(g, 16));
-    if (!Number.isInteger(hi) || !Number.isInteger(lo)) return null;
-    if (hi < 0 || hi > 0xffff || lo < 0 || lo > 0xffff) return null;
-    return [hi >> 8, hi & 0xff, lo >> 8, lo & 0xff].join(".");
-}
-
-function isPrivateHost(hostname: string): boolean {
-    const host = hostname.toLowerCase().replace(/\.$/, "");
-
-    if (host === "localhost" || host.endsWith(".localhost")) return true;
-    if (PRIVATE_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix))) return true;
-    // A single-label name only resolves inside the local network.
-    if (!host.includes(".") && !host.includes(":")) return true;
-
-    // IPv6 literals arrive from URL.hostname wrapped in brackets.
-    const v6 = host.startsWith("[") && host.endsWith("]") ? host.slice(1, -1) : null;
-    if (v6) {
-        const mapped = mappedIpv4(v6);
-        if (mapped) return isPrivateIpv4(mapped);
-        return v6 === "::1" || v6 === "::" || /^f[cd][0-9a-f]{2}:/.test(v6) || /^fe80:/.test(v6);
-    }
-
-    return isPrivateIpv4(host);
 }
 
 export type UrlCheck = { ok: true } | { ok: false; error: string };

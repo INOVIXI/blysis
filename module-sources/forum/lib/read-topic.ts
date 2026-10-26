@@ -16,7 +16,7 @@
  * apart for the reason in its own comment.
  */
 import { headers } from "next/headers";
-import { isAdmin, moduleSettings, prisma } from "@/core/sdk/server";
+import { isAdmin, moduleSettings, prisma, textContains } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { accessToCategory, visibleCategoryIds } from "./visible-categories";
 import { mayViewForum } from "./guest-view";
@@ -46,6 +46,21 @@ export interface TopicRead {
  * `/like`. One per reply would be one request per row; this is a join on the
  * unique constraint that already exists, and it costs the read nothing.
  */
+/**
+ * Who wrote the topic and each reply: what the line above a post draws, and
+ * the role and joining date a theme that sets authors in a column draws
+ * beside it. Nothing a member's public profile does not already show.
+ */
+const POST_AUTHOR = {
+    select: {
+        id: true,
+        username: true,
+        avatar: true,
+        createdAt: true,
+        role: { select: { id: true, name: true, displayName: true, color: true, badgeCss: true } },
+    },
+} as const;
+
 function findTopic(
     id: string,
     postWhere: { moderationState: "APPROVED" } | undefined,
@@ -56,7 +71,7 @@ function findTopic(
     return prisma.forumTopic.findFirst({
         where: { OR: [{ id }, { slug: id }, ...(isNaN(Number(id)) ? [] : [{ number: Number(id) }])] },
         include: {
-            author: { select: { id: true, username: true, avatar: true } },
+            author: POST_AUTHOR,
             category: { select: { id: true, name: true, slug: true, color: true } },
             posts: {
                 where: postWhere,
@@ -64,7 +79,7 @@ function findTopic(
                 skip,
                 take,
                 include: {
-                    author: { select: { id: true, username: true, avatar: true } },
+                    author: POST_AUTHOR,
                     _count: { select: { likes: true } },
                     likes: readerId
                         ? { where: { userId: readerId }, select: { id: true }, take: 1 }
@@ -202,7 +217,7 @@ export async function readTopicList(options: {
         : undefined;
     if (options.categorySlug && !chosen) return null;
     if (chosen) where.categoryId = chosen.id;
-    if (options.search) where.title = { contains: options.search, mode: "insensitive" };
+    if (options.search) where.OR = textContains(["title"], options.search);
     if (!readerIsAdmin) where.moderationState = "APPROVED";
 
     const narrowed = readable.everything

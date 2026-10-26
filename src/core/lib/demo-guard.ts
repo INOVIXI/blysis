@@ -59,6 +59,7 @@ export const DEMO_REFUSES: readonly DemoRule[] = [
     { pattern: /^\/api\/v1\/admin\/rate-limits$/, why: "a ceiling of zero refuses every request" },
     { pattern: /^\/api\/v1\/roles(?:\/|$)/, why: "the admin role is what opens the panel" },
     { pattern: /^\/api\/v1\/admin\/translations/, why: "every screen would read its own keys" },
+    { pattern: /^\/api\/v1\/admin\/languages$/, why: "a site offering one language turns away every visitor reading another" },
     { pattern: /^\/api\/v1\/auth\/two-factor\//, why: "a second factor on a shared account is a lock with one key" },
     { pattern: /^\/api\/v1\/auth\/(?:setup|disable|verify)$/, why: "the same, under the names this module also answers to" },
     { pattern: /^\/api\/v1\/admin\/ip-blocks/, why: "blocks the next visitor by address" },

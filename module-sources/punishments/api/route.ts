@@ -105,7 +105,10 @@ export async function POST(request: NextRequest) {
                 data: {
                     userId: targetUser.id,
                     issuedById: issuerUserId,
-                    reason: reason || "No reason provided",
+                    // Empty, not a placeholder: the warnings screen says "no reason
+                    // given" in its reader's language, and English stored here
+                    // could never be translated.
+                    reason: reason || "",
                     expiresAt: expiresAt ? new Date(expiresAt) : null,
                 },
             }).catch(() => {});

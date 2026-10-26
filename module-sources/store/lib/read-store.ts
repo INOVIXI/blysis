@@ -14,7 +14,7 @@
  * a filter rather than a check after the fact, and the hour of a weekly window
  * is applied in `hideShut` rather than in SQL.
  */
-import { moduleSettings, prisma, siteTimeZone } from "@/core/sdk/server";
+import { moduleSettings, prisma, siteTimeZone, textContains } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
 import { creditingPurchases } from "./upgrade-credit-server";
@@ -87,6 +87,10 @@ export interface ShelfProduct {
     was: number | null;
     onSale: boolean;
     image: string | null;
+    /** The one line about it a card has room for. */
+    shortDesc: string | null;
+    /** How long a purchase lasts, in days; null is owned outright. */
+    durationDays: number | null;
     stock: number | null;
     isFeatured: boolean;
     category: { id: string; name: string; slug: string } | null;
@@ -124,19 +128,25 @@ export async function readStoreProducts(options: {
     search?: string;
     sort: StoreSort;
     page: number;
+    /** Only the products marked featured. */
+    featured?: boolean;
+    /** Leave this one out: the product a page is about. */
+    exceptId?: string;
+    /** Fewer than a page, for a front that shows a taste of a shelf. */
+    perPage?: number;
 }): Promise<StoreProducts> {
     const now = new Date();
     const page = Math.max(1, Math.floor(options.page) || 1);
+    const perPage = options.perPage ?? PRODUCTS_PER_PAGE;
     const where = {
         ...onTheShelfWhere(now),
         ...(options.categorySlug ? { category: { slug: options.categorySlug } } : {}),
+        ...(options.featured ? { isFeatured: true } : {}),
+        ...(options.exceptId ? { id: { not: options.exceptId } } : {}),
+        // Inside an AND: the shelf's own window is the top-level OR, and a
+        // search spread beside it replaced it.
         ...(options.search
-            ? {
-                OR: [
-                    { name: { contains: options.search, mode: "insensitive" as const } },
-                    { description: { contains: options.search, mode: "insensitive" as const } },
-                ],
-            }
+            ? { AND: [{ OR: textContains(["name", "description"], options.search) }] }
             : {}),
     };
 
@@ -144,8 +154,8 @@ export async function readStoreProducts(options: {
         prisma.product.findMany({
             where,
             select: PUBLIC_PRODUCT,
-            skip: (page - 1) * PRODUCTS_PER_PAGE,
-            take: PRODUCTS_PER_PAGE,
+            skip: (page - 1) * perPage,
+            take: perPage,
             orderBy: options.sort === "popular" ? [{ unitsSold: "desc" as const }, { createdAt: "desc" as const }]
                 : options.sort === "price_asc" ? { price: "asc" as const }
                 : options.sort === "price_desc" ? { price: "desc" as const }
@@ -190,7 +200,8 @@ export async function readStoreProducts(options: {
         );
         const source = row as unknown as {
             id: string; number: number; name: string; slug: string;
-            comparePrice: unknown; image: string | null; stock: number | null; isFeatured: boolean;
+            comparePrice: unknown; image: string | null; shortDesc: string | null; durationDays: number | null;
+            stock: number | null; isFeatured: boolean;
             category: { id: string; name: string; slug: string } | null;
         };
         return {
@@ -205,6 +216,8 @@ export async function readStoreProducts(options: {
             was: priced.was,
             onSale: priced.onSale,
             image: source.image,
+            shortDesc: source.shortDesc ?? null,
+            durationDays: source.durationDays ?? null,
             stock: source.stock,
             isFeatured: source.isFeatured,
             category: source.category,
@@ -222,7 +235,44 @@ export async function readStoreProducts(options: {
         products: annotated,
         lowStockAt,
         page,
-        pages: Math.max(1, Math.ceil(total / PRODUCTS_PER_PAGE)),
+        pages: Math.max(1, Math.ceil(total / perPage)),
         total,
     };
+}
+
+/**
+ * The product the shop is pushing: the newest one marked featured that is on
+ * the shelf, priced the way its card is. Null when nothing is featured.
+ */
+export async function readFeatured(): Promise<ShelfProduct | null> {
+    const { products } = await readStoreProducts({ featured: true, sort: "newest", page: 1, perPage: 1 });
+    return products[0] ?? null;
+}
+
+export interface FrontShelf {
+    category: StoreCategory;
+    products: ShelfProduct[];
+    /** Everything on the shelf, for the link to the rest of it. */
+    total: number;
+}
+
+/**
+ * A taste of every top-level section: its first products, newest first, and
+ * how many it holds. A section with nothing on its own shelf, one whose
+ * products all sit in its children for one, is left out.
+ */
+export async function readShelves(categories: StoreCategory[], limit: number): Promise<FrontShelf[]> {
+    const roots = categories.filter((c) => c.parentId === null);
+    const shelves = await Promise.all(roots.map(async (category) => {
+        const { products, total } = await readStoreProducts({ categorySlug: category.slug, sort: "newest", page: 1, perPage: limit });
+        return { category, products, total };
+    }));
+    return shelves.filter((s) => s.products.length > 0);
+}
+
+/** The other products on a product's shelf, newest first; none for one with no shelf. */
+export async function readRelated(product: { id: string; categorySlug: string | null }, limit: number): Promise<ShelfProduct[]> {
+    if (!product.categorySlug) return [];
+    const { products } = await readStoreProducts({ categorySlug: product.categorySlug, exceptId: product.id, sort: "newest", page: 1, perPage: limit });
+    return products;
 }

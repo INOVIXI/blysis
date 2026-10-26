@@ -185,7 +185,8 @@ export default function ProfileWall({ userId, username }: { userId?: string; use
     };
 
     return (
-        <Card className="mt-6">
+        // No margin of its own: the profile it stands on spaces its parts.
+        <Card>
             <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
                 <CardTitle>{t("title")}</CardTitle>
                 {mine && (

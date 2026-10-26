@@ -16,7 +16,10 @@ import { ChevronDown } from "lucide-react";
  * all of them, so the heading is a heading and the list is open. The button
  * only exists at the width where the fold is worth having, which is also why
  * it is a button inside the heading rather than instead of it - the page's
- * outline does not change with the viewport.
+ * outline does not change with the viewport. Wider, the heading holds the
+ * words alone: a button that did nothing there was still a control named
+ * after the column, beside a link of the same name when a module's page is
+ * called what its section is (`a-control-says-which-one-it-is`).
  */
 export function FooterColumn({ title, children }: { title: React.ReactNode; children: React.ReactNode }) {
     const [open, setOpen] = useState(false);
@@ -24,16 +27,17 @@ export function FooterColumn({ title, children }: { title: React.ReactNode; chil
     return (
         <div>
             <h2 className="font-semibold text-foreground mb-4">
+                <span className="hidden sm:inline">{title}</span>
                 <button
                     type="button"
                     onClick={() => setOpen(!open)}
                     aria-expanded={open}
-                    className="sm:cursor-default flex w-full items-center justify-between gap-2 text-left cursor-pointer"
+                    className="sm:hidden flex w-full items-center justify-between gap-2 text-left cursor-pointer"
                 >
                     {title}
                     <ChevronDown
                         aria-hidden="true"
-                        className={`sm:hidden w-4 h-4 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
+                        className={`w-4 h-4 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
                     />
                 </button>
             </h2>

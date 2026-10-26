@@ -2,7 +2,7 @@
   "id": "csv-import-export",
   "name": "CSV Export",
   "description": "Export the site's tables as CSV",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "coreVersion": "^5.0.0",
   "category": "management",
   "author": "Blysis",

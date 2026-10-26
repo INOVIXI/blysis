@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pageParams, prisma } from "@/core/sdk/server";
 import { CONTENT_KINDS, type ContentItem } from "../../../lib/member-content";
+import { strangerWhere } from "../../../lib/stranger-where";
 
 type RouteParams = { params: Promise<{ username: string }> };
 
@@ -37,7 +38,18 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     if (!user) return NextResponse.json({ error: "Member not found" }, { status: 404 });
 
     const { page, limit, skip, take } = pageParams(request.nextUrl.searchParams, { defaultLimit: 20, maxLimit: 50 });
-    const where = { [kind.field]: user.id, ...(kind.where ?? {}) };
+    // Narrowed by the module that owns the rows as well as by the kind's own
+    // rule: a forum's staff room is the forum's to keep shut.
+    const narrowed = await strangerWhere(kind.kind);
+    if (narrowed === null) {
+        return NextResponse.json({
+            member: { username: user.username },
+            kind: kind.kind,
+            items: [],
+            pagination: { page, limit, total: 0, pages: 1 },
+        });
+    }
+    const where = { AND: [{ [kind.field]: user.id }, narrowed] };
 
     const listing = delegate as {
         findMany(args: Record<string, unknown>): Promise<Record<string, unknown>[]>;

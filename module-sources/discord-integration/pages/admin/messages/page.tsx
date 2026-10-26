@@ -241,7 +241,7 @@ export default function DiscordMessagesPage() {
                 }
             />
 
-            <div className="grid lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <Card className="lg:col-span-1">
                     <CardHeader><CardTitle>{t("adm_msgEvents")}</CardTitle></CardHeader>
                     <CardContent className="p-2">

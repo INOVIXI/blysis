@@ -1,6 +1,7 @@
 import { prisma } from "./db";
 import { Prisma } from "@prisma/client";
 import { auth } from "@/core/lib/auth";
+import { errorText, log } from "@/core/lib/logger";
 
 /**
  * Record a single audit event. The schema stores `metadata` as a Json
@@ -62,6 +63,6 @@ export async function logActivity(params: {
             },
         });
     } catch (err) {
-        console.error("[Activity Log] Failed:", err);
+        log.error("[activity-log] the entry was not recorded", { action: params.action, error: errorText(err) });
     }
 }

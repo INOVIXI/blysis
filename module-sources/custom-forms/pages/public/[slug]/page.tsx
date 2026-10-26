@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { useTranslations } from "next-intl";
 import { Button, Card, CardContent, Challenge, Input, Label, Textarea, NativeSelect, CheckboxField, useChallenge } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Loader2, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -178,49 +178,52 @@ export default function FormPage({ params }: PageProps) {
     };
 
     return (
-        <PageFrame
-            title={form?.title ?? commonT("loading")}
-            description={form?.description || undefined}
-        >
-            {loading ? (
-                <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
-            ) : !form ? (
-                <Card><CardContent className="py-12 text-center text-muted-foreground">{t("formNotFound")}</CardContent></Card>
-            ) : submitted ? (
-                <Card>
-                    <CardContent className="py-12 text-center">
-                        <CheckCircle className="w-12 h-12 text-success mx-auto mb-3" />
-                        <h2 className="text-xl font-bold text-foreground mb-1">{t("thankYou")}</h2>
-                        <p className="text-muted-foreground">{t("thankYouBody")}</p>
-                    </CardContent>
-                </Card>
-            ) : (
-                <Card>
-                    <CardContent className="pt-6">
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            {form.fields.map((field) => (
-                                <div key={field.name}>
-                                    <Label>{field.label} {field.required && <span className="text-destructive">*</span>}</Label>
-                                    {/* Above the control, not below it: it is
-                                        how to answer, and it is no use after
-                                        somebody has answered. */}
-                                    {field.help && (
-                                        <p className="mb-1.5 text-xs text-muted-foreground">{field.help}</p>
-                                    )}
-                                    {renderField(field)}
-                                </div>
-                            ))}
-                            {/* Above the button, which is where a person
-                                looks for the last thing to do before
-                                pressing it. */}
-                            <Challenge action="forms.submit" onField={challenge.onField} />
-                            <Button type="submit" disabled={submitting}>
-                                {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> {t("submitting")}</> : t("submit")}
-                            </Button>
-                        </form>
-                    </CardContent>
-                </Card>
-            )}
-        </PageFrame>
+        <ArrangedClientPage
+            page="custom-forms.form"
+            frame={{ title: form?.title ?? commonT("loading"), description: form?.description || undefined }}
+            blocks={{
+                form: () => (
+                    loading ? (
+                        <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
+                    ) : !form ? (
+                        <Card><CardContent className="py-12 text-center text-muted-foreground">{t("formNotFound")}</CardContent></Card>
+                    ) : submitted ? (
+                        <Card>
+                            <CardContent className="py-12 text-center">
+                                <CheckCircle className="w-12 h-12 text-success mx-auto mb-3" />
+                                <h2 className="text-xl font-bold text-foreground mb-1">{t("thankYou")}</h2>
+                                <p className="text-muted-foreground">{t("thankYouBody")}</p>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <Card>
+                            <CardContent className="pt-6">
+                                <form onSubmit={handleSubmit} className="space-y-4">
+                                    {form.fields.map((field) => (
+                                        <div key={field.name}>
+                                            <Label>{field.label} {field.required && <span className="text-destructive">*</span>}</Label>
+                                            {/* Above the control, not below it: it is
+                                                how to answer, and it is no use after
+                                                somebody has answered. */}
+                                            {field.help && (
+                                                <p className="mb-1.5 text-xs text-muted-foreground">{field.help}</p>
+                                            )}
+                                            {renderField(field)}
+                                        </div>
+                                    ))}
+                                    {/* Above the button, which is where a person
+                                        looks for the last thing to do before
+                                        pressing it. */}
+                                    <Challenge action="forms.submit" onField={challenge.onField} />
+                                    <Button type="submit" disabled={submitting}>
+                                        {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> {t("submitting")}</> : t("submit")}
+                                    </Button>
+                                </form>
+                            </CardContent>
+                        </Card>
+                    )
+                ),
+            }}
+        />
     );
 }

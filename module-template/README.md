@@ -86,15 +86,18 @@ The template manifest enumerates every common UI registration so you can see all
 | `adminRoutes` | Admin pages → `/[locale]/admin/[path]` |
 | `api` | API handlers → `/api/v1/[path]` |
 | `menu` | Admin sidebar items |
-| `navLinks` / `footerLinks` | Public navbar and footer entries |
+| `navLinks` / `footerLinks` | Public navbar and footer entries; a footer link's `section` is the column it belongs in, one lowercase word other modules may share, and `sectionLabelKey` a `footer` key you ship for that column's name |
 | `navbarComponents` / `footerComponents` | Navbar right-side and footer components |
 | `layoutComponents` | Site-wide components with URL include/exclude filters |
-| `homepageSections` / `widgets` | Homepage main content and sidebar widgets |
+| `widgets` | Homepage sidebar widgets |
+| `blocks` | Homepage blocks a theme's arrangement places, with the widths they work at and their settings; `replaces` carries an old widget or section's place and switch (see [arranged pages](../docs/internals/page-layouts.md)) |
+| `pages` | A page the module draws through `ArrangedPage` from `@/core/sdk/page` (or `ArrangedClientPage` from `@/core/sdk/layout` when it reads its data in the browser), the blocks it is built from and its default arrangement, which a theme may replace under `layouts["<module>.<page>"]` |
+| `homepageSections` | Homepage main content, read as a wide block; a new one is better declared in `blocks` |
 | `profileTabs` | Tabs added to the user profile page |
 | `dashboardCards` + `statsApi` | Admin dashboard stat cards + data endpoint |
 | `settingsCards` | Cards on the admin Settings page |
 | `oauthButtons` | OAuth login/register buttons |
-| `slotContents` | Render into core (`layout.beforeMain`, `layout.afterMain`, `head.extra`) or theme-declared slots |
+| `slotContents` | Render into core (`layout.beforeMain`, `layout.afterMain`, `head.extra`, `home.stats`) or the slots themes draw (`hero.tags`, `hero.bottom`, `auth.login.aside`, `auth.register.aside`) |
 
 ### Behavior (all optional)
 
@@ -108,6 +111,7 @@ The template manifest enumerates every common UI registration so you can see all
 | `webhookReceivers` | Inbound webhook endpoints (HMAC verification supported) |
 | `hookListeners` | Action/filter listeners auto-wired at build time |
 | `searchProviders` | Contributors to `GET /api/v1/search` |
+| `placeholders` | Live public values written `{<module>.<name>}` in a theme's text; the handler default-exports `async () => string \| number \| null` and answers for every visitor |
 | `storageProviders` | File-storage backends implementing `StorageProvider` |
 | `seoRoutes` | Sitemap contribution handler |
 | `notificationTypes` | Event types surfaced in user notification preferences |
@@ -199,7 +203,7 @@ npm run build:marketplace
 - **Server components by default** - add `"use client"` only when needed.
 - **No hardcoded UI strings** - use `useTranslations()` (`next-intl`) or declare `translations` in `module.json`.
 - **Auth checks** - admin pages call `isAdmin()` from `@/core/sdk/server`; write API endpoints verify `session.user.id` + `hasPermission()`.
-- **Imports** - the SDK (`@/core/sdk`, `/server`, `/auth`, `/navigation`, `/theme`, `/ui`, `/layout`, `/admin`) for core, relative paths within the module. Reaching into `@/core/lib/*` or `@/core/components/*` fails `npm run validate:module`.
+- **Imports** - the SDK (`@/core/sdk`, `/server`, `/auth`, `/navigation`, `/theme`, `/ui`, `/layout`, `/page`, `/admin`) for core, relative paths within the module. Reaching into `@/core/lib/*` or `@/core/components/*` fails `npm run validate:module`.
 - **No `any`** - TypeScript strict mode.
 - **No `confirm()` / `alert()`** - use `useConfirm()` + `toast` from `sonner`.
 - **No emojis in UI** - Lucide icons only.

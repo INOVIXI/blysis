@@ -60,7 +60,7 @@ export function ModuleSettingsPanel({
     // 36rem column with the rest of the panel blank beside it.
     return (
         <div className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {declarations.map((setting) => {
                     const id = `module-setting-${mod.id}-${setting.key}`;
                     const value = values[setting.key];

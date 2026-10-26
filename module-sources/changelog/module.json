@@ -2,8 +2,8 @@
   "id": "changelog",
   "name": "Changelog",
   "description": "Release notes and update history",
-  "version": "1.8.0",
-  "coreVersion": "^5.0.0",
+  "version": "1.10.0",
+  "coreVersion": "^5.30.0",
   "category": "community",
   "author": "Blysis",
   "icon": "History",
@@ -189,6 +189,9 @@
       },
       "pageDescriptions": {
         "changelog": "See what changed in every release, from new features to fixes, with the most recent update listed first."
+      },
+      "footer": {
+        "section_community": "Community"
       }
     },
     "tr": {
@@ -280,6 +283,9 @@
       },
       "pageDescriptions": {
         "changelog": "Her sürümde nelerin değiştiğini, yeni özelliklerden düzeltmelere kadar en güncel kayıt en üstte olacak şekilde görün."
+      },
+      "footer": {
+        "section_community": "Topluluk"
       }
     },
     "az": {
@@ -371,6 +377,9 @@
       },
       "pageDescriptions": {
         "changelog": "Yeni funksiyalardan düzəlişlərə qədər hər buraxılışda nələrin dəyişdiyini görün; ən son yeniləmə birinci göstərilir."
+      },
+      "footer": {
+        "section_community": "İcma"
       }
     },
     "de": {
@@ -462,6 +471,9 @@
       },
       "pageDescriptions": {
         "changelog": "Sieh, was sich in jedem Release geändert hat, von neuen Funktionen bis zu Fehlerbehebungen, mit dem neuesten Update zuerst."
+      },
+      "footer": {
+        "section_community": "Community"
       }
     },
     "es": {
@@ -553,6 +565,9 @@
       },
       "pageDescriptions": {
         "changelog": "Consulta qué ha cambiado en cada versión, desde las funciones nuevas hasta las correcciones, con la actualización más reciente en primer lugar."
+      },
+      "footer": {
+        "section_community": "Comunidad"
       }
     },
     "et": {
@@ -644,6 +659,9 @@
       },
       "pageDescriptions": {
         "changelog": "Vaata, mis igas väljaandes muutus, uutest funktsioonidest parandusteni. Kõige viimane uuendus on esimesena."
+      },
+      "footer": {
+        "section_community": "Kogukond"
       }
     },
     "fr": {
@@ -735,6 +753,9 @@
       },
       "pageDescriptions": {
         "changelog": "Découvrez ce qui a changé à chaque version, des nouveautés aux corrections, la mise à jour la plus récente en premier."
+      },
+      "footer": {
+        "section_community": "Communauté"
       }
     },
     "it": {
@@ -826,6 +847,9 @@
       },
       "pageDescriptions": {
         "changelog": "Scopri cosa è cambiato in ogni release, dalle nuove funzioni alle correzioni, con l’aggiornamento più recente in cima."
+      },
+      "footer": {
+        "section_community": "Comunità"
       }
     },
     "pl": {
@@ -917,6 +941,9 @@
       },
       "pageDescriptions": {
         "changelog": "Zobacz, co zmieniło się w każdym wydaniu, od nowych funkcji po poprawki, z najnowszą aktualizacją na górze."
+      },
+      "footer": {
+        "section_community": "Społeczność"
       }
     },
     "pt": {
@@ -1008,6 +1035,9 @@
       },
       "pageDescriptions": {
         "changelog": "Veja o que mudou em cada versão, de novidades a correções, com a atualização mais recente listada primeiro."
+      },
+      "footer": {
+        "section_community": "Comunidade"
       }
     },
     "ru": {
@@ -1099,6 +1129,9 @@
       },
       "pageDescriptions": {
         "changelog": "Что изменилось в каждом выпуске: от новых возможностей до исправлений. Самое свежее обновление вверху."
+      },
+      "footer": {
+        "section_community": "Сообщество"
       }
     },
     "zh": {
@@ -1190,6 +1223,9 @@
       },
       "pageDescriptions": {
         "changelog": "查看每个版本的变更，从新功能到修复，最近的更新排在最前。"
+      },
+      "footer": {
+        "section_community": "社区"
       }
     }
   },
@@ -1214,7 +1250,8 @@
       "label": "Changelog",
       "labelKey": "changelog",
       "href": "/changelog",
-      "section": "quick"
+      "section": "community",
+      "sectionLabelKey": "section_community"
     }
   ],
   "activityTitles": [
@@ -1233,6 +1270,101 @@
     {
       "action": "changelog_type.delete",
       "nameKey": "auditChangelogTypeDelete"
+    }
+  ],
+  "pages": [
+    {
+      "id": "timeline",
+      "blocks": [
+        {
+          "id": "timeline",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "timeline",
+                  "block": "changelog.timeline"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "entry",
+      "blocks": [
+        {
+          "id": "back",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "cover",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "meta",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "notes",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "back",
+                  "block": "changelog.back"
+                },
+                {
+                  "key": "cover",
+                  "block": "changelog.cover"
+                },
+                {
+                  "key": "meta",
+                  "block": "changelog.meta"
+                },
+                {
+                  "key": "notes",
+                  "block": "changelog.notes"
+                },
+                {
+                  "key": "back-below",
+                  "block": "changelog.back"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

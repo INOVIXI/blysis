@@ -111,7 +111,7 @@ export function CustomerView({ userId }: { userId: string }) {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
                             {panel.rows.map((row) => (
                                 <div key={row.label} className="flex justify-between gap-3">
                                     <dt className="text-muted-foreground">{row.label}</dt>

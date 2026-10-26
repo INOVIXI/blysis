@@ -44,6 +44,8 @@ export interface CardProduct {
     comparePrice?: number | null;
     was?: number | null;
     image: string | null;
+    /** The one line about it the operator wrote for a card. */
+    shortDesc?: string | null;
     stock?: number | null;
     isFeatured?: boolean;
     category?: { name: string; slug: string } | null;
@@ -111,6 +113,10 @@ export function ProductCard({ product, lowStockAt = 0, showCategory = false }: P
                     {product.name}
                 </h3>
 
+                {product.shortDesc ? (
+                    <p className="line-clamp-2 text-sm text-muted-foreground">{product.shortDesc}</p>
+                ) : null}
+
                 {(product.availability || product.stock !== null) && (
                     <div className="flex flex-wrap gap-2 empty:hidden">
                         {product.availability && <AvailabilityNote info={product.availability} compact />}
@@ -138,7 +144,7 @@ export function ProductCard({ product, lowStockAt = 0, showCategory = false }: P
                             </span>
                         )}
                     </div>
-                    <span className="whitespace-nowrap text-sm text-muted-foreground transition-colors group-hover:text-primary">
+                    <span data-product-more className="whitespace-nowrap text-sm text-muted-foreground transition-colors group-hover:text-primary">
                         {t("viewDetails")} →
                     </span>
                 </div>

@@ -40,6 +40,10 @@ const BOUNDED: Record<string, string> = {
         "The jobs the app and its modules declare. The list is as long as the code, not as long as the site has been running.",
     "src/app/[locale]/(admin)/admin/modules/page.tsx":
         "The modules installed and the ones offered. It has its own filters by category and tag, and a redesign of this screen is its own item.",
+    "src/app/[locale]/(admin)/admin/translations/import/page.tsx":
+        "The strings one chosen file would change, capped by the file's own limit. Choosing another file is the way to another list.",
+    "src/app/[locale]/(admin)/admin/translations/replace/page.tsx":
+        "The strings one typed word is found in, capped by the endpoint. The word is the search; a narrower one narrows the list.",
     "src/app/[locale]/(admin)/admin/theme/appearance/page.tsx":
         "The settings one theme declares. An operator cannot add to it.",
     "src/app/[locale]/(admin)/admin/settings/footer/page.tsx":

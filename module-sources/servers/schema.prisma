@@ -15,6 +15,10 @@ model GameServer {
   isDefault   Boolean  @default(false)
   isActive    Boolean  @default(true)
   order       Int      @default(0)
+  /// A line about the server, for a card that offers it to players.
+  description String?
+  /// A picture of it: a path on this site or an http(s) address.
+  image       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

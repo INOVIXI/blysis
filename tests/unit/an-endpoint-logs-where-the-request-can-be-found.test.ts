@@ -20,6 +20,9 @@ import { relativePath } from "./source-text";
  * The rule is scoped to where a request exists. A client component has no
  * correlation id and cannot import the logger anyway, since it reaches
  * `next/headers` and `async_hooks`, so a `"use client"` file is left alone.
+ * A page drawn on the server is inside a request as much as an endpoint is:
+ * only `route.ts` was read here once, and the catch-all pages that load a
+ * module's component kept a `console.error` nobody could join to its visit.
  */
 
 const ROOT = path.resolve(import.meta.dirname, "../..");
@@ -33,50 +36,54 @@ const SCANNED = ["src/app", "module-sources"];
 const CORE = "src/core/lib";
 
 /**
- * Files under `src/core/lib` that a `"use client"` file imports, so the
- * logger cannot go in them: it reaches `next/headers` and `async_hooks`, and
- * `client-bundle-safety.test.ts` fails the moment either lands in a browser
- * bundle. They keep the console, which is what a browser has anyway.
+ * Files under `src/core/lib` that may not import the logger, because it
+ * reaches `next/headers` and `async_hooks`.
  *
- * `hooks.ts` is here for the same reason by a longer road: `@/core/sdk`
- * re-exports it, and that entry is isomorphic, so anything it pulls in is
- * compiled for the browser. `hooks-bootstrap.ts` exists precisely because the
- * two halves once shared a file and `next dev` answered 500 on every page
- * whose client graph touched the barrel.
+ * `hooks.ts` is reached from a browser: `@/core/sdk` re-exports it, and that
+ * entry is isomorphic, so anything it pulls in is compiled for the browser.
+ * `hooks-bootstrap.ts` exists precisely because the two halves once shared a
+ * file and `next dev` answered 500 on every page whose client graph touched
+ * the barrel. Its console is only the fallback: the bootstrap hands it the
+ * logger on the server.
  *
  * `logger.ts` is here for a different reason: it is what writes the line.
+ *
+ * Seven more files were listed here as reached from a browser, and none was:
+ * most already imported the logger or the database, which
+ * `client-bundle-safety.test.ts` would have failed on. Whether a file is in
+ * a browser's graph is that test's to say, not this list's.
  */
 const REACHED_FROM_A_BROWSER = new Set([
     "src/core/lib/logger.ts",
     "src/core/lib/hooks.ts",
-    "src/core/lib/secret-storage.ts",
-    "src/core/lib/module-cache.ts",
-    "src/core/lib/cache.ts",
-    "src/core/lib/rate-limit.ts",
-    "src/core/lib/activity-log.ts",
-    "src/core/lib/email.ts",
-    "src/core/lib/revisions.ts",
 ]);
 
 /**
- * Any mention of the console, called or handed on. `.catch(console.error)`
+ * Any use of the console, called or handed on. `.catch(console.error)`
  * loses the request the same way a direct call does, and it was the shape
- * six of these took.
+ * six of these took. Not the word inside a string: a message telling an
+ * operator to run `node -e "console.log(...)"` names it after a quote.
  */
-const CONSOLE = /\bconsole\.(log|error|warn|info|debug)\b/;
+const CONSOLE = /(^|[^"'`\w.])console\.(log|error|warn|info|debug)\b/;
 
 /** A line that only talks about the console is not one that writes to it. */
 const COMMENT = /^\s*(\/\/|\*|\/\*)/;
 
-/** Every `.ts` under a directory, tests aside. */
+/** Every `.ts` and `.tsx` under a directory, tests aside. */
 function serverFiles(dir: string, out: string[] = []): string[] {
     if (!fs.existsSync(dir)) return out;
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
         const full = path.join(dir, entry.name);
         if (entry.isDirectory()) serverFiles(full, out);
-        else if (entry.name.endsWith(".ts") && !entry.name.endsWith(".test.ts")) out.push(full);
+        else if (/\.tsx?$/.test(entry.name) && !/\.test\.tsx?$/.test(entry.name)) out.push(full);
     }
     return out;
+}
+
+/** A browser file, by its directive, in either quote. */
+function isClientFile(source: string): boolean {
+    const head = source.slice(0, 200);
+    return head.includes('"use client"') || head.includes("'use client'");
 }
 
 function routeFiles(dir: string, out: string[] = []): string[] {
@@ -95,7 +102,7 @@ describe("an endpoint", () => {
         for (const base of SCANNED) {
             for (const file of routeFiles(path.join(ROOT, base))) {
                 const source = fs.readFileSync(file, "utf8");
-                if (source.slice(0, 200).includes('"use client"')) continue;
+                if (isClientFile(source)) continue;
                 source.split("\n").forEach((line, i) => {
                     if (CONSOLE.test(line) && !COMMENT.test(line)) {
                         bare.push(`${relativePath(ROOT, file)}:${i + 1}  ${line.trim().slice(0, 80)}`);
@@ -109,13 +116,36 @@ describe("an endpoint", () => {
         ).toEqual([]);
     });
 
+    it("writes them the same way from a page drawn on the server", () => {
+        const bare: string[] = [];
+        for (const file of serverFiles(path.join(ROOT, "src/app"))) {
+            if (path.basename(file) === "route.ts") continue;
+            const source = fs.readFileSync(file, "utf8");
+            if (isClientFile(source)) continue;
+            source.split("\n").forEach((line, i) => {
+                if (CONSOLE.test(line) && !COMMENT.test(line)) {
+                    bare.push(`${relativePath(ROOT, file)}:${i + 1}  ${line.trim().slice(0, 80)}`);
+                }
+            });
+        }
+        expect(
+            bare,
+            `these write to the console while drawing a page, so nothing joins them to the visit that caused them:\n${bare.join("\n")}`,
+        ).toEqual([]);
+    });
+
+    it("sees the pages it reads", () => {
+        const pages = serverFiles(path.join(ROOT, "src/app")).filter((file) => path.basename(file) === "page.tsx");
+        expect(pages.length).toBeGreaterThan(50);
+    });
+
     it("writes them the same way inside core, where the request is furthest away", () => {
         const bare: string[] = [];
         for (const file of serverFiles(path.join(ROOT, CORE))) {
             const relative = relativePath(ROOT, file);
             if (REACHED_FROM_A_BROWSER.has(relative)) continue;
             const source = fs.readFileSync(file, "utf8");
-            if (source.slice(0, 200).includes('"use client"')) continue;
+            if (isClientFile(source)) continue;
             source.split("\n").forEach((line, i) => {
                 const trimmed = line.trim();
                 if (trimmed.startsWith("//") || trimmed.startsWith("*")) return;
@@ -138,7 +168,7 @@ describe("an endpoint", () => {
         for (const file of serverFiles(path.join(ROOT, "module-sources"))) {
             if (path.basename(file) === "route.ts") continue;
             const source = fs.readFileSync(file, "utf8");
-            if (source.slice(0, 200).includes('"use client"')) continue;
+            if (isClientFile(source)) continue;
             source.split("\n").forEach((line, i) => {
                 const trimmed = line.trim();
                 if (trimmed.startsWith("//") || trimmed.startsWith("*")) return;

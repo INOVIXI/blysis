@@ -20,6 +20,8 @@ export const PUBLIC_PRODUCT = {
     name: true,
     slug: true,
     description: true,
+    /** The one line about it a card has room for. */
+    shortDesc: true,
     price: true,
     comparePrice: true,
     image: true,
@@ -43,6 +45,8 @@ export const PUBLIC_PRODUCT = {
     saleFrom: true,
     saleUntil: true,
     isFeatured: true,
+    /** How long a purchase lasts, which a card may say. */
+    durationDays: true,
     createdAt: true,
     category: { select: { id: true, name: true, slug: true } },
 } as const;

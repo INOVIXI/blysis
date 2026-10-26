@@ -150,7 +150,7 @@ export default function GiftCodesPage() {
                 <Card>
                     <CardContent className="p-6">
                         <form onSubmit={generate} className="space-y-4">
-                            <div className="grid md:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <Label>{t("adm_valueDollar")}</Label>
                                     <Input aria-label={t("adm_valueDollar")} type="number" step="0.01" min="0.01" value={value} onChange={(e) => setValue(e.target.value)} required />

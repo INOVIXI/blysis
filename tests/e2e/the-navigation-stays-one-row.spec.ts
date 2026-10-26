@@ -18,6 +18,7 @@
  * bar clips away is still in the DOM with every class it had.
  */
 import { test, expect, type Page } from '@playwright/test';
+import { skipUnlessTheThemeDrawsABar } from './helpers/bar';
 
 /** Widths where the horizontal navigation is rendered (above the `sm` breakpoint). */
 const DESKTOP_WIDTHS = [1920, 1536, 1440, 1366, 1280, 1024, 800];
@@ -25,6 +26,7 @@ const DESKTOP_WIDTHS = [1920, 1536, 1440, 1366, 1280, 1024, 800];
 async function open(page: Page, width: number) {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/tr', { waitUntil: 'load' });
+    await skipUnlessTheThemeDrawsABar(page);
     await page.locator('header nav').first().waitFor();
     // The overflow trigger is decided once the bar has been laid out.
     await page.waitForTimeout(1200);

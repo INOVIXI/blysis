@@ -74,7 +74,7 @@ export default function ExportPage() {
                         /* Across the card rather than stacked in a 28rem
                            column: the screen offers one kind of thing several
                            times, and a row says that better than a list. */
-                        <div className="grid gap-3 sm:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                             {offered.map((one) => (
                                 <Button
                                     key={one.id}

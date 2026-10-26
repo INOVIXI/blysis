@@ -23,11 +23,11 @@ vi.mock("@/core/lib/db", () => ({ prisma: { emailJob } }));
 
 // --- logger ----------------------------------------------------------------
 
-const logWarn = vi.fn();
+const { logWarn, logError } = vi.hoisted(() => ({ logWarn: vi.fn(), logError: vi.fn() }));
 
 vi.mock("@/core/lib/logger", () => ({
-    
-    errorText: (e: unknown) => (e instanceof Error ? e.message : String(e)),log: { debug: vi.fn(), info: vi.fn(), warn: logWarn, error: vi.fn() },
+    errorText: (e: unknown) => (e instanceof Error ? e.message : String(e)),
+    log: { debug: vi.fn(), info: vi.fn(), warn: logWarn, error: logError },
 }));
 
 // --- the transport ---------------------------------------------------------
@@ -101,8 +101,6 @@ function lastSend(): Record<string, unknown> {
     return call[0];
 }
 
-let consoleError: ReturnType<typeof vi.spyOn>;
-
 beforeEach(() => {
     emailJob.create.mockReset().mockResolvedValue({ id: "job-1" });
     emailJob.findMany.mockReset().mockResolvedValue([]);
@@ -110,11 +108,10 @@ beforeEach(() => {
     emailJob.update.mockReset().mockResolvedValue({});
     providerSend.mockReset().mockResolvedValue({ id: "re_1" });
     logWarn.mockReset();
-    consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    logError.mockReset();
 });
 
 afterEach(() => {
-    consoleError.mockRestore();
     vi.unstubAllEnvs();
 });
 
@@ -170,7 +167,7 @@ describe("queueEmail", () => {
         emailJob.create.mockRejectedValue(new Error("db down"));
 
         await expect(queueEmail({ to: "a@b.co", subject: "Hi", body: "x" })).resolves.toBeNull();
-        expect(consoleError).toHaveBeenCalled();
+        expect(logError).toHaveBeenCalledWith("[email] queueEmail failed", { error: "db down" });
     });
 });
 

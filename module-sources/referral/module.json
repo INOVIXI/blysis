@@ -2,8 +2,8 @@
   "id": "referral",
   "name": "Referral System",
   "description": "Earn credits by referring new users",
-  "version": "1.6.3",
-  "coreVersion": "^5.0.0",
+  "version": "1.7.0",
+  "coreVersion": "^5.26.0",
   "category": "community",
   "author": "Blysis",
   "icon": "UserPlus",
@@ -1212,6 +1212,70 @@
       "href": "/referral",
       "icon": "UserPlus",
       "position": 140
+    }
+  ],
+  "pages": [
+    {
+      "id": "referrals",
+      "blocks": [
+        {
+          "id": "link",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "apply",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "stats",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "history",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "link",
+                  "block": "referral.link"
+                },
+                {
+                  "key": "apply",
+                  "block": "referral.apply"
+                },
+                {
+                  "key": "stats",
+                  "block": "referral.stats"
+                },
+                {
+                  "key": "history",
+                  "block": "referral.history"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

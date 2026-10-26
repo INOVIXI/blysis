@@ -2,8 +2,8 @@
   "id": "tickets",
   "name": "Support Tickets",
   "description": "Customer support ticket system with departments and priority levels",
-  "version": "1.8.1",
-  "coreVersion": "^5.0.0",
+  "version": "1.10.0",
+  "coreVersion": "^5.30.0",
   "category": "management",
   "author": "Blysis Team",
   "icon": "Ticket",
@@ -414,6 +414,9 @@
         "support": "See every support request you have opened, follow the replies from the team and start a new one when you need to.",
         "newTicket": "Open a support request: pick the right department, describe your issue and get an answer from the team.",
         "ticket": "Follow this support request from start to finish, read every reply and answer the team in the same thread."
+      },
+      "footer": {
+        "section_help": "Help"
       }
     },
     "tr": {
@@ -640,6 +643,9 @@
         "support": "Açtığınız tüm destek taleplerini görün, ekipten gelen yanıtları takip edin ve gerektiğinde yenisini oluşturun.",
         "newTicket": "Yeni bir destek talebi oluşturun: ilgili birimi seçin, sorununuzu ayrıntısıyla anlatın ve ekipten yanıt alın.",
         "ticket": "Bu destek talebini baştan sona takip edin, tüm yanıtları okuyun ve aynı başlık altında ekibe cevap yazın."
+      },
+      "footer": {
+        "section_help": "Yardım"
       }
     },
     "az": {
@@ -866,6 +872,9 @@
         "support": "Açdığınız bütün dəstək sorğularına baxın, komandanın cavablarını izləyin və lazım olanda yenisini başlayın.",
         "newTicket": "Dəstək sorğusu açın: düzgün şöbəni seçin, probleminizi təsvir edin və komandadan cavab alın.",
         "ticket": "Bu dəstək sorğusunu əvvəldən sona izləyin, hər cavabı oxuyun və eyni mövzuda komandaya cavab verin."
+      },
+      "footer": {
+        "section_help": "Kömək"
       }
     },
     "de": {
@@ -1092,6 +1101,9 @@
         "support": "Sieh dir jede Support-Anfrage an, die du eröffnet hast, verfolge die Antworten des Teams und eröffne eine neue, wenn du sie brauchst.",
         "newTicket": "Eröffne eine Support-Anfrage: Wähle die passende Abteilung, beschreibe dein Problem und erhalte eine Antwort vom Team.",
         "ticket": "Verfolge diese Support-Anfrage von Anfang bis Ende, lies jede Antwort und antworte dem Team im selben Verlauf."
+      },
+      "footer": {
+        "section_help": "Hilfe"
       }
     },
     "es": {
@@ -1318,6 +1330,9 @@
         "support": "Consulta todas las solicitudes de soporte que has abierto, sigue las respuestas del equipo y abre una nueva cuando la necesites.",
         "newTicket": "Abre una solicitud de soporte: elige el departamento adecuado, describe tu problema y recibe una respuesta del equipo.",
         "ticket": "Sigue esta solicitud de soporte de principio a fin, lee cada respuesta y responde al equipo en el mismo hilo."
+      },
+      "footer": {
+        "section_help": "Ayuda"
       }
     },
     "et": {
@@ -1544,6 +1559,9 @@
         "support": "Vaata kõiki tugipäringuid, mille oled avanud, jälgi tiimi vastuseid ja alusta uut, kui vaja.",
         "newTicket": "Ava tugipäring: vali sobiv osakond, kirjelda oma probleemi ja saa vastus tiimilt.",
         "ticket": "Jälgi seda tugipäringut algusest lõpuni, loe iga vastust ja vasta tiimile samas lõimes."
+      },
+      "footer": {
+        "section_help": "Abi"
       }
     },
     "fr": {
@@ -1770,6 +1788,9 @@
         "support": "Retrouvez chaque demande d’assistance que vous avez ouverte, suivez les réponses de l’équipe et ouvrez-en une nouvelle quand vous en avez besoin.",
         "newTicket": "Ouvrez une demande d’assistance : choisissez le bon service, décrivez votre problème et obtenez une réponse de l’équipe.",
         "ticket": "Suivez cette demande d’assistance du début à la fin, lisez chaque réponse et répondez à l’équipe dans le même fil."
+      },
+      "footer": {
+        "section_help": "Aide"
       }
     },
     "it": {
@@ -1996,6 +2017,9 @@
         "support": "Vedi ogni richiesta di supporto che hai aperto, segui le risposte del team e aprine una nuova quando ne hai bisogno.",
         "newTicket": "Apri una richiesta di supporto: scegli il reparto giusto, descrivi il problema e ricevi una risposta dal team.",
         "ticket": "Segui questa richiesta di supporto dall’inizio alla fine, leggi ogni risposta e rispondi al team nello stesso thread."
+      },
+      "footer": {
+        "section_help": "Aiuto"
       }
     },
     "pl": {
@@ -2222,6 +2246,9 @@
         "support": "Zobacz wszystkie swoje zgłoszenia wsparcia, śledź odpowiedzi zespołu i w razie potrzeby zacznij nowe.",
         "newTicket": "Otwórz zgłoszenie wsparcia: wybierz odpowiedni dział, opisz problem i otrzymaj odpowiedź od zespołu.",
         "ticket": "Śledź to zgłoszenie od początku do końca, czytaj każdą odpowiedź i odpowiadaj zespołowi w tym samym wątku."
+      },
+      "footer": {
+        "section_help": "Pomoc"
       }
     },
     "pt": {
@@ -2448,6 +2475,9 @@
         "support": "Veja todas as solicitações de suporte que você abriu, acompanhe as respostas da equipe e abra uma nova quando precisar.",
         "newTicket": "Abra uma solicitação de suporte: escolha o departamento certo, descreva seu problema e receba uma resposta da equipe.",
         "ticket": "Acompanhe esta solicitação de suporte do início ao fim, leia todas as respostas e responda à equipe na mesma conversa."
+      },
+      "footer": {
+        "section_help": "Ajuda"
       }
     },
     "ru": {
@@ -2674,6 +2704,9 @@
         "support": "Просмотрите все свои обращения в поддержку, следите за ответами команды и при необходимости откройте новое.",
         "newTicket": "Откройте обращение в поддержку: выберите подходящий отдел, опишите проблему и получите ответ от команды.",
         "ticket": "Следите за этим обращением от начала до конца, читайте каждый ответ и отвечайте команде в той же переписке."
+      },
+      "footer": {
+        "section_help": "Помощь"
       }
     },
     "zh": {
@@ -2900,6 +2933,9 @@
         "support": "查看你发起过的所有支持请求，关注团队的回复，需要时可以发起新的请求。",
         "newTicket": "发起支持请求：选择合适的部门，描述你的问题，并获得团队的解答。",
         "ticket": "从头到尾跟进此支持请求，阅读每一条回复，并在同一话题中回复团队。"
+      },
+      "footer": {
+        "section_help": "帮助"
       }
     }
   },
@@ -2940,7 +2976,8 @@
       "label": "Support",
       "labelKey": "tickets",
       "href": "/support",
-      "section": "quick"
+      "section": "help",
+      "sectionLabelKey": "section_help"
     }
   ],
   "activityTitles": [
@@ -2988,6 +3025,102 @@
     {
       "action": "tickets.department.setup",
       "nameKey": "auditTicketDepartmentSetup"
+    }
+  ],
+  "pages": [
+    {
+      "id": "list",
+      "blocks": [
+        {
+          "id": "tickets",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "tickets",
+                  "block": "tickets.tickets"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "new",
+      "blocks": [
+        {
+          "id": "form",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "form",
+                  "block": "tickets.form"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "ticket",
+      "blocks": [
+        {
+          "id": "thread",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "details",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "thread",
+                  "block": "tickets.thread"
+                }
+              ],
+              [
+                {
+                  "key": "details",
+                  "block": "tickets.details"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

@@ -16,6 +16,8 @@ import { prisma } from "./db";
 import { resolveAppUrl } from "./app-url";
 import { serverConfig } from "@/core/config/server";
 import { localeAlternates, localizedPath } from "./sitemap-routes";
+import type { SiteLanguages } from "./i18n/site-languages";
+import { getSiteLanguages } from "./i18n/site-languages-setting";
 import { locales } from "./i18n/config";
 
 export interface PageMetaInput {
@@ -106,13 +108,13 @@ function getSeoSiteInfoSync(): SeoSiteInfo {
  * A path already carrying a locale segment is left alone - the caller has
  * given an absolute or already-localized URL and knows better than we do.
  */
-function alternatesFor(siteUrl: string, path: string | undefined, locale: string | undefined) {
+function alternatesFor(siteUrl: string, path: string | undefined, locale: string | undefined, site: SiteLanguages) {
     if (!path || !locale || !(locales as readonly string[]).includes(locale)) return undefined;
     if (path.startsWith("http")) return undefined;
     const normalized = path.startsWith("/") ? path : `/${path}`;
     return {
         canonical: `${siteUrl}${localizedPath(normalized, locale)}`,
-        languages: localeAlternates(siteUrl, normalized),
+        languages: localeAlternates(siteUrl, normalized, site),
     };
 }
 
@@ -257,7 +259,7 @@ export async function buildPageMeta(input: PageMetaInput): Promise<Metadata> {
      */
     const twitterCard: "summary" | "summary_large_image" = input.image ? "summary_large_image" : "summary";
 
-    const computed = alternatesFor(siteUrl, input.url, input.locale);
+    const computed = alternatesFor(siteUrl, input.url, input.locale, await getSiteLanguages());
     // An operator naming a canonical replaces the one core derived, but keeps
     // the `hreflang` set: the two answer different questions, and dropping the
     // alternates would unpublish a claim the sitemap still makes.

@@ -2,8 +2,8 @@
   "id": "custom-forms",
   "name": "Custom Forms",
   "description": "Dynamic form builder with submissions",
-  "version": "1.6.0",
-  "coreVersion": "^5.0.0",
+  "version": "1.7.0",
+  "coreVersion": "^5.26.0",
   "category": "content",
   "author": "Blysis",
   "icon": "FileEdit",
@@ -1814,6 +1814,36 @@
     {
       "action": "form_submission.delete",
       "nameKey": "auditFormSubmissionDelete"
+    }
+  ],
+  "pages": [
+    {
+      "id": "form",
+      "blocks": [
+        {
+          "id": "form",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "form",
+                  "block": "custom-forms.form"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

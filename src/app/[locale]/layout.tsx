@@ -4,6 +4,7 @@ import { isKnownLocale } from "@/core/lib/i18n/resolve-locale";
 import { buildSiteHead, buildPageMeta, buildOrganizationJsonLd } from "@/core/lib/seo";
 import { Inter, Outfit, JetBrains_Mono } from "next/font/google";
 import { buildTokenOverrideCss } from "@/core/lib/theme-override-css";
+import { themeFontVariables } from "@/core/generated/theme-fonts";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { publicMessages } from "@/core/lib/i18n/message-scopes";
@@ -19,6 +20,8 @@ import { ServerSlot } from "@/core/components/ServerSlot";
 import { ModuleContextProviders } from "@/core/components/layout/ModuleContextProviders";
 import { SiteCurrencyProvider } from "@/core/components/currency/site-currency";
 import { ConfirmProvider } from "@/core/components/ui/confirm-dialog";
+import { PlaceholderProvider } from "@/core/components/placeholders/PlaceholderProvider";
+import { resolvePlaceholders } from "@/core/lib/placeholders";
 import { ProgressBar } from "@/core/components/layout/ProgressBar";
 import { Toaster } from "sonner";
 import { ErrorBoundary } from "@/core/components/ErrorBoundary";
@@ -111,6 +114,12 @@ export default async function RootLayout({
   // rewrites itself once the request lands.
   const session = await getSession();
 
+  // The site placeholders a theme's text may name, as far as the cache has
+  // them in a moment: a value that is not ready is asked for by the browser
+  // after the page paints, rather than holding up every page for it.
+  const placeholders = await resolvePlaceholders({ budgetMs: 200 })
+    .catch(() => ({ values: {}, pending: [] as string[] }));
+
   // An override <style> block so admin-saved colour customizations take
   // effect: the generated theme-tokens.css sets the manifest defaults at
   // [data-theme][data-mode], and this appends the operator's at the same
@@ -150,7 +159,7 @@ export default async function RootLayout({
       suppressHydrationWarning
       data-theme={active.themeId}
       data-mode={active.mode}
-      className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable}`}
+      className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} ${themeFontVariables}`}
     >
       <head>
         <script
@@ -163,6 +172,7 @@ export default async function RootLayout({
       <body className="antialiased bg-background">
         <SessionProvider session={session}>
           <NextIntlClientProvider messages={publicMessages(messages)}>
+            <PlaceholderProvider values={placeholders.values} pending={placeholders.pending}>
               <AppThemeProvider
                 themeId={active.themeId}
                 mode={active.mode}
@@ -206,6 +216,7 @@ export default async function RootLayout({
                 </SiteCurrencyProvider>
                 </ModuleProvider>
               </AppThemeProvider>
+            </PlaceholderProvider>
           </NextIntlClientProvider>
         </SessionProvider>
       </body>

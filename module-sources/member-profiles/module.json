@@ -2,8 +2,8 @@
   "id": "member-profiles",
   "name": "Member Profiles",
   "description": "Public profile pages, with what every installed module knows about a member",
-  "version": "1.7.1",
-  "coreVersion": "^5.0.0",
+  "version": "1.8.0",
+  "coreVersion": "^5.26.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Users",
@@ -87,7 +87,9 @@
         "statistics": "Statistics",
         "title": "Member Profile",
         "untitled": "Untitled",
-        "username": "Username"
+        "username": "Username",
+        "overview": "Overview",
+        "profileSections": "Profile sections"
       },
       "pageTitles": {
         "member": "Member Profile",
@@ -128,7 +130,9 @@
         "statistics": "İstatistikler",
         "title": "Üye Profili",
         "untitled": "Başlıksız",
-        "username": "Kullanıcı Adı"
+        "username": "Kullanıcı Adı",
+        "overview": "Genel",
+        "profileSections": "Profil bölümleri"
       },
       "pageTitles": {
         "member": "Üye Profili",
@@ -169,7 +173,9 @@
         "statistics": "Statistika",
         "title": "Üzv profili",
         "untitled": "Adsız",
-        "username": "İstifadəçi adı"
+        "username": "İstifadəçi adı",
+        "overview": "Ümumi",
+        "profileSections": "Profil bölmələri"
       },
       "pageTitles": {
         "member": "Üzv profili",
@@ -210,7 +216,9 @@
         "statistics": "Statistiken",
         "title": "Mitgliederprofil",
         "untitled": "Ohne Titel",
-        "username": "Benutzername"
+        "username": "Benutzername",
+        "overview": "Übersicht",
+        "profileSections": "Profilbereiche"
       },
       "pageTitles": {
         "member": "Mitgliederprofil",
@@ -251,7 +259,9 @@
         "statistics": "Estadísticas",
         "title": "Perfil de miembro",
         "untitled": "Sin título",
-        "username": "Nombre de usuario"
+        "username": "Nombre de usuario",
+        "overview": "Resumen",
+        "profileSections": "Secciones del perfil"
       },
       "pageTitles": {
         "member": "Perfil de miembro",
@@ -292,7 +302,9 @@
         "statistics": "Statistika",
         "title": "Liikme profiil",
         "untitled": "Pealkirjata",
-        "username": "Kasutajanimi"
+        "username": "Kasutajanimi",
+        "overview": "Ülevaade",
+        "profileSections": "Profiili jaotised"
       },
       "pageTitles": {
         "member": "Liikme profiil",
@@ -333,7 +345,9 @@
         "statistics": "Statistiques",
         "title": "Profil du membre",
         "untitled": "Sans titre",
-        "username": "Nom d’utilisateur"
+        "username": "Nom d’utilisateur",
+        "overview": "Aperçu",
+        "profileSections": "Sections du profil"
       },
       "pageTitles": {
         "member": "Profil du membre",
@@ -374,7 +388,9 @@
         "statistics": "Statistiche",
         "title": "Profilo del membro",
         "untitled": "Senza titolo",
-        "username": "Nome utente"
+        "username": "Nome utente",
+        "overview": "Panoramica",
+        "profileSections": "Sezioni del profilo"
       },
       "pageTitles": {
         "member": "Profilo del membro",
@@ -415,7 +431,9 @@
         "statistics": "Statystyki",
         "title": "Profil członka",
         "untitled": "Bez tytułu",
-        "username": "Nazwa użytkownika"
+        "username": "Nazwa użytkownika",
+        "overview": "Przegląd",
+        "profileSections": "Sekcje profilu"
       },
       "pageTitles": {
         "member": "Profil członka",
@@ -456,7 +474,9 @@
         "statistics": "Estatísticas",
         "title": "Perfil do membro",
         "untitled": "Sem título",
-        "username": "Nome de usuário"
+        "username": "Nome de usuário",
+        "overview": "Visão geral",
+        "profileSections": "Seções do perfil"
       },
       "pageTitles": {
         "member": "Perfil do membro",
@@ -497,7 +517,9 @@
         "statistics": "Статистика",
         "title": "Профиль участника",
         "untitled": "Без названия",
-        "username": "Имя пользователя"
+        "username": "Имя пользователя",
+        "overview": "Обзор",
+        "profileSections": "Разделы профиля"
       },
       "pageTitles": {
         "member": "Профиль участника",
@@ -538,7 +560,9 @@
         "statistics": "统计",
         "title": "成员资料",
         "untitled": "无标题",
-        "username": "用户名"
+        "username": "用户名",
+        "overview": "概览",
+        "profileSections": "个人资料分区"
       },
       "pageTitles": {
         "member": "成员资料",
@@ -558,6 +582,142 @@
     {
       "hook": "profile.linkedAccounts",
       "type": "filter"
+    },
+    {
+      "hook": "profile.contentWhere",
+      "type": "filter"
+    }
+  ],
+  "pages": [
+    {
+      "id": "profile",
+      "blocks": [
+        {
+          "id": "band",
+          "widths": [
+            "full",
+            "wide"
+          ],
+          "settings": {
+            "name": {
+              "type": "toggle",
+              "default": false
+            }
+          }
+        },
+        {
+          "id": "tabs",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        },
+        {
+          "id": "accounts",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        },
+        {
+          "id": "activity",
+          "widths": [
+            "narrow",
+            "wide"
+          ]
+        },
+        {
+          "id": "more",
+          "widths": [
+            "full",
+            "wide"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "band",
+                  "block": "member-profiles.band"
+                }
+              ]
+            ]
+          },
+          {
+            "split": "1-1",
+            "cells": [
+              [
+                {
+                  "key": "accounts",
+                  "block": "member-profiles.accounts"
+                }
+              ],
+              [
+                {
+                  "key": "activity",
+                  "block": "member-profiles.activity"
+                }
+              ]
+            ]
+          },
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "more",
+                  "block": "member-profiles.more"
+                }
+              ]
+            ]
+          }
+        ],
+        "hidden": [
+          "member-profiles.tabs"
+        ]
+      }
+    },
+    {
+      "id": "content",
+      "blocks": [
+        {
+          "id": "controls",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "items",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "controls",
+                  "block": "member-profiles.controls"
+                },
+                {
+                  "key": "items",
+                  "block": "member-profiles.items"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

@@ -1,3 +1,4 @@
+import type { ThemeFieldDef } from "./theme-manifest-schema";
 
 /** One admin-editable setting declared by a module manifest. */
 export interface ModuleSetting {
@@ -238,6 +239,17 @@ export interface ModuleManifest {
         handler: string;      // path to file exporting default async fn
     }[];
 
+    // Site placeholders - live public values, written `{<module>.<name>}` in a
+    // theme's text or drawn by a theme. Handler default-exports
+    // async () => string | number | null; see module-manifest-schema.ts.
+    placeholders?: {
+        name: string;
+        handler: string;
+        labelKey: string;
+        example?: string;
+        maxAgeSeconds?: number;
+    }[];
+
     // Public search providers - handlers the /search endpoint queries
     // when a user searches the site. Handler default-exports an async
     // function: (query: string) => Promise<SearchResult[]>
@@ -262,6 +274,9 @@ export interface ModuleManifest {
         nameKey: string;      // what the kind is called, e.g. "kindForumTopicCreated"
         prefix?: string;      // English prefix to strip, e.g. "New topic: "
         key?: string;         // translation key under "activity", e.g. "forumTopicCreated"
+        // The whole English sentence with named blanks, for a title a prefix
+        // cannot describe, e.g. { pattern: "Received {amount} credits", key: "creditAdded" }.
+        patterns?: { pattern: string; key: string }[];
     }[];
 
     // What this module's audit-log entries are called. `logActivity` files a
@@ -334,6 +349,19 @@ export interface ModuleManifest {
         type: "content" | "widget";   // content = main area, widget = sidebar
         component: string;             // path to component (e.g. "@core/widgets/xxx" or "components/xxx")
         order: number;                  // render order
+    }[];
+
+    // Blocks a page is built from; see `blockEntry` in module-manifest-schema.ts.
+    blocks?: {
+        id: string;
+        label?: string;
+        labelKey?: string;
+        component: string;
+        widths: ("full" | "wide" | "narrow")[];
+        defaultOrder: number;
+        defaultVisible: boolean;
+        settings?: Record<string, ThemeFieldDef>;
+        replaces?: string[];
     }[];
 
     dashboardCards?: {

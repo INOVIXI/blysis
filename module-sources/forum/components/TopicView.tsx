@@ -6,8 +6,7 @@ import { useRouter } from "@/core/sdk/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Link } from "@/core/sdk/navigation";
-import { Badge, Button, Card, CardContent, Pagination, RichContent, Textarea } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { Badge, Button, Card, CardContent, Pagination, RichContent, RoleBadge, Textarea, useLocalDate } from "@/core/sdk/ui";
 import { Pin, Lock, Eye, ThumbsUp, Send, Loader2, Pencil, Quote, Trash2, X } from "lucide-react";
 import { useRelativeTime } from "@/core/sdk/ui";
 import { useTranslations } from "next-intl";
@@ -23,12 +22,25 @@ import { useConfirm } from "@/core/sdk/ui";
  */
 const REPLY_LIMIT = 50_000;
 
+/** Who wrote a post: what the line above it and the column beside it draw. */
+interface Author {
+    id: string;
+    username: string;
+    avatar: string | null;
+    role?: { id: string; name?: string | null; displayName?: string | null; color?: string | null; badgeCss?: string | null } | null;
+    /** When they joined, for the column beside a post. */
+    createdAt?: string;
+}
+
+/** How a post says who wrote it: on a line above it, or in a column beside it. */
+export type PostsVariant = "stacked" | "columns";
+
 interface Post {
     id: string;
     content: string;
     createdAt: string;
     /** Null once the account has been erased; the post stays. */
-    author: { id: string; username: string; avatar: string | null } | null;
+    author: Author | null;
     _count: { likes: number };
     /** Whether the person reading this reply has already liked it. */
     liked: boolean;
@@ -43,7 +55,7 @@ interface Topic {
     isLocked: boolean;
     views: number;
     createdAt: string;
-    author: { id: string; username: string; avatar: string | null } | null;
+    author: Author | null;
     category: { id: string; name: string; slug: string; color: string | null };
     posts: Post[];
     _count: { likes: number };
@@ -57,11 +69,15 @@ interface Topic {
  * the server sent, for all 58 topics the sitemap publishes. The server renders
  * it now and hands it over; this still owns replying, liking and paging
  * through the replies, and asks the endpoint again for those.
+ *
+ * It is the topic page's `topic` block, so the page's frame, title included,
+ * is the page's to draw.
  */
 export function TopicView({
     initialTopic,
     initialPostsPages,
     canModerate = false,
+    postsVariant = "stacked",
 }: {
     initialTopic: Topic;
     initialPostsPages: number;
@@ -71,6 +87,8 @@ export function TopicView({
      * because the author is the author.
      */
     canModerate?: boolean;
+    /** The block's `posts` setting. */
+    postsVariant?: PostsVariant;
 }) {
     const t = useTranslations('forum');
     const commonT = useTranslations('common');
@@ -242,10 +260,7 @@ export function TopicView({
     );
 
     return (
-        <PageFrame
-            title={topic?.title ?? t('title')}
-            trail={[{ label: t('title'), href: '/forum' }]}
-        >
+        <>
             {loading ? (
                 <div className="text-center py-12">
                     <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mx-auto" />
@@ -309,15 +324,20 @@ export function TopicView({
                         their `text-sm`, which is the hierarchy a forum
                         actually has. A coloured bar was decoration standing
                         in for it. */}
-                    <Card className="mb-4">
+                    <Card className="mb-4" data-post-card>
+                        <PostLayout variant={postsVariant} author={topic.author}>
                         <CardContent className="p-6">
-                            <div className="flex items-center gap-3 mb-4">
-                                {topic.author && renderAvatar(topic.author)}
-                                <div>
-                                    <p className="font-medium text-foreground">{topic.author?.username ?? t('deletedAuthor')}</p>
-                                    <p className="text-xs text-muted-foreground">{relativeTime(new Date(topic.createdAt))}</p>
+                            {postsVariant === "columns" ? (
+                                <p className="text-xs text-muted-foreground mb-4">{relativeTime(new Date(topic.createdAt))}</p>
+                            ) : (
+                                <div className="flex items-center gap-3 mb-4">
+                                    {topic.author && renderAvatar(topic.author)}
+                                    <div>
+                                        <p className="font-medium text-foreground">{topic.author?.username ?? t('deletedAuthor')}</p>
+                                        <p className="text-xs text-muted-foreground">{relativeTime(new Date(topic.createdAt))}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                             {/* Typed into a box with no preview: every line
                                 the member ended is a line a reader sees. */}
                             {editingTopic ? (
@@ -372,6 +392,7 @@ export function TopicView({
                                 </>
                             )}
                         </CardContent>
+                        </PostLayout>
                     </Card>
 
                     {/* Replies */}
@@ -386,6 +407,7 @@ export function TopicView({
                                     topicAuthor={topic.author?.username ?? null}
                                     mayWork={canModerate || post.author?.id === session?.user?.id}
                                     mayQuote={!topic.isLocked}
+                                    variant={postsVariant}
                                     onQuote={quotePost}
                                     onChanged={fetchTopic}
                                 />
@@ -434,11 +456,45 @@ export function TopicView({
                     )}
                 </>
             )}
-        </PageFrame>
+        </>
     );
 }
 
-function PostCard({ post, renderAvatar, topicAuthor, mayWork, mayQuote, onQuote, onChanged }: {
+/**
+ * Who wrote a post, in a column of its own: picture, name, role and since
+ * when they have been a member. Laid out by the block's box, so beside the
+ * post where there is room and above it where there is not.
+ */
+function AuthorColumn({ author }: { author: Author | null }) {
+    const t = useTranslations("forum");
+    const joined = useLocalDate({ month: "long", year: "numeric" });
+    return (
+        <div data-author-column className="flex items-center gap-3 p-5 bg-muted/40 @2xl:w-48 @2xl:shrink-0 @2xl:flex-col @2xl:text-center">
+            {author ? <MemberAvatar name={author.username} src={author.avatar} size={64} /> : null}
+            <div className="min-w-0 space-y-1">
+                <p className="font-medium text-foreground break-words">{author?.username ?? t("deletedAuthor")}</p>
+                {author?.role ? <RoleBadge role={author.role} /> : null}
+                {author?.createdAt ? (
+                    <p className="text-xs text-muted-foreground">{t("memberSince", { date: joined(author.createdAt) })}</p>
+                ) : null}
+            </div>
+        </div>
+    );
+}
+
+/** A post's card body, alone or beside its author's column. */
+function PostLayout({ variant, author, children }: { variant: PostsVariant; author: Author | null; children: React.ReactNode }) {
+    if (variant !== "columns") return <>{children}</>;
+    return (
+        <div className="flex flex-col @2xl:flex-row">
+            <AuthorColumn author={author} />
+            <div className="min-w-0 flex-1">{children}</div>
+        </div>
+    );
+}
+
+function PostCard({ post, renderAvatar, topicAuthor, mayWork, mayQuote, onQuote, onChanged, variant }: {
+    variant: PostsVariant;
     post: Post;
     renderAvatar: (user: { username: string; avatar: string | null }) => React.ReactNode;
     /** Who asked, so a reply from them can say so. */
@@ -519,13 +575,16 @@ function PostCard({ post, renderAvatar, topicAuthor, mayWork, mayQuote, onQuote,
     };
 
     return (
-        <Card>
+        <Card data-post-card>
+            <PostLayout variant={variant} author={post.author}>
             <CardContent className="p-5" data-post={post.id}>
                 <div className="flex items-center gap-3 mb-3">
-                    {post.author && renderAvatar(post.author)}
+                    {variant !== "columns" && post.author && renderAvatar(post.author)}
                     <div>
                         <div className="flex items-center gap-2">
-                            <p className="font-medium text-foreground text-sm">{post.author?.username ?? t('deletedAuthor')}</p>
+                            {variant !== "columns" && (
+                                <p className="font-medium text-foreground text-sm">{post.author?.username ?? t('deletedAuthor')}</p>
+                            )}
                             {/* Which of these replies is the person who asked.
                                 That is the thing a reader scanning a thread
                                 looks for, and it is worth more than a stripe
@@ -607,6 +666,7 @@ function PostCard({ post, renderAvatar, topicAuthor, mayWork, mayQuote, onQuote,
                     )}
                 </div>
             </CardContent>
+            </PostLayout>
         </Card>
     );
 }

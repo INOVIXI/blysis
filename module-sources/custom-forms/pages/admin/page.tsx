@@ -218,7 +218,7 @@ export default function FormsPage() {
                 <Card>
                     <CardContent className="p-6">
                         <form onSubmit={submitForm} className="space-y-4">
-                            <div className="grid md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <Label>{`${t("adm_formTitle")} *`}</Label>
                                     <Input aria-label={t("adm_formTitle")} value={title} onChange={(e) => setTitle(e.target.value)} required placeholder={t("adm_titlePlaceholder")} />
@@ -260,7 +260,7 @@ export default function FormsPage() {
                                                     />
                                                 </div>
 
-                                                <div className="grid md:grid-cols-2 gap-3">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                     <div>
                                                         <Label>{t("adm_fieldLabel")}</Label>
                                                         <Input
@@ -373,7 +373,7 @@ export default function FormsPage() {
                                                     // width rather than
                                                     // leaving half the row
                                                     // empty beside it.
-                                                    <div className={`grid gap-3 ${needs.range ? "md:grid-cols-2" : ""}`}>
+                                                    <div className={`grid grid-cols-1 gap-3 ${needs.range ? "md:grid-cols-2" : ""}`}>
                                                         {needs.range && (
                                                             <>
                                                                 <div>
@@ -449,7 +449,7 @@ export default function FormsPage() {
                 </>}
             />
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {forms.length === 0 ? (
                     <Card className="col-span-full"><CardContent className="py-8 text-center text-muted-foreground">{t("adm_noFormsYet")}</CardContent></Card>
                 ) : forms.map((form) => (

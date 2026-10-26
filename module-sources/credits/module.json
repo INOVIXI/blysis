@@ -2,8 +2,8 @@
   "id": "credits",
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
-  "version": "1.10.0",
-  "coreVersion": "^5.0.0",
+  "version": "1.10.2",
+  "coreVersion": "^5.21.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Coins",
@@ -128,7 +128,8 @@
         "notificationType_credits_credit_added": "Credits Added to Your Balance"
       },
       "activity": {
-        "kindCreditAdded": "Credits Received"
+        "kindCreditAdded": "Credits Received",
+        "creditAdded": "Received {amount} credits"
       }
     },
     "tr": {
@@ -207,7 +208,8 @@
         "notificationType_credits_credit_added": "Bakiyenize Kredi Eklendi"
       },
       "activity": {
-        "kindCreditAdded": "Gelen Kredi"
+        "kindCreditAdded": "Gelen Kredi",
+        "creditAdded": "{amount} kredi aldı"
       }
     },
     "az": {
@@ -286,7 +288,8 @@
         "notificationType_credits_credit_added": "Balansınıza kredit əlavə olundu"
       },
       "activity": {
-        "kindCreditAdded": "Kreditlər qəbul edildi"
+        "kindCreditAdded": "Kreditlər qəbul edildi",
+        "creditAdded": "{amount} kredit aldı"
       }
     },
     "de": {
@@ -365,7 +368,8 @@
         "notificationType_credits_credit_added": "Credits auf dein Guthaben gebucht"
       },
       "activity": {
-        "kindCreditAdded": "Credits erhalten"
+        "kindCreditAdded": "Credits erhalten",
+        "creditAdded": "{amount} Guthaben erhalten"
       }
     },
     "es": {
@@ -444,7 +448,8 @@
         "notificationType_credits_credit_added": "Créditos añadidos a tu saldo"
       },
       "activity": {
-        "kindCreditAdded": "Créditos recibidos"
+        "kindCreditAdded": "Créditos recibidos",
+        "creditAdded": "Recibió {amount} créditos"
       }
     },
     "et": {
@@ -523,7 +528,8 @@
         "notificationType_credits_credit_added": "Krediite lisati sinu saldole"
       },
       "activity": {
-        "kindCreditAdded": "Krediite saadud"
+        "kindCreditAdded": "Krediite saadud",
+        "creditAdded": "Sai {amount} krediiti"
       }
     },
     "fr": {
@@ -602,7 +608,8 @@
         "notificationType_credits_credit_added": "Crédits ajoutés à votre solde"
       },
       "activity": {
-        "kindCreditAdded": "Crédits reçus"
+        "kindCreditAdded": "Crédits reçus",
+        "creditAdded": "A reçu {amount} crédits"
       }
     },
     "it": {
@@ -681,7 +688,8 @@
         "notificationType_credits_credit_added": "Crediti aggiunti al tuo saldo"
       },
       "activity": {
-        "kindCreditAdded": "Crediti ricevuti"
+        "kindCreditAdded": "Crediti ricevuti",
+        "creditAdded": "Ha ricevuto {amount} crediti"
       }
     },
     "pl": {
@@ -760,7 +768,8 @@
         "notificationType_credits_credit_added": "Kredyty dodane do Twojego salda"
       },
       "activity": {
-        "kindCreditAdded": "Otrzymano kredyty"
+        "kindCreditAdded": "Otrzymano kredyty",
+        "creditAdded": "Otrzymane kredyty: {amount}"
       }
     },
     "pt": {
@@ -839,7 +848,8 @@
         "notificationType_credits_credit_added": "Créditos adicionados ao seu saldo"
       },
       "activity": {
-        "kindCreditAdded": "Créditos recebidos"
+        "kindCreditAdded": "Créditos recebidos",
+        "creditAdded": "Recebeu {amount} créditos"
       }
     },
     "ru": {
@@ -918,7 +928,8 @@
         "notificationType_credits_credit_added": "Кредиты зачислены на ваш баланс"
       },
       "activity": {
-        "kindCreditAdded": "Получены кредиты"
+        "kindCreditAdded": "Получены кредиты",
+        "creditAdded": "Получено кредитов: {amount}"
       }
     },
     "zh": {
@@ -997,7 +1008,8 @@
         "notificationType_credits_credit_added": "积分已添加到你的余额"
       },
       "activity": {
-        "kindCreditAdded": "已收到积分"
+        "kindCreditAdded": "已收到积分",
+        "creditAdded": "获得 {amount} 积分"
       }
     }
   },
@@ -1064,7 +1076,13 @@
   "activityTitles": [
     {
       "type": "credits.credit.added",
-      "nameKey": "kindCreditAdded"
+      "nameKey": "kindCreditAdded",
+      "patterns": [
+        {
+          "pattern": "Received {amount} credits",
+          "key": "creditAdded"
+        }
+      ]
     }
   ],
   "menu": [

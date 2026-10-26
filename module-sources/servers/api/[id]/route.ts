@@ -35,6 +35,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.isDefault !== undefined) data.isDefault = fields.isDefault;
     if (fields.isActive !== undefined) data.isActive = fields.isActive;
     if (fields.order !== undefined) data.order = fields.order;
+    if (fields.description !== undefined) data.description = fields.description || null;
+    if (fields.image !== undefined) data.image = fields.image || null;
     const server = await prisma.gameServer.update({ where: { id }, data, select: SERVER_PUBLIC_FIELDS });
     return NextResponse.json({ server });
 }

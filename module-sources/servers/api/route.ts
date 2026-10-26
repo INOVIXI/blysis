@@ -63,7 +63,10 @@ export async function POST(request: NextRequest) {
             rconPassword: fields.rconPassword ? encryptSecret(fields.rconPassword) : null,
             queryPort: fields.queryPort || null,
             isDefault: fields.isDefault || false,
+            isActive: fields.isActive ?? true,
             order: fields.order || 0,
+            description: fields.description || null,
+            image: fields.image || null,
         },
         select: SERVER_PUBLIC_FIELDS,
     });

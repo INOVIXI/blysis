@@ -293,7 +293,7 @@ function checkSdkImports(modulePath: string): CheckResult {
             name: "SDK imports only",
             passed: false,
             message: `${violations.length} import(s) reach into core internals:\n      ${violations.slice(0, 5).join("\n      ")}${violations.length > 5 ? `\n      ... and ${violations.length - 5} more` : ""}`,
-            suggestion: "Import from @/core/sdk (isomorphic), or one of @/core/sdk/{server,auth,navigation,theme,ui,layout,admin}. Run `npx tsx scripts/migrate-module-imports.ts <path>` to rewrite them.",
+            suggestion: "Import from @/core/sdk (isomorphic), or one of @/core/sdk/{server,auth,navigation,theme,ui,layout,page,admin}. Run `npx tsx scripts/migrate-module-imports.ts <path>` to rewrite them.",
         };
     }
 

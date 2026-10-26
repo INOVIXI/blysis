@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, RichContent } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Loader2 } from "lucide-react";
 import { wasBuiltWithBlocks } from "../../../lib/validations";
 
@@ -58,27 +58,31 @@ export default function CustomPageView({ params }: PageProps) {
     }, [slug]);
 
     return (
-        <PageFrame
-            title={page?.title ?? commonT("loading")}
-        >
-            {loading ? (
-                <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
-            ) : notFound ? (
-                <Card><CardContent className="py-12 text-center text-muted-foreground">{t("pageNotFound")}</CardContent></Card>
-            ) : page ? (
-                <Card>
-                    <CardContent className="p-8">
-                        {wasBuiltWithBlocks(page.content) ? (
-                            <p className="text-muted-foreground">{t("builtWithBlocks")}</p>
-                        ) : (
-                            // The title is the frame's. This used to draw it
-                            // again underneath, so `/page/rules` was headed
-                            // Rules twice.
-                            <RichContent markdown={page.content} />
-                        )}
-                    </CardContent>
-                </Card>
-            ) : null}
-        </PageFrame>
+        <ArrangedClientPage
+            page="custom-pages.page"
+            frame={{ title: page?.title ?? commonT("loading") }}
+            blocks={{
+                content: () => (
+                    loading ? (
+                        <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
+                    ) : notFound ? (
+                        <Card><CardContent className="py-12 text-center text-muted-foreground">{t("pageNotFound")}</CardContent></Card>
+                    ) : page ? (
+                        <Card>
+                            <CardContent className="p-8">
+                                {wasBuiltWithBlocks(page.content) ? (
+                                    <p className="text-muted-foreground">{t("builtWithBlocks")}</p>
+                                ) : (
+                                    // The title is the frame's. This used to draw it
+                                    // again underneath, so `/page/rules` was headed
+                                    // Rules twice.
+                                    <RichContent markdown={page.content} />
+                                )}
+                            </CardContent>
+                        </Card>
+                    ) : null
+                ),
+            }}
+        />
     );
 }

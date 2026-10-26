@@ -26,8 +26,11 @@ vi.mock("@/core/components/layout", () => ({
     Navbar: () => <nav data-testid="navbar" />,
     Footer: () => <footer data-testid="footer" />,
 }));
+// A site wearing no theme override: every slot draws core's own fallback,
+// which is the frame this file is about.
 vi.mock("@/core/components/theme/ThemeComponentSlot", () => ({
-    ThemeComponentSlot: () => null,
+    ThemeComponentSlot: ({ fallback: Fallback, name: _name, ...rest }: { fallback?: React.ComponentType<Record<string, unknown>>; name: string }) =>
+        Fallback ? <Fallback {...rest} /> : null,
 }));
 // next-intl's client navigation cannot be resolved under vitest's jsdom
 // environment, and what it adds - the locale prefix on every href - is
@@ -189,9 +192,19 @@ describe("the public pages, core's own and the modules'", () => {
         return stripComments(fs.readFileSync(path.join(ROOT, page), "utf8"));
     }
 
-    it("draws every one of them in the frame", () => {
-        const freehand = pages.filter((p) => !NOT_A_PAGE[p] && !frameSource(p).includes("<PageFrame"));
-        expect(freehand).toEqual([]);
+    it("draws every one of them in the frame, arranged by the active theme", () => {
+        // `ArrangedPage` and `ArrangedClientPage` draw `PageFrame` around the
+        // rows a theme arranges. A page drawn straight into `PageFrame` is one
+        // a theme can recolour and never arrange: on 2026-10-25 that was 36 of
+        // the public pages, the tickets, the cart and the wheel among them.
+        // Every state of a page, the one it shows while it reads and the one
+        // it shows when what it was asked for is gone, stands in the same
+        // arrangement, so a theme that hides the header hides it on all of
+        // them.
+        const unarranged = pages.filter((p) => !NOT_A_PAGE[p] && (
+            /<PageFrame\b/.test(frameSource(p)) || !/<(ArrangedPage|ArrangedClientPage)\b/.test(frameSource(p))
+        ));
+        expect(unarranged).toEqual([]);
     });
 
     it("lets none of them set a width of its own", () => {

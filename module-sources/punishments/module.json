@@ -2,8 +2,8 @@
   "id": "punishments",
   "name": "Punishments",
   "description": "Bans, mutes and warnings against members, issued here or reported by a module that watches somewhere else",
-  "version": "1.7.2",
-  "coreVersion": "^5.0.0",
+  "version": "1.8.0",
+  "coreVersion": "^5.26.0",
   "category": "management",
   "author": "Blysis",
   "icon": "Shield",
@@ -214,7 +214,10 @@
         "kindPunishmentIssued": "Punishment",
         "kindPunishmentRevoked": "Punishment Lifted",
         "auditPunishmentScopeSaved": "Saved a punishment place",
-        "auditPunishmentScopeDeleted": "Deleted a punishment place"
+        "auditPunishmentScopeDeleted": "Deleted a punishment place",
+        "punishmentIssuedWithReason": "{type, select, ban {Ban} tempBan {Temporary ban} mute {Mute} tempMute {Temporary mute} kick {Kick} warning {Warning} other {{type}}} issued to {player}: {reason}",
+        "punishmentIssued": "{type, select, ban {Ban} tempBan {Temporary ban} mute {Mute} tempMute {Temporary mute} kick {Kick} warning {Warning} other {{type}}} issued to {player}",
+        "punishmentRevoked": "{type, select, ban {Ban} tempBan {Temporary ban} mute {Mute} tempMute {Temporary mute} kick {Kick} warning {Warning} other {{type}}} revoked for {player}"
       }
     },
     "tr": {
@@ -338,7 +341,10 @@
         "kindPunishmentIssued": "Ceza",
         "kindPunishmentRevoked": "Ceza Kaldırma",
         "auditPunishmentScopeSaved": "Ceza yeri kaydedildi",
-        "auditPunishmentScopeDeleted": "Ceza yeri silindi"
+        "auditPunishmentScopeDeleted": "Ceza yeri silindi",
+        "punishmentIssuedWithReason": "{player} için {type, select, ban {yasaklama} tempBan {geçici yasaklama} mute {susturma} tempMute {geçici susturma} kick {sunucudan atılma} warning {uyarı} other {{type}}} verildi: {reason}",
+        "punishmentIssued": "{player} için {type, select, ban {yasaklama} tempBan {geçici yasaklama} mute {susturma} tempMute {geçici susturma} kick {sunucudan atılma} warning {uyarı} other {{type}}} verildi",
+        "punishmentRevoked": "{player} için {type, select, ban {yasaklama} tempBan {geçici yasaklama} mute {susturma} tempMute {geçici susturma} kick {sunucudan atılma} warning {uyarı} other {{type}}} kaldırıldı"
       }
     },
     "az": {
@@ -462,7 +468,10 @@
         "kindPunishmentIssued": "Cəza",
         "kindPunishmentRevoked": "Cəza ləğv edildi",
         "auditPunishmentScopeSaved": "Cəza yerini yadda saxladı",
-        "auditPunishmentScopeDeleted": "Cəza yerini sildi"
+        "auditPunishmentScopeDeleted": "Cəza yerini sildi",
+        "punishmentIssuedWithReason": "{player} üçün {type, select, ban {qadağa} tempBan {müvəqqəti qadağa} mute {susdurma} tempMute {müvəqqəti susdurma} kick {serverdən çıxarılma} warning {xəbərdarlıq} other {{type}}} verildi: {reason}",
+        "punishmentIssued": "{player} üçün {type, select, ban {qadağa} tempBan {müvəqqəti qadağa} mute {susdurma} tempMute {müvəqqəti susdurma} kick {serverdən çıxarılma} warning {xəbərdarlıq} other {{type}}} verildi",
+        "punishmentRevoked": "{player} üçün {type, select, ban {qadağa} tempBan {müvəqqəti qadağa} mute {susdurma} tempMute {müvəqqəti susdurma} kick {serverdən çıxarılma} warning {xəbərdarlıq} other {{type}}} ləğv edildi"
       }
     },
     "de": {
@@ -586,7 +595,10 @@
         "kindPunishmentIssued": "Strafe",
         "kindPunishmentRevoked": "Strafe aufgehoben",
         "auditPunishmentScopeSaved": "Einen Strafort gespeichert",
-        "auditPunishmentScopeDeleted": "Einen Strafort gelöscht"
+        "auditPunishmentScopeDeleted": "Einen Strafort gelöscht",
+        "punishmentIssuedWithReason": "Strafe für {player}: {type, select, ban {Sperre} tempBan {Temporäre Sperre} mute {Stummschaltung} tempMute {Temporäre Stummschaltung} kick {Rauswurf} warning {Verwarnung} other {{type}}} ({reason})",
+        "punishmentIssued": "Strafe für {player}: {type, select, ban {Sperre} tempBan {Temporäre Sperre} mute {Stummschaltung} tempMute {Temporäre Stummschaltung} kick {Rauswurf} warning {Verwarnung} other {{type}}}",
+        "punishmentRevoked": "Strafe für {player} aufgehoben: {type, select, ban {Sperre} tempBan {Temporäre Sperre} mute {Stummschaltung} tempMute {Temporäre Stummschaltung} kick {Rauswurf} warning {Verwarnung} other {{type}}}"
       }
     },
     "es": {
@@ -710,7 +722,10 @@
         "kindPunishmentIssued": "Sanción",
         "kindPunishmentRevoked": "Sanción levantada",
         "auditPunishmentScopeSaved": "Guardó una ubicación de sanciones",
-        "auditPunishmentScopeDeleted": "Eliminó una ubicación de sanciones"
+        "auditPunishmentScopeDeleted": "Eliminó una ubicación de sanciones",
+        "punishmentIssuedWithReason": "Sanción para {player}: {type, select, ban {Baneo} tempBan {Baneo temporal} mute {Silencio} tempMute {Silencio temporal} kick {Expulsión} warning {Advertencia} other {{type}}} ({reason})",
+        "punishmentIssued": "Sanción para {player}: {type, select, ban {Baneo} tempBan {Baneo temporal} mute {Silencio} tempMute {Silencio temporal} kick {Expulsión} warning {Advertencia} other {{type}}}",
+        "punishmentRevoked": "Sanción retirada a {player}: {type, select, ban {Baneo} tempBan {Baneo temporal} mute {Silencio} tempMute {Silencio temporal} kick {Expulsión} warning {Advertencia} other {{type}}}"
       }
     },
     "et": {
@@ -834,7 +849,10 @@
         "kindPunishmentIssued": "Karistus",
         "kindPunishmentRevoked": "Karistus tühistati",
         "auditPunishmentScopeSaved": "Salvestas karistuste koha",
-        "auditPunishmentScopeDeleted": "Kustutas karistuste koha"
+        "auditPunishmentScopeDeleted": "Kustutas karistuste koha",
+        "punishmentIssuedWithReason": "Karistus mängijale {player}: {type, select, ban {Keeld} tempBan {Ajutine keeld} mute {Vaigistus} tempMute {Ajutine vaigistus} kick {Väljaviskamine} warning {Hoiatus} other {{type}}} ({reason})",
+        "punishmentIssued": "Karistus mängijale {player}: {type, select, ban {Keeld} tempBan {Ajutine keeld} mute {Vaigistus} tempMute {Ajutine vaigistus} kick {Väljaviskamine} warning {Hoiatus} other {{type}}}",
+        "punishmentRevoked": "Karistus tühistatud mängijale {player}: {type, select, ban {Keeld} tempBan {Ajutine keeld} mute {Vaigistus} tempMute {Ajutine vaigistus} kick {Väljaviskamine} warning {Hoiatus} other {{type}}}"
       }
     },
     "fr": {
@@ -958,7 +976,10 @@
         "kindPunishmentIssued": "Sanction",
         "kindPunishmentRevoked": "Sanction levée",
         "auditPunishmentScopeSaved": "A enregistré un emplacement de sanction",
-        "auditPunishmentScopeDeleted": "A supprimé un emplacement de sanction"
+        "auditPunishmentScopeDeleted": "A supprimé un emplacement de sanction",
+        "punishmentIssuedWithReason": "Sanction pour {player} : {type, select, ban {Bannissement} tempBan {Bannissement temporaire} mute {Mise en sourdine} tempMute {Mise en sourdine temporaire} kick {Expulsion} warning {Avertissement} other {{type}}} ({reason})",
+        "punishmentIssued": "Sanction pour {player} : {type, select, ban {Bannissement} tempBan {Bannissement temporaire} mute {Mise en sourdine} tempMute {Mise en sourdine temporaire} kick {Expulsion} warning {Avertissement} other {{type}}}",
+        "punishmentRevoked": "Sanction levée pour {player} : {type, select, ban {Bannissement} tempBan {Bannissement temporaire} mute {Mise en sourdine} tempMute {Mise en sourdine temporaire} kick {Expulsion} warning {Avertissement} other {{type}}}"
       }
     },
     "it": {
@@ -1082,7 +1103,10 @@
         "kindPunishmentIssued": "Sanzione",
         "kindPunishmentRevoked": "Sanzione rimossa",
         "auditPunishmentScopeSaved": "Ha salvato un luogo di sanzione",
-        "auditPunishmentScopeDeleted": "Ha eliminato un luogo di sanzione"
+        "auditPunishmentScopeDeleted": "Ha eliminato un luogo di sanzione",
+        "punishmentIssuedWithReason": "Sanzione per {player}: {type, select, ban {Ban} tempBan {Ban temporaneo} mute {Silenziamento} tempMute {Silenziamento temporaneo} kick {Espulsione} warning {Avvertimento} other {{type}}} ({reason})",
+        "punishmentIssued": "Sanzione per {player}: {type, select, ban {Ban} tempBan {Ban temporaneo} mute {Silenziamento} tempMute {Silenziamento temporaneo} kick {Espulsione} warning {Avvertimento} other {{type}}}",
+        "punishmentRevoked": "Sanzione revocata per {player}: {type, select, ban {Ban} tempBan {Ban temporaneo} mute {Silenziamento} tempMute {Silenziamento temporaneo} kick {Espulsione} warning {Avvertimento} other {{type}}}"
       }
     },
     "pl": {
@@ -1206,7 +1230,10 @@
         "kindPunishmentIssued": "Kara",
         "kindPunishmentRevoked": "Kara zdjęta",
         "auditPunishmentScopeSaved": "Zapisano miejsce kary",
-        "auditPunishmentScopeDeleted": "Usunięto miejsce kary"
+        "auditPunishmentScopeDeleted": "Usunięto miejsce kary",
+        "punishmentIssuedWithReason": "Kara dla {player}: {type, select, ban {Ban} tempBan {Ban tymczasowy} mute {Wyciszenie} tempMute {Wyciszenie tymczasowe} kick {Wyrzucenie} warning {Ostrzeżenie} other {{type}}} ({reason})",
+        "punishmentIssued": "Kara dla {player}: {type, select, ban {Ban} tempBan {Ban tymczasowy} mute {Wyciszenie} tempMute {Wyciszenie tymczasowe} kick {Wyrzucenie} warning {Ostrzeżenie} other {{type}}}",
+        "punishmentRevoked": "Cofnięto karę dla {player}: {type, select, ban {Ban} tempBan {Ban tymczasowy} mute {Wyciszenie} tempMute {Wyciszenie tymczasowe} kick {Wyrzucenie} warning {Ostrzeżenie} other {{type}}}"
       }
     },
     "pt": {
@@ -1330,7 +1357,10 @@
         "kindPunishmentIssued": "Punição",
         "kindPunishmentRevoked": "Punição removida",
         "auditPunishmentScopeSaved": "Salvou um local de punição",
-        "auditPunishmentScopeDeleted": "Excluiu um local de punição"
+        "auditPunishmentScopeDeleted": "Excluiu um local de punição",
+        "punishmentIssuedWithReason": "Punição para {player}: {type, select, ban {Banimento} tempBan {Banimento temporário} mute {Silenciamento} tempMute {Silenciamento temporário} kick {Expulsão} warning {Aviso} other {{type}}} ({reason})",
+        "punishmentIssued": "Punição para {player}: {type, select, ban {Banimento} tempBan {Banimento temporário} mute {Silenciamento} tempMute {Silenciamento temporário} kick {Expulsão} warning {Aviso} other {{type}}}",
+        "punishmentRevoked": "Punição retirada de {player}: {type, select, ban {Banimento} tempBan {Banimento temporário} mute {Silenciamento} tempMute {Silenciamento temporário} kick {Expulsão} warning {Aviso} other {{type}}}"
       }
     },
     "ru": {
@@ -1454,7 +1484,10 @@
         "kindPunishmentIssued": "Наказание",
         "kindPunishmentRevoked": "Наказание снято",
         "auditPunishmentScopeSaved": "Сохранено место наказания",
-        "auditPunishmentScopeDeleted": "Удалено место наказания"
+        "auditPunishmentScopeDeleted": "Удалено место наказания",
+        "punishmentIssuedWithReason": "Наказание для {player}: {type, select, ban {Бан} tempBan {Временный бан} mute {Мут} tempMute {Временный мут} kick {Кик} warning {Предупреждение} other {{type}}} ({reason})",
+        "punishmentIssued": "Наказание для {player}: {type, select, ban {Бан} tempBan {Временный бан} mute {Мут} tempMute {Временный мут} kick {Кик} warning {Предупреждение} other {{type}}}",
+        "punishmentRevoked": "Наказание снято с {player}: {type, select, ban {Бан} tempBan {Временный бан} mute {Мут} tempMute {Временный мут} kick {Кик} warning {Предупреждение} other {{type}}}"
       }
     },
     "zh": {
@@ -1578,7 +1611,10 @@
         "kindPunishmentIssued": "处罚",
         "kindPunishmentRevoked": "处罚已解除",
         "auditPunishmentScopeSaved": "保存了处罚范围",
-        "auditPunishmentScopeDeleted": "删除了处罚范围"
+        "auditPunishmentScopeDeleted": "删除了处罚范围",
+        "punishmentIssuedWithReason": "{player} 受到处罚：{type, select, ban {封禁} tempBan {临时封禁} mute {禁言} tempMute {临时禁言} kick {踢出} warning {警告} other {{type}}}（{reason}）",
+        "punishmentIssued": "{player} 受到处罚：{type, select, ban {封禁} tempBan {临时封禁} mute {禁言} tempMute {临时禁言} kick {踢出} warning {警告} other {{type}}}",
+        "punishmentRevoked": "{player} 的处罚已撤销：{type, select, ban {封禁} tempBan {临时封禁} mute {禁言} tempMute {临时禁言} kick {踢出} warning {警告} other {{type}}}"
       }
     }
   },
@@ -1619,11 +1655,27 @@
   "activityTitles": [
     {
       "type": "punishments.punishment.issued",
-      "nameKey": "kindPunishmentIssued"
+      "nameKey": "kindPunishmentIssued",
+      "patterns": [
+        {
+          "pattern": "{type} issued to {player}: {reason}",
+          "key": "punishmentIssuedWithReason"
+        },
+        {
+          "pattern": "{type} issued to {player}",
+          "key": "punishmentIssued"
+        }
+      ]
     },
     {
       "type": "punishments.punishment.revoked",
-      "nameKey": "kindPunishmentRevoked"
+      "nameKey": "kindPunishmentRevoked",
+      "patterns": [
+        {
+          "pattern": "{type} revoked for {player}",
+          "key": "punishmentRevoked"
+        }
+      ]
     }
   ],
   "auditActions": [
@@ -1634,6 +1686,46 @@
     {
       "action": "punishments.scope.deleted",
       "nameKey": "auditPunishmentScopeDeleted"
+    }
+  ],
+  "pages": [
+    {
+      "id": "records",
+      "blocks": [
+        {
+          "id": "controls",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        },
+        {
+          "id": "records",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "controls",
+                  "block": "punishments.controls"
+                },
+                {
+                  "key": "records",
+                  "block": "punishments.records"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

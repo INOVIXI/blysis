@@ -259,11 +259,29 @@ model Translation {
   value     String   @db.Text
   module    String   @default("core")
   isCustom  Boolean  @default(false)
+  // What the string shipped as when the site last edited this row. An update
+  // that ships something else under the edit asks the operator to look again.
+  basis     String?  @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([locale, namespace, key, module])
   @@index([module])
+}
+
+// A string in one language that wants the operator's eye: `review` when an
+// update changed what it ships under the site's edit, `translate` when the
+// string changed in another language after this one was written.
+model TranslationFlag {
+  id        String   @id @default(cuid())
+  locale    String
+  namespace String
+  key       String
+  reason    String
+  createdAt DateTime @default(now())
+
+  @@unique([locale, namespace, key, reason])
+  @@index([reason, locale])
 }
 
 model ModuleConfig {

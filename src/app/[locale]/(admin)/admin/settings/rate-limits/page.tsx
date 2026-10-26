@@ -118,7 +118,7 @@ export default function RateLimitsSettingsPage() {
                         be a single `max-w-3xl` column with one row per role in
                         it, which left the right half of a desktop panel empty
                         while the rows themselves were cramped. */}
-                    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                         {roles.map((role) => {
                             const current = values[role.name] ?? 1;
                             const isUnlimited = current === 0;

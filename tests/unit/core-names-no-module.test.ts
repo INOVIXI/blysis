@@ -26,6 +26,11 @@ import path from "node:path";
  * "forum" - and a gate that flagged those would flag the sentence explaining
  * why it flagged them. Every id with a hyphen in it is a name nobody writes by
  * accident, which is 60 of them, and that is the check.
+ *
+ * A theme's id is often one ordinary word, so its name is read instead:
+ * the `name` its manifest gives, capitalised as a proper noun is ("Flat",
+ * not "flat"). That check was missing, and core's own version notes named a
+ * theme to explain a helper the theme had kept.
  */
 
 const ROOT = process.cwd();
@@ -56,12 +61,24 @@ const COMPOUND_IDS = [
     ...directories(path.join(ROOT, "src/themes")),
 ].filter((id) => id.includes("-"));
 
+/** Each theme's own name, as its manifest writes it. */
+const THEME_NAMES = directories(path.join(ROOT, "src/themes"))
+    .map((id) => path.join(ROOT, "src/themes", id, "theme.json"))
+    .filter((file) => fs.existsSync(file))
+    .map((file) => (JSON.parse(fs.readFileSync(file, "utf8")) as { name: string }).name);
+
+/** The module ids and theme names `source` writes. */
+export function namesIn(source: string, ids: string[], names: string[]): string[] {
+    return [...ids, ...names].filter((word) => new RegExp(`\\b${word}\\b`).test(source));
+}
+
 const FILES = [...walk(path.join(ROOT, "src/core")), ...walk(path.join(ROOT, "src/app"))];
 const rel = (file: string) => path.relative(ROOT, file);
 
 describe("core", () => {
     it("has modules to be ignorant of, and files to read", () => {
         expect(COMPOUND_IDS.length).toBeGreaterThan(40);
+        expect(THEME_NAMES.length).toBeGreaterThanOrEqual(2);
         expect(FILES.length).toBeGreaterThan(300);
     });
 
@@ -69,11 +86,13 @@ describe("core", () => {
         const offenders: string[] = [];
         for (const file of FILES) {
             const source = fs.readFileSync(file, "utf8");
-            for (const id of COMPOUND_IDS) {
-                if (!new RegExp(`\\b${id}\\b`).test(source)) continue;
-                offenders.push(`${rel(file)}: ${id}`);
-            }
+            for (const name of namesIn(source, COMPOUND_IDS, THEME_NAMES)) offenders.push(`${rel(file)}: ${name}`);
         }
         expect(offenders, "describe the shape core knows, not the module that has it").toEqual([]);
+    });
+
+    it("reads a theme's name, which a compound id would never catch", () => {
+        expect(namesIn("Vanguard kept this check beside its hero", ["staff-strip"], ["Vanguard"])).toEqual(["Vanguard"]);
+        expect(namesIn("a flat list of rows", [], ["Flat"])).toEqual([]);
     });
 });

@@ -57,6 +57,7 @@ import {
     FileJson,
     ImageIcon,
     Languages,
+    Earth,
     Navigation,
     PanelBottom,
     LayoutGrid,
@@ -207,7 +208,7 @@ export const CORE_NAV_GROUPS: NavGroup[] = [
         label: "Design",
         labelKey: "sidebar_design",
         order: 70,
-        pathPrefix: ["/admin/settings/navbar", "/admin/settings/footer", "/admin/settings/widgets", "/admin/settings/css", "/admin/settings/theme", "/admin/media", "/admin/translations"],
+        pathPrefix: ["/admin/settings/navbar", "/admin/settings/footer", "/admin/settings/widgets", "/admin/settings/css", "/admin/settings/theme", "/admin/media", "/admin/translations", "/admin/languages"],
         sections: [
             {
                 id: "appearance",
@@ -242,6 +243,7 @@ export const CORE_NAV_GROUPS: NavGroup[] = [
                 headerKey: "sidebar_wording",
                 items: [
                     { href: "/admin/translations", label: "Translations", labelKey: "sidebar_translations", icon: Languages },
+                    { href: "/admin/languages", label: "Languages", labelKey: "sidebar_languages", icon: Earth },
                 ],
             },
         ],
@@ -723,9 +725,10 @@ export function buildThemeNavGroup(activeThemeId: string): NavGroup | null {
     const themeItems: ThemeAdminNavItem[] = themeAdminRoutes[activeThemeId] ?? [];
 
     const items: NavItem[] = [
-        { label: "Appearance", href: "/admin/theme/appearance", icon: Palette },
+        { label: "Appearance", labelKey: "sidebar_appearance", href: "/admin/theme/appearance", icon: Palette },
         ...themeItems.map((i: ThemeAdminNavItem) => ({
             label: i.label,
+            labelKey: i.labelKey,
             href: adminHref(i.path),
             icon: resolveLucideIcon(i.icon) ?? Palette,
         })),

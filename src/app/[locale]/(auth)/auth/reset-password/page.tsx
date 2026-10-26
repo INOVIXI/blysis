@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { SiteName } from "@/core/components/ui/site-name";
+import { AuthFrame } from "@/core/components/layout/AuthFrame";
+import { Card } from "@/core/components/ui/card";
 import { Link } from "@/core/lib/i18n/navigation";
 import { useSearchParams } from "next/navigation";
-import { Home, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { Button, buttonClassName } from "@/core/components/ui/button";
 import { PasswordInput } from "@/core/components/ui/password-input";
 import { useTranslations } from "next-intl";
@@ -73,96 +74,80 @@ export default function ResetPasswordPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12 relative">
-            <Link
-                href="/"
-                aria-label={t('backToHome')}
-                className="absolute top-6 left-6 w-10 h-10 rounded-full bg-card border border-border shadow-sm flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-all"
-            >
-                <Home className="w-5 h-5" aria-hidden="true" />
-            </Link>
-
-            <div className="w-full max-w-md">
-                <div className="text-center mb-8">
-                    <Link href="/" className="inline-flex items-center gap-3">
-                        <SiteName className="font-bold text-2xl text-foreground" />
-                    </Link>
+        <AuthFrame>
+            <Card className="rounded-lg overflow-hidden">
+                <div className="p-6 border-b border-border">
+                    <h1 className="text-xl font-bold text-foreground text-center">{t('resetTitle')}</h1>
+                    <p className="text-muted-foreground text-sm text-center mt-1">{t('resetSubtitle')}</p>
                 </div>
 
-                <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
-                    <div className="p-6 border-b border-border">
-                        <h1 className="text-xl font-bold text-foreground text-center">{t('resetTitle')}</h1>
-                        <p className="text-muted-foreground text-sm text-center mt-1">{t('resetSubtitle')}</p>
-                    </div>
+                <div className="p-6">
+                    {success ? (
+                        <div className="text-center py-4">
+                            <CheckCircle className="w-12 h-12 text-success mx-auto mb-3" />
+                            <h2 className="font-semibold text-foreground mb-1">{t('resetSuccess')}</h2>
+                            <p className="text-muted-foreground text-sm mb-4">
+                                {t('resetSuccessBody')}
+                            </p>
+                            <Link href="/auth/login" className={buttonClassName("default", "default", "bg-primary hover:bg-primary/90 text-primary-foreground")}>
+                                    {t('signIn')}
+                                </Link>
+                        </div>
+                    ) : (
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            {error && (
+                                <div role="alert" className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+                                    {error}
+                                </div>
+                            )}
 
-                    <div className="p-6">
-                        {success ? (
-                            <div className="text-center py-4">
-                                <CheckCircle className="w-12 h-12 text-success mx-auto mb-3" />
-                                <h2 className="font-semibold text-foreground mb-1">{t('resetSuccess')}</h2>
-                                <p className="text-muted-foreground text-sm mb-4">
-                                    {t('resetSuccessBody')}
-                                </p>
-                                <Link href="/auth/login" className={buttonClassName("default", "default", "bg-primary hover:bg-primary/90 text-primary-foreground")}>
-                                        {t('signIn')}
-                                    </Link>
+                            <div className="space-y-2">
+                                <label htmlFor="password" className="text-sm font-medium text-foreground">
+                                    {t('password')}
+                                </label>
+                                <PasswordInput
+                                    id="password"
+                                    autoComplete="new-password"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    minLength={6}
+                                    className="border-border bg-muted"
+                                    showLabel={t('showPassword')}
+                                    hideLabel={t('hidePassword')}
+                                />
                             </div>
-                        ) : (
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                {error && (
-                                    <div role="alert" className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
-                                        {error}
-                                    </div>
-                                )}
 
-                                <div className="space-y-2">
-                                    <label htmlFor="password" className="text-sm font-medium text-foreground">
-                                        {t('password')}
-                                    </label>
-                                    <PasswordInput
-                                        id="password"
-                                        autoComplete="new-password"
-                                        placeholder="••••••••"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                        minLength={6}
-                                        className="border-border bg-muted"
-                                        showLabel={t('showPassword')}
-                                        hideLabel={t('hidePassword')}
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
+                                    {t('confirmPassword')}
+                                </label>
+                                <PasswordInput
+                                    id="confirmPassword"
+                                    autoComplete="new-password"
+                                    placeholder="••••••••"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                    minLength={6}
+                                    className="border-border bg-muted"
+                                    showLabel={t('showPassword')}
+                                    hideLabel={t('hidePassword')}
+                                />
+                            </div>
 
-                                <div className="space-y-2">
-                                    <label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
-                                        {t('confirmPassword')}
-                                    </label>
-                                    <PasswordInput
-                                        id="confirmPassword"
-                                        autoComplete="new-password"
-                                        placeholder="••••••••"
-                                        value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                        required
-                                        minLength={6}
-                                        className="border-border bg-muted"
-                                        showLabel={t('showPassword')}
-                                        hideLabel={t('hidePassword')}
-                                    />
-                                </div>
-
-                                <Button
-                                    type="submit"
-                                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                                    disabled={loading}
-                                >
-                                    {loading ? t('resetting') : t('resetButton')}
-                                </Button>
-                            </form>
-                        )}
-                    </div>
+                            <Button
+                                type="submit"
+                                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                                disabled={loading}
+                            >
+                                {loading ? t('resetting') : t('resetButton')}
+                            </Button>
+                        </form>
+                    )}
                 </div>
-            </div>
-        </div>
+            </Card>
+        </AuthFrame>
     );
 }

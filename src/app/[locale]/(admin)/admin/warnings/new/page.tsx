@@ -78,7 +78,7 @@ export default function NewWarningPage() {
                         that still stretched drew a border around an empty
                         right half of the panel. */}
                     <form onSubmit={submit} className="space-y-4">
-                        <div className="grid gap-4 md:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                             <UserPicker
                                 id="warning-user"
                                 value={user}

@@ -210,7 +210,7 @@ export default function AdminStoreCampaignsPage() {
                                 <p className="mt-1 text-sm text-muted-foreground">{t("adm_campaignDaysHint")}</p>
                             </div>
 
-                            <div className="grid gap-4 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
                                     <Label htmlFor="campaignFrom">{t("adm_campaignFrom")}</Label>
                                     <Input
@@ -239,7 +239,7 @@ export default function AdminStoreCampaignsPage() {
                                 ) : (
                                     <div className="max-h-80 space-y-2 overflow-y-auto rounded-md border border-border p-3">
                                         {products.map((product) => (
-                                            <div key={product.id} className="grid items-center gap-2 md:grid-cols-[1fr_8rem_8rem]">
+                                            <div key={product.id} className="grid grid-cols-1 items-center gap-2 md:grid-cols-[1fr_8rem_8rem]">
                                                 <span className="truncate text-sm">{product.name}</span>
                                                 <Input
                                                     aria-label={t("adm_campaignPriceFor", { product: product.name })}

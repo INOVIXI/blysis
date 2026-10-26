@@ -12,6 +12,121 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.32.0 - a theme can ask whether a slot will be drawn into.
+ * `useSlotHasContent` from `@/core/sdk/layout` answers from the registry,
+ * before any contribution has run, so a theme holds the room for what a
+ * module will draw after the page instead of growing when it arrives.
+ * Additive.
+ *
+ * 5.31.0 - a site placeholder reaches the site's own words. The translation
+ * catalogue a page is given has each `{module.name}` token filled, and
+ * `fillPlaceholderText` takes an optional `quote` that wraps whatever
+ * replaces a token, for text read again as syntax. Additive.
+ *
+ * 5.30.0 - a module's footer link names its own section. `section` in a
+ * `footerLinks` entry is any lowercase word rather than `quick` or `legal`,
+ * and `sectionLabelKey` is a `footer` key the module ships for the column's
+ * name; a footer nobody arranged is drawn a column per such section. The
+ * operator can hide a link the site adds, by its address, in the
+ * `footer_hidden_links` setting, and `useFooter` leaves it out. Additive.
+ *
+ * 5.29.0 - a theme draws its own footer. A theme names `Footer` in its
+ * `components` and is handed `FooterProps` (the slot modules draw into its
+ * top); it draws from `useFooter` (the operator's columns with the modules'
+ * links placed, the about line, social links, the operator's copyright),
+ * `useLanguageChoice`, `useDarkMode`, and the `FooterLink`,
+ * `FooterModuleControls` and `FooterCredit` components. Additive.
+ *
+ * 5.28.0 - a theme speaks in its own voice. The active theme's strings speak
+ * over core's and every module's, under the site's own edits; a theme's
+ * arrangement for a page may give its heading words (`heading`: a label, a
+ * title and a line), and `PageHeaderProps` gains `kicker` and `pageName`,
+ * where the crumb trail ends when the title was worded. Additive.
+ *
+ * 5.27.0 - site placeholders. A module declares `placeholders` in its
+ * manifest, each a live public value under its id, `{servers.online}`, with a
+ * handler that answers for every visitor. `@/core/sdk/theme` gains
+ * `Placeholder`, `PlaceholderText` and `usePlaceholder` for a theme to draw
+ * one, a theme's text setting may say `"placeholders": true` for its operator
+ * to write them, and `useBlockText` fills them in a block's words.
+ * `resolvePlaceholders` joins `@/core/sdk/server` and `fillPlaceholderText`
+ * the isomorphic barrel, for a module's own text. Additive.
+ *
+ * 5.26.0 - `ArrangedClientPage` joins `@/core/sdk/layout`: a page drawn in
+ * the browser, a ticket or the cart, is arranged from the blocks its
+ * manifest declares as `ArrangedPage` arranges a server page, from the active
+ * theme's manifest the browser already holds. A block the page hands no way
+ * to draw is not drawn, so a page that is still reading passes none and
+ * stands as the page with only what it says while it waits. `searchMatches`
+ * and `searchRank` join `@/core/sdk/server`: a search provider matches and
+ * orders through the document its declared index was built from, which folds
+ * the Turkish ı and İ, so "altin" and "ALTIN" find "Altın". `textContains`
+ * joins it too, for a list's search box: the `OR` that asks each field for
+ * every spelling of what was typed. Additive.
+ *
+ * 5.25.0 - a module may declare `pages`, each built from blocks with a
+ * default arrangement, and draw one with `ArrangedPage` from
+ * `@/core/sdk/page` (`sidebar: false` for a page whose third beside two
+ * thirds is its own column, not a sidebar); a theme arranges it under
+ * `layouts["<module>.<page>"]` as it arranges `home`. An arrangement may hide
+ * the header band (`header: "hidden"`) and place a row of a quarter, a half
+ * and a quarter (`1-2-1`), and `PageFrame` takes a `picture` and a `meta` line a theme's
+ * header may draw. The store's, a blog's or a forum's page had been the
+ * module's alone, so a theme could recolour it but never arrange it. The 404
+ * stands in the site's shell, and a theme may draw it as `NotFound`, typed by
+ * `NotFoundProps` in `@/core/sdk/theme`. Additive: a page with no theme
+ * arrangement stands as its module drew it.
+ *
+ * 5.24.0 - `BlockHeading`, `StatTile`, `useBlockText` and the `BlockProps`
+ * type join `@/core/sdk/ui`. A block is handed its settings and its width
+ * class; its heading and a stats tile are core's, so every block and every
+ * tile a theme styles is the same element; and a text setting may name a
+ * message, which `useBlockText` shows in the reader's language. A theme's
+ * layout may also leave a setting to the operator with
+ * `{ "$theme": "<group>.<field>" }`, and a module may not be called `core`,
+ * the name of the blocks that belong to no module. Additive.
+ *
+ * 5.23.0 - a module may declare `blocks` and a theme may ship
+ * `layouts.home`. A block names the file that draws it, the widths it can be
+ * drawn in (`full`, `wide`, `narrow`), its settings in a theme's field
+ * definitions and the widget or section it `replaces`; a layout is rows of
+ * cells of blocks. The homepage's arrangement had been core's alone, the same
+ * main column and sidebar for every theme, so a theme could recolour the page
+ * but never arrange it. Additive: `widgets` and `homepageSections` are read
+ * as blocks, and a theme with no layout keeps the arrangement it had. A select
+ * option may also carry a `labelKey`.
+ *
+ * 5.22.0 - `linkTarget` joins `@/core/sdk/theme`: an address an operator
+ * typed into a theme setting, as a link only when it is a path on this site
+ * or an http(s) address. One theme kept this check beside its own hero, and
+ * the next theme with a button in its settings would have copied it, test
+ * and all, or gone without. Additive.
+ *
+ * 5.21.0 - an `activityTitles` entry may declare `patterns`: the stored
+ * English with its blanks named, each with the message that takes them. A
+ * prefix can only translate a title that starts with fixed words, so a kind
+ * written as "Received 40 credits" or "ban issued to Steve" stayed English
+ * for every reader. A module using it requires this core, because an older
+ * one drops the field and shows the English again.
+ *
+ * 5.20.0 - `isPrivateHost` joins `@/core/sdk`. The servers module publishes
+ * where to connect, and a network registers its backend servers by their
+ * inside address so the module can ask them; a module had no way to tell
+ * such an address from a public one without copying the check the webhook
+ * guard already made, and a copy of a security check is one that drifts.
+ *
+ * 5.19.0 - a theme can redraw the frame, not only the hero. `SiteShell`,
+ * `PageHeader` and `AuthFrame` become names a theme's `components` may
+ * replace, and `@/core/sdk/theme` gains what a theme needs to draw them:
+ * `useNavLinks` (the site's navigation as the bar sees it), `NavbarActions`
+ * (the mode toggle, the modules' controls and the account menu),
+ * `PageBreadcrumb`, `SiteName`, `SiteMark` and the props types. A theme
+ * manifest also gains `stylesheet` and `fontFiles`. A theme could restyle
+ * colours, fonts and one radius and replace three components, so a look that
+ * put the navigation down the left edge, or the page title on a backdrop,
+ * had to copy core to get there. Additive: a theme that brings none of these
+ * is drawn as before.
+ *
  * 5.18.0 - `auditActions` in a manifest says what this module's audit-log
  * entries are called: `{ action, nameKey }`, with the name under the
  * `activity` namespace the module already writes its activity kinds into.
@@ -613,4 +728,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.18.0";
+export const CORE_API_VERSION = "5.32.0";

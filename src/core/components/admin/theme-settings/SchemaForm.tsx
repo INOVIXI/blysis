@@ -72,7 +72,7 @@ export function SchemaForm({ themeId, group, fields, initialValues, title, descr
             />
 
             <Card>
-                <CardContent className="grid gap-6 p-6 md:grid-cols-2 xl:grid-cols-3">
+                <CardContent className="grid grid-cols-1 gap-6 p-6 md:grid-cols-2 xl:grid-cols-3">
                     {Object.entries(fields).map(([key, def]) => (
                         <FieldRow key={key} fieldKey={key} def={def} value={values[key]} onChange={(v) => set(key, v)} />
                     ))}

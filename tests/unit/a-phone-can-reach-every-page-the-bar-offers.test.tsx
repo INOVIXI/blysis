@@ -129,6 +129,15 @@ describe("a footer column on a phone", () => {
         expect(screen.getByRole("button", { name: /Quick Links/ }).getAttribute("aria-expanded")).toBe("true");
     });
 
+    it("is only a button where it folds, and words alone where it does not", () => {
+        drawColumn();
+        const heading = screen.getByRole("heading", { name: /Quick Links/ });
+        const words = heading.querySelector(":scope > span");
+        expect(words?.textContent).toBe("Quick Links");
+        expect(words?.className).toContain("hidden sm:inline");
+        expect(screen.getByRole("button", { name: /Quick Links/ }).className).toContain("sm:hidden");
+    });
+
     it("is still a heading, so the page keeps its outline", () => {
         drawColumn();
         expect(screen.getByRole("heading", { name: /Quick Links/ })).toBeTruthy();

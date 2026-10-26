@@ -37,6 +37,11 @@ const PUBLIC_KEYS = [
     "identity_requires_password",
     "site_email",
     "site_discord_url",
+    // Which languages the footer offers a visitor, and which the site opens
+    // in. The proxy keeps a visitor out of the others either way; this stops
+    // the picker offering a language that would only redirect.
+    "site_languages",
+    "default_locale",
     // Rendered by the footer. Core hardcodes no column at all: the headings,
     // the links and which module section each column adopts are the
     // operator's, in `footer_columns`. The two older keys stay on the list
@@ -44,6 +49,7 @@ const PUBLIC_KEYS = [
     // the editor, and the footer reads them when `footer_columns` is absent.
     "footer_about_text",
     "footer_columns",
+    "footer_hidden_links",
     "footer_quick_links",
     "footer_legal_links",
     "footer_copyright",
@@ -64,11 +70,6 @@ const PUBLIC_KEYS = [
     "default_currency",
     // Theme customizer overrides
     "theme_overrides",
-    // Admin > Settings > Widgets writes both of these, and the homepage is
-    // the only thing that reads them. Leaving them off this list meant the
-    // customiser saved preferences the page it configures never received.
-    "widget_visibility",
-    "widget_order",
     // Back-compat alias the footer falls back to; unreachable while it was
     // absent here, so the fallback it documents never resolved.
     "hero_discord_url",

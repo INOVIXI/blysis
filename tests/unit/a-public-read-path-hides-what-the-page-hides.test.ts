@@ -41,29 +41,35 @@ function delegate(model: string) {
 
 vi.mock("@/core/sdk/auth", () => ({ auth: async () => null }));
 
-vi.mock("@/core/sdk/server", () => ({
-    log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
-    prisma: {
-        $queryRaw: vi.fn(async (strings: TemplateStringsArray) => {
-            rawCalls.push(strings.join(" ? "));
-            if (rawFails) throw new Error("relation index not ready");
-            return [];
-        }),
-        blogArticle: delegate("blogArticle"),
-        forumTopic: delegate("forumTopic"),
-        // Read by the forum's visibility helper before it reads topics: a
-        // site with no matrix hides nothing, which is what these answer.
-        forumCategory: delegate("forumCategory"),
-        forumCategoryPermission: delegate("forumCategoryPermission"),
-        helpArticle: delegate("helpArticle"),
-        product: delegate("product"),
-    },
-    // `allowGuestView` is the forum's other visibility rule, and its provider
-    // now consults it before it queries anything. Granting it here is what
-    // lets these tests reach the rule they are actually about - the one a
-    // moderator applies. The rule itself has its own tests.
-    moduleSettings: vi.fn(async () => ({ enableSearch: true, allowGuestView: true })),
-}));
+vi.mock("@/core/sdk/server", async () => {
+    // The real SQL, so a provider builds its query as it does on a site.
+    const { searchMatches, searchRank } = await import("@/core/lib/search-text");
+    return {
+        searchMatches,
+        searchRank,
+        log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
+        prisma: {
+            $queryRaw: vi.fn(async (strings: TemplateStringsArray) => {
+                rawCalls.push(strings.join(" ? "));
+                if (rawFails) throw new Error("relation index not ready");
+                return [];
+            }),
+            blogArticle: delegate("blogArticle"),
+            forumTopic: delegate("forumTopic"),
+            // Read by the forum's visibility helper before it reads topics: a
+            // site with no matrix hides nothing, which is what these answer.
+            forumCategory: delegate("forumCategory"),
+            forumCategoryPermission: delegate("forumCategoryPermission"),
+            helpArticle: delegate("helpArticle"),
+            product: delegate("product"),
+        },
+        // `allowGuestView` is the forum's other visibility rule, and its provider
+        // now consults it before it queries anything. Granting it here is what
+        // lets these tests reach the rule they are actually about - the one a
+        // moderator applies. The rule itself has its own tests.
+        moduleSettings: vi.fn(async () => ({ enableSearch: true, allowGuestView: true })),
+    };
+});
 
 /**
  * What the public endpoint of the same module tests before it shows a row,

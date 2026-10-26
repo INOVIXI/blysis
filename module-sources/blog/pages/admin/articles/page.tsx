@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { redirect } from "@/core/sdk/navigation";
 import { formatDate } from "@/core/sdk";
-import { hasPermission, prisma } from "@/core/sdk/server";
+import { hasPermission, prisma, textContains } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { Card, CardContent, CardHeader, CardTitle, ListControls, Pagination, buttonClassName } from "@/core/sdk/ui";
 import { getTranslations, getLocale } from "next-intl/server";
@@ -37,7 +37,7 @@ async function getBlogArticles(page: number, term: string) {
         ? {}
         : {
             OR: [
-                { title: { contains: term, mode: "insensitive" as const } },
+                ...textContains(["title"], term),
                 { slug: { contains: term, mode: "insensitive" as const } },
             ],
         };

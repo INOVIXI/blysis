@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { refuseSilenced, isRestrictedFrom } from "@/core/sdk/server";
+import { isRestrictedFrom, refuseSilenced, textContains } from "@/core/sdk/server";
 import { visibleCategoryIds } from "../../lib/visible-categories";
 import { generateSlug } from "@/core/sdk";
 import { pageParams, isAdmin, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
@@ -32,13 +32,18 @@ export async function GET(request: NextRequest) {
     const { page, limit, skip, take } = pageParams(searchParams, { defaultLimit: topicsPerPage });
     const categoryId = searchParams.get("category");
     const search = searchParams.get("search") || "";
+    // Pinned first is the forum page's order. "What is new" - the homepage's
+    // question - is newest first, or the same pinned threads lead it forever.
+    const orderBy = searchParams.get("order") === "newest"
+        ? [{ createdAt: "desc" as const }]
+        : [{ isPinned: "desc" as const }, { createdAt: "desc" as const }];
 
     const session = await auth();
     const adminCheck = session?.user?.id ? await isAdmin(session.user.id) : false;
 
     const where: Record<string, unknown> = {};
     if (categoryId) where.categoryId = categoryId;
-    if (search) where.title = { contains: search, mode: "insensitive" };
+    if (search) where.OR = textContains(["title"], search);
     if (!adminCheck) where.moderationState = "APPROVED";
 
     // Narrowed to what this reader may open. Without it a private section's
@@ -59,7 +64,7 @@ export async function GET(request: NextRequest) {
             },
             skip,
             take,
-            orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
+            orderBy,
         }),
         prisma.forumTopic.count({ where: onlyReadable }),
     ]);

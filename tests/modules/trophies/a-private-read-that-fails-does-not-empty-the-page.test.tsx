@@ -26,9 +26,12 @@ vi.mock("@/core/lib/i18n/navigation", () => ({
     usePathname: () => "/",
     redirect: () => {},
 }));
-vi.mock("@/core/sdk/layout", () => ({
-    PageFrame: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
+vi.mock("@/core/sdk/layout", async () => {
+    const { arrangedClientPageStub } = await import("../../stubs/server-tree");
+    const manifest = JSON.parse((await import("node:fs")).readFileSync(
+        (await import("node:path")).join(process.cwd(), "module-sources/trophies/module.json"), "utf8"));
+    return { ArrangedClientPage: arrangedClientPageStub("trophies", manifest) };
+});
 
 const { TrophyGrid } = await import("@/../module-sources/trophies/components/TrophyGrid");
 

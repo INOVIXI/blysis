@@ -8,7 +8,7 @@
  * a different endpoint: checked, and never offered to a shared cache.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { hasPermission, log, pageParams, prisma } from "@/core/sdk/server";
+import { hasPermission, log, pageParams, prisma, textContains } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 
 /** This answer depends on who asked, so nothing may keep a copy of it. */
@@ -43,12 +43,7 @@ export async function GET(request: NextRequest) {
         const where = {
             ...(ids.length > 0 && { id: { in: ids } }),
             ...(category && { category: { slug: category } }),
-            ...(search && {
-                OR: [
-                    { name: { contains: search, mode: "insensitive" as const } },
-                    { description: { contains: search, mode: "insensitive" as const } },
-                ],
-            }),
+            ...(search && { OR: textContains(["name", "description"], search) }),
         };
 
         const [products, total] = await Promise.all([

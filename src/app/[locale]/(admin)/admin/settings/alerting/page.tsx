@@ -150,7 +150,7 @@ export default function AlertingSettingsPage() {
                 </>}
             />
 
-            <div className="grid gap-6 lg:grid-cols-3 items-start">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 items-start">
                 {/* The switch is its own card and comes first, because
                     everything below it is inert while it is off. */}
                 <Card className="lg:col-span-3">

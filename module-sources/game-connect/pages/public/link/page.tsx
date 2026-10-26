@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { CheckCircle, Link2, Loader2 } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { Button, Card, CardContent, Input, Label, buttonClassName } from "@/core/sdk/ui";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { gameName } from "../../../lib/game-name";
 
 interface Preview {
@@ -92,53 +92,59 @@ export default function LinkPage() {
     };
 
     return (
-        <PageFrame title={t("link_title")} description={t("link_intro")}>
-            <Card>
-                <CardContent className="p-6 space-y-6">
-                        {status === "loading" ? (
-                            <div className="flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
-                        ) : status !== "authenticated" ? (
-                            <Link href={`/auth/login?callbackUrl=${encodeURIComponent(`/link${fromAddress ? `?code=${fromAddress}` : ""}`)}`} className={buttonClassName("default", "default", "w-full")}>
-                                {t("link_signIn")}
-                            </Link>
-                        ) : linked ? (
-                            <div className="text-center space-y-2">
-                                <CheckCircle className="w-8 h-8 text-success mx-auto" />
-                                <p className="font-medium">{t("link_done", { name: linked.name })}</p>
-                            </div>
-                        ) : (
-                            <>
-                                <div className="space-y-2">
-                                    <Label htmlFor="link-code">{t("link_codeFromGame")}</Label>
-                                    <div className="flex gap-2">
-                                        <Input id="link-code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="ABCD1234" />
-                                        <Button variant="outline" disabled={busy || code.trim().length < 4} onClick={() => look(code)}>{t("link_look")}</Button>
+        <ArrangedClientPage
+            page="game-connect.link"
+            frame={{ title: t("link_title"), description: t("link_intro") }}
+            blocks={{
+                link: () => (
+                    <Card>
+                        <CardContent className="p-6 space-y-6">
+                                {status === "loading" ? (
+                                    <div className="flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
+                                ) : status !== "authenticated" ? (
+                                    <Link href={`/auth/login?callbackUrl=${encodeURIComponent(`/link${fromAddress ? `?code=${fromAddress}` : ""}`)}`} className={buttonClassName("default", "default", "w-full")}>
+                                        {t("link_signIn")}
+                                    </Link>
+                                ) : linked ? (
+                                    <div className="text-center space-y-2">
+                                        <CheckCircle className="w-8 h-8 text-success mx-auto" />
+                                        <p className="font-medium">{t("link_done", { name: linked.name })}</p>
                                     </div>
-                                </div>
-                                {preview && (
-                                    <div className="rounded-lg border border-border p-4 space-y-3">
-                                        <p className="text-sm">{t("link_preview", { name: preview.name, platform: gameName(preview.platform) })}</p>
-                                        <p className="text-xs text-muted-foreground">{t("link_previewWarn")}</p>
-                                        <Button className="w-full" disabled={busy} onClick={confirmLink}>
-                                            <Link2 className="w-4 h-4" /> {t("link_confirm", { name: preview.name })}
-                                        </Button>
-                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="link-code">{t("link_codeFromGame")}</Label>
+                                            <div className="flex gap-2">
+                                                <Input id="link-code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="ABCD1234" />
+                                                <Button variant="outline" disabled={busy || code.trim().length < 4} onClick={() => look(code)}>{t("link_look")}</Button>
+                                            </div>
+                                        </div>
+                                        {preview && (
+                                            <div className="rounded-lg border border-border p-4 space-y-3">
+                                                <p className="text-sm">{t("link_preview", { name: preview.name, platform: gameName(preview.platform) })}</p>
+                                                <p className="text-xs text-muted-foreground">{t("link_previewWarn")}</p>
+                                                <Button className="w-full" disabled={busy} onClick={confirmLink}>
+                                                    <Link2 className="w-4 h-4" /> {t("link_confirm", { name: preview.name })}
+                                                </Button>
+                                            </div>
+                                        )}
+                                        <div className="border-t border-border pt-4 space-y-2">
+                                            <p className="text-sm text-muted-foreground">{t("link_otherWay")}</p>
+                                            {made ? (
+                                                <p className="text-center">
+                                                    <code className="font-mono text-lg bg-muted px-3 py-1 rounded">/verify {made}</code>
+                                                </p>
+                                            ) : (
+                                                <Button variant="outline" className="w-full" disabled={busy} onClick={makeCode}>{t("link_makeCode")}</Button>
+                                            )}
+                                        </div>
+                                    </>
                                 )}
-                                <div className="border-t border-border pt-4 space-y-2">
-                                    <p className="text-sm text-muted-foreground">{t("link_otherWay")}</p>
-                                    {made ? (
-                                        <p className="text-center">
-                                            <code className="font-mono text-lg bg-muted px-3 py-1 rounded">/verify {made}</code>
-                                        </p>
-                                    ) : (
-                                        <Button variant="outline" className="w-full" disabled={busy} onClick={makeCode}>{t("link_makeCode")}</Button>
-                                    )}
-                                </div>
-                            </>
-                        )}
-                        {error && <p role="alert" className="text-sm text-destructive text-center">{error}</p>}
-                </CardContent>
-            </Card>
-        </PageFrame>
+                                {error && <p role="alert" className="text-sm text-destructive text-center">{error}</p>}
+                        </CardContent>
+                    </Card>
+                ),
+            }}
+        />
     );
 }

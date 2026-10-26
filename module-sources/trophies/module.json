@@ -2,8 +2,8 @@
   "id": "trophies",
   "name": "Trophies",
   "description": "Achievement badges with rule-based auto-award engine",
-  "version": "1.7.1",
-  "coreVersion": "^5.0.0",
+  "version": "1.9.0",
+  "coreVersion": "^5.30.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Trophy",
@@ -89,7 +89,8 @@
       "label": "Trophies",
       "labelKey": "trophies",
       "href": "/trophies",
-      "section": "quick"
+      "section": "game",
+      "sectionLabelKey": "section_game"
     }
   ],
   "profileTabs": [
@@ -216,6 +217,9 @@
         "auditTrophyCreate": "Added a trophy",
         "auditTrophyUpdate": "Changed a trophy",
         "auditTrophyDelete": "Deleted a trophy"
+      },
+      "footer": {
+        "section_game": "Game"
       }
     },
     "tr": {
@@ -305,6 +309,9 @@
         "auditTrophyCreate": "Kupa eklendi",
         "auditTrophyUpdate": "Kupa değiştirildi",
         "auditTrophyDelete": "Kupa silindi"
+      },
+      "footer": {
+        "section_game": "Oyun"
       }
     },
     "az": {
@@ -394,6 +401,9 @@
         "auditTrophyCreate": "Trofey əlavə etdi",
         "auditTrophyUpdate": "Trofeyi dəyişdi",
         "auditTrophyDelete": "Trofeyi sildi"
+      },
+      "footer": {
+        "section_game": "Oyun"
       }
     },
     "de": {
@@ -483,6 +493,9 @@
         "auditTrophyCreate": "Trophäe hinzugefügt",
         "auditTrophyUpdate": "Trophäe geändert",
         "auditTrophyDelete": "Trophäe gelöscht"
+      },
+      "footer": {
+        "section_game": "Spiel"
       }
     },
     "es": {
@@ -572,6 +585,9 @@
         "auditTrophyCreate": "Añadió un trofeo",
         "auditTrophyUpdate": "Cambió un trofeo",
         "auditTrophyDelete": "Eliminó un trofeo"
+      },
+      "footer": {
+        "section_game": "Juego"
       }
     },
     "et": {
@@ -661,6 +677,9 @@
         "auditTrophyCreate": "Lisas trofee",
         "auditTrophyUpdate": "Muutis trofeed",
         "auditTrophyDelete": "Kustutas trofee"
+      },
+      "footer": {
+        "section_game": "Mäng"
       }
     },
     "fr": {
@@ -750,6 +769,9 @@
         "auditTrophyCreate": "A ajouté un trophée",
         "auditTrophyUpdate": "A modifié un trophée",
         "auditTrophyDelete": "A supprimé un trophée"
+      },
+      "footer": {
+        "section_game": "Jeu"
       }
     },
     "it": {
@@ -839,6 +861,9 @@
         "auditTrophyCreate": "Ha aggiunto un trofeo",
         "auditTrophyUpdate": "Ha modificato un trofeo",
         "auditTrophyDelete": "Ha eliminato un trofeo"
+      },
+      "footer": {
+        "section_game": "Gioco"
       }
     },
     "pl": {
@@ -928,6 +953,9 @@
         "auditTrophyCreate": "Dodano trofeum",
         "auditTrophyUpdate": "Zmieniono trofeum",
         "auditTrophyDelete": "Usunięto trofeum"
+      },
+      "footer": {
+        "section_game": "Gra"
       }
     },
     "pt": {
@@ -1017,6 +1045,9 @@
         "auditTrophyCreate": "Adicionou um troféu",
         "auditTrophyUpdate": "Alterou um troféu",
         "auditTrophyDelete": "Excluiu um troféu"
+      },
+      "footer": {
+        "section_game": "Jogo"
       }
     },
     "ru": {
@@ -1106,6 +1137,9 @@
         "auditTrophyCreate": "Добавлен трофей",
         "auditTrophyUpdate": "Изменен трофей",
         "auditTrophyDelete": "Удален трофей"
+      },
+      "footer": {
+        "section_game": "Игра"
       }
     },
     "zh": {
@@ -1195,6 +1229,9 @@
         "auditTrophyCreate": "添加了一个奖杯",
         "auditTrophyUpdate": "更改了一个奖杯",
         "auditTrophyDelete": "删除了一个奖杯"
+      },
+      "footer": {
+        "section_game": "游戏"
       }
     }
   },
@@ -1210,6 +1247,35 @@
     {
       "action": "trophy.delete",
       "nameKey": "auditTrophyDelete"
+    }
+  ],
+  "pages": [
+    {
+      "id": "trophies",
+      "blocks": [
+        {
+          "id": "trophies",
+          "widths": [
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "1",
+            "cells": [
+              [
+                {
+                  "key": "trophies",
+                  "block": "trophies.trophies"
+                }
+              ]
+            ]
+          }
+        ]
+      }
     }
   ]
 }

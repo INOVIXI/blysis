@@ -14,7 +14,7 @@ import type { ComponentType, ReactNode } from "react";
  * here only works from another client boundary; RSC pages should either
  * omit `fallback` or wrap their server fallback in a Client Component.
  */
-export function ThemeComponentSlot<P extends Record<string, unknown>>({
+export function ThemeComponentSlot<P extends object>({
     name,
     fallback: Fallback,
     ...rest

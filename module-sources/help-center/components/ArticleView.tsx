@@ -5,7 +5,7 @@ import { RichContent } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { useTranslations } from "next-intl";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
-import { PageFrame } from "@/core/sdk/layout";
+import { ArrangedClientPage } from "@/core/sdk/layout";
 import { toast } from "sonner";
 import { writeError } from "@/core/sdk";
 
@@ -58,39 +58,20 @@ export function ArticleView({
     };
 
     return (
-        <PageFrame
-            title={article.title}
-            trail={[
-                { label: t("title"), href: "/help" },
-                { label: article.category.name, href: `/help/category/${article.category.slug}` },
-            ]}
-            sidebar={(
-                <nav aria-label={t("inThisCategory")} className="bg-card rounded-xl border border-border p-5">
-                    <h2 className="font-bold text-foreground mb-4">{t("inThisCategory")}</h2>
-                    <ul className="space-y-2">
-                            {neighbours.map((entry) => (
-                                <li key={entry.id}>
-                                    <Link
-                                        href={`/help/${entry.slug}`}
-                                        aria-current={entry.slug === slug ? "page" : undefined}
-                                        className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
-                                            entry.slug === slug
-                                                ? "bg-muted font-medium text-foreground"
-                                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                        }`}
-                                    >
-                                        {entry.title}
-                                    </Link>
-                                </li>
-                            ))}
-                    </ul>
-                </nav>
-            )}
-        >
-            {/* Nothing is loading and nothing is missing: the server answered
-                both questions before this rendered, and an article that is not
-                there is a 404 rather than a page saying so. */}
-            <div>
+        <ArrangedClientPage
+            page="help-center.article"
+            frame={{
+                title: article.title,
+                trail: [
+                    { label: t("title"), href: "/help" },
+                    { label: article.category.name, href: `/help/category/${article.category.slug}` },
+                ],
+            }}
+            // Nothing is loading and nothing is missing: the server answered
+            // both questions before this rendered, and an article that is not
+            // there is a 404 rather than a page saying so.
+            blocks={{
+                article: () => (
                     <div className="bg-card rounded-xl border border-border p-8">
                         <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6 pb-6 border-b">
                             <span>{t("articleCategory", { name: article.category.name })}</span>
@@ -139,15 +120,38 @@ export function ArticleView({
                         </div>
                         )}
                     </div>
-
-                    {/* Related */}
-                    <div className="mt-6 text-center">
+                ),
+                contact: () => (
+                    <div className="text-center">
                         <p className="text-muted-foreground mb-2">{t("stillNeedHelp")}</p>
                         <Link href="/support/new" className="text-primary hover:underline font-medium">
                             {t("createTicket")}
                         </Link>
                     </div>
-                </div>
-        </PageFrame>
+                ),
+                neighbours: () => (
+                    <nav aria-label={t("inThisCategory")} className="bg-card rounded-xl border border-border p-5">
+                        <h2 className="font-bold text-foreground mb-4">{t("inThisCategory")}</h2>
+                        <ul className="space-y-2">
+                                {neighbours.map((entry) => (
+                                    <li key={entry.id}>
+                                        <Link
+                                            href={`/help/${entry.slug}`}
+                                            aria-current={entry.slug === slug ? "page" : undefined}
+                                            className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
+                                                entry.slug === slug
+                                                    ? "bg-muted font-medium text-foreground"
+                                                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                            }`}
+                                        >
+                                            {entry.title}
+                                        </Link>
+                                    </li>
+                                ))}
+                        </ul>
+                    </nav>
+                ),
+            }}
+        />
     );
 }

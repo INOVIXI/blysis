@@ -114,7 +114,7 @@ function warnRedisFallback(reason: string): void {
     const now = Date.now();
     if (now - lastRedisFallbackWarnAt < 30_000) return;
     lastRedisFallbackWarnAt = now;
-    console.error(`[rate-limit] Redis unavailable (${reason}) - serving requests with in-memory fallback. Counts are NOT shared across workers.`);
+    log.error("[rate-limit] Redis unavailable, serving requests with the in-memory fallback. Counts are NOT shared across workers.", { reason });
 }
 
 /**
@@ -257,7 +257,7 @@ function getActiveBackend(): RateLimitBackend {
         const now = Date.now();
         if (now - prodMisconfigLoggedAt > 60_000) {
             prodMisconfigLoggedAt = now;
-            console.error(
+            log.error(
                 "[rate-limit] REDIS_URL is required in production. " +
                 "The in-memory backend resets on every restart - including the restart a " +
                 "module install performs - so limits are bypassable on demand. " +

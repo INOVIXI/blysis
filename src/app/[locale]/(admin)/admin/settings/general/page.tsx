@@ -237,7 +237,7 @@ export default function GeneralSettingsPage() {
             />
 
             <form id={FORM_ID} onSubmit={handleSave}>
-                <div className="grid lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {sections.map((section) => (
                         <Card key={section.titleKey}>
                             <CardHeader>

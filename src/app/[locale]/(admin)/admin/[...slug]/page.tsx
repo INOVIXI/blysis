@@ -7,6 +7,7 @@ import { matchModuleRoute } from "@/core/lib/route-matcher";
 import { getSession } from "@/core/lib/auth";
 import { canOpenAdminPage } from "@/core/lib/permissions";
 import { getLocale } from "next-intl/server";
+import { log } from "@/core/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +51,7 @@ export default async function DynamicAdminModulePage(props: PageProps) {
     const Component = ModuleAdminRegistry[match.key];
 
     if (!Component) {
-        console.error(`Module component not found in registry: ${match.key}`);
+        log.error("[module-admin-page] component not found in the registry", { page: match.key });
         notFound();
     }
 

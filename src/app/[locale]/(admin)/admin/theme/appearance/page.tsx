@@ -14,6 +14,7 @@ import { writeError } from "@/core/lib/write-result";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { NavIcon } from "@/core/components/ui/NavIcon";
 import { Link } from "@/core/lib/i18n/navigation";
+import { colorLabelKey } from "@/core/lib/theme-labels";
 
 /**
  * Active theme's appearance editor - color tokens + mode toggle.
@@ -162,7 +163,7 @@ export default function ActiveThemeAppearancePage() {
                 tall as the taller one; the right column lays its cards out
                 in a flex column and lets the last one take the slack, which
                 is what stops it ending a few pixels short of the swatches. */}
-            <div className="grid gap-6 mt-6 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 mt-6 xl:grid-cols-3">
                 <div className="xl:col-span-2 space-y-6">
                     {Object.keys(colorTokens).length > 0 && (
                         <Card>
@@ -171,12 +172,13 @@ export default function ActiveThemeAppearancePage() {
                                 <CardDescription>{t("theme_overrideDesc")}</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
                                     {Object.entries(colorTokens).map(([name, def]) => {
                                         const modeDefault = activeTheme.modes?.available?.[currentMode]?.tokens?.colors?.[name];
+                                        const labelKey = colorLabelKey(name, def.labelKey);
                                         const effectiveDef = {
                                             ...def,
-                                            label: def.label ?? name,
+                                            label: t.has(labelKey) ? t(labelKey) : def.label ?? name,
                                             default: modeDefault ?? def.default,
                                         };
                                         return (
@@ -234,7 +236,7 @@ export default function ActiveThemeAppearancePage() {
                                         className="flex items-center gap-3 rounded-lg border border-border px-3 py-2.5 text-sm hover:bg-muted transition-colors"
                                     >
                                         {group.icon && <NavIcon name={group.icon} className="w-4 h-4 text-muted-foreground" />}
-                                        <span className="flex-1 font-medium">{group.label}</span>
+                                        <span className="flex-1 font-medium">{group.labelKey && t.has(group.labelKey) ? t(group.labelKey) : group.label}</span>
                                         <span className="text-xs text-muted-foreground">
                                             {t("theme_groupFieldCount", { count: Object.keys(group.fields).length })}
                                         </span>
