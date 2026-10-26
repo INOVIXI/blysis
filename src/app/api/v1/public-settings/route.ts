@@ -44,6 +44,7 @@ const PUBLIC_KEYS = [
     // the editor, and the footer reads them when `footer_columns` is absent.
     "footer_about_text",
     "footer_columns",
+    "footer_hidden_links",
     "footer_quick_links",
     "footer_legal_links",
     "footer_copyright",

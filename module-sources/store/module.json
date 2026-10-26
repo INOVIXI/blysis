@@ -2,8 +2,8 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.51.0",
-  "coreVersion": "^5.26.0",
+  "version": "2.52.0",
+  "coreVersion": "^5.30.0",
   "category": "commerce",
   "author": "Blysis Team",
   "icon": "ShoppingBag",
@@ -1708,6 +1708,9 @@
         "product": "See what this product includes, what it costs and what you receive once the order is paid, then add it to your cart.",
         "orderSuccess": "Your order is complete: see what happens next, find it again in your order history or carry on shopping.",
         "vip": "Compare the VIP ranks side by side, see what each one unlocks and pick the one that suits you best."
+      },
+      "footer": {
+        "section_game": "Game"
       }
     },
     "tr": {
@@ -2545,6 +2548,9 @@
         "product": "Bu ürünün neleri kapsadığını, fiyatını ve ödeme tamamlandığında neler alacağınızı görün, sonra sepetinize ekleyin.",
         "orderSuccess": "Siparişiniz tamamlandı: sırada ne olduğunu görün, sipariş geçmişinizden tekrar bulun ya da alışverişe devam edin.",
         "vip": "VIP rütbelerini yan yana karşılaştırın, her birinin neleri açtığını görün ve size en uygun olanı seçin."
+      },
+      "footer": {
+        "section_game": "Oyun"
       }
     },
     "az": {
@@ -3382,6 +3388,9 @@
         "product": "Bu məhsulun nəyi əhatə etdiyini, nə qədər olduğunu və sifarişə ödəniş edildikdən sonra nə alacağınızı görün, sonra onu səbətinizə əlavə edin.",
         "orderSuccess": "Sifarişiniz tamamlandı: növbəti addımların nə olduğunu görün, onu sifariş tarixçənizdə yenidən tapın və ya alış-verişə davam edin.",
         "vip": "VIP rütbələrini yan-yana müqayisə edin, hər birinin nə açdığını görün və sizə ən uyğun olanı seçin."
+      },
+      "footer": {
+        "section_game": "Oyun"
       }
     },
     "de": {
@@ -4219,6 +4228,9 @@
         "product": "Sieh dir an, was dieses Produkt enthält, was es kostet und was du nach der Bezahlung erhältst, und leg es dann in deinen Warenkorb.",
         "orderSuccess": "Deine Bestellung ist abgeschlossen: Sieh nach, was als Nächstes passiert, finde sie in deinem Bestellverlauf wieder oder stöbere weiter im Shop.",
         "vip": "Vergleiche die VIP-Ränge nebeneinander, sieh, was jeder freischaltet, und wähle den, der am besten zu dir passt."
+      },
+      "footer": {
+        "section_game": "Spiel"
       }
     },
     "es": {
@@ -5056,6 +5068,9 @@
         "product": "Consulta qué incluye este producto, cuánto cuesta y qué recibirás una vez pagado el pedido, y después añádelo al carrito.",
         "orderSuccess": "Tu pedido está completo: mira qué pasa ahora, encuéntralo de nuevo en tu historial de pedidos o sigue comprando.",
         "vip": "Compara los rangos VIP lado a lado, mira qué desbloquea cada uno y elige el que mejor te convenga."
+      },
+      "footer": {
+        "section_game": "Juego"
       }
     },
     "et": {
@@ -5893,6 +5908,9 @@
         "product": "Vaata, mida see toode sisaldab, mis see maksab ja mida saad pärast tellimuse tasumist, ning lisa see seejärel ostukorvi.",
         "orderSuccess": "Sinu tellimus on tehtud: vaata, mis edasi saab, leia see tellimuste ajaloost uuesti üles või jätka ostlemist.",
         "vip": "Võrdle VIP-astmeid kõrvuti, vaata, mida iga aste avab, ja vali endale sobivaim."
+      },
+      "footer": {
+        "section_game": "Mäng"
       }
     },
     "fr": {
@@ -6730,6 +6748,9 @@
         "product": "Découvrez ce que comprend ce produit, son prix et ce que vous recevez une fois la commande réglée, puis ajoutez-le à votre panier.",
         "orderSuccess": "Votre commande est validée : découvrez la suite, retrouvez-la dans votre historique de commandes ou poursuivez vos achats.",
         "vip": "Comparez les rangs VIP côte à côte, découvrez ce que débloque chacun et choisissez celui qui vous convient le mieux."
+      },
+      "footer": {
+        "section_game": "Jeu"
       }
     },
     "it": {
@@ -7567,6 +7588,9 @@
         "product": "Scopri cosa comprende questo prodotto, quanto costa e cosa ricevi una volta pagato l’ordine, poi aggiungilo al carrello.",
         "orderSuccess": "Il tuo ordine è completato: scopri cosa succede ora, ritrovalo nello storico ordini o continua a fare acquisti.",
         "vip": "Confronta i rank VIP uno accanto all’altro, scopri cosa sblocca ciascuno e scegli quello più adatto a te."
+      },
+      "footer": {
+        "section_game": "Gioco"
       }
     },
     "pl": {
@@ -8404,6 +8428,9 @@
         "product": "Zobacz, co zawiera ten produkt, ile kosztuje i co dostaniesz po opłaceniu zamówienia, a potem dodaj go do koszyka.",
         "orderSuccess": "Zamówienie zostało zrealizowane: zobacz, co dalej, znajdź je w historii zamówień albo kontynuuj zakupy.",
         "vip": "Porównaj rangi VIP obok siebie, zobacz, co każda z nich odblokowuje, i wybierz tę, która najbardziej Ci odpowiada."
+      },
+      "footer": {
+        "section_game": "Gra"
       }
     },
     "pt": {
@@ -9241,6 +9268,9 @@
         "product": "Veja o que este produto inclui, quanto custa e o que você recebe depois que o pedido for pago, e então adicione-o ao carrinho.",
         "orderSuccess": "Seu pedido foi concluído: veja o que acontece agora, encontre-o novamente no histórico de pedidos ou continue comprando.",
         "vip": "Compare os cargos VIP lado a lado, veja o que cada um libera e escolha o que mais combina com você."
+      },
+      "footer": {
+        "section_game": "Jogo"
       }
     },
     "ru": {
@@ -10078,6 +10108,9 @@
         "product": "Посмотрите, что входит в этот товар, сколько он стоит и что вы получите после оплаты заказа, затем добавьте его в корзину.",
         "orderSuccess": "Заказ оформлен: узнайте, что будет дальше, найдите его в истории заказов или продолжайте покупки.",
         "vip": "Сравните VIP-ранги рядом, посмотрите, что открывает каждый из них, и выберите тот, который подходит вам лучше всего."
+      },
+      "footer": {
+        "section_game": "Игра"
       }
     },
     "zh": {
@@ -10915,6 +10948,9 @@
         "product": "了解此商品包含的内容、价格，以及订单付款后你将获得的东西，然后将其加入购物车。",
         "orderSuccess": "订单已完成：了解接下来会发生什么，可在订单历史中再次找到它，或继续购物。",
         "vip": "并排比较各个 VIP 等级，了解每个等级解锁的内容，选出最适合你的一个。"
+      },
+      "footer": {
+        "section_game": "游戏"
       }
     }
   },
@@ -11059,7 +11095,8 @@
       "label": "Store",
       "labelKey": "store",
       "href": "/store",
-      "section": "quick"
+      "section": "game",
+      "sectionLabelKey": "section_game"
     }
   ],
   "activityTitles": [

@@ -113,7 +113,7 @@ export default defineConfig({
             // provider and CI ran `npm test` without it.
             thresholds: {
                 statements: 91,
-                branches: 85,
+                branches: 86,
                 functions: 91,
                 lines: 92,
                 'src/core/lib/permissions.ts': {

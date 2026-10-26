@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-25",
-  "updatedAt": "2026-10-25T17:43:54Z",
+  "updated": "2026-10-26",
+  "updatedAt": "2026-10-26T10:34:40Z",
   "modules": [
     {
       "id": "announcements",
@@ -365,13 +365,13 @@
           "description": "新闻与公告系统"
         }
       },
-      "version": "1.13.2",
-      "coreVersion": "^5.26.0",
+      "version": "1.14.0",
+      "coreVersion": "^5.30.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-25T16:21:58Z",
+      "updatedAt": "2026-10-26T10:34:40Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -449,13 +449,13 @@
           "description": "版本说明与更新历史"
         }
       },
-      "version": "1.9.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.10.0",
+      "coreVersion": "^5.30.0",
       "author": "Blysis",
       "icon": "History",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-10-26T10:34:40Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2155,13 +2155,13 @@
           "description": "带分类、主题和回复的社区讨论论坛"
         }
       },
-      "version": "1.15.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.16.0",
+      "coreVersion": "^5.30.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-24T19:30:52Z",
+      "updatedAt": "2026-10-26T10:34:40Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2565,13 +2565,13 @@
           "description": "带分类和可搜索文章的知识库"
         }
       },
-      "version": "1.10.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.11.0",
+      "coreVersion": "^5.30.0",
       "author": "Blysis Team",
       "icon": "HelpCircle",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-10-26T10:34:40Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -5950,13 +5950,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.51.0",
-      "coreVersion": "^5.26.0",
+      "version": "2.52.0",
+      "coreVersion": "^5.30.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-25T17:43:54Z",
+      "updatedAt": "2026-10-26T10:34:40Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -6154,13 +6154,13 @@
           "description": "带投票功能的社区功能建议"
         }
       },
-      "version": "1.9.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.10.0",
+      "coreVersion": "^5.30.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-10-26T10:34:40Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -6311,13 +6311,13 @@
           "description": "带部门和优先级的客户支持工单系统"
         }
       },
-      "version": "1.9.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.10.0",
+      "coreVersion": "^5.30.0",
       "author": "Blysis Team",
       "icon": "Ticket",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-10-26T10:34:40Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -6466,13 +6466,13 @@
           "description": "基于规则自动颁发的成就徽章"
         }
       },
-      "version": "1.8.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.30.0",
       "author": "Blysis",
       "icon": "Trophy",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-10-26T10:34:40Z",
       "screenshots": [],
       "tags": [
         "community"

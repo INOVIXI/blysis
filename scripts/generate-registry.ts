@@ -355,7 +355,7 @@ export const ModuleBlocks: CatalogBlock[] = ${JSON.stringify(sortedBlocks, null,
     widgetRegistry += `export const ModuleWidgets: { id: string; label?: string; labelKey?: string; component: string; module: string; defaultOrder: number; defaultVisible: boolean }[] = ${JSON.stringify(allWidgets, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleNavLinks: { label: string; labelKey?: string; href: string; icon?: string; position?: number; module: string }[] = ${JSON.stringify(allNavLinks, null, 2)};\n\n`;
     widgetRegistry += `export const ModuleDemoUnsafe: { path: string; module: string }[] = ${JSON.stringify(allDemoUnsafe.sort((a, b) => a.path.localeCompare(b.path)), null, 2)};\n\n`;
-    widgetRegistry += `export const ModuleFooterLinks: { label: string; labelKey?: string; href: string; section?: string; module: string }[] = ${JSON.stringify(allFooterLinks, null, 2)};\n\n`;
+    widgetRegistry += `export const ModuleFooterLinks: { label: string; labelKey?: string; href: string; section?: string; sectionLabelKey?: string; module: string }[] = ${JSON.stringify(allFooterLinks, null, 2)};\n\n`;
     // The forms a challenge module may be switched on for. Core's own three
     // are added beside these in `challenge-points.ts`.
     widgetRegistry += `export const ModuleChallengePoints: { id: string; labelKey: string; module: string }[] = ${JSON.stringify(allChallengePoints, null, 2)};\n\n`;

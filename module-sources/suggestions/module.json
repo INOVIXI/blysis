@@ -2,8 +2,8 @@
   "id": "suggestions",
   "name": "Suggestions",
   "description": "Community feature suggestions with voting",
-  "version": "1.9.0",
-  "coreVersion": "^5.26.0",
+  "version": "1.10.0",
+  "coreVersion": "^5.30.0",
   "category": "community",
   "author": "Blysis",
   "icon": "MessageSquare",
@@ -196,6 +196,9 @@
       },
       "pageDescriptions": {
         "suggestions": "Read what members have suggested, vote for the ideas you want to see built and post an idea of your own."
+      },
+      "footer": {
+        "section_community": "Community"
       }
     },
     "tr": {
@@ -287,6 +290,9 @@
       },
       "pageDescriptions": {
         "suggestions": "Üyelerin önerilerini okuyun, hayata geçmesini istediğiniz fikirlere oy verin ve kendi önerinizi paylaşın."
+      },
+      "footer": {
+        "section_community": "Topluluk"
       }
     },
     "az": {
@@ -378,6 +384,9 @@
       },
       "pageDescriptions": {
         "suggestions": "Üzvlərin nə təklif etdiyini oxuyun, qurulmasını istədiyiniz ideyalara səs verin və öz ideyanızı paylaşın."
+      },
+      "footer": {
+        "section_community": "İcma"
       }
     },
     "de": {
@@ -469,6 +478,9 @@
       },
       "pageDescriptions": {
         "suggestions": "Lies, was Mitglieder vorgeschlagen haben, stimme für die Ideen ab, die du umgesetzt sehen willst, und reiche deine eigene Idee ein."
+      },
+      "footer": {
+        "section_community": "Community"
       }
     },
     "es": {
@@ -560,6 +572,9 @@
       },
       "pageDescriptions": {
         "suggestions": "Lee lo que han sugerido los miembros, vota las ideas que quieres ver hechas y publica una idea propia."
+      },
+      "footer": {
+        "section_community": "Comunidad"
       }
     },
     "et": {
@@ -651,6 +666,9 @@
       },
       "pageDescriptions": {
         "suggestions": "Loe, mida liikmed on soovitanud, hääleta ideede poolt, mida tahaksid näha valmis, ja postita oma idee."
+      },
+      "footer": {
+        "section_community": "Kogukond"
       }
     },
     "fr": {
@@ -742,6 +760,9 @@
       },
       "pageDescriptions": {
         "suggestions": "Découvrez les suggestions des membres, votez pour les idées que vous voulez voir réalisées et proposez la vôtre."
+      },
+      "footer": {
+        "section_community": "Communauté"
       }
     },
     "it": {
@@ -833,6 +854,9 @@
       },
       "pageDescriptions": {
         "suggestions": "Leggi cosa hanno suggerito i membri, vota le idee che vorresti vedere realizzate e pubblica una tua idea."
+      },
+      "footer": {
+        "section_community": "Comunità"
       }
     },
     "pl": {
@@ -924,6 +948,9 @@
       },
       "pageDescriptions": {
         "suggestions": "Przeczytaj, co zaproponowali członkowie, zagłosuj na pomysły, które chcesz zobaczyć zrealizowane, i dodaj własny."
+      },
+      "footer": {
+        "section_community": "Społeczność"
       }
     },
     "pt": {
@@ -1015,6 +1042,9 @@
       },
       "pageDescriptions": {
         "suggestions": "Veja o que os membros sugeriram, vote nas ideias que você quer ver criadas e publique uma ideia própria."
+      },
+      "footer": {
+        "section_community": "Comunidade"
       }
     },
     "ru": {
@@ -1106,6 +1136,9 @@
       },
       "pageDescriptions": {
         "suggestions": "Прочтите, что предложили участники, проголосуйте за идеи, которые хотите видеть, и предложите свою."
+      },
+      "footer": {
+        "section_community": "Сообщество"
       }
     },
     "zh": {
@@ -1197,6 +1230,9 @@
       },
       "pageDescriptions": {
         "suggestions": "浏览成员提出的建议，为你希望看到实现的想法投票，并发表你自己的想法。"
+      },
+      "footer": {
+        "section_community": "社区"
       }
     }
   },
@@ -1254,7 +1290,8 @@
       "label": "Suggestions",
       "labelKey": "suggestions",
       "href": "/suggestions",
-      "section": "quick"
+      "section": "community",
+      "sectionLabelKey": "section_community"
     }
   ],
   "activityTitles": [

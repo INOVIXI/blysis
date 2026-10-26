@@ -12,6 +12,13 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.30.0 - a module's footer link names its own section. `section` in a
+ * `footerLinks` entry is any lowercase word rather than `quick` or `legal`,
+ * and `sectionLabelKey` is a `footer` key the module ships for the column's
+ * name; a footer nobody arranged is drawn a column per such section. The
+ * operator can hide a link the site adds, by its address, in the
+ * `footer_hidden_links` setting, and `useFooter` leaves it out. Additive.
+ *
  * 5.29.0 - a theme draws its own footer. A theme names `Footer` in its
  * `components` and is handed `FooterProps` (the slot modules draw into its
  * top); it draws from `useFooter` (the operator's columns with the modules'
@@ -710,4 +717,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.29.0";
+export const CORE_API_VERSION = "5.30.0";

@@ -15,7 +15,7 @@ import { ModuleFooterLinks } from "@/core/generated/module-registry";
 import { useAllModules } from "@/core/providers/module-provider";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
 import { invalidateSettingsCache } from "@/core/hooks/useSiteSettings";
-import { drawnFooterColumns, legacyColumns, parseFooterColumns, type FooterColumn } from "@/core/lib/footer-columns";
+import { defaultFooterColumns, drawnFooterColumns, parseFooterColumns, parseHiddenLinks, type FooterColumn } from "@/core/lib/footer-columns";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { writeError } from "@/core/lib/write-result";
 import { FooterColumnCard, PlacedLinks, type DraftColumn } from "./FooterColumnCard";
@@ -29,8 +29,9 @@ import { FooterColumnCard, PlacedLinks, type DraftColumn } from "./FooterColumnC
  *
  * A column is now the operator's - its heading, its links, an icon each, and
  * the module section it adopts. An install arriving here for the first time
- * sees the two columns it already had, read from the old settings, so saving
- * is a change and opening the screen is not.
+ * sees the footer it is drawing, the old columns and one per module section,
+ * so saving is a change and opening the screen is not. What the site adds to
+ * a column the operator cannot edit here, but can hide, and show again.
  */
 
 function toDraft(column: FooterColumn): DraftColumn {
@@ -88,23 +89,25 @@ export default function FooterSettingsPage() {
     const moduleStatus = useAllModules();
 
     const [columns, setColumns] = useState<DraftColumn[]>([]);
+    const [hidden, setHidden] = useState<string[]>([]);
     const [about, setAbout] = useState("");
     const [copyright, setCopyright] = useState("");
     const [saving, setSaving] = useState(false);
 
+    const moduleLinks = ModuleFooterLinks.filter((fl) => isEnabledIn(moduleStatus, fl.module));
+
     const { loading, failed, retry } = useSettingsLoad((settings) => {
         setAbout(typeof settings.footer_about_text === "string" ? settings.footer_about_text : "");
         setCopyright(typeof settings.footer_copyright === "string" ? settings.footer_copyright : "");
+        setHidden(parseHiddenLinks(settings.footer_hidden_links));
         const saved = parseFooterColumns(settings.footer_columns);
-        // No override yet: show the two columns the footer is rendering now,
-        // so the operator edits real state rather than an empty screen that
+        // No override yet: show the columns the footer is rendering now, so
+        // the operator edits real state rather than an empty screen that
         // saving would turn into an empty footer.
         setColumns(
-            (saved ?? legacyColumns(settings.footer_quick_links, settings.footer_legal_links)).map(toDraft),
+            (saved ?? defaultFooterColumns(settings.footer_quick_links, settings.footer_legal_links, moduleLinks)).map(toDraft),
         );
     });
-
-    const moduleLinks = ModuleFooterLinks.filter((fl) => isEnabledIn(moduleStatus, fl.module));
 
     /** What the installed modules actually declare, offered as suggestions. */
     const sections = [...new Set(
@@ -124,6 +127,9 @@ export default function FooterSettingsPage() {
     });
     const placedIn = (index: number) =>
         (drawn[index]?.links ?? []).filter((link) => link.source !== "operator");
+    const hiddenSet = new Set(hidden);
+    const toggleHidden = (href: string) =>
+        setHidden(hiddenSet.has(href) ? hidden.filter((h) => h !== href) : [...hidden, href]);
 
     const save = async () => {
         setSaving(true);
@@ -133,6 +139,7 @@ export default function FooterSettingsPage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     footer_columns: columns.map(toSaved),
+                    footer_hidden_links: hidden,
                     footer_about_text: about,
                     footer_copyright: copyright,
                 }),
@@ -227,6 +234,8 @@ export default function FooterSettingsPage() {
                                     ? footerT(column.titleKey)
                                     : t("footer_columnTitlePlaceholder")}
                                 placed={placedIn(index)}
+                                hidden={hiddenSet}
+                                onToggleHidden={toggleHidden}
                                 onChange={(next) => setColumns(columns.map((c, i) => (i === index ? next : c)))}
                                 onRemove={() => setColumns(columns.filter((_, i) => i !== index))}
                                 onMove={(direction) => {
@@ -251,7 +260,7 @@ export default function FooterSettingsPage() {
                                         ? footerT(drawn[drawn.length - 1].titleKey as string)
                                         : t("footer_columnTitlePlaceholder")}
                                 </p>
-                                <PlacedLinks links={placedIn(drawn.length - 1)} />
+                                <PlacedLinks links={placedIn(drawn.length - 1)} hidden={hiddenSet} onToggle={toggleHidden} />
                             </CardContent>
                         </Card>
                     )}

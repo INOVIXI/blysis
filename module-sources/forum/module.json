@@ -2,8 +2,8 @@
   "id": "forum",
   "name": "Forum Module",
   "description": "Community discussion forum with categories, topics, and replies",
-  "version": "1.15.0",
-  "coreVersion": "^5.26.0",
+  "version": "1.16.0",
+  "coreVersion": "^5.30.0",
   "category": "community",
   "author": "Blysis Team",
   "icon": "MessageSquare",
@@ -421,6 +421,9 @@
         "forum": "Browse the discussion categories, see the newest topics and replies, and join the conversation with other members.",
         "topic": "Read the whole discussion, follow every reply in the order it was posted and add your own answer to the topic.",
         "newTopic": "Start a new discussion: pick a category, write your question or idea and post it for other members to reply to."
+      },
+      "footer": {
+        "section_community": "Community"
       }
     },
     "tr": {
@@ -614,6 +617,9 @@
         "forum": "Tartışma kategorilerine göz atın, en yeni konuları ve yanıtları görün, diğer üyelerle sohbete katılın.",
         "topic": "Tartışmanın tamamını okuyun, her yanıtı gönderildiği sırayla takip edin ve konuya kendi cevabınızı ekleyin.",
         "newTopic": "Yeni bir tartışma başlatın: kategori seçin, sorunuzu ya da fikrinizi yazın ve diğer üyelerin yanıtlaması için paylaşın."
+      },
+      "footer": {
+        "section_community": "Topluluk"
       }
     },
     "az": {
@@ -807,6 +813,9 @@
         "forum": "Müzakirə kateqoriyalarına baxın, ən yeni mövzu və cavabları görün və digər üzvlərlə söhbətə qoşulun.",
         "topic": "Bütün müzakirəni oxuyun, hər cavabı yazılma sırası ilə izləyin və mövzuya öz cavabınızı əlavə edin.",
         "newTopic": "Yeni müzakirə başlayın: kateqoriya seçin, sualınızı və ya fikrinizi yazın və digər üzvlərin cavab verməsi üçün paylaşın."
+      },
+      "footer": {
+        "section_community": "İcma"
       }
     },
     "de": {
@@ -1000,6 +1009,9 @@
         "forum": "Durchsuche die Diskussionskategorien, sieh dir die neuesten Themen und Antworten an und mische dich mit anderen Mitgliedern ins Gespräch.",
         "topic": "Lies die ganze Diskussion, verfolge jede Antwort in der Reihenfolge, in der sie geschrieben wurde, und gib deine eigene Antwort auf das Thema.",
         "newTopic": "Starte eine neue Diskussion: Wähle eine Kategorie, schreibe deine Frage oder Idee und veröffentliche sie, damit andere Mitglieder antworten können."
+      },
+      "footer": {
+        "section_community": "Community"
       }
     },
     "es": {
@@ -1193,6 +1205,9 @@
         "forum": "Explora las categorías de debate, mira los temas y respuestas más recientes y únete a la conversación con otros miembros.",
         "topic": "Lee todo el debate, sigue cada respuesta en el orden en que se publicó y añade tu propia respuesta al tema.",
         "newTopic": "Inicia un nuevo debate: elige una categoría, escribe tu pregunta o idea y publícala para que otros miembros puedan responder."
+      },
+      "footer": {
+        "section_community": "Comunidad"
       }
     },
     "et": {
@@ -1386,6 +1401,9 @@
         "forum": "Sirvi arutelukategooriaid, vaata uusimaid teemasid ja vastuseid ning liitu vestlusega teiste liikmetega.",
         "topic": "Loe kogu arutelu, jälgi iga vastust selles järjekorras, milles see postitati, ja lisa teemale oma vastus.",
         "newTopic": "Alusta uut arutelu: vali kategooria, kirjuta oma küsimus või idee ja postita see, et teised liikmed saaksid vastata."
+      },
+      "footer": {
+        "section_community": "Kogukond"
       }
     },
     "fr": {
@@ -1579,6 +1597,9 @@
         "forum": "Parcourez les catégories de discussion, consultez les derniers sujets et réponses, et rejoignez la conversation avec les autres membres.",
         "topic": "Lisez l’ensemble de la discussion, suivez chaque réponse dans l’ordre de publication et ajoutez votre propre réponse au sujet.",
         "newTopic": "Lancez une nouvelle discussion : choisissez une catégorie, rédigez votre question ou votre idée et publiez-la pour que les autres membres puissent répondre."
+      },
+      "footer": {
+        "section_community": "Communauté"
       }
     },
     "it": {
@@ -1772,6 +1793,9 @@
         "forum": "Sfoglia le categorie di discussione, leggi le discussioni e le risposte più recenti e partecipa alla conversazione con gli altri membri.",
         "topic": "Leggi l’intera discussione, segui ogni risposta nell’ordine in cui è stata pubblicata e aggiungi la tua risposta alla discussione.",
         "newTopic": "Avvia una nuova discussione: scegli una categoria, scrivi la tua domanda o idea e pubblicala perché gli altri membri possano rispondere."
+      },
+      "footer": {
+        "section_community": "Comunità"
       }
     },
     "pl": {
@@ -1965,6 +1989,9 @@
         "forum": "Przeglądaj kategorie dyskusji, zobacz najnowsze tematy i odpowiedzi oraz dołącz do rozmowy z innymi członkami.",
         "topic": "Przeczytaj całą dyskusję, śledź każdą odpowiedź w kolejności, w jakiej została napisana, i dodaj własną odpowiedź do tematu.",
         "newTopic": "Zacznij nową dyskusję: wybierz kategorię, napisz pytanie lub pomysł i opublikuj go, aby inni członkowie mogli odpowiedzieć."
+      },
+      "footer": {
+        "section_community": "Społeczność"
       }
     },
     "pt": {
@@ -2158,6 +2185,9 @@
         "forum": "Navegue pelas categorias de discussão, veja os tópicos e respostas mais recentes e participe da conversa com outros membros.",
         "topic": "Leia a discussão inteira, acompanhe cada resposta na ordem em que foi publicada e adicione sua própria resposta ao tópico.",
         "newTopic": "Inicie uma nova discussão: escolha uma categoria, escreva sua pergunta ou ideia e publique para que outros membros respondam."
+      },
+      "footer": {
+        "section_community": "Comunidade"
       }
     },
     "ru": {
@@ -2351,6 +2381,9 @@
         "forum": "Просматривайте категории обсуждений, читайте новые темы и ответы и присоединяйтесь к беседе с другими участниками.",
         "topic": "Читайте всё обсуждение, следите за каждым ответом в порядке публикации и добавляйте свой ответ в тему.",
         "newTopic": "Начните новое обсуждение: выберите категорию, напишите вопрос или идею и опубликуйте ее, чтобы другие участники могли ответить."
+      },
+      "footer": {
+        "section_community": "Сообщество"
       }
     },
     "zh": {
@@ -2544,6 +2577,9 @@
         "forum": "浏览讨论分类，查看最新的主题和回复，并与其他成员一起加入讨论。",
         "topic": "阅读完整讨论，按发布顺序查看每条回复，并在主题下添加你自己的回答。",
         "newTopic": "发起新讨论：选择分类，写下你的问题或想法并发布，供其他成员回复。"
+      },
+      "footer": {
+        "section_community": "社区"
       }
     }
   },
@@ -2636,7 +2672,8 @@
       "label": "Forum",
       "labelKey": "forum",
       "href": "/forum",
-      "section": "quick"
+      "section": "community",
+      "sectionLabelKey": "section_community"
     }
   ],
   "activityTitles": [

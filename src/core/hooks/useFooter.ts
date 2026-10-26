@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { serverConfig } from "@/core/config/server";
 import { ModuleFooterLinks } from "@/core/generated/module-registry";
 import { useSiteSettings } from "@/core/hooks/useSiteSettings";
-import { drawnFooterColumns, legacyColumns, parseFooterColumns, type FooterColumnLink } from "@/core/lib/footer-columns";
+import { defaultFooterColumns, drawnFooterColumns, parseFooterColumns, parseHiddenLinks, type FooterColumnLink } from "@/core/lib/footer-columns";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { useAllModules } from "@/core/providers/module-provider";
 
@@ -59,13 +59,15 @@ export function useFooter(): FooterContent {
     const { settings } = useSiteSettings();
 
     const enabledFooterLinks = ModuleFooterLinks.filter((fl) => isEnabledIn(moduleStatus, fl.module));
-    // An install that has never opened the footer editor keeps the two
-    // columns it had, read out of the settings that still hold them.
+    // An install that has never saved a footer is drawn the default one: the
+    // two columns it had, read out of the settings that still hold them, and
+    // a column for each section its modules name.
     const saved = parseFooterColumns(settings.footer_columns);
     const columns = drawnFooterColumns(
-        saved ?? legacyColumns(settings.footer_quick_links, settings.footer_legal_links),
+        saved ?? defaultFooterColumns(settings.footer_quick_links, settings.footer_legal_links, enabledFooterLinks),
         enabledFooterLinks,
         { home: commonT("home"), moduleLink: (key) => (navT.has(key) ? navT(key) : null) },
+        parseHiddenLinks(settings.footer_hidden_links),
     )
         // An empty column would leave a hole where a narrower footer belongs.
         .filter((column) => column.links.length > 0)

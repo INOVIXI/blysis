@@ -50,6 +50,8 @@ export interface FooterColumn {
 const MAX_COLUMNS = 6;
 const MAX_TITLE = 48;
 const MAX_ICON = 48;
+/** More than every module installed contributes, so the list cannot grow without end. */
+const MAX_HIDDEN = 100;
 
 /** The section the legacy legal column claimed, and still claims. */
 const LEGAL_SECTION = "legal";
@@ -136,8 +138,61 @@ export interface ModuleFooterLink {
     /** Where that name lives in the `nav` catalogue, where one was declared. */
     labelKey?: string | null;
     href: string;
+    /** The module's own word for where the link belongs: `community`, `help`. */
     section?: string | null;
+    /** Where that section's column name lives in the `footer` catalogue. */
+    sectionLabelKey?: string | null;
     icon?: string | null;
+}
+
+/**
+ * The footer of a site nobody has arranged: the two columns core always drew,
+ * read out of the settings that still hold them, then a column for every
+ * section the installed modules name and say what to call, in the order they
+ * first appear. Every module used to file its link under one section, so the
+ * footer was a single column of every page; grouped the way the modules say,
+ * it reads as a footer. A section that comes with no name has nothing to put
+ * over a column, and its links join the catch-all as before.
+ *
+ * The footer and its editor both start from this, so opening the editor and
+ * saving changes nothing a visitor sees.
+ */
+export function defaultFooterColumns(
+    quick: unknown,
+    legal: unknown,
+    moduleLinks: readonly ModuleFooterLink[],
+): FooterColumn[] {
+    const columns = legacyColumns(quick, legal);
+    for (const link of moduleLinks) {
+        const section = text(link.section, MAX_TITLE);
+        const titleKey = text(link.sectionLabelKey, MAX_TITLE);
+        if (!section || !titleKey || columns.some((column) => column.section === section)) continue;
+        if (columns.length >= MAX_COLUMNS) break;
+        columns.push({ title: null, titleKey, section, links: [] });
+    }
+    return columns;
+}
+
+/**
+ * The links an operator took out of the footer, by address. Only what the
+ * site adds is hidden by it, a module's link or the way home; an operator's
+ * own link is removed where it was written.
+ */
+export function parseHiddenLinks(raw: unknown): string[] {
+    let value = raw;
+    if (typeof value === "string") {
+        try {
+            value = JSON.parse(value);
+        } catch {
+            return [];
+        }
+    }
+    if (!Array.isArray(value)) return [];
+    return value
+        .filter((entry): entry is string => typeof entry === "string")
+        .map((entry) => entry.trim())
+        .filter((entry) => entry !== "")
+        .slice(0, MAX_HIDDEN);
 }
 
 /**
@@ -165,12 +220,19 @@ export function drawnFooterColumns(
     columns: FooterColumn[],
     moduleLinks: readonly ModuleFooterLink[],
     words: FooterWords,
+    hidden: readonly string[] = [],
 ): FooterColumn[] {
     const named = moduleLinks.map((link) => ({
         ...link,
         label: (link.labelKey ? words.moduleLink(link.labelKey) : null) ?? link.label,
     }));
-    return withHomeLink(placeModuleLinks(columns, named), words.home);
+    const drawn = withHomeLink(placeModuleLinks(columns, named), words.home);
+    if (hidden.length === 0) return drawn;
+    const left = new Set(hidden);
+    return drawn.map((column) => ({
+        ...column,
+        links: column.links.filter((link) => link.source === "operator" || !left.has(link.href)),
+    }));
 }
 
 /**
@@ -230,7 +292,12 @@ export function withHomeLink(columns: FooterColumn[], label: string): FooterColu
 
     if (base.some((column) => column.links.some((link) => link.href === "/"))) return base;
 
-    const home = base.find((column) => column.section === null) ?? base[0];
+    // The catch-all, unless it is empty and another column is not: the way
+    // home alone under "Quick Links" read as a column of its own.
+    const catchAll = base.find((column) => column.section === null);
+    const home = catchAll && catchAll.links.length > 0
+        ? catchAll
+        : base.find((column) => column.links.length > 0) ?? catchAll ?? base[0];
     home.links.unshift({ label, href: "/", external: false, icon: null, source: "home" });
     return base;
 }

@@ -334,11 +334,19 @@ const navLink = z.object({
     position: z.number().int().optional(),
 });
 
+/**
+ * A link a module puts in the site's footer. `section` is the module's own
+ * word for the column it belongs in; core keeps no list of them. Every module
+ * once said `quick`, and the footer was one column of every page.
+ * `sectionLabelKey` names, in the `footer` catalogue the module ships, what
+ * that column is called; a footer nobody arranged draws a column for it.
+ */
 const footerLink = z.object({
     label: z.string().min(1).max(100),
     labelKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/).optional(),
     href: routePath,
-    section: z.enum(["quick", "legal"]).optional(),
+    section: z.string().min(1).max(48).regex(/^[a-z][a-z0-9-]*$/, "a section is one lowercase word").optional(),
+    sectionLabelKey: z.string().min(1).max(48).regex(/^[a-zA-Z0-9_]+$/).optional(),
 });
 
 /**

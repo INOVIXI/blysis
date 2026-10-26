@@ -86,7 +86,7 @@ The template manifest enumerates every common UI registration so you can see all
 | `adminRoutes` | Admin pages → `/[locale]/admin/[path]` |
 | `api` | API handlers → `/api/v1/[path]` |
 | `menu` | Admin sidebar items |
-| `navLinks` / `footerLinks` | Public navbar and footer entries |
+| `navLinks` / `footerLinks` | Public navbar and footer entries; a footer link's `section` is the column it belongs in, one lowercase word other modules may share, and `sectionLabelKey` a `footer` key you ship for that column's name |
 | `navbarComponents` / `footerComponents` | Navbar right-side and footer components |
 | `layoutComponents` | Site-wide components with URL include/exclude filters |
 | `widgets` | Homepage sidebar widgets |

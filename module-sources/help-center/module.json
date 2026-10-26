@@ -2,8 +2,8 @@
   "id": "help-center",
   "name": "Help Center",
   "description": "Knowledge base with categories and searchable articles",
-  "version": "1.10.0",
-  "coreVersion": "^5.26.0",
+  "version": "1.11.0",
+  "coreVersion": "^5.30.0",
   "category": "management",
   "author": "Blysis Team",
   "icon": "HelpCircle",
@@ -241,6 +241,9 @@
         "help": "Search the knowledge base or browse the categories to find an answer, with the most read articles listed first.",
         "article": "Read this help article step by step, tell us whether it solved your problem and find the related guides.",
         "category": "Browse every help article filed in this category and open the guide that answers the question you arrived with."
+      },
+      "footer": {
+        "section_help": "Help"
       }
     },
     "tr": {
@@ -371,6 +374,9 @@
         "help": "Bilgi bankasında arama yapın ya da kategorilere göz atarak yanıt bulun; en çok okunan makaleler en başta listelenir.",
         "article": "Bu yardım makalesini adım adım okuyun, sorununuzu çözüp çözmediğini bize bildirin ve ilgili rehberleri bulun.",
         "category": "Bu kategoride toplanan tüm yardım makalelerine göz atın ve aklınızdaki soruyu yanıtlayan rehberi açın."
+      },
+      "footer": {
+        "section_help": "Yardım"
       }
     },
     "az": {
@@ -501,6 +507,9 @@
         "help": "Cavabı tapmaq üçün bilik bazasında axtarın və ya kateqoriyalara baxın; ən çox oxunan məqalələr birinci sırada göstərilir.",
         "article": "Bu yardım məqaləsini addım-addım oxuyun, problemin həll olunub-olunmadığını bizə bildirin və əlaqəli bələdçiləri tapın.",
         "category": "Bu kateqoriyaya aid bütün yardım məqalələrinə baxın və gətirdiyiniz sualı cavablandıran bələdçini açın."
+      },
+      "footer": {
+        "section_help": "Kömək"
       }
     },
     "de": {
@@ -631,6 +640,9 @@
         "help": "Durchsuche die Wissensdatenbank oder stöbere in den Kategorien, um eine Antwort zu finden. Die meistgelesenen Artikel stehen oben.",
         "article": "Lies diesen Hilfeartikel Schritt für Schritt, sag uns, ob er dein Problem gelöst hat, und finde die passenden Anleitungen.",
         "category": "Stöbere durch alle Hilfeartikel in dieser Kategorie und öffne die Anleitung, die deine Frage beantwortet."
+      },
+      "footer": {
+        "section_help": "Hilfe"
       }
     },
     "es": {
@@ -761,6 +773,9 @@
         "help": "Busca en la base de conocimiento o explora las categorías para encontrar una respuesta. Los artículos más leídos aparecen primero.",
         "article": "Lee este artículo de ayuda paso a paso, dinos si ha resuelto tu problema y encuentra las guías relacionadas.",
         "category": "Explora todos los artículos de ayuda de esta categoría y abre la guía que responda a la pregunta con la que has llegado."
+      },
+      "footer": {
+        "section_help": "Ayuda"
       }
     },
     "et": {
@@ -891,6 +906,9 @@
         "help": "Otsi teadmusbaasist või sirvi kategooriaid, et leida vastus. Kõige enam loetud artiklid on esimesed.",
         "article": "Loe seda abiartiklit samm-sammult, anna meile teada, kas see lahendas sinu probleemi, ja leia seotud juhendid.",
         "category": "Sirvi kõiki selles kategoorias olevaid abiartikleid ja ava juhend, mis vastab küsimusele, millega tulid."
+      },
+      "footer": {
+        "section_help": "Abi"
       }
     },
     "fr": {
@@ -1021,6 +1039,9 @@
         "help": "Recherchez dans la base de connaissances ou parcourez les catégories pour trouver une réponse. Les articles les plus lus sont affichés en premier.",
         "article": "Lisez cet article étape par étape, dites-nous s’il a résolu votre problème et découvrez les guides associés.",
         "category": "Parcourez tous les articles d’aide classés dans cette catégorie et ouvrez le guide qui répond à votre question."
+      },
+      "footer": {
+        "section_help": "Aide"
       }
     },
     "it": {
@@ -1151,6 +1172,9 @@
         "help": "Cerca nella base di conoscenza o sfoglia le categorie per trovare una risposta, con gli articoli più letti in cima.",
         "article": "Leggi questo articolo passo dopo passo, dicci se ha risolto il tuo problema e trova le guide correlate.",
         "category": "Sfoglia tutti gli articoli di aiuto di questa categoria e apri la guida che risponde alla domanda con cui sei arrivato."
+      },
+      "footer": {
+        "section_help": "Aiuto"
       }
     },
     "pl": {
@@ -1281,6 +1305,9 @@
         "help": "Przeszukaj bazę wiedzy albo przeglądaj kategorie, aby znaleźć odpowiedź. Najczęściej czytane artykuły są na początku.",
         "article": "Przeczytaj ten artykuł krok po kroku, daj nam znać, czy rozwiązał Twój problem, i znajdź powiązane poradniki.",
         "category": "Przeglądaj wszystkie artykuły pomocy z tej kategorii i otwórz poradnik, który odpowiada na Twoje pytanie."
+      },
+      "footer": {
+        "section_help": "Pomoc"
       }
     },
     "pt": {
@@ -1411,6 +1438,9 @@
         "help": "Pesquise na base de conhecimento ou navegue pelas categorias para encontrar uma resposta, com os artigos mais lidos listados primeiro.",
         "article": "Leia este artigo de ajuda passo a passo, diga se ele resolveu seu problema e encontre os guias relacionados.",
         "category": "Navegue por todos os artigos de ajuda desta categoria e abra o guia que responde à sua dúvida."
+      },
+      "footer": {
+        "section_help": "Ajuda"
       }
     },
     "ru": {
@@ -1541,6 +1571,9 @@
         "help": "Ищите ответ в базе знаний или просмотрите категории. Самые читаемые статьи показаны первыми.",
         "article": "Прочитайте эту статью по шагам, сообщите, решила ли она вашу проблему, и найдите связанные руководства.",
         "category": "Просмотрите все статьи этой категории и откройте руководство, которое отвечает на ваш вопрос."
+      },
+      "footer": {
+        "section_help": "Помощь"
       }
     },
     "zh": {
@@ -1671,6 +1704,9 @@
         "help": "搜索知识库或浏览分类以找到答案，阅读最多的文章排在最前。",
         "article": "按步骤阅读这篇帮助文章，告诉我们它是否解决了你的问题，并找到相关指南。",
         "category": "浏览归入此分类的所有帮助文章，打开能回答你问题的指南。"
+      },
+      "footer": {
+        "section_help": "帮助"
       }
     }
   },
@@ -1708,7 +1744,8 @@
       "label": "Help",
       "labelKey": "helpCenter",
       "href": "/help",
-      "section": "quick"
+      "section": "help",
+      "sectionLabelKey": "section_help"
     }
   ],
   "permissionResources": [

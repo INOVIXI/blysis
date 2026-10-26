@@ -21,11 +21,11 @@ const settingsBodySchema = z.record(settingKeySchema, z.unknown()).refine(
     { message: "Settings payload too large (max 100KB)" }
 );
 
-// Per-key max string length for public-facing settings. These values are
+// Per-key max length for public-facing settings. These values are
 // served to every visitor via /api/v1/public-settings, so a careless admin
 // (or a compromised account) could otherwise inflate the anonymous response
 // to tens of MB. Keys not listed here fall back to the 100KB overall cap.
-const PER_KEY_STRING_LIMITS: Record<string, number> = {
+const PER_KEY_LIMITS: Record<string, number> = {
     custom_css: 200_000,      // 200KB - stylesheets can be legitimately big
     site_name: 100,
     site_description: 500,
@@ -33,6 +33,7 @@ const PER_KEY_STRING_LIMITS: Record<string, number> = {
     site_discord_url: 500,
     footer_about_text: 2_000,
     footer_columns: 24_000,
+    footer_hidden_links: 8_000,
     footer_quick_links: 8_000,
     footer_legal_links: 8_000,
     footer_copyright: 300,
@@ -107,11 +108,15 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Pre-flight per-key string length cap. Enforced BEFORE any writes so a
+    // Pre-flight per-key length cap. Enforced BEFORE any writes so a
     // rejection doesn't leave the DB with a mix of accepted + rejected keys.
+    // A value that is not a string is measured as the JSON it is stored as:
+    // the footer editor saves arrays, and a cap read only off strings let
+    // them through unmeasured (`a-setting-s-limit-holds-whatever-shape-it-is-sent-in`).
     for (const [key, rawValue] of Object.entries(parsed.data)) {
-        const limit = PER_KEY_STRING_LIMITS[key];
-        if (typeof rawValue === "string" && limit !== undefined && rawValue.length > limit) {
+        const limit = PER_KEY_LIMITS[key];
+        const length = typeof rawValue === "string" ? rawValue.length : JSON.stringify(rawValue ?? null).length;
+        if (limit !== undefined && length > limit) {
             return NextResponse.json(
                 { error: `Setting "${key}" exceeds the ${limit}-character limit` },
                 { status: 400 },

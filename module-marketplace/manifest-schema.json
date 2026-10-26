@@ -555,10 +555,15 @@
           },
           "section": {
             "type": "string",
-            "enum": [
-              "quick",
-              "legal"
-            ]
+            "minLength": 1,
+            "maxLength": 48,
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "sectionLabelKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 48,
+            "pattern": "^[a-zA-Z0-9_]+$"
           }
         },
         "required": [
@@ -2392,6 +2397,27 @@
                   "shown",
                   "hidden"
                 ]
+              },
+              "heading": {
+                "type": "object",
+                "properties": {
+                  "kicker": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "description": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                },
+                "additionalProperties": false
               }
             },
             "required": [

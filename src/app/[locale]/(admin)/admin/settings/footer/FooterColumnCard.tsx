@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Eye, EyeOff, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/core/components/ui/button";
 import { Card, CardContent } from "@/core/components/ui/card";
@@ -43,6 +43,9 @@ interface FooterColumnCardProps {
     shippedTitle: string;
     /** What the site adds to this column, which is not the operator's to edit. */
     placed: readonly FooterColumnLink[];
+    /** The addresses of what the site adds that the operator hid. */
+    hidden: ReadonlySet<string>;
+    onToggleHidden: (href: string) => void;
     onChange: (column: DraftColumn) => void;
     onRemove: () => void;
     onMove: (direction: -1 | 1) => void;
@@ -55,6 +58,8 @@ export function FooterColumnCard({
     sections,
     shippedTitle,
     placed,
+    hidden,
+    onToggleHidden,
     onChange,
     onRemove,
     onMove,
@@ -166,7 +171,7 @@ export function FooterColumnCard({
                         <Plus className="w-4 h-4" aria-hidden="true" />
                         {t("footer_addLink")}
                     </Button>
-                    <PlacedLinks links={placed} />
+                    <PlacedLinks links={placed} hidden={hidden} onToggle={onToggleHidden} />
                 </div>
             </CardContent>
         </Card>
@@ -177,12 +182,18 @@ export function FooterColumnCard({
  * What lands in a column without the operator putting it there: the links an
  * installed module contributes, and the way home.
  *
- * Read-only on purpose. They are recomposed on every request from the module
- * registry, so a copy saved into the operator's own column would be a second
- * one - drawn twice, and frozen in whichever language the operator was
- * reading when they pressed Save.
+ * Not edited here, on purpose. They are recomposed on every request from the
+ * module registry, so a copy saved into the operator's own column would be a
+ * second one - drawn twice, and frozen in whichever language the operator was
+ * reading when they pressed Save. Each can be hidden, by its address, and
+ * shown again from the same line; without that a module's link could never
+ * leave the footer.
  */
-export function PlacedLinks({ links }: { links: readonly FooterColumnLink[] }) {
+export function PlacedLinks({ links, hidden, onToggle }: {
+    links: readonly FooterColumnLink[];
+    hidden: ReadonlySet<string>;
+    onToggle: (href: string) => void;
+}) {
     const t = useTranslations("admin");
     if (links.length === 0) return null;
     return (
@@ -192,8 +203,21 @@ export function PlacedLinks({ links }: { links: readonly FooterColumnLink[] }) {
                 {links.map((link) => (
                     <li key={`${link.source}-${link.href}`} className="flex items-center gap-2 text-sm text-muted-foreground">
                         <NavIcon name={link.icon} className="w-4 h-4 shrink-0" />
-                        <span>{link.label}</span>
+                        <span className={hidden.has(link.href) ? "line-through opacity-60" : undefined}>{link.label}</span>
                         <span className="text-xs opacity-70">{link.href}</span>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="ml-auto"
+                            aria-label={hidden.has(link.href)
+                                ? t("footer_showLink", { label: link.label })
+                                : t("footer_hideLink", { label: link.label })}
+                            onClick={() => onToggle(link.href)}
+                        >
+                            {hidden.has(link.href)
+                                ? <><Eye className="w-4 h-4" aria-hidden="true" /> {t("footer_show")}</>
+                                : <><EyeOff className="w-4 h-4" aria-hidden="true" /> {t("footer_hide")}</>}
+                        </Button>
                     </li>
                 ))}
             </ul>
