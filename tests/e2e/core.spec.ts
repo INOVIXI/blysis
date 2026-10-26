@@ -19,8 +19,10 @@ test.describe('Core Platform', () => {
         // Home link uses translated label ("Home" in EN, "Ana Sayfa" in TR)
         // and always has href="/"
         // Multiple Home links exist (mobile brand, desktop nav, footer) -
-        // assert that at least one visible Home link is present at desktop width.
-        const homeLink = page.locator('header nav[aria-label="Primary"] a[href="/en"], header nav[aria-label="Primary"] a[href="/"]').first();
+        // assert that at least one visible Home link is present at desktop width,
+        // in the primary navigation wherever the theme draws it: a bar across
+        // the top, or Vanguard's rail down the left edge.
+        const homeLink = page.locator('nav[aria-label="Primary"] a[href="/en"], nav[aria-label="Primary"] a[href="/"]').first();
         await expect(homeLink).toBeVisible();
     });
 

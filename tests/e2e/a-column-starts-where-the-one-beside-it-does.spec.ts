@@ -64,8 +64,19 @@ async function columnTops(page: import('@playwright/test').Page): Promise<Tops> 
             }
             return null;
         };
+        // A theme may stand the widgets beside what opens the page rather
+        // than beside the sections under it: Vanguard runs its sidebar down
+        // from the hero. Then the column beside the first widget begins with
+        // that opener, and the two are compared.
+        const main = document.querySelector('[data-sidebar-main]');
+        const side = document.querySelector('[data-sidebar]');
+        // The nearest box drawn before the layout; a hidden trail is not one.
+        let opener = document.querySelector('[data-sidebar-layout]')?.previousElementSibling ?? null;
+        while (opener && opener.getBoundingClientRect().height === 0) opener = opener.previousElementSibling;
+        const besideOpener = main && side && opener
+            && side.getBoundingClientRect().top < main.getBoundingClientRect().top - 1;
         return {
-            content: firstCard('[data-sidebar-main]'),
+            content: besideOpener && opener ? Math.round(opener.getBoundingClientRect().top) : firstCard('[data-sidebar-main]'),
             sidebar: firstCard('[data-sidebar]'),
         };
     });

@@ -19,10 +19,12 @@
  * menu inside the line hovered one the reader cannot.
  */
 import { test, expect } from '@playwright/test';
+import { skipUnlessTheThemeDrawsABar } from './helpers/bar';
 
 test('a menu on the bar stays open while the pointer moves into it', async ({ page }) => {
     await page.setViewportSize({ width: 1920, height: 900 });
     await page.goto('/tr', { waitUntil: 'load' });
+    await skipUnlessTheThemeDrawsABar(page);
     await page.locator('header nav').first().waitFor();
     // The fold is decided once the bar has been laid out.
     await page.waitForTimeout(1200);
