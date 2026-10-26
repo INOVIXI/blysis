@@ -1,5 +1,6 @@
 "use client";
 
+import { createContext, useContext } from "react";
 import { Link } from "@/core/sdk/navigation";
 import Image from "next/image";
 import { Newspaper } from "lucide-react";
@@ -51,13 +52,22 @@ export interface BlogCardArticle {
     category?: { name: string; slug: string } | null;
 }
 
+/**
+ * True inside the hidden outline that holds a news block's room. Its
+ * articles are empty and their links lead nowhere, and a link on screen is
+ * one Next.js fetches ahead: the outline asked for `/blog/1` on every load.
+ */
+export const OutlineContext = createContext(false);
+
 export function NewsCard({ post }: { post: BlogCardArticle }) {
+    const outline = useContext(OutlineContext);
     const formatLocalDate = useLocalDate();
     const date = post.publishedAt || post.createdAt;
 
     return (
         <Link
             href={`/blog/${post.number}/${post.slug}`}
+            prefetch={outline ? false : undefined}
             className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/40"
         >
             <div className="relative aspect-card overflow-hidden bg-muted">

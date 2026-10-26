@@ -966,13 +966,11 @@ html[data-mode="dark"] {
 }
 
 .kt-site [data-news-lead] h3 {
-  min-height: 0;
   font-size: 1.875rem;
   line-height: 1.15;
 }
 
 .kt-site [data-news-lead] h3 + p {
-  min-height: 0;
   color: color-mix(in srgb, var(--blysis-color-foreground) 80%, var(--blysis-color-mutedForeground));
   font-size: 1.0625rem;
   line-height: 1.6;

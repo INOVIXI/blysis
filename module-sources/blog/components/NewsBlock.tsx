@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useContext, useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Newspaper } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { Badge, BlockHeading, LoadFailed, Pagination, Waiting, buttonClassName, useBlockText, useLocalDate, type BlockProps } from "@/core/sdk/ui";
-import { NewsCard, type BlogCardArticle } from "./news-card";
+import { NewsCard, OutlineContext, type BlogCardArticle } from "./news-card";
 import { readingMinutes } from "../lib/reading-time";
 
 interface Article extends BlogCardArticle {
@@ -16,18 +16,14 @@ interface Article extends BlogCardArticle {
 /** Cards a grid page holds, and articles the featured shape shows. */
 const PER_PAGE = 4;
 
-/**
- * Room each shape holds from its first paint, so the page under it does not
- * move when the articles arrive. The grid is a heading over two rows of
- * cards, measured at 786px in the homepage's wide column; the featured shape
- * is as tall as its lead card, whose picture is a ratio and whose text is a
- * fixed number of lines. `a-section-keeps-the-room-it-reserves.spec.ts` asks
- * the block its height before and after.
- */
-const GRID_ROOM = "min-h-[786px]";
-
 function href(post: Article) {
     return `/blog/${post.number}/${post.slug}`;
+}
+
+/** A link to an article, which the outline's empty articles do not fetch ahead. */
+function ArticleLink({ post, className, children }: { post: Article; className: string; children: ReactNode }) {
+    const outline = useContext(OutlineContext);
+    return <Link href={href(post)} prefetch={outline ? false : undefined} className={className}>{children}</Link>;
 }
 
 function Picture({ post, sizes }: { post: Article; sizes: string }) {
@@ -57,11 +53,17 @@ function Lead({ post }: { post: Article }) {
                     {date ? <span data-news-separator aria-hidden="true"> · </span> : null}
                     {t("readingTime", { minutes: readingMinutes(post.content) })}
                 </p>
-                <h3 className="line-clamp-2 min-h-[3.5rem] text-xl font-bold leading-7 text-foreground">
-                    <Link href={href(post)} className="hover:text-primary">{post.title}</Link>
-                </h3>
-                <p className="line-clamp-3 min-h-[4.5rem] text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
-                <Link href={href(post)} className={`${buttonClassName("secondary", "default")} mt-auto self-start`}>{t("readMore")}</Link>
+                {/* Two lines of headline and three of summary, reserved on the
+                    pair as a news card does: the summary follows a short
+                    headline instead of starting below a hole, and the card
+                    is as tall whatever the article says. */}
+                <div className="flex min-h-[8.625rem] flex-col gap-2.5">
+                    <h3 className="line-clamp-2 text-xl font-bold leading-7 text-foreground">
+                        <ArticleLink post={post} className="hover:text-primary">{post.title}</ArticleLink>
+                    </h3>
+                    <p className="line-clamp-3 text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
+                </div>
+                <ArticleLink post={post} className={`${buttonClassName("secondary", "default")} mt-auto self-start`}>{t("readMore")}</ArticleLink>
             </div>
         </article>
     );
@@ -72,14 +74,16 @@ function Row({ post }: { post: Article }) {
     const formatDate = useLocalDate({ dateStyle: "long" });
     const date = post.publishedAt || post.createdAt;
     return (
-        <article data-news-row className="flex min-h-[7.5rem] overflow-hidden rounded-xl border border-border bg-card">
+        // Tall enough for a category, two lines of headline and the date, so
+        // a row is one height whichever of them an article has.
+        <article data-news-row className="flex min-h-[7.75rem] overflow-hidden rounded-xl border border-border bg-card">
             <div className="relative w-[7.5rem] shrink-0 bg-muted">
                 <Picture post={post} sizes="120px" />
             </div>
             <div className="flex min-w-0 flex-col justify-center gap-1.5 px-4 py-3">
                 {post.category ? <Badge tone="info" solid className="self-start">{post.category.name}</Badge> : null}
                 <h3 className="line-clamp-2 font-bold leading-6 text-foreground">
-                    <Link href={href(post)} className="hover:text-primary">{post.title}</Link>
+                    <ArticleLink post={post} className="hover:text-primary">{post.title}</ArticleLink>
                 </h3>
                 {date ? <p className="text-xs text-muted-foreground"><time data-news-date dateTime={new Date(date).toISOString()}>{formatDate(date)}</time></p> : null}
             </div>
@@ -100,20 +104,33 @@ function Featured({ posts }: { posts: Article[] }) {
     );
 }
 
-/** Four articles with nothing in them, to draw the featured shape's outline. */
-const OUTLINE: Article[] = [1, 2, 3, 4].map((n) => ({ id: `outline-${n}`, number: n, slug: "", title: "", excerpt: "", content: "", coverImage: null, publishedAt: null, category: null }));
+/**
+ * Four articles with nothing in them, to draw a shape's outline. They carry a
+ * date because a card keeps a line for one.
+ */
+const OUTLINE: Article[] = [1, 2, 3, 4].map((n) => ({ id: `outline-${n}`, number: n, slug: "", title: "", excerpt: "", content: "", coverImage: null, publishedAt: "2000-01-01T00:00:00.000Z", category: null }));
 
 /**
- * The featured shape's room while there is nothing to put in it: the shape
- * itself, drawn with empty articles and hidden, under whatever is shown
- * instead. The picture is a ratio of the box, so no single number is its
- * height; an outline of the real thing is right at every width.
+ * The room a shape holds from its first paint, so the page under it does not
+ * move when the articles arrive: the shape itself, drawn with empty articles
+ * and hidden, in the same grid cell as whatever is shown. A picture is a
+ * ratio of its box and a column folds at a width the theme decides, so no
+ * single number is the height; the grid once held a fixed 786px, measured in
+ * one theme's column, and stacked to 2056px in a narrower one. An outline of
+ * the real thing is right at every width, and sharing a cell rather than
+ * covering the outline lets a longer answer, one with pages, grow past it.
+ * `a-section-keeps-the-room-it-reserves.spec.ts` asks the block its height
+ * before and after.
  */
-function FeaturedRoom({ children }: { children: ReactNode }) {
+function Room({ outline, children }: { outline: ReactNode; children: ReactNode }) {
     return (
-        <div className="relative">
-            <div aria-hidden="true" className="invisible"><Featured posts={OUTLINE} /></div>
-            <div className="absolute inset-0 flex flex-col">{children}</div>
+        <div className="grid">
+            <div className="flex flex-col [grid-area:1/1]">{children}</div>
+            {/* After what is shown, so the first lead or date a page or a
+                theme looks for is a real one. */}
+            <div aria-hidden="true" className="invisible [grid-area:1/1]">
+                <OutlineContext.Provider value={true}>{outline}</OutlineContext.Provider>
+            </div>
         </div>
     );
 }
@@ -172,6 +189,7 @@ export function NewsBlock({ settings }: BlockProps) {
             ) : undefined}
         />
     );
+    const outline = featured ? <Featured posts={OUTLINE} /> : <Grid posts={OUTLINE} />;
     const waiting = <Waiting label={commonT("loading")} />;
     const empty = (
         <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card px-6 py-10 text-center">
@@ -187,23 +205,18 @@ export function NewsBlock({ settings }: BlockProps) {
             setReloadKey((k) => k + 1);
         };
         const shown = failed ? <LoadFailed onRetry={retry} /> : posts === null ? waiting : empty;
-        return featured ? (
+        return (
             <div>
                 {heading}
-                <FeaturedRoom>{shown}</FeaturedRoom>
-            </div>
-        ) : (
-            <div className={`${GRID_ROOM} flex flex-col`}>
-                {heading}
-                {shown}
+                <Room outline={outline}>{shown}</Room>
             </div>
         );
     }
 
     return (
-        <div className={featured ? undefined : GRID_ROOM}>
+        <div>
             {heading}
-            {featured ? <Featured posts={posts} /> : <Grid posts={posts} />}
+            <Room outline={outline}>{featured ? <Featured posts={posts} /> : <Grid posts={posts} />}</Room>
         </div>
     );
 }

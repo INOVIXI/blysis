@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-10-26",
-  "updatedAt": "2026-10-26T10:34:40Z",
+  "updatedAt": "2026-10-26T17:03:52Z",
   "modules": [
     {
       "id": "announcements",
@@ -365,13 +365,13 @@
           "description": "新闻与公告系统"
         }
       },
-      "version": "1.14.0",
+      "version": "1.14.1",
       "coreVersion": "^5.30.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-10-26T17:03:52Z",
       "screenshots": [],
       "tags": [
         "community"

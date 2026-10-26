@@ -16,7 +16,9 @@ import fs from "node:fs";
 import path from "node:path";
 
 vi.mock("@/core/sdk/navigation", () => ({
-    Link: ({ children, href, className }: { children: React.ReactNode; href: string; className?: string }) => <a href={href} className={className}>{children}</a>,
+    Link: ({ children, href, className, prefetch }: { children: React.ReactNode; href: string; className?: string; prefetch?: boolean }) => (
+        <a href={href} className={className} data-prefetch={prefetch === false ? "off" : undefined}>{children}</a>
+    ),
 }));
 vi.mock("next/image", () => ({ default: () => null }));
 vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams() }));
@@ -90,10 +92,29 @@ describe("the news block", () => {
 
     // The date is a time of its own, apart from the reading time beside it,
     // so a theme can set it on its own: Kite prints it on a postage stamp.
+    it("fetches ahead none of the links in the outline that holds its room", async () => {
+        // The outline's articles are empty, and Next.js fetches a link on
+        // screen ahead of a click, hidden or not: it asked for /blog/1 on
+        // every homepage load. The articles a reader sees are fetched ahead
+        // as any link is.
+        for (const variant of ["grid", "featured"]) {
+            const { container, unmount } = draw({ variant }, [1, 2, 3, 4].map(article));
+            await screen.findAllByText("Headline 1");
+            const hidden = [...container.querySelectorAll("[aria-hidden] a")];
+            const shown = [...container.querySelectorAll("a")].filter((a) => !a.closest("[aria-hidden]"));
+            expect(hidden.length, variant).toBeGreaterThan(0);
+            expect(hidden.every((a) => a.getAttribute("data-prefetch") === "off"), variant).toBe(true);
+            expect(shown.some((a) => a.getAttribute("data-prefetch") === "off"), variant).toBe(false);
+            unmount();
+        }
+    });
+
     it("gives each article's date a time of its own", async () => {
         draw({ variant: "featured" }, [1, 2].map(article));
         await screen.findByRole("heading", { level: 3, name: "Headline 1" });
-        const dates = document.querySelectorAll("time[data-news-date]");
+        // The outline that holds the block's room is hidden from readers, and
+        // carries dates of its own.
+        const dates = [...document.querySelectorAll("time[data-news-date]")].filter((d) => !d.closest("[aria-hidden]"));
         expect(Array.from(dates, (d) => [d.textContent, d.getAttribute("datetime")])).toEqual([
             ["October 24, 2026", "2026-10-24T10:00:00.000Z"],
             ["October 24, 2026", "2026-10-24T10:00:00.000Z"],

@@ -529,15 +529,6 @@ html {
   font-size: 1.0625rem;
 }
 
-/*
- * The lead article's summary follows its headline. The block keeps room for
- * two lines of each so its waiting outline matches; here the words close up
- * and the card is as tall as what it says.
- */
-.qr-site [data-news-lead] :is(h3, h3 + p) {
-  min-height: 0;
-}
-
 .qr-site [data-news-lead] h3 + p {
   color: color-mix(in srgb, var(--blysis-color-foreground) 45%, var(--blysis-color-mutedForeground));
   font-size: 0.9375rem;
