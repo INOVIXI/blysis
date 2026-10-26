@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, Replace, Search } from "lucide-react";
+import { Download, FileUp, Loader2, Replace, Search } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
@@ -211,9 +211,18 @@ export default function TranslationsPage() {
                 title={t("translations_title")}
                 description={t("translations_description", { count: total })}
                 actions={
-                    <Link href="/admin/translations/replace" className={buttonClassName("outline", "default")}>
-                        <Replace className="w-4 h-4" aria-hidden="true" /> {t("translations_replaceOpen")}
-                    </Link>
+                    <>
+                        <Link href="/admin/translations/replace" className={buttonClassName("outline", "default")}>
+                            <Replace className="w-4 h-4" aria-hidden="true" /> {t("translations_replaceOpen")}
+                        </Link>
+                        <Link href="/admin/translations/import" className={buttonClassName("outline", "default")}>
+                            <FileUp className="w-4 h-4" aria-hidden="true" /> {t("translations_importOpen")}
+                        </Link>
+                        {/* A file, not a page: the endpoint answers with an attachment. */}
+                        <a href="/api/v1/admin/translations/export" download className={buttonClassName("outline", "default")}>
+                            <Download className="w-4 h-4" aria-hidden="true" /> {t("translations_export")}
+                        </a>
+                    </>
                 }
             />
 

@@ -72,6 +72,7 @@ export const CORE_ADMIN_API: AdminApiRoute[] = [
     { path: "/v1/upload", permission: "admin.content" },
     { path: "/v1/admin/translations", permission: "admin.content" },
     { path: "/v1/admin/translations/flags", permission: "admin.content" },
+    { path: "/v1/admin/translations/import", permission: "admin.content" },
     { path: "/v1/admin/translations/history", permission: "admin.content" },
     { path: "/v1/admin/translations/replace", permission: "admin.content" },
 

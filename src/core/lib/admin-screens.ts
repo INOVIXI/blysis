@@ -55,6 +55,7 @@ export const CORE_ADMIN_SCREENS: AdminScreen[] = [
     { path: "/media", permission: "admin.content" },
     { path: "/translations", permission: "admin.content" },
     { path: "/translations/replace", permission: "admin.content" },
+    { path: "/translations/import", permission: "admin.content" },
     { path: "/revisions", permission: "admin.content" },
 
     // Acting on members, which is the job a moderator is given.

@@ -17,7 +17,7 @@ import { type EditOp, type Line, type LineRef, type LineRow, editOps, measureOf,
 /** What the `Revision` table files a string's versions under. */
 export const HISTORY_RESOURCE = "translation";
 
-const HISTORY_CAUSES = ["edit", "restore", "replace", "undo"] as const;
+const HISTORY_CAUSES = ["edit", "restore", "replace", "import", "undo"] as const;
 export type HistoryCause = (typeof HISTORY_CAUSES)[number];
 
 const snapshotSchema = z.object({

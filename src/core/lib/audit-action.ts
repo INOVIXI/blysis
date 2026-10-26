@@ -68,6 +68,7 @@ const CORE_AUDIT_NAMES: Record<string, string> = {
     "translation.edit": "auditTranslationEdit",
     "translation.revert": "auditTranslationRevert",
     "translation.replace": "auditTranslationReplace",
+    "translation.import": "auditTranslationImport",
     "translation.undo": "auditTranslationUndo",
     "translation.looked_at": "auditTranslationLookedAt",
     "user.account.deleted": "auditOwnAccountDeleted",

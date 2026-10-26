@@ -20,7 +20,7 @@ interface Version {
     id: string;
     createdAt: string;
     author: string | null;
-    cause: "edit" | "restore" | "replace" | "undo";
+    cause: "edit" | "restore" | "replace" | "import" | "undo";
     locales: Record<string, { value: string | null; isCustom: boolean }>;
 }
 
@@ -28,6 +28,7 @@ const CAUSES = {
     edit: "translations_historyEdit",
     restore: "translations_historyRestore",
     replace: "translations_historyReplace",
+    import: "translations_historyImport",
     undo: "translations_historyUndo",
 } as const;
 
