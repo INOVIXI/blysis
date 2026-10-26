@@ -12,6 +12,13 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.29.0 - a theme draws its own footer. A theme names `Footer` in its
+ * `components` and is handed `FooterProps` (the slot modules draw into its
+ * top); it draws from `useFooter` (the operator's columns with the modules'
+ * links placed, the about line, social links, the operator's copyright),
+ * `useLanguageChoice`, `useDarkMode`, and the `FooterLink`,
+ * `FooterModuleControls` and `FooterCredit` components. Additive.
+ *
  * 5.28.0 - a theme speaks in its own voice. The active theme's strings speak
  * over core's and every module's, under the site's own edits; a theme's
  * arrangement for a page may give its heading words (`heading`: a label, a
@@ -703,4 +710,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.28.0";
+export const CORE_API_VERSION = "5.29.0";

@@ -12,9 +12,11 @@ import { Cloud } from "./Sky";
  * evening as it goes down, and the footer is the night sky, opened by a row
  * of clouds. In the dark mode every one of those colours is the night's.
  *
- * The bar and the footer are core's, restyled in `theme.css` as Quarry's
- * are: the bar already folds the links that do not fit into a menu and
- * draws the phone menu, and a copy of it would have to keep up with both.
+ * The bar is core's, restyled in `theme.css` as Quarry's is: it already
+ * folds the links that do not fit into a menu and draws the phone menu, and
+ * a copy of it would have to keep up with both. The footer is Kite's own
+ * (named in the manifest, so core's `Footer` draws it), built from core's
+ * footer parts in the approved design's arrangement.
  */
 export default function SiteShell({ children }: SiteShellProps) {
     const pathname = usePathname();

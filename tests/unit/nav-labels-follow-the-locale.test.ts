@@ -168,7 +168,7 @@ describe("the renderers", () => {
         // The resolution moved into `drawnFooterColumns`, which the footer and
         // its editor both ask, so the screen an operator edits cannot call a
         // module's link something the site does not.
-        const src = read("src/core/components/layout/Footer.tsx");
+        const src = read("src/core/hooks/useFooter.ts");
         expect(src).toContain("moduleLink: (key) => (navT.has(key) ? navT(key) : null)");
     });
 

@@ -151,7 +151,7 @@ describe("the composition itself", () => {
 
 describe("the two screens that draw it", () => {
     it("both ask the one function", () => {
-        expect(read("src/core/components/layout/Footer.tsx")).toContain("drawnFooterColumns");
+        expect(read("src/core/hooks/useFooter.ts")).toContain("drawnFooterColumns");
         expect(read("src/app/[locale]/(admin)/admin/settings/footer/page.tsx")).toContain("drawnFooterColumns");
     });
 

@@ -67,7 +67,7 @@ describe("keys read through useSiteSettings", () => {
 
     it("finds the components that read them", () => {
         const files = consumers().map((c) => c.file);
-        expect(files).toContain("src/core/components/layout/Footer.tsx");
+        expect(files).toContain("src/core/hooks/useFooter.ts");
         expect(files.length).toBeGreaterThan(1);
     });
 

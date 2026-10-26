@@ -247,9 +247,9 @@ html[data-mode="dark"] {
  * night, carries a scatter of stars, and its text and controls take the
  * night's colours. The row of clouds reaches both edges of the window; it is
  * drawn as a mask over the night's colour, so it is the same colour by
- * construction and never shows a seam.
+ * construction and never shows a seam. Measurements are the approved design's.
  */
-.kt-site > footer {
+.kt-foot {
   position: relative;
   margin-top: 90px;
   border-top: 0;
@@ -275,7 +275,7 @@ html[data-mode="dark"] {
   --blysis-color-primaryForeground: var(--blysis-color-ink);
 }
 
-.kt-site > footer::before {
+.kt-foot::before {
   content: "";
   position: absolute;
   left: 0;
@@ -287,27 +287,189 @@ html[data-mode="dark"] {
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 90' preserveAspectRatio='none'%3E%3Cpath d='M0 90V60c60-30 120-30 170 0 40-40 110-46 160-8 50-38 130-34 170 6 50-30 110-30 160 0 40-34 110-40 160-4 50-30 120-28 170 4 50-36 130-36 180 0 60-26 120-22 170 4c34-30 76-32 100-2V90z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
 }
 
-.kt-site > footer h2 {
-  color: var(--blysis-color-sun);
-  font-size: 1.125rem;
+.kt-foot-in {
+  position: relative;
+  padding-top: 40px;
+  padding-bottom: 32px;
 }
 
-.kt-site > footer h2 button {
-  color: inherit;
+.kt-foot-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px 56px;
 }
 
-.kt-site > footer .text-lg {
+.kt-foot-brand {
+  flex: 2 1 300px;
+}
+
+.kt-foot-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
   font-family: var(--blysis-font-heading);
-  font-weight: 800;
-  font-size: 1.625rem;
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: color-mix(in srgb, var(--blysis-color-nightForeground), white 60%);
 }
 
-.kt-site > footer a:hover {
+.kt-foot-about {
+  margin: 16px 0 0;
+  max-width: 380px;
+  line-height: 1.6;
+}
+
+.kt-foot-mail {
+  display: inline-block;
+  margin-top: 12px;
+}
+
+.kt-foot-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  font-weight: 700;
+}
+
+.kt-foot-col {
+  flex: 1 1 140px;
+}
+
+.kt-foot-col h2 {
+  margin: 0 0 14px;
+  font-family: var(--blysis-font-heading);
+  font-weight: 600;
+  font-size: 1.125rem;
+  line-height: 1;
   color: var(--blysis-color-sun);
 }
 
-.kt-site > footer .border-t {
+.kt-foot-col ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kt-foot-col a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kt-foot a {
+  color: var(--blysis-color-nightForeground);
+}
+
+.kt-foot a:hover {
+  color: var(--blysis-color-sun);
+}
+
+.kt-foot-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 22px;
   border-top: 2px dashed var(--blysis-color-border);
+  font-size: 0.875rem;
+}
+
+.kt-foot-legal p {
+  margin: 0;
+}
+
+.kt-foot-credit {
+  margin-top: 4px;
+  font-size: 0.8125rem;
+}
+
+.kt-foot-credit a {
+  color: var(--blysis-color-sun);
+}
+
+.kt-foot-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.kt-foot-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kt-foot-lang > div {
+  width: auto;
+}
+
+.kt-foot-lang select {
+  min-height: 40px;
+  padding: 0 32px 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--blysis-color-muted);
+  color: color-mix(in srgb, var(--blysis-color-nightForeground), white 60%);
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.kt-foot [data-footer-control] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: var(--blysis-color-muted);
+  font-weight: 700;
+}
+
+/* A module with nothing to offer this visitor draws nothing; so does its box. */
+.kt-foot [data-footer-control]:empty {
+  display: none;
+}
+
+.kt-foot-social a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--blysis-color-muted);
+}
+
+.kt-foot-mode {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--blysis-color-muted);
+}
+
+.kt-foot-mode button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--blysis-color-nightForeground);
+  font-weight: 800;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.kt-foot-mode button[aria-pressed="true"] {
+  background: var(--blysis-color-sun);
+  color: var(--blysis-color-ink);
 }
 
 /* The drawings, coloured from the theme's tokens */

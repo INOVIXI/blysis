@@ -32,6 +32,22 @@ export type { NavLink, NavLinks } from "@/core/hooks/useNavLinks";
 /** The controls at the end of the bar, wherever a theme puts them. */
 export { NavbarActions } from "@/core/components/layout/NavbarActions";
 
+/**
+ * The parts of the footer, for a theme that names `Footer` in its manifest
+ * and draws its own: what it says, the language and the day or night a
+ * visitor picks, what modules put there, and who made the software.
+ */
+export type { FooterProps } from "@/core/components/layout/Footer";
+export { useFooter } from "@/core/hooks/useFooter";
+export type { FooterContent, FooterContentColumn, FooterSocialLink } from "@/core/hooks/useFooter";
+export type { FooterColumnLink } from "@/core/lib/footer-columns";
+export { useLanguageChoice } from "@/core/hooks/useLanguageChoice";
+export type { LanguageChoice } from "@/core/hooks/useLanguageChoice";
+export { useDarkMode } from "@/core/hooks/useDarkMode";
+export { FooterLink } from "@/core/components/layout/FooterLink";
+export { FooterModuleControls } from "@/core/components/layout/FooterModuleControls";
+export { FooterCredit } from "@/core/components/layout/FooterCredit";
+
 export { PageBreadcrumb } from "@/core/components/layout/PageBreadcrumb";
 export type { Crumb } from "@/core/components/layout/PageBreadcrumb";
 export { SiteName, SiteMark } from "@/core/components/ui/site-name";
