@@ -1626,13 +1626,13 @@
           "description": "首页侧边栏的 Discord 服务器小组件"
         }
       },
-      "version": "1.4.0",
+      "version": "1.4.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "integration",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-10-26T17:03:52Z",
       "screenshots": [],
       "tags": [
         "integration"
