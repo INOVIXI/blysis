@@ -10,6 +10,7 @@ import { matchModuleRouteOnce } from "@/core/lib/route-matcher";
 import { buildPageMeta } from "@/core/lib/seo";
 import { resolveRouteTitle, descriptionFromMessages } from "@/core/lib/route-title";
 import { getMessages } from "@/core/lib/i18n/translation-service";
+import { errorText, log } from "@/core/lib/logger";
 
 /**
  * Ask the module whether the URL names anything, when it declared a way to ask.
@@ -31,7 +32,7 @@ const routeExists = cache(async (key: string, params: Record<string, string | st
         const { default: resolve } = await load();
         return await resolve(params);
     } catch (err) {
-        console.error(`[route-resolver] ${key} failed`, err);
+        log.error("[route-resolver] the resolver failed", { resolver: key, error: errorText(err) });
         return true;
     }
 });
@@ -129,7 +130,7 @@ export default async function DynamicModulePage(props: PageProps) {
     const Component = ModuleRegistry[match.key];
 
     if (!Component) {
-        console.error(`Module component not found in registry: ${match.key}`);
+        log.error("[module-page] component not found in the registry", { page: match.key });
         notFound();
     }
 

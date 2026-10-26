@@ -16,6 +16,7 @@ import {
     doActionAsync,
     isBootstrapped,
     markBootstrapped,
+    setHookFailureReporter,
     type ActionListener,
     type FilterListener,
 } from "./hooks";
@@ -52,6 +53,7 @@ export async function ensureHooks(): Promise<void> {
 export async function bootstrapHooks(): Promise<void> {
     if (isBootstrapped()) return;
     markBootstrapped();
+    setHookFailureReporter((message, err) => log.error(message, { error: errorText(err) }));
 
     // Core listeners - activity feed, etc. (module-specific listeners live in their modules)
     try {

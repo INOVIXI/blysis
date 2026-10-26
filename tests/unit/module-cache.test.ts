@@ -28,6 +28,12 @@ vi.mock("@/core/lib/redis", () => ({ cacheGetJSON, cacheSetJSON, cacheDel }));
 const { resolveSettings } = vi.hoisted(() => ({ resolveSettings: vi.fn() }));
 vi.mock("@/core/lib/module-settings", () => ({ resolveSettings }));
 
+const { logWarn } = vi.hoisted(() => ({ logWarn: vi.fn() }));
+vi.mock("@/core/lib/logger", () => ({
+    errorText: (e: unknown) => (e instanceof Error ? e.message : String(e)),
+    log: { debug: vi.fn(), info: vi.fn(), warn: logWarn, error: vi.fn() },
+}));
+
 import {
     getModuleStates,
     isModuleEnabled,
@@ -35,15 +41,13 @@ import {
     moduleSettings,
 } from "@/core/lib/module-cache";
 
-let consoleWarn: ReturnType<typeof vi.spyOn>;
-
 beforeEach(() => {
     moduleConfig.findMany.mockReset().mockResolvedValue([]);
     cacheGetJSON.mockReset().mockResolvedValue(null);
     cacheSetJSON.mockReset().mockResolvedValue(undefined);
     cacheDel.mockReset().mockResolvedValue(undefined);
     resolveSettings.mockReset().mockImplementation((_id: string, stored: unknown) => ({ stored }));
-    consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => { });
+    logWarn.mockReset();
     vi.stubEnv("NODE_ENV", "test");
 });
 
@@ -109,7 +113,7 @@ describe("getModuleStates", () => {
         moduleConfig.findMany.mockRejectedValue(new Error("ECONNREFUSED"));
         await getModuleStates();
 
-        expect(consoleWarn).toHaveBeenCalled();
+        expect(logWarn).toHaveBeenCalled();
     });
 
     it("stays quiet in production, where this is expected during build", async () => {
@@ -118,7 +122,7 @@ describe("getModuleStates", () => {
 
         await getModuleStates();
 
-        expect(consoleWarn).not.toHaveBeenCalled();
+        expect(logWarn).not.toHaveBeenCalled();
     });
 
     it("serves a cached empty map instead of re-querying", async () => {
@@ -219,7 +223,7 @@ describe("moduleSettings", () => {
         moduleConfig.findMany.mockRejectedValue(new Error("ECONNREFUSED"));
 
         await expect(moduleSettings("shop")).resolves.toEqual({ stored: undefined });
-        expect(consoleWarn).toHaveBeenCalled();
+        expect(logWarn).toHaveBeenCalled();
         // Nothing partial is cached, so the next read tries the database again.
         expect(cacheSetJSON).not.toHaveBeenCalled();
     });
@@ -229,6 +233,6 @@ describe("moduleSettings", () => {
         moduleConfig.findMany.mockRejectedValue(new Error("ECONNREFUSED"));
 
         await expect(moduleSettings("shop")).resolves.toEqual({ stored: undefined });
-        expect(consoleWarn).not.toHaveBeenCalled();
+        expect(logWarn).not.toHaveBeenCalled();
     });
 });

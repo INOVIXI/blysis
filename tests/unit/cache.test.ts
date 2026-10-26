@@ -16,6 +16,12 @@ const { getRedisClient, isRedisConfigured } = vi.hoisted(() => ({
 
 vi.mock("@/core/lib/redis", () => ({ getRedisClient, isRedisConfigured }));
 
+const { logWarn } = vi.hoisted(() => ({ logWarn: vi.fn() }));
+vi.mock("@/core/lib/logger", () => ({
+    errorText: (e: unknown) => (e instanceof Error ? e.message : String(e)),
+    log: { debug: vi.fn(), info: vi.fn(), warn: logWarn, error: vi.fn() },
+}));
+
 type CacheModule = typeof import("@/core/lib/cache");
 
 interface FakeRedis {
@@ -35,12 +41,10 @@ function fakeRedis(over: Partial<FakeRedis> = {}): FakeRedis {
     } as FakeRedis;
 }
 
-let consoleWarn: ReturnType<typeof vi.spyOn>;
-
 beforeEach(() => {
     getRedisClient.mockReset().mockResolvedValue(null);
     isRedisConfigured.mockReset().mockReturnValue(false);
-    consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => { });
+    logWarn.mockReset();
     // The module arms a 60s sweep at import; fake timers keep it contained.
     vi.useFakeTimers();
     vi.resetModules();
@@ -305,8 +309,8 @@ describe("Redis degradation", () => {
         await RedisCacheBackend.get("b");
         await RedisCacheBackend.get("c");
 
-        expect(consoleWarn).toHaveBeenCalledTimes(1);
-        expect(String(consoleWarn.mock.calls[0]![0])).toContain("connection lost");
+        expect(logWarn).toHaveBeenCalledTimes(1);
+        expect(logWarn.mock.calls[0]![1]).toEqual({ error: "connection lost" });
     });
 
     it("stringifies a non-Error failure in the warning", async () => {
@@ -317,7 +321,7 @@ describe("Redis degradation", () => {
 
         await RedisCacheBackend.get("a");
 
-        expect(String(consoleWarn.mock.calls[0]![0])).toContain("socket hang up");
+        expect(logWarn.mock.calls[0]![1]).toEqual({ error: "socket hang up" });
     });
 });
 

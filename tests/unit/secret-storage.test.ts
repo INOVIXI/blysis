@@ -23,11 +23,17 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 const VALID_KEY = "a".repeat(64); // 64 hex chars = 32 bytes
 
+const { logWarn } = vi.hoisted(() => ({ logWarn: vi.fn() }));
+vi.mock("@/core/lib/logger", () => ({
+    log: { debug: vi.fn(), info: vi.fn(), warn: logWarn, error: vi.fn() },
+}));
+
 // Snapshot + restore env so cases don't leak into each other.
 let savedEnv: NodeJS.ProcessEnv;
 beforeEach(() => {
     savedEnv = { ...process.env };
     vi.resetModules();
+    logWarn.mockReset();
 });
 afterEach(() => {
     process.env = savedEnv;
@@ -136,7 +142,6 @@ describe("key resolution branches", () => {
     });
 
     it("dev fallback derives a stable key from DATABASE_URL when no env key", async () => {
-        const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
         const { encryptSecret, decryptSecret } = await loadWithEnv({
             SECRET_ENCRYPTION_KEY: undefined,
             NODE_ENV: "development",
@@ -144,7 +149,7 @@ describe("key resolution branches", () => {
         });
         const enc = encryptSecret("dev-secret");
         expect(decryptSecret(enc)).toBe("dev-secret");
-        expect(warnSpy).toHaveBeenCalled();
+        expect(logWarn).toHaveBeenCalled();
     });
 
     it("dev fallback throws when neither key nor DATABASE_URL is set", async () => {

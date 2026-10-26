@@ -24,6 +24,7 @@
 //   silent fallback from leaking through into a deploy.
 
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "crypto";
+import { log } from "@/core/lib/logger";
 
 const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 12; // GCM standard
@@ -63,7 +64,7 @@ function getKey(): Buffer {
     }
 
     if (!warnedDevFallback) {
-        console.warn(
+        log.warn(
             "[secret-storage] SECRET_ENCRYPTION_KEY is not set; deriving a key from DATABASE_URL for dev. " +
             "Set SECRET_ENCRYPTION_KEY before going to production."
         );

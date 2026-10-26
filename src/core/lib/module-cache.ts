@@ -5,6 +5,7 @@
 
 import { prisma } from "./db";
 import { cacheGetJSON, cacheSetJSON, cacheDel } from "./redis";
+import { errorText, log } from "./logger";
 import { resolveSettings, type SettingValue } from "./module-settings";
 
 const CACHE_KEY = "blysis:modules:status";
@@ -26,7 +27,7 @@ export async function getModuleStates(): Promise<Record<string, boolean>> {
         configs = await prisma.moduleConfig.findMany({ select: { id: true, enabled: true } });
     } catch (err) {
         if (process.env.NODE_ENV !== "production") {
-            console.warn("[module-cache] moduleConfig.findMany failed (returning empty):", err);
+            log.warn("[module-cache] moduleConfig.findMany failed, returning empty", { error: errorText(err) });
         }
         return {};
     }
@@ -81,7 +82,7 @@ async function getModuleConfigs(): Promise<Record<string, unknown>> {
         // stored config known", and every caller falls back to the manifest
         // defaults rather than failing the request.
         if (process.env.NODE_ENV !== "production") {
-            console.warn("[module-cache] moduleConfig.findMany failed (returning empty):", err);
+            log.warn("[module-cache] moduleConfig.findMany failed, returning empty", { error: errorText(err) });
         }
         return {};
     }

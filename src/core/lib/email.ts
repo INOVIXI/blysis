@@ -2,7 +2,7 @@ import { prisma } from "./db";
 import { resolveAppName, resolveAppUrl } from "./app-url";
 import { getEmailConfig } from "./email-config";
 import { resolveMailer } from "./mailer";
-import { log } from "./logger";
+import { errorText, log } from "./logger";
 import type { Locale } from "./i18n/config";
 
 /**
@@ -594,7 +594,7 @@ async function deliverViaProvider(opts: {
         return { ok: true };
     } catch (err) {
         const error = err instanceof Error ? err.message : String(err);
-        console.error("[email] delivery failed:", error);
+        log.error("[email] delivery failed", { error });
         return { ok: false, error };
     }
 }
@@ -632,7 +632,7 @@ export async function queueEmail(input: QueueEmailInput): Promise<string | null>
         });
         return job.id;
     } catch (err) {
-        console.error("[email] queueEmail failed:", err);
+        log.error("[email] queueEmail failed", { error: errorText(err) });
         return null;
     }
 }
