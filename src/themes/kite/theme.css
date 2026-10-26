@@ -193,8 +193,13 @@ html[data-mode="dark"] {
   min-height: 34px;
 }
 
-/* Words, not icons: the links are read as a row of names, each a soft pill. */
+/*
+ * Words, not icons: the links are read as a row of names, each a soft pill.
+ * At core's height: the line holds 32px, and a taller pill sat 1.4px below
+ * the menu that gathers what the line could not hold, which stands beside it.
+ */
 .kt-bar header :is(a[data-nav-item], [data-nav-item] > button) {
+  line-height: 20px;
   border-radius: 14px;
   padding-left: 14px;
   padding-right: 14px;
@@ -753,6 +758,17 @@ html[data-mode="dark"] {
   line-height: 1.1;
 }
 
+/*
+ * The sidebar's spacer is one of core's headings tall, so a widget card
+ * starts level with the cards beside it, as
+ * `a-column-starts-where-the-one-beside-it-does` holds. Kite's heading is
+ * taller, and taller again with a label over it, so when the column beside
+ * opens with one the spacer is as tall.
+ */
+.kt-site [data-sidebar-layout]:has(> [data-sidebar-main] > * > :first-child [data-block-heading] [data-kicker]) > [data-sidebar] > .blysis-heading-spacer {
+  height: calc(clamp(1.75rem, 3.2vw, 2.5rem) * 1.1 + 1.5rem);
+}
+
 /* A section's label in the brand colour, after a small kite. */
 .kt-site [data-kicker] {
   display: flex;
@@ -912,6 +928,19 @@ html[data-mode="dark"] {
   padding: 18px 10px 8px;
 }
 
+/*
+ * The room the section holds while it waits is the shape drawn with empty
+ * articles, so each card's words are given the most room they can take: a
+ * date line, two lines of headline, three of summary and the button on the
+ * lead; a category, two lines of headline and the date on a row. The words
+ * sit at the top and what they do not use gathers above the button.
+ * Otherwise the page moved when the news arrived, as
+ * `a-section-keeps-the-room-it-reserves` holds.
+ */
+.kt-site [data-news-lead] > div + div {
+  min-height: calc(26px + 1rem + 30px + 1.875rem * 1.15 * 2 + 1.0625rem * 1.6 * 3 + 40px);
+}
+
 .kt-site [data-news-lead] h3 {
   min-height: 0;
   font-size: 1.875rem;
@@ -923,6 +952,11 @@ html[data-mode="dark"] {
   color: color-mix(in srgb, var(--blysis-color-foreground) 80%, var(--blysis-color-mutedForeground));
   font-size: 1.0625rem;
   line-height: 1.6;
+}
+
+.kt-site [data-news-row] > div + div {
+  justify-content: flex-start;
+  min-height: calc(26px + (1rem + 10px) + 6px + 3rem + 6px);
 }
 
 .kt-site [data-news-row] h3 {

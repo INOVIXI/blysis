@@ -11,6 +11,12 @@
  *
  * The pointer is moved in small steps, as a hand moves it, so it passes
  * through every pixel of the way down rather than jumping over the strip.
+ *
+ * The menu tried is the first a reader can reach. A bar narrower than its
+ * links clips a menu that sits late in the line onto a second line nobody
+ * sees and makes it inert; what it holds is offered by the trailing menu
+ * outside the line instead. Kite's bar is such a bar, and taking the first
+ * menu inside the line hovered one the reader cannot.
  */
 import { test, expect } from '@playwright/test';
 
@@ -21,7 +27,7 @@ test('a menu on the bar stays open while the pointer moves into it', async ({ pa
     // The fold is decided once the bar has been laid out.
     await page.waitForTimeout(1200);
 
-    const triggers = page.locator('header nav[aria-label] > [data-nav-item] > button[aria-haspopup="menu"]');
+    const triggers = page.locator('header [data-nav-item]:not([inert]) > button[aria-haspopup="menu"]');
     // A site with no menu on the bar would pass this for nothing.
     expect(await triggers.count()).toBeGreaterThan(0);
 
