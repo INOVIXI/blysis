@@ -5,6 +5,7 @@
 - [Install Blysis](./user/install.md)
 - [Keep it running: updates, backups, logs](./user/running.md)
 - [Modules and themes](./user/modules-and-themes.md)
+- [Languages and the site's words](./user/languages-and-words.md)
 
 ---
 
