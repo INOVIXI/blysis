@@ -255,6 +255,7 @@
     "auditLog_userId": "ID utente",
     "backup_actions": "Azioni",
     "backup_automatedLabel": "Esegui backup automatici",
+    "backup_automatedPinned": "Il file .env di questo server imposta il backup automatico (BLYSIS_AUTOMATED_BACKUP), quindi non si può cambiare qui.",
     "backup_backupFailed": "Backup non riuscito",
     "backup_createNow": "Crea backup ora",
     "backup_created": "Creato",

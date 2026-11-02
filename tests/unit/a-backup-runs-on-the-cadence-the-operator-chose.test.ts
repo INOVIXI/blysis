@@ -71,6 +71,7 @@ beforeEach(() => {
     settings.clear();
     user = { id: "admin1", role: "admin" };
     admin = true;
+    vi.unstubAllEnvs();
 });
 
 const patch = (body: unknown) =>
@@ -181,5 +182,52 @@ describe("the screen that sets it", () => {
         admin = false;
         expect((await patch({ schedule: "every-hour" })).status).toBe(403);
         expect(await automatedBackupSchedule()).toBe("every-day");
+    });
+});
+
+describe("a switch the server fixed in .env", () => {
+    it("decides whether the job runs, whatever the row says", async () => {
+        await setAutomatedBackup({ enabled: true });
+        vi.stubEnv("BLYSIS_AUTOMATED_BACKUP", "off");
+        expect((await getAutomatedBackup()).enabled).toBe(false);
+
+        await setAutomatedBackup({ enabled: false });
+        vi.stubEnv("BLYSIS_AUTOMATED_BACKUP", "on");
+        expect((await getAutomatedBackup()).enabled).toBe(true);
+    });
+
+    it("is never written into the row, so removing it gives the screen its own answer back", async () => {
+        await setAutomatedBackup({ enabled: true });
+        vi.stubEnv("BLYSIS_AUTOMATED_BACKUP", "off");
+        await setAutomatedBackup({ keep: 5 });
+        expect(settings.get("automated_backup")).toEqual({ enabled: true, schedule: "every-day", keep: 5 });
+
+        vi.unstubAllEnvs();
+        expect((await getAutomatedBackup()).enabled).toBe(true);
+    });
+
+    it("is shown to the screen, and the screen cannot switch it", async () => {
+        vi.stubEnv("BLYSIS_AUTOMATED_BACKUP", "off");
+        const body = await (await GET()).json();
+        expect(body.automatedPinned).toBe(true);
+        expect(body.automated.enabled).toBe(false);
+
+        const res = await patch({ automated: true });
+        expect(res.status).toBe(409);
+        expect((await res.json()).code).toBe("automated_backup_pinned");
+        expect((await getAutomatedBackup()).enabled).toBe(false);
+    });
+
+    it("still lets the screen change the cadence and how many are kept", async () => {
+        vi.stubEnv("BLYSIS_AUTOMATED_BACKUP", "off");
+        expect((await patch({ schedule: "every-week", keep: 3 })).status).toBe(200);
+        expect(await automatedBackupSchedule()).toBe("every-week");
+        expect(await scheduledBackupsToKeep()).toBe(3);
+    });
+
+    it("is ignored when it names neither, so a typo leaves the backup on", async () => {
+        vi.stubEnv("BLYSIS_AUTOMATED_BACKUP", "of");
+        expect(await getAutomatedBackup()).toEqual(DEFAULT_AUTOMATED_BACKUP);
+        expect((await (await GET()).json()).automatedPinned).toBe(false);
     });
 });

@@ -255,6 +255,7 @@
     "auditLog_userId": "Kullanıcı Kimliği",
     "backup_actions": "İşlemler",
     "backup_automatedLabel": "Otomatik yedek al",
+    "backup_automatedPinned": "Otomatik yedeği bu sunucunun .env dosyası belirliyor (BLYSIS_AUTOMATED_BACKUP), bu yüzden burada açılıp kapatılamaz.",
     "backup_backupFailed": "Yedekleme başarısız",
     "backup_createNow": "Şimdi yedek oluştur",
     "backup_created": "Oluşturulma",

@@ -4,6 +4,7 @@ import { isAdmin } from "@/core/lib/permissions";
 import { createBackup, listBackups, formatBytes } from "@/core/lib/backup";
 import {
     AUTOMATED_BACKUP_SCHEDULES,
+    automatedBackupPin,
     getAutomatedBackup,
     setAutomatedBackup,
 } from "@/core/lib/backup-schedule";
@@ -67,6 +68,9 @@ export async function GET() {
             // The screen shows what the job is really set to, read from the
             // same place the job reads it rather than assumed.
             automated: await getAutomatedBackup(),
+            // True when `.env` decides the switch, so the screen shows the pin
+            // instead of a tick box that would do nothing.
+            automatedPinned: automatedBackupPin() !== null,
             // The cadences on offer travel with the answer, so the screen does
             // not keep a second copy of a list core owns.
             schedules: [...AUTOMATED_BACKUP_SCHEDULES],
@@ -164,6 +168,12 @@ export async function PATCH(request: NextRequest) {
     }
 
     const { automated, schedule, keep } = parsed.data;
+    if (automated !== undefined && automatedBackupPin() !== null) {
+        return NextResponse.json(
+            { error: "BLYSIS_AUTOMATED_BACKUP in .env decides the automated backup on this server.", code: "automated_backup_pinned" },
+            { status: 409 },
+        );
+    }
     const next = await setAutomatedBackup({
         ...(automated === undefined ? {} : { enabled: automated }),
         ...(schedule === undefined ? {} : { schedule }),
