@@ -255,6 +255,7 @@
     "auditLog_userId": "İstifadəçi ID-si",
     "backup_actions": "Əməliyyatlar",
     "backup_automatedLabel": "Avtomatik ehtiyat nüsxə",
+    "backup_automatedPinned": "Avtomatik ehtiyat nüsxəni bu serverin .env faylı müəyyən edir (BLYSIS_AUTOMATED_BACKUP), buna görə burada dəyişdirilə bilməz.",
     "backup_backupFailed": "Ehtiyat nüsxə alınmadı",
     "backup_createNow": "İndi ehtiyat nüsxə yarat",
     "backup_created": "Yaradılıb",

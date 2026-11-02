@@ -32,6 +32,21 @@ import { errorText, log } from "./logger";
 const AUTOMATED_BACKUP_SETTING_KEY = "automated_backup";
 
 /**
+ * `BLYSIS_AUTOMATED_BACKUP=off` (or `on`) in `.env` fixes the switch on this
+ * server, the way `BLYSIS_UPDATE_CHANNEL` fixes the update channel. A host that
+ * dumps the database from outside, or rebuilds it from scratch, needs the
+ * answer to live with the server rather than in a row a rebuild throws away.
+ * Any other value is ignored rather than read as a pin, so a typo leaves the
+ * screen in charge and the backup on.
+ */
+export function automatedBackupPin(): boolean | null {
+    const value = process.env.BLYSIS_AUTOMATED_BACKUP?.trim().toLowerCase();
+    if (value === "on") return true;
+    if (value === "off") return false;
+    return null;
+}
+
+/**
  * The cadences a backup may be put on.
  *
  * A subset of the scheduler's vocabulary, because the rest of it is measured
@@ -92,7 +107,7 @@ export function readAutomatedBackup(raw: unknown): AutomatedBackup {
     return { enabled, schedule: named ?? DEFAULT_AUTOMATED_BACKUP.schedule, keep };
 }
 
-export async function getAutomatedBackup(): Promise<AutomatedBackup> {
+async function getStoredAutomatedBackup(): Promise<AutomatedBackup> {
     try {
         const row = await prisma.setting.findUnique({ where: { key: AUTOMATED_BACKUP_SETTING_KEY } });
         return readAutomatedBackup(row?.value ?? null);
@@ -102,9 +117,20 @@ export async function getAutomatedBackup(): Promise<AutomatedBackup> {
     }
 }
 
-/** Writes the fields given and leaves the rest as they stand. */
+/** What the job runs on: the stored setting, with the server's pin over the switch. */
+export async function getAutomatedBackup(): Promise<AutomatedBackup> {
+    const stored = await getStoredAutomatedBackup();
+    const pin = automatedBackupPin();
+    return pin === null ? stored : { ...stored, enabled: pin };
+}
+
+/**
+ * Writes the fields given and leaves the rest as they stand. It merges onto
+ * the stored row, not the pinned answer, so changing the cadence on a pinned
+ * server never writes the pin into the database.
+ */
 export async function setAutomatedBackup(patch: Partial<AutomatedBackup>): Promise<AutomatedBackup> {
-    const current = await getAutomatedBackup();
+    const current = await getStoredAutomatedBackup();
     const next = readAutomatedBackup({ ...current, ...patch });
     const value = next as unknown as object;
     await prisma.setting.upsert({
@@ -112,7 +138,8 @@ export async function setAutomatedBackup(patch: Partial<AutomatedBackup>): Promi
         update: { value },
         create: { key: AUTOMATED_BACKUP_SETTING_KEY, value, module: "core" },
     });
-    return next;
+    const pin = automatedBackupPin();
+    return pin === null ? next : { ...next, enabled: pin };
 }
 
 export async function isAutomatedBackupEnabled(): Promise<boolean> {

@@ -255,6 +255,7 @@
     "auditLog_userId": "ID пользователя",
     "backup_actions": "Действия",
     "backup_automatedLabel": "Создавать резервные копии автоматически",
+    "backup_automatedPinned": "Автоматическое резервное копирование задано в .env этого сервера (BLYSIS_AUTOMATED_BACKUP), поэтому здесь его нельзя переключить.",
     "backup_backupFailed": "Не удалось создать резервную копию",
     "backup_createNow": "Создать резервную копию",
     "backup_created": "Создана",

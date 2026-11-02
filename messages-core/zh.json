@@ -255,6 +255,7 @@
     "auditLog_userId": "用户 ID",
     "backup_actions": "操作",
     "backup_automatedLabel": "自动备份",
+    "backup_automatedPinned": "此服务器的 .env 设置了自动备份（BLYSIS_AUTOMATED_BACKUP），因此无法在此处切换。",
     "backup_backupFailed": "备份失败",
     "backup_createNow": "立即创建备份",
     "backup_created": "创建时间",

@@ -255,6 +255,7 @@
     "auditLog_userId": "Kasutaja ID",
     "backup_actions": "Tegevused",
     "backup_automatedLabel": "Tee varukoopiad automaatselt",
+    "backup_automatedPinned": "Selle serveri .env määrab automaatse varunduse (BLYSIS_AUTOMATED_BACKUP), seega ei saa seda siin ümber lülitada.",
     "backup_backupFailed": "Varukoopia ebaõnnestus",
     "backup_createNow": "Loo varukoopia kohe",
     "backup_created": "Loodud",

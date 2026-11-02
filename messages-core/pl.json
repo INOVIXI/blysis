@@ -255,6 +255,7 @@
     "auditLog_userId": "ID użytkownika",
     "backup_actions": "Działania",
     "backup_automatedLabel": "Twórz kopie automatycznie",
+    "backup_automatedPinned": "Plik .env tego serwera ustala automatyczną kopię zapasową (BLYSIS_AUTOMATED_BACKUP), więc nie można jej tu przełączyć.",
     "backup_backupFailed": "Kopia zapasowa nie powiodła się",
     "backup_createNow": "Utwórz kopię teraz",
     "backup_created": "Utworzono",

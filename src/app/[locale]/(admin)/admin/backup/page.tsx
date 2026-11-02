@@ -19,7 +19,7 @@ import { downloadFromUrl } from "@/core/lib/download";
 import { Badge } from "@/core/components/ui/badge";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { errorMessage } from "@/core/lib/write-result";
-import { Database, Download, Trash2, RotateCcw, Loader2, RefreshCw, Plus, AlertTriangle } from "lucide-react";
+import { Database, Download, Trash2, RotateCcw, Loader2, RefreshCw, Plus, AlertTriangle, Lock } from "lucide-react";
 import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface BackupRow {
@@ -77,6 +77,7 @@ export default function BackupAdminPage() {
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [restoringId, setRestoringId] = useState<string | null>(null);
     const [automated, setAutomated] = useState(true);
+    const [automatedPinned, setAutomatedPinned] = useState(false);
     /*
      * How often, and how many to keep. Both used to be written into the
      * source beside the job - `every-day` at the registration and a constant
@@ -105,6 +106,7 @@ export default function BackupAdminPage() {
             const data = await res.json();
             setBackups(data.backups || []);
             setAutomated(data.automated?.enabled !== false);
+            setAutomatedPinned(data.automatedPinned === true);
             if (typeof data.automated?.schedule === "string") setSchedule(data.automated.schedule);
             if (typeof data.automated?.keep === "number") setKeep(data.automated.keep);
             if (Array.isArray(data.schedules)) setSchedules(data.schedules);
@@ -374,10 +376,15 @@ export default function BackupAdminPage() {
                         </div>
                         <CheckboxField
                             checked={automated}
-                            disabled={savingSchedule}
+                            disabled={savingSchedule || automatedPinned}
                             onChange={(e) => void toggleAutomated(e.target.checked)}
                             label={<span className="text-xs">{t("backup_automatedLabel")}</span>}
                         />
+                        {automatedPinned && (
+                            <p className="flex items-start gap-2 text-xs text-muted-foreground">
+                                <Lock className="w-4 h-4 shrink-0" /> {t("backup_automatedPinned")}
+                            </p>
+                        )}
                     </CardContent>
                 </Card>
             </div>
