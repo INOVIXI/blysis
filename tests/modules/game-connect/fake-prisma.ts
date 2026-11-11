@@ -2,8 +2,8 @@
  * An in-memory stand-in for the part of Prisma game-connect uses.
  *
  * It reads the same `where` objects the module writes: plain equality, `in`,
- * `lt`, `gt`, `gte`, `lte`, `not`, `equals` with `mode: "insensitive"`, `OR`
- * and `AND`. That is enough to test the queue's conditional writes as written,
+ * `lt`, `gt`, `gte`, `lte`, `not`, `equals` with `mode: "insensitive"`, `OR`,
+ * `AND` and `NOT`. That is enough to test the queue's conditional writes as written,
  * rather than as a mock that answers whatever the test expects.
  */
 import { vi } from "vitest";
@@ -47,6 +47,8 @@ export function matches(row: Row, where: Where | undefined): boolean {
             if (!(condition as Where[]).some((w) => matches(row, w))) return false;
         } else if (key === "AND") {
             if (!(condition as Where[]).every((w) => matches(row, w))) return false;
+        } else if (key === "NOT") {
+            if (matches(row, condition as Where)) return false;
         } else if (compound(row, key, condition)) {
             if (!matches(row, condition as Where)) return false;
         } else if (!compare(row[key], condition)) {

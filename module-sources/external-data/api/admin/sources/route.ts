@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, deleteContentTranslations, isAdmin, logActivity, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { DEFAULT_CONNECTION_KEY } from "../../../lib/connection";
 import { readExternalList } from "../../../lib/read";
-import { boundedSource, checkSourceDraft } from "../../../lib/source-draft";
+import { SOURCE_TEXT, SOURCE_TRANSLATED_FIELDS, boundedSource, checkSourceDraft } from "../../../lib/source-draft";
 
 /**
  * The sources an operator defines, and a way to find out whether one works.
@@ -53,7 +53,11 @@ export async function GET() {
         orderBy: { title: "asc" },
         take: 100,
     });
-    return NextResponse.json({ sources }, { headers: { "Cache-Control": "private, no-store" } });
+    // With every language of each title, for the editor's language boxes.
+    return NextResponse.json(
+        { sources: await attachContentTranslations(prisma, SOURCE_TEXT, sources) },
+        { headers: { "Cache-Control": "private, no-store" } },
+    );
 }
 
 export async function PUT(request: NextRequest) {
@@ -66,6 +70,8 @@ export async function PUT(request: NextRequest) {
     if (!parsed.success) {
         return NextResponse.json({ error: "Invalid input", code: "invalid_source" }, { status: 400 });
     }
+    const translations = contentTranslationsInput(body, SOURCE_TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error, code: "invalid_source" }, { status: 400 });
     const draft = parsed.data;
 
     const refusal = checkSourceDraft(draft);
@@ -98,9 +104,13 @@ export async function PUT(request: NextRequest) {
         isActive: draft.isActive,
     };
 
-    const source = draft.id
-        ? await prisma.externalSource.update({ where: { id: draft.id }, data })
-        : await prisma.externalSource.create({ data });
+    const source = await prisma.$transaction(async (tx) => {
+        const saved = draft.id
+            ? await tx.externalSource.update({ where: { id: draft.id }, data })
+            : await tx.externalSource.create({ data });
+        if (translations.value) await saveContentTranslations(tx, { ...SOURCE_TEXT, recordId: saved.id }, translations.value);
+        return saved;
+    });
 
     logActivity({
         userId: guard.session?.user?.id,
@@ -180,7 +190,11 @@ export async function DELETE(request: NextRequest) {
     const parsed = deleteSchema.safeParse(body);
     if (!parsed.success) return NextResponse.json({ error: "Invalid input" }, { status: 400 });
 
-    const gone = await prisma.externalSource.deleteMany({ where: { id: parsed.data.id } });
+    const gone = await prisma.$transaction(async (tx) => {
+        const result = await tx.externalSource.deleteMany({ where: { id: parsed.data.id } });
+        await deleteContentTranslations(tx, SOURCE_TEXT, [parsed.data.id]);
+        return result;
+    });
     if (gone.count === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     logActivity({

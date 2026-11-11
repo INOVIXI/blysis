@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cached, prisma } from "@/core/sdk/server";
+import { cached, prisma, translateContent } from "@/core/sdk/server";
 import { readExternalList } from "../../lib/read";
 import { DEFAULT_CONNECTION_KEY } from "../../lib/connection";
+import { SOURCE_TEXT } from "../../lib/source-draft";
 
 /**
  * GET /api/v1/external-data?slug=... - the list, as the other database has it.
@@ -12,7 +13,9 @@ import { DEFAULT_CONNECTION_KEY } from "../../lib/connection";
  *
  * The answer carries only the columns the source names. Nothing here says
  * which database it came from, and a failure says what kind it was and no
- * more; see lib/errors.ts.
+ * more; see lib/errors.ts. The title is the operator's and is in `?locale=`,
+ * the original where they wrote no translation; the language is in the
+ * address, so a cache keeps one answer per language.
  */
 export async function GET(request: NextRequest) {
     const slug = request.nextUrl.searchParams.get("slug");
@@ -53,8 +56,9 @@ export async function GET(request: NextRequest) {
         );
     }
 
+    const [titled] = await translateContent(prisma, SOURCE_TEXT, [source], ["title"], request.nextUrl.searchParams.get("locale") ?? "");
     return NextResponse.json(
-        { title: source.title, columns: source.columns, rows: answer.rows },
+        { title: titled.title, columns: source.columns, rows: answer.rows },
         { headers: { "Cache-Control": `public, max-age=${source.cacheSeconds}` } },
     );
 }
