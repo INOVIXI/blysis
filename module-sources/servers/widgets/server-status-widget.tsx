@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Copy, Server } from "lucide-react";
 import { copyText } from "@/core/sdk";
@@ -29,18 +29,20 @@ interface ServerRow {
  */
 export function ServerStatusWidget() {
     const t = useTranslations("servers");
+    // The names and descriptions in the page's language.
+    const locale = useLocale();
     const [servers, setServers] = useState<ServerRow[]>([]);
 
     useEffect(() => {
         let active = true;
-        fetch("/api/v1/servers/status")
+        fetch(`/api/v1/servers/status?locale=${encodeURIComponent(locale)}`)
             .then((r) => (r.ok ? r.json() : null))
             .then((d: { servers?: ServerRow[] } | null) => {
                 if (active && Array.isArray(d?.servers)) setServers(d.servers);
             })
             .catch(() => {});
         return () => { active = false; };
-    }, []);
+    }, [locale]);
 
     if (servers.length === 0) return null;
 

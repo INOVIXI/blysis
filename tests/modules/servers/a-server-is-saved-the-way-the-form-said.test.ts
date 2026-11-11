@@ -12,17 +12,24 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const written: { create: Record<string, unknown> | null; update: Record<string, unknown> | null } = { create: null, update: null };
 const body = { value: {} as Record<string, unknown> };
 
-vi.mock("@/core/sdk/server", () => ({
-    isAdmin: async () => true,
-    encryptSecret: (value: string) => value,
-    readJsonBody: async () => body.value,
-    prisma: {
+vi.mock("@/core/sdk/server", async () => {
+    const translations = await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations");
+    const prisma: Record<string, unknown> = {
         gameServer: {
             create: async (args: { data: Record<string, unknown> }) => { written.create = args.data; return { id: "s1" }; },
             update: async (args: { data: Record<string, unknown> }) => { written.update = args.data; return { id: "s1" }; },
         },
-    },
-}));
+    };
+    // A save is the row and its translations in one transaction.
+    prisma.$transaction = async (work: (tx: unknown) => Promise<unknown>) => work(prisma);
+    return {
+        ...translations,
+        isAdmin: async () => true,
+        encryptSecret: (value: string) => value,
+        readJsonBody: async () => body.value,
+        prisma,
+    };
+});
 vi.mock("@/core/sdk/auth", () => ({ auth: async () => ({ user: { id: "admin" } }) }));
 
 beforeEach(() => {

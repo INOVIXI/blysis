@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T21:01:50Z",
+  "updatedAt": "2026-11-11T21:04:34Z",
   "modules": [
     {
       "id": "announcements",
@@ -5420,13 +5420,13 @@
           "description": "游戏服务器管理、RCON 和状态监控"
         }
       },
-      "version": "1.11.0",
-      "coreVersion": "^5.27.0",
+      "version": "1.12.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Server",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-25T16:14:40Z",
+      "updatedAt": "2026-11-11T21:04:34Z",
       "screenshots": [],
       "tags": [
         "gaming"
