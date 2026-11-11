@@ -43,23 +43,29 @@ export default function NewTicketPage() {
     });
 
     useEffect(() => {
+        // An answer for a language the reader has left is dropped
+        // (a-late-response-does-not-win).
+        let cancelled = false;
         fetch(`/api/v1/tickets/departments?locale=${encodeURIComponent(locale)}`)
             .then((res) => res.json())
-            .then((data) => setDepartments(Array.isArray(data) ? data : data.departments || []))
+            .then((data) => { if (!cancelled) setDepartments(Array.isArray(data) ? data : data.departments || []); })
             .catch(console.error)
-            .finally(() => setDepartmentsLoaded(true));
+            .finally(() => { if (!cancelled) setDepartmentsLoaded(true); });
+        return () => { cancelled = true; };
     }, [locale]);
 
     // The ticket list carries the desk's states, which is the only place a
     // member can be told about one an operator wrote.
     useEffect(() => {
+        let cancelled = false;
         fetch(`/api/v1/tickets?locale=${encodeURIComponent(locale)}`)
             .then((res) => (res.ok ? res.json() : null))
-            .then((data) => { if (data?.states?.priorities?.length) setPriorities(data.states.priorities); })
+            .then((data) => { if (!cancelled && data?.states?.priorities?.length) setPriorities(data.states.priorities); })
             // The shipped four stand in, so a failure here narrows the
             // choice rather than emptying the control; the reason still goes
             // somewhere a developer can find it.
             .catch(console.error);
+        return () => { cancelled = true; };
     }, [locale]);
 
     const handleSubmit = async (e: React.FormEvent) => {
