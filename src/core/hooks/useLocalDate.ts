@@ -2,7 +2,7 @@
 
 import { useLocale, useTimeZone } from "next-intl";
 import { dateLocaleTag } from "@/core/lib/utils";
-import { formatDateTimeInZone, formatInZone } from "@/core/lib/format-date";
+import { formatDateTimeInZone, formatInZone, type DayOnlyOptions } from "@/core/lib/format-date";
 
 /**
  * A date formatter bound to the reader's language and the site's zone.
@@ -21,7 +21,7 @@ import { formatDateTimeInZone, formatInZone } from "@/core/lib/format-date";
  *   const fmt = useLocalDate();
  *   <span>{fmt(item.createdAt)}</span>
  */
-export function useLocalDate(options?: Intl.DateTimeFormatOptions) {
+export function useLocalDate(options?: DayOnlyOptions) {
     const locale = useLocale();
     const timeZone = useTimeZone();
     const tag = dateLocaleTag(locale);
