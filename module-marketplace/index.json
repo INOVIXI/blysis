@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-26",
-  "updatedAt": "2026-10-26T17:03:52Z",
+  "updated": "2026-11-11",
+  "updatedAt": "2026-11-11T14:51:21Z",
   "modules": [
     {
       "id": "announcements",
@@ -1237,13 +1237,13 @@
           "description": "支持多货币并自动换算"
         }
       },
-      "version": "1.6.2",
+      "version": "1.7.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "DollarSign",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-11-11T14:51:21Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -1260,7 +1260,7 @@
       "stats": {
         "publicRoutes": 0,
         "adminRoutes": 1,
-        "apiRoutes": 1,
+        "apiRoutes": 3,
         "widgets": 0
       }
     },

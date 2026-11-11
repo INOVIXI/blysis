@@ -7,6 +7,7 @@ import { Loader2, Plus, Trash2, Save, Star } from "lucide-react";
 import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/sdk/admin";
 import { errorMessage } from "@/core/sdk";
+import { RateSources } from "./RateSources";
 
 interface Currency {
     code: string;
@@ -262,6 +263,8 @@ export default function CurrencyAdminPage() {
                     </Button>
                 </CardContent>
             </Card>
+
+            <RateSources />
         </>
     );
 }
