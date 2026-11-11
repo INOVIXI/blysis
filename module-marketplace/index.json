@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-26",
-  "updatedAt": "2026-10-26T17:03:52Z",
+  "updated": "2026-11-11",
+  "updatedAt": "2026-11-11T11:55:28Z",
   "modules": [
     {
       "id": "announcements",
@@ -365,13 +365,13 @@
           "description": "新闻与公告系统"
         }
       },
-      "version": "1.14.1",
+      "version": "1.15.0",
       "coreVersion": "^5.30.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-26T17:03:52Z",
+      "updatedAt": "2026-11-11T11:55:28Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2155,13 +2155,13 @@
           "description": "带分类、主题和回复的社区讨论论坛"
         }
       },
-      "version": "1.16.0",
+      "version": "1.17.0",
       "coreVersion": "^5.30.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-11T11:55:28Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -3032,13 +3032,13 @@
           "description": "按购买、投票和活跃度排列的成员排名"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Trophy",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-24T12:46:38Z",
+      "updatedAt": "2026-11-11T11:55:28Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -3686,6 +3686,82 @@
         "publicRoutes": 0,
         "adminRoutes": 1,
         "apiRoutes": 1,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "minecraft-heads",
+      "name": "Minecraft Heads",
+      "description": "Draws a member who has no picture as the Minecraft head of the account with their username, from a public head service the operator picks. On an offline-mode server, names are not proven, so a member gets the skin of the premium account that holds their name, or initials when none does.",
+      "i18n": {
+        "az": {
+          "name": "Minecraft Başları",
+          "description": "Şəkli olmayan üzvü istifadəçi adı ilə eyni adlı Minecraft hesabının başı ilə göstərir; baş operatorun seçdiyi açıq xidmətdən gəlir. Offline rejimli serverlərdə adlar təsdiqlənmir, ona görə üzv həmin adı daşıyan premium hesabın skinini alır; belə hesab yoxdursa baş hərflər göstərilir."
+        },
+        "de": {
+          "name": "Minecraft-Köpfe",
+          "description": "Zeigt ein Mitglied ohne Bild als Minecraft-Kopf des Kontos mit seinem Benutzernamen, von einem öffentlichen Kopfdienst, den der Betreiber wählt. Auf einem Offline-Mode-Server sind Namen nicht bestätigt, daher bekommt ein Mitglied den Skin des Premium-Kontos mit diesem Namen, oder Initialen, wenn es keines gibt."
+        },
+        "es": {
+          "name": "Cabezas de Minecraft",
+          "description": "Muestra a un miembro sin imagen con la cabeza de Minecraft de la cuenta que tiene su nombre de usuario, desde un servicio público de cabezas que elige el operador. En un servidor en modo offline los nombres no están verificados, así que el miembro recibe la skin de la cuenta premium con ese nombre, o las iniciales si no existe."
+        },
+        "et": {
+          "name": "Minecrafti pead",
+          "description": "Näitab pildita liiget Minecrafti kontopea järgi, mille nimi on tema kasutajanimi, operaatori valitud avalikust peateenusest. Offline-režiimis serveris nimesid ei kinnitata, seega saab liige selle nimega premium-konto skini või initsiaalid, kui sellist kontot pole."
+        },
+        "fr": {
+          "name": "Têtes Minecraft",
+          "description": "Affiche un membre sans image avec la tête Minecraft du compte qui porte son nom d'utilisateur, depuis un service public de têtes choisi par l'opérateur. Sur un serveur en mode hors ligne, les noms ne sont pas vérifiés : le membre reçoit le skin du compte premium qui porte ce nom, ou ses initiales s'il n'y en a pas."
+        },
+        "it": {
+          "name": "Teste di Minecraft",
+          "description": "Mostra un membro senza immagine con la testa Minecraft dell'account che ha il suo nome utente, da un servizio pubblico di teste scelto dall'operatore. Su un server in modalità offline i nomi non sono verificati, quindi il membro riceve la skin dell'account premium con quel nome, o le iniziali se non esiste."
+        },
+        "pl": {
+          "name": "Głowy z Minecrafta",
+          "description": "Pokazuje członka bez zdjęcia jako głowę z Minecrafta konta o jego nazwie użytkownika, z publicznej usługi głów wybranej przez operatora. Na serwerze w trybie offline nazwy nie są potwierdzane, więc członek dostaje skin konta premium o tej nazwie albo inicjały, gdy takiego nie ma."
+        },
+        "pt": {
+          "name": "Cabeças de Minecraft",
+          "description": "Mostra um membro sem imagem com a cabeça de Minecraft da conta com o seu nome de utilizador, de um serviço público de cabeças escolhido pelo operador. Num servidor em modo offline os nomes não são verificados, por isso o membro recebe a skin da conta premium com esse nome, ou as iniciais se não existir."
+        },
+        "ru": {
+          "name": "Головы Minecraft",
+          "description": "Показывает участника без изображения головой Minecraft аккаунта с его именем пользователя, из публичного сервиса голов, который выбирает оператор. На сервере в офлайн-режиме имена не подтверждаются, поэтому участник получает скин премиум-аккаунта с этим именем, или инициалы, если такого нет."
+        },
+        "tr": {
+          "name": "Minecraft Kafaları",
+          "description": "Fotoğrafı olmayan bir üyeyi, kullanıcı adıyla aynı adlı Minecraft hesabının kafasıyla gösterir; kafa, yöneticinin seçtiği herkese açık bir servisten gelir. Offline mod sunucularda adlar doğrulanmadığı için üye, o adı taşıyan premium hesabın skinini alır; böyle bir hesap yoksa adın ilk harfleri gösterilir."
+        },
+        "zh": {
+          "name": "Minecraft 头像",
+          "description": "用公共头像服务（由站长选择）显示没有头像的成员：取与其用户名同名的 Minecraft 账号的头部。离线模式服务器不验证名称，因此成员会得到持有该名称的正版账号的皮肤；没有这样的账号时显示首字母。"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.33.0",
+      "author": "MrMirhan",
+      "icon": "UserRound",
+      "category": "integration",
+      "verified": true,
+      "updatedAt": "2026-11-11T11:55:28Z",
+      "screenshots": [],
+      "tags": [
+        "minecraft",
+        "avatars"
+      ],
+      "zip": "minecraft-heads.zip",
+      "dependencies": [],
+      "conflicts": [],
+      "hooks": {
+        "emits": [],
+        "listens": []
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 0,
+        "apiRoutes": 0,
         "widgets": 0
       }
     },
@@ -5109,13 +5185,13 @@
           "description": "通过推荐新用户赚取积分"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "UserPlus",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-11T11:55:28Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -5800,13 +5876,13 @@
           "description": "运营这里的人，以及管理他们的界面。"
         }
       },
-      "version": "1.7.1",
+      "version": "1.8.0",
       "coreVersion": "^5.25.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-26T17:03:52Z",
+      "updatedAt": "2026-11-11T11:55:28Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -6311,13 +6387,13 @@
           "description": "带部门和优先级的客户支持工单系统"
         }
       },
-      "version": "1.10.0",
+      "version": "1.11.0",
       "coreVersion": "^5.30.0",
       "author": "Blysis Team",
       "icon": "Ticket",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-11T11:55:28Z",
       "screenshots": [],
       "tags": [
         "management"

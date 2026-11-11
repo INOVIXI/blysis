@@ -2,7 +2,7 @@
   "id": "leaderboard",
   "name": "Leaderboard",
   "description": "Member rankings by purchases, votes and activity",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "coreVersion": "^5.26.0",
   "category": "community",
   "author": "Blysis",

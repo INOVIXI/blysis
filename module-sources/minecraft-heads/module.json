@@ -1,0 +1,166 @@
+{
+  "id": "minecraft-heads",
+  "name": "Minecraft Heads",
+  "description": "Draws a member who has no picture as the Minecraft head of the account with their username, from a public head service the operator picks. On an offline-mode server, names are not proven, so a member gets the skin of the premium account that holds their name, or initials when none does.",
+  "version": "1.0.0",
+  "coreVersion": "^5.33.0",
+  "category": "integration",
+  "author": "MrMirhan",
+  "icon": "UserRound",
+  "tags": [
+    "minecraft",
+    "avatars"
+  ],
+  "avatarProviders": [
+    {
+      "id": "minotar",
+      "labelKey": "avatarProvider_minecraftHeads_minotar",
+      "url": "https://minotar.net/helm/{name}/{size}"
+    },
+    {
+      "id": "mc-heads",
+      "labelKey": "avatarProvider_minecraftHeads_mcheads",
+      "url": "https://mc-heads.net/avatar/{name}/{size}"
+    },
+    {
+      "id": "mineskin",
+      "labelKey": "avatarProvider_minecraftHeads_mineskin",
+      "url": "https://mineskin.eu/helm/{name}/{size}"
+    },
+    {
+      "id": "cravatar",
+      "labelKey": "avatarProvider_minecraftHeads_cravatar",
+      "url": "https://cravatar.eu/helmavatar/{name}/{size}.png"
+    }
+  ],
+  "csp": {
+    "img-src": [
+      "https://cravatar.eu",
+      "https://mc-heads.net",
+      "https://mineskin.eu",
+      "https://minotar.net"
+    ]
+  },
+  "translations": {
+    "en": {
+      "admin": {
+        "module_minecraft-heads_name": "Minecraft Heads",
+        "module_minecraft-heads_description": "Draws a member who has no picture as the Minecraft head of the account with their username, from a public head service the operator picks. On an offline-mode server, names are not proven, so a member gets the skin of the premium account that holds their name, or initials when none does.",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    },
+    "tr": {
+      "admin": {
+        "module_minecraft-heads_name": "Minecraft Kafaları",
+        "module_minecraft-heads_description": "Fotoğrafı olmayan bir üyeyi, kullanıcı adıyla aynı adlı Minecraft hesabının kafasıyla gösterir; kafa, yöneticinin seçtiği herkese açık bir servisten gelir. Offline mod sunucularda adlar doğrulanmadığı için üye, o adı taşıyan premium hesabın skinini alır; böyle bir hesap yoksa adın ilk harfleri gösterilir.",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    },
+    "az": {
+      "admin": {
+        "module_minecraft-heads_name": "Minecraft Başları",
+        "module_minecraft-heads_description": "Şəkli olmayan üzvü istifadəçi adı ilə eyni adlı Minecraft hesabının başı ilə göstərir; baş operatorun seçdiyi açıq xidmətdən gəlir. Offline rejimli serverlərdə adlar təsdiqlənmir, ona görə üzv həmin adı daşıyan premium hesabın skinini alır; belə hesab yoxdursa baş hərflər göstərilir.",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    },
+    "de": {
+      "admin": {
+        "module_minecraft-heads_name": "Minecraft-Köpfe",
+        "module_minecraft-heads_description": "Zeigt ein Mitglied ohne Bild als Minecraft-Kopf des Kontos mit seinem Benutzernamen, von einem öffentlichen Kopfdienst, den der Betreiber wählt. Auf einem Offline-Mode-Server sind Namen nicht bestätigt, daher bekommt ein Mitglied den Skin des Premium-Kontos mit diesem Namen, oder Initialen, wenn es keines gibt.",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    },
+    "es": {
+      "admin": {
+        "module_minecraft-heads_name": "Cabezas de Minecraft",
+        "module_minecraft-heads_description": "Muestra a un miembro sin imagen con la cabeza de Minecraft de la cuenta que tiene su nombre de usuario, desde un servicio público de cabezas que elige el operador. En un servidor en modo offline los nombres no están verificados, así que el miembro recibe la skin de la cuenta premium con ese nombre, o las iniciales si no existe.",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    },
+    "et": {
+      "admin": {
+        "module_minecraft-heads_name": "Minecrafti pead",
+        "module_minecraft-heads_description": "Näitab pildita liiget Minecrafti kontopea järgi, mille nimi on tema kasutajanimi, operaatori valitud avalikust peateenusest. Offline-režiimis serveris nimesid ei kinnitata, seega saab liige selle nimega premium-konto skini või initsiaalid, kui sellist kontot pole.",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    },
+    "fr": {
+      "admin": {
+        "module_minecraft-heads_name": "Têtes Minecraft",
+        "module_minecraft-heads_description": "Affiche un membre sans image avec la tête Minecraft du compte qui porte son nom d'utilisateur, depuis un service public de têtes choisi par l'opérateur. Sur un serveur en mode hors ligne, les noms ne sont pas vérifiés : le membre reçoit le skin du compte premium qui porte ce nom, ou ses initiales s'il n'y en a pas.",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    },
+    "it": {
+      "admin": {
+        "module_minecraft-heads_name": "Teste di Minecraft",
+        "module_minecraft-heads_description": "Mostra un membro senza immagine con la testa Minecraft dell'account che ha il suo nome utente, da un servizio pubblico di teste scelto dall'operatore. Su un server in modalità offline i nomi non sono verificati, quindi il membro riceve la skin dell'account premium con quel nome, o le iniziali se non esiste.",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    },
+    "pl": {
+      "admin": {
+        "module_minecraft-heads_name": "Głowy z Minecrafta",
+        "module_minecraft-heads_description": "Pokazuje członka bez zdjęcia jako głowę z Minecrafta konta o jego nazwie użytkownika, z publicznej usługi głów wybranej przez operatora. Na serwerze w trybie offline nazwy nie są potwierdzane, więc członek dostaje skin konta premium o tej nazwie albo inicjały, gdy takiego nie ma.",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    },
+    "pt": {
+      "admin": {
+        "module_minecraft-heads_name": "Cabeças de Minecraft",
+        "module_minecraft-heads_description": "Mostra um membro sem imagem com a cabeça de Minecraft da conta com o seu nome de utilizador, de um serviço público de cabeças escolhido pelo operador. Num servidor em modo offline os nomes não são verificados, por isso o membro recebe a skin da conta premium com esse nome, ou as iniciais se não existir.",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    },
+    "ru": {
+      "admin": {
+        "module_minecraft-heads_name": "Головы Minecraft",
+        "module_minecraft-heads_description": "Показывает участника без изображения головой Minecraft аккаунта с его именем пользователя, из публичного сервиса голов, который выбирает оператор. На сервере в офлайн-режиме имена не подтверждаются, поэтому участник получает скин премиум-аккаунта с этим именем, или инициалы, если такого нет.",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    },
+    "zh": {
+      "admin": {
+        "module_minecraft-heads_name": "Minecraft 头像",
+        "module_minecraft-heads_description": "用公共头像服务（由站长选择）显示没有头像的成员：取与其用户名同名的 Minecraft 账号的头部。离线模式服务器不验证名称，因此成员会得到持有该名称的正版账号的皮肤；没有这样的账号时显示首字母。",
+        "avatarProvider_minecraftHeads_minotar": "Minotar",
+        "avatarProvider_minecraftHeads_mcheads": "MC-Heads",
+        "avatarProvider_minecraftHeads_mineskin": "Mineskin.eu",
+        "avatarProvider_minecraftHeads_cravatar": "Cravatar.eu"
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@ import type { ModuleSetting } from '../src/core/lib/module-types';
 import { exportedHttpMethods } from '../src/core/lib/http-methods';
 import { CORE_ADMIN_SCREENS } from '../src/core/lib/admin-screens';
 import { CORE_ADMIN_API, MEMBER_MUTATIONS } from '../src/core/lib/admin-api';
+import { avatarProvidersOf } from '../src/core/lib/avatar-providers';
 import { blocksOf, pagesOf, sortBlocks, type CatalogBlock, type ModulePage } from '../src/core/lib/page-blocks';
 
 function toComponentName(basename: string): string {
@@ -540,6 +541,9 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
     // server-only handlers and has no business in a browser bundle.
     dataContent += `export const ModuleEmailProviders: { id: string; name: string }[] = ${JSON.stringify(allEmailProviders.map((e) => ({ id: e.id, name: e.name })), null, 2)};\n\n`;
     dataContent += `export const ModuleWebhookChannels: { id: string; label: string; layout: "json" | "embed" | "attachment"; hosts?: string[]; urlPlaceholder?: string; module: string }[] = ${JSON.stringify(allWebhookChannels, null, 2)};\n`;
+    // Picture services a member's face may come from. Plain data the layout
+    // reads on the server and the panel lists; core builds each address.
+    dataContent += `\nexport const ModuleAvatarProviders: { id: string; module: string; labelKey: string; url: string; host: string }[] = ${JSON.stringify(avatarProvidersOf(loaded), null, 2)};\n`;
     fs.writeFileSync(DATA_FILE, dataContent);
 
     // ── Auth.js providers ─────────────────────────────────────────────────

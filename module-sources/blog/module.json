@@ -2,7 +2,7 @@
   "id": "blog",
   "name": "Blog Module",
   "description": "News and announcements system",
-  "version": "1.14.1",
+  "version": "1.15.0",
   "coreVersion": "^5.30.0",
   "category": "community",
   "author": "Blysis",

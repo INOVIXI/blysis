@@ -21,6 +21,8 @@ import { ModuleContextProviders } from "@/core/components/layout/ModuleContextPr
 import { SiteCurrencyProvider } from "@/core/components/currency/site-currency";
 import { ConfirmProvider } from "@/core/components/ui/confirm-dialog";
 import { PlaceholderProvider } from "@/core/components/placeholders/PlaceholderProvider";
+import { MemberFaceProvider } from "@/core/components/MemberFaceProvider";
+import { readMemberFaceRules } from "@/core/lib/member-face-rules";
 import { resolvePlaceholders } from "@/core/lib/placeholders";
 import { ProgressBar } from "@/core/components/layout/ProgressBar";
 import { Toaster } from "sonner";
@@ -117,6 +119,10 @@ export default async function RootLayout({
   // The site placeholders a theme's text may name, as far as the cache has
   // them in a moment: a value that is not ready is asked for by the browser
   // after the page paints, rather than holding up every page for it.
+  // How a member's face is drawn, for every avatar on the page: theirs, a
+  // picture service's by their name, or initials.
+  const faceRules = await readMemberFaceRules(moduleStates);
+
   const placeholders = await resolvePlaceholders({ budgetMs: 200 })
     .catch(() => ({ values: {}, pending: [] as string[] }));
 
@@ -183,6 +189,7 @@ export default async function RootLayout({
               >
                 <ModuleProvider moduleStates={moduleStates}>
                 <SiteCurrencyProvider>
+                <MemberFaceProvider rules={faceRules}>
                 <ModuleContextProviders>
                 <ConfirmProvider>
                   <a
@@ -213,6 +220,7 @@ export default async function RootLayout({
                   />
                 </ConfirmProvider>
                 </ModuleContextProviders>
+                </MemberFaceProvider>
                 </SiteCurrencyProvider>
                 </ModuleProvider>
               </AppThemeProvider>

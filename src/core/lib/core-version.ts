@@ -12,6 +12,15 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.33.0 - a member's face can come from a picture service. A module
+ * declares `avatarProviders` in its manifest, each an https address with
+ * `{name}` and `{size}` whose host is in its `csp["img-src"]`; the operator
+ * picks one beside the member picture setting, and `MemberAvatar` draws a
+ * member with no picture of their own, or every member while member pictures
+ * are off, from it by username, falling back to initials when it does not
+ * load. `MemberAvatar` is now a client component; its props are unchanged.
+ * Additive.
+ *
  * 5.32.0 - a theme can ask whether a slot will be drawn into.
  * `useSlotHasContent` from `@/core/sdk/layout` answers from the registry,
  * before any contribution has run, so a theme holds the room for what a
@@ -728,4 +737,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.32.0";
+export const CORE_API_VERSION = "5.33.0";

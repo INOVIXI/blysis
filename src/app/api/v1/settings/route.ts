@@ -12,6 +12,7 @@ import { sanitizeCustomCss, CSS_SANITIZED_SETTING_KEYS } from "@/core/lib/css-sa
 import { readJsonBody } from "@/core/lib/api-body";
 import { log } from "@/core/lib/logger";
 import { isSecretSetting, settingsForStorage, withoutSecrets } from "@/core/lib/secret-settings";
+import { MEMBER_FACE_CACHE_KEY } from "@/core/lib/member-face-rules";
 
 const settingKeySchema = z.string().regex(/^[a-zA-Z0-9_]+$/, "Invalid setting key format");
 // Value is a Json column - accept any JSON-serializable value (string, number, boolean, array, object, null)
@@ -41,6 +42,8 @@ const PER_KEY_LIMITS: Record<string, number> = {
     site_timezone: 64,
     default_currency: 16,
     member_avatar_uploads: 32,
+    // `<module>.<provider>`, both slugs of at most 64 and 32.
+    member_avatar_provider: 100,
     member_username_changes: 32,
     member_email_changes: 32,
     identity_requires_password: 32,
@@ -211,6 +214,8 @@ export async function PATCH(request: NextRequest) {
     // Drop the cached public-settings payload so clients see fresh values
     // immediately instead of waiting out the 60s TTL.
     await invalidate("public-settings");
+    // Every page's layout reads how faces are drawn from its own entry.
+    await invalidate(MEMBER_FACE_CACHE_KEY);
     // The mailer keeps its transport for ten seconds; an admin who has just
     // pasted an API key should be able to send a test message straight away.
     invalidateEmailConfig();

@@ -66,6 +66,8 @@ describe("the team online card", () => {
         answer.members = [
             { id: "m1", name: "Ada", role: "Admin", avatar: null, user: { username: "ada", avatar: "/a.png" } },
             { id: "m2", name: "Grace", role: "Moderator", avatar: null, user: null },
+            // A picture the operator set on the entry outranks the member's own.
+            { id: "m3", name: "Linus", role: "Owner", avatar: "/set.png", user: { username: "linus", avatar: "/own.png" } },
         ];
         draw({ title: "sample.title" });
         const list = await screen.findByRole("list");
@@ -73,7 +75,9 @@ describe("the team online card", () => {
         expect(list.textContent).toContain("ada");
         expect(list.textContent).toContain("Admin");
         expect(list.textContent).toContain("Moderator");
-        expect(list.querySelector("img")?.getAttribute("src")).toBe("/a.png");
+        // next/image writes the member's relative address out against the test's origin.
+        const pictures = [...list.querySelectorAll("img")].map((img) => new URL(img.getAttribute("src")!, "http://x").pathname);
+        expect(pictures).toEqual(["/a.png", "/set.png"]);
         expect(list.textContent).toContain("G");
     });
 

@@ -1,5 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { memberInitials, avatarTone } from "@/core/lib/member-initials";
+import { memberFaceSources } from "@/core/lib/member-face";
+import { useMemberFaceRules } from "@/core/components/MemberFaceProvider";
 import { cn } from "@/core/lib/utils";
 
 /**
@@ -14,14 +19,17 @@ import { cn } from "@/core/lib/utils";
  * colour the name picks, so the same person is the same colour on every
  * screen and a list of twenty reads as twenty people.
  *
- * A server component. It renders in a table on the server and inside a client
- * list alike, holds no state, and reads no setting: whether a member may
- * upload at all is the operator's question, answered where the upload control
- * is drawn, not here.
+ * Which picture, if any, is the site's rule rather than the caller's: the
+ * member's own while the operator allows member pictures, then the picture
+ * service the operator chose, asked by name (`member-face.ts`). A picture that
+ * does not load gives way to the next and finally to the initials, which is
+ * why this is a client component: noticing a failed image takes the browser.
+ * It still renders from a server table and a client list alike, and reads the
+ * rules from `MemberFaceProvider`, which the root layout fills.
  */
 
 export interface MemberAvatarProps {
-    /** The name the initials and the colour come from. */
+    /** The name the initials and the colour come from, and a provider is asked by. */
     name: string;
     /** Their picture, when they have one. */
     src?: string | null;
@@ -32,17 +40,26 @@ export interface MemberAvatarProps {
 
 export function MemberAvatar({ name, src, size = 40, className }: MemberAvatarProps) {
     const label = name?.trim() || "?";
+    const rules = useMemberFaceRules();
+    // Remembered by address rather than by position, so a list that reuses
+    // this component for another member does not inherit a failure.
+    const [failed, setFailed] = useState<readonly string[]>([]);
+    const picture = memberFaceSources(rules, { name: name ?? "", src, size })
+        .find((candidate) => !failed.includes(candidate));
 
-    if (src) {
+    if (picture) {
         return (
             <Image
-                src={src}
+                key={picture}
+                src={picture}
                 alt={label}
                 width={size}
                 height={size}
-                // The address is whatever a member uploaded or linked, and
-                // which host answered is not core's business to optimise.
+                // The address is whatever a member uploaded or linked, or a
+                // service the operator chose, and which host answered is not
+                // core's business to optimise.
                 unoptimized
+                onError={() => setFailed((before) => [...before, picture])}
                 className={cn("rounded-full object-cover shrink-0", className)}
                 style={{ width: size, height: size }}
             />
