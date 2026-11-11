@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { invalidate, isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, invalidate, isAdmin, logActivity, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { RULES_MODES, trophyRuleSchema } from "../../../lib/validations";
+import { RULES_MODES, TRANSLATED_FIELDS, TROPHY_TEXT, trophyRuleSchema } from "../../../lib/validations";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -61,6 +61,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         );
     }
 
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
     const data = parsed.data;
     const update: Record<string, unknown> = {};
     if (data.name !== undefined) update.name = data.name;
@@ -87,7 +90,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         update.awardOn = nextEvent ? `${nextEvent}:${nextThreshold ?? 1}` : null;
     }
 
-    const trophy = await prisma.trophy.update({ where: { id }, data: update });
+    const trophy = await prisma.$transaction(async (tx) => {
+        const updated = await tx.trophy.update({ where: { id }, data: update });
+        if (translations.value) await saveContentTranslations(tx, { ...TROPHY_TEXT, recordId: id }, translations.value);
+        return updated;
+    });
 
     await invalidate("trophies:public");
 
@@ -108,8 +115,12 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
     const { id } = await params;
-    // UserTrophy rows cascade via onDelete: Cascade
-    await prisma.trophy.delete({ where: { id } });
+    // UserTrophy rows cascade via onDelete: Cascade; the translations are
+    // not tied to the row by the database, so they go in the same transaction.
+    await prisma.$transaction(async (tx) => {
+        await tx.trophy.delete({ where: { id } });
+        await deleteContentTranslations(tx, TROPHY_TEXT, [id]);
+    });
 
     await invalidate("trophies:public");
 

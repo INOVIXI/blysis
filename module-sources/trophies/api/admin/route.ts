@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { invalidate, isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, invalidate, isAdmin, logActivity, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { RULES_MODES, trophyRuleSchema } from "../../lib/validations";
+import { RULES_MODES, TRANSLATED_FIELDS, TROPHY_TEXT, trophyRuleSchema } from "../../lib/validations";
 
 /**
  * Admin trophy CRUD.
@@ -32,7 +32,8 @@ export async function GET() {
         take: 200,
     });
 
-    return NextResponse.json({ trophies });
+    // With every language of each, for the editor's language boxes.
+    return NextResponse.json({ trophies: await attachContentTranslations(prisma, TROPHY_TEXT, trophies) });
 }
 
 const createSchema = z.object({
@@ -69,9 +70,12 @@ export async function POST(request: NextRequest) {
         );
     }
 
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
     const data = parsed.data;
-    const trophy = await prisma.trophy.create({
-        data: {
+    const trophy = await prisma.$transaction(async (tx) => {
+        const created = await tx.trophy.create({ data: {
             name: data.name,
             description: data.description ?? null,
             icon: data.icon ?? null,
@@ -88,7 +92,9 @@ export async function POST(request: NextRequest) {
             isActive: data.isActive ?? true,
             // Keep legacy awardOn in sync so older consumers keep working.
             awardOn: data.ruleEvent ? `${data.ruleEvent}:${data.ruleThreshold ?? 1}` : null,
-        },
+        } });
+        if (translations.value) await saveContentTranslations(tx, { ...TROPHY_TEXT, recordId: created.id }, translations.value);
+        return created;
     });
 
     await invalidate("trophies:public");

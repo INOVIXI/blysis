@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { activityKinds, Button, Card, CardContent, CardHeader, CardTitle, Checkbox, IconPicker, Input, Label, ListControls, Pagination, useRowList, Textarea, useConfirm, useFormRoute, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
+import { activityKinds, Button, Card, CardContent, CardHeader, CardTitle, Checkbox, IconPicker, Input, Label, LocalizedTextInput, ListControls, Pagination, useRowList, useConfirm, useFormRoute, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import {
     ArrowLeft,
@@ -16,7 +16,7 @@ import {
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
-import { deleteEach, errorMessage } from "@/core/sdk";
+import { deleteEach, errorMessage, joinTranslations, originalText, splitTranslations, type LanguageTexts, type TranslatableText } from "@/core/sdk";
 import { trophyConditions } from "../../lib/validations";
 
 interface AdminTrophy {
@@ -35,12 +35,15 @@ interface AdminTrophy {
     isActive: boolean;
     createdAt: string;
     _count?: { users: number };
+    /** Every language of its name and description, from the editor's list. */
+    translations?: Record<string, LanguageTexts>;
 }
 
 
 type FormState = {
-    name: string;
-    description: string;
+    /** The original and a translation per language. */
+    name: TranslatableText;
+    description: TranslatableText;
     icon: string;
     color: string;
     points: string;
@@ -139,8 +142,8 @@ export default function AdminTrophiesPage() {
             return;
         }
         setForm({
-            name: editing.name,
-            description: editing.description || "",
+            name: joinTranslations(editing.name, editing.translations?.name),
+            description: joinTranslations(editing.description || "", editing.translations?.description),
             icon: editing.icon || "Award",
             color: editing.color || "#f59e0b",
             points: String(editing.points),
@@ -177,15 +180,20 @@ export default function AdminTrophiesPage() {
         setForm((f) => ({ ...f, conditions: f.conditions.filter((_, idx) => idx !== i) }));
 
     const handleSave = async () => {
-        if (!form.name.trim()) {
+        if (!originalText(form.name).trim()) {
             toast.error(t("nameRequired"));
             return;
         }
         setSaving(true);
         const conditions = conditionsPayload(form.conditions);
         const payload = {
-            name: form.name.trim(),
-            description: form.description.trim() || null,
+            name: originalText(form.name).trim(),
+            description: originalText(form.description).trim() || null,
+            // Both every time: an empty one is how a cleared language goes.
+            translations: {
+                name: splitTranslations(form.name).translations,
+                description: splitTranslations(form.description).translations,
+            },
             icon: form.icon.trim() || null,
             color: form.color.trim() || null,
             points: parseInt(form.points) || 0,
@@ -306,21 +314,24 @@ export default function AdminTrophiesPage() {
                         <div className="space-y-4">
                             <div>
                                 <Label>{t("name")}</Label>
-                                <Input
-                                    aria-label={t("name")}
+                                <LocalizedTextInput
+                                    label={t("name")}
                                     value={form.name}
-                                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                    onChange={(name) => setForm({ ...form, name })}
                                     placeholder={t("adm_namePlaceholder")}
+                                    maxLength={100}
                                 />
                             </div>
                             <div>
                                 <Label>{t("descriptionLabel")}</Label>
-                                <Textarea
-                                    aria-label={t("descriptionLabel")}
+                                <LocalizedTextInput
+                                    label={t("descriptionLabel")}
                                     value={form.description}
-                                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                                    onChange={(description) => setForm({ ...form, description })}
                                     placeholder={t("adm_descriptionPlaceholder")}
+                                    multiline
                                     rows={2}
+                                    maxLength={500}
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-3">

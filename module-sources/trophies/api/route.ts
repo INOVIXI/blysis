@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, isAdmin, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { readTrophies } from "../lib/read-trophies";
 import { auth } from "@/core/sdk/auth";
+import { TRANSLATED_FIELDS, TROPHY_TEXT } from "../lib/validations";
 
 /** GET - list all trophies (public endpoint, used by profile pages too) */
 // The read lives in lib/read-trophies.ts, because the page renders the list
-// on the server now and the two must not drift.
-export async function GET() {
-    return NextResponse.json({ trophies: await readTrophies() });
+// on the server now and the two must not drift. A reader names their
+// language with `?locale=`.
+export async function GET(request: NextRequest) {
+    return NextResponse.json({ trophies: await readTrophies(new URL(request.url).searchParams.get("locale") ?? "") });
 }
 
 const trophySchema = z.object({
@@ -37,6 +39,13 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: parsed.error.issues[0]?.message || "Invalid" }, { status: 400 });
     }
 
-    const trophy = await prisma.trophy.create({ data: parsed.data });
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
+    const trophy = await prisma.$transaction(async (tx) => {
+        const created = await tx.trophy.create({ data: parsed.data });
+        if (translations.value) await saveContentTranslations(tx, { ...TROPHY_TEXT, recordId: created.id }, translations.value);
+        return created;
+    });
     return NextResponse.json({ trophy }, { status: 201 });
 }
