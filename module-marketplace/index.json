@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-26",
-  "updatedAt": "2026-10-26T17:03:52Z",
+  "updated": "2026-11-11",
+  "updatedAt": "2026-11-11T17:36:38Z",
   "modules": [
     {
       "id": "announcements",
@@ -3418,13 +3418,13 @@
           "description": "公开的成员资料页，展示每个已安装模块所了解的成员信息"
         }
       },
-      "version": "1.8.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.33.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-24T19:33:32Z",
+      "updatedAt": "2026-11-11T17:36:38Z",
       "screenshots": [],
       "tags": [
         "gaming"

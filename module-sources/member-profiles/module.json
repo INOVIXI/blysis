@@ -2,8 +2,8 @@
   "id": "member-profiles",
   "name": "Member Profiles",
   "description": "Public profile pages, with what every installed module knows about a member",
-  "version": "1.8.0",
-  "coreVersion": "^5.26.0",
+  "version": "1.9.0",
+  "coreVersion": "^5.33.0",
   "category": "gaming",
   "author": "Blysis",
   "icon": "Users",
@@ -89,7 +89,9 @@
         "untitled": "Untitled",
         "username": "Username",
         "overview": "Overview",
-        "profileSections": "Profile sections"
+        "profileSections": "Profile sections",
+        "signInMethod_connectedOn": "Connected {date}",
+        "signInMethod_manage": "Manage {provider} in Sign-in methods"
       },
       "pageTitles": {
         "member": "Member Profile",
@@ -132,7 +134,9 @@
         "untitled": "Başlıksız",
         "username": "Kullanıcı Adı",
         "overview": "Genel",
-        "profileSections": "Profil bölümleri"
+        "profileSections": "Profil bölümleri",
+        "signInMethod_connectedOn": "{date} tarihinde bağlandı",
+        "signInMethod_manage": "{provider} bağlantısını Giriş yöntemleri bölümünde yönet"
       },
       "pageTitles": {
         "member": "Üye Profili",
@@ -175,7 +179,9 @@
         "untitled": "Adsız",
         "username": "İstifadəçi adı",
         "overview": "Ümumi",
-        "profileSections": "Profil bölmələri"
+        "profileSections": "Profil bölmələri",
+        "signInMethod_connectedOn": "{date} tarixində qoşulub",
+        "signInMethod_manage": "{provider} bağlantısını Giriş üsulları bölməsində idarə et"
       },
       "pageTitles": {
         "member": "Üzv profili",
@@ -218,7 +224,9 @@
         "untitled": "Ohne Titel",
         "username": "Benutzername",
         "overview": "Übersicht",
-        "profileSections": "Profilbereiche"
+        "profileSections": "Profilbereiche",
+        "signInMethod_connectedOn": "Verbunden am {date}",
+        "signInMethod_manage": "{provider} unter Anmeldemethoden verwalten"
       },
       "pageTitles": {
         "member": "Mitgliederprofil",
@@ -261,7 +269,9 @@
         "untitled": "Sin título",
         "username": "Nombre de usuario",
         "overview": "Resumen",
-        "profileSections": "Secciones del perfil"
+        "profileSections": "Secciones del perfil",
+        "signInMethod_connectedOn": "Conectado el {date}",
+        "signInMethod_manage": "Gestionar {provider} en Métodos de inicio de sesión"
       },
       "pageTitles": {
         "member": "Perfil de miembro",
@@ -304,7 +314,9 @@
         "untitled": "Pealkirjata",
         "username": "Kasutajanimi",
         "overview": "Ülevaade",
-        "profileSections": "Profiili jaotised"
+        "profileSections": "Profiili jaotised",
+        "signInMethod_connectedOn": "Ühendatud {date}",
+        "signInMethod_manage": "Halda teenust {provider} jaotises Sisselogimisviisid"
       },
       "pageTitles": {
         "member": "Liikme profiil",
@@ -347,7 +359,9 @@
         "untitled": "Sans titre",
         "username": "Nom d’utilisateur",
         "overview": "Aperçu",
-        "profileSections": "Sections du profil"
+        "profileSections": "Sections du profil",
+        "signInMethod_connectedOn": "Connecté le {date}",
+        "signInMethod_manage": "Gérer {provider} dans Méthodes de connexion"
       },
       "pageTitles": {
         "member": "Profil du membre",
@@ -390,7 +404,9 @@
         "untitled": "Senza titolo",
         "username": "Nome utente",
         "overview": "Panoramica",
-        "profileSections": "Sezioni del profilo"
+        "profileSections": "Sezioni del profilo",
+        "signInMethod_connectedOn": "Collegato il {date}",
+        "signInMethod_manage": "Gestisci {provider} in Metodi di accesso"
       },
       "pageTitles": {
         "member": "Profilo del membro",
@@ -433,7 +449,9 @@
         "untitled": "Bez tytułu",
         "username": "Nazwa użytkownika",
         "overview": "Przegląd",
-        "profileSections": "Sekcje profilu"
+        "profileSections": "Sekcje profilu",
+        "signInMethod_connectedOn": "Połączono {date}",
+        "signInMethod_manage": "Zarządzaj {provider} w sekcji Metody logowania"
       },
       "pageTitles": {
         "member": "Profil członka",
@@ -476,7 +494,9 @@
         "untitled": "Sem título",
         "username": "Nome de usuário",
         "overview": "Visão geral",
-        "profileSections": "Seções do perfil"
+        "profileSections": "Seções do perfil",
+        "signInMethod_connectedOn": "Conectado em {date}",
+        "signInMethod_manage": "Gerir {provider} em Métodos de login"
       },
       "pageTitles": {
         "member": "Perfil do membro",
@@ -519,7 +539,9 @@
         "untitled": "Без названия",
         "username": "Имя пользователя",
         "overview": "Обзор",
-        "profileSections": "Разделы профиля"
+        "profileSections": "Разделы профиля",
+        "signInMethod_connectedOn": "Подключено {date}",
+        "signInMethod_manage": "Управлять {provider} в разделе «Способы входа»"
       },
       "pageTitles": {
         "member": "Профиль участника",
@@ -562,7 +584,9 @@
         "untitled": "无标题",
         "username": "用户名",
         "overview": "概览",
-        "profileSections": "个人资料分区"
+        "profileSections": "个人资料分区",
+        "signInMethod_connectedOn": "已于 {date} 连接",
+        "signInMethod_manage": "在登录方式中管理 {provider}"
       },
       "pageTitles": {
         "member": "成员资料",

@@ -122,6 +122,12 @@ export { activityKinds, activityTypeLabel } from "@/core/lib/activity-title";
  * contact form.
  */
 export { Challenge, useChallenge } from "@/core/components/auth/Challenge";
+/**
+ * What a sign-in provider is called and its mark, from the button its module
+ * declared for the sign-in page; a provider whose module is gone is its id
+ * and a plain key.
+ */
+export { ProviderMark, providerLabel } from "@/core/components/auth/ProviderMark";
 export { MemberAvatar } from "@/core/components/ui/MemberAvatar";
 export { MemberLink } from "@/core/components/ui/MemberLink";
 export { CountBadge } from "@/core/components/ui/count-badge";

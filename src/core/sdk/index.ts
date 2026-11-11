@@ -155,6 +155,10 @@ export type { MatrixRule } from "@/core/lib/permission-matrix";
  */
 export { isUnsafeKey } from "@/core/lib/safe-object";
 
+// The account page's section where a member connects and removes sign-in
+// methods, for a module that lists them and sends the member there to manage.
+export { SIGN_IN_METHODS_SECTION } from "@/core/lib/sign-in-methods-shared";
+
 export { restrictedFrom, SITE_WIDE } from "@/core/lib/restrictions";
 export type { Restriction } from "@/core/lib/restrictions";
 
