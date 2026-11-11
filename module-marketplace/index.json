@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T12:22:38Z",
+  "updatedAt": "2026-11-11T12:27:07Z",
   "modules": [
     {
       "id": "announcements",
@@ -282,13 +282,13 @@
           "description": "将此商店已付款的订单发送至 BirFatura，由其开具发票"
         }
       },
-      "version": "1.8.0",
+      "version": "1.9.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-11-11T12:27:07Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -4229,13 +4229,13 @@
           "description": "将本店铺已付款的订单发送至 Parasut，由其开具发票"
         }
       },
-      "version": "1.6.0",
+      "version": "1.7.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-11-11T12:27:07Z",
       "screenshots": [],
       "tags": [
         "commerce"
