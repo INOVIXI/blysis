@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/core/sdk/navigation";
 import { Button, useSiteCurrency, buttonClassName } from "@/core/sdk/ui";
 import { Crown } from "lucide-react";
@@ -17,18 +17,19 @@ interface Product {
 
 export function FeaturedProductWidget() {
     const sidebarT = useTranslations('sidebar');
+    const locale = useLocale();
     const { format: formatPrice } = useSiteCurrency();
     const [product, setProduct] = useState<Product | null>(null);
 
     useEffect(() => {
-        fetch("/api/v1/store/products?featured=true&limit=1")
+        fetch(`/api/v1/store/products?featured=true&limit=1&locale=${encodeURIComponent(locale)}`)
             .then((res) => res.json())
             .then((data) => {
                 const products = data.products || [];
                 if (products.length > 0) setProduct(products[0]);
             })
             .catch(() => {});
-    }, []);
+    }, [locale]);
 
     if (!product) return null;
 

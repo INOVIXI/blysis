@@ -90,6 +90,13 @@ describe("reading a page of records in the reader's language", () => {
         expect(out).toEqual(rows);
     });
 
+    it("never adds a field the row was read without", async () => {
+        await seed("a", "description", "en", "A long description");
+        await seed("a", "name", "en", "Rank");
+        const out = await translateContent(db as never, PAGE, [{ id: "a", name: "Rütbe" }], ["name", "description"] as never, "en");
+        expect(out).toEqual([{ id: "a", name: "Rank" }]);
+    });
+
     it("does not ask at all for an empty page or a reader with no language", async () => {
         await translateContent(db as never, PAGE, [], ["title"], "en");
         await translateContent(db as never, PAGE, [{ id: "a", title: "x" }], ["title"], "");

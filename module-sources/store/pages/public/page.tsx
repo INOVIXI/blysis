@@ -23,7 +23,7 @@
  * every shelf as well.
  */
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
 import { Slot } from "@/core/sdk/layout";
 import { ArrangedPage } from "@/core/sdk/page";
@@ -71,7 +71,10 @@ export default async function StorePage({ searchParams }: PageProps) {
     const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
 
     const t = await getTranslations("store");
-    const categories = await readStoreCategories();
+    // The operator's words for the shop in the reader's language, and the
+    // original where they wrote none.
+    const locale = await getLocale();
+    const categories = await readStoreCategories(locale);
 
     const chosen = categorySlug ? categories.find((c) => c.slug === categorySlug) : undefined;
     // A section nobody has is a 404, not the whole shop drawn as if the
@@ -93,12 +96,12 @@ export default async function StorePage({ searchParams }: PageProps) {
                         ? <CategoryChips roots={roots} />
                         : <CategoryCards roots={roots} />),
                     featured: async () => {
-                        const product = await readFeatured();
+                        const product = await readFeatured(locale);
                         return product ? <FeaturedProduct product={product} /> : null;
                     },
                     shelves: async ({ settings }) => {
                         const [shelves, { lowStockAt }] = await Promise.all([
-                            readShelves(categories, shelfLimit(settings.limit)),
+                            readShelves(categories, shelfLimit(settings.limit), locale),
                             moduleSettings<{ lowStockAt: number }>("store"),
                         ]);
                         return <ShelfRows shelves={shelves} lowStockAt={lowStockAt} />;
@@ -118,7 +121,7 @@ export default async function StorePage({ searchParams }: PageProps) {
     // nothing to compare across two of them.
     const asTable = !search && chosen?.layout === "table";
     const shelf = showsProducts
-        ? await readStoreProducts({ categorySlug: search ? undefined : chosen?.slug, search, sort, page })
+        ? await readStoreProducts({ categorySlug: search ? undefined : chosen?.slug, search, sort, page, locale })
         : null;
 
     // Named because the shelf is drawn from two places: on its own, and as

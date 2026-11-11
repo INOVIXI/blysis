@@ -25,15 +25,21 @@ const create = vi.fn(async (args: { data: Record<string, unknown> }) => ({ id: "
 const findFirst = vi.fn(async () => null);
 const count = vi.fn(async () => 0);
 
-vi.mock("@/core/sdk/server", () => ({
-    prisma: {
+vi.mock("@/core/sdk/server", async () => {
+    const db: Record<string, unknown> = {
         category: { create: (args: never) => create(args), findFirst: () => findFirst(), findUnique: () => findFirst() },
         product: { count: () => count() },
-    },
-    hasPermission: async () => true,
-    log: { error: () => {}, info: () => {} },
-    readJsonBody: async (request: { json: () => Promise<unknown> }) => request.json(),
-}));
+    };
+    // The shelf and its words are one write.
+    db.$transaction = (write: (tx: unknown) => unknown) => write(db);
+    return {
+        ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
+        prisma: db,
+        hasPermission: async () => true,
+        log: { error: () => {}, info: () => {} },
+        readJsonBody: async (request: { json: () => Promise<unknown> }) => request.json(),
+    };
+});
 vi.mock("@/core/sdk/auth", () => ({ auth: async () => ({ user: { id: "admin", role: "ADMIN" } }) }));
 vi.mock("@/core/sdk", () => ({ slugify: (s: string) => s.toLowerCase().replace(/\s+/g, "-") }));
 vi.mock("@/modules/store/lib/category-visibility", () => ({

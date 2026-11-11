@@ -19,6 +19,7 @@ const MANIFEST = JSON.parse(fs.readFileSync(path.join(process.cwd(), "module-sou
 const MESSAGES = MANIFEST.translations.en;
 
 vi.mock("next-intl/server", () => ({
+    getLocale: async () => "en",
     getTranslations: async (namespace: string) => createTranslator({ locale: "en", messages: MESSAGES, namespace }),
 }));
 
@@ -32,7 +33,10 @@ vi.mock("@/core/sdk/layout", () => ({ Slot: () => null }));
 
 // The front as a site whose theme does not arrange it sees it.
 vi.mock("@/core/sdk/page", () => ({ ArrangedPage: arrangedPageStub("store", MANIFEST) }));
-vi.mock("@/core/sdk/server", () => ({ moduleSettings: async () => ({ lowStockAt: 0 }) }));
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
+    moduleSettings: async () => ({ lowStockAt: 0 }),
+}));
 vi.mock("@/modules/store/components/FeaturedProduct", () => ({ FeaturedProduct: () => null }));
 
 vi.mock("@/core/sdk/ui", () => ({

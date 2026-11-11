@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hasPermission, log, moduleSettings, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, hasPermission, log, moduleSettings, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../../lib/validations";
 import { availabilityData } from "../../../lib/availability-input";
 import { PUBLIC_PRODUCT } from "../../../lib/public-product";
 import { readProduct } from "../../../lib/read-product";
+import { PRODUCT_FIELDS, PRODUCT_TEXT, localeOf } from "../../../lib/store-text";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -13,10 +14,10 @@ type RouteParams = { params: Promise<{ id: string }> };
 // The read and the two rules about what a visitor may see live in
 // lib/read-product.ts, because the page renders the product on the server now
 // and the two must not disagree.
-export async function GET(_request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
     try {
         const { id } = await params;
-        const product = await readProduct(id);
+        const product = await readProduct(id, localeOf(request));
         if (!product) {
             return NextResponse.json({ error: "Product not found" }, { status: 404 });
         }
@@ -53,6 +54,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             );
         }
 
+        const translations = contentTranslationsInput((body as { translations?: unknown }).translations, PRODUCT_FIELDS);
+        if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
         const existing = await prisma.product.findUnique({ where: { id } });
         if (!existing) {
             return NextResponse.json({ error: "Product not found" }, { status: 404 });
@@ -70,10 +74,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             delete (data as Record<string, unknown>)[key];
         }
 
-        const product = await prisma.product.update({
-            where: { id },
-            data: { ...data, ...scheduled },
-            include: { category: true },
+        const product = await prisma.$transaction(async (tx) => {
+            const updated = await tx.product.update({
+                where: { id },
+                data: { ...data, ...scheduled },
+                include: { category: true },
+            });
+            if (translations.value) await saveContentTranslations(tx, { ...PRODUCT_TEXT, recordId: id }, translations.value);
+            return updated;
         });
 
         return NextResponse.json({ product });

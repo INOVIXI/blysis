@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { slugify } from "@/core/sdk";
-import { hasPermission, log, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, hasPermission, log, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { categorySchema } from "../../lib/validations";
 import { anyCategoryGated, gateProductIds, visibleCategories } from "../../lib/category-visibility";
 import { stillOwnedWhere } from "../../lib/ownership";
+import { CATEGORY_FIELDS, CATEGORY_TEXT, categoriesIn, localeOf } from "../../lib/store-text";
 
 /**
  * GET /api/v1/store/categories - the shelves a reader may see.
@@ -38,11 +39,14 @@ export async function GET(request: NextRequest) {
             },
             orderBy: { order: "asc" },
         });
-        return NextResponse.json({ categories: all });
+        // Every language of each shelf's words, for the editor.
+        return NextResponse.json({ categories: await attachContentTranslations(prisma, CATEGORY_TEXT, all) });
     }
 
     try {
-        const categories = await prisma.category.findMany({
+        // Named in `?locale=`, and in the original where the operator wrote
+        // none; the address carries the language, so a cache keeps one each.
+        const found = await prisma.category.findMany({
             where: { isActive: true },
             include: {
                 _count: {
@@ -55,6 +59,7 @@ export async function GET(request: NextRequest) {
             },
             orderBy: { order: "asc" },
         });
+        const categories = await categoriesIn(found, localeOf(request));
 
         if (!anyCategoryGated(categories)) {
             return NextResponse.json({ categories });
@@ -119,6 +124,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        const translations = contentTranslationsInput((body as { translations?: unknown }).translations, CATEGORY_FIELDS);
+        if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
         const data = validation.data;
         const slug = data.slug || slugify(data.name);
 
@@ -139,7 +146,8 @@ export async function POST(request: NextRequest) {
          * table was to create the shelf and then edit it. `a-shelf-keeps-
          * what-it-was-given` is what notices the next time.
          */
-        const category = await prisma.category.create({
+        const category = await prisma.$transaction(async (tx) => {
+            const created = await tx.category.create({
             data: {
                 name: data.name,
                 slug,
@@ -155,6 +163,9 @@ export async function POST(request: NextRequest) {
                 gameDescription: data.gameDescription || null,
                 gameIcon: data.gameIcon || null,
             },
+            });
+            if (translations.value) await saveContentTranslations(tx, { ...CATEGORY_TEXT, recordId: created.id }, translations.value);
+            return created;
         });
 
         return NextResponse.json({ category }, { status: 201 });

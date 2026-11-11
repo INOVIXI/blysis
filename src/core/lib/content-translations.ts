@@ -104,7 +104,11 @@ export async function translateContent<T extends { id: string }>(
     }
     return rows.map((row) => {
         const own = byRecord.get(row.id);
-        return own ? { ...row, ...own } : row;
+        if (!own) return row;
+        // Only what the row was read with: a shelf reads a product without
+        // its description, and must not be handed one by its translation.
+        const kept = Object.entries(own).filter(([field]) => Object.prototype.hasOwnProperty.call(row, field));
+        return kept.length === 0 ? row : { ...row, ...Object.fromEntries(kept) };
     });
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { sharedJson } from "@/core/sdk";
 import { FilterChips } from "@/core/sdk/admin";
 import { BlockHeading, LoadFailed, Waiting, useBlockText, type BlockProps } from "@/core/sdk/ui";
@@ -49,6 +49,8 @@ function Room({ children }: { children: ReactNode }) {
  */
 export function ProductsBlock({ settings }: BlockProps) {
     const t = useTranslations("store");
+    // Shelves and products named in the reader's language.
+    const locale = useLocale();
     const commonT = useTranslations("common");
     const text = useBlockText();
     const count = typeof settings.count === "number" ? settings.count : DEFAULT_COUNT;
@@ -62,7 +64,7 @@ export function ProductsBlock({ settings }: BlockProps) {
 
     useEffect(() => {
         let active = true;
-        sharedJson<{ categories?: Shelf[] }>("/api/v1/store/categories")
+        sharedJson<{ categories?: Shelf[] }>(`/api/v1/store/categories?locale=${encodeURIComponent(locale)}`)
             .then((d) => {
                 if (!active) return;
                 const stocked = (d?.categories ?? []).filter((c) => (c._count?.products ?? 0) > 0);
@@ -71,7 +73,7 @@ export function ProductsBlock({ settings }: BlockProps) {
             })
             .catch(() => { if (active) setFailed(true); });
         return () => { active = false; };
-    }, [reloadKey]);
+    }, [reloadKey, locale]);
 
     useEffect(() => {
         if (shelves === null) return;
@@ -79,11 +81,12 @@ export function ProductsBlock({ settings }: BlockProps) {
         const query = new URLSearchParams();
         if (chosen) query.set("category", chosen);
         query.set("limit", String(count));
+        query.set("locale", locale);
         sharedJson<{ products?: CardProduct[]; lowStockAt?: number }>(`/api/v1/store/products?${query}`)
             .then((d) => { if (active) setProducts({ shelf: chosen, rows: d?.products ?? [], lowStockAt: d?.lowStockAt ?? 0 }); })
             .catch(() => { if (active) setFailed(true); });
         return () => { active = false; };
-    }, [shelves, chosen, count, reloadKey]);
+    }, [shelves, chosen, count, reloadKey, locale]);
 
     // Nothing for sale anywhere: no section, the way a widget with nothing
     // to say has always drawn nothing.

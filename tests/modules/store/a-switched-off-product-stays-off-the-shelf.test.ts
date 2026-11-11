@@ -30,7 +30,8 @@ const findFirst = vi.fn<(args: unknown) => Promise<unknown>>(async () => null);
 /** Flipped by the tests that ask what an administrator is allowed to see. */
 let callerIsAdmin = false;
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
         product: {
             findMany: (args: unknown) => findMany(args as never),

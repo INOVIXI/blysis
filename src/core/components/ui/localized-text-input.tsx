@@ -25,6 +25,8 @@ export interface LocalizedTextInputProps {
      * page.
      */
     rich?: boolean;
+    /** How tall a rich editor starts; a sentence wants less than an article. */
+    minHeight?: string;
     rows?: number;
     maxLength?: number;
     placeholder?: string;
@@ -60,7 +62,7 @@ function translationsOf(value: TranslatableText | undefined): Partial<Record<Loc
  * stored exactly as it was before this existed.
  */
 export function LocalizedTextInput({
-    label, value, onChange, multiline = false, rich = false, rows = 3, maxLength, placeholder, required, id, inputRef,
+    label, value, onChange, multiline = false, rich = false, minHeight, rows = 3, maxLength, placeholder, required, id, inputRef,
 }: LocalizedTextInputProps) {
     const t = useTranslations("common");
     const { settings } = useSiteSettings();
@@ -88,7 +90,7 @@ export function LocalizedTextInput({
                 <div id={boxId}>
                     <span id={`${nameId}-${key}`} className="sr-only">{name}</span>
                     <RichTextEditor value={boxValue} placeholder={placeholder} labelledBy={`${nameId}-${key}`}
-                        minHeight={key === "original" ? undefined : "160px"} onChange={onText} />
+                        minHeight={minHeight ?? (key === "original" ? undefined : "160px")} onChange={onText} />
                 </div>
             );
         }

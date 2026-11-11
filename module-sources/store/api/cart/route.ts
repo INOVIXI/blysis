@@ -4,6 +4,7 @@ import { auth } from "@/core/sdk/auth";
 import { availabilityFor, type ProductRow } from "../../lib/availability-server";
 import { priceCartLines } from "../../lib/cart-pricing";
 import { creditingPurchases, ownedRungsOn } from "../../lib/upgrade-credit-server";
+import { localeOf, productsIn } from "../../lib/store-text";
 import { z } from "zod";
 
 const cartItemSchema = z.object({
@@ -11,8 +12,8 @@ const cartItemSchema = z.object({
     quantity: z.number().int().min(0).max(99),
 });
 
-// GET /api/v1/store/cart - Get user's cart
-export async function GET() {
+// GET /api/v1/store/cart - Get user's cart, its products named in `?locale=`
+export async function GET(request: NextRequest) {
     try {
         const session = await auth();
 
@@ -63,8 +64,10 @@ export async function GET() {
             await ownedRungsOn(basket.map((line) => line.categoryId), ownedIds),
         );
         const byProduct = new Map(lines.map((line) => [line.productId, line]));
+        const named = new Map((await productsIn(cartItems.map((item) => item.product), localeOf(request))).map((p) => [p.id, p]));
         const priced = cartItems.map((item) => ({
             ...item,
+            product: named.get(item.product.id) ?? item.product,
             upgradeCredit: byProduct.get(item.product.id)?.upgradeCredit ?? 0,
             payPrice: byProduct.get(item.product.id)?.payPrice ?? Number(item.product.price),
         }));

@@ -19,6 +19,7 @@ const MANIFEST = JSON.parse(fs.readFileSync(path.join(process.cwd(), "module-sou
 const MESSAGES = MANIFEST.translations.en;
 
 vi.mock("next-intl/server", () => ({
+    getLocale: async () => "en",
     getTranslations: async (namespace: string) => createTranslator({ locale: "en", messages: MESSAGES, namespace }),
 }));
 
@@ -39,7 +40,10 @@ vi.mock("@/core/sdk/page", async () => {
             stub("store", manifest, arranged.layouts as Parameters<typeof stub>[2])(props),
     };
 });
-vi.mock("@/core/sdk/server", () => ({ moduleSettings: async () => ({ lowStockAt: 0 }) }));
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
+    moduleSettings: async () => ({ lowStockAt: 0 }),
+}));
 
 vi.mock("@/core/sdk/ui", () => ({ RichContent: () => null }));
 vi.mock("@/modules/store/components/ProductGallery", () => ({ ProductGallery: () => null }));
