@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { downloadSlug } from "../../lib/guide";
-import { isAdmin, prisma, rateLimitForRoleAsync, readJsonBody, getClientIP } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, isAdmin, prisma, rateLimitForRoleAsync, readJsonBody, saveContentTranslations, getClientIP } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { canDownload } from "../../lib/can-download";
+import { DOWNLOAD_TEXT, TRANSLATED_FIELDS } from "../../lib/validations";
 import { z } from "zod";
 
 /**
@@ -99,17 +100,23 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (!validation.success) {
         return NextResponse.json({ error: validation.error.issues[0].message }, { status: 400 });
     }
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     // The slug follows the title so a renamed file reads correctly in a URL,
     // while the number in front of it keeps every shared link working. The
     // guide is sanitised on the way in, like the one the create path writes.
     const { title, details, ...rest } = validation.data;
-    const download = await prisma.download.update({
-        where: { id },
-        data: {
-            ...rest,
-            ...(title !== undefined ? { title, slug: downloadSlug(title) } : {}),
-            ...(details !== undefined ? { details: details ? details : null } : {}),
-        },
+    const download = await prisma.$transaction(async (tx) => {
+        const updated = await tx.download.update({
+            where: { id },
+            data: {
+                ...rest,
+                ...(title !== undefined ? { title, slug: downloadSlug(title) } : {}),
+                ...(details !== undefined ? { details: details ? details : null } : {}),
+            },
+        });
+        if (translations.value) await saveContentTranslations(tx, { ...DOWNLOAD_TEXT, recordId: id }, translations.value);
+        return updated;
     });
     return NextResponse.json({ download });
 }
@@ -120,6 +127,9 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { id } = await params;
-    await prisma.download.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.download.delete({ where: { id } });
+        await deleteContentTranslations(tx, DOWNLOAD_TEXT, [id]);
+    });
     return NextResponse.json({ message: "Deleted" });
 }

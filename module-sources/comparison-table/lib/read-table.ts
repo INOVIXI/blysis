@@ -16,6 +16,7 @@
 import { prisma } from "@/core/sdk/server";
 import { buildGrid, type GridGroup } from "./grid";
 import { reconcileColumns } from "./subject-columns";
+import { translateTable } from "./table-text";
 
 export interface DrawnColumn {
     id: string;
@@ -53,7 +54,7 @@ export async function readTable(by: { slug?: string; subject?: string; locale?: 
             : null;
     if (!where) return null;
 
-    const table = await prisma.comparisonTable.findFirst({
+    const stored = await prisma.comparisonTable.findFirst({
         where,
         include: {
             columns: { orderBy: { order: "asc" } },
@@ -61,7 +62,10 @@ export async function readTable(by: { slug?: string; subject?: string; locale?: 
             rows: { orderBy: { order: "asc" }, include: { cells: true } },
         },
     });
-    if (!table) return null;
+    if (!stored) return null;
+    // Every word in the reader's language, the operator's original where they
+    // wrote none. A subject's columns still take their names from the subject.
+    const table = await translateTable(stored, by.locale);
 
     // Columns from the subject where there is one, and the stored columns
     // otherwise. A subject that answers with nothing - its module turned off,

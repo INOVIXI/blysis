@@ -18,11 +18,14 @@ export const PRODUCT_TEXT = { owner: "store", entity: "product" };
 export const CATEGORY_TEXT = { owner: "store", entity: "category" };
 export const CREDIT_PACKAGE_TEXT = { owner: "store", entity: "credit-package" };
 export const CAMPAIGN_TEXT = { owner: "store", entity: "campaign" };
+/** A product's question to the buyer. Its key is what the checkout files the answer under, and is the same in every language. */
+export const VARIABLE_TEXT = { owner: "store", entity: "variable" };
 
 export const PRODUCT_FIELDS = { name: 200, shortDesc: 500, description: 100_000 };
 export const CATEGORY_FIELDS = { name: 100, description: 500 };
 export const CREDIT_PACKAGE_FIELDS = { name: 100 };
 export const CAMPAIGN_FIELDS = { name: 100 };
+export const VARIABLE_FIELDS = { label: 200, placeholder: 200 };
 
 interface Named {
     id: string;
@@ -60,4 +63,19 @@ export async function productsIn<T extends Named & { category?: Named | null }>(
 /** The reader's language an API route was asked in, or none for the originals. */
 export function localeOf(request: Request): string {
     return new URL(request.url).searchParams.get("locale") ?? "";
+}
+
+/**
+ * The products whose name, summary or description says `term` in a
+ * translation, any language: a shopper who knows a product by its English
+ * name finds the one written in Turkish. Any language, since the site's
+ * search is asked with no reader's language. One query, at most twenty.
+ */
+export async function productsTranslatedAs(term: string): Promise<string[]> {
+    const hits = await prisma.contentTranslation.findMany({
+        where: { ...PRODUCT_TEXT, field: { in: Object.keys(PRODUCT_FIELDS) }, text: { contains: term, mode: "insensitive" } },
+        select: { recordId: true },
+        take: 20,
+    });
+    return [...new Set(hits.map((hit) => hit.recordId))];
 }

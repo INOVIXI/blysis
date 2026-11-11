@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T20:44:27Z",
+  "updatedAt": "2026-11-11T21:11:47Z",
   "modules": [
     {
       "id": "announcements",
@@ -365,13 +365,13 @@
           "description": "新闻与公告系统"
         }
       },
-      "version": "1.14.1",
-      "coreVersion": "^5.30.0",
+      "version": "1.15.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-26T17:03:52Z",
+      "updatedAt": "2026-11-11T21:11:47Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -449,13 +449,13 @@
           "description": "版本说明与更新历史"
         }
       },
-      "version": "1.10.0",
-      "coreVersion": "^5.30.0",
+      "version": "1.11.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "History",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-11T21:11:47Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -846,13 +846,13 @@
           "description": "以任何人都能阅读的表格，逐项对比多个对象"
         }
       },
-      "version": "1.8.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Table",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-25T16:14:40Z",
+      "updatedAt": "2026-11-11T21:11:47Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -1314,13 +1314,13 @@
           "description": "带提交记录的动态表单构建器"
         }
       },
-      "version": "1.7.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "FileEdit",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-11T21:11:47Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -1703,13 +1703,13 @@
           "description": "文件库：版本发布、指南以及其他值得分享的内容"
         }
       },
-      "version": "1.7.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Download",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-11T21:11:47Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -2565,13 +2565,13 @@
           "description": "带分类和可搜索文章的知识库"
         }
       },
-      "version": "1.11.0",
-      "coreVersion": "^5.30.0",
+      "version": "1.12.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis Team",
       "icon": "HelpCircle",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-11T21:11:47Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -5573,13 +5573,13 @@
           "description": "首页图片轮播和横幅"
         }
       },
-      "version": "1.2.2",
-      "coreVersion": "^5.0.0",
+      "version": "1.3.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Image",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-11-11T21:11:47Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -5950,13 +5950,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.53.0",
+      "version": "2.54.0",
       "coreVersion": "^5.34.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-11-11T20:44:27Z",
+      "updatedAt": "2026-11-11T21:11:47Z",
       "screenshots": [],
       "tags": [
         "commerce"

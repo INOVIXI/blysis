@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
@@ -40,6 +40,9 @@ interface Entry {
 export default function ChangelogEntryPage() {
     const t = useTranslations("changelog");
     const params = useParams();
+    // The endpoint reads the release in this language, and the original
+    // where the admin wrote none.
+    const locale = useLocale();
     const formatLocalDate = useLocalDate();
     const [entry, setEntry] = useState<Entry | null>(null);
     /*
@@ -56,7 +59,7 @@ export default function ChangelogEntryPage() {
     useEffect(() => {
         if (!number) return;
         let cancelled = false;
-        fetch(`/api/v1/changelog/entry/${encodeURIComponent(String(number))}`)
+        fetch(`/api/v1/changelog/entry/${encodeURIComponent(String(number))}?locale=${encodeURIComponent(locale)}`)
             .then(async (r) => {
                 if (r.status === 404) return { missing: true as const };
                 if (!r.ok) throw new Error("load failed");
@@ -72,7 +75,7 @@ export default function ChangelogEntryPage() {
             })
             .catch(() => { if (!cancelled) setState("failed"); });
         return () => { cancelled = true; };
-    }, [number, reloadKey]);
+    }, [number, reloadKey, locale]);
 
     const back = (
         <Link href="/changelog" className="inline-flex items-center gap-2 text-sm text-primary hover:underline">

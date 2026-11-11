@@ -65,3 +65,11 @@ export function entryNumberFrom(raw: string | string[] | undefined): string | nu
     const candidate = at >= 0 ? segments[at + 1] : segments[0];
     return candidate && /^\d+$/.test(candidate) ? candidate : null;
 }
+
+/**
+ * Whose translations these are, in core's table, and the fields that have
+ * them: each language held to its column's own limit. The version and the
+ * kind are the same in every language.
+ */
+export const ENTRY_TEXT = { owner: "changelog", entity: "entry" };
+export const TRANSLATED_FIELDS = { title: 200, content: 10_000, details: 50_000 };

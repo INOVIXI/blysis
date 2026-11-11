@@ -9,9 +9,14 @@
  * is a page's worth of markup per row; what the list needs is whether there is
  * a page to link to.
  */
-import { prisma } from "@/core/sdk/server";
+import { prisma, translateContent } from "@/core/sdk/server";
+import { DOWNLOAD_TEXT } from "./validations";
 
-export async function readDownloads() {
+/**
+ * In the reader's `locale`, and in the original where the admin wrote no
+ * translation. Whether a file has a guide is the original's to say.
+ */
+export async function readDownloads(locale = "") {
     const rows = await prisma.download.findMany({
         where: { isActive: true },
         orderBy: { createdAt: "desc" },
@@ -22,8 +27,9 @@ export async function readDownloads() {
             details: true,
         },
     });
-    return rows.map(({ details, ...row }) => ({
+    const listed = rows.map(({ details, ...row }) => ({
         ...row,
         hasGuide: typeof details === "string" && details.trim() !== "",
     }));
+    return translateContent(prisma, DOWNLOAD_TEXT, listed, ["title", "description"], locale);
 }

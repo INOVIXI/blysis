@@ -14,4 +14,12 @@ export const slideCreateSchema = z.object({
     isActive: z.boolean().optional(),
 });
 
+/**
+ * Whose translations these are, in core's table, and the fields that have
+ * them: each language held to its column's own limit. The image and the link
+ * are the same in every language.
+ */
+export const SLIDE_TEXT = { owner: "slider", entity: "slide" };
+export const TRANSLATED_FIELDS = { title: 200, subtitle: 500 };
+
 export const slideUpdateSchema = slideCreateSchema.partial();

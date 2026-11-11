@@ -26,6 +26,16 @@ export const helpArticleSchema = z.object({
 /** The PATCH form: every field optional. */
 export const helpArticleUpdateSchema = helpArticleSchema.partial();
 
+/**
+ * Whose translations these are, in core's table, and the fields that have
+ * them: each language held to its column's own limit. A slug is an address,
+ * the same in every language.
+ */
+export const HELP_CATEGORY_TEXT = { owner: "help-center", entity: "category" };
+export const CATEGORY_TRANSLATED_FIELDS = { name: 100, description: 500 };
+export const HELP_ARTICLE_TEXT = { owner: "help-center", entity: "article" };
+export const ARTICLE_TRANSLATED_FIELDS = { title: 200, content: 100_000 };
+
 /** The one field the "was this helpful?" widget sends. */
 export const helpFeedbackSchema = z.object({
     helpful: z.boolean(),

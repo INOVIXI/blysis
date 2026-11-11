@@ -1,17 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
-import { challengeFieldsFrom, getClientIP, isAdmin, prisma, rateLimitForRoleAsync, readJsonBody, runChallenge } from "@/core/sdk/server";
+import { attachContentTranslations, challengeFieldsFrom, contentTranslationsInput, deleteContentTranslations, getClientIP, isAdmin, prisma, rateLimitForRoleAsync, readContentTranslations, readJsonBody, runChallenge, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { checkAnswers, formSubmissionSchema, formUpdateSchema, storedFieldsSchema } from "../../lib/validations";
+import { FORM_TEXT, formTextLimits, translateForm, withStaleCleared } from "../../lib/form-text";
 
 type RouteParams = { params: Promise<{ slug: string }> };
 
+/**
+ * GET /api/v1/forms/[slug] - one form, read in `?locale=`.
+ *
+ * `scope=admin` is the builder's answer: the form as stored, closed or not,
+ * with every language of its words, and refused to anybody who is not an
+ * admin. The builder read the visitor's answer before, so a form an operator
+ * closed could not be opened for editing.
+ */
 export async function GET(request: NextRequest, { params }: RouteParams) {
     const { slug } = await params;
+    const query = new URL(request.url).searchParams;
+    if (query.get("scope") === "admin") {
+        const session = await auth();
+        if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        const stored = await prisma.customForm.findFirst({ where: { OR: [{ slug }, { id: slug }] } });
+        if (!stored) return NextResponse.json({ error: "Form not found" }, { status: 404 });
+        const [form] = await attachContentTranslations(prisma, FORM_TEXT, [stored]);
+        return NextResponse.json({ form });
+    }
     const form = await prisma.customForm.findFirst({
         where: { OR: [{ slug }, { id: slug }], isActive: true },
     });
     if (!form) return NextResponse.json({ error: "Form not found" }, { status: 404 });
-    return NextResponse.json({ form });
+    return NextResponse.json({ form: await translateForm(prisma, form, query.get("locale") ?? "") });
 }
 
 // Submit form
@@ -120,6 +139,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Validation failed", details: parsedUpdate.error.flatten() }, { status: 400 });
     }
     const fields = parsedUpdate.data;
+    // Translatable words are read off the questions the form will have after
+    // this write: the ones sent, or the ones it already has.
+    const limits = formTextLimits(fields.fields ?? form.fields);
+    const translations = contentTranslationsInput(body, limits);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
 
     const data: Record<string, unknown> = {};
     if (fields.title !== undefined) data.title = fields.title;
@@ -127,7 +151,17 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.fields !== undefined) data.fields = fields.fields;
     if (fields.isActive !== undefined) data.isActive = fields.isActive;
 
-    const updated = await prisma.customForm.update({ where: { id: form.id }, data });
+    const updated = await prisma.$transaction(async (tx) => {
+        const written = await tx.customForm.update({ where: { id: form.id }, data });
+        // New questions may have left old words behind; they go whether or
+        // not this request named any translation.
+        const stored = fields.fields !== undefined
+            ? (await readContentTranslations(tx, FORM_TEXT, [form.id])).get(form.id)
+            : undefined;
+        const save = withStaleCleared(translations.value, stored, limits);
+        if (Object.keys(save).length > 0) await saveContentTranslations(tx, { ...FORM_TEXT, recordId: form.id }, save);
+        return written;
+    });
 
     const { doActionAsync } = await import("@/core/sdk");
     await doActionAsync("customforms.form.updated", updated);
@@ -144,7 +178,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const form = await prisma.customForm.findFirst({ where: { OR: [{ slug }, { id: slug }] } });
     if (!form) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    await prisma.customForm.delete({ where: { id: form.id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.customForm.delete({ where: { id: form.id } });
+        await deleteContentTranslations(tx, FORM_TEXT, [form.id]);
+    });
 
     const { doActionAsync } = await import("@/core/sdk");
     await doActionAsync("customforms.form.deleted", form);

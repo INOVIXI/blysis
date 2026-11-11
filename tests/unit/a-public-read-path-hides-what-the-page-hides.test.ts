@@ -62,6 +62,9 @@ vi.mock("@/core/sdk/server", async () => {
             forumCategoryPermission: delegate("forumCategoryPermission"),
             helpArticle: delegate("helpArticle"),
             product: delegate("product"),
+            // Where a provider also matches a record by its translations.
+            // None here, so each provider's own query is the one judged.
+            contentTranslation: { findMany: vi.fn(async () => []) },
         },
         // `allowGuestView` is the forum's other visibility rule, and its provider
         // now consults it before it queries anything. Granting it here is what

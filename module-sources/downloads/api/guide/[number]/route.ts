@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/core/sdk/server";
+import { prisma, translateContent } from "@/core/sdk/server";
+import { DOWNLOAD_TEXT } from "../../../lib/validations";
 
 type RouteParams = { params: Promise<{ number: string }> };
 
@@ -15,8 +16,11 @@ type RouteParams = { params: Promise<{ number: string }> };
  * The download count is not incremented here. This is somebody reading the
  * instructions, which is not the same as taking the file, and counting it
  * would make the number on the list mean two different things.
+ *
+ * Read in `?locale=`, and in the original where the admin wrote no
+ * translation. Whether there is a guide at all is the original's to say.
  */
-export async function GET(_request: Request, { params }: RouteParams) {
+export async function GET(request: Request, { params }: RouteParams) {
     const { number } = await params;
     const id = Number(number);
     if (!Number.isInteger(id) || id <= 0) {
@@ -36,6 +40,8 @@ export async function GET(_request: Request, { params }: RouteParams) {
         return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const { isActive: _isActive, ...download } = row;
+    const { isActive: _isActive, ...guided } = row;
+    const locale = new URL(request.url).searchParams.get("locale") ?? "";
+    const [download] = await translateContent(prisma, DOWNLOAD_TEXT, [guided], ["title", "description", "details"], locale);
     return NextResponse.json({ download });
 }

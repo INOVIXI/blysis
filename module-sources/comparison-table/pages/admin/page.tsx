@@ -14,14 +14,14 @@ import {
     Label,
     ListControls,
     LoadFailed,
+    LocalizedTextInput,
     NativeSelect,
     Pagination,
-    Textarea,
     useConfirm,
     useRowList,
 } from "@/core/sdk/ui";
 import { AdminPageHeader } from "@/core/sdk/admin";
-import { writeError } from "@/core/sdk";
+import { joinTranslations, splitTranslations, writeError, type LanguageTexts } from "@/core/sdk";
 import type { DraftCell } from "../../lib/table-payload";
 
 /**
@@ -36,6 +36,10 @@ import type { DraftCell } from "../../lib/table-payload";
  * The whole table is saved at once, because columns, groups, rows and cells
  * only mean anything together and a reader arriving between two half-saves
  * would see a comparison stating things nobody wrote.
+ *
+ * Every label may be written per language. The translations are kept by the
+ * same keys as the cells (`title`, `column.<key>.label`, ...) and saved with
+ * the table, which moves each one to its row's new id (`lib/table-text.ts`).
  */
 
 type CellKind = "unstated" | "yes" | "no" | "value";
@@ -57,6 +61,8 @@ interface Draft {
     groups: DraftGroup[];
     rows: DraftRow[];
     cells: Record<string, { kind: CellKind; value: string }>;
+    /** Every label's languages, by `lib/table-text.ts`'s keys. */
+    translations: Record<string, LanguageTexts>;
 }
 
 /** A key the server maps to a fresh id; it never leaves this screen. */
@@ -65,7 +71,7 @@ const newKey = (prefix: string) => `${prefix}${(counter += 1)}`;
 
 const EMPTY: Draft = {
     id: null, slug: "", title: "", description: "", isActive: true, order: 0,
-    subjectRef: "", columns: [], groups: [], rows: [], cells: {},
+    subjectRef: "", columns: [], groups: [], rows: [], cells: {}, translations: {},
 };
 
 const at = (rowKey: string, columnKey: string) => `${rowKey}|${columnKey}`;
@@ -84,6 +90,7 @@ interface StoredTable {
     columns: { id: string; label: string; subtitle: string | null; href: string | null; highlight: boolean }[];
     groups: { id: string; label: string }[];
     rows: { id: string; groupId: string | null; label: string; cells: { columnId: string; kind: string; value: string | null }[] }[];
+    translations?: Record<string, LanguageTexts>;
 }
 
 function toDraft(table: StoredTable): Draft {
@@ -114,7 +121,26 @@ function toDraft(table: StoredTable): Draft {
         groups: table.groups.map((group) => ({ key: group.id, label: group.label })),
         rows: table.rows.map((row) => ({ key: row.id, groupKey: row.groupId ?? "", label: row.label })),
         cells,
+        // The editor's keys are the stored ids, so the stored keys fit as they are.
+        translations: table.translations ?? {},
     };
+}
+
+/**
+ * The languages of every label the draft still has. A column, group or row
+ * removed takes its words with it, and the endpoint refuses words for one it
+ * does not have. Each is sent, an empty one too, since that is how a cleared
+ * language is cleared.
+ */
+function draftTranslations(draft: Draft): Record<string, LanguageTexts> {
+    const keys = [
+        "title",
+        "description",
+        ...draft.columns.flatMap((column) => [`column.${column.key}.label`, `column.${column.key}.subtitle`]),
+        ...draft.groups.map((group) => `group.${group.key}.label`),
+        ...draft.rows.map((row) => `row.${row.key}.label`),
+    ];
+    return Object.fromEntries(keys.map((key) => [key, draft.translations[key] ?? {}]));
 }
 
 export default function ComparisonTablesAdminPage() {
@@ -167,6 +193,17 @@ export default function ComparisonTablesAdminPage() {
 
     useEffect(() => { void load(); }, [load]);
 
+    /** A label's original and languages, as the editor box holds them. */
+    const word = (key: string, original: string) => joinTranslations(original, draft?.translations[key]);
+
+    /** A label written: the original into its place in the draft, the languages beside it. */
+    const setWord = (key: string, next: unknown, place: (current: Draft, original: string) => Draft) => {
+        if (!draft) return;
+        const { original, translations } = splitTranslations(next);
+        const placed = place(draft, original);
+        setDraft({ ...placed, translations: { ...placed.translations, [key]: translations } });
+    };
+
     const save = async () => {
         if (!draft) return;
         setSaving(true);
@@ -202,6 +239,7 @@ export default function ComparisonTablesAdminPage() {
                         kind: cell.kind,
                         value: cell.value,
                     })),
+                    translations: draftTranslations(draft),
                 }),
             });
             const wrong = await writeError(res, t("adm_saveFailed"), t);
@@ -333,7 +371,12 @@ export default function ComparisonTablesAdminPage() {
                 <CardContent className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <Label htmlFor="table-title">{t("adm_tableTitle")}</Label>
-                        <Input id="table-title" value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} />
+                        <LocalizedTextInput
+                            id="table-title"
+                            label={t("adm_tableTitle")}
+                            value={word("title", draft.title)}
+                            onChange={(next) => setWord("title", next, (d, title) => ({ ...d, title }))}
+                        />
                     </div>
                     <div>
                         <Label htmlFor="table-slug">{t("adm_tableSlug")}</Label>
@@ -341,7 +384,14 @@ export default function ComparisonTablesAdminPage() {
                     </div>
                     <div className="sm:col-span-2">
                         <Label htmlFor="table-desc">{t("adm_tableDescription")}</Label>
-                        <Textarea id="table-desc" rows={2} value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
+                        <LocalizedTextInput
+                            id="table-desc"
+                            label={t("adm_tableDescription")}
+                            multiline
+                            rows={2}
+                            value={word("description", draft.description)}
+                            onChange={(next) => setWord("description", next, (d, description) => ({ ...d, description }))}
+                        />
                     </div>
                     <div className="sm:col-span-2">
                         <Label htmlFor="table-subject">{t("adm_subject")}</Label>
@@ -400,16 +450,17 @@ export default function ComparisonTablesAdminPage() {
                         </ul>
                     ) : draft.columns.map((column, index) => (
                         <div key={column.key} className="flex items-center gap-2 flex-wrap">
-                            <Input
-                                value={column.label}
-                                aria-label={t("adm_columnLabel")}
-                                placeholder={t("adm_columnLabel")}
-                                className="flex-1 min-w-[8rem]"
-                                onChange={(e) => setDraft({
-                                    ...draft,
-                                    columns: draft.columns.map((c, i) => (i === index ? { ...c, label: e.target.value } : c)),
-                                })}
-                            />
+                            <div className="flex-1 min-w-[8rem]">
+                                <LocalizedTextInput
+                                    label={t("adm_columnLabel")}
+                                    placeholder={t("adm_columnLabel")}
+                                    value={word(`column.${column.key}.label`, column.label)}
+                                    onChange={(next) => setWord(`column.${column.key}.label`, next, (d, label) => ({
+                                        ...d,
+                                        columns: d.columns.map((c, i) => (i === index ? { ...c, label } : c)),
+                                    }))}
+                                />
+                            </div>
                             <Input
                                 value={column.href}
                                 aria-label={t("adm_columnHref")}
@@ -459,16 +510,18 @@ export default function ComparisonTablesAdminPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {draft.groups.map((group, index) => (
-                        <div key={group.key} className="flex items-center gap-2">
-                            <Input
-                                value={group.label}
-                                aria-label={t("adm_groupLabel")}
-                                placeholder={t("adm_groupLabel")}
-                                onChange={(e) => setDraft({
-                                    ...draft,
-                                    groups: draft.groups.map((g, i) => (i === index ? { ...g, label: e.target.value } : g)),
-                                })}
-                            />
+                        <div key={group.key} className="flex items-start gap-2">
+                            <div className="flex-1">
+                                <LocalizedTextInput
+                                    label={t("adm_groupLabel")}
+                                    placeholder={t("adm_groupLabel")}
+                                    value={word(`group.${group.key}.label`, group.label)}
+                                    onChange={(next) => setWord(`group.${group.key}.label`, next, (d, label) => ({
+                                        ...d,
+                                        groups: d.groups.map((g, i) => (i === index ? { ...g, label } : g)),
+                                    }))}
+                                />
+                            </div>
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -501,13 +554,13 @@ export default function ComparisonTablesAdminPage() {
                                     {draft.rows.map((row, index) => (
                                         <tr key={row.key} className="border-b last:border-0">
                                             <td className="py-2 pr-3">
-                                                <Input
-                                                    value={row.label}
-                                                    aria-label={t("adm_rowLabel")}
-                                                    onChange={(e) => setDraft({
-                                                        ...draft,
-                                                        rows: draft.rows.map((r, i) => (i === index ? { ...r, label: e.target.value } : r)),
-                                                    })}
+                                                <LocalizedTextInput
+                                                    label={t("adm_rowLabel")}
+                                                    value={word(`row.${row.key}.label`, row.label)}
+                                                    onChange={(next) => setWord(`row.${row.key}.label`, next, (d, label) => ({
+                                                        ...d,
+                                                        rows: d.rows.map((r, i) => (i === index ? { ...r, label } : r)),
+                                                    }))}
                                                 />
                                             </td>
                                             <td className="py-2 px-2">

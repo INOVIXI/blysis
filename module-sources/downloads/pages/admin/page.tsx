@@ -10,15 +10,16 @@ export default function Page() {
             title={t("adm_title")}
             subtitle={t("adm_subtitle")}
             apiPath="/api/v1/downloads"
+            listPath="/api/v1/downloads?scope=admin"
             listKey="downloads"
             displayField="title"
             secondaryField="fileName"
             fields={[
-                { key: "title", label: t("adm_field1Label"), required: true, placeholder: t("adm_field1Placeholder") },
-                { key: "description", label: t("adm_field2Label"), type: "richtext", placeholder: t("adm_field2Placeholder"), description: t("adm_field2Help") },
+                { key: "title", label: t("adm_field1Label"), type: "translatable", required: true, placeholder: t("adm_field1Placeholder") },
+                { key: "description", label: t("adm_field2Label"), type: "translatableRichtext", placeholder: t("adm_field2Placeholder"), description: t("adm_field2Help") },
                 // The guide and its picture. Both optional: most files are a
                 // title and a button, and one without them keeps that shape.
-                { key: "details", label: t("adm_guideLabel"), type: "richtext", placeholder: t("adm_guidePlaceholder"), description: t("adm_guideHelp") },
+                { key: "details", label: t("adm_guideLabel"), type: "translatableRichtext", placeholder: t("adm_guidePlaceholder"), description: t("adm_guideHelp") },
                 { key: "coverImage", label: t("adm_coverLabel"), type: "image", description: t("adm_coverHelp") },
                 { key: "fileName", label: t("adm_field3Label"), required: true, placeholder: t("adm_field3Placeholder") },
                 { key: "fileUrl", label: t("adm_field4Label"), type: "file", required: true, placeholder: t("adm_field4Placeholder") },

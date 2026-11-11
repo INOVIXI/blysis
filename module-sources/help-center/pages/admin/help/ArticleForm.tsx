@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
-    Button, Card, CardContent, CheckboxField, Input, Label, NativeSelect, RichTextEditor,
+    Button, Card, CardContent, CheckboxField, Label, LocalizedTextInput, NativeSelect,
 } from "@/core/sdk/ui";
 import { AdminPageHeader } from "@/core/sdk/admin";
-import { writeError } from "@/core/sdk";
+import { joinTranslations, splitTranslations, writeError, type LanguageTexts } from "@/core/sdk";
 import { Loader2 } from "lucide-react";
 import type { AdminHelpArticle, AdminHelpCategory } from "./rows";
 
@@ -43,6 +43,16 @@ export function ArticleForm({
         categoryId: article?.category?.id ?? "",
         isActive: article?.isActive ?? true,
     });
+    // Each language beside its original in `form`, sent as `translations`.
+    const [languages, setLanguages] = useState<Record<"title" | "content", LanguageTexts>>({
+        title: article?.translations?.title ?? {},
+        content: article?.translations?.content ?? {},
+    });
+    const word = (field: "title" | "content", next: unknown) => {
+        const parts = splitTranslations(next);
+        setForm((was) => ({ ...was, [field]: parts.original }));
+        setLanguages((was) => ({ ...was, [field]: parts.translations }));
+    };
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -56,7 +66,9 @@ export function ArticleForm({
                 {
                     method: article ? "PATCH" : "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(form),
+                    // Every language every time: an empty one is how a
+                    // cleared language goes.
+                    body: JSON.stringify({ ...form, translations: languages }),
                 },
             );
             const failed = await writeError(
@@ -94,11 +106,12 @@ export function ArticleForm({
                 <CardContent className="p-6">
                     <form onSubmit={submit} className="space-y-4">
                         <div>
-                            <Label>{`${t("adm_title")} *`}</Label>
-                            <Input
-                                aria-label={t("adm_title")}
-                                value={form.title}
-                                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                            <Label htmlFor="help-article-title">{`${t("adm_title")} *`}</Label>
+                            <LocalizedTextInput
+                                id="help-article-title"
+                                label={t("adm_title")}
+                                value={joinTranslations(form.title, languages.title)}
+                                onChange={(next) => word("title", next)}
                                 required
                             />
                         </div>
@@ -122,10 +135,13 @@ export function ArticleForm({
                             )}
                         </div>
                         <div>
-                            <Label>{`${t("adm_content")} *`}</Label>
-                            <RichTextEditor
-                                value={form.content}
-                                onChange={(value: string) => setForm({ ...form, content: value })}
+                            <Label id="help-article-content-label">{`${t("adm_content")} *`}</Label>
+                            <LocalizedTextInput
+                                label={t("adm_content")}
+                                labelledBy="help-article-content-label"
+                                rich
+                                value={joinTranslations(form.content, languages.content)}
+                                onChange={(next) => word("content", next)}
                             />
                         </div>
                         {/* The list has always drawn a status column. Nothing

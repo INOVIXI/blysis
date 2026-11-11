@@ -12,7 +12,8 @@
  * the site hides and the JSON still carries is not hidden.
  */
 import { headers } from "next/headers";
-import { moduleSettings, prisma, textContains } from "@/core/sdk/server";
+import { moduleSettings, prisma, textContains, translateContent } from "@/core/sdk/server";
+import { HELP_ARTICLE_TEXT, HELP_CATEGORY_TEXT } from "./validations";
 
 export interface ArticleRead {
     article: {
@@ -31,19 +32,43 @@ export interface ArticleRead {
     neighbours: { id: string; slug: string; title: string }[];
 }
 
-export async function readArticle(slug: string): Promise<ArticleRead | null> {
-    const article = await prisma.helpArticle.findUnique({
+/**
+ * Each row's section under its name in the reader's language: one query for
+ * the page, whatever number of sections it names.
+ */
+export async function withCategoryNames<T extends { category: { id: string; name: string } | null }>(
+    rows: T[],
+    locale: string,
+): Promise<T[]> {
+    const named = new Map<string, { id: string; name: string }>();
+    for (const row of rows) if (row.category) named.set(row.category.id, { id: row.category.id, name: row.category.name });
+    const read = await translateContent(prisma, HELP_CATEGORY_TEXT, [...named.values()], ["name"], locale);
+    const names = new Map(read.map((category) => [category.id, category.name]));
+    return rows.map((row) => (row.category
+        ? { ...row, category: { ...row.category, name: names.get(row.category.id) ?? row.category.name } }
+        : row));
+}
+
+/**
+ * `locale` is the reader's language: the article, its section and the
+ * articles beside it are read in it, and in the original where the admin
+ * wrote no translation. Without one, the columns as they were typed.
+ */
+export async function readArticle(slug: string, locale = ""): Promise<ArticleRead | null> {
+    const found = await prisma.helpArticle.findUnique({
         where: { slug },
         include: { category: { select: { id: true, name: true, slug: true } } },
     });
-    if (!article || !article.isActive || !article.category) return null;
+    if (!found || !found.isActive || !found.category) return null;
+    const [translated] = await translateContent(prisma, HELP_ARTICLE_TEXT, [found], ["title", "content"], locale);
+    const [article] = await withCategoryNames([translated], locale);
 
     const { showViewCount, enableFeedback } = await moduleSettings<{
         showViewCount: boolean;
         enableFeedback: boolean;
     }>("help-center");
 
-    const neighbours = await prisma.helpArticle.findMany({
+    const beside = await prisma.helpArticle.findMany({
         where: { categoryId: article.categoryId, isActive: true },
         select: { id: true, slug: true, title: true },
         // The same order the list endpoint uses, so the column beside an article
@@ -51,6 +76,7 @@ export async function readArticle(slug: string): Promise<ArticleRead | null> {
         orderBy: { views: "desc" },
         take: 50,
     });
+    const neighbours = await translateContent(prisma, HELP_ARTICLE_TEXT, beside, ["title"], locale);
 
     return {
         article: {
@@ -92,8 +118,8 @@ export interface HelpIndexRead {
  * them was the shared header and footer. The 30 articles the sitemap publishes
  * had no path into them from anywhere on the site.
  */
-export async function readHelpIndex(): Promise<HelpIndexRead> {
-    const [categories, popular] = await Promise.all([
+export async function readHelpIndex(locale = ""): Promise<HelpIndexRead> {
+    const [sections, mostRead] = await Promise.all([
         prisma.helpCategory.findMany({
             where: { isActive: true },
             orderBy: { order: "asc" },
@@ -110,6 +136,10 @@ export async function readHelpIndex(): Promise<HelpIndexRead> {
             select: { id: true, slug: true, title: true },
         }),
     ]);
+    const [categories, popular] = await Promise.all([
+        translateContent(prisma, HELP_CATEGORY_TEXT, sections, ["name", "description"], locale),
+        translateContent(prisma, HELP_ARTICLE_TEXT, mostRead, ["title"], locale),
+    ]);
 
     return {
         categories: categories.map(({ _count, ...category }) => ({ ...category, articleCount: _count.articles })),
@@ -123,20 +153,22 @@ export interface HelpCategoryRead {
 }
 
 /** One section and everything filed in it. */
-export async function readHelpCategory(slug: string): Promise<HelpCategoryRead | null> {
-    const category = await prisma.helpCategory.findFirst({
+export async function readHelpCategory(slug: string, locale = ""): Promise<HelpCategoryRead | null> {
+    const section = await prisma.helpCategory.findFirst({
         where: { slug, isActive: true },
         select: { id: true, name: true, slug: true, description: true },
     });
-    if (!category) return null;
+    if (!section) return null;
+    const [category] = await translateContent(prisma, HELP_CATEGORY_TEXT, [section], ["name", "description"], locale);
 
     const { showViewCount } = await moduleSettings<{ showViewCount: boolean }>("help-center");
-    const articles = await prisma.helpArticle.findMany({
+    const filed = await prisma.helpArticle.findMany({
         where: { categoryId: category.id, isActive: true },
         orderBy: { views: "desc" },
         take: 200,
         select: { id: true, slug: true, title: true, views: true },
     });
+    const articles = await translateContent(prisma, HELP_ARTICLE_TEXT, filed, ["title"], locale);
 
     return {
         category,
@@ -144,17 +176,41 @@ export async function readHelpCategory(slug: string): Promise<HelpCategoryRead |
     };
 }
 
-/** What a reader typed in the band at the top, answered by the server. */
-export async function searchHelpArticles(query: string) {
+/**
+ * The articles whose title or body says `term` in a translation, which a
+ * search of the columns cannot see: a reader who types the English title of
+ * an article written in Turkish still finds it. Any language, since the
+ * site's search is asked with no reader's language.
+ */
+export async function articlesTranslatedAs(term: string): Promise<string[]> {
+    const hits = await prisma.contentTranslation.findMany({
+        where: { ...HELP_ARTICLE_TEXT, field: { in: ["title", "content"] }, text: { contains: term, mode: "insensitive" } },
+        select: { recordId: true },
+        take: 20,
+    });
+    return [...new Set(hits.map((hit) => hit.recordId))];
+}
+
+/**
+ * What a reader typed in the band at the top, answered by the server. It
+ * matches the original columns and every translation, and draws what it
+ * found in the reader's language.
+ */
+export async function searchHelpArticles(query: string, locale = "") {
     const term = query.trim();
     if (!term) return [];
-    return prisma.helpArticle.findMany({
+    const translated = await articlesTranslatedAs(term);
+    const found = await prisma.helpArticle.findMany({
         where: {
             isActive: true,
-            OR: textContains(["title", "content"], term),
+            OR: [
+                ...textContains(["title", "content"], term),
+                ...(translated.length > 0 ? [{ id: { in: translated } }] : []),
+            ],
         },
         orderBy: { views: "desc" },
         take: 25,
-        select: { id: true, slug: true, title: true, category: { select: { name: true } } },
+        select: { id: true, slug: true, title: true, category: { select: { id: true, name: true } } },
     });
+    return withCategoryNames(await translateContent(prisma, HELP_ARTICLE_TEXT, found, ["title"], locale), locale);
 }

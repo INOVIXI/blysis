@@ -4,7 +4,7 @@ import { hasPermission, log, logActivity, prisma, readContentTranslations, readJ
 import { auth } from "@/core/sdk/auth";
 import { copyOf, freeSlug } from "../../../../../lib/clone-product";
 import { copyProductSchema } from "../../../../../lib/validations";
-import { PRODUCT_TEXT } from "../../../../../lib/store-text";
+import { PRODUCT_TEXT, VARIABLE_TEXT } from "../../../../../lib/store-text";
 
 /**
  * POST /api/v1/store/admin/products/[id]/copy - one product, again.
@@ -98,7 +98,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
             }
 
             if (variables.length > 0) {
-                await tx.productVariable.createMany({
+                // Returned in the order they were sent, so each question's
+                // languages are filed under its own new row.
+                const questions = await tx.productVariable.createManyAndReturn({
                     data: variables.map((row) => ({
                         productId: written.id,
                         name: row.name,
@@ -108,7 +110,13 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
                         placeholder: row.placeholder,
                         options: row.options,
                     })),
+                    select: { id: true },
                 });
+                const asked = await readContentTranslations(tx, VARIABLE_TEXT, variables.map((row) => row.id));
+                await Promise.all(variables.map((row, i) => {
+                    const languages = asked.get(row.id);
+                    return languages ? saveContentTranslations(tx, { ...VARIABLE_TEXT, recordId: questions[i].id }, languages) : undefined;
+                }));
             }
 
             return written;

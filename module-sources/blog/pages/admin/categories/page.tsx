@@ -3,11 +3,11 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, useConfirm, useFormRoute, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Label, LocalizedTextInput, useConfirm, useFormRoute, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus, Trash2, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import { writeError, errorMessage } from "@/core/sdk";
+import { joinTranslations, splitTranslations, writeError, errorMessage, type LanguageTexts } from "@/core/sdk";
 import { AdminPageHeader, RowActions } from "@/core/sdk/admin";
 
 interface Category {
@@ -16,7 +16,11 @@ interface Category {
     slug: string;
     description: string | null;
     _count: { articles: number };
+    translations?: Partial<Record<WordField, LanguageTexts>>;
 }
+
+type WordField = "name" | "description";
+const NO_LANGUAGES: Record<WordField, LanguageTexts> = { name: {}, description: {} };
 
 export default function AdminBlogCategoriesPage() {
     const t = useTranslations("blog");
@@ -31,10 +35,13 @@ export default function AdminBlogCategoriesPage() {
     const [error, setError] = useState<string | null>(null);
 
     const [form, setForm] = useState({ name: "", description: "" });
+    // Each language of the name and description, beside the originals in the form.
+    const [languages, setLanguages] = useState<Record<WordField, LanguageTexts>>(NO_LANGUAGES);
 
     const fetchCategories = useCallback(async () => {
         try {
-            const res = await fetch("/api/v1/blog/categories");
+            // The editor's answer: every language of each category.
+            const res = await fetch("/api/v1/blog/categories?scope=admin");
             if (res.ok) {
                 const data = await res.json();
                 setCategories(Array.isArray(data) ? data : data.categories || []);
@@ -56,11 +63,22 @@ export default function AdminBlogCategoriesPage() {
         setError(null);
         if (!editingId) {
             setForm({ name: "", description: "" });
+            setLanguages(NO_LANGUAGES);
             return;
         }
         const row = categories.find((cat) => cat.id === editingId);
-        if (row) setForm({ name: row.name, description: row.description || "" });
+        if (row) {
+            setForm({ name: row.name, description: row.description || "" });
+            setLanguages({ name: row.translations?.name ?? {}, description: row.translations?.description ?? {} });
+        }
     }, [editingId, categories]);
+
+    // The original goes to the form's column, each language beside it.
+    const word = (field: WordField, next: unknown) => {
+        const parts = splitTranslations(next);
+        setForm((was) => ({ ...was, [field]: parts.original }));
+        setLanguages((was) => ({ ...was, [field]: parts.translations }));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -74,7 +92,9 @@ export default function AdminBlogCategoriesPage() {
             const res = await fetch(url, {
                 method,
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(form),
+                // Every field every time: an empty one is how a cleared
+                // language goes.
+                body: JSON.stringify({ ...form, translations: languages }),
             });
 
             const failed = await writeError(res, t("adm_saveCategoryFailed"), t);
@@ -141,20 +161,24 @@ export default function AdminBlogCategoriesPage() {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <Label>{`${t("adm_name")} *`}</Label>
-                                    <Input
-                                        aria-label={t("adm_name")}
-                                        value={form.name}
-                                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                    <Label htmlFor="category-name">{`${t("adm_name")} *`}</Label>
+                                    <LocalizedTextInput
+                                        id="category-name"
+                                        label={t("adm_name")}
+                                        value={joinTranslations(form.name, languages.name)}
+                                        onChange={(next) => word("name", next)}
+                                        maxLength={100}
                                         required
                                     />
                                 </div>
                                 <div>
-                                    <Label>{t("adm_description")}</Label>
-                                    <Input
-                                        aria-label={t("adm_description")}
-                                        value={form.description}
-                                        onChange={(e) => setForm({ ...form, description: e.target.value })}
+                                    <Label htmlFor="category-description">{t("adm_description")}</Label>
+                                    <LocalizedTextInput
+                                        id="category-description"
+                                        label={t("adm_description")}
+                                        value={joinTranslations(form.description, languages.description)}
+                                        onChange={(next) => word("description", next)}
+                                        maxLength={500}
                                         placeholder={t("adm_briefDescription")}
                                     />
                                 </div>

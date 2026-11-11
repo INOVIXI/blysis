@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Minus, Plus, Check, Loader2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { errorMessage } from "@/core/sdk";
 import { AvailabilityNote, LowStockNote, type AvailabilityInfo } from "./AvailabilityNote";
 import { type BulkRung } from "../lib/pricing";
@@ -99,11 +99,14 @@ export function ProductView({
     const [variableValues, setVariableValues] = useState<Record<string, string>>({});
 
 
-    // Fetch product variables
+    // Fetch product variables, asked in the page's language: the label and
+    // the hint are the operator's words, and the original where they wrote
+    // no translation.
+    const locale = useLocale();
     useEffect(() => {
         let cancelled = false;
         if (!product) return;
-        fetch(`/api/v1/product-variables?productId=${product.id}`)
+        fetch(`/api/v1/product-variables?productId=${product.id}&locale=${encodeURIComponent(locale)}`)
             .then((r) => r.json())
             .then((d) => {
                 if (cancelled) return;
@@ -112,7 +115,7 @@ export function ProductView({
             .catch(() => {});
         return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [product?.id]);
+    }, [product?.id, locale]);
 
     const addToCart = async () => {
         if (!product) return;

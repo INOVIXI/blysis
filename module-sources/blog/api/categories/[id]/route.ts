@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
-import { hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, hasPermission, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { blogCategorySchema } from "../../../lib/validations";
+import { CATEGORY_FIELDS, CATEGORY_TEXT, categoriesIn, localeOf } from "../../../lib/blog-text";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
-// GET /api/v1/blog/categories/[id]
+// GET /api/v1/blog/categories/[id], in `?locale=`
 export async function GET(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
 
@@ -19,7 +20,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Category not found" }, { status: 404 });
     }
 
-    return NextResponse.json(category);
+    const [read] = await categoriesIn([category], localeOf(request));
+    return NextResponse.json(read);
 }
 
 // PATCH /api/v1/blog/categories/[id]
@@ -46,6 +48,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         );
     }
 
+    const translations = contentTranslationsInput(body, CATEGORY_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
     const existing = await prisma.blogCategory.findUnique({ where: { id } });
     if (!existing) {
         return NextResponse.json({ error: "Category not found" }, { status: 404 });
@@ -62,9 +67,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         if (!slugExists) data.slug = newSlug;
     }
 
-    const category = await prisma.blogCategory.update({
-        where: { id },
-        data,
+    const category = await prisma.$transaction(async (tx) => {
+        const updated = await tx.blogCategory.update({ where: { id }, data });
+        if (translations.value) await saveContentTranslations(tx, { ...CATEGORY_TEXT, recordId: id }, translations.value);
+        return updated;
     });
 
     const { doActionAsync } = await import("@/core/sdk");
@@ -98,7 +104,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         data: { categoryId: null },
     });
 
-    await prisma.blogCategory.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.blogCategory.delete({ where: { id } });
+        await deleteContentTranslations(tx, CATEGORY_TEXT, [id]);
+    });
 
     const { doActionAsync } = await import("@/core/sdk");
     await doActionAsync("blog.category.deleted", existing);

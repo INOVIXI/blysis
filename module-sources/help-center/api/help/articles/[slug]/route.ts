@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, logActivity, moduleSettings, prisma, rateLimitForRole, readJsonBody, getClientIP } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, isAdmin, logActivity, moduleSettings, prisma, rateLimitForRole, readJsonBody, saveContentTranslations, getClientIP } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { helpArticleUpdateSchema, helpFeedbackSchema } from "../../../../lib/validations";
+import { ARTICLE_TRANSLATED_FIELDS, HELP_ARTICLE_TEXT, helpArticleUpdateSchema, helpFeedbackSchema } from "../../../../lib/validations";
 import { countArticleView, readArticle } from "../../../../lib/read-article";
 
 interface RouteParams {
@@ -12,11 +12,12 @@ interface RouteParams {
 //
 // The read and the rule about what may be shown live in lib/read-article.ts,
 // because the page renders the article on the server now and the two must not
-// disagree.
-export async function GET(_request: NextRequest, { params }: RouteParams) {
+// disagree. It is read in `?locale=`, and in the original where the admin
+// wrote no translation.
+export async function GET(request: NextRequest, { params }: RouteParams) {
     const { slug } = await params;
 
-    const read = await readArticle(slug);
+    const read = await readArticle(slug, new URL(request.url).searchParams.get("locale") ?? "");
     if (!read) {
         return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
@@ -87,6 +88,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
+    const translations = contentTranslationsInput(body, ARTICLE_TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const fields = parsed.data;
 
     const data: Record<string, unknown> = {};
@@ -96,7 +99,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.isActive !== undefined) data.isActive = fields.isActive;
     if (fields.categoryId !== undefined) data.categoryId = fields.categoryId;
 
-    const updated = await prisma.helpArticle.update({ where: { id: existing.id }, data });
+    const updated = await prisma.$transaction(async (tx) => {
+        const saved = await tx.helpArticle.update({ where: { id: existing.id }, data });
+        if (translations.value) await saveContentTranslations(tx, { ...HELP_ARTICLE_TEXT, recordId: existing.id }, translations.value);
+        return saved;
+    });
     await logActivity({
         userId: session.user.id,
         action: "help_article.update",
@@ -117,7 +124,10 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
     const existing = await prisma.helpArticle.findUnique({ where: { slug } });
     if (!existing) return NextResponse.json({ error: "Article not found" }, { status: 404 });
 
-    await prisma.helpArticle.delete({ where: { id: existing.id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.helpArticle.delete({ where: { id: existing.id } });
+        await deleteContentTranslations(tx, HELP_ARTICLE_TEXT, [existing.id]);
+    });
     await logActivity({
         userId: session.user.id,
         action: "help_article.delete",

@@ -2,7 +2,7 @@
 
 import { useContext, useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Newspaper } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { Badge, BlockHeading, LoadFailed, Pagination, Waiting, buttonClassName, useBlockText, useLocalDate, type BlockProps } from "@/core/sdk/ui";
@@ -161,6 +161,9 @@ export function NewsBlock({ settings }: BlockProps) {
     const blogT = useTranslations("blog");
     const commonT = useTranslations("common");
     const text = useBlockText();
+    // The endpoint reads each article in this language, and the original
+    // where the admin wrote none.
+    const locale = useLocale();
     const [posts, setPosts] = useState<Article[] | null>(null);
     // A read that did not come back says so: it used to read as "no news
     // yet" (an-empty-screen-says-which-empty).
@@ -170,7 +173,7 @@ export function NewsBlock({ settings }: BlockProps) {
 
     useEffect(() => {
         let active = true;
-        fetch(`/api/v1/blog/articles?limit=${featured ? PER_PAGE : PER_PAGE * 2}`)
+        fetch(`/api/v1/blog/articles?limit=${featured ? PER_PAGE : PER_PAGE * 2}&locale=${encodeURIComponent(locale)}`)
             .then((res) => {
                 if (!res.ok) throw new Error(`articles answered ${res.status}`);
                 return res.json();
@@ -178,7 +181,7 @@ export function NewsBlock({ settings }: BlockProps) {
             .then((data: { articles?: Article[] }) => { if (active) setPosts(data.articles ?? []); })
             .catch(() => { if (active) setFailed(true); });
         return () => { active = false; };
-    }, [featured, reloadKey]);
+    }, [featured, reloadKey, locale]);
 
     const heading = (
         <BlockHeading
