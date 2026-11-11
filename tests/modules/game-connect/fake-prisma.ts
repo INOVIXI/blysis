@@ -2,8 +2,8 @@
  * An in-memory stand-in for the part of Prisma game-connect uses.
  *
  * It reads the same `where` objects the module writes: plain equality, `in`,
- * `lt`, `gt`, `gte`, `lte`, `not`, `equals` with `mode: "insensitive"`, `OR`,
- * `AND` and `NOT`. That is enough to test the queue's conditional writes as written,
+ * `lt`, `gt`, `gte`, `lte`, `not`, `startsWith`, `equals` with
+ * `mode: "insensitive"`, `OR`, `AND` and `NOT` (one condition or a list). That is enough to test the queue's conditional writes as written,
  * rather than as a mock that answers whatever the test expects.
  */
 import { vi } from "vitest";
@@ -24,6 +24,7 @@ function compare(value: unknown, condition: unknown): boolean {
     if ("gt" in c && !(v !== null && v !== undefined && (v as number) > (n(c.gt) as number))) return false;
     if ("gte" in c && !(v !== null && v !== undefined && (v as number) >= (n(c.gte) as number))) return false;
     if ("not" in c && compare(value, c.not)) return false;
+    if ("startsWith" in c && !(typeof value === "string" && value.startsWith(String(c.startsWith)))) return false;
     if ("equals" in c) {
         if (c.mode === "insensitive") {
             if (String(value).toLowerCase() !== String(c.equals).toLowerCase()) return false;
@@ -32,7 +33,7 @@ function compare(value: unknown, condition: unknown): boolean {
     return true;
 }
 
-const OPERATORS = new Set(["in", "lt", "lte", "gt", "gte", "not", "equals", "mode"]);
+const OPERATORS = new Set(["in", "lt", "lte", "gt", "gte", "not", "equals", "mode", "startsWith"]);
 
 /** `serverId_key: { serverId, key }`: a compound unique key, read as its fields. */
 function compound(row: Row, key: string, condition: unknown): boolean {
@@ -48,7 +49,9 @@ export function matches(row: Row, where: Where | undefined): boolean {
         } else if (key === "AND") {
             if (!(condition as Where[]).every((w) => matches(row, w))) return false;
         } else if (key === "NOT") {
-            if (matches(row, condition as Where)) return false;
+            // One condition or a list, and the row matches none of them.
+            const excluded = Array.isArray(condition) ? (condition as Where[]) : [condition as Where];
+            if (excluded.some((w) => matches(row, w))) return false;
         } else if (compound(row, key, condition)) {
             if (!matches(row, condition as Where)) return false;
         } else if (!compare(row[key], condition)) {
