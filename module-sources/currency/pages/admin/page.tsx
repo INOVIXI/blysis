@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Input, Label, useConfirm, CheckboxField } from "@/core/sdk/ui";
 import { Loader2, Plus, Trash2, Save, Star } from "lucide-react";
@@ -20,31 +20,53 @@ interface Currency {
 interface CurrencyConfig {
     base: string;
     currencies: Currency[];
+    useFetchedRates: boolean;
 }
+
+/** As the endpoint answers: `rate` is what is shown, `manualRate` what was typed. */
+interface ShownCurrency extends Currency {
+    manualRate?: number;
+    liveRate?: number | null;
+}
+
+/** Enough digits to compare with a typed rate, without a float's tail. */
+const readable = (rate: number) => Number(rate.toPrecision(6)).toString();
 
 export default function CurrencyAdminPage() {
     const t = useTranslations("currency");
     const commonT = useTranslations("common");
     const { confirm } = useConfirm();
-    const [config, setConfig] = useState<CurrencyConfig>({ base: "USD", currencies: [] });
+    const [config, setConfig] = useState<CurrencyConfig>({ base: "USD", currencies: [], useFetchedRates: false });
+    // The fetched rate per code, against the base as last saved. Read again
+    // after a save, since changing the base changes every one of them.
+    const [live, setLive] = useState<Record<string, number | null>>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
+    const load = useCallback(async () => {
+        const d = await (await fetch("/api/v1/currency")).json();
+        const shown: ShownCurrency[] = Array.isArray(d.currencies) ? d.currencies : [];
+        // The screen edits what was typed. `rate` in the answer is what the
+        // footer shows, which is the fetched one while the switch is on.
+        setConfig({
+            base: d.base,
+            useFetchedRates: d.useFetchedRates === true,
+            currencies: shown.map((cur) => ({
+                code: cur.code,
+                name: cur.name,
+                symbol: cur.symbol,
+                enabled: cur.enabled,
+                rate: cur.manualRate ?? cur.rate,
+            })),
+        });
+        setLive(Object.fromEntries(shown.map((cur) => [cur.code, cur.liveRate ?? null])));
+    }, []);
+
     useEffect(() => {
-        let cancelled = false;
-        fetch("/api/v1/currency")
-            .then((r) => r.json())
-            .then((d) => {
-                if (cancelled) return;
-                setConfig(d);
-            })
+        load()
             .catch(() => toast.error(t("saveError")))
-            .finally(() => {
-                if (cancelled) return;
-                setLoading(false);
-            });
-        return () => { cancelled = true; };
-    }, [t]);
+            .finally(() => setLoading(false));
+    }, [load, t]);
 
     const updateCurrency = (idx: number, patch: Partial<Currency>) => {
         const next = [...config.currencies];
@@ -113,6 +135,7 @@ export default function CurrencyAdminPage() {
                 return;
             }
             toast.success(t("saved"));
+            await load();
         } catch {
             toast.error(t("saveError"));
         } finally {
@@ -154,12 +177,25 @@ export default function CurrencyAdminPage() {
                     <CardTitle>{t("exchangeRates")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    <CheckboxField
+                        checked={config.useFetchedRates}
+                        onChange={(e) => setConfig({ ...config, useFetchedRates: e.target.checked })}
+                        label={<span className="font-medium">{t("adm_useFetched")}</span>}
+                        description={t("adm_useFetchedHint")}
+                    />
+
                     {config.currencies.length === 0 && (
                         <p className="text-sm text-muted-foreground">{t("noCurrencies")}</p>
                     )}
 
                     {config.currencies.map((cur, idx) => {
                         const isBase = cur.code !== "" && cur.code === config.base;
+                        const liveRate = live[cur.code] ?? null;
+                        // A currency with a fetched rate is shown at it, so the
+                        // typed one is kept but not offered. One without keeps
+                        // its typed rate and says so.
+                        const followsLive = config.useFetchedRates && liveRate !== null;
+                        const missingLive = config.useFetchedRates && liveRate === null && !isBase;
                         return (
                             <div key={idx} className="rounded-lg border border-border bg-muted/30 p-4 space-y-4">
                                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -169,6 +205,7 @@ export default function CurrencyAdminPage() {
                                         </span>
                                         {isBase && <Badge tone="info"><Star className="w-3 h-3" />{t("adm_isBase")}</Badge>}
                                         {!cur.enabled && <Badge>{t("disabled")}</Badge>}
+                                        {missingLive && <Badge tone="warning">{t("adm_manualFallback")}</Badge>}
                                     </div>
                                     <div className="flex items-center gap-1">
                                         {!isBase && (
@@ -237,12 +274,19 @@ export default function CurrencyAdminPage() {
                                             // so its own rate is 1 by definition. Letting it be
                                             // edited is letting the ruler be a different length.
                                             value={isBase ? 1 : cur.rate}
-                                            disabled={isBase}
+                                            disabled={isBase || followsLive}
                                             onChange={(e) => updateCurrency(idx, { rate: Number(e.target.value) || 0 })}
                                         />
                                         <p className="mt-1 text-xs text-muted-foreground">
                                             {isBase ? t("adm_baseRateHint") : t("adm_rateHint", { base: config.base })}
                                         </p>
+                                        {!isBase && cur.code !== "" && (
+                                            <p className={missingLive ? "mt-1 text-xs text-warning" : "mt-1 text-xs text-muted-foreground"}>
+                                                {liveRate !== null
+                                                    ? t("adm_liveRate", { rate: readable(liveRate) })
+                                                    : t("adm_noLiveRate")}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
