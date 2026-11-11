@@ -14,8 +14,8 @@
  *  3. **A build is interrupted** (OOM, `docker kill` mid-install) and leaves
  *     `.next` matching neither the old nor the new module set.
  *
- * The fix is a fingerprint. After every successful build the module set is
- * hashed and written beside the build; at boot `scripts/reconcile-build.ts`
+ * The fix is a fingerprint. Every build hashes the module set before it
+ * starts and, once it succeeds, writes that hash beside the build; at boot `scripts/reconcile-build.ts`
  * compares the hash against what is actually installed and rebuilds when they
  * disagree. The process therefore always serves a build that matches disk,
  * whatever happened while it was down.
@@ -146,17 +146,27 @@ export function readBuildState(root: string = process.cwd()): BuildState | null 
 }
 
 /**
- * Record that the build now on disk was produced from the module set now on
- * disk. Call this only after a build actually succeeded - writing it earlier
- * would tell the next boot that a broken build is current.
+ * Record that the build now on disk was produced from `moduleFingerprint`.
+ * Call this only after a build actually succeeded - writing it earlier would
+ * tell the next boot that a broken build is current.
+ *
+ * A build takes the fingerprint before its generators read `src/modules` and
+ * passes it here. The default, the modules on disk now, is only right when
+ * nothing was built: a module installed while `next build` ran is on disk by
+ * the time it finishes but not in what it compiled, and recording it as built
+ * left its endpoints answering 404 with no drift for the next boot to see.
  *
  * `dir` is the build being described: the live `.next` by default, or a
  * staged build that will carry the record with it when it is promoted (see
  * staged-build.ts).
  */
-export function writeBuildState(root: string = process.cwd(), dir: string = nextDir(root)): BuildState {
+export function writeBuildState(
+    root: string = process.cwd(),
+    dir: string = nextDir(root),
+    moduleFingerprint: string = computeModuleFingerprint(root),
+): BuildState {
     const state: BuildState = {
-        moduleFingerprint: computeModuleFingerprint(root),
+        moduleFingerprint,
         imageBuildId: readImageBuildId(root),
         builtAt: new Date().toISOString(),
     };
@@ -239,10 +249,16 @@ export function readSchemaState(root: string = process.cwd()): SchemaState | nul
     }
 }
 
-/** Call only after `merge-schemas` regenerated the client successfully. */
-export function writeSchemaState(root: string = process.cwd()): SchemaState {
+/**
+ * Call only after `merge-schemas` regenerated the client successfully, with
+ * the fingerprint taken before it ran, for the reason `writeBuildState` gives.
+ */
+export function writeSchemaState(
+    root: string = process.cwd(),
+    moduleFingerprint: string = computeModuleFingerprint(root),
+): SchemaState {
     const state: SchemaState = {
-        moduleFingerprint: computeModuleFingerprint(root),
+        moduleFingerprint,
         generatedAt: new Date().toISOString(),
     };
     const file = schemaStatePath(root);

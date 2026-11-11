@@ -169,6 +169,23 @@ describe("writeBuildState", () => {
         expect(written.moduleFingerprint).toBe(computeModuleFingerprint(root));
     });
 
+    // A module installed while `next build` ran is on disk when the build
+    // finishes but not in the route table it compiled. Hashing at write time
+    // recorded it as built, the next boot found no drift, and every endpoint
+    // of that module answered 404 until the state file was removed by hand.
+    it("records the module set the build started from, so a module installed during it is drift", () => {
+        makeBuild();
+        makeModule("blog");
+        const atStart = computeModuleFingerprint(root);
+
+        makeModule("store");
+        const written = writeBuildState(root, path.join(root, ".next"), atStart);
+
+        expect(written.moduleFingerprint).toBe(atStart);
+        expect(readBuildState(root)?.moduleFingerprint).toBe(atStart);
+        expect(detectDrift(root)?.kind).toBe("modules-changed");
+    });
+
     it("leaves no temp file behind", () => {
         makeBuild();
         writeBuildState(root);
@@ -223,6 +240,15 @@ describe("detectSchemaDrift", () => {
 
         expect(detectDrift(root)).toBeNull();
         expect(detectSchemaDrift(root)?.kind).toBe("no-state");
+    });
+
+    it("records the module set the client was generated from, not the one at write time", () => {
+        makeModule("blog");
+        const atStart = computeModuleFingerprint(root);
+
+        makeModule("store");
+        expect(writeSchemaState(root, atStart).moduleFingerprint).toBe(atStart);
+        expect(detectSchemaDrift(root)?.kind).toBe("modules-changed");
     });
 
     it("round-trips through readSchemaState", () => {

@@ -23,7 +23,7 @@
 import { execFile } from "child_process";
 import { promisify } from "util";
 import { errorText, log } from "./logger";
-import { writeSchemaState } from "./build-state";
+import { computeModuleFingerprint, writeSchemaState } from "./build-state";
 import { discardStagedBuild, markStagedBuildReady, prepareStagedBuild } from "./staged-build";
 import { toolCommand } from "./tool-command";
 
@@ -175,6 +175,11 @@ export function scheduleBuild(): void {
         buildScheduled = false;
 
         try {
+            // What this build compiles: taken before any generator reads
+            // src/modules, so a module copied in while it runs is recorded
+            // as not built (see writeBuildState).
+            const moduleFingerprint = computeModuleFingerprint();
+
             // 1. Rebuild prisma/schema.prisma from the core schema plus every
             //    module currently in src/modules. This is what makes the push
             //    below safe: the merged schema describes the modules that are
@@ -285,8 +290,15 @@ export function scheduleBuild(): void {
             // 6. Record what the build and the regenerated Prisma client were
             //    made from. The build's record goes into the staged build, so
             //    it arrives with it, and marks it ready to promote.
-            markStagedBuildReady();
-            writeSchemaState();
+            markStagedBuildReady(process.cwd(), moduleFingerprint);
+            writeSchemaState(process.cwd(), moduleFingerprint);
+
+            // A module installed during the build is not in it. Restarting
+            // now would serve the build without it, and the restart lands
+            // before the next build's debounce runs out, so that build never
+            // happened. The `finally` below starts that build instead, and it
+            // restarts when it is done.
+            if (buildScheduled) return;
 
             // 7. Replace the process so the new build is actually served.
             //

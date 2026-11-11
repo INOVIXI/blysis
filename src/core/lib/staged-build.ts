@@ -144,14 +144,16 @@ export function discardStagedBuild(root: string = process.cwd()): void {
 
 /**
  * Mark a finished staged build ready to promote, by writing the record of
- * what it was built from into it. Call only after `next build` succeeded.
+ * what it was built from into it. Call only after `next build` succeeded,
+ * with the module fingerprint taken before the build started (see
+ * `writeBuildState`).
  */
-export function markStagedBuildReady(root: string = process.cwd()): void {
+export function markStagedBuildReady(root: string = process.cwd(), moduleFingerprint?: string): void {
     const dir = stagingDir(root);
     if (!fs.existsSync(path.join(dir, "BUILD_ID"))) {
         throw new Error(`${dir} holds no finished build (no BUILD_ID)`);
     }
-    writeBuildState(root, dir);
+    writeBuildState(root, dir, moduleFingerprint);
 }
 
 /** Whether a finished, marked staged build is waiting to be promoted. */

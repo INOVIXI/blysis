@@ -58,12 +58,13 @@ function reconcileSchema(): void {
     if (!drift) return;
 
     log(`regenerating the Prisma client - ${drift.kind}: ${drift.detail}`);
+    const moduleFingerprint = computeModuleFingerprint();
     try {
         execFileSync(...toolCommand(["npx", "tsx", "scripts/merge-schemas.ts"]), {
             stdio: "inherit",
             cwd: process.cwd(),
         });
-        writeSchemaState();
+        writeSchemaState(process.cwd(), moduleFingerprint);
         log("Prisma client regenerated");
     } catch {
         console.error("[reconcile] Prisma client regeneration FAILED - module queries will not work.");
@@ -99,7 +100,9 @@ function main(): void {
     const nothingToFallBackTo = drift.kind === "no-build";
 
     log(`rebuild required - ${drift.kind}: ${drift.detail}`);
-    log(`installed module fingerprint: ${computeModuleFingerprint().slice(0, 12)}`);
+    // Recorded for the build, not recomputed after it (see writeBuildState).
+    const moduleFingerprint = computeModuleFingerprint();
+    log(`installed module fingerprint: ${moduleFingerprint.slice(0, 12)}`);
     log("running `npm run build` (this takes a few minutes; the container is not serving yet)");
 
     try {
@@ -107,7 +110,7 @@ function main(): void {
         // registry and the OpenAPI document, so this one command covers every
         // generated artifact the build depends on.
         execFileSync(...toolCommand(["npm", "run", "build"]), { stdio: "inherit", cwd: process.cwd(), env: prepareStagedBuild() });
-        markStagedBuildReady();
+        markStagedBuildReady(process.cwd(), moduleFingerprint);
     } catch {
         discardStagedBuild();
         if (nothingToFallBackTo) {
@@ -122,7 +125,7 @@ function main(): void {
     promoteStagedBuild();
     // `prebuild` re-ran merge-schemas as part of the build, so the client is
     // current too.
-    writeSchemaState();
+    writeSchemaState(process.cwd(), moduleFingerprint);
     log(`rebuild finished in ${Math.round((Date.now() - started) / 1000)}s - starting`);
 }
 
