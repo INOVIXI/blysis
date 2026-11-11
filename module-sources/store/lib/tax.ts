@@ -173,7 +173,7 @@ const REASON_KEYS: Record<StoreTaxReason, string> = {
  * own words, with the rate. An order from before there was a record says
  * only "Tax", because its rate was never written down.
  */
-export function taxLineText(say: Say, record: StoreTaxRecord | null): string {
+export function taxLineText(say: Say, record: Pick<StoreTaxRecord, "label" | "rate" | "included"> | null): string {
     if (!record) return say(LABEL_KEYS.tax);
     const label = record.label.kind === "custom" ? record.label.text : say(LABEL_KEYS[record.label.id]);
     return say(record.included ? "taxLineIncluded" : "taxLine", { label, rate: record.rate });

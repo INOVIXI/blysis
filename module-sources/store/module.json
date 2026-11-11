@@ -1541,7 +1541,8 @@
         "taxReason_exempt": "No tax charged",
         "taxEvidence": "Billing address country: {billing}. Connection country: {ip}.",
         "taxEvidenceConflict": "The billing address and the connection are in different countries. Check the order before invoicing it.",
-        "taxUnknown": "unknown"
+        "taxUnknown": "unknown",
+        "taxMayChange": "Tax at the shop's standard rate. It can change at checkout once your billing country is known."
       },
       "cart": {
         "title": "Shopping Cart",
@@ -2424,7 +2425,8 @@
         "taxReason_exempt": "Vergi alınmadı",
         "taxEvidence": "Fatura adresi ülkesi: {billing}. Bağlantı ülkesi: {ip}.",
         "taxEvidenceConflict": "Fatura adresi ile bağlantı farklı ülkelerde. Faturalandırmadan önce siparişi kontrol edin.",
-        "taxUnknown": "bilinmiyor"
+        "taxUnknown": "bilinmiyor",
+        "taxMayChange": "Vergi mağazanın standart oranıyla gösteriliyor. Fatura ülkeniz belli olunca ödeme adımında değişebilir."
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -3307,7 +3309,8 @@
         "taxReason_exempt": "Vergi tutulmayıb",
         "taxEvidence": "Faktura ünvanının ölkəsi: {billing}. Bağlantının ölkəsi: {ip}.",
         "taxEvidenceConflict": "Faktura ünvanı ilə bağlantı fərqli ölkələrdədir. Faktura verməzdən əvvəl sifarişi yoxlayın.",
-        "taxUnknown": "naməlum"
+        "taxUnknown": "naməlum",
+        "taxMayChange": "Vergi mağazanın standart dərəcəsi ilə göstərilir. Faktura ölkəniz məlum olduqda ödəniş addımında dəyişə bilər."
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -4190,7 +4193,8 @@
         "taxReason_exempt": "Keine Steuer berechnet",
         "taxEvidence": "Land der Rechnungsadresse: {billing}. Land der Verbindung: {ip}.",
         "taxEvidenceConflict": "Rechnungsadresse und Verbindung liegen in verschiedenen Ländern. Prüfe die Bestellung vor der Rechnungsstellung.",
-        "taxUnknown": "unbekannt"
+        "taxUnknown": "unbekannt",
+        "taxMayChange": "Steuer zum Standardsatz des Shops. Sie kann sich an der Kasse ändern, sobald dein Rechnungsland bekannt ist."
       },
       "cart": {
         "title": "Warenkorb",
@@ -5073,7 +5077,8 @@
         "taxReason_exempt": "Sin impuesto",
         "taxEvidence": "País de la dirección de facturación: {billing}. País de la conexión: {ip}.",
         "taxEvidenceConflict": "La dirección de facturación y la conexión están en países distintos. Revisa el pedido antes de facturarlo.",
-        "taxUnknown": "desconocido"
+        "taxUnknown": "desconocido",
+        "taxMayChange": "Impuesto al tipo general de la tienda. Puede cambiar al pagar, cuando se conozca tu país de facturación."
       },
       "cart": {
         "title": "Carrito de compra",
@@ -5956,7 +5961,8 @@
         "taxReason_exempt": "Maksu ei arvestatud",
         "taxEvidence": "Arveaadressi riik: {billing}. Ühenduse riik: {ip}.",
         "taxEvidenceConflict": "Arveaadress ja ühendus on eri riikides. Kontrolli tellimust enne arve väljastamist.",
-        "taxUnknown": "teadmata"
+        "taxUnknown": "teadmata",
+        "taxMayChange": "Maks poe tavamääraga. See võib kassas muutuda, kui sinu arveldusriik on teada."
       },
       "cart": {
         "title": "Ostukorv",
@@ -6839,7 +6845,8 @@
         "taxReason_exempt": "Aucune taxe facturée",
         "taxEvidence": "Pays de l'adresse de facturation : {billing}. Pays de la connexion : {ip}.",
         "taxEvidenceConflict": "L'adresse de facturation et la connexion sont dans des pays différents. Vérifiez la commande avant de la facturer.",
-        "taxUnknown": "inconnu"
+        "taxUnknown": "inconnu",
+        "taxMayChange": "Taxe au taux normal de la boutique. Elle peut changer au paiement, une fois votre pays de facturation connu."
       },
       "cart": {
         "title": "Panier",
@@ -7722,7 +7729,8 @@
         "taxReason_exempt": "Nessuna imposta applicata",
         "taxEvidence": "Paese dell'indirizzo di fatturazione: {billing}. Paese della connessione: {ip}.",
         "taxEvidenceConflict": "L'indirizzo di fatturazione e la connessione sono in paesi diversi. Controlla l'ordine prima di fatturarlo.",
-        "taxUnknown": "sconosciuto"
+        "taxUnknown": "sconosciuto",
+        "taxMayChange": "Imposta all'aliquota standard del negozio. Può cambiare al checkout, quando sarà noto il tuo paese di fatturazione."
       },
       "cart": {
         "title": "Carrello",
@@ -8605,7 +8613,8 @@
         "taxReason_exempt": "Bez podatku",
         "taxEvidence": "Kraj adresu rozliczeniowego: {billing}. Kraj połączenia: {ip}.",
         "taxEvidenceConflict": "Adres rozliczeniowy i połączenie są w różnych krajach. Sprawdź zamówienie przed wystawieniem faktury.",
-        "taxUnknown": "nieznany"
+        "taxUnknown": "nieznany",
+        "taxMayChange": "Podatek według standardowej stawki sklepu. Może się zmienić przy płatności, gdy znany będzie kraj rozliczeniowy."
       },
       "cart": {
         "title": "Koszyk",
@@ -9488,7 +9497,8 @@
         "taxReason_exempt": "Sem imposto",
         "taxEvidence": "País do endereço de faturação: {billing}. País da ligação: {ip}.",
         "taxEvidenceConflict": "O endereço de faturação e a ligação estão em países diferentes. Verifique a encomenda antes de a faturar.",
-        "taxUnknown": "desconhecido"
+        "taxUnknown": "desconhecido",
+        "taxMayChange": "Imposto à taxa normal da loja. Pode mudar no checkout, quando o seu país de faturação for conhecido."
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -10371,7 +10381,8 @@
         "taxReason_exempt": "Налог не взимался",
         "taxEvidence": "Страна платёжного адреса: {billing}. Страна подключения: {ip}.",
         "taxEvidenceConflict": "Платёжный адрес и подключение находятся в разных странах. Проверьте заказ перед выставлением счёта.",
-        "taxUnknown": "неизвестно"
+        "taxUnknown": "неизвестно",
+        "taxMayChange": "Налог по стандартной ставке магазина. Он может измениться при оформлении, когда станет известна страна платёжного адреса."
       },
       "cart": {
         "title": "Корзина",
@@ -11254,7 +11265,8 @@
         "taxReason_exempt": "未征税",
         "taxEvidence": "账单地址国家：{billing}。连接国家：{ip}。",
         "taxEvidenceConflict": "账单地址与连接位于不同国家。开具发票前请核对此订单。",
-        "taxUnknown": "未知"
+        "taxUnknown": "未知",
+        "taxMayChange": "税费按商店标准税率显示。确定您的账单国家后，结账时可能会变化。"
       },
       "cart": {
         "title": "购物车",

@@ -13,7 +13,8 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { writeError, errorMessage } from "@/core/sdk";
 import { isPlayerName } from "../../../lib/player-name";
-import { grossUpForFee, type ProcessorFee } from "../../../lib/pricing";
+import { checkoutSummary, type ProcessorFee } from "../../../lib/pricing";
+import { taxLineText } from "../../../lib/tax";
 
 interface CartItem {
     id: string;
@@ -42,6 +43,14 @@ interface PaymentProvider {
     fee?: ProcessorFee | null;
     /** Set when the checkout would refuse this method right now. */
     unavailable?: string;
+}
+
+/** The tax a sale would carry, as `/store/payment-providers` answers it. */
+interface CartTax {
+    rate: number;
+    included: boolean;
+    label: StoreTaxLabel;
+    country: string | null;
 }
 
 interface CartData {
@@ -94,20 +103,13 @@ export default function CartPage() {
     // Which boxes the endpoint named, so the form marks them rather than
     // saying "something is missing" over a page of fields.
     const [billingMissing, setBillingMissing] = useState<string[]>([]);
+    // The tax a sale would carry, as the checkout will ask it. Null until the
+    // first answer, which charges nothing rather than guessing.
+    const [tax, setTax] = useState<CartTax | null>(null);
+    const [taxCountryKnown, setTaxCountryKnown] = useState(false);
 
     useEffect(() => {
         fetchCart();
-        // Which gateways are installed and configured is a question only the
-        // server can answer - it is the sum of the payment.providers filter.
-        fetch("/api/v1/store/payment-providers")
-            .then(r => r.ok ? r.json() : null)
-            .then(data => {
-                setBillingRequired(data?.billingRequired === true);
-                const list: PaymentProvider[] = Array.isArray(data?.providers) ? data.providers : [];
-                setProviders(list);
-                setPaymentMethod(prev => prev || list.find(p => !p.unavailable)?.id || "");
-            })
-            .catch(() => {});
         // The wallet is a module too: no credits endpoint, no credits button.
         fetch("/api/v1/credits")
             .then(r => r.ok ? r.json() : null)
@@ -119,6 +121,43 @@ export default function CartPage() {
             })
             .catch(() => {});
     }, []);
+
+    // Which gateways are installed and configured is a question only the
+    // server can answer - it is the sum of the payment.providers filter - and
+    // so is the tax, which may follow the buyer's country. Asked again when
+    // the invoice form names a country, a little after the last keystroke.
+    const billingCountry = /^[A-Za-z]{2}$/.test(billing.country) ? billing.country : "";
+    const billingTaxNumber = billing.kind === "company" ? billing.taxNumber : "";
+    useEffect(() => {
+        const query = new URLSearchParams();
+        if (billingCountry) {
+            query.set("country", billingCountry);
+            query.set("kind", billing.kind);
+            if (billingTaxNumber) query.set("taxNumber", billingTaxNumber);
+        }
+        // A country changed twice in quick succession sends two questions; the
+        // answer to the first must not land after the second and price the
+        // cart for a country the buyer has already left.
+        let cancelled = false;
+        const timer = setTimeout(() => {
+            fetch(`/api/v1/store/payment-providers${query.size > 0 ? `?${query}` : ""}`)
+                .then(r => r.ok ? r.json() : null)
+                .then(data => {
+                    if (cancelled) return;
+                    setBillingRequired(data?.billingRequired === true);
+                    const list: PaymentProvider[] = Array.isArray(data?.providers) ? data.providers : [];
+                    setProviders(list);
+                    setPaymentMethod(prev => prev || list.find(p => !p.unavailable)?.id || "");
+                    if (data?.tax && typeof data.tax.rate === "number") setTax(data.tax as CartTax);
+                    setTaxCountryKnown(data?.taxCountryKnown === true);
+                })
+                .catch(() => {});
+        }, billingCountry ? 300 : 0);
+        return () => {
+            cancelled = true;
+            clearTimeout(timer);
+        };
+    }, [billingCountry, billing.kind, billingTaxNumber]);
 
     const fetchCart = async () => {
         try {
@@ -288,9 +327,21 @@ export default function CartPage() {
     // method they picked, grossed up the way the checkout grosses it. Shown
     // before they press anything, because a surcharge first seen on a
     // processor's page is a chargeback waiting.
-    const orderTotal = cart ? Math.max(0, cart.total - couponDiscount - (creatorApplied?.discount ?? 0)) : 0;
-    const chosenFee = providers.find(p => p.id === paymentMethod)?.fee ?? null;
-    const paymentFee = chosenFee ? grossUpForFee(orderTotal, chosenFee).surcharge : 0;
+    //
+    // The tax comes first and the fee is grossed up on the taxed total, with
+    // the function the checkout's figures come from: see `checkoutSummary`.
+    // Credits pay the total; only a gateway carries a fee.
+    const chosenFee = paymentMethod === "credits" ? null : providers.find(p => p.id === paymentMethod)?.fee ?? null;
+    const summary = checkoutSummary({
+        subtotal: cart?.total ?? 0,
+        couponDiscount,
+        creatorDiscount: creatorApplied?.discount ?? 0,
+        taxRate: tax?.rate ?? 0,
+        taxIncluded: tax?.included ?? false,
+        fee: chosenFee,
+    });
+    const orderTotal = summary.total;
+    const paymentFee = summary.surcharge;
 
     const waiting = loading ? (
         // The minimum height is the card below it, which is what a
@@ -536,6 +587,16 @@ export default function CartPage() {
                                     </div>
                                 )}
 
+                                {tax && summary.tax > 0 && (
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">{taxLineText(t, tax)}</span>
+                                        <span>{tax.included ? formatPrice(summary.tax) : `+${formatPrice(summary.tax)}`}</span>
+                                    </div>
+                                )}
+                                {tax && tax.rate > 0 && !taxCountryKnown && (
+                                    <p className="text-xs text-muted-foreground">{t('taxMayChange')}</p>
+                                )}
+
                                 <hr className="border-border" />
 
                                 <div className="flex justify-between text-lg font-bold">
@@ -551,7 +612,7 @@ export default function CartPage() {
                                         </div>
                                         <div className="flex justify-between font-semibold">
                                             <span>{t('amountToPay')}</span>
-                                            <span>{formatPrice(orderTotal + paymentFee)}</span>
+                                            <span>{formatPrice(summary.charged)}</span>
                                         </div>
                                     </>
                                 )}
