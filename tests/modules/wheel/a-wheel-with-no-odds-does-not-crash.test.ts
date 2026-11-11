@@ -28,7 +28,8 @@ const transaction = vi.fn(async (fn: (tx: unknown) => Promise<unknown>) =>
     }),
 );
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
         // The prizes belong to a wheel now, and the wheel carries the rules
         // the route used to read from a module setting.
@@ -49,6 +50,12 @@ vi.mock("@/core/sdk/server", () => ({
         wheelPrize: { findMany: () => findMany() },
         user: { findUnique: async () => ({ creditBalance: 1000, roleId: "member" }) },
         activityFeedItem: { create: async () => ({}) },
+        // The won prize is named back in the reader's language.
+        contentTranslation: {
+            findMany: async ({ where }: { where: { locale?: string } }) =>
+                [{ owner: "wheel", entity: "prize", recordId: "a", field: "name", locale: "en", text: "Ten credits" }]
+                    .filter((row) => !where.locale || row.locale === where.locale),
+        },
         $transaction: (fn: (tx: unknown) => Promise<unknown>) => transaction(fn),
     },
     moduleSettings: async () => ({}),
@@ -58,11 +65,11 @@ vi.mock("@/core/sdk/server", () => ({
 
 vi.mock("@/core/sdk/auth", () => ({ auth: async () => ({ user: { id: "u1", role: "user" } }) }));
 
-async function spin() {
+async function spin(query = "") {
     const route = await import("@/modules/wheel/api/spin/route");
     // `?wheel=` names which one; without it the route takes the first, which
     // is what an install with a single wheel means by "the wheel".
-    return route.POST(new Request("http://x/api/v1/wheel/spin") as never);
+    return route.POST(new Request(`http://x/api/v1/wheel/spin${query}`) as never);
 }
 
 describe("a wheel whose prizes all have zero odds", () => {
@@ -91,5 +98,11 @@ describe("a wheel whose prizes all have zero odds", () => {
         prizes = [{ id: "a", name: "Credits", type: "credits", value: 10, probability: 100 }];
         const res = await spin();
         expect(res.status).toBe(200);
+    });
+
+    it("names the prize won in the reader's language, and the original in one it has none in", async () => {
+        prizes = [{ id: "a", name: "On kredi", type: "credits", value: 10, probability: 100 }];
+        expect((await (await spin("?locale=en")).json()).prize.name).toBe("Ten credits");
+        expect((await (await spin("?locale=de")).json()).prize.name).toBe("On kredi");
     });
 });

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, isAdmin, prisma, readJsonBody, saveContentTranslations, translateContent } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { wheelPrizeCreateSchema } from "../../lib/validations";
+import { PRIZE_TEXT, PRIZE_TRANSLATED_FIELDS, wheelPrizeCreateSchema } from "../../lib/validations";
 
 // GET - List prizes (admin sees all, public sees active only)
 export async function GET(request: NextRequest) {
@@ -28,7 +28,11 @@ export async function GET(request: NextRequest) {
             select: { id: true, name: true, type: true, value: true, color: true, order: true, wheelId: true },
         }),
     });
-    return NextResponse.json({ prizes });
+    // The editor's answer carries every language of each label; a visitor's
+    // is in `?locale=`, and the original where the admin wrote none.
+    if (adminCheck) return NextResponse.json({ prizes: await attachContentTranslations(prisma, PRIZE_TEXT, prizes) });
+    const locale = new URL(request.url).searchParams.get("locale") ?? "";
+    return NextResponse.json({ prizes: await translateContent(prisma, PRIZE_TEXT, prizes, ["name"], locale) });
 }
 
 // POST - Admin: create prize
@@ -41,6 +45,8 @@ export async function POST(request: NextRequest) {
     if (jsonBody instanceof NextResponse) return jsonBody;
     const parsed = wheelPrizeCreateSchema.safeParse(jsonBody);
     if (!parsed.success) return NextResponse.json({ error: "Name and type required" }, { status: 400 });
+    const translations = contentTranslationsInput(jsonBody, PRIZE_TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const { name, type, value, color, probability, order, wheelId, productId } = parsed.data;
 
     // A prize that says it hands something over has to say what. Refusing
@@ -62,8 +68,8 @@ export async function POST(request: NextRequest) {
         : await prisma.wheel.findFirst({ orderBy: [{ order: "asc" }, { createdAt: "asc" }], select: { id: true } });
     if (!wheel) return NextResponse.json({ error: "Create a wheel first" }, { status: 400 });
 
-    const prize = await prisma.wheelPrize.create({
-        data: {
+    const prize = await prisma.$transaction(async (tx) => {
+        const created = await tx.wheelPrize.create({ data: {
             wheelId: wheel.id,
             name,
             type,
@@ -72,7 +78,9 @@ export async function POST(request: NextRequest) {
             color: color || "#3b82f6",
             probability: probability || 10,
             order: order || 0,
-        },
+        } });
+        if (translations.value) await saveContentTranslations(tx, { ...PRIZE_TEXT, recordId: created.id }, translations.value);
+        return created;
     });
     return NextResponse.json({ prize }, { status: 201 });
 }

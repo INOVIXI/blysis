@@ -40,9 +40,9 @@ export default function Page() {
             displayField="name"
             secondaryField="slug"
             fields={[
-                { key: "name", label: t("adm_wheels_name"), required: true, placeholder: t("adm_wheels_namePlaceholder") },
+                { key: "name", label: t("adm_wheels_name"), type: "translatable", required: true, placeholder: t("adm_wheels_namePlaceholder") },
                 { key: "slug", label: t("adm_wheels_slug"), required: true, placeholder: "vip-weekly" },
-                { key: "description", label: t("adm_wheels_description"), type: "textarea" },
+                { key: "description", label: t("adm_wheels_description"), type: "translatableTextarea" },
                 {
                     key: "cooldown",
                     label: t("adm_wheels_cooldown"),

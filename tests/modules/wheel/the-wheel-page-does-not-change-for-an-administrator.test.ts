@@ -42,7 +42,8 @@ const findMany = vi.fn(async (args: { include?: { prizes?: unknown } }) =>
 );
 const isAdmin = vi.fn(async () => false);
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
         wheel: { findMany: (args: unknown) => findMany(args as never) },
         user: { findUnique: async () => ({ creditBalance: 0, roleId: null }) },
@@ -65,7 +66,7 @@ interface Listed {
 }
 
 async function listed(): Promise<Listed[]> {
-    const res = await GET();
+    const res = await GET(new Request("http://x/api/v1/wheel/wheels") as never);
     const body = (await res.json()) as { wheels: Listed[] };
     return body.wheels;
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, isAdmin, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { wheelSchema } from "../../../lib/validations";
+import { WHEEL_TEXT, WHEEL_TRANSLATED_FIELDS, wheelSchema } from "../../../lib/validations";
 
 /**
  * Every wheel, including the ones that are switched off.
@@ -38,7 +38,8 @@ export async function GET() {
         // `roleId` is what the form writes: one role is the question an
         // operator asks, and the column stays a list so several stay
         // possible through the API.
-        wheels: wheels.map((wheel) => ({ ...wheel, roleId: wheel.roleIds[0] ?? "" })),
+        // With every language of each, for the editor's language boxes.
+        wheels: (await attachContentTranslations(prisma, WHEEL_TEXT, wheels)).map((wheel) => ({ ...wheel, roleId: wheel.roleIds[0] ?? "" })),
     }, { headers: PRIVATE });
 }
 
@@ -54,12 +55,19 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
 
+    const translations = contentTranslationsInput(body, WHEEL_TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
     const existing = await prisma.wheel.findUnique({ where: { slug: parsed.data.slug } });
     if (existing) return NextResponse.json({ error: "That address is taken" }, { status: 409 });
 
     const { roleId, ...fields } = parsed.data;
-    const wheel = await prisma.wheel.create({
-        data: { ...fields, roleIds: roleId ? [roleId] : (fields.roleIds ?? []) },
+    const wheel = await prisma.$transaction(async (tx) => {
+        const created = await tx.wheel.create({
+            data: { ...fields, roleIds: roleId ? [roleId] : (fields.roleIds ?? []) },
+        });
+        if (translations.value) await saveContentTranslations(tx, { ...WHEEL_TEXT, recordId: created.id }, translations.value);
+        return created;
     });
     return NextResponse.json({ wheel }, { status: 201, headers: PRIVATE });
 }

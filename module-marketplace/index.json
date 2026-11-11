@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T21:10:19Z",
+  "updatedAt": "2026-11-11T21:13:53Z",
   "modules": [
     {
       "id": "announcements",
@@ -7006,13 +7006,13 @@
           "description": "可配置奖品和冷却时间的转动赢奖游戏"
         }
       },
-      "version": "1.11.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.12.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Dices",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-11T21:13:53Z",
       "screenshots": [],
       "tags": [
         "commerce"

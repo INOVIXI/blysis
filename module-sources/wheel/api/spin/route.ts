@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { applyFiltersAsync } from "@/core/sdk";
-import { prisma, rateLimitForRoleAsync } from "@/core/sdk/server";
+import { prisma, rateLimitForRoleAsync, translateContent } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { randomInt } from "crypto";
 import { drawPrize, nextTurnAt, refusalFor } from "../../lib/wheels";
+import { PRIZE_TEXT } from "../../lib/validations";
 
 /**
  * Turn a wheel.
@@ -14,7 +15,9 @@ import { drawPrize, nextTurnAt, refusalFor } from "../../lib/wheels";
  * button and a working endpoint end up in the same release.
  *
  * `?wheel=<slug>` names which one. Without it, the first wheel the site has,
- * which is what an install with one wheel means by "the wheel".
+ * which is what an install with one wheel means by "the wheel". The prize
+ * is named back in `?locale=`; the log, the hooks and the feed keep the
+ * original, as an order keeps its items' names.
  */
 export async function POST(request: NextRequest) {
     const session = await auth();
@@ -232,10 +235,14 @@ export async function POST(request: NextRequest) {
         }).catch(() => {});
     }
 
+    const [label] = await translateContent(
+        prisma, PRIZE_TEXT, [{ id: selectedPrize.id, name: selectedPrize.name }], ["name"],
+        new URL(request.url).searchParams.get("locale") ?? "",
+    );
     return NextResponse.json({
         prize: {
             id: selectedPrize.id,
-            name: selectedPrize.name,
+            name: label.name,
             type: selectedPrize.type,
             value: selectedPrize.value,
             color: selectedPrize.color,
