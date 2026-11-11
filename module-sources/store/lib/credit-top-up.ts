@@ -20,6 +20,8 @@ export interface TopUpRow {
     userId: string | null;
     credits: number;
     amount: number | { toString(): string };
+    /** The payment method's fee passed on, charged on top of `amount`. */
+    fee?: number | { toString(): string } | null;
     currency: string;
     status: string;
 }
@@ -44,7 +46,10 @@ export async function settleCredits(settlement: PaymentSettlement, topUp: TopUpR
     if (!topUp.userId) return failed("the account that bought these credits no longer exists");
     const userId = topUp.userId;
 
-    const shortfall = chargeShortfall({ amount: Number(topUp.amount), currency: topUp.currency }, settlement);
+    // Held against the price and the fee together, because both were asked
+    // for: a payment that covers the credits and not the fee is short.
+    const charged = Math.round((Number(topUp.amount) + Number(topUp.fee ?? 0)) * 100) / 100;
+    const shortfall = chargeShortfall({ amount: charged, currency: topUp.currency }, settlement);
     if (shortfall) {
         log.error("[store] a top-up was paid for with less than it cost", {
             topUpId: topUp.id,

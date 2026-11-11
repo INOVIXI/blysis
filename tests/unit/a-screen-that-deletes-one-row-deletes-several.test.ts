@@ -55,6 +55,8 @@ const ONE_AT_A_TIME: Record<string, string> = {
         "A campaign is a schedule an operator designed; there are a few and each is deliberate. Deleting several at once is not a thing anybody wants to do quickly.",
     "module-sources/seo/pages/admin/pages/page.tsx":
         "The list here is a picker for which page to edit, not a list of rows to act on. What gets deleted is one page's override, from that page's own panel.",
+    "module-sources/store/pages/admin/settings/payment-fees/page.tsx":
+        "What it deletes is the fee set for one payment method, which hands that method back to its gateway's own setting. It is a reset of one setting, and there are as many as gateways installed.",
     "module-sources/help-center/pages/admin/help/page.tsx":
         "It has no delete for an article at all, and no edit either. Giving it a bulk delete before it can delete one row would be half an answer; that is its own item.",
 };

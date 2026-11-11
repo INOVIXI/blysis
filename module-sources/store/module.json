@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.52.0",
+  "version": "2.53.0",
   "coreVersion": "^5.30.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -291,6 +291,13 @@
       "permission": "store.manage"
     },
     {
+      "label": "Payment Fees",
+      "path": "/settings/payment-fees",
+      "icon": "Receipt",
+      "group": "commerce",
+      "permission": "store.manage"
+    },
+    {
       "label": "Bulk Discounts",
       "path": "/bulk-discounts",
       "icon": "Percent",
@@ -437,6 +444,11 @@
     {
       "path": "/store/credit-packages",
       "component": "pages/admin/credit-packages/page.tsx",
+      "permission": "store.manage"
+    },
+    {
+      "path": "/settings/payment-fees",
+      "component": "pages/admin/settings/payment-fees/page.tsx",
       "permission": "store.manage"
     }
   ],
@@ -701,6 +713,12 @@
       "handler": "api/payment-providers/route.ts",
       "method": "GET",
       "description": "The payment gateways installed and configured on this site."
+    },
+    {
+      "path": "/store/admin/payment-fees",
+      "handler": "api/admin/payment-fees/route.ts",
+      "description": "Read and set the fee each payment method passes on to the buyer (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/campaigns",
@@ -1308,7 +1326,8 @@
           "chest_gift_pending": "Accept the gift first.",
           "chest_gift_not_pending": "That gift is no longer waiting.",
           "chest_recipient_refuses_gifts": "That member does not accept gifts.",
-          "chest_gift_to_self": "That is your own chest."
+          "chest_gift_to_self": "That is your own chest.",
+          "fee_rate_unavailable": "That payment method cannot be used right now: its fee cannot be converted into this currency. Pick another method or try again later."
         },
         "err_checkoutFailed": "Checkout failed",
         "err_couponMinPurchase": "Spend at least {amount} to use this code.",
@@ -1479,7 +1498,31 @@
         "shelfAll": "See all ({count})",
         "discountTag": "{percent}% off",
         "durationDays": "{days, plural, one {# day} other {# days}}",
-        "relatedProducts": "From the same shelf"
+        "relatedProducts": "From the same shelf",
+        "fees_title": "Payment fees",
+        "fees_subtitle": "Pass a payment method's fee on to the buyer. The checkout adds it so that what the processor leaves you is the full order.",
+        "fees_loading": "Loading payment methods",
+        "fees_noMethods": "No payment method is set up yet. Install and configure a payment gateway first.",
+        "fees_setHere": "Set here",
+        "fees_fromGateway": "Gateway setting: {percent}% + {fixed} {currency}",
+        "fees_none": "No fee passed on",
+        "fees_passOn": "Pass this method's fee on to the buyer",
+        "fees_passOnHelp": "Off means the shop pays the fee, even when the gateway's own settings pass one on.",
+        "fees_percent": "Percentage (%)",
+        "fees_fixed": "Fixed amount per payment",
+        "fees_fixedCurrency": "Currency of the fixed amount",
+        "fees_shopCurrency": "Shop currency ({currency})",
+        "fees_conversionHelp": "A fixed amount in another currency is converted at checkout with the site's exchange rates. If no rate is available, the method cannot be used until one is.",
+        "fees_save": "Save",
+        "fees_saved": "Payment fee saved",
+        "fees_saveFailed": "The payment fee could not be saved",
+        "fees_useGateway": "Use the gateway's setting",
+        "fees_useGatewayConfirm": "Remove the fee set here for {method}? The checkout then uses whatever the gateway's own settings say.",
+        "paymentFee": "Payment fee",
+        "amountToPay": "Amount to pay",
+        "amountPaid": "Amount paid",
+        "paymentFeeTerms": "Fee: {percent}% + {fixed}",
+        "paymentMethodUnavailable": "Not available right now"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -1679,7 +1722,8 @@
         "menu_store_credit_packages": "Credit Packages",
         "menu_store_community_goal": "Community Goal",
         "settings_store": "Payments",
-        "settings_store_description": "Stripe and PayPal configuration."
+        "settings_store_description": "Stripe and PayPal configuration.",
+        "menu_store_payment_fees": "Payment Fees"
       },
       "activity": {
         "kindStoreOrderCompleted": "Order",
@@ -1690,7 +1734,9 @@
         "auditCreditPackageCreated": "Added a credit package",
         "auditCreditPackageUpdated": "Changed a credit package",
         "auditCreditPackageRetired": "Took a credit package off sale",
-        "auditCreditsTransferred": "Sent credits to a member"
+        "auditCreditsTransferred": "Sent credits to a member",
+        "auditPaymentFeeUpdated": "Changed a payment method's fee",
+        "auditPaymentFeeReset": "Returned a payment method to its gateway's fee"
       },
       "pageTitles": {
         "store": "Store",
@@ -2148,7 +2194,8 @@
           "chest_gift_pending": "Önce hediyeyi kabul et.",
           "chest_gift_not_pending": "Bu hediye artık beklemiyor.",
           "chest_recipient_refuses_gifts": "Bu üye hediye kabul etmiyor.",
-          "chest_gift_to_self": "Bu senin kendi sandığın."
+          "chest_gift_to_self": "Bu senin kendi sandığın.",
+          "fee_rate_unavailable": "Bu ödeme yöntemi şu anda kullanılamıyor: ücreti bu para birimine çevrilemiyor. Başka bir yöntem seçin ya da daha sonra yeniden deneyin."
         },
         "err_checkoutFailed": "Ödeme tamamlanamadı",
         "err_couponMinPurchase": "Bu kodu kullanmak için en az {amount} harcayın.",
@@ -2319,7 +2366,31 @@
         "shelfAll": "Hepsini gör ({count})",
         "discountTag": "%{percent} indirim",
         "durationDays": "{days} gün",
-        "relatedProducts": "Aynı raftan"
+        "relatedProducts": "Aynı raftan",
+        "fees_title": "Ödeme ücretleri",
+        "fees_subtitle": "Bir ödeme yönteminin ücretini alıcıya yansıtın. Ödeme adımı ücreti ekler, böylece işlemcinin size bıraktığı tutar siparişin tamamı olur.",
+        "fees_loading": "Ödeme yöntemleri yükleniyor",
+        "fees_noMethods": "Henüz kurulu bir ödeme yöntemi yok. Önce bir ödeme ağ geçidi kurup yapılandırın.",
+        "fees_setHere": "Burada ayarlandı",
+        "fees_fromGateway": "Ağ geçidi ayarı: %{percent} + {fixed} {currency}",
+        "fees_none": "Ücret yansıtılmıyor",
+        "fees_passOn": "Bu yöntemin ücretini alıcıya yansıt",
+        "fees_passOnHelp": "Kapalıyken ağ geçidinin kendi ayarları bir ücret yansıtsa bile ücreti mağaza öder.",
+        "fees_percent": "Yüzde (%)",
+        "fees_fixed": "Ödeme başına sabit tutar",
+        "fees_fixedCurrency": "Sabit tutarın para birimi",
+        "fees_shopCurrency": "Mağaza para birimi ({currency})",
+        "fees_conversionHelp": "Başka bir para birimindeki sabit tutar, ödeme sırasında sitenin döviz kurlarıyla çevrilir. Kur yoksa yöntem, bir kur bulunana kadar kullanılamaz.",
+        "fees_save": "Kaydet",
+        "fees_saved": "Ödeme ücreti kaydedildi",
+        "fees_saveFailed": "Ödeme ücreti kaydedilemedi",
+        "fees_useGateway": "Ağ geçidinin ayarını kullan",
+        "fees_useGatewayConfirm": "{method} için burada ayarlanan ücret kaldırılsın mı? Ödeme adımı bundan sonra ağ geçidinin kendi ayarlarını kullanır.",
+        "paymentFee": "Ödeme ücreti",
+        "amountToPay": "Ödenecek tutar",
+        "amountPaid": "Ödenen tutar",
+        "paymentFeeTerms": "Ücret: %{percent} + {fixed}",
+        "paymentMethodUnavailable": "Şu anda kullanılamıyor"
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -2519,7 +2590,8 @@
         "menu_store_credit_packages": "Kredi Paketleri",
         "menu_store_community_goal": "Topluluk Hedefi",
         "settings_store": "Ödemeler",
-        "settings_store_description": "Stripe ve PayPal ayarları."
+        "settings_store_description": "Stripe ve PayPal ayarları.",
+        "menu_store_payment_fees": "Ödeme Ücretleri"
       },
       "activity": {
         "kindStoreOrderCompleted": "Sipariş",
@@ -2530,7 +2602,9 @@
         "auditCreditPackageCreated": "Kredi paketi eklendi",
         "auditCreditPackageUpdated": "Kredi paketi değiştirildi",
         "auditCreditPackageRetired": "Kredi paketi satıştan kaldırıldı",
-        "auditCreditsTransferred": "Üyeye kredi gönderildi"
+        "auditCreditsTransferred": "Üyeye kredi gönderildi",
+        "auditPaymentFeeUpdated": "Bir ödeme yönteminin ücreti değiştirildi",
+        "auditPaymentFeeReset": "Bir ödeme yöntemi ağ geçidinin ücretine döndürüldü"
       },
       "pageTitles": {
         "store": "Mağaza",
@@ -2988,7 +3062,8 @@
           "chest_gift_pending": "Əvvəlcə hədiyyəni qəbul edin.",
           "chest_gift_not_pending": "O hədiyyə artıq gözləmir.",
           "chest_recipient_refuses_gifts": "O üzv hədiyyə qəbul etmir.",
-          "chest_gift_to_self": "Bu sizin öz sandığınızdır."
+          "chest_gift_to_self": "Bu sizin öz sandığınızdır.",
+          "fee_rate_unavailable": "Bu ödəniş üsulu hazırda istifadə edilə bilməz: onun haqqı bu valyutaya çevrilə bilmir. Başqa üsul seçin və ya sonra yenidən cəhd edin."
         },
         "err_checkoutFailed": "Ödəniş alınmadı",
         "err_couponMinPurchase": "Bu kodu istifadə etmək üçün ən azı {amount} xərcləyin.",
@@ -3159,7 +3234,31 @@
         "shelfAll": "Hamısına bax ({count})",
         "discountTag": "%{percent} endirim",
         "durationDays": "{days} gün",
-        "relatedProducts": "Eyni rəfdən"
+        "relatedProducts": "Eyni rəfdən",
+        "fees_title": "Ödəniş haqları",
+        "fees_subtitle": "Ödəniş üsulunun haqqını alıcının üzərinə keçirin. Ödəniş addımı onu əlavə edir ki, prosessorun sizə saxladığı məbləğ sifarişin tamamı olsun.",
+        "fees_loading": "Ödəniş üsulları yüklənir",
+        "fees_noMethods": "Hələ heç bir ödəniş üsulu qurulmayıb. Əvvəlcə ödəniş şlüzü quraşdırın və tənzimləyin.",
+        "fees_setHere": "Burada təyin edilib",
+        "fees_fromGateway": "Şlüz ayarı: {percent}% + {fixed} {currency}",
+        "fees_none": "Haqq keçirilmir",
+        "fees_passOn": "Bu üsulun haqqını alıcının üzərinə keçir",
+        "fees_passOnHelp": "Söndürüldükdə şlüzün öz ayarları haqq keçirsə belə, haqqı mağaza ödəyir.",
+        "fees_percent": "Faiz (%)",
+        "fees_fixed": "Hər ödəniş üçün sabit məbləğ",
+        "fees_fixedCurrency": "Sabit məbləğin valyutası",
+        "fees_shopCurrency": "Mağaza valyutası ({currency})",
+        "fees_conversionHelp": "Başqa valyutadakı sabit məbləğ ödəniş zamanı saytın valyuta məzənnələri ilə çevrilir. Məzənnə yoxdursa, üsul məzənnə olana qədər istifadə edilə bilməz.",
+        "fees_save": "Yadda saxla",
+        "fees_saved": "Ödəniş haqqı yadda saxlanıldı",
+        "fees_saveFailed": "Ödəniş haqqı yadda saxlanıla bilmədi",
+        "fees_useGateway": "Şlüzün ayarını istifadə et",
+        "fees_useGatewayConfirm": "{method} üçün burada təyin edilən haqq silinsin? Ödəniş addımı bundan sonra şlüzün öz ayarlarını istifadə edir.",
+        "paymentFee": "Ödəniş haqqı",
+        "amountToPay": "Ödəniləcək məbləğ",
+        "amountPaid": "Ödənilmiş məbləğ",
+        "paymentFeeTerms": "Haqq: {percent}% + {fixed}",
+        "paymentMethodUnavailable": "Hazırda əlçatan deyil"
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -3359,7 +3458,8 @@
         "menu_store_credit_packages": "Kredit paketləri",
         "menu_store_community_goal": "İcma hədəfi",
         "settings_store": "Ödənişlər",
-        "settings_store_description": "Stripe və PayPal konfiqurasiyası."
+        "settings_store_description": "Stripe və PayPal konfiqurasiyası.",
+        "menu_store_payment_fees": "Ödəniş haqları"
       },
       "activity": {
         "kindStoreOrderCompleted": "Sifariş",
@@ -3370,7 +3470,9 @@
         "auditCreditPackageCreated": "Kredit paketi əlavə etdi",
         "auditCreditPackageUpdated": "Kredit paketini dəyişdi",
         "auditCreditPackageRetired": "Kredit paketini satışdan çıxardı",
-        "auditCreditsTransferred": "Üzvə kredit göndərdi"
+        "auditCreditsTransferred": "Üzvə kredit göndərdi",
+        "auditPaymentFeeUpdated": "Ödəniş üsulunun haqqı dəyişdirildi",
+        "auditPaymentFeeReset": "Ödəniş üsulu şlüzün öz haqqına qaytarıldı"
       },
       "pageTitles": {
         "store": "Mağaza",
@@ -3828,7 +3930,8 @@
           "chest_gift_pending": "Nimm das Geschenk zuerst an.",
           "chest_gift_not_pending": "Dieses Geschenk wartet nicht mehr.",
           "chest_recipient_refuses_gifts": "Dieses Mitglied nimmt keine Geschenke an.",
-          "chest_gift_to_self": "Das ist deine eigene Truhe."
+          "chest_gift_to_self": "Das ist deine eigene Truhe.",
+          "fee_rate_unavailable": "Diese Zahlungsart ist gerade nicht verfügbar: Ihre Gebühr kann nicht in diese Währung umgerechnet werden. Wähle eine andere Zahlungsart oder versuche es später erneut."
         },
         "err_checkoutFailed": "Kasse fehlgeschlagen",
         "err_couponMinPurchase": "Gib mindestens {amount} aus, um diesen Code zu nutzen.",
@@ -3999,7 +4102,31 @@
         "shelfAll": "Alle ansehen ({count})",
         "discountTag": "{percent} % Rabatt",
         "durationDays": "{days, plural, one {# Tag} other {# Tage}}",
-        "relatedProducts": "Aus demselben Regal"
+        "relatedProducts": "Aus demselben Regal",
+        "fees_title": "Zahlungsgebühren",
+        "fees_subtitle": "Gib die Gebühr einer Zahlungsart an den Käufer weiter. Der Checkout schlägt sie so auf, dass dir nach dem Abzug des Zahlungsanbieters der volle Bestellwert bleibt.",
+        "fees_loading": "Zahlungsarten werden geladen",
+        "fees_noMethods": "Es ist noch keine Zahlungsart eingerichtet. Installiere und konfiguriere zuerst ein Zahlungs-Gateway.",
+        "fees_setHere": "Hier festgelegt",
+        "fees_fromGateway": "Gateway-Einstellung: {percent} % + {fixed} {currency}",
+        "fees_none": "Keine Gebühr weitergegeben",
+        "fees_passOn": "Gebühr dieser Zahlungsart an den Käufer weitergeben",
+        "fees_passOnHelp": "Aus bedeutet, dass der Shop die Gebühr trägt, auch wenn die Gateway-Einstellungen eine weitergeben.",
+        "fees_percent": "Prozentsatz (%)",
+        "fees_fixed": "Fester Betrag pro Zahlung",
+        "fees_fixedCurrency": "Währung des festen Betrags",
+        "fees_shopCurrency": "Shop-Währung ({currency})",
+        "fees_conversionHelp": "Ein fester Betrag in einer anderen Währung wird beim Checkout mit den Wechselkursen der Website umgerechnet. Ohne Kurs ist die Zahlungsart nicht nutzbar, bis einer vorliegt.",
+        "fees_save": "Speichern",
+        "fees_saved": "Zahlungsgebühr gespeichert",
+        "fees_saveFailed": "Die Zahlungsgebühr konnte nicht gespeichert werden",
+        "fees_useGateway": "Einstellung des Gateways verwenden",
+        "fees_useGatewayConfirm": "Die hier für {method} festgelegte Gebühr entfernen? Der Checkout verwendet dann die Einstellungen des Gateways.",
+        "paymentFee": "Zahlungsgebühr",
+        "amountToPay": "Zu zahlender Betrag",
+        "amountPaid": "Bezahlter Betrag",
+        "paymentFeeTerms": "Gebühr: {percent} % + {fixed}",
+        "paymentMethodUnavailable": "Derzeit nicht verfügbar"
       },
       "cart": {
         "title": "Warenkorb",
@@ -4199,7 +4326,8 @@
         "menu_store_credit_packages": "Credit-Pakete",
         "menu_store_community_goal": "Gemeinschaftsziel",
         "settings_store": "Zahlungen",
-        "settings_store_description": "Konfiguration von Stripe und PayPal."
+        "settings_store_description": "Konfiguration von Stripe und PayPal.",
+        "menu_store_payment_fees": "Zahlungsgebühren"
       },
       "activity": {
         "kindStoreOrderCompleted": "Bestellung",
@@ -4210,7 +4338,9 @@
         "auditCreditPackageCreated": "Ein Credit-Paket hinzugefügt",
         "auditCreditPackageUpdated": "Ein Credit-Paket geändert",
         "auditCreditPackageRetired": "Ein Credit-Paket aus dem Verkauf genommen",
-        "auditCreditsTransferred": "Credits an ein Mitglied gesendet"
+        "auditCreditsTransferred": "Credits an ein Mitglied gesendet",
+        "auditPaymentFeeUpdated": "Gebühr einer Zahlungsart geändert",
+        "auditPaymentFeeReset": "Zahlungsart auf die Gebühr des Gateways zurückgesetzt"
       },
       "pageTitles": {
         "store": "Shop",
@@ -4668,7 +4798,8 @@
           "chest_gift_pending": "Primero acepta el regalo.",
           "chest_gift_not_pending": "Ese regalo ya no está esperando.",
           "chest_recipient_refuses_gifts": "Ese miembro no acepta regalos.",
-          "chest_gift_to_self": "Ese es tu propio cofre."
+          "chest_gift_to_self": "Ese es tu propio cofre.",
+          "fee_rate_unavailable": "Ese método de pago no se puede usar ahora: su comisión no se puede convertir a esta moneda. Elige otro método o inténtalo más tarde."
         },
         "err_checkoutFailed": "Falló el pago",
         "err_couponMinPurchase": "Gasta al menos {amount} para usar este código.",
@@ -4839,7 +4970,31 @@
         "shelfAll": "Ver todo ({count})",
         "discountTag": "{percent} % de descuento",
         "durationDays": "{days, plural, one {# día} other {# días}}",
-        "relatedProducts": "De la misma sección"
+        "relatedProducts": "De la misma sección",
+        "fees_title": "Comisiones de pago",
+        "fees_subtitle": "Traslada al comprador la comisión de un método de pago. El pago la añade para que lo que te deja el procesador sea el pedido completo.",
+        "fees_loading": "Cargando métodos de pago",
+        "fees_noMethods": "Todavía no hay ningún método de pago configurado. Instala y configura primero una pasarela de pago.",
+        "fees_setHere": "Definida aquí",
+        "fees_fromGateway": "Ajuste de la pasarela: {percent} % + {fixed} {currency}",
+        "fees_none": "No se traslada ninguna comisión",
+        "fees_passOn": "Trasladar al comprador la comisión de este método",
+        "fees_passOnHelp": "Desactivado, la tienda paga la comisión aunque los ajustes de la pasarela trasladen una.",
+        "fees_percent": "Porcentaje (%)",
+        "fees_fixed": "Importe fijo por pago",
+        "fees_fixedCurrency": "Moneda del importe fijo",
+        "fees_shopCurrency": "Moneda de la tienda ({currency})",
+        "fees_conversionHelp": "Un importe fijo en otra moneda se convierte al pagar con los tipos de cambio del sitio. Si no hay tipo de cambio, el método no se puede usar hasta que lo haya.",
+        "fees_save": "Guardar",
+        "fees_saved": "Comisión de pago guardada",
+        "fees_saveFailed": "No se pudo guardar la comisión de pago",
+        "fees_useGateway": "Usar el ajuste de la pasarela",
+        "fees_useGatewayConfirm": "¿Quitar la comisión definida aquí para {method}? El pago usará entonces los ajustes de la propia pasarela.",
+        "paymentFee": "Comisión de pago",
+        "amountToPay": "Importe a pagar",
+        "amountPaid": "Importe pagado",
+        "paymentFeeTerms": "Comisión: {percent} % + {fixed}",
+        "paymentMethodUnavailable": "No disponible ahora"
       },
       "cart": {
         "title": "Carrito de compra",
@@ -5039,7 +5194,8 @@
         "menu_store_credit_packages": "Paquetes de créditos",
         "menu_store_community_goal": "Objetivo de la comunidad",
         "settings_store": "Pagos",
-        "settings_store_description": "Configuración de Stripe y PayPal."
+        "settings_store_description": "Configuración de Stripe y PayPal.",
+        "menu_store_payment_fees": "Comisiones de pago"
       },
       "activity": {
         "kindStoreOrderCompleted": "Pedido",
@@ -5050,7 +5206,9 @@
         "auditCreditPackageCreated": "Añadió un paquete de créditos",
         "auditCreditPackageUpdated": "Cambió un paquete de créditos",
         "auditCreditPackageRetired": "Quitó un paquete de créditos de la venta",
-        "auditCreditsTransferred": "Envió créditos a un miembro"
+        "auditCreditsTransferred": "Envió créditos a un miembro",
+        "auditPaymentFeeUpdated": "Se cambió la comisión de un método de pago",
+        "auditPaymentFeeReset": "Un método de pago volvió a la comisión de su pasarela"
       },
       "pageTitles": {
         "store": "Tienda",
@@ -5508,7 +5666,8 @@
           "chest_gift_pending": "Võta kingitus kõigepealt vastu.",
           "chest_gift_not_pending": "See kingitus enam ei oota.",
           "chest_recipient_refuses_gifts": "See liige ei võta kingitusi vastu.",
-          "chest_gift_to_self": "See on sinu enda kirst."
+          "chest_gift_to_self": "See on sinu enda kirst.",
+          "fee_rate_unavailable": "Seda makseviisi ei saa praegu kasutada: selle tasu ei saa sellesse valuutasse teisendada. Vali muu makseviis või proovi hiljem uuesti."
         },
         "err_checkoutFailed": "Vormistamine ebaõnnestus",
         "err_couponMinPurchase": "Selle koodi kasutamiseks kuluta vähemalt {amount}.",
@@ -5679,7 +5838,31 @@
         "shelfAll": "Vaata kõiki ({count})",
         "discountTag": "{percent}% soodsam",
         "durationDays": "{days, plural, one {# päev} other {# päeva}}",
-        "relatedProducts": "Samast riiulist"
+        "relatedProducts": "Samast riiulist",
+        "fees_title": "Maksetasud",
+        "fees_subtitle": "Kanna makseviisi tasu ostjale üle. Kassa lisab selle nii, et makseteenuse pakkuja jätab sulle kogu tellimuse summa.",
+        "fees_loading": "Makseviise laaditakse",
+        "fees_noMethods": "Ühtegi makseviisi pole veel seadistatud. Paigalda ja seadista kõigepealt makselüüs.",
+        "fees_setHere": "Määratud siin",
+        "fees_fromGateway": "Makselüüsi seade: {percent}% + {fixed} {currency}",
+        "fees_none": "Tasu ei kanta üle",
+        "fees_passOn": "Kanna selle makseviisi tasu ostjale üle",
+        "fees_passOnHelp": "Väljas tähendab, et tasu maksab pood, isegi kui makselüüsi enda seaded kannavad selle üle.",
+        "fees_percent": "Protsent (%)",
+        "fees_fixed": "Fikseeritud summa makse kohta",
+        "fees_fixedCurrency": "Fikseeritud summa valuuta",
+        "fees_shopCurrency": "Poe valuuta ({currency})",
+        "fees_conversionHelp": "Muus valuutas fikseeritud summa teisendatakse kassas saidi vahetuskurssidega. Kui kurssi pole, ei saa makseviisi kasutada enne, kui see olemas on.",
+        "fees_save": "Salvesta",
+        "fees_saved": "Maksetasu salvestati",
+        "fees_saveFailed": "Maksetasu ei õnnestunud salvestada",
+        "fees_useGateway": "Kasuta makselüüsi seadet",
+        "fees_useGatewayConfirm": "Kas eemaldada siin makseviisile {method} määratud tasu? Kassa kasutab siis makselüüsi enda seadeid.",
+        "paymentFee": "Maksetasu",
+        "amountToPay": "Makstav summa",
+        "amountPaid": "Makstud summa",
+        "paymentFeeTerms": "Tasu: {percent}% + {fixed}",
+        "paymentMethodUnavailable": "Praegu pole saadaval"
       },
       "cart": {
         "title": "Ostukorv",
@@ -5879,7 +6062,8 @@
         "menu_store_credit_packages": "Krediitpaketid",
         "menu_store_community_goal": "Kogukonna eesmärk",
         "settings_store": "Maksed",
-        "settings_store_description": "Stripe'i ja PayPali seadistus."
+        "settings_store_description": "Stripe'i ja PayPali seadistus.",
+        "menu_store_payment_fees": "Maksetasud"
       },
       "activity": {
         "kindStoreOrderCompleted": "Tellimus",
@@ -5890,7 +6074,9 @@
         "auditCreditPackageCreated": "Lisas krediitpaketi",
         "auditCreditPackageUpdated": "Muutis krediitpaketti",
         "auditCreditPackageRetired": "Eemaldas krediitpaketi müügist",
-        "auditCreditsTransferred": "Saatis krediite liikmele"
+        "auditCreditsTransferred": "Saatis krediite liikmele",
+        "auditPaymentFeeUpdated": "Makseviisi tasu muudeti",
+        "auditPaymentFeeReset": "Makseviis taastati makselüüsi tasule"
       },
       "pageTitles": {
         "store": "Pood",
@@ -6348,7 +6534,8 @@
           "chest_gift_pending": "Acceptez d’abord le cadeau.",
           "chest_gift_not_pending": "Ce cadeau n’attend plus.",
           "chest_recipient_refuses_gifts": "Ce membre n’accepte pas les cadeaux.",
-          "chest_gift_to_self": "C’est votre propre coffre."
+          "chest_gift_to_self": "C’est votre propre coffre.",
+          "fee_rate_unavailable": "Ce moyen de paiement n'est pas utilisable pour le moment : ses frais ne peuvent pas être convertis dans cette devise. Choisissez un autre moyen ou réessayez plus tard."
         },
         "err_checkoutFailed": "Échec du paiement",
         "err_couponMinPurchase": "Dépensez au moins {amount} pour utiliser ce code.",
@@ -6519,7 +6706,31 @@
         "shelfAll": "Tout voir ({count})",
         "discountTag": "-{percent} %",
         "durationDays": "{days, plural, one {# jour} other {# jours}}",
-        "relatedProducts": "Du même rayon"
+        "relatedProducts": "Du même rayon",
+        "fees_title": "Frais de paiement",
+        "fees_subtitle": "Répercutez les frais d'un moyen de paiement sur l'acheteur. Le paiement les ajoute pour que ce que le prestataire vous laisse soit la commande entière.",
+        "fees_loading": "Chargement des moyens de paiement",
+        "fees_noMethods": "Aucun moyen de paiement n'est encore configuré. Installez et configurez d'abord une passerelle de paiement.",
+        "fees_setHere": "Défini ici",
+        "fees_fromGateway": "Réglage de la passerelle : {percent} % + {fixed} {currency}",
+        "fees_none": "Aucuns frais répercutés",
+        "fees_passOn": "Répercuter les frais de ce moyen sur l'acheteur",
+        "fees_passOnHelp": "Désactivé, la boutique paie les frais, même si les réglages de la passerelle en répercutent.",
+        "fees_percent": "Pourcentage (%)",
+        "fees_fixed": "Montant fixe par paiement",
+        "fees_fixedCurrency": "Devise du montant fixe",
+        "fees_shopCurrency": "Devise de la boutique ({currency})",
+        "fees_conversionHelp": "Un montant fixe dans une autre devise est converti au paiement avec les taux de change du site. Sans taux, le moyen n'est pas utilisable tant qu'il n'y en a pas.",
+        "fees_save": "Enregistrer",
+        "fees_saved": "Frais de paiement enregistrés",
+        "fees_saveFailed": "Les frais de paiement n'ont pas pu être enregistrés",
+        "fees_useGateway": "Utiliser le réglage de la passerelle",
+        "fees_useGatewayConfirm": "Supprimer les frais définis ici pour {method} ? Le paiement utilisera alors les réglages de la passerelle.",
+        "paymentFee": "Frais de paiement",
+        "amountToPay": "Montant à payer",
+        "amountPaid": "Montant payé",
+        "paymentFeeTerms": "Frais : {percent} % + {fixed}",
+        "paymentMethodUnavailable": "Indisponible pour le moment"
       },
       "cart": {
         "title": "Panier",
@@ -6719,7 +6930,8 @@
         "menu_store_credit_packages": "Packs de crédits",
         "menu_store_community_goal": "Objectif communautaire",
         "settings_store": "Paiements",
-        "settings_store_description": "Configuration de Stripe et PayPal."
+        "settings_store_description": "Configuration de Stripe et PayPal.",
+        "menu_store_payment_fees": "Frais de paiement"
       },
       "activity": {
         "kindStoreOrderCompleted": "Commande",
@@ -6730,7 +6942,9 @@
         "auditCreditPackageCreated": "A ajouté un pack de crédits",
         "auditCreditPackageUpdated": "A modifié un pack de crédits",
         "auditCreditPackageRetired": "A retiré un pack de crédits de la vente",
-        "auditCreditsTransferred": "A envoyé des crédits à un membre"
+        "auditCreditsTransferred": "A envoyé des crédits à un membre",
+        "auditPaymentFeeUpdated": "Frais d'un moyen de paiement modifiés",
+        "auditPaymentFeeReset": "Moyen de paiement remis aux frais de sa passerelle"
       },
       "pageTitles": {
         "store": "Boutique",
@@ -7188,7 +7402,8 @@
           "chest_gift_pending": "Prima accetta il regalo.",
           "chest_gift_not_pending": "Quel regalo non è più in attesa.",
           "chest_recipient_refuses_gifts": "Quel membro non accetta regali.",
-          "chest_gift_to_self": "È il tuo baule."
+          "chest_gift_to_self": "È il tuo baule.",
+          "fee_rate_unavailable": "Questo metodo di pagamento non può essere usato ora: la sua commissione non può essere convertita in questa valuta. Scegli un altro metodo o riprova più tardi."
         },
         "err_checkoutFailed": "Pagamento non riuscito",
         "err_couponMinPurchase": "Spendi almeno {amount} per usare questo codice.",
@@ -7359,7 +7574,31 @@
         "shelfAll": "Vedi tutti ({count})",
         "discountTag": "-{percent}%",
         "durationDays": "{days, plural, one {# giorno} other {# giorni}}",
-        "relatedProducts": "Dallo stesso scaffale"
+        "relatedProducts": "Dallo stesso scaffale",
+        "fees_title": "Commissioni di pagamento",
+        "fees_subtitle": "Addebita all'acquirente la commissione di un metodo di pagamento. Il checkout la aggiunge in modo che ciò che il processore ti lascia sia l'intero ordine.",
+        "fees_loading": "Caricamento dei metodi di pagamento",
+        "fees_noMethods": "Non è ancora configurato alcun metodo di pagamento. Installa e configura prima un gateway di pagamento.",
+        "fees_setHere": "Impostata qui",
+        "fees_fromGateway": "Impostazione del gateway: {percent}% + {fixed} {currency}",
+        "fees_none": "Nessuna commissione addebitata",
+        "fees_passOn": "Addebita all'acquirente la commissione di questo metodo",
+        "fees_passOnHelp": "Disattivato, il negozio paga la commissione anche se le impostazioni del gateway ne addebitano una.",
+        "fees_percent": "Percentuale (%)",
+        "fees_fixed": "Importo fisso per pagamento",
+        "fees_fixedCurrency": "Valuta dell'importo fisso",
+        "fees_shopCurrency": "Valuta del negozio ({currency})",
+        "fees_conversionHelp": "Un importo fisso in un'altra valuta viene convertito al checkout con i tassi di cambio del sito. Senza tasso, il metodo non è utilizzabile finché non ce n'è uno.",
+        "fees_save": "Salva",
+        "fees_saved": "Commissione di pagamento salvata",
+        "fees_saveFailed": "Impossibile salvare la commissione di pagamento",
+        "fees_useGateway": "Usa l'impostazione del gateway",
+        "fees_useGatewayConfirm": "Rimuovere la commissione impostata qui per {method}? Il checkout userà poi le impostazioni del gateway.",
+        "paymentFee": "Commissione di pagamento",
+        "amountToPay": "Importo da pagare",
+        "amountPaid": "Importo pagato",
+        "paymentFeeTerms": "Commissione: {percent}% + {fixed}",
+        "paymentMethodUnavailable": "Non disponibile al momento"
       },
       "cart": {
         "title": "Carrello",
@@ -7559,7 +7798,8 @@
         "menu_store_credit_packages": "Pacchetti di crediti",
         "menu_store_community_goal": "Obiettivo della community",
         "settings_store": "Pagamenti",
-        "settings_store_description": "Configurazione di Stripe e PayPal."
+        "settings_store_description": "Configurazione di Stripe e PayPal.",
+        "menu_store_payment_fees": "Commissioni di pagamento"
       },
       "activity": {
         "kindStoreOrderCompleted": "Ordine",
@@ -7570,7 +7810,9 @@
         "auditCreditPackageCreated": "Ha aggiunto un pacchetto di crediti",
         "auditCreditPackageUpdated": "Ha modificato un pacchetto di crediti",
         "auditCreditPackageRetired": "Ha tolto un pacchetto di crediti dalla vendita",
-        "auditCreditsTransferred": "Ha inviato crediti a un membro"
+        "auditCreditsTransferred": "Ha inviato crediti a un membro",
+        "auditPaymentFeeUpdated": "Commissione di un metodo di pagamento modificata",
+        "auditPaymentFeeReset": "Metodo di pagamento riportato alla commissione del suo gateway"
       },
       "pageTitles": {
         "store": "Store",
@@ -8028,7 +8270,8 @@
           "chest_gift_pending": "Najpierw przyjmij prezent.",
           "chest_gift_not_pending": "Ten prezent już nie czeka.",
           "chest_recipient_refuses_gifts": "Ten członek nie przyjmuje prezentów.",
-          "chest_gift_to_self": "To twoja własna skrzynia."
+          "chest_gift_to_self": "To twoja własna skrzynia.",
+          "fee_rate_unavailable": "Tej metody płatności nie można teraz użyć: jej opłaty nie da się przeliczyć na tę walutę. Wybierz inną metodę lub spróbuj później."
         },
         "err_checkoutFailed": "Płatność nie powiodła się",
         "err_couponMinPurchase": "Wydaj co najmniej {amount}, aby użyć tego kodu.",
@@ -8199,7 +8442,31 @@
         "shelfAll": "Zobacz wszystkie ({count})",
         "discountTag": "-{percent}%",
         "durationDays": "{days, plural, one {# dzień} other {# dni}}",
-        "relatedProducts": "Z tej samej półki"
+        "relatedProducts": "Z tej samej półki",
+        "fees_title": "Opłaty za płatności",
+        "fees_subtitle": "Przenieś opłatę metody płatności na kupującego. Kasa dolicza ją tak, aby po potrąceniu operatora zostawała ci pełna kwota zamówienia.",
+        "fees_loading": "Wczytywanie metod płatności",
+        "fees_noMethods": "Nie skonfigurowano jeszcze żadnej metody płatności. Najpierw zainstaluj i skonfiguruj bramkę płatności.",
+        "fees_setHere": "Ustawiona tutaj",
+        "fees_fromGateway": "Ustawienie bramki: {percent}% + {fixed} {currency}",
+        "fees_none": "Opłata nie jest przenoszona",
+        "fees_passOn": "Przenoś opłatę tej metody na kupującego",
+        "fees_passOnHelp": "Wyłączone oznacza, że opłatę ponosi sklep, nawet jeśli ustawienia bramki ją przenoszą.",
+        "fees_percent": "Procent (%)",
+        "fees_fixed": "Stała kwota za płatność",
+        "fees_fixedCurrency": "Waluta stałej kwoty",
+        "fees_shopCurrency": "Waluta sklepu ({currency})",
+        "fees_conversionHelp": "Stała kwota w innej walucie jest przeliczana w kasie według kursów strony. Bez kursu metody nie można użyć, dopóki się nie pojawi.",
+        "fees_save": "Zapisz",
+        "fees_saved": "Zapisano opłatę za płatność",
+        "fees_saveFailed": "Nie udało się zapisać opłaty za płatność",
+        "fees_useGateway": "Użyj ustawienia bramki",
+        "fees_useGatewayConfirm": "Usunąć opłatę ustawioną tutaj dla {method}? Kasa użyje wtedy ustawień samej bramki.",
+        "paymentFee": "Opłata za płatność",
+        "amountToPay": "Kwota do zapłaty",
+        "amountPaid": "Zapłacona kwota",
+        "paymentFeeTerms": "Opłata: {percent}% + {fixed}",
+        "paymentMethodUnavailable": "Teraz niedostępna"
       },
       "cart": {
         "title": "Koszyk",
@@ -8399,7 +8666,8 @@
         "menu_store_credit_packages": "Pakiety kredytów",
         "menu_store_community_goal": "Cel społeczności",
         "settings_store": "Płatności",
-        "settings_store_description": "Konfiguracja Stripe i PayPal."
+        "settings_store_description": "Konfiguracja Stripe i PayPal.",
+        "menu_store_payment_fees": "Opłaty za płatności"
       },
       "activity": {
         "kindStoreOrderCompleted": "Zamówienie",
@@ -8410,7 +8678,9 @@
         "auditCreditPackageCreated": "Dodano pakiet kredytów",
         "auditCreditPackageUpdated": "Zmieniono pakiet kredytów",
         "auditCreditPackageRetired": "Wycofano pakiet kredytów z sprzedaży",
-        "auditCreditsTransferred": "Wysłano kredyty członkowi"
+        "auditCreditsTransferred": "Wysłano kredyty członkowi",
+        "auditPaymentFeeUpdated": "Zmieniono opłatę metody płatności",
+        "auditPaymentFeeReset": "Przywrócono opłatę bramki dla metody płatności"
       },
       "pageTitles": {
         "store": "Sklep",
@@ -8868,7 +9138,8 @@
           "chest_gift_pending": "Aceite o presente primeiro.",
           "chest_gift_not_pending": "Esse presente não está mais esperando.",
           "chest_recipient_refuses_gifts": "Esse membro não aceita presentes.",
-          "chest_gift_to_self": "Esse é o seu próprio baú."
+          "chest_gift_to_self": "Esse é o seu próprio baú.",
+          "fee_rate_unavailable": "Esse método de pagamento não pode ser usado agora: a sua taxa não pode ser convertida para esta moeda. Escolha outro método ou tente mais tarde."
         },
         "err_checkoutFailed": "Falha na finalização da compra",
         "err_couponMinPurchase": "Gaste pelo menos {amount} para usar este código.",
@@ -9039,7 +9310,31 @@
         "shelfAll": "Ver todos ({count})",
         "discountTag": "{percent}% de desconto",
         "durationDays": "{days, plural, one {# dia} other {# dias}}",
-        "relatedProducts": "Da mesma seção"
+        "relatedProducts": "Da mesma seção",
+        "fees_title": "Taxas de pagamento",
+        "fees_subtitle": "Repasse ao comprador a taxa de um método de pagamento. O checkout acrescenta-a para que o que o processador lhe deixa seja o pedido completo.",
+        "fees_loading": "A carregar métodos de pagamento",
+        "fees_noMethods": "Ainda não há nenhum método de pagamento configurado. Instale e configure primeiro um gateway de pagamento.",
+        "fees_setHere": "Definida aqui",
+        "fees_fromGateway": "Definição do gateway: {percent}% + {fixed} {currency}",
+        "fees_none": "Nenhuma taxa repassada",
+        "fees_passOn": "Repassar ao comprador a taxa deste método",
+        "fees_passOnHelp": "Desligado, a loja paga a taxa, mesmo que as definições do gateway repassem uma.",
+        "fees_percent": "Percentagem (%)",
+        "fees_fixed": "Valor fixo por pagamento",
+        "fees_fixedCurrency": "Moeda do valor fixo",
+        "fees_shopCurrency": "Moeda da loja ({currency})",
+        "fees_conversionHelp": "Um valor fixo noutra moeda é convertido no checkout com as taxas de câmbio do site. Sem taxa de câmbio, o método não pode ser usado até haver uma.",
+        "fees_save": "Guardar",
+        "fees_saved": "Taxa de pagamento guardada",
+        "fees_saveFailed": "Não foi possível guardar a taxa de pagamento",
+        "fees_useGateway": "Usar a definição do gateway",
+        "fees_useGatewayConfirm": "Remover a taxa definida aqui para {method}? O checkout passa a usar as definições do próprio gateway.",
+        "paymentFee": "Taxa de pagamento",
+        "amountToPay": "Valor a pagar",
+        "amountPaid": "Valor pago",
+        "paymentFeeTerms": "Taxa: {percent}% + {fixed}",
+        "paymentMethodUnavailable": "Indisponível de momento"
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -9239,7 +9534,8 @@
         "menu_store_credit_packages": "Pacotes de créditos",
         "menu_store_community_goal": "Meta da comunidade",
         "settings_store": "Pagamentos",
-        "settings_store_description": "Configuração do Stripe e do PayPal."
+        "settings_store_description": "Configuração do Stripe e do PayPal.",
+        "menu_store_payment_fees": "Taxas de pagamento"
       },
       "activity": {
         "kindStoreOrderCompleted": "Pedido",
@@ -9250,7 +9546,9 @@
         "auditCreditPackageCreated": "Adicionou um pacote de créditos",
         "auditCreditPackageUpdated": "Alterou um pacote de créditos",
         "auditCreditPackageRetired": "Tirou um pacote de créditos de venda",
-        "auditCreditsTransferred": "Enviou créditos a um membro"
+        "auditCreditsTransferred": "Enviou créditos a um membro",
+        "auditPaymentFeeUpdated": "A taxa de um método de pagamento foi alterada",
+        "auditPaymentFeeReset": "Um método de pagamento voltou à taxa do seu gateway"
       },
       "pageTitles": {
         "store": "Loja",
@@ -9708,7 +10006,8 @@
           "chest_gift_pending": "Сначала примите подарок.",
           "chest_gift_not_pending": "Этот подарок больше не ждёт.",
           "chest_recipient_refuses_gifts": "Этот участник не принимает подарки.",
-          "chest_gift_to_self": "Это ваш собственный сундук."
+          "chest_gift_to_self": "Это ваш собственный сундук.",
+          "fee_rate_unavailable": "Этот способ оплаты сейчас недоступен: его комиссию нельзя пересчитать в эту валюту. Выберите другой способ или попробуйте позже."
         },
         "err_checkoutFailed": "Не удалось оформить заказ",
         "err_couponMinPurchase": "Чтобы использовать этот код, потратьте не меньше {amount}.",
@@ -9879,7 +10178,31 @@
         "shelfAll": "Смотреть все ({count})",
         "discountTag": "Скидка {percent}%",
         "durationDays": "{days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
-        "relatedProducts": "С той же полки"
+        "relatedProducts": "С той же полки",
+        "fees_title": "Платёжные комиссии",
+        "fees_subtitle": "Переложите комиссию способа оплаты на покупателя. Оформление заказа добавляет её так, чтобы после удержания платёжной системы у вас оставалась полная сумма заказа.",
+        "fees_loading": "Загрузка способов оплаты",
+        "fees_noMethods": "Ни один способ оплаты ещё не настроен. Сначала установите и настройте платёжный шлюз.",
+        "fees_setHere": "Задано здесь",
+        "fees_fromGateway": "Настройка шлюза: {percent}% + {fixed} {currency}",
+        "fees_none": "Комиссия не перекладывается",
+        "fees_passOn": "Перекладывать комиссию этого способа на покупателя",
+        "fees_passOnHelp": "Если выключено, комиссию платит магазин, даже если настройки шлюза её перекладывают.",
+        "fees_percent": "Процент (%)",
+        "fees_fixed": "Фиксированная сумма за платёж",
+        "fees_fixedCurrency": "Валюта фиксированной суммы",
+        "fees_shopCurrency": "Валюта магазина ({currency})",
+        "fees_conversionHelp": "Фиксированная сумма в другой валюте пересчитывается при оплате по курсам сайта. Если курса нет, способ нельзя использовать, пока он не появится.",
+        "fees_save": "Сохранить",
+        "fees_saved": "Платёжная комиссия сохранена",
+        "fees_saveFailed": "Не удалось сохранить платёжную комиссию",
+        "fees_useGateway": "Использовать настройку шлюза",
+        "fees_useGatewayConfirm": "Удалить комиссию, заданную здесь для {method}? Тогда оформление заказа будет использовать настройки самого шлюза.",
+        "paymentFee": "Комиссия за оплату",
+        "amountToPay": "К оплате",
+        "amountPaid": "Оплачено",
+        "paymentFeeTerms": "Комиссия: {percent}% + {fixed}",
+        "paymentMethodUnavailable": "Сейчас недоступно"
       },
       "cart": {
         "title": "Корзина",
@@ -10079,7 +10402,8 @@
         "menu_store_credit_packages": "Пакеты кредитов",
         "menu_store_community_goal": "Цель сообщества",
         "settings_store": "Оплата",
-        "settings_store_description": "Настройка Stripe и PayPal."
+        "settings_store_description": "Настройка Stripe и PayPal.",
+        "menu_store_payment_fees": "Платёжные комиссии"
       },
       "activity": {
         "kindStoreOrderCompleted": "Заказ",
@@ -10090,7 +10414,9 @@
         "auditCreditPackageCreated": "Добавил пакет кредитов",
         "auditCreditPackageUpdated": "Изменил пакет кредитов",
         "auditCreditPackageRetired": "Снял пакет кредитов с продажи",
-        "auditCreditsTransferred": "Отправил кредиты участнику"
+        "auditCreditsTransferred": "Отправил кредиты участнику",
+        "auditPaymentFeeUpdated": "Изменена комиссия способа оплаты",
+        "auditPaymentFeeReset": "Для способа оплаты возвращена комиссия шлюза"
       },
       "pageTitles": {
         "store": "Магазин",
@@ -10548,7 +10874,8 @@
           "chest_gift_pending": "请先接受礼物。",
           "chest_gift_not_pending": "这个礼物已不在等待中。",
           "chest_recipient_refuses_gifts": "该成员不接受礼物。",
-          "chest_gift_to_self": "这是你自己的箱子。"
+          "chest_gift_to_self": "这是你自己的箱子。",
+          "fee_rate_unavailable": "该支付方式目前无法使用：其手续费无法换算为此货币。请选择其他方式或稍后再试。"
         },
         "err_checkoutFailed": "结账失败",
         "err_couponMinPurchase": "消费满 {amount} 方可使用此优惠码。",
@@ -10719,7 +11046,31 @@
         "shelfAll": "查看全部（{count}）",
         "discountTag": "优惠 {percent}%",
         "durationDays": "{days} 天",
-        "relatedProducts": "同一货架"
+        "relatedProducts": "同一货架",
+        "fees_title": "支付手续费",
+        "fees_subtitle": "将支付方式的手续费转由买家承担。结账时会加上手续费，使支付服务商扣费后您仍能收到完整的订单金额。",
+        "fees_loading": "正在加载支付方式",
+        "fees_noMethods": "尚未设置任何支付方式。请先安装并配置支付网关。",
+        "fees_setHere": "在此设置",
+        "fees_fromGateway": "网关设置：{percent}% + {fixed} {currency}",
+        "fees_none": "不转嫁手续费",
+        "fees_passOn": "由买家承担此支付方式的手续费",
+        "fees_passOnHelp": "关闭时由商店承担手续费，即使网关自身的设置会转嫁手续费。",
+        "fees_percent": "百分比 (%)",
+        "fees_fixed": "每笔支付的固定金额",
+        "fees_fixedCurrency": "固定金额的货币",
+        "fees_shopCurrency": "商店货币（{currency}）",
+        "fees_conversionHelp": "以其他货币计的固定金额会在结账时按网站汇率换算。没有汇率时，该方式在有汇率之前无法使用。",
+        "fees_save": "保存",
+        "fees_saved": "支付手续费已保存",
+        "fees_saveFailed": "无法保存支付手续费",
+        "fees_useGateway": "使用网关的设置",
+        "fees_useGatewayConfirm": "要删除此处为 {method} 设置的手续费吗？之后结账将使用网关自身的设置。",
+        "paymentFee": "支付手续费",
+        "amountToPay": "应付金额",
+        "amountPaid": "已付金额",
+        "paymentFeeTerms": "手续费：{percent}% + {fixed}",
+        "paymentMethodUnavailable": "目前不可用"
       },
       "cart": {
         "title": "购物车",
@@ -10919,7 +11270,8 @@
         "menu_store_credit_packages": "积分套餐",
         "menu_store_community_goal": "社区目标",
         "settings_store": "支付",
-        "settings_store_description": "Stripe 与 PayPal 配置。"
+        "settings_store_description": "Stripe 与 PayPal 配置。",
+        "menu_store_payment_fees": "支付手续费"
       },
       "activity": {
         "kindStoreOrderCompleted": "订单",
@@ -10930,7 +11282,9 @@
         "auditCreditPackageCreated": "添加了一个积分套餐",
         "auditCreditPackageUpdated": "更改了一个积分套餐",
         "auditCreditPackageRetired": "将一个积分套餐停售",
-        "auditCreditsTransferred": "向成员转赠了积分"
+        "auditCreditsTransferred": "向成员转赠了积分",
+        "auditPaymentFeeUpdated": "更改了支付方式的手续费",
+        "auditPaymentFeeReset": "支付方式已恢复为网关的手续费"
       },
       "pageTitles": {
         "store": "商店",
@@ -11140,6 +11494,14 @@
     {
       "action": "store.credits.transferred",
       "nameKey": "auditCreditsTransferred"
+    },
+    {
+      "action": "store.payment_fee.updated",
+      "nameKey": "auditPaymentFeeUpdated"
+    },
+    {
+      "action": "store.payment_fee.reset",
+      "nameKey": "auditPaymentFeeReset"
     }
   ],
   "blocks": [

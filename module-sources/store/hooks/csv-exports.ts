@@ -64,12 +64,14 @@ const products: ShopExport = {
 const orders: ShopExport = {
     id: "orders",
     labelKey: "store.adm_exportOrders",
-    header: ["id", "orderNumber", "status", "total", "currency", "buyer", "email", "createdAt"],
+    // The fee is its own column: what was sold and what the processor was
+    // paid are two numbers, and a report summing one column must not mix them.
+    header: ["id", "orderNumber", "status", "total", "paymentFee", "currency", "buyer", "email", "createdAt"],
     read: async (skip, take) => {
         const rows = await prisma.order.findMany({
             select: {
                 id: true, orderNumber: true, status: true, total: true,
-                currency: true, createdAt: true,
+                paymentFee: true, currency: true, createdAt: true,
                 user: { select: { username: true, email: true } },
             },
             orderBy: { id: "asc" },
@@ -81,6 +83,7 @@ const orders: ShopExport = {
             row.orderNumber,
             row.status,
             Number(row.total),
+            Number(row.paymentFee),
             row.currency,
             // A shop takes guest orders, and inventing a buyer for one is
             // worse than an empty cell.

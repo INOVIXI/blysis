@@ -523,6 +523,21 @@ describe("settleCredits", () => {
         expect(applyFiltersAsync).not.toHaveBeenCalledWith("credit.change", expect.anything(), expect.anything());
     });
 
+    it("holds a top-up that carried a fee against the price and the fee together", async () => {
+        // The gateway was asked for 10.62: the credits and the fee on top.
+        // A payment that covers the credits and not the fee is short.
+        const withFee = { ...topUp, fee: 0.62 };
+
+        expect((await settleCredits({ ...settled, amount: 10 }, withFee)).handled).toBe(false);
+        expect(db.creditTopUp.updateMany).not.toHaveBeenCalled();
+
+        expect(await settleCredits({ ...settled, amount: 10.62 }, withFee)).toEqual({
+            handled: true,
+            duplicate: false,
+            error: null,
+        });
+    });
+
     /**
      * The duplicate check used to be `findFirst` on
      * `description: { contains: providerRef }` - a scan of the whole ledger,

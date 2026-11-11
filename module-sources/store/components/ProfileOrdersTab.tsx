@@ -17,6 +17,8 @@ interface Order {
     subtotal: number;
     discount: number;
     total: number;
+    /** What the payment method's fee added on top of `total`. */
+    paymentFee?: number;
     status: string;
     createdAt: string;
     items: {
@@ -204,6 +206,18 @@ export function ProfileOrdersTab() {
                                             <span>{t("tab_orders_total")}</span>
                                             <span>{money(Number(order.total))}</span>
                                         </div>
+                                        {Number(order.paymentFee ?? 0) > 0 && (
+                                            <>
+                                                <div className="flex justify-between mt-1 text-sm text-muted-foreground">
+                                                    <span>{t("paymentFee")}</span>
+                                                    <span>+{money(Number(order.paymentFee))}</span>
+                                                </div>
+                                                <div className="flex justify-between mt-1 text-sm font-medium">
+                                                    <span>{t("amountPaid")}</span>
+                                                    <span>{money(Number(order.total) + Number(order.paymentFee))}</span>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 )}
                             </div>

@@ -117,6 +117,20 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                                     <span>{t("adm_total")}</span>
                                     <span>{money(Number(order.total))}</span>
                                 </div>
+                                {/* Apart from the total, which is what was sold:
+                                    the fee went to the processor. */}
+                                {Number(order.paymentFee) > 0 && (
+                                    <>
+                                        <div className="flex justify-between text-sm text-muted-foreground">
+                                            <span>{t("paymentFee")}</span>
+                                            <span>+{money(Number(order.paymentFee))}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm font-medium">
+                                            <span>{t("amountPaid")}</span>
+                                            <span>{money(Number(order.total) + Number(order.paymentFee))}</span>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </CardContent>
                     </Card>

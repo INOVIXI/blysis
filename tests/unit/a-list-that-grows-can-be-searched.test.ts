@@ -66,6 +66,8 @@ const BOUNDED: Record<string, string> = {
         "The forms an operator built. Their submissions grow; the forms do not.",
     "module-sources/discord-integration/pages/admin/messages/page.tsx":
         "One row per event the modules declare, which is as long as the code.",
+    "module-sources/store/pages/admin/settings/payment-fees/page.tsx":
+        "One row per payment method the installed gateways offer, which is as long as the gateways an operator installed.",
     "module-sources/currency/pages/admin/page.tsx":
         "The currencies an operator turned on, plus the rate beside each. An operator cannot have more of them than they chose to enable.",
     "module-sources/referral/pages/admin/page.tsx":
