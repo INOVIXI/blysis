@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T21:04:34Z",
+  "updatedAt": "2026-11-11T21:05:41Z",
   "modules": [
     {
       "id": "announcements",
@@ -6850,13 +6850,13 @@
           "description": "将玩家引导至你所在的服务器列表，并统计投票人数"
         }
       },
-      "version": "1.7.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Vote",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-11T21:05:41Z",
       "screenshots": [],
       "tags": [
         "gaming"

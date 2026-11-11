@@ -6,10 +6,12 @@
  * HTML the server sent carried no site and no reward: measured, 147 characters
  * of text inside `<main>`.
  */
+import { getLocale } from "next-intl/server";
 import { readVoteSites } from "../../lib/read-sites";
 import { VoteSites } from "../../components/VoteSites";
 
 export default async function VotePage() {
-    const sites = await readVoteSites();
+    // Each name in the reader's language, and the original where the admin wrote none.
+    const sites = await readVoteSites(await getLocale());
     return <VoteSites initial={sites} />;
 }
