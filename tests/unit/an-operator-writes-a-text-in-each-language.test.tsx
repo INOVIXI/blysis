@@ -38,25 +38,31 @@ describe("LocalizedTextInput", () => {
     it("shows the original text and keeps the languages closed until asked", () => {
         render(<Harness initial={{ default: "Vanilya", en: "Vanilla" }} seen={() => {}} />);
         expect((screen.getByRole("textbox", { name: "Site name" }) as HTMLInputElement).value).toBe("Vanilya");
-        const toggle = screen.getByRole("button", { name: /1 of 3/ });
+        const toggle = screen.getByRole("button", { name: /1 of 2/ });
         expect(toggle.getAttribute("aria-expanded")).toBe("false");
         expect(screen.queryByRole("textbox", { name: /English/ })).toBeNull();
     });
 
-    it("offers every language the site speaks, each named, and marks the filled ones", () => {
+    it("offers every other language the site speaks, one box at a time, and marks the filled ones", () => {
         render(<Harness initial={{ default: "Vanilya", en: "Vanilla" }} seen={() => {}} />);
-        fireEvent.click(screen.getByRole("button", { name: /1 of 3/ }));
+        fireEvent.click(screen.getByRole("button", { name: /1 of 2/ }));
+        // The first language opens; the rest wait behind their own buttons, so
+        // twelve languages are one box on the screen, not twelve.
         expect((screen.getByRole("textbox", { name: "Site name, English" }) as HTMLInputElement).value).toBe("Vanilla");
+        expect(screen.queryByRole("textbox", { name: "Site name, Deutsch" })).toBeNull();
+        expect(screen.getByRole("button", { name: /English.*Translated/ }).getAttribute("aria-pressed")).toBe("true");
+        fireEvent.click(screen.getByRole("button", { name: /Deutsch.*Shows the original/ }));
         expect(screen.getByRole("textbox", { name: "Site name, Deutsch" })).toBeTruthy();
-        expect(screen.getByRole("textbox", { name: "Site name, Türkçe" })).toBeTruthy();
-        expect(screen.getByText("English").parentElement?.textContent).toContain("Translated");
-        expect(screen.getByText("Deutsch").parentElement?.textContent).toContain("Shows the original");
+        // The site's own language is the one the original is written in, so it
+        // is not offered as a translation of itself.
+        expect(screen.queryByRole("button", { name: /Türkçe/ })).toBeNull();
     });
 
     it("hands back a translation beside the original", () => {
         const seen = vi.fn();
         render(<Harness initial="Vanilya" seen={seen} />);
-        fireEvent.click(screen.getByRole("button", { name: /0 of 3/ }));
+        fireEvent.click(screen.getByRole("button", { name: /0 of 2/ }));
+        fireEvent.click(screen.getByRole("button", { name: /Deutsch/ }));
         fireEvent.change(screen.getByRole("textbox", { name: "Site name, Deutsch" }), { target: { value: "Vanille" } });
         expect(seen).toHaveBeenLastCalledWith({ default: "Vanilya", de: "Vanille" });
     });
@@ -64,7 +70,7 @@ describe("LocalizedTextInput", () => {
     it("hands back a plain string once the last translation is cleared", () => {
         const seen = vi.fn();
         render(<Harness initial={{ default: "Vanilya", en: "Vanilla" }} seen={seen} />);
-        fireEvent.click(screen.getByRole("button", { name: /1 of 3/ }));
+        fireEvent.click(screen.getByRole("button", { name: /1 of 2/ }));
         fireEvent.change(screen.getByRole("textbox", { name: "Site name, English" }), { target: { value: "" } });
         expect(seen).toHaveBeenLastCalledWith("Vanilya");
     });

@@ -10,6 +10,7 @@ import { RichTextEditor } from "@/core/components/ui/rich-text-editor";
 import { useSiteSettings } from "@/core/hooks/useSiteSettings";
 import { siteLanguagesOf } from "@/core/lib/i18n/site-languages";
 import { localeNames, locales, type Locale } from "@/core/lib/i18n/config";
+import { cn } from "@/core/lib/utils";
 import { originalText, type TranslatableText, type TranslatedText } from "@/core/lib/i18n/translatable-text";
 
 export interface LocalizedTextInputProps {
@@ -73,14 +74,20 @@ export function LocalizedTextInput({
     const t = useTranslations("common");
     const { settings } = useSiteSettings();
     const [open, setOpen] = React.useState(false);
+    const [picked, setPicked] = React.useState<Locale | null>(null);
     const panelId = React.useId();
     const nameId = React.useId();
 
     const original = originalText(value);
     const translations = translationsOf(value);
     const site = siteLanguagesOf(settings.site_languages, settings.default_locale);
-    const shown = locales.filter((l) => site.offered.includes(l) || (translations[l] ?? "").trim() !== "");
+    // The site's own language is the one the original is written in, so it is
+    // not offered as a translation of itself, unless one was stored for it.
+    const hasText = (l: Locale) => (translations[l] ?? "").trim() !== "";
+    const shown = locales.filter((l) => (site.offered.includes(l) && l !== site.preferred) || hasText(l));
     const filled = shown.filter((l) => (translations[l] ?? "").trim() !== "").length;
+
+    const active: Locale | null = picked && shown.includes(picked) ? picked : (shown[0] ?? null);
 
     const emit = (nextOriginal: string, next: Partial<Record<Locale, string>>) => {
         const kept = Object.entries(next).filter(([, text]) => (text ?? "").trim() !== "");
@@ -128,33 +135,45 @@ export function LocalizedTextInput({
             {open && (
                 <div id={panelId} className="space-y-3 rounded-lg border border-border bg-muted/40 p-3">
                     <p className="text-xs text-muted-foreground">{t("localizedText_fallbackHint")}</p>
-                    {shown.map((locale) => {
-                        const text = translations[locale] ?? "";
-                        const isFilled = text.trim() !== "";
-                        return (
-                            <div key={locale} className="space-y-1">
-                                <div className="flex items-center gap-2 text-xs font-medium text-foreground">
-                                    <span>{localeNames[locale]}</span>
-                                    {isFilled ? (
-                                        <span className="inline-flex items-center gap-1 text-success">
-                                            <Check className="w-3 h-3" aria-hidden="true" />
-                                            {t("localizedText_filled")}
-                                        </span>
-                                    ) : (
-                                        <span className="text-muted-foreground">{t("localizedText_empty")}</span>
+                    {/* One language at a time: twelve stacked boxes made a
+                        one-line field taller than the screen. */}
+                    <div className="flex flex-wrap gap-1.5" role="group" aria-label={t("localizedText_translations", { filled, total: shown.length })}>
+                        {shown.map((locale) => {
+                            const isFilled = hasText(locale);
+                            const isActive = locale === active;
+                            return (
+                                <button
+                                    key={locale}
+                                    type="button"
+                                    aria-pressed={isActive}
+                                    aria-label={`${localeNames[locale]}, ${isFilled ? t("localizedText_filled") : t("localizedText_empty")}`}
+                                    onClick={() => setPicked(locale)}
+                                    className={cn(
+                                        "inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
+                                        isActive ? "border-primary bg-primary/10 text-foreground" : "border-border bg-card text-muted-foreground hover:text-foreground",
                                     )}
-                                </div>
-                                {box(
-                                    text,
-                                    (next) => emit(original, { ...translations, [locale]: next }),
-                                    t("localizedText_languageField", { label, language: localeNames[locale] }),
-                                    undefined,
-                                    undefined,
-                                    locale,
-                                )}
-                            </div>
-                        );
-                    })}
+                                >
+                                    {isFilled && <Check className="w-3 h-3 text-success" aria-hidden="true" />}
+                                    {localeNames[locale]}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    {active && (
+                        <div className="space-y-1">
+                            <p className="text-xs text-muted-foreground">
+                                {hasText(active) ? t("localizedText_filled") : t("localizedText_empty")}
+                            </p>
+                            {box(
+                                translations[active] ?? "",
+                                (next) => emit(original, { ...translations, [active]: next }),
+                                t("localizedText_languageField", { label, language: localeNames[active] }),
+                                undefined,
+                                undefined,
+                                active,
+                            )}
+                        </div>
+                    )}
                 </div>
             )}
         </div>

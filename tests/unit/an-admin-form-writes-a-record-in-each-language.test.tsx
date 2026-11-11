@@ -71,7 +71,7 @@ describe("a record's editor", () => {
         wrap(<AdminCrudPage title="Notices" subtitle="" apiPath="/api/v1/notices" listKey="notices" displayField="title" fields={FIELDS} />);
         const title = await screen.findByDisplayValue("Kurallar");
         expect(screen.getByRole("textbox", { name: "Title" })).toBe(title);
-        fireEvent.click(screen.getAllByRole("button", { name: /1 of 3/ })[0]);
+        fireEvent.click(screen.getAllByRole("button", { name: /1 of 2/ })[0]);
         expect((screen.getByRole("textbox", { name: "Title, English" }) as HTMLInputElement).value).toBe("Rules");
     });
 
@@ -79,7 +79,8 @@ describe("a record's editor", () => {
         wrap(<AdminCrudPage title="Notices" subtitle="" apiPath="/api/v1/notices" listKey="notices" displayField="title" fields={FIELDS} />);
         const title = await screen.findByDisplayValue("Kurallar");
         fireEvent.change(title, { target: { value: "Site kuralları" } });
-        fireEvent.click(screen.getAllByRole("button", { name: /0 of 3/ })[0]);
+        fireEvent.click(screen.getAllByRole("button", { name: /0 of 2/ })[0]);
+        fireEvent.click(screen.getAllByRole("button", { name: /^Deutsch/ })[0]);
         fireEvent.change(screen.getByRole("textbox", { name: "Content, Deutsch" }), { target: { value: "Regeltext" } });
         fireEvent.submit(title.closest("form") as HTMLFormElement);
 
@@ -96,7 +97,7 @@ describe("a record's editor", () => {
     it("sends a cleared language as a field with nothing in it, which removes it", async () => {
         wrap(<AdminCrudPage title="Notices" subtitle="" apiPath="/api/v1/notices" listKey="notices" displayField="title" fields={FIELDS} />);
         const title = await screen.findByDisplayValue("Kurallar");
-        fireEvent.click(screen.getAllByRole("button", { name: /1 of 3/ })[0]);
+        fireEvent.click(screen.getAllByRole("button", { name: /1 of 2/ })[0]);
         fireEvent.change(screen.getByRole("textbox", { name: "Title, English" }), { target: { value: "" } });
         fireEvent.submit(title.closest("form") as HTMLFormElement);
         await waitFor(() => expect(sent).toHaveLength(1));
@@ -107,7 +108,8 @@ describe("a record's editor", () => {
         wrap(<AdminCrudPage title="Notices" subtitle="" apiPath="/api/v1/notices" listKey="notices" displayField="title" fields={FIELDS} />);
         await screen.findByDisplayValue("Kurallar");
         expect((screen.getByRole("textbox", { name: "Body" }) as HTMLTextAreaElement).value).toBe("**Kalın**");
-        fireEvent.click(screen.getAllByRole("button", { name: /1 of 3/ })[1]);
+        fireEvent.click(screen.getAllByRole("button", { name: /1 of 2/ })[1]);
+        fireEvent.click(screen.getAllByRole("button", { name: /^Deutsch/ })[0]);
         expect((screen.getByRole("textbox", { name: "Body, Deutsch" }) as HTMLTextAreaElement).value).toBe("**Fett**");
     });
 
@@ -145,7 +147,8 @@ describe("a settings screen", () => {
         );
         const title = await screen.findByDisplayValue("Aylık hedef");
         expect(screen.getByRole("textbox", { name: "Goal title" })).toBe(title);
-        fireEvent.click(screen.getAllByRole("button", { name: /0 of 3/ })[0]);
+        fireEvent.click(screen.getAllByRole("button", { name: /0 of 2/ })[0]);
+        fireEvent.click(screen.getAllByRole("button", { name: /^Deutsch/ })[0]);
         fireEvent.change(screen.getByRole("textbox", { name: "Goal line, Deutsch" }), { target: { value: "Eine Zeile" } });
         fireEvent.submit(title.closest("form") as HTMLFormElement);
 
