@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, hasPermission, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { ticketDepartmentUpdateSchema } from "../../../../lib/validations";
+import { DEPARTMENT_FIELDS, DEPARTMENT_TEXT } from "../../../../lib/desk-text";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -18,6 +19,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
+    const translations = contentTranslationsInput(body, DEPARTMENT_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const fields = parsed.data;
 
     const data: Record<string, unknown> = {};
@@ -27,7 +30,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.order !== undefined) data.order = fields.order;
     if (fields.isActive !== undefined) data.isActive = fields.isActive;
 
-    const department = await prisma.ticketDepartment.update({ where: { id }, data });
+    const department = await prisma.$transaction(async (tx) => {
+        const updated = await tx.ticketDepartment.update({ where: { id }, data });
+        if (translations.value) await saveContentTranslations(tx, { ...DEPARTMENT_TEXT, recordId: id }, translations.value);
+        return updated;
+    });
     return NextResponse.json({ department });
 }
 
@@ -50,6 +57,9 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         );
     }
 
-    await prisma.ticketDepartment.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.ticketDepartment.delete({ where: { id } });
+        await deleteContentTranslations(tx, DEPARTMENT_TEXT, [id]);
+    });
     return NextResponse.json({ ok: true });
 }

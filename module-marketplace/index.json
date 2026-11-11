@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T21:24:13Z",
+  "updatedAt": "2026-11-11T21:27:54Z",
   "modules": [
     {
       "id": "announcements",
@@ -6311,13 +6311,13 @@
           "description": "带部门和优先级的客户支持工单系统"
         }
       },
-      "version": "1.10.0",
-      "coreVersion": "^5.30.0",
+      "version": "1.11.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis Team",
       "icon": "Ticket",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-11T21:27:54Z",
       "screenshots": [],
       "tags": [
         "management"

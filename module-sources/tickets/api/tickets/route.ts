@@ -8,6 +8,7 @@ import { auth } from "@/core/sdk/auth";
 import { ticketSchema } from "../../lib/validations";
 import { readTicketStates } from "../../lib/read-states";
 import { DEFAULT_PRIORITY } from "../../lib/ticket-states";
+import { withDepartmentNames } from "../../lib/desk-text";
 
 // GET /api/v1/tickets - List tickets
 export async function GET(request: NextRequest) {
@@ -25,7 +26,10 @@ export async function GET(request: NextRequest) {
      * this desk does not have is a mistake worth saying out loud rather than
      * an empty list.
      */
-    const { statuses, priorities } = await readTicketStates();
+    // The words in `?locale=`: a department and a state the operator named
+    // are read in the reader's language; a ticket's subject stays as written.
+    const locale = searchParams.get("locale") ?? "";
+    const { statuses, priorities } = await readTicketStates(locale);
     const asked = searchParams.get("status");
     if (asked && !statuses.some((state) => state.key === asked)) {
         return NextResponse.json({ error: "Unknown status", code: "unknown_status" }, { status: 400 });
@@ -69,7 +73,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     return NextResponse.json({
-        tickets,
+        tickets: await withDepartmentNames(tickets, locale),
         /*
          * The words a screen needs to draw these, with the tickets rather
          * than from a second request. A member reading their own tickets

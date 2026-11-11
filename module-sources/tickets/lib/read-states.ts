@@ -1,5 +1,6 @@
-import { prisma } from "@/core/sdk/server";
+import { prisma, translateContent } from "@/core/sdk/server";
 import { DEFAULT_PRIORITIES, DEFAULT_STATUSES, type TicketState } from "./ticket-states";
+import { PRIORITY_TEXT, STATUS_TEXT } from "./desk-text";
 
 /**
  * The states this desk has, seeded on first read.
@@ -34,8 +35,12 @@ export interface TicketStateRow extends TicketState {
     isActive: boolean;
 }
 
-/** Every state a screen may draw or offer, in the order an operator set. */
-export async function readTicketStates(): Promise<{
+/**
+ * Every state a screen may draw or offer, in the order an operator set, each
+ * name an operator typed in `locale` and the original where they wrote no
+ * translation. No language reads the originals.
+ */
+export async function readTicketStates(locale = ""): Promise<{
     statuses: TicketStateRow[];
     priorities: TicketStateRow[];
 }> {
@@ -55,5 +60,8 @@ export async function readTicketStates(): Promise<{
             select: { id: true, key: true, name: true, nameKey: true, tone: true, order: true, isActive: true },
         }),
     ]);
-    return { statuses, priorities };
+    return {
+        statuses: await translateContent(prisma, STATUS_TEXT, statuses, ["name"], locale),
+        priorities: await translateContent(prisma, PRIORITY_TEXT, priorities, ["name"], locale),
+    };
 }
