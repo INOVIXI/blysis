@@ -17,7 +17,9 @@ import path from "node:path";
 
 const calls = vi.hoisted(() => ({ findMany: [] as Record<string, unknown>[] }));
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    // The real translation helpers: a request with no `?locale=` asks nothing more.
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     refuseSilenced: vi.fn(),
     isRestrictedFrom: vi.fn(),
     pageParams: (params: URLSearchParams, { defaultLimit }: { defaultLimit: number }) => {

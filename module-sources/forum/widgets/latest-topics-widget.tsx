@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { MessagesSquare } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { useRelativeTime } from "@/core/sdk/ui";
@@ -31,19 +31,21 @@ const SHOWN = 5;
  */
 export function LatestTopicsWidget() {
     const t = useTranslations("forum");
+    // Each topic's section named in the page's language.
+    const locale = useLocale();
     const relative = useRelativeTime();
     const [topics, setTopics] = useState<TopicRow[]>([]);
 
     useEffect(() => {
         let active = true;
-        fetch(`/api/v1/forum/topics?order=newest&limit=${SHOWN}`)
+        fetch(`/api/v1/forum/topics?order=newest&limit=${SHOWN}&locale=${encodeURIComponent(locale)}`)
             .then((r) => (r.ok ? r.json() : null))
             .then((d: { topics?: TopicRow[] } | null) => {
                 if (active && Array.isArray(d?.topics)) setTopics(d.topics.slice(0, SHOWN));
             })
             .catch(() => {});
         return () => { active = false; };
-    }, []);
+    }, [locale]);
 
     if (topics.length === 0) return null;
 

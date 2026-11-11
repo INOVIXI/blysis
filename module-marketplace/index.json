@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T21:18:47Z",
+  "updatedAt": "2026-11-11T21:24:13Z",
   "modules": [
     {
       "id": "announcements",
@@ -2155,13 +2155,13 @@
           "description": "带分类、主题和回复的社区讨论论坛"
         }
       },
-      "version": "1.16.0",
-      "coreVersion": "^5.30.0",
+      "version": "1.17.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-11T21:24:13Z",
       "screenshots": [],
       "tags": [
         "community"

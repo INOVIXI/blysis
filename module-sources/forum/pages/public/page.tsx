@@ -68,11 +68,13 @@ export default async function ForumPage({ searchParams }: PageProps) {
         );
     }
 
-    const board = await readTopicList({ page, categorySlug, search });
+    const locale = await getLocale();
+    // The sections named in the reader's language; the topics stay as members wrote them.
+    const board = await readTopicList({ page, categorySlug, search, locale });
     // Null now means one thing: a section nobody has, or nobody may see.
     if (!board) notFound();
 
-    const dateTag = dateLocaleTag(await getLocale());
+    const dateTag = dateLocaleTag(locale);
     const active = categorySlug ? board.categories.find((c) => c.slug === categorySlug) : undefined;
 
     const actions = (

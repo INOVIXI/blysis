@@ -9,7 +9,7 @@ import { Link } from "@/core/sdk/navigation";
 import { Badge, Button, Card, CardContent, Pagination, RichContent, RoleBadge, Textarea, useLocalDate } from "@/core/sdk/ui";
 import { Pin, Lock, Eye, ThumbsUp, Send, Loader2, Pencil, Quote, Trash2, X } from "lucide-react";
 import { useRelativeTime } from "@/core/sdk/ui";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { errorMessage } from "@/core/sdk";
 import { useConfirm } from "@/core/sdk/ui";
 
@@ -91,6 +91,8 @@ export function TopicView({
     postsVariant?: PostsVariant;
 }) {
     const t = useTranslations('forum');
+    // The section's name in the page's language when a later page of replies is read.
+    const locale = useLocale();
     const commonT = useTranslations('common');
     const router = useRouter();
     const { confirm } = useConfirm();
@@ -116,7 +118,7 @@ export function TopicView({
     // already left. Action handlers call fetchTopic with no predicate: their
     // response is always the one wanted.
     const fetchTopic = (page = postsPage, isStale: () => boolean = () => false) => {
-        fetch(`/api/v1/forum/topics/${topicId}?postsPage=${page}`)
+        fetch(`/api/v1/forum/topics/${topicId}?postsPage=${page}&locale=${encodeURIComponent(locale)}`)
             .then(async (r) => {
                 if (isStale()) return null;
                 if (r.status === 403) { setRestricted(true); return null; }
