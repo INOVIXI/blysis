@@ -26,7 +26,15 @@ import { dateLocaleTag, formatCurrency } from "@/core/lib/utils";
  * Core owns the base currency because core owns the setting the payment
  * gateways charge in. It does not own exchange rates and does not want to:
  * a module that knows them calls `setDisplay({ code, rate })` and every price
- * on the site follows. `null` puts prices back in the base currency.
+ * on the site follows. `null` clears the visitor's choice.
+ *
+ * A site can also say what a visitor who never chose should read, through
+ * `setDefaultDisplay`. That one is held for the page and never stored: saved
+ * like a choice, it would stay the visitor's forever, and an operator who
+ * later picked another default would never reach them. The visitor's own
+ * choice wins over it. Both are applied after mount, so the server and the
+ * first browser render draw the base and hydrate against the same text
+ * (`a-new-visitor-reads-the-sites-chosen-currency`).
  */
 
 export interface DisplayCurrency {
@@ -43,8 +51,12 @@ export interface SiteCurrency {
     code: string;
     /** Format an amount given in the BASE currency, converting if needed. */
     format: (amount: number | string | null | undefined) => string;
-    /** Ask for prices in another currency, or `null` to go back to the base. */
+    /** The visitor's own choice, stored; `null` clears it. */
     setDisplay: (display: DisplayCurrency | null) => void;
+    /** What a visitor with no choice reads; `null` is the base. Never stored. */
+    setDefaultDisplay: (display: DisplayCurrency | null) => void;
+    /** True when what is shown is the visitor's own choice. */
+    chosen: boolean;
     /** False until the site settings have arrived; prices render as base. */
     loaded: boolean;
 }
@@ -71,11 +83,12 @@ function readStored(): DisplayCurrency | null {
 export function SiteCurrencyProvider({ children }: { children: React.ReactNode }) {
     const { settings, loaded } = useSiteSettings();
     const locale = useLocale();
-    const [display, setDisplayState] = useState<DisplayCurrency | null>(null);
+    const [choice, setChoice] = useState<DisplayCurrency | null>(null);
+    const [fallbackDisplay, setFallbackDisplay] = useState<DisplayCurrency | null>(null);
 
     useEffect(() => {
         const stored = readStored();
-        if (stored) setDisplayState(stored);
+        if (stored) setChoice(stored);
     }, []);
 
     const base = useMemo(() => {
@@ -86,7 +99,7 @@ export function SiteCurrencyProvider({ children }: { children: React.ReactNode }
     }, [settings.default_currency]);
 
     const setDisplay = useCallback((next: DisplayCurrency | null) => {
-        setDisplayState(next);
+        setChoice(next);
         try {
             if (next) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
             else window.localStorage.removeItem(STORAGE_KEY);
@@ -96,7 +109,12 @@ export function SiteCurrencyProvider({ children }: { children: React.ReactNode }
         }
     }, []);
 
+    const setDefaultDisplay = useCallback((next: DisplayCurrency | null) => {
+        setFallbackDisplay(next);
+    }, []);
+
     const value = useMemo<SiteCurrency>(() => {
+        const display = choice ?? fallbackDisplay;
         const code = display?.code ?? base;
         const rate = display?.rate ?? 1;
         return {
@@ -104,9 +122,11 @@ export function SiteCurrencyProvider({ children }: { children: React.ReactNode }
             code,
             loaded,
             setDisplay,
+            setDefaultDisplay,
+            chosen: choice !== null,
             format: (amount) => formatCurrency((Number(amount) || 0) * rate, code, dateLocaleTag(locale)),
         };
-    }, [base, display, loaded, locale, setDisplay]);
+    }, [base, choice, fallbackDisplay, loaded, locale, setDisplay, setDefaultDisplay]);
 
     return <SiteCurrencyContext value={value}>{children}</SiteCurrencyContext>;
 }
@@ -127,6 +147,8 @@ export function useSiteCurrency(): SiteCurrency {
             code: DEFAULT_BASE,
             loaded: false,
             setDisplay: () => {},
+            setDefaultDisplay: () => {},
+            chosen: false,
             format: (amount) => formatCurrency(Number(amount) || 0, DEFAULT_BASE, dateLocaleTag(locale)),
         }),
         [locale],

@@ -32,6 +32,16 @@ const configSchema = z.object({
      * site that typed its rates on purpose keeps them.
      */
     useFetchedRates: z.boolean().default(false),
+    /**
+     * The currency a visitor who never picked one reads; empty is the base.
+     * Prices stay entered in the base either way, and the checkout still
+     * charges in the gateway's currency.
+     */
+    defaultDisplay: z.string().max(8).default(""),
+    /** The same per language the page is read in, which wins over the above. */
+    languageDisplay: z.record(z.string().regex(/^[a-z]{2,3}(-[A-Za-z]{2,4})?$/), z.string().max(8))
+        .refine((map) => Object.keys(map).length <= 50)
+        .default({}),
 })
     .refine((c) => c.currencies.some((cur) => cur.code === c.base), {
         message: "Base currency must exist in currencies list",
@@ -46,12 +56,23 @@ const configSchema = z.object({
     // 32.5 says one of itself is worth 32.5 of itself, and every conversion
     // through it is off by that factor - so it is normalised rather than
     // rejected, and a disabled base is enabled again for the same reason.
-    .transform((c) => ({
-        ...c,
-        currencies: c.currencies.map((cur) =>
+    .transform((c) => {
+        const currencies = c.currencies.map((cur) =>
             cur.code === c.base ? { ...cur, rate: 1, enabled: true } : cur,
-        ),
-    }));
+        );
+        // A default naming a currency the site does not offer would have the
+        // picker showing something it cannot list, so it goes back to the
+        // base: switching a currency off takes it out of every default.
+        const offered = new Set(currencies.filter((cur) => cur.enabled).map((cur) => cur.code));
+        return {
+            ...c,
+            currencies,
+            defaultDisplay: offered.has(c.defaultDisplay) ? c.defaultDisplay : "",
+            languageDisplay: Object.fromEntries(
+                Object.entries(c.languageDisplay).filter(([, code]) => offered.has(code)),
+            ),
+        };
+    });
 
 /** What a save wrote, before the base is normalised. */
 type StoredConfig = z.input<typeof configSchema>;

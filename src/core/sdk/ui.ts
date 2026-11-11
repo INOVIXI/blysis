@@ -89,7 +89,9 @@ export { useConfirm } from "@/core/components/ui/confirm-dialog";
  * The site's currency and a formatter for it. A module that shows a price
  * must use this rather than its own `$`: the base comes from the setting the
  * payment gateways charge in, and the formatting follows the reader's locale.
- * A module that knows exchange rates calls `setDisplay({ code, rate })`.
+ * A module that knows exchange rates calls `setDisplay({ code, rate })` for
+ * a visitor's own pick, and `setDefaultDisplay` for what a visitor who never
+ * picked should read, which is never stored.
  */
 export { useSiteCurrency } from "@/core/components/currency/site-currency";
 export type { SiteCurrency, DisplayCurrency } from "@/core/components/currency/site-currency";

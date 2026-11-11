@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/sdk/admin";
 import { errorMessage } from "@/core/sdk";
 import { RateSources } from "./RateSources";
+import { NewVisitorCurrency } from "./NewVisitorCurrency";
 
 interface Currency {
     code: string;
@@ -21,6 +22,8 @@ interface CurrencyConfig {
     base: string;
     currencies: Currency[];
     useFetchedRates: boolean;
+    defaultDisplay: string;
+    languageDisplay: Record<string, string>;
 }
 
 /** As the endpoint answers: `rate` is what is shown, `manualRate` what was typed. */
@@ -36,7 +39,13 @@ export default function CurrencyAdminPage() {
     const t = useTranslations("currency");
     const commonT = useTranslations("common");
     const { confirm } = useConfirm();
-    const [config, setConfig] = useState<CurrencyConfig>({ base: "USD", currencies: [], useFetchedRates: false });
+    const [config, setConfig] = useState<CurrencyConfig>({
+        base: "USD",
+        currencies: [],
+        useFetchedRates: false,
+        defaultDisplay: "",
+        languageDisplay: {},
+    });
     // The fetched rate per code, against the base as last saved. Read again
     // after a save, since changing the base changes every one of them.
     const [live, setLive] = useState<Record<string, number | null>>({});
@@ -50,6 +59,8 @@ export default function CurrencyAdminPage() {
         // footer shows, which is the fetched one while the switch is on.
         setConfig({
             base: d.base,
+            defaultDisplay: typeof d.defaultDisplay === "string" ? d.defaultDisplay : "",
+            languageDisplay: d.languageDisplay && typeof d.languageDisplay === "object" ? d.languageDisplay : {},
             useFetchedRates: d.useFetchedRates === true,
             currencies: shown.map((cur) => ({
                 code: cur.code,
@@ -307,6 +318,14 @@ export default function CurrencyAdminPage() {
                     </Button>
                 </CardContent>
             </Card>
+
+            <NewVisitorCurrency
+                base={config.base}
+                offered={config.currencies.filter((cur) => cur.enabled).map((cur) => cur.code)}
+                defaultDisplay={config.defaultDisplay}
+                languageDisplay={config.languageDisplay}
+                onChange={(patch) => setConfig({ ...config, ...patch })}
+            />
 
             <RateSources />
         </>
