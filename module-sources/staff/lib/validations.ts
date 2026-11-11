@@ -8,3 +8,11 @@ export const staffMemberSchema = z.object({
     userId: z.string().max(64).optional().nullable(),
     order: z.number().int().min(0).max(10_000).optional(),
 });
+
+/**
+ * Whose translations a member's are, in core's table, and the field that has
+ * them: the role title, held to its column's own limit. A name is a person's
+ * and is not translated.
+ */
+export const STAFF_TEXT = { owner: "staff", entity: "member" };
+export const TRANSLATED_FIELDS = { role: 100 };

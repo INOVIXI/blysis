@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T21:05:41Z",
+  "updatedAt": "2026-11-11T21:07:14Z",
   "modules": [
     {
       "id": "announcements",
@@ -5800,13 +5800,13 @@
           "description": "运营这里的人，以及管理他们的界面。"
         }
       },
-      "version": "1.7.1",
-      "coreVersion": "^5.25.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-26T17:03:52Z",
+      "updatedAt": "2026-11-11T21:07:14Z",
       "screenshots": [],
       "tags": [
         "management"

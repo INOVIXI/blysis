@@ -6,15 +6,18 @@
  * `<main>`. The endpoint calls this too, so who counts as staff and who counts
  * as online is decided once.
  */
-import { prisma } from "@/core/sdk/server";
+import { prisma, translateContent } from "@/core/sdk/server";
+import { STAFF_TEXT } from "./validations";
 
-export async function readStaff(onlineOnly = false) {
-    const members = await prisma.staffMember.findMany({
+/** The team, each role title in `locale` and the original where the admin wrote none. */
+export async function readStaff(onlineOnly = false, locale = "") {
+    const rows = await prisma.staffMember.findMany({
         where: { isActive: true },
         orderBy: { order: "asc" },
         take: 200,
         include: { user: { select: { id: true, username: true, avatar: true } } },
     });
+    const members = await translateContent(prisma, STAFF_TEXT, rows, ["role"], locale);
     if (!onlineOnly) return members;
 
     /*

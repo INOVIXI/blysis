@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Users } from "lucide-react";
 import { sharedJson } from "@/core/sdk";
 import { LoadFailed, Waiting, useBlockText, type BlockProps } from "@/core/sdk/ui";
@@ -28,6 +28,8 @@ const SHOWN = 6;
  */
 export function OnlineCard({ settings }: BlockProps) {
     const t = useTranslations("staff");
+    // Each role in the page's language; the strip and the card ask the same address.
+    const locale = useLocale();
     const commonT = useTranslations("common");
     const text = useBlockText();
     const [members, setMembers] = useState<StaffMember[] | null>(null);
@@ -40,11 +42,11 @@ export function OnlineCard({ settings }: BlockProps) {
         let active = true;
         // Shared with the strip under the hero, which a theme may draw on
         // the same page: one request for both (a-page-settles-and-asks-once).
-        sharedJson<{ members?: StaffMember[] }>("/api/v1/staff?online=1")
+        sharedJson<{ members?: StaffMember[] }>(`/api/v1/staff?online=1&locale=${encodeURIComponent(locale)}`)
             .then((d) => { if (active) setMembers(d.members ?? []); })
             .catch(() => { if (active) setFailed(true); });
         return () => { active = false; };
-    }, [reloadKey]);
+    }, [reloadKey, locale]);
 
     const retry = () => {
         setFailed(false);
