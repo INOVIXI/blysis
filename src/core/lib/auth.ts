@@ -40,6 +40,8 @@ import {
     ModuleOwnAuthProviderFactories,
 } from "@/core/generated/module-auth-providers";
 import { resolveAuthProviders } from "./auth-providers";
+import { oauthSignInGate, sessionToKeep } from "./sign-in-methods";
+import { connectRefusalPath } from "./sign-in-methods-shared";
 
 // OAuth providers come from installed modules only - core names none. A module
 // declares `authProviders` in its manifest, the registry generator collects the
@@ -385,6 +387,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 email: user.email || "",
             });
         },
+        /**
+         * A provider account was bound to a member: a connect from the
+         * account page, or the first sign-in of a new account. What the
+         * provider calls the account is kept for the page to show beside it,
+         * since an id alone is a number nobody recognises.
+         */
+        async linkAccount({ user, account, profile }) {
+            const name = [profile?.name, profile?.email].find(
+                (value): value is string => typeof value === "string" && value.trim() !== "",
+            );
+            if (name) {
+                await prisma.account.update({
+                    where: { provider_providerAccountId: { provider: account.provider, providerAccountId: account.providerAccountId } },
+                    data: { displayName: name.trim().slice(0, 100) },
+                }).catch(() => { /* The id is shown instead. */ });
+            }
+            // Imported here: activity-log imports this file for `auth()`.
+            const { logActivity } = await import("./activity-log");
+            logActivity({
+                userId: user.id,
+                action: "user.sign_in_method.connect",
+                entity: "account",
+                entityId: account.provider,
+                metadata: { provider: account.provider, __impersonationChecked: true },
+            }).catch(() => {});
+        },
         async signOut() {
             const { doActionAsync, HookNames } = await import("./hooks");
             await doActionAsync(HookNames.USER_LOGGED_OUT, {});
@@ -395,20 +423,49 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // is banned, so we never mint a session (even a short-lived one) for
         // a banned account. The jwt callback below revokes active sessions
         // on their next refresh as a second line of defense.
-        async signIn({ user }) {
-            if (!user?.id) return true;
+        async signIn({ user, account }) {
+            // A provider sign-in arrives with the provider's own id in
+            // `user.id` until the account is bound, so asking about that id
+            // asked about nobody and refused every first sign-in and every
+            // connect. The gate says which member this sign-in really is, and
+            // whether it may happen at all. See sign-in-methods.ts.
+            let memberId = user?.id ?? null;
+            if (account?.type === "oauth" || account?.type === "oidc") {
+                const { headers } = await import("next/headers");
+                const verdict = await oauthSignInGate({
+                    provider: account.provider,
+                    providerAccountId: account.providerAccountId,
+                    headers: await headers(),
+                });
+                if (verdict.refusal) return connectRefusalPath(verdict.refusal);
+                memberId = verdict.memberId;
+            }
+            // A new account: there is nobody yet to ask about.
+            if (!memberId) return true;
             const existing = await prisma.user.findUnique({
-                where: { id: user.id },
+                where: { id: memberId },
                 select: { isDeleted: true },
             });
             if (existing?.isDeleted) return false;
             // The same question the credentials path asks. An OAuth handshake
             // that skipped it was a way around every restriction a module
             // holds: sign in with the game launcher instead of a password.
-            return (await memberStanding(user.id)).mayEnter;
+            return (await memberStanding(memberId)).mayEnter;
         },
-        async jwt({ token, user, trigger, session: updatePayload }) {
-            if (user) {
+        async jwt({ token, user, account, trigger, session: updatePayload }) {
+            // A provider sign-in by the member this browser is already signed
+            // in as (a connect, or signing in again with a method they hold)
+            // keeps the session they had. See `sessionToKeep`.
+            const kept = user?.id && (account?.type === "oauth" || account?.type === "oidc")
+                ? await sessionToKeep(user.id, await (await import("next/headers")).headers())
+                : null;
+            if (kept) {
+                Object.assign(token, kept);
+                // Checked again on this request rather than trusted: the
+                // stamp it carries was earned by the request that minted it.
+                token.checkedAt = undefined;
+                forgetChecked(kept.tokenId as string);
+            } else if (user) {
                 token.id = user.id;
                 token.role = (user as { role?: string }).role;
                 token.rolePriority = (user as { rolePriority?: number }).rolePriority ?? 0;

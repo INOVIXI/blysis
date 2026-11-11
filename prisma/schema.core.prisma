@@ -101,6 +101,10 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
+  /// When it was connected. Null on a row linked before this was recorded.
+  connectedAt       DateTime?
+  /// What the provider called the account at the time, shown beside it.
+  displayName       String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

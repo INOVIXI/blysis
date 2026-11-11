@@ -44,6 +44,7 @@ export const CORE_ADMIN_API: AdminApiRoute[] = [
     { path: "/v1/users", permission: "admin.users" },
     { path: "/v1/users/[id]", permission: "admin.users" },
     { path: "/v1/users/[id]/delete", permission: "admin.users.delete" },
+    { path: "/v1/users/[id]/sign-in-methods/[provider]", permission: "admin.users" },
     { path: "/v1/admin/impersonate/start", permission: "admin.users.impersonate" },
     { path: "/v1/admin/impersonate/stop", permission: "admin.users.impersonate" },
 
@@ -158,6 +159,14 @@ export const MEMBER_MUTATIONS: MemberMutation[] = [
     {
         path: "/v1/auth/profile/delete",
         reason: "A member erasing their own account, which is a right rather than a privilege and cannot be made to depend on a grant.",
+    },
+    {
+        path: "/v1/auth/sign-in-methods",
+        reason: "A member starting to connect a sign-in method to their own account. The handler writes a note against the signed-in session and no other, and the link is made only when that session comes back.",
+    },
+    {
+        path: "/v1/auth/sign-in-methods/[provider]",
+        reason: "A member removing one of their own sign-in methods. The handler touches the signed-in account only and refuses to remove the last way into it.",
     },
     {
         path: "/v1/me/avatar",

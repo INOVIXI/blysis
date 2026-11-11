@@ -22,6 +22,7 @@ import {
     IDENTITY_REQUIRES_PASSWORD_KEY,
     EMAIL_CHANGE_VERIFICATION_KEY,
 } from "@/core/lib/member-identity";
+import { SIGN_IN_METHOD_SIGN_UPS_KEY } from "@/core/lib/sign-in-methods-shared";
 
 interface FieldDef {
     key: string;
@@ -74,6 +75,15 @@ const USERNAME_RULE_CHOICES = USERNAME_RULES.map((value) => ({ value, labelKey: 
 const OPEN_CHOICES = [
     { value: "true", labelKey: "generalSettings_open" },
     { value: "false", labelKey: "generalSettings_closed" },
+] as const;
+
+/**
+ * Whether a provider sign-in nobody connected makes a new account. Its own
+ * words, for the reason above: "members may change it" says nothing here.
+ */
+const SIGN_UP_CHOICES = [
+    { value: "true", labelKey: "generalSettings_signInMethodSignUpsOpen" },
+    { value: "false", labelKey: "generalSettings_signInMethodSignUpsClosed" },
 ] as const;
 
 /** Asked for, or not. */
@@ -140,6 +150,10 @@ const sections: SectionDef[] = [
             { key: "username_min_length", labelKey: "generalSettings_usernameMinLength", type: "number", defaultValue: 3 },
             { key: "registration_daily_cap", labelKey: "generalSettings_registrationDailyCap", type: "number", defaultValue: 0, descriptionKey: "generalSettings_registrationCapHint" },
             { key: "registration_total_cap", labelKey: "generalSettings_registrationTotalCap", type: "number", defaultValue: 0 },
+            // A site whose members come from somewhere else (a game server, an
+            // older platform) closes this, so a provider sign-in only ever
+            // finds an account a member connected and never makes a new one.
+            { key: SIGN_IN_METHOD_SIGN_UPS_KEY, labelKey: "generalSettings_signInMethodSignUps", type: "choice", defaultValue: "true", choices: SIGN_UP_CHOICES, descriptionKey: "generalSettings_signInMethodSignUpsHint" },
         ],
     },
     {

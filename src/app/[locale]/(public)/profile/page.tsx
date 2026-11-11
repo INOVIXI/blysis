@@ -14,6 +14,8 @@ import { ModuleErrorBoundary } from "@/core/components/ModuleErrorBoundary";
 import { NotificationPrefsTab } from "@/core/components/profile/NotificationPrefsTab";
 import { MessagesTab } from "@/core/components/profile/MessagesTab";
 import { SessionsTab } from "@/core/components/profile/SessionsTab";
+import { SignInMethodsTab } from "@/core/components/profile/SignInMethodsTab";
+import { SIGN_IN_METHODS_SECTION } from "@/core/lib/sign-in-methods-shared";
 import { ActivityTab } from "@/core/components/profile/ActivityTab";
 import { AccountNav, type AccountSection } from "@/core/components/profile/AccountNav";
 import { AccountSettings } from "@/core/components/profile/AccountSettings";
@@ -81,6 +83,7 @@ export default function ProfilePage() {
         { id: "messages", label: t("messages") },
         { id: "notifications", label: t("notifications") },
         { id: "sessions", label: t("sessions") },
+        { id: SIGN_IN_METHODS_SECTION, label: t("signInMethods") },
         // A module names its own section; the manifest's English `label` is
         // only the fallback.
         ...moduleSections.map((tab) => ({
@@ -169,6 +172,7 @@ export default function ProfilePage() {
                             {active === "messages" && <MessagesTab />}
                             {active === "notifications" && <NotificationPrefsTab />}
                             {active === "sessions" && <SessionsTab />}
+                            {active === SIGN_IN_METHODS_SECTION && <SignInMethodsTab />}
                             {moduleSections.map((tab) => {
                                 if (active !== tab.id) return null;
                                 const Section = ProfileTabRegistry[tab.id];

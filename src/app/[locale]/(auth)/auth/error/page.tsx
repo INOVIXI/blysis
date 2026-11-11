@@ -17,6 +17,7 @@ export default function AuthErrorPage() {
             case "AccessDenied": return t("errorAccessDenied");
             case "Verification": return t("errorVerification");
             case "OAuthAccountNotLinked": return t("errorOAuthAccountNotLinked");
+            case "ConnectFirst": return t("errorConnectFirst");
             default: return t("errorDefault");
         }
     })();

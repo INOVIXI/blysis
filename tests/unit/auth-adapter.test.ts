@@ -206,6 +206,7 @@ describe("coreAuthAdapter linkAccount", () => {
             provider: "github",
             providerAccountId: "42",
             access_token: "tok",
+            connectedAt: expect.any(Date),
         });
     });
 
