@@ -44,14 +44,14 @@
       "default": "",
       "maxLength": 200,
       "label": "Site usernames are player names",
-      "description": "Games, as their servers name them (minecraft), where a member is the player with their username, case ignored, and no link code is offered. Empty: members link with a code."
+      "description": "Games, in lower case as their servers name them, where a member is the account in game with their username, case ignored, and no link code is offered. Empty: members link with a code."
     },
     {
       "key": "offlineModeIds",
       "type": "boolean",
       "default": false,
       "label": "Offline-mode ids",
-      "description": "On those games a player's id is the offline-mode Minecraft UUID of their name. A player with another id is not matched by name, and a member's player is given that id."
+      "description": "On those games an account's id is the one an offline-mode server derives from its name (\"OfflinePlayer:\" + name, a version 3 UUID). Another id is not matched by name."
     }
   ],
   "api": [
@@ -512,7 +512,7 @@
         "srv_pick": "Pick this server",
         "srv_revokeManyConfirm": "{count} servers can no longer connect. Their queued deliveries stay where they are.",
         "srv_revokedPartly": "Revoked {deleted} of {total}",
-        "link_byName": "Your {platform} account is {name}: your username here is your player name.",
+        "link_byName": "Your {platform} account is {name}: your username here is your name in game.",
         "link_noCodes": "Accounts here are linked by name, so there is no code to make."
       },
       "admin": {

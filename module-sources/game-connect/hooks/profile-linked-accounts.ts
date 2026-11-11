@@ -5,7 +5,8 @@
  *
  * Only those games, and nothing with the setting off: a profile showed no
  * game account of this module's before, and a site that has not chosen to
- * publish one does not start to.
+ * publish one does not start to. A game another module already answered for
+ * is left to that answer, so a profile never lists one game twice.
  */
 import { prisma } from "@/core/sdk/server";
 import { accountsByName } from "../lib/names";
@@ -35,9 +36,12 @@ const profileLinkedAccounts = async (current: LinkedAccount[], who?: { userId: s
         take: settings.games.length,
     });
     const named = await accountsByName(settings, who.userId, new Set(links.map((link) => link.platform)));
+    const answered = new Set((current ?? []).map((account) => account.provider.toLowerCase()));
     return [
         ...(current ?? []),
-        ...[...links, ...named].map((account) => ({ provider: account.platform, username: account.name, avatar: null })),
+        ...[...links, ...named]
+            .filter((account) => !answered.has(account.platform))
+            .map((account) => ({ provider: account.platform, username: account.name, avatar: null })),
     ];
 };
 

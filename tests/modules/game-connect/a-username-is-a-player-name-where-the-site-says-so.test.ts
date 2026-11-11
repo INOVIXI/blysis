@@ -124,6 +124,12 @@ describe("with usernames as player names on a game", () => {
         await expect(profileAccounts([], { userId: "u2" })).resolves.toEqual([{ provider: "minecraft", username: "Alexander", avatar: null }]);
     });
 
+    it("leaves a game another module answered for on the profile to that answer", async () => {
+        const fromAnother = { provider: "minecraft", username: "Steve", avatar: null };
+
+        await expect(profileAccounts([fromAnother], { userId: "u1" })).resolves.toEqual([fromAnother]);
+    });
+
     it("shows the player on the link page and refuses a code when every connected game links by name", async () => {
         const res = await linksRoute.GET();
         await expect(res.json()).resolves.toEqual({ links: [], byName: [{ platform: "minecraft", name: "Steve" }], codes: false });
