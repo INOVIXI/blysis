@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T21:13:53Z",
+  "updatedAt": "2026-11-11T21:16:42Z",
   "modules": [
     {
       "id": "announcements",
@@ -4867,13 +4867,13 @@
           "description": "针对成员的封禁、禁言和警告，可在此发出，也可由其他位置的模块上报"
         }
       },
-      "version": "1.8.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Shield",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-11T21:16:42Z",
       "screenshots": [],
       "tags": [
         "management"
