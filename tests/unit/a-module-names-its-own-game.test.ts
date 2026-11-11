@@ -17,9 +17,10 @@ import { stripComments } from "./source-text";
  * "Player Profiles" reached the same service, and the shop's own admin help
  * offered "Minecraft username" as the example of a field to ask a buyer for.
  *
- * Three modules may say the word, and they are the ones it belongs to:
+ * Four modules may say the word, and they are the ones it belongs to:
  * `minecraft-link` is about proving you own an account, `minecraft-litebans`
- * takes one plugin's bans and hands them to the punishments module, and
+ * and `minecraft-libertybans` each take one plugin's bans and hand them to
+ * the punishments module, and
  * `servers` lists Minecraft among nine game types it can talk to over RCON.
  * Naming it there is the feature, and each of them says so in its own name.
  * Anywhere else it is an assumption about what this site is.
@@ -28,10 +29,11 @@ import { stripComments } from "./source-text";
 const ROOT = join(__dirname, "..", "..");
 const MODULES = "module-sources";
 
-/** The two modules that are allowed to say it, and why. */
+/** The modules that are allowed to say it, and why. */
 const ITS_OWN = new Set([
     "minecraft-link",
     "minecraft-litebans",
+    "minecraft-libertybans",
     "servers",
 ]);
 

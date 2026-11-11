@@ -72,6 +72,8 @@ const BOUNDED: Record<string, string> = {
         "Settings and a scoreboard, not a list to look somebody up in.",
     "module-sources/minecraft-litebans/pages/admin/page.tsx":
         "One connection and what probing it reported.",
+    "module-sources/minecraft-libertybans/pages/admin/page.tsx":
+        "One connection and what probing it reported.",
     "src/app/[locale]/(admin)/admin/analytics/page.tsx":
         "Charts and counters. The repeated block is a row of a chart's legend, not a row somebody looks one thing up in.",
     "src/app/[locale]/(admin)/admin/page.tsx":

@@ -18,8 +18,8 @@ import { join } from "node:path";
  * holds the plugin, the payload and the API key - leaving a record about
  * members with a form that asked for a player.
  *
- * Four modules may say it, because they are about a game: the one that proves
- * you own an in-game account, the one that takes a plugin's bans, the one
+ * Five modules may say it, because they are about a game: the one that proves
+ * you own an in-game account, the two that take a plugin's bans, the one
  * that talks to game servers, and the one that sends people to the listings a
  * server is ranked on. Everywhere else the word is an assumption.
  *
@@ -34,7 +34,7 @@ const ROOT = join(__dirname, "..", "..");
 const MODULES = "module-sources";
 
 /** The modules a game is the subject of. */
-const ABOUT_A_GAME = new Set(["minecraft-link", "minecraft-litebans", "servers", "vote"]);
+const ABOUT_A_GAME = new Set(["minecraft-link", "minecraft-litebans", "minecraft-libertybans", "servers", "vote"]);
 
 const SAYS_PLAYER = /\b(player|players|oyuncu|oyuncular|oyuncuya|oyuncunun)\b/i;
 

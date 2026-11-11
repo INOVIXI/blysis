@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-26",
-  "updatedAt": "2026-10-26T17:03:52Z",
+  "updated": "2026-11-11",
+  "updatedAt": "2026-11-11T10:44:33Z",
   "modules": [
     {
       "id": "announcements",
@@ -3681,6 +3681,86 @@
           "payment.providers",
           "payment.session"
         ]
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 1,
+        "apiRoutes": 1,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "minecraft-libertybans",
+      "name": "Minecraft Punishments (LibertyBans)",
+      "description": "Reads bans, mutes, warnings and kicks out of a LibertyBans database and records them against the member who owns the account",
+      "i18n": {
+        "az": {
+          "name": "Minecraft cəzaları (LibertyBans)",
+          "description": "LibertyBans verilənlər bazasından banları, səssizləşdirmələri, xəbərdarlıqları və kikləri oxuyur və hesabın sahibi olan üzvə yazır"
+        },
+        "de": {
+          "name": "Minecraft-Strafen (LibertyBans)",
+          "description": "Liest Sperren, Stummschaltungen, Verwarnungen und Kicks aus einer LibertyBans-Datenbank aus und erfasst sie beim Mitglied, dem das Konto gehört"
+        },
+        "es": {
+          "name": "Sanciones de Minecraft (LibertyBans)",
+          "description": "Lee baneos, silenciamientos, advertencias y expulsiones de una base de datos de LibertyBans y los registra a nombre del miembro que es dueño de la cuenta"
+        },
+        "et": {
+          "name": "Minecrafti karistused (LibertyBans)",
+          "description": "Loeb keelud, vaigistused, hoiatused ja väljaheitmised LibertyBansi andmebaasist ning salvestab need konto omava liikme kohta"
+        },
+        "fr": {
+          "name": "Sanctions Minecraft (LibertyBans)",
+          "description": "Lit les bannissements, mises en sourdine, avertissements et expulsions d’une base LibertyBans et les enregistre pour le membre qui possède le compte"
+        },
+        "it": {
+          "name": "Sanzioni Minecraft (LibertyBans)",
+          "description": "Legge ban, mute, avvisi ed espulsioni da un database LibertyBans e li registra a carico del membro che possiede l’account"
+        },
+        "pl": {
+          "name": "Kary w Minecraft (LibertyBans)",
+          "description": "Odczytuje bany, wyciszenia, ostrzeżenia i wyrzucenia z bazy LibertyBans i zapisuje je na koncie członka, który jest właścicielem konta"
+        },
+        "pt": {
+          "name": "Punições do Minecraft (LibertyBans)",
+          "description": "Lê banimentos, silenciamentos, avisos e expulsões de um banco de dados LibertyBans e os registra no membro dono da conta"
+        },
+        "ru": {
+          "name": "Наказания Minecraft (LibertyBans)",
+          "description": "Читает баны, муты, предупреждения и кики из базы данных LibertyBans и записывает их на участника, которому принадлежит учетная запись"
+        },
+        "tr": {
+          "name": "Minecraft Cezaları (LibertyBans)",
+          "description": "Bir LibertyBans veritabanındaki yasakları, susturmaları, uyarıları ve atmaları okur ve hesabın sahibi olan üyenin kaydına yazar"
+        },
+        "zh": {
+          "name": "Minecraft 处罚（LibertyBans）",
+          "description": "从 LibertyBans 数据库读取封禁、禁言、警告和踢出记录，并将其记入拥有该账户的成员名下"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.0.0",
+      "author": "MrMirhan",
+      "icon": "Gavel",
+      "category": "gaming",
+      "verified": true,
+      "updatedAt": "2026-11-11T10:44:33Z",
+      "screenshots": [],
+      "tags": [
+        "gaming"
+      ],
+      "zip": "minecraft-libertybans.zip",
+      "dependencies": [
+        "punishments"
+      ],
+      "conflicts": [],
+      "hooks": {
+        "emits": [
+          "punishment.record",
+          "game-account.resolve"
+        ],
+        "listens": []
       },
       "stats": {
         "publicRoutes": 0,
