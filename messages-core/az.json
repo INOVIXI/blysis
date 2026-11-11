@@ -97,7 +97,12 @@
     "welcomeTitle": "İcmanıza xoş gəlmisiniz",
     "welcomeVisitorHint": "İcmanı araşdırmaq üçün yuxarıdakı naviqasiyadan istifadə edin.",
     "writeContentHere": "Məzmununuzu buraya yazın...",
-    "statsLabel": "Server icmalı"
+    "statsLabel": "Server icmalı",
+    "localizedText_translations": "Tərcümələr ({total} dildən {filled})",
+    "localizedText_fallbackHint": "Boş qalan dildə orijinal mətn göstərilir.",
+    "localizedText_filled": "Tərcümə edilib",
+    "localizedText_empty": "Orijinalı göstərir",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Səhifə tapılmadı",

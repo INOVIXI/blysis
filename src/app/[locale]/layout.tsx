@@ -47,7 +47,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   // Pull site_name/description from Settings, then layer root-layout-only
   // fields (title template, manifest) on top.
   // The site's own name comes from the setting, not from the environment.
@@ -56,11 +56,19 @@ export async function generateMetadata(): Promise<Metadata> {
   // name, because only this file can set a title template and this file was
   // asking the wrong thing. `buildSiteHead` reads the setting and lets a
   // module answer `seo.siteHead` on top of it.
-  const head = await buildSiteHead();
+  //
+  // In the reader's language: the operator may write the name per language.
+  // The language is checked before it is used, as the page below checks it,
+  // and handed over as `siteLanguage` rather than `locale`, which would give
+  // every page a canonical naming the home page.
+  const { locale: segment } = await params;
+  const reader = isKnownLocale(segment) ? segment : undefined;
+  const head = await buildSiteHead(reader);
   const base = await buildPageMeta({
     title: head.defaultTitle,
     type: "website",
     url: "/",
+    siteLanguage: reader,
   });
   return {
     ...base,

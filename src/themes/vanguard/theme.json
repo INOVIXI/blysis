@@ -282,7 +282,8 @@
           "type": "text",
           "label": "Where the button goes",
           "max": 300,
-          "labelKey": "theme_vanguard_hero_ctaHref"
+          "labelKey": "theme_vanguard_hero_ctaHref",
+          "translatable": false
         }
       }
     },

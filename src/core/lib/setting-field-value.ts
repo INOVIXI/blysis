@@ -1,4 +1,5 @@
 import type { ThemeFieldDef } from "@/core/lib/theme-manifest-schema";
+import { cleanTranslatableText } from "@/core/lib/i18n/translatable-text";
 
 /**
  * What a declared setting may hold, checked the same way wherever a value is
@@ -59,6 +60,12 @@ export function sanitizeSettingValue(def: ThemeFieldDef, value: unknown): unknow
         case "toggle":
             return typeof value === "boolean" ? value : undefined;
         case "text":
+            // Prose may carry a translation per language; a value it cannot
+            // hold was deleted by the route, so a heading saved in two
+            // languages would otherwise have removed the heading.
+            return def.translatable === false
+                ? clampString(value, def.max ?? 10000)
+                : cleanTranslatableText(value, def.max ?? 10000);
         case "richtext":
             return clampString(value, def.max ?? 10000);
         case "url":

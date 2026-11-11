@@ -18,17 +18,22 @@ import { isEnabledIn } from "@/core/lib/module-enabled";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
+import { LocalizedTextInput } from "@/core/components/ui/localized-text-input";
+import { originalText, type TranslatableText } from "@/core/lib/i18n/translatable-text";
 
 interface NavChild {
-    label: string;
+    label: TranslatableText;
     href: string;
 }
 
 interface NavLink {
-    label: string;
+    /** The admin's own words, which they may write per language. */
+    label: TranslatableText;
     // Carried through from the module manifest so a seeded list that the admin
-    // saves unchanged keeps following the locale. Typing a label clears it:
-    // text the admin wrote is what they meant to show.
+    // saves unchanged keeps following the locale. Typing the original label
+    // clears it: text the admin wrote is what they meant to show. Adding a
+    // translation does not, since the key still speaks every language the
+    // admin left empty.
     labelKey?: string;
     href: string;
     icon?: string;
@@ -80,12 +85,16 @@ export default function NavbarSettingsPage() {
     const addDropdown = () => setLinks([...links, { label: navT("more"), href: "#", icon: "Star", children: [{ label: "", href: "/" }] }]);
 
     const updateLink = (i: number, field: string, value: string) => {
+        setLinks(links.map((l, idx) => (idx === i ? { ...l, [field]: value } : l)));
+    };
+
+    const updateLabel = (i: number, value: TranslatableText) => {
         setLinks(links.map((l, idx) => {
             if (idx !== i) return l;
-            // An edited label is the admin's own words, so it stops deferring
-            // to the module's translation key.
-            if (field === "label") return { ...l, label: value, labelKey: undefined };
-            return { ...l, [field]: value };
+            // An edited original is the admin's own words, so it stops
+            // deferring to the module's translation key.
+            const keepsKey = originalText(value) === originalText(l.label);
+            return { ...l, label: value, labelKey: keepsKey ? l.labelKey : undefined };
         }));
     };
 
@@ -109,9 +118,9 @@ export default function NavbarSettingsPage() {
         setLinks(newLinks);
     };
 
-    const updateChild = (parentIdx: number, childIdx: number, field: string, value: string) => {
+    const updateChild = (parentIdx: number, childIdx: number, field: string, value: TranslatableText) => {
         const newLinks = [...links];
-        (newLinks[parentIdx].children![childIdx] as unknown as Record<string, string>)[field] = value;
+        (newLinks[parentIdx].children![childIdx] as unknown as Record<string, TranslatableText>)[field] = value;
         setLinks(newLinks);
     };
 
@@ -188,12 +197,14 @@ export default function NavbarSettingsPage() {
                             return (
                                 <div key={i} className="border border-border rounded-lg overflow-hidden">
                                     {/* Main row */}
-                                    <div className="flex items-center gap-2 p-3 bg-muted">
+                                    <div className="flex items-start gap-2 p-3 bg-muted">
                                         <div className="flex flex-col gap-0.5">
-                                            <button aria-label={t("common_moveUp", { label: link.label })} onClick={() => moveLink(i, -1)} className="text-muted-foreground hover:text-foreground text-xs"><span aria-hidden="true">▲</span></button>
-                                            <button aria-label={t("common_moveDown", { label: link.label })} onClick={() => moveLink(i, 1)} className="text-muted-foreground hover:text-foreground text-xs"><span aria-hidden="true">▼</span></button>
+                                            <button aria-label={t("common_moveUp", { label: originalText(link.label) })} onClick={() => moveLink(i, -1)} className="text-muted-foreground hover:text-foreground text-xs"><span aria-hidden="true">▲</span></button>
+                                            <button aria-label={t("common_moveDown", { label: originalText(link.label) })} onClick={() => moveLink(i, 1)} className="text-muted-foreground hover:text-foreground text-xs"><span aria-hidden="true">▼</span></button>
                                         </div>
-                                        <Input value={link.label} onChange={(e) => updateLink(i, "label", e.target.value)} placeholder={t("navbar_labelPlaceholder")} aria-label={t("navbar_labelPlaceholder")} className="flex-1 min-w-0" />
+                                        <div className="flex-1 min-w-0">
+                                            <LocalizedTextInput value={link.label} onChange={(v) => updateLabel(i, v)} placeholder={t("navbar_labelPlaceholder")} label={t("navbar_labelPlaceholder")} />
+                                        </div>
                                         {!isDropdown && (
                                             <Input value={link.href} onChange={(e) => updateLink(i, "href", e.target.value)} placeholder="/path" aria-label={t("navbar_pathLabel")} className="flex-1 min-w-0" />
                                         )}
@@ -235,7 +246,7 @@ export default function NavbarSettingsPage() {
                                         where the site says "Magaza", and an
                                         operator had no way to know the two
                                         were the same link. */}
-                                    {link.labelKey && navT.has(link.labelKey) && navT(link.labelKey) !== link.label && (
+                                    {link.labelKey && navT.has(link.labelKey) && navT(link.labelKey) !== originalText(link.label) && (
                                         <p className="border-t border-border bg-muted px-3 pb-2 text-xs text-muted-foreground">
                                             {t("navbar_visitorsSee", { label: navT(link.labelKey) })}
                                         </p>
@@ -246,9 +257,11 @@ export default function NavbarSettingsPage() {
                                         <div className="border-t border-border p-3 bg-card space-y-2">
                                             <Label className="text-xs text-muted-foreground">{t("navbar_dropdownItems")}</Label>
                                             {link.children!.map((child, j) => (
-                                                <div key={j} className="flex items-center gap-2 pl-6">
+                                                <div key={j} className="flex items-start gap-2 pl-6">
                                                     <span className="text-muted-foreground">└</span>
-                                                    <Input aria-label={t("navbar_dropdownItems")} value={child.label} onChange={(e) => updateChild(i, j, "label", e.target.value)} placeholder={t("navbar_subItemPlaceholder")} className="flex-1" />
+                                                    <div className="flex-1 min-w-0">
+                                                        <LocalizedTextInput label={t("navbar_dropdownItems")} value={child.label} onChange={(v) => updateChild(i, j, "label", v)} placeholder={t("navbar_subItemPlaceholder")} />
+                                                    </div>
                                                     <Input value={child.href} onChange={(e) => updateChild(i, j, "href", e.target.value)} placeholder="/path" aria-label={t("navbar_pathLabel")} className="flex-1" />
                                                     <Button aria-label={commonT("remove")} variant="ghost" size="sm" onClick={() => removeChild(i, j)}><X className="w-3 h-3 text-destructive" /></Button>
                                                 </div>

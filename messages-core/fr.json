@@ -97,7 +97,12 @@
     "welcomeTitle": "Bienvenue dans votre communauté",
     "welcomeVisitorHint": "Utilisez la navigation ci-dessus pour explorer la communauté.",
     "writeContentHere": "Rédigez votre contenu ici…",
-    "statsLabel": "Le site en un coup d’œil"
+    "statsLabel": "Le site en un coup d’œil",
+    "localizedText_translations": "Traductions ({filled} sur {total})",
+    "localizedText_fallbackHint": "Une langue laissée vide affiche le texte d'origine.",
+    "localizedText_filled": "Traduit",
+    "localizedText_empty": "Affiche l'original",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Page introuvable",

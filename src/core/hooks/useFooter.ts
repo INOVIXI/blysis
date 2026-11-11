@@ -7,6 +7,7 @@ import { useSiteSettings } from "@/core/hooks/useSiteSettings";
 import { defaultFooterColumns, drawnFooterColumns, parseFooterColumns, parseHiddenLinks, type FooterColumnLink } from "@/core/lib/footer-columns";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { useAllModules } from "@/core/providers/module-provider";
+import { useText } from "@/core/hooks/useText";
 
 /**
  * A setting with something in it. Each key is read as `settings.<key>` at the
@@ -56,6 +57,10 @@ export function useFooter(): FooterContent {
     const commonT = useTranslations("common");
     const navT = useTranslations("nav");
     const moduleStatus = useAllModules();
+    // The name, the about line and the copyright are the operator's prose,
+    // which may be written per language; read in the reader's before the
+    // "is anything there" test, which only a string can pass.
+    const text = useText();
     const { settings } = useSiteSettings();
 
     const enabledFooterLinks = ModuleFooterLinks.filter((fl) => isEnabledIn(moduleStatus, fl.module));
@@ -89,11 +94,11 @@ export function useFooter(): FooterContent {
     ].filter((link): link is FooterSocialLink => typeof link.href === "string" && link.href !== "");
 
     return {
-        siteName: filled(settings.site_name) ?? serverConfig.name,
-        about: filled(settings.footer_about_text) ?? filled(settings.site_description) ?? filled(serverConfig.description),
+        siteName: filled(text(settings.site_name)) ?? serverConfig.name,
+        about: filled(text(settings.footer_about_text)) ?? filled(text(settings.site_description)) ?? filled(serverConfig.description),
         email: filled(settings.site_email) ?? filled(serverConfig.email),
         social,
         columns,
-        copyright: filled(settings.footer_copyright),
+        copyright: filled(text(settings.footer_copyright)),
     };
 }

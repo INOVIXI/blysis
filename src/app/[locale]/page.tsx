@@ -3,7 +3,8 @@ import { Link } from "@/core/lib/i18n/navigation";
 import { SiteShell } from "@/core/components/layout/SiteShell";
 import { PageLayoutView } from "@/core/components/layout/PageLayoutView";
 import { loadHomeLayout } from "@/core/lib/page-layout-loader";
-import { readSettingStrings } from "@/core/lib/setting-values";
+import { readSettingValues } from "@/core/lib/setting-values";
+import { textFor } from "@/core/lib/i18n/translatable-text";
 import { HomeWelcome } from "./HomeWelcome";
 
 export const dynamic = "force-dynamic";
@@ -13,12 +14,16 @@ export const dynamic = "force-dynamic";
  * once by `resolveLayout` from what the operator saved, what the active
  * theme ships and the widget settings sites had before either existed.
  */
-export default async function HomePage() {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
     const commonT = await getTranslations("common");
-    const [layout, { site_name: siteName }] = await Promise.all([
+    const [layout, settings] = await Promise.all([
         loadHomeLayout(),
-        readSettingStrings(["site_name"]).catch(() => ({ site_name: null })),
+        readSettingValues(["site_name"]).catch(() => ({}) as Record<string, unknown>),
     ]);
+    // The name as the reader's language has it, since the operator may write
+    // it per language.
+    const siteName = textFor(settings.site_name, locale).trim();
 
     return (
         <SiteShell>

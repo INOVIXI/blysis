@@ -47,6 +47,15 @@ describe("a setting value", () => {
         expect(sanitizeSettingValue(field({ type: "text", max: 3 }), "abcdef")).toBe("abc");
     });
 
+    it("is text in several languages where the field is prose, and one string where it is not", () => {
+        const prose = field({ type: "text", max: 3 });
+        expect(sanitizeSettingValue(prose, { default: "abcdef", en: "ghijkl" })).toEqual({ default: "abc", en: "ghi" });
+        expect(sanitizeSettingValue(prose, { en: "no original" })).toBeUndefined();
+        const address = field({ type: "text", translatable: false });
+        expect(sanitizeSettingValue(address, { default: "play.example.net", en: "x" })).toBeUndefined();
+        expect(sanitizeSettingValue(address, "play.example.net")).toBe("play.example.net");
+    });
+
     it("falls back to the field's default, or to the plainest value of its type", () => {
         expect(settingDefault(field({ type: "number", min: 2, max: 9 }))).toBe(2);
         expect(settingDefault(field({ type: "number", default: 4 }))).toBe(4);

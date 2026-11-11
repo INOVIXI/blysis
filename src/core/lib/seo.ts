@@ -19,6 +19,7 @@ import { localeAlternates, localizedPath } from "./sitemap-routes";
 import type { SiteLanguages } from "./i18n/site-languages";
 import { getSiteLanguages } from "./i18n/site-languages-setting";
 import { locales } from "./i18n/config";
+import { originalText, textFor } from "./i18n/translatable-text";
 
 export interface PageMetaInput {
     title: string;
@@ -34,6 +35,12 @@ export interface PageMetaInput {
      * hreflang is emitted, which is better than emitting a wrong one.
      */
     locale?: string;
+    /**
+     * Which language the site's own name and description are read in, when
+     * that is wanted without a canonical: the root layout's head, which every
+     * page inherits and so must not name one page's URL. Defaults to `locale`.
+     */
+    siteLanguage?: string;
     type?: "website" | "article" | "profile";
     publishedTime?: string;
     authorName?: string;
@@ -58,7 +65,10 @@ export interface SeoSiteInfo {
 }
 
 /**
- * Reads site_name + site_description from Settings with env fallbacks.
+ * Reads site_name + site_description from Settings with env fallbacks, in
+ * `locale` when one is given: the operator may write both per language, and a
+ * crawler indexing one language of the site reads that language's name. With
+ * no locale, a mail or an export rather than a page, it is the original text.
  *
  * Cached for the length of one render, for the reason `getSession` and
  * `getActiveTheme` are: every route that declares metadata calls
@@ -67,7 +77,7 @@ export interface SeoSiteInfo {
  * queries `/en/blog` issued for one request. A site cannot be renamed
  * between a layout's metadata and its page's.
  */
-export const getSeoSiteInfo = cache(async function getSeoSiteInfo(): Promise<SeoSiteInfo> {
+export const getSeoSiteInfo = cache(async function getSeoSiteInfo(locale?: string): Promise<SeoSiteInfo> {
     // Runtime-resolved: see app-url.ts. Reading NEXT_PUBLIC_SITE_URL here
     // baked localhost into every canonical tag of every prebuilt-image install.
     const siteUrl = resolveAppUrl();
@@ -80,7 +90,11 @@ export const getSeoSiteInfo = cache(async function getSeoSiteInfo(): Promise<Seo
             where: { key: { in: [...SEO_SETTING_KEYS] } },
         });
         for (const r of rows) {
-            const value = typeof r.value === "string" ? r.value : String(r.value ?? "");
+            // An object is text written per language; anything else is
+            // coerced as it always was, so a name saved as a number still reads.
+            const value = typeof r.value === "object" && r.value !== null
+                ? (locale ? textFor(r.value, locale) : originalText(r.value))
+                : String(r.value ?? "");
             if (r.key === "site_name" && value) siteName = value;
             if (r.key === "site_description" && value) siteDescription = value;
         }
@@ -200,8 +214,8 @@ export interface SiteHead {
  * environment, which is why renaming a site used to change every heading on it
  * and leave the browser tab reading the old name.
  */
-export async function buildSiteHead(): Promise<SiteHead> {
-    const { siteName } = await getSeoSiteInfo();
+export async function buildSiteHead(locale?: string): Promise<SiteHead> {
+    const { siteName } = await getSeoSiteInfo(locale);
     let answer = NO_SITE_HEAD;
     try {
         const { ensureHooks } = await import("./hooks-bootstrap");
@@ -230,7 +244,7 @@ export async function buildSiteHead(): Promise<SiteHead> {
  * export. Async to allow reading Settings - await the result.
  */
 export async function buildPageMeta(input: PageMetaInput): Promise<Metadata> {
-    const { siteName, siteDescription, siteUrl } = await getSeoSiteInfo();
+    const { siteName, siteDescription, siteUrl } = await getSeoSiteInfo(input.siteLanguage ?? input.locale);
     const override = await pageOverride(input, { description: input.description || siteDescription });
 
     const title = override.title || input.title;

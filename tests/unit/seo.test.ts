@@ -22,6 +22,7 @@ vi.mock("@/core/config/server", () => ({ serverConfig }));
 import type { Metadata } from "next";
 import {
     buildPageMeta,
+    buildSiteHead,
     buildArticleJsonLd,
     buildOrganizationJsonLd,
 } from "@/core/lib/seo";
@@ -42,6 +43,40 @@ beforeEach(() => {
 });
 
 // ===========================================================================
+
+describe("a site name and description written per language", () => {
+    // Every page's head carried one value for both, so a crawler indexing
+    // the English site read the Turkish name in every result.
+    beforeEach(() => {
+        setting.findMany.mockResolvedValue([
+            { key: "site_name", value: { default: "Vanilya Sunucusu", en: "Vanilla Server" } },
+            { key: "site_description", value: { default: "Türkçe açıklama", en: "English description" } },
+        ]);
+    });
+
+    it("is the reader's in a page's head", async () => {
+        const meta = await buildPageMeta({ title: "Servers", url: "/servers", locale: "en" });
+        expect(meta.description).toBe("English description");
+        expect(og(meta).siteName).toBe("Vanilla Server");
+    });
+
+    it("is the original for a language with no translation", async () => {
+        const meta = await buildPageMeta({ title: "Servers", url: "/servers", locale: "fr" });
+        expect(meta.description).toBe("Türkçe açıklama");
+        expect(og(meta).siteName).toBe("Vanilya Sunucusu");
+    });
+
+    it("names the tab in the reader's language", async () => {
+        expect((await buildSiteHead("en")).defaultTitle).toBe("Vanilla Server");
+        expect((await buildSiteHead("tr")).titleTemplate).toBe("%s | Vanilya Sunucusu");
+    });
+
+    it("is never the text of an object", async () => {
+        const meta = await buildPageMeta({ title: "Servers" });
+        expect(meta.description).toBe("Türkçe açıklama");
+        expect(og(meta).siteName).toBe("Vanilya Sunucusu");
+    });
+});
 
 describe("buildPageMeta", () => {
     it("uses the title as given", async () => {

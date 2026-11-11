@@ -1,11 +1,13 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/core/lib/i18n/navigation";
 import { useSiteSettings } from "@/core/hooks/useSiteSettings";
 import { useAllModules } from "@/core/providers/module-provider";
 import { ModuleNavLinks, ModuleRoutes } from "@/core/generated/module-registry";
 import { isEnabledIn } from "@/core/lib/module-enabled";
+import { useText } from "@/core/hooks/useText";
+import type { TranslatableText } from "@/core/lib/i18n/translatable-text";
 
 export interface NavLink {
     label: string;
@@ -13,6 +15,15 @@ export interface NavLink {
     href: string;
     icon?: string;
     children?: { label: string; labelKey?: string; href: string; icon?: string }[];
+}
+
+/** A link as the editor saved it: its label may be written per language. */
+interface StoredNavLink {
+    label: TranslatableText;
+    labelKey?: string;
+    href: string;
+    icon?: string;
+    children?: { label: TranslatableText; labelKey?: string; href: string; icon?: string }[];
 }
 
 export interface NavLinks {
@@ -35,6 +46,8 @@ export interface NavLinks {
  */
 export function useNavLinks(): NavLinks {
     const t = useTranslations("nav");
+    const locale = useLocale();
+    const text = useText();
     const pathname = usePathname();
     const { settings } = useSiteSettings();
     const moduleStatus = useAllModules();
@@ -94,8 +107,16 @@ export function useNavLinks(): NavLinks {
     // module already shipped the string under the `nav` namespace; `label`
     // remains the fallback for a module that declares no key, and for an admin
     // who typed their own text in the navbar editor.
-    const navLabel = (link: { label: string; labelKey?: string }) =>
-        link.labelKey && t.has(link.labelKey) ? t(link.labelKey) : link.label;
+    //
+    // A label may be written per language (`translatable-text.ts`). What the
+    // operator wrote for the reader's own language is what they chose to
+    // show, so it wins over the key; the original they typed does not, since
+    // the editor seeds it with the module's English name.
+    const navLabel = (link: { label: TranslatableText; labelKey?: string }) => {
+        const own = typeof link.label === "object" ? link.label[locale] : undefined;
+        if (own && own.trim()) return own;
+        return link.labelKey && t.has(link.labelKey) ? t(link.labelKey) : text(link.label);
+    };
 
     // Default links: Home + enabled module navLinks from registry
     const registryLinks = [
@@ -105,7 +126,7 @@ export function useNavLinks(): NavLinks {
             .map(nl => ({ label: navLabel(nl), href: nl.href, icon: nl.icon || "Package" })),
     ];
 
-    const rawNavLinks = (Array.isArray(settings.navbar_links) ? settings.navbar_links : registryLinks) as NavLink[];
+    const rawNavLinks = (Array.isArray(settings.navbar_links) ? settings.navbar_links : registryLinks) as StoredNavLink[];
 
     // Filter out disabled module links (including from dropdown children)
     const navLinks = rawNavLinks

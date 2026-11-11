@@ -51,6 +51,8 @@ vi.mock("@/core/providers/module-provider", () => ({
 
 vi.mock("@/core/hooks/useSiteSettings", () => ({
     invalidateSettingsCache: () => {},
+    // The about line and the copyright offer the site's languages.
+    useSiteSettings: () => ({ settings: {}, loaded: true }),
 }));
 
 vi.mock("sonner", () => ({ toast: { success: () => {}, error: () => {} } }));

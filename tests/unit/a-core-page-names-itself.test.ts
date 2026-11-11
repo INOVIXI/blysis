@@ -256,9 +256,14 @@ describe("the pages that ask for the canonical", () => {
     it("leaves the root layout emitting none", () => {
         // Deliberate: see the header. An inherited canonical would put the
         // home page's URL on every admin screen.
+        // It reads the page's language for the site's own name, which the
+        // operator may write per language, and hands it over as
+        // `siteLanguage`, which names no canonical; `locale` would.
         const source = reads("src/app/[locale]/layout.tsx");
         const fn = source.slice(source.indexOf("export async function generateMetadata"));
-        expect(fn.slice(0, 400)).not.toContain("locale");
-        expect(fn.slice(0, 400)).not.toContain("alternates");
+        const call = fn.slice(fn.indexOf("buildPageMeta({"), fn.indexOf("});", fn.indexOf("buildPageMeta({")));
+        expect(call).toContain("buildPageMeta({");
+        expect(call).not.toMatch(/\blocale\b/);
+        expect(fn.slice(0, fn.indexOf("\n}\n"))).not.toContain("alternates");
     });
 });

@@ -4,15 +4,21 @@ import { auth } from "@/core/lib/auth";
 import { isAdmin } from "@/core/lib/permissions";
 import { logActivity } from "@/core/lib/activity-log";
 import {
+    MAINTENANCE_MESSAGE_MAX,
     getMaintenanceConfig,
     setMaintenanceConfig,
     type MaintenanceConfig,
 } from "@/core/lib/maintenance";
 import { readJsonBody } from "@/core/lib/api-body";
+import { isTranslatableText, longestText, type TranslatableText } from "@/core/lib/i18n/translatable-text";
 
 const configSchema = z.object({
     enabled: z.boolean(),
-    message: z.string().max(2000).optional(),
+    // Written per language or once for all of them; each language is held
+    // to the same length one message always was.
+    message: z.custom<TranslatableText>(
+        (value) => isTranslatableText(value) && longestText(value) <= MAINTENANCE_MESSAGE_MAX,
+    ).optional(),
     allowedRoles: z.array(z.string().min(1).max(50)).max(20).optional(),
 });
 

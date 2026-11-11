@@ -97,7 +97,12 @@
     "welcomeTitle": "Bem-vindo à sua comunidade",
     "welcomeVisitorHint": "Use a navegação acima para explorar a comunidade.",
     "writeContentHere": "Escreva seu conteúdo aqui...",
-    "statsLabel": "O site num relance"
+    "statsLabel": "O site num relance",
+    "localizedText_translations": "Traduções ({filled} de {total})",
+    "localizedText_fallbackHint": "Um idioma deixado vazio mostra o texto original.",
+    "localizedText_filled": "Traduzido",
+    "localizedText_empty": "Mostra o original",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Página não encontrada",

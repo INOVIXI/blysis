@@ -58,6 +58,11 @@ export type { CheckboxProps, CheckboxFieldProps } from "@/core/components/ui/che
 export { Input } from "@/core/components/ui/input";
 export { Label } from "@/core/components/ui/label";
 export { Textarea } from "@/core/components/ui/textarea";
+// Text the operator writes once and then per language, and the same text
+// read back in the page's language.
+export { LocalizedTextInput } from "@/core/components/ui/localized-text-input";
+export type { LocalizedTextInputProps } from "@/core/components/ui/localized-text-input";
+export { useText } from "@/core/hooks/useText";
 export {
     Select,
     SelectTrigger,

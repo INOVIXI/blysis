@@ -16,7 +16,7 @@ vi.mock("@/core/lib/auth", () => ({ auth: async () => ({ user: { id: "admin-1" }
 vi.mock("@/core/lib/permissions", () => ({ isAdmin: async () => true }));
 vi.mock("@/core/generated/theme-registry", () => ({
     themeRegistry: {
-        sample: { settings: { hero: { label: "Hero", fields: { ctaHref: { type: "url" }, count: { type: "number", min: 1, max: 12 } } } } },
+        sample: { settings: { hero: { label: "Hero", fields: { ctaHref: { type: "url" }, count: { type: "number", min: 1, max: 12 }, title: { type: "text", max: 5 }, address: { type: "text", translatable: false } } } } },
     },
 }));
 vi.mock("@/core/lib/db", () => ({
@@ -67,5 +67,16 @@ describe("saving a theme's settings", () => {
         await save({ count: 400 });
         expect(calls.upserts).toEqual([]);
         expect(calls.deletes).toEqual(["count"]);
+    });
+
+    it("keeps a heading written in several languages, each cut to the field's length", async () => {
+        expect((await save({ title: { default: "Merhaba dünya", en: "Hello world", de: "" } })).status).toBe(200);
+        expect(calls.upserts).toEqual([{ key: "title", value: { default: "Merha", en: "Hello" } }]);
+    });
+
+    it("drops a translation sent to a field that is not prose", async () => {
+        await save({ address: { default: "play.example.net", en: "x" } });
+        expect(calls.upserts).toEqual([]);
+        expect(calls.deletes).toEqual(["address"]);
     });
 });
