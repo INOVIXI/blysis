@@ -5,7 +5,7 @@ import { stripComments } from "./source-text";
 
 const root = path.resolve(import.meta.dirname, "../..");
 const routeSource = fs.readFileSync(
-    path.join(root, "src/app/api/v1/public-settings/route.ts"),
+    path.join(root, "src/core/lib/public-settings.ts"),
     "utf8",
 );
 

@@ -72,16 +72,16 @@ describe("a public setting sent as JSON", () => {
 describe("every setting served to visitors", () => {
     beforeEach(() => transaction.mockClear());
 
-    // The list `/api/v1/public-settings` serves, read off its route: a route
-    // file may export nothing but its handlers. Two of them, the languages
+    // The list `/api/v1/public-settings` serves, read off the file that holds
+    // it for the route and the root layout alike. Two of them, the languages
     // the site offers and the one it opens in, were added without a limit,
     // and thirteen older ones never had one, so each could carry a whole
     // request's 100KB into every visitor's answer.
-    const source = fs.readFileSync(path.join(process.cwd(), "src/app/api/v1/public-settings/route.ts"), "utf8");
+    const source = fs.readFileSync(path.join(process.cwd(), "src/core/lib/public-settings.ts"), "utf8");
     const list = source.slice(source.indexOf("const PUBLIC_KEYS"), source.indexOf("];", source.indexOf("const PUBLIC_KEYS")));
     const keys = [...list.matchAll(/^\s+"([a-z0-9_]+)",/gm)].map((m) => m[1]);
 
-    it("is read off the route", () => {
+    it("is read off the allowlist", () => {
         expect(keys).toContain("site_languages");
         expect(keys.length).toBeGreaterThan(20);
     });
