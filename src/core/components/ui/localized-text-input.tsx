@@ -6,6 +6,7 @@ import { Check, ChevronDown, ChevronUp, Languages } from "lucide-react";
 import { Input } from "@/core/components/ui/input";
 import { Textarea } from "@/core/components/ui/textarea";
 import { Button } from "@/core/components/ui/button";
+import { RichTextEditor } from "@/core/components/ui/rich-text-editor";
 import { useSiteSettings } from "@/core/hooks/useSiteSettings";
 import { siteLanguagesOf } from "@/core/lib/i18n/site-languages";
 import { localeNames, locales, type Locale } from "@/core/lib/i18n/config";
@@ -18,9 +19,17 @@ export interface LocalizedTextInputProps {
     onChange: (value: TranslatableText) => void;
     /** A textarea rather than one line. */
     multiline?: boolean;
+    /**
+     * A Markdown body in the site's editor, the original and each language
+     * alike, so a page's translation is written with the same tools as the
+     * page.
+     */
+    rich?: boolean;
     rows?: number;
     maxLength?: number;
     placeholder?: string;
+    /** The original must be filled; a translation never has to be. */
+    required?: boolean;
     id?: string;
     /** The original's box, for a caller that inserts at its caret. */
     inputRef?: React.Ref<HTMLInputElement>;
@@ -51,12 +60,13 @@ function translationsOf(value: TranslatableText | undefined): Partial<Record<Loc
  * stored exactly as it was before this existed.
  */
 export function LocalizedTextInput({
-    label, value, onChange, multiline = false, rows = 3, maxLength, placeholder, id, inputRef,
+    label, value, onChange, multiline = false, rich = false, rows = 3, maxLength, placeholder, required, id, inputRef,
 }: LocalizedTextInputProps) {
     const t = useTranslations("common");
     const { settings } = useSiteSettings();
     const [open, setOpen] = React.useState(false);
     const panelId = React.useId();
+    const nameId = React.useId();
 
     const original = originalText(value);
     const translations = translationsOf(value);
@@ -69,14 +79,27 @@ export function LocalizedTextInput({
         onChange(kept.length === 0 ? nextOriginal : { default: nextOriginal, ...Object.fromEntries(kept) });
     };
 
-    const box = (boxValue: string, onText: (text: string) => void, name: string, boxId?: string, ref?: React.Ref<HTMLInputElement>) =>
-        multiline ? (
+    const box = (boxValue: string, onText: (text: string) => void, name: string, boxId?: string, ref?: React.Ref<HTMLInputElement>, key = "original") => {
+        const must = key === "original" && required;
+        if (rich) {
+            // The editor is named by an element rather than an aria-label,
+            // so each box carries its name beside it, for a screen reader.
+            return (
+                <div id={boxId}>
+                    <span id={`${nameId}-${key}`} className="sr-only">{name}</span>
+                    <RichTextEditor value={boxValue} placeholder={placeholder} labelledBy={`${nameId}-${key}`}
+                        minHeight={key === "original" ? undefined : "160px"} onChange={onText} />
+                </div>
+            );
+        }
+        return multiline ? (
             <Textarea id={boxId} value={boxValue} rows={rows} maxLength={maxLength} placeholder={placeholder}
-                aria-label={name} onChange={(e) => onText(e.target.value)} />
+                required={must} aria-label={name} onChange={(e) => onText(e.target.value)} />
         ) : (
             <Input ref={ref} id={boxId} value={boxValue} maxLength={maxLength} placeholder={placeholder}
-                aria-label={name} onChange={(e) => onText(e.target.value)} />
+                required={must} aria-label={name} onChange={(e) => onText(e.target.value)} />
         );
+    };
 
     return (
         <div className="space-y-2">
@@ -116,6 +139,9 @@ export function LocalizedTextInput({
                                     text,
                                     (next) => emit(original, { ...translations, [locale]: next }),
                                     t("localizedText_languageField", { label, language: localeNames[locale] }),
+                                    undefined,
+                                    undefined,
+                                    locale,
                                 )}
                             </div>
                         );

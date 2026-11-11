@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useModalDialog, buttonClassName } from "@/core/sdk/ui";
 import { usePathname } from "@/core/sdk/navigation";
 import { safeUrl } from "../lib/safe-url";
@@ -41,6 +41,9 @@ interface ActivePopup {
  */
 export default function PopupRenderer() {
     const t = useTranslations("popups");
+    // The endpoint reads the popup in this language, and the original where
+    // the admin wrote none.
+    const locale = useLocale();
     const pathname = usePathname();
     const [popup, setPopup] = useState<ActivePopup | null>(null);
     // `usePathname` is the locale-aware one, so this is the path without the
@@ -52,7 +55,7 @@ export default function PopupRenderer() {
     useEffect(() => {
         if (covering) return;
         let active = true;
-        fetch("/api/v1/popups?active=1&limit=1")
+        fetch(`/api/v1/popups?active=1&limit=1&locale=${encodeURIComponent(locale)}`)
             .then((r) => (r.ok ? r.json() : { popups: [] }))
             .then((d: { popups?: ActivePopup[] }) => {
                 if (!active) return;
@@ -66,7 +69,7 @@ export default function PopupRenderer() {
             })
             .catch(() => undefined);
         return () => { active = false; };
-    }, [covering]);
+    }, [covering, locale]);
 
     const dismiss = useCallback(() => {
         if (!popup) return;

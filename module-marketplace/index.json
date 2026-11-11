@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-26",
-  "updatedAt": "2026-10-26T17:03:52Z",
+  "updated": "2026-11-11",
+  "updatedAt": "2026-11-11T20:30:56Z",
   "modules": [
     {
       "id": "announcements",
@@ -53,13 +53,13 @@
           "description": "全站公告横幅"
         }
       },
-      "version": "1.3.0",
-      "coreVersion": "^5.0.0",
+      "version": "1.4.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Megaphone",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-09-20T08:38:05Z",
+      "updatedAt": "2026-11-11T20:30:56Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -1394,13 +1394,13 @@
           "description": "团队撰写、拥有独立地址的页面"
         }
       },
-      "version": "1.6.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.7.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-11T20:30:56Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -4715,13 +4715,13 @@
           "description": "模态弹窗通知和促销活动"
         }
       },
-      "version": "1.4.0",
-      "coreVersion": "^5.0.0",
+      "version": "1.5.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Bell",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-09-20T04:45:04Z",
+      "updatedAt": "2026-11-11T20:30:56Z",
       "screenshots": [],
       "tags": [
         "management"

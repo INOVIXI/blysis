@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { serverConfig } from "@/core/config/server";
 import { ModuleFooterLinks } from "@/core/generated/module-registry";
 import { useSiteSettings } from "@/core/hooks/useSiteSettings";
@@ -61,13 +61,15 @@ export function useFooter(): FooterContent {
     // which may be written per language; read in the reader's before the
     // "is anything there" test, which only a string can pass.
     const text = useText();
+    const locale = useLocale();
     const { settings } = useSiteSettings();
 
     const enabledFooterLinks = ModuleFooterLinks.filter((fl) => isEnabledIn(moduleStatus, fl.module));
     // An install that has never saved a footer is drawn the default one: the
     // two columns it had, read out of the settings that still hold them, and
     // a column for each section its modules name.
-    const saved = parseFooterColumns(settings.footer_columns);
+    // Headings and labels the operator wrote per language, in the reader's.
+    const saved = parseFooterColumns(settings.footer_columns, locale);
     const columns = drawnFooterColumns(
         saved ?? defaultFooterColumns(settings.footer_quick_links, settings.footer_legal_links, enabledFooterLinks),
         enabledFooterLinks,

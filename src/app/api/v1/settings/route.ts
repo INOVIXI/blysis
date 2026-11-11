@@ -52,7 +52,8 @@ const PER_KEY_LIMITS: Record<string, number> = {
     // Each label may now carry a translation per language the site offers.
     navbar_links: 48_000,
     footer_about_text: 2_000,
-    footer_columns: 24_000,
+    // Headings and labels may each carry a translation per language.
+    footer_columns: 48_000,
     footer_hidden_links: 8_000,
     footer_quick_links: 8_000,
     footer_legal_links: 8_000,

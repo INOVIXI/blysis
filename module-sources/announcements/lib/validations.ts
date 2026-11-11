@@ -24,5 +24,12 @@ export const announcementCreateSchema = z.object({
     publishAt: isoDate.optional().nullable(),
 });
 
+/**
+ * Whose translations these are, in core's table, and the fields that have
+ * them: each language held to its column's own limit.
+ */
+export const ANNOUNCEMENT_TEXT = { owner: "announcements", entity: "announcement" };
+export const TRANSLATED_FIELDS = { title: 200, content: 10_000 };
+
 /** The same fields, all optional: a PATCH writes only what it names. */
 export const announcementUpdateSchema = announcementCreateSchema.partial();

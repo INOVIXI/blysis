@@ -31,4 +31,12 @@ export const popupSchema = z.object({
 
 export const popupUpdateSchema = popupSchema.partial();
 
+/**
+ * Whose translations these are, in core's table, and the fields that have
+ * them: each language held to its column's own limit. The link is an
+ * address, the same in every language.
+ */
+export const POPUP_TEXT = { owner: "popups", entity: "popup" };
+export const TRANSLATED_FIELDS = { title: 200, content: 20000, linkText: 100 };
+
 export type PopupInput = z.infer<typeof popupSchema>;

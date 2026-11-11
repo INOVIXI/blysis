@@ -14,6 +14,8 @@ import { useTranslations } from "next-intl";
 import { UrlOrFile } from "@/core/components/ui/url-or-file";
 import { RichTextEditor } from "@/core/components/ui/rich-text-editor";
 import { IconPicker } from "@/core/components/ui/icon-picker";
+import { LocalizedTextInput } from "@/core/components/ui/localized-text-input";
+import { joinTranslations, splitTranslations, type LanguageTexts } from "@/core/lib/i18n/translatable-text";
 import { writeError } from "@/core/lib/write-result";
 import { NativeSelect } from "@/core/components/ui/native-select";
 import { Pagination, usePagedRows } from "@/core/components/ui/pagination";
@@ -47,7 +49,15 @@ export interface CrudField {
      * `urlOrFile` named the control rather than the field, and sat beside an
      * `image` that could only be uploaded to; both now draw `UrlOrFile`.
      */
-    type?: "text" | "password" | "number" | "url" | "select" | "textarea" | "toggle" | "datetime" | "color" | "image" | "file" | "richtext" | "icon" | "reference" | "referenceList";
+    /**
+     * `translatable`, `translatableTextarea` and `translatableRichtext` are
+     * text the admin may write once per language. The original is the
+     * column, sent as it always was; the translations come from the row's
+     * `translations` (`attachContentTranslations`) and go back beside the
+     * originals as `translations: { [key]: { [locale]: text } }`, for the
+     * endpoint to save with `saveContentTranslations`.
+     */
+    type?: "text" | "password" | "number" | "url" | "select" | "textarea" | "toggle" | "datetime" | "color" | "image" | "file" | "richtext" | "icon" | "reference" | "referenceList" | "translatable" | "translatableTextarea" | "translatableRichtext";
     placeholder?: string;
     options?: { value: string; label: string }[];
     /**
@@ -151,6 +161,12 @@ interface AdminCrudPageProps {
  * two more files per module. The address changes, the back button works and
  * the form owns the screen, which is what the path segment was for.
  */
+const TRANSLATABLE = new Set(["translatable", "translatableTextarea", "translatableRichtext"]);
+
+function isTranslatable(field: CrudField): boolean {
+    return field.type !== undefined && TRANSLATABLE.has(field.type);
+}
+
 export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, listKey, displayField, secondaryField, secondaryRender, rowHref, rowActionLabel, activeField = "isActive" }: AdminCrudPageProps) {
     const ct = useTranslations("admin");
     const commonT = useTranslations("common");
@@ -161,6 +177,10 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
     // What the row held when the form opened on it, to tell a field the
     // admin emptied from one that was always empty (a-cleared-field-is-saved-cleared).
     const [loaded, setLoaded] = useState<Record<string, string>>({});
+    // A translatable field's languages, beside its original in `form`. Kept
+    // apart because `form` is one string per key and every screen built on
+    // this shell reads it as that.
+    const [translations, setTranslations] = useState<Record<string, LanguageTexts>>({});
     const [selected, setSelected] = useState<Selection>(new Set());
     const [search, setSearch] = useState("");
     const { confirm } = useConfirm();
@@ -190,6 +210,7 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
         if (!editingId) {
             setForm(defaults);
             setLoaded({});
+            setTranslations({});
             return;
         }
         const item = items.find((row) => row.id === editingId);
@@ -215,6 +236,8 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
                 vals[f.key] = v != null ? String(v) : f.defaultValue || "";
             }
         });
+        const stored = (item.translations ?? {}) as Record<string, LanguageTexts>;
+        setTranslations(Object.fromEntries(fields.filter(isTranslatable).map((f) => [f.key, stored[f.key] ?? {}])));
         setForm(vals);
         setLoaded(vals);
         // `fields` is a literal rebuilt on every render by every caller, so it
@@ -238,6 +261,12 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
             // all along is still left out.
             else payload[f.key] = v || (editingId && loaded[f.key] ? (f.defaultValue || null) : undefined);
         });
+        // Every translatable field is sent, an empty one too, since an empty
+        // one is how the languages an admin cleared are removed.
+        const translatable = fields.filter(isTranslatable);
+        if (translatable.length > 0) {
+            payload.translations = Object.fromEntries(translatable.map((f) => [f.key, translations[f.key] ?? {}]));
+        }
 
         const url = editingId ? `${apiPath}/${editingId}` : apiPath;
         const method = editingId ? "PATCH" : "POST";
@@ -297,6 +326,24 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
         const onChange = (v: string) => setForm({ ...form, [field.key]: v });
 
         switch (field.type) {
+            case "translatable":
+            case "translatableTextarea":
+            case "translatableRichtext":
+                return (
+                    <LocalizedTextInput
+                        label={field.label}
+                        placeholder={field.placeholder}
+                        required={field.required}
+                        multiline={field.type === "translatableTextarea"}
+                        rich={field.type === "translatableRichtext"}
+                        value={joinTranslations(val, translations[field.key])}
+                        onChange={(next) => {
+                            const { original, translations: languages } = splitTranslations(next);
+                            setForm({ ...form, [field.key]: original });
+                            setTranslations({ ...translations, [field.key]: languages });
+                        }}
+                    />
+                );
             case "textarea":
                 return <Textarea value={val} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} aria-label={field.label} required={field.required} rows={3} />;
             case "select":

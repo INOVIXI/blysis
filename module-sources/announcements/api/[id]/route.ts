@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, isAdmin, logActivity, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { announcementUpdateSchema } from "../../lib/validations";
+import { ANNOUNCEMENT_TEXT, TRANSLATED_FIELDS, announcementUpdateSchema } from "../../lib/validations";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -18,6 +18,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid payload" }, { status: 400 });
     }
+    const translations = contentTranslationsInput((body as { translations?: unknown }).translations, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const fields = parsed.data;
 
     const data: Record<string, unknown> = {};
@@ -32,7 +34,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.endsAt !== undefined) data.endsAt = fields.endsAt ? new Date(fields.endsAt) : null;
     if (fields.publishAt !== undefined) data.publishAt = fields.publishAt ? new Date(fields.publishAt) : null;
 
-    const announcement = await prisma.announcement.update({ where: { id }, data });
+    const announcement = await prisma.$transaction(async (tx) => {
+        const updated = await tx.announcement.update({ where: { id }, data });
+        if (translations.value) await saveContentTranslations(tx, { ...ANNOUNCEMENT_TEXT, recordId: id }, translations.value);
+        return updated;
+    });
 
     await logActivity({
         userId: session.user.id,
@@ -53,7 +59,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     const { id } = await params;
     const existing = await prisma.announcement.findUnique({ where: { id } });
-    await prisma.announcement.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.announcement.delete({ where: { id } });
+        await deleteContentTranslations(tx, ANNOUNCEMENT_TEXT, [id]);
+    });
 
     await logActivity({
         userId: session.user.id,

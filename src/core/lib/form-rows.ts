@@ -34,7 +34,11 @@ export interface Laid<T> {
  * Types that need the whole width: a box you write paragraphs in, a picture,
  * a file. A half-width one of these is a control nobody can use.
  */
-const FULL_WIDTH = new Set(["textarea", "richtext", "image", "file"]);
+const FULL_WIDTH = new Set([
+    "textarea", "richtext", "image", "file",
+    // A box that opens a box per language beneath it.
+    "translatable", "translatableTextarea", "translatableRichtext",
+]);
 
 function widthOf(type: string | undefined): Width {
     if (type === "toggle") return "switch";

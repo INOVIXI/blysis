@@ -9,8 +9,9 @@
  * key.
  */
 import { NextResponse } from "next/server";
-import { isAdmin, prisma } from "@/core/sdk/server";
+import { attachContentTranslations, isAdmin, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
+import { ANNOUNCEMENT_TEXT } from "../../lib/validations";
 
 export async function GET() {
     const session = await auth();
@@ -23,5 +24,6 @@ export async function GET() {
         // and a site with five hundred notices has a different problem.
         take: 500,
     });
-    return NextResponse.json({ announcements });
+    // With every language of each, for the editor's language boxes.
+    return NextResponse.json({ announcements: await attachContentTranslations(prisma, ANNOUNCEMENT_TEXT, announcements) });
 }

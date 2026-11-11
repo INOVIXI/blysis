@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Megaphone, X } from "lucide-react";
 import { isVisibleOnPage } from "../lib/visible-on";
 
@@ -24,12 +24,15 @@ interface Announcement {
  */
 export default function AnnouncementTopBanner() {
     const t = useTranslations("announcements");
+    // The endpoint reads the notice in this language, and the original
+    // where the admin wrote none.
+    const locale = useLocale();
     const pathname = usePathname();
     const [announcement, setAnnouncement] = useState<Announcement | null>(null);
 
     useEffect(() => {
         let active = true;
-        fetch("/api/v1/announcements")
+        fetch(`/api/v1/announcements?locale=${encodeURIComponent(locale)}`)
             .then((r) => (r.ok ? r.json() : { announcements: [] }))
             .then((d: { announcements?: Announcement[] }) => {
                 if (!active) return;
@@ -48,7 +51,7 @@ export default function AnnouncementTopBanner() {
             })
             .catch(() => undefined);
         return () => { active = false; };
-    }, [pathname]);
+    }, [pathname, locale]);
 
     if (!announcement) return null;
 

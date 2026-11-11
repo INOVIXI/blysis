@@ -12,6 +12,23 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.34.0 - a module's own records speak the reader's language. A record's
+ * column keeps the text the admin typed, the original, and core's
+ * `ContentTranslation` table holds a translation per field and language
+ * beside it. `@/core/sdk/server` gains `translateContent` (a page of rows in
+ * one language, one query), `readContentTranslations` and
+ * `attachContentTranslations` (every language, for the editor),
+ * `saveContentTranslations` and `deleteContentTranslations` (in the record's
+ * own transaction) and `contentTranslationsInput` (what a form sent,
+ * checked), with the `ContentKind`, `ContentTranslations` and
+ * `ContentTranslationsInput` types. The isomorphic barrel gains
+ * `joinTranslations`, `splitTranslations` and `LanguageTexts`.
+ * `AdminCrudPage` fields may be `translatable`, `translatableTextarea` or
+ * `translatableRichtext`, read from a row's `translations` and sent back
+ * beside the originals; `SettingsForm` fields may be `translatable` or
+ * `translatableTextarea`, stored in the setting as phase one's shape.
+ * `LocalizedTextInput` takes `rich` for a Markdown body. Additive.
+ *
  * 5.33.0 - text an operator writes may be written per language. A value
  * is a string, which reads the same in every language, or `{ default, en,
  * de, ... }`: the original the operator typed and a translation per
@@ -741,4 +758,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.33.0";
+export const CORE_API_VERSION = "5.34.0";

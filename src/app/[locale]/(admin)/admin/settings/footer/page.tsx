@@ -18,7 +18,7 @@ import { isEnabledIn } from "@/core/lib/module-enabled";
 import { writeError } from "@/core/lib/write-result";
 import { FooterColumnCard, PlacedLinks, type DraftColumn } from "./FooterColumnCard";
 import { LocalizedTextInput } from "@/core/components/ui/localized-text-input";
-import { isTranslatableText, type TranslatableText } from "@/core/lib/i18n/translatable-text";
+import { isTranslatableText, originalText, type TranslatableText } from "@/core/lib/i18n/translatable-text";
 
 /**
  * The footer, built rather than typed as JSON.
@@ -36,11 +36,19 @@ import { isTranslatableText, type TranslatableText } from "@/core/lib/i18n/trans
 
 function toDraft(column: FooterColumn): DraftColumn {
     return {
-        title: column.title ?? "",
+        // Every language the heading and the labels were written in.
+        title: column.titleText ?? column.title ?? "",
         titleKey: column.titleKey ?? "",
         section: column.section ?? "",
-        links: column.links.map((link) => ({ label: link.label, href: link.href, icon: link.icon ?? "" })),
+        links: column.links.map((link) => ({ label: link.labelText ?? link.label, href: link.href, icon: link.icon ?? "" })),
     };
+}
+
+/** A heading or label with its original trimmed, or nothing when the original is empty. */
+function written(value: TranslatableText): TranslatableText | undefined {
+    const original = originalText(value).trim();
+    if (original === "") return undefined;
+    return typeof value === "string" ? original : { ...value, default: original };
 }
 
 /**
@@ -49,12 +57,13 @@ function toDraft(column: FooterColumn): DraftColumn {
  * nothing here: nothing below renders one of the operator's own links.
  */
 function toColumn(column: DraftColumn): FooterColumn {
+    const title = originalText(column.title).trim();
     return {
-        title: column.title.trim() || null,
-        titleKey: column.title.trim() ? null : column.titleKey || null,
+        title: title || null,
+        titleKey: title ? null : column.titleKey || null,
         section: column.section.trim() || null,
         links: column.links.map((link) => ({
-            label: link.label,
+            label: originalText(link.label),
             href: link.href,
             external: false,
             icon: link.icon.trim() || null,
@@ -65,14 +74,15 @@ function toColumn(column: DraftColumn): FooterColumn {
 
 /** What is saved: empty strings become absent rather than empty values. */
 function toSaved(column: DraftColumn) {
+    const title = written(column.title);
     return {
-        title: column.title.trim() || undefined,
-        titleKey: column.title.trim() ? undefined : column.titleKey || undefined,
+        title,
+        titleKey: title ? undefined : column.titleKey || undefined,
         section: column.section.trim() || undefined,
         links: column.links
-            .filter((link) => link.label.trim() !== "" && link.href.trim() !== "")
+            .filter((link) => written(link.label) !== undefined && link.href.trim() !== "")
             .map((link) => ({
-                label: link.label.trim(),
+                label: written(link.label),
                 href: link.href.trim(),
                 icon: link.icon.trim() || undefined,
             })),

@@ -1780,6 +1780,10 @@
                     "placeholders": {
                       "type": "boolean",
                       "const": true
+                    },
+                    "translatable": {
+                      "type": "boolean",
+                      "const": false
                     }
                   },
                   "required": [
@@ -2177,6 +2181,10 @@
                           "placeholders": {
                             "type": "boolean",
                             "const": true
+                          },
+                          "translatable": {
+                            "type": "boolean",
+                            "const": false
                           }
                         },
                         "required": [

@@ -4,11 +4,11 @@
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, Checkbox, Input, Label, ListControls, Pagination, RichTextEditor, useConfirm, useFormRoute, useRowList, CheckboxField, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Checkbox, Input, Label, ListControls, LocalizedTextInput, Pagination, useConfirm, useFormRoute, useRowList, CheckboxField, buttonClassName } from "@/core/sdk/ui";
 import { Loader2, Plus, Trash2, ExternalLink, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { AdminPageHeader, BulkBar, RowActions } from "@/core/sdk/admin";
-import { deleteEach } from "@/core/sdk";
+import { deleteEach, joinTranslations, splitTranslations, type LanguageTexts } from "@/core/sdk";
 
 interface CustomPage {
     id: string;
@@ -37,6 +37,9 @@ export default function CustomPagesAdminPage() {
     const [title, setTitle] = useState("");
     const [slug, setSlug] = useState("");
     const [content, setContent] = useState("");
+    // Each language beside the original, which is the column.
+    const [titleLanguages, setTitleLanguages] = useState<LanguageTexts>({});
+    const [contentLanguages, setContentLanguages] = useState<LanguageTexts>({});
     const [isActive, setIsActive] = useState(true);
     const [order, setOrder] = useState(0);
 
@@ -52,17 +55,19 @@ export default function CustomPagesAdminPage() {
 
     const resetForm = () => {
         setTitle(""); setSlug(""); setContent(""); setIsActive(true); setOrder(0);
+        setTitleLanguages({}); setContentLanguages({});
     };
 
     // The page the URL names is loaded once the list arrives, so opening
     // `?form=<id>` directly - or reloading it - lands on a filled editor. The
-    // body is not in the list response, hence the second request.
+    // body is not in the list response, hence the second request: the
+    // editor's answer, which opens a draft and carries every language.
     useEffect(() => {
         if (!editingId) { resetForm(); return; }
         const row = pages.find((page) => page.id === editingId);
         if (!row) return;
         let cancelled = false;
-        fetch(`/api/v1/custom-pages/${row.slug}`)
+        fetch(`/api/v1/custom-pages/${row.slug}?scope=admin`)
             .then((res) => (res.ok ? res.json() : Promise.reject(new Error("load"))))
             .then((data) => {
                 if (cancelled) return;
@@ -71,6 +76,8 @@ export default function CustomPagesAdminPage() {
                 setContent(data.page.content || "");
                 setIsActive(data.page.isActive);
                 setOrder(data.page.order || 0);
+                setTitleLanguages(data.page.translations?.title ?? {});
+                setContentLanguages(data.page.translations?.content ?? {});
             })
             .catch(() => {
                 // An editor that silently stays blank looks like an empty
@@ -83,13 +90,15 @@ export default function CustomPagesAdminPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
+        // Both fields every time: an empty one is how a cleared language goes.
+        const translations = { title: titleLanguages, content: contentLanguages };
 
         try {
             if (editingId) {
                 const res = await fetch(`/api/v1/custom-pages/${editingId}`, {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ title, content, isActive, order }),
+                    body: JSON.stringify({ title, content, isActive, order, translations }),
                 });
                 if (res.ok) {
                     toast.success(t("adm_pageUpdated"));
@@ -102,7 +111,7 @@ export default function CustomPagesAdminPage() {
                 const res = await fetch("/api/v1/custom-pages", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ title, slug: slug || undefined, content, isActive, order }),
+                    body: JSON.stringify({ title, slug: slug || undefined, content, isActive, order, translations }),
                 });
                 if (res.ok) {
                     toast.success(t("adm_pageCreated"));
@@ -180,7 +189,17 @@ export default function CustomPagesAdminPage() {
                             <div className={`grid grid-cols-1 gap-4 ${editingId ? "" : "md:grid-cols-2"}`}>
                                 <div>
                                     <Label>{`${t("adm_title")} *`}</Label>
-                                    <Input aria-label={t("adm_title")} value={title} onChange={(e) => setTitle(e.target.value)} required placeholder={t("adm_pageTitle")} />
+                                    <LocalizedTextInput
+                                        label={t("adm_title")}
+                                        value={joinTranslations(title, titleLanguages)}
+                                        onChange={(next) => {
+                                            const parts = splitTranslations(next);
+                                            setTitle(parts.original);
+                                            setTitleLanguages(parts.translations);
+                                        }}
+                                        required
+                                        placeholder={t("adm_pageTitle")}
+                                    />
                                 </div>
                                 {!editingId && (
                                     <div>
@@ -192,7 +211,16 @@ export default function CustomPagesAdminPage() {
                             </div>
                             <div>
                                 <Label>{`${t("adm_contentLabel")} *`}</Label>
-                                <RichTextEditor value={content} onChange={setContent} />
+                                <LocalizedTextInput
+                                    label={t("adm_contentLabel")}
+                                    rich
+                                    value={joinTranslations(content, contentLanguages)}
+                                    onChange={(next) => {
+                                        const parts = splitTranslations(next);
+                                        setContent(parts.original);
+                                        setContentLanguages(parts.translations);
+                                    }}
+                                />
                                 <p className="text-xs text-muted-foreground mt-1">{t("adm_contentHint")}</p>
                             </div>
 
