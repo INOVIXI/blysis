@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, isAdmin, logActivity, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { cardImage, cardLink } from "../../../lib/card";
+import { CARD_TEXT, TRANSLATED_FIELDS } from "../../../lib/card-text";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -49,7 +50,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         );
     }
 
-    const changed = await prisma.showcaseCard.updateMany({ where: { id }, data: parsed.data });
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
+    const changed = await prisma.$transaction(async (tx) => {
+        const result = await tx.showcaseCard.updateMany({ where: { id }, data: parsed.data });
+        if (result.count > 0 && translations.value) await saveContentTranslations(tx, { ...CARD_TEXT, recordId: id }, translations.value);
+        return result;
+    });
     if (changed.count === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     await logActivity({
@@ -71,7 +79,11 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     // Removed outright: a card is a thing an operator wrote, with nothing
     // pointing at it and no history worth keeping.
-    const gone = await prisma.showcaseCard.deleteMany({ where: { id } });
+    const gone = await prisma.$transaction(async (tx) => {
+        const result = await tx.showcaseCard.deleteMany({ where: { id } });
+        await deleteContentTranslations(tx, CARD_TEXT, [id]);
+        return result;
+    });
     if (gone.count === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     await logActivity({
