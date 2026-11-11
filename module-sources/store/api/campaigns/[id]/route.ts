@@ -25,7 +25,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
 
-    const translations = contentTranslationsInput((body as { translations?: unknown }).translations, CAMPAIGN_FIELDS);
+    const translations = contentTranslationsInput(body, CAMPAIGN_FIELDS);
     if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
 
     const existing = await prisma.campaign.findUnique({ where: { id } });

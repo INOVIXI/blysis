@@ -160,9 +160,10 @@ export default function NewProductPage() {
                                     />
                                 </div>
                                 <div>
-                                    <Label>{t("adm_description")}</Label>
+                                    <Label id="description-label">{t("adm_description")}</Label>
                                     <LocalizedTextInput
                                         label={t("adm_description")}
+                                        labelledBy="description-label"
                                         rich
                                         value={joinTranslations(form.description, languages.description)}
                                         onChange={(next) => word("description", next)}

@@ -25,6 +25,12 @@ export interface LocalizedTextInputProps {
      * page.
      */
     rich?: boolean;
+    /**
+     * The element naming the original's rich editor, a visible `<Label>` above
+     * it, so the name a screen reader gives the field is the one on the
+     * screen. Without it the editor carries its label as hidden text.
+     */
+    labelledBy?: string;
     /** How tall a rich editor starts; a sentence wants less than an article. */
     minHeight?: string;
     rows?: number;
@@ -62,7 +68,7 @@ function translationsOf(value: TranslatableText | undefined): Partial<Record<Loc
  * stored exactly as it was before this existed.
  */
 export function LocalizedTextInput({
-    label, value, onChange, multiline = false, rich = false, minHeight, rows = 3, maxLength, placeholder, required, id, inputRef,
+    label, value, onChange, multiline = false, rich = false, labelledBy, minHeight, rows = 3, maxLength, placeholder, required, id, inputRef,
 }: LocalizedTextInputProps) {
     const t = useTranslations("common");
     const { settings } = useSiteSettings();
@@ -86,10 +92,11 @@ export function LocalizedTextInput({
         if (rich) {
             // The editor is named by an element rather than an aria-label,
             // so each box carries its name beside it, for a screen reader.
+            const named = key === "original" && labelledBy ? labelledBy : `${nameId}-${key}`;
             return (
                 <div id={boxId}>
-                    <span id={`${nameId}-${key}`} className="sr-only">{name}</span>
-                    <RichTextEditor value={boxValue} placeholder={placeholder} labelledBy={`${nameId}-${key}`}
+                    {named !== labelledBy && <span id={named} className="sr-only">{name}</span>}
+                    <RichTextEditor value={boxValue} placeholder={placeholder} labelledBy={named}
                         minHeight={minHeight ?? (key === "original" ? undefined : "160px")} onChange={onText} />
                 </div>
             );

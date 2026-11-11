@@ -182,32 +182,33 @@ describe("what an admin sends", () => {
 
     it("is absent when the body says nothing about translations", () => {
         expect(contentTranslationsInput(undefined, LIMITS)).toEqual({ ok: true, value: undefined });
+        expect(contentTranslationsInput({ title: "Kurallar" }, LIMITS)).toEqual({ ok: true, value: undefined });
     });
 
     it("keeps the languages the software ships and drops blanks", () => {
-        expect(contentTranslationsInput({ title: { en: "Rules", xx: "?", de: " " } }, LIMITS)).toEqual({
+        expect(contentTranslationsInput({ translations: { title: { en: "Rules", xx: "?", de: " " } } }, LIMITS)).toEqual({
             ok: true,
             value: { title: { en: "Rules" } },
         });
     });
 
     it("keeps a field sent with nothing in it, since that is how a field is cleared", () => {
-        expect(contentTranslationsInput({ title: {} }, LIMITS)).toEqual({ ok: true, value: { title: {} } });
+        expect(contentTranslationsInput({ translations: { title: {} } }, LIMITS)).toEqual({ ok: true, value: { title: {} } });
     });
 
     it("refuses a field the record does not translate", () => {
-        expect(contentTranslationsInput({ slug: { en: "x" } }, LIMITS).ok).toBe(false);
+        expect(contentTranslationsInput({ translations: { slug: { en: "x" } } }, LIMITS).ok).toBe(false);
     });
 
     it("refuses a translation longer than the column's own limit", () => {
-        expect(contentTranslationsInput({ title: { en: "x".repeat(201) } }, LIMITS).ok).toBe(false);
+        expect(contentTranslationsInput({ translations: { title: { en: "x".repeat(201) } } }, LIMITS).ok).toBe(false);
     });
 
     it("refuses anything that is not text", () => {
-        expect(contentTranslationsInput("en", LIMITS).ok).toBe(false);
-        expect(contentTranslationsInput({ title: "Rules" }, LIMITS).ok).toBe(false);
-        expect(contentTranslationsInput({ title: { en: 3 } }, LIMITS).ok).toBe(false);
-        expect(contentTranslationsInput([], LIMITS).ok).toBe(false);
+        expect(contentTranslationsInput({ translations: "en" }, LIMITS).ok).toBe(false);
+        expect(contentTranslationsInput({ translations: { title: "Rules" } }, LIMITS).ok).toBe(false);
+        expect(contentTranslationsInput({ translations: { title: { en: 3 } } }, LIMITS).ok).toBe(false);
+        expect(contentTranslationsInput({ translations: [] }, LIMITS).ok).toBe(false);
     });
 });
 

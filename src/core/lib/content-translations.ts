@@ -156,13 +156,15 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /**
- * The `translations` an admin's form sent, checked: only the fields named in
+ * The `translations` an admin's form sent beside the record, read from the
+ * request body as `readJsonBody` handed it over and checked: only the fields named in
  * `limits`, each language held to that field's own limit as its column is,
  * languages the software does not ship and blank texts dropped. Absent is
  * `undefined`, which saves nothing. A field sent with no languages is kept,
  * since that is how its translations are cleared.
  */
-export function contentTranslationsInput(value: unknown, limits: Record<string, number>): ContentTranslationsInput {
+export function contentTranslationsInput(body: unknown, limits: Record<string, number>): ContentTranslationsInput {
+    const value = isRecord(body) ? body.translations : undefined;
     if (value === undefined || value === null) return { ok: true, value: undefined };
     if (!isRecord(value)) return { ok: false, error: "translations must be an object" };
     const out: ContentTranslations = {};

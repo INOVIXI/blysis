@@ -10,8 +10,9 @@
 -- module adopts it with a field declaration and no migration of its own, and
 -- the rows already written need nothing done to them.
 --
--- The unique key is what a save replaces against. The second index is the
--- read: a page of records asks for every translation of those records at once.
+-- The unique key is what a save replaces against, and its leading three
+-- columns serve the read: a page of records asks for every translation of
+-- those records at once.
 --
 -- Additive: a new table, nothing touched.
 
@@ -29,6 +30,3 @@ CREATE TABLE IF NOT EXISTS "ContentTranslation" (
 
 CREATE UNIQUE INDEX IF NOT EXISTS "ContentTranslation_owner_entity_recordId_field_locale_key"
     ON "ContentTranslation" ("owner", "entity", "recordId", "field", "locale");
-
-CREATE INDEX IF NOT EXISTS "ContentTranslation_owner_entity_recordId_idx"
-    ON "ContentTranslation" ("owner", "entity", "recordId");

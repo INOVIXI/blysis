@@ -382,8 +382,8 @@ model ContentTranslation {
   text      String   @db.Text
   updatedAt DateTime @updatedAt
 
+  // Also the read: a page of records asks by its leading three columns.
   @@unique([owner, entity, recordId, field, locale])
-  @@index([owner, entity, recordId])
 }
 
 // Generic content revision history. Modules call recordRevision() before

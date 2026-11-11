@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     if (!validation.success) {
         return NextResponse.json({ error: validation.error.issues[0].message }, { status: 400 });
     }
-    const translations = contentTranslationsInput((body as { translations?: unknown }).translations, TRANSLATED_FIELDS);
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
     if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const data = validation.data;
     const popup = await prisma.$transaction(async (tx) => {

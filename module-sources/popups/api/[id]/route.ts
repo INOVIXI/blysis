@@ -17,7 +17,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (!validation.success) {
         return NextResponse.json({ error: validation.error.issues[0].message }, { status: 400 });
     }
-    const translations = contentTranslationsInput((body as { translations?: unknown }).translations, TRANSLATED_FIELDS);
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
     if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const popup = await prisma.$transaction(async (tx) => {
         const updated = await tx.popup.update({ where: { id }, data: validation.data });

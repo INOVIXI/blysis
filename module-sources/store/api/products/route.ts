@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const translations = contentTranslationsInput((body as { translations?: unknown }).translations, PRODUCT_FIELDS);
+        const translations = contentTranslationsInput(body, PRODUCT_FIELDS);
         if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
         const data = validation.data;
         const slug = data.slug || slugify(data.name);

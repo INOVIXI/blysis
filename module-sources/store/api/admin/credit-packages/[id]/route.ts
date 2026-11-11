@@ -19,7 +19,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
 
-    const translations = contentTranslationsInput((body as { translations?: unknown }).translations, CREDIT_PACKAGE_FIELDS);
+    const translations = contentTranslationsInput(body, CREDIT_PACKAGE_FIELDS);
     if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
 
     const updated = await prisma.$transaction(async (tx) => {

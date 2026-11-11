@@ -22,13 +22,18 @@ export function FeaturedProductWidget() {
     const [product, setProduct] = useState<Product | null>(null);
 
     useEffect(() => {
+        // A reader who switched language before the answer came back is not
+        // shown the product in the one they left.
+        let active = true;
         fetch(`/api/v1/store/products?featured=true&limit=1&locale=${encodeURIComponent(locale)}`)
             .then((res) => res.json())
             .then((data) => {
+                if (!active) return;
                 const products = data.products || [];
                 if (products.length > 0) setProduct(products[0]);
             })
             .catch(() => {});
+        return () => { active = false; };
     }, [locale]);
 
     if (!product) return null;

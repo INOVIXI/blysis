@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid payload" }, { status: 400 });
     }
-    const translations = contentTranslationsInput((body as { translations?: unknown }).translations, TRANSLATED_FIELDS);
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
     if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const { title, content, type, isActive, dismissible, includePages, excludePages, startsAt, endsAt, publishAt } = parsed.data;
 

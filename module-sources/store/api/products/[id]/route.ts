@@ -54,7 +54,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             );
         }
 
-        const translations = contentTranslationsInput((body as { translations?: unknown }).translations, PRODUCT_FIELDS);
+        const translations = contentTranslationsInput(body, PRODUCT_FIELDS);
         if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
 
         const existing = await prisma.product.findUnique({ where: { id } });
