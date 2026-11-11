@@ -67,6 +67,7 @@ const SAFE_FAMILIES: { pattern: RegExp; why: string }[] = [
     { pattern: /^\/api(?:\/v1)?\/setup/, why: "answered only while setup is incomplete, which a demo never is" },
     { pattern: /^\/api\/v1\/a\/b$/, why: "the module dispatcher: it forwards, and the proxy has already read the real path" },
     { pattern: /^\/api\/v1\/(?:error-report|notification-preferences)$/, why: "a browser reporting its own trouble, and a member's own switches" },
+    { pattern: /^\/api\/v1\/tax\/settings$/, why: "how the shop charges tax: the shop's own configuration, which the reset puts back, and no address or credential" },
     { pattern: /^\/api\/v1\/downloads/, why: "content the demo exists to show somebody managing" },
     { pattern: /^\/api\/v1\/admin\/trophies/, why: "the same, and reloading them only re-reads rows the reset puts back" },
     { pattern: /^\/api\/v1\/game-connect\/(?:hello|poll|jobs\/report|status)$/, why: "a game server's own calls, each refused without the token that only a connected server holds" },

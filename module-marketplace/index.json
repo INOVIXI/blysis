@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T12:01:43Z",
+  "updatedAt": "2026-11-11T12:22:38Z",
   "modules": [
     {
       "id": "announcements",
@@ -5950,13 +5950,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.53.0",
+      "version": "2.54.0",
       "coreVersion": "^5.30.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-11-11T12:01:43Z",
+      "updatedAt": "2026-11-11T12:22:38Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -5981,7 +5981,8 @@
           "servers.list",
           "store.credits.purchased",
           "store.gift.sent",
-          "store.orders.delivery"
+          "store.orders.delivery",
+          "store.tax"
         ],
         "listens": [
           "user.registered",
@@ -6253,6 +6254,88 @@
       "hooks": {
         "emits": [],
         "listens": []
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 1,
+        "apiRoutes": 1,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "tax",
+      "name": "Tax",
+      "description": "Charge tax by the buyer's country, call it what the law calls it, and keep the reason and the evidence on every order.",
+      "i18n": {
+        "az": {
+          "name": "Vergi",
+          "description": "Vergini alıcının ölkəsinə görə tutun, qanunun adlandırdığı kimi adlandırın, səbəbi və sübutu hər sifarişdə saxlayın."
+        },
+        "de": {
+          "name": "Steuern",
+          "description": "Steuer nach dem Land des Käufers berechnen, sie so nennen, wie das Gesetz sie nennt, und Grund und Nachweis bei jeder Bestellung aufbewahren."
+        },
+        "es": {
+          "name": "Impuestos",
+          "description": "Cobra impuestos según el país del comprador, llámalos como los llama la ley y guarda el motivo y la prueba en cada pedido."
+        },
+        "et": {
+          "name": "Maksud",
+          "description": "Arvesta maksu ostja riigi järgi, nimeta seda nii, nagu seadus seda nimetab, ning hoia põhjus ja tõend iga tellimuse juures."
+        },
+        "fr": {
+          "name": "Taxes",
+          "description": "Facturez la taxe selon le pays de l'acheteur, nommez-la comme la loi la nomme et gardez le motif et la preuve sur chaque commande."
+        },
+        "it": {
+          "name": "Imposte",
+          "description": "Applica l'imposta in base al paese dell'acquirente, chiamala come la chiama la legge e conserva motivo e prova su ogni ordine."
+        },
+        "pl": {
+          "name": "Podatki",
+          "description": "Naliczaj podatek według kraju kupującego, nazywaj go tak, jak nazywa go prawo, i zachowuj podstawę oraz dowód przy każdym zamówieniu."
+        },
+        "pt": {
+          "name": "Impostos",
+          "description": "Cobre o imposto pelo país do comprador, chame-o como a lei o chama e guarde o motivo e a prova em cada encomenda."
+        },
+        "ru": {
+          "name": "Налоги",
+          "description": "Начисляйте налог по стране покупателя, называйте его так, как его называет закон, и храните основание и доказательства в каждом заказе."
+        },
+        "tr": {
+          "name": "Vergi",
+          "description": "Vergiyi alıcının ülkesine göre alın, yasadaki adıyla adlandırın, gerekçeyi ve kanıtı her siparişte saklayın."
+        },
+        "zh": {
+          "name": "税费",
+          "description": "按买家所在国家征税，使用法律规定的名称，并在每个订单上保留征税理由和依据。"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.30.0",
+      "author": "MrMirhan",
+      "icon": "Percent",
+      "category": "commerce",
+      "verified": true,
+      "updatedAt": "2026-11-11T12:22:38Z",
+      "screenshots": [],
+      "tags": [
+        "commerce"
+      ],
+      "zip": "tax.zip",
+      "dependencies": [
+        "store@^2.54.0"
+      ],
+      "conflicts": [],
+      "hooks": {
+        "emits": [
+          "geo.country"
+        ],
+        "listens": [
+          "store.tax",
+          "store.billing.required"
+        ]
       },
       "stats": {
         "publicRoutes": 0,
