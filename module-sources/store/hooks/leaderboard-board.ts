@@ -6,7 +6,8 @@
  * the shop's table, its status vocabulary and that `total` is money. It asks
  * now, and this file is the only place any of that is known.
  */
-import { prisma } from "@/core/sdk/server";
+import { prisma, siteCurrency } from "@/core/sdk/server";
+import { largestFirst, totalsIn } from "../lib/money-totals";
 
 /**
  * A board and the question asked for it, as this module reads them.
@@ -58,32 +59,37 @@ const topBuyers = async (current: Board[], context: BoardsQuestion): Promise<Boa
     if (context.boardId && context.boardId !== BOARD.id) return current;
     if (!context.boardId) return [...current, { ...BOARD, rows: [] }];
 
+    // Grouped per member and currency, converted, and only then ranked and
+    // cut: a `take` on the database's sum ranks lira against dollars as if
+    // they were one money. See `lib/money-totals.ts`. A deleted account
+    // leaves its orders behind with nobody to credit (`Order.userId` is
+    // nullable), and those are not a row on a leaderboard.
     const spend = await prisma.order.groupBy({
-        by: ["userId"],
+        by: ["userId", "currency"],
         where: {
             status: "COMPLETED",
+            userId: { not: null },
             ...(context.since ? { createdAt: { gte: context.since } } : {}),
         },
         _sum: { total: true },
-        orderBy: { _sum: { total: "desc" } },
-        take: context.limit,
     });
+    const totals = await totalsIn(
+        await siteCurrency(),
+        spend.map((row) => ({ key: row.userId as string, currency: row.currency, amount: Number(row._sum.total ?? 0) })),
+    );
+    const top = largestFirst(totals).slice(0, context.limit);
 
-    // `Order.userId` is nullable: a deleted account leaves its orders behind
-    // with nobody to credit, and those are not a row on a leaderboard.
-    const userIds = spend.map((row) => row.userId).filter((id): id is string => id !== null);
     const users = await prisma.user.findMany({
-        where: { id: { in: userIds } },
+        where: { id: { in: top.map(([userId]) => userId) } },
         select: { id: true, username: true, avatar: true },
     });
     const byId = new Map(users.map((u) => [u.id, u]));
 
-    const rows = spend
-        .filter((row): row is typeof row & { userId: string } => row.userId !== null)
-        .map((row) => ({
-            username: byId.get(row.userId)?.username ?? "",
-            avatar: byId.get(row.userId)?.avatar ?? null,
-            value: Number(row._sum.total ?? 0),
+    const rows = top
+        .map(([userId, value]) => ({
+            username: byId.get(userId)?.username ?? "",
+            avatar: byId.get(userId)?.avatar ?? null,
+            value,
         }))
         .filter((row) => row.username !== "");
 
