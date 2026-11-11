@@ -2,7 +2,7 @@
   "id": "credits",
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
-  "version": "1.10.2",
+  "version": "1.10.3",
   "coreVersion": "^5.21.0",
   "category": "commerce",
   "author": "Blysis",
@@ -42,6 +42,10 @@
   ],
   "dependencies": [],
   "hooksEmitted": [
+    {
+      "hook": "currency.rate",
+      "type": "filter"
+    },
     {
       "hook": "credits.credit.added",
       "type": "action"

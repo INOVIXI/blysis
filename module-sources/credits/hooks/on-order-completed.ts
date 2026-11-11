@@ -10,8 +10,8 @@
  * once.
  */
 import { applyFiltersAsync } from "@/core/sdk";
-import { log } from "@/core/sdk/server";
-import { cashbackFor } from "../lib/cashback";
+import { log, siteCurrency } from "@/core/sdk/server";
+import { cashbackFor, saleInBase } from "../lib/cashback";
 import { cashbackPercent } from "../lib/setup";
 
 /**
@@ -29,14 +29,26 @@ interface CompletedOrder {
     userId: string | null;
     orderNumber: string;
     total: unknown;
+    currency?: string | null;
     paymentMethod?: string | null;
 }
 
 const onOrderCompleted = async (order: CompletedOrder): Promise<void> => {
     if (!order.userId) return;
 
+    const base = await siteCurrency();
+    const paidIn = (order.currency ?? "").trim().toUpperCase();
+    const rate = paidIn !== "" && paidIn !== base
+        ? await applyFiltersAsync("currency.rate", null, { from: paidIn, to: base }).catch(() => null)
+        : null;
+    const sale = saleInBase({ total: order.total, currency: order.currency }, base, typeof rate === "number" ? rate : null);
+    if (sale === null) {
+        log.warn("[credits] cashback skipped: no exchange rate for the order's currency", { orderId: order.id, from: paidIn, to: base });
+        return;
+    }
+
     const decision = cashbackFor(
-        { total: order.total, paymentMethod: order.paymentMethod },
+        { total: sale, paymentMethod: order.paymentMethod },
         await cashbackPercent(),
     );
     if ("skip" in decision) return;

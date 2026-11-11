@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T14:44:21Z",
+  "updatedAt": "2026-11-11T15:04:06Z",
   "modules": [
     {
       "id": "announcements",
@@ -999,13 +999,13 @@
           "description": "为用户提供的虚拟货币钱包"
         }
       },
-      "version": "1.10.2",
+      "version": "1.10.3",
       "coreVersion": "^5.21.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-23T20:22:50Z",
+      "updatedAt": "2026-11-11T15:04:06Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -1015,6 +1015,7 @@
       "conflicts": [],
       "hooks": {
         "emits": [
+          "currency.rate",
           "credits.credit.added",
           "credits.award"
         ],
