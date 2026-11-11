@@ -8,6 +8,9 @@
  * that account, not to a code: a code somebody else made and sent with a link
  * shows a stranger's name first. A member can also make a code here and type
  * it in game.
+ *
+ * On a game where a username is a player name the page names that player
+ * instead, and where no connected game is left to take a code it offers none.
  */
 import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
@@ -24,6 +27,11 @@ interface Preview {
     name: string;
 }
 
+interface LinkState {
+    byName?: Preview[];
+    codes?: boolean;
+}
+
 export default function LinkPage() {
     const t = useTranslations("gameConnect");
     const { status } = useSession();
@@ -34,6 +42,27 @@ export default function LinkPage() {
     const [made, setMade] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [byName, setByName] = useState<Preview[]>([]);
+    const [codes, setCodes] = useState(true);
+
+    useEffect(() => {
+        if (status !== "authenticated") return;
+        let cancelled = false;
+        fetch("/api/v1/game-connect/links")
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data: LinkState | null) => {
+                if (cancelled || !data) return;
+                setByName(data.byName ?? []);
+                setCodes(data.codes !== false);
+            })
+            // Unread, the page offers codes as it always did, and a refusal
+            // still says why when one is asked for.
+            .catch(() => undefined);
+        return () => { cancelled = true; };
+    }, [status]);
+
+    const refusal = (res: Response, data: { code?: string }, fallback: string) =>
+        t(data.code === "linked_by_name" ? "link_noCodes" : res.status === 429 ? "link_tooMany" : fallback);
 
     const look = async (typed: string) => {
         setBusy(true);
@@ -41,8 +70,9 @@ export default function LinkPage() {
         setPreview(null);
         try {
             const res = await fetch(`/api/v1/game-connect/link/confirm?code=${encodeURIComponent(typed.trim())}`);
-            if (res.ok) setPreview(await res.json());
-            else setError(t(res.status === 429 ? "link_tooMany" : "link_wrongCode"));
+            const data = await res.json().catch(() => ({}));
+            if (res.ok) setPreview(data);
+            else setError(refusal(res, data, "link_wrongCode"));
         } catch {
             setError(t("link_failed"));
         } finally {
@@ -68,7 +98,7 @@ export default function LinkPage() {
             });
             const data = await res.json().catch(() => ({}));
             if (res.ok) setLinked({ platform: data.platform, name: data.name });
-            else setError(t(data.code === "already_linked" ? "link_already" : "link_wrongCode"));
+            else setError(data.code === "already_linked" ? t("link_already") : refusal(res, data, "link_wrongCode"));
         } catch {
             setError(t("link_failed"));
         } finally {
@@ -83,7 +113,7 @@ export default function LinkPage() {
             const res = await fetch("/api/v1/game-connect/link/code", { method: "POST" });
             const data = await res.json().catch(() => ({}));
             if (res.ok) setMade(data.code);
-            else setError(t(res.status === 429 ? "link_tooMany" : "link_failed"));
+            else setError(refusal(res, data, "link_failed"));
         } catch {
             setError(t("link_failed"));
         } finally {
@@ -112,32 +142,44 @@ export default function LinkPage() {
                                     </div>
                                 ) : (
                                     <>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="link-code">{t("link_codeFromGame")}</Label>
-                                            <div className="flex gap-2">
-                                                <Input id="link-code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="ABCD1234" />
-                                                <Button variant="outline" disabled={busy || code.trim().length < 4} onClick={() => look(code)}>{t("link_look")}</Button>
+                                        {byName.map((account) => (
+                                            <div key={account.platform} className="flex items-center gap-3 rounded-lg bg-muted p-3">
+                                                <CheckCircle className="w-5 h-5 text-success shrink-0" />
+                                                <p className="text-sm">{t("link_byName", { name: account.name, platform: gameName(account.platform) })}</p>
                                             </div>
-                                        </div>
-                                        {preview && (
-                                            <div className="rounded-lg border border-border p-4 space-y-3">
-                                                <p className="text-sm">{t("link_preview", { name: preview.name, platform: gameName(preview.platform) })}</p>
-                                                <p className="text-xs text-muted-foreground">{t("link_previewWarn")}</p>
-                                                <Button className="w-full" disabled={busy} onClick={confirmLink}>
-                                                    <Link2 className="w-4 h-4" /> {t("link_confirm", { name: preview.name })}
-                                                </Button>
-                                            </div>
+                                        ))}
+                                        {!codes ? (
+                                            <p className="text-sm text-muted-foreground">{t("link_noCodes")}</p>
+                                        ) : (
+                                            <>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="link-code">{t("link_codeFromGame")}</Label>
+                                                    <div className="flex gap-2">
+                                                        <Input id="link-code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="ABCD1234" />
+                                                        <Button variant="outline" disabled={busy || code.trim().length < 4} onClick={() => look(code)}>{t("link_look")}</Button>
+                                                    </div>
+                                                </div>
+                                                {preview && (
+                                                    <div className="rounded-lg border border-border p-4 space-y-3">
+                                                        <p className="text-sm">{t("link_preview", { name: preview.name, platform: gameName(preview.platform) })}</p>
+                                                        <p className="text-xs text-muted-foreground">{t("link_previewWarn")}</p>
+                                                        <Button className="w-full" disabled={busy} onClick={confirmLink}>
+                                                            <Link2 className="w-4 h-4" /> {t("link_confirm", { name: preview.name })}
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                                <div className="border-t border-border pt-4 space-y-2">
+                                                    <p className="text-sm text-muted-foreground">{t("link_otherWay")}</p>
+                                                    {made ? (
+                                                        <p className="text-center">
+                                                            <code className="font-mono text-lg bg-muted px-3 py-1 rounded">/verify {made}</code>
+                                                        </p>
+                                                    ) : (
+                                                        <Button variant="outline" className="w-full" disabled={busy} onClick={makeCode}>{t("link_makeCode")}</Button>
+                                                    )}
+                                                </div>
+                                            </>
                                         )}
-                                        <div className="border-t border-border pt-4 space-y-2">
-                                            <p className="text-sm text-muted-foreground">{t("link_otherWay")}</p>
-                                            {made ? (
-                                                <p className="text-center">
-                                                    <code className="font-mono text-lg bg-muted px-3 py-1 rounded">/verify {made}</code>
-                                                </p>
-                                            ) : (
-                                                <Button variant="outline" className="w-full" disabled={busy} onClick={makeCode}>{t("link_makeCode")}</Button>
-                                            )}
-                                        </div>
                                     </>
                                 )}
                                 {error && <p role="alert" className="text-sm text-destructive text-center">{error}</p>}

@@ -270,6 +270,13 @@ when unlimited. `type` is `text`, `number` or `select`.
 
 `linked: false` comes without `member`.
 
+A player is linked when a member linked their account with a code. An operator can also say
+that on a game a member's username is their player name (the module setting
+`usernamePlayerGames`): there a player with no link is the member whose username is their name,
+case ignored, unless the name could mean two members. With `offlineModeIds` on as well, that
+holds only when the player's `id` is the offline-mode id of their name, Java's
+`UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(UTF_8))`.
+
 ### `POST link/start`
 
 ```json
@@ -285,7 +292,8 @@ link/confirm?code=`, a member route) and links it only when the member confirms 
 by name (`POST link/confirm` with `code` and `account`). A code somebody else made and sent
 with a link therefore shows the member a stranger's name before anything is linked. The site
 then sends a `link.confirmed` event.
-Refusals: `409 already_linked`.
+Refusals: `409 already_linked`, `409 linked_by_name` (this game links players by username, so
+there is nothing to link).
 
 ### `POST link/verify`
 
@@ -296,7 +304,8 @@ Refusals: `409 already_linked`.
 The code was made on the site by a signed-in member. Answer `{ "linked": true, "member":
 { "username": "notch" } }`. Refusals: `409 code_invalid` (wrong, expired or used; five wrong
 tries spend the code), `409 already_linked`. The code is read first, so a wrong code is
-`code_invalid` whoever sends it.
+`code_invalid` whoever sends it. On a game that links players by username the call is refused as
+`409 linked_by_name` before the code is read, and the code is not spent.
 
 Codes for both directions are single use and live for ten minutes.
 
@@ -468,7 +477,7 @@ The id is the whole voucher. An item that carries it is only its look.
 | `topup` | `player` (null when anonymous), `amount` |
 | `goal.reached` | `title`, `goal`, `raised`, `month` (said once a month) |
 | `link.confirmed` | `player` (a Player), `member` |
-| `gift.received` | `player` (a Player: the recipient's account), `platform`, `from` (the sender's account name in the same game, else their username), `product`, `quantity` |
+| `gift.received` | `player` (a Player: the recipient's account; its `id` is `null` when the site knows the account only by the recipient's username), `platform`, `from` (the sender's account name in the same game, else their username), `product`, `quantity` |
 | `catalog.changed` | `version` |
 
 An event is sent to every server, except `link.confirmed`, which goes to the server the player

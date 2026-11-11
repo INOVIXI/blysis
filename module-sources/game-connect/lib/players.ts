@@ -6,11 +6,14 @@
  * Links made by the older Minecraft Link module count too: the first time
  * one is used here it is copied over, so nobody has to link twice. It is asked
  * about this server's game only, so a link on one game never becomes a link
- * on another.
+ * on another. On a game where a username is a player name, a player with no
+ * link is the member with their name, and nothing is written for it.
  */
 import { applyFiltersAsync } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
 import type { ConnectedServer } from "./auth";
+import { memberByName, memberByPlayerName } from "./names";
+import { nameSettings } from "./settings";
 
 export interface Player {
     id: string;
@@ -60,6 +63,7 @@ export async function memberOf(server: Pick<ConnectedServer, "game">, player: Pl
     } else if (link && link.name !== player.name) {
         await prisma.gameConnectLink.update({ where: { id: link.id }, data: { name: player.name } }).catch(() => undefined);
     }
+    if (!userId && platform !== "") userId = await memberByPlayerName(await nameSettings(), platform, player);
     if (!userId) return null;
 
     const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, username: true } });
@@ -78,21 +82,8 @@ export async function memberOf(server: Pick<ConnectedServer, "game">, player: Pl
 export async function memberNamed(server: Pick<ConnectedServer, "game">, name: string): Promise<LinkedMember | null> {
     const trimmed = name.trim();
     if (trimmed === "") return null;
-    const [links, users] = await Promise.all([
-        prisma.gameConnectLink.findMany({
-            where: { platform: platformOf(server), name: { equals: trimmed, mode: "insensitive" } },
-            select: { userId: true },
-            take: 2,
-        }),
-        prisma.user.findMany({
-            where: { username: { equals: trimmed, mode: "insensitive" } },
-            select: { id: true },
-            take: 2,
-        }),
-    ]);
-    const candidates = new Set([...links.map((link) => link.userId), ...users.map((user) => user.id)]);
-    if (candidates.size !== 1 || links.length > 1 || users.length > 1) return null;
-    const [userId] = candidates;
+    const userId = await memberByName(platformOf(server), trimmed);
+    if (!userId) return null;
     const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, username: true } });
     return user ? { userId: user.id, username: user.username } : null;
 }
