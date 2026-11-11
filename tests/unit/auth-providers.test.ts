@@ -32,6 +32,24 @@ describe("resolveAuthProviders", () => {
         });
     });
 
+    it("passes the issuer a manifest declares, so a server that sends iss is accepted", () => {
+        // Discord began sending RFC 9207's iss on its callback. Its Auth.js
+        // definition has no issuer, so the check ran against a placeholder and
+        // every Discord sign-in ended on the Configuration error page.
+        const factory = vi.fn((config: unknown) => config);
+        const [built] = resolveAuthProviders([{ ...discord, issuer: "https://discord.com" }], {
+            env: fullEnv,
+            factories: { discord: factory },
+        }) as unknown as { issuer?: string }[];
+        expect(built.issuer).toBe("https://discord.com");
+    });
+
+    it("leaves the issuer to Auth.js when the manifest declares none", () => {
+        const factories = { discord: (config: unknown) => config };
+        const [built] = resolveAuthProviders([discord], { env: fullEnv, factories }) as unknown as object[];
+        expect(built).not.toHaveProperty("issuer");
+    });
+
     it("never enables dangerous account linking", () => {
         const factories = { discord: (config: unknown) => config };
         const [built] = resolveAuthProviders([discord], { env: fullEnv, factories }) as unknown as {

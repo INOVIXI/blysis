@@ -196,7 +196,7 @@ function generateRegistry() {
     const allSettingsCards: ManifestItem[] = [];
     const allOauthButtons: ManifestItem[] = [];
     const allNavGroups: ModuleNavGroupDeclaration[] = [];
-    const allAuthProviders: ({ id: string; envIdVar?: string; envSecretVar?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string })[] = [];
+    const allAuthProviders: ({ id: string; envIdVar?: string; envSecretVar?: string; issuer?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string })[] = [];
     const allWebhookChannels: ({ id: string; label: string; layout: string; hosts?: string[]; urlPlaceholder?: string; module: string })[] = [];
     const allProfileTabs: ({ id: string; label: string; component: string; order: number; module: string })[] = [];
     const allStorageProviders: ({ id: string; name: string; handler: string; module: string })[] = [];
@@ -613,14 +613,14 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
     authContent += '// the env vars it names are set.\n';
     if (authProviderImports.length > 0) authContent += `${authProviderImports.join('\n')}\n`;
     authContent += '\n';
-    authContent += `export const ModuleAuthProviders: { id: string; envIdVar?: string; envSecretVar?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string }[] = ${JSON.stringify(safeAuthProviders, null, 2)};\n\n`;
+    authContent += `export const ModuleAuthProviders: { id: string; envIdVar?: string; envSecretVar?: string; issuer?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string }[] = ${JSON.stringify(safeAuthProviders, null, 2)};\n\n`;
     const declarationsContent =
         '// AUTO-GENERATED. Do not edit.\n' +
         '//\n' +
         '// What each installed module declared about its auth provider, with no\n' +
         '// imports: a reader that only needs the ids and the env vars they want\n' +
         '// must not pull every provider next-auth ships in behind them.\n\n' +
-        `export const ModuleAuthDeclarations: { id: string; envIdVar?: string; envSecretVar?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string }[] = ${JSON.stringify(safeAuthProviders, null, 2)};\n`;
+        `export const ModuleAuthDeclarations: { id: string; envIdVar?: string; envSecretVar?: string; issuer?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string }[] = ${JSON.stringify(safeAuthProviders, null, 2)};\n`;
     fs.writeFileSync(AUTH_DECLARATIONS_FILE, declarationsContent);
 
     authContent += '// Providers Auth.js ships. Each one takes a client id and secret and\n';

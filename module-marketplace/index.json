@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-26",
-  "updatedAt": "2026-10-26T17:03:52Z",
+  "updated": "2026-11-11",
+  "updatedAt": "2026-11-11T16:33:31Z",
   "modules": [
     {
       "id": "announcements",
@@ -1469,13 +1469,13 @@
           "description": "允许用户使用 Discord 账户登录"
         }
       },
-      "version": "1.3.0",
+      "version": "1.3.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "integration",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-11-11T16:33:31Z",
       "screenshots": [],
       "tags": [
         "integration"
