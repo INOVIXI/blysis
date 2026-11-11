@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hasPermission, log, pageParams, prisma } from "@/core/sdk/server";
+import { orderListOwner } from "../../lib/order-list-owner";
 import { auth } from "@/core/sdk/auth";
 import { ORDER_STATUSES } from "../../lib/order-status";
 import { deliveryOf } from "../../lib/order-delivery";
@@ -32,9 +33,15 @@ export async function GET(request: NextRequest) {
         const { page, limit, skip, take } = pageParams(searchParams, { defaultLimit: 10 });
 
         // Seeing everybody's orders is the job of serving them, which is not
-        // the job of setting the prices. A member without it sees their own,
-        // which is what this endpoint is for in the first place.
-        const adminCheck = await hasPermission(session.user.id, "store.orders");
+        // the job of setting the prices. The profile tab and the admin screen
+        // share this endpoint; see lib/order-list-owner.ts for why everyone's
+        // orders must be asked for.
+        const scope = searchParams.get("scope");
+        const owner = orderListOwner({
+            scope,
+            mayServe: scope === "all" && (await hasPermission(session.user.id, "store.orders")),
+            userId: session.user.id,
+        });
 
         const term = (searchParams.get("q") ?? "").trim();
         // The column is an enum, so a name that is not one of its members is
@@ -45,9 +52,8 @@ export async function GET(request: NextRequest) {
             ? (asked as (typeof ORDER_STATUSES)[number])
             : null;
 
-        // Whoever serves orders sees all of them; a member sees their own
         const where = {
-            ...(adminCheck ? {} : { userId: session.user.id }),
+            ...(owner === null ? {} : { userId: owner }),
             ...(status ? { status } : {}),
             // An order number is what a buyer quotes in a ticket, and what
             // they bought is what they remember instead when they cannot find
