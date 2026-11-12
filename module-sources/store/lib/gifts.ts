@@ -111,15 +111,36 @@ export async function sentGifts(userId: string, view: { inGame: boolean } = { in
     }));
 }
 
-/** The recipient accepts. Conditional on the gift still waiting, so a cancel racing it finds nothing. */
+/**
+ * The recipient accepts. Conditional on the gift still waiting, so a cancel racing it finds nothing.
+ *
+ * A gift that was bought as a gift becomes owned here and not before: while it
+ * waited, the sender could still take it back. The ownership is written in the
+ * same transaction as the accept, so it exists exactly when the accept won.
+ */
 export async function activateGift(userId: string, itemId: string): Promise<ChestActionResult> {
-    const changed = await prisma.chestItem.updateMany({
-        where: { id: itemId, userId, giftState: PENDING, isRedeemed: false },
-        data: { giftState: null },
+    const item = await prisma.chestItem.findFirst({ where: { id: itemId, userId } });
+    if (!item) return { ok: false, code: "not_found" };
+    const order = item.orderId ? await prisma.order.findUnique({ where: { id: item.orderId }, select: { id: true, userId: true, metadata: true } }) : null;
+    // The same test as `cancelGift`: the sender paid for an order that is a gift.
+    const boughtAsGift =
+        order !== null &&
+        item.giftedById !== null &&
+        order.userId === item.giftedById &&
+        (order.metadata as Record<string, unknown> | null)?.gift === true;
+
+    const accepted = await prisma.$transaction(async (tx) => {
+        const changed = await tx.chestItem.updateMany({
+            where: { id: itemId, userId, giftState: PENDING, isRedeemed: false },
+            data: { giftState: null },
+        });
+        if (changed.count === 0) return false;
+        if (boughtAsGift && order) {
+            await tx.ownedProduct.createMany({ data: [{ userId, productId: item.productId, orderId: order.id }], skipDuplicates: true });
+        }
+        return true;
     });
-    if (changed.count > 0) return { ok: true };
-    const exists = await prisma.chestItem.findFirst({ where: { id: itemId, userId }, select: { id: true } });
-    return { ok: false, code: exists ? "not_pending" : "not_found" };
+    return accepted ? { ok: true } : { ok: false, code: "not_pending" };
 }
 
 /**
