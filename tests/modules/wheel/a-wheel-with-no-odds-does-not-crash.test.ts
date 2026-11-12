@@ -24,7 +24,8 @@ const transaction = vi.fn(async (fn: (tx: unknown) => Promise<unknown>) =>
     fn({
         user: { updateMany: async () => ({ count: 1 }), update: async () => ({}) },
         creditTransaction: { create: async () => ({}) },
-        wheelSpin: { create: async () => ({}) },
+        wheelSpin: { create: async () => ({}), findFirst: async () => null },
+        $executeRaw: async () => 1,
     }),
 );
 
