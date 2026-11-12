@@ -985,6 +985,8 @@
     "siteSettings_contactEmail": "Email di contatto",
     "siteSettings_description": "Descrizione",
     "siteSettings_general": "Generali",
+    "siteSettings_icon": "Icona del sito",
+    "siteSettings_iconHint": "La piccola immagine nella scheda del browser e nella schermata Home di un telefono. Un'immagine quadrata rende meglio. Se lasciato vuoto, viene usata l'icona predefinita.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Salvataggio delle impostazioni non riuscito",
     "siteSettings_saveSettings": "Salva impostazioni",

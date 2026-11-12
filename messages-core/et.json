@@ -985,6 +985,8 @@
     "siteSettings_contactEmail": "Kontakti e-post",
     "siteSettings_description": "Kirjeldus",
     "siteSettings_general": "Üldine",
+    "siteSettings_icon": "Saidi ikoon",
+    "siteSettings_iconHint": "Väike pilt brauseri vahekaardil ja telefoni avakuval. Ruudukujuline pilt näeb kõige parem välja. Tühjaks jäetuna kasutatakse vaikeikooni.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Seadete salvestamine ebaõnnestus",
     "siteSettings_saveSettings": "Salvesta seaded",

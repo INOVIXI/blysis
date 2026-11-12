@@ -40,6 +40,7 @@ const PER_KEY_LIMITS: Record<string, number> = {
     site_tiktok_url: 500,
     hero_discord_url: 500,
     site_logo: 2_000,
+    site_icon: 2_000,
     // Twelve codes as JSON is under a hundred characters.
     site_languages: 200,
     default_locale: 16,

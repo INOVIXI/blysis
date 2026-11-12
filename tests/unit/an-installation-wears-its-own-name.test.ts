@@ -16,15 +16,18 @@
  *   - `public/logo.png` was 48 KB of the product's own mark that nothing
  *     referenced.
  *
- * The browser tab icon stays a file. Next resolves `src/app/icon.svg` by
- * convention at build time, and an installation that wants its own replaces
- * the file; making it a route would cost a request on every page for
- * something almost nobody changes.
+ * The browser tab icon was a file, `src/app/icon.svg` with `favicon.ico` and
+ * `apple-icon.png` beside it, so the only way to change it was to edit the
+ * installation's source, which an operator never does. It is a setting now,
+ * `site_icon`, and the shipped icons are what the head links to while it is
+ * unset. They live in `public/`: Next lets an icon file in `src/app` win over
+ * the icons a layout's metadata names, so left there they would have hidden
+ * the setting on every page.
  */
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { SITE_LOGO_KEY } from "@/core/lib/site-logo";
+import { SITE_ICON_KEY, SITE_LOGO_KEY, siteIconMetadata } from "@/core/lib/site-logo";
 
 const ROOT = process.cwd();
 
@@ -75,6 +78,42 @@ describe("what an installation calls itself", () => {
         ]) {
             expect(fs.readFileSync(path.join(ROOT, file), "utf8"), file).toContain("<SiteMark");
         }
+    });
+
+    it("offers a tab icon the operator can set", () => {
+        expect(SITE_ICON_KEY).toBe("site_icon");
+        const screen = fs.readFileSync(
+            path.join(ROOT, "src/app/[locale]/(admin)/admin/settings/site/page.tsx"),
+            "utf8",
+        );
+        expect(screen).toContain("SITE_ICON_KEY");
+        expect(screen.match(/<UrlOrFile/g)?.length).toBe(2);
+    });
+
+    it("puts the operator's icon in the tab and on the home screen", () => {
+        expect(siteIconMetadata(" /uploads/icon.png ")).toEqual({
+            icon: [{ url: "/uploads/icon.png" }],
+            apple: [{ url: "/uploads/icon.png" }],
+        });
+    });
+
+    it("keeps the shipped icons while none is set", () => {
+        for (const unset of [undefined, null, "", "   ", 42]) {
+            expect(siteIconMetadata(unset)).toEqual({
+                icon: [
+                    { url: "/favicon.ico", sizes: "any" },
+                    { url: "/icon.svg", type: "image/svg+xml" },
+                ],
+                apple: [{ url: "/apple-icon.png" }],
+            });
+        }
+        for (const file of ["favicon.ico", "icon.svg", "apple-icon.png"]) {
+            expect(fs.existsSync(path.join(ROOT, "public", file)), `public/${file}`).toBe(true);
+            // A file convention in src/app outranks the layout's `icons`.
+            expect(fs.existsSync(path.join(ROOT, "src/app", file)), `src/app/${file}`).toBe(false);
+        }
+        const layout = fs.readFileSync(path.join(ROOT, "src/app/[locale]/layout.tsx"), "utf8");
+        expect(layout).toContain("icons: siteIconMetadata(");
     });
 
     it("ships no mark nothing draws", () => {

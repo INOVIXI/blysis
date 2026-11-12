@@ -14,7 +14,7 @@ import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
 import { UrlOrFile } from "@/core/components/ui/url-or-file";
-import { SITE_LOGO_KEY } from "@/core/lib/site-logo";
+import { SITE_ICON_KEY, SITE_LOGO_KEY } from "@/core/lib/site-logo";
 import { SITE_SOCIAL_LINKS, siteFormFromSettings, siteSettingsPatch, type SiteForm } from "@/core/lib/site-contact";
 
 /**
@@ -43,7 +43,7 @@ export default function SiteSettingsPage() {
 
     // Keyed by the settings the site reads (`site-contact.ts`). The screen
     // wrote keys of its own that nothing read, so a save renamed nothing.
-    const [form, setForm] = useState<SiteForm>(() => ({ ...siteFormFromSettings({}), [SITE_LOGO_KEY]: "" }));
+    const [form, setForm] = useState<SiteForm>(() => ({ ...siteFormFromSettings({}), [SITE_LOGO_KEY]: "", [SITE_ICON_KEY]: "" }));
     // What was loaded, so a save can empty an older key it carried forward.
     const loaded = useRef<Record<string, unknown>>({});
     const field = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -53,7 +53,11 @@ export default function SiteSettingsPage() {
     // saving it would empty the site's name and every social link.
     const { loading, failed, retry } = useSettingsLoad((s) => {
         loaded.current = s;
-        setForm({ ...siteFormFromSettings(s), [SITE_LOGO_KEY]: (s[SITE_LOGO_KEY] as string) || "" });
+        setForm({
+            ...siteFormFromSettings(s),
+            [SITE_LOGO_KEY]: (s[SITE_LOGO_KEY] as string) || "",
+            [SITE_ICON_KEY]: (s[SITE_ICON_KEY] as string) || "",
+        });
     });
 
     const handleSave = async (e: React.FormEvent) => {
@@ -69,6 +73,7 @@ export default function SiteSettingsPage() {
                 body: JSON.stringify({
                     ...siteSettingsPatch(form, loaded.current),
                     [SITE_LOGO_KEY]: form[SITE_LOGO_KEY],
+                    [SITE_ICON_KEY]: form[SITE_ICON_KEY],
                 }),
             });
 
@@ -151,6 +156,17 @@ export default function SiteSettingsPage() {
                                     onChange={(v) => setForm({ ...form, [SITE_LOGO_KEY]: v })}
                                     accept="image/*"
                                 />
+                            </div>
+                            <div>
+                                {/* The browser tab and the home screen. Unset,
+                                    the icons the installation ships. */}
+                                <UrlOrFile
+                                    label={t("siteSettings_icon")}
+                                    value={form[SITE_ICON_KEY]}
+                                    onChange={(v) => setForm({ ...form, [SITE_ICON_KEY]: v })}
+                                    accept="image/*"
+                                />
+                                <p className="mt-1 text-sm text-muted-foreground">{t("siteSettings_iconHint")}</p>
                             </div>
                             <div>
                                 <Label>{t("siteSettings_description")}</Label>
