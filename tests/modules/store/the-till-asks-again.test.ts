@@ -94,12 +94,12 @@ function product(rules: Record<string, unknown> = {}) {
     };
 }
 
-async function checkout() {
+async function checkout(quantity = 1) {
     const res = await POST(
         new NextRequest("http://localhost/api/v1/store/checkout", {
             method: "POST",
             body: JSON.stringify({
-                items: [{ productId: "p1", quantity: 1 }],
+                items: [{ productId: "p1", quantity }],
                 playerName: "Steve",
                 paymentMethod: "credits",
             }),
@@ -144,6 +144,17 @@ describe("the checkout", () => {
         const { status, body } = await checkout();
         expect(status).toBe(409);
         expect(body.code).toBe("store_limit_reached");
+        expect(orderCreate).not.toHaveBeenCalled();
+    });
+
+    // The cart holds 99 of a line at most, and the checkout took any count.
+    // A paid line that large only overflowed the total, but a free one, or
+    // a product that runs its commands once per unit, delivered that many.
+    it("takes no more of a line than a cart can hold", async () => {
+        const { status, body } = await checkout(100000);
+        expect(status).toBe(400);
+        // Refused as input, before any price was worked out for it.
+        expect(body.error).not.toMatch(/credit/i);
         expect(orderCreate).not.toHaveBeenCalled();
     });
 
