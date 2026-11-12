@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.52.0",
+  "version": "2.52.1",
   "coreVersion": "^5.30.0",
   "category": "commerce",
   "author": "Blysis Team",
