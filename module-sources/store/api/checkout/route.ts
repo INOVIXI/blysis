@@ -18,44 +18,15 @@ import {
     computeCouponDiscount,
     scopedSubtotal,
     computeCreatorDiscount,
-    computeCreatorCommission,
     computeTotals,
     grossUpForFee,
 } from "../../lib/pricing";
 import { creditingPurchases, ownedRungsOn } from "../../lib/upgrade-credit-server";
 import { z } from "zod";
 import { isPlayerName } from "../../lib/player-name";
+import { payCreatorCommission } from "../../lib/creator-commission";
 
 const LIMIT_REACHED = "LIMIT_REACHED";
-
-/**
- * Bank a creator's cut and record it.
- *
- * The two checkout branches - paid in credits and paid at a gateway - both
- * settle a code the same way, and both had written this transaction out in
- * full. Keeping one copy is what stops the balance and the ledger row from
- * ever being credited different amounts.
- */
-async function payCreatorCommission(
-    code: { id: string; code: string; creatorId: string; commissionPercent: number },
-    total: number,
-    orderNumber: string,
-) {
-    const commission = computeCreatorCommission(total, code.commissionPercent);
-    await prisma.$transaction(async (tx) => {
-        await tx.creatorCode.update({
-            where: { id: code.id },
-            data: { usageCount: { increment: 1 }, totalRevenue: { increment: total } },
-        });
-        await applyFiltersAsync("credit.change", { applied: false }, {
-            tx,
-            userId: code.creatorId,
-            amount: commission,
-            type: "creator_commission",
-            description: `Commission for order ${orderNumber} via code ${code.code}`,
-        });
-    });
-}
 
 const checkoutSchema = z.object({
     items: z.array(z.object({
@@ -439,7 +410,8 @@ export async function POST(request: NextRequest) {
 
             // ── Update creator code stats ──
             if (creatorCodeRecord) {
-                await payCreatorCommission(creatorCodeRecord, total, order.orderNumber);
+                const code = creatorCodeRecord;
+                await prisma.$transaction((tx) => payCreatorCommission(tx, code, total, order.orderNumber));
             }
 
             // ── Clear cart ──
@@ -490,10 +462,8 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        // ── Update creator code stats ──
-        if (creatorCodeRecord) {
-            await payCreatorCommission(creatorCodeRecord, total, order.orderNumber);
-        }
+        // The creator's commission is paid when the money is: by
+        // `settleOrder` for a gateway, below for a free order.
 
         // ── Clear cart ──
         await prisma.cartItem.deleteMany({ where: { userId: session.user.id } });
@@ -524,6 +494,7 @@ export async function POST(request: NextRequest) {
             // The order written above is left out of that count, or it would
             // be counted against itself.
             const freeBuyerId = session.user.id;
+            const freeCode = creatorCodeRecord;
             try {
                 await prisma.$transaction(async (tx) => {
                     if (await pastTheLimit(tx, products, orderItems, freeBuyerId, now, order.id)) {
@@ -533,6 +504,7 @@ export async function POST(request: NextRequest) {
                     if ((await claimStock(tx, claims)).length > 0) throw new Error(OUT_OF_STOCK);
                     await countSales(tx, claims);
                     await tx.order.update({ where: { id: order.id }, data: { status: "COMPLETED" } });
+                    if (freeCode) await payCreatorCommission(tx, freeCode, total, order.orderNumber);
                     await tx.chestItem.createMany({
                         data: orderItems.map((item) => ({
                             userId: freeBuyerId,
