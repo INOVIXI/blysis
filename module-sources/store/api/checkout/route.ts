@@ -31,7 +31,9 @@ const LIMIT_REACHED = "LIMIT_REACHED";
 const checkoutSchema = z.object({
     items: z.array(z.object({
         productId: z.string({ message: "Product is missing" }),
-        quantity: z.number().int().min(1, "Quantity must be at least 1"),
+        // The most a cart holds of one line (`api/cart/route.ts`). Without it a
+        // free line, or one that runs its commands per unit, delivered any count.
+        quantity: z.number().int().min(1, "Quantity must be at least 1").max(99, "Quantity must be at most 99"),
     }), { message: "Your cart is empty" }).min(1, "Your cart is empty"),
     playerName: z
         .string()
