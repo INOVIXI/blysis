@@ -298,14 +298,35 @@ html[data-mode="dark"] {
   padding-bottom: 32px;
 }
 
+/*
+ * A grid rather than a wrapping row. As a flex row the brand's 300px and five
+ * 140px columns, with their gaps, came to more than the container, so the
+ * fifth column of an operator's footer dropped onto a second row beside
+ * nothing. Narrow, the brand takes its own row and the columns share the next
+ * ones; wide, every column gets an equal share of one row beside the brand,
+ * however many the operator made.
+ */
 .kt-foot-top {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 40px 56px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 40px 32px;
 }
 
 .kt-foot-brand {
-  flex: 2 1 300px;
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 64rem) {
+  .kt-foot-top {
+    grid-template-columns: minmax(240px, 1.6fr);
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 40px 40px;
+  }
+
+  .kt-foot-brand {
+    grid-column: auto;
+  }
 }
 
 .kt-foot-name {
@@ -342,7 +363,7 @@ html[data-mode="dark"] {
 }
 
 .kt-foot-col {
-  flex: 1 1 140px;
+  min-width: 0;
 }
 
 .kt-foot-col h2 {
