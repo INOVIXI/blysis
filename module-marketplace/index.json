@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-12",
-  "updatedAt": "2026-11-12T13:53:13Z",
+  "updatedAt": "2026-11-12T13:53:43Z",
   "modules": [
     {
       "id": "announcements",
@@ -1394,13 +1394,13 @@
           "description": "团队撰写、拥有独立地址的页面"
         }
       },
-      "version": "1.7.1",
+      "version": "1.7.2",
       "coreVersion": "^5.35.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-11-12T13:53:13Z",
+      "updatedAt": "2026-11-12T13:53:43Z",
       "screenshots": [],
       "tags": [
         "content"

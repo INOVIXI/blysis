@@ -25,14 +25,15 @@ import { errorText, log } from "@/core/lib/logger";
  * both ask, and a resolver that throws is treated as "no opinion" rather than
  * turning a database hiccup into a 404 on a page that exists. A resolver may
  * also name what it found, which is how one route pattern serving many
- * resources titles each of them.
+ * resources titles each of them. It is told the page's language, so the name
+ * it gives is the one the reader reads on the page.
  */
-const resolveRoute = cache(async (key: string, params: Record<string, string | string[]>): Promise<RouteResolution> => {
+const resolveRoute = cache(async (key: string, params: Record<string, string | string[]>, locale: string): Promise<RouteResolution> => {
     const load = ModuleRouteResolvers[key];
     if (!load) return { exists: true, title: null };
     try {
         const { default: resolve } = await load();
-        return routeResolution(await resolve(params));
+        return routeResolution(await resolve(params, { locale }));
     } catch (err) {
         log.error("[route-resolver] the resolver failed", { resolver: key, error: errorText(err) });
         return { exists: true, title: null };
@@ -73,7 +74,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const description = descriptionFromMessages(messages, route?.descriptionKey);
 
     // Asked once per request; the page below reads the same answer.
-    const resolution = match && route ? await resolveRoute(match.key, match.params) : null;
+    const resolution = match && route ? await resolveRoute(match.key, match.params, locale) : null;
 
     const meta = await buildPageMeta({
         title: resolveRouteTitle({
@@ -125,7 +126,7 @@ export default async function DynamicModulePage(props: PageProps) {
     // gets its own input back with no error to show for it.
     await ensureHooks();
     const { params } = props;
-    const { slug } = await params;
+    const { slug, locale } = await params;
 
     const match = matchModuleRouteOnce(slug.join("/"));
 
@@ -140,7 +141,7 @@ export default async function DynamicModulePage(props: PageProps) {
         notFound();
     }
 
-    if (!(await resolveRoute(match.key, match.params)).exists) {
+    if (!(await resolveRoute(match.key, match.params, locale)).exists) {
         notFound();
     }
 

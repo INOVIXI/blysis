@@ -2,7 +2,7 @@
   "id": "custom-pages",
   "name": "Custom Pages",
   "description": "Pages the team writes, at an address of their own",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "coreVersion": "^5.35.0",
   "category": "content",
   "author": "Blysis",

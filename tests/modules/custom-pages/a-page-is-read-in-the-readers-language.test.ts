@@ -111,6 +111,17 @@ describe("a page written in three languages", () => {
         expect((await readPage("rules", "?locale=en")).page).toMatchObject({ title: "Rules", content: "New text" });
     });
 
+    // Core puts what the resolver answers in the browser tab, so a reader
+    // whose page body was in their language still read the original title
+    // above it in the tab.
+    it("names itself in the tab in the reader's language", async () => {
+        await create({ title: "Kurallar", slug: "rules", content: "Metin", translations: { title: { en: "Rules" } } });
+        const { default: resolve } = await import("../../../module-sources/custom-pages/lib/route-exists");
+        expect(await resolve({ slug: "rules" }, { locale: "en" })).toEqual({ title: "Rules" });
+        expect(await resolve({ slug: "rules" }, { locale: "de" })).toEqual({ title: "Kurallar" });
+        expect(await resolve({ slug: "missing" }, { locale: "en" })).toBe(false);
+    });
+
     it("takes its translations with it when it is deleted", async () => {
         await create({ title: "Kurallar", slug: "rules", content: "Metin", translations: { title: { en: "Rules" } } });
         const { DELETE } = await one();
