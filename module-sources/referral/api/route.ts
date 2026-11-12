@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { applyFiltersAsync } from "@/core/sdk";
 import { prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { nanoid } from "nanoid";
@@ -125,32 +124,21 @@ export async function POST(request: NextRequest) {
     });
     const rewardAmount = Number(rewardSetting?.value) || 5;
 
-    // The record and the reward in one transaction: a referral marked
-    // rewarded without the credits arriving is a support ticket. The wallet
-    // belongs to another module, so it does the paying, on this transaction.
+    // Only the record is written here. The reward is paid when this member
+    // first pays for an order (hooks/on-order-completed.ts): paying on the code
+    // alone let anybody collect it with accounts made for the purpose.
     await prisma.$transaction(async (tx) => {
         await tx.referral.create({
             data: {
                 referrerId: referrer.id,
                 referredId: session.user.id,
                 rewardAmount,
-                status: "completed",
+                status: "pending",
             },
         });
         await tx.user.update({
             where: { id: session.user.id },
             data: { referredBy: referrer.id },
-        });
-        await applyFiltersAsync("credit.change", { applied: false }, {
-            tx,
-            userId: referrer.id,
-            amount: rewardAmount,
-            type: "referral_reward",
-            description: "Referral reward for inviting a new user",
-        });
-        await tx.referral.updateMany({
-            where: { referrerId: referrer.id, referredId: session.user.id },
-            data: { status: "rewarded" },
         });
     });
 

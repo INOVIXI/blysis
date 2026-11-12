@@ -136,7 +136,7 @@ export function ReferralTab() {
                                             ref.status === "completed" ? "bg-primary/10 text-primary" :
                                             "bg-warning/10 text-warning"
                                         }`}>
-                                            {t.has(ref.status) ? t(ref.status) : ref.status}
+                                            {ref.status === "pending" ? t("awaitingFirstPurchase") : t.has(ref.status) ? t(ref.status) : ref.status}
                                         </span>
                                         <p className="text-xs text-muted-foreground mt-1">{(Number(ref.rewardAmount) || 0).toFixed(2)} {t("creditsUnit")}</p>
                                     </div>

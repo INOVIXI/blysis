@@ -111,7 +111,7 @@ export default function ReferralPage() {
     const statusLabel = (status: string) => {
         if (status === "rewarded") return t("rewarded");
         if (status === "completed") return t("completed");
-        return t("pending");
+        return t("awaitingFirstPurchase");
     };
 
     // Until there is something of the member's to show, the page says why
