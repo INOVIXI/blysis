@@ -12,6 +12,12 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.33.0 - a site can choose the currency a new visitor reads. `useSiteCurrency`
+ * gains `setDefaultDisplay`, held for the page and never stored, which a
+ * visitor's own `setDisplay` choice overrides, and `chosen`, which says
+ * whether what is shown is that choice. `setDisplay(null)` clears the choice,
+ * which on a site with no default is the base as before. Additive.
+ *
  * 5.32.0 - a theme can ask whether a slot will be drawn into.
  * `useSlotHasContent` from `@/core/sdk/layout` answers from the registry,
  * before any contribution has run, so a theme holds the room for what a
@@ -728,4 +734,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.32.0";
+export const CORE_API_VERSION = "5.33.0";

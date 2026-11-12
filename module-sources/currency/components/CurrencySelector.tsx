@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Coins } from "lucide-react";
+import { useLocale } from "next-intl";
 import { FooterDropdown, useSiteCurrency } from "@/core/sdk/ui";
+import { defaultDisplayFor, offered, quote, type DisplaySettings } from "../lib/default-display";
 
 interface ConfiguredCurrency {
     code: string;
@@ -11,7 +13,7 @@ interface ConfiguredCurrency {
     enabled?: boolean;
 }
 
-interface CurrencyConfig {
+interface CurrencyConfig extends DisplaySettings {
     base: string;
     currencies: ConfiguredCurrency[];
 }
@@ -29,9 +31,14 @@ interface CurrencyConfig {
  * Core owns the price formatter now. This module still owns the rates: it
  * hands core a code and how many of that currency one unit of the site's own
  * currency buys, and every price on the site follows.
+ *
+ * It also hands core the operator's choice for a visitor who never picked,
+ * as a default core does not store, and brings a stored pick up to today's
+ * rate: a pick keeps the rate of the day it was made otherwise.
  */
 export function CurrencySelector() {
-    const { base, code, setDisplay } = useSiteCurrency();
+    const { base, code, chosen, setDisplay, setDefaultDisplay } = useSiteCurrency();
+    const locale = useLocale();
     const [config, setConfig] = useState<CurrencyConfig | null>(null);
 
     useEffect(() => {
@@ -48,7 +55,18 @@ export function CurrencySelector() {
         return () => { cancelled = true; };
     }, []);
 
-    const list = (config?.currencies ?? []).filter((c) => c.enabled !== false && c.rate > 0);
+    useEffect(() => {
+        if (!config) return;
+        setDefaultDisplay(defaultDisplayFor(config, locale, base));
+    }, [config, locale, base, setDefaultDisplay]);
+
+    useEffect(() => {
+        if (!config || !chosen || code === base) return;
+        const today = quote(config, code, base);
+        if (today) setDisplay(today);
+    }, [config, chosen, code, base, setDisplay]);
+
+    const list = config ? offered(config) : [];
     // The configured rates are quoted against the config's own base, which is
     // not necessarily what this site charges in. Re-quote them against the
     // site's currency so a price never gets converted twice.
@@ -73,10 +91,11 @@ export function CurrencySelector() {
     if (options.length < 2 || !baseRate) return null;
 
     const choose = (next: string) => {
-        if (next === base) { setDisplay(null); return; }
-        const target = options.find((c) => c.code === next);
-        if (!target) return;
-        setDisplay({ code: target.code, rate: target.rate / baseRate });
+        // The base is stored as a pick like any other. Cleared instead, the
+        // visitor would be back on the operator's default the next page.
+        if (next === base) { setDisplay({ code: base, rate: 1 }); return; }
+        const target = quote(config, next, base);
+        if (target) setDisplay(target);
     };
 
     // The code alone. A symbol beside it says the same thing twice, and the
