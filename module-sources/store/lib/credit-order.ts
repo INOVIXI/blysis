@@ -98,14 +98,19 @@ export async function createCreditOrder(tx: PrismaTransaction, input: CreditOrde
             ...(input.gift ? { giftState: "pending", giftedById: input.buyerId, giftedToId: input.ownerId } : {}),
         })),
     });
-    await tx.ownedProduct.createMany({
-        data: [...new Set(input.lines.map((line) => line.productId))].map((productId) => ({
-            userId: input.ownerId,
-            productId,
-            orderId: order.id,
-        })),
-        skipDuplicates: true,
-    });
+    // A gift is owned once its recipient accepts it (`activateGift`). Written
+    // now, the sender could still take the gift back and be refunded while the
+    // recipient priced an upgrade off a rung they never kept.
+    if (!input.gift) {
+        await tx.ownedProduct.createMany({
+            data: [...new Set(input.lines.map((line) => line.productId))].map((productId) => ({
+                userId: input.ownerId,
+                productId,
+                orderId: order.id,
+            })),
+            skipDuplicates: true,
+        });
+    }
 
     return order;
 }
