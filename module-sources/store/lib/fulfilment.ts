@@ -19,7 +19,7 @@ import { recordedPlayerName, recordedVariables } from "./chest";
 import { chargeShortfall } from "./charge";
 import { cancelTopUp, findTopUp, settleCredits } from "./credit-top-up";
 import { ALREADY, OK, failed, refused } from "./payment-outcome";
-import { payCommissionFor } from "./creator-commission";
+import { payCommissionFor, takeBackCommission } from "./creator-commission";
 
 /**
  * Settles whatever the reference names: a top-up, or else an order.
@@ -394,6 +394,8 @@ export async function refundPayment(provider: string, providerRef: string): Prom
         });
         if (claimed.count === 0) return false;
         await tx.order.update({ where: { id: payment.orderId }, data: { status: "REFUNDED" } });
+        // The creator's cut goes back with the money, in the same claim.
+        if (refundedOrder) await takeBackCommission(tx, refundedOrder);
         if (refundedOrder) {
             const claims = stockClaims(refundedOrder.items);
             await releaseStock(tx, claims);

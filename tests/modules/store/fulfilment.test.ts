@@ -62,6 +62,7 @@ const db = {
     creatorCode: {
         findUnique: vi.fn(async () => null as unknown),
         update: vi.fn(async () => ({})),
+        updateMany: vi.fn(async () => ({ count: 1 })),
     },
     creditTransaction: { findUnique: vi.fn(async () => null), create: vi.fn(async () => ({})) },
     creditTopUp: {
@@ -160,6 +161,7 @@ const paidOrder = {
 beforeEach(() => {
     vi.clearAllMocks();
     calls.length = 0;
+    applyFiltersAsync.mockImplementation(async (_hook: string, value: unknown) => value);
     db.order.update.mockResolvedValue({});
     db.order.updateMany.mockResolvedValue({ count: 1 });
     db.subscription.updateMany.mockResolvedValue({ count: 1 });
@@ -406,6 +408,37 @@ describe("settleOrder, for an order placed with a creator's code", () => {
         await settleOrder(settlement);
 
         expect(db.creatorCode.update).not.toHaveBeenCalled();
+    });
+
+    it("writes on the order what the creator was paid, so a refund can take it back", async () => {
+        db.order.findUnique.mockResolvedValueOnce(withCode);
+        db.creatorCode.findUnique.mockResolvedValueOnce({ id: "cc1", code: "ALEX", creatorId: "creator", commissionPercent: 10 });
+        applyFiltersAsync.mockImplementation(async (_hook: string, value: unknown) => ({ ...(value as object), applied: true }));
+
+        await settleOrder(settlement);
+
+        const written = calls.find((c) => c.op === "order.update");
+        expect(written?.viaTx).toBe(true);
+        expect(written?.args).toEqual({
+            where: { id: "order-1" },
+            data: {
+                metadata: {
+                    playerName: "Steve",
+                    creatorCode: "ALEX",
+                    commissionPaid: { codeId: "cc1", creatorId: "creator", amount: 5, total: 50 },
+                },
+            },
+        });
+    });
+
+    it("writes nothing when the wallet did not take the credit", async () => {
+        db.order.findUnique.mockResolvedValueOnce(withCode);
+        db.creatorCode.findUnique.mockResolvedValueOnce({ id: "cc1", code: "ALEX", creatorId: "creator", commissionPercent: 10 });
+
+        await settleOrder(settlement);
+
+        const written = calls.find((c) => c.op === "order.update");
+        expect((written?.args as { data?: { metadata?: { commissionPaid?: { amount: number } } } } | undefined)?.data?.metadata?.commissionPaid?.amount ?? 0).toBe(0);
     });
 });
 
@@ -677,6 +710,106 @@ describe("refundPayment", () => {
 
         expect(outcome.error).toMatch(/unknown payment/i);
         expect(db.order.update).not.toHaveBeenCalled();
+    });
+});
+
+describe("refundPayment, for an order whose creator was paid", () => {
+    const payment = { id: "pay-1", orderId: "order-1", status: "COMPLETED" };
+    const paid = {
+        ...paidOrder,
+        status: "COMPLETED",
+        total: 50,
+        metadata: {
+            playerName: "Steve",
+            creatorCode: "ALEX",
+            commissionPaid: { codeId: "cc1", creatorId: "creator", amount: 5, total: 50 },
+        },
+    };
+    const moves = () => applyFiltersAsync.mock.calls.filter(([hook]) => hook === "credit.change");
+
+    /** The creator's balance as the wallet answers it, and a wallet that takes what it is asked. */
+    function creatorHolds(balance: number | null) {
+        applyFiltersAsync.mockImplementation(async (hook: string, value: unknown) =>
+            hook === "credits.balance" ? balance : hook === "credit.change" ? { applied: true } : value,
+        );
+    }
+
+    beforeEach(() => {
+        db.payment.findFirst.mockResolvedValueOnce(payment);
+        db.order.findUnique.mockResolvedValueOnce(paid);
+        creatorHolds(40);
+    });
+
+    it("takes the commission back from the creator once, inside the refund's claim", async () => {
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()).toHaveLength(1);
+        expect(moves()[0][2]).toEqual(
+            expect.objectContaining({
+                userId: "creator",
+                amount: -5,
+                type: "creator_commission",
+                ledgerId: "commission-refund:order-1",
+                tx: expect.anything(),
+            }),
+        );
+    });
+
+    it("counts the use and the revenue back off the code", async () => {
+        await refundPayment("stripe", "pi_123");
+
+        const undone = calls.find((c) => c.op === "creatorCode.updateMany");
+        expect(undone?.viaTx).toBe(true);
+        expect(undone?.args).toEqual({
+            where: { id: "cc1", usageCount: { gt: 0 } },
+            data: { usageCount: { decrement: 1 }, totalRevenue: { decrement: 50 } },
+        });
+    });
+
+    it("takes back only what the creator still holds, and says so", async () => {
+        creatorHolds(3.5);
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()[0][2]).toEqual(expect.objectContaining({ amount: -3.5 }));
+        expect(log.warn).toHaveBeenCalled();
+    });
+
+    it("takes nothing when the creator has spent it all, and still counts the code back", async () => {
+        creatorHolds(0);
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()).toHaveLength(0);
+        expect(db.creatorCode.updateMany).toHaveBeenCalled();
+    });
+
+    it("takes nothing when the order paid no commission", async () => {
+        db.order.findUnique.mockReset();
+        db.order.findUnique.mockResolvedValueOnce({ ...paid, metadata: { playerName: "Steve", creatorCode: "ALEX" } });
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()).toHaveLength(0);
+        expect(db.creatorCode.updateMany).not.toHaveBeenCalled();
+    });
+
+    it("takes nothing a second time when another notice of the refund won the claim", async () => {
+        db.payment.updateMany.mockResolvedValueOnce({ count: 0 });
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()).toHaveLength(0);
+        expect(db.creatorCode.updateMany).not.toHaveBeenCalled();
+    });
+
+    it("takes nothing a second time when the payment is already refunded", async () => {
+        db.payment.findFirst.mockReset();
+        db.payment.findFirst.mockResolvedValueOnce({ ...payment, status: "REFUNDED" });
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()).toHaveLength(0);
     });
 });
 
