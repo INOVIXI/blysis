@@ -20,7 +20,7 @@ import { chargeShortfall } from "./charge";
 import { cancelTopUp, findTopUp, refundTopUp, settleCredits } from "./credit-top-up";
 import { revokeRefundedRoles, takeBackOrder, type GrantedRole } from "./take-back";
 import { ALREADY, OK, failed, refused } from "./payment-outcome";
-import { payCommissionFor } from "./creator-commission";
+import { payCommissionFor, takeBackCommission } from "./creator-commission";
 import { pastTheLimit } from "./availability-server";
 
 /** Thrown inside a settlement to roll it back: the order would pass a limit. */
@@ -444,6 +444,8 @@ export async function refundPayment(provider: string, providerRef: string): Prom
         if (claimed.count === 0) return null;
         await tx.order.update({ where: { id: payment.orderId }, data: { status: "REFUNDED" } });
         if (!refundedOrder) return [] as GrantedRole[];
+        // The creator's cut goes back with the money, in the same claim.
+        await takeBackCommission(tx, refundedOrder);
         const claims = stockClaims(refundedOrder.items);
         await releaseStock(tx, claims);
         await uncountSales(tx, claims);

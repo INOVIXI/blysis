@@ -860,6 +860,10 @@
       "type": "filter"
     },
     {
+      "hook": "credits.balance",
+      "type": "filter"
+    },
+    {
       "hook": "servers.list",
       "type": "filter"
     },
