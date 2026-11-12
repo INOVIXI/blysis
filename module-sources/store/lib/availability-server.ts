@@ -1,6 +1,7 @@
 import { siteTimeZone } from "@/core/sdk/server";
 import { stillOwnedWhere } from "./ownership";
 import {
+    AWAITING_PAYMENT_MS,
     availabilityOf,
     effectivePrice,
     periodStart,
@@ -142,12 +143,6 @@ interface CountReader {
         }): Promise<{ _sum: { quantity: number | null } }>;
     };
 }
-
-/**
- * How long a checkout still waiting for its payment holds a per-person
- * allowance. Long enough for a payment page; an abandoned one lets go.
- */
-const AWAITING_PAYMENT_MS = 60 * 60_000;
 
 /**
  * Units of this product already bought, inside the periods the rules count

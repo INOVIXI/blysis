@@ -5,6 +5,7 @@ import { couponValidateSchema } from "../../../lib/validations";
 import { computeCouponDiscount, scopedSubtotal } from "../../../lib/pricing";
 import { priceCartLines } from "../../../lib/cart-pricing";
 import { creditingPurchases, ownedRungsOn } from "../../../lib/upgrade-credit-server";
+import { customerUses } from "../../../lib/coupon-limit";
 
 // POST /api/v1/store/coupons/validate - Check coupon validity
 export async function POST(request: NextRequest) {
@@ -77,7 +78,9 @@ export async function POST(request: NextRequest) {
         lines.map((line) => ({ productId: line.productId, price: line.payPrice, quantity: line.quantity })),
         lines.map((line) => ({ id: line.productId, categoryId: line.categoryId })),
     );
-    const priced = computeCouponDiscount(coupon, cartSubtotal, new Date(), eligible);
+    const now = new Date();
+    const used = coupon.perCustomerLimit ? await customerUses(prisma, coupon.id, session.user.id, now) : 0;
+    const priced = computeCouponDiscount(coupon, cartSubtotal, now, eligible, used);
 
     if (priced.code) {
         /*
@@ -85,9 +88,14 @@ export async function POST(request: NextRequest) {
          * existed and one that has run out answer the same, so the response
          * cannot be used to go looking for codes. Two are exceptions, because
          * they are the two a shopper can act on - spend more, or put
-         * something the offer covers in the basket.
+         * something the offer covers in the basket. The third is told
+         * because it gives nothing away: only somebody who already used
+         * the code hears that they have.
          */
-        const tellable = priced.code === "coupon_min_purchase" || priced.code === "coupon_not_for_these_items";
+        const tellable =
+            priced.code === "coupon_min_purchase" ||
+            priced.code === "coupon_not_for_these_items" ||
+            priced.code === "coupon_already_used";
         return NextResponse.json({
             valid: false,
             code: tellable ? priced.code : "coupon_unknown",

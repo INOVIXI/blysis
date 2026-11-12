@@ -140,6 +140,12 @@ export const couponSchema = z.object({
     minPurchase: z.number().min(0).optional().nullable(),
     maxDiscount: z.number().min(0).optional().nullable(),
     usageLimit: z.number().int().min(1).optional().nullable(),
+    /**
+     * Orders one customer may place with the code. Null is no limit. No
+     * default here: an edit that does not send it must leave an existing
+     * coupon as it was, so the default of one is set where a coupon is made.
+     */
+    perCustomerLimit: z.number().int().min(1).max(1_000_000).optional().nullable(),
     startsAt: z.string().datetime().optional().nullable(),
     expiresAt: z.string().datetime().optional().nullable(),
     /**

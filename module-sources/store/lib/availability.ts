@@ -29,6 +29,13 @@ export type LimitPeriod = (typeof LIMIT_PERIODS)[number];
 export const OUTSIDE_WINDOW = ["countdown", "hidden"] as const;
 export type OutsideWindow = (typeof OUTSIDE_WINDOW)[number];
 
+/**
+ * How long a checkout still waiting for its payment holds a per-person
+ * allowance or a coupon's per-customer use. Long enough for a payment page;
+ * an abandoned one lets go.
+ */
+export const AWAITING_PAYMENT_MS = 60 * 60_000;
+
 export interface ProductRules {
     isActive: boolean;
     /** Role ids that may buy it. Empty means anyone. */

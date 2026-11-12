@@ -222,6 +222,9 @@ model Order {
   paymentFee    Decimal     @default(0) @db.Decimal(10, 2)
   paymentMethod String?
   paymentId     String?
+  /// The coupon this order was placed with. A plain id like the coupon's own
+  /// product lists: deleting a coupon must not touch the orders that used it.
+  couponId      String?
   notes         String?
   metadata      Json?
   /**
@@ -244,6 +247,8 @@ model Order {
 
   @@index([userId])
   @@index([status])
+  // Read as "how many times has this customer used this coupon".
+  @@index([couponId, userId])
 
   // The revenue chart and the community goal both scan a date window.
   @@index([createdAt])
@@ -324,6 +329,12 @@ model Coupon {
   maxDiscount   Decimal?    @db.Decimal(10, 2)
   usageLimit    Int?
   usageCount    Int         @default(0)
+  /// How many orders one customer may place with the code. Null is no limit,
+  /// which is what every coupon written before there was a way to say so
+  /// meant; a coupon made in the panel starts at one. Counted from the orders
+  /// that carry it, so a refunded or cancelled order gives its use back. See
+  /// lib/coupon-limit.ts.
+  perCustomerLimit Int?
   startsAt      DateTime?
   expiresAt     DateTime?
   /// Which products the code works on. Empty is every product, which is what
