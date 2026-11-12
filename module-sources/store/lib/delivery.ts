@@ -31,6 +31,14 @@ function sanitizePlayerName(input: string): string {
     return sanitizeRconArg(input).replace(/ /g, "");
 }
 
+/**
+ * An order number, or a run named after it, as one argument a game plugin can
+ * keep and compare: letters, digits and dashes.
+ */
+function sanitizeReference(input: string): string {
+    return input.replace(/[^a-zA-Z0-9-]/g, "");
+}
+
 export interface DeliveryCommand {
     command: string;
     /** Which server to run it on. Null means the install's default server. */
@@ -96,7 +104,14 @@ export async function runDeliveryCommand(
  * failure so a half-delivered purchase is visible rather than silently partial.
  *
  * Commands support `{player}`, `{product}`, `{quantity}`, and any custom
- * variable the product defines.
+ * variable the product defines, then `{order}`, `{delivery}` and `{unit}`.
+ * Those three come last so a product that already named a variable `unit`
+ * keeps it, and a buyer's answer cannot carry them: braces never survive
+ * `sanitizeRconArg`.
+ *
+ * `{delivery}` is `<order>-<line>-<unit>` and is the same every time the same
+ * unit of the same line is delivered, which is what lets a game plugin refuse
+ * a retried run it has already carried out.
  */
 export async function deliverProduct(params: {
     playerName: string;
@@ -115,6 +130,15 @@ export async function deliverProduct(params: {
      * order are two deliveries, each with its own order.
      */
     line?: string | null;
+    /**
+     * Run the whole list once per unit rather than once per line, for a
+     * command that hands out a fixed amount however many were bought.
+     */
+    perUnit?: boolean;
+    /** The number the buyer was shown. Without one, the reference's id. */
+    orderNumber?: string | null;
+    /** The line's 1-based place in its order. */
+    lineNumber?: number;
 }): Promise<DeliveryResult> {
     const results: string[] = [];
     const safePlayerName = sanitizePlayerName(params.playerName);
@@ -125,7 +149,14 @@ export async function deliverProduct(params: {
     const batch = reference.id ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
     const sequences = new Map<string, number>();
 
-    for (const entry of params.commands) {
+    const orderRef = sanitizeReference(params.orderNumber ?? batch);
+    const lineNumber = params.lineNumber ?? 1;
+    // Every unit's commands share the line's group, its sequence running on
+    // from one unit to the next, so a queue keeps them whole and in order.
+    const units = params.perUnit ? Math.max(1, Math.trunc(params.quantity || 1)) : 1;
+    const runs = Array.from({ length: units }, (_, i) => params.commands.map((entry) => ({ entry, unit: i + 1 }))).flat();
+
+    for (const { entry, unit } of runs) {
         let command = entry.command
             .replace(/\{player\}/g, safePlayerName)
             .replace(/\{product\}/g, safeProductName)
@@ -136,6 +167,11 @@ export async function deliverProduct(params: {
                 command = command.replace(new RegExp(`\\{${key}\\}`, "g"), sanitizeRconArg(value));
             }
         }
+
+        command = command
+            .replace(/\{order\}/g, orderRef)
+            .replace(/\{delivery\}/g, `${orderRef}-${lineNumber}-${unit}`)
+            .replace(/\{unit\}/g, String(unit));
 
         const target = entry.target === "player" ? "player" : "server";
         const place = target === "player" ? "current" : (entry.serverId ?? "default");

@@ -90,6 +90,7 @@ function source(over: Record<string, unknown> = {}) {
         stock: null,
         type: "DIGITAL",
         deliveryData: null,
+        commandsPerUnit: false,
         subscriptionInterval: null,
         subscriptionIntervalCount: 1,
         availableFrom: null,

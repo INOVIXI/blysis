@@ -16,6 +16,8 @@ export const productSchema = z.object({
     isFeatured: z.boolean().optional(),
     /** Whether an unclaimed copy may be handed to somebody else. */
     giftable: z.boolean().optional(),
+    /** Run the delivery commands once per unit bought rather than once per line. */
+    commandsPerUnit: z.boolean().optional(),
     type: z.enum(["DIGITAL", "PHYSICAL", "GAME_ITEM", "SUBSCRIPTION"]).optional(),
     categoryId: z.string().optional().nullable(),
     deliveryData: z.any().optional(),

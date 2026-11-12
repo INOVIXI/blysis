@@ -204,6 +204,38 @@ export async function cancelGift(senderId: string, itemId: string): Promise<Gift
 }
 
 /**
+ * What a chest row's delivery is named by, and whether it runs per unit.
+ *
+ * The order number and the line's place are read only when a command asks for
+ * them, and the product only when there is more than one, so a claim that
+ * needs neither costs what it always did. A row nobody bought is named by its
+ * own id. The line is the order's first line of this product: a checkout
+ * basket holds a product once, so that is the line the row came from.
+ */
+async function chestDelivery(
+    item: { id: string; orderId: string | null; productId: string; quantity: number },
+    commands: { command: string }[],
+): Promise<{ perUnit: boolean; orderNumber: string; lineNumber: number }> {
+    const perUnit =
+        item.quantity > 1 &&
+        (await prisma.product.findUnique({ where: { id: item.productId }, select: { commandsPerUnit: true } }))?.commandsPerUnit === true;
+    const named = commands.some((c) => /\{(order|delivery)\}/.test(c.command));
+    if (!named || !item.orderId) return { perUnit, orderNumber: item.id, lineNumber: 1 };
+
+    const [order, lines] = await Promise.all([
+        prisma.order.findUnique({ where: { id: item.orderId }, select: { orderNumber: true } }),
+        prisma.orderItem.findMany({
+            where: { orderId: item.orderId, productId: { not: null } },
+            select: { id: true, productId: true },
+            orderBy: { id: "asc" },
+            take: 500,
+        }),
+    ]);
+    const place = lines.findIndex((line) => line.productId === item.productId);
+    return { perUnit, orderNumber: order?.orderNumber ?? item.id, lineNumber: place >= 0 ? place + 1 : 1 };
+}
+
+/**
  * Claims a ready chest row and hands it to delivery.
  *
  * The row is claimed before delivery, conditionally, so two claims that
@@ -223,6 +255,8 @@ export async function claimChestItem(
     const commands = await prisma.productCommand.findMany({ where: { productId: item.productId }, orderBy: { order: "asc" } });
     const delivery = commands.length > 0 ? deliveryFor(item, { playerName: player.name }) : null;
     if (delivery && "needsPlayerName" in delivery) return { ok: false, code: "needs_player_name" };
+    // Read before the row is claimed, so a read that fails leaves it claimable.
+    const named = delivery ? await chestDelivery(item, commands) : null;
 
     const claimed = await prisma.chestItem.updateMany({
         where: { id: item.id, userId, isRedeemed: false, giftState: null },
@@ -244,6 +278,7 @@ export async function claimChestItem(
             variables: delivery.variables,
             reference: { kind: "chest", id: item.id, label: item.productName },
             line: item.id,
+            ...(named ?? {}),
         }).catch((error: unknown) =>
             log.error("[store] delivering a chest reward failed", { error: error instanceof Error ? error.message : String(error) }),
         );

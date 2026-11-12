@@ -400,7 +400,7 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
     // Not awaited: a gateway's webhook has a timeout, and a slow game server
     // must not make the provider think the payment went unrecorded.
     deliverPaidOrder(
-        { id: order.id, items: granted },
+        { id: order.id, orderNumber: order.orderNumber, items: granted },
         { name: playerName, id: null, userId: buyerId },
     ).catch((error) => log.error("[store] delivery failed", { orderId: order.id, error: String(error) }));
 

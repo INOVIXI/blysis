@@ -45,6 +45,7 @@ const original = {
     isFeatured: true,
     type: "DIGITAL",
     deliveryData: { note: "keep" },
+    commandsPerUnit: true,
     subscriptionInterval: null,
     subscriptionIntervalCount: 1,
     stripePriceId: "price_abc123",
@@ -136,6 +137,7 @@ describe("what a copied product is", () => {
             image: "/uploads/vip.png",
             images: ["/uploads/vip-2.png"],
             deliveryData: { note: "keep" },
+            commandsPerUnit: true,
             translations: { tr: { name: "VIP" } },
         });
         expect(copy.availableFrom).toEqual(original.availableFrom);

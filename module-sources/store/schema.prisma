@@ -147,6 +147,15 @@ model Product {
    */
   giftable             Boolean   @default(true)
 
+  /**
+   * Run the delivery commands once per unit bought rather than once per line.
+   *
+   * A command that hands out a fixed amount ("give 8 bonus blocks") delivered
+   * one lot to somebody who paid for three. Off by default, because a command
+   * written with `{quantity}` already delivers the whole line in one go.
+   */
+  commandsPerUnit      Boolean   @default(false)
+
   /** A sale with a start and an end, rather than a price somebody remembers. */
   salePrice            Decimal?  @db.Decimal(10, 2)
   saleFrom             DateTime?
