@@ -82,6 +82,7 @@ vi.mock("@/core/sdk/server", () => ({
     readJsonBody: (request: Request) => request.json(),
     siteTimeZone: async () => "UTC",
     resolveAppUrl: () => "http://localhost",
+    getClientIP: () => "unknown",
 }));
 vi.mock("@/core/sdk", async (importOriginal) => ({
     ...(await importOriginal<typeof import("@/core/sdk")>()),

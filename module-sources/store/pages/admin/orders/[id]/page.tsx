@@ -8,6 +8,7 @@ import { auth } from "@/core/sdk/auth";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@/core/sdk/ui";
 import { ArrowLeft, Package } from "lucide-react";
 import { OrderStatusSelect } from "./status-select";
+import { readTaxRecord, taxLineText, taxReasonText } from "../../../../lib/tax";
 import { DeliveryBadge } from "../../../../components/DeliveryBadge";
 import { deliveryOf } from "../../../../lib/order-delivery";
 import { adminOrderStatusKeys, orderStatusLabel } from "../../../../lib/order-status";
@@ -55,6 +56,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
     });
 
     if (!order) notFound();
+    const taxKept = readTaxRecord(order.metadata);
     const delivery = (await deliveryOf([order.id]))[order.id] ?? null;
     const deliveryLabel = (state: DeliveryState) => t(`dlv_${state}`);
     // Written by the refund: lines a game command already delivered, which a
@@ -115,6 +117,27 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                                     <div className="flex justify-between text-success">
                                         <span>{t("adm_discount")}</span>
                                         <span>-{money(Number(order.discount))}</span>
+                                    </div>
+                                )}
+                                {(Number(order.tax) > 0 || taxKept) && (
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">{taxLineText(t, taxKept)}</span>
+                                        <span>{money(Number(order.tax))}</span>
+                                    </div>
+                                )}
+                                {taxKept && (
+                                    // Why this sale carries this tax, and where the
+                                    // buyer was said to be: what an operator checks
+                                    // before an invoice for a foreign buyer goes out.
+                                    <div className="space-y-0.5 text-xs text-muted-foreground">
+                                        <p>{taxReasonText(t, taxKept)}</p>
+                                        <p>
+                                            {t("taxEvidence", {
+                                                billing: taxKept.billingCountry ?? t("taxUnknown"),
+                                                ip: taxKept.ipCountry ?? t("taxUnknown"),
+                                            })}
+                                        </p>
+                                        {taxKept.evidenceConflict && <p className="text-warning">{t("taxEvidenceConflict")}</p>}
                                     </div>
                                 )}
                                 <div className="flex justify-between text-lg font-bold">

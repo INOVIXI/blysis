@@ -10,6 +10,7 @@ import { ChevronDown, ChevronUp, Package, Receipt, ShoppingCart, Loader2 } from 
 import { dateLocaleTag } from "@/core/sdk";
 import { ORDER_STATUSES, ORDER_STATUS_KEYS, orderStatusLabel } from "../lib/order-status";
 import { DeliveryBadge } from "./DeliveryBadge";
+import { readTaxRecord, taxLineText } from "../lib/tax";
 
 interface Order {
     id: string;
@@ -19,6 +20,9 @@ interface Order {
     total: number;
     /** What the payment method's fee added on top of `total`. */
     paymentFee?: number;
+    tax?: number;
+    /** Holds the tax record, among other things, when the order has one. */
+    metadata?: unknown;
     status: string;
     createdAt: string;
     items: {
@@ -200,6 +204,12 @@ export function ProfileOrdersTab() {
                                             <div className="flex justify-between mt-3 pt-3 border-t text-sm text-success">
                                                 <span>{t("tab_orders_discount")}</span>
                                                 <span>-{money(Number(order.discount))}</span>
+                                            </div>
+                                        )}
+                                        {Number(order.tax ?? 0) > 0 && (
+                                            <div className="flex justify-between mt-2 text-sm text-muted-foreground">
+                                                <span>{taxLineText(t, readTaxRecord(order.metadata))}</span>
+                                                <span>{money(Number(order.tax))}</span>
                                             </div>
                                         )}
                                         <div className="flex justify-between mt-2 pt-2 border-t text-sm font-bold">

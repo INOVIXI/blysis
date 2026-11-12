@@ -10,16 +10,24 @@
  * processor's page is a chargeback waiting. A method whose fee cannot be put
  * into this currency says so, because the checkout will refuse it.
  *
+ * And the tax a sale would carry, from the same `store.tax` filter the
+ * checkout asks, so the cart can show a tax added on top and work the fee out
+ * on the taxed total. The buyer's country is passed when the cart has one;
+ * without it the answer is the shop's default, and `taxCountryKnown` says so.
+ *
  * It also answers whether the checkout has to ask for a tax identity. The page
  * needs that before the buyer presses anything: finding out by being refused
  * means filling in the form twice.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { applyFiltersAsync } from "@/core/sdk";
-import { prisma } from "@/core/sdk/server";
+import { getClientIP, prisma } from "@/core/sdk/server";
 import { listPaymentProviders } from "../../lib/payments";
 import { paymentFeeFor, readPaymentFees } from "../../lib/payment-fee-server";
 import { resolveCurrency } from "../../lib/currency";
+import { headerReader, resolveTax } from "../../lib/tax-server";
+
+const COUNTRY = /^[A-Za-z]{2}$/;
 
 export async function GET(request: NextRequest) {
     const requested = request.nextUrl.searchParams.get("currency");
@@ -32,7 +40,12 @@ export async function GET(request: NextRequest) {
     // could actually be asked about it.
     const currency = resolveCurrency(requested, configured?.value as string);
 
-    const [listed, billingRequired, fees] = await Promise.all([
+    const params = request.nextUrl.searchParams;
+    const sentCountry = params.get("country") ?? "";
+    const country = COUNTRY.test(sentCountry) ? sentCountry.toUpperCase() : null;
+    const clientIp = getClientIP(request.headers);
+
+    const [listed, billingRequired, fees, tax] = await Promise.all([
         listPaymentProviders(currency),
         // The total is not known until the cart is priced, and a module that
         // wants an identity above a threshold still gets asked again at
@@ -40,6 +53,19 @@ export async function GET(request: NextRequest) {
         // this currency, in principle".
         applyFiltersAsync("store.billing.required", false, { currency, total: 0 }),
         readPaymentFees(),
+        resolveTax({
+            channel: "checkout",
+            currency,
+            billing: country
+                ? {
+                      kind: params.get("kind") === "company" ? "company" : "individual",
+                      country,
+                      taxNumber: (params.get("taxNumber") ?? "").slice(0, 40),
+                  }
+                : null,
+            ip: clientIp === "unknown" ? null : clientIp,
+            header: headerReader(request.headers),
+        }),
     ]);
 
     const providers = await Promise.all(
@@ -49,5 +75,12 @@ export async function GET(request: NextRequest) {
         }),
     );
 
-    return NextResponse.json({ providers, billingRequired });
+    return NextResponse.json({
+        providers,
+        billingRequired,
+        // The rate and how to name it, not the evidence: the evidence is the
+        // order's, and this answers anybody who asks.
+        tax: { rate: tax.rate, included: tax.included, label: tax.label, country: tax.country },
+        taxCountryKnown: tax.country !== null,
+    });
 }
