@@ -42,7 +42,7 @@
  */
 import "dotenv/config";
 import { spawnSync } from "node:child_process";
-import { detectSchemaDrift, writeSchemaState } from "../src/core/lib/build-state";
+import { computeModuleFingerprint, detectSchemaDrift, writeSchemaState } from "../src/core/lib/build-state";
 import { toolCommand } from "../src/core/lib/tool-command";
 
 // `--force` on both seed-demo steps, because a demo host runs the published
@@ -80,8 +80,9 @@ function main(): void {
 
     process.stdout.write("\n── the generated code, for the modules installed ──\n");
     if (detectSchemaDrift()) {
+        const moduleFingerprint = computeModuleFingerprint();
         run(["scripts/merge-schemas.ts"]);
-        writeSchemaState();
+        writeSchemaState(process.cwd(), moduleFingerprint);
     }
     // Every registry, not only the hooks: a seed may reach any of them, and
     // regenerating is idempotent and quick.

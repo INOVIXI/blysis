@@ -41,11 +41,12 @@ vi.mock("@/core/lib/logger", () => ({
     errorText: (e: unknown) => (e instanceof Error ? e.message : String(e)),log: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
-const { writeSchemaState } = vi.hoisted(() => ({
+const { writeSchemaState, computeModuleFingerprint } = vi.hoisted(() => ({
     writeSchemaState: vi.fn(),
+    computeModuleFingerprint: vi.fn(() => "modules"),
 }));
 
-vi.mock("@/core/lib/build-state", () => ({ writeSchemaState }));
+vi.mock("@/core/lib/build-state", () => ({ writeSchemaState, computeModuleFingerprint }));
 
 // The build is staged (staged-build.ts has its own tests against a real
 // directory): what matters here is that install-lock builds into the staging
@@ -152,6 +153,8 @@ afterEach(() => {
     discardStagedBuild.mockClear();
     prepareStagedBuild.mockClear();
     writeSchemaState.mockClear();
+    computeModuleFingerprint.mockReset();
+    computeModuleFingerprint.mockReturnValue("modules");
 });
 
 async function load(): Promise<InstallLock> {
@@ -498,6 +501,28 @@ describe("scheduleBuild", () => {
         expect(discardStagedBuild).not.toHaveBeenCalled();
     });
 
+    it("records the modules the build started from, not the ones there when it ended", async () => {
+        setProduction();
+        // The module set changes the moment the first generator starts, as
+        // a module copied in during the build would.
+        let modules = "at-start";
+        computeModuleFingerprint.mockImplementation(() => modules);
+        execFileMock.mockImplementation(((_file: string, _args: string[], _opts: unknown, cb: ExecFileCb) => {
+            modules = "at-end";
+            cb(null, "", "");
+        }) as never);
+        const mod = await load();
+
+        mod.scheduleBuild();
+        await drainBuild();
+
+        // The generators read src/modules before the build. A module copied
+        // in after that is not in the compiled route table, so recording it
+        // as built told the next boot there was nothing to rebuild.
+        expect(markStagedBuildReady).toHaveBeenCalledWith(process.cwd(), "at-start");
+        expect(writeSchemaState).toHaveBeenCalledWith(process.cwd(), "at-start");
+    });
+
     it("schedules another build for installs that landed during one", async () => {
         setProduction();
         let releaseBuild: () => void = () => { };
@@ -515,11 +540,17 @@ describe("scheduleBuild", () => {
         mod.scheduleBuild();
         releaseBuild();
         await vi.advanceTimersByTimeAsync(0);
+        // Restarting now would serve a build without that module, and the
+        // restart landed before the next build's debounce ran out, so the
+        // next build never happened.
         await vi.advanceTimersByTimeAsync(3000);
+        expect(process.kill).not.toHaveBeenCalled();
         releaseBuild();
         await vi.advanceTimersByTimeAsync(0);
+        await vi.advanceTimersByTimeAsync(2000);
 
         expect(ranCommands().filter((c) => c === "npm run build")).toHaveLength(2);
+        expect(process.kill).toHaveBeenCalledTimes(1);
     });
 
     it("reports isBuildPending while a build is running", async () => {
