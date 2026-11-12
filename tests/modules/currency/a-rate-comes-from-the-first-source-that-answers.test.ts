@@ -162,7 +162,7 @@ describe("asking the sources in order", () => {
             fetch: impl,
         });
         expect(result.failures.openexchangerates).toEqual({ code: "noKey" });
-        expect(asked.some((url) => url.includes("openexchangerates.org"))).toBe(false);
+        expect(asked.some((url) => new URL(url).hostname === "openexchangerates.org")).toBe(false);
         expect(result.answeredBy).toEqual(["frankfurter"]);
     });
 
