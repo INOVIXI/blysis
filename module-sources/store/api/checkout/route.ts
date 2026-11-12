@@ -6,7 +6,7 @@ import { auth } from "@/core/sdk/auth";
 import { shortOfStock, stockClaims } from "../../lib/stock";
 import { createCreditOrder, deliverPaidOrder } from "../../lib/credit-order";
 import { effectivePrice } from "../../lib/availability";
-import { availabilityFor, rulesOf, type ProductRow } from "../../lib/availability-server";
+import { availabilityFor, pastTheLimit, rulesOf, type ProductRow } from "../../lib/availability-server";
 import { convertedCharge, resolveCurrency } from "../../lib/currency";
 import { startPaymentSession, listPaymentProviders } from "../../lib/payments";
 import { announceOrderCreated, announceOrderCompleted } from "../../lib/order-events";
@@ -396,9 +396,11 @@ export async function POST(request: NextRequest) {
             // transaction: `createCreditOrder` is shared with the game
             // servers that sell on the site's behalf, so both take a credit
             // payment the same way.
+            // The limit is counted again under the lock the game takes: two
+            // credits checkouts sent together both passed the count above.
             const buyerId = session.user.id;
-            const order = await prisma.$transaction((tx) =>
-                createCreditOrder(tx, {
+            const order = await prisma.$transaction(async (tx) =>
+                (await pastTheLimit(tx, products, orderItems, buyerId, now)) ? null : createCreditOrder(tx, {
                     buyerId,
                     ownerId: buyerId,
                     gift: false,
@@ -421,6 +423,9 @@ export async function POST(request: NextRequest) {
                     description: `Store purchase (${orderItems.map((i) => i.name).join(", ")})`,
                 }),
             );
+            if (!order) {
+                return NextResponse.json({ error: "limit_reached", code: "store_limit_reached" }, { status: 409 });
+            }
 
             // Delivery runs after the commit: a game server that is down must
             // not roll back an order somebody paid for. Not awaited, as

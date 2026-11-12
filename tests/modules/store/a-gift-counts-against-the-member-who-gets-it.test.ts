@@ -22,8 +22,10 @@ interface Row {
 function matches(where: Record<string, unknown>, row: Row): boolean {
     if (where.productId !== undefined && where.productId !== row.productId) return false;
     const order = (where.order ?? {}) as Record<string, unknown>;
-    const status = order.status as { in: string[] } | undefined;
-    if (status && !status.in.includes(row.order.status)) return false;
+    const either = order.OR as Record<string, unknown>[] | undefined;
+    if (either && !either.some((one) => matches({ order: one }, row))) return false;
+    const status = order.status as { in: string[] } | string | undefined;
+    if (typeof status === "string" ? status !== row.order.status : status && !status.in.includes(row.order.status)) return false;
     if (order.userId !== undefined && order.userId !== row.order.userId) return false;
     const created = order.createdAt as { gte: Date } | undefined;
     if (created && row.order.createdAt < created.gte) return false;
@@ -33,7 +35,7 @@ function matches(where: Record<string, unknown>, row: Row): boolean {
         if (value !== meta.equals) return false;
     }
     for (const key of Object.keys(order)) {
-        if (!["status", "userId", "createdAt", "metadata"].includes(key)) throw new Error(`unread filter ${key}`);
+        if (!["OR", "status", "userId", "createdAt", "metadata"].includes(key)) throw new Error(`unread filter ${key}`);
     }
     return true;
 }
@@ -88,5 +90,28 @@ describe("a per-person limit", () => {
     it("still counts an order with no metadata as the buyer's own", async () => {
         const plain: Row = { productId: "rank", quantity: 2, order: { status: "COMPLETED", userId: "bo", createdAt: at, metadata: null } };
         expect((await countsFor(reader([plain]), "rank", "bo", rules, now)).boughtByPerson).toBe(2);
+    });
+});
+
+describe("a per-person limit, while a payment is on its way", () => {
+    const placed = (minutesAgo: number): Row => ({
+        productId: "rank",
+        quantity: 1,
+        order: { status: "PENDING", userId: "bo", createdAt: new Date(now.getTime() - minutesAgo * 60_000), metadata: null },
+    });
+
+    it("counts a checkout still waiting for its payment", async () => {
+        // Ten checkouts opened in ten tabs were all PENDING, so none counted,
+        // and paying all ten bought ten of a one-per-account product.
+        expect((await countsFor(reader([placed(5)]), "rank", "bo", rules, now)).boughtByPerson).toBe(1);
+    });
+
+    it("lets a checkout nobody paid for go after an hour", async () => {
+        // An abandoned payment page must not hold the allowance for ever.
+        expect((await countsFor(reader([placed(61)]), "rank", "bo", rules, now)).boughtByPerson).toBe(0);
+    });
+
+    it("counts only what was paid for when a payment settles", async () => {
+        expect((await countsFor(reader([placed(5), own("bo")]), "rank", "bo", rules, now, true)).boughtByPerson).toBe(1);
     });
 });

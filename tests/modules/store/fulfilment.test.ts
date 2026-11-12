@@ -57,7 +57,8 @@ const db = {
     // the shop does not count - `stock: null` - so the read finds nothing to
     // take and no product is written to. `a-limited-product-runs-out.test.ts`
     // is where the counting itself is tested.
-    product: { findMany: vi.fn(async () => []), updateMany: vi.fn(async () => ({ count: 1 })) },
+    product: { findMany: vi.fn(async (): Promise<unknown[]> => []), updateMany: vi.fn(async () => ({ count: 1 })) },
+    orderItem: { aggregate: vi.fn(async () => ({ _sum: { quantity: null as number | null } })) },
     user: { update: vi.fn(async () => ({})) },
     creditTransaction: { findUnique: vi.fn(async () => null), create: vi.fn(async () => ({})) },
     creditTopUp: {
@@ -99,7 +100,8 @@ const models = Object.fromEntries(Object.entries(db).filter(([k]) => k !== "$tra
     string,
     Record<string, unknown>
 >;
-const txClient = trace(models, true);
+const executeRaw = vi.fn(async () => 1);
+const txClient = { ...trace(models, true), $executeRaw: executeRaw };
 const prismaClient = { ...trace(models, false), $transaction: db.$transaction };
 
 const log = { error: vi.fn(), warn: vi.fn(), info: vi.fn() };
@@ -376,6 +378,41 @@ describe("settleOrder", () => {
  * settlement is held against it. The gateway's word for the amount used to be
  * the only one there was: a cent settled an order of fifty.
  */
+describe("settleOrder, against a per-person limit", () => {
+    const limited = { id: "prod-1", durationDays: null, grantsRoleId: null, perPersonLimit: 1, perPersonPeriod: "ever" };
+
+    it("settles nothing that takes the buyer past their limit, and says so", async () => {
+        // Two checkouts paid for one at a time: the other one is already paid.
+        db.order.findUnique.mockResolvedValueOnce({ ...paidOrder, status: "PENDING" });
+        db.product.findMany.mockImplementation(async () => [limited]);
+        db.orderItem.aggregate.mockResolvedValueOnce({ _sum: { quantity: 1 } });
+
+        const outcome = await settleOrder(settlement);
+
+        expect(outcome.handled).toBe(false);
+        expect(outcome.error).toMatch(/limit/);
+        expect(db.payment.create).not.toHaveBeenCalled();
+        expect(announceOrderCompleted).not.toHaveBeenCalled();
+        expect(log.error).toHaveBeenCalled();
+        // Counted under the lock the in-game purchase takes, leaving out the
+        // order being settled.
+        expect(executeRaw).toHaveBeenCalled();
+        expect(JSON.stringify(db.orderItem.aggregate.mock.calls[0])).toContain('"not":"order-1"');
+        db.product.findMany.mockImplementation(async () => []);
+    });
+
+    it("settles an order that stays inside the limit", async () => {
+        db.order.findUnique.mockResolvedValueOnce({ ...paidOrder, status: "PENDING" });
+        db.product.findMany.mockImplementation(async () => [limited]);
+
+        const outcome = await settleOrder(settlement);
+
+        expect(outcome).toEqual({ handled: true, duplicate: false, error: null });
+        expect(db.payment.create).toHaveBeenCalled();
+        db.product.findMany.mockImplementation(async () => []);
+    });
+});
+
 describe("settleOrder, against what was charged", () => {
     const charged = { ...paidOrder, status: "PENDING", chargeAmount: 42, chargeCurrency: "USD" };
 

@@ -147,6 +147,28 @@ describe("the checkout", () => {
         expect(orderCreate).not.toHaveBeenCalled();
     });
 
+    it("refuses a credits purchase when the limit filled while it waited for the lock", async () => {
+        // Two credits checkouts sent together both passed the count above;
+        // the one that takes the lock second counts again and sees the first.
+        row.current = product({ perPersonLimit: 1 });
+        db.user.findUnique.mockImplementation(async () => ({ creditBalance: 100, roleId: null }));
+        db.$transaction.mockImplementationOnce(async (work: unknown) =>
+            (work as (tx: unknown) => Promise<unknown>)({
+                ...db,
+                $executeRaw: vi.fn(async () => {
+                    bought.current = 1;
+                    return 1;
+                }),
+            }),
+        );
+
+        const { status, body } = await checkout();
+
+        db.user.findUnique.mockImplementation(async () => ({ creditBalance: 0, roleId: null }));
+        expect(status).toBe(409);
+        expect(body.code).toBe("store_limit_reached");
+    });
+
     it("refuses over the period's allowance", async () => {
         row.current = product({ periodStock: 5 });
         bought.current = 5;

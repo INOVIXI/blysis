@@ -19,6 +19,14 @@ import { recordedPlayerName, recordedVariables } from "./chest";
 import { chargeShortfall } from "./charge";
 import { cancelTopUp, findTopUp, settleCredits } from "./credit-top-up";
 import { ALREADY, OK, failed, refused } from "./payment-outcome";
+import { pastTheLimit } from "./availability-server";
+
+/** Thrown inside a settlement to roll it back: the order would pass a limit. */
+class PastTheLimit extends Error {
+    constructor(readonly productId: string) {
+        super("past the per-person limit");
+    }
+}
 
 /**
  * Settles whatever the reference names: a top-up, or else an order.
@@ -213,8 +221,15 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
             // settlement carry columns the shelf has no use for.
             const grants = await tx.product.findMany({
                 where: { id: { in: productIds } },
-                select: { id: true, durationDays: true, grantsRoleId: true },
+                select: { id: true, durationDays: true, grantsRoleId: true, perPersonLimit: true, perPersonPeriod: true },
             });
+
+            // The per-person limit again, now that the money is here: every
+            // checkout counted before it was paid, and several paid together
+            // each passed. Thrown, so the claim and the chest rows above roll
+            // back with it.
+            const past = await pastTheLimit(tx, grants, granted, buyerId, now, order.id);
+            if (past) throw new PastTheLimit(past);
             const timed = grants.filter((p) => p.durationDays !== null && p.durationDays > 0);
             const timedIds = new Set(timed.map((p) => p.id));
             const outright = productIds.filter((id) => !timedIds.has(id));
@@ -289,7 +304,24 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
             },
         });
         return { settled: true, short };
+    }).catch((error: unknown) => {
+        if (error instanceof PastTheLimit) return { settled: false, short: [] as string[], past: error.productId };
+        throw error;
     });
+
+    // Refused rather than acknowledged, like a short payment: the money
+    // arrived for more than this member may buy, and an operator has to
+    // refund it. A retry settles it if the order that filled the limit was
+    // refunded in the meantime.
+    if ("past" in settled) {
+        log.error("[store] a paid order would pass a per-person limit; refund it", {
+            orderId: order.id,
+            productId: settled.past,
+            provider: settlement.provider,
+            providerRef: settlement.providerRef,
+        });
+        return refused(`order passes the per-person limit of ${settled.past}`);
+    }
 
     // Another delivery of the same payment got there first.
     if (!settled.settled) return ALREADY;
