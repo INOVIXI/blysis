@@ -9,7 +9,7 @@ import { Pagination, usePagedRows } from "@/core/components/ui/pagination";
 import { Loader2, Smartphone, Monitor, Trash2, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
-import { useLocalDate } from "@/core/hooks/useLocalDate";
+import { useLocalDateTime } from "@/core/hooks/useLocalDate";
 
 interface UserSession {
     id: string;
@@ -36,7 +36,7 @@ export function SessionsTab() {
     const __locale = useLocale();
     // The site's zone, not the machine's: without it the server and the
     // browser disagree about what day a timestamp near midnight is.
-    const formatDate = useLocalDate({ dateStyle: "medium", timeStyle: "short" });
+    const formatDate = useLocalDateTime({ dateStyle: "medium", timeStyle: "short" });
     const [sessions, setSessions] = useState<UserSession[]>([]);
     const [loading, setLoading] = useState(true);
     const [revoking, setRevoking] = useState<Set<string>>(new Set());
