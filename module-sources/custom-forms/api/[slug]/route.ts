@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { challengeFieldsFrom, getClientIP, isAdmin, prisma, rateLimitForRoleAsync, readJsonBody, runChallenge } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { checkAnswers, formSubmissionSchema, formUpdateSchema, storedFieldsSchema } from "../../lib/validations";
+import { checkAnswers, formSubmissionSchema, formUpdateSchema, limitWithoutSignIn, storedFieldsSchema } from "../../lib/validations";
+import { usedAllowance } from "../../lib/allowance";
+import { memberStatus } from "../../lib/member-status";
 
 type RouteParams = { params: Promise<{ slug: string }> };
 
@@ -11,7 +13,35 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         where: { OR: [{ slug }, { id: slug }], isActive: true },
     });
     if (!form) return NextResponse.json({ error: "Form not found" }, { status: 404 });
-    return NextResponse.json({ form });
+
+    /*
+     * Who is reading, as far as this form cares: a visitor is told to sign
+     * in where the form asks for it, and a member sees what they already
+     * sent and what was decided, so an application that has been answered
+     * is not a blank form inviting them to send it again.
+     */
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId) return NextResponse.json({ form, viewer: { signedIn: false } });
+
+    const [used, sent] = await Promise.all([
+        usedAllowance(prisma, form, userId),
+        prisma.customFormSubmission.findMany({
+            where: { formId: form.id, userId },
+            select: { id: true, status: true, reviewNote: true, createdAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 10,
+        }),
+    ]);
+    return NextResponse.json({
+        form,
+        viewer: {
+            signedIn: true,
+            used,
+            limit: form.requireSignIn ? form.submissionLimit : null,
+            submissions: sent.map((row) => ({ ...row, status: memberStatus(row.status) })),
+        },
+    });
 }
 
 // Submit form
@@ -34,6 +64,13 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         where: { OR: [{ slug }, { id: slug }], isActive: true },
     });
     if (!form) return NextResponse.json({ error: "Form not found" }, { status: 404 });
+
+    // Before anything is read: the page shows a visitor a prompt instead of
+    // this form, and the rule has to hold for a post that skipped the page.
+    const userId = session?.user?.id ?? null;
+    if (form.requireSignIn && !userId) {
+        return NextResponse.json({ error: "Sign in to send this form", code: "sign_in_required" }, { status: 401 });
+    }
 
     const jsonBody = await readJsonBody(request);
     if (jsonBody instanceof NextResponse) return jsonBody;
@@ -75,13 +112,23 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Form data rejected", ...problem }, { status: 400 });
     }
 
-    const submission = await prisma.customFormSubmission.create({
-        data: {
-            formId: form.id,
-            userId: session?.user?.id || null,
-            data,
-        },
-    });
+    const record = { formId: form.id, userId, data };
+    const limit = form.requireSignIn && userId ? form.submissionLimit : null;
+    /*
+     * The count and the write under one lock per member and form, held to
+     * the end of the transaction: counted and then written separately, two
+     * tabs sending at once would both find the last place free.
+     */
+    const submission = limit === null || !userId
+        ? await prisma.customFormSubmission.create({ data: record })
+        : await prisma.$transaction(async (tx) => {
+            await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`custom-forms:${form.id}:${userId}`}))`;
+            if ((await usedAllowance(tx, form, userId)) >= limit) return null;
+            return tx.customFormSubmission.create({ data: record });
+        });
+    if (!submission) {
+        return NextResponse.json({ error: "You have already sent this form", code: "limit_reached" }, { status: 409 });
+    }
 
     // Fire hook for cross-module reactions
     const { doActionAsync } = await import("@/core/sdk");
@@ -121,11 +168,19 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
     const fields = parsedUpdate.data;
 
+    const requireSignIn = fields.requireSignIn ?? form.requireSignIn;
+    const submissionLimit = fields.submissionLimit !== undefined ? fields.submissionLimit : form.submissionLimit;
+    if (limitWithoutSignIn(requireSignIn, submissionLimit)) {
+        return NextResponse.json({ error: "A limit needs sign-in", code: "limit_needs_sign_in" }, { status: 400 });
+    }
+
     const data: Record<string, unknown> = {};
     if (fields.title !== undefined) data.title = fields.title;
     if (fields.description !== undefined) data.description = fields.description;
     if (fields.fields !== undefined) data.fields = fields.fields;
     if (fields.isActive !== undefined) data.isActive = fields.isActive;
+    if (fields.requireSignIn !== undefined) data.requireSignIn = fields.requireSignIn;
+    if (fields.submissionLimit !== undefined) data.submissionLimit = fields.submissionLimit;
 
     const updated = await prisma.customForm.update({ where: { id: form.id }, data });
 

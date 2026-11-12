@@ -127,10 +127,15 @@ const fieldList = z.array(formFieldSchema).min(1, "Title and fields required").m
         }
     });
 
+/** How many times one member may send a form in a period; null is no limit. */
+const submissionLimit = z.number().int().min(1).max(1_000).nullable();
+
 export const formCreateSchema = z.object({
     title: z.string().trim().min(1, "Title and fields required").max(200),
     description: z.string().max(1_000).optional().nullable(),
     fields: fieldList,
+    requireSignIn: z.boolean().optional(),
+    submissionLimit: submissionLimit.optional(),
 });
 
 export const formUpdateSchema = z.object({
@@ -138,7 +143,21 @@ export const formUpdateSchema = z.object({
     description: z.string().max(1_000).optional().nullable(),
     fields: fieldList.optional(),
     isActive: z.boolean().optional(),
+    requireSignIn: z.boolean().optional(),
+    submissionLimit: submissionLimit.optional(),
 });
+
+/**
+ * Whether a form's sign-in rule and limit can stand together.
+ *
+ * A limit is counted per member, and a visitor who is not signed in is
+ * nobody the count can find, so a limit on a form anyone may send would
+ * limit nothing while the panel said it did. Asked of the form as it will
+ * be after the write, so switching sign-in off under a limit is refused too.
+ */
+export function limitWithoutSignIn(requireSignIn: boolean, limit: number | null): boolean {
+    return limit !== null && !requireSignIn;
+}
 
 /**
  * A submission answers each field by name. The renderer only ever produces
@@ -153,18 +172,27 @@ export const formSubmissionSchema = z.object({
 /**
  * Where a submission can be in an operator's day.
  *
- * The column has held one of these three since the module was written and
- * nothing in it ever wrote the column, so the value a row was created with
- * was the value it kept. A list that only grows is not an inbox; these are
- * what an operator moves a row between, and the list is closed so the screen
- * can name every one of them.
+ * The first three are an inbox: what an operator moves a row between while
+ * dealing with it. The last two are a decision, for a form that is an
+ * application, and the person who sent it reads them (see `memberStatus`).
+ * The list is closed so the screen can name every one of them.
  */
-export const SUBMISSION_STATES = ["new", "read", "handled"] as const;
+export const SUBMISSION_STATES = ["new", "read", "handled", "approved", "rejected"] as const;
 
 export type SubmissionState = (typeof SUBMISSION_STATES)[number];
 
+/** The states that are an answer to the person, rather than a step in the inbox. */
+export const DECISION_STATES: readonly SubmissionState[] = ["approved", "rejected"];
+
+/**
+ * A state change, a note to the person who sent it, or both. A note is
+ * cleared with null or an empty string.
+ */
 export const submissionUpdateSchema = z.object({
-    status: z.enum(SUBMISSION_STATES),
+    status: z.enum(SUBMISSION_STATES).optional(),
+    reviewNote: z.string().trim().max(2_000).nullable().optional(),
+}).refine((body) => body.status !== undefined || body.reviewNote !== undefined, {
+    message: "Nothing to change",
 });
 
 /**

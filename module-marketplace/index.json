@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-26",
-  "updatedAt": "2026-10-26T17:03:52Z",
+  "updated": "2026-11-12",
+  "updatedAt": "2026-11-12T08:00:51Z",
   "modules": [
     {
       "id": "announcements",
@@ -1314,13 +1314,13 @@
           "description": "带提交记录的动态表单构建器"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "FileEdit",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-12T08:00:51Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -1333,14 +1333,15 @@
           "customforms.form.created",
           "customforms.form.deleted",
           "customforms.form.updated",
-          "customforms.submission.created"
+          "customforms.submission.created",
+          "customforms.submission.reviewed"
         ],
         "listens": []
       },
       "stats": {
         "publicRoutes": 1,
         "adminRoutes": 2,
-        "apiRoutes": 4,
+        "apiRoutes": 6,
         "widgets": 0
       }
     },
