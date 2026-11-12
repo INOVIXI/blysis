@@ -163,7 +163,10 @@
     "twoFactorEnabled": "Autenticazione a due fattori attivata",
     "userProfileUpdated": "{username} ha aggiornato il proprio profilo",
     "userRegistered": "si è unito alla community",
-    "viewAll": "Vedi tutto"
+    "viewAll": "Vedi tutto",
+    "auditSignInMethodConnect": "Ha collegato un metodo di accesso",
+    "auditSignInMethodDisconnect": "Ha scollegato un metodo di accesso",
+    "auditSignInMethodRemove": "Ha rimosso un metodo di accesso di un membro"
   },
   "nav": {
     "adminPanel": "Pannello di amministrazione",
@@ -1356,7 +1359,21 @@
     "placeholder_noValue": "nessun valore al momento",
     "placeholder_unknown": "Niente su questo sito risponde a {names}, i visitatori vedono un trattino.",
     "placeholder_refused": "Niente su questo sito risponde a {names}, quindi il testo non verrà salvato.",
-    "placeholder_site_name": "Nome del sito"
+    "placeholder_site_name": "Nome del sito",
+    "users_signInMethods": "Metodi di accesso",
+    "users_signInMethodsPassword": "Ha una password.",
+    "users_signInMethodsNoPassword": "Nessuna password: accede solo con i metodi qui sotto.",
+    "users_signInMethodsNone": "Nessun metodo di accesso collegato.",
+    "users_signInMethodConnectedOn": "Collegato il {date}",
+    "users_signInMethodRemove": "Rimuovi",
+    "users_signInMethodRemoveTitle": "Rimuovere {provider}?",
+    "users_signInMethodRemoveMessage": "{username} non potrà più accedere con {provider}.",
+    "users_signInMethodRemoved": "{provider} rimosso.",
+    "users_signInMethodLast": "È l'unico modo di accesso del membro, quindi non è stato rimosso.",
+    "generalSettings_signInMethodSignUps": "Nuovi account dai metodi di accesso",
+    "generalSettings_signInMethodSignUpsHint": "Quando possono usarli solo i membri collegati, l'accesso tramite un provider funziona solo per chi lo ha collegato dalla pagina del proprio account, e nessuno ottiene un nuovo account in questo modo.",
+    "generalSettings_signInMethodSignUpsOpen": "Crea un account per chiunque sia nuovo",
+    "generalSettings_signInMethodSignUpsClosed": "Solo membri collegati"
   },
   "footer": {
     "quickLinks": "Link rapidi",
@@ -1443,7 +1460,22 @@
     "username": "Nome utente",
     "usernameCannotChange": "Questo sito non consente ai membri di cambiare il nome utente.",
     "viewPublicProfile": "Visualizza profilo pubblico",
-    "youSaid": "Tu:"
+    "youSaid": "Tu:",
+    "signInMethods": "Metodi di accesso",
+    "signInMethods_hint": "Collega un account che hai altrove per accedere qui con quello. Nome utente e password continuano a funzionare.",
+    "signInMethods_none": "Questo sito non offre altri metodi di accesso.",
+    "signInMethods_connectedOn": "Collegato il {date}",
+    "signInMethods_notConnected": "Non collegato",
+    "signInMethods_connect": "Collega",
+    "signInMethods_connectLabel": "Collega {provider}",
+    "signInMethods_disconnect": "Scollega",
+    "signInMethods_disconnectTitle": "Scollegare {provider}?",
+    "signInMethods_disconnectMessage": "Non potrai più accedere con {provider}. Potrai collegarlo di nuovo in seguito.",
+    "signInMethods_connected": "{provider} è collegato. Da ora puoi accedere con esso.",
+    "signInMethods_disconnected": "{provider} è scollegato.",
+    "signInMethods_failed": "Non ha funzionato. Riprova.",
+    "signInMethods_errTaken": "Quell'account è già collegato a un altro membro qui. Non è stato spostato sul tuo.",
+    "signInMethods_errNotStarted": "Non è stato collegato nulla. Inizia da questa pagina con Collega, poi accedi presso il provider."
   },
   "auth": {
     "accountLocked": "Troppi tentativi falliti. Il tuo account è bloccato temporaneamente. Controlla la tua email o riprova tra qualche minuto.",
@@ -1500,7 +1532,13 @@
       "username_taken": "Questo nome utente è già in uso.",
       "username_too_short": "Questo nome utente è troppo corto per questo sito. Scegline uno più lungo.",
       "weak_password": "La password non soddisfa i requisiti. Scegline una più sicura.",
-      "wrong_password": "La password non è corretta."
+      "wrong_password": "La password non è corretta.",
+      "already_connected": "Hai già collegato un account di questo provider. Scollegalo prima.",
+      "impersonating": "Non è possibile collegare metodi di accesso mentre agisci come un altro membro.",
+      "last_sign_in_method": "È l'unico modo per entrare nel tuo account, quindi non può essere rimosso. Collega prima un altro metodo.",
+      "session_unknown": "Esci e accedi di nuovo, poi collega.",
+      "unknown_provider": "Quel metodo di accesso non è disponibile su questo sito.",
+      "sign_in_method_not_found": "Quel metodo di accesso non è collegato."
     },
     "errorAccessDenied": "Accesso negato. Non hai il permesso di accedere.",
     "errorConfiguration": "Errore di configurazione del server. Contatta l’amministratore del sito.",
@@ -1559,7 +1597,8 @@
     "demoAsAdmin": "Come amministratore",
     "demoAsMember": "Come membro",
     "demoResetNote": "Tutto qui viene ripristinato ogni ora, così nulla di ciò che fai può rovinarlo per il visitatore successivo. Alcune azioni sono disattivate: invio di email, pagamenti reali e tutto ciò che bloccherebbe l’account che stai usando.",
-    "demoFillFor": "Compila i dati {who}"
+    "demoFillFor": "Compila i dati {who}",
+    "errorConnectFirst": "Questo accesso non è collegato a nessun account qui. Accedi con nome utente e password, poi collegalo dalla pagina del tuo account."
   },
   "search": {
     "title": "Cerca",

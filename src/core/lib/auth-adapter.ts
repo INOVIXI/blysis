@@ -224,8 +224,13 @@ export function coreAuthAdapter(base: Adapter, prisma: CoreAdapterClient): Adapt
             return toAdapterUser(row) as AdapterUser;
         },
 
+        // `connectedAt` is core's own column, written here rather than taken
+        // from the provider: it is the date the account page shows beside a
+        // sign-in method, and a row linked before it existed stays null.
         linkAccount: async (account) => {
-            await prisma.account.create({ data: toAccountRow(account as unknown as Record<string, unknown>) });
+            await prisma.account.create({
+                data: { ...toAccountRow(account as unknown as Record<string, unknown>), connectedAt: new Date() },
+            });
             return account as AdapterAccount;
         },
 

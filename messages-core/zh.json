@@ -163,7 +163,10 @@
     "twoFactorEnabled": "已开启两步验证",
     "userProfileUpdated": "{username} 更新了个人资料",
     "userRegistered": "加入了社区",
-    "viewAll": "查看全部"
+    "viewAll": "查看全部",
+    "auditSignInMethodConnect": "连接了一种登录方式",
+    "auditSignInMethodDisconnect": "断开了一种登录方式",
+    "auditSignInMethodRemove": "移除了成员的一种登录方式"
   },
   "nav": {
     "adminPanel": "管理后台",
@@ -1356,7 +1359,21 @@
     "placeholder_noValue": "当前没有值",
     "placeholder_unknown": "本站没有任何内容响应 {names}，访客在此处会看到一条短横线。",
     "placeholder_refused": "本站没有任何内容响应 {names}，因此文本无法保存。",
-    "placeholder_site_name": "站点名称"
+    "placeholder_site_name": "站点名称",
+    "users_signInMethods": "登录方式",
+    "users_signInMethodsPassword": "已设置密码。",
+    "users_signInMethodsNoPassword": "未设置密码:只能通过下方方式登录。",
+    "users_signInMethodsNone": "未连接任何登录方式。",
+    "users_signInMethodConnectedOn": "连接于 {date}",
+    "users_signInMethodRemove": "移除",
+    "users_signInMethodRemoveTitle": "移除 {provider}?",
+    "users_signInMethodRemoveMessage": "{username} 将无法再用 {provider} 登录。",
+    "users_signInMethodRemoved": "已移除 {provider}。",
+    "users_signInMethodLast": "这是该成员唯一的登录方式,因此未被移除。",
+    "generalSettings_signInMethodSignUps": "通过登录方式创建新账号",
+    "generalSettings_signInMethodSignUpsHint": "设为仅限已连接成员时,通过服务商登录只对在账号页面连接过的成员有效,不会以此方式创建新账号。",
+    "generalSettings_signInMethodSignUpsOpen": "为任何新用户创建账号",
+    "generalSettings_signInMethodSignUpsClosed": "仅限已连接成员"
   },
   "footer": {
     "quickLinks": "快速链接",
@@ -1443,7 +1460,22 @@
     "username": "用户名",
     "usernameCannotChange": "本站不允许成员更改用户名。",
     "viewPublicProfile": "查看公开资料",
-    "youSaid": "你："
+    "youSaid": "你：",
+    "signInMethods": "登录方式",
+    "signInMethods_hint": "连接你在其他地方的账号,即可用它在这里登录。你的用户名和密码仍然有效。",
+    "signInMethods_none": "本站未提供其他登录方式。",
+    "signInMethods_connectedOn": "连接于 {date}",
+    "signInMethods_notConnected": "未连接",
+    "signInMethods_connect": "连接",
+    "signInMethods_connectLabel": "连接 {provider}",
+    "signInMethods_disconnect": "断开连接",
+    "signInMethods_disconnectTitle": "断开 {provider}?",
+    "signInMethods_disconnectMessage": "你将无法再用 {provider} 登录。之后可以重新连接。",
+    "signInMethods_connected": "{provider} 已连接。从现在起你可以用它登录。",
+    "signInMethods_disconnected": "{provider} 已断开。",
+    "signInMethods_failed": "操作失败,请重试。",
+    "signInMethods_errTaken": "该账号已连接到本站的另一位成员,没有被转移到你的账号。",
+    "signInMethods_errNotStarted": "未连接任何内容。请先在此页面点击“连接”,再到服务商处登录。"
   },
   "auth": {
     "accountLocked": "尝试失败次数过多，你的账户已被暂时锁定。请查看邮箱，或几分钟后再试。",
@@ -1500,7 +1532,13 @@
       "username_taken": "该用户名已被占用。",
       "username_too_short": "该用户名对本站来说太短，请选择更长的用户名。",
       "weak_password": "该密码不符合要求，请设置更强的密码。",
-      "wrong_password": "密码不正确。"
+      "wrong_password": "密码不正确。",
+      "already_connected": "你已连接了该服务商的一个账号,请先断开它。",
+      "impersonating": "以其他成员身份操作时无法连接登录方式。",
+      "last_sign_in_method": "这是进入你账号的唯一方式,无法移除。请先连接另一种方式。",
+      "session_unknown": "请退出后重新登录,再进行连接。",
+      "unknown_provider": "本站不提供该登录方式。",
+      "sign_in_method_not_found": "该登录方式未连接。"
     },
     "errorAccessDenied": "拒绝访问。你没有登录权限。",
     "errorConfiguration": "服务器配置有误，请联系站点管理员。",
@@ -1559,7 +1597,8 @@
     "demoAsAdmin": "以管理员身份",
     "demoAsMember": "以成员身份",
     "demoResetNote": "此处的所有内容每小时恢复一次，因此你的操作不会影响下一位访客。部分操作已被禁用：发送邮件、真实付款，以及任何会锁定你所用账户的操作。",
-    "demoFillFor": "填写 {who} 的详细信息"
+    "demoFillFor": "填写 {who} 的详细信息",
+    "errorConnectFirst": "此登录方式未连接到本站的任何账号。请先用用户名和密码登录,再在账号页面中连接它。"
   },
   "search": {
     "title": "搜索",

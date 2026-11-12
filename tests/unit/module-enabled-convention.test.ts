@@ -71,6 +71,8 @@ const UNGATED_BY_DESIGN: Record<string, string> = {
         "Registry introspection for developers. Its whole purpose is to report what is installed, enabled or not.",
     "src/core/lib/activity-title.ts":
         "Titles rows already written to the activity log. History must keep rendering after a module is turned off, or it degrades to raw keys.",
+    "src/core/components/auth/ProviderMark.tsx":
+        "Names and draws a sign-in method a member already has connected. Its module being turned off does not unbind the account, and the member still needs to recognise it to disconnect it; what may be connected is gated on the server by connectableProviders.",
     "src/core/lib/audit-action.ts":
         "Names rows already written to the audit log, which is the record of what was done to this site. Turning a module off does not unmake what it logged, and gating here would turn that history back into the raw keys this replaced.",
     "src/core/sdk/index.ts":

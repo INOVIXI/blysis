@@ -163,7 +163,10 @@
     "twoFactorEnabled": "Zwei-Faktor-Authentifizierung aktiviert",
     "userProfileUpdated": "{username} hat das Profil aktualisiert",
     "userRegistered": "ist der Community beigetreten",
-    "viewAll": "Alle anzeigen"
+    "viewAll": "Alle anzeigen",
+    "auditSignInMethodConnect": "Hat eine Anmeldemethode verbunden",
+    "auditSignInMethodDisconnect": "Hat eine Anmeldemethode getrennt",
+    "auditSignInMethodRemove": "Hat die Anmeldemethode eines Mitglieds entfernt"
   },
   "nav": {
     "adminPanel": "Admin-Bereich",
@@ -1356,7 +1359,21 @@
     "placeholder_noValue": "derzeit kein Wert",
     "placeholder_unknown": "Auf dieser Seite beantwortet nichts {names}, Besucher sehen dort einen Strich.",
     "placeholder_refused": "Auf dieser Seite beantwortet nichts {names}, so lässt sich der Text nicht speichern.",
-    "placeholder_site_name": "Seitenname"
+    "placeholder_site_name": "Seitenname",
+    "users_signInMethods": "Anmeldemethoden",
+    "users_signInMethodsPassword": "Hat ein Passwort.",
+    "users_signInMethodsNoPassword": "Kein Passwort: meldet sich nur über die Methoden unten an.",
+    "users_signInMethodsNone": "Keine Anmeldemethode verbunden.",
+    "users_signInMethodConnectedOn": "Verbunden am {date}",
+    "users_signInMethodRemove": "Entfernen",
+    "users_signInMethodRemoveTitle": "{provider} entfernen?",
+    "users_signInMethodRemoveMessage": "{username} kann sich dann nicht mehr mit {provider} anmelden.",
+    "users_signInMethodRemoved": "{provider} entfernt.",
+    "users_signInMethodLast": "Das ist der einzige Anmeldeweg des Mitglieds, deshalb wurde er nicht entfernt.",
+    "generalSettings_signInMethodSignUps": "Neue Konten über Anmeldemethoden",
+    "generalSettings_signInMethodSignUpsHint": "Wenn nur verbundene Mitglieder sie nutzen dürfen, funktioniert die Anmeldung über einen Anbieter nur für Mitglieder, die ihn auf ihrer Kontoseite verbunden haben, und niemand erhält so ein neues Konto.",
+    "generalSettings_signInMethodSignUpsOpen": "Für jeden Neuen ein Konto anlegen",
+    "generalSettings_signInMethodSignUpsClosed": "Nur verbundene Mitglieder"
   },
   "footer": {
     "quickLinks": "Schnelllinks",
@@ -1443,7 +1460,22 @@
     "username": "Benutzername",
     "usernameCannotChange": "Auf dieser Seite können Mitglieder ihren Benutzernamen nicht ändern.",
     "viewPublicProfile": "Öffentliches Profil ansehen",
-    "youSaid": "Du:"
+    "youSaid": "Du:",
+    "signInMethods": "Anmeldemethoden",
+    "signInMethods_hint": "Verbinde ein Konto, das du anderswo hast, um dich hier damit anzumelden. Benutzername und Passwort funktionieren weiter.",
+    "signInMethods_none": "Diese Seite bietet keine weiteren Anmeldemethoden an.",
+    "signInMethods_connectedOn": "Verbunden am {date}",
+    "signInMethods_notConnected": "Nicht verbunden",
+    "signInMethods_connect": "Verbinden",
+    "signInMethods_connectLabel": "{provider} verbinden",
+    "signInMethods_disconnect": "Trennen",
+    "signInMethods_disconnectTitle": "{provider} trennen?",
+    "signInMethods_disconnectMessage": "Du kannst dich dann nicht mehr mit {provider} anmelden. Du kannst es später wieder verbinden.",
+    "signInMethods_connected": "{provider} ist verbunden. Du kannst dich ab jetzt damit anmelden.",
+    "signInMethods_disconnected": "{provider} ist getrennt.",
+    "signInMethods_failed": "Das hat nicht geklappt. Versuche es noch einmal.",
+    "signInMethods_errTaken": "Dieses Konto ist hier bereits mit einem anderen Mitglied verbunden. Es wurde nicht zu deinem verschoben.",
+    "signInMethods_errNotStarted": "Es wurde nichts verbunden. Beginne auf dieser Seite mit Verbinden und melde dich dann beim Anbieter an."
   },
   "auth": {
     "accountLocked": "Zu viele fehlgeschlagene Versuche. Dein Konto ist vorübergehend gesperrt. Prüfe deine E-Mails oder versuche es in ein paar Minuten erneut.",
@@ -1500,7 +1532,13 @@
       "username_taken": "Dieser Benutzername ist bereits vergeben.",
       "username_too_short": "Dieser Benutzername ist für diese Seite zu kurz. Bitte wähle einen längeren.",
       "weak_password": "Dieses Passwort erfüllt die Anforderungen nicht. Bitte wähle ein stärkeres.",
-      "wrong_password": "Dieses Passwort ist nicht korrekt."
+      "wrong_password": "Dieses Passwort ist nicht korrekt.",
+      "already_connected": "Du hast bereits ein Konto dieses Anbieters verbunden. Trenne es zuerst.",
+      "impersonating": "Anmeldemethoden können nicht verbunden werden, während du als anderes Mitglied handelst.",
+      "last_sign_in_method": "Das ist der einzige Weg in dein Konto, deshalb kann es nicht entfernt werden. Verbinde zuerst eine andere Methode.",
+      "session_unknown": "Melde dich ab und wieder an, dann verbinde.",
+      "unknown_provider": "Diese Anmeldemethode ist auf dieser Seite nicht verfügbar.",
+      "sign_in_method_not_found": "Diese Anmeldemethode ist nicht verbunden."
     },
     "errorAccessDenied": "Zugriff verweigert. Du hast keine Berechtigung, dich anzumelden.",
     "errorConfiguration": "Fehlerhafte Serverkonfiguration. Bitte kontaktiere den Seiten-Administrator.",
@@ -1559,7 +1597,8 @@
     "demoAsAdmin": "Als Administrator",
     "demoAsMember": "Als Mitglied",
     "demoResetNote": "Alles hier wird jede Stunde zurückgesetzt, damit nichts, was du tust, den nächsten Besuch stört. Einige Aktionen sind deaktiviert: E-Mails versenden, echte Zahlungen und alles, was das gerade genutzte Konto sperren würde.",
-    "demoFillFor": "Trage die Angaben {who} ein"
+    "demoFillFor": "Trage die Angaben {who} ein",
+    "errorConnectFirst": "Diese Anmeldung ist hier mit keinem Konto verbunden. Melde dich mit Benutzername und Passwort an und verbinde sie dann auf deiner Kontoseite."
   },
   "search": {
     "title": "Suche",

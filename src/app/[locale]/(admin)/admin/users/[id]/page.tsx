@@ -21,6 +21,7 @@ import { NativeSelect } from "@/core/components/ui/native-select";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { CustomerView } from "./CustomerView";
+import { SignInMethodsCard } from "./SignInMethodsCard";
 
 interface UserDetail {
     id: string;
@@ -383,6 +384,8 @@ export default function AdminUserDetailPage() {
                             </div>
                         </CardContent>
                     </Card>
+
+                    <SignInMethodsCard userId={user.id} username={user.username} />
 
                     {/* Ban/Unban */}
                     <Card className={user.isBanned ? "border-destructive/30" : ""}>
