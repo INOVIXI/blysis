@@ -98,7 +98,10 @@ export function SiteCurrencyProvider({ children }: { children: React.ReactNode }
 
     const value = useMemo<SiteCurrency>(() => {
         const code = display?.code ?? base;
-        const rate = display?.rate ?? 1;
+        // A stored choice keeps the rate it was made at. When it names the
+        // base itself, that rate belongs to whatever the base was then, so
+        // prices are shown as entered (`a-price-in-the-base-is-never-converted`).
+        const rate = code === base ? 1 : display?.rate ?? 1;
         return {
             base,
             code,
