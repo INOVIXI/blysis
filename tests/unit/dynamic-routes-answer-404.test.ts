@@ -145,8 +145,8 @@ describe("the wiring", () => {
         const catchAll = read("src/app/[locale]/[...slug]/page.tsx");
         expect(catchAll).toContain("const resolveRoute = cache(");
         // once in generateMetadata, once in the page: cache() keeps it to one query
-        expect(catchAll.match(/await resolveRoute\(match\.key, match\.params\)/g)?.length).toBe(2);
-        expect(catchAll).toContain("if (!(await resolveRoute(match.key, match.params)).exists) {\n        notFound();");
+        expect(catchAll.match(/await resolveRoute\(match\.key, match\.params, locale\)/g)?.length).toBe(2);
+        expect(catchAll).toContain("if (!(await resolveRoute(match.key, match.params, locale)).exists) {\n        notFound();");
     });
 
     it("treats a broken resolver as no opinion rather than a 404", () => {

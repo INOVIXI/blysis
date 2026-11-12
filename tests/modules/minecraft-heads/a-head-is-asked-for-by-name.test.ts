@@ -24,7 +24,7 @@ describe("the minecraft-heads manifest", () => {
     });
 
     it("needs a core that understands avatar providers", () => {
-        expect(parsed.data?.coreVersion).toBe("^5.33.0");
+        expect(parsed.data?.coreVersion).toBe("^5.35.0");
     });
 
     it("asks each service for a member's head by name and size", () => {

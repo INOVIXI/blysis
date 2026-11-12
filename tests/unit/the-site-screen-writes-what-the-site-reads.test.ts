@@ -111,7 +111,9 @@ describe("the wiring", () => {
     const read = (file: string) => fs.readFileSync(path.join(ROOT, file), "utf8");
 
     it("publishes and caps every link the footer reads", () => {
-        const publicRoute = read("src/app/api/v1/public-settings/route.ts");
+        // The keys a visitor may read live beside the reader the endpoint and
+        // the root layout share.
+        const publicRoute = read("src/core/lib/public-settings.ts");
         const settingsRoute = read("src/app/api/v1/settings/route.ts");
         expect(SITE_SOCIAL_LINKS.length).toBe(6);
         for (const link of SITE_SOCIAL_LINKS) {
