@@ -10,12 +10,13 @@ export default function ShowcaseAdminPage() {
             title={t("adm_title")}
             subtitle={t("adm_subtitleWithHint")}
             apiPath="/api/v1/showcase/cards"
+            listPath="/api/v1/showcase/cards?scope=admin"
             listKey="cards"
             displayField="title"
             secondaryField="href"
             fields={[
-                { key: "title", label: t("adm_cardTitle"), required: true },
-                { key: "body", label: t("adm_cardBody"), type: "textarea" },
+                { key: "title", label: t("adm_cardTitle"), type: "translatable", required: true },
+                { key: "body", label: t("adm_cardBody"), type: "translatableTextarea" },
                 // The same control as every other picture on the site, rather
                 // than a box whose placeholder was an example path.
                 { key: "image", label: t("adm_cardImage"), type: "image" },

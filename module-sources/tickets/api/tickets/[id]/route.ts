@@ -6,6 +6,7 @@ import { canAccessTicket } from "../../../lib/can-access-ticket";
 import { ticketFieldsFor } from "../../../lib/ticket-edit-rights";
 import { closesTicket, movedTo } from "../../../lib/ticket-states";
 import { readTicketStates } from "../../../lib/read-states";
+import { withDepartmentNames } from "../../../lib/desk-text";
 
 interface RouteParams {
     params: Promise<{ id: string }>;
@@ -49,8 +50,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
      * member cannot ask the admin endpoint for them, and a state an operator
      * added has no key in any catalogue - only the row knows its name.
      */
-    const { statuses, priorities } = await readTicketStates();
-    return NextResponse.json({ ...ticket, states: { statuses, priorities } });
+    const locale = new URL(request.url).searchParams.get("locale") ?? "";
+    const { statuses, priorities } = await readTicketStates(locale);
+    const [named] = await withDepartmentNames([ticket], locale);
+    return NextResponse.json({ ...named, states: { statuses, priorities } });
 }
 
 // POST /api/v1/tickets/[id] - Add a message/reply to ticket

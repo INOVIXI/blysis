@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Badge, Card, CardContent, ListControls, LoadFailed, Pagination, SegmentedTabs, useLocalDate, type BadgeTone } from "@/core/sdk/ui";
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Loader2, Ban, VolumeX, LogOut, AlertTriangle } from "lucide-react";
@@ -81,6 +81,8 @@ export function PunishmentList({ initial, initialPages, scopes }: {
     // rebuilt it; see format-date.ts.
     const formatDate = useLocalDate();
     const t = useTranslations("punishments");
+    // The scopes' names on a page it asks for, in the page's language.
+    const locale = useLocale();
     const [punishments, setPunishments] = useState<PunishmentItem[]>(initial);
     const [failed, setFailed] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -98,6 +100,7 @@ export function PunishmentList({ initial, initialPages, scopes }: {
         if (typeFilter) params.set("type", typeFilter);
         if (scopeFilter) params.set("scope", scopeFilter);
         if (status) params.set("status", status);
+        params.set("locale", locale);
 
         fetch(`/api/v1/punishments?${params}`)
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })

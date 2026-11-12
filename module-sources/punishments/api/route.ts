@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
         scope: params.get("scope"),
         page,
         perPage: limit,
+        locale: params.get("locale") ?? "",
     });
     return NextResponse.json({
         punishments: read.punishments,

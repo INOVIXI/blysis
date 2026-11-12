@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, isAdmin, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { trophyUpdateSchema } from "../../lib/validations";
+import { TRANSLATED_FIELDS, TROPHY_TEXT, trophyUpdateSchema } from "../../lib/validations";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -20,6 +20,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const fields = parsed.data;
 
     const data: Record<string, unknown> = {};
@@ -29,7 +31,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.color !== undefined) data.color = fields.color;
     if (fields.points !== undefined) data.points = fields.points;
     if (fields.awardOn !== undefined) data.awardOn = fields.awardOn;
-    const trophy = await prisma.trophy.update({ where: { id }, data });
+    const trophy = await prisma.$transaction(async (tx) => {
+        const updated = await tx.trophy.update({ where: { id }, data });
+        if (translations.value) await saveContentTranslations(tx, { ...TROPHY_TEXT, recordId: id }, translations.value);
+        return updated;
+    });
     return NextResponse.json({ trophy });
 }
 
@@ -42,6 +48,9 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
     const { id } = await params;
-    await prisma.trophy.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.trophy.delete({ where: { id } });
+        await deleteContentTranslations(tx, TROPHY_TEXT, [id]);
+    });
     return NextResponse.json({ ok: true });
 }

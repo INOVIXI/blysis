@@ -71,3 +71,11 @@ export function boundedSource(draft: SourceDraft): { rowLimit: number; cacheSeco
         cacheSeconds: Math.min(86_400, Math.max(5, seconds)),
     };
 }
+
+/**
+ * Whose translations a source's are, in core's table, and the field that
+ * has them: its title, held to the column's own limit. The table, the columns
+ * and the rows are another database's names and are never translated.
+ */
+export const SOURCE_TEXT = { owner: "external-data", entity: "source" };
+export const SOURCE_TRANSLATED_FIELDS = { title: 160 };

@@ -16,8 +16,8 @@ export default function Page() {
             rowHref={(item) => `/admin/tickets/departments/${item.id}`}
             rowActionLabel={t("adm_setupTitle")}
             fields={[
-                { key: "name", label: t("adm_field1Label"), required: true, placeholder: t("adm_field1Placeholder") },
-                { key: "description", label: t("adm_field2Label"), placeholder: t("adm_field2Placeholder") },
+                { key: "name", label: t("adm_field1Label"), type: "translatable", required: true, placeholder: t("adm_field1Placeholder") },
+                { key: "description", label: t("adm_field2Label"), type: "translatable", placeholder: t("adm_field2Placeholder") },
                 { key: "color", label: t("adm_field3Label"), type: "color", defaultValue: "#3b82f6" },
                 { key: "order", label: t("adm_field4Label"), type: "number", placeholder: t("adm_field3Placeholder"), defaultValue: "0" },
                 { key: "isActive", label: t("adm_field5Label"), type: "toggle", defaultValue: "true" },

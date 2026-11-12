@@ -6,6 +6,7 @@ import { pageParams, isAdmin, moduleSettings, prisma, rateLimitForRole, readJson
 import { auth } from "@/core/sdk/auth";
 import { forumTopicSchema } from "../../lib/validations";
 import { denyGuestView } from "../../lib/guest-view";
+import { withCategoryNames } from "../../lib/category-text";
 
 type ModerationSettingValue = {
     blog_comments?: "auto" | "manual";
@@ -69,8 +70,9 @@ export async function GET(request: NextRequest) {
         prisma.forumTopic.count({ where: onlyReadable }),
     ]);
 
+    // The section each topic is in, named in `?locale=`; what members wrote stays theirs.
     return NextResponse.json({
-        topics,
+        topics: await withCategoryNames(topics, searchParams.get("locale") ?? ""),
         total,
         pages: Math.ceil(total / limit),
         page,

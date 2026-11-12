@@ -17,7 +17,7 @@ import {
     useRowList,
 } from "@/core/sdk/ui";
 import { AdminPageHeader } from "@/core/sdk/admin";
-import { writeError } from "@/core/sdk";
+import { joinTranslations, writeError, type LanguageTexts } from "@/core/sdk";
 import { DEFAULT_CONNECTION_KEY } from "../../lib/connection";
 import { EMPTY_SOURCE, SourceEditor, type SourceDraftValue } from "./SourceEditor";
 
@@ -46,13 +46,15 @@ interface StoredSource {
     rowLimit: number;
     cacheSeconds: number;
     isActive: boolean;
+    /** Every language of its title, from the editor's list. */
+    translations?: Record<string, LanguageTexts>;
 }
 
 function toDraft(source: StoredSource): SourceDraftValue {
     return {
         id: source.id,
         slug: source.slug,
-        title: source.title,
+        title: joinTranslations(source.title, source.translations?.title),
         settingKey: source.settingKey,
         table: source.table,
         columns: source.columns.join(", "),

@@ -96,7 +96,7 @@ export default function Page() {
                 });
             }}
             fields={[
-                { key: "name", label: t("adm_field1Label"), required: true, placeholder: t("adm_field1Placeholder") },
+                { key: "name", label: t("adm_field1Label"), type: "translatable", required: true, placeholder: t("adm_field1Placeholder") },
                 /*
                  * Which wheel it is on. Picked, not typed: nothing in the
                  * panel shows a wheel's id, and a prize pointing at nothing is

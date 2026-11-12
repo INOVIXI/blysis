@@ -5,8 +5,9 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
     Badge, Button, Card, CardContent, Checkbox, Input, Label, LoadFailed,
-    NativeSelect, useConfirm,
+    LocalizedTextInput, NativeSelect, useConfirm,
 } from "@/core/sdk/ui";
+import { joinTranslations, originalText, splitTranslations, type LanguageTexts, type TranslatableText } from "@/core/sdk";
 import { AdminPageHeader, RowActions } from "@/core/sdk/admin";
 import { Plus, Save, Trash2 } from "lucide-react";
 import { STATE_TONES, stateLabel, type TicketState } from "../../../../lib/ticket-states";
@@ -27,9 +28,44 @@ import { STATE_TONES, stateLabel, type TicketState } from "../../../../lib/ticke
 interface StateRow extends TicketState {
     id: string;
     order: number;
+    /** Every language of the name an operator typed, from the desk's list. */
+    translations?: Record<string, LanguageTexts>;
 }
 
 type Kind = "status" | "priority";
+
+/** What a name is sent as: the original, and its languages beside it. */
+function namePayload(name: TranslatableText) {
+    return {
+        name: originalText(name).trim(),
+        // Every time: an empty one is how a cleared language goes.
+        translations: { name: splitTranslations(name).translations },
+    };
+}
+
+/**
+ * A state's name, written once and then per language, saved when focus
+ * leaves the box and its languages, as the one box was before.
+ */
+function StateName({ shown, translations, label, onSave }: {
+    shown: string;
+    translations: LanguageTexts | undefined;
+    label: string;
+    onSave: (name: TranslatableText) => void;
+}) {
+    const initial = joinTranslations(shown, translations);
+    const [value, setValue] = useState<TranslatableText>(initial);
+    return (
+        <div
+            onBlur={(e) => {
+                if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+                if (originalText(value).trim() && JSON.stringify(value) !== JSON.stringify(initial)) onSave(value);
+            }}
+        >
+            <LocalizedTextInput label={label} value={value} onChange={setValue} maxLength={64} />
+        </div>
+    );
+}
 
 const COLUMNS = "gap-x-3 gap-y-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_9rem_auto_13rem]";
 
@@ -42,7 +78,7 @@ export default function TicketStatesPage() {
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
     const [saving, setSaving] = useState<string | null>(null);
-    const [draft, setDraft] = useState<{ kind: Kind; key: string; name: string; tone: string } | null>(null);
+    const [draft, setDraft] = useState<{ kind: Kind; key: string; name: TranslatableText; tone: string } | null>(null);
 
     const load = useCallback(async () => {
         try {
@@ -116,15 +152,11 @@ export default function TicketStatesPage() {
                     </div>
                     <div>
                         <Label className="md:hidden">{t("adm_stateName")}</Label>
-                        <Input
-                            aria-label={t("adm_stateName")}
-                            defaultValue={stateLabel(t, state.key, states)}
-                            onBlur={(e) => {
-                                const name = e.target.value.trim();
-                                if (name && name !== stateLabel(t, state.key, states)) {
-                                    write("PATCH", { kind, id: state.id, name }, state.id);
-                                }
-                            }}
+                        <StateName
+                            shown={stateLabel(t, state.key, states)}
+                            translations={state.translations?.name}
+                            label={t("adm_stateName")}
+                            onSave={(name) => write("PATCH", { kind, id: state.id, ...namePayload(name) }, state.id)}
                         />
                     </div>
                     <div>
@@ -221,10 +253,11 @@ export default function TicketStatesPage() {
                                     </div>
                                     <div>
                                         <Label className="md:hidden">{t("adm_stateName")}</Label>
-                                        <Input
-                                            aria-label={t("adm_stateName")}
+                                        <LocalizedTextInput
+                                            label={t("adm_stateName")}
                                             value={draft.name}
-                                            onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                                            maxLength={64}
+                                            onChange={(name) => setDraft({ ...draft, name })}
                                         />
                                     </div>
                                     <div>
@@ -254,9 +287,9 @@ export default function TicketStatesPage() {
                                     <div className="flex items-center gap-2">
                                         <Button
                                             size="sm"
-                                            disabled={!draft.key.trim() || !draft.name.trim() || saving === "new"}
+                                            disabled={!draft.key.trim() || !originalText(draft.name).trim() || saving === "new"}
                                             onClick={async () => {
-                                                const ok = await write("POST", { ...draft, key: draft.key.trim() }, "new");
+                                                const ok = await write("POST", { ...draft, key: draft.key.trim(), ...namePayload(draft.name) }, "new");
                                                 if (ok) setDraft(null);
                                             }}
                                         >

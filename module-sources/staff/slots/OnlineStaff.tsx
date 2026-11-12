@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { sharedJson } from "@/core/sdk";
 import { MemberAvatar } from "@/core/sdk/ui";
 
@@ -26,18 +26,20 @@ const SHOWN = 5;
  */
 export default function OnlineStaff() {
     const t = useTranslations("staff");
+    // Each role in the page's language; the strip and the card ask the same address.
+    const locale = useLocale();
     const [members, setMembers] = useState<StaffMember[]>([]);
 
     useEffect(() => {
         let active = true;
         // The same request the `staff.online` card makes, shared with it.
-        sharedJson<{ members?: StaffMember[] }>("/api/v1/staff?online=1")
+        sharedJson<{ members?: StaffMember[] }>(`/api/v1/staff?online=1&locale=${encodeURIComponent(locale)}`)
             .then((d) => {
                 if (active) setMembers(d.members || []);
             })
             .catch(() => {});
         return () => { active = false; };
-    }, []);
+    }, [locale]);
 
     if (members.length === 0) return null;
 

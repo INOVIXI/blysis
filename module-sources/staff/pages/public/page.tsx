@@ -6,14 +6,15 @@
  * `<main>`. Nothing on this page needs a browser.
  */
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { ArrangedPage } from "@/core/sdk/page";
 import { Card, CardContent, MemberAvatar } from "@/core/sdk/ui";
 import { readStaff } from "../../lib/read-staff";
 
 export default async function StaffPage() {
     const t = await getTranslations("staff");
-    const members = await readStaff();
+    // Each role in the reader's language, and the original where the admin wrote none.
+    const members = await readStaff(false, await getLocale());
 
     const team = members.length === 0 ? (
         <Card><CardContent className="py-12 text-center text-muted-foreground">{t("empty")}</CardContent></Card>

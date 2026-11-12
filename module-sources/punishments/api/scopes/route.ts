@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, deleteContentTranslations, isAdmin, logActivity, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
+import { SCOPE_TEXT, SCOPE_TRANSLATED_FIELDS } from "../../lib/validations";
 
 /**
  * The places an operator divides the record into.
@@ -66,7 +67,8 @@ export async function GET() {
 
     return NextResponse.json(
         {
-            scopes,
+            // With every language of each name, for the editor's language boxes.
+            scopes: await attachContentTranslations(prisma, SCOPE_TEXT, scopes),
             unclaimed: unclaimed.map((row) => ({ key: row.scopeKey, count: row._count._all })),
         },
         { headers: { "Cache-Control": "private, no-store" } },
@@ -83,6 +85,8 @@ export async function PUT(request: NextRequest) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0].message, code: "invalid_scope" }, { status: 400 });
     }
+    const translations = contentTranslationsInput(body, SCOPE_TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error, code: "invalid_scope" }, { status: 400 });
     const draft = parsed.data;
     const matchKey = draft.matchKey || null;
 
@@ -106,9 +110,13 @@ export async function PUT(request: NextRequest) {
         isActive: draft.isActive,
     };
 
-    const scope = draft.id
-        ? await prisma.punishmentScope.update({ where: { id: draft.id }, data })
-        : await prisma.punishmentScope.create({ data });
+    const scope = await prisma.$transaction(async (tx) => {
+        const saved = draft.id
+            ? await tx.punishmentScope.update({ where: { id: draft.id }, data })
+            : await tx.punishmentScope.create({ data });
+        if (translations.value) await saveContentTranslations(tx, { ...SCOPE_TEXT, recordId: saved.id }, translations.value);
+        return saved;
+    });
 
     // The rows that were waiting for this key, including the ones recorded
     // before anybody had named the place.
@@ -152,7 +160,11 @@ export async function DELETE(request: NextRequest) {
      * deleted scope must not be a way to quietly lift everything recorded in
      * it.
      */
-    const gone = await prisma.punishmentScope.deleteMany({ where: { id: parsed.data.id } });
+    const gone = await prisma.$transaction(async (tx) => {
+        const result = await tx.punishmentScope.deleteMany({ where: { id: parsed.data.id } });
+        await deleteContentTranslations(tx, SCOPE_TEXT, [parsed.data.id]);
+        return result;
+    });
     if (gone.count === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     logActivity({

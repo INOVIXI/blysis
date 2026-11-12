@@ -6,14 +6,17 @@
  * `<main>`. Pressing one is still the browser's job - it records the vote and
  * opens the site - and that is the only part that is.
  */
-import { prisma } from "@/core/sdk/server";
+import { prisma, translateContent } from "@/core/sdk/server";
+import { VOTE_SITE_TEXT } from "./validations";
 
-export async function readVoteSites() {
-    return prisma.voteSite.findMany({
+/** The sites with each name in `locale`, and the original where the admin wrote none. */
+export async function readVoteSites(locale = "") {
+    const sites = await prisma.voteSite.findMany({
         where: { isActive: true },
         orderBy: { order: "asc" },
         take: 100,
         // The row draws the running total beside each site.
         include: { _count: { select: { votes: true } } },
     });
+    return translateContent(prisma, VOTE_SITE_TEXT, sites, ["name"], locale);
 }

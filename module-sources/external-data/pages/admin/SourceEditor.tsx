@@ -13,9 +13,10 @@ import {
     Checkbox,
     Input,
     Label,
+    LocalizedTextInput,
     useConfirm,
 } from "@/core/sdk/ui";
-import { writeError } from "@/core/sdk";
+import { originalText, splitTranslations, writeError, type TranslatableText } from "@/core/sdk";
 
 /**
  * One source: which table, which columns, and how often to ask.
@@ -36,7 +37,8 @@ import { writeError } from "@/core/sdk";
 export interface SourceDraftValue {
     id: string | null;
     slug: string;
-    title: string;
+    /** The original and a translation per language. */
+    title: TranslatableText;
     settingKey: string;
     table: string;
     columns: string;
@@ -68,7 +70,9 @@ function payload(draft: SourceDraftValue) {
     return {
         id: draft.id,
         slug: draft.slug.trim(),
-        title: draft.title.trim(),
+        title: originalText(draft.title).trim(),
+        // Every time: an empty one is how a cleared language goes.
+        translations: { title: splitTranslations(draft.title).translations },
         settingKey: draft.settingKey.trim(),
         table: draft.table.trim(),
         columns: draft.columns.split(",").map((column) => column.trim()).filter(Boolean),
@@ -125,7 +129,7 @@ export function SourceEditor({ value, onChange, onSaved, onCancel }: SourceEdito
         setBusy("try");
         setTried(null);
         try {
-            const { id: _id, isActive: _isActive, ...trial } = payload(value);
+            const { id: _id, isActive: _isActive, translations: _translations, ...trial } = payload(value);
             const res = await fetch(ENDPOINT, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -159,7 +163,7 @@ export function SourceEditor({ value, onChange, onSaved, onCancel }: SourceEdito
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <Label htmlFor="source-title">{t("adm_sourceTitle")}</Label>
-                        <Input id="source-title" value={value.title} onChange={(e) => onChange({ ...value, title: e.target.value })} />
+                        <LocalizedTextInput id="source-title" label={t("adm_sourceTitle")} value={value.title} maxLength={160} onChange={(title) => onChange({ ...value, title })} />
                     </div>
                     <div>
                         <Label htmlFor="source-slug">{t("adm_sourceSlug")}</Label>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { MessagesSquare } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
 import { LoadFailed, Waiting, buttonClassName, useBlockText, useRelativeTime, type BlockProps } from "@/core/sdk/ui";
@@ -35,6 +35,8 @@ const HEX = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
  */
 export function LatestTopicsBlock({ settings }: BlockProps) {
     const t = useTranslations("forum");
+    // Each topic's section named in the page's language.
+    const locale = useLocale();
     const commonT = useTranslations("common");
     const text = useBlockText();
     const relative = useRelativeTime();
@@ -46,12 +48,12 @@ export function LatestTopicsBlock({ settings }: BlockProps) {
 
     useEffect(() => {
         let active = true;
-        fetch(`/api/v1/forum/topics?order=newest&limit=${SHOWN}`)
+        fetch(`/api/v1/forum/topics?order=newest&limit=${SHOWN}&locale=${encodeURIComponent(locale)}`)
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
             .then((d: { topics?: TopicRow[] }) => { if (active) setTopics((d.topics ?? []).slice(0, SHOWN)); })
             .catch(() => { if (active) setFailed(true); });
         return () => { active = false; };
-    }, [reloadKey]);
+    }, [reloadKey, locale]);
 
     const retry = () => {
         setFailed(false);

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, isAdmin, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { wheelPrizeUpdateSchema } from "../../../lib/validations";
+import { PRIZE_TEXT, PRIZE_TRANSLATED_FIELDS, wheelPrizeUpdateSchema } from "../../../lib/validations";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -19,6 +19,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
+    const translations = contentTranslationsInput(body, PRIZE_TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const fields = parsed.data;
 
     const data: Record<string, unknown> = {};
@@ -76,7 +78,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.order !== undefined) data.order = fields.order;
     if (fields.isActive !== undefined) data.isActive = fields.isActive;
 
-    const prize = await prisma.wheelPrize.update({ where: { id }, data });
+    const prize = await prisma.$transaction(async (tx) => {
+        const updated = await tx.wheelPrize.update({ where: { id }, data });
+        if (translations.value) await saveContentTranslations(tx, { ...PRIZE_TEXT, recordId: id }, translations.value);
+        return updated;
+    });
     return NextResponse.json({ prize });
 }
 
@@ -87,6 +93,9 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { id } = await params;
-    await prisma.wheelPrize.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.wheelPrize.delete({ where: { id } });
+        await deleteContentTranslations(tx, PRIZE_TEXT, [id]);
+    });
     return NextResponse.json({ message: "Deleted" });
 }

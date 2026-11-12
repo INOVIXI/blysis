@@ -8,11 +8,13 @@
  *
  * `readPunishments` holds what a filter means, and the endpoint calls it too.
  */
+import { getLocale } from "next-intl/server";
 import { readPunishments } from "../../lib/read-punishments";
 import { PunishmentList } from "../../components/PunishmentList";
 
 export default async function PunishmentsPage() {
-    const read = await readPunishments({ page: 1 });
+    // The scopes' names in the reader's language, and the original where the admin wrote none.
+    const read = await readPunishments({ page: 1, locale: await getLocale() });
     // The two dates cross the boundary as the strings the list already
     // expected of the endpoint, so nothing below had to learn a second shape.
     const rows = read.punishments.map((row) => ({

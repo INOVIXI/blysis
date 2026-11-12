@@ -5,6 +5,8 @@
  * Another module that needs a server's name, or which one is the default, asks
  * here rather than reading this module's table. Only the fields a stranger may
  * see go out; the RCON port and password never leave `server-fields.ts`.
+ * The name is the original the admin typed: a hook has no reader whose
+ * language it could be asked in.
  */
 import type { HookHandlerFor } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";

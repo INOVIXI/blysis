@@ -21,7 +21,8 @@ interface EarnedTrophy {
 
 export default function TrophiesTab() {
     const t = useTranslations("trophies");
-    const __locale = useLocale();
+    // Each trophy's name in the page's language.
+    const locale = useLocale();
     // The site's zone, not the machine's: without it the server and the
     // browser disagree about what day a timestamp near midnight is.
     const formatDate = useLocalDate();
@@ -33,7 +34,7 @@ export default function TrophiesTab() {
 
     useEffect(() => {
         let cancelled = false;
-        fetch("/api/v1/me/trophies")
+        fetch(`/api/v1/me/trophies?locale=${encodeURIComponent(locale)}`)
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
             .then(d => { if (cancelled) return;
                 setEarned(Array.isArray(d.earned) ? d.earned : []);
@@ -43,7 +44,7 @@ export default function TrophiesTab() {
             .catch(() => { if (cancelled) return; setFailed(true); })
             .finally(() => { if (cancelled) return; setLoading(false); });
         return () => { cancelled = true; };
-    }, [reloadKey]);
+    }, [reloadKey, locale]);
 
     return (
         <Card>

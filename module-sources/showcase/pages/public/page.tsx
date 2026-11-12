@@ -6,7 +6,7 @@
  * `<main>`. Nothing on this page needs a browser.
  */
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
 import { ArrangedPage } from "@/core/sdk/page";
 import { Card, CardContent } from "@/core/sdk/ui";
@@ -44,7 +44,8 @@ function CardFace({ card }: { card: ShowcaseCard }) {
 
 export default async function ShowcasePage() {
     const t = await getTranslations("showcase");
-    const cards = await readShowcaseCards();
+    // In the reader's language, and the original where the admin wrote none.
+    const cards = await readShowcaseCards(await getLocale());
 
     const wall = cards.length === 0 ? (
         <Card><CardContent className="py-12 text-center"><p className="text-muted-foreground">{t("empty")}</p></CardContent></Card>

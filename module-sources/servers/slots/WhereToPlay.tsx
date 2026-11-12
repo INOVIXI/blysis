@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { sharedJson } from "@/core/sdk";
 import type { CountedServer } from "../lib/players-online";
 
@@ -21,15 +21,17 @@ interface ListedServer extends CountedServer {
  */
 export default function WhereToPlay() {
     const t = useTranslations("servers");
+    // Every reader of this answer asks in the page's language, so they share one request.
+    const locale = useLocale();
     const [servers, setServers] = useState<ListedServer[] | null>(null);
 
     useEffect(() => {
         let active = true;
-        sharedJson<{ servers?: ListedServer[] }>("/api/v1/servers/status")
+        sharedJson<{ servers?: ListedServer[] }>(`/api/v1/servers/status?locale=${encodeURIComponent(locale)}`)
             .then((d) => { if (active) setServers(Array.isArray(d?.servers) ? d.servers : []); })
             .catch(() => {});
         return () => { active = false; };
-    }, []);
+    }, [locale]);
 
     if (servers === null || servers.length === 0) return null;
     return (

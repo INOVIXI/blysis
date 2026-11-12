@@ -13,9 +13,10 @@ import {
     Input,
     Label,
     LoadFailed,
+    LocalizedTextInput,
     useConfirm,
 } from "@/core/sdk/ui";
-import { writeError } from "@/core/sdk";
+import { joinTranslations, originalText, splitTranslations, writeError, type LanguageTexts, type TranslatableText } from "@/core/sdk";
 
 /**
  * The places an operator divides the record into.
@@ -40,14 +41,19 @@ interface Scope {
     restrictsSite: boolean;
     order: number;
     isActive: boolean;
+    /** Every language of its name, from the editor's list. */
+    translations?: Record<string, LanguageTexts>;
 }
+
+/** A scope being written: its name is the original and a translation per language. */
+type Draft = Omit<Scope, "id" | "name" | "translations"> & { id: string | null; name: TranslatableText };
 
 interface Unclaimed {
     key: string;
     count: number;
 }
 
-const EMPTY: Omit<Scope, "id"> & { id: string | null } = {
+const EMPTY: Draft = {
     id: null,
     name: "",
     matchKey: "",
@@ -63,7 +69,7 @@ export function ScopeManager() {
 
     const [scopes, setScopes] = useState<Scope[]>([]);
     const [unclaimed, setUnclaimed] = useState<Unclaimed[]>([]);
-    const [draft, setDraft] = useState<(Omit<Scope, "id"> & { id: string | null }) | null>(null);
+    const [draft, setDraft] = useState<Draft | null>(null);
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -93,7 +99,12 @@ export function ScopeManager() {
             const res = await fetch("/api/v1/punishments/scopes", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(draft),
+                body: JSON.stringify({
+                    ...draft,
+                    name: originalText(draft.name).trim(),
+                    // Every time: an empty one is how a cleared language goes.
+                    translations: { name: splitTranslations(draft.name).translations },
+                }),
             });
             const wrong = await writeError(res, t("err_invalid_scope"), t);
             if (wrong) { toast.error(wrong); return; }
@@ -163,7 +174,14 @@ export function ScopeManager() {
                                 {scope.restrictsSite ? (
                                     <Badge tone="warning">{t("adm_scopeRestricts")}</Badge>
                                 ) : null}
-                                <Button variant="outline" size="sm" onClick={() => setDraft({ ...scope, matchKey: scope.matchKey ?? "" })}>
+                                <Button variant="outline" size="sm" onClick={() => setDraft({
+                                    id: scope.id,
+                                    name: joinTranslations(scope.name, scope.translations?.name),
+                                    matchKey: scope.matchKey ?? "",
+                                    restrictsSite: scope.restrictsSite,
+                                    order: scope.order,
+                                    isActive: scope.isActive,
+                                })}>
                                     {t("adm_saveScope")}
                                 </Button>
                                 <Button variant="ghost" size="sm" onClick={() => remove(scope.id)}>
@@ -198,7 +216,7 @@ export function ScopeManager() {
                     <div className="border-t border-border pt-4 space-y-3">
                         <div>
                             <Label htmlFor="scope-name">{t("adm_scopeName")}</Label>
-                            <Input id="scope-name" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+                            <LocalizedTextInput id="scope-name" label={t("adm_scopeName")} value={draft.name} maxLength={80} onChange={(name) => setDraft({ ...draft, name })} />
                         </div>
                         <div>
                             <Label htmlFor="scope-key">{t("adm_scopeKey")}</Label>
@@ -218,7 +236,7 @@ export function ScopeManager() {
                         />
                         <div className="flex justify-end gap-2">
                             <Button variant="outline" size="sm" onClick={() => setDraft(null)}>{commonT("cancel")}</Button>
-                            <Button size="sm" disabled={saving || draft.name.trim() === ""} onClick={save}>
+                            <Button size="sm" disabled={saving || originalText(draft.name).trim() === ""} onClick={save}>
                                 {saving ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : null}
                                 {t("adm_saveScope")}
                             </Button>

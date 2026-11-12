@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { encryptSecret, isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, encryptSecret, isAdmin, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { serverUpdateSchema } from "../../lib/validations";
+import { SERVER_TEXT, TRANSLATED_FIELDS, serverUpdateSchema } from "../../lib/validations";
 import { SERVER_PUBLIC_FIELDS } from "../../lib/server-fields";
 
 type RouteParams = { params: Promise<{ id: string }> };
@@ -18,6 +18,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const fields = parsed.data;
 
     const data: Record<string, unknown> = {};
@@ -37,7 +39,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.order !== undefined) data.order = fields.order;
     if (fields.description !== undefined) data.description = fields.description || null;
     if (fields.image !== undefined) data.image = fields.image || null;
-    const server = await prisma.gameServer.update({ where: { id }, data, select: SERVER_PUBLIC_FIELDS });
+    const server = await prisma.$transaction(async (tx) => {
+        const updated = await tx.gameServer.update({ where: { id }, data, select: SERVER_PUBLIC_FIELDS });
+        if (translations.value) await saveContentTranslations(tx, { ...SERVER_TEXT, recordId: id }, translations.value);
+        return updated;
+    });
     return NextResponse.json({ server });
 }
 
@@ -47,6 +53,9 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { id } = await params;
-    await prisma.gameServer.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.gameServer.delete({ where: { id } });
+        await deleteContentTranslations(tx, SERVER_TEXT, [id]);
+    });
     return NextResponse.json({ message: "Server deleted" });
 }

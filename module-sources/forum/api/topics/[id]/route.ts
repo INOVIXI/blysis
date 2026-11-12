@@ -36,7 +36,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         fixedLimit: 1,
     });
 
-    const read = await readTopic(id, postsPage);
+    const read = await readTopic(id, postsPage, request.nextUrl.searchParams.get("locale") ?? "");
     if (!read) {
         return NextResponse.json({ error: "Topic not found" }, { status: 404 });
     }
