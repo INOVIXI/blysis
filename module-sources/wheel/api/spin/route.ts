@@ -3,7 +3,7 @@ import { applyFiltersAsync } from "@/core/sdk";
 import { prisma, rateLimitForRoleAsync } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { randomInt } from "crypto";
-import { drawPrize, nextTurnAt, refusalFor } from "../../lib/wheels";
+import { cooldownHoursOf, drawPrize, nextTurnAt, refusalFor } from "../../lib/wheels";
 
 /**
  * Turn a wheel.
@@ -114,7 +114,28 @@ export async function POST(request: NextRequest) {
     // a credits prize did the same in the other direction, and a turn could be
     // paid for without being recorded at all. Either half failing now undoes
     // the other.
+    //
+    // The last turn read above is a snapshot: twenty requests sent together
+    // all read "no recent turn", and each won a prize and paid for it. A wheel
+    // with a cooldown takes a lock on this member and this wheel first and
+    // reads the last turn again under it, so the second request waits for the
+    // first and then sees its turn. That check comes before the payment, so a
+    // refused request takes no credits.
+    let turnedAt: Date | null = null;
     const spun = await prisma.$transaction(async (tx) => {
+        if (cooldownHoursOf(rules) > 0) {
+            await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`wheel-spin:${session.user.id}:${wheel.id}`}))`;
+            const again = await tx.wheelSpin.findFirst({
+                where: { userId: session.user.id, wheelId: wheel.id },
+                orderBy: { createdAt: "desc" },
+                select: { createdAt: true },
+            });
+            const next = nextTurnAt(rules, again?.createdAt ?? null);
+            if (next && next > new Date()) {
+                turnedAt = again?.createdAt ?? null;
+                return "wheel_too_soon";
+            }
+        }
         if (wheel.cost > 0) {
             // The balance read above is a snapshot: two turns submitted
             // together both saw enough credits, both turned, and the balance
@@ -185,6 +206,12 @@ export async function POST(request: NextRequest) {
     // boolean, and every falsehood was reported as an empty wallet - which
     // was true of the only case there was. A prize whose thing has since been
     // taken down is a different sentence and a different status.
+    if (spun === "wheel_too_soon") {
+        return NextResponse.json(
+            { error: "too_soon", code: "wheel_too_soon", cost: wheel.cost, nextTurnAt: nextTurnAt(rules, turnedAt) },
+            { status: 429 },
+        );
+    }
     if (spun === "wheel_not_enough_credits") {
         return NextResponse.json(
             { error: "not_enough_credits", code: "wheel_not_enough_credits", cost: wheel.cost },
