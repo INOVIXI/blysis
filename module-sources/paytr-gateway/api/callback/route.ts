@@ -45,6 +45,16 @@ export async function POST(request: NextRequest) {
 
     const reference = fromMerchantOid(merchantOid);
 
+    // A merchant account runs in test mode until PayTR approves it, and there
+    // it takes the published test cards and reports a success signed like any
+    // other. On a site that is not in test mode that is an order given away,
+    // so it settles nothing. "OK" all the same: a retry would say the same.
+    // `a-test-payment-settles-nothing-on-a-live-site.test.ts`.
+    if (String(form.get("test_mode") ?? "0") === "1" && !config.testMode) {
+        log.error("[paytr-gateway] a test payment reached a site that is not in test mode; nothing was granted", { reference, merchantOid });
+        return new NextResponse("OK");
+    }
+
     if (status !== "success") {
         const voided = await applyFiltersAsync("payment.voided", UNHANDLED, {
             kind: "order",
