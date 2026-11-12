@@ -710,7 +710,7 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
     // answers false, so a URL naming nothing gets a status that says so.
     const RESOLVERS_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-route-resolvers.ts');
     let resolversContent = '// Auto-generated dynamic route existence checks\n\n';
-    resolversContent += 'export type RouteResolver = (params: Record<string, string | string[]>) => Promise<boolean>;\n\n';
+    resolversContent += 'export type RouteResolver = (params: Record<string, string | string[]>) => Promise<boolean | { title?: string | null }>;\n\n';
     resolversContent += 'export const ModuleRouteResolvers: Record<string, () => Promise<{ default: RouteResolver }>> = {\n';
     for (const rr of routeResolvers) {
         const handlerPath = rr.handler.replace(/\.tsx?$/, '');
