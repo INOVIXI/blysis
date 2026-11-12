@@ -990,6 +990,8 @@
     "siteSettings_contactEmail": "İletişim E-postası",
     "siteSettings_description": "Açıklama",
     "siteSettings_general": "Genel",
+    "siteSettings_icon": "Site simgesi",
+    "siteSettings_iconHint": "Tarayıcı sekmesinde ve telefonun ana ekranında görünen küçük resim. Kare bir resim en iyi sonucu verir. Boş bırakılırsa varsayılan simge kullanılır.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Ayarlar kaydedilemedi",
     "siteSettings_saveSettings": "Ayarları Kaydet",

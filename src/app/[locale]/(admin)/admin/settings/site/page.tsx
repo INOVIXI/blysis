@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
@@ -13,7 +13,8 @@ import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
 import { UrlOrFile } from "@/core/components/ui/url-or-file";
-import { SITE_LOGO_KEY } from "@/core/lib/site-logo";
+import { SITE_ICON_KEY, SITE_LOGO_KEY } from "@/core/lib/site-logo";
+import { SITE_SOCIAL_LINKS, siteFormFromSettings, siteSettingsPatch, type SiteForm } from "@/core/lib/site-contact";
 import { LocalizedTextInput } from "@/core/components/ui/localized-text-input";
 import { isTranslatableText, originalText, type TranslatableText } from "@/core/lib/i18n/translatable-text";
 
@@ -44,41 +45,30 @@ export default function SiteSettingsPage() {
     // The site's own words, which the operator may write per language.
     const [name, setName] = useState<TranslatableText>("");
     const [description, setDescription] = useState<TranslatableText>("");
-    const [form, setForm] = useState({
-        [SITE_LOGO_KEY]: "",
-        contactEmail: "",
-        socialFacebook: "",
-        socialInstagram: "",
-        socialTwitter: "",
-        socialYoutube: "",
-        socialDiscord: "",
-        timezone: "UTC",
-    });
+    // Keyed by the settings the site reads (`site-contact.ts`). The screen
+    // wrote keys of its own that nothing read, so a save renamed nothing.
+    const [form, setForm] = useState<SiteForm>(() => ({ ...siteFormFromSettings({}), [SITE_LOGO_KEY]: "", [SITE_ICON_KEY]: "" }));
+    // What was loaded, so a save can empty an older key it carried forward.
+    const loaded = useRef<Record<string, unknown>>({});
+    const field = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+        setForm({ ...form, [key]: e.target.value });
 
     // A read that failed would otherwise offer this form at its defaults, and
-    // saving it renames the site to "Blysis" and empties every social link.
+    // saving it would empty the site's name and every social link.
     const { loading, failed, retry } = useSettingsLoad((s) => {
-        // `site_name` and `site_description` are the rows every page reads.
-        // This form wrote `siteName` and `siteDescription`, which nothing
-        // reads, so renaming the site here changed nothing anywhere; a name
-        // saved that way is offered back once so it is not lost.
-        //
         // Empty rather than the product's own name: a read that fell back
         // to it and then saved would rename the operator's site after the
-        // thing it was built from.
+        // thing it was built from. A name saved under the old key that
+        // nothing read is offered back once so it is not lost.
         const stored = (value: unknown, legacy: unknown): TranslatableText =>
             isTranslatableText(value) && originalText(value).trim() ? value : typeof legacy === "string" ? legacy : "";
         setName(stored(s.site_name, s.siteName));
         setDescription(stored(s.site_description, s.siteDescription));
+        loaded.current = s;
         setForm({
+            ...siteFormFromSettings(s),
             [SITE_LOGO_KEY]: (s[SITE_LOGO_KEY] as string) || "",
-            contactEmail: (s.contactEmail as string) || "",
-            socialFacebook: (s.socialFacebook as string) || "",
-            socialInstagram: (s.socialInstagram as string) || "",
-            socialTwitter: (s.socialTwitter as string) || "",
-            socialYoutube: (s.socialYoutube as string) || "",
-            socialDiscord: (s.socialDiscord as string) || "",
-            timezone: (s.site_timezone as string) || "UTC",
+            [SITE_ICON_KEY]: (s[SITE_ICON_KEY] as string) || "",
         });
     });
 
@@ -92,14 +82,14 @@ export default function SiteSettingsPage() {
             const res = await fetch("/api/v1/settings", {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                // `timezone` is the field's name; `site_timezone` is the row
-                // everything scheduled reads.
                 body: JSON.stringify({
-                    ...form,
+                    ...siteSettingsPatch(form, loaded.current),
+                    [SITE_LOGO_KEY]: form[SITE_LOGO_KEY],
+                    [SITE_ICON_KEY]: form[SITE_ICON_KEY],
+                    // Written per language, so they come from their own boxes,
+                    // not the plain-text form.
                     site_name: name,
                     site_description: description,
-                    site_timezone: form.timezone,
-                    timezone: undefined,
                 }),
             });
 
@@ -108,6 +98,8 @@ export default function SiteSettingsPage() {
                 return;
             }
 
+            // An older key emptied by this save holds nothing now.
+            loaded.current = {};
             setSaved(true);
             setTimeout(() => setSaved(false), 3000);
         } catch {
@@ -183,6 +175,17 @@ export default function SiteSettingsPage() {
                                 />
                             </div>
                             <div>
+                                {/* The browser tab and the home screen. Unset,
+                                    the icons the installation ships. */}
+                                <UrlOrFile
+                                    label={t("siteSettings_icon")}
+                                    value={form[SITE_ICON_KEY]}
+                                    onChange={(v) => setForm({ ...form, [SITE_ICON_KEY]: v })}
+                                    accept="image/*"
+                                />
+                                <p className="mt-1 text-sm text-muted-foreground">{t("siteSettings_iconHint")}</p>
+                            </div>
+                            <div>
                                 <Label>{t("siteSettings_description")}</Label>
                                 <LocalizedTextInput
                                     label={t("siteSettings_description")}
@@ -198,8 +201,8 @@ export default function SiteSettingsPage() {
                                 <NativeSelect
                                     id="site-timezone"
                                     className="mt-1"
-                                    value={form.timezone}
-                                    onChange={(e) => setForm({ ...form, timezone: e.target.value })}
+                                    value={form.site_timezone}
+                                    onChange={field("site_timezone")}
                                 >
                                     {zones.map((zone) => <option key={zone} value={zone}>{zone}</option>)}
                                 </NativeSelect>
@@ -210,8 +213,8 @@ export default function SiteSettingsPage() {
                                 <Input
                                     aria-label={t("siteSettings_contactEmail")}
                                     type="email"
-                                    value={form.contactEmail}
-                                    onChange={(e) => setForm({ ...form, contactEmail: e.target.value })}
+                                    value={form.site_email}
+                                    onChange={field("site_email")}
                                     placeholder="support@example.com"
                                 />
                             </div>
@@ -223,51 +226,17 @@ export default function SiteSettingsPage() {
                             <CardTitle>{t("siteSettings_socialLinks")}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div>
-                                <Label>Discord</Label>
-                                <Input
-                                    aria-label="Discord"
-                                    value={form.socialDiscord}
-                                    onChange={(e) => setForm({ ...form, socialDiscord: e.target.value })}
-                                    placeholder="https://discord.gg/..."
-                                />
-                            </div>
-                            <div>
-                                <Label>X</Label>
-                                <Input
-                                    aria-label="X"
-                                    value={form.socialTwitter}
-                                    onChange={(e) => setForm({ ...form, socialTwitter: e.target.value })}
-                                    placeholder="https://x.com/..."
-                                />
-                            </div>
-                            <div>
-                                <Label>YouTube</Label>
-                                <Input
-                                    aria-label="YouTube"
-                                    value={form.socialYoutube}
-                                    onChange={(e) => setForm({ ...form, socialYoutube: e.target.value })}
-                                    placeholder="https://youtube.com/..."
-                                />
-                            </div>
-                            <div>
-                                <Label>Instagram</Label>
-                                <Input
-                                    aria-label="Instagram"
-                                    value={form.socialInstagram}
-                                    onChange={(e) => setForm({ ...form, socialInstagram: e.target.value })}
-                                    placeholder="https://instagram.com/..."
-                                />
-                            </div>
-                            <div>
-                                <Label>Facebook</Label>
-                                <Input
-                                    aria-label="Facebook"
-                                    value={form.socialFacebook}
-                                    onChange={(e) => setForm({ ...form, socialFacebook: e.target.value })}
-                                    placeholder="https://facebook.com/..."
-                                />
-                            </div>
+                            {SITE_SOCIAL_LINKS.map((link) => (
+                                <div key={link.key}>
+                                    <Label htmlFor={link.key}>{link.label}</Label>
+                                    <Input
+                                        id={link.key}
+                                        value={form[link.key] ?? ""}
+                                        onChange={field(link.key)}
+                                        placeholder={link.placeholder}
+                                    />
+                                </div>
+                            ))}
                         </CardContent>
                     </Card>
                 </div>

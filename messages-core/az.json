@@ -990,6 +990,8 @@
     "siteSettings_contactEmail": "Əlaqə e-poçtu",
     "siteSettings_description": "Təsvir",
     "siteSettings_general": "Ümumi",
+    "siteSettings_icon": "Sayt ikonu",
+    "siteSettings_iconHint": "Brauzer tabında və telefonun əsas ekranında görünən kiçik şəkil. Kvadrat şəkil daha yaxşı görünür. Boş qalsa, standart ikon istifadə olunur.",
     "siteSettings_logo": "Loqo",
     "siteSettings_saveFailed": "Parametrləri yadda saxlamaq alınmadı",
     "siteSettings_saveSettings": "Parametrləri yadda saxla",

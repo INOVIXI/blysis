@@ -9,6 +9,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/core/lib/db";
 import { cached } from "@/core/lib/cache";
 import { SETTINGS_CACHE, getDurationMs } from "@/core/lib/security-settings";
+import { withEnvironmentFallbacks } from "@/core/lib/site-contact";
 
 // Public settings keys that can be read without authentication.
 // Only core platform keys - module-specific settings (Discord widget IDs,
@@ -36,7 +37,14 @@ const PUBLIC_KEYS = [
     "member_email_changes",
     "identity_requires_password",
     "site_email",
+    // Where else the site can be found, drawn in the footer. One per network,
+    // listed in `SITE_SOCIAL_LINKS`.
     "site_discord_url",
+    "site_facebook_url",
+    "site_instagram_url",
+    "site_x_url",
+    "site_youtube_url",
+    "site_tiktok_url",
     // Which languages the footer offers a visitor, and which the site opens
     // in. The proxy keeps a visitor out of the others either way; this stops
     // the picker offering a language that would only redirect.
@@ -98,7 +106,18 @@ export async function GET() {
     );
 
     return NextResponse.json({
-        settings: settingsMap,
+        // The documented environment fallbacks are applied here, on the
+        // server, because the browser cannot read them.
+        // Each variable is named, so `the-example-env-is-the-env` can see it
+        // is read.
+        settings: withEnvironmentFallbacks(settingsMap, {
+            SITE_EMAIL: process.env.SITE_EMAIL,
+            COMMUNITY_URL: process.env.COMMUNITY_URL,
+            SOCIAL_FACEBOOK: process.env.SOCIAL_FACEBOOK,
+            SOCIAL_INSTAGRAM: process.env.SOCIAL_INSTAGRAM,
+            SOCIAL_TWITTER: process.env.SOCIAL_TWITTER,
+            SOCIAL_YOUTUBE: process.env.SOCIAL_YOUTUBE,
+        }),
         // The browser reuses the payload for this long; see useSiteSettings.
         cacheSeconds: Math.floor(ttlMs / 1000),
         // Exposed so the login page can show its credentials banner on the

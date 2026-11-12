@@ -990,6 +990,8 @@
     "siteSettings_contactEmail": "Contact Email",
     "siteSettings_description": "Description",
     "siteSettings_general": "General",
+    "siteSettings_icon": "Site icon",
+    "siteSettings_iconHint": "The small image in the browser tab and on a phone's home screen. A square image reads best. Left empty, the default icon is used.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Failed to save settings",
     "siteSettings_saveSettings": "Save Settings",

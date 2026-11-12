@@ -990,6 +990,8 @@
     "siteSettings_contactEmail": "Kontakt-E-Mail",
     "siteSettings_description": "Beschreibung",
     "siteSettings_general": "Allgemein",
+    "siteSettings_icon": "Website-Symbol",
+    "siteSettings_iconHint": "Das kleine Bild im Browser-Tab und auf dem Startbildschirm eines Telefons. Ein quadratisches Bild wirkt am besten. Leer gelassen, wird das Standardsymbol verwendet.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Einstellungen konnten nicht gespeichert werden",
     "siteSettings_saveSettings": "Einstellungen speichern",

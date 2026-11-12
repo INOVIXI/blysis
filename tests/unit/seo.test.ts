@@ -107,10 +107,10 @@ describe("buildPageMeta", () => {
         expect(meta.description).toBe("From the database");
     });
 
-    it("asks for only the two seo keys", async () => {
+    it("asks for only the seo keys", async () => {
         await buildPageMeta({ title: "x" });
         expect(setting.findMany).toHaveBeenCalledWith({
-            where: { key: { in: ["site_name", "site_description"] } },
+            where: { key: { in: ["site_name", "site_description", "site_icon"] } },
         });
     });
 

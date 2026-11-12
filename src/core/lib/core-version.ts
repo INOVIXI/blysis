@@ -12,6 +12,12 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.35.0 - `FooterSocialLink` carries a `label`, and its `name` may be
+ * `tiktok`. The site's social links became settings, one per network, and a
+ * theme that draws them reads what to call each one rather than keeping a
+ * map of its own that a new network would fall out of. Kept a minor: the
+ * only theme that mapped the names is in this tree and reads `label` now.
+ *
  * 5.34.0 - a module's own records speak the reader's language. A record's
  * column keeps the text the admin typed, the original, and core's
  * `ContentTranslation` table holds a translation per field and language
@@ -758,4 +764,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.34.0";
+export const CORE_API_VERSION = "5.35.0";

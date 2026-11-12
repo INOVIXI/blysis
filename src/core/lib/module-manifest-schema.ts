@@ -216,6 +216,11 @@ const routeEntry = z.object({
      * small question, so the module answers the question separately: a file
      * that default-exports `(params) => Promise<boolean>`, false meaning
      * `notFound()`. Only routes with a dynamic segment need one.
+     *
+     * It may answer `{ title }` instead of `true`: the resource exists and is
+     * called that. A route serving many resources under one pattern has no
+     * other way to put a resource's own name in the tab, and the resolver has
+     * just read the row.
      */
     resolver: relativePath("resolver").optional(),
     /**

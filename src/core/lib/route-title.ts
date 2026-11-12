@@ -140,17 +140,22 @@ export interface RouteTitleInput {
     titleKey?: string;
     /** The visitor's message catalogue, core and modules merged. */
     messages?: Record<string, unknown> | null;
+    /** What the route's resolver says the resource it found is called. */
+    resourceTitle?: string | null;
 }
 
 /**
  * The title for a module page, in the visitor's language where the module
  * said what it is called.
  *
- * `titleFromPath` still wins: a route that declared it names a resource the
- * URL identifies (a product, an article), which is more specific than any
- * static page name and is already the resource's own words.
+ * A name the route's resolver read off the row wins: it is the resource's
+ * own words, written by whoever wrote the resource. Then `titleFromPath`: a
+ * route that declared it names a resource the URL identifies (a product, an
+ * article), which is more specific than any static page name.
  */
 export function resolveRouteTitle(input: RouteTitleInput): string {
+    const named = input.resourceTitle?.trim();
+    if (named && named.length <= MAX_TITLE_LENGTH) return named;
     if (input.titleFromPath && input.slug && input.slug.length > 0) {
         return moduleRouteTitle(input.slug, input.routePattern, true);
     }
@@ -158,4 +163,26 @@ export function resolveRouteTitle(input: RouteTitleInput): string {
         titleFromMessages(input.messages, input.titleKey) ??
         moduleRouteTitle(input.slug, input.routePattern, false)
     );
+}
+
+export interface RouteResolution {
+    exists: boolean;
+    /** The resource's own name, when the resolver gave one. */
+    title: string | null;
+}
+
+/**
+ * What a route's resolver answered.
+ *
+ * A resolver says whether the URL names anything, and may say what it is
+ * called in the same breath: it has just read the row, and a route serving
+ * many resources under one pattern, `/page/[slug]`, has no other way to put a
+ * resource's name in the tab. `true` and an object both mean it exists.
+ */
+export function routeResolution(answer: unknown): RouteResolution {
+    if (answer && typeof answer === "object") {
+        const title = (answer as { title?: unknown }).title;
+        return { exists: true, title: typeof title === "string" && title.trim() ? title.trim() : null };
+    }
+    return { exists: Boolean(answer), title: null };
 }
