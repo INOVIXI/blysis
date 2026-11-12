@@ -559,6 +559,21 @@ model CreditPackage {
   @@index([isActive, order])
 }
 
+/// A limited-time bonus on credit top-ups, larger for a larger payment.
+/// `tiers` is a list of { minAmount, percent }. See lib/credit-bonus.ts.
+model CreditBonusCampaign {
+  id        String   @id @default(cuid())
+  name      String
+  startsAt  DateTime
+  endsAt    DateTime
+  isActive  Boolean  @default(true)
+  tiers     Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, endsAt])
+}
+
 /// One wallet top-up a buyer started: the credits it sells and what it costs.
 /// Its id is the reference the gateway carries, so settling it reads the
 /// credits, the buyer and the price from here rather than from whatever the
@@ -579,6 +594,12 @@ model CreditTopUp {
   providerRef String?
   /// When the money went back and the credits were taken back.
   refundedAt  DateTime?
+  /// A bonus campaign's extra credits, decided when the payment started and
+  /// paid as their own ledger row when it settles. See lib/credit-bonus.ts.
+  bonusCredits    Int     @default(0)
+  /// The campaign that gave them. A plain id: the campaign may be deleted
+  /// and the top-up still has to pay what the buyer was shown.
+  bonusCampaignId String?
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 

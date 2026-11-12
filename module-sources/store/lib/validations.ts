@@ -114,6 +114,23 @@ export const creditPackageSchema = z.object({
     order: z.number().int().min(0).max(9999).default(0),
 });
 
+/**
+ * A credit bonus campaign as a form sends it. The dates are the operator's
+ * wall clock on the site's zone, or an instant with its offset; the order of
+ * the dates and of the tiers is checked after they are read, by
+ * `campaignProblem` in `credit-bonus.ts`.
+ */
+export const creditBonusCampaignSchema = z.object({
+    name: z.string().trim().min(1, "Name is required").max(100),
+    startsAt: z.string().min(16).max(40),
+    endsAt: z.string().min(16).max(40),
+    isActive: z.boolean().default(true),
+    tiers: z.array(z.object({
+        minAmount: z.number().positive().max(1_000_000),
+        percent: z.number().int().min(1).max(500),
+    })).min(1).max(10),
+});
+
 export const campaignSchema = z.object({
     name: z.string().min(1, "Name is required").max(100),
     isActive: z.boolean().optional(),

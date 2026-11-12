@@ -2,7 +2,7 @@
   "id": "credits",
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "coreVersion": "^5.21.0",
   "category": "commerce",
   "author": "Blysis",
@@ -120,7 +120,13 @@
         "typeVoucher_create": "Voucher Made",
         "typeVoucher_redeem": "Voucher Redeemed",
         "typeWheel_prize": "Wheel Prize",
-        "typeWheel_spin": "Wheel Spin"
+        "typeWheel_spin": "Wheel Spin",
+        "buy_campaignTitle": "Top-up bonus is on",
+        "buy_campaignTier": "Pay {amount} or more: +{percent}%",
+        "buy_campaignBonus": "+{percent}% campaign bonus: +{count} credits",
+        "buy_campaignEnds": "Ends in {days, plural, one {# day} other {# days}} {hours, plural, one {# hour} other {# hours}}",
+        "buy_campaignEndsSoon": "Ends in {hours, plural, one {# hour} other {# hours}} {minutes, plural, one {# minute} other {# minutes}}",
+        "typeTop_up_bonus": "Top-up Bonus"
       },
       "admin": {
         "module_credits_name": "Credit System",
@@ -201,7 +207,13 @@
         "typeVoucher_create": "Kupon Oluşturuldu",
         "typeVoucher_redeem": "Kupon Bozduruldu",
         "typeWheel_prize": "Çark Ödülü",
-        "typeWheel_spin": "Çark Çevirme"
+        "typeWheel_spin": "Çark Çevirme",
+        "buy_campaignTitle": "Yükleme bonusu aktif",
+        "buy_campaignTier": "{amount} veya daha fazla öde: +%{percent}",
+        "buy_campaignBonus": "+%{percent} kampanya bonusu: +{count} kredi",
+        "buy_campaignEnds": "{days} gün {hours} saat sonra bitiyor",
+        "buy_campaignEndsSoon": "{hours} saat {minutes} dakika sonra bitiyor",
+        "typeTop_up_bonus": "Yükleme Bonusu"
       },
       "admin": {
         "module_credits_name": "Kredi Sistemi",
@@ -282,7 +294,13 @@
         "typeGift_refund": "Hədiyyə geri alındı",
         "typePayment_refund": "Geri Qaytarmadan Sonra Geri Alındı",
         "typeVoucher_create": "Kupon yaradıldı",
-        "typeVoucher_redeem": "Kupon istifadə edildi"
+        "typeVoucher_redeem": "Kupon istifadə edildi",
+        "buy_campaignTitle": "Yükləmə bonusu aktivdir",
+        "buy_campaignTier": "{amount} və ya daha çox ödə: +{percent}%",
+        "buy_campaignBonus": "+{percent}% kampaniya bonusu: +{count} kredit",
+        "buy_campaignEnds": "{days} gün {hours} saat sonra bitir",
+        "buy_campaignEndsSoon": "{hours} saat {minutes} dəqiqə sonra bitir",
+        "typeTop_up_bonus": "Yükləmə Bonusu"
       },
       "admin": {
         "module_credits_name": "Kredit sistemi",
@@ -363,7 +381,13 @@
         "typeGift_refund": "Geschenk zurückgenommen",
         "typePayment_refund": "Nach Erstattung zurückgebucht",
         "typeVoucher_create": "Gutschein erstellt",
-        "typeVoucher_redeem": "Gutschein eingelöst"
+        "typeVoucher_redeem": "Gutschein eingelöst",
+        "buy_campaignTitle": "Aufladebonus läuft",
+        "buy_campaignTier": "Zahle {amount} oder mehr: +{percent} %",
+        "buy_campaignBonus": "+{percent} % Aktionsbonus: +{count} Credits",
+        "buy_campaignEnds": "Endet in {days, plural, one {# Tag} other {# Tagen}} {hours, plural, one {# Stunde} other {# Stunden}}",
+        "buy_campaignEndsSoon": "Endet in {hours, plural, one {# Stunde} other {# Stunden}} {minutes, plural, one {# Minute} other {# Minuten}}",
+        "typeTop_up_bonus": "Aufladebonus"
       },
       "admin": {
         "module_credits_name": "Credit-System",
@@ -444,7 +468,13 @@
         "typeGift_refund": "Regalo recuperado",
         "typePayment_refund": "Retirado tras un reembolso",
         "typeVoucher_create": "Vale creado",
-        "typeVoucher_redeem": "Vale canjeado"
+        "typeVoucher_redeem": "Vale canjeado",
+        "buy_campaignTitle": "Bonificación de recarga activa",
+        "buy_campaignTier": "Paga {amount} o más: +{percent} %",
+        "buy_campaignBonus": "+{percent} % de bonificación: +{count} créditos",
+        "buy_campaignEnds": "Termina en {days, plural, one {# día} other {# días}} {hours, plural, one {# hora} other {# horas}}",
+        "buy_campaignEndsSoon": "Termina en {hours, plural, one {# hora} other {# horas}} {minutes, plural, one {# minuto} other {# minutos}}",
+        "typeTop_up_bonus": "Bonificación de recarga"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -525,7 +555,13 @@
         "typeGift_refund": "Kingitus võeti tagasi",
         "typePayment_refund": "Tagasimakse järel tagasi võetud",
         "typeVoucher_create": "Kupong loodud",
-        "typeVoucher_redeem": "Kupong lunastatud"
+        "typeVoucher_redeem": "Kupong lunastatud",
+        "buy_campaignTitle": "Laadimisboonus kehtib",
+        "buy_campaignTier": "Maksa {amount} või rohkem: +{percent}%",
+        "buy_campaignBonus": "+{percent}% kampaaniaboonus: +{count} krediiti",
+        "buy_campaignEnds": "Lõpeb {days, plural, one {# päeva} other {# päeva}} {hours, plural, one {# tunni} other {# tunni}} pärast",
+        "buy_campaignEndsSoon": "Lõpeb {hours, plural, one {# tunni} other {# tunni}} {minutes, plural, one {# minuti} other {# minuti}} pärast",
+        "typeTop_up_bonus": "Laadimisboonus"
       },
       "admin": {
         "module_credits_name": "Krediidisüsteem",
@@ -606,7 +642,13 @@
         "typeGift_refund": "Cadeau repris",
         "typePayment_refund": "Repris après un remboursement",
         "typeVoucher_create": "Bon créé",
-        "typeVoucher_redeem": "Bon utilisé"
+        "typeVoucher_redeem": "Bon utilisé",
+        "buy_campaignTitle": "Bonus de recharge en cours",
+        "buy_campaignTier": "Payez {amount} ou plus : +{percent} %",
+        "buy_campaignBonus": "+{percent} % de bonus : +{count} crédits",
+        "buy_campaignEnds": "Se termine dans {days, plural, one {# jour} other {# jours}} {hours, plural, one {# heure} other {# heures}}",
+        "buy_campaignEndsSoon": "Se termine dans {hours, plural, one {# heure} other {# heures}} {minutes, plural, one {# minute} other {# minutes}}",
+        "typeTop_up_bonus": "Bonus de recharge"
       },
       "admin": {
         "module_credits_name": "Système de crédits",
@@ -687,7 +729,13 @@
         "typeGift_refund": "Regalo ripreso",
         "typePayment_refund": "Ripreso dopo un rimborso",
         "typeVoucher_create": "Buono creato",
-        "typeVoucher_redeem": "Buono riscattato"
+        "typeVoucher_redeem": "Buono riscattato",
+        "buy_campaignTitle": "Bonus ricarica attivo",
+        "buy_campaignTier": "Paga {amount} o più: +{percent}%",
+        "buy_campaignBonus": "+{percent}% di bonus: +{count} crediti",
+        "buy_campaignEnds": "Termina tra {days, plural, one {# giorno} other {# giorni}} {hours, plural, one {# ora} other {# ore}}",
+        "buy_campaignEndsSoon": "Termina tra {hours, plural, one {# ora} other {# ore}} {minutes, plural, one {# minuto} other {# minuti}}",
+        "typeTop_up_bonus": "Bonus ricarica"
       },
       "admin": {
         "module_credits_name": "Sistema di crediti",
@@ -768,7 +816,13 @@
         "typeGift_refund": "Prezent cofnięty",
         "typePayment_refund": "Cofnięte po zwrocie",
         "typeVoucher_create": "Utworzono bon",
-        "typeVoucher_redeem": "Wykorzystano bon"
+        "typeVoucher_redeem": "Wykorzystano bon",
+        "buy_campaignTitle": "Trwa bonus za doładowanie",
+        "buy_campaignTier": "Zapłać {amount} lub więcej: +{percent}%",
+        "buy_campaignBonus": "+{percent}% bonusu z kampanii: +{count} kredytów",
+        "buy_campaignEnds": "Kończy się za {days, plural, one {# dzień} other {# dni}} {hours, plural, one {# godzinę} few {# godziny} many {# godzin} other {# godziny}}",
+        "buy_campaignEndsSoon": "Kończy się za {hours, plural, one {# godzinę} few {# godziny} many {# godzin} other {# godziny}} {minutes, plural, one {# minutę} few {# minuty} many {# minut} other {# minuty}}",
+        "typeTop_up_bonus": "Bonus za doładowanie"
       },
       "admin": {
         "module_credits_name": "System kredytów",
@@ -849,7 +903,13 @@
         "typeGift_refund": "Presente recuperado",
         "typePayment_refund": "Retirado após reembolso",
         "typeVoucher_create": "Vale criado",
-        "typeVoucher_redeem": "Vale resgatado"
+        "typeVoucher_redeem": "Vale resgatado",
+        "buy_campaignTitle": "Bónus de carregamento ativo",
+        "buy_campaignTier": "Pague {amount} ou mais: +{percent}%",
+        "buy_campaignBonus": "+{percent}% de bónus: +{count} créditos",
+        "buy_campaignEnds": "Termina dentro de {days, plural, one {# dia} other {# dias}} {hours, plural, one {# hora} other {# horas}}",
+        "buy_campaignEndsSoon": "Termina dentro de {hours, plural, one {# hora} other {# horas}} {minutes, plural, one {# minuto} other {# minutos}}",
+        "typeTop_up_bonus": "Bónus de carregamento"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -930,7 +990,13 @@
         "typeGift_refund": "Подарок отозван",
         "typePayment_refund": "Списано после возврата",
         "typeVoucher_create": "Ваучер создан",
-        "typeVoucher_redeem": "Ваучер погашен"
+        "typeVoucher_redeem": "Ваучер погашен",
+        "buy_campaignTitle": "Действует бонус за пополнение",
+        "buy_campaignTier": "Оплатите от {amount}: +{percent}%",
+        "buy_campaignBonus": "Бонус акции +{percent}%: +{count} кредитов",
+        "buy_campaignEnds": "Закончится через {days, plural, one {# день} few {# дня} many {# дней} other {# дня}} {hours, plural, one {# час} few {# часа} many {# часов} other {# часа}}",
+        "buy_campaignEndsSoon": "Закончится через {hours, plural, one {# час} few {# часа} many {# часов} other {# часа}} {minutes, plural, one {# минуту} few {# минуты} many {# минут} other {# минуты}}",
+        "typeTop_up_bonus": "Бонус за пополнение"
       },
       "admin": {
         "module_credits_name": "Система кредитов",
@@ -1011,7 +1077,13 @@
         "typeGift_refund": "礼物已收回",
         "typePayment_refund": "退款后收回",
         "typeVoucher_create": "已创建兑换券",
-        "typeVoucher_redeem": "已兑换兑换券"
+        "typeVoucher_redeem": "已兑换兑换券",
+        "buy_campaignTitle": "充值奖励进行中",
+        "buy_campaignTier": "付款满 {amount}：+{percent}%",
+        "buy_campaignBonus": "活动奖励 +{percent}%：+{count} 积分",
+        "buy_campaignEnds": "{days} 天 {hours} 小时后结束",
+        "buy_campaignEndsSoon": "{hours} 小时 {minutes} 分钟后结束",
+        "typeTop_up_bonus": "充值奖励"
       },
       "admin": {
         "module_credits_name": "积分系统",
