@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isKnownLocale } from "@/core/lib/i18n/resolve-locale";
-import { buildSiteHead, buildPageMeta, buildOrganizationJsonLd } from "@/core/lib/seo";
+import { buildSiteHead, buildPageMeta, buildOrganizationJsonLd, siteHeadMetadata } from "@/core/lib/seo";
 import { Inter, Outfit, JetBrains_Mono } from "next/font/google";
 import { buildTokenOverrideCss } from "@/core/lib/theme-override-css";
 import { themeFontVariables } from "@/core/generated/theme-fonts";
@@ -68,7 +68,7 @@ export async function generateMetadata(): Promise<Metadata> {
       default: head.defaultTitle,
       template: head.titleTemplate,
     },
-    keywords: ["open source", "modular platform", "plugin marketplace"],
+    ...siteHeadMetadata(head),
     manifest: "/manifest.webmanifest",
     authors: [{ name: head.defaultTitle }],
   };

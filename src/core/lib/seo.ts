@@ -225,6 +225,26 @@ export async function buildSiteHead(): Promise<SiteHead> {
 }
 
 /**
+ * The part of the site's head the root layout spreads into its metadata.
+ *
+ * The layout read the title out of `buildSiteHead` and dropped the rest: it
+ * wrote its own keywords, the product's ("open source, modular platform,
+ * plugin marketplace"), into every installation's head, and the verification
+ * tokens an operator pasted never reached the page a search engine checks.
+ * Nothing said is nothing written, so a site with no keywords has no tag.
+ */
+export function siteHeadMetadata(head: SiteHead): Pick<Metadata, "keywords" | "verification"> {
+    const verification = {
+        ...(head.googleVerification ? { google: head.googleVerification } : {}),
+        ...(head.bingVerification ? { other: { "msvalidate.01": head.bingVerification } } : {}),
+    };
+    return {
+        ...(head.keywords ? { keywords: head.keywords } : {}),
+        ...(Object.keys(verification).length > 0 ? { verification } : {}),
+    };
+}
+
+/**
  * Build a Next.js Metadata object for a page, populated with OpenGraph and
  * Twitter card data. Use from `generateMetadata()` or as a static `metadata`
  * export. Async to allow reading Settings - await the result.
