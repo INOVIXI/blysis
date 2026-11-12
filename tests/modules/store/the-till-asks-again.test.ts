@@ -36,6 +36,11 @@ const db = {
     setting: { findUnique: vi.fn(async () => null) },
     user: { findUnique: vi.fn(async () => ({ creditBalance: 0, roleId: null })) },
     order: { create: orderCreate },
+    creatorCode: {
+        findUnique: vi.fn(async () => null as unknown),
+        update: vi.fn(async () => ({})),
+    },
+    cartItem: { deleteMany: vi.fn(async () => ({ count: 0 })) },
     $transaction: vi.fn(),
 };
 
@@ -60,6 +65,21 @@ vi.mock("@/core/sdk/auth", () => ({ auth: async () => ({ user: { id: "buyer", ro
 vi.mock("@/modules/store/lib/upgrade-credit-server", () => ({
     creditingPurchases: async () => [],
     ownedRungsOn: async () => [],
+}));
+
+vi.mock("@/modules/store/lib/order-events", () => ({
+    announceOrderCreated: vi.fn(async () => {}),
+    announceOrderCompleted: vi.fn(async () => {}),
+}));
+// Nothing here is counted on a shelf; `a-limited-product-runs-out` is where stock is.
+vi.mock("@/modules/store/lib/stock", async (importOriginal) => ({
+    ...(await importOriginal<Record<string, unknown>>()),
+    shortOfStock: vi.fn(async () => []),
+}));
+// No gateway is set up, so a card checkout writes its order and stops there.
+vi.mock("@/modules/store/lib/payments", () => ({
+    listPaymentProviders: vi.fn(async () => []),
+    startPaymentSession: vi.fn(),
 }));
 
 const { POST } = await import("@/modules/store/api/checkout/route");
@@ -145,6 +165,34 @@ describe("the checkout", () => {
         expect(status).toBe(409);
         expect(body.code).toBe("store_limit_reached");
         expect(orderCreate).not.toHaveBeenCalled();
+    });
+
+    it("pays a creator nothing for an order that is not paid yet", async () => {
+        // A checkout at a gateway is only an order waiting for its money. A
+        // creator paid at this point was paid for every checkout nobody
+        // finished, as many times as one could be started.
+        db.creatorCode.findUnique.mockResolvedValueOnce({
+            id: "cc1", code: "ALEX", creatorId: "creator", isActive: true,
+            discountPercent: 0, commissionPercent: 10, productIds: [], categoryIds: [],
+        });
+        db.$transaction.mockImplementation(async (work: unknown) => (work as (tx: unknown) => Promise<unknown>)(db));
+
+        const res = await POST(
+            new NextRequest("http://localhost/api/v1/store/checkout", {
+                method: "POST",
+                body: JSON.stringify({
+                    items: [{ productId: "p1", quantity: 1 }],
+                    playerName: "Steve",
+                    paymentMethod: "card",
+                    creatorCode: "ALEX",
+                }),
+            }),
+        );
+
+        db.$transaction.mockReset();
+        expect(orderCreate).toHaveBeenCalled();
+        expect(res.status).toBe(503);
+        expect(db.creatorCode.update).not.toHaveBeenCalled();
     });
 
     it("refuses over the period's allowance", async () => {

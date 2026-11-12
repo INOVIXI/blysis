@@ -59,6 +59,10 @@ const db = {
     // is where the counting itself is tested.
     product: { findMany: vi.fn(async () => []), updateMany: vi.fn(async () => ({ count: 1 })) },
     user: { update: vi.fn(async () => ({})) },
+    creatorCode: {
+        findUnique: vi.fn(async () => null as unknown),
+        update: vi.fn(async () => ({})),
+    },
     creditTransaction: { findUnique: vi.fn(async () => null), create: vi.fn(async () => ({})) },
     creditTopUp: {
         findUnique: vi.fn(async () => null as unknown),
@@ -376,6 +380,35 @@ describe("settleOrder", () => {
  * settlement is held against it. The gateway's word for the amount used to be
  * the only one there was: a cent settled an order of fifty.
  */
+describe("settleOrder, for an order placed with a creator's code", () => {
+    const withCode = { ...paidOrder, status: "PENDING", total: 50, metadata: { playerName: "Steve", creatorCode: "ALEX" } };
+
+    it("pays the creator once the money is here, inside the claim", async () => {
+        db.order.findUnique.mockResolvedValueOnce(withCode);
+        db.creatorCode.findUnique.mockResolvedValueOnce({ id: "cc1", code: "ALEX", creatorId: "creator", commissionPercent: 10 });
+
+        await settleOrder(settlement);
+
+        const update = calls.find((c) => c.op === "creatorCode.update");
+        expect(update?.viaTx).toBe(true);
+        expect(update?.args).toEqual({ where: { id: "cc1" }, data: { usageCount: { increment: 1 }, totalRevenue: { increment: 50 } } });
+        expect(applyFiltersAsync).toHaveBeenCalledWith(
+            "credit.change",
+            expect.anything(),
+            expect.objectContaining({ userId: "creator", amount: 5, type: "creator_commission" }),
+        );
+    });
+
+    it("pays nothing again when another delivery of the payment won the claim", async () => {
+        db.order.findUnique.mockResolvedValueOnce(withCode);
+        db.order.updateMany.mockResolvedValueOnce({ count: 0 });
+
+        await settleOrder(settlement);
+
+        expect(db.creatorCode.update).not.toHaveBeenCalled();
+    });
+});
+
 describe("settleOrder, against what was charged", () => {
     const charged = { ...paidOrder, status: "PENDING", chargeAmount: 42, chargeCurrency: "USD" };
 
