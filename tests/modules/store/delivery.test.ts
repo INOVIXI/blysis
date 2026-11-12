@@ -237,16 +237,31 @@ describe("deliverProduct, unit by unit", () => {
         expect(ran()[0].command).toBe("x ORD1opx ORD1opx-1-1");
     });
 
-    // The new names must not take a word a product already uses for itself.
-    it("leaves a product's own variable of the same name alone", async () => {
+    // A checkout's answers are the buyer's words. The store's own placeholders
+    // carry the order number a game plugin pays once against, so no answer
+    // may stand in for one, whatever it is called.
+    it("never lets a buyer's answer stand in for a placeholder the store fills", async () => {
         answers(ok);
         await deliverProduct({
             playerName: "Notch",
             productName: "Kit",
+            quantity: 1,
             orderNumber: "ORD-1",
-            commands: [{ command: "kit {unit}" }],
-            variables: { unit: "gold" },
+            commands: [{ command: "pay {player} {product} {quantity} {order} {delivery} {unit}" }],
+            variables: { player: "x", product: "x", quantity: "64", order: "x 999", delivery: "x", unit: "9" },
         });
-        expect(ran()[0].command).toBe("kit gold");
+        expect(ran()[0].command).toBe("pay Notch Kit 1 ORD-1 ORD-1-1-1 1");
+    });
+
+    it("delivers whatever a variable is called", async () => {
+        answers(ok);
+        const result = await deliverProduct({
+            playerName: "Notch",
+            productName: "Kit",
+            commands: [{ command: "kit {colour}" }],
+            variables: { "(": "x", colour: "red" },
+        });
+        expect(result.success).toBe(true);
+        expect(ran()[0].command).toBe("kit red");
     });
 });
