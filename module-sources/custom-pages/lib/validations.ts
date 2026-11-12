@@ -16,6 +16,14 @@ export const customPageCreateSchema = z.object({
 export const customPageUpdateSchema = customPageCreateSchema.partial();
 
 /**
+ * Whose translations these are, in core's table, and the fields that have
+ * them: each language held to its column's own limit. The address is the
+ * same in every language.
+ */
+export const CUSTOM_PAGE_TEXT = { owner: "custom-pages", entity: "page" };
+export const TRANSLATED_FIELDS = { title: 200, content: 100_000 };
+
+/**
  * Whether a page's content is a document the removed block editor wrote.
  *
  * `content` held one of two grammars for as long as there were two editors

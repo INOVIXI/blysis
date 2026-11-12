@@ -22,8 +22,10 @@ vi.mock("@/core/config/server", () => ({ serverConfig }));
 import type { Metadata } from "next";
 import {
     buildPageMeta,
+    buildSiteHead,
     buildArticleJsonLd,
     buildOrganizationJsonLd,
+    getSeoSiteInfo,
 } from "@/core/lib/seo";
 
 /**
@@ -42,6 +44,49 @@ beforeEach(() => {
 });
 
 // ===========================================================================
+
+describe("a site name and description written per language", () => {
+    // Every page's head carried one value for both, so a crawler indexing
+    // the English site read the Turkish name in every result.
+    beforeEach(() => {
+        setting.findMany.mockResolvedValue([
+            { key: "site_name", value: { default: "Vanilya Sunucusu", en: "Vanilla Server" } },
+            { key: "site_description", value: { default: "Türkçe açıklama", en: "English description" } },
+        ]);
+    });
+
+    it("is the reader's in a page's head", async () => {
+        const meta = await buildPageMeta({ title: "Servers", url: "/servers", locale: "en" });
+        expect(meta.description).toBe("English description");
+        expect(og(meta).siteName).toBe("Vanilla Server");
+    });
+
+    it("is the original for a language with no translation", async () => {
+        const meta = await buildPageMeta({ title: "Servers", url: "/servers", locale: "fr" });
+        expect(meta.description).toBe("Türkçe açıklama");
+        expect(og(meta).siteName).toBe("Vanilya Sunucusu");
+    });
+
+    it("names the tab in the reader's language", async () => {
+        expect((await buildSiteHead("en")).defaultTitle).toBe("Vanilla Server");
+        expect((await buildSiteHead("tr")).titleTemplate).toBe("%s | Vanilya Sunucusu");
+    });
+
+    it("is never the text of an object", async () => {
+        const meta = await buildPageMeta({ title: "Servers" });
+        expect(meta.description).toBe("Türkçe açıklama");
+        expect(og(meta).siteName).toBe("Vanilya Sunucusu");
+    });
+});
+
+describe("the tab icon", () => {
+    // The root layout draws the head's icons from this (`siteIconMetadata`).
+    it("is the one the operator stored, and none when nothing is", async () => {
+        expect((await getSeoSiteInfo()).siteIcon).toBeNull();
+        setting.findMany.mockResolvedValue([{ key: "site_icon", value: "/uploads/tab.png" }]);
+        expect((await getSeoSiteInfo()).siteIcon).toBe("/uploads/tab.png");
+    });
+});
 
 describe("buildPageMeta", () => {
     it("uses the title as given", async () => {
@@ -72,10 +117,10 @@ describe("buildPageMeta", () => {
         expect(meta.description).toBe("From the database");
     });
 
-    it("asks for only the two seo keys", async () => {
+    it("asks for only the seo keys", async () => {
         await buildPageMeta({ title: "x" });
         expect(setting.findMany).toHaveBeenCalledWith({
-            where: { key: { in: ["site_name", "site_description"] } },
+            where: { key: { in: ["site_name", "site_description", "site_icon"] } },
         });
     });
 

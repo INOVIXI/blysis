@@ -13,7 +13,7 @@ import crypto from "crypto";
 vi.mock("@/core/sdk/server", () => ({
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() }, prisma: {} }));
 
-const { paytrHash, paytrCurrency, toMerchantOid, fromMerchantOid } = await import(
+const { paytrHash, paytrCallbackHash, paytrCurrency, toMerchantOid, fromMerchantOid } = await import(
     "@/modules/paytr-gateway/lib/paytr"
 );
 
@@ -30,6 +30,22 @@ describe("paytrHash", () => {
     it("does not key the HMAC with the salt", () => {
         const wrong = crypto.createHmac("sha256", "salt").update("payloadkey").digest("base64");
         expect(paytrHash(config, "payload")).not.toBe(wrong);
+    });
+});
+
+// PayTR signs a callback as merchant_oid + merchant_salt + status +
+// total_amount, with the salt in the middle and nothing appended. Signing it
+// with the payment recipe added the salt a second time at the end, so no
+// genuine callback verified and no card order was ever settled.
+describe("paytrCallbackHash", () => {
+    it("is the HMAC of oid, salt, status and amount, with the salt once and in the middle", () => {
+        const expected = crypto.createHmac("sha256", "key").update("abc123" + "salt" + "success" + "10000").digest("base64");
+        expect(paytrCallbackHash(config, "abc123", "success", "10000")).toBe(expected);
+    });
+
+    it("does not append the salt again", () => {
+        const doubled = crypto.createHmac("sha256", "key").update("abc123saltsuccess10000salt").digest("base64");
+        expect(paytrCallbackHash(config, "abc123", "success", "10000")).not.toBe(doubled);
     });
 });
 

@@ -5,7 +5,7 @@ import { useRouter } from "@/core/sdk/navigation";
 import { Button, Card, CardContent, Input, Label, LoadFailed, Textarea, NativeSelect } from "@/core/sdk/ui";
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Loader2, FolderPlus } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { writeError } from "@/core/sdk";
 
 interface Category {
@@ -18,6 +18,8 @@ export default function NewTopicPage() {
     const router = useRouter();
     const t = useTranslations('forum');
     const commonT = useTranslations('common');
+    // The sections to post in, named in the page's language.
+    const locale = useLocale();
     const [categories, setCategories] = useState<Category[]>([]);
     const [categoriesLoaded, setCategoriesLoaded] = useState(false);
     const [failed, setFailed] = useState(false);
@@ -33,13 +35,13 @@ export default function NewTopicPage() {
 
     useEffect(() => {
         let cancelled = false;
-        fetch("/api/v1/forum/categories")
+        fetch(`/api/v1/forum/categories?locale=${encodeURIComponent(locale)}`)
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
             .then((d) => { if (cancelled) return; setCategories(d.categories || []); setFailed(false); })
             .catch(() => { if (cancelled) return; setFailed(true); })
             .finally(() => { if (cancelled) return; setCategoriesLoaded(true); });
         return () => { cancelled = true; };
-    }, [reloadKey]);
+    }, [reloadKey, locale]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

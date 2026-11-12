@@ -58,6 +58,11 @@ export type { CheckboxProps, CheckboxFieldProps } from "@/core/components/ui/che
 export { Input } from "@/core/components/ui/input";
 export { Label } from "@/core/components/ui/label";
 export { Textarea } from "@/core/components/ui/textarea";
+// Text the operator writes once and then per language, and the same text
+// read back in the page's language.
+export { LocalizedTextInput } from "@/core/components/ui/localized-text-input";
+export type { LocalizedTextInputProps } from "@/core/components/ui/localized-text-input";
+export { useText } from "@/core/hooks/useText";
 export {
     Select,
     SelectTrigger,
@@ -89,7 +94,9 @@ export { useConfirm } from "@/core/components/ui/confirm-dialog";
  * The site's currency and a formatter for it. A module that shows a price
  * must use this rather than its own `$`: the base comes from the setting the
  * payment gateways charge in, and the formatting follows the reader's locale.
- * A module that knows exchange rates calls `setDisplay({ code, rate })`.
+ * A module that knows exchange rates calls `setDisplay({ code, rate })` for
+ * a visitor's own pick, and `setDefaultDisplay` for what a visitor who never
+ * picked should read, which is never stored.
  */
 export { useSiteCurrency } from "@/core/components/currency/site-currency";
 export type { SiteCurrency, DisplayCurrency } from "@/core/components/currency/site-currency";
@@ -122,6 +129,12 @@ export { activityKinds, activityTypeLabel } from "@/core/lib/activity-title";
  * contact form.
  */
 export { Challenge, useChallenge } from "@/core/components/auth/Challenge";
+/**
+ * What a sign-in provider is called and its mark, from the button its module
+ * declared for the sign-in page; a provider whose module is gone is its id
+ * and a plain key.
+ */
+export { ProviderMark, providerLabel } from "@/core/components/auth/ProviderMark";
 export { MemberAvatar } from "@/core/components/ui/MemberAvatar";
 export { MemberLink } from "@/core/components/ui/MemberLink";
 export { CountBadge } from "@/core/components/ui/count-badge";

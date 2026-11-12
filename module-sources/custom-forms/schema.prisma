@@ -10,6 +10,13 @@ model CustomForm {
   description String?
   fields      Json
   isActive    Boolean  @default(true)
+  // A form can be an application: only a signed-in member may send it, and
+  // only `submissionLimit` times (null is no limit) since `limitPeriodStart`
+  // (null is since the form was made). Resetting the allowances moves the
+  // start; the submissions before it stay, they just stop counting.
+  requireSignIn    Boolean   @default(false)
+  submissionLimit  Int?
+  limitPeriodStart DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -23,14 +30,22 @@ model CustomFormSubmission {
   userId    String?
   data      Json
   status    String     @default("new")
+  // What the operator tells the person who sent it. The member reads it
+  // beside the decision, so it is never a place for notes about them.
+  reviewNote String?
+  reviewedAt DateTime?
   createdAt DateTime   @default(now())
 
   // No User FK relation declared here - userId is a loose reference so the
   // form module stays decoupled from the User model (anonymous submissions
   // are valid). Stale userIds become harmless dangling pointers after the
   // user is deleted.
-  @@index([formId])
   // The admin list is every submission, newest first, a page at a time,
-  // with nothing narrowing it. Additive: formId is still its own lookup.
+  // with nothing narrowing it. A form's own lookup is the index below,
+  // which starts with formId.
   @@index([createdAt])
+  // A member's allowance is counted per form, and their own list is read
+  // by who sent it.
+  @@index([formId, userId, createdAt])
+  @@index([userId, createdAt])
 }

@@ -42,7 +42,9 @@ const userFindMany = vi.fn(
     },
 );
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    // The real translation helpers: a request with no `?locale=` asks nothing more.
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
         staffMember: { findMany: async () => members.filter((m) => m.isActive) },
         user: { findMany: (args: never) => userFindMany(args) },

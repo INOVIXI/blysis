@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
-    Button, Card, CardContent, CheckboxField, Input, Label, Textarea, UrlOrFile,
+    Button, Card, CardContent, CheckboxField, Input, Label, LocalizedTextInput, UrlOrFile,
 } from "@/core/sdk/ui";
 import { AdminPageHeader } from "@/core/sdk/admin";
-import { writeError } from "@/core/sdk";
+import { joinTranslations, splitTranslations, writeError, type LanguageTexts } from "@/core/sdk";
 import { Loader2 } from "lucide-react";
 import type { AdminHelpCategory } from "./rows";
 
@@ -36,6 +36,16 @@ export function CategoryForm({
         image: category?.image ?? "",
         isActive: category?.isActive ?? true,
     });
+    // Each language beside its original in `form`, sent as `translations`.
+    const [languages, setLanguages] = useState<Record<"name" | "description", LanguageTexts>>({
+        name: category?.translations?.name ?? {},
+        description: category?.translations?.description ?? {},
+    });
+    const word = (field: "name" | "description", next: unknown) => {
+        const parts = splitTranslations(next);
+        setForm((was) => ({ ...was, [field]: parts.original }));
+        setLanguages((was) => ({ ...was, [field]: parts.translations }));
+    };
     const [iconMode, setIconMode] = useState<"icon" | "image">(category?.image ? "image" : "icon");
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -50,7 +60,9 @@ export function CategoryForm({
                 {
                     method: category ? "PATCH" : "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(form),
+                    // Every language every time: an empty one is how a
+                    // cleared language goes.
+                    body: JSON.stringify({ ...form, translations: languages }),
                 },
             );
             const failed = await writeError(
@@ -88,21 +100,26 @@ export function CategoryForm({
                 <CardContent className="p-6">
                     <form onSubmit={submit} className="space-y-4">
                         <div>
-                            <Label>{`${t("adm_name")} *`}</Label>
-                            <Input
-                                aria-label={t("adm_name")}
-                                value={form.name}
-                                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                            <Label htmlFor="help-category-name">{`${t("adm_name")} *`}</Label>
+                            <LocalizedTextInput
+                                id="help-category-name"
+                                label={t("adm_name")}
+                                value={joinTranslations(form.name, languages.name)}
+                                onChange={(next) => word("name", next)}
+                                maxLength={100}
                                 required
                             />
                         </div>
                         <div>
-                            <Label>{t("adm_description")}</Label>
-                            <Textarea
-                                aria-label={t("adm_description")}
-                                value={form.description ?? ""}
-                                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                            <Label htmlFor="help-category-description">{t("adm_description")}</Label>
+                            <LocalizedTextInput
+                                id="help-category-description"
+                                label={t("adm_description")}
+                                multiline
                                 rows={3}
+                                maxLength={500}
+                                value={joinTranslations(form.description ?? "", languages.description)}
+                                onChange={(next) => word("description", next)}
                             />
                         </div>
                         <div>

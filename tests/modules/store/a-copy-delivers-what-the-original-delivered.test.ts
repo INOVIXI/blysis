@@ -28,13 +28,15 @@ const db = {
         create: vi.fn(async () => ({ id: "prod-copy" })),
     },
     productCommand: { findMany: vi.fn(async () => [] as Record<string, unknown>[]), createMany: vi.fn(async () => ({ count: 0 })) },
-    productVariable: { findMany: vi.fn(async () => [] as Record<string, unknown>[]), createMany: vi.fn(async () => ({ count: 0 })) },
+    productVariable: { findMany: vi.fn(async () => [] as Record<string, unknown>[]), createManyAndReturn: vi.fn(async ({ data }: { data: Record<string, unknown>[] }) => data.map((row, i) => ({ id: `v-copy-${i}`, ...row }))) },
     ownedProduct: { createMany: vi.fn(), findMany: vi.fn(async () => []) },
     cartItem: { createMany: vi.fn() },
     orderItem: { createMany: vi.fn() },
     chestItem: { createMany: vi.fn() },
     campaignEntry: { createMany: vi.fn() },
     subscription: { createMany: vi.fn() },
+    // Its words in other languages, which come with it.
+    contentTranslation: { findMany: vi.fn(async () => []), deleteMany: vi.fn(async () => ({ count: 0 })), createMany: vi.fn(async () => ({ count: 0 })) },
 };
 
 function trace<T extends object>(client: T, viaTx: boolean): T {
@@ -61,7 +63,8 @@ const prisma = {
     $transaction: async (run: (tx: typeof db) => unknown) => run(trace(db, true)),
 };
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma,
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     logActivity: vi.fn(async () => {}),
@@ -90,6 +93,7 @@ function source(over: Record<string, unknown> = {}) {
         stock: null,
         type: "DIGITAL",
         deliveryData: null,
+        commandsPerUnit: false,
         subscriptionInterval: null,
         subscriptionIntervalCount: 1,
         availableFrom: null,
@@ -165,8 +169,8 @@ describe("copying a product", () => {
 
         await ask();
 
-        const written = db.productVariable.createMany.mock.calls[0][0] as { data: Record<string, unknown>[] };
-        expect(written.data).toEqual([
+        // Returned with their ids, so each question's languages can follow it.
+        expect(db.productVariable.createManyAndReturn.mock.calls[0][0].data).toEqual([
             { productId: "prod-copy", name: "player", label: "Player name", type: "text", required: true, placeholder: "Your name", options: null },
         ]);
     });
@@ -174,7 +178,7 @@ describe("copying a product", () => {
     it("writes nothing extra when the original had none", async () => {
         await ask();
         expect(db.productCommand.createMany).not.toHaveBeenCalled();
-        expect(db.productVariable.createMany).not.toHaveBeenCalled();
+        expect(db.productVariable.createManyAndReturn).not.toHaveBeenCalled();
     });
 
     it("copies nobody's history", async () => {

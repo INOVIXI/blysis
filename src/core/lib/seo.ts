@@ -12,6 +12,7 @@
 
 import { cache } from "react";
 import type { Metadata } from "next";
+import { SITE_ICON_KEY } from "@/core/lib/site-logo";
 import { prisma } from "./db";
 import { resolveAppUrl } from "./app-url";
 import { serverConfig } from "@/core/config/server";
@@ -19,6 +20,7 @@ import { localeAlternates, localizedPath } from "./sitemap-routes";
 import type { SiteLanguages } from "./i18n/site-languages";
 import { getSiteLanguages } from "./i18n/site-languages-setting";
 import { locales } from "./i18n/config";
+import { originalText, textFor } from "./i18n/translatable-text";
 
 export interface PageMetaInput {
     title: string;
@@ -34,6 +36,12 @@ export interface PageMetaInput {
      * hreflang is emitted, which is better than emitting a wrong one.
      */
     locale?: string;
+    /**
+     * Which language the site's own name and description are read in, when
+     * that is wanted without a canonical: the root layout's head, which every
+     * page inherits and so must not name one page's URL. Defaults to `locale`.
+     */
+    siteLanguage?: string;
     type?: "website" | "article" | "profile";
     publishedTime?: string;
     authorName?: string;
@@ -49,16 +57,21 @@ export interface ArticleJsonLdInput {
     authorName?: string;
 }
 
-const SEO_SETTING_KEYS = ["site_name", "site_description"] as const;
+const SEO_SETTING_KEYS = ["site_name", "site_description", SITE_ICON_KEY] as const;
 
 export interface SeoSiteInfo {
     siteName: string;
     siteDescription: string;
     siteUrl: string;
+    /** The stored tab icon; `siteIconMetadata` turns it into the head's icons. */
+    siteIcon: string | null;
 }
 
 /**
- * Reads site_name + site_description from Settings with env fallbacks.
+ * Reads site_name + site_description from Settings with env fallbacks, in
+ * `locale` when one is given: the operator may write both per language, and a
+ * crawler indexing one language of the site reads that language's name. With
+ * no locale, a mail or an export rather than a page, it is the original text.
  *
  * Cached for the length of one render, for the reason `getSession` and
  * `getActiveTheme` are: every route that declares metadata calls
@@ -67,28 +80,34 @@ export interface SeoSiteInfo {
  * queries `/en/blog` issued for one request. A site cannot be renamed
  * between a layout's metadata and its page's.
  */
-export const getSeoSiteInfo = cache(async function getSeoSiteInfo(): Promise<SeoSiteInfo> {
+export const getSeoSiteInfo = cache(async function getSeoSiteInfo(locale?: string): Promise<SeoSiteInfo> {
     // Runtime-resolved: see app-url.ts. Reading NEXT_PUBLIC_SITE_URL here
     // baked localhost into every canonical tag of every prebuilt-image install.
     const siteUrl = resolveAppUrl();
 
     let siteName: string = serverConfig.name;
     let siteDescription: string = serverConfig.description || "";
+    let siteIcon: string | null = null;
 
     try {
         const rows = await prisma.setting.findMany({
             where: { key: { in: [...SEO_SETTING_KEYS] } },
         });
         for (const r of rows) {
-            const value = typeof r.value === "string" ? r.value : String(r.value ?? "");
+            // An object is text written per language; anything else is
+            // coerced as it always was, so a name saved as a number still reads.
+            const value = typeof r.value === "object" && r.value !== null
+                ? (locale ? textFor(r.value, locale) : originalText(r.value))
+                : String(r.value ?? "");
             if (r.key === "site_name" && value) siteName = value;
             if (r.key === "site_description" && value) siteDescription = value;
+            if (r.key === SITE_ICON_KEY && value) siteIcon = value;
         }
     } catch {
         // DB unavailable (build phase / fresh install) - fall back to defaults
     }
 
-    return { siteName, siteDescription, siteUrl };
+    return { siteName, siteDescription, siteUrl, siteIcon };
 });
 
 /** Synchronous version using only env/serverConfig - safe for non-async callers. */
@@ -97,6 +116,7 @@ function getSeoSiteInfoSync(): SeoSiteInfo {
         siteName: serverConfig.name,
         siteDescription: serverConfig.description || "",
         siteUrl: resolveAppUrl(),
+        siteIcon: null,
     };
 }
 
@@ -200,8 +220,8 @@ export interface SiteHead {
  * environment, which is why renaming a site used to change every heading on it
  * and leave the browser tab reading the old name.
  */
-export async function buildSiteHead(): Promise<SiteHead> {
-    const { siteName } = await getSeoSiteInfo();
+export async function buildSiteHead(locale?: string): Promise<SiteHead> {
+    const { siteName } = await getSeoSiteInfo(locale);
     let answer = NO_SITE_HEAD;
     try {
         const { ensureHooks } = await import("./hooks-bootstrap");
@@ -225,12 +245,32 @@ export async function buildSiteHead(): Promise<SiteHead> {
 }
 
 /**
+ * The part of the site's head the root layout spreads into its metadata.
+ *
+ * The layout read the title out of `buildSiteHead` and dropped the rest: it
+ * wrote its own keywords, the product's ("open source, modular platform,
+ * plugin marketplace"), into every installation's head, and the verification
+ * tokens an operator pasted never reached the page a search engine checks.
+ * Nothing said is nothing written, so a site with no keywords has no tag.
+ */
+export function siteHeadMetadata(head: SiteHead): Pick<Metadata, "keywords" | "verification"> {
+    const verification = {
+        ...(head.googleVerification ? { google: head.googleVerification } : {}),
+        ...(head.bingVerification ? { other: { "msvalidate.01": head.bingVerification } } : {}),
+    };
+    return {
+        ...(head.keywords ? { keywords: head.keywords } : {}),
+        ...(Object.keys(verification).length > 0 ? { verification } : {}),
+    };
+}
+
+/**
  * Build a Next.js Metadata object for a page, populated with OpenGraph and
  * Twitter card data. Use from `generateMetadata()` or as a static `metadata`
  * export. Async to allow reading Settings - await the result.
  */
 export async function buildPageMeta(input: PageMetaInput): Promise<Metadata> {
-    const { siteName, siteDescription, siteUrl } = await getSeoSiteInfo();
+    const { siteName, siteDescription, siteUrl } = await getSeoSiteInfo(input.siteLanguage ?? input.locale);
     const override = await pageOverride(input, { description: input.description || siteDescription });
 
     const title = override.title || input.title;

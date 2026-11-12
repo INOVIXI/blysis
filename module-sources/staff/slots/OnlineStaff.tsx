@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { sharedJson } from "@/core/sdk";
+import { MemberAvatar } from "@/core/sdk/ui";
 
 interface StaffMember {
     id: string;
@@ -25,18 +26,20 @@ const SHOWN = 5;
  */
 export default function OnlineStaff() {
     const t = useTranslations("staff");
+    // Each role in the page's language; the strip and the card ask the same address.
+    const locale = useLocale();
     const [members, setMembers] = useState<StaffMember[]>([]);
 
     useEffect(() => {
         let active = true;
         // The same request the `staff.online` card makes, shared with it.
-        sharedJson<{ members?: StaffMember[] }>("/api/v1/staff?online=1")
+        sharedJson<{ members?: StaffMember[] }>(`/api/v1/staff?online=1&locale=${encodeURIComponent(locale)}`)
             .then((d) => {
                 if (active) setMembers(d.members || []);
             })
             .catch(() => {});
         return () => { active = false; };
-    }, []);
+    }, [locale]);
 
     if (members.length === 0) return null;
 
@@ -47,17 +50,9 @@ export default function OnlineStaff() {
             <ul aria-label={label} className="flex flex-wrap items-center gap-2">
                 {members.slice(0, SHOWN).map((m) => {
                     const name = m.user?.username || m.name;
-                    const avatar = m.user?.avatar;
                     return (
                         <li key={m.id} className="flex items-center gap-2 rounded-md bg-foreground/10 py-1 pl-1 pr-2.5">
-                            <span className="w-6 h-6 rounded overflow-hidden bg-muted text-muted-foreground flex items-center justify-center text-xs font-semibold" aria-hidden="true">
-                                {avatar ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={avatar} alt="" className="w-full h-full object-cover" />
-                                ) : (
-                                    name.slice(0, 1).toUpperCase()
-                                )}
-                            </span>
+                            <MemberAvatar name={name} src={m.user?.avatar} size={24} className="rounded" />
                             <span className="text-sm font-semibold">{name}</span>
                             <span className="text-xs opacity-75">{m.role}</span>
                         </li>

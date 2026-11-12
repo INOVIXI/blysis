@@ -8,7 +8,7 @@
  * The button on each row stays a client component - it asks for a link issued
  * per request - and it is the only part of the row that does.
  */
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
 import { ArrangedPage } from "@/core/sdk/page";
 import { Card, CardContent, Pagination, RichContent } from "@/core/sdk/ui";
@@ -29,7 +29,8 @@ export default async function DownloadsPage({ searchParams }: PageProps) {
     const page = Number.isFinite(asked) && asked > 0 ? asked : 1;
 
     const t = await getTranslations("downloads");
-    const downloads = await readDownloads();
+    // In the reader's language, and the original where the admin wrote none.
+    const downloads = await readDownloads(await getLocale());
     const pages = Math.max(1, Math.ceil(downloads.length / PER_PAGE));
     const rows = downloads.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 

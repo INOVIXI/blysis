@@ -15,6 +15,7 @@
  */
 import { prisma } from "@/core/lib/db";
 import { settingsFromStorage } from "@/core/lib/secret-settings";
+import { isTranslatableText, originalText } from "@/core/lib/i18n/translatable-text";
 
 /**
  * The stored value of each key, as JSON, with any declared credential
@@ -33,12 +34,17 @@ export async function readSettingValues(keys: string[]): Promise<Record<string, 
  * trimmed string, or null when the row is missing, empty, not a string, or a
  * credential this install can no longer decrypt. A caller that gets null shows
  * "not configured" rather than trying to authenticate with nothing.
+ *
+ * Text the operator wrote per language (`translatable-text.ts`) is its
+ * original: a caller asking for a string has no reader's language to ask in,
+ * and a site name written in two languages is still a site name.
  */
 export async function readSettingStrings(keys: string[]): Promise<Record<string, string | null>> {
     const values = await readSettingValues(keys);
     const out: Record<string, string | null> = {};
     for (const key of keys) {
-        const value = values[key];
+        const stored = values[key];
+        const value = typeof stored === "object" && isTranslatableText(stored) ? originalText(stored) : stored;
         out[key] = typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
     }
     return out;

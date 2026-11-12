@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, deleteContentTranslations, isAdmin, logActivity, prisma, readContentTranslations, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { storedCells, type DraftCell } from "../../../lib/table-payload";
+import { TABLE_TEXT, carriedTranslations, tableTextLimits } from "../../../lib/table-text";
 
 /**
  * The tables an operator writes, whole.
@@ -26,6 +27,11 @@ import { storedCells, type DraftCell } from "../../../lib/table-payload";
  * the cells hang off those ids: an operator would fill in a grid, press save,
  * and find it empty. So for those tables the columns are left alone and the
  * cells arrive keyed by the column ids the editor was given.
+ *
+ * The words are translated per language, and the translations are the
+ * table's (`lib/table-text.ts`): the editor sends them keyed by its own keys,
+ * as it sends the cells, and a save moves each one to its column's, group's or
+ * row's new id.
  */
 
 const cellSchema = z.object({
@@ -70,7 +76,10 @@ async function requireAdmin() {
     return { session };
 }
 
-/** Every table, including the ones switched off, which the public list hides. */
+/**
+ * Every table, including the ones switched off, which the public list hides,
+ * with every language of its words for the editor.
+ */
 export async function GET() {
     const guard = await requireAdmin();
     if (guard.error) return guard.error;
@@ -84,7 +93,10 @@ export async function GET() {
         },
         take: 50,
     });
-    return NextResponse.json({ tables }, { headers: { "Cache-Control": "private, no-store" } });
+    return NextResponse.json(
+        { tables: await attachContentTranslations(prisma, TABLE_TEXT, tables) },
+        { headers: { "Cache-Control": "private, no-store" } },
+    );
 }
 
 export async function PUT(request: NextRequest) {
@@ -98,6 +110,10 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: parsed.error.issues[0].message, code: "invalid_table" }, { status: 400 });
     }
     const draft = parsed.data;
+    const translations = contentTranslationsInput(body, tableTextLimits(draft));
+    if (!translations.ok) {
+        return NextResponse.json({ error: translations.error, code: "invalid_table" }, { status: 400 });
+    }
 
     const clash = await prisma.comparisonTable.findFirst({
         where: { slug: draft.slug, ...(draft.id ? { NOT: { id: draft.id } } : {}) },
@@ -228,6 +244,15 @@ export async function PUT(request: NextRequest) {
             await tx.comparisonCell.createMany({ data: cells });
         }
 
+        // The words move with their rows: what the table had, carried to the
+        // new ids, and what the editor sent over it. A subject's columns that
+        // the draft did not carry keep their ids, and their words.
+        for (const id of known) if (!columnId.has(id)) columnId.set(id, id);
+        const stored = draft.id ? (await readContentTranslations(tx, TABLE_TEXT, [table.id])).get(table.id) : undefined;
+        const words = carriedTranslations(stored, translations.value, { column: columnId, group: groupId, row: rowId });
+        await deleteContentTranslations(tx, TABLE_TEXT, [table.id]);
+        await saveContentTranslations(tx, { ...TABLE_TEXT, recordId: table.id }, words);
+
         return table.id;
     });
 
@@ -255,7 +280,11 @@ export async function DELETE(request: NextRequest) {
 
     // A table is the operator's own content and points at nothing outside this
     // module, so this one really is a delete. Its children go with it.
-    const gone = await prisma.comparisonTable.deleteMany({ where: { id: parsed.data.id } });
+    const gone = await prisma.$transaction(async (tx) => {
+        const deleted = await tx.comparisonTable.deleteMany({ where: { id: parsed.data.id } });
+        await deleteContentTranslations(tx, TABLE_TEXT, [parsed.data.id]);
+        return deleted;
+    });
     if (gone.count === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     logActivity({

@@ -12,8 +12,9 @@
  * look up a session to decide what to say, on the page every visitor asks for.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { hasPermission, log, prisma } from "@/core/sdk/server";
+import { attachContentTranslations, hasPermission, log, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
+import { PRODUCT_TEXT } from "../../../../lib/store-text";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -48,7 +49,9 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
             return NextResponse.json({ error: "Product not found" }, { status: 404, headers: PRIVATE });
         }
 
-        return NextResponse.json({ product }, { headers: PRIVATE });
+        // Every language of its words, for the editor's language boxes.
+        const [withLanguages] = await attachContentTranslations(prisma, PRODUCT_TEXT, [product]);
+        return NextResponse.json({ product: withLanguages }, { headers: PRIVATE });
     } catch (error) {
         log.error("Read a product for an operator failed", {
             error: error instanceof Error ? error.message : String(error),

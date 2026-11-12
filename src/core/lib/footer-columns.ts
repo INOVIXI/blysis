@@ -19,6 +19,7 @@
  */
 
 import { parseFooterLinks, type FooterLink } from "@/core/lib/footer-links";
+import { cleanTranslatableText, isTranslatableText, originalText, textFor, type TranslatableText } from "@/core/lib/i18n/translatable-text";
 
 /**
  * Who put a link in a column.
@@ -37,8 +38,16 @@ export interface FooterColumnLink extends FooterLink {
 }
 
 export interface FooterColumn {
-    /** The operator's own words, or null for a column core seeded. */
+    /**
+     * The operator's own words in the language the footer was read in, or
+     * null for a column core seeded.
+     */
     title: string | null;
+    /**
+     * Every language the operator wrote the heading in, for their editor.
+     * Absent while the heading is one string, which `title` already is.
+     */
+    titleText?: TranslatableText;
     /** A key into the `footer` catalogue, for a column core seeded. */
     titleKey: string | null;
     /** Module links declaring this section join this column. */
@@ -68,8 +77,8 @@ function text(value: unknown, limit: number): string | null {
  * validated: `NavIcon` renders nothing for a name Lucide does not know, which
  * turns a typo into a missing icon instead of a missing link.
  */
-function columnLinks(raw: unknown): FooterColumnLink[] {
-    const links = parseFooterLinks(raw);
+function columnLinks(raw: unknown, locale = ""): FooterColumnLink[] {
+    const links = parseFooterLinks(raw, locale);
     const icons = new Map<string, string | null>();
     if (Array.isArray(raw)) {
         for (const entry of raw) {
@@ -85,8 +94,11 @@ function columnLinks(raw: unknown): FooterColumnLink[] {
  * Null when nothing was ever saved, which is what tells a caller to fall back
  * to the legacy settings. An empty array is a footer an operator emptied on
  * purpose and is not the same answer.
+ *
+ * Headings and labels are read in `locale`, and in the original where it has
+ * nothing; with no locale, the original. `a-footer-column-is-written-in-each-language`.
  */
-export function parseFooterColumns(raw: unknown): FooterColumn[] | null {
+export function parseFooterColumns(raw: unknown, locale = ""): FooterColumn[] | null {
     let value = raw;
     if (typeof value === "string") {
         const trimmed = value.trim();
@@ -105,7 +117,8 @@ export function parseFooterColumns(raw: unknown): FooterColumn[] | null {
         if (!entry || typeof entry !== "object" || Array.isArray(entry)) continue;
         const { title, titleKey, section, links } = entry as Record<string, unknown>;
 
-        const heading = text(title, MAX_TITLE);
+        const written = isTranslatableText(title) && originalText(title).trim() !== "" ? title : null;
+        const heading = written === null ? null : text(textFor(written, locale), MAX_TITLE);
         const key = text(titleKey, MAX_TITLE);
         // A column with no heading is a list of links with nothing to say what
         // they have in common, which is a column an operator half-created.
@@ -113,9 +126,10 @@ export function parseFooterColumns(raw: unknown): FooterColumn[] | null {
 
         columns.push({
             title: heading,
+            ...(written === null || typeof written === "string" ? {} : { titleText: cleanTranslatableText(written, MAX_TITLE) }),
             titleKey: heading ? null : key,
             section: text(section, MAX_TITLE),
-            links: columnLinks(links),
+            links: columnLinks(links, locale),
         });
     }
     return columns;

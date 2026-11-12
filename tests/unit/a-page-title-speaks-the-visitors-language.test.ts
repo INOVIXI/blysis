@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { resolveRouteTitle, titleFromMessages, humanizeSegment } from "@/core/lib/route-title";
+import { resolveRouteTitle, titleFromMessages, humanizeSegment, routeResolution } from "@/core/lib/route-title";
 
 /**
  * The browser tab and the search result, in the language the page is in.
@@ -99,9 +99,36 @@ describe("resolveRouteTitle", () => {
         })).toBe("Hello World");
     });
 
+    it("lets the resolver name the resource it found, over the route's word for it", () => {
+        // A page the team wrote at `/page/rules` was titled "Page" in every
+        // tab, whatever it was called, because the route pattern is all core
+        // knew. The resolver has already read the row to say it exists.
+        expect(resolveRouteTitle({
+            slug: ["page", "rules"],
+            routePattern: "/page/[slug]",
+            titleKey: "pageTitles.store",
+            messages,
+            resourceTitle: "Server Rules",
+        })).toBe("Server Rules");
+        // An empty or absurd answer is no answer.
+        expect(resolveRouteTitle({ slug: ["page", "rules"], routePattern: "/page/[slug]", resourceTitle: "  " })).toBe("Page");
+        expect(resolveRouteTitle({ slug: ["page", "rules"], routePattern: "/page/[slug]", resourceTitle: "x".repeat(200) })).toBe("Page");
+    });
+
     it("still answers for a route it knows nothing about", () => {
         expect(resolveRouteTitle({})).toBe("Page");
         expect(humanizeSegment("order-success")).toBe("Order Success");
+    });
+});
+
+describe("routeResolution", () => {
+    it("reads a resolver's yes, no, or yes with a name", () => {
+        expect(routeResolution(true)).toEqual({ exists: true, title: null });
+        expect(routeResolution(false)).toEqual({ exists: false, title: null });
+        expect(routeResolution({ title: " Server Rules " })).toEqual({ exists: true, title: "Server Rules" });
+        // A found row with nothing to call it still exists.
+        expect(routeResolution({ title: null })).toEqual({ exists: true, title: null });
+        expect(routeResolution({ title: 42 })).toEqual({ exists: true, title: null });
     });
 });
 

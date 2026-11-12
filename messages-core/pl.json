@@ -97,7 +97,12 @@
     "welcomeTitle": "Witaj w swojej społeczności",
     "welcomeVisitorHint": "Skorzystaj z nawigacji powyżej, aby poznać społeczność.",
     "writeContentHere": "Napisz tutaj treść...",
-    "statsLabel": "Strona w skrócie"
+    "statsLabel": "Strona w skrócie",
+    "localizedText_translations": "Tłumaczenia ({filled} z {total})",
+    "localizedText_fallbackHint": "Język pozostawiony pusty pokazuje tekst oryginalny.",
+    "localizedText_filled": "Przetłumaczono",
+    "localizedText_empty": "Pokazuje oryginał",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Nie znaleziono strony",
@@ -163,7 +168,10 @@
     "twoFactorEnabled": "Uwierzytelnianie dwuetapowe włączone",
     "userProfileUpdated": "{username} zaktualizował(a) profil",
     "userRegistered": "dołączył do społeczności",
-    "viewAll": "Zobacz wszystkie"
+    "viewAll": "Zobacz wszystkie",
+    "auditSignInMethodConnect": "Połączył metodę logowania",
+    "auditSignInMethodDisconnect": "Odłączył metodę logowania",
+    "auditSignInMethodRemove": "Usunął metodę logowania członka"
   },
   "nav": {
     "adminPanel": "Panel administratora",
@@ -537,6 +545,9 @@
     "generalSettings_identityPasswordHint": "Wymagane przed zmianą nazwy lub adresu, aby pożyczony ekran nie przejął konta. Konto logujące się przez dostawcę nie ma hasła i nie jest o nie pytane.",
     "generalSettings_memberAvatarUploads": "Zdjęcia profilowe",
     "generalSettings_memberAvatarUploadsHint": "Co członek może umieścić na swoim profilu: wysłać plik, wskazać swój adres albo nic. Przesyłane są tylko obrazy, do 2 MB, z limitem na członka.",
+    "generalSettings_memberAvatarProvider": "Usługa zdjęć członków",
+    "generalSettings_memberAvatarProviderHint": "Gdy członek nie ma własnego zdjęcia albo zdjęcia członków są wyłączone, jego twarz pochodzi z tej usługi według nazwy użytkownika. Gdy usługa nie znajdzie zdjęcia, widać inicjały.",
+    "generalSettings_avatarProviderNone": "Brak: inicjały",
     "generalSettings_memberContent": "Treści członków",
     "generalSettings_memberIdentity": "Tożsamość członka",
     "generalSettings_minPasswordLength": "Minimalna długość hasła",
@@ -985,6 +996,8 @@
     "siteSettings_contactEmail": "E-mail kontaktowy",
     "siteSettings_description": "Opis",
     "siteSettings_general": "Ogólne",
+    "siteSettings_icon": "Ikona witryny",
+    "siteSettings_iconHint": "Mały obrazek na karcie przeglądarki i na ekranie głównym telefonu. Najlepiej wygląda kwadratowy obraz. Jeśli pole jest puste, używana jest domyślna ikona.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Nie udało się zapisać ustawień",
     "siteSettings_saveSettings": "Zapisz ustawienia",
@@ -1356,7 +1369,21 @@
     "placeholder_noValue": "obecnie brak wartości",
     "placeholder_unknown": "Nic na tej witrynie nie odpowiada na {names}, odwiedzający widzą tam kreskę.",
     "placeholder_refused": "Nic na tej witrynie nie odpowiada na {names}, więc tekst się nie zapisze.",
-    "placeholder_site_name": "Nazwa witryny"
+    "placeholder_site_name": "Nazwa witryny",
+    "users_signInMethods": "Metody logowania",
+    "users_signInMethodsPassword": "Ma hasło.",
+    "users_signInMethodsNoPassword": "Brak hasła: loguje się tylko metodami poniżej.",
+    "users_signInMethodsNone": "Brak połączonych metod logowania.",
+    "users_signInMethodConnectedOn": "Połączono {date}",
+    "users_signInMethodRemove": "Usuń",
+    "users_signInMethodRemoveTitle": "Usunąć {provider}?",
+    "users_signInMethodRemoveMessage": "{username} nie będzie mógł już logować się przez {provider}.",
+    "users_signInMethodRemoved": "Usunięto {provider}.",
+    "users_signInMethodLast": "To jedyny sposób logowania tego członka, więc nie został usunięty.",
+    "generalSettings_signInMethodSignUps": "Nowe konta przez metody logowania",
+    "generalSettings_signInMethodSignUpsHint": "Gdy mogą z nich korzystać tylko połączeni członkowie, logowanie przez dostawcę działa tylko dla tych, którzy połączyli go na stronie konta, i nikt nie dostaje w ten sposób nowego konta.",
+    "generalSettings_signInMethodSignUpsOpen": "Twórz konto dla każdej nowej osoby",
+    "generalSettings_signInMethodSignUpsClosed": "Tylko połączeni członkowie"
   },
   "footer": {
     "quickLinks": "Szybkie linki",
@@ -1443,7 +1470,22 @@
     "username": "Nazwa użytkownika",
     "usernameCannotChange": "Na tej stronie członkowie nie mogą zmieniać nazwy użytkownika.",
     "viewPublicProfile": "Zobacz profil publiczny",
-    "youSaid": "Ty:"
+    "youSaid": "Ty:",
+    "signInMethods": "Metody logowania",
+    "signInMethods_hint": "Połącz konto, które masz gdzie indziej, aby logować się nim tutaj. Nazwa użytkownika i hasło nadal działają.",
+    "signInMethods_none": "Ta strona nie oferuje innych metod logowania.",
+    "signInMethods_connectedOn": "Połączono {date}",
+    "signInMethods_notConnected": "Niepołączone",
+    "signInMethods_connect": "Połącz",
+    "signInMethods_connectLabel": "Połącz {provider}",
+    "signInMethods_disconnect": "Odłącz",
+    "signInMethods_disconnectTitle": "Odłączyć {provider}?",
+    "signInMethods_disconnectMessage": "Nie będziesz już mógł logować się przez {provider}. Możesz połączyć je ponownie później.",
+    "signInMethods_connected": "{provider} jest połączone. Od teraz możesz się nim logować.",
+    "signInMethods_disconnected": "{provider} zostało odłączone.",
+    "signInMethods_failed": "Nie udało się. Spróbuj ponownie.",
+    "signInMethods_errTaken": "To konto jest już tutaj połączone z innym członkiem. Nie zostało przeniesione do Twojego.",
+    "signInMethods_errNotStarted": "Nic nie zostało połączone. Zacznij na tej stronie od Połącz, a potem zaloguj się u dostawcy."
   },
   "auth": {
     "accountLocked": "Zbyt wiele nieudanych prób. Konto zostało tymczasowo zablokowane. Sprawdź e-mail albo spróbuj ponownie za kilka minut.",
@@ -1500,7 +1542,13 @@
       "username_taken": "Ta nazwa użytkownika jest już zajęta.",
       "username_too_short": "Ta nazwa użytkownika jest na tej stronie za krótka. Wybierz dłuższą.",
       "weak_password": "To hasło nie spełnia wymagań. Wybierz mocniejsze.",
-      "wrong_password": "To hasło jest nieprawidłowe."
+      "wrong_password": "To hasło jest nieprawidłowe.",
+      "already_connected": "Masz już połączone konto od tego dostawcy. Najpierw je odłącz.",
+      "impersonating": "Nie można łączyć metod logowania, działając jako inny członek.",
+      "last_sign_in_method": "To jedyny sposób wejścia na Twoje konto, więc nie można go usunąć. Najpierw połącz inną metodę.",
+      "session_unknown": "Wyloguj się i zaloguj ponownie, a potem połącz.",
+      "unknown_provider": "Ta metoda logowania nie jest dostępna na tej stronie.",
+      "sign_in_method_not_found": "Ta metoda logowania nie jest połączona."
     },
     "errorAccessDenied": "Odmowa dostępu. Nie masz uprawnień do logowania.",
     "errorConfiguration": "Błędna konfiguracja serwera. Skontaktuj się z administratorem strony.",
@@ -1559,7 +1607,8 @@
     "demoAsAdmin": "jako administrator",
     "demoAsMember": "jako członek",
     "demoResetNote": "Wszystko tutaj przywracane jest co godzinę, więc nic, co zrobisz, nie zepsuje strony następnym odwiedzającym. Kilka działań jest wyłączonych: wysyłanie poczty, prawdziwe płatności i wszystko, co zablokowałoby konto, z którego korzystasz.",
-    "demoFillFor": "Wypełnij dane {who}"
+    "demoFillFor": "Wypełnij dane {who}",
+    "errorConnectFirst": "To logowanie nie jest tutaj połączone z żadnym kontem. Zaloguj się nazwą użytkownika i hasłem, a potem połącz je na stronie konta."
   },
   "search": {
     "title": "Szukaj",

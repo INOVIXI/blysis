@@ -144,11 +144,24 @@ interface CountReader {
 }
 
 /**
- * Units of this product already paid for, inside the periods the rules count
+ * How long a checkout still waiting for its payment holds a per-person
+ * allowance. Long enough for a payment page; an abandoned one lets go.
+ */
+const AWAITING_PAYMENT_MS = 60 * 60_000;
+
+/**
+ * Units of this product already bought, inside the periods the rules count
  * over: by one person, and by everybody.
  *
- * Paid only - a pending order is not a purchase, and counting one would let a
- * checkout somebody abandoned hold the last of an allowance until it expired.
+ * The person's count includes their checkouts of the last hour still waiting
+ * for a payment. Counted as paid only, ten payment pages opened at once all
+ * read "none bought yet", and paying all ten bought ten of a product sold one
+ * per account. Only the last hour, so a checkout somebody abandoned does not
+ * hold the allowance for ever. `paidOnly` is the count a settling payment
+ * makes (`pastTheLimit`), leaving out the order being settled.
+ *
+ * The shop's allowance counts paid orders only: a pending order holds nothing
+ * on the shelf, so it does not hold the period's allowance either.
  */
 export async function countsFor(
     db: CountReader,
@@ -156,8 +169,16 @@ export async function countsFor(
     userId: string | null,
     rules: ProductRules,
     now: Date,
+    paidOnly = false,
+    exceptOrderId?: string,
 ): Promise<{ boughtByPerson: number; soldInPeriod: number }> {
     const paid = { status: { in: ["COMPLETED", "PROCESSING"] } };
+    const held = {
+        ...(paidOnly
+            ? paid
+            : { OR: [paid, { status: "PENDING", createdAt: { gte: new Date(now.getTime() - AWAITING_PAYMENT_MS) } }] }),
+        ...(exceptOrderId ? { id: { not: exceptOrderId } } : {}),
+    };
 
     const personSince = periodStart(rules.perPersonPeriod, now);
     const periodSince = periodStart(rules.periodStockWindow, now);
@@ -170,7 +191,7 @@ export async function countsFor(
     const personal = (order: Record<string, unknown>) =>
         db.orderItem
             .aggregate({
-                where: { productId, order: { ...paid, ...(personSince ? { createdAt: { gte: personSince } } : {}), ...order } },
+                where: { productId, order: { ...held, ...(personSince ? { createdAt: { gte: personSince } } : {}), ...order } },
                 _sum: { quantity: true },
             })
             .then((sum) => sum._sum.quantity ?? 0);
@@ -197,6 +218,35 @@ export async function countsFor(
         boughtByPerson: person._sum.quantity ?? 0,
         soldInPeriod: everyone._sum.quantity ?? 0,
     };
+}
+
+/**
+ * The first of these products the lines would take this member past their
+ * limit on, counted again under a lock. Null when every one stays inside.
+ *
+ * For a payment that settles: a checkout's count is a snapshot, and two paid
+ * at once both passed it. The lock is the one the in-game purchase takes, so
+ * a game purchase, a credits checkout and a settling payment for the same
+ * member and product wait for each other. Taken in product order, so two
+ * orders that hold the same products cannot wait on each other for ever.
+ */
+export async function pastTheLimit(
+    tx: CountReader & { $executeRaw(query: TemplateStringsArray, ...values: unknown[]): Promise<number> },
+    products: readonly { id: string; perPersonLimit: number | null; perPersonPeriod: string }[],
+    lines: readonly { productId: string | null; quantity: number }[],
+    userId: string,
+    now: Date,
+    exceptOrderId?: string,
+): Promise<string | null> {
+    const limited = products.filter((p) => typeof p.perPersonLimit === "number").sort((a, b) => a.id.localeCompare(b.id));
+    for (const product of limited) {
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`store-limit:${userId}:${product.id}`}))`;
+        const rules = { perPersonLimit: product.perPersonLimit, perPersonPeriod: product.perPersonPeriod, periodStock: null } as ProductRules;
+        const { boughtByPerson } = await countsFor(tx, product.id, userId, rules, now, true, exceptOrderId);
+        const wanted = lines.reduce((sum, line) => sum + (line.productId === product.id ? line.quantity : 0), 0);
+        if (boughtByPerson + wanted > (product.perPersonLimit as number)) return product.id;
+    }
+    return null;
 }
 
 /** The state of one product for one person, with the counting done. */

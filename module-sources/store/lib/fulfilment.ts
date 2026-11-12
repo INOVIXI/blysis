@@ -11,14 +11,24 @@ import { Prisma } from "@prisma/client";
 import { prisma, log, grantRole } from "@/core/sdk/server";
 import { sendOrderConfirmationEmail } from "./order-email";
 import { deliverPaidOrder } from "./credit-order";
-import { announceOrderCompleted } from "./order-events";
+import { announceOrderCompleted, announceOrderRefunded } from "./order-events";
 import { claimStock, releaseStock, stockClaims } from "./stock";
 import { countSales, uncountSales } from "./popularity";
 import { extendedExpiry } from "./ownership";
 import { recordedPlayerName, recordedVariables } from "./chest";
 import { chargeShortfall } from "./charge";
-import { cancelTopUp, findTopUp, settleCredits } from "./credit-top-up";
+import { cancelTopUp, findTopUp, refundTopUp, settleCredits } from "./credit-top-up";
+import { revokeRefundedRoles, takeBackOrder, type GrantedRole } from "./take-back";
 import { ALREADY, OK, failed, refused } from "./payment-outcome";
+import { payCommissionFor, takeBackCommission } from "./creator-commission";
+import { pastTheLimit } from "./availability-server";
+
+/** Thrown inside a settlement to roll it back: the order would pass a limit. */
+class PastTheLimit extends Error {
+    constructor(readonly productId: string) {
+        super("past the per-person limit");
+    }
+}
 
 /**
  * Settles whatever the reference names: a top-up, or else an order.
@@ -118,6 +128,19 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
     }
     // Webhooks retry, and a buyer can reload a return URL. Both arrive here.
     if (order.status === "COMPLETED") return ALREADY;
+    // A refunded order already gave back what it granted, and a replayed
+    // success callback must not hand it all out again.
+    if (order.status === "REFUNDED") return ALREADY;
+    if (order.status === "CANCELLED") {
+        // Settled by nothing: an operator who sees the money arrive marks the
+        // order paid by hand, which opens it again first.
+        log.error("[store] a payment arrived for a cancelled order", {
+            orderId: order.id,
+            provider: settlement.provider,
+            providerRef: settlement.providerRef,
+        });
+        return failed("order is cancelled");
+    }
 
     // What checkout asked the gateway to collect, converted and grossed up as
     // it was charged. An order placed before checkout wrote it down has
@@ -172,7 +195,7 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
 
     const settled = await prisma.$transaction(async (tx) => {
         const claimed = await tx.order.updateMany({
-            where: { id: order.id, status: { not: "COMPLETED" } },
+            where: { id: order.id, status: { in: ["PENDING", "PROCESSING"] } },
             data: {
                 status: "COMPLETED",
                 paymentMethod: settlement.provider,
@@ -180,6 +203,11 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
             },
         });
         if (claimed.count === 0) return { settled: false, short: [] as string[] };
+
+        // Paid here, inside the claim, and nowhere at checkout: an order
+        // nobody pays for earns its creator nothing, and a retried webhook
+        // that loses the claim pays nothing twice.
+        await payCommissionFor(tx, order);
 
         // Stock comes off the shelf here rather than at checkout: an order
         // nobody pays for must not hold anything. Inside the same claim as the
@@ -213,8 +241,15 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
             // settlement carry columns the shelf has no use for.
             const grants = await tx.product.findMany({
                 where: { id: { in: productIds } },
-                select: { id: true, durationDays: true, grantsRoleId: true },
+                select: { id: true, durationDays: true, grantsRoleId: true, perPersonLimit: true, perPersonPeriod: true },
             });
+
+            // The per-person limit again, now that the money is here: every
+            // checkout counted before it was paid, and several paid together
+            // each passed. Thrown, so the claim and the chest rows above roll
+            // back with it.
+            const past = await pastTheLimit(tx, grants, granted, buyerId, now, order.id);
+            if (past) throw new PastTheLimit(past);
             const timed = grants.filter((p) => p.durationDays !== null && p.durationDays > 0);
             const timedIds = new Set(timed.map((p) => p.id));
             const outright = productIds.filter((id) => !timedIds.has(id));
@@ -289,7 +324,24 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
             },
         });
         return { settled: true, short };
+    }).catch((error: unknown) => {
+        if (error instanceof PastTheLimit) return { settled: false, short: [] as string[], past: error.productId };
+        throw error;
     });
+
+    // Refused rather than acknowledged, like a short payment: the money
+    // arrived for more than this member may buy, and an operator has to
+    // refund it. A retry settles it if the order that filled the limit was
+    // refunded in the meantime.
+    if ("past" in settled) {
+        log.error("[store] a paid order would pass a per-person limit; refund it", {
+            orderId: order.id,
+            productId: settled.past,
+            provider: settlement.provider,
+            providerRef: settlement.providerRef,
+        });
+        return refused(`order passes the per-person limit of ${settled.past}`);
+    }
 
     // Another delivery of the same payment got there first.
     if (!settled.settled) return ALREADY;
@@ -348,7 +400,7 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
     // Not awaited: a gateway's webhook has a timeout, and a slow game server
     // must not make the provider think the payment went unrecorded.
     deliverPaidOrder(
-        { id: order.id, items: granted },
+        { id: order.id, orderNumber: order.orderNumber, items: granted },
         { name: playerName, id: null, userId: buyerId },
     ).catch((error) => log.error("[store] delivery failed", { orderId: order.id, error: String(error) }));
 
@@ -363,6 +415,8 @@ export async function voidOrder(reference: string): Promise<PaymentOutcome> {
     // A paid order is never cancelled by a late "expired" event.
     if (order.status === "COMPLETED") return ALREADY;
     if (order.status === "CANCELLED") return ALREADY;
+    // A refund is not undone into a cancellation.
+    if (order.status === "REFUNDED") return ALREADY;
     await prisma.order.update({ where: { id: reference }, data: { status: "CANCELLED" } });
     return OK;
 }
@@ -370,7 +424,8 @@ export async function voidOrder(reference: string): Promise<PaymentOutcome> {
 /** The money went back, whether the buyer asked or the operator did. */
 export async function refundPayment(provider: string, providerRef: string): Promise<PaymentOutcome> {
     const payment = await prisma.payment.findFirst({ where: { provider, providerId: providerRef } });
-    if (!payment) return failed("unknown payment");
+    // A top-up writes no payment row; its refund is found by the same reference.
+    if (!payment) return refundTopUp(provider, providerRef);
     if (payment.status === "REFUNDED") return ALREADY;
 
     const refundedOrder = await prisma.order.findUnique({
@@ -386,16 +441,22 @@ export async function refundPayment(provider: string, providerRef: string): Prom
             where: { id: payment.id, status: { not: "REFUNDED" } },
             data: { status: "REFUNDED" },
         });
-        if (claimed.count === 0) return false;
+        if (claimed.count === 0) return null;
         await tx.order.update({ where: { id: payment.orderId }, data: { status: "REFUNDED" } });
-        if (refundedOrder) {
-            const claims = stockClaims(refundedOrder.items);
-            await releaseStock(tx, claims);
-            await uncountSales(tx, claims);
-        }
-        return true;
+        if (!refundedOrder) return [] as GrantedRole[];
+        // The creator's cut goes back with the money, in the same claim.
+        await takeBackCommission(tx, refundedOrder);
+        const claims = stockClaims(refundedOrder.items);
+        await releaseStock(tx, claims);
+        await uncountSales(tx, claims);
+        return takeBackOrder(tx, refundedOrder);
     });
-    return refunded ? OK : ALREADY;
+    if (!refunded) return ALREADY;
+
+    await revokeRefundedRoles(refunded);
+    // The cashback is the wallet's to take back; it hears of the refund here.
+    await announceOrderRefunded(payment.orderId);
+    return OK;
 }
 
 /**

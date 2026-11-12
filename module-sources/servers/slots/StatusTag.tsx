@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { sharedJson } from "@/core/sdk";
 import { anyOnline, playersOnline, type CountedServer } from "../lib/players-online";
 
@@ -15,15 +15,17 @@ import { anyOnline, playersOnline, type CountedServer } from "../lib/players-onl
  */
 export default function StatusTag() {
     const t = useTranslations("servers");
+    // Every reader of this answer asks in the page's language, so they share one request.
+    const locale = useLocale();
     const [servers, setServers] = useState<CountedServer[] | null>(null);
 
     useEffect(() => {
         let active = true;
-        sharedJson<{ servers?: CountedServer[] }>("/api/v1/servers/status")
+        sharedJson<{ servers?: CountedServer[] }>(`/api/v1/servers/status?locale=${encodeURIComponent(locale)}`)
             .then((d) => { if (active) setServers(Array.isArray(d?.servers) ? d.servers : []); })
             .catch(() => {});
         return () => { active = false; };
-    }, []);
+    }, [locale]);
 
     const count = servers ? playersOnline(servers) : null;
     if (servers === null || count === null) return null;

@@ -66,11 +66,17 @@ const BOUNDED: Record<string, string> = {
         "The forms an operator built. Their submissions grow; the forms do not.",
     "module-sources/discord-integration/pages/admin/messages/page.tsx":
         "One row per event the modules declare, which is as long as the code.",
+    "module-sources/store/pages/admin/settings/payment-fees/page.tsx":
+        "One row per payment method the installed gateways offer, which is as long as the gateways an operator installed.",
+    "module-sources/tax/pages/admin/page.tsx":
+        "The countries an operator charges a rate for, which is bounded by the countries there are and is read whole when it is checked against a tax authority's list.",
     "module-sources/currency/pages/admin/page.tsx":
         "The currencies an operator turned on, plus the rate beside each. An operator cannot have more of them than they chose to enable.",
     "module-sources/referral/pages/admin/page.tsx":
         "Settings and a scoreboard, not a list to look somebody up in.",
     "module-sources/minecraft-litebans/pages/admin/page.tsx":
+        "One connection and what probing it reported.",
+    "module-sources/minecraft-libertybans/pages/admin/page.tsx":
         "One connection and what probing it reported.",
     "src/app/[locale]/(admin)/admin/analytics/page.tsx":
         "Charts and counters. The repeated block is a row of a chart's legend, not a row somebody looks one thing up in.",

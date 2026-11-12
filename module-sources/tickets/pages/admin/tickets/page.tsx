@@ -58,8 +58,8 @@ export default function AdminTicketsPage() {
     useEffect(() => {
         let cancelled = false;
         const url = statusFilter
-            ? `/api/v1/tickets?status=${statusFilter}`
-            : "/api/v1/tickets";
+            ? `/api/v1/tickets?scope=all&status=${statusFilter}`
+            : "/api/v1/tickets?scope=all";
 
         fetch(url)
             .then((res) => { if (!res.ok) throw new Error("load failed"); return res.json(); })
@@ -81,7 +81,7 @@ export default function AdminTicketsPage() {
     useEffect(() => {
         let cancelled = false;
         Promise.all(states.statuses.map(({ key: status }) =>
-            fetch(`/api/v1/tickets?status=${status}`)
+            fetch(`/api/v1/tickets?scope=all&status=${status}`)
                 .then((r) => (r.ok ? r.json() : null))
                 .then((d) => [status, d === null ? null : (d?.pagination?.total ?? 0)] as const),
         )).then((pairs) => {

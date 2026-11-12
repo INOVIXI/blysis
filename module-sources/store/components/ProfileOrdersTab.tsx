@@ -10,6 +10,7 @@ import { ChevronDown, ChevronUp, Package, Receipt, ShoppingCart, Loader2 } from 
 import { dateLocaleTag } from "@/core/sdk";
 import { ORDER_STATUSES, ORDER_STATUS_KEYS, orderStatusLabel } from "../lib/order-status";
 import { DeliveryBadge } from "./DeliveryBadge";
+import { readTaxRecord, taxLineText } from "../lib/tax";
 
 interface Order {
     id: string;
@@ -17,6 +18,11 @@ interface Order {
     subtotal: number;
     discount: number;
     total: number;
+    /** What the payment method's fee added on top of `total`. */
+    paymentFee?: number;
+    tax?: number;
+    /** Holds the tax record, among other things, when the order has one. */
+    metadata?: unknown;
     status: string;
     createdAt: string;
     items: {
@@ -200,10 +206,28 @@ export function ProfileOrdersTab() {
                                                 <span>-{money(Number(order.discount))}</span>
                                             </div>
                                         )}
+                                        {Number(order.tax ?? 0) > 0 && (
+                                            <div className="flex justify-between mt-2 text-sm text-muted-foreground">
+                                                <span>{taxLineText(t, readTaxRecord(order.metadata))}</span>
+                                                <span>{money(Number(order.tax))}</span>
+                                            </div>
+                                        )}
                                         <div className="flex justify-between mt-2 pt-2 border-t text-sm font-bold">
                                             <span>{t("tab_orders_total")}</span>
                                             <span>{money(Number(order.total))}</span>
                                         </div>
+                                        {Number(order.paymentFee ?? 0) > 0 && (
+                                            <>
+                                                <div className="flex justify-between mt-1 text-sm text-muted-foreground">
+                                                    <span>{t("paymentFee")}</span>
+                                                    <span>+{money(Number(order.paymentFee))}</span>
+                                                </div>
+                                                <div className="flex justify-between mt-1 text-sm font-medium">
+                                                    <span>{t("amountPaid")}</span>
+                                                    <span>{money(Number(order.total) + Number(order.paymentFee))}</span>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 )}
                             </div>

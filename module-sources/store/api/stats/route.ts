@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { formatCurrency } from "@/core/sdk";
-import { dailySeries, dayLabels, hasPermission, prisma } from "@/core/sdk/server";
+import { dailySeries, dayLabels, hasPermission, prisma, siteCurrency } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
+import { largestFirst, totalsIn, type PaidAmount } from "../../lib/money-totals";
 
 /**
  * Store stats endpoint.
@@ -23,6 +24,14 @@ import { auth } from "@/core/sdk/auth";
  * month, by payment method and by category, and who has spent the most, are
  * each one grouped read; doing any of them in JavaScript would mean pulling a
  * year of orders and their items into the process to produce a dozen numbers.
+ *
+ * Every one of them is also grouped by the currency the order was paid in, and
+ * converted into the site's currency before anything is added or ranked. A
+ * shop that took lira and now prices in dollars has both on file, and a sum
+ * across them is a number in no currency. See `lib/money-totals.ts`. The extra
+ * group multiplies the rows by the handful of currencies a shop has taken, so
+ * the answer stays small; what it costs is that a `take` can only be applied
+ * after the conversion.
  *
  * Accepts ?period=7|30|90|365 to match the analytics date range picker.
  * Defaults to 30 days.
@@ -48,12 +57,14 @@ export async function GET(request: NextRequest) {
         Math.max(1, parseInt(request.nextUrl.searchParams.get("period") || "30", 10) || 30),
     );
 
-    const [products, orders, revenueData] = await Promise.all([
+    const [products, orders, revenueData, base] = await Promise.all([
         prisma.product.count(),
         prisma.order.count(),
-        prisma.order.aggregate({ _sum: { total: true }, where: { status: "COMPLETED" } }),
+        prisma.order.groupBy({ by: ["currency"], _sum: { total: true }, where: { status: "COMPLETED" } }),
+        siteCurrency(),
     ]);
-    const revenue = Number(revenueData._sum.total || 0);
+    const revenue =
+        (await totalsIn(base, revenueData.map((row) => ({ key: "all", currency: row.currency, amount: Number(row._sum.total ?? 0) })))).get("all") ?? 0;
 
     const recentOrders = await prisma.order.findMany({
         take: 5,
@@ -69,36 +80,56 @@ export async function GET(request: NextRequest) {
     // Grouped by the database, counts and revenue in one pass. This used to
     // read every completed order in the window - up to a year of them - to
     // produce one number per day.
-    const series = await dailySeries({
-        table: "Order",
-        since: startDate,
-        sumColumn: "total",
-        equals: { status: "COMPLETED" },
+    // One series per currency taken in the window, so each day's sums can be
+    // converted before they are added. Counts add across currencies as they are.
+    const windowCurrencies = await prisma.order.groupBy({
+        by: ["currency"],
+        where: { status: "COMPLETED", createdAt: { gte: startDate } },
     });
+    const series = await Promise.all(
+        windowCurrencies.map(async ({ currency }) => ({
+            currency,
+            rows: await dailySeries({
+                table: "Order",
+                since: startDate,
+                sumColumn: "total",
+                equals: { status: "COMPLETED", currency },
+            }),
+        })),
+    );
 
     const labels = dayLabels(startDate, period);
     const ordersByDay: Record<string, number> = Object.fromEntries(labels.map((k) => [k, 0]));
-    const revenueByDay: Record<string, number> = Object.fromEntries(labels.map((k) => [k, 0]));
-    for (const row of series) {
-        if (!(row.day in ordersByDay)) continue;
-        ordersByDay[row.day] = row.count;
-        revenueByDay[row.day] = row.sum;
+    const dailyPaid: PaidAmount<string>[] = [];
+    for (const { currency, rows } of series) {
+        for (const row of rows) {
+            if (!(row.day in ordersByDay)) continue;
+            ordersByDay[row.day] += row.count;
+            dailyPaid.push({ key: row.day, currency, amount: row.sum });
+        }
     }
+    const revenueByDay = await totalsIn(base, dailyPaid);
 
-    // Top sellers in the window. Grouped in the database; the product names
-    // are fetched in one follow-up query rather than one per row.
-    const topRows = await prisma.orderItem.groupBy({
-        by: ["productId"],
-        _sum: { price: true, quantity: true },
-        where: {
-            productId: { not: null },
-            order: { status: "COMPLETED", createdAt: { gte: startDate } },
-        },
-        orderBy: { _sum: { price: "desc" } },
-        take: 8,
-    });
+    // Top sellers in the window. A line has no currency of its own, it has its
+    // order's, and Prisma cannot group across that join. The revenue is the
+    // price times the quantity, as in the category report below. The product
+    // names are fetched in one follow-up query rather than one per row.
+    const productRows = await prisma.$queryRaw<{ id: string; currency: string; revenue: number; units: number }[]>`
+        SELECT oi."productId" AS id, o."currency" AS currency,
+               COALESCE(SUM(oi."price" * oi."quantity"), 0)::float8 AS revenue,
+               COALESCE(SUM(oi."quantity"), 0)::int AS units
+        FROM "OrderItem" oi
+        JOIN "Order" o ON o."id" = oi."orderId"
+        WHERE oi."productId" IS NOT NULL AND o."status" = 'COMPLETED' AND o."createdAt" >= ${startDate}
+        GROUP BY 1, 2
+    `;
+    const productUnits = new Map<string, number>();
+    for (const row of productRows) productUnits.set(row.id, (productUnits.get(row.id) ?? 0) + row.units);
+    const topRows = largestFirst(
+        await totalsIn(base, productRows.map((row) => ({ key: row.id, currency: row.currency, amount: row.revenue }))),
+    ).slice(0, 8);
     const topProducts = await prisma.product.findMany({
-        where: { id: { in: topRows.map((r) => r.productId!).filter(Boolean) } },
+        where: { id: { in: topRows.map(([id]) => id) } },
         select: { id: true, name: true, slug: true },
     });
     const productById = new Map(topProducts.map((p) => [p.id, p]));
@@ -114,28 +145,27 @@ export async function GET(request: NextRequest) {
     yearStart.setDate(1);
     yearStart.setHours(0, 0, 0, 0);
 
-    const [monthly, byMethod, byCategory, spenders] = await Promise.all([
-        prisma.$queryRaw<{ month: string; orders: number; revenue: number }[]>`
+    const [monthlyRows, methodRows, categoryRows, spenderRows] = await Promise.all([
+        prisma.$queryRaw<{ month: string; currency: string; orders: number; revenue: number }[]>`
             SELECT to_char(date_trunc('month', "createdAt"), 'YYYY-MM') AS month,
+                   "currency" AS currency,
                    COUNT(*)::int AS orders,
                    COALESCE(SUM("total"), 0)::float8 AS revenue
             FROM "Order"
             WHERE "status" = 'COMPLETED' AND "createdAt" >= ${yearStart}
-            GROUP BY 1
+            GROUP BY 1, 2
             ORDER BY 1
         `,
         prisma.order.groupBy({
-            by: ["paymentMethod"],
+            by: ["paymentMethod", "currency"],
             _sum: { total: true },
             _count: { _all: true },
             where: { status: "COMPLETED", createdAt: { gte: startDate } },
-            orderBy: { _sum: { total: "desc" } },
-            take: 8,
         }),
         // Prisma cannot group across a join, and the alternative is reading
         // every paid item in the window into the process to add them up.
-        prisma.$queryRaw<{ id: string | null; name: string | null; revenue: number; units: number }[]>`
-            SELECT c."id" AS id, c."name" AS name,
+        prisma.$queryRaw<{ id: string | null; name: string | null; currency: string; revenue: number; units: number }[]>`
+            SELECT c."id" AS id, c."name" AS name, o."currency" AS currency,
                    COALESCE(SUM(oi."price" * oi."quantity"), 0)::float8 AS revenue,
                    COALESCE(SUM(oi."quantity"), 0)::int AS units
             FROM "OrderItem" oi
@@ -143,22 +173,47 @@ export async function GET(request: NextRequest) {
             LEFT JOIN "Product" p ON p."id" = oi."productId"
             LEFT JOIN "Category" c ON c."id" = p."categoryId"
             WHERE o."status" = 'COMPLETED' AND o."createdAt" >= ${startDate}
-            GROUP BY c."id", c."name"
-            ORDER BY revenue DESC
-            LIMIT 8
+            GROUP BY c."id", c."name", o."currency"
         `,
         prisma.order.groupBy({
-            by: ["userId"],
+            by: ["userId", "currency"],
             _sum: { total: true },
             _count: { _all: true },
             where: { status: "COMPLETED", createdAt: { gte: startDate }, userId: { not: null } },
-            orderBy: { _sum: { total: "desc" } },
-            take: 8,
         }),
     ]);
 
+    const months = [...new Set(monthlyRows.map((row) => row.month))].sort();
+    const ordersByMonth = new Map<string, number>();
+    for (const row of monthlyRows) ordersByMonth.set(row.month, (ordersByMonth.get(row.month) ?? 0) + row.orders);
+    const revenueByMonth = await totalsIn(base, monthlyRows.map((row) => ({ key: row.month, currency: row.currency, amount: row.revenue })));
+
+    // A shop that took money before any gateway was named has rows with no
+    // method on them, and calling that zero would quietly drop revenue out of
+    // the report.
+    const methodCounts = new Map<string | null, number>();
+    for (const row of methodRows) methodCounts.set(row.paymentMethod, (methodCounts.get(row.paymentMethod) ?? 0) + row._count._all);
+    const byMethod = largestFirst(
+        await totalsIn(base, methodRows.map((row) => ({ key: row.paymentMethod, currency: row.currency, amount: Number(row._sum.total ?? 0) }))),
+    ).slice(0, 8);
+
+    const categories = new Map<string | null, { name: string | null; units: number }>();
+    for (const row of categoryRows) {
+        const seen = categories.get(row.id);
+        categories.set(row.id, { name: row.name, units: (seen?.units ?? 0) + row.units });
+    }
+    const byCategory = largestFirst(
+        await totalsIn(base, categoryRows.map((row) => ({ key: row.id, currency: row.currency, amount: row.revenue }))),
+    ).slice(0, 8);
+
+    const spenderCounts = new Map<string, number>();
+    for (const row of spenderRows) spenderCounts.set(row.userId as string, (spenderCounts.get(row.userId as string) ?? 0) + row._count._all);
+    const spenders = largestFirst(
+        await totalsIn(base, spenderRows.map((row) => ({ key: row.userId as string, currency: row.currency, amount: Number(row._sum.total ?? 0) }))),
+    ).slice(0, 8);
+
     const buyers = await prisma.user.findMany({
-        where: { id: { in: spenders.map((row) => row.userId as string) } },
+        where: { id: { in: spenders.map(([userId]) => userId) } },
         select: { id: true, username: true },
     });
     const buyerById = new Map(buyers.map((buyer) => [buyer.id, buyer.username]));
@@ -180,13 +235,13 @@ export async function GET(request: NextRequest) {
                 group: "store-catalogue",
                 color: "#10b981",
                 format: "currency",
-                items: topRows.map((row) => {
-                    const product = productById.get(row.productId!);
+                items: topRows.map(([id, value]) => {
+                    const product = productById.get(id);
                     return {
-                        id: row.productId!,
-                        label: product?.name ?? row.productId!,
-                        value: Number(row._sum.price || 0),
-                        secondary: `${row._sum.quantity ?? 0}x`,
+                        id,
+                        label: product?.name ?? id,
+                        value,
+                        secondary: `${productUnits.get(id) ?? 0}x`,
                         href: product ? `/admin/store/products/${product.id}/edit` : undefined,
                     };
                 }),
@@ -198,14 +253,11 @@ export async function GET(request: NextRequest) {
                 group: "store-payments",
                 color: "#8b5cf6",
                 format: "currency",
-                items: byMethod.map((row) => ({
-                    // A shop that took money before any gateway was named has
-                    // rows with no method on them, and calling that zero would
-                    // quietly drop revenue out of the report.
-                    id: row.paymentMethod ?? "unrecorded",
-                    label: row.paymentMethod ?? "Not recorded",
-                    value: Number(row._sum.total || 0),
-                    secondary: `${row._count._all}`,
+                items: byMethod.map(([method, value]) => ({
+                    id: method ?? "unrecorded",
+                    label: method ?? "Not recorded",
+                    value,
+                    secondary: `${methodCounts.get(method) ?? 0}`,
                 })),
             },
             {
@@ -215,12 +267,12 @@ export async function GET(request: NextRequest) {
                 group: "store-catalogue",
                 color: "#f59e0b",
                 format: "currency",
-                items: byCategory.map((row) => ({
-                    id: row.id ?? "uncategorised",
-                    label: row.name ?? "Uncategorised",
-                    value: row.revenue,
-                    secondary: `${row.units}x`,
-                    href: row.id ? `/admin/store/categories` : undefined,
+                items: byCategory.map(([id, value]) => ({
+                    id: id ?? "uncategorised",
+                    label: categories.get(id)?.name ?? "Uncategorised",
+                    value,
+                    secondary: `${categories.get(id)?.units ?? 0}x`,
+                    href: id ? `/admin/store/categories` : undefined,
                 })),
             },
             {
@@ -230,14 +282,14 @@ export async function GET(request: NextRequest) {
                 group: "store-buyers",
                 color: "#ec4899",
                 format: "currency",
-                items: spenders.map((row) => ({
-                    id: row.userId as string,
+                items: spenders.map(([userId, value]) => ({
+                    id: userId,
                     // A buyer whose account has since been deleted still spent
                     // the money, so the row stays and says so.
-                    label: buyerById.get(row.userId as string) ?? "Deleted account",
-                    value: Number(row._sum.total || 0),
-                    secondary: `${row._count._all}`,
-                    href: `/admin/users/${row.userId}`,
+                    label: buyerById.get(userId) ?? "Deleted account",
+                    value,
+                    secondary: `${spenderCounts.get(userId) ?? 0}`,
+                    href: `/admin/users/${userId}`,
                 })),
             },
         ],
@@ -258,7 +310,7 @@ export async function GET(request: NextRequest) {
                 labelKey: "analytics_storeRevenuePerDay",
                 group: "store-sales",
                 labels,
-                data: labels.map((k) => Number(revenueByDay[k].toFixed(2))),
+                data: labels.map((k) => revenueByDay.get(k) ?? 0),
                 color: "#10b981",
                 format: "currency",
             },
@@ -267,8 +319,8 @@ export async function GET(request: NextRequest) {
                 label: "Revenue by month",
                 labelKey: "analytics_storeRevenueByMonth",
                 group: "store-monthly",
-                labels: monthly.map((row) => row.month),
-                data: monthly.map((row) => Number(row.revenue.toFixed(2))),
+                labels: months,
+                data: months.map((month) => revenueByMonth.get(month) ?? 0),
                 color: "#10b981",
                 type: "bar",
                 format: "currency",
@@ -278,8 +330,8 @@ export async function GET(request: NextRequest) {
                 label: "Orders by month",
                 labelKey: "analytics_storeOrdersByMonth",
                 group: "store-monthly",
-                labels: monthly.map((row) => row.month),
-                data: monthly.map((row) => row.orders),
+                labels: months,
+                data: months.map((month) => ordersByMonth.get(month) ?? 0),
                 color: "#3b82f6",
                 type: "bar",
             },
@@ -297,7 +349,9 @@ export async function GET(request: NextRequest) {
                     secondary: (o.user?.username ?? "Deleted user") + " · " + o.createdAt.toISOString().split("T")[0],
                     badge: o.status,
                     badgeColor: o.status === "COMPLETED" ? "green" : o.status === "PENDING" ? "yellow" : "blue",
-                    value: formatCurrency(Number(o.total)),
+                    // Each order in the currency it was paid in, not a dollar sign
+                    // on whatever number it holds.
+                    value: formatCurrency(Number(o.total), o.currency),
                 })),
             },
         ],

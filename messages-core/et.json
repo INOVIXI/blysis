@@ -97,7 +97,12 @@
     "welcomeTitle": "Tere tulemast oma kogukonda",
     "welcomeVisitorHint": "Kogukonna avastamiseks kasuta ülal olevat navigeerimist.",
     "writeContentHere": "Kirjuta sisu siia...",
-    "statsLabel": "Sait ühe pilguga"
+    "statsLabel": "Sait ühe pilguga",
+    "localizedText_translations": "Tõlked ({filled}/{total})",
+    "localizedText_fallbackHint": "Tühjaks jäetud keeles näidatakse algteksti.",
+    "localizedText_filled": "Tõlgitud",
+    "localizedText_empty": "Näitab algteksti",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Lehte ei leitud",
@@ -163,7 +168,10 @@
     "twoFactorEnabled": "Kaksikautentimine sisse lülitatud",
     "userProfileUpdated": "{username} uuendas oma profiili",
     "userRegistered": "liitus kogukonnaga",
-    "viewAll": "Vaata kõiki"
+    "viewAll": "Vaata kõiki",
+    "auditSignInMethodConnect": "Ühendas sisselogimisviisi",
+    "auditSignInMethodDisconnect": "Katkestas sisselogimisviisi ühenduse",
+    "auditSignInMethodRemove": "Eemaldas liikme sisselogimisviisi"
   },
   "nav": {
     "adminPanel": "Halduspaneel",
@@ -537,6 +545,9 @@
     "generalSettings_identityPasswordHint": "Küsitakse enne nime või aadressi muutmist, et laenatud ekraan ei saaks kontot üle võtta. Teenusepakkuja kaudu sisse logivatel kontodel parooli pole ja neilt seda ei küsita.",
     "generalSettings_memberAvatarUploads": "Profiilipildid",
     "generalSettings_memberAvatarUploadsHint": "Mida liige oma profiilile panna võib: saata faili, osutada oma hostitud pildile või mitte midagi. Üleslaadimised on ainult pildid, kuni 2 MB, ja liikme kohta piiratud.",
+    "generalSettings_memberAvatarProvider": "Liikmete pilditeenus",
+    "generalSettings_memberAvatarProviderHint": "Kui liikmel pole oma pilti või liikmete pildid on välja lülitatud, tuleb tema nägu kasutajanime järgi sellest teenusest. Kui teenus pilti ei leia, näidatakse initsiaale.",
+    "generalSettings_avatarProviderNone": "Puudub: initsiaalid",
     "generalSettings_memberContent": "Liikme sisu",
     "generalSettings_memberIdentity": "Liikme identiteet",
     "generalSettings_minPasswordLength": "Parooli miinimumpikkus",
@@ -985,6 +996,8 @@
     "siteSettings_contactEmail": "Kontakti e-post",
     "siteSettings_description": "Kirjeldus",
     "siteSettings_general": "Üldine",
+    "siteSettings_icon": "Saidi ikoon",
+    "siteSettings_iconHint": "Väike pilt brauseri vahekaardil ja telefoni avakuval. Ruudukujuline pilt näeb kõige parem välja. Tühjaks jäetuna kasutatakse vaikeikooni.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Seadete salvestamine ebaõnnestus",
     "siteSettings_saveSettings": "Salvesta seaded",
@@ -1356,7 +1369,21 @@
     "placeholder_noValue": "praegu väärtus puudub",
     "placeholder_unknown": "Miski sellel saidil ei vasta kohatäitele {names}, külastaja näeb seal kriipsu.",
     "placeholder_refused": "Miski sellel saidil ei vasta kohatäitele {names}, nii tekst ei salvestu.",
-    "placeholder_site_name": "Saidi nimi"
+    "placeholder_site_name": "Saidi nimi",
+    "users_signInMethods": "Sisselogimisviisid",
+    "users_signInMethodsPassword": "Parool on olemas.",
+    "users_signInMethodsNoPassword": "Parool puudub: logib sisse ainult allolevate viisidega.",
+    "users_signInMethodsNone": "Ühtegi sisselogimisviisi pole ühendatud.",
+    "users_signInMethodConnectedOn": "Ühendatud {date}",
+    "users_signInMethodRemove": "Eemalda",
+    "users_signInMethodRemoveTitle": "Eemaldada {provider}?",
+    "users_signInMethodRemoveMessage": "{username} ei saa enam teenusega {provider} sisse logida.",
+    "users_signInMethodRemoved": "{provider} eemaldatud.",
+    "users_signInMethodLast": "See on liikme ainus sisselogimisviis, seega seda ei eemaldatud.",
+    "generalSettings_signInMethodSignUps": "Uued kontod sisselogimisviiside kaudu",
+    "generalSettings_signInMethodSignUpsHint": "Kui neid tohivad kasutada ainult ühendatud liikmed, töötab teenusepakkujaga sisselogimine ainult neile, kes ühendasid selle oma kontolehel, ja uusi kontosid nii ei looda.",
+    "generalSettings_signInMethodSignUpsOpen": "Loo konto igale uuele",
+    "generalSettings_signInMethodSignUpsClosed": "Ainult ühendatud liikmed"
   },
   "footer": {
     "quickLinks": "Kiirlingid",
@@ -1443,7 +1470,22 @@
     "username": "Kasutajanimi",
     "usernameCannotChange": "See sait ei luba liikmetel oma kasutajanime muuta.",
     "viewPublicProfile": "Vaata avalikku profiili",
-    "youSaid": "Sina:"
+    "youSaid": "Sina:",
+    "signInMethods": "Sisselogimisviisid",
+    "signInMethods_hint": "Ühenda mujal olev konto, et sellega siia sisse logida. Kasutajanimi ja parool töötavad edasi.",
+    "signInMethods_none": "See sait ei paku muid sisselogimisviise.",
+    "signInMethods_connectedOn": "Ühendatud {date}",
+    "signInMethods_notConnected": "Pole ühendatud",
+    "signInMethods_connect": "Ühenda",
+    "signInMethods_connectLabel": "Ühenda {provider}",
+    "signInMethods_disconnect": "Katkesta ühendus",
+    "signInMethods_disconnectTitle": "Katkestada ühendus kontoga {provider}?",
+    "signInMethods_disconnectMessage": "Sa ei saa enam teenusega {provider} sisse logida. Saad selle hiljem uuesti ühendada.",
+    "signInMethods_connected": "{provider} on ühendatud. Nüüdsest saad sellega sisse logida.",
+    "signInMethods_disconnected": "{provider} ühendus on katkestatud.",
+    "signInMethods_failed": "See ei õnnestunud. Proovi uuesti.",
+    "signInMethods_errTaken": "See konto on siin juba teise liikmega ühendatud. Seda ei viidud sinu kontole.",
+    "signInMethods_errNotStarted": "Midagi ei ühendatud. Alusta sellelt lehelt nupuga Ühenda ja logi siis teenusepakkuja juures sisse."
   },
   "auth": {
     "accountLocked": "Liiga palju ebaõnnestunud katseid. Sinu konto on ajutiselt lukus. Vaata oma e-posti või proovi mõne minuti pärast uuesti.",
@@ -1500,7 +1542,13 @@
       "username_taken": "See kasutajanimi on juba võetud.",
       "username_too_short": "See kasutajanimi on sellel saidil liiga lühike. Palun vali pikem.",
       "weak_password": "See parool ei vasta nõuetele. Palun vali tugevam.",
-      "wrong_password": "See parool ei ole õige."
+      "wrong_password": "See parool ei ole õige.",
+      "already_connected": "Sul on selle teenusepakkuja konto juba ühendatud. Katkesta see enne.",
+      "impersonating": "Sisselogimisviise ei saa ühendada, kui tegutsed teise liikmena.",
+      "last_sign_in_method": "See on ainus viis sinu kontole pääseda, seega ei saa seda eemaldada. Ühenda enne muu viis.",
+      "session_unknown": "Logi välja ja uuesti sisse, seejärel ühenda.",
+      "unknown_provider": "See sisselogimisviis pole sellel saidil saadaval.",
+      "sign_in_method_not_found": "See sisselogimisviis pole ühendatud."
     },
     "errorAccessDenied": "Ligipääs keelatud. Sul pole luba sisse logida.",
     "errorConfiguration": "Serveri seadistusviga. Palun võta ühendust saidi administraatoriga.",
@@ -1559,7 +1607,8 @@
     "demoAsAdmin": "Administraatorina",
     "demoAsMember": "Liikmena",
     "demoResetNote": "Kõik siin pannakse iga tund tagasi, nii et miski, mida teed, ei riku seda järgmisele külastajale. Mõned toimingud on välja lülitatud: e-kirjade saatmine, päris maksed ja kõik, mis lukustaks sinu kasutatava konto.",
-    "demoFillFor": "Täida andmed {who}"
+    "demoFillFor": "Täida andmed {who}",
+    "errorConnectFirst": "See sisselogimine pole siin ühegi kontoga ühendatud. Logi sisse kasutajanime ja parooliga ning ühenda see siis oma kontolehel."
   },
   "search": {
     "title": "Otsi",

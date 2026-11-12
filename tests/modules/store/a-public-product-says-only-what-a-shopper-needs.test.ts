@@ -23,13 +23,16 @@ const findFirst = vi.fn<(args: unknown) => Promise<unknown>>(async () => null);
 const count = vi.fn(async () => 0);
 let callerIsAdmin = false;
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
         product: {
             findMany: (args: unknown) => findMany(args as never),
             findFirst: (args: unknown) => findFirst(args),
             count: (args: unknown) => count(args as never),
         },
+        // The editor's answer carries each language of its words.
+        contentTranslation: { findMany: async () => [] },
     },
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     isAdmin: async () => callerIsAdmin,

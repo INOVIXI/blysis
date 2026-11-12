@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { ArrowLeft, Download, FileText, Loader2 } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
@@ -39,6 +39,9 @@ interface GuidedFile {
 export default function DownloadGuidePage() {
     const t = useTranslations("downloads");
     const params = useParams();
+    // The endpoint reads the guide in this language, and the original where
+    // the admin wrote none.
+    const locale = useLocale();
     const formatLocalDate = useLocalDate();
     const [file, setFile] = useState<GuidedFile | null>(null);
     const [state, setState] = useState<"loading" | "ready" | "failed" | "missing">("loading");
@@ -49,7 +52,7 @@ export default function DownloadGuidePage() {
     useEffect(() => {
         if (!number) { setState("missing"); return; }
         let cancelled = false;
-        fetch(`/api/v1/downloads/guide/${encodeURIComponent(number)}`)
+        fetch(`/api/v1/downloads/guide/${encodeURIComponent(number)}?locale=${encodeURIComponent(locale)}`)
             .then(async (r) => {
                 if (r.status === 404) return { missing: true as const };
                 if (!r.ok) throw new Error("load failed");
@@ -63,7 +66,7 @@ export default function DownloadGuidePage() {
             })
             .catch(() => { if (!cancelled) setState("failed"); });
         return () => { cancelled = true; };
-    }, [number, reloadKey]);
+    }, [number, reloadKey, locale]);
 
     const take = async () => {
         if (!file) return;

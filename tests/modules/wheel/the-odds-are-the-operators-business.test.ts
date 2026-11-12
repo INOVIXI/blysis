@@ -33,8 +33,13 @@ const findMany = vi.fn(async (args: { select?: Record<string, boolean> }) => {
 });
 const isAdmin = vi.fn(async () => false);
 
-vi.mock("@/core/sdk/server", () => ({
-    prisma: { wheelPrize: { findMany: (args: unknown) => findMany(args as never) } },
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
+    prisma: {
+        wheelPrize: { findMany: (args: unknown) => findMany(args as never) },
+        // The editor's answer carries each label's languages; there are none here.
+        contentTranslation: { findMany: async () => [] },
+    },
     isAdmin: (...args: unknown[]) => isAdmin(...(args as [])),
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     readJsonBody: async (request: Request) => request.json(),

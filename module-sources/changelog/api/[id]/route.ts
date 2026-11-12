@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, isAdmin, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
-import { entrySlug } from "../../lib/entry-page";
+import { ENTRY_TEXT, TRANSLATED_FIELDS, entrySlug } from "../../lib/entry-page";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -48,6 +48,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: validation.error.issues[0].message }, { status: 400 });
     }
 
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
     const { content, details, publishAt, title, ...rest } = validation.data;
     const patchData = {
         ...rest,
@@ -59,7 +62,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         ...(details !== undefined ? { details: details ? details : null } : {}),
         ...(publishAt !== undefined ? { publishAt: publishAt ? new Date(publishAt) : null } : {}),
     };
-    const entry = await prisma.changelogEntry.update({ where: { id }, data: patchData });
+    const entry = await prisma.$transaction(async (tx) => {
+        const updated = await tx.changelogEntry.update({ where: { id }, data: patchData });
+        if (translations.value) await saveContentTranslations(tx, { ...ENTRY_TEXT, recordId: id }, translations.value);
+        return updated;
+    });
 
     const { doActionAsync } = await import("@/core/sdk");
     await doActionAsync("changelog.entry.updated", entry);
@@ -80,7 +87,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const { recordRevision } = await import("@/core/sdk/server");
     await recordRevision("changelog.entry", id, existing, "delete", session.user.id);
 
-    await prisma.changelogEntry.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.changelogEntry.delete({ where: { id } });
+        await deleteContentTranslations(tx, ENTRY_TEXT, [id]);
+    });
 
     const { doActionAsync } = await import("@/core/sdk");
     await doActionAsync("changelog.entry.deleted", existing);

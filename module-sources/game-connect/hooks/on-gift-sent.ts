@@ -8,10 +8,16 @@
  * the player's language, the rest find nobody. The sender is
  * named by their account in the same game when they have one, the name the
  * recipient knows them by there, else by their username.
+ *
+ * On a game where a username is a player name, a member with no link there
+ * is the player with their name, named with the offline-mode id when the
+ * site derives one and with a null id otherwise.
  */
 import { log, prisma } from "@/core/sdk/server";
 import { emitEvent } from "../lib/events";
+import { accountsByName } from "../lib/names";
 import { platformOf } from "../lib/players";
+import { nameSettings } from "../lib/settings";
 
 /** The store's payload, spelled out: this module does not depend on the store. */
 interface GiftSent {
@@ -29,7 +35,7 @@ const onGiftSent = async (gift: GiftSent): Promise<void> => {
         if (!gift?.recipientId || !gift.senderId) return;
         const recipientId = gift.recipientId;
         const senderId = gift.senderId;
-        const [recipient, sender, accounts, servers] = await Promise.all([
+        const [recipient, sender, links, servers, settings] = await Promise.all([
             prisma.user.findUnique({ where: { id: recipientId }, select: { username: true } }),
             prisma.user.findUnique({ where: { id: senderId }, select: { username: true } }),
             prisma.gameConnectLink.findMany({
@@ -38,8 +44,19 @@ const onGiftSent = async (gift: GiftSent): Promise<void> => {
                 take: MOST_LINKS * 2,
             }),
             prisma.gameConnectServer.findMany({ where: { enabled: true }, select: { gameServerId: true, game: true } }),
+            nameSettings(),
         ]);
         if (!recipient) return;
+        const linkedOn = (userId: string) => new Set(links.filter((a) => a.userId === userId).map((a) => a.platform));
+        const [recipientNamed, senderNamed] = await Promise.all([
+            accountsByName(settings, recipientId, linkedOn(recipientId)),
+            accountsByName(settings, senderId, linkedOn(senderId)),
+        ]);
+        const accounts = [
+            ...links,
+            ...recipientNamed.map((a) => ({ ...a, userId: recipientId })),
+            ...senderNamed.map((a) => ({ ...a, userId: senderId })),
+        ];
         const senderIn = new Map(accounts.filter((a) => a.userId === senderId).map((a) => [a.platform, a.name]));
         for (const account of accounts.filter((a) => a.userId === recipientId)) {
             const data = {

@@ -8,7 +8,7 @@ import { ModuleRoutes } from "@/core/generated/module-registry";
 import { ModuleRouteResolvers } from "@/core/generated/module-route-resolvers";
 import { matchModuleRouteOnce } from "@/core/lib/route-matcher";
 import { buildPageMeta } from "@/core/lib/seo";
-import { resolveRouteTitle, descriptionFromMessages } from "@/core/lib/route-title";
+import { resolveRouteTitle, descriptionFromMessages, routeResolution, type RouteResolution } from "@/core/lib/route-title";
 import { getMessages } from "@/core/lib/i18n/translation-service";
 import { errorText, log } from "@/core/lib/logger";
 
@@ -23,17 +23,20 @@ import { errorText, log } from "@/core/lib/logger";
  *
  * `cache` keeps it to one call per request even though metadata and the page
  * both ask, and a resolver that throws is treated as "no opinion" rather than
- * turning a database hiccup into a 404 on a page that exists.
+ * turning a database hiccup into a 404 on a page that exists. A resolver may
+ * also name what it found, which is how one route pattern serving many
+ * resources titles each of them. It is told the page's language, so the name
+ * it gives is the one the reader reads on the page.
  */
-const routeExists = cache(async (key: string, params: Record<string, string | string[]>): Promise<boolean> => {
+const resolveRoute = cache(async (key: string, params: Record<string, string | string[]>, locale: string): Promise<RouteResolution> => {
     const load = ModuleRouteResolvers[key];
-    if (!load) return true;
+    if (!load) return { exists: true, title: null };
     try {
         const { default: resolve } = await load();
-        return await resolve(params);
+        return routeResolution(await resolve(params, { locale }));
     } catch (err) {
         log.error("[route-resolver] the resolver failed", { resolver: key, error: errorText(err) });
-        return true;
+        return { exists: true, title: null };
     }
 });
 
@@ -70,6 +73,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     // store, the forum and the leaderboard said exactly the same thing.
     const description = descriptionFromMessages(messages, route?.descriptionKey);
 
+    // Asked once per request; the page below reads the same answer.
+    const resolution = match && route ? await resolveRoute(match.key, match.params, locale) : null;
+
     const meta = await buildPageMeta({
         title: resolveRouteTitle({
             slug,
@@ -77,6 +83,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             titleFromPath: route?.titleFromPath,
             titleKey: route?.titleKey,
             messages,
+            resourceTitle: resolution?.title,
         }),
         ...(description ? { description } : {}),
         url: "/" + (slug?.join("/") || ""),
@@ -99,7 +106,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     // The route pattern matches but names nothing. Same treatment: the page is
     // about to 404, and until it does, no crawler should be told to index this.
-    if (!(await routeExists(match.key, match.params))) {
+    if (!resolution?.exists) {
         return { ...meta, robots: { index: false, follow: false } };
     }
 
@@ -119,7 +126,7 @@ export default async function DynamicModulePage(props: PageProps) {
     // gets its own input back with no error to show for it.
     await ensureHooks();
     const { params } = props;
-    const { slug } = await params;
+    const { slug, locale } = await params;
 
     const match = matchModuleRouteOnce(slug.join("/"));
 
@@ -134,7 +141,7 @@ export default async function DynamicModulePage(props: PageProps) {
         notFound();
     }
 
-    if (!(await routeExists(match.key, match.params))) {
+    if (!(await resolveRoute(match.key, match.params, locale)).exists) {
         notFound();
     }
 

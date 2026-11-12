@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Copy, Server } from "lucide-react";
 import { copyText, sharedJson } from "@/core/sdk";
@@ -110,6 +110,8 @@ function Card({ server, capacity, onCopy }: { server: ServerCard; capacity: bool
 export function ServerCards({ settings }: BlockProps) {
     const t = useTranslations("servers");
     const commonT = useTranslations("common");
+    // Every reader of this answer asks in the page's language, so they share one request.
+    const locale = useLocale();
     const text = useBlockText();
     const [servers, setServers] = useState<ServerCard[] | null>(null);
     // A read that did not come back says so rather than reading as a site
@@ -120,11 +122,11 @@ export function ServerCards({ settings }: BlockProps) {
 
     useEffect(() => {
         let active = true;
-        sharedJson<{ servers?: ServerCard[] }>("/api/v1/servers/status")
+        sharedJson<{ servers?: ServerCard[] }>(`/api/v1/servers/status?locale=${encodeURIComponent(locale)}`)
             .then((d) => { if (active) setServers(Array.isArray(d?.servers) ? d.servers : []); })
             .catch(() => { if (active) setFailed(true); });
         return () => { active = false; };
-    }, [reloadKey]);
+    }, [reloadKey, locale]);
 
     if (!failed && servers !== null && servers.length === 0) return null;
 

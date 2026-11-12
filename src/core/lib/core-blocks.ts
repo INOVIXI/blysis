@@ -7,7 +7,8 @@ function tileFields(): Record<string, ThemeFieldDef> {
     for (const n of [1, 2, 3]) {
         fields[`tile${n}Value`] = { type: "text", max: 40 };
         fields[`tile${n}Label`] = { type: "text", max: 80 };
-        fields[`tile${n}Icon`] = { type: "text", max: 64 };
+        // An icon's name reads the same in every language.
+        fields[`tile${n}Icon`] = { type: "text", max: 64, translatable: false };
     }
     return fields;
 }

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hasPermission, log, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, hasPermission, log, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { campaignSchema } from "../../../lib/validations";
+import { CAMPAIGN_FIELDS, CAMPAIGN_TEXT } from "../../../lib/store-text";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -24,6 +25,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
 
+    const translations = contentTranslationsInput(body, CAMPAIGN_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
     const existing = await prisma.campaign.findUnique({ where: { id } });
     if (!existing) return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
 
@@ -41,6 +45,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
                     });
                 }
             }
+            if (translations.value) await saveContentTranslations(tx, { ...CAMPAIGN_TEXT, recordId: id }, translations.value);
             return tx.campaign.update({
                 where: { id },
                 data: fields,
@@ -63,6 +68,9 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
 
     const { id } = await params;
     // The entries go with it; the products do not.
-    await prisma.campaign.deleteMany({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.campaign.deleteMany({ where: { id } });
+        await deleteContentTranslations(tx, CAMPAIGN_TEXT, [id]);
+    });
     return NextResponse.json({ deleted: true });
 }

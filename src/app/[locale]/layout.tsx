@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isKnownLocale } from "@/core/lib/i18n/resolve-locale";
-import { buildSiteHead, buildPageMeta, buildOrganizationJsonLd } from "@/core/lib/seo";
+import { buildSiteHead, buildPageMeta, buildOrganizationJsonLd, getSeoSiteInfo, siteHeadMetadata } from "@/core/lib/seo";
+import { siteIconMetadata } from "@/core/lib/site-logo";
 import { Inter, Outfit, JetBrains_Mono } from "next/font/google";
 import { buildTokenOverrideCss } from "@/core/lib/theme-override-css";
 import { themeFontVariables } from "@/core/generated/theme-fonts";
@@ -19,8 +20,12 @@ import { ModuleLayoutComponents } from "@/core/components/layout/ModuleLayoutCom
 import { ServerSlot } from "@/core/components/ServerSlot";
 import { ModuleContextProviders } from "@/core/components/layout/ModuleContextProviders";
 import { SiteCurrencyProvider } from "@/core/components/currency/site-currency";
+import { SiteSettingsProvider } from "@/core/providers/site-settings-provider";
+import { readPublicSettings } from "@/core/lib/public-settings";
 import { ConfirmProvider } from "@/core/components/ui/confirm-dialog";
 import { PlaceholderProvider } from "@/core/components/placeholders/PlaceholderProvider";
+import { MemberFaceProvider } from "@/core/components/MemberFaceProvider";
+import { readMemberFaceRules } from "@/core/lib/member-face-rules";
 import { resolvePlaceholders } from "@/core/lib/placeholders";
 import { ProgressBar } from "@/core/components/layout/ProgressBar";
 import { Toaster } from "sonner";
@@ -47,7 +52,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   // Pull site_name/description from Settings, then layer root-layout-only
   // fields (title template, manifest) on top.
   // The site's own name comes from the setting, not from the environment.
@@ -56,11 +61,19 @@ export async function generateMetadata(): Promise<Metadata> {
   // name, because only this file can set a title template and this file was
   // asking the wrong thing. `buildSiteHead` reads the setting and lets a
   // module answer `seo.siteHead` on top of it.
-  const head = await buildSiteHead();
+  //
+  // In the reader's language: the operator may write the name per language.
+  // The language is checked before it is used, as the page below checks it,
+  // and handed over as `siteLanguage` rather than `locale`, which would give
+  // every page a canonical naming the home page.
+  const { locale: segment } = await params;
+  const reader = isKnownLocale(segment) ? segment : undefined;
+  const head = await buildSiteHead(reader);
   const base = await buildPageMeta({
     title: head.defaultTitle,
     type: "website",
     url: "/",
+    siteLanguage: reader,
   });
   return {
     ...base,
@@ -68,7 +81,10 @@ export async function generateMetadata(): Promise<Metadata> {
       default: head.defaultTitle,
       template: head.titleTemplate,
     },
-    keywords: ["open source", "modular platform", "plugin marketplace"],
+    ...siteHeadMetadata(head),
+    // The operator's tab icon, or the shipped ones. Read in the same cached
+    // query as the site's name, so it costs this render nothing.
+    icons: siteIconMetadata((await getSeoSiteInfo()).siteIcon),
     manifest: "/manifest.webmanifest",
     authors: [{ name: head.defaultTitle }],
   };
@@ -114,9 +130,20 @@ export default async function RootLayout({
   // rewrites itself once the request lands.
   const session = await getSession();
 
+  // The settings any visitor may read, for the same reason: the navbar, the
+  // footer and every price are drawn from them. Read in the browser alone,
+  // the server sent the shipped name and USD and the browser hydrated with
+  // the operator's, which React logged as a mismatch on every page. Null on
+  // a database blip, and the browser fetches them as it used to.
+  const publicSettings = await readPublicSettings().catch(() => null);
+
   // The site placeholders a theme's text may name, as far as the cache has
   // them in a moment: a value that is not ready is asked for by the browser
   // after the page paints, rather than holding up every page for it.
+  // How a member's face is drawn, for every avatar on the page: theirs, a
+  // picture service's by their name, or initials.
+  const faceRules = await readMemberFaceRules(moduleStates);
+
   const placeholders = await resolvePlaceholders({ budgetMs: 200 })
     .catch(() => ({ values: {}, pending: [] as string[] }));
 
@@ -182,7 +209,9 @@ export default async function RootLayout({
                 serverConfig={active.settings}
               >
                 <ModuleProvider moduleStates={moduleStates}>
+                <SiteSettingsProvider payload={publicSettings}>
                 <SiteCurrencyProvider>
+                <MemberFaceProvider rules={faceRules}>
                 <ModuleContextProviders>
                 <ConfirmProvider>
                   <a
@@ -213,7 +242,9 @@ export default async function RootLayout({
                   />
                 </ConfirmProvider>
                 </ModuleContextProviders>
+                </MemberFaceProvider>
                 </SiteCurrencyProvider>
+                </SiteSettingsProvider>
                 </ModuleProvider>
               </AppThemeProvider>
             </PlaceholderProvider>

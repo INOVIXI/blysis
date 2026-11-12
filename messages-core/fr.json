@@ -97,7 +97,12 @@
     "welcomeTitle": "Bienvenue dans votre communauté",
     "welcomeVisitorHint": "Utilisez la navigation ci-dessus pour explorer la communauté.",
     "writeContentHere": "Rédigez votre contenu ici…",
-    "statsLabel": "Le site en un coup d’œil"
+    "statsLabel": "Le site en un coup d’œil",
+    "localizedText_translations": "Traductions ({filled} sur {total})",
+    "localizedText_fallbackHint": "Une langue laissée vide affiche le texte d'origine.",
+    "localizedText_filled": "Traduit",
+    "localizedText_empty": "Affiche l'original",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Page introuvable",
@@ -163,7 +168,10 @@
     "twoFactorEnabled": "Double authentification activée",
     "userProfileUpdated": "{username} a mis à jour son profil",
     "userRegistered": "a rejoint la communauté",
-    "viewAll": "Voir tout"
+    "viewAll": "Voir tout",
+    "auditSignInMethodConnect": "A connecté une méthode de connexion",
+    "auditSignInMethodDisconnect": "A déconnecté une méthode de connexion",
+    "auditSignInMethodRemove": "A retiré une méthode de connexion d'un membre"
   },
   "nav": {
     "adminPanel": "Panneau d’administration",
@@ -537,6 +545,9 @@
     "generalSettings_identityPasswordHint": "Demandé avant de modifier un nom ou une adresse, pour qu’un écran emprunté ne puisse pas prendre le contrôle du compte. Un compte connecté via un fournisseur n’a pas de mot de passe et n’est pas invité à en saisir un.",
     "generalSettings_memberAvatarUploads": "Photos de profil",
     "generalSettings_memberAvatarUploadsHint": "Ce qu’un membre peut mettre sur son propre profil : envoyer un fichier, indiquer une image hébergée ailleurs, ou aucune. Les envois sont limités aux images, à 2 Mo au maximum, et plafonnés par membre.",
+    "generalSettings_memberAvatarProvider": "Service d'images des membres",
+    "generalSettings_memberAvatarProviderHint": "Quand un membre n'a pas d'image à lui, ou que les images des membres sont désactivées, son visage vient de ce service d'après son nom d'utilisateur. Une image introuvable est remplacée par les initiales.",
+    "generalSettings_avatarProviderNone": "Aucun : initiales",
     "generalSettings_memberContent": "Contenu des membres",
     "generalSettings_memberIdentity": "Identité des membres",
     "generalSettings_minPasswordLength": "Longueur minimale du mot de passe",
@@ -985,6 +996,8 @@
     "siteSettings_contactEmail": "E-mail de contact",
     "siteSettings_description": "Description",
     "siteSettings_general": "Général",
+    "siteSettings_icon": "Icône du site",
+    "siteSettings_iconHint": "La petite image affichée dans l'onglet du navigateur et sur l'écran d'accueil d'un téléphone. Une image carrée rend le mieux. Laissé vide, l'icône par défaut est utilisée.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Échec de l’enregistrement des paramètres",
     "siteSettings_saveSettings": "Enregistrer les paramètres",
@@ -1356,7 +1369,21 @@
     "placeholder_noValue": "aucune valeur pour l'instant",
     "placeholder_unknown": "Rien sur ce site ne répond à {names}, les visiteurs y voient un tiret.",
     "placeholder_refused": "Rien sur ce site ne répond à {names}, le texte ne sera pas enregistré ainsi.",
-    "placeholder_site_name": "Nom du site"
+    "placeholder_site_name": "Nom du site",
+    "users_signInMethods": "Méthodes de connexion",
+    "users_signInMethodsPassword": "A un mot de passe.",
+    "users_signInMethodsNoPassword": "Pas de mot de passe : se connecte uniquement avec les méthodes ci-dessous.",
+    "users_signInMethodsNone": "Aucune méthode de connexion connectée.",
+    "users_signInMethodConnectedOn": "Connecté le {date}",
+    "users_signInMethodRemove": "Retirer",
+    "users_signInMethodRemoveTitle": "Retirer {provider} ?",
+    "users_signInMethodRemoveMessage": "{username} ne pourra plus se connecter avec {provider}.",
+    "users_signInMethodRemoved": "{provider} retiré.",
+    "users_signInMethodLast": "C'est le seul moyen de connexion du membre, il n'a donc pas été retiré.",
+    "generalSettings_signInMethodSignUps": "Nouveaux comptes via les méthodes de connexion",
+    "generalSettings_signInMethodSignUpsHint": "Lorsque seuls les membres connectés peuvent les utiliser, la connexion via un fournisseur ne fonctionne que pour les membres qui l'ont connecté depuis leur page de compte, et personne n'obtient de nouveau compte ainsi.",
+    "generalSettings_signInMethodSignUpsOpen": "Créer un compte pour tout nouveau venu",
+    "generalSettings_signInMethodSignUpsClosed": "Membres connectés uniquement"
   },
   "footer": {
     "quickLinks": "Liens rapides",
@@ -1443,7 +1470,22 @@
     "username": "Nom d’utilisateur",
     "usernameCannotChange": "Ce site ne permet pas aux membres de modifier leur nom d’utilisateur.",
     "viewPublicProfile": "Voir le profil public",
-    "youSaid": "Vous :"
+    "youSaid": "Vous :",
+    "signInMethods": "Méthodes de connexion",
+    "signInMethods_hint": "Connectez un compte que vous avez ailleurs pour vous connecter ici avec. Votre nom d'utilisateur et votre mot de passe continuent de fonctionner.",
+    "signInMethods_none": "Ce site ne propose aucune autre méthode de connexion.",
+    "signInMethods_connectedOn": "Connecté le {date}",
+    "signInMethods_notConnected": "Non connecté",
+    "signInMethods_connect": "Connecter",
+    "signInMethods_connectLabel": "Connecter {provider}",
+    "signInMethods_disconnect": "Déconnecter",
+    "signInMethods_disconnectTitle": "Déconnecter {provider} ?",
+    "signInMethods_disconnectMessage": "Vous ne pourrez plus vous connecter avec {provider}. Vous pourrez le reconnecter plus tard.",
+    "signInMethods_connected": "{provider} est connecté. Vous pouvez désormais vous connecter avec.",
+    "signInMethods_disconnected": "{provider} est déconnecté.",
+    "signInMethods_failed": "Cela n'a pas fonctionné. Réessayez.",
+    "signInMethods_errTaken": "Ce compte est déjà connecté à un autre membre ici. Il n'a pas été déplacé vers le vôtre.",
+    "signInMethods_errNotStarted": "Rien n'a été connecté. Commencez sur cette page avec Connecter, puis connectez-vous chez le fournisseur."
   },
   "auth": {
     "accountLocked": "Trop de tentatives échouées. Votre compte est temporairement verrouillé. Consultez vos e-mails ou réessayez dans quelques minutes.",
@@ -1500,7 +1542,13 @@
       "username_taken": "Ce nom d’utilisateur est déjà pris.",
       "username_too_short": "Ce nom d’utilisateur est trop court pour ce site. Veuillez en choisir un plus long.",
       "weak_password": "Ce mot de passe ne respecte pas les exigences. Veuillez en choisir un plus robuste.",
-      "wrong_password": "Ce mot de passe n’est pas correct."
+      "wrong_password": "Ce mot de passe n’est pas correct.",
+      "already_connected": "Vous avez déjà un compte de ce fournisseur connecté. Déconnectez-le d'abord.",
+      "impersonating": "Impossible de connecter une méthode de connexion en agissant en tant qu'un autre membre.",
+      "last_sign_in_method": "C'est le seul moyen d'accéder à votre compte, il ne peut donc pas être retiré. Connectez d'abord une autre méthode.",
+      "session_unknown": "Déconnectez-vous puis reconnectez-vous, ensuite connectez la méthode.",
+      "unknown_provider": "Cette méthode de connexion n'est pas disponible sur ce site.",
+      "sign_in_method_not_found": "Cette méthode de connexion n'est pas connectée."
     },
     "errorAccessDenied": "Accès refusé. Vous n’êtes pas autorisé à vous connecter.",
     "errorConfiguration": "Erreur de configuration du serveur. Veuillez contacter l’administrateur du site.",
@@ -1559,7 +1607,8 @@
     "demoAsAdmin": "En tant qu’administrateur",
     "demoAsMember": "En tant que membre",
     "demoResetNote": "Tout ici est remis à zéro chaque heure, afin que rien de ce que vous faites ne gêne le visiteur suivant. Quelques actions sont désactivées : envoi d’e-mails, paiements réels et tout ce qui verrouillerait le compte que vous utilisez.",
-    "demoFillFor": "Renseignez les informations {who}"
+    "demoFillFor": "Renseignez les informations {who}",
+    "errorConnectFirst": "Cette connexion n'est liée à aucun compte ici. Connectez-vous avec votre nom d'utilisateur et votre mot de passe, puis connectez-la depuis votre page de compte."
   },
   "search": {
     "title": "Recherche",

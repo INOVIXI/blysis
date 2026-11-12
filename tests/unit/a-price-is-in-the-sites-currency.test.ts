@@ -130,7 +130,7 @@ describe("a screen that shows money", () => {
 
 describe("the currency contract", () => {
     it("publishes the currency the gateways charge in", () => {
-        const source = read("src/app/api/v1/public-settings/route.ts");
+        const source = read("src/core/lib/public-settings.ts");
         const block = code(source.slice(source.indexOf("PUBLIC_KEYS"), source.indexOf("PUBLIC_SETTINGS_CACHE_KEY")));
         const keys = [...block.matchAll(/^\s*"([\w_]+)",$/gm)].map((m) => m[1]);
         expect(keys).toContain("default_currency");
@@ -193,8 +193,10 @@ describe("the footer currency picker", () => {
     it("re-quotes the configured rates against the site's own currency", () => {
         // The config's rates are relative to the config's base, which need not
         // be what this site charges in. Dividing is what stops a price being
-        // converted twice.
-        expect(source).toContain("target.rate / baseRate");
+        // converted twice. The division lives with the default it is shared
+        // with, and `a-new-visitor-sees-the-operators-currency` runs it.
+        expect(source).toContain("quote(");
+        expect(read("module-sources/currency/lib/default-display.ts")).toContain("target.rate / baseRate");
     });
 
     it("hides itself rather than offering one option", () => {

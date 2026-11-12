@@ -20,3 +20,11 @@ export const voteSiteCreateSchema = z.object({
 });
 
 export const voteSiteUpdateSchema = voteSiteCreateSchema.partial();
+
+/**
+ * Whose translations a vote site's are, in core's table, and the field that
+ * has them: each language held to its column's own limit. The address is a
+ * place, not prose, and has none.
+ */
+export const VOTE_SITE_TEXT = { owner: "vote", entity: "site" };
+export const TRANSLATED_FIELDS = { name: 100 };

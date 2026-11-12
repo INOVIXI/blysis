@@ -274,8 +274,9 @@ html[data-mode="dark"] {
 
 @media (min-width: 64rem) {
   .vg-stage {
-    --vg-reach-right: calc(max(0px, (100cqw - 1360px) / 2) + 24px);
-    --vg-reach-left: calc(var(--vg-reach-right) + 236px + 20px);
+    --vg-margin: calc(max(0px, (100cqw - 1360px) / 2) + 24px);
+    --vg-reach-right: var(--vg-margin);
+    --vg-reach-left: calc(var(--vg-margin) + 236px + 20px);
   }
 }
 
@@ -443,9 +444,11 @@ html[data-mode="dark"] {
 }
 
 .vg-home {
+  --vg-widgets: 300px;
+  --vg-home-gap: 20px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
+  gap: var(--vg-home-gap);
 }
 
 .vg-home > [data-home-trail] {
@@ -467,7 +470,14 @@ html[data-mode="dark"] {
      that drew nothing is no widget either: core asks the same question in
      globals.css, and globals-css.test.ts holds the two together. */
   .vg-home:has(> [data-sidebar-layout] > [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty)) {
-    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-columns: minmax(0, 1fr) var(--vg-widgets);
+  }
+
+  /* The stage spans the screen, so beside the widgets it also reaches past
+     their column and the gap before it, or the night ends at the hero's
+     edge and the widgets stand half on the sky, half on the page. */
+  .vg-home:has(> [data-sidebar-layout] > [data-sidebar] > :not(template, .blysis-heading-spacer, [data-block]:empty)) .vg-hero > .vg-stage {
+    --vg-reach-right: calc(var(--vg-margin) + var(--vg-widgets) + var(--vg-home-gap));
   }
 
   .vg-home > [data-sidebar-layout] {

@@ -216,6 +216,11 @@ const routeEntry = z.object({
      * small question, so the module answers the question separately: a file
      * that default-exports `(params) => Promise<boolean>`, false meaning
      * `notFound()`. Only routes with a dynamic segment need one.
+     *
+     * It may answer `{ title }` instead of `true`: the resource exists and is
+     * called that. A route serving many resources under one pattern has no
+     * other way to put a resource's own name in the tab, and the resolver has
+     * just read the row.
      */
     resolver: relativePath("resolver").optional(),
     /**
@@ -464,6 +469,15 @@ const authProvider = z
             .max(128)
             .regex(ENV_VAR_NAME, "envSecretVar must be an env var name")
             .optional(),
+        /**
+         * The authorization server's issuer, for a built-in provider whose
+         * Auth.js definition leaves it out. A server that sends the RFC 9207
+         * `iss` parameter on its callback is checked against it, and with none
+         * set Auth.js checks against a placeholder no server sends, so every
+         * sign-in fails with "unexpected iss". Discord started sending it in
+         * October 2026; its issuer is `https://discord.com`.
+         */
+        issuer: z.string().url().max(256).regex(/^https:\/\//, "issuer must be an https URL").optional(),
         /** Module-relative path to a file whose default export builds the provider. */
         factory: relativePath("factory").optional(),
         /**
@@ -501,6 +515,9 @@ const authProvider = z
         }
         if (value.envVars) {
             ctx.addIssue({ code: "custom", message: "envVars only applies to an auth provider with a factory" });
+        }
+        if (value.factory && value.issuer) {
+            ctx.addIssue({ code: "custom", message: "issuer only applies to a built-in auth provider; a factory sets its own" });
         }
         if (value.standardCallback !== undefined) {
             ctx.addIssue({
@@ -831,6 +848,41 @@ const moderationProvider = z.object({
     handler: relativePath("handler"),
 });
 
+/**
+ * A picture service a member's face may be drawn from, by their name.
+ *
+ * Plain data and no handler: core builds the address itself, in the browser
+ * as well as on the server, so there is nothing of the module's to run. The
+ * address is https, its host is fixed (a token there would let a name pick
+ * the server), and it may carry only `{name}` and `{size}`. `{name}` is
+ * required, because a pattern without it draws one face for everybody; any
+ * other token is refused, because core has nothing to fill it with and the
+ * service would be asked for the literal braces.
+ *
+ * The host must also be in this manifest's `csp["img-src"]`, so what a site
+ * loads pictures from is declared where every other origin a module needs is.
+ */
+const AVATAR_PROVIDER_URL = /^https:\/\/[a-z0-9-]+(\.[a-z0-9-]+)+\/[A-Za-z0-9\-._~/?=&%{}]*$/;
+
+const avatarProvider = z
+    .object({
+        id: z.string().min(1).max(32).regex(SAFE_ID, "avatar provider id must be a lowercase slug"),
+        /** Resolved in the `admin` namespace of this module's `translations`. */
+        labelKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
+        url: z
+            .string()
+            .min(1)
+            .max(300)
+            .regex(AVATAR_PROVIDER_URL, "url must be an https address with a fixed host")
+            .refine((url) => url.includes("{name}"), "url must contain {name}")
+            .refine(
+                (url) => (url.match(/\{[^}]*\}/g) ?? []).every((token) => token === "{name}" || token === "{size}"),
+                "url may contain only {name} and {size}",
+            )
+            .refine((url) => !/[{}]/.test(url.replace(/\{(name|size)\}/g, "")), "url has an unmatched brace"),
+    })
+    .strict();
+
 type TranslationValue = string | { [key: string]: TranslationValue };
 const translationValue: z.ZodType<TranslationValue> = z.lazy(() =>
     z.union([z.string(), z.record(z.string(), translationValue)]),
@@ -1151,6 +1203,7 @@ export const moduleManifestSchema = z.object({
     seoRoutes: z.object({ handler: relativePath("handler") }).optional(),
     userDataExport: z.array(userDataExportEntry).max(50).optional(),
     moderationProviders: z.array(moderationProvider).max(20).optional(),
+    avatarProviders: z.array(avatarProvider).max(10).optional(),
     csp: cspContribution.optional(),
 }).strict().superRefine((m, ctx) => {
     // Every widget and section is also a block under its own id, unless a
@@ -1166,6 +1219,19 @@ export const moduleManifestSchema = z.object({
         if (seen.has(id)) ctx.addIssue({ code: "custom", path: ["blocks"], message: `"${id}" names two blocks, widgets or sections` });
         seen.add(id);
     }
+
+    const imageOrigins = new Set(m.csp?.["img-src"] ?? []);
+    const avatarIds = new Set<string>();
+    (m.avatarProviders ?? []).forEach((provider, p) => {
+        if (avatarIds.has(provider.id)) {
+            ctx.addIssue({ code: "custom", path: ["avatarProviders", p, "id"], message: `"${provider.id}" names two avatar providers` });
+        }
+        avatarIds.add(provider.id);
+        const origin = new URL(provider.url).origin;
+        if (!imageOrigins.has(origin)) {
+            ctx.addIssue({ code: "custom", path: ["avatarProviders", p, "url"], message: `declare ${origin} in csp["img-src"]` });
+        }
+    });
 
     const placeholderNames = new Set<string>();
     (m.placeholders ?? []).forEach((placeholder, p) => {

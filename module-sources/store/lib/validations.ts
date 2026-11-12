@@ -16,6 +16,8 @@ export const productSchema = z.object({
     isFeatured: z.boolean().optional(),
     /** Whether an unclaimed copy may be handed to somebody else. */
     giftable: z.boolean().optional(),
+    /** Run the delivery commands once per unit bought rather than once per line. */
+    commandsPerUnit: z.boolean().optional(),
     type: z.enum(["DIGITAL", "PHYSICAL", "GAME_ITEM", "SUBSCRIPTION"]).optional(),
     categoryId: z.string().optional().nullable(),
     deliveryData: z.any().optional(),
@@ -188,10 +190,16 @@ export const chestSettingsSchema = z.object({
     receiveGifts: z.boolean(),
 });
 
-/** The community goal banner: a target, a title, and when it ends. */
+/**
+ * The community goal banner: a target, a title, and when it ends. The title
+ * may be written per language, `{ default, en, ... }`, each held to 200.
+ */
 export const communityGoalSchema = z.object({
     target: z.number().min(0).max(1_000_000_000).optional(),
-    title: z.string().max(200).optional(),
+    title: z.union([
+        z.string().max(200),
+        z.object({ default: z.string().max(200) }).catchall(z.string().max(200)),
+    ]).optional(),
     endDate: z.string().max(64).optional().nullable(),
 });
 

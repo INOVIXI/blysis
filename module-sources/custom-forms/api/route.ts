@@ -1,17 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, isAdmin, prisma, readJsonBody, saveContentTranslations, translateContent } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { formCreateSchema } from "../lib/validations";
+import { formCreateSchema, limitWithoutSignIn } from "../lib/validations";
+import { FORM_TEXT, formTextLimits } from "../lib/form-text";
 
 /**
  * GET /api/v1/forms - the forms still taking answers, and the panel's list.
  *
  * The panel read the reader's answer, so a form an operator closed left the
  * one screen that could open it again.
+ *
+ * The reader's list is read in `?locale=`, and in the original where the
+ * admin wrote no translation; the panel's list is the columns as typed.
  */
 export async function GET(request: NextRequest) {
-    if (new URL(request.url).searchParams.get("scope") === "admin") {
+    const query = new URL(request.url).searchParams;
+    if (query.get("scope") === "admin") {
         const session = await auth();
         if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -28,7 +33,8 @@ export async function GET(request: NextRequest) {
         select: { id: true, title: true, slug: true, description: true },
         orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json({ forms });
+    const locale = query.get("locale") ?? "";
+    return NextResponse.json({ forms: await translateContent(prisma, FORM_TEXT, forms, ["title", "description"], locale) });
 }
 
 export async function POST(request: NextRequest) {
@@ -42,11 +48,22 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid payload" }, { status: 400 });
     }
-    const { title, description, fields } = parsed.data;
+    const { title, description, fields, requireSignIn = false, submissionLimit = null } = parsed.data;
+    if (limitWithoutSignIn(requireSignIn, submissionLimit)) {
+        return NextResponse.json({ error: "A limit needs sign-in", code: "limit_needs_sign_in" }, { status: 400 });
+    }
+    // Each question's words may be translated too, so what may be sent is
+    // read off the questions being saved.
+    const translations = contentTranslationsInput(jsonBody, formTextLimits(fields));
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
 
     const slug = generateSlug(title);
-    const form = await prisma.customForm.create({
-        data: { title, slug, description: description || null, fields },
+    const form = await prisma.$transaction(async (tx) => {
+        const created = await tx.customForm.create({
+            data: { title, slug, description: description || null, fields, requireSignIn, submissionLimit },
+        });
+        if (translations.value) await saveContentTranslations(tx, { ...FORM_TEXT, recordId: created.id }, translations.value);
+        return created;
     });
 
     // Fire hook for cross-module reactions

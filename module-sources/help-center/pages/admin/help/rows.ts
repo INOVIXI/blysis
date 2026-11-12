@@ -7,6 +7,7 @@
  * carried a `_count` the form did not, so a category opened for editing lost
  * the number of articles under it until the next read.
  */
+import type { LanguageTexts } from "@/core/sdk";
 
 export interface AdminHelpCategory {
     id: string;
@@ -17,6 +18,8 @@ export interface AdminHelpCategory {
     image?: string | null;
     isActive: boolean;
     _count?: { articles: number };
+    /** Every language of the name and description, for the editor. */
+    translations?: Partial<Record<"name" | "description", LanguageTexts>>;
 }
 
 export interface AdminHelpArticle {
@@ -29,6 +32,8 @@ export interface AdminHelpArticle {
     notHelpful: number;
     isActive: boolean;
     category: { id: string; name: string } | null;
+    /** Every language of the title and body, for the editor. */
+    translations?: Partial<Record<"title" | "content", LanguageTexts>>;
 }
 
 /**

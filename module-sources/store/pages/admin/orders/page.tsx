@@ -62,7 +62,7 @@ export default function AdminOrdersPage() {
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            const query = new URLSearchParams({ page: String(page), limit: "20" });
+            const query = new URLSearchParams({ scope: "all", page: String(page), limit: "20" });
             if (search.trim()) query.set("q", search.trim());
             if (activeStatus !== "ALL") query.set("status", activeStatus);
             const res = await fetch(`/api/v1/store/orders?${query}`);

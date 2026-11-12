@@ -5,7 +5,7 @@ import { Link, useRouter } from "@/core/sdk/navigation";
 import { Button, Input, Label, Textarea, NativeSelect, buttonClassName } from "@/core/sdk/ui";
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { useSession } from "next-auth/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { writeError } from "@/core/sdk";
 import { DEFAULT_PRIORITIES, DEFAULT_PRIORITY, stateLabel, type TicketState } from "../../../../lib/ticket-states";
 
@@ -20,6 +20,8 @@ export default function NewTicketPage() {
     const { data: session } = useSession();
     const router = useRouter();
     const t = useTranslations('tickets');
+    // The department and the states the operator named, in the page's language.
+    const locale = useLocale();
     const commonT = useTranslations('common');
     const [departments, setDepartments] = useState<Department[]>([]);
     /*
@@ -41,24 +43,30 @@ export default function NewTicketPage() {
     });
 
     useEffect(() => {
-        fetch("/api/v1/tickets/departments")
+        // An answer for a language the reader has left is dropped
+        // (a-late-response-does-not-win).
+        let cancelled = false;
+        fetch(`/api/v1/tickets/departments?locale=${encodeURIComponent(locale)}`)
             .then((res) => res.json())
-            .then((data) => setDepartments(Array.isArray(data) ? data : data.departments || []))
+            .then((data) => { if (!cancelled) setDepartments(Array.isArray(data) ? data : data.departments || []); })
             .catch(console.error)
-            .finally(() => setDepartmentsLoaded(true));
-    }, []);
+            .finally(() => { if (!cancelled) setDepartmentsLoaded(true); });
+        return () => { cancelled = true; };
+    }, [locale]);
 
     // The ticket list carries the desk's states, which is the only place a
     // member can be told about one an operator wrote.
     useEffect(() => {
-        fetch("/api/v1/tickets")
+        let cancelled = false;
+        fetch(`/api/v1/tickets?locale=${encodeURIComponent(locale)}`)
             .then((res) => (res.ok ? res.json() : null))
-            .then((data) => { if (data?.states?.priorities?.length) setPriorities(data.states.priorities); })
+            .then((data) => { if (!cancelled && data?.states?.priorities?.length) setPriorities(data.states.priorities); })
             // The shipped four stand in, so a failure here narrows the
             // choice rather than emptying the control; the reason still goes
             // somewhere a developer can find it.
             .catch(console.error);
-    }, []);
+        return () => { cancelled = true; };
+    }, [locale]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

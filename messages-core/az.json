@@ -97,7 +97,12 @@
     "welcomeTitle": "İcmanıza xoş gəlmisiniz",
     "welcomeVisitorHint": "İcmanı araşdırmaq üçün yuxarıdakı naviqasiyadan istifadə edin.",
     "writeContentHere": "Məzmununuzu buraya yazın...",
-    "statsLabel": "Server icmalı"
+    "statsLabel": "Server icmalı",
+    "localizedText_translations": "Tərcümələr ({total} dildən {filled})",
+    "localizedText_fallbackHint": "Boş qalan dildə orijinal mətn göstərilir.",
+    "localizedText_filled": "Tərcümə edilib",
+    "localizedText_empty": "Orijinalı göstərir",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Səhifə tapılmadı",
@@ -163,7 +168,10 @@
     "twoFactorEnabled": "İki addımlı doğrulama aktivləşdirildi",
     "userProfileUpdated": "{username} profilini yenilədi",
     "userRegistered": "icmaya qoşuldu",
-    "viewAll": "Hamısına bax"
+    "viewAll": "Hamısına bax",
+    "auditSignInMethodConnect": "Giriş üsulu bağladı",
+    "auditSignInMethodDisconnect": "Giriş üsulunun bağlantısını kəsdi",
+    "auditSignInMethodRemove": "Üzvün giriş üsulunu sildi"
   },
   "nav": {
     "adminPanel": "Admin paneli",
@@ -537,6 +545,9 @@
     "generalSettings_identityPasswordHint": "Ad və ya ünvan dəyişməzdən əvvəl soruşulur ki, başqasının istifadə etdiyi ekrandan hesaba yiyələnmək olmasın. Provayder vasitəsilə daxil olan hesabın parolu yoxdur və ondan soruşulmur.",
     "generalSettings_memberAvatarUploads": "Profil şəkilləri",
     "generalSettings_memberAvatarUploadsHint": "Üzv öz profilinə nə qoya bilər: fayl göndərmək, özünün host etdiyi fayla keçid vermək və ya heç nə. Yükləmələr yalnız şəkil olmalıdır, ən çox 2 MB və hər üzv üçün limitlidir.",
+    "generalSettings_memberAvatarProvider": "Üzv şəkli xidməti",
+    "generalSettings_memberAvatarProviderHint": "Üzvün öz şəkli yoxdursa və ya üzv şəkilləri bağlıdırsa, onun üzü istifadəçi adına görə bu xidmətdən gəlir. Xidmətin tapmadığı şəkil əvəzinə baş hərflər göstərilir.",
+    "generalSettings_avatarProviderNone": "Yoxdur: baş hərflər",
     "generalSettings_memberContent": "Üzv məzmunu",
     "generalSettings_memberIdentity": "Üzv kimliyi",
     "generalSettings_minPasswordLength": "Parolun minimum uzunluğu",
@@ -985,6 +996,8 @@
     "siteSettings_contactEmail": "Əlaqə e-poçtu",
     "siteSettings_description": "Təsvir",
     "siteSettings_general": "Ümumi",
+    "siteSettings_icon": "Sayt ikonu",
+    "siteSettings_iconHint": "Brauzer tabında və telefonun əsas ekranında görünən kiçik şəkil. Kvadrat şəkil daha yaxşı görünür. Boş qalsa, standart ikon istifadə olunur.",
     "siteSettings_logo": "Loqo",
     "siteSettings_saveFailed": "Parametrləri yadda saxlamaq alınmadı",
     "siteSettings_saveSettings": "Parametrləri yadda saxla",
@@ -1356,7 +1369,21 @@
     "placeholder_noValue": "hazırda dəyər yoxdur",
     "placeholder_unknown": "Bu saytda {names} üçün cavab yoxdur, ziyarətçi orada tire görür.",
     "placeholder_refused": "Bu saytda {names} üçün cavab yoxdur, mətn bununla yadda saxlanılmır.",
-    "placeholder_site_name": "Sayt adı"
+    "placeholder_site_name": "Sayt adı",
+    "users_signInMethods": "Giriş üsulları",
+    "users_signInMethodsPassword": "Şifrəsi var.",
+    "users_signInMethodsNoPassword": "Şifrəsi yoxdur: yalnız aşağıdakı üsullarla daxil olur.",
+    "users_signInMethodsNone": "Bağlı giriş üsulu yoxdur.",
+    "users_signInMethodConnectedOn": "{date} tarixində bağlandı",
+    "users_signInMethodRemove": "Sil",
+    "users_signInMethodRemoveTitle": "{provider} silinsin?",
+    "users_signInMethodRemoveMessage": "{username} artıq {provider} ilə daxil ola bilməyəcək.",
+    "users_signInMethodRemoved": "{provider} silindi.",
+    "users_signInMethodLast": "Bu, üzvün yeganə giriş yoludur, ona görə silinmədi.",
+    "generalSettings_signInMethodSignUps": "Giriş üsulları ilə yeni hesablar",
+    "generalSettings_signInMethodSignUpsHint": "Yalnız bağlı üzvlər seçiləndə provayderlə giriş yalnız onu hesab səhifəsindən bağlamış üzvlər üçün işləyir və bu yolla heç kimə yeni hesab açılmır.",
+    "generalSettings_signInMethodSignUpsOpen": "Yeni gələn hər kəsə hesab aç",
+    "generalSettings_signInMethodSignUpsClosed": "Yalnız bağlı üzvlər"
   },
   "footer": {
     "quickLinks": "Sürətli keçidlər",
@@ -1443,7 +1470,22 @@
     "username": "İstifadəçi adı",
     "usernameCannotChange": "Bu sayt üzvlərə istifadəçi adını dəyişməyə icazə vermir.",
     "viewPublicProfile": "İctimai profilə bax",
-    "youSaid": "Siz:"
+    "youSaid": "Siz:",
+    "signInMethods": "Giriş üsulları",
+    "signInMethods_hint": "Başqa yerdəki hesabını bağla və buraya onunla da daxil ol. İstifadəçi adın və şifrən işləməyə davam edir.",
+    "signInMethods_none": "Bu sayt başqa giriş üsulu təklif etmir.",
+    "signInMethods_connectedOn": "{date} tarixində bağlandı",
+    "signInMethods_notConnected": "Bağlı deyil",
+    "signInMethods_connect": "Bağla",
+    "signInMethods_connectLabel": "{provider} bağla",
+    "signInMethods_disconnect": "Bağlantını kəs",
+    "signInMethods_disconnectTitle": "{provider} bağlantısı kəsilsin?",
+    "signInMethods_disconnectMessage": "Artıq {provider} ilə daxil ola bilməyəcəksən. Sonra yenidən bağlaya bilərsən.",
+    "signInMethods_connected": "{provider} bağlandı. Artıq onunla daxil ola bilərsən.",
+    "signInMethods_disconnected": "{provider} bağlantısı kəsildi.",
+    "signInMethods_failed": "Alınmadı. Yenidən cəhd et.",
+    "signInMethods_errTaken": "Bu hesab burada artıq başqa üzvə bağlıdır. Sənin hesabına köçürülmədi.",
+    "signInMethods_errNotStarted": "Heç nə bağlanmadı. Bu səhifədə Bağla ilə başla, sonra provayderdə daxil ol."
   },
   "auth": {
     "accountLocked": "Həddindən artıq uğursuz cəhd. Hesabınız müvəqqəti bloklanıb. E-poçtunuzu yoxlayın və ya bir neçə dəqiqədən sonra yenidən cəhd edin.",
@@ -1500,7 +1542,13 @@
       "username_taken": "Bu istifadəçi adı artıq tutulub.",
       "username_too_short": "Bu istifadəçi adı bu sayt üçün çox qısadır. Daha uzun birini seçin.",
       "weak_password": "Bu parol tələblərə cavab vermir. Daha güclü birini seçin.",
-      "wrong_password": "Bu parol düzgün deyil."
+      "wrong_password": "Bu parol düzgün deyil.",
+      "already_connected": "Bu provayderdən artıq bağlı hesabın var. Əvvəlcə onun bağlantısını kəs.",
+      "impersonating": "Başqa üzv kimi hərəkət edərkən giriş üsulu bağlana bilməz.",
+      "last_sign_in_method": "Hesabına girməyin yeganə yolu budur, ona görə silinə bilməz. Əvvəlcə başqa üsul bağla.",
+      "session_unknown": "Çıxış edib yenidən daxil ol, sonra bağla.",
+      "unknown_provider": "Bu giriş üsulu bu saytda mövcud deyil.",
+      "sign_in_method_not_found": "Bu giriş üsulu bağlı deyil."
     },
     "errorAccessDenied": "Giriş qadağandır. Daxil olmaq icazəniz yoxdur.",
     "errorConfiguration": "Server konfiqurasiyasında xəta. Sayt administratoru ilə əlaqə saxlayın.",
@@ -1559,7 +1607,8 @@
     "demoAsAdmin": "Administrator kimi",
     "demoAsMember": "Üzv kimi",
     "demoResetNote": "Buradakı hər şey hər saat bərpa olunur, ona görə etdiklərinizlə növbəti ziyarətçinin təcrübəsi pozulmur. Bəzi əməliyyatlar söndürülüb: e-poçt göndərmək, real ödənişlər və istifadə etdiyiniz hesabı kilidləyəcək hər şey.",
-    "demoFillFor": "Məlumatları {who} doldurun"
+    "demoFillFor": "Məlumatları {who} doldurun",
+    "errorConnectFirst": "Bu giriş burada heç bir hesaba bağlı deyil. İstifadəçi adın və şifrənlə daxil ol, sonra hesab səhifəndən bağla."
   },
   "search": {
     "title": "Axtarış",

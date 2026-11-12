@@ -54,21 +54,19 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "This code has expired" }, { status: 400 });
     }
 
-    // Atomic mark as redeemed (prevents race condition / double redemption)
-    const updated = await prisma.giftCode.updateMany({
-        where: { id: giftCode.id, isRedeemed: false },
-        data: { isRedeemed: true, redeemedAt: new Date(), redeemedById: session.user.id },
-    });
-    if (updated.count === 0) {
-        return NextResponse.json({ error: "This code has already been redeemed" }, { status: 400 });
-    }
-
     const creditAmount = Number(giftCode.value);
 
-    // The code is already marked redeemed above, so the credits have to
-    // arrive: the movement runs on this transaction, and a failure takes the
-    // redemption with it.
+    // The claim and the credit are one transaction: a credit that fails takes
+    // the claim with it, so a code is never spent for nothing. The claim is
+    // conditional on the code still being unredeemed, which is what stops two
+    // requests from both redeeming it.
     const user = await prisma.$transaction(async (tx) => {
+        const claimed = await tx.giftCode.updateMany({
+            where: { id: giftCode.id, isRedeemed: false },
+            data: { isRedeemed: true, redeemedAt: new Date(), redeemedById: session.user.id },
+        });
+        if (claimed.count === 0) return null;
+
         await applyFiltersAsync("credit.change", { applied: false }, {
             tx,
             userId: session.user.id as string,
@@ -81,6 +79,9 @@ export async function POST(request: NextRequest) {
             select: { creditBalance: true },
         });
     });
+    if (!user) {
+        return NextResponse.json({ error: "This code has already been redeemed" }, { status: 400 });
+    }
 
     return NextResponse.json({
         message: `Gift code redeemed! ${creditAmount.toFixed(2)} credits added to your balance.`,

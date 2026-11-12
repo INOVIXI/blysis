@@ -37,12 +37,12 @@ const EXEMPT: Record<string, string> = {
     "Trophy.isActive": "a curated list an admin writes, tens of rows at most",
     "Referral.status": "one row per referral, and the admin screen reads them all anyway",
     "HelpArticle.isActive": "a curated list, and the sitemap build is not a request path",
-    "GiftCode.isRedeemed": "paired with the unique code on the redeem path",
+    "GiftCode.isRedeemed": "paired with the code's id in the transaction that claims it",
+    "Payment.status": "paired with the payment's id on the refund claim: the status is the precondition, not the search",
     "Download.isActive": "a curated list an admin writes, and the page shows all of it",
     "BlogComment.isApproved": "always paired with articleId, which is indexed and selective",
     "ApiKey.isActive": "paired with keyPrefix, which is indexed",
     "ActivityLog.metadata": "a JSON path filter, which a plain btree index does not serve",
-    "OrderItem.order": "a relation filter, which this scan cannot see through: the join uses OrderItem.orderId and the conditions are Order.status and Order.createdAt, all three indexed",
     "ForumPost.topic": "a relation filter, which this scan cannot see through: the join uses ForumPost.topicId and the conditions are ForumTopic.moderationState and ForumTopic.categoryId, all three indexed",
     "User.loginSessions": "a relation filter, which this scan cannot see through: the join uses UserSession.userId and the conditions are isRevoked and expiresAt, all indexed",
     "User.isBanned": "counting the administrators who can still sign in, which runs once per ban, demotion or deletion - an admin action, not a request path, and the row it protects against losing is the last one",
@@ -135,7 +135,7 @@ export function unindexedFilters(
     models: Map<string, ModelInfo>,
 ): string[] {
     const found = new Set<string>();
-    const READ = /prisma\.(\w+)\.(findMany|findFirst|count|aggregate|groupBy|updateMany|deleteMany)\s*\(/g;
+    const READ = /\b(?:prisma|tx)\.(\w+)\.(findMany|findFirst|count|aggregate|groupBy|updateMany|deleteMany)\s*\(/g;
     for (const { source } of files) {
         for (const m of source.matchAll(READ)) {
             const delegate = m[1];
@@ -250,5 +250,18 @@ describe("the scan itself", () => {
     it("says nothing about a model that does not grow", () => {
         const files = [{ file: "a.ts", source: "prisma.thing.findMany({ where: { state: 'x' } })" }];
         expect(unindexedFilters(files, models)).toEqual([]);
+    });
+
+    it("reads a call made through a transaction too", () => {
+        // A filter moved into `prisma.$transaction(async (tx) => ...)` left
+        // the scan, and the exemption that named it looked stale (#152).
+        const orders = readModels([
+            `model Order {
+  id String @id
+  state String
+}`,
+        ]);
+        const files = [{ file: "a.ts", source: "tx.order.updateMany({ where: { state: 'x' }, data: {} })" }];
+        expect(unindexedFilters(files, orders)).toEqual(["Order.state"]);
     });
 });

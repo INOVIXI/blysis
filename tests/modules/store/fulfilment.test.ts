@@ -40,11 +40,15 @@ const db = {
         createMany: vi.fn(async () => ({ count: 1 })),
         findMany: vi.fn(async () => [] as unknown[]),
         updateMany: vi.fn(async () => ({ count: 0 })),
+        deleteMany: vi.fn(async () => ({ count: 0 })),
     },
     ownedProduct: {
         upsert: vi.fn(async () => ({})),
         createMany: vi.fn(async () => ({ count: 1 })),
         deleteMany: vi.fn(async () => ({})),
+        findMany: vi.fn(async () => [] as unknown[]),
+        update: vi.fn(async () => ({})),
+        count: vi.fn(async () => 0),
     },
     payment: {
         create: vi.fn(async () => ({})),
@@ -57,11 +61,18 @@ const db = {
     // the shop does not count - `stock: null` - so the read finds nothing to
     // take and no product is written to. `a-limited-product-runs-out.test.ts`
     // is where the counting itself is tested.
-    product: { findMany: vi.fn(async () => []), updateMany: vi.fn(async () => ({ count: 1 })) },
-    user: { update: vi.fn(async () => ({})) },
+    product: { findMany: vi.fn(async (): Promise<unknown[]> => []), updateMany: vi.fn(async () => ({ count: 1 })) },
+    orderItem: { aggregate: vi.fn(async () => ({ _sum: { quantity: null as number | null } })) },
+    user: { update: vi.fn(async () => ({})), findUnique: vi.fn(async () => null as unknown) },
+    creatorCode: {
+        findUnique: vi.fn(async () => null as unknown),
+        update: vi.fn(async () => ({})),
+        updateMany: vi.fn(async () => ({ count: 1 })),
+    },
     creditTransaction: { findUnique: vi.fn(async () => null), create: vi.fn(async () => ({})) },
     creditTopUp: {
         findUnique: vi.fn(async () => null as unknown),
+        findFirst: vi.fn(async () => null as unknown),
         updateMany: vi.fn(async () => ({ count: 1 })),
     },
     subscription: {
@@ -99,13 +110,18 @@ const models = Object.fromEntries(Object.entries(db).filter(([k]) => k !== "$tra
     string,
     Record<string, unknown>
 >;
-const txClient = trace(models, true);
+const executeRaw = vi.fn(async () => 1);
+const txClient = { ...trace(models, true), $executeRaw: executeRaw };
 const prismaClient = { ...trace(models, false), $transaction: db.$transaction };
 
 const log = { error: vi.fn(), warn: vi.fn(), info: vi.fn() };
+const rolesHeldBy = vi.fn(async (): Promise<{ roleId: string; source: string }[]> => []);
+const revokeRole = vi.fn(async () => {});
 vi.mock("@/core/sdk/server", () => ({
     prisma: prismaClient,
     log,
+    rolesHeldBy,
+    revokeRole,
 }));
 
 /**
@@ -124,7 +140,8 @@ vi.mock("@/modules/store/lib/order-email", () => ({ sendOrderConfirmationEmail }
 const deliverProduct = vi.fn(async () => ({}));
 vi.mock("@/modules/store/lib/delivery", () => ({ deliverProduct }));
 const announceOrderCompleted = vi.fn(async () => {});
-vi.mock("@/modules/store/lib/order-events", () => ({ announceOrderCompleted }));
+const announceOrderRefunded = vi.fn(async () => {});
+vi.mock("@/modules/store/lib/order-events", () => ({ announceOrderCompleted, announceOrderRefunded }));
 
 const { settlePayment, settleOrder, cancelPayment, voidOrder, refundPayment, applySubscriptionChange } = await import(
     "@/modules/store/lib/fulfilment"
@@ -156,6 +173,7 @@ const paidOrder = {
 beforeEach(() => {
     vi.clearAllMocks();
     calls.length = 0;
+    applyFiltersAsync.mockImplementation(async (_hook: string, value: unknown) => value);
     db.order.update.mockResolvedValue({});
     db.order.updateMany.mockResolvedValue({ count: 1 });
     db.subscription.updateMany.mockResolvedValue({ count: 1 });
@@ -178,7 +196,7 @@ describe("settleOrder", () => {
         // snapshot, and a gateway retry racing a reloaded return URL would
         // otherwise pass it twice and grant the order twice.
         expect(db.order.updateMany).toHaveBeenCalledWith({
-            where: { id: "order-1", status: { not: "COMPLETED" } },
+            where: { id: "order-1", status: { in: ["PENDING", "PROCESSING"] } },
             data: expect.objectContaining({
                 status: "COMPLETED",
                 paymentMethod: "stripe",
@@ -371,11 +389,130 @@ describe("settleOrder", () => {
     });
 });
 
+describe("settleOrder, against a per-person limit", () => {
+    const limited = { id: "prod-1", durationDays: null, grantsRoleId: null, perPersonLimit: 1, perPersonPeriod: "ever" };
+
+    it("settles nothing that takes the buyer past their limit, and says so", async () => {
+        // Two checkouts paid for one at a time: the other one is already paid.
+        db.order.findUnique.mockResolvedValueOnce({ ...paidOrder, status: "PENDING" });
+        db.product.findMany.mockImplementation(async () => [limited]);
+        db.orderItem.aggregate.mockResolvedValueOnce({ _sum: { quantity: 1 } });
+
+        const outcome = await settleOrder(settlement);
+
+        expect(outcome.handled).toBe(false);
+        expect(outcome.error).toMatch(/limit/);
+        expect(db.payment.create).not.toHaveBeenCalled();
+        expect(announceOrderCompleted).not.toHaveBeenCalled();
+        expect(log.error).toHaveBeenCalled();
+        // Counted under the lock the in-game purchase takes, leaving out the
+        // order being settled.
+        expect(executeRaw).toHaveBeenCalled();
+        expect(JSON.stringify(db.orderItem.aggregate.mock.calls[0])).toContain('"not":"order-1"');
+        db.product.findMany.mockImplementation(async () => []);
+    });
+
+    it("settles an order that stays inside the limit", async () => {
+        db.order.findUnique.mockResolvedValueOnce({ ...paidOrder, status: "PENDING" });
+        db.product.findMany.mockImplementation(async () => [limited]);
+
+        const outcome = await settleOrder(settlement);
+
+        expect(outcome).toEqual({ handled: true, duplicate: false, error: null });
+        expect(db.payment.create).toHaveBeenCalled();
+        db.product.findMany.mockImplementation(async () => []);
+    });
+});
+
+describe("settleOrder, after the money went back", () => {
+    it("settles nothing again for a refunded order", async () => {
+        // A replayed success callback for a payment that was refunded must not
+        // hand everything out a second time.
+        db.order.findUnique.mockResolvedValueOnce({ ...paidOrder, status: "REFUNDED" });
+
+        const outcome = await settleOrder(settlement);
+
+        expect(outcome.handled).toBe(true);
+        expect(db.order.updateMany).not.toHaveBeenCalled();
+        expect(db.chestItem.createMany).not.toHaveBeenCalled();
+    });
+
+    it("settles nothing for a cancelled order, and says money arrived for it", async () => {
+        db.order.findUnique.mockResolvedValueOnce({ ...paidOrder, status: "CANCELLED" });
+
+        const outcome = await settleOrder(settlement);
+
+        expect(outcome.error).toMatch(/cancelled/);
+        expect(db.order.updateMany).not.toHaveBeenCalled();
+        expect(log.error).toHaveBeenCalled();
+    });
+});
+
 /**
  * An order holds what the store asked the gateway to collect, and a
  * settlement is held against it. The gateway's word for the amount used to be
  * the only one there was: a cent settled an order of fifty.
  */
+describe("settleOrder, for an order placed with a creator's code", () => {
+    const withCode = { ...paidOrder, status: "PENDING", total: 50, metadata: { playerName: "Steve", creatorCode: "ALEX" } };
+
+    it("pays the creator once the money is here, inside the claim", async () => {
+        db.order.findUnique.mockResolvedValueOnce(withCode);
+        db.creatorCode.findUnique.mockResolvedValueOnce({ id: "cc1", code: "ALEX", creatorId: "creator", commissionPercent: 10 });
+
+        await settleOrder(settlement);
+
+        const update = calls.find((c) => c.op === "creatorCode.update");
+        expect(update?.viaTx).toBe(true);
+        expect(update?.args).toEqual({ where: { id: "cc1" }, data: { usageCount: { increment: 1 }, totalRevenue: { increment: 50 } } });
+        expect(applyFiltersAsync).toHaveBeenCalledWith(
+            "credit.change",
+            expect.anything(),
+            expect.objectContaining({ userId: "creator", amount: 5, type: "creator_commission" }),
+        );
+    });
+
+    it("pays nothing again when another delivery of the payment won the claim", async () => {
+        db.order.findUnique.mockResolvedValueOnce(withCode);
+        db.order.updateMany.mockResolvedValueOnce({ count: 0 });
+
+        await settleOrder(settlement);
+
+        expect(db.creatorCode.update).not.toHaveBeenCalled();
+    });
+
+    it("writes on the order what the creator was paid, so a refund can take it back", async () => {
+        db.order.findUnique.mockResolvedValueOnce(withCode);
+        db.creatorCode.findUnique.mockResolvedValueOnce({ id: "cc1", code: "ALEX", creatorId: "creator", commissionPercent: 10 });
+        applyFiltersAsync.mockImplementation(async (_hook: string, value: unknown) => ({ ...(value as object), applied: true }));
+
+        await settleOrder(settlement);
+
+        const written = calls.find((c) => c.op === "order.update");
+        expect(written?.viaTx).toBe(true);
+        expect(written?.args).toEqual({
+            where: { id: "order-1" },
+            data: {
+                metadata: {
+                    playerName: "Steve",
+                    creatorCode: "ALEX",
+                    commissionPaid: { codeId: "cc1", creatorId: "creator", amount: 5, total: 50 },
+                },
+            },
+        });
+    });
+
+    it("writes nothing when the wallet did not take the credit", async () => {
+        db.order.findUnique.mockResolvedValueOnce(withCode);
+        db.creatorCode.findUnique.mockResolvedValueOnce({ id: "cc1", code: "ALEX", creatorId: "creator", commissionPercent: 10 });
+
+        await settleOrder(settlement);
+
+        const written = calls.find((c) => c.op === "order.update");
+        expect((written?.args as { data?: { metadata?: { commissionPaid?: { amount: number } } } } | undefined)?.data?.metadata?.commissionPaid?.amount ?? 0).toBe(0);
+    });
+});
+
 describe("settleOrder, against what was charged", () => {
     const charged = { ...paidOrder, status: "PENDING", chargeAmount: 42, chargeCurrency: "USD" };
 
@@ -523,6 +660,21 @@ describe("settleCredits", () => {
         expect(applyFiltersAsync).not.toHaveBeenCalledWith("credit.change", expect.anything(), expect.anything());
     });
 
+    it("holds a top-up that carried a fee against the price and the fee together", async () => {
+        // The gateway was asked for 10.62: the credits and the fee on top.
+        // A payment that covers the credits and not the fee is short.
+        const withFee = { ...topUp, fee: 0.62 };
+
+        expect((await settleCredits({ ...settled, amount: 10 }, withFee)).handled).toBe(false);
+        expect(db.creditTopUp.updateMany).not.toHaveBeenCalled();
+
+        expect(await settleCredits({ ...settled, amount: 10.62 }, withFee)).toEqual({
+            handled: true,
+            duplicate: false,
+            error: null,
+        });
+    });
+
     /**
      * The duplicate check used to be `findFirst` on
      * `description: { contains: providerRef }` - a scan of the whole ledger,
@@ -595,6 +747,13 @@ describe("voidOrder", () => {
         expect(db.order.update).toHaveBeenCalledWith({ where: { id: "order-1" }, data: { status: "CANCELLED" } });
     });
 
+    it("never turns a refunded order into a cancelled one", async () => {
+        db.order.findUnique.mockResolvedValueOnce({ id: "order-1", status: "REFUNDED" });
+
+        expect((await voidOrder("order-1")).duplicate).toBe(true);
+        expect(db.order.update).not.toHaveBeenCalled();
+    });
+
     // Providers send an "expired" event for the session, which can land after
     // the payment succeeded through another route.
     it("never cancels an order that was already paid for", async () => {
@@ -635,6 +794,110 @@ describe("refundPayment", () => {
         expect(db.payment.updateMany).not.toHaveBeenCalled();
     });
 
+    const refunding = {
+        id: "order-1",
+        userId: "user-1",
+        metadata: { playerName: "Steve" },
+        items: [{ id: "i1", productId: "prod-1", name: "VIP", quantity: 1, price: 42, metadata: {} }],
+    };
+
+    it("takes back what the order granted and nobody has been handed yet", async () => {
+        db.payment.findFirst.mockResolvedValueOnce({ id: "pay-1", orderId: "order-1", status: "COMPLETED" });
+        db.order.findUnique.mockResolvedValueOnce(refunding);
+        db.ownedProduct.findMany.mockResolvedValueOnce([{ id: "own-1", userId: "user-1", productId: "prod-1", expiresAt: null }]);
+        db.product.findMany.mockImplementation(async () => [{ id: "prod-1", durationDays: null, grantsRoleId: null }]);
+
+        expect((await refundPayment("stripe", "pi_123")).handled).toBe(true);
+
+        // Inside the claim, so a second refund notification takes nothing twice.
+        const inTx = calls.filter((c) => c.viaTx).map((c) => c.op);
+        expect(inTx).toContain("chestItem.deleteMany");
+        expect(inTx).toContain("ownedProduct.deleteMany");
+        expect(db.chestItem.deleteMany).toHaveBeenCalledWith({ where: { orderId: "order-1", isRedeemed: false } });
+        expect(db.ownedProduct.deleteMany).toHaveBeenCalledWith({ where: { id: { in: ["own-1"] } } });
+        // The cashback is the wallet's to take back; it hears of the refund.
+        expect(announceOrderRefunded).toHaveBeenCalledWith("order-1");
+        db.product.findMany.mockImplementation(async () => []);
+    });
+
+    it("takes off a timed ownership only the time this order added", async () => {
+        const ends = new Date(Date.now() + 40 * 86_400_000);
+        db.payment.findFirst.mockResolvedValueOnce({ id: "pay-1", orderId: "order-1", status: "COMPLETED" });
+        db.order.findUnique.mockResolvedValueOnce(refunding);
+        db.ownedProduct.findMany.mockResolvedValueOnce([{ id: "own-1", userId: "user-1", productId: "prod-1", expiresAt: ends }]);
+        db.product.findMany.mockImplementation(async () => [{ id: "prod-1", durationDays: 30, grantsRoleId: null }]);
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(db.ownedProduct.update).toHaveBeenCalledWith({
+            where: { id: "own-1" },
+            data: { expiresAt: new Date(ends.getTime() - 30 * 86_400_000) },
+        });
+        expect(db.ownedProduct.deleteMany).not.toHaveBeenCalled();
+        db.product.findMany.mockImplementation(async () => []);
+    });
+
+    it("writes on the order what was already delivered in game", async () => {
+        // A command that ran on a game server cannot be run backwards. The
+        // order says which lines those were, for the operator to undo by hand.
+        db.payment.findFirst.mockResolvedValueOnce({ id: "pay-1", orderId: "order-1", status: "COMPLETED" });
+        db.order.findUnique.mockResolvedValueOnce(refunding);
+        db.chestItem.findMany.mockResolvedValueOnce([{ productName: "VIP" }]);
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(db.order.update).toHaveBeenCalledWith({
+            where: { id: "order-1" },
+            data: { metadata: { playerName: "Steve", keptInGame: ["VIP"] } },
+        });
+    });
+
+    it("takes back the rank the order granted when nothing else still grants it", async () => {
+        db.payment.findFirst.mockResolvedValueOnce({ id: "pay-1", orderId: "order-1", status: "COMPLETED" });
+        db.order.findUnique.mockResolvedValueOnce(refunding);
+        db.ownedProduct.findMany.mockResolvedValueOnce([{ id: "own-1", userId: "user-1", productId: "prod-1", expiresAt: null }]);
+        db.product.findMany.mockImplementation(async () => [{ id: "prod-1", durationDays: null, grantsRoleId: "role-vip" }]);
+        rolesHeldBy.mockResolvedValueOnce([{ roleId: "role-vip", source: "store:product" }]);
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(revokeRole).toHaveBeenCalledWith("user-1", "role-vip");
+        db.product.findMany.mockImplementation(async () => []);
+    });
+
+    it("leaves a rank an administrator gave by hand", async () => {
+        db.payment.findFirst.mockResolvedValueOnce({ id: "pay-1", orderId: "order-1", status: "COMPLETED" });
+        db.order.findUnique.mockResolvedValueOnce(refunding);
+        db.ownedProduct.findMany.mockResolvedValueOnce([{ id: "own-1", userId: "user-1", productId: "prod-1", expiresAt: null }]);
+        db.product.findMany.mockImplementation(async () => [{ id: "prod-1", durationDays: null, grantsRoleId: "role-vip" }]);
+        rolesHeldBy.mockResolvedValueOnce([{ roleId: "role-vip", source: "manual" }]);
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(revokeRole).not.toHaveBeenCalled();
+        db.product.findMany.mockImplementation(async () => []);
+    });
+
+    it("takes back the credits of a refunded top-up, as far as they are unspent", async () => {
+        db.payment.findFirst.mockResolvedValueOnce(null);
+        db.creditTopUp.findFirst.mockResolvedValueOnce({ id: "tu-1", userId: "user-1", credits: 100, refundedAt: null });
+        db.user.findUnique.mockResolvedValueOnce({ creditBalance: 60 });
+
+        const outcome = await refundPayment("stripe", "pi_123");
+
+        expect(outcome).toEqual({ handled: true, duplicate: false, error: null });
+        expect(db.creditTopUp.updateMany).toHaveBeenCalledWith(
+            expect.objectContaining({ where: { id: "tu-1", refundedAt: null } }),
+        );
+        expect(applyFiltersAsync).toHaveBeenCalledWith(
+            "credit.change",
+            expect.anything(),
+            expect.objectContaining({ userId: "user-1", amount: -60, type: "payment_refund" }),
+        );
+        // Forty were spent before the money went back: loud, for the operator.
+        expect(log.error).toHaveBeenCalled();
+    });
+
     // Two gateways can hold the same provider reference only by accident, but a
     // refund for a payment this site never took should not touch an order.
     it("answers with an error when the payment is not ours", async () => {
@@ -644,6 +907,106 @@ describe("refundPayment", () => {
 
         expect(outcome.error).toMatch(/unknown payment/i);
         expect(db.order.update).not.toHaveBeenCalled();
+    });
+});
+
+describe("refundPayment, for an order whose creator was paid", () => {
+    const payment = { id: "pay-1", orderId: "order-1", status: "COMPLETED" };
+    const paid = {
+        ...paidOrder,
+        status: "COMPLETED",
+        total: 50,
+        metadata: {
+            playerName: "Steve",
+            creatorCode: "ALEX",
+            commissionPaid: { codeId: "cc1", creatorId: "creator", amount: 5, total: 50 },
+        },
+    };
+    const moves = () => applyFiltersAsync.mock.calls.filter(([hook]) => hook === "credit.change");
+
+    /** The creator's balance as the wallet answers it, and a wallet that takes what it is asked. */
+    function creatorHolds(balance: number | null) {
+        applyFiltersAsync.mockImplementation(async (hook: string, value: unknown) =>
+            hook === "credits.balance" ? balance : hook === "credit.change" ? { applied: true } : value,
+        );
+    }
+
+    beforeEach(() => {
+        db.payment.findFirst.mockResolvedValueOnce(payment);
+        db.order.findUnique.mockResolvedValueOnce(paid);
+        creatorHolds(40);
+    });
+
+    it("takes the commission back from the creator once, inside the refund's claim", async () => {
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()).toHaveLength(1);
+        expect(moves()[0][2]).toEqual(
+            expect.objectContaining({
+                userId: "creator",
+                amount: -5,
+                type: "creator_commission",
+                ledgerId: "commission-refund:order-1",
+                tx: expect.anything(),
+            }),
+        );
+    });
+
+    it("counts the use and the revenue back off the code", async () => {
+        await refundPayment("stripe", "pi_123");
+
+        const undone = calls.find((c) => c.op === "creatorCode.updateMany");
+        expect(undone?.viaTx).toBe(true);
+        expect(undone?.args).toEqual({
+            where: { id: "cc1", usageCount: { gt: 0 } },
+            data: { usageCount: { decrement: 1 }, totalRevenue: { decrement: 50 } },
+        });
+    });
+
+    it("takes back only what the creator still holds, and says so", async () => {
+        creatorHolds(3.5);
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()[0][2]).toEqual(expect.objectContaining({ amount: -3.5 }));
+        expect(log.warn).toHaveBeenCalled();
+    });
+
+    it("takes nothing when the creator has spent it all, and still counts the code back", async () => {
+        creatorHolds(0);
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()).toHaveLength(0);
+        expect(db.creatorCode.updateMany).toHaveBeenCalled();
+    });
+
+    it("takes nothing when the order paid no commission", async () => {
+        db.order.findUnique.mockReset();
+        db.order.findUnique.mockResolvedValueOnce({ ...paid, metadata: { playerName: "Steve", creatorCode: "ALEX" } });
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()).toHaveLength(0);
+        expect(db.creatorCode.updateMany).not.toHaveBeenCalled();
+    });
+
+    it("takes nothing a second time when another notice of the refund won the claim", async () => {
+        db.payment.updateMany.mockResolvedValueOnce({ count: 0 });
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()).toHaveLength(0);
+        expect(db.creatorCode.updateMany).not.toHaveBeenCalled();
+    });
+
+    it("takes nothing a second time when the payment is already refunded", async () => {
+        db.payment.findFirst.mockReset();
+        db.payment.findFirst.mockResolvedValueOnce({ ...payment, status: "REFUNDED" });
+
+        await refundPayment("stripe", "pi_123");
+
+        expect(moves()).toHaveLength(0);
     });
 });
 

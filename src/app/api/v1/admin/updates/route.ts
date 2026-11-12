@@ -20,6 +20,7 @@ import { UPDATE_CHANNELS, getUpdateChannel, setUpdateChannel } from "@/core/lib/
 import { canStart, readIntent, writeIntent } from "@/core/lib/core-update";
 import { createBackup } from "@/core/lib/backup";
 import { getMaintenanceConfig, setMaintenanceConfig } from "@/core/lib/maintenance";
+import { originalText } from "@/core/lib/i18n/translatable-text";
 import pkg from "../../../../../../package.json";
 
 /**
@@ -197,7 +198,7 @@ export async function POST(request: NextRequest) {
         await setMaintenanceConfig({
             ...maintenance,
             enabled: true,
-            message: maintenance.message?.trim() ? maintenance.message : "",
+            message: originalText(maintenance.message).trim() ? maintenance.message : "",
         });
     }
 

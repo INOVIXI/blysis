@@ -1,12 +1,14 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { serverConfig } from "@/core/config/server";
 import { ModuleFooterLinks } from "@/core/generated/module-registry";
 import { useSiteSettings } from "@/core/hooks/useSiteSettings";
 import { defaultFooterColumns, drawnFooterColumns, parseFooterColumns, parseHiddenLinks, type FooterColumnLink } from "@/core/lib/footer-columns";
 import { isEnabledIn } from "@/core/lib/module-enabled";
+import { SITE_SOCIAL_LINKS, type SiteSocialLink } from "@/core/lib/site-contact";
 import { useAllModules } from "@/core/providers/module-provider";
+import { useText } from "@/core/hooks/useText";
 
 /**
  * A setting with something in it. Each key is read as `settings.<key>` at the
@@ -17,9 +19,11 @@ function filled(value: unknown): string | null {
     return typeof value === "string" && value.trim() !== "" ? value : null;
 }
 
-/** A place the site can be found off the site. `name` says which, for its label. */
+/** A place the site can be found off the site. `name` says which, for its mark. */
 export interface FooterSocialLink {
-    name: "facebook" | "instagram" | "x" | "youtube" | "community";
+    name: SiteSocialLink["name"];
+    /** What to call it, in the reader's language where it has one. */
+    label: string;
     href: string;
 }
 
@@ -56,13 +60,19 @@ export function useFooter(): FooterContent {
     const commonT = useTranslations("common");
     const navT = useTranslations("nav");
     const moduleStatus = useAllModules();
+    // The name, the about line and the copyright are the operator's prose,
+    // which may be written per language; read in the reader's before the
+    // "is anything there" test, which only a string can pass.
+    const text = useText();
+    const locale = useLocale();
     const { settings } = useSiteSettings();
 
     const enabledFooterLinks = ModuleFooterLinks.filter((fl) => isEnabledIn(moduleStatus, fl.module));
     // An install that has never saved a footer is drawn the default one: the
     // two columns it had, read out of the settings that still hold them, and
     // a column for each section its modules name.
-    const saved = parseFooterColumns(settings.footer_columns);
+    // Headings and labels the operator wrote per language, in the reader's.
+    const saved = parseFooterColumns(settings.footer_columns, locale);
     const columns = drawnFooterColumns(
         saved ?? defaultFooterColumns(settings.footer_quick_links, settings.footer_legal_links, enabledFooterLinks),
         enabledFooterLinks,
@@ -76,24 +86,30 @@ export function useFooter(): FooterContent {
             links: column.links,
         }));
 
+    // Each address is a setting, published by `/api/v1/public-settings` with
+    // the documented environment variables already filled in on the server.
     // site_discord_url is the canonical key; hero_discord_url is read as a
     // back-compat fallback for installs migrated from older versions where
     // the Discord URL lived under the (misnamed) hero_* namespace.
-    const community = filled(settings.site_discord_url) ?? filled(settings.hero_discord_url) ?? serverConfig.communityUrl;
-    const social: FooterSocialLink[] = [
-        { name: "facebook" as const, href: serverConfig.social.facebook },
-        { name: "instagram" as const, href: serverConfig.social.instagram },
-        { name: "x" as const, href: serverConfig.social.twitter },
-        { name: "youtube" as const, href: serverConfig.social.youtube },
-        { name: "community" as const, href: community },
-    ].filter((link): link is FooterSocialLink => typeof link.href === "string" && link.href !== "");
+    const addresses: Record<string, string | null> = {
+        site_facebook_url: filled(settings.site_facebook_url),
+        site_instagram_url: filled(settings.site_instagram_url),
+        site_x_url: filled(settings.site_x_url),
+        site_youtube_url: filled(settings.site_youtube_url),
+        site_tiktok_url: filled(settings.site_tiktok_url),
+        site_discord_url: filled(settings.site_discord_url) ?? filled(settings.hero_discord_url),
+    };
+    const social: FooterSocialLink[] = SITE_SOCIAL_LINKS.flatMap((link) => {
+        const href = addresses[link.key];
+        return href ? [{ name: link.name, label: link.name === "community" ? navT("community") : link.label, href }] : [];
+    });
 
     return {
-        siteName: filled(settings.site_name) ?? serverConfig.name,
-        about: filled(settings.footer_about_text) ?? filled(settings.site_description) ?? filled(serverConfig.description),
-        email: filled(settings.site_email) ?? filled(serverConfig.email),
+        siteName: filled(text(settings.site_name)) ?? serverConfig.name,
+        about: filled(text(settings.footer_about_text)) ?? filled(text(settings.site_description)) ?? filled(serverConfig.description),
+        email: filled(settings.site_email),
         social,
         columns,
-        copyright: filled(settings.footer_copyright),
+        copyright: filled(text(settings.footer_copyright)),
     };
 }

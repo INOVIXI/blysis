@@ -12,6 +12,65 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.38.0 - `FooterSocialLink` carries a `label`, and its `name` may be
+ * `tiktok`. The site's social links became settings, one per network, and a
+ * theme that draws them reads what to call each one rather than keeping a
+ * map of its own that a new network would fall out of. Kept a minor: the
+ * only theme that mapped the names is in this tree and reads `label` now.
+ *
+ * 5.37.0 - a module's own records speak the reader's language. A record's
+ * column keeps the text the admin typed, the original, and core's
+ * `ContentTranslation` table holds a translation per field and language
+ * beside it. `@/core/sdk/server` gains `translateContent` (a page of rows in
+ * one language, one query), `readContentTranslations` and
+ * `attachContentTranslations` (every language, for the editor),
+ * `saveContentTranslations` and `deleteContentTranslations` (in the record's
+ * own transaction) and `contentTranslationsInput` (what a form sent,
+ * checked), with the `ContentKind`, `ContentTranslations` and
+ * `ContentTranslationsInput` types. The isomorphic barrel gains
+ * `joinTranslations`, `splitTranslations` and `LanguageTexts`.
+ * `AdminCrudPage` fields may be `translatable`, `translatableTextarea` or
+ * `translatableRichtext`, read from a row's `translations` and sent back
+ * beside the originals; `SettingsForm` fields may be `translatable` or
+ * `translatableTextarea`, stored in the setting as phase one's shape.
+ * `LocalizedTextInput` takes `rich` for a Markdown body. Additive.
+ *
+ * 5.36.0 - text an operator writes may be written per language. A value
+ * is a string, which reads the same in every language, or `{ default, en,
+ * de, ... }`: the original the operator typed and a translation per
+ * language. `textFor(value, locale)` in the isomorphic barrel gives the
+ * reader's translation and otherwise the original, never another language's
+ * entry; `isTranslatableText`, `originalText` and the `TranslatableText`
+ * type join it. `@/core/sdk/ui` gains `useText`, the same read in the page's
+ * own language, and `LocalizedTextInput`, the box an admin writes such a
+ * value in. A theme's `text` setting is translatable unless it says
+ * `"translatable": false`, and `useThemeConfig` and `useBlockText` hand back
+ * the reader's text. `readSettingStrings` reads such a value as its
+ * original. Additive.
+ *
+ * 5.35.0 - a member's face can come from a picture service. A module
+ * declares `avatarProviders` in its manifest, each an https address with
+ * `{name}` and `{size}` whose host is in its `csp["img-src"]`; the operator
+ * picks one beside the member picture setting, and `MemberAvatar` draws a
+ * member with no picture of their own, or every member while member pictures
+ * are off, from it by username, falling back to initials when it does not
+ * load. `MemberAvatar` is now a client component; its props are unchanged.
+ * Additive.
+ *
+ * 5.34.0 - a module can show a member the sign-in methods they connected.
+ * `signInMethodsOf` joins `@/core/sdk/server`, the methods without a token
+ * column; `ProviderMark` and `providerLabel` join `@/core/sdk/ui` for a
+ * provider's mark and name; and `SIGN_IN_METHODS_SECTION` joins `@/core/sdk`,
+ * the account page section that manages them. Sign-in methods are core's and
+ * core cannot answer a module's hook, so a module that lists a member's
+ * accounts asks instead. Additive.
+ *
+ * 5.33.0 - a site can choose the currency a new visitor reads. `useSiteCurrency`
+ * gains `setDefaultDisplay`, held for the page and never stored, which a
+ * visitor's own `setDisplay` choice overrides, and `chosen`, which says
+ * whether what is shown is that choice. `setDisplay(null)` clears the choice,
+ * which on a site with no default is the base as before. Additive.
+ *
  * 5.32.0 - a theme can ask whether a slot will be drawn into.
  * `useSlotHasContent` from `@/core/sdk/layout` answers from the registry,
  * before any contribution has run, so a theme holds the room for what a
@@ -728,4 +787,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.32.0";
+export const CORE_API_VERSION = "5.38.0";

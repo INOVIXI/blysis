@@ -31,7 +31,7 @@ vi.mock("@/core/lib/app-url", () => ({ resolveAppUrl }));
 vi.mock("@/core/config/server", () => ({ serverConfig }));
 vi.mock("@/core/lib/hooks-bootstrap", () => ({ ensureHooks }));
 
-const { buildPageMeta, buildSiteHead } = await import("@/core/lib/seo");
+const { buildPageMeta, buildSiteHead, siteHeadMetadata } = await import("@/core/lib/seo");
 const { addFilter, resetHooks } = await import("@/core/lib/hooks");
 
 /** The answer a listener with nothing to say hands back untouched. */
@@ -163,6 +163,35 @@ describe("the site's head", () => {
         expect(head.defaultTitle).toBe("Blysis");
         expect(head.titleTemplate).toBe("%s | Blysis");
         expect(head.keywords).toBe("");
+    });
+});
+
+describe("what the root layout puts in the head", () => {
+    const head = { defaultTitle: "Acme", titleTemplate: "%s | Acme", keywords: "", googleVerification: "", bingVerification: "" };
+
+    it("says no keywords when nobody gave any", () => {
+        // The layout wrote "open source, modular platform, plugin marketplace"
+        // into every installation's head, which described the product the
+        // site was built with rather than the site.
+        expect(siteHeadMetadata(head)).toEqual({});
+    });
+
+    it("carries the keywords and verification tokens the site's head was given", () => {
+        // `buildSiteHead` has returned them for as long as the seo module has
+        // answered, and the layout read only the title out of it.
+        expect(siteHeadMetadata({ ...head, keywords: "survival, towny", googleVerification: "g-token", bingVerification: "b-token" }))
+            .toEqual({
+                keywords: "survival, towny",
+                verification: { google: "g-token", other: { "msvalidate.01": "b-token" } },
+            });
+        expect(siteHeadMetadata({ ...head, googleVerification: "g-token" }))
+            .toEqual({ verification: { google: "g-token" } });
+    });
+
+    it("is what the layout spreads, with no keywords of its own", () => {
+        const layout = fs.readFileSync(path.join(process.cwd(), "src/app/[locale]/layout.tsx"), "utf8");
+        expect(layout).toContain("...siteHeadMetadata(head)");
+        expect(layout).not.toMatch(/keywords:\s*\[/);
     });
 });
 

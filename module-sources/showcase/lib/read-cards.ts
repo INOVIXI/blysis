@@ -10,16 +10,22 @@
  * A card whose link is dropped is still a card. The endpoint calls this too,
  * so the cleaning cannot happen on one path and not the other.
  */
-import { prisma } from "@/core/sdk/server";
+import { prisma, translateContent } from "@/core/sdk/server";
 import { cardImage, cardLink } from "./card";
+import { CARD_TEXT } from "./card-text";
 
-export async function readShowcaseCards() {
+/**
+ * The cards in `locale`: each heading and line in the reader's language, and
+ * the original where the admin wrote none. No language reads the originals.
+ */
+export async function readShowcaseCards(locale = "") {
     const cards = await prisma.showcaseCard.findMany({
         where: { isActive: true },
         orderBy: [{ order: "asc" }, { createdAt: "asc" }],
         take: 100,
     });
-    return cards.map((card) => ({
+    const read = await translateContent(prisma, CARD_TEXT, cards, ["title", "body"], locale);
+    return read.map((card) => ({
         id: card.id,
         title: card.title,
         body: card.body,

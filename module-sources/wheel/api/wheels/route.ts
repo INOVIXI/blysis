@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/core/sdk/server";
+import { NextRequest, NextResponse } from "next/server";
+import { prisma, translateContent } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { refusalFor, nextTurnAt } from "../../lib/wheels";
+import { PRIZE_TEXT, WHEEL_TEXT } from "../../lib/validations";
 
 /**
  * The wheels this visitor can see, and what each of them will let them do.
@@ -17,15 +18,19 @@ import { refusalFor, nextTurnAt } from "../../lib/wheels";
  * TypeError instead of a page. An administrator browsing the site is a
  * visitor; the screen that manages wheels asks /api/v1/wheel/admin/wheels,
  * which is a different question and says so in its address.
+ *
+ * The names, descriptions and prize labels are in `?locale=`, and the
+ * original where the admin wrote no translation.
  */
 
 /** Names the reader, so no shared cache may hold a copy of it. */
 const PRIVATE = { "Cache-Control": "private, no-store" };
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     const session = await auth();
+    const locale = new URL(request.url).searchParams.get("locale") ?? "";
 
-    const [wheels, user] = await Promise.all([
+    const [rows, user] = await Promise.all([
         prisma.wheel.findMany({
             where: { isActive: true },
             orderBy: [{ order: "asc" }, { createdAt: "asc" }],
@@ -44,6 +49,15 @@ export async function GET() {
             })
             : Promise.resolve(null),
     ]);
+
+    // Two queries for the page however many wheels and prizes it holds.
+    const named = await translateContent(prisma, WHEEL_TEXT, rows, ["name", "description"], locale);
+    const labels = await translateContent(prisma, PRIZE_TEXT, rows.flatMap((wheel) => wheel.prizes), ["name"], locale);
+    const labelOf = new Map(labels.map((prize) => [prize.id, prize.name]));
+    const wheels = named.map((wheel) => ({
+        ...wheel,
+        prizes: wheel.prizes.map((prize) => ({ ...prize, name: labelOf.get(prize.id) ?? prize.name })),
+    }));
 
     // One query for every wheel's last turn rather than one per wheel.
     const lastTurns = session?.user?.id

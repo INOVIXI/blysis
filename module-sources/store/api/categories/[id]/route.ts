@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
-import { hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, hasPermission, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { categorySchema } from "../../../lib/validations";
+import { CATEGORY_FIELDS, CATEGORY_TEXT, categoriesIn, localeOf } from "../../../lib/store-text";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -10,7 +11,7 @@ type RouteParams = { params: Promise<{ id: string }> };
 export async function GET(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
 
-    const category = await prisma.category.findFirst({
+    const found = await prisma.category.findFirst({
         where: { OR: [{ id }, { slug: id }] },
         include: {
             children: true,
@@ -18,10 +19,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         },
     });
 
-    if (!category) {
+    if (!found) {
         return NextResponse.json({ error: "Category not found" }, { status: 404 });
     }
 
+    const [category] = await categoriesIn([found], localeOf(request));
     return NextResponse.json({ category });
 }
 
@@ -48,6 +50,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             { status: 400 }
         );
     }
+
+    const translations = contentTranslationsInput(body, CATEGORY_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
 
     const existing = await prisma.category.findUnique({ where: { id } });
     if (!existing) {
@@ -81,10 +86,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         if (!slugExists) data.slug = newSlug;
     }
 
-    const category = await prisma.category.update({
-        where: { id },
-        data,
-        include: { children: true },
+    const category = await prisma.$transaction(async (tx) => {
+        const updated = await tx.category.update({
+            where: { id },
+            data,
+            include: { children: true },
+        });
+        if (translations.value) await saveContentTranslations(tx, { ...CATEGORY_TEXT, recordId: id }, translations.value);
+        return updated;
     });
 
     return NextResponse.json({ category });
@@ -119,7 +128,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         data: { parentId: null },
     });
 
-    await prisma.category.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.category.delete({ where: { id } });
+        await deleteContentTranslations(tx, CATEGORY_TEXT, [id]);
+    });
 
     return NextResponse.json({ message: "Category deleted" });
 }

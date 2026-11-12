@@ -11,6 +11,7 @@
  * until somebody counts them; the wrong verb sends a partial row to a route
  * that wanted a whole one.
  */
+import type { LanguageTexts } from "@/core/sdk";
 import { EMPTY_IN_GAME, inGamePayload, type InGameValue } from "../products/_fields/in-game-payload";
 
 export interface CategoryFormValue {
@@ -27,6 +28,8 @@ export interface CategoryFormValue {
     layout: string;
     /** How a connected game shows the shelf. */
     inGame: InGameValue;
+    /** The name and description in each language, beside the originals above. */
+    translations: { name: LanguageTexts; description: LanguageTexts };
 }
 
 export const EMPTY_CATEGORY: CategoryFormValue = {
@@ -39,6 +42,7 @@ export const EMPTY_CATEGORY: CategoryFormValue = {
     visibleAfterProductIds: [],
     layout: "grid",
     inGame: EMPTY_IN_GAME,
+    translations: { name: {}, description: {} },
 };
 
 /** The address and verb for saving, given what is being edited. */
@@ -63,5 +67,7 @@ export function categoryPayload(value: CategoryFormValue) {
         visibleAfterProductIds: value.visibleAfterProductIds,
         layout: value.layout,
         ...inGamePayload(value.inGame),
+        // Both every time: an empty one is how a cleared language goes.
+        translations: value.translations,
     };
 }

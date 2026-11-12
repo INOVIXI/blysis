@@ -1,21 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { hasPermission, log, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { communityGoalSchema } from "../../lib/validations";
 import { readCommunityGoal } from "../../lib/community-goal";
+import { localeOf } from "../../lib/store-text";
 
 /**
  * This answer is the same whoever asked, so a proxy in front of the site may
  * hold it briefly. `s-maxage` speaks to shared caches and not to browsers, so
  * no visitor's own cache is involved. Anything here that ever starts varying
- * by who is asking has to lose this.
+ * by who is asking has to lose this. The reader's language is in the address
+ * (`?locale=`), so a shared cache keeps one answer per language.
  */
 const SHARED_CACHE = { "Cache-Control": "public, max-age=0, s-maxage=30, stale-while-revalidate=60" };
 
 // GET /api/v1/community-goal - Public endpoint
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
-        const { target, current, title, endDate } = await readCommunityGoal();
+        const { target, current, title, endDate } = await readCommunityGoal(new Date(), localeOf(request));
         return NextResponse.json({ target, current, title, endDate }, { headers: SHARED_CACHE });
     } catch (error) {
         log.error("Community goal error", { error: error instanceof Error ? error.message : String(error) });
@@ -54,8 +57,8 @@ export async function PATCH(request: NextRequest) {
     await prisma.$transaction(
         updates.map(({ key, value }) => prisma.setting.upsert({
             where: { key },
-            update: { value: value as string },
-            create: { key, value: value as string, module: "store" },
+            update: { value: value as Prisma.InputJsonValue },
+            create: { key, value: value as Prisma.InputJsonValue, module: "store" },
         })),
     );
 

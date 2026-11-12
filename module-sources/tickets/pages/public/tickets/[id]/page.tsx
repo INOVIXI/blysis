@@ -3,9 +3,9 @@
 import { useState, useEffect, use } from "react";
 import { Link } from "@/core/sdk/navigation";
 import { useSession } from "next-auth/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Badge, Button, RichContent, RichTextEditor, buttonClassName } from "@/core/sdk/ui";
+import { Badge, Button, MemberAvatar, RichContent, RichTextEditor, buttonClassName } from "@/core/sdk/ui";
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { useRelativeTime } from "@/core/sdk/ui";
 import { FIRST_STATUS, isOpenState, stateLabel, stateTone, type TicketState } from "../../../../lib/ticket-states";
@@ -39,6 +39,8 @@ export default function TicketDetailPage({ params }: PageProps) {
     const { id } = use(params);
     const { data: session } = useSession();
     const t = useTranslations("tickets");
+    // The department and the states the operator named, in the page's language.
+    const locale = useLocale();
     const relativeTime = useRelativeTime();
     const [ticket, setTicket] = useState<Ticket | null>(null);
     /*
@@ -57,7 +59,7 @@ export default function TicketDetailPage({ params }: PageProps) {
     useEffect(() => {
         let cancelled = false;
         if (session?.user) {
-            fetch(`/api/v1/tickets/${id}`)
+            fetch(`/api/v1/tickets/${id}?locale=${encodeURIComponent(locale)}`)
                 .then((res) => {
                     // The reason is not the reader's: a 404 and a dead
                     // network both mean the ticket is not on screen.
@@ -79,7 +81,7 @@ export default function TicketDetailPage({ params }: PageProps) {
             setLoading(false);
         }
         return () => { cancelled = true; };
-    }, [session, id]);
+    }, [session, id, locale]);
 
     const handleReply = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -174,14 +176,7 @@ export default function TicketDetailPage({ params }: PageProps) {
                                         }`}
                                 >
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold">
-                                            {message.user.avatar ? (
-                                                <>{/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img src={message.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /></>
-                                            ) : (
-                                                message.user.username.charAt(0).toUpperCase()
-                                            )}
-                                        </div>
+                                        <MemberAvatar name={message.user.username} src={message.user.avatar} size={40} />
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <span className="font-medium text-foreground">{message.user.username}</span>

@@ -72,6 +72,8 @@ export interface SoldOrder {
     email: string | null;
     paymentMethod: string | null;
     billingDetails: unknown;
+    /** Where the store keeps what each order was charged, under `tax`. */
+    metadata?: unknown;
     items: { productId: string | null; name: string; quantity: number; price: unknown }[];
 }
 
@@ -81,6 +83,26 @@ export interface TaxSetup {
     timeZone: string;
     taxRate: number;
     taxIncluded: boolean;
+}
+
+/**
+ * The rate and the way it was charged for this order, when the order recorded
+ * them.
+ *
+ * A tax module charges by the buyer's country, so one shop's orders carry
+ * different rates: zero for an export, another country's rate for a buyer
+ * there. The shop's setting is the answer only for an order placed before
+ * orders kept their own, and for a record that cannot be read whole.
+ */
+export function taxCharged(order: Pick<SoldOrder, "metadata">, shop: TaxSetup): TaxSetup {
+    const metadata = order.metadata;
+    if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return shop;
+    const tax = (metadata as Record<string, unknown>).tax;
+    if (!tax || typeof tax !== "object") return shop;
+    const { rate, included } = tax as Record<string, unknown>;
+    if (typeof rate !== "number" || !Number.isFinite(rate) || rate < 0 || rate > 100) return shop;
+    if (typeof included !== "boolean") return shop;
+    return { ...shop, taxRate: rate, taxIncluded: included };
 }
 
 function billingIn(value: unknown): Billing | null {
@@ -108,9 +130,10 @@ function billingIn(value: unknown): Billing | null {
  * username is a wrong legal document, and the integrator will issue it
  * without complaint.
  */
-export function orderAnswer(order: SoldOrder, tax: TaxSetup): Record<string, unknown> | null {
+export function orderAnswer(order: SoldOrder, shop: TaxSetup): Record<string, unknown> | null {
     const billing = billingIn(order.billingDetails);
     if (!billing) return null;
+    const tax = taxCharged(order, shop);
 
     const details = order.items.map((item) => {
         const split = splitLine(Number(item.price), tax.taxRate, tax.taxIncluded);

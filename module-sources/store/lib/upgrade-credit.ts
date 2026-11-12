@@ -24,6 +24,11 @@
  * The highest one owned, not the sum of them. Somebody who bought VIP and then
  * VIP+ has paid 9.99 and 10.00; crediting both toward MVP would refund the
  * ladder they climbed. The rung they are standing on is what they trade in.
+ *
+ * Only a step up. Somebody who already owns the product, or a dearer one on
+ * the same shelf, is not upgrading, and a basket trades a rung in once: on one
+ * line, on one unit (`lineCredit`). Otherwise a cheaper purchase came off every
+ * unit of every later order.
  */
 
 export interface UpgradeCandidate {
@@ -51,15 +56,38 @@ export function upgradeCredit(
 ): number {
     if (!product.categoryId) return 0;
 
+    if (ownedIds.has(product.id)) return 0;
+
     let best = 0;
     for (const other of catalogue) {
         if (other.id === product.id) continue;
         if (other.categoryId !== product.categoryId) continue;
         if (!ownedIds.has(other.id)) continue;
-        if (other.price >= product.price) continue;
+        if (other.price >= product.price) return 0;
         if (other.price > best) best = other.price;
     }
     return best;
+}
+
+/**
+ * The credit one basket line takes, given the shelves already credited.
+ *
+ * A line of one unit only, and the first such line on its shelf: the rung
+ * owned was paid for once, so it is traded in once. `credited` is filled as
+ * lines take a credit, which is why the cart and the till walk the basket in
+ * one pass.
+ */
+export function lineCredit(
+    product: UpgradeCandidate,
+    quantity: number,
+    catalogue: readonly UpgradeCandidate[],
+    ownedIds: ReadonlySet<string>,
+    credited: Set<string>,
+): number {
+    if (quantity !== 1 || !product.categoryId || credited.has(product.categoryId)) return 0;
+    const credit = upgradeCredit(product, catalogue, ownedIds);
+    if (credit > 0) credited.add(product.categoryId);
+    return credit;
 }
 
 /**

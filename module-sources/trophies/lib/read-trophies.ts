@@ -9,12 +9,15 @@
  * was, in the browser: it is per person, so an answer the server wrote into
  * the page would be one visitor's badges cached for the next.
  */
-import { prisma } from "@/core/sdk/server";
+import { prisma, translateContent } from "@/core/sdk/server";
+import { TROPHY_TEXT } from "./validations";
 
-export async function readTrophies() {
-    return prisma.trophy.findMany({
+/** The trophies, each name and description in `locale` and the original where the admin wrote none. */
+export async function readTrophies(locale = "") {
+    const trophies = await prisma.trophy.findMany({
         orderBy: { points: "desc" },
         include: { _count: { select: { users: true } } },
         take: 200,
     });
+    return translateContent(prisma, TROPHY_TEXT, trophies, ["name", "description"], locale);
 }

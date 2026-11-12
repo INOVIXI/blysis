@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { applyFiltersAsync } from "@/core/sdk";
 import { log } from "@/core/sdk/server";
-import { fromMerchantOid, getPaytrConfig, paytrHash } from "../../lib/paytr";
+import { fromMerchantOid, getPaytrConfig, paytrCallbackHash } from "../../lib/paytr";
 
 export const dynamic = "force-dynamic";
 
@@ -37,13 +37,23 @@ export async function POST(request: NextRequest) {
         return new NextResponse("BAD_REQUEST", { status: 400 });
     }
 
-    const expected = paytrHash(config, merchantOid + config.merchantSalt + status + totalAmount);
+    const expected = paytrCallbackHash(config, merchantOid, status, totalAmount);
     if (!hashesMatch(expected, received)) {
         log.error("[paytr-gateway] a callback arrived with a hash that does not verify", { merchantOid });
         return new NextResponse("BAD_HASH", { status: 400 });
     }
 
     const reference = fromMerchantOid(merchantOid);
+
+    // A merchant account runs in test mode until PayTR approves it, and there
+    // it takes the published test cards and reports a success signed like any
+    // other. On a site that is not in test mode that is an order given away,
+    // so it settles nothing. "OK" all the same: a retry would say the same.
+    // `a-test-payment-settles-nothing-on-a-live-site.test.ts`.
+    if (String(form.get("test_mode") ?? "0") === "1" && !config.testMode) {
+        log.error("[paytr-gateway] a test payment reached a site that is not in test mode; nothing was granted", { reference, merchantOid });
+        return new NextResponse("OK");
+    }
 
     if (status !== "success") {
         const voided = await applyFiltersAsync("payment.voided", UNHANDLED, {

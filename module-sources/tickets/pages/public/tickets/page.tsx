@@ -7,7 +7,7 @@ import { Badge, LoadFailed, Pagination, buttonClassName, usePagedRows } from "@/
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { useRelativeTime } from "@/core/sdk/ui";
 import { stateLabel, stateTone, type TicketState } from "../../../lib/ticket-states";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 interface Ticket {
     id: string;
@@ -23,6 +23,8 @@ interface Ticket {
 export default function SupportPage() {
     const { data: session } = useSession();
     const t = useTranslations('tickets');
+    // The department and the states the operator named, in the page's language.
+    const locale = useLocale();
     const relativeTime = useRelativeTime();
     /*
      * The words come with the tickets. They are rows an operator writes now,
@@ -43,7 +45,7 @@ export default function SupportPage() {
     useEffect(() => {
         let cancelled = false;
         if (session?.user) {
-            fetch("/api/v1/tickets")
+            fetch(`/api/v1/tickets?locale=${encodeURIComponent(locale)}`)
                 .then((res) => { if (!res.ok) throw new Error("load failed"); return res.json(); })
                 .then((data) => {
                     if (cancelled) return;
@@ -62,7 +64,7 @@ export default function SupportPage() {
             setLoading(false);
         }
         return () => { cancelled = true; };
-    }, [session, reloadKey]);
+    }, [session, reloadKey, locale]);
 
     const actions = session?.user ? (
         <Link href="/support/new" className={buttonClassName("default", "default")}>{t('newTicket')}</Link>

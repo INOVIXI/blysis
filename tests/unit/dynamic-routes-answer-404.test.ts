@@ -82,7 +82,9 @@ describe("dynamic public routes", () => {
             if (!/export default async function \w+\(/.test(body)) {
                 problems.push(`${module} ${route.resolver} has no default export`);
             }
-            if (!/Promise<boolean>/.test(body)) {
+            // `Promise<boolean | { title: string }>` is the same answer with
+            // the resource's name beside it.
+            if (!/Promise<boolean[ >|]/.test(body)) {
                 problems.push(`${module} ${route.resolver} does not answer a boolean`);
             }
             // A resolver runs on every request for the route, so it reads the
@@ -141,17 +143,19 @@ describe("the wiring", () => {
 
     it("asks the resolver before rendering, and before saying the page is indexable", () => {
         const catchAll = read("src/app/[locale]/[...slug]/page.tsx");
-        expect(catchAll).toContain("const routeExists = cache(");
+        expect(catchAll).toContain("const resolveRoute = cache(");
         // once in generateMetadata, once in the page: cache() keeps it to one query
-        expect(catchAll.match(/await routeExists\(match\.key, match\.params\)/g)?.length).toBe(2);
-        expect(catchAll).toContain("if (!(await routeExists(match.key, match.params))) {\n        notFound();");
+        expect(catchAll.match(/await resolveRoute\(match\.key, match\.params, locale\)/g)?.length).toBe(2);
+        expect(catchAll).toContain("if (!(await resolveRoute(match.key, match.params, locale)).exists) {\n        notFound();");
     });
 
     it("treats a broken resolver as no opinion rather than a 404", () => {
         // A database hiccup must not turn a page that exists into a 404.
         const catchAll = read("src/app/[locale]/[...slug]/page.tsx");
-        const body = catchAll.slice(catchAll.indexOf("const routeExists = cache("));
-        expect(body.slice(0, body.indexOf("});"))).toContain("return true;");
+        const body = catchAll.slice(catchAll.indexOf("const resolveRoute = cache("));
+        const resolver = body.slice(0, body.indexOf("\n});"));
+        expect(resolver).toContain("catch (err)");
+        expect(resolver.slice(resolver.indexOf("catch (err)"))).toContain("return { exists: true, title: null };");
     });
 });
 

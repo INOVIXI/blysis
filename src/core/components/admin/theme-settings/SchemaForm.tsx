@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import * as Fields from "@/core/components/admin/theme-customizer/fields";
 import type { ThemeFieldDef } from "@/core/lib/theme-manifest-schema";
+import type { TranslatableText } from "@/core/lib/i18n/translatable-text";
 import { Button } from "@/core/components/ui/button";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
@@ -130,7 +131,7 @@ function renderField(def: ThemeFieldDef, value: unknown, onChange: (v: unknown) 
         case "select":   return <Fields.SelectField def={def} value={value as string} onChange={onChange as (v: string | undefined) => void} isDefault={isDefault} />;
         case "slider":   return <Fields.SliderField def={def} value={value as number} onChange={onChange as (v: number | undefined) => void} isDefault={isDefault} />;
         case "toggle":   return <Fields.ToggleField def={def} value={value as boolean} onChange={onChange as (v: boolean | undefined) => void} isDefault={isDefault} />;
-        case "text":     return <Fields.TextField   def={def} value={value as string} onChange={onChange as (v: string | undefined) => void} isDefault={isDefault} />;
+        case "text":     return <Fields.TextField   def={def} value={value as TranslatableText} onChange={onChange as (v: TranslatableText | undefined) => void} isDefault={isDefault} />;
         case "url":      return <Fields.UrlField    def={def} value={value as string} onChange={onChange as (v: string | undefined) => void} isDefault={isDefault} />;
         case "richtext": return <Fields.RichTextField def={def} value={value as string} onChange={onChange as (v: string | undefined) => void} isDefault={isDefault} />;
         case "image":    return <Fields.ImageField  def={def} value={value as string} onChange={onChange as (v: string | undefined) => void} isDefault={isDefault} />;

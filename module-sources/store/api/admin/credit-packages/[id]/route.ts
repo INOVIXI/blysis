@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hasPermission, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, hasPermission, logActivity, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { creditPackageSchema } from "../../../../lib/validations";
+import { CREDIT_PACKAGE_FIELDS, CREDIT_PACKAGE_TEXT } from "../../../../lib/store-text";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -18,7 +19,16 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
 
-    const updated = await prisma.creditPackage.updateMany({ where: { id }, data: parsed.data });
+    const translations = contentTranslationsInput(body, CREDIT_PACKAGE_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
+    const updated = await prisma.$transaction(async (tx) => {
+        const written = await tx.creditPackage.updateMany({ where: { id }, data: parsed.data });
+        if (written.count > 0 && translations.value) {
+            await saveContentTranslations(tx, { ...CREDIT_PACKAGE_TEXT, recordId: id }, translations.value);
+        }
+        return written;
+    });
     if (updated.count === 0) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     await logActivity({

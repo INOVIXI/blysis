@@ -12,11 +12,10 @@
  * the narrowing, and the endpoint applies the same rule.
  */
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
 import { ArrangedPage } from "@/core/sdk/page";
-import { Card, CardContent, Pagination, buttonClassName } from "@/core/sdk/ui";
+import { Card, CardContent, MemberAvatar, Pagination, buttonClassName } from "@/core/sdk/ui";
 import { NavIcon } from "@/core/sdk/ui";
 import { Eye, Lock, MessageSquare, Pin, Plus, ThumbsUp } from "lucide-react";
 import { formatDate, dateLocaleTag } from "@/core/sdk";
@@ -68,11 +67,13 @@ export default async function ForumPage({ searchParams }: PageProps) {
         );
     }
 
-    const board = await readTopicList({ page, categorySlug, search });
+    const locale = await getLocale();
+    // The sections named in the reader's language; the topics stay as members wrote them.
+    const board = await readTopicList({ page, categorySlug, search, locale });
     // Null now means one thing: a section nobody has, or nobody may see.
     if (!board) notFound();
 
-    const dateTag = dateLocaleTag(await getLocale());
+    const dateTag = dateLocaleTag(locale);
     const active = categorySlug ? board.categories.find((c) => c.slug === categorySlug) : undefined;
 
     const actions = (
@@ -150,13 +151,7 @@ export default async function ForumPage({ searchParams }: PageProps) {
                                             <Card className="hover:shadow-md transition-shadow cursor-pointer">
                                                 <CardContent className="p-4">
                                                     <div className="flex items-start gap-4">
-                                                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold text-sm flex-shrink-0">
-                                                            {topic.author?.avatar ? (
-                                                                <Image src={topic.author.avatar} alt="" width={40} height={40} className="w-full h-full rounded-full object-cover" />
-                                                            ) : (
-                                                                (topic.author?.username ?? t("deletedAuthor"))[0].toUpperCase()
-                                                            )}
-                                                        </div>
+                                                        <MemberAvatar name={topic.author?.username ?? t("deletedAuthor")} src={topic.author?.avatar} size={40} />
                                                         <div className="flex-1 min-w-0">
                                                             <div className="flex items-center gap-2 mb-1">
                                                                 {topic.isPinned && <Pin className="w-3 h-3 text-primary" aria-hidden="true" />}

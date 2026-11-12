@@ -15,12 +15,20 @@ import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { Textarea } from "@/core/components/ui/textarea";
 import { useConfirm } from "@/core/components/ui/confirm-dialog";
+import { LocalizedTextInput } from "@/core/components/ui/localized-text-input";
+import { joinTranslations, splitTranslations, type LanguageTexts } from "@/core/lib/i18n/translatable-text";
 
 export interface SettingsField {
     key: string;
     label: string;
     /** "icon" renders the Lucide icon picker and stores the icon's kebab-case name. */
-    type?: "text" | "password" | "number" | "url" | "email" | "textarea" | "image" | "select" | "date" | "icon";
+    /**
+     * `translatable` and `translatableTextarea` are prose the admin may write
+     * once per language. The setting holds the shape `textFor` reads: the
+     * plain string while nothing is translated, `{ default, en, ... }` once
+     * something is. A module reads it with `textFor(value, locale)`.
+     */
+    type?: "text" | "password" | "number" | "url" | "email" | "textarea" | "image" | "select" | "date" | "icon" | "translatable" | "translatableTextarea";
     placeholder?: string;
     description?: string;
     defaultValue?: string;
@@ -53,12 +61,18 @@ function isSecretField(field: SettingsField): boolean {
     return field.type === "password";
 }
 
+function isTranslatable(field: SettingsField): boolean {
+    return field.type === "translatable" || field.type === "translatableTextarea";
+}
+
 export function SettingsForm({ title, subtitle, fields, children }: SettingsFormProps) {
     const t = useTranslations("admin");
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [values, setValues] = useState<Record<string, string>>({});
+    // A translatable field's languages; its original is in `values`.
+    const [translations, setTranslations] = useState<Record<string, LanguageTexts>>({});
     const [cleared, setCleared] = useState<Set<string>>(new Set());
     const { confirm } = useConfirm();
 
@@ -67,12 +81,20 @@ export function SettingsForm({ title, subtitle, fields, children }: SettingsForm
     // wrote the defaults back.
     const { loading, failed, retry, secretsConfigured } = useSettingsLoad((s) => {
         const v: Record<string, string> = {};
+        const languages: Record<string, LanguageTexts> = {};
         for (const field of fields) {
+            if (isTranslatable(field)) {
+                const { original, translations: stored } = splitTranslations(s[field.key]);
+                v[field.key] = original || field.defaultValue || "";
+                languages[field.key] = stored;
+                continue;
+            }
             v[field.key] = isSecretField(field)
                 ? ""
                 : (s[field.key] as string) || field.defaultValue || "";
         }
         setValues(v);
+        setTranslations(languages);
     });
 
     const stored = new Set(secretsConfigured);
@@ -88,9 +110,10 @@ export function SettingsForm({ title, subtitle, fields, children }: SettingsForm
             // only writes the keys it receives, so leaving one out is how the
             // stored value survives a save of the fields beside it. A cleared
             // one is sent as empty, which is the one way to remove it.
-            const payload: Record<string, string> = {};
+            const payload: Record<string, unknown> = {};
             for (const field of fields) {
                 const value = values[field.key] ?? "";
+                if (isTranslatable(field)) { payload[field.key] = joinTranslations(value, translations[field.key]); continue; }
                 if (!isSecretField(field)) { payload[field.key] = value; continue; }
                 if (cleared.has(field.key)) { payload[field.key] = ""; continue; }
                 if (value !== "") payload[field.key] = value;
@@ -164,7 +187,19 @@ export function SettingsForm({ title, subtitle, fields, children }: SettingsForm
                         {fields.map((field) => (
                             <div key={field.key}>
                                 <Label>{field.label}</Label>
-                                {field.type === "textarea" ? (
+                                {isTranslatable(field) ? (
+                                    <LocalizedTextInput
+                                        label={field.label}
+                                        placeholder={field.placeholder}
+                                        multiline={field.type === "translatableTextarea"}
+                                        value={joinTranslations(values[field.key] || "", translations[field.key])}
+                                        onChange={(next) => {
+                                            const { original, translations: languages } = splitTranslations(next);
+                                            setValues({ ...values, [field.key]: original });
+                                            setTranslations({ ...translations, [field.key]: languages });
+                                        }}
+                                    />
+                                ) : field.type === "textarea" ? (
                                     <Textarea
                                         aria-label={field.label}
                                         value={values[field.key] || ""}

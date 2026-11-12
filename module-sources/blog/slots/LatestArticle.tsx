@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/core/sdk/navigation";
 import { Badge, useLocalDate } from "@/core/sdk/ui";
 import type { BlogCardArticle } from "../components/news-card";
@@ -21,11 +21,14 @@ interface Article extends BlogCardArticle {
 export default function LatestArticle() {
     const t = useTranslations("news");
     const formatDate = useLocalDate({ dateStyle: "long" });
+    // The endpoint reads the article in this language, and the original
+    // where the admin wrote none.
+    const locale = useLocale();
     const [post, setPost] = useState<Article | null>(null);
 
     useEffect(() => {
         let active = true;
-        fetch("/api/v1/blog/articles?limit=1")
+        fetch(`/api/v1/blog/articles?limit=1&locale=${encodeURIComponent(locale)}`)
             .then((res) => {
                 if (!res.ok) throw new Error(`articles answered ${res.status}`);
                 return res.json();
@@ -33,7 +36,7 @@ export default function LatestArticle() {
             .then((data: { articles?: Article[] }) => { if (active) setPost(data.articles?.[0] ?? null); })
             .catch(() => {});
         return () => { active = false; };
-    }, []);
+    }, [locale]);
 
     if (!post) return null;
     const href = `/blog/${post.number}/${post.slug}`;

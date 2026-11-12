@@ -3,10 +3,10 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, IconPicker, Input, Label, NavIcon, RichTextEditor, useFormRoute, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, IconPicker, Input, Label, LocalizedTextInput, NavIcon, useFormRoute, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, Loader2, Plus } from "lucide-react";
-import { writeError } from "@/core/sdk";
+import { joinTranslations, originalText, splitTranslations, writeError, type LanguageTexts, type TranslatableText } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
 
 interface Category {
@@ -19,25 +19,52 @@ interface Category {
     order: number;
     isActive: boolean;
     _count: { topics: number };
+    /** Every language of its name and description, from the panel's list. */
+    translations?: Record<string, LanguageTexts>;
 }
+
+interface CategoryForm {
+    /** The original and a translation per language. */
+    name: TranslatableText;
+    description: TranslatableText;
+    icon: string;
+    color: string;
+    order: number;
+}
+
+const BLANK: CategoryForm = { name: "", description: "", icon: "", color: "#6366f1", order: 0 };
 
 export default function AdminForumCategoriesPage() {
     const t = useTranslations("forum");
     const commonT = useTranslations("common");
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
-    // The form is a screen of its own at `?form=new`, not a card above the list.
-    const { showForm, formHref, closeForm } = useFormRoute();
+    // The form is a screen of its own at `?form=new`, not a card above the list,
+    // and `?form=<id>` opens a section to be edited: its name and description
+    // are written once per language, and a section made before that has to
+    // be reachable to be given them.
+    const { showForm, editingId, formHref, closeForm } = useFormRoute();
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const [form, setForm] = useState({
-        name: "",
-        description: "",
-        icon: "",
-        color: "#6366f1",
-        order: 0,
-    });
+    const [form, setForm] = useState<CategoryForm>(BLANK);
+    const editing = editingId ? categories.find((category) => category.id === editingId) ?? null : null;
+
+    // The section the address names fills the form once the list arrives,
+    // so `?form=<id>` survives a reload rather than opening a blank editor.
+    useEffect(() => {
+        if (!editing) {
+            setForm(BLANK);
+            return;
+        }
+        setForm({
+            name: joinTranslations(editing.name, editing.translations?.name),
+            description: joinTranslations(editing.description ?? "", editing.translations?.description),
+            icon: editing.icon ?? "",
+            color: editing.color ?? "#6366f1",
+            order: editing.order,
+        });
+    }, [editing]);
 
     const fetchCategories = async () => {
         try {
@@ -65,10 +92,19 @@ export default function AdminForumCategoriesPage() {
         setError(null);
 
         try {
-            const res = await fetch("/api/v1/forum/categories", {
-                method: "POST",
+            const res = await fetch(editing ? `/api/v1/forum/categories/${editing.id}` : "/api/v1/forum/categories", {
+                method: editing ? "PATCH" : "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(form),
+                body: JSON.stringify({
+                    ...form,
+                    name: originalText(form.name),
+                    description: originalText(form.description),
+                    // Both every time: an empty one is how a cleared language goes.
+                    translations: {
+                        name: splitTranslations(form.name).translations,
+                        description: splitTranslations(form.description).translations,
+                    },
+                }),
             });
 
             const failed = await writeError(res, t("adm_createCategoryFailed"), t);
@@ -77,7 +113,7 @@ export default function AdminForumCategoriesPage() {
                 return;
             }
 
-            setForm({ name: "", description: "", icon: "", color: "#6366f1", order: 0 });
+            setForm(BLANK);
             await fetchCategories();
             closeForm();
         } catch {
@@ -103,7 +139,7 @@ export default function AdminForumCategoriesPage() {
         return (
             <>
                 <AdminPageHeader
-                    title={t("adm_newCategory")}
+                    title={editing ? originalText(form.name) || commonT("edit") : t("adm_newCategory")}
                     description={t("adm_manageCategories")}
                     onBack={closeForm}
                     backLabel={commonT("back")}
@@ -117,10 +153,11 @@ export default function AdminForumCategoriesPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <Label>{`${t("adm_name")} *`}</Label>
-                                    <Input
-                                        aria-label={t("adm_name")}
+                                    <LocalizedTextInput
+                                        label={t("adm_name")}
                                         value={form.name}
-                                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                        onChange={(name) => setForm({ ...form, name })}
+                                        maxLength={100}
                                         required
                                     />
                                 </div>
@@ -141,10 +178,14 @@ export default function AdminForumCategoriesPage() {
                                 </div>
                             </div>
                             <div>
-                                <Label>{t("adm_description")}</Label>
-                                <RichTextEditor
+                                <Label id="forum-category-description">{t("adm_description")}</Label>
+                                <LocalizedTextInput
+                                    rich
+                                    labelledBy="forum-category-description"
+                                    label={t("adm_description")}
                                     value={form.description}
-                                    onChange={(v) => setForm({ ...form, description: v })}
+                                    onChange={(description) => setForm({ ...form, description })}
+                                    maxLength={500}
                                 />
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -173,7 +214,9 @@ export default function AdminForumCategoriesPage() {
                             </div>
                             <div className="flex gap-2">
                                 <Button type="submit" disabled={saving}>
-                                    {saving ? <><Loader2 className="w-4 h-4 animate-spin" /> {t("adm_creating")}</> : t("adm_createCategory")}
+                                    {editing
+                                        ? <>{saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null} {commonT("save")}</>
+                                        : (saving ? <><Loader2 className="w-4 h-4 animate-spin" /> {t("adm_creating")}</> : t("adm_createCategory"))}
                                 </Button>
                                 <Button type="button" variant="outline" onClick={closeForm} disabled={saving}>
                                     {t("adm_cancel")}
@@ -226,6 +269,9 @@ export default function AdminForumCategoriesPage() {
                                         {cat.isActive ? t("adm_active") : t("adm_inactive")}
                                     </span>
                                 </div>
+                                <Link href={formHref(cat.id)} className={buttonClassName("outline", "sm", "mt-3")}>
+                                    {commonT("edit")}
+                                </Link>
                             </CardContent>
                         </Card>
                     ))

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Badge, Button, Card, CardContent, LoadFailed, useLocalDate, SegmentedTabs } from "@/core/sdk/ui";
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Coins, Gift, Loader2, PartyPopper, Timer } from "lucide-react";
@@ -106,6 +106,8 @@ function short(name: string): string {
 
 export default function WheelPage() {
     const t = useTranslations("wheel");
+    // The wheels, their prizes and a won prize in the page's language.
+    const locale = useLocale();
     const commonT = useTranslations("common");
     const { data: session } = useSession();
     const formatLocalDate = useLocalDate();
@@ -127,7 +129,7 @@ export default function WheelPage() {
 
     useEffect(() => {
         let cancelled = false;
-        fetch("/api/v1/wheel/wheels")
+        fetch(`/api/v1/wheel/wheels?locale=${encodeURIComponent(locale)}`)
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
             .then((d) => {
                 if (cancelled) return;
@@ -140,7 +142,7 @@ export default function WheelPage() {
             })
             .catch(() => { if (!cancelled) { setFailed(true); setLoading(false); } });
         return () => { cancelled = true; };
-    }, [reloadKey]);
+    }, [reloadKey, locale]);
 
     const wheel = useMemo(
         () => wheels.find((w) => w.slug === activeSlug) ?? wheels[0] ?? null,
@@ -153,7 +155,7 @@ export default function WheelPage() {
         setResult(null);
         setRefused(null);
         try {
-            const res = await fetch(`/api/v1/wheel/spin?wheel=${encodeURIComponent(wheel.slug)}`, { method: "POST" });
+            const res = await fetch(`/api/v1/wheel/spin?wheel=${encodeURIComponent(wheel.slug)}&locale=${encodeURIComponent(locale)}`, { method: "POST" });
             const data = await res.json();
             if (!res.ok) {
                 setRefused(t.has(`refusal_${data.code ?? ""}`) ? t(`refusal_${data.code}`) : errorMessage(data, commonT("somethingWentWrong"), commonT));

@@ -16,9 +16,9 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "@/core/sdk/navigation";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, UrlOrFile, Input, Label, NativeSelect, RichTextEditor, Textarea, useSiteSettings } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, UrlOrFile, Input, Label, NativeSelect, LocalizedTextInput, useSiteSettings } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, X } from "lucide-react";
-import { writeError } from "@/core/sdk";
+import { joinTranslations, splitTranslations, writeError, type LanguageTexts } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
 
 interface Category {
@@ -26,6 +26,9 @@ interface Category {
     name: string;
     slug: string;
 }
+
+type WordField = "name" | "description" | "shortDesc";
+const NO_LANGUAGES: Record<WordField, LanguageTexts> = { name: {}, description: {}, shortDesc: {} };
 
 export default function NewProductPage() {
     const t = useTranslations("store");
@@ -42,6 +45,9 @@ export default function NewProductPage() {
     const { settings } = useSiteSettings();
     const timeZone = (settings.site_timezone as string) || "UTC";
 
+    // Each language of the name, description and summary, beside the
+    // originals in the form.
+    const [languages, setLanguages] = useState<Record<WordField, LanguageTexts>>(NO_LANGUAGES);
     const [form, setForm] = useState({
         name: "",
         description: "",
@@ -67,6 +73,13 @@ export default function NewProductPage() {
             .catch(() => {});
     }, []);
 
+    // The original goes to the form's column, each language beside it.
+    const word = (field: WordField, next: unknown) => {
+        const parts = splitTranslations(next);
+        setForm((was) => ({ ...was, [field]: parts.original }));
+        setLanguages((was) => ({ ...was, [field]: parts.translations }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
@@ -75,6 +88,9 @@ export default function NewProductPage() {
         try {
             const payload = {
                 name: form.name,
+                // Every field every time: an empty one is how a cleared
+                // language goes.
+                translations: languages,
                 description: form.description || undefined,
                 shortDesc: form.shortDesc.trim() || undefined,
                 price: parseFloat(form.price),
@@ -134,31 +150,36 @@ export default function NewProductPage() {
                             <CardContent className="space-y-4">
                                 <div>
                                     <Label htmlFor="name">{`${t("adm_name")} *`}</Label>
-                                    <Input
+                                    <LocalizedTextInput
                                         id="name"
-                                        value={form.name}
-                                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                        label={t("adm_name")}
+                                        value={joinTranslations(form.name, languages.name)}
+                                        onChange={(next) => word("name", next)}
                                         placeholder={t("adm_productName")}
                                         required
                                     />
                                 </div>
                                 <div>
                                     <Label id="description-label">{t("adm_description")}</Label>
-                                    <RichTextEditor
+                                    <LocalizedTextInput
+                                        label={t("adm_description")}
                                         labelledBy="description-label"
-                                        value={form.description}
-                                        onChange={(value: string) => setForm({ ...form, description: value })}
+                                        rich
+                                        value={joinTranslations(form.description, languages.description)}
+                                        onChange={(next) => word("description", next)}
                                         placeholder={t("adm_productDescription")}
                                     />
                                 </div>
                                 <div>
                                     <Label htmlFor="shortDesc">{t("adm_summary")}</Label>
-                                    <Textarea
+                                    <LocalizedTextInput
                                         id="shortDesc"
+                                        label={t("adm_summary")}
+                                        multiline
                                         rows={2}
                                         maxLength={500}
-                                        value={form.shortDesc}
-                                        onChange={(e) => setForm({ ...form, shortDesc: e.target.value })}
+                                        value={joinTranslations(form.shortDesc, languages.shortDesc)}
+                                        onChange={(next) => word("shortDesc", next)}
                                     />
                                     <p className="text-xs text-muted-foreground mt-1">{t("adm_summaryHint")}</p>
                                 </div>

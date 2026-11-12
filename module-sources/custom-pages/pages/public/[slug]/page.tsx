@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Card, CardContent, RichContent } from "@/core/sdk/ui";
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Loader2 } from "lucide-react";
@@ -33,13 +33,16 @@ export default function CustomPageView({ params }: PageProps) {
     const t = useTranslations("customPages");
     const commonT = useTranslations("common");
     const { slug } = use(params);
+    // The page in the reader's language, and the original where the admin
+    // wrote no translation.
+    const locale = useLocale();
     const [page, setPage] = useState<CustomPage | null>(null);
     const [loading, setLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
-        fetch(`/api/v1/custom-pages/${slug}`)
+        fetch(`/api/v1/custom-pages/${slug}?locale=${encodeURIComponent(locale)}`)
             .then((r) => {
                 if (cancelled) return;
                 if (!r.ok) { setNotFound(true); setLoading(false); return null; }
@@ -55,7 +58,7 @@ export default function CustomPageView({ params }: PageProps) {
                 setLoading(false);
             });
         return () => { cancelled = true; };
-    }, [slug]);
+    }, [slug, locale]);
 
     return (
         <ArrangedClientPage

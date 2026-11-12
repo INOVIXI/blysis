@@ -4,12 +4,12 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useCallback, useEffect, useState } from "react";
 import {
-    Badge, Button, Card, CardContent, Checkbox, ListControls,
-    Pagination, useConfirm, useLocalDateTime, useRowPicks,
+    Badge, Button, Card, CardContent, Checkbox, Label, ListControls,
+    Pagination, Textarea, useConfirm, useLocalDateTime, useRowPicks,
 } from "@/core/sdk/ui";
 import { deleteEach } from "@/core/sdk";
 import { AdminPageHeader, BulkBar, FilterChips, RowActions } from "@/core/sdk/admin";
-import { ChevronDown, ChevronUp, FileText, Loader2, Trash2 } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, FileText, Loader2, Trash2, X } from "lucide-react";
 import { SUBMISSION_STATES, type SubmissionState } from "../../../lib/validations";
 
 /**
@@ -30,6 +30,10 @@ import { SUBMISSION_STATES, type SubmissionState } from "../../../lib/validation
  * moves, the answers are shown under the questions that were asked rather
  * than under the column names they are stored in, and the list can be
  * searched for what somebody actually wrote.
+ *
+ * A form can also be an application, so a submission can be approved or
+ * rejected, one at a time or ticked in bulk, with a note the person who sent
+ * it reads beside the decision.
  */
 
 interface Field {
@@ -53,15 +57,29 @@ interface Submission {
     sentBy: string | null;
     data: Record<string, unknown>;
     status: string;
+    /** What the person who sent it reads beside the decision. */
+    reviewNote: string | null;
     createdAt: string;
     form: Form;
 }
 
-/** The state each row's button moves it to, and what that button says. */
+/**
+ * The inbox step each row's button moves it to, and what that button says.
+ * A decision is not part of the cycle; it has its own two buttons, and
+ * putting a decided row back in new is the way back from one.
+ */
 const NEXT_STATE: Record<SubmissionState, { to: SubmissionState; key: string }> = {
     new: { to: "read", key: "adm_markRead" },
     read: { to: "handled", key: "adm_markHandled" },
     handled: { to: "new", key: "adm_markNew" },
+    approved: { to: "new", key: "adm_markNew" },
+    rejected: { to: "new", key: "adm_markNew" },
+};
+
+const STATE_TONE: Partial<Record<string, "info" | "success" | "danger">> = {
+    new: "info",
+    approved: "success",
+    rejected: "danger",
 };
 
 export default function SubmissionsPage() {
@@ -83,6 +101,8 @@ export default function SubmissionsPage() {
     const [filterState, setFilterState] = useState("");
     const [search, setSearch] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(null);
+    // The note being written on the open row, so a decision can carry it.
+    const [noteDraft, setNoteDraft] = useState("");
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -161,19 +181,62 @@ export default function SubmissionsPage() {
         return raw === "true" ? t("adm_answerYes") : t("adm_answerNo");
     };
 
-    const move = async (sub: Submission) => {
-        const next = NEXT_STATE[sub.status as SubmissionState] ?? NEXT_STATE.new;
-        const res = await fetch(`/api/v1/forms/submissions/${sub.id}`, {
+    const patch = (id: string, body: { status?: SubmissionState; reviewNote?: string }) =>
+        fetch(`/api/v1/forms/submissions/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: next.to }),
+            body: JSON.stringify(body),
         });
+
+    /** Moves a row to `to`; a decision carries the note written beside it. */
+    const move = async (sub: Submission, to: SubmissionState) => {
+        const decision = to === "approved" || to === "rejected";
+        const res = await patch(sub.id, decision ? { status: to, reviewNote: noteDraft } : { status: to });
         if (!res.ok) {
             toast.error(t("adm_stateFailed"));
             return;
         }
-        toast.success(t("adm_stateChanged", { state: stateName(next.to) }));
+        toast.success(t("adm_stateChanged", { state: stateName(to) }));
         fetchSubmissions();
+    };
+
+    const saveNote = async (sub: Submission) => {
+        const res = await patch(sub.id, { reviewNote: noteDraft });
+        if (!res.ok) {
+            toast.error(t("adm_writeFailed"));
+            return;
+        }
+        toast.success(t("adm_noteSaved"));
+        fetchSubmissions();
+    };
+
+    const open = (sub: Submission) => {
+        if (expandedId === sub.id) {
+            setExpandedId(null);
+            return;
+        }
+        setExpandedId(sub.id);
+        setNoteDraft(sub.reviewNote ?? "");
+    };
+
+    /** Approves or rejects every ticked row, after asking. */
+    const decideMany = async (to: "approved" | "rejected") => {
+        const ok = await confirm({
+            title: stateName(to),
+            message: t(to === "approved" ? "adm_approveManyConfirm" : "adm_rejectManyConfirm", { count: picks.picked.size }),
+            confirmText: t(to === "approved" ? "adm_approve" : "adm_reject"),
+            variant: to === "rejected" ? "danger" : undefined,
+        });
+        if (!ok) return;
+        const { deleted: done, total: asked } = await deleteEach([...picks.picked], async (id) => {
+            const res = await patch(id, { status: to });
+            return res.ok;
+        });
+        picks.clear();
+        fetchSubmissions();
+        if (done === asked) toast.success(t("adm_stateChanged", { state: stateName(to) }));
+        else if (done === 0) toast.error(t("adm_stateFailed"));
+        else toast.error(t("adm_changedPartly", { done, total: asked }));
     };
 
     const remove = async (sub: Submission) => {
@@ -277,15 +340,21 @@ export default function SubmissionsPage() {
                         state={picks.headerState}
                         count={picks.picked.size}
                         onToggleAll={picks.toggleAll}
-                        actions={
+                        actions={<>
+                            <Button variant="outline" size="sm" onClick={() => decideMany("approved")}>
+                                <Check className="w-4 h-4" /> {t("adm_approve")}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => decideMany("rejected")}>
+                                <X className="w-4 h-4" /> {t("adm_reject")}
+                            </Button>
                             <Button variant="destructive" size="sm" onClick={removeMany}>
                                 <Trash2 className="w-4 h-4" /> {commonT("delete")} {picks.picked.size}
                             </Button>
-                        }
+                        </>}
                     />
                     <div className="space-y-2">
                         {submissions.map((sub) => {
-                            const open = expandedId === sub.id;
+                            const isOpen = expandedId === sub.id;
                             const next = NEXT_STATE[sub.status as SubmissionState] ?? NEXT_STATE.new;
                             return (
                                 <Card key={sub.id}>
@@ -304,17 +373,17 @@ export default function SubmissionsPage() {
                                             <button
                                                 type="button"
                                                 className="flex flex-1 min-w-0 items-center gap-3 text-left"
-                                                aria-expanded={open}
-                                                onClick={() => setExpandedId(open ? null : sub.id)}
+                                                aria-expanded={isOpen}
+                                                onClick={() => open(sub)}
                                             >
                                                 <span className="font-medium text-foreground truncate">{sub.form.title}</span>
-                                                <Badge tone={sub.status === "new" ? "info" : "neutral"}>
+                                                <Badge tone={STATE_TONE[sub.status] ?? "neutral"}>
                                                     {stateName(sub.status)}
                                                 </Badge>
                                                 <span className="text-xs text-muted-foreground whitespace-nowrap">
                                                     {formatDateTime(sub.createdAt)}
                                                 </span>
-                                                {open
+                                                {isOpen
                                                     ? <ChevronUp className="ml-auto w-4 h-4 shrink-0" aria-hidden="true" />
                                                     : <ChevronDown className="ml-auto w-4 h-4 shrink-0" aria-hidden="true" />}
                                             </button>
@@ -324,7 +393,7 @@ export default function SubmissionsPage() {
                                                 ]}
                                             />
                                         </div>
-                                        {open && (
+                                        {isOpen && (
                                             <div className="mt-3 pt-3 border-t border-border">
                                                 <div className="overflow-x-auto">
                                                     <table className="w-full text-sm">
@@ -340,8 +409,37 @@ export default function SubmissionsPage() {
                                                         </tbody>
                                                     </table>
                                                 </div>
+                                                <div className="mt-3">
+                                                    <Label htmlFor={`note-${sub.id}`}>{t("adm_reviewNote")}</Label>
+                                                    <p className="mb-1.5 text-xs text-muted-foreground">{t("adm_reviewNoteHelp")}</p>
+                                                    <Textarea
+                                                        id={`note-${sub.id}`}
+                                                        value={noteDraft}
+                                                        onChange={(e) => setNoteDraft(e.target.value)}
+                                                        maxLength={2000}
+                                                        rows={2}
+                                                    />
+                                                </div>
                                                 <div className="mt-3 flex flex-wrap items-center gap-3">
-                                                    <Button size="sm" variant="outline" onClick={() => move(sub)}>
+                                                    {sub.status !== "approved" && (
+                                                        <Button size="sm" onClick={() => move(sub, "approved")}>
+                                                            <Check className="w-4 h-4" /> {t("adm_approve")}
+                                                        </Button>
+                                                    )}
+                                                    {sub.status !== "rejected" && (
+                                                        <Button size="sm" variant="outline" onClick={() => move(sub, "rejected")}>
+                                                            <X className="w-4 h-4" /> {t("adm_reject")}
+                                                        </Button>
+                                                    )}
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        onClick={() => saveNote(sub)}
+                                                        disabled={noteDraft.trim() === (sub.reviewNote ?? "")}
+                                                    >
+                                                        {t("adm_saveNote")}
+                                                    </Button>
+                                                    <Button size="sm" variant="outline" onClick={() => move(sub, next.to)}>
                                                         {t(next.key)}
                                                     </Button>
                                                     <span className="text-xs text-muted-foreground">

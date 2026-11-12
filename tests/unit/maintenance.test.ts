@@ -86,6 +86,11 @@ describe("normalisation", () => {
         await expect(getMaintenanceConfig()).resolves.toMatchObject({ message: "" });
     });
 
+    it("keeps a message written per language", async () => {
+        setting.findUnique.mockResolvedValue({ value: { enabled: true, message: { default: "Bakımdayız", en: "Down for maintenance", de: "" } } });
+        await expect(getMaintenanceConfig()).resolves.toMatchObject({ message: { default: "Bakımdayız", en: "Down for maintenance" } });
+    });
+
     it("falls back to the default roles when the stored value is not an array", async () => {
         setting.findUnique.mockResolvedValue({ value: { enabled: true, allowedRoles: "admin" } });
         await expect(getMaintenanceConfig()).resolves.toMatchObject({ allowedRoles: ["admin"] });

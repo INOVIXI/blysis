@@ -13,6 +13,8 @@ import { z } from "zod";
 import { startPaymentSession, isPaymentProviderAvailable, listPaymentProviders } from "../../../lib/payments";
 import { resolveCurrency } from "../../../lib/currency";
 import { buyableNow, packageSnapshot } from "../../../lib/credit-packages";
+import { paymentFeeFor } from "../../../lib/payment-fee-server";
+import { grossUpForFee } from "../../../lib/pricing";
 
 const buyCreditsSchema = z.object({
     /** A loose amount, for a shop that sells credits by the unit. */
@@ -99,10 +101,11 @@ export async function POST(request: NextRequest) {
         // Without a named provider, take the first gateway that can hold this
         // currency. A site usually has one, and asking a buyer to choose
         // between none and one is not a choice.
-        const provider =
-            validation.data.provider ?? (await listPaymentProviders(currency))[0]?.id ?? "";
+        const methods = await listPaymentProviders(currency);
+        const provider = validation.data.provider ?? methods[0]?.id ?? "";
+        const method = methods.find((candidate) => candidate.id === provider);
 
-        if (!provider || !(await isPaymentProviderAvailable(provider, currency))) {
+        if (!provider || !method || !(await isPaymentProviderAvailable(provider, currency))) {
             return NextResponse.json(
                 {
                     error: "Payments are not configured. Please contact the site administrator.",
@@ -111,6 +114,26 @@ export async function POST(request: NextRequest) {
                 { status: 503 },
             );
         }
+
+        // The same fee an order through this method is charged, from the same
+        // function: a top-up through Stripe used to cost the shop Stripe's cut
+        // while an order through it did not.
+        const resolvedFee = await paymentFeeFor(method, currency);
+        if (!resolvedFee.ok) {
+            return NextResponse.json(
+                {
+                    error: "That payment method cannot be used right now: its fee cannot be converted into this currency.",
+                    code: resolvedFee.code,
+                },
+                { status: 503 },
+            );
+        }
+        const { charged, surcharge } = resolvedFee.fee
+            ? grossUpForFee(totalAmount, resolvedFee.fee)
+            : { charged: totalAmount, surcharge: 0 };
+        const lines = [{ name: description, quantity: 1, unitAmount: totalAmount }];
+        // English, like the line an order carries: see the checkout route.
+        if (surcharge > 0) lines.push({ name: "Payment processing fee", quantity: 1, unitAmount: surcharge });
 
         const buyer = await prisma.user.findUnique({
             where: { id: session.user.id },
@@ -121,7 +144,7 @@ export async function POST(request: NextRequest) {
         // buyer's id used to be the reference, and the credits travelled as
         // metadata, which most gateways cannot carry. See `credit-top-up.ts`.
         const topUp = await prisma.creditTopUp.create({
-            data: { userId: session.user.id, credits: amount, amount: totalAmount, currency, provider },
+            data: { userId: session.user.id, credits: amount, amount: totalAmount, fee: surcharge, currency, provider },
             select: { id: true },
         });
 
@@ -129,10 +152,10 @@ export async function POST(request: NextRequest) {
             provider,
             kind: "credits",
             reference: topUp.id,
-            amount: totalAmount,
+            amount: charged,
             currency,
             description,
-            lines: [{ name: description, quantity: 1, unitAmount: totalAmount }],
+            lines,
             customer: { userId: session.user.id, email: buyer?.email ?? null, name: buyer?.username ?? null },
             metadata: {
                 type: "credit_purchase",

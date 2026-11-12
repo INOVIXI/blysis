@@ -3,11 +3,11 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
-import { Button, Card, CardContent, Input, Label, Textarea, useConfirm, useFormRoute, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, Input, Label, LocalizedTextInput, useConfirm, useFormRoute, useLocalDateTime, NativeSelect, CheckboxField, buttonClassName } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
-import { ChevronDown, ChevronUp, Copy, Loader2, Plus, X, Trash2, FileText, Link as LinkIcon, Pencil } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, Loader2, Plus, RotateCcw, X, Trash2, FileText, Link as LinkIcon, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import { writeError } from "@/core/sdk";
+import { joinTranslations, splitTranslations, writeError, type LanguageTexts } from "@/core/sdk";
 import { AdminPageHeader, RowActions } from "@/core/sdk/admin";
 import { FIELD_TYPES, fieldNeeds, uniqueName } from "../../lib/validations";
 
@@ -27,7 +27,21 @@ import { FIELD_TYPES, fieldNeeds, uniqueName } from "../../lib/validations";
  * A question is a card now, and the card asks for what the type it holds
  * needs - `fieldNeeds` in the module's own lib, so the builder, the schema
  * and the public form agree about it rather than each deciding separately.
+ *
+ * Every word a visitor reads may be written per language. A question's
+ * translations ride on the question itself while it is edited (`words`), so
+ * moving it, or rewording its label (which renames it), takes them along;
+ * they are sent beside the form keyed by the question's final name, as
+ * `lib/form-text.ts` stores them.
  */
+
+/** A question's translations, beside its originals. A choice's sit at its index. */
+interface FieldWords {
+    label?: LanguageTexts;
+    help?: LanguageTexts;
+    placeholder?: LanguageTexts;
+    options?: LanguageTexts[];
+}
 
 interface FormField {
     name: string;
@@ -40,6 +54,7 @@ interface FormField {
     min?: number;
     max?: number;
     maxLength?: number;
+    words?: FieldWords;
 }
 
 interface Form {
@@ -50,7 +65,14 @@ interface Form {
     fields?: FormField[];
 }
 
+/** The current allowance period of the form being edited, from its own endpoint. */
+interface Allowance {
+    periodStart: string;
+    members: number;
+}
+
 export default function FormsPage() {
+    const formatDateTime = useLocalDateTime();
     const t = useTranslations("customForms");
     const commonT = useTranslations("common");
     const { confirm } = useConfirm();
@@ -63,9 +85,14 @@ export default function FormsPage() {
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [formWords, setFormWords] = useState<Record<string, LanguageTexts>>({});
     const [fields, setFields] = useState<FormField[]>([
         { name: "name", type: "text", label: "Name", required: true },
     ]);
+    const [requireSignIn, setRequireSignIn] = useState(false);
+    // The box's text, so an empty box is "no limit" rather than zero.
+    const [limit, setLimit] = useState("");
+    const [allowance, setAllowance] = useState<Allowance | null>(null);
 
     const fetchForms = useCallback(async () => {
         // The operator's answer: a form they closed is one this screen has to
@@ -85,20 +112,39 @@ export default function FormsPage() {
         if (!editingSlug) {
             setTitle("");
             setDescription("");
+            setFormWords({});
             setFields([{ name: "name", type: "text", label: "Name", required: true }]);
+            setRequireSignIn(false);
+            setLimit("");
+            setAllowance(null);
             return;
         }
         let cancelled = false;
-        fetch(`/api/v1/forms/${editingSlug}`)
+        // The builder's answer: closed forms too, with every language.
+        fetch(`/api/v1/forms/${editingSlug}?scope=admin`)
             .then((res) => (res.ok ? res.json() : Promise.reject(new Error("load"))))
             .then((data) => {
                 if (cancelled) return;
                 const f = data.form;
+                const stored: Record<string, LanguageTexts> = f.translations ?? {};
                 setTitle(f.title || "");
                 setDescription(f.description || "");
-                setFields(Array.isArray(f.fields) && f.fields.length > 0 ? f.fields : [{ name: "name", type: "text", label: "Name", required: true }]);
+                setFormWords({ title: stored.title ?? {}, description: stored.description ?? {} });
+                setFields(Array.isArray(f.fields) && f.fields.length > 0
+                    ? (f.fields as FormField[]).map((field) => withWords(field, stored))
+                    : [{ name: "name", type: "text", label: "Name", required: true }]);
+                setRequireSignIn(f.requireSignIn === true);
+                setLimit(typeof f.submissionLimit === "number" ? String(f.submissionLimit) : "");
             })
             .catch(() => { if (!cancelled) toast.error(t("adm_loadFormFailed")); });
+        fetch(`/api/v1/forms/${editingSlug}/allowances`)
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data: Allowance | null) => { if (!cancelled) setAllowance(data); })
+            .catch(() => {
+                if (cancelled) return;
+                setAllowance(null);
+                toast.error(t("adm_loadAllowanceFailed"));
+            });
         return () => { cancelled = true; };
     }, [editingSlug, t]);
 
@@ -120,9 +166,16 @@ export default function FormsPage() {
      * nothing said. The name is still readable, because somebody reads the
      * stored answers; it is the collision that is new.
      */
-    const renameFromLabel = (i: number, label: string) => {
+    const renameFromLabel = (i: number, value: unknown) => {
+        const { original: label, translations } = splitTranslations(value);
         const taken = fields.filter((_, idx) => idx !== i).map((f) => f.name);
-        updateField(i, { label, name: uniqueName(label, taken) });
+        updateField(i, { label, name: uniqueName(label, taken), words: { ...fields[i].words, label: translations } });
+    };
+
+    /** One of a question's own words, original and languages. */
+    const setWord = (i: number, part: "help" | "placeholder", value: unknown) => {
+        const { original, translations } = splitTranslations(value);
+        updateField(i, { [part]: original || undefined, words: { ...fields[i].words, [part]: translations } });
     };
 
     const removeField = (i: number) => {
@@ -142,15 +195,19 @@ export default function FormsPage() {
         const copy: FormField = {
             ...source,
             options: source.options ? [...source.options] : undefined,
+            words: source.words ? { ...source.words, options: source.words.options ? [...source.words.options] : undefined } : undefined,
             name: uniqueName(source.label || "field", fields.map((f) => f.name)),
         };
         setFields([...fields.slice(0, i + 1), copy, ...fields.slice(i + 1)]);
     };
 
-    const setOption = (i: number, optionIndex: number, value: string) => {
+    const setOption = (i: number, optionIndex: number, value: unknown) => {
+        const { original, translations } = splitTranslations(value);
         const options = [...(fields[i].options ?? [])];
-        options[optionIndex] = value;
-        updateField(i, { options });
+        const words = [...(fields[i].words?.options ?? [])];
+        options[optionIndex] = original;
+        words[optionIndex] = translations;
+        updateField(i, { options, words: { ...fields[i].words, options: words } });
     };
 
     const addOption = (i: number) => {
@@ -158,7 +215,10 @@ export default function FormsPage() {
     };
 
     const removeOption = (i: number, optionIndex: number) => {
-        updateField(i, { options: (fields[i].options ?? []).filter((_, idx) => idx !== optionIndex) });
+        updateField(i, {
+            options: (fields[i].options ?? []).filter((_, idx) => idx !== optionIndex),
+            words: { ...fields[i].words, options: (fields[i].words?.options ?? []).filter((_, idx) => idx !== optionIndex) },
+        });
     };
 
     /** A number box's value, kept undefined rather than stored as NaN. */
@@ -174,20 +234,46 @@ export default function FormsPage() {
             const res = await fetch(url, {
                 method,
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, description, fields }),
+                body: JSON.stringify({
+                    title,
+                    description,
+                    fields: fields.map(({ words: _words, ...field }) => field),
+                    translations: { title: formWords.title ?? {}, description: formWords.description ?? {}, ...wordsOf(fields) },
+                    requireSignIn,
+                    // A limit only means something with sign-in; the
+                    // endpoint refuses the pair otherwise.
+                    submissionLimit: requireSignIn && limit.trim() !== "" ? Number(limit) : null,
+                }),
             });
             if (res.ok) {
                 toast.success(editingSlug ? t("adm_formSaved") : t("adm_formCreated"));
                 await fetchForms();
                 closeForm();
             } else {
-                toast.error(t("adm_writeFailed"));
+                const said = await res.json().catch(() => null) as { code?: string } | null;
+                toast.error(said?.code === "limit_needs_sign_in" ? t("adm_limitNeedsSignIn") : t("adm_writeFailed"));
             }
         } catch {
             toast.error(t("adm_writeFailed"));
         } finally {
             setSaving(false);
         }
+    };
+
+    /** Every member's allowance back; what they sent stays, uncounted. */
+    const resetAllowances = async () => {
+        if (!editingSlug) return;
+        const ok = await confirm({
+            title: t("adm_resetAllowances"),
+            message: t("adm_resetAllowancesConfirm"),
+            confirmText: t("adm_resetAllowances"),
+        });
+        if (!ok) return;
+        const res = await fetch(`/api/v1/forms/${editingSlug}/allowances`, { method: "POST" });
+        const failed = await writeError(res, t("adm_writeFailed"), t);
+        if (failed) { toast.error(failed); return; }
+        setAllowance(await res.json());
+        toast.success(t("adm_allowancesReset"));
     };
 
     const deleteForm = async (slug: string) => {
@@ -221,12 +307,65 @@ export default function FormsPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <Label>{`${t("adm_formTitle")} *`}</Label>
-                                    <Input aria-label={t("adm_formTitle")} value={title} onChange={(e) => setTitle(e.target.value)} required placeholder={t("adm_titlePlaceholder")} />
+                                    <LocalizedTextInput
+                                        label={t("adm_formTitle")}
+                                        value={joinTranslations(title, formWords.title)}
+                                        onChange={(next) => {
+                                            const { original, translations } = splitTranslations(next);
+                                            setTitle(original);
+                                            setFormWords({ ...formWords, title: translations });
+                                        }}
+                                        required
+                                        placeholder={t("adm_titlePlaceholder")}
+                                    />
                                 </div>
                                 <div>
                                     <Label>{t("adm_description")}</Label>
-                                    <Input aria-label={t("adm_description")} value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("adm_descriptionPlaceholder")} />
+                                    <LocalizedTextInput
+                                        label={t("adm_description")}
+                                        value={joinTranslations(description, formWords.description)}
+                                        onChange={(next) => {
+                                            const { original, translations } = splitTranslations(next);
+                                            setDescription(original);
+                                            setFormWords({ ...formWords, description: translations });
+                                        }}
+                                        placeholder={t("adm_descriptionPlaceholder")}
+                                    />
                                 </div>
+                            </div>
+
+                            <div className="space-y-3 rounded-lg border border-border p-4">
+                                <Label>{t("adm_whoMaySend")}</Label>
+                                <CheckboxField
+                                    checked={requireSignIn}
+                                    onChange={(e) => setRequireSignIn(e.target.checked)}
+                                    label={t("adm_requireSignIn")}
+                                />
+                                <div>
+                                    <Label htmlFor="form-submission-limit">{t("adm_submissionLimit")}</Label>
+                                    <Input
+                                        id="form-submission-limit"
+                                        type="number"
+                                        min={1}
+                                        max={1000}
+                                        value={limit}
+                                        onChange={(e) => setLimit(e.target.value)}
+                                        disabled={!requireSignIn}
+                                        className="max-w-40"
+                                    />
+                                    <p className="mt-1 text-xs text-muted-foreground">{t("adm_submissionLimitHelp")}</p>
+                                </div>
+                                {allowance && (
+                                    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
+                                        <div className="text-sm text-muted-foreground">
+                                            <p>{t("adm_periodStarted", { date: formatDateTime(allowance.periodStart) })}</p>
+                                            <p>{t("adm_periodMembers", { count: allowance.members })}</p>
+                                        </div>
+                                        <Button type="button" variant="outline" size="sm" onClick={resetAllowances}>
+                                            <RotateCcw className="w-3 h-3" /> {t("adm_resetAllowances")}
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
 
                             <div>
@@ -263,11 +402,11 @@ export default function FormsPage() {
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                     <div>
                                                         <Label>{t("adm_fieldLabel")}</Label>
-                                                        <Input
-                                                            value={field.label}
-                                                            onChange={(e) => renameFromLabel(i, e.target.value)}
+                                                        <LocalizedTextInput
+                                                            label={t("adm_fieldLabel")}
+                                                            value={joinTranslations(field.label, field.words?.label)}
+                                                            onChange={(next) => renameFromLabel(i, next)}
                                                             placeholder={t("adm_fieldLabel")}
-                                                            aria-label={t("adm_fieldLabel")}
                                                         />
                                                         {/* The key the answers are filed under. An
                                                             operator reading the stored answers meets
@@ -309,11 +448,11 @@ export default function FormsPage() {
 
                                                 <div>
                                                     <Label>{t("adm_fieldHelp")}</Label>
-                                                    <Input
-                                                        value={field.help ?? ""}
-                                                        onChange={(e) => updateField(i, { help: e.target.value || undefined })}
+                                                    <LocalizedTextInput
+                                                        label={t("adm_fieldHelp")}
+                                                        value={joinTranslations(field.help ?? "", field.words?.help)}
+                                                        onChange={(next) => setWord(i, "help", next)}
                                                         placeholder={t("adm_fieldHelpPlaceholder")}
-                                                        aria-label={t("adm_fieldHelp")}
                                                     />
                                                 </div>
 
@@ -322,13 +461,15 @@ export default function FormsPage() {
                                                         <Label>{t("adm_options")}</Label>
                                                         <div className="space-y-2">
                                                             {(field.options ?? []).map((option, optionIndex) => (
-                                                                <div key={optionIndex} className="flex items-center gap-2">
-                                                                    <Input
-                                                                        value={option}
-                                                                        onChange={(e) => setOption(i, optionIndex, e.target.value)}
-                                                                        placeholder={t("adm_optionPlaceholder")}
-                                                                        aria-label={t("adm_optionPlaceholder")}
-                                                                    />
+                                                                <div key={optionIndex} className="flex items-start gap-2">
+                                                                    <div className="flex-1">
+                                                                        <LocalizedTextInput
+                                                                            label={t("adm_optionPlaceholder")}
+                                                                            value={joinTranslations(option, field.words?.options?.[optionIndex])}
+                                                                            onChange={(next) => setOption(i, optionIndex, next)}
+                                                                            placeholder={t("adm_optionPlaceholder")}
+                                                                        />
+                                                                    </div>
                                                                     <Button
                                                                         type="button"
                                                                         variant="ghost"
@@ -358,10 +499,10 @@ export default function FormsPage() {
                                                 {needs.placeholder && (
                                                     <div>
                                                         <Label>{field.type === "checkbox" ? t("adm_checkboxCaption") : t("adm_fieldPlaceholder")}</Label>
-                                                        <Input
-                                                            value={field.placeholder ?? ""}
-                                                            onChange={(e) => updateField(i, { placeholder: e.target.value || undefined })}
-                                                            aria-label={field.type === "checkbox" ? t("adm_checkboxCaption") : t("adm_fieldPlaceholder")}
+                                                        <LocalizedTextInput
+                                                            label={field.type === "checkbox" ? t("adm_checkboxCaption") : t("adm_fieldPlaceholder")}
+                                                            value={joinTranslations(field.placeholder ?? "", field.words?.placeholder)}
+                                                            onChange={(next) => setWord(i, "placeholder", next)}
                                                         />
                                                     </div>
                                                 )}
@@ -475,4 +616,37 @@ export default function FormsPage() {
             </div>
         </>
     );
+}
+
+/** A stored question with its translations, as `lib/form-text.ts` keyed them, on it. */
+function withWords(field: FormField, stored: Record<string, LanguageTexts>): FormField {
+    const key = `field.${field.name}`;
+    return {
+        ...field,
+        words: {
+            label: stored[`${key}.label`] ?? {},
+            help: stored[`${key}.help`] ?? {},
+            placeholder: stored[`${key}.placeholder`] ?? {},
+            options: (field.options ?? []).map((option) => stored[`${key}.option.${option}`] ?? {}),
+        },
+    };
+}
+
+/**
+ * Every question's translations, keyed by the name it is saved under. A word
+ * with no original is sent empty, which clears what it had: a caption the
+ * builder dropped with a type change has nothing left to translate.
+ */
+function wordsOf(fields: readonly FormField[]): Record<string, LanguageTexts> {
+    const out: Record<string, LanguageTexts> = {};
+    for (const field of fields) {
+        const key = `field.${field.name}`;
+        out[`${key}.label`] = field.words?.label ?? {};
+        out[`${key}.help`] = field.help ? field.words?.help ?? {} : {};
+        out[`${key}.placeholder`] = field.placeholder ? field.words?.placeholder ?? {} : {};
+        (field.options ?? []).forEach((option, at) => {
+            if (option !== "") out[`${key}.option.${option}`] = field.words?.options?.[at] ?? {};
+        });
+    }
+    return out;
 }

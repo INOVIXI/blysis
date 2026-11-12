@@ -47,3 +47,13 @@ export const wheelSchema = z.object({
     isActive: z.boolean().optional(),
     order: z.number().int().min(0).max(10_000).optional(),
 });
+
+/**
+ * Whose translations these are, in core's table, and the fields that have
+ * them: each language held to its column's own limit. A turn's log keeps the
+ * prize's original name, as an order keeps its items' names.
+ */
+export const WHEEL_TEXT = { owner: "wheel", entity: "wheel" };
+export const WHEEL_TRANSLATED_FIELDS = { name: 80, description: 300 };
+export const PRIZE_TEXT = { owner: "wheel", entity: "prize" };
+export const PRIZE_TRANSLATED_FIELDS = { name: 100 };

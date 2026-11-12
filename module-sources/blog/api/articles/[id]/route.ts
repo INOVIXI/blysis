@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
-import { hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, deleteContentTranslations, hasPermission, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { blogArticleSchema } from "../../../lib/validations";
+import { ARTICLE_FIELDS, ARTICLE_TEXT, articlesIn, localeOf } from "../../../lib/blog-text";
 
 interface RouteParams {
     params: Promise<{ id: string }>;
 }
 
-// GET /api/v1/blog/articles/[id] - Get single article
+/**
+ * GET /api/v1/blog/articles/[id] - Get single article.
+ *
+ * `?locale=` reads it, and its category, in the reader's language.
+ * `?scope=admin` is the editor's answer: the originals with every language
+ * beside them, refused to anybody who may not edit the article.
+ */
 export async function GET(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
 
@@ -43,7 +50,16 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
-    return NextResponse.json(article);
+    if (new URL(request.url).searchParams.get("scope") === "admin") {
+        if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const mayEdit = article.authorId === session.user.id || await hasPermission(session.user.id, "blog.edit-any");
+        if (!mayEdit) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        const [withLanguages] = await attachContentTranslations(prisma, ARTICLE_TEXT, [article]);
+        return NextResponse.json(withLanguages);
+    }
+
+    const [read] = await articlesIn([article], localeOf(request));
+    return NextResponse.json(read);
 }
 
 // PATCH /api/v1/blog/articles/[id] - Update article (author or admin)
@@ -89,6 +105,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             { status: 400 }
         );
     }
+
+    const translations = contentTranslationsInput(body, ARTICLE_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
 
     const { title, slug: requestedSlug, excerpt, content, coverImage, status, publishedAt, publishAt, categoryId, tags } = validation.data;
 
@@ -149,25 +168,29 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         };
     }
 
-    const updatedArticle = await prisma.blogArticle.update({
-        where: { id },
-        data: {
-            title,
-            slug,
-            excerpt,
-            content: content !== undefined ? content : undefined,
-            coverImage,
-            status: effectiveStatus,
-            publishedAt: effectivePublishedAt,
-            publishAt: publishAtDate,
-            categoryId,
-            ...tagUpdate,
-        },
-        include: {
-            author: { select: { id: true, username: true, avatar: true } },
-            category: true,
-            tags: true,
-        },
+    const updatedArticle = await prisma.$transaction(async (tx) => {
+        const updated = await tx.blogArticle.update({
+            where: { id },
+            data: {
+                title,
+                slug,
+                excerpt,
+                content: content !== undefined ? content : undefined,
+                coverImage,
+                status: effectiveStatus,
+                publishedAt: effectivePublishedAt,
+                publishAt: publishAtDate,
+                categoryId,
+                ...tagUpdate,
+            },
+            include: {
+                author: { select: { id: true, username: true, avatar: true } },
+                category: true,
+                tags: true,
+            },
+        });
+        if (translations.value) await saveContentTranslations(tx, { ...ARTICLE_TEXT, recordId: id }, translations.value);
+        return updated;
     });
 
     const { doActionAsync } = await import("@/core/sdk");
@@ -204,7 +227,10 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     const { recordRevision } = await import("@/core/sdk/server");
     await recordRevision("blog.article", id, article, "delete", session.user.id);
 
-    await prisma.blogArticle.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.blogArticle.delete({ where: { id } });
+        await deleteContentTranslations(tx, ARTICLE_TEXT, [id]);
+    });
 
     const { doActionAsync } = await import("@/core/sdk");
     await doActionAsync("blog.article.deleted", article);

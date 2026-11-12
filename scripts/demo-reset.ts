@@ -19,7 +19,9 @@
  *
  *   1. `seed-demo --clean` takes back every row the demo seed wrote. It works
  *      from a ledger and checks each row still exists, so a visitor who
- *      deleted something does not stop the sweep.
+ *      deleted something does not stop the sweep. The ledger is a file, at
+ *      SEED_LEDGER_PATH: a reset run in a fresh container keeps it on a
+ *      volume, and step 3 stops rather than seed over a demo it has lost.
  *   2. `prisma/seed.ts` makes sure the roles, the permissions and the site's
  *      own settings are there. It is idempotent and leaves an existing
  *      administrator's password alone.
@@ -42,7 +44,7 @@
  */
 import "dotenv/config";
 import { spawnSync } from "node:child_process";
-import { detectSchemaDrift, writeSchemaState } from "../src/core/lib/build-state";
+import { computeModuleFingerprint, detectSchemaDrift, writeSchemaState } from "../src/core/lib/build-state";
 import { toolCommand } from "../src/core/lib/tool-command";
 
 // `--force` on both seed-demo steps, because a demo host runs the published
@@ -80,8 +82,9 @@ function main(): void {
 
     process.stdout.write("\n── the generated code, for the modules installed ──\n");
     if (detectSchemaDrift()) {
+        const moduleFingerprint = computeModuleFingerprint();
         run(["scripts/merge-schemas.ts"]);
-        writeSchemaState();
+        writeSchemaState(process.cwd(), moduleFingerprint);
     }
     // Every registry, not only the hooks: a seed may reach any of them, and
     // regenerating is idempotent and quick.

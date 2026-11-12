@@ -298,14 +298,35 @@ html[data-mode="dark"] {
   padding-bottom: 32px;
 }
 
+/*
+ * A grid rather than a wrapping row. As a flex row the brand's 300px and five
+ * 140px columns, with their gaps, came to more than the container, so the
+ * fifth column of an operator's footer dropped onto a second row beside
+ * nothing. Narrow, the brand takes its own row and the columns share the next
+ * ones; wide, every column gets an equal share of one row beside the brand,
+ * however many the operator made.
+ */
 .kt-foot-top {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 40px 56px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 40px 32px;
 }
 
 .kt-foot-brand {
-  flex: 2 1 300px;
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 64rem) {
+  .kt-foot-top {
+    grid-template-columns: minmax(240px, 1.6fr);
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 40px 40px;
+  }
+
+  .kt-foot-brand {
+    grid-column: auto;
+  }
 }
 
 .kt-foot-name {
@@ -342,7 +363,7 @@ html[data-mode="dark"] {
 }
 
 .kt-foot-col {
-  flex: 1 1 140px;
+  min-width: 0;
 }
 
 .kt-foot-col h2 {
@@ -1752,9 +1773,15 @@ html[data-mode="dark"] {
   box-shadow: none;
 }
 
+/* As specific as the shadow every block's card stands on: a topic is a
+   block, and that shadow left the empty card floating around the author. */
+.kt-site [data-post-card].blysis-card.bg-card.rounded-xl {
+  box-shadow: none;
+}
+
 .kt-site [data-author-column] {
   gap: 8px;
-  padding: 4px 18px 0 0;
+  padding: 4px 0 18px;
   border: 0;
   background: none;
 }
@@ -1771,16 +1798,29 @@ html[data-mode="dark"] {
   box-shadow: var(--kt-shadow);
 }
 
+/* The bubble points at its author: up while the author sits above it, left
+   once the block is wide enough for the forum's column (its `@2xl`). */
 .kt-site [data-author-column] + *::before {
   content: "";
   position: absolute;
-  left: -9px;
-  top: 28px;
+  left: 22px;
+  top: -9px;
   width: 20px;
   height: 20px;
   border-radius: 4px;
   background: var(--blysis-color-card);
   transform: rotate(45deg);
+}
+
+@container (min-width: 42rem) {
+  .kt-site [data-author-column] {
+    padding: 4px 18px 0 0;
+  }
+
+  .kt-site [data-author-column] + *::before {
+    left: -9px;
+    top: 28px;
+  }
 }
 
 /* A member's profile: a band of sky and island, their picture standing on it. */

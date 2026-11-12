@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface SlideItem {
@@ -15,15 +15,22 @@ interface SlideItem {
 export function SliderWidget() {
     const t = useTranslations("common");
     const sliderT = useTranslations("slider");
+    // The endpoint reads each slide in this language, and the original where
+    // the admin wrote none.
+    const locale = useLocale();
     const [slides, setSlides] = useState<SlideItem[]>([]);
     const [current, setCurrent] = useState(0);
 
     useEffect(() => {
-        fetch("/api/v1/slider")
+        // A reader who switched language before the answer came back is not
+        // shown the slides in the one they left.
+        let active = true;
+        fetch(`/api/v1/slider?locale=${encodeURIComponent(locale)}`)
             .then((r) => r.json())
-            .then((d) => setSlides(d.items || []))
+            .then((d) => { if (active) setSlides(d.items || []); })
             .catch(() => {});
-    }, []);
+        return () => { active = false; };
+    }, [locale]);
 
     const next = useCallback(() => {
         setCurrent((c) => (c + 1) % slides.length);

@@ -97,7 +97,12 @@
     "welcomeTitle": "Bienvenido a tu comunidad",
     "welcomeVisitorHint": "Usa la navegación de arriba para explorar la comunidad.",
     "writeContentHere": "Escribe tu contenido aquí...",
-    "statsLabel": "El sitio de un vistazo"
+    "statsLabel": "El sitio de un vistazo",
+    "localizedText_translations": "Traducciones ({filled} de {total})",
+    "localizedText_fallbackHint": "Un idioma vacío muestra el texto original.",
+    "localizedText_filled": "Traducido",
+    "localizedText_empty": "Muestra el original",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Página no encontrada",
@@ -163,7 +168,10 @@
     "twoFactorEnabled": "Verificación en dos pasos activada",
     "userProfileUpdated": "{username} actualizó su perfil",
     "userRegistered": "se unió a la comunidad",
-    "viewAll": "Ver todo"
+    "viewAll": "Ver todo",
+    "auditSignInMethodConnect": "Conectó un método de inicio de sesión",
+    "auditSignInMethodDisconnect": "Desconectó un método de inicio de sesión",
+    "auditSignInMethodRemove": "Quitó un método de inicio de sesión de un miembro"
   },
   "nav": {
     "adminPanel": "Panel de administración",
@@ -537,6 +545,9 @@
     "generalSettings_identityPasswordHint": "Se pide antes de cambiar un nombre o un correo, para que una pantalla prestada no pueda quedarse con la cuenta. Una cuenta que inicia sesión con un proveedor no tiene contraseña y no se le pide.",
     "generalSettings_memberAvatarUploads": "Fotos de perfil",
     "generalSettings_memberAvatarUploadsHint": "Lo que un miembro puede poner en su perfil: subir un archivo, indicar uno alojado en otro lugar o no poner ninguno. Las subidas son solo imágenes, de 2 MB como máximo, con un límite por miembro.",
+    "generalSettings_memberAvatarProvider": "Servicio de imágenes para miembros",
+    "generalSettings_memberAvatarProviderHint": "Si un miembro no tiene imagen propia, o las imágenes de miembros están desactivadas, su cara se obtiene de este servicio por su nombre de usuario. Si el servicio no encuentra imagen, se muestran las iniciales.",
+    "generalSettings_avatarProviderNone": "Ninguno: iniciales",
     "generalSettings_memberContent": "Contenido de los miembros",
     "generalSettings_memberIdentity": "Identidad de los miembros",
     "generalSettings_minPasswordLength": "Longitud mínima de la contraseña",
@@ -985,6 +996,8 @@
     "siteSettings_contactEmail": "Correo de contacto",
     "siteSettings_description": "Descripción",
     "siteSettings_general": "General",
+    "siteSettings_icon": "Icono del sitio",
+    "siteSettings_iconHint": "La imagen pequeña de la pestaña del navegador y de la pantalla de inicio de un teléfono. Una imagen cuadrada se ve mejor. Si se deja vacío, se usa el icono predeterminado.",
     "siteSettings_logo": "Logotipo",
     "siteSettings_saveFailed": "No se pudieron guardar los ajustes",
     "siteSettings_saveSettings": "Guardar ajustes",
@@ -1356,7 +1369,21 @@
     "placeholder_noValue": "sin valor ahora mismo",
     "placeholder_unknown": "Nada en este sitio responde a {names}, así que los visitantes ven un guion.",
     "placeholder_refused": "Nada en este sitio responde a {names}, así que el texto no se guardará.",
-    "placeholder_site_name": "Nombre del sitio"
+    "placeholder_site_name": "Nombre del sitio",
+    "users_signInMethods": "Métodos de inicio de sesión",
+    "users_signInMethodsPassword": "Tiene contraseña.",
+    "users_signInMethodsNoPassword": "Sin contraseña: solo inicia sesión con los métodos de abajo.",
+    "users_signInMethodsNone": "Ningún método de inicio de sesión conectado.",
+    "users_signInMethodConnectedOn": "Conectado el {date}",
+    "users_signInMethodRemove": "Quitar",
+    "users_signInMethodRemoveTitle": "¿Quitar {provider}?",
+    "users_signInMethodRemoveMessage": "{username} ya no podrá iniciar sesión con {provider}.",
+    "users_signInMethodRemoved": "{provider} quitado.",
+    "users_signInMethodLast": "Es la única forma de entrar del miembro, así que no se quitó.",
+    "generalSettings_signInMethodSignUps": "Cuentas nuevas desde métodos de inicio de sesión",
+    "generalSettings_signInMethodSignUpsHint": "Si solo los miembros conectados pueden usarlos, iniciar sesión con un proveedor solo funciona para quienes lo conectaron desde su página de cuenta, y nadie obtiene una cuenta nueva así.",
+    "generalSettings_signInMethodSignUpsOpen": "Crear una cuenta para cualquier persona nueva",
+    "generalSettings_signInMethodSignUpsClosed": "Solo miembros conectados"
   },
   "footer": {
     "quickLinks": "Enlaces rápidos",
@@ -1443,7 +1470,22 @@
     "username": "Nombre de usuario",
     "usernameCannotChange": "Este sitio no permite a los miembros cambiar su nombre de usuario.",
     "viewPublicProfile": "Ver perfil público",
-    "youSaid": "Tú:"
+    "youSaid": "Tú:",
+    "signInMethods": "Métodos de inicio de sesión",
+    "signInMethods_hint": "Conecta una cuenta que tengas en otro sitio para iniciar sesión aquí con ella. Tu usuario y contraseña siguen funcionando.",
+    "signInMethods_none": "Este sitio no ofrece otros métodos de inicio de sesión.",
+    "signInMethods_connectedOn": "Conectado el {date}",
+    "signInMethods_notConnected": "No conectado",
+    "signInMethods_connect": "Conectar",
+    "signInMethods_connectLabel": "Conectar {provider}",
+    "signInMethods_disconnect": "Desconectar",
+    "signInMethods_disconnectTitle": "¿Desconectar {provider}?",
+    "signInMethods_disconnectMessage": "Ya no podrás iniciar sesión con {provider}. Puedes volver a conectarlo más tarde.",
+    "signInMethods_connected": "{provider} está conectado. Desde ahora puedes iniciar sesión con él.",
+    "signInMethods_disconnected": "{provider} está desconectado.",
+    "signInMethods_failed": "No funcionó. Inténtalo de nuevo.",
+    "signInMethods_errTaken": "Esa cuenta ya está conectada a otro miembro aquí. No se ha movido a la tuya.",
+    "signInMethods_errNotStarted": "No se conectó nada. Empieza en esta página con Conectar y luego inicia sesión en el proveedor."
   },
   "auth": {
     "accountLocked": "Demasiados intentos fallidos. Tu cuenta está bloqueada temporalmente. Revisa tu correo o inténtalo de nuevo en unos minutos.",
@@ -1500,7 +1542,13 @@
       "username_taken": "Ese nombre de usuario ya está en uso.",
       "username_too_short": "Ese nombre de usuario es demasiado corto para este sitio. Elige uno más largo.",
       "weak_password": "Esa contraseña no cumple los requisitos. Elige una más segura.",
-      "wrong_password": "Esa contraseña no es correcta."
+      "wrong_password": "Esa contraseña no es correcta.",
+      "already_connected": "Ya tienes conectada una cuenta de este proveedor. Desconéctala primero.",
+      "impersonating": "No se pueden conectar métodos de inicio de sesión mientras actúas como otro miembro.",
+      "last_sign_in_method": "Es la única forma de entrar en tu cuenta, así que no se puede quitar. Conecta otro método primero.",
+      "session_unknown": "Cierra sesión, vuelve a iniciarla y luego conecta.",
+      "unknown_provider": "Ese método de inicio de sesión no está disponible en este sitio.",
+      "sign_in_method_not_found": "Ese método de inicio de sesión no está conectado."
     },
     "errorAccessDenied": "Acceso denegado. No tienes permiso para iniciar sesión.",
     "errorConfiguration": "Error de configuración del servidor. Ponte en contacto con el administrador del sitio.",
@@ -1559,7 +1607,8 @@
     "demoAsAdmin": "Como administrador",
     "demoAsMember": "Como miembro",
     "demoResetNote": "Todo lo de aquí se restablece cada hora, así que lo que hagas no estropeará la experiencia del siguiente visitante. Algunas acciones están desactivadas: enviar correos, pagos reales y cualquier cosa que bloquee la cuenta que estás usando.",
-    "demoFillFor": "Rellena los datos {who}"
+    "demoFillFor": "Rellena los datos {who}",
+    "errorConnectFirst": "Este inicio de sesión no está conectado a ninguna cuenta aquí. Entra con tu usuario y contraseña y luego conéctalo desde tu página de cuenta."
   },
   "search": {
     "title": "Buscar",

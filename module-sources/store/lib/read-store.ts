@@ -22,6 +22,7 @@ import { PUBLIC_PRODUCT } from "./public-product";
 import { availabilityOf, effectivePrice } from "./availability";
 import { pricedForCampaign, runningCampaignEntries } from "./campaign-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "./availability-server";
+import { categoriesIn, productsIn, productsTranslatedAs } from "./store-text";
 
 export const PRODUCTS_PER_PAGE = 12;
 
@@ -41,8 +42,11 @@ export interface StoreCategory {
     children: { id: string; name: string; slug: string; image: string | null; description: string | null }[];
 }
 
-/** Every section a shopper may see, roots first with their children attached. */
-export async function readStoreCategories(): Promise<StoreCategory[]> {
+/**
+ * Every section a shopper may see, roots first with their children attached,
+ * named in `locale` and in the operator's original where it has none.
+ */
+export async function readStoreCategories(locale = ""): Promise<StoreCategory[]> {
     const rows = await prisma.category.findMany({
         where: { isActive: true },
         orderBy: { order: "asc" },
@@ -56,7 +60,7 @@ export async function readStoreCategories(): Promise<StoreCategory[]> {
             },
         },
     });
-    return rows;
+    return categoriesIn(rows, locale);
 }
 
 /**
@@ -134,10 +138,15 @@ export async function readStoreProducts(options: {
     exceptId?: string;
     /** Fewer than a page, for a front that shows a taste of a shelf. */
     perPage?: number;
+    /** The shopper's language, for the products' and shelves' names. */
+    locale?: string;
 }): Promise<StoreProducts> {
     const now = new Date();
     const page = Math.max(1, Math.floor(options.page) || 1);
     const perPage = options.perPage ?? PRODUCTS_PER_PAGE;
+    // A product found by its name in another language too: the shopper may
+    // know it by the English name of a product written in Turkish.
+    const translated = options.search ? await productsTranslatedAs(options.search) : [];
     const where = {
         ...onTheShelfWhere(now),
         ...(options.categorySlug ? { category: { slug: options.categorySlug } } : {}),
@@ -146,7 +155,7 @@ export async function readStoreProducts(options: {
         // Inside an AND: the shelf's own window is the top-level OR, and a
         // search spread beside it replaced it.
         ...(options.search
-            ? { AND: [{ OR: textContains(["name", "description"], options.search) }] }
+            ? { AND: [{ OR: [...textContains(["name", "description"], options.search), ...(translated.length > 0 ? [{ id: { in: translated } }] : [])] }] }
             : {}),
     };
 
@@ -175,7 +184,10 @@ export async function readStoreProducts(options: {
     const session = await auth();
     const ownedIds = await creditingPurchases(session?.user?.id);
 
-    const visible = hideShut(products as unknown as ProductRow[], now, zone);
+    // In the shopper's language before anything is worked out from the rows,
+    // so every line below reads the words the card will draw.
+    const named = await productsIn(products, options.locale ?? "");
+    const visible = hideShut(named as unknown as ProductRow[], now, zone);
     // The rungs of every ladder on this page, priced the way the cards are.
     // A credit is worked out against what is on the shelf, so it is the same
     // list the reader is looking at.
@@ -244,8 +256,8 @@ export async function readStoreProducts(options: {
  * The product the shop is pushing: the newest one marked featured that is on
  * the shelf, priced the way its card is. Null when nothing is featured.
  */
-export async function readFeatured(): Promise<ShelfProduct | null> {
-    const { products } = await readStoreProducts({ featured: true, sort: "newest", page: 1, perPage: 1 });
+export async function readFeatured(locale = ""): Promise<ShelfProduct | null> {
+    const { products } = await readStoreProducts({ featured: true, sort: "newest", page: 1, perPage: 1, locale });
     return products[0] ?? null;
 }
 
@@ -261,18 +273,18 @@ export interface FrontShelf {
  * how many it holds. A section with nothing on its own shelf, one whose
  * products all sit in its children for one, is left out.
  */
-export async function readShelves(categories: StoreCategory[], limit: number): Promise<FrontShelf[]> {
+export async function readShelves(categories: StoreCategory[], limit: number, locale = ""): Promise<FrontShelf[]> {
     const roots = categories.filter((c) => c.parentId === null);
     const shelves = await Promise.all(roots.map(async (category) => {
-        const { products, total } = await readStoreProducts({ categorySlug: category.slug, sort: "newest", page: 1, perPage: limit });
+        const { products, total } = await readStoreProducts({ categorySlug: category.slug, sort: "newest", page: 1, perPage: limit, locale });
         return { category, products, total };
     }));
     return shelves.filter((s) => s.products.length > 0);
 }
 
 /** The other products on a product's shelf, newest first; none for one with no shelf. */
-export async function readRelated(product: { id: string; categorySlug: string | null }, limit: number): Promise<ShelfProduct[]> {
+export async function readRelated(product: { id: string; categorySlug: string | null }, limit: number, locale = ""): Promise<ShelfProduct[]> {
     if (!product.categorySlug) return [];
-    const { products } = await readStoreProducts({ categorySlug: product.categorySlug, exceptId: product.id, sort: "newest", page: 1, perPage: limit });
+    const { products } = await readStoreProducts({ categorySlug: product.categorySlug, exceptId: product.id, sort: "newest", page: 1, perPage: limit, locale });
     return products;
 }

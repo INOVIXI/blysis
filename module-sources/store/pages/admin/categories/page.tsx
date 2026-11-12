@@ -4,7 +4,8 @@
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Button, Card, CardContent, CheckboxField, UrlOrFile, Input, Label, RichTextEditor, useConfirm, useFormRoute, NativeSelect, buttonClassName } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CheckboxField, UrlOrFile, Input, Label, LocalizedTextInput, useConfirm, useFormRoute, NativeSelect, buttonClassName } from "@/core/sdk/ui";
+import { joinTranslations, splitTranslations, type LanguageTexts } from "@/core/sdk";
 import { Link } from "@/core/sdk/navigation";
 import { ArrowLeft, FolderOpen, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -37,6 +38,8 @@ interface Category {
     gameIcon?: string | null;
     children?: Category[];
     _count?: { products: number };
+    /** Every language of its name and description, from the operator's list. */
+    translations?: Record<string, LanguageTexts>;
 }
 
 export default function AdminStoreCategoriesPage() {
@@ -81,8 +84,10 @@ export default function AdminStoreCategoriesPage() {
             setForm(EMPTY_CATEGORY);
             return;
         }
+        // The list holds every shelf at the top with its languages; a child
+        // inside its parent carries neither, so it is the fallback.
         const flat = categories.flatMap((c) => [c, ...(c.children ?? [])]);
-        const row = flat.find((c) => c.id === editingId);
+        const row = categories.find((c) => c.id === editingId) ?? flat.find((c) => c.id === editingId);
         if (!row) return;
         setForm({
             name: row.name,
@@ -94,6 +99,10 @@ export default function AdminStoreCategoriesPage() {
             visibleAfterProductIds: row.visibleAfterProductIds ?? [],
             layout: row.layout ?? "grid",
             inGame: inGameFrom(row),
+            translations: {
+                name: row.translations?.name ?? {},
+                description: row.translations?.description ?? {},
+            },
         });
     }, [editingId, categories]);
 
@@ -192,10 +201,13 @@ export default function AdminStoreCategoriesPage() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <Label>{`${t("adm_name")} *`}</Label>
-                                        <Input
-                                            aria-label={t("adm_name")}
-                                            value={form.name}
-                                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                        <LocalizedTextInput
+                                            label={t("adm_name")}
+                                            value={joinTranslations(form.name, form.translations.name)}
+                                            onChange={(next) => {
+                                                const parts = splitTranslations(next);
+                                                setForm({ ...form, name: parts.original, translations: { ...form.translations, name: parts.translations } });
+                                            }}
                                             required
                                         />
                                     </div>
@@ -223,10 +235,15 @@ export default function AdminStoreCategoriesPage() {
                                       * of this form as though it were the
                                       * point of the screen.
                                       */}
-                                    <RichTextEditor
-                                        value={form.description}
-                                        onChange={(value: string) => setForm({ ...form, description: value })}
+                                    <LocalizedTextInput
+                                        label={t("adm_description")}
+                                        rich
                                         minHeight="6rem"
+                                        value={joinTranslations(form.description, form.translations.description)}
+                                        onChange={(next) => {
+                                            const parts = splitTranslations(next);
+                                            setForm({ ...form, description: parts.original, translations: { ...form.translations, description: parts.translations } });
+                                        }}
                                     />
                                     <p className="mt-1 text-xs text-muted-foreground">{t("adm_categoryDescriptionHint")}</p>
                                 </div>

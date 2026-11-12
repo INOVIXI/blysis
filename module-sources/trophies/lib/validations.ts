@@ -57,3 +57,10 @@ export function trophyConditions(trophy: {
     }
     return [];
 }
+
+/**
+ * Whose translations a trophy's are, in core's table, and the fields that
+ * have them: each language held to its column's own limit.
+ */
+export const TROPHY_TEXT = { owner: "trophies", entity: "trophy" };
+export const TRANSLATED_FIELDS = { name: 100, description: 500 };

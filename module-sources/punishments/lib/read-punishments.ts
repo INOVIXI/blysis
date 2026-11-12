@@ -7,9 +7,10 @@
  * filter on the state, not on the spelling the row happened to be written
  * with.
  */
-import { prisma } from "@/core/sdk/server";
+import { prisma, translateContent } from "@/core/sdk/server";
 import { canonicalType, spellingsOf } from "./punishment-types";
 import { isPunishmentStatus, punishmentStatus, statusWhere } from "./status";
+import { SCOPE_TEXT } from "./validations";
 
 export async function readPunishments(options: {
     type?: string | null;
@@ -19,6 +20,8 @@ export async function readPunishments(options: {
     scope?: string | null;
     page?: number;
     perPage?: number;
+    /** The reader's language, for the scopes' names; none reads the originals. */
+    locale?: string;
 }) {
     const now = new Date();
     const perPage = Math.max(1, options.perPage ?? 20);
@@ -36,7 +39,7 @@ export async function readPunishments(options: {
     const status = options.status ?? null;
     if (isPunishmentStatus(status)) where.AND = [statusWhere(status, now)];
 
-    const [punishments, total] = await Promise.all([
+    const [rows, total, offered] = await Promise.all([
         prisma.punishment.findMany({
             where,
             orderBy: { createdAt: "desc" },
@@ -47,18 +50,30 @@ export async function readPunishments(options: {
             include: { scope: { select: { id: true, name: true } } },
         }),
         prisma.punishment.count({ where }),
-    ]);
-
-    return {
-        punishments: punishments.map((row) => ({ ...row, status: punishmentStatus(row, now.getTime()) })),
         // What a reader may filter by, so the page draws the tabs the site
         // actually has rather than every scope ever made.
-        scopes: await prisma.punishmentScope.findMany({
+        prisma.punishmentScope.findMany({
             where: { isActive: true, punishments: { some: {} } },
             orderBy: [{ order: "asc" }, { name: "asc" }],
             select: { id: true, name: true },
             take: 30,
         }),
+    ]);
+
+    // Every scope the page names, the tabs and the entries', in one query.
+    const named = new Map<string, { id: string; name: string }>();
+    for (const scope of [...offered, ...rows.flatMap((row) => (row.scope ? [row.scope] : []))]) named.set(scope.id, scope);
+    const translated = await translateContent(prisma, SCOPE_TEXT, [...named.values()], ["name"], options.locale ?? "");
+    const nameOf = new Map(translated.map((scope) => [scope.id, scope.name]));
+    const inLanguage = (scope: { id: string; name: string }) => ({ ...scope, name: nameOf.get(scope.id) ?? scope.name });
+
+    return {
+        punishments: rows.map((row) => ({
+            ...row,
+            scope: row.scope ? inLanguage(row.scope) : null,
+            status: punishmentStatus(row, now.getTime()),
+        })),
+        scopes: offered.map(inLanguage),
         total,
         page,
         pages: Math.max(1, Math.ceil(total / perPage)),

@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { useTranslations } from "next-intl";
-import { Button, Card, CardContent, Challenge, Input, Label, Textarea, NativeSelect, CheckboxField, useChallenge } from "@/core/sdk/ui";
+import { useLocale, useTranslations } from "next-intl";
+import { Button, Card, CardContent, Challenge, Input, Label, Textarea, NativeSelect, CheckboxField, buttonClassName, useChallenge } from "@/core/sdk/ui";
 import { ArrangedClientPage } from "@/core/sdk/layout";
-import { Loader2, CheckCircle } from "lucide-react";
+import { Link, usePathname } from "@/core/sdk/navigation";
+import { Loader2, CheckCircle, LogIn } from "lucide-react";
+import { MySubmissions, type MySubmission } from "../../../components/MySubmissions";
 import { toast } from "sonner";
 
 interface FormField {
@@ -16,6 +18,8 @@ interface FormField {
     help?: string;
     placeholder?: string;
     options?: string[];
+    /** Each choice in the reader's language; the choice itself is what is sent. */
+    optionLabels?: string[];
     min?: number;
     max?: number;
     maxLength?: number;
@@ -26,6 +30,18 @@ interface CustomForm {
     title: string;
     description: string | null;
     fields: FormField[];
+    requireSignIn?: boolean;
+}
+
+/**
+ * Who is reading, as the endpoint sees it: a visitor, or a member with what
+ * they already sent to this form and how much of the allowance it used.
+ */
+interface Viewer {
+    signedIn: boolean;
+    used?: number;
+    limit?: number | null;
+    submissions?: MySubmission[];
 }
 
 interface PageProps {
@@ -36,7 +52,14 @@ export default function FormPage({ params }: PageProps) {
     const { slug } = use(params);
     const t = useTranslations("customForms");
     const commonT = useTranslations("common");
+    const pathname = usePathname();
+    // The endpoint reads the form in this language, and the original where
+    // the admin wrote none.
+    const locale = useLocale();
     const [form, setForm] = useState<CustomForm | null>(null);
+    const [viewer, setViewer] = useState<Viewer>({ signedIn: false });
+    // Bumped after a submission, so the status beside the form is read again.
+    const [reload, setReload] = useState(0);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
@@ -44,11 +67,12 @@ export default function FormPage({ params }: PageProps) {
 
     useEffect(() => {
         let cancelled = false;
-        fetch(`/api/v1/forms/${slug}`)
+        fetch(`/api/v1/forms/${slug}?locale=${encodeURIComponent(locale)}`)
             .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
             .then((d) => {
                 if (cancelled) return;
                 setForm(d.form);
+                setViewer(d.viewer ?? { signedIn: false });
                 setLoading(false);
             })
             .catch(() => {
@@ -56,7 +80,7 @@ export default function FormPage({ params }: PageProps) {
                 setLoading(false);
             });
         return () => { cancelled = true; };
-    }, [slug]);
+    }, [slug, reload, locale]);
 
     /*
      * Whatever check the operator put in front of this form.
@@ -82,6 +106,7 @@ export default function FormPage({ params }: PageProps) {
 
             if (res.ok) {
                 setSubmitted(true);
+                setReload((n) => n + 1);
                 toast.success(t("submitSuccess"));
             } else {
                 /*
@@ -91,13 +116,20 @@ export default function FormPage({ params }: PageProps) {
                  * leaves them to guess which box it was.
                  */
                 const said = await res.json().catch(() => null) as
-                    { reason?: string; label?: string; limit?: number } | null;
-                const key = said?.reason
-                    ? `err_${said.reason.replace(/_(.)/g, (_, c: string) => c.toUpperCase())}`
+                    { reason?: string; code?: string; field?: string; label?: string; limit?: number } | null;
+                // A refusal about the answers names a `reason`; one about who
+                // is sending, sign-in or the allowance, a `code`.
+                const why = said?.reason ?? said?.code;
+                // The question as this reader was shown it; the endpoint only
+                // knows the original.
+                const label = form.fields.find((f) => f.name === said?.field)?.label ?? said?.label ?? "";
+                const key = why
+                    ? `err_${why.replace(/_(.)/g, (_, c: string) => c.toUpperCase())}`
                     : null;
+                if (said?.code) setReload((n) => n + 1);
                 toast.error(
                     key && t.has(key)
-                        ? t(key, { label: said?.label ?? "", limit: said?.limit ?? 0 })
+                        ? t(key, { label, limit: said?.limit ?? 0 })
                         : t("submitError"),
                 );
             }
@@ -119,7 +151,7 @@ export default function FormPage({ params }: PageProps) {
                 return (
                     <NativeSelect value={val} onChange={(e) => onChange(e.target.value)} required={field.required} aria-label={field.label} className="w-full">
                         <option value="">{t("selectOption")}</option>
-                        {field.options?.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+                        {field.options?.map((opt, at) => <option key={opt} value={opt}>{field.optionLabels?.[at] ?? opt}</option>)}
                     </NativeSelect>
                 );
             case "radio":
@@ -131,7 +163,7 @@ export default function FormPage({ params }: PageProps) {
                  */
                 return (
                     <div role="radiogroup" aria-label={field.label} className="space-y-1.5">
-                        {(field.options ?? []).map((opt) => (
+                        {(field.options ?? []).map((opt, at) => (
                             <label key={opt} className="flex items-center gap-2 text-sm">
                                 <input
                                     type="radio"
@@ -142,7 +174,7 @@ export default function FormPage({ params }: PageProps) {
                                     required={field.required}
                                     className="h-4 w-4 accent-primary"
                                 />
-                                <span>{opt}</span>
+                                <span>{field.optionLabels?.[at] ?? opt}</span>
                             </label>
                         ))}
                     </div>
@@ -177,6 +209,11 @@ export default function FormPage({ params }: PageProps) {
         }
     };
 
+    const mine = viewer.submissions ?? [];
+    const mustSignIn = form?.requireSignIn === true && !viewer.signedIn;
+    const allowanceSpent = typeof viewer.limit === "number" && (viewer.used ?? 0) >= viewer.limit;
+    const remaining = typeof viewer.limit === "number" ? Math.max(0, viewer.limit - (viewer.used ?? 0)) : null;
+
     return (
         <ArrangedClientPage
             page="custom-forms.form"
@@ -187,6 +224,31 @@ export default function FormPage({ params }: PageProps) {
                         <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
                     ) : !form ? (
                         <Card><CardContent className="py-12 text-center text-muted-foreground">{t("formNotFound")}</CardContent></Card>
+                    ) : mustSignIn ? (
+                        <Card>
+                            <CardContent className="py-12 text-center">
+                                <LogIn className="w-10 h-10 text-muted-foreground mx-auto mb-3" aria-hidden="true" />
+                                <p className="text-muted-foreground mb-4">{t("signInRequired")}</p>
+                                <Link
+                                    href={`/auth/login?callbackUrl=${encodeURIComponent(pathname || "/")}`}
+                                    className={buttonClassName("default", "default")}
+                                >
+                                    {t("signIn")}
+                                </Link>
+                            </CardContent>
+                        </Card>
+                    ) : allowanceSpent ? (
+                        // An answered application is a status, not a blank
+                        // form inviting the member to send it again.
+                        <div className="space-y-4">
+                            <Card>
+                                <CardContent className="py-8 text-center">
+                                    <CheckCircle className="w-10 h-10 text-success mx-auto mb-3" aria-hidden="true" />
+                                    <p className="font-medium text-foreground">{t("alreadyApplied")}</p>
+                                </CardContent>
+                            </Card>
+                            <MySubmissions submissions={mine} />
+                        </div>
                     ) : submitted ? (
                         <Card>
                             <CardContent className="py-12 text-center">
@@ -196,8 +258,13 @@ export default function FormPage({ params }: PageProps) {
                             </CardContent>
                         </Card>
                     ) : (
+                        <div className="space-y-4">
+                        {mine.length > 0 && <MySubmissions submissions={mine} />}
                         <Card>
                             <CardContent className="pt-6">
+                                {remaining !== null && (
+                                    <p className="mb-4 text-sm text-muted-foreground">{t("remaining", { count: remaining })}</p>
+                                )}
                                 <form onSubmit={handleSubmit} className="space-y-4">
                                     {form.fields.map((field) => (
                                         <div key={field.name}>
@@ -221,6 +288,7 @@ export default function FormPage({ params }: PageProps) {
                                 </form>
                             </CardContent>
                         </Card>
+                        </div>
                     )
                 ),
             }}

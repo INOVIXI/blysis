@@ -15,7 +15,7 @@
  * setting lets a theme set each author in a column beside their post.
  */
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { ArrangedPage } from "@/core/sdk/page";
 import { hasPermission } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
@@ -43,7 +43,8 @@ export default async function TopicPage({ params }: PageProps) {
     const id = topicIdFrom(resolved.params ?? resolved.slug);
     if (!id) notFound();
 
-    const read = await readTopic(id, 1);
+    // The section's name in the reader's language.
+    const read = await readTopic(id, 1, await getLocale());
     // Null covers every refusal: a topic that is not there, a section this
     // reader may not see, a topic awaiting moderation. See readTopic.
     if (!read) notFound();

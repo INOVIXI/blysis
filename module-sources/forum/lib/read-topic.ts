@@ -16,10 +16,11 @@
  * apart for the reason in its own comment.
  */
 import { headers } from "next/headers";
-import { isAdmin, moduleSettings, prisma, textContains } from "@/core/sdk/server";
+import { isAdmin, moduleSettings, prisma, textContains, translateContent } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { accessToCategory, visibleCategoryIds } from "./visible-categories";
 import { mayViewForum } from "./guest-view";
+import { CATEGORY_TEXT, withCategoryNames } from "./category-text";
 
 type FoundTopic = NonNullable<Awaited<ReturnType<typeof findTopic>>>;
 
@@ -96,7 +97,7 @@ function findTopic(
  * address exists, which is half of what a private section is hiding, so a
  * caller turns this into "not found" whatever the reason was.
  */
-export async function readTopic(id: string, postsPage: number): Promise<TopicRead | null> {
+export async function readTopic(id: string, postsPage: number, locale = ""): Promise<TopicRead | null> {
     if (!(await mayViewForum())) return null;
 
     const reader = await auth();
@@ -113,9 +114,12 @@ export async function readTopic(id: string, postsPage: number): Promise<TopicRea
     // The reader's own like leaves as a yes or a no. Handing back the row
     // that records it would put one person's like on another's screen the
     // moment anything caches a response.
+    // The section's name in the reader's language; the topic and its replies
+    // are what members wrote and stay as they wrote them.
+    const [named] = await withCategoryNames([found], locale);
     const topic = {
-        ...found,
-        posts: found.posts.map(({ likes, ...post }) => ({ ...post, liked: likes.length > 0 })),
+        ...named,
+        posts: named.posts.map(({ likes, ...post }) => ({ ...post, liked: likes.length > 0 })),
     };
     if (!topic) return null;
     if (!(await accessToCategory(topic.categoryId, reader?.user?.role ?? null)).view) return null;
@@ -190,6 +194,8 @@ export async function readTopicList(options: {
     page: number;
     categorySlug?: string;
     search?: string;
+    /** The reader's language, for the sections' names; none reads the originals. */
+    locale?: string;
 }): Promise<TopicListRead | null> {
     // Null here means "no such section", which the page answers with a 404.
     // Whether a guest may read the board at all is a different answer - a
@@ -229,9 +235,11 @@ export async function readTopicList(options: {
         prisma.forumTopic.count({ where: narrowed }),
     ]);
 
+    const locale = options.locale ?? "";
+    const named = await translateContent(prisma, CATEGORY_TEXT, categories, ["name"], locale);
     return {
-        topics,
-        categories: categories.map(({ _count, ...category }) => ({ ...category, topicCount: _count.topics })),
+        topics: await withCategoryNames(topics, locale),
+        categories: named.map(({ _count, ...category }) => ({ ...category, topicCount: _count.topics })),
         page,
         pages: Math.max(1, Math.ceil(total / perPage)),
         total,

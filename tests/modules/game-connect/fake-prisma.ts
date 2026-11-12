@@ -2,8 +2,8 @@
  * An in-memory stand-in for the part of Prisma game-connect uses.
  *
  * It reads the same `where` objects the module writes: plain equality, `in`,
- * `lt`, `gt`, `gte`, `lte`, `not`, `equals` with `mode: "insensitive"`, `OR`
- * and `AND`. That is enough to test the queue's conditional writes as written,
+ * `lt`, `gt`, `gte`, `lte`, `not`, `startsWith`, `equals` and `contains` with
+ * `mode: "insensitive"`, `OR`, `AND` and `NOT` (one condition or a list). That is enough to test the queue's conditional writes as written,
  * rather than as a mock that answers whatever the test expects.
  */
 import { vi } from "vitest";
@@ -24,6 +24,13 @@ function compare(value: unknown, condition: unknown): boolean {
     if ("gt" in c && !(v !== null && v !== undefined && (v as number) > (n(c.gt) as number))) return false;
     if ("gte" in c && !(v !== null && v !== undefined && (v as number) >= (n(c.gte) as number))) return false;
     if ("not" in c && compare(value, c.not)) return false;
+    if ("contains" in c) {
+        const insensitive = c.mode === "insensitive";
+        const text = insensitive ? String(value ?? "").toLowerCase() : String(value ?? "");
+        const part = insensitive ? String(c.contains).toLowerCase() : String(c.contains);
+        if (typeof value !== "string" || !text.includes(part)) return false;
+    }
+    if ("startsWith" in c && !(typeof value === "string" && value.startsWith(String(c.startsWith)))) return false;
     if ("equals" in c) {
         if (c.mode === "insensitive") {
             if (String(value).toLowerCase() !== String(c.equals).toLowerCase()) return false;
@@ -32,7 +39,7 @@ function compare(value: unknown, condition: unknown): boolean {
     return true;
 }
 
-const OPERATORS = new Set(["in", "lt", "lte", "gt", "gte", "not", "equals", "mode"]);
+const OPERATORS = new Set(["in", "lt", "lte", "gt", "gte", "not", "equals", "contains", "mode", "startsWith"]);
 
 /** `serverId_key: { serverId, key }`: a compound unique key, read as its fields. */
 function compound(row: Row, key: string, condition: unknown): boolean {
@@ -47,6 +54,10 @@ export function matches(row: Row, where: Where | undefined): boolean {
             if (!(condition as Where[]).some((w) => matches(row, w))) return false;
         } else if (key === "AND") {
             if (!(condition as Where[]).every((w) => matches(row, w))) return false;
+        } else if (key === "NOT") {
+            // One condition or a list, and the row matches none of them.
+            const excluded = Array.isArray(condition) ? (condition as Where[]) : [condition as Where];
+            if (excluded.some((w) => matches(row, w))) return false;
         } else if (compound(row, key, condition)) {
             if (!matches(row, condition as Where)) return false;
         } else if (!compare(row[key], condition)) {
@@ -105,6 +116,11 @@ export function fakeTable(defaults: () => Row = () => ({}), idField = "id", uniq
         createMany: vi.fn(async ({ data }: { data: Row[] }) => {
             for (const d of data) await api.create({ data: d });
             return { count: data.length };
+        }),
+        createManyAndReturn: vi.fn(async ({ data }: { data: Row[] }) => {
+            const out: Row[] = [];
+            for (const d of data) out.push(await api.create({ data: d }));
+            return out;
         }),
         findUnique: vi.fn(async ({ where, select }: { where: Where; select?: Record<string, boolean> }) => {
             const row = table.rows.find((r) => matches(r, where));

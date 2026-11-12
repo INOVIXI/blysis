@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Card, CardContent, ListControls, LoadFailed, SegmentedTabs, Waiting, useSiteCurrency } from "@/core/sdk/ui";
+import { Card, CardContent, ListControls, LoadFailed, MemberAvatar, SegmentedTabs, Waiting, useSiteCurrency } from "@/core/sdk/ui";
 import { ArrangedClientPage } from "@/core/sdk/layout";
 
 interface Row {
@@ -151,19 +150,7 @@ export function BoardTabs({ initialBoards, initialRows, initialId }: {
                                             <div className={`w-10 text-center font-bold text-lg ${rankColours[row.rank - 1] || "text-muted-foreground"}`}>
                                                 #{row.rank}
                                             </div>
-                                            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center font-bold text-sm overflow-hidden">
-                                                {row.avatar ? (
-                                                    <Image
-                                                        src={row.avatar}
-                                                        alt={row.username}
-                                                        width={40}
-                                                        height={40}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    row.username.charAt(0).toUpperCase()
-                                                )}
-                                            </div>
+                                            <MemberAvatar name={row.username} src={row.avatar} size={40} />
                                             <div className="flex-1">
                                                 <p className="font-medium">{row.username}</p>
                                             </div>

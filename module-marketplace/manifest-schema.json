@@ -747,6 +747,11 @@
             "maxLength": 128,
             "pattern": "^[A-Z][A-Z0-9_]*$"
           },
+          "issuer": {
+            "type": "string",
+            "maxLength": 256,
+            "pattern": "^https:\\/\\/"
+          },
           "factory": {
             "type": "string",
             "minLength": 1,
@@ -1780,6 +1785,10 @@
                     "placeholders": {
                       "type": "boolean",
                       "const": true
+                    },
+                    "translatable": {
+                      "type": "boolean",
+                      "const": false
                     }
                   },
                   "required": [
@@ -2177,6 +2186,10 @@
                           "placeholders": {
                             "type": "boolean",
                             "const": true
+                          },
+                          "translatable": {
+                            "type": "boolean",
+                            "const": false
                           }
                         },
                         "required": [
@@ -2625,6 +2638,39 @@
           "label",
           "handler"
         ]
+      }
+    },
+    "avatarProviders": {
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "labelKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[a-zA-Z0-9._-]+$"
+          },
+          "url": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300,
+            "pattern": "^https:\\/\\/[a-z0-9-]+(\\.[a-z0-9-]+)+\\/[A-Za-z0-9\\-._~/?=&%{}]*$"
+          }
+        },
+        "required": [
+          "id",
+          "labelKey",
+          "url"
+        ],
+        "additionalProperties": false
       }
     },
     "csp": {

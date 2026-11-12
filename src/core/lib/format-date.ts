@@ -25,6 +25,16 @@
 const NEUTRAL_ZONE = "UTC";
 
 /**
+ * Options for a date without its clock. `toLocaleDateString` throws on any time
+ * option, so they are left out of the type rather than discovered by a page
+ * that fails to render; see `a-day-only-date-asks-for-no-clock.test.ts`.
+ */
+export type DayOnlyOptions = Omit<
+    Intl.DateTimeFormatOptions,
+    "timeStyle" | "hour" | "minute" | "second" | "fractionalSecondDigits" | "dayPeriod" | "hour12" | "hourCycle"
+>;
+
+/**
  * One date, in one language, in one zone.
  *
  * A zone the runtime does not recognise falls back rather than throwing. An
@@ -35,7 +45,7 @@ export function formatInZone(
     value: Date | string | number,
     localeTag: string,
     timeZone: string,
-    options: Intl.DateTimeFormatOptions = {},
+    options: DayOnlyOptions = {},
 ): string {
     const date = value instanceof Date ? value : new Date(value);
 

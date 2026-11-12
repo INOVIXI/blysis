@@ -44,3 +44,10 @@ export async function announceOrderCompleted(orderId: string): Promise<void> {
     if (!order) return;
     await doActionAsync("store.order.completed", order);
 }
+
+/** Fired once an order's money went back and what the store holds was taken back. */
+export async function announceOrderRefunded(orderId: string): Promise<void> {
+    const order = await loadOrder(orderId);
+    if (!order) return;
+    await doActionAsync("store.order.refunded", order);
+}

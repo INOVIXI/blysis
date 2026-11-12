@@ -7,10 +7,8 @@ import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
-import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
 import { LoadFailed } from "@/core/components/ui/load-failed";
-import { Textarea } from "@/core/components/ui/textarea";
 import { ModuleFooterLinks } from "@/core/generated/module-registry";
 import { useAllModules } from "@/core/providers/module-provider";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
@@ -19,6 +17,8 @@ import { defaultFooterColumns, drawnFooterColumns, parseFooterColumns, parseHidd
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { writeError } from "@/core/lib/write-result";
 import { FooterColumnCard, PlacedLinks, type DraftColumn } from "./FooterColumnCard";
+import { LocalizedTextInput } from "@/core/components/ui/localized-text-input";
+import { isTranslatableText, originalText, type TranslatableText } from "@/core/lib/i18n/translatable-text";
 
 /**
  * The footer, built rather than typed as JSON.
@@ -36,11 +36,19 @@ import { FooterColumnCard, PlacedLinks, type DraftColumn } from "./FooterColumnC
 
 function toDraft(column: FooterColumn): DraftColumn {
     return {
-        title: column.title ?? "",
+        // Every language the heading and the labels were written in.
+        title: column.titleText ?? column.title ?? "",
         titleKey: column.titleKey ?? "",
         section: column.section ?? "",
-        links: column.links.map((link) => ({ label: link.label, href: link.href, icon: link.icon ?? "" })),
+        links: column.links.map((link) => ({ label: link.labelText ?? link.label, href: link.href, icon: link.icon ?? "" })),
     };
+}
+
+/** A heading or label with its original trimmed, or nothing when the original is empty. */
+function written(value: TranslatableText): TranslatableText | undefined {
+    const original = originalText(value).trim();
+    if (original === "") return undefined;
+    return typeof value === "string" ? original : { ...value, default: original };
 }
 
 /**
@@ -49,12 +57,13 @@ function toDraft(column: FooterColumn): DraftColumn {
  * nothing here: nothing below renders one of the operator's own links.
  */
 function toColumn(column: DraftColumn): FooterColumn {
+    const title = originalText(column.title).trim();
     return {
-        title: column.title.trim() || null,
-        titleKey: column.title.trim() ? null : column.titleKey || null,
+        title: title || null,
+        titleKey: title ? null : column.titleKey || null,
         section: column.section.trim() || null,
         links: column.links.map((link) => ({
-            label: link.label,
+            label: originalText(link.label),
             href: link.href,
             external: false,
             icon: link.icon.trim() || null,
@@ -65,14 +74,15 @@ function toColumn(column: DraftColumn): FooterColumn {
 
 /** What is saved: empty strings become absent rather than empty values. */
 function toSaved(column: DraftColumn) {
+    const title = written(column.title);
     return {
-        title: column.title.trim() || undefined,
-        titleKey: column.title.trim() ? undefined : column.titleKey || undefined,
+        title,
+        titleKey: title ? undefined : column.titleKey || undefined,
         section: column.section.trim() || undefined,
         links: column.links
-            .filter((link) => link.label.trim() !== "" && link.href.trim() !== "")
+            .filter((link) => written(link.label) !== undefined && link.href.trim() !== "")
             .map((link) => ({
-                label: link.label.trim(),
+                label: written(link.label),
                 href: link.href.trim(),
                 icon: link.icon.trim() || undefined,
             })),
@@ -90,15 +100,15 @@ export default function FooterSettingsPage() {
 
     const [columns, setColumns] = useState<DraftColumn[]>([]);
     const [hidden, setHidden] = useState<string[]>([]);
-    const [about, setAbout] = useState("");
-    const [copyright, setCopyright] = useState("");
+    const [about, setAbout] = useState<TranslatableText>("");
+    const [copyright, setCopyright] = useState<TranslatableText>("");
     const [saving, setSaving] = useState(false);
 
     const moduleLinks = ModuleFooterLinks.filter((fl) => isEnabledIn(moduleStatus, fl.module));
 
     const { loading, failed, retry } = useSettingsLoad((settings) => {
-        setAbout(typeof settings.footer_about_text === "string" ? settings.footer_about_text : "");
-        setCopyright(typeof settings.footer_copyright === "string" ? settings.footer_copyright : "");
+        setAbout(isTranslatableText(settings.footer_about_text) ? settings.footer_about_text : "");
+        setCopyright(isTranslatableText(settings.footer_copyright) ? settings.footer_copyright : "");
         setHidden(parseHiddenLinks(settings.footer_hidden_links));
         const saved = parseFooterColumns(settings.footer_columns);
         // No override yet: show the columns the footer is rendering now, so
@@ -194,21 +204,24 @@ export default function FooterSettingsPage() {
                 <CardContent className="space-y-4">
                     <div>
                         <Label htmlFor="footer-about">{t("footer_aboutText")}</Label>
-                        <Textarea
+                        <LocalizedTextInput
                             id="footer-about"
+                            label={t("footer_aboutText")}
+                            multiline
                             rows={3}
                             value={about}
                             placeholder={t("footer_aboutTextPlaceholder")}
-                            onChange={(event) => setAbout(event.target.value)}
+                            onChange={setAbout}
                         />
                     </div>
                     <div>
                         <Label htmlFor="footer-copyright">{t("footer_copyright")}</Label>
-                        <Input
+                        <LocalizedTextInput
                             id="footer-copyright"
+                            label={t("footer_copyright")}
                             value={copyright}
                             placeholder={t("footer_copyrightPlaceholder")}
-                            onChange={(event) => setCopyright(event.target.value)}
+                            onChange={setCopyright}
                         />
                     </div>
                 </CardContent>

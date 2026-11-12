@@ -97,7 +97,12 @@
     "welcomeTitle": "Welcome to your community",
     "welcomeVisitorHint": "Use the navigation above to explore the community.",
     "writeContentHere": "Write your content here...",
-    "statsLabel": "The site at a glance"
+    "statsLabel": "The site at a glance",
+    "localizedText_translations": "Translations ({filled} of {total})",
+    "localizedText_fallbackHint": "A language left empty shows the original text.",
+    "localizedText_filled": "Translated",
+    "localizedText_empty": "Shows the original",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Page not found",
@@ -163,7 +168,10 @@
     "twoFactorEnabled": "Two-factor authentication enabled",
     "userProfileUpdated": "{username} updated their profile",
     "userRegistered": "joined the community",
-    "viewAll": "View all"
+    "viewAll": "View all",
+    "auditSignInMethodConnect": "Connected a sign-in method",
+    "auditSignInMethodDisconnect": "Disconnected a sign-in method",
+    "auditSignInMethodRemove": "Removed a member's sign-in method"
   },
   "nav": {
     "adminPanel": "Admin Panel",
@@ -537,6 +545,9 @@
     "generalSettings_identityPasswordHint": "Asked for before a name or an address changes, so a borrowed screen cannot take the account. An account that signs in through a provider has no password and is not asked.",
     "generalSettings_memberAvatarUploads": "Profile pictures",
     "generalSettings_memberAvatarUploadsHint": "What a member may put on their own profile: send a file, point at one they host, or none at all. Uploads are images only, at most 2 MB, and capped per member.",
+    "generalSettings_memberAvatarProvider": "Picture service for members",
+    "generalSettings_memberAvatarProviderHint": "When a member has no picture of their own, or member pictures are off, their face comes from this service by their username. A picture it cannot find is shown as initials.",
+    "generalSettings_avatarProviderNone": "None: initials",
     "generalSettings_memberContent": "Member content",
     "generalSettings_memberIdentity": "Member identity",
     "generalSettings_minPasswordLength": "Minimum password length",
@@ -985,6 +996,8 @@
     "siteSettings_contactEmail": "Contact Email",
     "siteSettings_description": "Description",
     "siteSettings_general": "General",
+    "siteSettings_icon": "Site icon",
+    "siteSettings_iconHint": "The small image in the browser tab and on a phone's home screen. A square image reads best. Left empty, the default icon is used.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Failed to save settings",
     "siteSettings_saveSettings": "Save Settings",
@@ -1356,7 +1369,21 @@
     "placeholder_noValue": "no value right now",
     "placeholder_unknown": "Nothing on this site answers {names}, so visitors see a dash there.",
     "placeholder_refused": "Nothing on this site answers {names}, so the text will not save with it.",
-    "placeholder_site_name": "Site name"
+    "placeholder_site_name": "Site name",
+    "users_signInMethods": "Sign-in methods",
+    "users_signInMethodsPassword": "Has a password.",
+    "users_signInMethodsNoPassword": "No password: signs in only through the methods below.",
+    "users_signInMethodsNone": "No sign-in method connected.",
+    "users_signInMethodConnectedOn": "Connected {date}",
+    "users_signInMethodRemove": "Remove",
+    "users_signInMethodRemoveTitle": "Remove {provider}?",
+    "users_signInMethodRemoveMessage": "{username} will no longer be able to sign in with {provider}.",
+    "users_signInMethodRemoved": "{provider} removed.",
+    "users_signInMethodLast": "This is the member's only way to sign in, so it was not removed.",
+    "generalSettings_signInMethodSignUps": "New accounts from sign-in methods",
+    "generalSettings_signInMethodSignUpsHint": "When only connected members may use them, signing in through a provider works only for members who connected it from their account page, and nobody gets a new account that way.",
+    "generalSettings_signInMethodSignUpsOpen": "Make an account for anyone new",
+    "generalSettings_signInMethodSignUpsClosed": "Only connected members"
   },
   "footer": {
     "quickLinks": "Quick Links",
@@ -1443,7 +1470,22 @@
     "username": "Username",
     "usernameCannotChange": "This site does not let members change their username.",
     "viewPublicProfile": "View public profile",
-    "youSaid": "You:"
+    "youSaid": "You:",
+    "signInMethods": "Sign-in methods",
+    "signInMethods_hint": "Connect an account you hold elsewhere to sign in here with it. Your username and password keep working.",
+    "signInMethods_none": "This site offers no other sign-in methods.",
+    "signInMethods_connectedOn": "Connected {date}",
+    "signInMethods_notConnected": "Not connected",
+    "signInMethods_connect": "Connect",
+    "signInMethods_connectLabel": "Connect {provider}",
+    "signInMethods_disconnect": "Disconnect",
+    "signInMethods_disconnectTitle": "Disconnect {provider}?",
+    "signInMethods_disconnectMessage": "You will no longer be able to sign in with {provider}. You can connect it again later.",
+    "signInMethods_connected": "{provider} is connected. You can sign in with it from now on.",
+    "signInMethods_disconnected": "{provider} is disconnected.",
+    "signInMethods_failed": "That did not work. Try again.",
+    "signInMethods_errTaken": "That account is already connected to another member here. It was not moved to yours.",
+    "signInMethods_errNotStarted": "Nothing was connected. Start from this page with Connect, then sign in at the provider."
   },
   "auth": {
     "accountLocked": "Too many failed attempts. Your account is temporarily locked. Check your email or try again in a few minutes.",
@@ -1500,7 +1542,13 @@
       "username_taken": "That username is already taken.",
       "username_too_short": "That username is too short for this site. Please pick a longer one.",
       "weak_password": "That password does not meet the requirements. Please choose a stronger one.",
-      "wrong_password": "That password is not correct."
+      "wrong_password": "That password is not correct.",
+      "already_connected": "You already have an account from this provider connected. Disconnect it first.",
+      "impersonating": "Sign-in methods cannot be connected while acting as another member.",
+      "last_sign_in_method": "This is the only way into your account, so it cannot be removed. Connect another method first.",
+      "session_unknown": "Sign out and sign in again, then connect.",
+      "unknown_provider": "That sign-in method is not available on this site.",
+      "sign_in_method_not_found": "That sign-in method is not connected."
     },
     "errorAccessDenied": "Access denied. You don't have permission to sign in.",
     "errorConfiguration": "Server misconfiguration. Please contact the site administrator.",
@@ -1559,7 +1607,8 @@
     "demoAsAdmin": "As an administrator",
     "demoAsMember": "As a member",
     "demoResetNote": "Everything here is put back every hour, so nothing you do can spoil it for the next visitor. A few actions are switched off: sending mail, real payments, and anything that would lock the account you are using.",
-    "demoFillFor": "Fill in the details {who}"
+    "demoFillFor": "Fill in the details {who}",
+    "errorConnectFirst": "This sign-in is not connected to an account here. Sign in with your username and password, then connect it from your account page."
   },
   "search": {
     "title": "Search",

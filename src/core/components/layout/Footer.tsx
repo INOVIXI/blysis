@@ -35,19 +35,20 @@ export interface FooterProps {
     top: ReactNode;
 }
 
-function SocialMark({ link, communityLabel }: { link: FooterSocialLink; communityLabel: string }) {
+/** The letters drawn in each network's circle; the label is its accessible name. */
+const SOCIAL_MARKS = { facebook: "f", instagram: "ig", x: "X", youtube: "yt", tiktok: "tt" } as const;
+
+function SocialMark({ link }: { link: FooterSocialLink }) {
     if (link.name === "community") {
         return (
-            <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={communityLabel} className={`${SOCIAL_CLASS} hover:bg-primary`}>
+            <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} className={`${SOCIAL_CLASS} hover:bg-primary`}>
                 <Users className="w-4 h-4" aria-hidden="true" />
             </a>
         );
     }
-    const marks = { facebook: ["Facebook", "f"], instagram: ["Instagram", "ig"], x: ["X", "X"], youtube: ["YouTube", "yt"] } as const;
-    const [label, mark] = marks[link.name];
     return (
-        <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={label} className={SOCIAL_CLASS}>
-            <span aria-hidden="true">{mark}</span>
+        <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} className={SOCIAL_CLASS}>
+            <span aria-hidden="true">{SOCIAL_MARKS[link.name]}</span>
         </a>
     );
 }
@@ -89,7 +90,7 @@ function DefaultFooter({ top }: FooterProps) {
                         )}
                         <ul className="flex gap-3 list-none p-0" aria-label={navT("social")}>
                             {footer.social.map((link) => (
-                                <li key={link.name}><SocialMark link={link} communityLabel={navT("community")} /></li>
+                                <li key={link.name}><SocialMark link={link} /></li>
                             ))}
                         </ul>
                     </div>

@@ -36,3 +36,11 @@ export const punishmentUpdateSchema = z.object({
     /** Why it was lifted. Read only when `active` is being set to false. */
     liftReason: z.string().max(500).optional().nullable(),
 });
+
+/**
+ * Whose translations a scope's are, in core's table, and the field that has
+ * them: its name, held to the column's own limit. The key a reporting system
+ * sends is a machine's word and has none.
+ */
+export const SCOPE_TEXT = { owner: "punishments", entity: "scope" };
+export const SCOPE_TRANSLATED_FIELDS = { name: 80 };

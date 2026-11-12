@@ -62,6 +62,8 @@ declare global {
     interface BlysisHookPayloads {
         "store.order.created": StoreOrderHookPayload;
         "store.order.completed": StoreOrderHookPayload;
+        /** The order's money went back; the store already took back what it holds. */
+        "store.order.refunded": StoreOrderHookPayload;
         "store.product.created": { id: string; name: string; slug: string };
         /** Credits bought with money settled on an account. Gifts, refunds and grants are not this. */
         "store.credits.purchased": { userId: string; amount: number };
@@ -132,6 +134,17 @@ declare global {
          * moves, since afterwards they cannot be asked for at all.
          */
         "store.billing.required": boolean;
+        /**
+         * The tax one sale carries.
+         *
+         * Asked with the store's own answer, built from its two tax settings,
+         * so a shop with nothing listening charges exactly what it always
+         * did. A tax module answers instead, and its answer wins: the rate,
+         * whether the prices already hold it, what the tax is called, and why
+         * this buyer is charged it. An answer the store cannot charge - a rate
+         * outside 0 to 100, no label - is discarded whole for the store's own.
+         */
+        "store.tax": StoreTaxAnswer;
     }
 
     /** The other half of the same six filters: what each one is asked about. */
@@ -201,6 +214,77 @@ declare global {
          * it has to - above a threshold, or in the currency it files in.
          */
         "store.billing.required": { currency: string; total: number };
+        "store.tax": StoreTaxContext;
+    }
+
+    /** A tax's name: one the site translates, or the operator's own words. */
+    type StoreTaxLabelPreset = "tax" | "vat" | "gst" | "sales_tax";
+    type StoreTaxLabel = { kind: "preset"; id: StoreTaxLabelPreset } | { kind: "custom"; text: string };
+
+    /**
+     * Why a sale carries the tax it does, for an invoice that has to say so.
+     *
+     * - `standard`: the rate the shop charges where nothing more specific applies
+     * - `domestic`: a buyer in the seller's own country
+     * - `destination`: a buyer in another country of the seller's tax area, at that country's rate
+     * - `export`: a buyer outside the tax area, zero-rated
+     * - `reverse_charge`: a business buyer abroad who accounts for the tax itself
+     * - `exempt`: nothing charged, and none of the above is why
+     */
+    type StoreTaxReason = "standard" | "domestic" | "destination" | "export" | "reverse_charge" | "exempt";
+
+    /** Where the buyer is, by each source that said, and whether they disagree. */
+    interface StoreTaxEvidence {
+        /** ISO 3166-1 alpha-2, from the billing address. */
+        billingCountry: string | null;
+        /** ISO 3166-1 alpha-2, from the buyer's connection. */
+        ipCountry: string | null;
+        /** The connection's address cut to its network; never the full address. */
+        ipMasked: string | null;
+        /** Both countries are known and they are not the same. */
+        conflict: boolean;
+    }
+
+    interface StoreTaxAnswer {
+        /** Percent, 0 to 100. */
+        rate: number;
+        /** Whether the prices already contain the tax. */
+        included: boolean;
+        label: StoreTaxLabel;
+        /** The country whose rule was applied, or null when none was known. */
+        country: string | null;
+        reason: StoreTaxReason;
+        /** Null where nothing asked where the buyer is. */
+        evidence: StoreTaxEvidence | null;
+    }
+
+    interface StoreTaxContext {
+        /** A checkout on the site, or a purchase a game server makes on a member's behalf. */
+        channel: "checkout" | "game";
+        /** ISO 4217, uppercase. */
+        currency: string;
+        /** What the buyer typed into the invoice form, when they did. */
+        billing: { kind: "individual" | "company"; country: string; taxNumber: string } | null;
+        /** The buyer's address as the site's trusted proxies resolve it, or null off a request. */
+        ip: string | null;
+        /**
+         * One request header by name, lowercase, or null. A listener decides
+         * which ones it trusts; the store forwards rather than vouches.
+         */
+        header: (name: string) => string | null;
+    }
+
+    /** What an order keeps of the tax it was charged, under `metadata.tax`. */
+    interface StoreTaxRecord {
+        rate: number;
+        included: boolean;
+        label: StoreTaxLabel;
+        country: string | null;
+        reason: StoreTaxReason;
+        billingCountry: string | null;
+        ipCountry: string | null;
+        ipMasked: string | null;
+        evidenceConflict: boolean;
     }
 
     /**

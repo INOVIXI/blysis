@@ -49,8 +49,11 @@ const state: { categories: Category[]; categoryQuery: unknown; recent: unknown[]
     recent: [],
 };
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    // The page reads its words in the reader's language; this site wrote none.
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
+        contentTranslation: { findMany: async () => [] },
         blogArticle: {
             findMany: async (args: { take?: number }) => (args.take === 5 ? state.recent : []),
             count: async () => 0,

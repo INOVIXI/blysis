@@ -97,7 +97,12 @@
     "welcomeTitle": "Добро пожаловать в ваше сообщество",
     "welcomeVisitorHint": "Используйте навигацию выше, чтобы изучить сообщество.",
     "writeContentHere": "Напишите содержимое здесь...",
-    "statsLabel": "Сайт в цифрах"
+    "statsLabel": "Сайт в цифрах",
+    "localizedText_translations": "Переводы ({filled} из {total})",
+    "localizedText_fallbackHint": "Для языка без перевода показывается исходный текст.",
+    "localizedText_filled": "Переведено",
+    "localizedText_empty": "Показывает оригинал",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Страница не найдена",
@@ -163,7 +168,10 @@
     "twoFactorEnabled": "Двухфакторная аутентификация включена",
     "userProfileUpdated": "{username} обновил(а) профиль",
     "userRegistered": "присоединился(-ась) к сообществу",
-    "viewAll": "Смотреть все"
+    "viewAll": "Смотреть все",
+    "auditSignInMethodConnect": "Подключил способ входа",
+    "auditSignInMethodDisconnect": "Отключил способ входа",
+    "auditSignInMethodRemove": "Удалил способ входа участника"
   },
   "nav": {
     "adminPanel": "Панель администратора",
@@ -537,6 +545,9 @@
     "generalSettings_identityPasswordHint": "Запрашивается перед изменением имени или адреса, чтобы чужой экран не смог забрать учетную запись. У учетных записей, которые входят через внешнего провайдера, пароля нет, и его не спрашивают.",
     "generalSettings_memberAvatarUploads": "Изображения профиля",
     "generalSettings_memberAvatarUploadsHint": "Что участник может поставить в свой профиль: загрузить файл, указать ссылку на свой файл или не ставить ничего. Загружаются только изображения размером до 2 МБ с ограничением на участника.",
+    "generalSettings_memberAvatarProvider": "Сервис изображений участников",
+    "generalSettings_memberAvatarProviderHint": "Если у участника нет своего изображения или изображения участников отключены, его лицо берётся из этого сервиса по имени пользователя. Если сервис не нашёл изображение, показываются инициалы.",
+    "generalSettings_avatarProviderNone": "Нет: инициалы",
     "generalSettings_memberContent": "Содержимое участников",
     "generalSettings_memberIdentity": "Данные участника",
     "generalSettings_minPasswordLength": "Минимальная длина пароля",
@@ -985,6 +996,8 @@
     "siteSettings_contactEmail": "Контактный e-mail",
     "siteSettings_description": "Описание",
     "siteSettings_general": "Общие",
+    "siteSettings_icon": "Значок сайта",
+    "siteSettings_iconHint": "Маленькое изображение на вкладке браузера и на главном экране телефона. Лучше всего подходит квадратное изображение. Если поле пустое, используется значок по умолчанию.",
     "siteSettings_logo": "Логотип",
     "siteSettings_saveFailed": "Не удалось сохранить настройки",
     "siteSettings_saveSettings": "Сохранить настройки",
@@ -1356,7 +1369,21 @@
     "placeholder_noValue": "сейчас нет значения",
     "placeholder_unknown": "На этом сайте ничто не отвечает на {names}, посетители увидят там прочерк.",
     "placeholder_refused": "На этом сайте ничто не отвечает на {names}, поэтому текст не сохранится.",
-    "placeholder_site_name": "Название сайта"
+    "placeholder_site_name": "Название сайта",
+    "users_signInMethods": "Способы входа",
+    "users_signInMethodsPassword": "Пароль задан.",
+    "users_signInMethodsNoPassword": "Пароля нет: входит только способами ниже.",
+    "users_signInMethodsNone": "Способы входа не подключены.",
+    "users_signInMethodConnectedOn": "Подключено {date}",
+    "users_signInMethodRemove": "Удалить",
+    "users_signInMethodRemoveTitle": "Удалить {provider}?",
+    "users_signInMethodRemoveMessage": "{username} больше не сможет входить через {provider}.",
+    "users_signInMethodRemoved": "{provider} удалён.",
+    "users_signInMethodLast": "Это единственный способ входа участника, поэтому он не удалён.",
+    "generalSettings_signInMethodSignUps": "Новые аккаунты через способы входа",
+    "generalSettings_signInMethodSignUpsHint": "Если доступно только подключённым участникам, вход через провайдера работает лишь для тех, кто подключил его на странице аккаунта, и новые аккаунты так не создаются.",
+    "generalSettings_signInMethodSignUpsOpen": "Создавать аккаунт для новых людей",
+    "generalSettings_signInMethodSignUpsClosed": "Только подключённые участники"
   },
   "footer": {
     "quickLinks": "Быстрые ссылки",
@@ -1443,7 +1470,22 @@
     "username": "Имя пользователя",
     "usernameCannotChange": "Этот сайт не позволяет участникам менять имя пользователя.",
     "viewPublicProfile": "Открыть публичный профиль",
-    "youSaid": "Вы:"
+    "youSaid": "Вы:",
+    "signInMethods": "Способы входа",
+    "signInMethods_hint": "Подключите аккаунт с другого сервиса, чтобы входить с ним здесь. Имя пользователя и пароль продолжат работать.",
+    "signInMethods_none": "На этом сайте нет других способов входа.",
+    "signInMethods_connectedOn": "Подключено {date}",
+    "signInMethods_notConnected": "Не подключено",
+    "signInMethods_connect": "Подключить",
+    "signInMethods_connectLabel": "Подключить {provider}",
+    "signInMethods_disconnect": "Отключить",
+    "signInMethods_disconnectTitle": "Отключить {provider}?",
+    "signInMethods_disconnectMessage": "Вы больше не сможете входить через {provider}. Позже его можно подключить снова.",
+    "signInMethods_connected": "{provider} подключён. Теперь можно входить через него.",
+    "signInMethods_disconnected": "{provider} отключён.",
+    "signInMethods_failed": "Не получилось. Попробуйте ещё раз.",
+    "signInMethods_errTaken": "Этот аккаунт уже подключён к другому участнику. Он не был перенесён к вам.",
+    "signInMethods_errNotStarted": "Ничего не подключено. Начните на этой странице с кнопки «Подключить», затем войдите у провайдера."
   },
   "auth": {
     "accountLocked": "Слишком много неудачных попыток. Учетная запись временно заблокирована. Проверьте e-mail или попробуйте снова через несколько минут.",
@@ -1500,7 +1542,13 @@
       "username_taken": "Это имя пользователя уже занято.",
       "username_too_short": "Это имя пользователя слишком короткое для этого сайта. Выберите более длинное.",
       "weak_password": "Пароль не соответствует требованиям. Выберите более надёжный.",
-      "wrong_password": "Неверный пароль."
+      "wrong_password": "Неверный пароль.",
+      "already_connected": "У вас уже подключён аккаунт этого провайдера. Сначала отключите его.",
+      "impersonating": "Нельзя подключать способы входа, действуя от имени другого участника.",
+      "last_sign_in_method": "Это единственный способ войти в аккаунт, поэтому его нельзя удалить. Сначала подключите другой способ.",
+      "session_unknown": "Выйдите и войдите снова, затем подключите.",
+      "unknown_provider": "Этот способ входа недоступен на сайте.",
+      "sign_in_method_not_found": "Этот способ входа не подключён."
     },
     "errorAccessDenied": "Доступ запрещён. У вас нет прав для входа.",
     "errorConfiguration": "Ошибка конфигурации сервера. Обратитесь к администратору сайта.",
@@ -1559,7 +1607,8 @@
     "demoAsAdmin": "Как администратор",
     "demoAsMember": "Как участник",
     "demoResetNote": "Всё здесь возвращается к исходному состоянию каждый час, поэтому ваши действия не испортят демо для следующего посетителя. Некоторые действия отключены: отправка почты, реальные платежи и всё, что может заблокировать используемую учетную запись.",
-    "demoFillFor": "Заполните данные {who}"
+    "demoFillFor": "Заполните данные {who}",
+    "errorConnectFirst": "Этот вход не связан ни с одним аккаунтом здесь. Войдите по имени пользователя и паролю, затем подключите его на странице аккаунта."
   },
   "search": {
     "title": "Поиск",

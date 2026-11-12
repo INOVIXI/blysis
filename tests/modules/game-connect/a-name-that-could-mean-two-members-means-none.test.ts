@@ -15,6 +15,7 @@ const users = fakeTable();
 
 vi.mock("@/core/sdk/server", () => ({
     prisma: { gameConnectLink: links, user: users },
+    moduleSettings: vi.fn(async () => ({})),
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
 }));
 vi.mock("@/core/sdk", () => ({ applyFiltersAsync: vi.fn(async (_hook: string, value: unknown) => value) }));

@@ -7,7 +7,7 @@
 // imports computeOrderPricing/computeCouponDiscount/computeTotals instead of
 // inlining the arithmetic.
 
-import { priceAfterCredit, upgradeCredit, type UpgradeCandidate } from "./upgrade-credit";
+import { lineCredit, priceAfterCredit, type UpgradeCandidate } from "./upgrade-credit";
 
 /**
  * Money, to the cent.
@@ -118,6 +118,7 @@ export function computeOrderPricing(params: {
     const { items, products, bulkDiscounts, ownedProductIds, ownedRungs, variables } = params;
 
     let subtotal = 0;
+    const credited = new Set<string>();
     const orderItems = items.map((item): ComputedOrderItem => {
         const product = products.find((p) => p.id === item.productId)!;
         let price = Number(product.price);
@@ -127,13 +128,15 @@ export function computeOrderPricing(params: {
         // ahead of this one have to quote the same number the checkout takes.
         price = priceAfterCredit(
             price,
-            upgradeCredit(
+            lineCredit(
                 { id: product.id, categoryId: product.categoryId ?? null, price },
+                item.quantity,
                 [
                     ...products.map((p) => ({ id: p.id, categoryId: p.categoryId ?? null, price: Number(p.price) })),
                     ...ownedRungs,
                 ],
                 ownedProductIds,
+                credited,
             ),
         );
 
@@ -452,4 +455,29 @@ export function grossUpForFee(net: number, fee: ProcessorFee): { charged: number
     }
     const charged = cents((net + Math.max(0, fixed)) / (1 - percent / 100));
     return { charged, surcharge: cents(charged - net) };
+}
+
+/**
+ * Everything a buyer is asked for, in the order it is worked out: the
+ * discounts, the tax, the total, and the payment method's fee grossed up on
+ * that total.
+ *
+ * The cart quotes from this and the checkout charges through the same two
+ * functions it composes, so the figure a buyer reads before they leave for a
+ * processor is the figure the processor is handed. The cart used to work the
+ * fee out on a total without the tax added on top, and the checkout on the
+ * one with it. `the-cart-quotes-what-the-checkout-charges.test.ts` holds them
+ * together.
+ */
+export function checkoutSummary(params: {
+    subtotal: number;
+    couponDiscount: number;
+    creatorDiscount: number;
+    taxRate: number;
+    taxIncluded: boolean;
+    fee: ProcessorFee | null;
+}): { totalDiscount: number; tax: number; total: number; surcharge: number; charged: number } {
+    const { totalDiscount, tax, total } = computeTotals(params);
+    const { charged, surcharge } = params.fee ? grossUpForFee(total, params.fee) : { charged: total, surcharge: 0 };
+    return { totalDiscount, tax, total, surcharge, charged };
 }

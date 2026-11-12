@@ -147,6 +147,15 @@ model Product {
    */
   giftable             Boolean   @default(true)
 
+  /**
+   * Run the delivery commands once per unit bought rather than once per line.
+   *
+   * A command that hands out a fixed amount ("give 8 bonus blocks") delivered
+   * one lot to somebody who paid for three. Off by default, because a command
+   * written with `{quantity}` already delivers the whole line in one go.
+   */
+  commandsPerUnit      Boolean   @default(false)
+
   /** A sale with a start and an end, rather than a price somebody remembers. */
   salePrice            Decimal?  @db.Decimal(10, 2)
   saleFrom             DateTime?
@@ -207,6 +216,10 @@ model Order {
   /// it was recorded, and on one never sent to a gateway.
   chargeAmount   Decimal?   @db.Decimal(10, 2)
   chargeCurrency String?
+  /// What the buyer paid on top of `total` to cover the payment method's fee,
+  /// in `currency`. Kept apart from `total` so revenue is what was sold and
+  /// the fee is what the processor was paid; zero where none was passed on.
+  paymentFee    Decimal     @default(0) @db.Decimal(10, 2)
   paymentMethod String?
   paymentId     String?
   notes         String?
@@ -554,9 +567,18 @@ model CreditTopUp {
   id        String            @id @default(cuid())
   credits   Int
   amount    Decimal           @db.Decimal(10, 2)
+  /// The payment method's fee passed on to the buyer, in `currency`. The
+  /// gateway is asked for `amount` plus this, and a settlement is held
+  /// against the two together.
+  fee       Decimal           @default(0) @db.Decimal(10, 2)
   currency  String
   provider  String
   status    CreditTopUpStatus @default(PENDING)
+  /// The gateway's own id for the money, written at settlement: a refund
+  /// names the payment by it, never by this row's id.
+  providerRef String?
+  /// When the money went back and the credits were taken back.
+  refundedAt  DateTime?
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
@@ -564,6 +586,7 @@ model CreditTopUp {
   user   User?   @relation("CreditTopUps", fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
+  @@index([providerRef])
 }
 
 enum CreditTopUpStatus {

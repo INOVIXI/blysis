@@ -2,6 +2,7 @@
 
 import { useMessages, useTranslations } from "next-intl";
 import { usePlaceholderFill } from "@/core/hooks/usePlaceholder";
+import { useText } from "@/core/hooks/useText";
 
 /**
  * Words a block was given, in the reader's language.
@@ -24,7 +25,11 @@ export function useBlockText() {
     const t = useTranslations();
     const messages = useMessages();
     const fill = usePlaceholderFill();
-    return (value: unknown): string => {
+    const own = useText();
+    return (given: unknown): string => {
+        // A theme setting the operator wrote per language, which a block's
+        // setting may point at, is read in the reader's first.
+        const value = given !== null && typeof given === "object" ? own(given) : given;
         if (typeof value !== "string") return "";
         let node: unknown = messages;
         for (const part of value.split(".")) {

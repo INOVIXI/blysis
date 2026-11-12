@@ -130,6 +130,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         const plain: { notes?: string; status?: typeof status } = rest;
 
         if (status === "COMPLETED") {
+            // Settlement refuses a cancelled order, so a replayed gateway
+            // callback cannot revive one. An operator marking it paid means it.
+            if (existing.status === "CANCELLED") {
+                await prisma.order.updateMany({ where: { id: existing.id, status: "CANCELLED" }, data: { status: "PENDING" } });
+            }
             const settled = await settleOrder({
                 kind: "order",
                 reference: existing.id,

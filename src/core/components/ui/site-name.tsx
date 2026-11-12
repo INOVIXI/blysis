@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useSiteSettings } from "@/core/hooks/useSiteSettings";
+import { useText } from "@/core/hooks/useText";
 import { SITE_LOGO_KEY, siteLogo } from "@/core/lib/site-logo";
 
 /**
@@ -21,8 +22,9 @@ import { SITE_LOGO_KEY, siteLogo } from "@/core/lib/site-logo";
  */
 export function SiteName({ className }: { className?: string }) {
     const t = useTranslations("common");
+    const text = useText();
     const { settings } = useSiteSettings();
-    const name = (settings.site_name as string)?.trim() || t("appName");
+    const name = text(settings.site_name).trim() || t("appName");
     return <span className={className}>{name}</span>;
 }
 

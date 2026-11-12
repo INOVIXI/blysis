@@ -12,6 +12,8 @@ import { sanitizeCustomCss, CSS_SANITIZED_SETTING_KEYS } from "@/core/lib/css-sa
 import { readJsonBody } from "@/core/lib/api-body";
 import { log } from "@/core/lib/logger";
 import { isSecretSetting, settingsForStorage, withoutSecrets } from "@/core/lib/secret-settings";
+import { MEMBER_FACE_CACHE_KEY } from "@/core/lib/member-face-rules";
+import { cleanTranslatableText, isTranslatableText, longestText } from "@/core/lib/i18n/translatable-text";
 
 const settingKeySchema = z.string().regex(/^[a-zA-Z0-9_]+$/, "Invalid setting key format");
 // Value is a Json column - accept any JSON-serializable value (string, number, boolean, array, object, null)
@@ -33,14 +35,22 @@ const PER_KEY_LIMITS: Record<string, number> = {
     site_description: 500,
     site_email: 254,
     site_discord_url: 500,
+    site_facebook_url: 500,
+    site_instagram_url: 500,
+    site_x_url: 500,
+    site_youtube_url: 500,
+    site_tiktok_url: 500,
     hero_discord_url: 500,
     site_logo: 2_000,
+    site_icon: 2_000,
     // Twelve codes as JSON is under a hundred characters.
     site_languages: 200,
     default_locale: 16,
     site_timezone: 64,
     default_currency: 16,
     member_avatar_uploads: 32,
+    // `<module>.<provider>`, both slugs of at most 64 and 32.
+    member_avatar_provider: 100,
     member_username_changes: 32,
     member_email_changes: 32,
     identity_requires_password: 32,
@@ -48,9 +58,11 @@ const PER_KEY_LIMITS: Record<string, number> = {
     theme_color_secondary: 64,
     theme_color_accent: 64,
     theme_overrides: 16_000,
-    navbar_links: 24_000,
+    // Each label may now carry a translation per language the site offers.
+    navbar_links: 48_000,
     footer_about_text: 2_000,
-    footer_columns: 24_000,
+    // Headings and labels may each carry a translation per language.
+    footer_columns: 48_000,
     footer_hidden_links: 8_000,
     footer_quick_links: 8_000,
     footer_legal_links: 8_000,
@@ -60,6 +72,15 @@ const PER_KEY_LIMITS: Record<string, number> = {
     currency: 16,
     currency_symbol: 8,
 };
+
+/**
+ * The site's own prose, which the operator may write once per language
+ * (`translatable-text.ts`). Its limit is on one language's text, since that
+ * is what a reader is served; measured as the JSON of every language, a name
+ * in five of them was refused as too long. Identifiers stay off this list:
+ * an address or a code reads the same in every language.
+ */
+const TRANSLATABLE_KEYS = new Set(["site_name", "site_description", "footer_about_text", "footer_copyright"]);
 
 // GET /api/v1/settings
 export async function GET() {
@@ -131,8 +152,24 @@ export async function PATCH(request: NextRequest) {
     // A value that is not a string is measured as the JSON it is stored as:
     // the footer editor saves arrays, and a cap read only off strings let
     // them through unmeasured (`a-setting-s-limit-holds-whatever-shape-it-is-sent-in`).
-    for (const [key, rawValue] of Object.entries(parsed.data)) {
+    const data: Record<string, unknown> = { ...parsed.data };
+    for (const [key, rawValue] of Object.entries(data)) {
         const limit = PER_KEY_LIMITS[key];
+        if (TRANSLATABLE_KEYS.has(key) && rawValue !== null) {
+            if (!isTranslatableText(rawValue)) {
+                return NextResponse.json({ error: `Setting "${key}" must be text` }, { status: 400 });
+            }
+            if (limit !== undefined && longestText(rawValue) > limit) {
+                return NextResponse.json(
+                    { error: `Setting "${key}" exceeds the ${limit}-character limit` },
+                    { status: 400 },
+                );
+            }
+            // Blank translations and languages the software does not ship
+            // are not stored.
+            data[key] = cleanTranslatableText(rawValue, limit ?? Number.MAX_SAFE_INTEGER);
+            continue;
+        }
         const length = typeof rawValue === "string" ? rawValue.length : JSON.stringify(rawValue ?? null).length;
         if (limit !== undefined && length > limit) {
             return NextResponse.json(
@@ -178,7 +215,7 @@ export async function PATCH(request: NextRequest) {
     // promises.
     let forStorage: Record<string, unknown>;
     try {
-        forStorage = settingsForStorage(parsed.data);
+        forStorage = settingsForStorage(data);
     } catch (error) {
         log.error("settings: could not encrypt a credential", {
             error: error instanceof Error ? error.message : String(error),
@@ -211,6 +248,8 @@ export async function PATCH(request: NextRequest) {
     // Drop the cached public-settings payload so clients see fresh values
     // immediately instead of waiting out the 60s TTL.
     await invalidate("public-settings");
+    // Every page's layout reads how faces are drawn from its own entry.
+    await invalidate(MEMBER_FACE_CACHE_KEY);
     // The mailer keeps its transport for ten seconds; an admin who has just
     // pasted an API key should be able to send a test message straight away.
     invalidateEmailConfig();
@@ -219,7 +258,7 @@ export async function PATCH(request: NextRequest) {
         userId: session.user.id,
         action: "settings.update",
         entity: "setting",
-        metadata: { keys: Object.keys(parsed.data) },
+        metadata: { keys: Object.keys(data) },
     }).catch(() => {});
 
     return NextResponse.json({ message: "Settings updated" });

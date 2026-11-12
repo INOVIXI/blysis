@@ -97,7 +97,12 @@
     "welcomeTitle": "Bem-vindo à sua comunidade",
     "welcomeVisitorHint": "Use a navegação acima para explorar a comunidade.",
     "writeContentHere": "Escreva seu conteúdo aqui...",
-    "statsLabel": "O site num relance"
+    "statsLabel": "O site num relance",
+    "localizedText_translations": "Traduções ({filled} de {total})",
+    "localizedText_fallbackHint": "Um idioma deixado vazio mostra o texto original.",
+    "localizedText_filled": "Traduzido",
+    "localizedText_empty": "Mostra o original",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Página não encontrada",
@@ -163,7 +168,10 @@
     "twoFactorEnabled": "Verificação em duas etapas ativada",
     "userProfileUpdated": "{username} atualizou o seu perfil",
     "userRegistered": "entrou na comunidade",
-    "viewAll": "Ver tudo"
+    "viewAll": "Ver tudo",
+    "auditSignInMethodConnect": "Conectou um método de login",
+    "auditSignInMethodDisconnect": "Desconectou um método de login",
+    "auditSignInMethodRemove": "Removeu um método de login de um membro"
   },
   "nav": {
     "adminPanel": "Painel administrativo",
@@ -537,6 +545,9 @@
     "generalSettings_identityPasswordHint": "Solicitada antes de alterar um nome ou e-mail, para que uma tela emprestada não tome a conta. Uma conta que entra por um provedor não tem senha e não é solicitada.",
     "generalSettings_memberAvatarUploads": "Fotos de perfil",
     "generalSettings_memberAvatarUploadsHint": "O que um membro pode colocar no próprio perfil: enviar um arquivo, apontar para um que ele hospeda ou nenhum. Os envios são somente imagens, de no máximo 2 MB, com limite por membro.",
+    "generalSettings_memberAvatarProvider": "Serviço de imagens dos membros",
+    "generalSettings_memberAvatarProviderHint": "Quando um membro não tem imagem própria, ou as imagens dos membros estão desligadas, o seu rosto vem deste serviço pelo nome de utilizador. Uma imagem que o serviço não encontre aparece como iniciais.",
+    "generalSettings_avatarProviderNone": "Nenhum: iniciais",
     "generalSettings_memberContent": "Conteúdo dos membros",
     "generalSettings_memberIdentity": "Identidade do membro",
     "generalSettings_minPasswordLength": "Tamanho mínimo da senha",
@@ -985,6 +996,8 @@
     "siteSettings_contactEmail": "E-mail de contato",
     "siteSettings_description": "Descrição",
     "siteSettings_general": "Geral",
+    "siteSettings_icon": "Ícone do site",
+    "siteSettings_iconHint": "A pequena imagem na aba do navegador e na tela inicial de um telefone. Uma imagem quadrada fica melhor. Se ficar vazio, é usado o ícone padrão.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Falha ao salvar as configurações",
     "siteSettings_saveSettings": "Salvar configurações",
@@ -1356,7 +1369,21 @@
     "placeholder_noValue": "sem valor agora",
     "placeholder_unknown": "Nada neste site responde a {names}, os visitantes veem um traço.",
     "placeholder_refused": "Nada neste site responde a {names}, então o texto não será salvo.",
-    "placeholder_site_name": "Nome do site"
+    "placeholder_site_name": "Nome do site",
+    "users_signInMethods": "Métodos de login",
+    "users_signInMethodsPassword": "Tem senha.",
+    "users_signInMethodsNoPassword": "Sem senha: entra apenas pelos métodos abaixo.",
+    "users_signInMethodsNone": "Nenhum método de login conectado.",
+    "users_signInMethodConnectedOn": "Conectado em {date}",
+    "users_signInMethodRemove": "Remover",
+    "users_signInMethodRemoveTitle": "Remover {provider}?",
+    "users_signInMethodRemoveMessage": "{username} não poderá mais entrar com {provider}.",
+    "users_signInMethodRemoved": "{provider} removido.",
+    "users_signInMethodLast": "Este é o único jeito de o membro entrar, então não foi removido.",
+    "generalSettings_signInMethodSignUps": "Novas contas por métodos de login",
+    "generalSettings_signInMethodSignUpsHint": "Quando só membros conectados podem usá-los, entrar por um provedor só funciona para quem o conectou na página da conta, e ninguém ganha uma conta nova assim.",
+    "generalSettings_signInMethodSignUpsOpen": "Criar conta para qualquer pessoa nova",
+    "generalSettings_signInMethodSignUpsClosed": "Apenas membros conectados"
   },
   "footer": {
     "quickLinks": "Links rápidos",
@@ -1443,7 +1470,22 @@
     "username": "Nome de usuário",
     "usernameCannotChange": "Este site não permite que os membros alterem o nome de usuário.",
     "viewPublicProfile": "Ver perfil público",
-    "youSaid": "Você:"
+    "youSaid": "Você:",
+    "signInMethods": "Métodos de login",
+    "signInMethods_hint": "Conecte uma conta que você tem em outro lugar para entrar aqui com ela. Seu usuário e senha continuam funcionando.",
+    "signInMethods_none": "Este site não oferece outros métodos de login.",
+    "signInMethods_connectedOn": "Conectado em {date}",
+    "signInMethods_notConnected": "Não conectado",
+    "signInMethods_connect": "Conectar",
+    "signInMethods_connectLabel": "Conectar {provider}",
+    "signInMethods_disconnect": "Desconectar",
+    "signInMethods_disconnectTitle": "Desconectar {provider}?",
+    "signInMethods_disconnectMessage": "Você não poderá mais entrar com {provider}. Pode conectá-lo de novo depois.",
+    "signInMethods_connected": "{provider} está conectado. A partir de agora você pode entrar com ele.",
+    "signInMethods_disconnected": "{provider} foi desconectado.",
+    "signInMethods_failed": "Não funcionou. Tente de novo.",
+    "signInMethods_errTaken": "Essa conta já está conectada a outro membro aqui. Ela não foi movida para a sua.",
+    "signInMethods_errNotStarted": "Nada foi conectado. Comece nesta página com Conectar e depois entre no provedor."
   },
   "auth": {
     "accountLocked": "Muitas tentativas sem sucesso. Sua conta foi bloqueada temporariamente. Verifique seu e-mail ou tente novamente em alguns minutos.",
@@ -1500,7 +1542,13 @@
       "username_taken": "Este nome de usuário já está em uso.",
       "username_too_short": "Este nome de usuário é curto demais para este site. Escolha um mais longo.",
       "weak_password": "Esta senha não atende aos requisitos. Escolha uma mais forte.",
-      "wrong_password": "Esta senha não está correta."
+      "wrong_password": "Esta senha não está correta.",
+      "already_connected": "Você já tem uma conta deste provedor conectada. Desconecte-a primeiro.",
+      "impersonating": "Não é possível conectar métodos de login enquanto você age como outro membro.",
+      "last_sign_in_method": "Este é o único jeito de entrar na sua conta, então não pode ser removido. Conecte outro método primeiro.",
+      "session_unknown": "Saia e entre de novo, depois conecte.",
+      "unknown_provider": "Esse método de login não está disponível neste site.",
+      "sign_in_method_not_found": "Esse método de login não está conectado."
     },
     "errorAccessDenied": "Acesso negado. Você não tem permissão para entrar.",
     "errorConfiguration": "Erro de configuração do servidor. Entre em contato com o administrador do site.",
@@ -1559,7 +1607,8 @@
     "demoAsAdmin": "Como administrador",
     "demoAsMember": "Como membro",
     "demoResetNote": "Tudo aqui é restaurado a cada hora, então nada do que você fizer estraga a experiência do próximo visitante. Algumas ações estão desativadas: envio de e-mails, pagamentos reais e qualquer coisa que bloquearia a conta que você está usando.",
-    "demoFillFor": "Preencha os dados {who}"
+    "demoFillFor": "Preencha os dados {who}",
+    "errorConnectFirst": "Este login não está conectado a nenhuma conta aqui. Entre com seu usuário e senha e depois conecte-o na página da sua conta."
   },
   "search": {
     "title": "Pesquisar",

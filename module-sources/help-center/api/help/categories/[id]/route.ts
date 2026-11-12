@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, deleteContentTranslations, isAdmin, logActivity, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { helpCategoryUpdateSchema } from "../../../../lib/validations";
+import { CATEGORY_TRANSLATED_FIELDS, HELP_CATEGORY_TEXT, helpCategoryUpdateSchema } from "../../../../lib/validations";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -21,6 +21,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
+    const translations = contentTranslationsInput(body, CATEGORY_TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const fields = parsed.data;
 
     const data: Record<string, unknown> = {};
@@ -31,7 +33,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (fields.order !== undefined) data.order = fields.order;
     if (fields.isActive !== undefined) data.isActive = fields.isActive;
 
-    const updated = await prisma.helpCategory.update({ where: { id }, data });
+    const updated = await prisma.$transaction(async (tx) => {
+        const saved = await tx.helpCategory.update({ where: { id }, data });
+        if (translations.value) await saveContentTranslations(tx, { ...HELP_CATEGORY_TEXT, recordId: id }, translations.value);
+        return saved;
+    });
     await logActivity({
         userId: session.user.id,
         action: "help_category.update",
@@ -62,7 +68,10 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
         );
     }
 
-    await prisma.helpCategory.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        await tx.helpCategory.delete({ where: { id } });
+        await deleteContentTranslations(tx, HELP_CATEGORY_TEXT, [id]);
+    });
     await logActivity({
         userId: session.user.id,
         action: "help_category.delete",

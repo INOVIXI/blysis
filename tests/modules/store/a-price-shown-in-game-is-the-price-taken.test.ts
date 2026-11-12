@@ -29,6 +29,10 @@ const product = {
 const owned: { productId: string }[] = [];
 const bulk: { minQuantity: number; discountPercent: number; isActive: boolean; productIds: string[]; categoryIds: string[] }[] = [];
 let charged: number | null = null;
+let kept: Record<string, unknown> | null = null;
+/** What a tax module answers, when one is listening. */
+const taxModule = { current: null as StoreTaxAnswer | null };
+const taxAsked: StoreTaxContext[] = [];
 
 const db = {
     product: {
@@ -53,7 +57,11 @@ vi.mock("@/core/sdk/server", () => ({
     siteTimeZone: vi.fn(async () => "UTC"),
 }));
 vi.mock("@/core/sdk", () => ({
-    applyFiltersAsync: vi.fn(async (_hook: string, value: unknown) => value),
+    applyFiltersAsync: vi.fn(async (hook: string, value: unknown, context: unknown) => {
+        if (hook !== "store.tax") return value;
+        taxAsked.push(context as StoreTaxContext);
+        return taxModule.current ?? value;
+    }),
     doActionAsync: vi.fn(async () => undefined),
     generateOrderNumber: () => "ORD-1",
 }));
@@ -64,8 +72,9 @@ vi.mock("@/modules/store/lib/availability-server", async (original) => ({
 vi.mock("@/modules/store/lib/credit-order", () => ({
     INSUFFICIENT_CREDITS: "INSUFFICIENT_CREDITS",
     OUT_OF_STOCK: "OUT_OF_STOCK",
-    createCreditOrder: vi.fn(async (_tx: unknown, input: { total: number }) => {
+    createCreditOrder: vi.fn(async (_tx: unknown, input: { total: number; metadata: Record<string, unknown> }) => {
         charged = input.total;
+        kept = input.metadata;
         return { id: "o1", orderNumber: "ORD-1" };
     }),
     deliverPaidOrder: vi.fn(async () => undefined),
@@ -84,6 +93,9 @@ beforeEach(() => {
     owned.length = 0;
     bulk.length = 0;
     charged = null;
+    kept = null;
+    taxModule.current = null;
+    taxAsked.length = 0;
 });
 
 describe("a price quoted in game", () => {
@@ -117,5 +129,23 @@ describe("a price quoted in game", () => {
         await expect(quoteWithCredits({ ...ask, quantity: 0 })).resolves.toEqual({ ok: false, code: "quantity_invalid" });
         db.product.findFirst.mockResolvedValueOnce(null as never);
         await expect(quoteWithCredits(ask)).resolves.toEqual({ ok: false, code: "not_found" });
+    });
+});
+
+describe("tax on a purchase made in game", () => {
+    it("is what a tax module answers for a buyer it knows nothing about, as the site would charge", async () => {
+        taxModule.current = {
+            rate: 10,
+            included: false,
+            label: { kind: "preset", id: "gst" },
+            country: null,
+            reason: "standard",
+            evidence: null,
+        };
+        await expect(quoteWithCredits(ask)).resolves.toEqual({ ok: true, each: 5, total: 5.5 });
+        await purchaseWithCredits(buy);
+        expect(charged).toBe(5.5);
+        expect(taxAsked.at(-1)).toMatchObject({ channel: "game", billing: null, ip: null });
+        expect(kept?.tax).toMatchObject({ rate: 10, label: { kind: "preset", id: "gst" }, reason: "standard" });
     });
 });

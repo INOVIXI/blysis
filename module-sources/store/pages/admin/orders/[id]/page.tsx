@@ -8,6 +8,7 @@ import { auth } from "@/core/sdk/auth";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@/core/sdk/ui";
 import { ArrowLeft, Package } from "lucide-react";
 import { OrderStatusSelect } from "./status-select";
+import { readTaxRecord, taxLineText, taxReasonText } from "../../../../lib/tax";
 import { DeliveryBadge } from "../../../../components/DeliveryBadge";
 import { deliveryOf } from "../../../../lib/order-delivery";
 import { adminOrderStatusKeys, orderStatusLabel } from "../../../../lib/order-status";
@@ -55,8 +56,13 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
     });
 
     if (!order) notFound();
+    const taxKept = readTaxRecord(order.metadata);
     const delivery = (await deliveryOf([order.id]))[order.id] ?? null;
     const deliveryLabel = (state: DeliveryState) => t(`dlv_${state}`);
+    // Written by the refund: lines a game command already delivered, which a
+    // refund cannot run backwards. See `take-back.ts`.
+    const keptInGame = (order.metadata as { keptInGame?: unknown } | null)?.keptInGame;
+    const keptLines = Array.isArray(keptInGame) ? keptInGame.filter((name): name is string => typeof name === "string") : [];
 
     return (
         <>
@@ -113,10 +119,45 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                                         <span>-{money(Number(order.discount))}</span>
                                     </div>
                                 )}
+                                {(Number(order.tax) > 0 || taxKept) && (
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">{taxLineText(t, taxKept)}</span>
+                                        <span>{money(Number(order.tax))}</span>
+                                    </div>
+                                )}
+                                {taxKept && (
+                                    // Why this sale carries this tax, and where the
+                                    // buyer was said to be: what an operator checks
+                                    // before an invoice for a foreign buyer goes out.
+                                    <div className="space-y-0.5 text-xs text-muted-foreground">
+                                        <p>{taxReasonText(t, taxKept)}</p>
+                                        <p>
+                                            {t("taxEvidence", {
+                                                billing: taxKept.billingCountry ?? t("taxUnknown"),
+                                                ip: taxKept.ipCountry ?? t("taxUnknown"),
+                                            })}
+                                        </p>
+                                        {taxKept.evidenceConflict && <p className="text-warning">{t("taxEvidenceConflict")}</p>}
+                                    </div>
+                                )}
                                 <div className="flex justify-between text-lg font-bold">
                                     <span>{t("adm_total")}</span>
                                     <span>{money(Number(order.total))}</span>
                                 </div>
+                                {/* Apart from the total, which is what was sold:
+                                    the fee went to the processor. */}
+                                {Number(order.paymentFee) > 0 && (
+                                    <>
+                                        <div className="flex justify-between text-sm text-muted-foreground">
+                                            <span>{t("paymentFee")}</span>
+                                            <span>+{money(Number(order.paymentFee))}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm font-medium">
+                                            <span>{t("amountPaid")}</span>
+                                            <span>{money(Number(order.total) + Number(order.paymentFee))}</span>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
@@ -163,6 +204,12 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                                     <span className="text-muted-foreground">{t("dlv_label")}: </span>
                                     <DeliveryBadge state={delivery.state} label={deliveryLabel} />
                                 </p>
+                            )}
+                            {order.status === "REFUNDED" && (
+                                <p className="text-xs text-muted-foreground mt-2">{t("adm_refundTookBack")}</p>
+                            )}
+                            {order.status === "REFUNDED" && keptLines.length > 0 && (
+                                <p className="text-xs text-warning mt-1">{t("adm_refundKeptInGame", { items: keptLines.join(", ") })}</p>
                             )}
                         </CardContent>
                     </Card>

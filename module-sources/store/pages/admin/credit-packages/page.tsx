@@ -15,12 +15,13 @@ import {
     Label,
     ListControls,
     LoadFailed,
+    LocalizedTextInput,
     useConfirm,
     useRowList,
     useSiteCurrency,
 } from "@/core/sdk/ui";
 import { AdminPageHeader } from "@/core/sdk/admin";
-import { dateLocaleTag, writeError } from "@/core/sdk";
+import { dateLocaleTag, joinTranslations, originalText, splitTranslations, writeError, type LanguageTexts, type TranslatableText } from "@/core/sdk";
 import { creditsPerUnit, poorValue, type PricedPackage } from "../../../lib/credit-package-value";
 
 /**
@@ -40,10 +41,13 @@ import { creditsPerUnit, poorValue, type PricedPackage } from "../../../lib/cred
 interface Package extends PricedPackage {
     name: string;
     order: number;
+    /** Every language of its name, from the operator's list. */
+    translations?: Record<string, LanguageTexts>;
 }
 
 type Draft = {
-    name: string;
+    /** The original and a translation per language. */
+    name: TranslatableText;
     credits: string;
     bonusCredits: string;
     price: string;
@@ -54,7 +58,7 @@ const EMPTY: Draft = { name: "", credits: "", bonusCredits: "0", price: "", orde
 
 function draftOf(pack: Package): Draft {
     return {
-        name: pack.name,
+        name: joinTranslations(pack.name, pack.translations?.name),
         credits: String(pack.credits),
         bonusCredits: String(pack.bonusCredits),
         price: String(pack.price),
@@ -65,7 +69,9 @@ function draftOf(pack: Package): Draft {
 /** What the endpoint takes. Empty boxes are zero, not NaN. */
 function payload(draft: Draft) {
     return {
-        name: draft.name.trim(),
+        name: originalText(draft.name).trim(),
+        // Every time: an empty one is how a cleared language goes.
+        translations: { name: splitTranslations(draft.name).translations },
         credits: Number(draft.credits) || 0,
         bonusCredits: Number(draft.bonusCredits) || 0,
         price: Number(draft.price) || 0,
@@ -154,7 +160,7 @@ export default function CreditPackagesPage() {
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
             <div className="sm:col-span-2">
                 <Label htmlFor={`${prefix}-name`}>{t("adm_creditPackName")}</Label>
-                <Input id={`${prefix}-name`} value={draft.name} onChange={(e) => onChange({ ...draft, name: e.target.value })} />
+                <LocalizedTextInput id={`${prefix}-name`} label={t("adm_creditPackName")} value={draft.name} onChange={(name) => onChange({ ...draft, name })} />
             </div>
             <div>
                 <Label htmlFor={`${prefix}-credits`}>{t("adm_creditPackCredits")}</Label>
@@ -191,7 +197,7 @@ export default function CreditPackagesPage() {
                         {numbers(fresh, setFresh, "new")}
                         <div className="flex justify-end">
                             <Button
-                                disabled={busy !== null || fresh.name.trim() === ""}
+                                disabled={busy !== null || originalText(fresh.name).trim() === ""}
                                 onClick={async () => {
                                     const done = await send(
                                         "/api/v1/store/admin/credit-packages",

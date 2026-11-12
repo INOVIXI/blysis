@@ -101,6 +101,10 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
+  /// When it was connected. Null on a row linked before this was recorded.
+  connectedAt       DateTime?
+  /// What the provider called the account at the time, shown beside it.
+  displayName       String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -361,6 +365,29 @@ model MediaItem {
   @@index([uploadedById])
   @@index([mimeType])
   @@index([createdAt])
+}
+
+/// A module record's text in one more language.
+///
+/// The record's own column keeps the text as the admin typed it, so search,
+/// sorting, exports and every API that reads the column go on working; a row
+/// here is a translation of one field of one record into one language.
+/// `owner` is the module's id and `entity` its word for the kind of record,
+/// neither interpreted here, the way `Revision.resource` is not. A module
+/// writes and reads these through `@/core/sdk/server`
+/// (lib/content-translations.ts), and deletes them with the record.
+model ContentTranslation {
+  id        String   @id @default(cuid())
+  owner     String
+  entity    String
+  recordId  String
+  field     String
+  locale    String
+  text      String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  // Also the read: a page of records asks by its leading three columns.
+  @@unique([owner, entity, recordId, field, locale])
 }
 
 // Generic content revision history. Modules call recordRevision() before

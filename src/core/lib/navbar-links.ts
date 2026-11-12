@@ -1,3 +1,5 @@
+import type { TranslatableText } from "@/core/lib/i18n/translatable-text";
+
 /**
  * How many links the bar draws before it folds the rest away.
  *
@@ -8,13 +10,17 @@
  */
 export const INLINE_NAV_LINKS = 8;
 
-export interface NavbarLink {
-    label: string;
+/**
+ * A link as stored, where the label is the operator's own words and may be
+ * written per language, or as drawn, once the label is read in the reader's.
+ */
+export interface NavbarLink<Label extends TranslatableText = TranslatableText> {
+    label: Label;
     /** The module's own translation key, where it declared one. */
     labelKey?: string;
     href: string;
     icon?: string;
-    children?: NavbarLink[];
+    children?: NavbarLink<Label>[];
 }
 
 /**
@@ -33,7 +39,7 @@ export interface NavbarLink {
  * translation key, or it would be frozen in whichever language the operator
  * happened to be reading when they pressed Save.
  */
-export function foldNavLinks(links: readonly NavbarLink[], moreLabel: string): NavbarLink[] {
+export function foldNavLinks<Label extends TranslatableText>(links: readonly NavbarLink<Label>[], moreLabel: Label): NavbarLink<Label>[] {
     if (links.length <= INLINE_NAV_LINKS) return [...links];
 
     // Already folded: the editor seeds itself with this shape and hands it

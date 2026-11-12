@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { slugify } from "@/core/sdk";
-import { hasPermission, log, moduleSettings, pageParams, prisma, readJsonBody, textContains } from "@/core/sdk/server";
+import { contentTranslationsInput, hasPermission, log, moduleSettings, pageParams, prisma, readJsonBody, saveContentTranslations, textContains } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../lib/validations";
 import { availabilityData } from "../../lib/availability-input";
@@ -9,6 +9,7 @@ import { availabilityOf, effectivePrice } from "../../lib/availability";
 import { pricedForCampaign, runningCampaignEntries } from "../../lib/campaign-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "../../lib/availability-server";
 import { siteTimeZone } from "@/core/sdk/server";
+import { PRODUCT_FIELDS, PRODUCT_TEXT, localeOf, productsIn, productsTranslatedAs } from "../../lib/store-text";
 
 /**
  * The listing is the same whoever asked - it reads no session - but it is no
@@ -37,11 +38,16 @@ export async function GET(request: NextRequest) {
         // computed. The screen that needs the full list asks
         // /api/v1/store/admin/products, which checks who is asking.
         const now = new Date();
+        // A product found by its name in another language too.
+        const translated = search ? await productsTranslatedAs(search) : [];
         const where = {
             ...onTheShelfWhere(now),
             ...(category && { category: { slug: category } }),
             ...(featured && { isFeatured: true }),
-            ...(search && { OR: textContains(["name", "description"], search) }),
+            // Inside an AND, as the shop front's own search does: the shelf's
+            // window is the top-level OR, and a search spread beside it
+            // replaced it, so a search listed products outside their hours.
+            ...(search && { AND: [{ OR: [...textContains(["name", "description"], search), ...(translated.length > 0 ? [{ id: { in: translated } }] : [])] }] }),
         };
 
         const [products, total] = await Promise.all([
@@ -74,7 +80,11 @@ export async function GET(request: NextRequest) {
         // product for its entry would be a query a line.
         const campaignEntries = await runningCampaignEntries(prisma, now, zone);
         const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
-        const onShelf = hideShut(products as unknown as ProductRow[], now, zone);
+        // In `?locale=`, and in the original where the operator wrote none.
+        // The address carries the language, so a shared cache keeps one
+        // answer per language.
+        const named = await productsIn(products, localeOf(request));
+        const onShelf = hideShut(named as unknown as ProductRow[], now, zone);
         const annotated = onShelf.map((row) => {
             const rules = rulesOf(row);
             // Nobody in particular: this answer is shared-cached, so it
@@ -151,6 +161,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        const translations = contentTranslationsInput(body, PRODUCT_FIELDS);
+        if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
         const data = validation.data;
         const slug = data.slug || slugify(data.name);
 
@@ -163,7 +175,9 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const product = await prisma.product.create({
+        const scheduled = await availabilityData(data);
+        const product = await prisma.$transaction(async (tx) => {
+            const created = await tx.product.create({
             data: {
                 name: data.name,
                 slug,
@@ -177,6 +191,7 @@ export async function POST(request: NextRequest) {
                 isActive: data.isActive ?? true,
                 isFeatured: data.isFeatured ?? false,
                 giftable: data.giftable ?? true,
+                commandsPerUnit: data.commandsPerUnit ?? false,
                 showInGame: data.showInGame ?? false,
                 gameTitle: data.gameTitle || null,
                 gameDescription: data.gameDescription || null,
@@ -186,11 +201,14 @@ export async function POST(request: NextRequest) {
                 deliveryData: data.deliveryData,
                 subscriptionInterval: data.type === "SUBSCRIPTION" ? data.subscriptionInterval : null,
                 subscriptionIntervalCount: data.type === "SUBSCRIPTION" ? data.subscriptionIntervalCount : null,
-                ...(await availabilityData(data)),
+                ...scheduled,
             },
             include: {
                 category: true,
             },
+            });
+            if (translations.value) await saveContentTranslations(tx, { ...PRODUCT_TEXT, recordId: created.id }, translations.value);
+            return created;
         });
 
         const { doActionAsync } = await import("@/core/sdk");

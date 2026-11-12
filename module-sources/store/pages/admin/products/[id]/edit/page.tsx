@@ -20,9 +20,9 @@ import { useState, useEffect, use } from "react";
 import Image from "next/image";
 import { useRouter } from "@/core/sdk/navigation";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, UrlOrFile, Input, Label, LoadFailed, NativeSelect, RichTextEditor, Textarea, useConfirm, useSiteSettings } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, UrlOrFile, Input, Label, LoadFailed, NativeSelect, LocalizedTextInput, useConfirm, useSiteSettings } from "@/core/sdk/ui";
 import { ArrowLeft, Loader2, Trash2, X, Plus } from "lucide-react";
-import { writeError } from "@/core/sdk";
+import { joinTranslations, splitTranslations, writeError, type LanguageTexts } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
 
 interface Category {
@@ -34,6 +34,9 @@ interface Category {
 interface PageProps {
     params: Promise<{ id: string; locale: string }>;
 }
+
+type WordField = "name" | "description" | "shortDesc";
+const NO_LANGUAGES: Record<WordField, LanguageTexts> = { name: {}, description: {}, shortDesc: {} };
 
 export default function EditProductPage(props: PageProps) {
     const t = useTranslations("store");
@@ -57,6 +60,9 @@ export default function EditProductPage(props: PageProps) {
     const { confirm } = useConfirm();
 
     const [inGame, setInGame] = useState<InGameValue>(EMPTY_IN_GAME);
+    // Each language of the name, description and summary, beside the
+    // originals in the form.
+    const [languages, setLanguages] = useState<Record<WordField, LanguageTexts>>(NO_LANGUAGES);
     const [form, setForm] = useState({
         name: "",
         description: "",
@@ -71,6 +77,7 @@ export default function EditProductPage(props: PageProps) {
         isActive: true,
         isFeatured: false,
         giftable: true,
+        commandsPerUnit: false,
         subscriptionInterval: "month" as string,
         subscriptionIntervalCount: "1",
     });
@@ -94,6 +101,11 @@ export default function EditProductPage(props: PageProps) {
             if (cancelled) return;
             const p = productData.product;
             if (p) {
+                setLanguages({
+                    name: p.translations?.name ?? {},
+                    description: p.translations?.description ?? {},
+                    shortDesc: p.translations?.shortDesc ?? {},
+                });
                 setForm({
                     name: p.name || "",
                     description: p.description || "",
@@ -108,6 +120,7 @@ export default function EditProductPage(props: PageProps) {
                     isActive: p.isActive ?? true,
                     isFeatured: p.isFeatured ?? false,
                     giftable: p.giftable ?? true,
+                    commandsPerUnit: p.commandsPerUnit ?? false,
                     subscriptionInterval: p.subscriptionInterval || "month",
                     subscriptionIntervalCount: p.subscriptionIntervalCount ? String(p.subscriptionIntervalCount) : "1",
                 });
@@ -153,6 +166,13 @@ export default function EditProductPage(props: PageProps) {
         return () => { cancelled = true; };
     }, [productId, reloadKey]);
 
+    // The original goes to the form's column, each language beside it.
+    const word = (field: WordField, next: unknown) => {
+        const parts = splitTranslations(next);
+        setForm((was) => ({ ...was, [field]: parts.original }));
+        setLanguages((was) => ({ ...was, [field]: parts.translations }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
@@ -161,6 +181,9 @@ export default function EditProductPage(props: PageProps) {
         try {
             const payload = {
                 name: form.name,
+                // Every field every time: an empty one is how a cleared
+                // language goes.
+                translations: languages,
                 // Sent as they stand, so a description or summary the admin
                 // emptied is saved empty rather than left as it was.
                 description: form.description,
@@ -175,6 +198,7 @@ export default function EditProductPage(props: PageProps) {
                 isActive: form.isActive,
                 isFeatured: form.isFeatured,
                 giftable: form.giftable,
+                commandsPerUnit: form.commandsPerUnit,
                 subscriptionInterval: form.type === "SUBSCRIPTION" ? form.subscriptionInterval : null,
                 subscriptionIntervalCount: form.type === "SUBSCRIPTION" ? parseInt(form.subscriptionIntervalCount) || 1 : null,
                 ...availabilityPayload(availability),
@@ -284,29 +308,34 @@ export default function EditProductPage(props: PageProps) {
                             <CardContent className="space-y-4">
                                 <div>
                                     <Label htmlFor="name">{`${t("adm_name")} *`}</Label>
-                                    <Input
+                                    <LocalizedTextInput
                                         id="name"
-                                        value={form.name}
-                                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                        label={t("adm_name")}
+                                        value={joinTranslations(form.name, languages.name)}
+                                        onChange={(next) => word("name", next)}
                                         required
                                     />
                                 </div>
                                 <div>
                                     <Label id="description-label">{t("adm_description")}</Label>
-                                    <RichTextEditor
+                                    <LocalizedTextInput
+                                        label={t("adm_description")}
                                         labelledBy="description-label"
-                                        value={form.description}
-                                        onChange={(value: string) => setForm({ ...form, description: value })}
+                                        rich
+                                        value={joinTranslations(form.description, languages.description)}
+                                        onChange={(next) => word("description", next)}
                                     />
                                 </div>
                                 <div>
                                     <Label htmlFor="shortDesc">{t("adm_summary")}</Label>
-                                    <Textarea
+                                    <LocalizedTextInput
                                         id="shortDesc"
+                                        label={t("adm_summary")}
+                                        multiline
                                         rows={2}
                                         maxLength={500}
-                                        value={form.shortDesc}
-                                        onChange={(e) => setForm({ ...form, shortDesc: e.target.value })}
+                                        value={joinTranslations(form.shortDesc, languages.shortDesc)}
+                                        onChange={(next) => word("shortDesc", next)}
                                     />
                                     <p className="text-xs text-muted-foreground mt-1">{t("adm_summaryHint")}</p>
                                 </div>
@@ -392,7 +421,13 @@ export default function EditProductPage(props: PageProps) {
                                 <CardTitle>{t("adm_deliveryCommands")}</CardTitle>
                                 <p className="text-sm text-muted-foreground">{t("adm_deliveryCommandsHelp")}</p>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="space-y-4">
+                                <CheckboxField
+                                    checked={form.commandsPerUnit}
+                                    onChange={(e) => setForm({ ...form, commandsPerUnit: e.target.checked })}
+                                    label={t("adm_commandsPerUnit")}
+                                    description={t("adm_commandsPerUnitHint")}
+                                />
                                 <ProductCommandsEditor productId={productId} />
                             </CardContent>
                         </Card>
@@ -643,6 +678,7 @@ function ProductVariablesEditor({ productId }: { productId: string }) {
     const t = useTranslations("store");
     const [vars, setVars] = useState<{ id: string; name: string; label: string; type: string }[]>([]);
     const [newLabel, setNewLabel] = useState("");
+    const [newLabelLanguages, setNewLabelLanguages] = useState<LanguageTexts>({});
 
     useEffect(() => {
         let cancelled = false;
@@ -658,16 +694,19 @@ function ProductVariablesEditor({ productId }: { productId: string }) {
 
     const addVar = async () => {
         if (!newLabel.trim()) return;
+        // The key comes from the original, so the checkout files a buyer's
+        // answer under the same name whatever language they asked in.
         const name = newLabel.toLowerCase().replace(/\s+/g, "_");
         const res = await fetch("/api/v1/product-variables", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productId, name, label: newLabel, type: "text", required: true }),
+            body: JSON.stringify({ productId, name, label: newLabel, type: "text", required: true, translations: { label: newLabelLanguages } }),
         });
         if (res.ok) {
             const data = await res.json();
             setVars([...vars, data.variable]);
             setNewLabel("");
+            setNewLabelLanguages({});
         }
     };
 
@@ -680,7 +719,18 @@ function ProductVariablesEditor({ productId }: { productId: string }) {
                 </div>
             ))}
             <div className="flex gap-2">
-                <Input value={newLabel} onChange={(e) => setNewLabel(e.target.value)} placeholder={t("adm_variableLabelPlaceholder")} aria-label={t("adm_variableLabelPlaceholder")} className="text-xs" />
+                <div className="flex-1">
+                    <LocalizedTextInput
+                        label={t("adm_variableLabelPlaceholder")}
+                        value={joinTranslations(newLabel, newLabelLanguages)}
+                        onChange={(next) => {
+                            const parts = splitTranslations(next);
+                            setNewLabel(parts.original);
+                            setNewLabelLanguages(parts.translations);
+                        }}
+                        placeholder={t("adm_variableLabelPlaceholder")}
+                    />
+                </div>
                 <Button type="button" variant="outline" size="sm" onClick={addVar}><Plus className="w-3.5 h-3.5" /> {t("adm_add")}</Button>
             </div>
         </div>

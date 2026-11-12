@@ -64,6 +64,17 @@ export {
  * where there is not, and returns whether the text actually landed.
  */
 export { sharedJson, peekShared, invalidateShared } from "@/core/lib/shared-request";
+/**
+ * Text an operator wrote, once or per language: the reader's translation, or
+ * the original where their language has none.
+ */
+export { textFor, isTranslatableText, originalText, type TranslatableText, type TranslatedText } from "@/core/lib/i18n/translatable-text";
+/**
+ * A record's text kept as the original in its column and translations beside
+ * it: joined into the value `LocalizedTextInput` edits, and split back apart
+ * for the save.
+ */
+export { joinTranslations, splitTranslations, type LanguageTexts } from "@/core/lib/i18n/translatable-text";
 /** Site placeholders in text, `{servers.online}`: filled once and as text. */
 export { fillPlaceholderText, placeholderTokens, type PlaceholderValue } from "@/core/lib/placeholder-text";
 
@@ -154,6 +165,10 @@ export type { MatrixRule } from "@/core/lib/permission-matrix";
  * a member, stored as JSON, read back by whichever module claims the kind.
  */
 export { isUnsafeKey } from "@/core/lib/safe-object";
+
+// The account page's section where a member connects and removes sign-in
+// methods, for a module that lists them and sends the member there to manage.
+export { SIGN_IN_METHODS_SECTION } from "@/core/lib/sign-in-methods-shared";
 
 export { restrictedFrom, SITE_WIDE } from "@/core/lib/restrictions";
 export type { Restriction } from "@/core/lib/restrictions";

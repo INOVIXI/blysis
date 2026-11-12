@@ -144,6 +144,37 @@ export async function revokeSessionsFor(userId: string, spared: string | null): 
 }
 
 /**
+ * The decoded session token the request carries, or null.
+ *
+ * Decoded only: a token that decodes can still be revoked or past its own
+ * deadline, which is the `jwt` callback's question. It is read here because
+ * Auth.js reads the same cookie the same way when an OAuth sign-in comes back
+ * (`handleLoginOrRegister` links to its `sub`), and the sign-in callback has
+ * to know who that will be before it happens.
+ *
+ * The name comes from session-cookie.ts, which is also where auth.ts gets it,
+ * so the reader and the issuer cannot disagree about the prefix.
+ */
+export async function callerToken(source: { headers: Headers }): Promise<Record<string, unknown> | null> {
+    try {
+        const { getToken } = await import("next-auth/jwt");
+        const token = await getToken({
+            // getToken reads `req.cookies` or the Cookie header; a Request has
+            // the header, which is what the app's own handlers receive.
+            req: source as unknown as Parameters<typeof getToken>[0]["req"],
+            secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
+            secureCookie: SECURE_SESSION_COOKIES,
+            cookieName: SESSION_TOKEN_COOKIE,
+        });
+        return token && typeof token === "object" ? (token as Record<string, unknown>) : null;
+    } catch (error) {
+        // Unreadable is treated as unknown, which spares nothing and links nothing.
+        log.warn("[sessions] could not read the caller's session token", { error: errorText(error) });
+        return null;
+    }
+}
+
+/**
  * The tokenId of the session making this request, or null.
  *
  * The claim lives in the JWT and nowhere else: `auth()` returns the session
@@ -151,27 +182,8 @@ export async function revokeSessionsFor(userId: string, spared: string | null): 
  * out of its response for the same reason - an identifier that answers "which
  * session is this" is not something a browser needs handed back. So it is read
  * from the cookie on the server, where it already is.
- *
- * The name comes from session-cookie.ts, which is also where auth.ts gets it,
- * so the reader and the issuer cannot disagree about the prefix.
  */
 export async function callerSessionTokenId(request: Request): Promise<string | null> {
-    try {
-        const { getToken } = await import("next-auth/jwt");
-        const token = await getToken({
-            // getToken reads `req.cookies` or the Cookie header; a Request has
-            // the header, which is what the app's own handlers receive.
-            req: request as unknown as Parameters<typeof getToken>[0]["req"],
-            secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
-            secureCookie: SECURE_SESSION_COOKIES,
-            cookieName: SESSION_TOKEN_COOKIE,
-        });
-        const tokenId = (token as { tokenId?: unknown } | null)?.tokenId;
-        return typeof tokenId === "string" && tokenId !== "" ? tokenId : null;
-    } catch (error) {
-        // Unreadable is treated as unknown, which spares nothing.
-        log.warn("[sessions] could not read the caller's session id", { error: errorText(error) });
-        return null;
-    }
+    const tokenId = (await callerToken(request))?.tokenId;
+    return typeof tokenId === "string" && tokenId !== "" ? tokenId : null;
 }
-

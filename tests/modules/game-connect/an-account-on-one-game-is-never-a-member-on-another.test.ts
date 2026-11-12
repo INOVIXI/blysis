@@ -32,6 +32,7 @@ vi.mock("@/core/sdk/server", () => ({
         },
         user: { findUnique: vi.fn(async ({ where }: { where: { id: string } }) => ({ id: where.id, username: where.id })) },
     },
+    moduleSettings: vi.fn(async () => ({})),
 }));
 
 const resolveAccount = (await import("@/modules/game-connect/hooks/resolve-account")).default;

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { slugify } from "@/core/sdk";
-import { isAdmin, moduleSettings, pageParams, prisma, rateLimitForRole, readJsonBody, textContains } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, isAdmin, moduleSettings, pageParams, prisma, rateLimitForRole, readJsonBody, saveContentTranslations, textContains, translateContent } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { helpArticleSchema } from "../../../lib/validations";
+import { ARTICLE_TRANSLATED_FIELDS, HELP_ARTICLE_TEXT, helpArticleSchema } from "../../../lib/validations";
+import { withCategoryNames } from "../../../lib/read-article";
 
 /**
  * GET /api/v1/help/articles - the published list, and the operator's list.
@@ -17,7 +18,10 @@ import { helpArticleSchema } from "../../../lib/validations";
  *
  * `scope=admin` is the operator's answer: everything, hidden ones included,
  * newest first, paged, with the counts as they stand. It is refused to
- * anybody who could not open the screen that asks for it.
+ * anybody who could not open the screen that asks for it, and carries every
+ * language of each article, for the editor. The visitor's answer is read in
+ * `?locale=`, and in the original where the admin wrote no translation; a
+ * search matches the original columns.
  */
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -38,7 +42,7 @@ export async function GET(request: NextRequest) {
         where.OR = textContains(["title", "content"], search);
     }
 
-    const articles = await prisma.helpArticle.findMany({
+    const found = await prisma.helpArticle.findMany({
         where,
         take: limit,
         orderBy: { views: "desc" },
@@ -46,6 +50,12 @@ export async function GET(request: NextRequest) {
             category: { select: { id: true, name: true, slug: true } },
         },
     });
+
+    const locale = searchParams.get("locale") ?? "";
+    const articles = await withCategoryNames(
+        await translateContent(prisma, HELP_ARTICLE_TEXT, found, ["title", "content"], locale),
+        locale,
+    );
 
     // Same reason as the single-article endpoint: the list page is a client
     // component, so a hidden view count is withheld here, not there.
@@ -110,7 +120,7 @@ async function adminList(searchParams: URLSearchParams) {
     ]);
 
     return NextResponse.json({
-        articles,
+        articles: await attachContentTranslations(prisma, HELP_ARTICLE_TEXT, articles),
         pagination: { page, perPage: limit, total, pages: Math.max(1, Math.ceil(total / limit)) },
     });
 }
@@ -148,11 +158,14 @@ export async function POST(request: NextRequest) {
         );
     }
 
+    const translations = contentTranslationsInput(body, ARTICLE_TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
     const { title, slug, content, categoryId, isActive } = validation.data;
     const articleSlug = slug || slugify(title);
 
-    const article = await prisma.helpArticle.create({
-        data: {
+    const article = await prisma.$transaction(async (tx) => {
+        const created = await tx.helpArticle.create({ data: {
             title,
             slug: articleSlug,
             content: content,
@@ -161,7 +174,9 @@ export async function POST(request: NextRequest) {
         },
         include: {
             category: { select: { id: true, name: true, slug: true } },
-        },
+        } });
+        if (translations.value) await saveContentTranslations(tx, { ...HELP_ARTICLE_TEXT, recordId: created.id }, translations.value);
+        return created;
     });
 
     // Fire hook for cross-module reactions

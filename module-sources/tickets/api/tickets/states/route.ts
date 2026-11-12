@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hasPermission, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, deleteContentTranslations, hasPermission, logActivity, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { STATE_TONES, nextStateOrder } from "../../../lib/ticket-states";
 import { readTicketStates } from "../../../lib/read-states";
+import { PRIORITY_TEXT, STATE_FIELDS, STATUS_TEXT } from "../../../lib/desk-text";
 
 /**
  * The states this desk names its tickets with.
@@ -53,7 +54,12 @@ async function requireAdmin(): Promise<string | NextResponse> {
 export async function GET() {
     const who = await requireAdmin();
     if (who instanceof NextResponse) return who;
-    return NextResponse.json(await readTicketStates());
+    // With every language of each name an operator typed, for the editor.
+    const { statuses, priorities } = await readTicketStates();
+    return NextResponse.json({
+        statuses: await attachContentTranslations(prisma, STATUS_TEXT, statuses),
+        priorities: await attachContentTranslations(prisma, PRIORITY_TEXT, priorities),
+    });
 }
 
 export async function POST(request: NextRequest) {
@@ -66,6 +72,8 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
+    const translations = contentTranslationsInput(raw, STATE_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const { kind, key, name, tone, isOpen, closesTicket } = parsed.data;
 
     // A key already in use would take over every ticket holding it, which is
@@ -84,11 +92,17 @@ export async function POST(request: NextRequest) {
         : await prisma.ticketPriority.findFirst({ orderBy: { order: "desc" }, select: { order: true } });
     const order = nextStateOrder(highest?.order ?? null);
 
-    const state = kind === "status"
-        ? await prisma.ticketStatus.create({
-            data: { key, name, tone, order, isOpen: isOpen ?? true, closesTicket: closesTicket ?? false },
-        })
-        : await prisma.ticketPriority.create({ data: { key, name, tone, order } });
+    const state = await prisma.$transaction(async (tx) => {
+        const created = kind === "status"
+            ? await tx.ticketStatus.create({
+                data: { key, name, tone, order, isOpen: isOpen ?? true, closesTicket: closesTicket ?? false },
+            })
+            : await tx.ticketPriority.create({ data: { key, name, tone, order } });
+        if (translations.value) {
+            await saveContentTranslations(tx, { ...(kind === "status" ? STATUS_TEXT : PRIORITY_TEXT), recordId: created.id }, translations.value);
+        }
+        return created;
+    });
 
     await logActivity({
         userId: who,
@@ -110,7 +124,14 @@ export async function PATCH(request: NextRequest) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
+    const translations = contentTranslationsInput(raw, STATE_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const { kind, id, name, tone, isOpen, closesTicket } = parsed.data;
+    // A translation is of a name an operator typed. One sent without it, for
+    // a state this module ships, would sit under a key the label reads first.
+    if (translations.value && name === undefined) {
+        return NextResponse.json({ error: "A translation comes with the name it translates", code: "name_required" }, { status: 400 });
+    }
 
     // A name an operator types replaces the key this module translated it
     // under: once they have said what it is called, that is what it is
@@ -123,9 +144,15 @@ export async function PATCH(request: NextRequest) {
         if (closesTicket !== undefined) data.closesTicket = closesTicket;
     }
 
-    const state = kind === "status"
-        ? await prisma.ticketStatus.update({ where: { id }, data })
-        : await prisma.ticketPriority.update({ where: { id }, data });
+    const state = await prisma.$transaction(async (tx) => {
+        const updated = kind === "status"
+            ? await tx.ticketStatus.update({ where: { id }, data })
+            : await tx.ticketPriority.update({ where: { id }, data });
+        if (translations.value) {
+            await saveContentTranslations(tx, { ...(kind === "status" ? STATUS_TEXT : PRIORITY_TEXT), recordId: id }, translations.value);
+        }
+        return updated;
+    });
 
     await logActivity({
         userId: who,
@@ -167,8 +194,11 @@ export async function DELETE(request: NextRequest) {
         where: kind === "status" ? { status: state.key } : { priority: state.key },
     });
 
-    if (kind === "status") await prisma.ticketStatus.delete({ where: { id } });
-    else await prisma.ticketPriority.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+        if (kind === "status") await tx.ticketStatus.delete({ where: { id } });
+        else await tx.ticketPriority.delete({ where: { id } });
+        await deleteContentTranslations(tx, kind === "status" ? STATUS_TEXT : PRIORITY_TEXT, [id]);
+    });
 
     await logActivity({
         userId: who,

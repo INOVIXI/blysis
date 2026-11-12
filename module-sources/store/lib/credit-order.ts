@@ -98,14 +98,19 @@ export async function createCreditOrder(tx: PrismaTransaction, input: CreditOrde
             ...(input.gift ? { giftState: "pending", giftedById: input.buyerId, giftedToId: input.ownerId } : {}),
         })),
     });
-    await tx.ownedProduct.createMany({
-        data: [...new Set(input.lines.map((line) => line.productId))].map((productId) => ({
-            userId: input.ownerId,
-            productId,
-            orderId: order.id,
-        })),
-        skipDuplicates: true,
-    });
+    // A gift is owned once its recipient accepts it (`activateGift`). Written
+    // now, the sender could still take the gift back and be refunded while the
+    // recipient priced an upgrade off a rung they never kept.
+    if (!input.gift) {
+        await tx.ownedProduct.createMany({
+            data: [...new Set(input.lines.map((line) => line.productId))].map((productId) => ({
+                userId: input.ownerId,
+                productId,
+                orderId: order.id,
+            })),
+            skipDuplicates: true,
+        });
+    }
 
     return order;
 }
@@ -127,7 +132,12 @@ export interface DeliveryPlayer {
  * which is what the chest is for.
  */
 export async function deliverPaidOrder(
-    order: { id: string; items: { id: string; productId: string | null; name: string; quantity: number; metadata: unknown }[] },
+    order: {
+        id: string;
+        /** What `{order}` reads. Without it, the order's id. */
+        orderNumber?: string;
+        items: { id: string; productId: string | null; name: string; quantity: number; metadata: unknown }[];
+    },
     player: DeliveryPlayer,
 ): Promise<void> {
     const lines = order.items.filter((item): item is typeof item & { productId: string } => Boolean(item.productId));
@@ -137,6 +147,23 @@ export async function deliverPaidOrder(
         where: { productId: { in: [...new Set(lines.map((line) => line.productId))] } },
         orderBy: { order: "asc" },
     });
+    // Only a line of more than one can run more than once, so a basket of
+    // single items asks nothing more of the database than it used to.
+    const several = [...new Set(lines.filter((line) => line.quantity > 1).map((line) => line.productId))];
+    const perUnit = new Set(
+        several.length === 0
+            ? []
+            : (
+                  await prisma.product.findMany({
+                      where: { id: { in: several }, commandsPerUnit: true },
+                      select: { id: true },
+                      take: several.length,
+                  })
+              ).map((row) => row.id),
+    );
+    // A line's place is counted by id, the way a chest claim counts it, so
+    // `{delivery}` comes out the same whichever of the two runs the line.
+    const lineNumbers = new Map([...lines].sort((a, b) => (a.id < b.id ? -1 : 1)).map((line, i) => [line.id, i + 1]));
     const byProduct = new Map<string, typeof commandRows>();
     for (const row of commandRows) {
         const list = byProduct.get(row.productId);
@@ -182,6 +209,9 @@ export async function deliverPaidOrder(
                 variables,
                 reference: { kind: "order", id: order.id, label: line.name },
                 line: line.id,
+                perUnit: perUnit.has(line.productId),
+                orderNumber: order.orderNumber ?? order.id,
+                lineNumber: lineNumbers.get(line.id),
             });
             delivered = result.success;
         } catch (error) {

@@ -6,6 +6,7 @@ import type { ModuleSetting } from '../src/core/lib/module-types';
 import { exportedHttpMethods } from '../src/core/lib/http-methods';
 import { CORE_ADMIN_SCREENS } from '../src/core/lib/admin-screens';
 import { CORE_ADMIN_API, MEMBER_MUTATIONS } from '../src/core/lib/admin-api';
+import { avatarProvidersOf } from '../src/core/lib/avatar-providers';
 import { blocksOf, pagesOf, sortBlocks, type CatalogBlock, type ModulePage } from '../src/core/lib/page-blocks';
 
 function toComponentName(basename: string): string {
@@ -196,7 +197,7 @@ function generateRegistry() {
     const allSettingsCards: ManifestItem[] = [];
     const allOauthButtons: ManifestItem[] = [];
     const allNavGroups: ModuleNavGroupDeclaration[] = [];
-    const allAuthProviders: ({ id: string; envIdVar?: string; envSecretVar?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string })[] = [];
+    const allAuthProviders: ({ id: string; envIdVar?: string; envSecretVar?: string; issuer?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string })[] = [];
     const allWebhookChannels: ({ id: string; label: string; layout: string; hosts?: string[]; urlPlaceholder?: string; module: string })[] = [];
     const allProfileTabs: ({ id: string; label: string; component: string; order: number; module: string })[] = [];
     const allStorageProviders: ({ id: string; name: string; handler: string; module: string })[] = [];
@@ -540,6 +541,9 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
     // server-only handlers and has no business in a browser bundle.
     dataContent += `export const ModuleEmailProviders: { id: string; name: string }[] = ${JSON.stringify(allEmailProviders.map((e) => ({ id: e.id, name: e.name })), null, 2)};\n\n`;
     dataContent += `export const ModuleWebhookChannels: { id: string; label: string; layout: "json" | "embed" | "attachment"; hosts?: string[]; urlPlaceholder?: string; module: string }[] = ${JSON.stringify(allWebhookChannels, null, 2)};\n`;
+    // Picture services a member's face may come from. Plain data the layout
+    // reads on the server and the panel lists; core builds each address.
+    dataContent += `\nexport const ModuleAvatarProviders: { id: string; module: string; labelKey: string; url: string; host: string }[] = ${JSON.stringify(avatarProvidersOf(loaded), null, 2)};\n`;
     fs.writeFileSync(DATA_FILE, dataContent);
 
     // ── Auth.js providers ─────────────────────────────────────────────────
@@ -613,14 +617,14 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
     authContent += '// the env vars it names are set.\n';
     if (authProviderImports.length > 0) authContent += `${authProviderImports.join('\n')}\n`;
     authContent += '\n';
-    authContent += `export const ModuleAuthProviders: { id: string; envIdVar?: string; envSecretVar?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string }[] = ${JSON.stringify(safeAuthProviders, null, 2)};\n\n`;
+    authContent += `export const ModuleAuthProviders: { id: string; envIdVar?: string; envSecretVar?: string; issuer?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string }[] = ${JSON.stringify(safeAuthProviders, null, 2)};\n\n`;
     const declarationsContent =
         '// AUTO-GENERATED. Do not edit.\n' +
         '//\n' +
         '// What each installed module declared about its auth provider, with no\n' +
         '// imports: a reader that only needs the ids and the env vars they want\n' +
         '// must not pull every provider next-auth ships in behind them.\n\n' +
-        `export const ModuleAuthDeclarations: { id: string; envIdVar?: string; envSecretVar?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string }[] = ${JSON.stringify(safeAuthProviders, null, 2)};\n`;
+        `export const ModuleAuthDeclarations: { id: string; envIdVar?: string; envSecretVar?: string; issuer?: string; factory?: string; standardCallback?: boolean; envVars?: string[]; module: string }[] = ${JSON.stringify(safeAuthProviders, null, 2)};\n`;
     fs.writeFileSync(AUTH_DECLARATIONS_FILE, declarationsContent);
 
     authContent += '// Providers Auth.js ships. Each one takes a client id and secret and\n';
@@ -710,7 +714,7 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
     // answers false, so a URL naming nothing gets a status that says so.
     const RESOLVERS_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-route-resolvers.ts');
     let resolversContent = '// Auto-generated dynamic route existence checks\n\n';
-    resolversContent += 'export type RouteResolver = (params: Record<string, string | string[]>) => Promise<boolean>;\n\n';
+    resolversContent += 'export type RouteResolver = (params: Record<string, string | string[]>, context: { locale: string }) => Promise<boolean | { title?: string | null }>;\n\n';
     resolversContent += 'export const ModuleRouteResolvers: Record<string, () => Promise<{ default: RouteResolver }>> = {\n';
     for (const rr of routeResolvers) {
         const handlerPath = rr.handler.replace(/\.tsx?$/, '');

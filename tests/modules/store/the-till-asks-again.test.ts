@@ -27,15 +27,27 @@ const ZONE = { current: "Europe/Istanbul" };
 const bought = { current: 0 };
 const row = { current: {} as Record<string, unknown> };
 const orderCreate = vi.fn(async () => ({ id: "o1", orderNumber: "ORD-1" }));
+const orderUpdate = vi.fn(async () => ({}));
+const stockTaken = vi.fn(async () => ({ count: 1 }));
 
 const db = {
-    product: { findMany: vi.fn(async () => [row.current]) },
+    // The stock read asks for tracked products only; the product read for all.
+    product: {
+        findMany: vi.fn(async (args?: { where?: { stock?: unknown } }) =>
+            args?.where?.stock && row.current.stock == null ? [] : [row.current],
+        ),
+    },
     productVariable: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },
     orderItem: { aggregate: vi.fn(async () => ({ _sum: { quantity: bought.current } })) },
     setting: { findUnique: vi.fn(async () => null) },
     user: { findUnique: vi.fn(async () => ({ creditBalance: 0, roleId: null })) },
-    order: { create: orderCreate },
+    order: { create: orderCreate, update: orderUpdate },
+    creatorCode: {
+        findUnique: vi.fn(async () => null as unknown),
+        update: vi.fn(async () => ({})),
+    },
+    cartItem: { deleteMany: vi.fn(async () => ({ count: 0 })) },
     $transaction: vi.fn(),
 };
 
@@ -48,6 +60,7 @@ vi.mock("@/core/sdk/server", () => ({
     readJsonBody: (request: Request) => request.json(),
     siteTimeZone: async () => ZONE.current,
     resolveAppUrl: () => "http://localhost",
+    getClientIP: () => "unknown",
 }));
 vi.mock("@/core/sdk", async (importOriginal) => ({
     ...(await importOriginal<typeof import("@/core/sdk")>()),
@@ -56,10 +69,29 @@ vi.mock("@/core/sdk", async (importOriginal) => ({
     doActionAsync: async () => {},
 }));
 vi.mock("@/core/sdk/auth", () => ({ auth: async () => ({ user: { id: "buyer", role: "member" } }) }));
+vi.mock("@/modules/store/lib/order-events", () => ({
+    announceOrderCreated: vi.fn(async () => {}),
+    announceOrderCompleted: vi.fn(async () => {}),
+}));
 // What this buyer already owns, for upgrade credit. Nothing, here.
 vi.mock("@/modules/store/lib/upgrade-credit-server", () => ({
-    creditingPurchases: async () => [],
+    creditingPurchases: async () => new Set<string>(),
     ownedRungsOn: async () => [],
+}));
+
+vi.mock("@/modules/store/lib/order-events", () => ({
+    announceOrderCreated: vi.fn(async () => {}),
+    announceOrderCompleted: vi.fn(async () => {}),
+}));
+// Nothing here is counted on a shelf; `a-limited-product-runs-out` is where stock is.
+vi.mock("@/modules/store/lib/stock", async (importOriginal) => ({
+    ...(await importOriginal<Record<string, unknown>>()),
+    shortOfStock: vi.fn(async () => []),
+}));
+// No gateway is set up, so a card checkout writes its order and stops there.
+vi.mock("@/modules/store/lib/payments", () => ({
+    listPaymentProviders: vi.fn(async () => []),
+    startPaymentSession: vi.fn(),
 }));
 
 const { POST } = await import("@/modules/store/api/checkout/route");
@@ -94,14 +126,14 @@ function product(rules: Record<string, unknown> = {}) {
     };
 }
 
-async function checkout() {
+async function checkout(paymentMethod = "credits", quantity = 1) {
     const res = await POST(
         new NextRequest("http://localhost/api/v1/store/checkout", {
             method: "POST",
             body: JSON.stringify({
-                items: [{ productId: "p1", quantity: 1 }],
+                items: [{ productId: "p1", quantity }],
                 playerName: "Steve",
-                paymentMethod: "credits",
+                paymentMethod,
             }),
         }),
     );
@@ -116,6 +148,8 @@ beforeEach(() => {
     bought.current = 0;
     row.current = product();
     orderCreate.mockClear();
+    orderUpdate.mockClear();
+    stockTaken.mockClear();
 });
 
 afterEach(() => {
@@ -144,6 +178,132 @@ describe("the checkout", () => {
         const { status, body } = await checkout();
         expect(status).toBe(409);
         expect(body.code).toBe("store_limit_reached");
+        expect(orderCreate).not.toHaveBeenCalled();
+    });
+
+    it("refuses a credits purchase when the limit filled while it waited for the lock", async () => {
+        // Two credits checkouts sent together both passed the count above;
+        // the one that takes the lock second counts again and sees the first.
+        row.current = product({ perPersonLimit: 1 });
+        db.user.findUnique.mockImplementation(async () => ({ creditBalance: 100, roleId: null }));
+        db.$transaction.mockImplementationOnce(async (work: unknown) =>
+            (work as (tx: unknown) => Promise<unknown>)({
+                ...db,
+                $executeRaw: vi.fn(async () => {
+                    bought.current = 1;
+                    return 1;
+                }),
+            }),
+        );
+
+        const { status, body } = await checkout();
+
+        db.user.findUnique.mockImplementation(async () => ({ creditBalance: 0, roleId: null }));
+        expect(status).toBe(409);
+        expect(body.code).toBe("store_limit_reached");
+    });
+
+    it("refuses a free order when the limit filled while it waited for the lock", async () => {
+        // A hundred per cent coupon or a product at nothing skips the credits
+        // branch, and used to skip the count under the lock with it.
+        row.current = product({ price: 0, perPersonLimit: 1 });
+        const chest = vi.fn(async () => ({ count: 1 }));
+        db.$transaction.mockImplementationOnce(async (work: unknown) =>
+            (work as (tx: unknown) => Promise<unknown>)({
+                ...db,
+                chestItem: { createMany: chest },
+                ownedProduct: { createMany: vi.fn(async () => ({ count: 1 })) },
+                $executeRaw: vi.fn(async () => {
+                    bought.current = 1;
+                    return 1;
+                }),
+            }),
+        );
+
+        const { status, body } = await checkout("none");
+
+        expect(status).toBe(409);
+        expect(body.code).toBe("store_limit_reached");
+        expect(chest).not.toHaveBeenCalled();
+        // The order written a moment before does not sit PENDING holding the
+        // buyer's allowance.
+        expect(orderUpdate).toHaveBeenCalledWith({ where: { id: "o1" }, data: { status: "CANCELLED" } });
+    });
+
+    it("takes a free order's stock off the shelf, and refuses it when there is none", async () => {
+        row.current = product({ price: 0, stock: 1 });
+        const chest = vi.fn(async () => ({ count: 1 }));
+        const shelf = (taken: number) => {
+            stockTaken.mockImplementation(async () => ({ count: taken }));
+            db.$transaction.mockImplementationOnce(async (work: unknown) =>
+                (work as (tx: unknown) => Promise<unknown>)({
+                    ...db,
+                    product: {
+                        findMany: vi.fn(async () => [{ id: "p1" }]),
+                        updateMany: stockTaken,
+                    },
+                    chestItem: { createMany: chest },
+                    ownedProduct: { createMany: vi.fn(async () => ({ count: 1 })) },
+                    $executeRaw: vi.fn(async () => 1),
+                }),
+            );
+        };
+
+        shelf(1);
+        const sold = await checkout("none");
+        expect(sold.status).toBe(201);
+        expect(stockTaken).toHaveBeenCalledWith({
+            where: { id: "p1", stock: { gte: 1 } },
+            data: { stock: { decrement: 1 } },
+        });
+
+        // Somebody took the last one between the read and the write.
+        chest.mockClear();
+        orderUpdate.mockClear();
+        shelf(0);
+        const gone = await checkout("none");
+        expect(gone.status).toBe(409);
+        expect(gone.body.code).toBe("out_of_stock");
+        expect(chest).not.toHaveBeenCalled();
+        expect(orderUpdate).toHaveBeenCalledWith({ where: { id: "o1" }, data: { status: "CANCELLED" } });
+    });
+
+    it("pays a creator nothing for an order that is not paid yet", async () => {
+        // A checkout at a gateway is only an order waiting for its money. A
+        // creator paid at this point was paid for every checkout nobody
+        // finished, as many times as one could be started.
+        db.creatorCode.findUnique.mockResolvedValueOnce({
+            id: "cc1", code: "ALEX", creatorId: "creator", isActive: true,
+            discountPercent: 0, commissionPercent: 10, productIds: [], categoryIds: [],
+        });
+        db.$transaction.mockImplementation(async (work: unknown) => (work as (tx: unknown) => Promise<unknown>)(db));
+
+        const res = await POST(
+            new NextRequest("http://localhost/api/v1/store/checkout", {
+                method: "POST",
+                body: JSON.stringify({
+                    items: [{ productId: "p1", quantity: 1 }],
+                    playerName: "Steve",
+                    paymentMethod: "card",
+                    creatorCode: "ALEX",
+                }),
+            }),
+        );
+
+        db.$transaction.mockReset();
+        expect(orderCreate).toHaveBeenCalled();
+        expect(res.status).toBe(503);
+        expect(db.creatorCode.update).not.toHaveBeenCalled();
+    });
+
+    // The cart holds 99 of a line at most, and the checkout took any count.
+    // A paid line that large only overflowed the total, but a free one, or
+    // a product that runs its commands once per unit, delivered that many.
+    it("takes no more of a line than a cart can hold", async () => {
+        const { status, body } = await checkout("credits", 100000);
+        expect(status).toBe(400);
+        // Refused as input, before any price was worked out for it.
+        expect(body.error).not.toMatch(/credit/i);
         expect(orderCreate).not.toHaveBeenCalled();
     });
 

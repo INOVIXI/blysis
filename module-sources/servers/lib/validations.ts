@@ -35,6 +35,14 @@ export const serverCreateSchema = z.object({
 
 export const serverUpdateSchema = serverCreateSchema.partial();
 
+/**
+ * Whose translations a server's are, in core's table, and the fields that
+ * have them: each language held to its column's own limit. The address is a
+ * place, not prose, and has none.
+ */
+export const SERVER_TEXT = { owner: "servers", entity: "server" };
+export const TRANSLATED_FIELDS = { name: 100, description: 300 };
+
 /** One RCON command, and which server it goes to. */
 export const rconCommandSchema = z.object({
     command: z.string().trim().min(1, "Command required").max(1_000),

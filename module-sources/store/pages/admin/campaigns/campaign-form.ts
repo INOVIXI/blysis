@@ -9,6 +9,7 @@
  * still is: an operator can mean free, and the difference between meaning it
  * and leaving the box alone is exactly what this file is for.
  */
+import type { LanguageTexts } from "@/core/sdk";
 import { minutesFromTime } from "../products/_fields/time-of-day";
 
 export interface CampaignEntryValue {
@@ -20,6 +21,8 @@ export interface CampaignEntryValue {
 
 export interface CampaignFormValue {
     name: string;
+    /** The name in each language, beside the original above. */
+    nameLanguages: LanguageTexts;
     isActive: boolean;
     days: number[];
     from24: string;
@@ -29,6 +32,7 @@ export interface CampaignFormValue {
 
 export const EMPTY_CAMPAIGN: CampaignFormValue = {
     name: "",
+    nameLanguages: {},
     isActive: true,
     days: [],
     from24: "",
@@ -55,6 +59,8 @@ export function campaignPayload(value: CampaignFormValue) {
 
     return {
         name: value.name,
+        // Every time: an empty one is how a cleared language goes.
+        translations: { name: value.nameLanguages },
         isActive: value.isActive,
         days: value.days,
         fromMinute: minutesFromTime(value.from24),

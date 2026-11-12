@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { visibleCategoryIds } from "../../lib/visible-categories";
 import { generateSlug } from "@/core/sdk";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, isAdmin, prisma, readJsonBody, saveContentTranslations, translateContent } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { forumCategorySchema } from "../../lib/validations";
 import { denyGuestView } from "../../lib/guest-view";
+import { CATEGORY_TEXT, TRANSLATED_FIELDS } from "../../lib/category-text";
 
 // GET /api/v1/forum/categories
 /**
@@ -14,7 +15,9 @@ import { denyGuestView } from "../../lib/guest-view";
  * The panel read the reader's answer, so a section an operator switched off
  * left the one screen that could switch it back on - and the private ones are
  * filtered by what the *reader* may see, which for an operator managing the
- * board is the wrong question entirely.
+ * board is the wrong question entirely. The panel's answer carries every
+ * language of each name and description; a reader's is in `?locale=`, and
+ * the original where the admin wrote no translation.
  */
 export async function GET(request: NextRequest) {
     if (new URL(request.url).searchParams.get("scope") === "admin") {
@@ -25,7 +28,7 @@ export async function GET(request: NextRequest) {
             orderBy: { order: "asc" },
             include: { _count: { select: { topics: true } } },
         });
-        return NextResponse.json({ categories: all });
+        return NextResponse.json({ categories: await attachContentTranslations(prisma, CATEGORY_TEXT, all) });
     }
 
     const denied = await denyGuestView();
@@ -45,7 +48,8 @@ export async function GET(request: NextRequest) {
         },
     });
 
-    return NextResponse.json({ categories });
+    const locale = new URL(request.url).searchParams.get("locale") ?? "";
+    return NextResponse.json({ categories: await translateContent(prisma, CATEGORY_TEXT, categories, ["name", "description"], locale) });
 }
 
 // POST /api/v1/forum/categories
@@ -68,6 +72,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: validation.error.issues[0].message }, { status: 400 });
     }
 
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
     const { name, slug: requestedSlug, description, icon, color, order, isActive } = validation.data;
     const slug = requestedSlug || generateSlug(name);
 
@@ -76,8 +83,12 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Slug already exists" }, { status: 400 });
     }
 
-    const category = await prisma.forumCategory.create({
-        data: { name, slug, description, icon, color, order: order || 0, isActive: isActive ?? true },
+    const category = await prisma.$transaction(async (tx) => {
+        const created = await tx.forumCategory.create({
+            data: { name, slug, description, icon, color, order: order || 0, isActive: isActive ?? true },
+        });
+        if (translations.value) await saveContentTranslations(tx, { ...CATEGORY_TEXT, recordId: created.id }, translations.value);
+        return created;
     });
 
     return NextResponse.json({ category }, { status: 201 });

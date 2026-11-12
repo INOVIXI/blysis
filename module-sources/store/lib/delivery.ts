@@ -31,6 +31,17 @@ function sanitizePlayerName(input: string): string {
     return sanitizeRconArg(input).replace(/ /g, "");
 }
 
+/**
+ * An order number, or a run named after it, as one argument a game plugin can
+ * keep and compare: letters, digits and dashes.
+ */
+function sanitizeReference(input: string): string {
+    return input.replace(/[^a-zA-Z0-9-]/g, "");
+}
+
+/** The placeholders the store fills itself, which no variable may take. */
+const STORE_PLACEHOLDERS = new Set(["player", "product", "quantity", "order", "delivery", "unit"]);
+
 export interface DeliveryCommand {
     command: string;
     /** Which server to run it on. Null means the install's default server. */
@@ -95,8 +106,17 @@ export async function runDeliveryCommand(
  * Executes a product's delivery commands in order, stopping at the first
  * failure so a half-delivered purchase is visible rather than silently partial.
  *
- * Commands support `{player}`, `{product}`, `{quantity}`, and any custom
- * variable the product defines.
+ * Commands support `{player}`, `{product}`, `{quantity}`, `{order}`,
+ * `{delivery}` and `{unit}`, filled by the store, and any custom variable the
+ * product defines. The variables are the buyer's answers, sent with the
+ * checkout under names the buyer chooses, so none of them may stand in for
+ * one of the store's own (`STORE_PLACEHOLDERS`): `{order}` is what a game
+ * plugin pays once against. A buyer's answer cannot carry a placeholder
+ * either: braces never survive `sanitizeRconArg`.
+ *
+ * `{delivery}` is `<order>-<line>-<unit>` and is the same every time the same
+ * unit of the same line is delivered, which is what lets a game plugin refuse
+ * a retried run it has already carried out.
  */
 export async function deliverProduct(params: {
     playerName: string;
@@ -115,6 +135,15 @@ export async function deliverProduct(params: {
      * order are two deliveries, each with its own order.
      */
     line?: string | null;
+    /**
+     * Run the whole list once per unit rather than once per line, for a
+     * command that hands out a fixed amount however many were bought.
+     */
+    perUnit?: boolean;
+    /** The number the buyer was shown. Without one, the reference's id. */
+    orderNumber?: string | null;
+    /** The line's 1-based place in its order. */
+    lineNumber?: number;
 }): Promise<DeliveryResult> {
     const results: string[] = [];
     const safePlayerName = sanitizePlayerName(params.playerName);
@@ -125,7 +154,14 @@ export async function deliverProduct(params: {
     const batch = reference.id ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
     const sequences = new Map<string, number>();
 
-    for (const entry of params.commands) {
+    const orderRef = sanitizeReference(params.orderNumber ?? batch);
+    const lineNumber = params.lineNumber ?? 1;
+    // Every unit's commands share the line's group, its sequence running on
+    // from one unit to the next, so a queue keeps them whole and in order.
+    const units = params.perUnit ? Math.max(1, Math.trunc(params.quantity || 1)) : 1;
+    const runs = Array.from({ length: units }, (_, i) => params.commands.map((entry) => ({ entry, unit: i + 1 }))).flat();
+
+    for (const { entry, unit } of runs) {
         let command = entry.command
             .replace(/\{player\}/g, safePlayerName)
             .replace(/\{product\}/g, safeProductName)
@@ -133,9 +169,17 @@ export async function deliverProduct(params: {
 
         if (params.variables) {
             for (const [key, value] of Object.entries(params.variables)) {
-                command = command.replace(new RegExp(`\\{${key}\\}`, "g"), sanitizeRconArg(value));
+                if (STORE_PLACEHOLDERS.has(key)) continue;
+                // Split rather than a pattern: the name is the buyer's, and a
+                // name like "(" made the pattern throw and the delivery fail.
+                command = command.split(`{${key}}`).join(sanitizeRconArg(value));
             }
         }
+
+        command = command
+            .replace(/\{order\}/g, orderRef)
+            .replace(/\{delivery\}/g, `${orderRef}-${lineNumber}-${unit}`)
+            .replace(/\{unit\}/g, String(unit));
 
         const target = entry.target === "player" ? "player" : "server";
         const place = target === "player" ? "current" : (entry.serverId ?? "default");

@@ -19,8 +19,10 @@ const chestItems = fakeTable(() => ({ isRedeemed: false, giftState: null, create
 const productCommands = fakeTable();
 const orders = fakeTable();
 const ownedProducts = fakeTable();
+const products = fakeTable();
+const orderItems = fakeTable();
 
-const client = { chestItem: chestItems, productCommand: productCommands, order: orders, ownedProduct: ownedProducts };
+const client = { chestItem: chestItems, productCommand: productCommands, order: orders, ownedProduct: ownedProducts, product: products, orderItem: orderItems };
 const prismaMock = {
     ...client,
     user: { findUnique: vi.fn(async () => ({ creditBalance: 0 })) },
@@ -57,7 +59,7 @@ const deliverProduct = vi.fn(async () => ({ success: true, results: ["Done"] }))
 vi.mock("@/modules/store/lib/delivery", () => ({ deliverProduct }));
 
 const { deliverPaidOrder } = await import("@/modules/store/lib/credit-order");
-const { activateGift, cancelGift, PENDING } = await import("@/modules/store/lib/gifts");
+const { activateGift, cancelGift, claimChestItem, PENDING } = await import("@/modules/store/lib/gifts");
 
 const line = { id: "line-1", productId: "p1", name: "VIP", quantity: 1, metadata: null };
 const buyer = { name: "Steve", id: "uuid-1", userId: "u1" };
@@ -68,6 +70,8 @@ beforeEach(() => {
     chestItems.table.rows = [];
     orders.table.rows = [];
     ownedProducts.table.rows = [];
+    products.table.rows = [{ id: "p1", commandsPerUnit: false }];
+    orderItems.table.rows = [];
     productCommands.table.rows = [{ id: "cmd-1", productId: "p1", command: "lp user {player} parent add vip", serverId: null, target: "server", whenOnline: true, order: 0 }];
     deliverProduct.mockResolvedValue({ success: true, results: ["Done"] });
 });
@@ -132,6 +136,75 @@ describe("a paid order", () => {
                 line: "line-1",
             }),
         );
+    });
+});
+
+describe("a paid order bought several times over", () => {
+    const three = { ...line, quantity: 3 };
+
+    it("asks for one run per unit when the product says so", async () => {
+        products.table.rows = [{ id: "p1", commandsPerUnit: true }];
+
+        await deliverPaidOrder({ id: "o1", orderNumber: "ORD-7", items: [three] }, buyer);
+
+        expect(deliverProduct).toHaveBeenCalledTimes(1);
+        expect(deliverProduct).toHaveBeenCalledWith(
+            expect.objectContaining({ quantity: 3, perUnit: true, orderNumber: "ORD-7", lineNumber: 1 }),
+        );
+    });
+
+    it("runs once per line when it does not", async () => {
+        await deliverPaidOrder({ id: "o1", orderNumber: "ORD-7", items: [three] }, buyer);
+
+        expect(deliverProduct).toHaveBeenCalledWith(expect.objectContaining({ quantity: 3, perUnit: false }));
+    });
+
+    // The units are one delivery: a second pass over a paid order finds the
+    // line taken and adds none.
+    it("is not run again for the same payment", async () => {
+        products.table.rows = [{ id: "p1", commandsPerUnit: true }];
+        chestItems.table.rows.push({ id: "c1", orderId: "o1", productId: "p1", userId: "u1", isRedeemed: false, giftState: null });
+
+        await deliverPaidOrder({ id: "o1", orderNumber: "ORD-7", items: [three] }, buyer);
+        await deliverPaidOrder({ id: "o1", orderNumber: "ORD-7", items: [three] }, buyer);
+
+        expect(deliverProduct).toHaveBeenCalledTimes(1);
+    });
+
+    // Lines are numbered by id, whichever order the caller listed them in.
+    it("numbers a line by its place in the order", async () => {
+        const first = { id: "line-0", productId: "p0", name: "Key", quantity: 1, metadata: null };
+        productCommands.table.rows.push({ id: "cmd-0", productId: "p0", command: "key {player}", serverId: null, target: "server", whenOnline: true, order: 0 });
+
+        await deliverPaidOrder({ id: "o1", orderNumber: "ORD-7", items: [line, first] }, buyer);
+
+        expect(deliverProduct).toHaveBeenCalledWith(expect.objectContaining({ line: "line-0", lineNumber: 1 }));
+        expect(deliverProduct).toHaveBeenCalledWith(expect.objectContaining({ line: "line-1", lineNumber: 2 }));
+    });
+
+    // A unit claimed from the chest after a delivery that stopped half way
+    // carries the reference the first attempt used, so a plugin can refuse it.
+    it("claimed from the chest, carries the order's number and the line's place", async () => {
+        productCommands.table.rows = [{ id: "cmd-1", productId: "p1", command: "x {delivery}", serverId: null, target: "server", whenOnline: true, order: 0 }];
+        products.table.rows = [{ id: "p1", commandsPerUnit: true }];
+        orders.table.rows.push({ id: "o1", orderNumber: "ORD-7" });
+        orderItems.table.rows.push({ id: "line-0", orderId: "o1", productId: "p0" }, { id: "line-1", orderId: "o1", productId: "p1" });
+        chestItems.table.rows.push({ id: "c1", orderId: "o1", productId: "p1", productName: "VIP", quantity: 3, playerName: "Steve", variables: null, userId: "u1", isRedeemed: false, giftState: null });
+
+        await expect(claimChestItem("u1", "c1", { name: null, id: null })).resolves.toEqual({ ok: true });
+
+        expect(deliverProduct).toHaveBeenCalledWith(
+            expect.objectContaining({ quantity: 3, perUnit: true, orderNumber: "ORD-7", lineNumber: 2 }),
+        );
+    });
+
+    it("claimed from a chest row nobody bought, is named by the row", async () => {
+        productCommands.table.rows = [{ id: "cmd-1", productId: "p1", command: "x {delivery}", serverId: null, target: "server", whenOnline: true, order: 0 }];
+        chestItems.table.rows.push({ id: "c9", orderId: null, productId: "p1", productName: "VIP", quantity: 1, playerName: "Steve", variables: null, userId: "u1", isRedeemed: false, giftState: null });
+
+        await claimChestItem("u1", "c9", { name: null, id: null });
+
+        expect(deliverProduct).toHaveBeenCalledWith(expect.objectContaining({ orderNumber: "c9", lineNumber: 1 }));
     });
 });
 

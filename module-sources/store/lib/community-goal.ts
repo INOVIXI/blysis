@@ -5,7 +5,9 @@
  * Read by the public banner and by a game that shows the same progress, from
  * here, so the two cannot disagree.
  */
-import { prisma } from "@/core/sdk/server";
+import { textFor } from "@/core/sdk";
+import { prisma, siteCurrency } from "@/core/sdk/server";
+import { totalsIn } from "./money-totals";
 
 export interface CommunityGoalState {
     target: number;
@@ -14,7 +16,12 @@ export interface CommunityGoalState {
     endDate: string | null;
 }
 
-export async function readCommunityGoal(now: Date = new Date()): Promise<CommunityGoalState> {
+/**
+ * `locale` reads a title the operator wrote per language in the reader's,
+ * and in the original where it has none. A game asks with none: it has no
+ * reader's language to ask in, so it is given the original.
+ */
+export async function readCommunityGoal(now: Date = new Date(), locale = ""): Promise<CommunityGoalState> {
     const settings = await prisma.setting.findMany({
         where: { key: { startsWith: "community_goal_" } },
         take: 20,
@@ -23,14 +30,21 @@ export async function readCommunityGoal(now: Date = new Date()): Promise<Communi
     for (const s of settings) settingsMap[s.key] = s.value;
 
     const target = Number(settingsMap.community_goal_target) || 0;
-    const title = (settingsMap.community_goal_title as string) || "Monthly Goal";
+    const title = textFor(settingsMap.community_goal_title, locale) || "Monthly Goal";
     const endDate = (settingsMap.community_goal_end_date as string) || null;
     if (target <= 0) return { target: 0, current: 0, title, endDate: null };
 
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const result = await prisma.order.aggregate({
-        _sum: { total: true },
-        where: { status: "COMPLETED", createdAt: { gte: monthStart } },
-    });
-    return { target, current: Number(result._sum.total) || 0, title, endDate };
+    // The target is set in the site's currency, so every order is converted
+    // into it before it counts. See `money-totals.ts`.
+    const [paid, base] = await Promise.all([
+        prisma.order.groupBy({
+            by: ["currency"],
+            _sum: { total: true },
+            where: { status: "COMPLETED", createdAt: { gte: monthStart } },
+        }),
+        siteCurrency(),
+    ]);
+    const raised = await totalsIn(base, paid.map((row) => ({ key: "goal", currency: row.currency, amount: Number(row._sum.total ?? 0) })));
+    return { target, current: raised.get("goal") ?? 0, title, endDate };
 }

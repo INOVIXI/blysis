@@ -12,12 +12,14 @@
  */
 import { Prisma } from "@prisma/client";
 import { applyFiltersAsync, doActionAsync } from "@/core/sdk";
-import { log, logActivity, moduleSettings, prisma, siteTimeZone, type PrismaTransaction } from "@/core/sdk/server";
+import { log, logActivity, prisma, siteTimeZone, type PrismaTransaction } from "@/core/sdk/server";
 import { availabilityFor, rulesOf, type ProductRow } from "./availability-server";
 import { effectivePrice } from "./availability";
 import { computeOrderPricing, computeTotals } from "./pricing";
 import { creditingPurchases, ownedRungsOn } from "./upgrade-credit-server";
 import { resolveCurrency } from "./currency";
+import { taxRecord } from "./tax";
+import { NO_HEADERS, resolveTax } from "./tax-server";
 import { createCreditOrder, deliverPaidOrder, INSUFFICIENT_CREDITS, OUT_OF_STOCK } from "./credit-order";
 import { announceOrderCompleted, announceOrderCreated } from "./order-events";
 import { receivesGifts, siteAllowsGifting } from "./gifts";
@@ -121,9 +123,25 @@ async function priceInGame(product: PricedProduct, quantity: number, ownerId: st
         variables: { [product.id]: answers },
     });
 
-    const { taxRate, taxIncluded } = await moduleSettings<{ taxRate: number; taxIncluded: boolean }>("store");
-    const { totalDiscount, tax, total } = computeTotals({ subtotal, couponDiscount: 0, creatorDiscount: 0, taxRate, taxIncluded });
-    return { subtotal, orderItems, totalDiscount, tax, total };
+    // The same question the checkout asks. A game has no invoice form and no
+    // visitor's request, so a tax module answers with whatever it charges a
+    // buyer it knows nothing about - its default, as the site's own would be.
+    const currSetting = await prisma.setting.findUnique({ where: { key: "default_currency" } });
+    const answer = await resolveTax({
+        channel: "game",
+        currency: resolveCurrency(currSetting?.value as string),
+        billing: null,
+        ip: null,
+        header: NO_HEADERS,
+    });
+    const { totalDiscount, tax, total } = computeTotals({
+        subtotal,
+        couponDiscount: 0,
+        creatorDiscount: 0,
+        taxRate: answer.rate,
+        taxIncluded: answer.included,
+    });
+    return { subtotal, orderItems, totalDiscount, tax, total, taxRecord: taxRecord(answer) };
 }
 
 type NotSellable = { ok: false; code: "not_found" | "not_in_game" | "quantity_invalid" };
@@ -243,7 +261,7 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
         fields.map((field) => [field.name, (request.fields[field.name] ?? "").trim()]).filter(([, value]) => value !== ""),
     );
 
-    const { subtotal, orderItems, totalDiscount, tax, total } = await priceInGame(product, quantity, ownerId, answers, now);
+    const { subtotal, orderItems, totalDiscount, tax, total, taxRecord: taxKept } = await priceInGame(product, quantity, ownerId, answers, now);
     const currSetting = await prisma.setting.findUnique({ where: { key: "default_currency" } });
     const currency = resolveCurrency(currSetting?.value as string);
 
@@ -282,6 +300,7 @@ export async function purchaseWithCredits(request: CreditPurchaseRequest): Promi
                     playerName: gift ? null : request.playerName,
                     variables: { [product.id]: answers },
                     channel: request.channel,
+                    tax: taxKept as unknown as Prisma.InputJsonObject,
                     ...(key !== null ? { gameKey: key } : {}),
                     ...(gift ? { gift: true, recipientId: ownerId } : {}),
                 },

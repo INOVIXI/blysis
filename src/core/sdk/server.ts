@@ -69,6 +69,15 @@ export { verifyPassword } from "@/core/lib/password-hash";
 export { refuseSilenced } from "@/core/lib/write-guard";
 export { memberStanding, type MemberStanding } from "@/core/lib/member-standing";
 
+/**
+ * The sign-in methods a member has connected, for display: provider, the id
+ * and name it gave, and when. The select names no token column, so nothing a
+ * provider handed over to act on the member's behalf can leave through here.
+ * Connecting and removing one stays on core's account page, under the rules
+ * that guard it.
+ */
+export { signInMethodsOf, type SignInMethodRow } from "@/core/lib/sign-in-methods";
+
 // --- Homepage sections a theme or a module can render directly ---
 // Reads the activity feed straight from the database rather than through the
 // API. Its own doc comment always described it as something a theme could
@@ -163,6 +172,19 @@ export { siteTimeZone } from "@/core/lib/site-time-setting";
 
 // --- Content revisions ---
 export { recordRevision } from "@/core/lib/revisions";
+
+// A record's text in the reader's language: the column keeps the original and
+// core's ContentTranslation table a translation per field and language. Read a
+// page at once, save and delete in the record's own transaction.
+export {
+    attachContentTranslations,
+    contentTranslationsInput,
+    deleteContentTranslations,
+    readContentTranslations,
+    saveContentTranslations,
+    translateContent,
+} from "@/core/lib/content-translations";
+export type { ContentKind, ContentTranslations, ContentTranslationsInput } from "@/core/lib/content-translations";
 
 // --- Uploads ---
 export { sanitizeFilename } from "@/core/lib/storage";

@@ -46,7 +46,8 @@ const matches = (where: Where) => (r: Record<string, unknown>) =>
     && (where.isFeatured === undefined || r.isFeatured === where.isFeatured)
     && (!where.id || r.id !== where.id.not);
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
         product: {
             findMany: async ({ where, skip = 0, take }: { where: Where; skip?: number; take?: number }) =>

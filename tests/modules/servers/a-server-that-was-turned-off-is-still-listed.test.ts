@@ -19,7 +19,8 @@ const queries: Record<string, unknown>[] = [];
 const session: { value: { user: { id: string } } | null } = { value: null };
 const admin = { value: false };
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     isAdmin: async () => admin.value,
     encryptSecret: (value: string) => value,
     readJsonBody: async () => ({}),
@@ -30,6 +31,7 @@ vi.mock("@/core/sdk/server", () => ({
                 return [];
             },
         },
+        contentTranslation: { findMany: async () => [] },
     },
 }));
 

@@ -10,12 +10,13 @@ export default function Page() {
             title={t("adm_members_title")}
             subtitle={t("adm_members_subtitle")}
             apiPath="/api/v1/staff"
+            listPath="/api/v1/staff?scope=admin"
             listKey="members"
             displayField="name"
             secondaryField="role"
             fields={[
                 { key: "name", label: t("adm_members_field1Label"), required: true, placeholder: t("adm_members_field1Placeholder") },
-                { key: "role", label: t("adm_members_field2Label"), required: true, placeholder: t("adm_members_field2Placeholder") },
+                { key: "role", label: t("adm_members_field2Label"), type: "translatable", required: true, placeholder: t("adm_members_field2Placeholder") },
                 // A picture, so the field that holds one: a link, an upload,
                 // or something already in the library. It was a link-only box
                 // on a platform that has stored files since the first release.

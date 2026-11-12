@@ -64,6 +64,32 @@ describe("isSetupComplete", () => {
         await expect(isSetupComplete()).resolves.toBe(false);
     });
 
+    it("answers every request that arrives while the first check is in flight with that check's answer", async () => {
+        // A restart: the first request starts the count, and the requests that
+        // arrive before it returns used to be told "not complete" by the
+        // throttle and were sent to the setup wizard of an installed site.
+        let answer: (n: number) => void = () => {};
+        user.count.mockReturnValue(new Promise<number>((resolve) => { answer = resolve; }));
+
+        const first = isSetupComplete();
+        const second = isSetupComplete();
+        const third = isSetupComplete();
+        answer(70_000);
+
+        await expect(Promise.all([first, second, third])).resolves.toEqual([true, true, true]);
+        expect(user.count).toHaveBeenCalledTimes(1);
+    });
+
+    it("keeps failing safe inside the throttle window after the database was unreachable", async () => {
+        user.count.mockRejectedValue(new Error("db down"));
+        await isSetupComplete();
+
+        // The throttle used to answer false here, so the request after an
+        // outage sent visitors of an installed site to the wizard.
+        await expect(isSetupComplete()).resolves.toBe(true);
+        expect(user.count).toHaveBeenCalledTimes(1);
+    });
+
     it("throttles repeat checks for ten seconds while incomplete", async () => {
         await isSetupComplete();
         await isSetupComplete();
