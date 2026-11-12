@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-10-26",
-  "updatedAt": "2026-10-26T17:03:52Z",
+  "updated": "2026-11-12",
+  "updatedAt": "2026-11-12T10:22:56Z",
   "modules": [
     {
       "id": "announcements",
@@ -999,13 +999,13 @@
           "description": "为用户提供的虚拟货币钱包"
         }
       },
-      "version": "1.10.2",
+      "version": "1.10.3",
       "coreVersion": "^5.21.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-23T20:22:50Z",
+      "updatedAt": "2026-11-12T10:22:56Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -1021,6 +1021,7 @@
         "listens": [
           "credits.award",
           "store.order.completed",
+          "store.order.refunded",
           "credit.change",
           "credits.balance",
           "credits.top"
@@ -5950,13 +5951,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.52.0",
+      "version": "2.52.1",
       "coreVersion": "^5.30.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-12T10:22:56Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -5972,6 +5973,7 @@
           "server.command",
           "store.order.completed",
           "store.order.created",
+          "store.order.refunded",
           "store.product.created",
           "payment.providers",
           "payment.session",

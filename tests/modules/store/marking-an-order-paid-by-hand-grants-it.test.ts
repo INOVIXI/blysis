@@ -29,6 +29,7 @@ const db = {
     order: {
         findUnique: vi.fn(),
         update: vi.fn(async () => ({ id: "order-1", items: [], user: null })),
+        updateMany: vi.fn(async () => ({ count: 1 })),
     },
     payment: { findFirst: vi.fn(async () => null) },
 };
@@ -102,6 +103,24 @@ describe("marking an unpaid order paid", () => {
         settleOrder.mockResolvedValue({ handled: false, duplicate: false, error: "no" });
         const res = await setStatus("COMPLETED");
         expect(res.status).toBe(500);
+    });
+});
+
+describe("marking a cancelled order paid", () => {
+    it("opens it again first, because settlement refuses a cancelled order", async () => {
+        // A gateway's late success for a cancelled order is refused; an
+        // operator who saw the money arrive says so on purpose.
+        db.order.findUnique.mockResolvedValue({ ...pending, status: "CANCELLED" });
+        settleOrder.mockResolvedValue({ handled: true, duplicate: false, error: null });
+
+        const res = await setStatus("COMPLETED");
+
+        expect(res.status).toBe(200);
+        expect(db.order.updateMany).toHaveBeenCalledWith({
+            where: { id: "order-1", status: "CANCELLED" },
+            data: { status: "PENDING" },
+        });
+        expect(settleOrder).toHaveBeenCalled();
     });
 });
 

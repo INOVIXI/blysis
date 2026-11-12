@@ -2,7 +2,7 @@
   "id": "credits",
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
-  "version": "1.10.2",
+  "version": "1.10.3",
   "coreVersion": "^5.21.0",
   "category": "commerce",
   "author": "Blysis",
@@ -103,6 +103,7 @@
         "typeDebit": "Debit",
         "typeGift_redeem": "Gift Code",
         "typeGift_refund": "Gift Taken Back",
+        "typePayment_refund": "Taken Back After a Refund",
         "typeMarket_commission": "Marketplace Commission",
         "typeMarket_purchase": "Bought from a Member",
         "typeMarket_sale": "Sold to a Member",
@@ -183,6 +184,7 @@
         "typeDebit": "Borç",
         "typeGift_redeem": "Hediye Kodu",
         "typeGift_refund": "Hediye Geri Alındı",
+        "typePayment_refund": "İade Sonrası Geri Alındı",
         "typeMarket_commission": "Pazar Komisyonu",
         "typeMarket_purchase": "Üyeden Satın Alındı",
         "typeMarket_sale": "Üyeye Satıldı",
@@ -274,6 +276,7 @@
         "typeWheel_spin": "Çarxın fırlanması",
         "typeAdmin_remove": "Heyət tərəfindən silinib",
         "typeGift_refund": "Hədiyyə geri alındı",
+        "typePayment_refund": "Geri Qaytarmadan Sonra Geri Alındı",
         "typeVoucher_create": "Kupon yaradıldı",
         "typeVoucher_redeem": "Kupon istifadə edildi"
       },
@@ -354,6 +357,7 @@
         "typeWheel_spin": "Glücksrad-Dreh",
         "typeAdmin_remove": "Von Mitarbeitern entfernt",
         "typeGift_refund": "Geschenk zurückgenommen",
+        "typePayment_refund": "Nach Erstattung zurückgebucht",
         "typeVoucher_create": "Gutschein erstellt",
         "typeVoucher_redeem": "Gutschein eingelöst"
       },
@@ -434,6 +438,7 @@
         "typeWheel_spin": "Giro de la ruleta",
         "typeAdmin_remove": "Retirado por el equipo",
         "typeGift_refund": "Regalo recuperado",
+        "typePayment_refund": "Retirado tras un reembolso",
         "typeVoucher_create": "Vale creado",
         "typeVoucher_redeem": "Vale canjeado"
       },
@@ -514,6 +519,7 @@
         "typeWheel_spin": "Õnnerattakeeramine",
         "typeAdmin_remove": "Meeskonna eemaldatud",
         "typeGift_refund": "Kingitus võeti tagasi",
+        "typePayment_refund": "Tagasimakse järel tagasi võetud",
         "typeVoucher_create": "Kupong loodud",
         "typeVoucher_redeem": "Kupong lunastatud"
       },
@@ -594,6 +600,7 @@
         "typeWheel_spin": "Tour de roue",
         "typeAdmin_remove": "Retiré par l’équipe",
         "typeGift_refund": "Cadeau repris",
+        "typePayment_refund": "Repris après un remboursement",
         "typeVoucher_create": "Bon créé",
         "typeVoucher_redeem": "Bon utilisé"
       },
@@ -674,6 +681,7 @@
         "typeWheel_spin": "Giro della ruota",
         "typeAdmin_remove": "Rimosso dallo staff",
         "typeGift_refund": "Regalo ripreso",
+        "typePayment_refund": "Ripreso dopo un rimborso",
         "typeVoucher_create": "Buono creato",
         "typeVoucher_redeem": "Buono riscattato"
       },
@@ -754,6 +762,7 @@
         "typeWheel_spin": "Obrót koła",
         "typeAdmin_remove": "Usunięte przez obsługę",
         "typeGift_refund": "Prezent cofnięty",
+        "typePayment_refund": "Cofnięte po zwrocie",
         "typeVoucher_create": "Utworzono bon",
         "typeVoucher_redeem": "Wykorzystano bon"
       },
@@ -834,6 +843,7 @@
         "typeWheel_spin": "Giro da roleta",
         "typeAdmin_remove": "Removido pela equipe",
         "typeGift_refund": "Presente recuperado",
+        "typePayment_refund": "Retirado após reembolso",
         "typeVoucher_create": "Vale criado",
         "typeVoucher_redeem": "Vale resgatado"
       },
@@ -914,6 +924,7 @@
         "typeWheel_spin": "Вращение колеса",
         "typeAdmin_remove": "Списано персоналом",
         "typeGift_refund": "Подарок отозван",
+        "typePayment_refund": "Списано после возврата",
         "typeVoucher_create": "Ваучер создан",
         "typeVoucher_redeem": "Ваучер погашен"
       },
@@ -994,6 +1005,7 @@
         "typeWheel_spin": "转盘抽奖",
         "typeAdmin_remove": "由工作人员扣除",
         "typeGift_refund": "礼物已收回",
+        "typePayment_refund": "退款后收回",
         "typeVoucher_create": "已创建兑换券",
         "typeVoucher_redeem": "已兑换兑换券"
       },
@@ -1032,6 +1044,11 @@
       "hook": "store.order.completed",
       "type": "action",
       "handler": "hooks/on-order-completed.ts"
+    },
+    {
+      "hook": "store.order.refunded",
+      "type": "action",
+      "handler": "hooks/on-order-refunded.ts"
     },
     {
       "hook": "credit.change",
