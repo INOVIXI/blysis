@@ -27,12 +27,18 @@
  * The upgrade path is the login. A password exists in this process for exactly
  * one moment - when somebody types it - so that is the only moment an old hash
  * can be replaced. `needsRehash` marks the ones to rewrite then.
+ *
+ * One more format is read and never written: the hashes a site imported from
+ * an older system, which an operator has to switch on. Why it is not on the
+ * list above, and how it is read, is in `legacy-password-hash.ts`.
  */
 
 import { randomBytes, scrypt as scryptCallback, timingSafeEqual, type ScryptOptions } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { BCRYPT_ROUNDS } from "@/core/lib/constants";
 import type { HashAlgorithm } from "@/core/lib/hash-algorithms";
+import { isLegacyPasswordHash, legacyPasswordMatches } from "@/core/lib/legacy-password-hash";
+import { legacyPasswordHashesAccepted } from "@/core/lib/security-settings";
 
 // Re-exported so a server caller has one import rather than two. A client
 // component takes the list from `hash-algorithms.ts` directly.
@@ -138,8 +144,15 @@ export async function hashPassword(password: string, algorithm: HashAlgorithm): 
     return bcrypt.hash(password, BCRYPT_ROUNDS);
 }
 
-/** False for anything this file did not write, rather than a thrown error. */
+/**
+ * False for anything this file did not write, rather than a thrown error, and
+ * for an imported hash while the site does not accept them. The setting is
+ * read only for such a hash, so every other sign-in costs what it did.
+ */
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+    if (isLegacyPasswordHash(hash)) {
+        return (await legacyPasswordHashesAccepted()) && legacyPasswordMatches(password, hash);
+    }
     const algorithm = algorithmOf(hash);
     if (algorithm === "scrypt") return scryptVerify(password, hash);
     if (algorithm === "bcrypt") {
@@ -155,11 +168,13 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 /**
  * True when a stored hash should be rewritten at the next successful login.
  *
- * False for a hash nothing here recognises: there is nothing to compare it
- * against, and rewriting one on a login would be trusting a password check
- * that did not happen.
+ * Always true for an imported hash: it is read only so that it can be
+ * replaced. False for a hash nothing here recognises: there is nothing to
+ * compare it against, and rewriting one on a login would be trusting a
+ * password check that did not happen.
  */
 export function needsRehash(hash: string, wanted: HashAlgorithm): boolean {
+    if (isLegacyPasswordHash(hash)) return true;
     const algorithm = algorithmOf(hash);
     if (algorithm === null) return false;
     return algorithm !== wanted;
