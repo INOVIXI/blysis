@@ -996,6 +996,8 @@
     "siteSettings_contactEmail": "E-mail de contact",
     "siteSettings_description": "Description",
     "siteSettings_general": "Général",
+    "siteSettings_icon": "Icône du site",
+    "siteSettings_iconHint": "La petite image affichée dans l'onglet du navigateur et sur l'écran d'accueil d'un téléphone. Une image carrée rend le mieux. Laissé vide, l'icône par défaut est utilisée.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Échec de l’enregistrement des paramètres",
     "siteSettings_saveSettings": "Enregistrer les paramètres",

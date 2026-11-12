@@ -156,7 +156,11 @@ describe("the site's name and description", () => {
             .readdirSync(libDir)
             .filter((n) => n.endsWith(".ts") && !ALLOWED.has(n))
             .map((n) => path.join(libDir, n));
-        const leaks = others.filter((f) => /"site_name"/.test(read(f))).map(rel);
+        // A file that names the key without reaching the database is not a
+        // reader: `site-contact.ts` lists it for the settings screen, which is
+        // a client component and could not import a reader if it wanted to.
+        const leaks = others.filter((f) => /"site_name"/.test(read(f)) && /prisma/.test(read(f))).map(rel);
+        expect(others.some((f) => /"site_name"/.test(read(f))), "the scan should see the key named somewhere").toBe(true);
         expect(leaks, `These read the site name straight from Settings:\n${leaks.join("\n")}`).toEqual([]);
     });
 });

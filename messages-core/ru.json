@@ -996,6 +996,8 @@
     "siteSettings_contactEmail": "Контактный e-mail",
     "siteSettings_description": "Описание",
     "siteSettings_general": "Общие",
+    "siteSettings_icon": "Значок сайта",
+    "siteSettings_iconHint": "Маленькое изображение на вкладке браузера и на главном экране телефона. Лучше всего подходит квадратное изображение. Если поле пустое, используется значок по умолчанию.",
     "siteSettings_logo": "Логотип",
     "siteSettings_saveFailed": "Не удалось сохранить настройки",
     "siteSettings_saveSettings": "Сохранить настройки",

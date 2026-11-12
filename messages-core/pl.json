@@ -996,6 +996,8 @@
     "siteSettings_contactEmail": "E-mail kontaktowy",
     "siteSettings_description": "Opis",
     "siteSettings_general": "Ogólne",
+    "siteSettings_icon": "Ikona witryny",
+    "siteSettings_iconHint": "Mały obrazek na karcie przeglądarki i na ekranie głównym telefonu. Najlepiej wygląda kwadratowy obraz. Jeśli pole jest puste, używana jest domyślna ikona.",
     "siteSettings_logo": "Logo",
     "siteSettings_saveFailed": "Nie udało się zapisać ustawień",
     "siteSettings_saveSettings": "Zapisz ustawienia",

@@ -996,6 +996,8 @@
     "siteSettings_contactEmail": "联系邮箱",
     "siteSettings_description": "描述",
     "siteSettings_general": "通用",
+    "siteSettings_icon": "网站图标",
+    "siteSettings_iconHint": "显示在浏览器标签页和手机主屏幕上的小图片。正方形图片效果最佳。留空则使用默认图标。",
     "siteSettings_logo": "徽标",
     "siteSettings_saveFailed": "保存设置失败",
     "siteSettings_saveSettings": "保存设置",

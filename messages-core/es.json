@@ -996,6 +996,8 @@
     "siteSettings_contactEmail": "Correo de contacto",
     "siteSettings_description": "Descripción",
     "siteSettings_general": "General",
+    "siteSettings_icon": "Icono del sitio",
+    "siteSettings_iconHint": "La imagen pequeña de la pestaña del navegador y de la pantalla de inicio de un teléfono. Una imagen cuadrada se ve mejor. Si se deja vacío, se usa el icono predeterminado.",
     "siteSettings_logo": "Logotipo",
     "siteSettings_saveFailed": "No se pudieron guardar los ajustes",
     "siteSettings_saveSettings": "Guardar ajustes",

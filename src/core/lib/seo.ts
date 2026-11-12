@@ -12,6 +12,7 @@
 
 import { cache } from "react";
 import type { Metadata } from "next";
+import { SITE_ICON_KEY } from "@/core/lib/site-logo";
 import { prisma } from "./db";
 import { resolveAppUrl } from "./app-url";
 import { serverConfig } from "@/core/config/server";
@@ -56,12 +57,14 @@ export interface ArticleJsonLdInput {
     authorName?: string;
 }
 
-const SEO_SETTING_KEYS = ["site_name", "site_description"] as const;
+const SEO_SETTING_KEYS = ["site_name", "site_description", SITE_ICON_KEY] as const;
 
 export interface SeoSiteInfo {
     siteName: string;
     siteDescription: string;
     siteUrl: string;
+    /** The stored tab icon; `siteIconMetadata` turns it into the head's icons. */
+    siteIcon: string | null;
 }
 
 /**
@@ -84,6 +87,7 @@ export const getSeoSiteInfo = cache(async function getSeoSiteInfo(locale?: strin
 
     let siteName: string = serverConfig.name;
     let siteDescription: string = serverConfig.description || "";
+    let siteIcon: string | null = null;
 
     try {
         const rows = await prisma.setting.findMany({
@@ -97,12 +101,13 @@ export const getSeoSiteInfo = cache(async function getSeoSiteInfo(locale?: strin
                 : String(r.value ?? "");
             if (r.key === "site_name" && value) siteName = value;
             if (r.key === "site_description" && value) siteDescription = value;
+            if (r.key === SITE_ICON_KEY && value) siteIcon = value;
         }
     } catch {
         // DB unavailable (build phase / fresh install) - fall back to defaults
     }
 
-    return { siteName, siteDescription, siteUrl };
+    return { siteName, siteDescription, siteUrl, siteIcon };
 });
 
 /** Synchronous version using only env/serverConfig - safe for non-async callers. */
@@ -111,6 +116,7 @@ function getSeoSiteInfoSync(): SeoSiteInfo {
         siteName: serverConfig.name,
         siteDescription: serverConfig.description || "",
         siteUrl: resolveAppUrl(),
+        siteIcon: null,
     };
 }
 
@@ -235,6 +241,26 @@ export async function buildSiteHead(locale?: string): Promise<SiteHead> {
         keywords: answer.keywords || "",
         googleVerification: answer.googleVerification || "",
         bingVerification: answer.bingVerification || "",
+    };
+}
+
+/**
+ * The part of the site's head the root layout spreads into its metadata.
+ *
+ * The layout read the title out of `buildSiteHead` and dropped the rest: it
+ * wrote its own keywords, the product's ("open source, modular platform,
+ * plugin marketplace"), into every installation's head, and the verification
+ * tokens an operator pasted never reached the page a search engine checks.
+ * Nothing said is nothing written, so a site with no keywords has no tag.
+ */
+export function siteHeadMetadata(head: SiteHead): Pick<Metadata, "keywords" | "verification"> {
+    const verification = {
+        ...(head.googleVerification ? { google: head.googleVerification } : {}),
+        ...(head.bingVerification ? { other: { "msvalidate.01": head.bingVerification } } : {}),
+    };
+    return {
+        ...(head.keywords ? { keywords: head.keywords } : {}),
+        ...(Object.keys(verification).length > 0 ? { verification } : {}),
     };
 }
 

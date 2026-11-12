@@ -24,7 +24,7 @@ export async function GET() {
                 userId: true,
                 createdAt: true,
                 user: { select: { username: true, avatar: true } },
-                items: { select: { product: { select: { name: true, image: true } } } },
+                items: { select: { name: true, product: { select: { name: true, image: true } } } },
             },
             orderBy: { createdAt: "desc" },
             // Four are shown. The margin covers orders whose buyer has since
@@ -42,7 +42,10 @@ export async function GET() {
         const recentPurchases = recentOrders.slice(0, 4).map((o) => ({
             username: o.user.username,
             avatar: o.user.avatar,
-            product: o.items[0]?.product?.name || "Unknown",
+            // The name the line was sold under, which outlives the product:
+            // a deleted product leaves `product` empty, and this printed the
+            // English word "Unknown" under the buyer on a site in any language.
+            product: o.items[0]?.name || o.items[0]?.product?.name || null,
             productImage: o.items[0]?.product?.image || null,
             time: o.createdAt,
         }));
