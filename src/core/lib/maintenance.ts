@@ -1,4 +1,5 @@
 import prisma from "@/core/lib/db";
+import { cleanTranslatableText, type TranslatableText } from "@/core/lib/i18n/translatable-text";
 
 /**
  * Maintenance mode configuration, backed by the Setting table under key
@@ -6,9 +7,13 @@ import prisma from "@/core/lib/db";
  * globalThis-backed store so the proxy and API route chunks share state.
  */
 
+/** The longest message, in any one language. */
+export const MAINTENANCE_MESSAGE_MAX = 2000;
+
 export interface MaintenanceConfig {
     enabled: boolean;
-    message?: string;
+    /** The operator's own words, which they may write per language. */
+    message?: TranslatableText;
     allowedRoles?: string[];
 }
 
@@ -58,7 +63,7 @@ function normalize(raw: unknown): MaintenanceConfig {
         : DEFAULT_CONFIG.allowedRoles;
     return {
         enabled: Boolean(obj.enabled),
-        message: typeof obj.message === "string" ? obj.message : "",
+        message: cleanTranslatableText(obj.message, MAINTENANCE_MESSAGE_MAX) ?? "",
         allowedRoles: allowed,
     };
 }

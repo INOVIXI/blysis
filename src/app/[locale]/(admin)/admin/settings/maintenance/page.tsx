@@ -10,12 +10,13 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { CheckboxField } from "@/core/components/ui/checkbox";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
-import { Textarea } from "@/core/components/ui/textarea";
 import { errorMessage } from "@/core/lib/write-result";
+import { LocalizedTextInput } from "@/core/components/ui/localized-text-input";
+import { isTranslatableText, type TranslatableText } from "@/core/lib/i18n/translatable-text";
 
 interface MaintenanceConfig {
     enabled: boolean;
-    message?: string;
+    message?: TranslatableText;
     allowedRoles?: string[];
 }
 
@@ -36,7 +37,7 @@ export default function MaintenanceSettingsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [enabled, setEnabled] = useState(false);
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState<TranslatableText>("");
     const [allowedRoles, setAllowedRoles] = useState<string[]>(["admin"]);
     const [roleOptions, setRoleOptions] = useState<string[]>(FALLBACK_ROLE_OPTIONS);
 
@@ -59,7 +60,7 @@ export default function MaintenanceSettingsPage() {
                 const cfg = payload?.data;
                 if (cfg) {
                     setEnabled(Boolean(cfg.enabled));
-                    setMessage(cfg.message || "");
+                    setMessage(isTranslatableText(cfg.message) ? cfg.message : "");
                     setAllowedRoles(
                         cfg.allowedRoles && cfg.allowedRoles.length > 0
                             ? cfg.allowedRoles
@@ -163,11 +164,13 @@ export default function MaintenanceSettingsPage() {
                     <CardTitle className="text-base">{t("maintenance_message")}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <Textarea
+                    <LocalizedTextInput
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        onChange={setMessage}
+                        multiline
                         rows={4}
-                        placeholder={t("maintenance_defaultMessage")} aria-label={t("maintenance_defaultMessage")}
+                        maxLength={2000}
+                        placeholder={t("maintenance_defaultMessage")} label={t("maintenance_defaultMessage")}
                     />
                     <p className="text-xs text-muted-foreground mt-1">
                         {t("maintenance_messageHelp")}

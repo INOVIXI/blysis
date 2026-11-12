@@ -12,6 +12,19 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.36.0 - text an operator writes may be written per language. A value
+ * is a string, which reads the same in every language, or `{ default, en,
+ * de, ... }`: the original the operator typed and a translation per
+ * language. `textFor(value, locale)` in the isomorphic barrel gives the
+ * reader's translation and otherwise the original, never another language's
+ * entry; `isTranslatableText`, `originalText` and the `TranslatableText`
+ * type join it. `@/core/sdk/ui` gains `useText`, the same read in the page's
+ * own language, and `LocalizedTextInput`, the box an admin writes such a
+ * value in. A theme's `text` setting is translatable unless it says
+ * `"translatable": false`, and `useThemeConfig` and `useBlockText` hand back
+ * the reader's text. `readSettingStrings` reads such a value as its
+ * original. Additive.
+ *
  * 5.35.0 - a member's face can come from a picture service. A module
  * declares `avatarProviders` in its manifest, each an https address with
  * `{name}` and `{size}` whose host is in its `csp["img-src"]`; the operator
@@ -751,4 +764,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.35.0";
+export const CORE_API_VERSION = "5.36.0";

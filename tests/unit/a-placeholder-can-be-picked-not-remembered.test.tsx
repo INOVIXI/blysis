@@ -15,6 +15,10 @@ import fs from "node:fs";
 import path from "node:path";
 
 vi.mock("@/core/lib/shared-request", () => ({
+    // A prose field offers the site's languages, which it reads from the
+    // site's settings through the same store.
+    peekShared: () => undefined,
+    invalidateShared: () => undefined,
     sharedJson: async () => ({
         placeholders: [
             { name: "site.name", module: "core", labelKey: "placeholder_site_name", example: null, value: "Kayadibi" },
@@ -24,12 +28,14 @@ vi.mock("@/core/lib/shared-request", () => ({
 }));
 
 const { TextField } = await import("@/core/components/admin/theme-customizer/fields/TextField");
+const { originalText } = await import("@/core/lib/i18n/translatable-text");
+type TranslatableText = import("@/core/lib/i18n/translatable-text").TranslatableText;
 
 const TR = JSON.parse(fs.readFileSync(path.join(process.cwd(), "messages-core/tr.json"), "utf8"));
 const messages = { ...TR, admin: { ...TR.admin, placeholder_servers_online: "Çevrimiçi oyuncu sayısı" } };
 
-function Field({ initial, placeholders = true }: { initial: string; placeholders?: boolean }) {
-    const [value, setValue] = useState<string | undefined>(initial);
+function Field({ initial, placeholders = true }: { initial: TranslatableText; placeholders?: boolean }) {
+    const [value, setValue] = useState<TranslatableText | undefined>(initial);
     return (
         <NextIntlClientProvider locale="tr" messages={messages}>
             <TextField
@@ -38,7 +44,8 @@ function Field({ initial, placeholders = true }: { initial: string; placeholders
                 onChange={setValue}
                 isDefault={false}
             />
-            <output data-testid="value">{value}</output>
+            <output data-testid="value">{originalText(value)}</output>
+            <output data-testid="raw">{JSON.stringify(value)}</output>
         </NextIntlClientProvider>
     );
 }
@@ -54,6 +61,16 @@ describe("a text that takes placeholders", () => {
         expect(screen.getByRole("button", { name: /Site adı|Kayadibi/ }).textContent).toContain("Kayadibi");
         fireEvent.click(pick);
         expect(screen.getByTestId("value").textContent).toBe("Şu an {servers.online} kişi");
+    });
+
+    it("goes into the original and leaves the translations as they were", async () => {
+        render(<Field initial={{ default: "Şu an  kişi", en: "Now  players" }} />);
+        const input = screen.getByLabelText("Başlık") as HTMLInputElement;
+        input.setSelectionRange(6, 6);
+        fireEvent.click(screen.getByRole("button", { name: TR.admin.placeholder_insert }));
+        fireEvent.click(await screen.findByRole("button", { name: /Çevrimiçi oyuncu sayısı/ }));
+        expect(JSON.parse(screen.getByTestId("raw").textContent ?? "null"))
+            .toEqual({ default: "Şu an {servers.online} kişi", en: "Now  players" });
     });
 
     it("names a token nothing on this site answers", async () => {

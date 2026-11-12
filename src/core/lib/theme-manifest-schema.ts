@@ -77,6 +77,14 @@ const textDef = z.object({
      * sentence a visitor reads: an address or an invite is not one.
      */
     placeholders: z.literal(true).optional(),
+    /**
+     * A text field is prose by default, and the operator may write it once
+     * per language the site offers. `false` for one that is not a sentence:
+     * an address to copy, a link, an icon's name. Those read the same in
+     * every language, and offering a translation box beside them invites a
+     * Turkish address that does not resolve.
+     */
+    translatable: z.literal(false).optional(),
 });
 const urlDef = z.object({
     type: z.literal("url"),

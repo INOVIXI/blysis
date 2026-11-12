@@ -50,7 +50,7 @@ export async function listCataloguePages(locale: string): Promise<CataloguePage[
     const [messages, states, site] = await Promise.all([
         getMessages(locale).catch(() => null),
         getModuleStates().catch(() => ({}) as Record<string, boolean>),
-        getSeoSiteInfo(),
+        getSeoSiteInfo(locale),
     ]);
 
     const pages: CataloguePage[] = [

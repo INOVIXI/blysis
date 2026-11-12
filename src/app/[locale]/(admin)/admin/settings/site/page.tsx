@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/c
 import { Button } from "@/core/components/ui/button";
 import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
-import { Textarea } from "@/core/components/ui/textarea";
 import { NativeSelect } from "@/core/components/ui/native-select";
 import { Loader2, Check } from "lucide-react";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
@@ -15,6 +14,8 @@ import { LoadFailed } from "@/core/components/ui/load-failed";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
 import { UrlOrFile } from "@/core/components/ui/url-or-file";
 import { SITE_LOGO_KEY } from "@/core/lib/site-logo";
+import { LocalizedTextInput } from "@/core/components/ui/localized-text-input";
+import { isTranslatableText, originalText, type TranslatableText } from "@/core/lib/i18n/translatable-text";
 
 /**
  * Every zone this runtime knows, so an operator picks rather than types.
@@ -40,10 +41,11 @@ export default function SiteSettingsPage() {
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // The site's own words, which the operator may write per language.
+    const [name, setName] = useState<TranslatableText>("");
+    const [description, setDescription] = useState<TranslatableText>("");
     const [form, setForm] = useState({
-        siteName: "",
         [SITE_LOGO_KEY]: "",
-        siteDescription: "",
         contactEmail: "",
         socialFacebook: "",
         socialInstagram: "",
@@ -56,13 +58,20 @@ export default function SiteSettingsPage() {
     // A read that failed would otherwise offer this form at its defaults, and
     // saving it renames the site to "Blysis" and empties every social link.
     const { loading, failed, retry } = useSettingsLoad((s) => {
+        // `site_name` and `site_description` are the rows every page reads.
+        // This form wrote `siteName` and `siteDescription`, which nothing
+        // reads, so renaming the site here changed nothing anywhere; a name
+        // saved that way is offered back once so it is not lost.
+        //
+        // Empty rather than the product's own name: a read that fell back
+        // to it and then saved would rename the operator's site after the
+        // thing it was built from.
+        const stored = (value: unknown, legacy: unknown): TranslatableText =>
+            isTranslatableText(value) && originalText(value).trim() ? value : typeof legacy === "string" ? legacy : "";
+        setName(stored(s.site_name, s.siteName));
+        setDescription(stored(s.site_description, s.siteDescription));
         setForm({
-            // Empty rather than the product's own name: a read that fell back
-            // to it and then saved would rename the operator's site after the
-            // thing it was built from.
-            siteName: (s.siteName as string) || "",
             [SITE_LOGO_KEY]: (s[SITE_LOGO_KEY] as string) || "",
-            siteDescription: (s.siteDescription as string) || "",
             contactEmail: (s.contactEmail as string) || "",
             socialFacebook: (s.socialFacebook as string) || "",
             socialInstagram: (s.socialInstagram as string) || "",
@@ -85,7 +94,13 @@ export default function SiteSettingsPage() {
                 headers: { "Content-Type": "application/json" },
                 // `timezone` is the field's name; `site_timezone` is the row
                 // everything scheduled reads.
-                body: JSON.stringify({ ...form, site_timezone: form.timezone, timezone: undefined }),
+                body: JSON.stringify({
+                    ...form,
+                    site_name: name,
+                    site_description: description,
+                    site_timezone: form.timezone,
+                    timezone: undefined,
+                }),
             });
 
             if (!res.ok) {
@@ -148,10 +163,11 @@ export default function SiteSettingsPage() {
                         <CardContent className="space-y-4">
                             <div>
                                 <Label>{t("siteSettings_siteName")}</Label>
-                                <Input
-                                    aria-label={t("siteSettings_siteName")}
-                                    value={form.siteName}
-                                    onChange={(e) => setForm({ ...form, siteName: e.target.value })}
+                                <LocalizedTextInput
+                                    label={t("siteSettings_siteName")}
+                                    value={name}
+                                    maxLength={100}
+                                    onChange={setName}
                                 />
                             </div>
                             <div>
@@ -168,11 +184,13 @@ export default function SiteSettingsPage() {
                             </div>
                             <div>
                                 <Label>{t("siteSettings_description")}</Label>
-                                <Textarea
-                                    aria-label={t("siteSettings_description")}
-                                    value={form.siteDescription}
-                                    onChange={(e) => setForm({ ...form, siteDescription: e.target.value })}
+                                <LocalizedTextInput
+                                    label={t("siteSettings_description")}
+                                    value={description}
+                                    maxLength={500}
+                                    multiline
                                     rows={3}
+                                    onChange={setDescription}
                                 />
                             </div>
                             <div>

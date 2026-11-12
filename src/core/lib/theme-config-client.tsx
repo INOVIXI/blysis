@@ -2,6 +2,8 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import { usePlaceholderFill } from "@/core/hooks/usePlaceholder";
+import { useText } from "@/core/hooks/useText";
+import { isTranslatableText } from "@/core/lib/i18n/translatable-text";
 
 export type ThemeConfigValue = Record<string, unknown>;
 
@@ -29,8 +31,9 @@ export function ThemeConfigProvider({ value, placeholderFields, children }: {
 const NO_FIELDS: ReadonlySet<string> = new Set();
 
 /**
- * A setting of the active theme by `group.field`. A text field the theme
- * marked `"placeholders": true` comes back with its site placeholders filled,
+ * A setting of the active theme by `group.field`. A text field comes back in
+ * the reader's language, and one the theme marked `"placeholders": true`
+ * with its site placeholders filled,
  * so an operator's `{servers.online}` reaches the page without the theme
  * doing anything but asking for the field.
  */
@@ -38,6 +41,7 @@ export function useThemeConfig() {
     const ctx = useContext(ThemeConfigContext);
     const placeholderFields = useContext(PlaceholderFieldsContext);
     const fill = usePlaceholderFill();
+    const text = useText();
     return function get<T = unknown>(path: string, fallback?: T): T | undefined {
         const parts = path.split(".");
         let cur: unknown = ctx;
@@ -49,7 +53,10 @@ export function useThemeConfig() {
                 break;
             }
         }
-        const found = (cur as T) ?? fallback;
+        // A text field the operator wrote per language reaches the theme as
+        // the reader's words, so no theme has to know the shape.
+        const value = cur !== null && typeof cur === "object" && isTranslatableText(cur) ? text(cur) : cur;
+        const found = (value as T) ?? fallback;
         return typeof found === "string" && placeholderFields.has(path) ? (fill(found) as T) : found;
     };
 }

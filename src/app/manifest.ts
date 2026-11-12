@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getTranslations } from "next-intl/server";
 import { readSettingValues } from "@/core/lib/setting-values";
 import { SITE_LOGO_KEY, siteLogo } from "@/core/lib/site-logo";
+import { originalText } from "@/core/lib/i18n/translatable-text";
 
 /**
  * What a phone shows when somebody adds this site to their home screen.
@@ -28,12 +29,11 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     // a literal here would be the product's name written into an
     // installation's own file again, which is the thing this route exists to
     // stop.
-    const name = typeof settings.site_name === "string" && settings.site_name.trim()
-        ? settings.site_name.trim()
-        : t("appName");
-    const description = typeof settings.site_description === "string"
-        ? settings.site_description.trim()
-        : "";
+    //
+    // The original text, not a translation: the manifest is one file at one
+    // address for every reader, with no language in its path to read.
+    const name = originalText(settings.site_name).trim() || t("appName");
+    const description = originalText(settings.site_description).trim();
     const logo = siteLogo(settings[SITE_LOGO_KEY]);
 
     return {

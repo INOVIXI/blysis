@@ -3,18 +3,21 @@ import { getTranslations } from "next-intl/server";
 import { Wrench, LogIn } from "lucide-react";
 import { getMaintenanceConfig } from "@/core/lib/maintenance";
 import { coreScreenMetadata } from "@/core/lib/core-screens";
+import { textFor } from "@/core/lib/i18n/translatable-text";
 
 export const dynamic = "force-dynamic";
 
 // A server component, so it names itself directly - no sibling layout needed.
 export const generateMetadata = coreScreenMetadata("/maintenance");
 
-export default async function MaintenancePage() {
+export default async function MaintenancePage({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
     const config = await getMaintenanceConfig();
     const t = await getTranslations("maintenance");
     const commonT = await getTranslations("common");
-    // The operator's own message wins; the fallback is the one core writes.
-    const message = config.message?.trim() || t("defaultMessage");
+    // The operator's own message wins, in the reader's language where they
+    // wrote one; the fallback is the one core writes.
+    const message = textFor(config.message, locale).trim() || t("defaultMessage");
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">

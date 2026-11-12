@@ -97,7 +97,12 @@
     "welcomeTitle": "Tere tulemast oma kogukonda",
     "welcomeVisitorHint": "Kogukonna avastamiseks kasuta ülal olevat navigeerimist.",
     "writeContentHere": "Kirjuta sisu siia...",
-    "statsLabel": "Sait ühe pilguga"
+    "statsLabel": "Sait ühe pilguga",
+    "localizedText_translations": "Tõlked ({filled}/{total})",
+    "localizedText_fallbackHint": "Tühjaks jäetud keeles näidatakse algteksti.",
+    "localizedText_filled": "Tõlgitud",
+    "localizedText_empty": "Näitab algteksti",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Lehte ei leitud",

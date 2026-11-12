@@ -158,7 +158,9 @@ describe("the renderers", () => {
         // In the hook the bar draws from, which a theme's own navigation
         // asks too, so both say a module's name in the same language.
         const src = read("src/core/hooks/useNavLinks.ts");
-        expect(src).toContain("link.labelKey && t.has(link.labelKey) ? t(link.labelKey) : link.label");
+        // The label is text the operator may have written per language, so
+        // the fallback is read in the reader's (`a-navbar-label-is-written-in-each-language`).
+        expect(src).toContain("link.labelKey && t.has(link.labelKey) ? t(link.labelKey) : text(link.label)");
         // registry links and admin-configured links both go through it
         expect(src).toContain("label: navLabel(nl)");
         expect(src).toContain("label: navLabel(link)");
@@ -188,7 +190,9 @@ describe("the renderers", () => {
         const src = read("src/app/[locale]/(admin)/admin/settings/navbar/page.tsx");
         expect(src).toContain("labelKey: nl.labelKey");
         expect(src).toContain('labelKey: "home"');
-        // and drops it once the admin types their own text
-        expect(src).toContain('if (field === "label") return { ...l, label: value, labelKey: undefined };');
+        // and drops it once the admin types their own original text, but not
+        // for a translation, which leaves the key speaking every language the
+        // admin left empty
+        expect(src).toContain("labelKey: keepsKey ? l.labelKey : undefined");
     });
 });

@@ -308,7 +308,8 @@
           "type": "text",
           "label": "Server address visitors can copy",
           "max": 120,
-          "labelKey": "theme_kite_hero_address"
+          "labelKey": "theme_kite_hero_address",
+          "translatable": false
         },
         "ctaText": {
           "type": "text",
@@ -321,7 +322,8 @@
           "type": "text",
           "label": "Where the extra button goes",
           "max": 300,
-          "labelKey": "theme_kite_hero_ctaHref"
+          "labelKey": "theme_kite_hero_ctaHref",
+          "translatable": false
         }
       }
     },

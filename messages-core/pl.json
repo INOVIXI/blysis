@@ -97,7 +97,12 @@
     "welcomeTitle": "Witaj w swojej społeczności",
     "welcomeVisitorHint": "Skorzystaj z nawigacji powyżej, aby poznać społeczność.",
     "writeContentHere": "Napisz tutaj treść...",
-    "statsLabel": "Strona w skrócie"
+    "statsLabel": "Strona w skrócie",
+    "localizedText_translations": "Tłumaczenia ({filled} z {total})",
+    "localizedText_fallbackHint": "Język pozostawiony pusty pokazuje tekst oryginalny.",
+    "localizedText_filled": "Przetłumaczono",
+    "localizedText_empty": "Pokazuje oryginał",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Nie znaleziono strony",

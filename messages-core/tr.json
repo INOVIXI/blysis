@@ -97,7 +97,12 @@
     "welcomeTitle": "Topluluğunuza hoş geldiniz",
     "welcomeVisitorHint": "Üst menüden topluluğu keşfedebilirsiniz.",
     "writeContentHere": "İçeriğinizi buraya yazın...",
-    "statsLabel": "Sunucu özeti"
+    "statsLabel": "Sunucu özeti",
+    "localizedText_translations": "Çeviriler ({total} dilin {filled} tanesi)",
+    "localizedText_fallbackHint": "Boş bırakılan bir dilde özgün metin gösterilir.",
+    "localizedText_filled": "Çevrildi",
+    "localizedText_empty": "Özgün metni gösterir",
+    "localizedText_languageField": "{label}, {language}"
   },
   "notFound": {
     "title": "Sayfa bulunamadı",
