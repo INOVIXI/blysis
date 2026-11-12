@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { applyFiltersAsync } from "@/core/sdk";
 import { log } from "@/core/sdk/server";
-import { fromMerchantOid, getPaytrConfig, paytrHash } from "../../lib/paytr";
+import { fromMerchantOid, getPaytrConfig, paytrCallbackHash } from "../../lib/paytr";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         return new NextResponse("BAD_REQUEST", { status: 400 });
     }
 
-    const expected = paytrHash(config, merchantOid + config.merchantSalt + status + totalAmount);
+    const expected = paytrCallbackHash(config, merchantOid, status, totalAmount);
     if (!hashesMatch(expected, received)) {
         log.error("[paytr-gateway] a callback arrived with a hash that does not verify", { merchantOid });
         return new NextResponse("BAD_HASH", { status: 400 });

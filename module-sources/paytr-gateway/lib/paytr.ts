@@ -51,6 +51,18 @@ export function paytrHash(config: PaytrConfig, parts: string): string {
     return crypto.createHmac("sha256", config.merchantKey).update(parts + config.merchantSalt).digest("base64");
 }
 
+/**
+ * What PayTR signs a callback with: the salt sits between the order id and
+ * the status and is not appended again, unlike the payment token's recipe
+ * that `paytrHash` follows (`paytr.test.ts`).
+ */
+export function paytrCallbackHash(config: PaytrConfig, merchantOid: string, status: string, totalAmount: string): string {
+    return crypto
+        .createHmac("sha256", config.merchantKey)
+        .update(merchantOid + config.merchantSalt + status + totalAmount)
+        .digest("base64");
+}
+
 /** PayTR names the Turkish lira "TL" and takes four other currencies. */
 export function paytrCurrency(currency: string): string | null {
     const map: Record<string, string> = { TRY: "TL", USD: "USD", EUR: "EUR", GBP: "GBP", RUB: "RUB" };
