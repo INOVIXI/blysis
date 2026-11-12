@@ -69,7 +69,7 @@ export async function settleCredits(settlement: PaymentSettlement, topUp: TopUpR
         const credited = await prisma.$transaction(async (tx) => {
             const claimed = await tx.creditTopUp.updateMany({
                 where: { id: topUp.id, status: "PENDING" },
-                data: { status: "COMPLETED" },
+                data: { status: "COMPLETED", providerRef: settlement.providerRef },
             });
             if (claimed.count === 0) return false;
             // The wallet is another module's; the transaction is this one's,
@@ -111,4 +111,48 @@ export async function cancelTopUp(topUp: TopUpRow): Promise<PaymentOutcome> {
         data: { status: "CANCELLED" },
     });
     return cancelled.count === 0 ? ALREADY : OK;
+}
+
+/**
+ * The money for a top-up went back: take its credits back off the account.
+ *
+ * As far as the balance still holds them. A debit the balance cannot cover is
+ * refused by the wallet, and the credits already spent are what an operator
+ * has to chase; the error log says how many. Stamped in the same transaction,
+ * so a second refund notice takes nothing twice.
+ */
+export async function refundTopUp(provider: string, providerRef: string): Promise<PaymentOutcome> {
+    const topUp = await prisma.creditTopUp.findFirst({
+        where: { provider, providerRef },
+        select: { id: true, userId: true, credits: true, refundedAt: true },
+    });
+    if (!topUp) return failed("unknown payment");
+    if (topUp.refundedAt) return ALREADY;
+
+    const kept = await prisma.$transaction(async (tx) => {
+        const claimed = await tx.creditTopUp.updateMany({
+            where: { id: topUp.id, refundedAt: null },
+            data: { refundedAt: new Date() },
+        });
+        if (claimed.count === 0) return null;
+        if (!topUp.userId) return 0;
+        const holder = await tx.user.findUnique({ where: { id: topUp.userId }, select: { creditBalance: true } });
+        const take = Math.min(topUp.credits, Math.max(0, Math.floor(Number(holder?.creditBalance ?? 0))));
+        if (take > 0) {
+            await applyFiltersAsync("credit.change", { applied: false }, {
+                tx,
+                userId: topUp.userId,
+                amount: -take,
+                type: "payment_refund",
+                description: `Refunded via ${provider} (${providerRef})`,
+                ledgerId: `refund:${creditLedgerId(provider, providerRef)}`,
+            });
+        }
+        return topUp.credits - take;
+    });
+    if (kept === null) return ALREADY;
+    if (kept > 0) {
+        log.error("[store] a refunded top-up's credits were already spent", { topUpId: topUp.id, provider, providerRef, kept });
+    }
+    return OK;
 }

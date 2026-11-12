@@ -57,6 +57,10 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
     if (!order) notFound();
     const delivery = (await deliveryOf([order.id]))[order.id] ?? null;
     const deliveryLabel = (state: DeliveryState) => t(`dlv_${state}`);
+    // Written by the refund: lines a game command already delivered, which a
+    // refund cannot run backwards. See `take-back.ts`.
+    const keptInGame = (order.metadata as { keptInGame?: unknown } | null)?.keptInGame;
+    const keptLines = Array.isArray(keptInGame) ? keptInGame.filter((name): name is string => typeof name === "string") : [];
 
     return (
         <>
@@ -163,6 +167,12 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                                     <span className="text-muted-foreground">{t("dlv_label")}: </span>
                                     <DeliveryBadge state={delivery.state} label={deliveryLabel} />
                                 </p>
+                            )}
+                            {order.status === "REFUNDED" && (
+                                <p className="text-xs text-muted-foreground mt-2">{t("adm_refundTookBack")}</p>
+                            )}
+                            {order.status === "REFUNDED" && keptLines.length > 0 && (
+                                <p className="text-xs text-warning mt-1">{t("adm_refundKeptInGame", { items: keptLines.join(", ") })}</p>
                             )}
                         </CardContent>
                     </Card>

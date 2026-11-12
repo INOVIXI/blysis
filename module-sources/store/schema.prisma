@@ -557,6 +557,11 @@ model CreditTopUp {
   currency  String
   provider  String
   status    CreditTopUpStatus @default(PENDING)
+  /// The gateway's own id for the money, written at settlement: a refund
+  /// names the payment by it, never by this row's id.
+  providerRef String?
+  /// When the money went back and the credits were taken back.
+  refundedAt  DateTime?
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
@@ -564,6 +569,7 @@ model CreditTopUp {
   user   User?   @relation("CreditTopUps", fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
+  @@index([providerRef])
 }
 
 enum CreditTopUpStatus {

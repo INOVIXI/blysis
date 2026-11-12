@@ -62,6 +62,8 @@ declare global {
     interface BlysisHookPayloads {
         "store.order.created": StoreOrderHookPayload;
         "store.order.completed": StoreOrderHookPayload;
+        /** The order's money went back; the store already took back what it holds. */
+        "store.order.refunded": StoreOrderHookPayload;
         "store.product.created": { id: string; name: string; slug: string };
         /** Credits bought with money settled on an account. Gifts, refunds and grants are not this. */
         "store.credits.purchased": { userId: string; amount: number };
