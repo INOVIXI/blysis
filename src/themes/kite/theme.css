@@ -1773,9 +1773,15 @@ html[data-mode="dark"] {
   box-shadow: none;
 }
 
+/* As specific as the shadow every block's card stands on: a topic is a
+   block, and that shadow left the empty card floating around the author. */
+.kt-site [data-post-card].blysis-card.bg-card.rounded-xl {
+  box-shadow: none;
+}
+
 .kt-site [data-author-column] {
   gap: 8px;
-  padding: 4px 18px 0 0;
+  padding: 4px 0 18px;
   border: 0;
   background: none;
 }
@@ -1792,16 +1798,29 @@ html[data-mode="dark"] {
   box-shadow: var(--kt-shadow);
 }
 
+/* The bubble points at its author: up while the author sits above it, left
+   once the block is wide enough for the forum's column (its `@2xl`). */
 .kt-site [data-author-column] + *::before {
   content: "";
   position: absolute;
-  left: -9px;
-  top: 28px;
+  left: 22px;
+  top: -9px;
   width: 20px;
   height: 20px;
   border-radius: 4px;
   background: var(--blysis-color-card);
   transform: rotate(45deg);
+}
+
+@container (min-width: 42rem) {
+  .kt-site [data-author-column] {
+    padding: 4px 18px 0 0;
+  }
+
+  .kt-site [data-author-column] + *::before {
+    left: -9px;
+    top: 28px;
+  }
 }
 
 /* A member's profile: a band of sky and island, their picture standing on it. */
