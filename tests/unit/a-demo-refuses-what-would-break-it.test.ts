@@ -38,6 +38,7 @@ const MUST_REFUSE: [string, string, string][] = [
     ["POST", "/api/v1/admin/alerting/test", "and firing it"],
     ["POST", "/api/v1/discord/test-send", "the same, through a module"],
     ["PUT", "/api/v1/minecraft-litebans/admin/connection", "a database this server dials"],
+    ["PUT", "/api/v1/minecraft-libertybans/admin/connection", "the same, for another plugin"],
     ["POST", "/api/v1/external-data/admin/sources", "the same, with credentials"],
     ["POST", "/api/v1/storage/cloudflare-r2/settings", "where uploads go"],
     ["POST", "/api/v1/security/turnstile/settings", "the captcha that guards registration"],

@@ -17,12 +17,13 @@ import { stripComments } from "./source-text";
  * "Player Profiles" reached the same service, and the shop's own admin help
  * offered "Minecraft username" as the example of a field to ask a buyer for.
  *
- * Four modules may say the word, and they are the ones it belongs to:
+ * Five modules may say the word, and they are the ones it belongs to:
  * `minecraft-link` is about proving you own an account, `minecraft-litebans`
- * takes one plugin's bans and hands them to the punishments module,
- * `minecraft-heads` offers those same head services as picture providers an
- * operator has to choose before any name is sent, and `servers` lists
- * Minecraft among nine game types it can talk to over RCON.
+ * and `minecraft-libertybans` each take one plugin's bans and hand them to
+ * the punishments module, `minecraft-heads` offers those same head services
+ * as picture providers an operator has to choose before any name is sent,
+ * and `servers` lists Minecraft among nine game types it can talk to over
+ * RCON.
  * Naming it there is the feature, and each of them says so in its own name.
  * Anywhere else it is an assumption about what this site is.
  */
@@ -35,6 +36,7 @@ const ITS_OWN = new Set([
     "minecraft-heads",
     "minecraft-link",
     "minecraft-litebans",
+    "minecraft-libertybans",
     "servers",
 ]);
 
