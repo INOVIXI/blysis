@@ -3,8 +3,9 @@ import { Prisma } from "@prisma/client";
 import { generateOrderNumber, applyFiltersAsync } from "@/core/sdk";
 import { log, logActivity, moduleSettings, prisma, rateLimitForRole, readJsonBody, siteTimeZone } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { shortOfStock, stockClaims } from "../../lib/stock";
-import { createCreditOrder, deliverPaidOrder } from "../../lib/credit-order";
+import { claimStock, shortOfStock, stockClaims } from "../../lib/stock";
+import { countSales } from "../../lib/popularity";
+import { createCreditOrder, deliverPaidOrder, OUT_OF_STOCK } from "../../lib/credit-order";
 import { effectivePrice } from "../../lib/availability";
 import { availabilityFor, pastTheLimit, rulesOf, type ProductRow } from "../../lib/availability-server";
 import { convertedCharge, resolveCurrency } from "../../lib/currency";
@@ -24,6 +25,8 @@ import {
 import { creditingPurchases, ownedRungsOn } from "../../lib/upgrade-credit-server";
 import { z } from "zod";
 import { isPlayerName } from "../../lib/player-name";
+
+const LIMIT_REACHED = "LIMIT_REACHED";
 
 /**
  * Bank a creator's cut and record it.
@@ -516,29 +519,49 @@ export async function POST(request: NextRequest) {
             // holds either both happen or neither does. Done in sequence, a
             // process that died in between left a COMPLETED order with an
             // empty chest and nothing that would ever go back and fix it.
+            // It takes the shelf and counts the limit again under the same
+            // lock, as the credits path does: a free order is still a sale.
+            // The order written above is left out of that count, or it would
+            // be counted against itself.
             const freeBuyerId = session.user.id;
-            await prisma.$transaction(async (tx) => {
-                await tx.order.update({ where: { id: order.id }, data: { status: "COMPLETED" } });
-                await tx.chestItem.createMany({
-                    data: orderItems.map((item) => ({
-                        userId: freeBuyerId,
-                        productId: item.productId,
-                        productName: item.name,
-                        quantity: item.quantity,
-                        orderId: order.id,
-                        playerName,
-                        variables: recordedVariables(item.metadata) ?? Prisma.JsonNull,
-                    })),
+            try {
+                await prisma.$transaction(async (tx) => {
+                    if (await pastTheLimit(tx, products, orderItems, freeBuyerId, now, order.id)) {
+                        throw new Error(LIMIT_REACHED);
+                    }
+                    const claims = stockClaims(orderItems);
+                    if ((await claimStock(tx, claims)).length > 0) throw new Error(OUT_OF_STOCK);
+                    await countSales(tx, claims);
+                    await tx.order.update({ where: { id: order.id }, data: { status: "COMPLETED" } });
+                    await tx.chestItem.createMany({
+                        data: orderItems.map((item) => ({
+                            userId: freeBuyerId,
+                            productId: item.productId,
+                            productName: item.name,
+                            quantity: item.quantity,
+                            orderId: order.id,
+                            playerName,
+                            variables: recordedVariables(item.metadata) ?? Prisma.JsonNull,
+                        })),
+                    });
+                    await tx.ownedProduct.createMany({
+                        data: [...new Set(orderItems.map((item) => item.productId))].map((productId) => ({
+                            userId: freeBuyerId,
+                            productId,
+                            orderId: order.id,
+                        })),
+                        skipDuplicates: true,
+                    });
                 });
-                await tx.ownedProduct.createMany({
-                    data: [...new Set(orderItems.map((item) => item.productId))].map((productId) => ({
-                        userId: freeBuyerId,
-                        productId,
-                        orderId: order.id,
-                    })),
-                    skipDuplicates: true,
-                });
-            });
+            } catch (error) {
+                // A refused order must not sit PENDING, where it would hold
+                // the buyer's allowance for an hour.
+                const message = error instanceof Error ? error.message : "";
+                if (message !== LIMIT_REACHED && message !== OUT_OF_STOCK) throw error;
+                await prisma.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });
+                if (message === OUT_OF_STOCK) throw error;
+                return NextResponse.json({ error: "limit_reached", code: "store_limit_reached" }, { status: 409 });
+            }
 
             await announceOrderCompleted(order.id);
             return NextResponse.json({ order, redirect: null, message: "Order completed (free)" }, { status: 201 });
