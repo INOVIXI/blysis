@@ -19,7 +19,9 @@
  *
  *   1. `seed-demo --clean` takes back every row the demo seed wrote. It works
  *      from a ledger and checks each row still exists, so a visitor who
- *      deleted something does not stop the sweep.
+ *      deleted something does not stop the sweep. The ledger is a file, at
+ *      SEED_LEDGER_PATH: a reset run in a fresh container keeps it on a
+ *      volume, and step 3 stops rather than seed over a demo it has lost.
  *   2. `prisma/seed.ts` makes sure the roles, the permissions and the site's
  *      own settings are there. It is idempotent and leaves an existing
  *      administrator's password alone.

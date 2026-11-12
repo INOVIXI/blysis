@@ -128,7 +128,9 @@ const WORDS = (
  * What this tool wrote, so `--clean` can take back exactly that.
  *
  * A file rather than a table: this is a development tool and its bookkeeping
- * has no business in the schema every install ships. It is keyed by database,
+ * has no business in the schema every install ships. Nor a `Setting` row:
+ * any admin can write those, a public demo hands every visitor an admin, and
+ * `--clean` deletes whatever ids the ledger lists. It is keyed by database,
  * so two checkouts pointed at two databases do not clean each other's rows,
  * and `--clean` checks each row still exists before deleting it - a ledger
  * that outlived a `db:push --force-reset` then simply finds nothing.
@@ -138,16 +140,23 @@ interface Ledger {
     rows: { module: string; model: string; id: string }[];
 }
 
-const LEDGER_FILE = path.join(ROOT, ".seed-ledger.json");
+/**
+ * The checkout's own file unless SEED_LEDGER_PATH names another. A demo host
+ * that runs the reset in a fresh container every time points it at a volume,
+ * because the working directory starts from the image on every run (#110).
+ */
+function ledgerFile(): string {
+    return path.resolve(ROOT, process.env.SEED_LEDGER_PATH || ".seed-ledger.json");
+}
 
 function databaseKey(): string {
     const url = process.env.DATABASE_URL ?? "";
     return crypto.createHash("sha256").update(url).digest("hex").slice(0, 16);
 }
 
-function readLedger(): Ledger {
+export function readLedger(): Ledger {
     try {
-        const parsed = JSON.parse(fs.readFileSync(LEDGER_FILE, "utf8")) as Ledger;
+        const parsed = JSON.parse(fs.readFileSync(ledgerFile(), "utf8")) as Ledger;
         if (parsed.database === databaseKey() && Array.isArray(parsed.rows)) return parsed;
     } catch {
         // No ledger, or one written against another database. Either way there
@@ -156,8 +165,31 @@ function readLedger(): Ledger {
     return { database: databaseKey(), rows: [] };
 }
 
-function writeLedger(ledger: Ledger): void {
-    fs.writeFileSync(LEDGER_FILE, JSON.stringify(ledger, null, 2) + "\n");
+export function writeLedger(ledger: Ledger): void {
+    const file = ledgerFile();
+    // A folder on a fresh volume may not exist yet, and a mount that has to
+    // exist before the container starts is the trap this path replaces.
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, JSON.stringify(ledger, null, 2) + "\n");
+}
+
+/**
+ * Stop a seed that would land on top of one its ledger has lost.
+ *
+ * Demo accounts in the database with nothing recorded against it means the
+ * rows were written by a run whose ledger is gone: the clean before this
+ * found nothing to take back, and seeding now writes a second demo beside the
+ * first that no `--clean` can ever remove. A reset that stops says so in its
+ * log; one that carries on grew demo.blysis.com by 16,000 rows a day.
+ */
+export function refuseWithoutItsLedger(ledger: Ledger, demoAccounts: number): void {
+    if (ledger.rows.length > 0 || demoAccounts === 0) return;
+    throw new Error(
+        `This database already has ${demoAccounts} demo account(s), and the ledger at ${ledgerFile()} ` +
+        "recorded none of them, so it was lost. Seeding again would add a second demo that --clean " +
+        "cannot take back. Keep the ledger where it survives (SEED_LEDGER_PATH, on a volume when the " +
+        "reset runs in a fresh container), then rebuild the demo database once.",
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -635,6 +667,10 @@ async function main(): Promise<void> {
         }
 
         const ledger = readLedger();
+        refuseWithoutItsLedger(
+            ledger,
+            await prisma.user.count({ where: { email: { endsWith: `@${DEMO_DOMAIN}` } } }),
+        );
         const record = (module: string) => (model: string, id: string) => {
             ledger.rows.push({ module, model, id });
         };
