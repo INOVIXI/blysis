@@ -21,7 +21,7 @@ import { relativePath } from "./source-text";
  */
 
 const ROOT = process.cwd();
-const ALLOWLIST_FILE = path.join(ROOT, "src/app/api/v1/public-settings/route.ts");
+const ALLOWLIST_FILE = path.join(ROOT, "src/core/lib/public-settings.ts");
 
 /** The keys `/api/v1/public-settings` will answer with. */
 export function publicKeys(source: string): Set<string> {

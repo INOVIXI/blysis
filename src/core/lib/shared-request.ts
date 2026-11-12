@@ -117,6 +117,24 @@ export function peekShared<T = unknown>(url: string): T | undefined {
     return hit.expires > Date.now() ? (hit.value as T) : undefined;
 }
 
+/**
+ * Hold `value` as the answer for `url`, as if it had just been fetched.
+ *
+ * For an answer the server already put in the page: the first caller then
+ * reads it instead of asking again. An entry already fresh or in flight is
+ * left alone, because it is at least as new as anything the page carried.
+ *
+ * Browser only. On the server this store is one object for every request the
+ * process serves, and a value written there would outlive the request.
+ */
+export function seedShared(url: string, value: unknown, ttlMs: number): void {
+    if (typeof window === "undefined") return;
+    const s = store();
+    const hit = s.get(url);
+    if (hit && (hit.promise || (hit.value !== undefined && hit.expires > Date.now()))) return;
+    s.set(url, { value, expires: Date.now() + ttlMs });
+}
+
 /** Drop one URL, or everything when called with no argument. */
 export function invalidateShared(url?: string): void {
     if (url === undefined) store().clear();

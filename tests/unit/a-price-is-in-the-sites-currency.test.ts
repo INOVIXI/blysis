@@ -130,7 +130,7 @@ describe("a screen that shows money", () => {
 
 describe("the currency contract", () => {
     it("publishes the currency the gateways charge in", () => {
-        const source = read("src/app/api/v1/public-settings/route.ts");
+        const source = read("src/core/lib/public-settings.ts");
         const block = code(source.slice(source.indexOf("PUBLIC_KEYS"), source.indexOf("PUBLIC_SETTINGS_CACHE_KEY")));
         const keys = [...block.matchAll(/^\s*"([\w_]+)",$/gm)].map((m) => m[1]);
         expect(keys).toContain("default_currency");
