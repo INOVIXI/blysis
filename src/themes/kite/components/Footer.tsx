@@ -13,8 +13,6 @@ import {
     type FooterProps,
 } from "@/core/sdk/theme";
 
-const SOCIAL_NAMES = { facebook: "Facebook", instagram: "Instagram", x: "X", youtube: "YouTube" } as const;
-
 /**
  * The night sky at the foot of the day: the site's name and what it is on the
  * left, the operator's columns beside it, and on the line under them the
@@ -50,7 +48,7 @@ export default function Footer({ top }: FooterProps) {
                                 {footer.social.map((link) => (
                                     <li key={link.name}>
                                         <a href={link.href} target="_blank" rel="noopener noreferrer">
-                                            {link.name === "community" ? nav("community") : SOCIAL_NAMES[link.name]}
+                                            {link.label}
                                         </a>
                                     </li>
                                 ))}

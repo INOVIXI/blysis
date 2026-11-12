@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
@@ -15,6 +15,7 @@ import { LoadFailed } from "@/core/components/ui/load-failed";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
 import { UrlOrFile } from "@/core/components/ui/url-or-file";
 import { SITE_LOGO_KEY } from "@/core/lib/site-logo";
+import { SITE_SOCIAL_LINKS, siteFormFromSettings, siteSettingsPatch, type SiteForm } from "@/core/lib/site-contact";
 
 /**
  * Every zone this runtime knows, so an operator picks rather than types.
@@ -40,37 +41,19 @@ export default function SiteSettingsPage() {
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const [form, setForm] = useState({
-        siteName: "",
-        [SITE_LOGO_KEY]: "",
-        siteDescription: "",
-        contactEmail: "",
-        socialFacebook: "",
-        socialInstagram: "",
-        socialTwitter: "",
-        socialYoutube: "",
-        socialDiscord: "",
-        timezone: "UTC",
-    });
+    // Keyed by the settings the site reads (`site-contact.ts`). The screen
+    // wrote keys of its own that nothing read, so a save renamed nothing.
+    const [form, setForm] = useState<SiteForm>(() => ({ ...siteFormFromSettings({}), [SITE_LOGO_KEY]: "" }));
+    // What was loaded, so a save can empty an older key it carried forward.
+    const loaded = useRef<Record<string, unknown>>({});
+    const field = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+        setForm({ ...form, [key]: e.target.value });
 
     // A read that failed would otherwise offer this form at its defaults, and
-    // saving it renames the site to "Blysis" and empties every social link.
+    // saving it would empty the site's name and every social link.
     const { loading, failed, retry } = useSettingsLoad((s) => {
-        setForm({
-            // Empty rather than the product's own name: a read that fell back
-            // to it and then saved would rename the operator's site after the
-            // thing it was built from.
-            siteName: (s.siteName as string) || "",
-            [SITE_LOGO_KEY]: (s[SITE_LOGO_KEY] as string) || "",
-            siteDescription: (s.siteDescription as string) || "",
-            contactEmail: (s.contactEmail as string) || "",
-            socialFacebook: (s.socialFacebook as string) || "",
-            socialInstagram: (s.socialInstagram as string) || "",
-            socialTwitter: (s.socialTwitter as string) || "",
-            socialYoutube: (s.socialYoutube as string) || "",
-            socialDiscord: (s.socialDiscord as string) || "",
-            timezone: (s.site_timezone as string) || "UTC",
-        });
+        loaded.current = s;
+        setForm({ ...siteFormFromSettings(s), [SITE_LOGO_KEY]: (s[SITE_LOGO_KEY] as string) || "" });
     });
 
     const handleSave = async (e: React.FormEvent) => {
@@ -83,9 +66,10 @@ export default function SiteSettingsPage() {
             const res = await fetch("/api/v1/settings", {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                // `timezone` is the field's name; `site_timezone` is the row
-                // everything scheduled reads.
-                body: JSON.stringify({ ...form, site_timezone: form.timezone, timezone: undefined }),
+                body: JSON.stringify({
+                    ...siteSettingsPatch(form, loaded.current),
+                    [SITE_LOGO_KEY]: form[SITE_LOGO_KEY],
+                }),
             });
 
             if (!res.ok) {
@@ -93,6 +77,8 @@ export default function SiteSettingsPage() {
                 return;
             }
 
+            // An older key emptied by this save holds nothing now.
+            loaded.current = {};
             setSaved(true);
             setTimeout(() => setSaved(false), 3000);
         } catch {
@@ -150,8 +136,8 @@ export default function SiteSettingsPage() {
                                 <Label>{t("siteSettings_siteName")}</Label>
                                 <Input
                                     aria-label={t("siteSettings_siteName")}
-                                    value={form.siteName}
-                                    onChange={(e) => setForm({ ...form, siteName: e.target.value })}
+                                    value={form.site_name}
+                                    onChange={field("site_name")}
                                 />
                             </div>
                             <div>
@@ -170,8 +156,8 @@ export default function SiteSettingsPage() {
                                 <Label>{t("siteSettings_description")}</Label>
                                 <Textarea
                                     aria-label={t("siteSettings_description")}
-                                    value={form.siteDescription}
-                                    onChange={(e) => setForm({ ...form, siteDescription: e.target.value })}
+                                    value={form.site_description}
+                                    onChange={field("site_description")}
                                     rows={3}
                                 />
                             </div>
@@ -180,8 +166,8 @@ export default function SiteSettingsPage() {
                                 <NativeSelect
                                     id="site-timezone"
                                     className="mt-1"
-                                    value={form.timezone}
-                                    onChange={(e) => setForm({ ...form, timezone: e.target.value })}
+                                    value={form.site_timezone}
+                                    onChange={field("site_timezone")}
                                 >
                                     {zones.map((zone) => <option key={zone} value={zone}>{zone}</option>)}
                                 </NativeSelect>
@@ -192,8 +178,8 @@ export default function SiteSettingsPage() {
                                 <Input
                                     aria-label={t("siteSettings_contactEmail")}
                                     type="email"
-                                    value={form.contactEmail}
-                                    onChange={(e) => setForm({ ...form, contactEmail: e.target.value })}
+                                    value={form.site_email}
+                                    onChange={field("site_email")}
                                     placeholder="support@example.com"
                                 />
                             </div>
@@ -205,51 +191,17 @@ export default function SiteSettingsPage() {
                             <CardTitle>{t("siteSettings_socialLinks")}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div>
-                                <Label>Discord</Label>
-                                <Input
-                                    aria-label="Discord"
-                                    value={form.socialDiscord}
-                                    onChange={(e) => setForm({ ...form, socialDiscord: e.target.value })}
-                                    placeholder="https://discord.gg/..."
-                                />
-                            </div>
-                            <div>
-                                <Label>X</Label>
-                                <Input
-                                    aria-label="X"
-                                    value={form.socialTwitter}
-                                    onChange={(e) => setForm({ ...form, socialTwitter: e.target.value })}
-                                    placeholder="https://x.com/..."
-                                />
-                            </div>
-                            <div>
-                                <Label>YouTube</Label>
-                                <Input
-                                    aria-label="YouTube"
-                                    value={form.socialYoutube}
-                                    onChange={(e) => setForm({ ...form, socialYoutube: e.target.value })}
-                                    placeholder="https://youtube.com/..."
-                                />
-                            </div>
-                            <div>
-                                <Label>Instagram</Label>
-                                <Input
-                                    aria-label="Instagram"
-                                    value={form.socialInstagram}
-                                    onChange={(e) => setForm({ ...form, socialInstagram: e.target.value })}
-                                    placeholder="https://instagram.com/..."
-                                />
-                            </div>
-                            <div>
-                                <Label>Facebook</Label>
-                                <Input
-                                    aria-label="Facebook"
-                                    value={form.socialFacebook}
-                                    onChange={(e) => setForm({ ...form, socialFacebook: e.target.value })}
-                                    placeholder="https://facebook.com/..."
-                                />
-                            </div>
+                            {SITE_SOCIAL_LINKS.map((link) => (
+                                <div key={link.key}>
+                                    <Label htmlFor={link.key}>{link.label}</Label>
+                                    <Input
+                                        id={link.key}
+                                        value={form[link.key] ?? ""}
+                                        onChange={field(link.key)}
+                                        placeholder={link.placeholder}
+                                    />
+                                </div>
+                            ))}
                         </CardContent>
                     </Card>
                 </div>

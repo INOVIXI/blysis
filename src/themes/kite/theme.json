@@ -3,7 +3,7 @@
   "id": "kite",
   "name": "Kite",
   "description": "A bright sky that turns to night as you scroll: white rounded cards on a raised edge, chunky friendly type, sticker game modes, postcard news and price tags on a string. Light and dark.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Blysis",
   "modes": {
     "default": "light",

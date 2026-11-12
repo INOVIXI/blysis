@@ -33,6 +33,11 @@ const PER_KEY_LIMITS: Record<string, number> = {
     site_description: 500,
     site_email: 254,
     site_discord_url: 500,
+    site_facebook_url: 500,
+    site_instagram_url: 500,
+    site_x_url: 500,
+    site_youtube_url: 500,
+    site_tiktok_url: 500,
     hero_discord_url: 500,
     site_logo: 2_000,
     // Twelve codes as JSON is under a hundred characters.

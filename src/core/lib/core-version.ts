@@ -12,6 +12,12 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.33.0 - `FooterSocialLink` carries a `label`, and its `name` may be
+ * `tiktok`. The site's social links became settings, one per network, and a
+ * theme that draws them reads what to call each one rather than keeping a
+ * map of its own that a new network would fall out of. Kept a minor: the
+ * only theme that mapped the names is in this tree and reads `label` now.
+ *
  * 5.32.0 - a theme can ask whether a slot will be drawn into.
  * `useSlotHasContent` from `@/core/sdk/layout` answers from the registry,
  * before any contribution has run, so a theme holds the room for what a
@@ -728,4 +734,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.32.0";
+export const CORE_API_VERSION = "5.33.0";
