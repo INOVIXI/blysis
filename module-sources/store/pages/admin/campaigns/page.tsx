@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
     Button, Card, CardContent, CheckboxField, Input, Label, ListControls, LoadFailed,
-    Pagination, buttonClassName, useConfirm, useFormRoute, useRowList, useSiteSettings,
+    LocalizedTextInput, Pagination, buttonClassName, useConfirm, useFormRoute, useRowList, useSiteSettings,
 } from "@/core/sdk/ui";
 import { Link } from "@/core/sdk/navigation";
 import { AdminPageHeader, RowActions } from "@/core/sdk/admin";
 import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { writeError, errorMessage } from "@/core/sdk";
+import { joinTranslations, splitTranslations, writeError, errorMessage, type LanguageTexts } from "@/core/sdk";
 import { EMPTY_CAMPAIGN, campaignPayload, type CampaignFormValue } from "./campaign-form";
 import { timeFromMinutes } from "../products/_fields/time-of-day";
 
@@ -30,6 +30,8 @@ interface Campaign {
     fromMinute: number | null;
     untilMinute: number | null;
     entries: { productId: string; price: string | number; stock: number | null }[];
+    /** Every language of its name, from the operator's list. */
+    translations?: Record<string, LanguageTexts>;
 }
 
 interface Product {
@@ -81,6 +83,7 @@ export default function AdminStoreCampaignsPage() {
         if (!row) return;
         setForm({
             name: row.name,
+            nameLanguages: row.translations?.name ?? {},
             isActive: row.isActive,
             days: row.days ?? [],
             from24: timeFromMinutes(row.fromMinute),
@@ -178,10 +181,14 @@ export default function AdminStoreCampaignsPage() {
                         <form onSubmit={save} className="space-y-6">
                             <div>
                                 <Label htmlFor="campaignName">{`${t("adm_campaignName")} *`}</Label>
-                                <Input
+                                <LocalizedTextInput
                                     id="campaignName"
-                                    value={form.name}
-                                    onChange={(e) => set({ name: e.target.value })}
+                                    label={t("adm_campaignName")}
+                                    value={joinTranslations(form.name, form.nameLanguages)}
+                                    onChange={(next) => {
+                                        const parts = splitTranslations(next);
+                                        set({ name: parts.original, nameLanguages: parts.translations });
+                                    }}
                                     required
                                 />
                             </div>

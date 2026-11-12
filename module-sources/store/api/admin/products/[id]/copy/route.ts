@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
-import { hasPermission, log, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { hasPermission, log, logActivity, prisma, readContentTranslations, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { copyOf, freeSlug } from "../../../../../lib/clone-product";
 import { copyProductSchema } from "../../../../../lib/validations";
+import { PRODUCT_TEXT } from "../../../../../lib/store-text";
 
 /**
  * POST /api/v1/store/admin/products/[id]/copy - one product, again.
@@ -74,6 +75,14 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
                     deliveryData: (copied.deliveryData ?? Prisma.JsonNull) as Prisma.InputJsonValue,
                 },
             });
+
+            // Its words in every language come with it: a copy that says
+            // in English only what the original said in Turkish is a product
+            // half made. A copy given a name of its own leaves the old name's
+            // languages behind, since they translate a name it no longer has.
+            const words = (await readContentTranslations(tx, PRODUCT_TEXT, [id])).get(id) ?? {};
+            if (parsed.data.name !== undefined) delete words.name;
+            await saveContentTranslations(tx, { ...PRODUCT_TEXT, recordId: written.id }, words);
 
             if (commands.length > 0) {
                 await tx.productCommand.createMany({

@@ -93,3 +93,31 @@ export function longestText(value: TranslatableText): number {
     if (typeof value === "string") return value.length;
     return Math.max(...Object.values(value).map((entry) => entry.length));
 }
+
+/** A translation per language code, beside an original kept somewhere else. */
+export type LanguageTexts = Partial<Record<string, string>>;
+
+/**
+ * The editor's value for an original kept in a record's own column and its
+ * translations kept beside it (`content-translations.ts`): the plain string
+ * while no translation holds anything, as `LocalizedTextInput` hands it back.
+ */
+export function joinTranslations(original: string, translations: LanguageTexts | undefined): TranslatableText {
+    const kept = locales.filter((locale) => (translations?.[locale] ?? "").trim() !== "");
+    if (kept.length === 0) return original;
+    const out: TranslatedText = { default: original };
+    for (const locale of kept) out[locale] = translations?.[locale] as string;
+    return out;
+}
+
+/** The editor's value taken apart again: the column's text and the translations to store. */
+export function splitTranslations(value: unknown): { original: string; translations: LanguageTexts } {
+    const translations: LanguageTexts = {};
+    if (isRecord(value)) {
+        for (const locale of locales) {
+            const entry = value[locale];
+            if (typeof entry === "string" && entry.trim() !== "") translations[locale] = entry;
+        }
+    }
+    return { original: originalText(value), translations };
+}

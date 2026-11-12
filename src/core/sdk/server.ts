@@ -173,6 +173,19 @@ export { siteTimeZone } from "@/core/lib/site-time-setting";
 // --- Content revisions ---
 export { recordRevision } from "@/core/lib/revisions";
 
+// A record's text in the reader's language: the column keeps the original and
+// core's ContentTranslation table a translation per field and language. Read a
+// page at once, save and delete in the record's own transaction.
+export {
+    attachContentTranslations,
+    contentTranslationsInput,
+    deleteContentTranslations,
+    readContentTranslations,
+    saveContentTranslations,
+    translateContent,
+} from "@/core/lib/content-translations";
+export type { ContentKind, ContentTranslations, ContentTranslationsInput } from "@/core/lib/content-translations";
+
 // --- Uploads ---
 export { sanitizeFilename } from "@/core/lib/storage";
 export type { StorageProvider, UploadResult } from "@/core/lib/storage";

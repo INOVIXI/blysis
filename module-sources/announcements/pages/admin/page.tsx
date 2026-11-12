@@ -32,8 +32,8 @@ export default function Page() {
             displayField="title"
             secondaryField="type"
             fields={[
-                { key: "title", label: t("adm_titleLabel"), required: true, placeholder: t("adm_titlePlaceholder") },
-                { key: "content", label: t("adm_contentLabel"), type: "textarea", required: true, placeholder: t("adm_contentPlaceholder") },
+                { key: "title", label: t("adm_titleLabel"), type: "translatable", required: true, placeholder: t("adm_titlePlaceholder") },
+                { key: "content", label: t("adm_contentLabel"), type: "translatableTextarea", required: true, placeholder: t("adm_contentPlaceholder") },
                 { key: "type", label: t("adm_typeLabel"), type: "select", options: [
                     { value: "info", label: t("adm_typeInfo") },
                     { value: "warning", label: t("adm_typeWarning") },

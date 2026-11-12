@@ -9,7 +9,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Input, useConfirm, us
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Loader2, Check, X, CreditCard, Coins, ShoppingCart } from "lucide-react";
 import { NavIcon } from "@/core/sdk/ui";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { writeError, errorMessage } from "@/core/sdk";
 import { isPlayerName } from "../../../lib/player-name";
@@ -78,6 +78,8 @@ export default function CartPage() {
     const router = useRouter();
     const { format: formatPrice } = useSiteCurrency();
     const t = useTranslations('store');
+    // The basket's products named in the reader's language.
+    const locale = useLocale();
     const { confirm } = useConfirm();
     const commonT = useTranslations('common');
     const [cart, setCart] = useState<CartData | null>(null);
@@ -161,7 +163,7 @@ export default function CartPage() {
 
     const fetchCart = async () => {
         try {
-            const res = await fetch("/api/v1/store/cart");
+            const res = await fetch(`/api/v1/store/cart?locale=${encodeURIComponent(locale)}`);
             if (res.ok) {
                 const data = await res.json();
                 setCart(data);

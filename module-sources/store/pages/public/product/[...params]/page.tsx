@@ -18,7 +18,7 @@
  * carries are not shown.
  */
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
 import { ArrangedPage } from "@/core/sdk/page";
 import { moduleSettings } from "@/core/sdk/server";
@@ -48,7 +48,9 @@ export default async function ProductPage({ params }: PageProps) {
     const id = productIdFrom(resolved.params ?? resolved.slug);
     if (!id) notFound();
 
-    const read = await readProduct(id);
+    // Its name, summary, description and shelf in the reader's language.
+    const locale = await getLocale();
+    const read = await readProduct(id, locale);
     if (!read) notFound();
 
     // The window's two dates cross the boundary as the strings the screen
@@ -102,7 +104,7 @@ export default async function ProductPage({ params }: PageProps) {
                 ) : null),
                 related: async () => {
                     const [others, { lowStockAt }] = await Promise.all([
-                        readRelated({ id: product.id, categorySlug: product.category?.slug ?? null }, 3),
+                        readRelated({ id: product.id, categorySlug: product.category?.slug ?? null }, 3, locale),
                         moduleSettings<{ lowStockAt: number }>("store"),
                     ]);
                     if (others.length === 0) return null;

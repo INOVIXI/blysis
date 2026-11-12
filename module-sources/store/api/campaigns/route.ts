@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hasPermission, log, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, hasPermission, log, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { campaignSchema } from "../../lib/validations";
+import { CAMPAIGN_FIELDS, CAMPAIGN_TEXT } from "../../lib/store-text";
 
 /**
  * Campaigns, for the screen that sets them.
@@ -37,7 +38,7 @@ export async function GET() {
         take: 100,
         include: { entries: { select: { productId: true, price: true, stock: true } } },
     });
-    return NextResponse.json({ campaigns }, { headers: PRIVATE });
+    return NextResponse.json({ campaigns: await attachContentTranslations(prisma, CAMPAIGN_TEXT, campaigns) }, { headers: PRIVATE });
 }
 
 export async function POST(request: NextRequest) {
@@ -51,15 +52,22 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
 
+    const translations = contentTranslationsInput(body, CAMPAIGN_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
     const { entries = [], ...fields } = parsed.data;
     try {
-        const campaign = await prisma.campaign.create({
-            data: {
-                ...fields,
-                days: fields.days ?? [],
-                entries: { create: entries },
-            },
-            include: { entries: true },
+        const campaign = await prisma.$transaction(async (tx) => {
+            const created = await tx.campaign.create({
+                data: {
+                    ...fields,
+                    days: fields.days ?? [],
+                    entries: { create: entries },
+                },
+                include: { entries: true },
+            });
+            if (translations.value) await saveContentTranslations(tx, { ...CAMPAIGN_TEXT, recordId: created.id }, translations.value);
+            return created;
         });
         return NextResponse.json({ campaign }, { status: 201, headers: PRIVATE });
     } catch (error) {

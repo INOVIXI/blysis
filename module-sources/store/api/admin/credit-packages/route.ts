@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hasPermission, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, hasPermission, logActivity, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { creditPackageSchema } from "../../../lib/validations";
+import { CREDIT_PACKAGE_FIELDS, CREDIT_PACKAGE_TEXT } from "../../../lib/store-text";
 
 /**
  * The packages an operator sells credits in.
@@ -18,7 +19,10 @@ export async function GET() {
         orderBy: [{ order: "asc" }, { price: "asc" }],
         take: 100,
     });
-    return NextResponse.json({ packages }, { headers: { "Cache-Control": "private, no-store" } });
+    return NextResponse.json(
+        { packages: await attachContentTranslations(prisma, CREDIT_PACKAGE_TEXT, packages) },
+        { headers: { "Cache-Control": "private, no-store" } },
+    );
 }
 
 export async function POST(request: NextRequest) {
@@ -33,7 +37,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
 
-    const pack = await prisma.creditPackage.create({ data: parsed.data });
+    const translations = contentTranslationsInput(body, CREDIT_PACKAGE_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
+    const pack = await prisma.$transaction(async (tx) => {
+        const created = await tx.creditPackage.create({ data: parsed.data });
+        if (translations.value) await saveContentTranslations(tx, { ...CREDIT_PACKAGE_TEXT, recordId: created.id }, translations.value);
+        return created;
+    });
     await logActivity({
         userId: session.user.id,
         action: "store.credit_package.created",

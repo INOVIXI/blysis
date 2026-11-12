@@ -18,7 +18,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const findMany = vi.fn<(args: unknown) => Promise<unknown[]>>(async () => []);
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
         product: { findMany: (args: unknown) => findMany(args) },
         // No campaign is running, so a column's price is the shelf's own.
@@ -28,6 +29,7 @@ vi.mock("@/core/sdk/server", () => ({
     moduleSettings: async () => ({ lowStockAt: 0 }),
 }));
 vi.mock("next-intl/server", () => ({
+    getLocale: async () => "en",
     getTranslations: async () => (key: string) => key,
 }));
 

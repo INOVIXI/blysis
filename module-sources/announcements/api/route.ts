@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, isAdmin, logActivity, prisma, readJsonBody, saveContentTranslations, translateContent } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { announcementCreateSchema } from "../lib/validations";
+import { ANNOUNCEMENT_TEXT, TRANSLATED_FIELDS, announcementCreateSchema } from "../lib/validations";
 
 /**
- * This answer is the same whoever asked, so a proxy in front of the site may
- * hold it briefly. `s-maxage` speaks to shared caches and not to browsers, so
+ * This answer is the same for whoever asks the same address, so a proxy in
+ * front of the site may hold it briefly. The reader's language is in the
+ * address (`?locale=`), so a shared cache keeps one answer per language. `s-maxage` speaks to shared caches and not to browsers, so
  * no visitor's own cache is involved. Anything here that ever starts varying
  * by who is asking has to lose this.
  */
@@ -22,8 +23,11 @@ const SHARED_CACHE = { "Cache-Control": "public, max-age=0, s-maxage=30, stale-w
  * and an answer that varies by who asked has no business behind one. The
  * header's own comment above says so.
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
     const now = new Date();
+    // The banner names the page's language. Without one, the columns as the
+    // admin typed them, which is what this answered before translations.
+    const locale = new URL(request.url).searchParams.get("locale") ?? "";
 
     const announcements = await prisma.announcement.findMany({
         where: {
@@ -44,7 +48,10 @@ export async function GET() {
         take: 100,
     });
 
-    return NextResponse.json({ announcements }, { headers: SHARED_CACHE });
+    return NextResponse.json(
+        { announcements: await translateContent(prisma, ANNOUNCEMENT_TEXT, announcements, ["title", "content"], locale) },
+        { headers: SHARED_CACHE },
+    );
 }
 
 // POST /api/v1/announcements - Admin
@@ -60,10 +67,12 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid payload" }, { status: 400 });
     }
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const { title, content, type, isActive, dismissible, includePages, excludePages, startsAt, endsAt, publishAt } = parsed.data;
 
-    const announcement = await prisma.announcement.create({
-        data: {
+    const announcement = await prisma.$transaction(async (tx) => {
+        const created = await tx.announcement.create({ data: {
             title,
             content: content,
             type: type || "info",
@@ -74,7 +83,11 @@ export async function POST(request: NextRequest) {
             startsAt: startsAt ? new Date(startsAt) : null,
             endsAt: endsAt ? new Date(endsAt) : null,
             publishAt: publishAt ? new Date(publishAt) : null,
-        },
+        } });
+        if (translations.value) {
+            await saveContentTranslations(tx, { ...ANNOUNCEMENT_TEXT, recordId: created.id }, translations.value);
+        }
+        return created;
     });
 
     await logActivity({

@@ -27,19 +27,22 @@ export function CreditPackages({ onBought }: { onBought: () => void }) {
     const commonT = useTranslations("common");
     // The reader's locale, not the renderer's: a thousand is 1,000 or 1.000
     // depending on who is looking at it.
-    const numberTag = dateLocaleTag(useLocale());
+    const locale = useLocale();
+    const numberTag = dateLocaleTag(locale);
     const { format: money } = useSiteCurrency();
     const [packages, setPackages] = useState<CreditPackage[]>([]);
     const [buying, setBuying] = useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
-        fetch("/api/v1/store/credit-packages")
+        // Named in the reader's language, and the shop's original where it
+        // wrote none.
+        fetch(`/api/v1/store/credit-packages?locale=${encodeURIComponent(locale)}`)
             .then((res) => (res.ok ? res.json() : { packages: [] }))
             .then((data) => { if (!cancelled) setPackages(Array.isArray(data.packages) ? data.packages : []); })
             .catch(() => { if (!cancelled) setPackages([]); });
         return () => { cancelled = true; };
-    }, []);
+    }, [locale]);
 
     if (packages.length === 0) return null;
 

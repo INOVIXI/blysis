@@ -88,7 +88,8 @@ describe("the products block", () => {
         expect(screen.getByText("A rank of your own.")).toBeTruthy();
         expect(screen.queryByRole("button", { name: "Empty" })).toBeNull();
         expect(screen.getByRole("button", { name: "Ranks" }).getAttribute("aria-pressed")).toBe("true");
-        expect(asked).toContain("/api/v1/store/products?category=ranks&limit=4");
+        // In the page's language, which names the products on the shelf.
+        expect(asked).toContain("/api/v1/store/products?category=ranks&limit=4&locale=en");
         fireEvent.click(screen.getByRole("button", { name: "Gold" }));
         expect(await screen.findByText("1,000 gold")).toBeTruthy();
         expect(screen.getByRole("button", { name: "Gold" }).getAttribute("aria-pressed")).toBe("true");

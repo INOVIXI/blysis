@@ -12,10 +12,22 @@
  * The value is admin-supplied and rendered as an anchor, so every href is
  * checked here rather than at the render site. `footer-columns.ts` builds on
  * that check rather than repeating it.
+ *
+ * A label may be written per language (`translatable-text.ts`). It is read in
+ * the language the caller names, and in the original where that language has
+ * nothing; `labelText` keeps every language for the editor.
  */
 
+import { cleanTranslatableText, isTranslatableText, originalText, textFor, type TranslatableText } from "@/core/lib/i18n/translatable-text";
+
 export interface FooterLink {
+    /** In the language the footer was read in. */
     label: string;
+    /**
+     * Every language the operator wrote it in, for their editor. Absent while
+     * the label is one string, which `label` already is.
+     */
+    labelText?: TranslatableText;
     href: string;
     /** True for absolute http(s) links, which render as a plain anchor. */
     external: boolean;
@@ -42,7 +54,7 @@ function classifyHref(href: string): { href: string; external: boolean } | null 
     return { href, external: true };
 }
 
-export function parseFooterLinks(raw: unknown): FooterLink[] {
+export function parseFooterLinks(raw: unknown, locale = ""): FooterLink[] {
     let value = raw;
 
     if (typeof value === "string") {
@@ -63,14 +75,16 @@ export function parseFooterLinks(raw: unknown): FooterLink[] {
         if (!entry || typeof entry !== "object" || Array.isArray(entry)) continue;
 
         const { label, href } = entry as { label?: unknown; href?: unknown };
-        if (typeof label !== "string" || typeof href !== "string") continue;
+        if (!isTranslatableText(label) || typeof href !== "string") continue;
 
-        const cleanLabel = label.trim();
+        // A link with no original is one the operator half-wrote, whatever
+        // its translations say: the original is what every other reader sees.
         const classified = classifyHref(href.trim());
-        if (!cleanLabel || !classified) continue;
+        if (!originalText(label).trim() || !classified) continue;
 
         links.push({
-            label: cleanLabel.slice(0, MAX_LABEL),
+            label: textFor(label, locale).trim().slice(0, MAX_LABEL),
+            ...(typeof label === "string" ? {} : { labelText: cleanTranslatableText(label, MAX_LABEL) }),
             href: classified.href,
             external: classified.external,
         });

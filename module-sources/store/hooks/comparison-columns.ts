@@ -22,6 +22,7 @@ import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "../lib/avai
 import { categoryIdIn } from "../lib/comparison-subject";
 import { priceAfterCredit, upgradeCredit } from "../lib/upgrade-credit";
 import { creditingPurchases } from "../lib/upgrade-credit-server";
+import { productsIn } from "../lib/store-text";
 import { auth } from "@/core/sdk/auth";
 
 /**
@@ -72,7 +73,9 @@ const columns = async (current: Column[], who?: ColumnsQuestion): Promise<Column
     const campaignEntries = await runningCampaignEntries(prisma, now, zone);
     const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
 
-    const visible = hideShut(rows as unknown as ProductRow[], now, zone);
+    // Named in the reader's language, and the original where it has none.
+    const named = await productsIn(rows, who?.locale ?? "");
+    const visible = hideShut(named as unknown as ProductRow[], now, zone);
 
     // A ladder is exactly where the upgrade credit matters most: the whole
     // point of the table is choosing the next rung up, and the price of that

@@ -7,6 +7,8 @@ import { Card, CardContent } from "@/core/components/ui/card";
 import { IconPicker } from "@/core/components/ui/icon-picker";
 import { Input } from "@/core/components/ui/input";
 import { Label } from "@/core/components/ui/label";
+import { LocalizedTextInput } from "@/core/components/ui/localized-text-input";
+import { originalText, type TranslatableText } from "@/core/lib/i18n/translatable-text";
 import { NavIcon } from "@/core/components/ui/NavIcon";
 import type { FooterColumnLink } from "@/core/lib/footer-columns";
 
@@ -21,13 +23,15 @@ import type { FooterColumnLink } from "@/core/lib/footer-columns";
  */
 
 export interface DraftLink {
-    label: string;
+    /** The operator's words, which may be written per language. */
+    label: TranslatableText;
     href: string;
     icon: string;
 }
 
 export interface DraftColumn {
-    title: string;
+    /** The operator's heading, which may be written per language. */
+    title: TranslatableText;
     /** A key into the `footer` catalogue, for a column core seeded. */
     titleKey: string;
     section: string;
@@ -71,7 +75,7 @@ export function FooterColumnCard({
     const patchLink = (at: number, fields: Partial<DraftLink>) =>
         patch({ links: column.links.map((link, i) => (i === at ? { ...link, ...fields } : link)) });
 
-    const heading = column.title.trim() === "" ? shippedTitle : column.title;
+    const heading = originalText(column.title).trim() === "" ? shippedTitle : originalText(column.title);
     const listId = `footer-sections-${index}`;
 
     return (
@@ -100,14 +104,15 @@ export function FooterColumnCard({
                     </div>
                     <div className="flex-1 min-w-[12rem]">
                         <Label htmlFor={`footer-title-${index}`}>{t("footer_columnTitle")}</Label>
-                        <Input
+                        <LocalizedTextInput
                             id={`footer-title-${index}`}
+                            label={t("footer_columnTitle")}
                             value={column.title}
                             placeholder={shippedTitle}
                             // Typing a heading is the operator saying it in
                             // their own words, so the column stops following
                             // the catalogue. Clearing it hands it back.
-                            onChange={(event) => patch({ title: event.target.value })}
+                            onChange={(title) => patch({ title })}
                         />
                     </div>
                     <div className="flex-1 min-w-[12rem]">
@@ -139,13 +144,14 @@ export function FooterColumnCard({
                                 placeholder={t("footer_linkIcon")}
                                 onChange={(icon) => patchLink(at, { icon })}
                             />
-                            <Input
-                                value={link.label}
-                                aria-label={t("footer_linkLabel")}
-                                placeholder={t("footer_linkLabel")}
-                                onChange={(event) => patchLink(at, { label: event.target.value })}
-                                className="flex-1 min-w-[10rem]"
-                            />
+                            <div className="flex-1 min-w-[10rem]">
+                                <LocalizedTextInput
+                                    label={t("footer_linkLabel")}
+                                    value={link.label}
+                                    placeholder={t("footer_linkLabel")}
+                                    onChange={(label) => patchLink(at, { label })}
+                                />
+                            </div>
                             <Input
                                 value={link.href}
                                 aria-label={t("footer_linkHref")}
@@ -156,7 +162,7 @@ export function FooterColumnCard({
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                aria-label={t("footer_removeLink", { label: link.label || link.href })}
+                                aria-label={t("footer_removeLink", { label: originalText(link.label) || link.href })}
                                 onClick={() => patch({ links: column.links.filter((_, i) => i !== at) })}
                             >
                                 <Trash2 className="w-4 h-4" aria-hidden="true" />

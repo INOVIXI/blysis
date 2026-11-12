@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/core/sdk/navigation";
 import { LoadFailed, useSiteCurrency, buttonClassName } from "@/core/sdk/ui";
 import { ArrangedClientPage } from "@/core/sdk/layout";
@@ -39,6 +39,7 @@ function parseFeatures(product: Product): string[] {
 
 export default function VipTablePage() {
     const t = useTranslations("store");
+    const locale = useLocale();
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
@@ -48,7 +49,7 @@ export default function VipTablePage() {
     useEffect(() => {
         let cancelled = false;
         // Fetch featured products to use as VIP ranks
-        fetch("/api/v1/store/products?featured=true&limit=10")
+        fetch(`/api/v1/store/products?featured=true&limit=10&locale=${encodeURIComponent(locale)}`)
             .then((r) => { if (!r.ok) throw new Error("load failed"); return r.json(); })
             .then((data) => { if (cancelled) return;
                 setProducts(data.products || []);
@@ -57,7 +58,7 @@ export default function VipTablePage() {
             })
             .catch(() => { if (cancelled) return; setFailed(true); setLoading(false); });
         return () => { cancelled = true; };
-    }, [reloadKey]);
+    }, [reloadKey, locale]);
 
     const frame = { title: t("vip_title"), description: t("vip_subtitle"), trail: [{ label: t('title'), href: '/store' }] };
 

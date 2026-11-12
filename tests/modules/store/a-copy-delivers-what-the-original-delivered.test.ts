@@ -35,6 +35,8 @@ const db = {
     chestItem: { createMany: vi.fn() },
     campaignEntry: { createMany: vi.fn() },
     subscription: { createMany: vi.fn() },
+    // Its words in other languages, which come with it.
+    contentTranslation: { findMany: vi.fn(async () => []), deleteMany: vi.fn(async () => ({ count: 0 })), createMany: vi.fn(async () => ({ count: 0 })) },
 };
 
 function trace<T extends object>(client: T, viaTx: boolean): T {
@@ -61,7 +63,8 @@ const prisma = {
     $transaction: async (run: (tx: typeof db) => unknown) => run(trace(db, true)),
 };
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma,
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     logActivity: vi.fn(async () => {}),

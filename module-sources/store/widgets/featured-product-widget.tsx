@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/core/sdk/navigation";
 import { Button, useSiteCurrency, buttonClassName } from "@/core/sdk/ui";
 import { Crown } from "lucide-react";
@@ -17,18 +17,24 @@ interface Product {
 
 export function FeaturedProductWidget() {
     const sidebarT = useTranslations('sidebar');
+    const locale = useLocale();
     const { format: formatPrice } = useSiteCurrency();
     const [product, setProduct] = useState<Product | null>(null);
 
     useEffect(() => {
-        fetch("/api/v1/store/products?featured=true&limit=1")
+        // A reader who switched language before the answer came back is not
+        // shown the product in the one they left.
+        let active = true;
+        fetch(`/api/v1/store/products?featured=true&limit=1&locale=${encodeURIComponent(locale)}`)
             .then((res) => res.json())
             .then((data) => {
+                if (!active) return;
                 const products = data.products || [];
                 if (products.length > 0) setProduct(products[0]);
             })
             .catch(() => {});
-    }, []);
+        return () => { active = false; };
+    }, [locale]);
 
     if (!product) return null;
 

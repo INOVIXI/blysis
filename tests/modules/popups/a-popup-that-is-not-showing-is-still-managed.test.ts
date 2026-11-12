@@ -22,7 +22,10 @@ const queries: Record<string, unknown>[] = [];
 const session: { value: { user: { id: string } } | null } = { value: null };
 const admin = { value: false };
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
+    // The real translation helpers: these rows are found empty, so they ask
+    // the table nothing.
+    ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     isAdmin: async () => admin.value,
     readJsonBody: async () => ({}),
     prisma: {

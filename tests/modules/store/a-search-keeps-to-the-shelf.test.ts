@@ -13,6 +13,7 @@ const asked = vi.hoisted(() => ({ where: undefined as unknown }));
 vi.mock("@/core/sdk/server", async () => {
     const { textContains } = await import("@/core/lib/search-text");
     return {
+        ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
         textContains,
         moduleSettings: async () => ({ lowStockAt: 0 }),
         siteTimeZone: async () => "UTC",

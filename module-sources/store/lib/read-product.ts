@@ -20,18 +20,21 @@ import { availabilityFor, type ProductRow } from "./availability-server";
 import { effectivePrice } from "./availability";
 import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
 import { creditingPurchases, ownedRungsOn } from "./upgrade-credit-server";
+import { productsIn } from "./store-text";
 
 export type ProductRead = Awaited<ReturnType<typeof readProduct>>;
 
-export async function readProduct(id: string) {
-    const product = await prisma.product.findFirst({
+/** `locale` names it and its shelf in the shopper's language; none reads the originals. */
+export async function readProduct(id: string, locale = "") {
+    const found = await prisma.product.findFirst({
         where: {
             isActive: true,
             OR: [{ id }, { slug: id }, ...(isNaN(Number(id)) ? [] : [{ number: Number(id) }])],
         },
         select: PUBLIC_PRODUCT,
     });
-    if (!product) return null;
+    if (!found) return null;
+    const [product] = await productsIn([found], locale);
 
     // Per-person counting needs the session, which is also why an answer built
     // here is never shared-cached the way the listing is.
