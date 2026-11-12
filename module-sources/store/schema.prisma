@@ -216,6 +216,10 @@ model Order {
   /// it was recorded, and on one never sent to a gateway.
   chargeAmount   Decimal?   @db.Decimal(10, 2)
   chargeCurrency String?
+  /// What the buyer paid on top of `total` to cover the payment method's fee,
+  /// in `currency`. Kept apart from `total` so revenue is what was sold and
+  /// the fee is what the processor was paid; zero where none was passed on.
+  paymentFee    Decimal     @default(0) @db.Decimal(10, 2)
   paymentMethod String?
   paymentId     String?
   notes         String?
@@ -563,6 +567,10 @@ model CreditTopUp {
   id        String            @id @default(cuid())
   credits   Int
   amount    Decimal           @db.Decimal(10, 2)
+  /// The payment method's fee passed on to the buyer, in `currency`. The
+  /// gateway is asked for `amount` plus this, and a settlement is held
+  /// against the two together.
+  fee       Decimal           @default(0) @db.Decimal(10, 2)
   currency  String
   provider  String
   status    CreditTopUpStatus @default(PENDING)

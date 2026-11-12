@@ -13,6 +13,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { writeError, errorMessage } from "@/core/sdk";
 import { isPlayerName } from "../../../lib/player-name";
+import { grossUpForFee, type ProcessorFee } from "../../../lib/pricing";
 
 interface CartItem {
     id: string;
@@ -37,6 +38,10 @@ interface PaymentProvider {
     label: string;
     description?: string;
     icon?: string;
+    /** The fee this method passes on, in the shop's currency, or none. */
+    fee?: ProcessorFee | null;
+    /** Set when the checkout would refuse this method right now. */
+    unavailable?: string;
 }
 
 interface CartData {
@@ -100,7 +105,7 @@ export default function CartPage() {
                 setBillingRequired(data?.billingRequired === true);
                 const list: PaymentProvider[] = Array.isArray(data?.providers) ? data.providers : [];
                 setProviders(list);
-                setPaymentMethod(prev => prev || list[0]?.id || "");
+                setPaymentMethod(prev => prev || list.find(p => !p.unavailable)?.id || "");
             })
             .catch(() => {});
         // The wallet is a module too: no credits endpoint, no credits button.
@@ -279,7 +284,13 @@ export default function CartPage() {
         }
     };
 
-    const finalTotal = cart ? cart.total - couponDiscount : 0;
+    // What the buyer is asked for: the order, and on top of it the fee of the
+    // method they picked, grossed up the way the checkout grosses it. Shown
+    // before they press anything, because a surcharge first seen on a
+    // processor's page is a chargeback waiting.
+    const orderTotal = cart ? Math.max(0, cart.total - couponDiscount - (creatorApplied?.discount ?? 0)) : 0;
+    const chosenFee = providers.find(p => p.id === paymentMethod)?.fee ?? null;
+    const paymentFee = chosenFee ? grossUpForFee(orderTotal, chosenFee).surcharge : 0;
 
     const waiting = loading ? (
         // The minimum height is the card below it, which is what a
@@ -529,10 +540,21 @@ export default function CartPage() {
 
                                 <div className="flex justify-between text-lg font-bold">
                                     <span>{t('total')}</span>
-                                    <span className="text-primary">{formatPrice(
-                                        Math.max(0, cart.total - couponDiscount - (creatorApplied?.discount ?? 0))
-                                    )}</span>
+                                    <span className="text-primary">{formatPrice(orderTotal)}</span>
                                 </div>
+
+                                {paymentFee > 0 && (
+                                    <>
+                                        <div className="flex justify-between text-sm text-muted-foreground">
+                                            <span>{t('paymentFee')}</span>
+                                            <span>+{formatPrice(paymentFee)}</span>
+                                        </div>
+                                        <div className="flex justify-between font-semibold">
+                                            <span>{t('amountToPay')}</span>
+                                            <span>{formatPrice(orderTotal + paymentFee)}</span>
+                                        </div>
+                                    </>
+                                )}
 
                                 {/* Payment Method */}
                                 <div className="space-y-2">
@@ -543,7 +565,8 @@ export default function CartPage() {
                                                 key={provider.id}
                                                 type="button"
                                                 onClick={() => setPaymentMethod(provider.id)}
-                                                className={`flex items-center gap-3 p-3 rounded-lg border transition-colors text-left ${
+                                                disabled={Boolean(provider.unavailable)}
+                                                className={`flex items-center gap-3 p-3 rounded-lg border transition-colors text-left disabled:opacity-60 ${
                                                     paymentMethod === provider.id
                                                         ? "border-primary bg-primary/5 ring-1 ring-primary"
                                                         : "border-border hover:border-muted-foreground"
@@ -554,6 +577,14 @@ export default function CartPage() {
                                                     <span className="text-sm font-medium">{provider.label}</span>
                                                     {provider.description && (
                                                         <p className="text-xs text-muted-foreground">{provider.description}</p>
+                                                    )}
+                                                    {provider.fee && (
+                                                        <p className="text-xs text-muted-foreground">
+                                                            {t('paymentFeeTerms', { percent: provider.fee.percent, fixed: formatPrice(provider.fee.fixed) })}
+                                                        </p>
+                                                    )}
+                                                    {provider.unavailable && (
+                                                        <p className="text-xs text-destructive">{t('paymentMethodUnavailable')}</p>
                                                     )}
                                                 </div>
                                                 <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
@@ -578,7 +609,7 @@ export default function CartPage() {
                                                     <span className="text-sm font-medium">{t('payWithCredits')}</span>
                                                     <p className="text-xs text-muted-foreground">
                                                         {t('balance', { amount: formatPrice(creditBalance) })}
-                                                        {cart && creditBalance < Math.max(0, cart.total - couponDiscount - (creatorApplied?.discount ?? 0)) && (
+                                                        {cart && creditBalance < orderTotal && (
                                                             <span className="text-destructive">({t('insufficient')})</span>
                                                         )}
                                                     </p>

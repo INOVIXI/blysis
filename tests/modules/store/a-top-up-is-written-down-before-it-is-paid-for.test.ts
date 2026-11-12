@@ -73,7 +73,7 @@ describe("buying credits", () => {
         expect(res.status).toBe(200);
         expect(db.creditTopUp.create).toHaveBeenCalledWith(
             expect.objectContaining({
-                data: { userId: "user-1", credits: 1200, amount: 9.99, currency: "USD", provider: "iyzico" },
+                data: { userId: "user-1", credits: 1200, amount: 9.99, fee: 0, currency: "USD", provider: "iyzico" },
             }),
         );
     });
