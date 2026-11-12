@@ -25,6 +25,7 @@ import {
     buildSiteHead,
     buildArticleJsonLd,
     buildOrganizationJsonLd,
+    getSeoSiteInfo,
 } from "@/core/lib/seo";
 
 /**
@@ -75,6 +76,15 @@ describe("a site name and description written per language", () => {
         const meta = await buildPageMeta({ title: "Servers" });
         expect(meta.description).toBe("Türkçe açıklama");
         expect(og(meta).siteName).toBe("Vanilya Sunucusu");
+    });
+});
+
+describe("the tab icon", () => {
+    // The root layout draws the head's icons from this (`siteIconMetadata`).
+    it("is the one the operator stored, and none when nothing is", async () => {
+        expect((await getSeoSiteInfo()).siteIcon).toBeNull();
+        setting.findMany.mockResolvedValue([{ key: "site_icon", value: "/uploads/tab.png" }]);
+        expect((await getSeoSiteInfo()).siteIcon).toBe("/uploads/tab.png");
     });
 });
 
