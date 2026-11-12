@@ -12,6 +12,7 @@ import { CommentSection } from "../../components/CommentSection";
 import { dateLocaleTag } from "@/core/sdk";
 import { publishedArticle } from "../../lib/visible-article";
 import { readingMinutes } from "../../lib/reading-time";
+import { articlesIn } from "../../lib/blog-text";
 
 interface PageProps {
     params: Promise<Record<string, unknown>>;
@@ -25,7 +26,8 @@ function extractLookup(resolved: Record<string, unknown>): string {
     return blogIdx >= 0 && segments[blogIdx + 1] ? segments[blogIdx + 1] : segments[0];
 }
 
-async function getArticle(lookup: string) {
+/** The article, and its category's name, in `locale`, or the originals where it has none. */
+async function getArticle(lookup: string, locale: string) {
     const num = Number(lookup);
     const article = await prisma.blogArticle.findFirst({
         where: {
@@ -34,24 +36,24 @@ async function getArticle(lookup: string) {
         },
         include: {
             author: { select: { username: true, avatar: true } },
-            category: { select: { name: true, slug: true } },
+            category: { select: { id: true, name: true, slug: true } },
             tags: { select: { name: true, slug: true } },
         },
     });
 
-    if (article) {
-        // Increment view count
-        await prisma.blogArticle.update({
-            where: { id: article.id },
-            data: { views: { increment: 1 } },
-        });
-    }
+    if (!article) return null;
+    // Increment view count
+    await prisma.blogArticle.update({
+        where: { id: article.id },
+        data: { views: { increment: 1 } },
+    });
 
-    return article;
+    const [read] = await articlesIn([article], locale);
+    return read;
 }
 
-async function getRelatedArticles(articleId: string, categoryId: string | null) {
-    return prisma.blogArticle.findMany({
+async function getRelatedArticles(articleId: string, categoryId: string | null, locale: string) {
+    const related = await prisma.blogArticle.findMany({
         where: {
             id: { not: articleId },
             ...publishedArticle(),
@@ -68,6 +70,7 @@ async function getRelatedArticles(articleId: string, categoryId: string | null) 
             publishedAt: true,
         },
     });
+    return articlesIn(related, locale);
 }
 
 /**
@@ -83,17 +86,18 @@ async function getRelatedArticles(articleId: string, categoryId: string | null) 
 export default async function BlogArticlePage({ params }: PageProps) {
     const resolvedParams = await params;
     const lookup = extractLookup(resolvedParams);
-    const article = await getArticle(lookup);
+    const locale = await getLocale();
+    const article = await getArticle(lookup, locale);
 
     if (!article) {
         notFound();
     }
 
-    const relatedArticles = await getRelatedArticles(article.id, article.categoryId);
+    const relatedArticles = await getRelatedArticles(article.id, article.categoryId, locale);
     const { allowComments } = await moduleSettings<{ allowComments: boolean }>("blog");
     const t = await getTranslations("blog");
     const newsT = await getTranslations("news");
-    const dateTag = dateLocaleTag(await getLocale());
+    const dateTag = dateLocaleTag(locale);
     const published = formatDate(article.publishedAt || article.createdAt, undefined, dateTag);
 
     // A share link has to be absolute or it shares nothing: the old fallback

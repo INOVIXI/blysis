@@ -1,15 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
+import { attachContentTranslations, contentTranslationsInput, isAdmin, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
-import { entrySlug } from "../lib/entry-page";
+import { ENTRY_TEXT, TRANSLATED_FIELDS, entrySlug } from "../lib/entry-page";
 import { readChangelogEntries } from "../lib/read-entries";
 
 // The read and what counts as published live in lib/read-entries.ts, because
 // the page renders the timeline on the server now and the two must not
-// disagree about which entries are out.
-export async function GET() {
-    return NextResponse.json({ entries: await readChangelogEntries() });
+// disagree about which entries are out. The visitor's answer is read in
+// `?locale=`.
+//
+// `scope=admin` is the editor's answer: every entry, a scheduled or switched
+// off one too, with every language of each, refused to anybody who is not an
+// admin.
+export async function GET(request: NextRequest) {
+    const query = new URL(request.url).searchParams;
+    if (query.get("scope") === "admin") {
+        const session = await auth();
+        if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (!(await isAdmin(session.user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        const entries = await prisma.changelogEntry.findMany({ orderBy: { createdAt: "desc" }, take: 500 });
+        return NextResponse.json({ entries: await attachContentTranslations(prisma, ENTRY_TEXT, entries) });
+    }
+    return NextResponse.json({ entries: await readChangelogEntries(query.get("locale") ?? "") });
 }
 
 export async function POST(request: NextRequest) {
@@ -34,10 +47,13 @@ export async function POST(request: NextRequest) {
     const validation = schema.safeParse(body);
     if (!validation.success) return NextResponse.json({ error: validation.error.issues[0].message }, { status: 400 });
 
+    const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
+
     const { version, title, content, details, coverImage, type, color, publishAt } = validation.data;
 
-    const entry = await prisma.changelogEntry.create({
-        data: {
+    const entry = await prisma.$transaction(async (tx) => {
+        const created = await tx.changelogEntry.create({ data: {
             version,
             title,
             slug: entrySlug(title),
@@ -50,7 +66,9 @@ export async function POST(request: NextRequest) {
             type: type || "update",
             color: color || "#3b82f6",
             publishAt: publishAt ? new Date(publishAt) : null,
-        },
+        } });
+        if (translations.value) await saveContentTranslations(tx, { ...ENTRY_TEXT, recordId: created.id }, translations.value);
+        return created;
     });
 
     // Fire hook for cross-module reactions

@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
-import { pageParams, enumParam, hasPermission, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, pageParams, enumParam, hasPermission, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { ARTICLE_STATUSES, blogArticleSchema } from "../../lib/validations";
+import { ARTICLE_FIELDS, ARTICLE_TEXT, articlesIn, localeOf } from "../../lib/blog-text";
 
-// GET /api/v1/blog/articles - List all articles (public)
+// GET /api/v1/blog/articles - List all articles (public). `?locale=` reads
+// them, and their categories, in the reader's language; without one, the
+// columns as the admin typed them.
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const { page, limit, skip, take } = pageParams(searchParams, { defaultLimit: 10 });
@@ -52,7 +55,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     return NextResponse.json({
-        articles,
+        articles: await articlesIn(articles, localeOf(request)),
         pagination: {
             page,
             limit,
@@ -85,6 +88,9 @@ export async function POST(request: NextRequest) {
             { status: 400 }
         );
     }
+
+    const translations = contentTranslationsInput(body, ARTICLE_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
 
     const { title, slug: requestedSlug, excerpt, content, coverImage, status, publishedAt, publishAt, categoryId, tags } = validation.data;
 
@@ -119,25 +125,29 @@ export async function POST(request: NextRequest) {
         }
         : undefined;
 
-    const article = await prisma.blogArticle.create({
-        data: {
-            title: title,
-            slug,
-            excerpt,
-            content: content,
-            coverImage,
-            status: effectiveStatus,
-            publishedAt: effectivePublishedAt,
-            publishAt: publishAtDate,
-            authorId: session.user.id,
-            categoryId,
-            tags: tagConnections,
-        },
-        include: {
-            author: { select: { id: true, username: true, avatar: true } },
-            category: true,
-            tags: true,
-        },
+    const article = await prisma.$transaction(async (tx) => {
+        const created = await tx.blogArticle.create({
+            data: {
+                title: title,
+                slug,
+                excerpt,
+                content: content,
+                coverImage,
+                status: effectiveStatus,
+                publishedAt: effectivePublishedAt,
+                publishAt: publishAtDate,
+                authorId: session.user.id,
+                categoryId,
+                tags: tagConnections,
+            },
+            include: {
+                author: { select: { id: true, username: true, avatar: true } },
+                category: true,
+                tags: true,
+            },
+        });
+        if (translations.value) await saveContentTranslations(tx, { ...ARTICLE_TEXT, recordId: created.id }, translations.value);
+        return created;
     });
 
     // Fire hook for cross-module reactions (discord webhook, notifications, etc.)

@@ -10,7 +10,7 @@
  * second page somebody can link to.
  */
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
 import { ArrangedPage } from "@/core/sdk/page";
 import { Pagination } from "@/core/sdk/ui";
@@ -30,7 +30,8 @@ export default async function HelpCategoryPage({ params, searchParams }: PagePro
     const requested = Number.parseInt((Array.isArray(query.page) ? query.page[0] : query.page) ?? "", 10);
     const page = Number.isFinite(requested) && requested > 0 ? requested : 1;
 
-    const read = await readHelpCategory(slug);
+    // In the reader's language, and the original where the admin wrote none.
+    const read = await readHelpCategory(slug, await getLocale());
     // A section that is not there is a 404, not a page saying it is not there.
     if (!read) notFound();
 

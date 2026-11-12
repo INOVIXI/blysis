@@ -5,9 +5,9 @@ import { useTranslations } from "next-intl";
 import { useState, useEffect, use } from "react";
 import { useRouter } from "@/core/sdk/navigation";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, LoadFailed, RichTextEditor, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea, useConfirm, UrlOrFile} from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, LoadFailed, LocalizedTextInput, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, useConfirm, UrlOrFile} from "@/core/sdk/ui";
 import { Loader2, Trash2 } from "lucide-react";
-import { writeError } from "@/core/sdk";
+import { joinTranslations, splitTranslations, writeError, type LanguageTexts } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
 
 interface Category {
@@ -15,6 +15,9 @@ interface Category {
     name: string;
     slug: string;
 }
+
+type WordField = "title" | "excerpt" | "content";
+const NO_LANGUAGES: Record<WordField, LanguageTexts> = { title: {}, excerpt: {}, content: {} };
 
 interface PageProps {
     params: Promise<{ id: string; locale: string }>;
@@ -39,6 +42,9 @@ export default function EditBlogArticlePage(props: PageProps) {
     const [loadFailed, setLoadFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
 
+    // Each language of the title, excerpt and body, beside the originals in
+    // the form.
+    const [languages, setLanguages] = useState<Record<WordField, LanguageTexts>>(NO_LANGUAGES);
     const [formData, setFormData] = useState({
         title: "",
         excerpt: "",
@@ -53,7 +59,8 @@ export default function EditBlogArticlePage(props: PageProps) {
         let cancelled = false;
         setLoadFailed(false);
         Promise.all([
-            fetch(`/api/v1/blog/articles/${articleId}`).then((r) => {
+            // The editor's answer: the originals with every language beside them.
+            fetch(`/api/v1/blog/articles/${articleId}?scope=admin`).then((r) => {
                 if (!r.ok) throw new Error("load failed");
                 return r.json();
             }),
@@ -62,6 +69,11 @@ export default function EditBlogArticlePage(props: PageProps) {
             if (cancelled) return;
             const a = articleData.article || articleData;
             if (a) {
+                setLanguages({
+                    title: a.translations?.title ?? {},
+                    excerpt: a.translations?.excerpt ?? {},
+                    content: a.translations?.content ?? {},
+                });
                 setFormData({
                     title: a.title || "",
                     excerpt: a.excerpt || "",
@@ -82,6 +94,13 @@ export default function EditBlogArticlePage(props: PageProps) {
         return () => { cancelled = true; };
     }, [articleId, reloadKey]);
 
+    // The original goes to the form's column, each language beside it.
+    const word = (field: WordField, next: unknown) => {
+        const parts = splitTranslations(next);
+        setFormData((was) => ({ ...was, [field]: parts.original }));
+        setLanguages((was) => ({ ...was, [field]: parts.translations }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
@@ -93,6 +112,9 @@ export default function EditBlogArticlePage(props: PageProps) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ...formData,
+                    // Every field every time: an empty one is how a cleared
+                    // language goes.
+                    translations: languages,
                     categoryId: formData.categoryId || null,
                     tags: formData.tags ? formData.tags.split(",").map((t) => t.trim()) : [],
                     publishedAt: formData.status === "PUBLISHED" ? new Date().toISOString() : undefined,
@@ -185,28 +207,35 @@ export default function EditBlogArticlePage(props: PageProps) {
                             <CardContent className="space-y-4">
                                 <div>
                                     <Label htmlFor="title">{`${t("adm_titleField")} *`}</Label>
-                                    <Input
+                                    <LocalizedTextInput
                                         id="title"
-                                        value={formData.title}
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, title: e.target.value })}
+                                        label={t("adm_titleField")}
+                                        value={joinTranslations(formData.title, languages.title)}
+                                        onChange={(next) => word("title", next)}
+                                        maxLength={200}
                                         required
                                     />
                                 </div>
                                 <div>
                                     <Label htmlFor="excerpt">{t("adm_excerpt")}</Label>
-                                    <Textarea
+                                    <LocalizedTextInput
                                         id="excerpt"
-                                        value={formData.excerpt}
-                                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, excerpt: e.target.value })}
+                                        label={t("adm_excerpt")}
+                                        multiline
                                         rows={3}
+                                        maxLength={500}
+                                        value={joinTranslations(formData.excerpt, languages.excerpt)}
+                                        onChange={(next) => word("excerpt", next)}
                                     />
                                 </div>
                                 <div>
                                     <Label id="content-label">{`${t("adm_content")} *`}</Label>
-                                    <RichTextEditor
+                                    <LocalizedTextInput
+                                        label={t("adm_content")}
                                         labelledBy="content-label"
-                                        value={formData.content}
-                                        onChange={(value: string) => setFormData({ ...formData, content: value })}
+                                        rich
+                                        value={joinTranslations(formData.content, languages.content)}
+                                        onChange={(next) => word("content", next)}
                                     />
                                 </div>
                             </CardContent>

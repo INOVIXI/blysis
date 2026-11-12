@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/core/sdk/server";
+import { prisma, translateContent } from "@/core/sdk/server";
 import { readTable } from "../../lib/read-table";
+import { TABLE_TEXT } from "../../lib/table-text";
 
 /**
  * GET /api/v1/comparison-tables?slug=... - one table, ready to draw.
@@ -18,19 +19,23 @@ export async function GET(request: NextRequest) {
     const slug = request.nextUrl.searchParams.get("slug");
     const subject = request.nextUrl.searchParams.get("subject");
 
+    // The reader's language, because every label is prose an operator writes
+    // and this route has no locale in its path to infer one from. It is in
+    // the address, so a cache keeps one answer per language.
+    const locale = request.nextUrl.searchParams.get("locale") ?? undefined;
+
     if (!slug && !subject) {
-        const tables = await prisma.comparisonTable.findMany({
+        const found = await prisma.comparisonTable.findMany({
             where: { isActive: true },
             orderBy: [{ order: "asc" }, { title: "asc" }],
-            select: { slug: true, title: true, description: true },
+            select: { id: true, slug: true, title: true, description: true },
             take: 50,
         });
+        const tables = (await translateContent(prisma, TABLE_TEXT, found, ["title", "description"], locale ?? ""))
+            .map(({ id: _id, ...table }) => table);
         return NextResponse.json({ tables }, { headers: { "Cache-Control": "public, max-age=60" } });
     }
 
-    // The reader's language, because a column's note is prose its owner
-    // writes and this route has no locale in its path to infer one from.
-    const locale = request.nextUrl.searchParams.get("locale") ?? undefined;
     const table = await readTable({ slug: slug ?? undefined, subject: subject ?? undefined, locale });
     if (!table) return NextResponse.json({ error: "Not found" }, { status: 404 });
 

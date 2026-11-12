@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { readChangelogKinds } from "../../../lib/read-entries";
-import { prisma } from "@/core/sdk/server";
+import { prisma, translateContent } from "@/core/sdk/server";
+import { ENTRY_TEXT } from "../../../lib/entry-page";
 
 type RouteParams = { params: Promise<{ number: string }> };
 
@@ -16,8 +17,11 @@ type RouteParams = { params: Promise<{ number: string }> };
  * rather than serving a page that repeats the line already on the timeline.
  * The same 404 covers an entry that is switched off or not published yet: a
  * visitor may not read a draft by guessing its number.
+ *
+ * Read in `?locale=`, and in the original where the admin wrote no
+ * translation. Whether there is a page at all is the original's to say.
  */
-export async function GET(_request: Request, { params }: RouteParams) {
+export async function GET(request: Request, { params }: RouteParams) {
     const { number } = await params;
     const id = Number(number);
     if (!Number.isInteger(id) || id <= 0) {
@@ -41,7 +45,9 @@ export async function GET(_request: Request, { params }: RouteParams) {
         return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const { isActive: _isActive, publishAt: _publishAt, ...body } = entry;
+    const { isActive: _isActive, publishAt: _publishAt, ...original } = entry;
+    const locale = new URL(request.url).searchParams.get("locale") ?? "";
+    const [body] = await translateContent(prisma, ENTRY_TEXT, [original], ["title", "content", "details"], locale);
     /*
      * The kinds travel with the entry.
      *

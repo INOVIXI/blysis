@@ -11,6 +11,7 @@
  * hidden on both.
  */
 import { notFound } from "next/navigation";
+import { getLocale } from "next-intl/server";
 import { countArticleView, readArticle } from "../../../../lib/read-article";
 import { ArticleView } from "../../../../components/ArticleView";
 
@@ -20,7 +21,8 @@ interface PageProps {
 
 export default async function HelpArticlePage({ params }: PageProps) {
     const { slug } = await params;
-    const read = await readArticle(slug);
+    // In the reader's language, and the original where the admin wrote none.
+    const read = await readArticle(slug, await getLocale());
     if (!read) notFound();
 
     await countArticleView(read.article.id);

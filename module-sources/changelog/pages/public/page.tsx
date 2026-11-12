@@ -30,9 +30,10 @@ export default async function ChangelogPage({ searchParams }: PageProps) {
     const page = Number.isFinite(asked) && asked > 0 ? asked : 1;
 
     const t = await getTranslations("changelog");
-    const dateTag = dateLocaleTag(await getLocale());
+    const locale = await getLocale();
+    const dateTag = dateLocaleTag(locale);
     // The two reads are independent, so they go together.
-    const [entries, kinds] = await Promise.all([readChangelogEntries(), readChangelogKinds()]);
+    const [entries, kinds] = await Promise.all([readChangelogEntries(locale), readChangelogKinds()]);
     const pages = Math.max(1, Math.ceil(entries.length / PER_PAGE));
     const rows = entries.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 

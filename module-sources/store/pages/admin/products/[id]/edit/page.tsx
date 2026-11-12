@@ -678,6 +678,7 @@ function ProductVariablesEditor({ productId }: { productId: string }) {
     const t = useTranslations("store");
     const [vars, setVars] = useState<{ id: string; name: string; label: string; type: string }[]>([]);
     const [newLabel, setNewLabel] = useState("");
+    const [newLabelLanguages, setNewLabelLanguages] = useState<LanguageTexts>({});
 
     useEffect(() => {
         let cancelled = false;
@@ -693,16 +694,19 @@ function ProductVariablesEditor({ productId }: { productId: string }) {
 
     const addVar = async () => {
         if (!newLabel.trim()) return;
+        // The key comes from the original, so the checkout files a buyer's
+        // answer under the same name whatever language they asked in.
         const name = newLabel.toLowerCase().replace(/\s+/g, "_");
         const res = await fetch("/api/v1/product-variables", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productId, name, label: newLabel, type: "text", required: true }),
+            body: JSON.stringify({ productId, name, label: newLabel, type: "text", required: true, translations: { label: newLabelLanguages } }),
         });
         if (res.ok) {
             const data = await res.json();
             setVars([...vars, data.variable]);
             setNewLabel("");
+            setNewLabelLanguages({});
         }
     };
 
@@ -715,7 +719,18 @@ function ProductVariablesEditor({ productId }: { productId: string }) {
                 </div>
             ))}
             <div className="flex gap-2">
-                <Input value={newLabel} onChange={(e) => setNewLabel(e.target.value)} placeholder={t("adm_variableLabelPlaceholder")} aria-label={t("adm_variableLabelPlaceholder")} className="text-xs" />
+                <div className="flex-1">
+                    <LocalizedTextInput
+                        label={t("adm_variableLabelPlaceholder")}
+                        value={joinTranslations(newLabel, newLabelLanguages)}
+                        onChange={(next) => {
+                            const parts = splitTranslations(next);
+                            setNewLabel(parts.original);
+                            setNewLabelLanguages(parts.translations);
+                        }}
+                        placeholder={t("adm_variableLabelPlaceholder")}
+                    />
+                </div>
                 <Button type="button" variant="outline" size="sm" onClick={addVar}><Plus className="w-3.5 h-3.5" /> {t("adm_add")}</Button>
             </div>
         </div>

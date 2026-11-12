@@ -5,6 +5,14 @@ import { z } from "zod";
  * `fileUrl` could be any string of any length, and `fileSize` reached an
  * `Int` column as whatever JSON carried.
  */
+/**
+ * Whose translations these are, in core's table, and the fields that have
+ * them: each language held to its column's own limit. The file, its name and
+ * the picture are the same in every language.
+ */
+export const DOWNLOAD_TEXT = { owner: "downloads", entity: "download" };
+export const TRANSLATED_FIELDS = { title: 200, description: 2_000, details: 50_000 };
+
 export const downloadCreateSchema = z.object({
     title: z.string().trim().min(1, "Title, fileName and fileUrl required").max(200),
     description: z.string().max(2_000).optional().nullable(),

@@ -22,7 +22,7 @@ import { PUBLIC_PRODUCT } from "./public-product";
 import { availabilityOf, effectivePrice } from "./availability";
 import { pricedForCampaign, runningCampaignEntries } from "./campaign-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "./availability-server";
-import { categoriesIn, productsIn } from "./store-text";
+import { categoriesIn, productsIn, productsTranslatedAs } from "./store-text";
 
 export const PRODUCTS_PER_PAGE = 12;
 
@@ -144,6 +144,9 @@ export async function readStoreProducts(options: {
     const now = new Date();
     const page = Math.max(1, Math.floor(options.page) || 1);
     const perPage = options.perPage ?? PRODUCTS_PER_PAGE;
+    // A product found by its name in another language too: the shopper may
+    // know it by the English name of a product written in Turkish.
+    const translated = options.search ? await productsTranslatedAs(options.search) : [];
     const where = {
         ...onTheShelfWhere(now),
         ...(options.categorySlug ? { category: { slug: options.categorySlug } } : {}),
@@ -152,7 +155,7 @@ export async function readStoreProducts(options: {
         // Inside an AND: the shelf's own window is the top-level OR, and a
         // search spread beside it replaced it.
         ...(options.search
-            ? { AND: [{ OR: textContains(["name", "description"], options.search) }] }
+            ? { AND: [{ OR: [...textContains(["name", "description"], options.search), ...(translated.length > 0 ? [{ id: { in: translated } }] : [])] }] }
             : {}),
     };
 

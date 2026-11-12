@@ -10,7 +10,7 @@
  * The search is an address now rather than client state, which is what lets a
  * result page be shared at all.
  */
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/core/sdk/navigation";
 import { StandardSidebarLayout } from "@/core/sdk/layout";
 import { ArrangedPage } from "@/core/sdk/page";
@@ -37,9 +37,12 @@ export default async function HelpCenterPage({ searchParams }: PageProps) {
     const term = raw?.trim() ?? "";
 
     const t = await getTranslations("helpCenter");
+    // Each section and article in the reader's language, and the original
+    // where the admin wrote none.
+    const locale = await getLocale();
     const [{ categories, popular }, results] = await Promise.all([
-        readHelpIndex(),
-        searchHelpArticles(term),
+        readHelpIndex(locale),
+        searchHelpArticles(term, locale),
     ]);
 
     // The search and what it found, then the sections beside the most read

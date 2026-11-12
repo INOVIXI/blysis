@@ -9,7 +9,7 @@ import { availabilityOf, effectivePrice } from "../../lib/availability";
 import { pricedForCampaign, runningCampaignEntries } from "../../lib/campaign-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "../../lib/availability-server";
 import { siteTimeZone } from "@/core/sdk/server";
-import { PRODUCT_FIELDS, PRODUCT_TEXT, localeOf, productsIn } from "../../lib/store-text";
+import { PRODUCT_FIELDS, PRODUCT_TEXT, localeOf, productsIn, productsTranslatedAs } from "../../lib/store-text";
 
 /**
  * The listing is the same whoever asked - it reads no session - but it is no
@@ -38,11 +38,16 @@ export async function GET(request: NextRequest) {
         // computed. The screen that needs the full list asks
         // /api/v1/store/admin/products, which checks who is asking.
         const now = new Date();
+        // A product found by its name in another language too.
+        const translated = search ? await productsTranslatedAs(search) : [];
         const where = {
             ...onTheShelfWhere(now),
             ...(category && { category: { slug: category } }),
             ...(featured && { isFeatured: true }),
-            ...(search && { OR: textContains(["name", "description"], search) }),
+            // Inside an AND, as the shop front's own search does: the shelf's
+            // window is the top-level OR, and a search spread beside it
+            // replaced it, so a search listed products outside their hours.
+            ...(search && { AND: [{ OR: [...textContains(["name", "description"], search), ...(translated.length > 0 ? [{ id: { in: translated } }] : [])] }] }),
         };
 
         const [products, total] = await Promise.all([

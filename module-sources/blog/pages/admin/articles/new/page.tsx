@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import { useRouter } from "@/core/sdk/navigation";
 import { Link } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, RichTextEditor, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea, UrlOrFile} from "@/core/sdk/ui";
-import { writeError } from "@/core/sdk";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, LocalizedTextInput, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, UrlOrFile} from "@/core/sdk/ui";
+import { joinTranslations, splitTranslations, writeError, type LanguageTexts } from "@/core/sdk";
 import { AdminPageHeader } from "@/core/sdk/admin";
 
 
@@ -16,12 +16,18 @@ interface Category {
     slug: string;
 }
 
+type WordField = "title" | "excerpt" | "content";
+const NO_LANGUAGES: Record<WordField, LanguageTexts> = { title: {}, excerpt: {}, content: {} };
+
 export default function NewBlogArticlePage() {
     const t = useTranslations("blog");
     const commonT = useTranslations("common");
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
+    // Each language of the title, excerpt and body, beside the originals in
+    // the form.
+    const [languages, setLanguages] = useState<Record<WordField, LanguageTexts>>(NO_LANGUAGES);
     const [formData, setFormData] = useState({
         title: "",
         excerpt: "",
@@ -41,6 +47,13 @@ export default function NewBlogArticlePage() {
             .catch(console.error);
     }, []);
 
+    // The original goes to the form's column, each language beside it.
+    const word = (field: WordField, next: unknown) => {
+        const parts = splitTranslations(next);
+        setFormData((was) => ({ ...was, [field]: parts.original }));
+        setLanguages((was) => ({ ...was, [field]: parts.translations }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -52,6 +65,7 @@ export default function NewBlogArticlePage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ...formData,
+                    translations: languages,
                     categoryId: formData.categoryId || null,
                     tags: formData.tags ? formData.tags.split(",").map(t => t.trim()) : [],
                     publishedAt: formData.status === "PUBLISHED" ? new Date().toISOString() : null,
@@ -98,32 +112,39 @@ export default function NewBlogArticlePage() {
                             <CardContent className="space-y-4">
                                 <div>
                                     <Label htmlFor="title">{`${t("adm_titleField")} *`}</Label>
-                                    <Input
+                                    <LocalizedTextInput
                                         id="title"
-                                        value={formData.title}
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, title: e.target.value })}
+                                        label={t("adm_titleField")}
+                                        value={joinTranslations(formData.title, languages.title)}
+                                        onChange={(next) => word("title", next)}
                                         placeholder={t("adm_enterTitle")}
+                                        maxLength={200}
                                         required
                                     />
                                 </div>
 
                                 <div>
                                     <Label htmlFor="excerpt">{t("adm_excerpt")}</Label>
-                                    <Textarea
+                                    <LocalizedTextInput
                                         id="excerpt"
-                                        value={formData.excerpt}
-                                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, excerpt: e.target.value })}
-                                        placeholder={t("adm_briefSummary")}
+                                        label={t("adm_excerpt")}
+                                        multiline
                                         rows={3}
+                                        maxLength={500}
+                                        value={joinTranslations(formData.excerpt, languages.excerpt)}
+                                        onChange={(next) => word("excerpt", next)}
+                                        placeholder={t("adm_briefSummary")}
                                     />
                                 </div>
 
                                 <div>
                                     <Label id="content-label">{`${t("adm_content")} *`}</Label>
-                                    <RichTextEditor
+                                    <LocalizedTextInput
+                                        label={t("adm_content")}
                                         labelledBy="content-label"
-                                        value={formData.content}
-                                        onChange={(value: string) => setFormData({ ...formData, content: value })}
+                                        rich
+                                        value={joinTranslations(formData.content, languages.content)}
+                                        onChange={(next) => word("content", next)}
                                         placeholder={t("adm_contentPlaceholder")}
                                     />
                                 </div>

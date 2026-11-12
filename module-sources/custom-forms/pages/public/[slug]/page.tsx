@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Button, Card, CardContent, Challenge, Input, Label, Textarea, NativeSelect, CheckboxField, buttonClassName, useChallenge } from "@/core/sdk/ui";
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Link, usePathname } from "@/core/sdk/navigation";
@@ -18,6 +18,8 @@ interface FormField {
     help?: string;
     placeholder?: string;
     options?: string[];
+    /** Each choice in the reader's language; the choice itself is what is sent. */
+    optionLabels?: string[];
     min?: number;
     max?: number;
     maxLength?: number;
@@ -51,6 +53,9 @@ export default function FormPage({ params }: PageProps) {
     const t = useTranslations("customForms");
     const commonT = useTranslations("common");
     const pathname = usePathname();
+    // The endpoint reads the form in this language, and the original where
+    // the admin wrote none.
+    const locale = useLocale();
     const [form, setForm] = useState<CustomForm | null>(null);
     const [viewer, setViewer] = useState<Viewer>({ signedIn: false });
     // Bumped after a submission, so the status beside the form is read again.
@@ -62,7 +67,7 @@ export default function FormPage({ params }: PageProps) {
 
     useEffect(() => {
         let cancelled = false;
-        fetch(`/api/v1/forms/${slug}`)
+        fetch(`/api/v1/forms/${slug}?locale=${encodeURIComponent(locale)}`)
             .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
             .then((d) => {
                 if (cancelled) return;
@@ -75,7 +80,7 @@ export default function FormPage({ params }: PageProps) {
                 setLoading(false);
             });
         return () => { cancelled = true; };
-    }, [slug, reload]);
+    }, [slug, reload, locale]);
 
     /*
      * Whatever check the operator put in front of this form.
@@ -111,17 +116,20 @@ export default function FormPage({ params }: PageProps) {
                  * leaves them to guess which box it was.
                  */
                 const said = await res.json().catch(() => null) as
-                    { reason?: string; code?: string; label?: string; limit?: number } | null;
+                    { reason?: string; code?: string; field?: string; label?: string; limit?: number } | null;
                 // A refusal about the answers names a `reason`; one about who
                 // is sending, sign-in or the allowance, a `code`.
                 const why = said?.reason ?? said?.code;
+                // The question as this reader was shown it; the endpoint only
+                // knows the original.
+                const label = form.fields.find((f) => f.name === said?.field)?.label ?? said?.label ?? "";
                 const key = why
                     ? `err_${why.replace(/_(.)/g, (_, c: string) => c.toUpperCase())}`
                     : null;
                 if (said?.code) setReload((n) => n + 1);
                 toast.error(
                     key && t.has(key)
-                        ? t(key, { label: said?.label ?? "", limit: said?.limit ?? 0 })
+                        ? t(key, { label, limit: said?.limit ?? 0 })
                         : t("submitError"),
                 );
             }
@@ -143,7 +151,7 @@ export default function FormPage({ params }: PageProps) {
                 return (
                     <NativeSelect value={val} onChange={(e) => onChange(e.target.value)} required={field.required} aria-label={field.label} className="w-full">
                         <option value="">{t("selectOption")}</option>
-                        {field.options?.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+                        {field.options?.map((opt, at) => <option key={opt} value={opt}>{field.optionLabels?.[at] ?? opt}</option>)}
                     </NativeSelect>
                 );
             case "radio":
@@ -155,7 +163,7 @@ export default function FormPage({ params }: PageProps) {
                  */
                 return (
                     <div role="radiogroup" aria-label={field.label} className="space-y-1.5">
-                        {(field.options ?? []).map((opt) => (
+                        {(field.options ?? []).map((opt, at) => (
                             <label key={opt} className="flex items-center gap-2 text-sm">
                                 <input
                                     type="radio"
@@ -166,7 +174,7 @@ export default function FormPage({ params }: PageProps) {
                                     required={field.required}
                                     className="h-4 w-4 accent-primary"
                                 />
-                                <span>{opt}</span>
+                                <span>{field.optionLabels?.[at] ?? opt}</span>
                             </label>
                         ))}
                     </div>

@@ -3,7 +3,7 @@
   "name": "Custom Forms",
   "description": "Dynamic form builder with submissions",
   "version": "1.8.0",
-  "coreVersion": "^5.26.0",
+  "coreVersion": "^5.37.0",
   "category": "content",
   "author": "Blysis",
   "icon": "FileEdit",

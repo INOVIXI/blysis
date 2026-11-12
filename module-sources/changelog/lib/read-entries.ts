@@ -11,10 +11,15 @@
  * renders none of it. What the list needs is whether there is a page to link
  * to.
  */
-import { prisma } from "@/core/sdk/server";
+import { prisma, translateContent } from "@/core/sdk/server";
+import { ENTRY_TEXT } from "./entry-page";
 import type { ChangelogKind } from "./types";
 
-export async function readChangelogEntries() {
+/**
+ * In the reader's `locale`, and in the original where the admin wrote no
+ * translation. Whether an entry has a page is the original's to say.
+ */
+export async function readChangelogEntries(locale = "") {
     const now = new Date();
     const rows = await prisma.changelogEntry.findMany({
         where: {
@@ -29,10 +34,11 @@ export async function readChangelogEntries() {
             coverImage: true, details: true,
         },
     });
-    return rows.map(({ details, ...entry }) => ({
+    const listed = rows.map(({ details, ...entry }) => ({
         ...entry,
         hasDetails: typeof details === "string" && details.trim() !== "",
     }));
+    return translateContent(prisma, ENTRY_TEXT, listed, ["title", "content"], locale);
 }
 
 /**

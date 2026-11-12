@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hasPermission, isModuleEnabled, prisma, readJsonBody } from "@/core/sdk/server";
+import { contentTranslationsInput, hasPermission, isModuleEnabled, prisma, readJsonBody, saveContentTranslations, translateContent } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { productVariableSchema } from "../../lib/validations";
+import { VARIABLE_FIELDS, VARIABLE_TEXT, localeOf } from "../../lib/store-text";
 
-// GET ?productId=xxx (public for checkout, admin for all)
+// GET ?productId=xxx (public for checkout, admin for all). The label and the
+// placeholder are read in `?locale=`, and in the original where the operator
+// wrote no translation.
 export async function GET(request: NextRequest) {
     if (!(await isModuleEnabled("store"))) return NextResponse.json({ error: "Store module is disabled" }, { status: 404 });
 
@@ -13,7 +16,7 @@ export async function GET(request: NextRequest) {
     const variables = await prisma.productVariable.findMany({
         where: { productId },
     });
-    return NextResponse.json({ variables });
+    return NextResponse.json({ variables: await translateContent(prisma, VARIABLE_TEXT, variables, ["label", "placeholder"], localeOf(request)) });
 }
 
 // POST - Admin
@@ -26,16 +29,20 @@ export async function POST(request: NextRequest) {
     if (jsonBody instanceof NextResponse) return jsonBody;
     const parsed = productVariableSchema.safeParse(jsonBody);
     if (!parsed.success) return NextResponse.json({ error: "productId, name, label required" }, { status: 400 });
+    const translations = contentTranslationsInput(jsonBody, VARIABLE_FIELDS);
+    if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
     const { productId, name, label, type, required, placeholder, options } = parsed.data;
 
-    const variable = await prisma.productVariable.create({
-        data: {
+    const variable = await prisma.$transaction(async (tx) => {
+        const created = await tx.productVariable.create({ data: {
             productId, name, label,
             type: type || "text",
             required: required ?? true,
             placeholder: placeholder || null,
             options: options || null,
-        },
+        } });
+        if (translations.value) await saveContentTranslations(tx, { ...VARIABLE_TEXT, recordId: created.id }, translations.value);
+        return created;
     });
     return NextResponse.json({ variable }, { status: 201 });
 }

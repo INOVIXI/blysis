@@ -7,6 +7,7 @@ import { NewsGrid } from "../components/news-grid";
 import { getTranslations, getLocale } from "next-intl/server";
 import { dateLocaleTag } from "@/core/sdk";
 import { publishedArticle } from "../lib/visible-article";
+import { articlesIn, categoriesIn } from "../lib/blog-text";
 
 export const revalidate = 60;
 
@@ -35,8 +36,11 @@ interface Filter {
  *
  * One grid can do the job, so the filter is a query parameter on this page
  * rather than two more routes, and paging keeps it.
+ *
+ * Titles, excerpts and category names are read in `locale`, and in the
+ * original where the admin wrote no translation.
  */
-async function getBlogArticles(page: number, filter: Filter) {
+async function getBlogArticles(page: number, filter: Filter, locale: string) {
     const where = {
         ...publishedArticle(),
         ...(filter.category ? { category: { slug: filter.category } } : {}),
@@ -51,7 +55,7 @@ async function getBlogArticles(page: number, filter: Filter) {
             take: PER_PAGE,
             include: {
                 author: { select: { username: true, avatar: true } },
-                category: { select: { name: true, slug: true } },
+                category: { select: { id: true, name: true, slug: true } },
             },
         }),
         prisma.blogArticle.count({ where }),
@@ -72,19 +76,27 @@ async function getBlogArticles(page: number, filter: Filter) {
             select: { id: true, number: true, slug: true, title: true, publishedAt: true, createdAt: true },
         }),
         filter.category
-            ? prisma.blogCategory.findUnique({ where: { slug: filter.category }, select: { name: true } })
+            ? prisma.blogCategory.findUnique({ where: { slug: filter.category }, select: { id: true, name: true } })
             : Promise.resolve(null),
         filter.tag
             ? prisma.blogTag.findUnique({ where: { slug: filter.tag }, select: { name: true } })
             : Promise.resolve(null),
     ]);
 
+    const [named, sections, latest] = await Promise.all([
+        articlesIn(articles, locale),
+        categoriesIn(categories, locale),
+        articlesIn(recent, locale),
+    ]);
+    // The sidebar reads every category, the one being browsed among them.
+    const active = activeCategory ? sections.find((row) => row.id === activeCategory.id) ?? activeCategory : undefined;
+
     return {
-        articles,
-        categories,
-        recent,
+        articles: named,
+        categories: sections,
+        recent: latest,
         pages: Math.max(1, Math.ceil(total / PER_PAGE)),
-        activeName: activeCategory?.name ?? activeTag?.name ?? null,
+        activeName: active?.name ?? activeTag?.name ?? null,
     };
 }
 
@@ -118,9 +130,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     const requested = Number.parseInt(one(query.page) ?? "", 10);
     const page = Number.isFinite(requested) && requested > 0 ? requested : 1;
     const filter: Filter = { category: one(query.category), tag: one(query.tag) };
-    const { articles, categories, recent, pages, activeName } = await getBlogArticles(page, filter);
+    const locale = await getLocale();
+    const { articles, categories, recent, pages, activeName } = await getBlogArticles(page, filter, locale);
     const t = await getTranslations('blog');
-    const dateTag = dateLocaleTag(await getLocale());
+    const dateTag = dateLocaleTag(locale);
 
     return (
         <ArrangedPage
