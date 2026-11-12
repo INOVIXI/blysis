@@ -189,7 +189,7 @@
       "type": "boolean",
       "default": true,
       "label": "Pay the difference when upgrading",
-      "description": "Somebody who already owns a cheaper product on the same shelf pays only the difference for a dearer one. Turn it off to charge the full price every time."
+      "description": "On a shelf drawn as a comparison table, somebody who still owns a cheaper product pays only the difference for one dearer product, once. Turn it off to charge the full price every time."
     },
     {
       "key": "creditsPricePerUnit",
