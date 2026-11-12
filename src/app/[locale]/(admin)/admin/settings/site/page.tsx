@@ -56,14 +56,10 @@ export default function SiteSettingsPage() {
     // A read that failed would otherwise offer this form at its defaults, and
     // saving it would empty the site's name and every social link.
     const { loading, failed, retry } = useSettingsLoad((s) => {
-        // `site_name` and `site_description` are the rows every page reads.
-        // This form wrote `siteName` and `siteDescription`, which nothing
-        // reads, so renaming the site here changed nothing anywhere; a name
-        // saved that way is offered back once so it is not lost.
-        //
         // Empty rather than the product's own name: a read that fell back
         // to it and then saved would rename the operator's site after the
-        // thing it was built from.
+        // thing it was built from. A name saved under the old key that
+        // nothing read is offered back once so it is not lost.
         const stored = (value: unknown, legacy: unknown): TranslatableText =>
             isTranslatableText(value) && originalText(value).trim() ? value : typeof legacy === "string" ? legacy : "";
         setName(stored(s.site_name, s.siteName));
@@ -90,8 +86,8 @@ export default function SiteSettingsPage() {
                     ...siteSettingsPatch(form, loaded.current),
                     [SITE_LOGO_KEY]: form[SITE_LOGO_KEY],
                     [SITE_ICON_KEY]: form[SITE_ICON_KEY],
-                    // Written over the patch, which reads them as plain
-                    // strings: either may hold a translation per language.
+                    // Written per language, so they come from their own boxes,
+                    // not the plain-text form.
                     site_name: name,
                     site_description: description,
                 }),
