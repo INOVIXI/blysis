@@ -9,6 +9,10 @@
  *
  * A lapsed purchase stops crediting: `stillOwnedWhere` is the filter and it is
  * in the query rather than applied afterwards, so it cannot be left out.
+ *
+ * Only a product on a shelf drawn as a comparison table counts. That layout is
+ * how an operator says a shelf is a ladder; a grid of crate keys is not one,
+ * and a key bought once used to come off every dearer key after it.
  */
 import { moduleSettings, prisma } from "@/core/sdk/server";
 import { stillOwnedWhere } from "./ownership";
@@ -30,7 +34,13 @@ export async function creditingPurchases(userId: string | null | undefined): Pro
         // this is not one this credit can say anything useful about.
         take: 500,
     });
-    return new Set(owned.map((row) => row.productId));
+    if (owned.length === 0) return new Set();
+
+    const rungs = await prisma.product.findMany({
+        where: { id: { in: owned.map((row) => row.productId) }, category: { layout: "table" } },
+        select: { id: true },
+    });
+    return new Set(rungs.map((row) => row.id));
 }
 
 /**

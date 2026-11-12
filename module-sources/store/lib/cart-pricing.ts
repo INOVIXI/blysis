@@ -1,4 +1,4 @@
-import { priceAfterCredit, upgradeCredit, type UpgradeCandidate } from "./upgrade-credit";
+import { lineCredit, priceAfterCredit, type UpgradeCandidate } from "./upgrade-credit";
 
 /**
  * What the basket costs this buyer, worked out once.
@@ -50,11 +50,14 @@ export function priceCartLines(
         ...ownedRungs,
     ];
 
+    const credited = new Set<string>();
     const priced = lines.map((line) => {
-        const credit = upgradeCredit(
+        const credit = lineCredit(
             { id: line.productId, categoryId: line.categoryId, price: line.price },
+            line.quantity,
             ladder,
             ownedIds,
+            credited,
         );
         return { ...line, upgradeCredit: credit, payPrice: priceAfterCredit(line.price, credit) };
     });

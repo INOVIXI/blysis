@@ -52,7 +52,7 @@ vi.mock("@/modules/store/lib/availability-server", () => ({
     rulesOf: vi.fn(() => ({ salePrice: null, saleFrom: null, saleUntil: null, price: 5 })),
 }));
 vi.mock("@/modules/store/lib/upgrade-credit-server", () => ({
-    creditingPurchases: vi.fn(async () => []),
+    creditingPurchases: vi.fn(async () => new Set<string>()),
     ownedRungsOn: vi.fn(async () => []),
 }));
 vi.mock("@/modules/store/lib/credit-order", () => ({

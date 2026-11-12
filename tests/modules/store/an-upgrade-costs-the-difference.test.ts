@@ -1,7 +1,22 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { upgradeCredit, priceAfterCredit } from "@/modules/store/lib/upgrade-credit";
+import { priceCartLines } from "@/modules/store/lib/cart-pricing";
+import { computeOrderPricing } from "@/modules/store/lib/pricing";
+
+const ownedRows = vi.fn<(args: unknown) => Promise<{ productId: string }[]>>(async () => []);
+const ladderRows = vi.fn<(args: unknown) => Promise<{ id: string }[]>>(async () => []);
+
+vi.mock("@/core/sdk/server", () => ({
+    prisma: {
+        ownedProduct: { findMany: (args: unknown) => ownedRows(args) },
+        product: { findMany: (args: unknown) => ladderRows(args) },
+    },
+    moduleSettings: async () => ({ enableUpgradeCredit: true }),
+}));
+
+const { creditingPurchases } = await import("@/modules/store/lib/upgrade-credit-server");
 
 /**
  * Somebody standing on a rung pays the difference to the next one.
@@ -83,6 +98,17 @@ describe("an upgrade costs the difference", () => {
         }
     });
 
+    it("credits nothing to somebody who already owns what they are buying", () => {
+        // Somebody who upgraded to VIP+ owns it. Buying it again is not an
+        // upgrade, so the VIP behind it is not traded in a second time.
+        expect(upgradeCredit(VIP_PLUS, LADDER, new Set(["vip", "vip-plus"]))).toBe(0);
+    });
+
+    it("credits nothing to somebody already standing above it", () => {
+        // Owning MVP and VIP, VIP+ is a step down, whatever lies below it.
+        expect(upgradeCredit(VIP_PLUS, LADDER, new Set(["vip", "mvp"]))).toBe(0);
+    });
+
     it("credits nothing to somebody who owns nothing", () => {
         expect(upgradeCredit(VIP_PLUS, LADDER, new Set())).toBe(0);
     });
@@ -98,12 +124,13 @@ describe("an upgrade costs the difference", () => {
             "module-sources/store/api/cart/route.ts",
             "module-sources/store/hooks/comparison-columns.ts",
         ];
-        // Either by asking directly or through `cart-pricing.ts`, which is
-        // the same question wrapped: the cart screen and the coupon preview
-        // both need the basket's worth and were working it out apart.
+        // Either by asking directly, line by line through `lineCredit`, or
+        // through `cart-pricing.ts`, which is the same question wrapped: the
+        // cart screen and the coupon preview both need the basket's worth and
+        // were working it out apart.
         const missing = asks.filter((file) => {
             const source = fs.readFileSync(path.join(ROOT, file), "utf8");
-            return !source.includes("upgradeCredit(") && !source.includes("priceCartLines(");
+            return !["upgradeCredit(", "lineCredit(", "priceCartLines("].some((call) => source.includes(call));
         });
         expect(missing, missing.join("\n")).toEqual([]);
     });
@@ -125,5 +152,68 @@ describe("an upgrade costs the difference", () => {
         const setting = manifest.settings?.find((s) => s.key === "enableUpgradeCredit");
         expect(setting, "the switch is not declared").toBeTruthy();
         expect(setting?.default, "it arrives on, the way it always behaved").toBe(true);
+    });
+});
+
+describe("a basket trades a rung in once", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    it("credits one unit of an upgrade, not every unit of it", () => {
+        // An upgrade is one step. Five of the rung above is not five steps
+        // from the one below it, and the credit used to be taken off each.
+        const cart = priceCartLines(
+            [{ productId: "vip-plus", categoryId: "ranks", price: 19.99, quantity: 5 }],
+            new Set(["vip"]),
+            [VIP],
+        );
+        expect(cart.lines[0].upgradeCredit).toBe(0);
+        expect(cart.subtotal).toBeCloseTo(99.95, 5);
+
+        const till = computeOrderPricing({
+            items: [{ productId: "vip-plus", quantity: 5 }],
+            products: [{ id: "vip-plus", name: "VIP+", price: 19.99, categoryId: "ranks" }],
+            bulkDiscounts: [],
+            ownedProductIds: new Set(["vip"]),
+            ownedRungs: [VIP],
+        });
+        expect(till.subtotal).toBeCloseTo(99.95, 5);
+    });
+
+    it("trades the rung owned in on one line of the basket, not on each", () => {
+        // VIP owned, VIP+ and MVP in one basket: the VIP was paid for once.
+        const lines = [
+            { productId: "vip-plus", categoryId: "ranks", price: 19.99, quantity: 1 },
+            { productId: "mvp", categoryId: "ranks", price: 39.99, quantity: 1 },
+        ];
+        const cart = priceCartLines(lines, new Set(["vip"]), [VIP]);
+        expect(cart.lines.map((line) => line.upgradeCredit)).toEqual([9.99, 0]);
+
+        const till = computeOrderPricing({
+            items: lines.map((line) => ({ productId: line.productId, quantity: 1 })),
+            products: [
+                { id: "vip-plus", name: "VIP+", price: 19.99, categoryId: "ranks" },
+                { id: "mvp", name: "MVP", price: 39.99, categoryId: "ranks" },
+            ],
+            bulkDiscounts: [],
+            ownedProductIds: new Set(["vip"]),
+            ownedRungs: [VIP],
+        });
+        expect(till.subtotal).toBeCloseTo(cart.subtotal, 5);
+        expect(till.subtotal).toBeCloseTo(10 + 39.99, 5);
+    });
+
+    it("counts only what was bought on a shelf drawn as a ladder", async () => {
+        // A crate key bought last week is not a rung: the shelf of keys is a
+        // grid, and the cheaper key used to be taken off the dearer one on
+        // every order for as long as the account existed.
+        ownedRows.mockResolvedValue([{ productId: "key" }, { productId: "vip" }]);
+        ladderRows.mockResolvedValue([{ id: "vip" }]);
+
+        expect([...(await creditingPurchases("user-1"))]).toEqual(["vip"]);
+        expect(ladderRows.mock.calls[0][0]).toMatchObject({
+            where: { id: { in: ["key", "vip"] }, category: { layout: "table" } },
+        });
     });
 });
