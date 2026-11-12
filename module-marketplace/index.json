@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-11-11",
-  "updatedAt": "2026-11-11T10:51:51Z",
+  "updated": "2026-11-12",
+  "updatedAt": "2026-11-12T16:58:56Z",
   "modules": [
     {
       "id": "announcements",
@@ -53,13 +53,13 @@
           "description": "全站公告横幅"
         }
       },
-      "version": "1.3.0",
-      "coreVersion": "^5.0.0",
+      "version": "1.4.0",
+      "coreVersion": "^5.37.0",
       "author": "Blysis",
       "icon": "Megaphone",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-09-20T08:38:05Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -282,13 +282,13 @@
           "description": "将此商店已付款的订单发送至 BirFatura，由其开具发票"
         }
       },
-      "version": "1.8.0",
+      "version": "1.9.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -365,13 +365,13 @@
           "description": "新闻与公告系统"
         }
       },
-      "version": "1.14.1",
-      "coreVersion": "^5.30.0",
+      "version": "1.15.0",
+      "coreVersion": "^5.37.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-26T17:03:52Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -449,13 +449,13 @@
           "description": "版本说明与更新历史"
         }
       },
-      "version": "1.10.0",
-      "coreVersion": "^5.30.0",
+      "version": "1.11.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "History",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -846,13 +846,13 @@
           "description": "以任何人都能阅读的表格，逐项对比多个对象"
         }
       },
-      "version": "1.8.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Table",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-25T16:14:40Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -999,13 +999,13 @@
           "description": "为用户提供的虚拟货币钱包"
         }
       },
-      "version": "1.10.2",
+      "version": "1.11.0",
       "coreVersion": "^5.21.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-23T20:22:50Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -1015,12 +1015,14 @@
       "conflicts": [],
       "hooks": {
         "emits": [
+          "currency.rate",
           "credits.credit.added",
           "credits.award"
         ],
         "listens": [
           "credits.award",
           "store.order.completed",
+          "store.order.refunded",
           "credit.change",
           "credits.balance",
           "credits.top"
@@ -1237,13 +1239,13 @@
           "description": "支持多货币并自动换算"
         }
       },
-      "version": "1.6.2",
-      "coreVersion": "^5.0.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.33.0",
       "author": "Blysis",
       "icon": "DollarSign",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -1260,7 +1262,7 @@
       "stats": {
         "publicRoutes": 0,
         "adminRoutes": 1,
-        "apiRoutes": 1,
+        "apiRoutes": 3,
         "widgets": 0
       }
     },
@@ -1314,13 +1316,13 @@
           "description": "带提交记录的动态表单构建器"
         }
       },
-      "version": "1.7.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.37.0",
       "author": "Blysis",
       "icon": "FileEdit",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -1333,14 +1335,15 @@
           "customforms.form.created",
           "customforms.form.deleted",
           "customforms.form.updated",
-          "customforms.submission.created"
+          "customforms.submission.created",
+          "customforms.submission.reviewed"
         ],
         "listens": []
       },
       "stats": {
         "publicRoutes": 1,
         "adminRoutes": 2,
-        "apiRoutes": 4,
+        "apiRoutes": 6,
         "widgets": 0
       }
     },
@@ -1394,13 +1397,13 @@
           "description": "团队撰写、拥有独立地址的页面"
         }
       },
-      "version": "1.6.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.7.2",
+      "coreVersion": "^5.38.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -1469,13 +1472,13 @@
           "description": "允许用户使用 Discord 账户登录"
         }
       },
-      "version": "1.3.0",
+      "version": "1.3.1",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "integration",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "integration"
@@ -1703,13 +1706,13 @@
           "description": "文件库：版本发布、指南以及其他值得分享的内容"
         }
       },
-      "version": "1.7.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Download",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -1930,13 +1933,13 @@
           "description": "从其他地方读取数据并显示在站点上"
         }
       },
-      "version": "1.6.1",
-      "coreVersion": "^5.0.0",
+      "version": "1.7.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Database",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-23T20:06:35Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -2155,13 +2158,13 @@
           "description": "带分类、主题和回复的社区讨论论坛"
         }
       },
-      "version": "1.16.0",
-      "coreVersion": "^5.30.0",
+      "version": "1.17.0",
+      "coreVersion": "^5.37.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2240,13 +2243,13 @@
           "description": "让游戏服务器自行连接到本站：重启后依然保留的发货队列、实时状态、游戏内商店与积分，以及账户绑定，适用于任何有客户端的游戏"
         }
       },
-      "version": "1.1.0",
+      "version": "1.2.0",
       "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Cable",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -2280,6 +2283,7 @@
           "store.credits.purchased",
           "store.gift.sent",
           "game-account.resolve",
+          "profile.linkedAccounts",
           "store.orders.delivery"
         ]
       },
@@ -2565,13 +2569,13 @@
           "description": "带分类和可搜索文章的知识库"
         }
       },
-      "version": "1.11.0",
-      "coreVersion": "^5.30.0",
+      "version": "1.12.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis Team",
       "icon": "HelpCircle",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -3032,13 +3036,13 @@
           "description": "按购买、投票和活跃度排列的成员排名"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "Trophy",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-24T12:46:38Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -3418,13 +3422,13 @@
           "description": "公开的成员资料页，展示每个已安装模块所了解的成员信息"
         }
       },
-      "version": "1.8.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-24T19:33:32Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -3681,6 +3685,162 @@
           "payment.providers",
           "payment.session"
         ]
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 1,
+        "apiRoutes": 1,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "minecraft-heads",
+      "name": "Minecraft Heads",
+      "description": "Draws a member who has no picture as the Minecraft head of the account with their username, from a public head service the operator picks. On an offline-mode server, names are not proven, so a member gets the skin of the premium account that holds their name, or initials when none does.",
+      "i18n": {
+        "az": {
+          "name": "Minecraft Başları",
+          "description": "Şəkli olmayan üzvü istifadəçi adı ilə eyni adlı Minecraft hesabının başı ilə göstərir; baş operatorun seçdiyi açıq xidmətdən gəlir. Offline rejimli serverlərdə adlar təsdiqlənmir, ona görə üzv həmin adı daşıyan premium hesabın skinini alır; belə hesab yoxdursa baş hərflər göstərilir."
+        },
+        "de": {
+          "name": "Minecraft-Köpfe",
+          "description": "Zeigt ein Mitglied ohne Bild als Minecraft-Kopf des Kontos mit seinem Benutzernamen, von einem öffentlichen Kopfdienst, den der Betreiber wählt. Auf einem Offline-Mode-Server sind Namen nicht bestätigt, daher bekommt ein Mitglied den Skin des Premium-Kontos mit diesem Namen, oder Initialen, wenn es keines gibt."
+        },
+        "es": {
+          "name": "Cabezas de Minecraft",
+          "description": "Muestra a un miembro sin imagen con la cabeza de Minecraft de la cuenta que tiene su nombre de usuario, desde un servicio público de cabezas que elige el operador. En un servidor en modo offline los nombres no están verificados, así que el miembro recibe la skin de la cuenta premium con ese nombre, o las iniciales si no existe."
+        },
+        "et": {
+          "name": "Minecrafti pead",
+          "description": "Näitab pildita liiget Minecrafti kontopea järgi, mille nimi on tema kasutajanimi, operaatori valitud avalikust peateenusest. Offline-režiimis serveris nimesid ei kinnitata, seega saab liige selle nimega premium-konto skini või initsiaalid, kui sellist kontot pole."
+        },
+        "fr": {
+          "name": "Têtes Minecraft",
+          "description": "Affiche un membre sans image avec la tête Minecraft du compte qui porte son nom d'utilisateur, depuis un service public de têtes choisi par l'opérateur. Sur un serveur en mode hors ligne, les noms ne sont pas vérifiés : le membre reçoit le skin du compte premium qui porte ce nom, ou ses initiales s'il n'y en a pas."
+        },
+        "it": {
+          "name": "Teste di Minecraft",
+          "description": "Mostra un membro senza immagine con la testa Minecraft dell'account che ha il suo nome utente, da un servizio pubblico di teste scelto dall'operatore. Su un server in modalità offline i nomi non sono verificati, quindi il membro riceve la skin dell'account premium con quel nome, o le iniziali se non esiste."
+        },
+        "pl": {
+          "name": "Głowy z Minecrafta",
+          "description": "Pokazuje członka bez zdjęcia jako głowę z Minecrafta konta o jego nazwie użytkownika, z publicznej usługi głów wybranej przez operatora. Na serwerze w trybie offline nazwy nie są potwierdzane, więc członek dostaje skin konta premium o tej nazwie albo inicjały, gdy takiego nie ma."
+        },
+        "pt": {
+          "name": "Cabeças de Minecraft",
+          "description": "Mostra um membro sem imagem com a cabeça de Minecraft da conta com o seu nome de utilizador, de um serviço público de cabeças escolhido pelo operador. Num servidor em modo offline os nomes não são verificados, por isso o membro recebe a skin da conta premium com esse nome, ou as iniciais se não existir."
+        },
+        "ru": {
+          "name": "Головы Minecraft",
+          "description": "Показывает участника без изображения головой Minecraft аккаунта с его именем пользователя, из публичного сервиса голов, который выбирает оператор. На сервере в офлайн-режиме имена не подтверждаются, поэтому участник получает скин премиум-аккаунта с этим именем, или инициалы, если такого нет."
+        },
+        "tr": {
+          "name": "Minecraft Kafaları",
+          "description": "Fotoğrafı olmayan bir üyeyi, kullanıcı adıyla aynı adlı Minecraft hesabının kafasıyla gösterir; kafa, yöneticinin seçtiği herkese açık bir servisten gelir. Offline mod sunucularda adlar doğrulanmadığı için üye, o adı taşıyan premium hesabın skinini alır; böyle bir hesap yoksa adın ilk harfleri gösterilir."
+        },
+        "zh": {
+          "name": "Minecraft 头像",
+          "description": "用公共头像服务（由站长选择）显示没有头像的成员：取与其用户名同名的 Minecraft 账号的头部。离线模式服务器不验证名称，因此成员会得到持有该名称的正版账号的皮肤；没有这样的账号时显示首字母。"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.35.0",
+      "author": "MrMirhan",
+      "icon": "UserRound",
+      "category": "integration",
+      "verified": true,
+      "updatedAt": "2026-11-12T16:58:56Z",
+      "screenshots": [],
+      "tags": [
+        "minecraft",
+        "avatars"
+      ],
+      "zip": "minecraft-heads.zip",
+      "dependencies": [],
+      "conflicts": [],
+      "hooks": {
+        "emits": [],
+        "listens": []
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 0,
+        "apiRoutes": 0,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "minecraft-libertybans",
+      "name": "Minecraft Punishments (LibertyBans)",
+      "description": "Reads bans, mutes, warnings and kicks out of a LibertyBans database and records them against the member who owns the account",
+      "i18n": {
+        "az": {
+          "name": "Minecraft cəzaları (LibertyBans)",
+          "description": "LibertyBans verilənlər bazasından banları, səssizləşdirmələri, xəbərdarlıqları və kikləri oxuyur və hesabın sahibi olan üzvə yazır"
+        },
+        "de": {
+          "name": "Minecraft-Strafen (LibertyBans)",
+          "description": "Liest Sperren, Stummschaltungen, Verwarnungen und Kicks aus einer LibertyBans-Datenbank aus und erfasst sie beim Mitglied, dem das Konto gehört"
+        },
+        "es": {
+          "name": "Sanciones de Minecraft (LibertyBans)",
+          "description": "Lee baneos, silenciamientos, advertencias y expulsiones de una base de datos de LibertyBans y los registra a nombre del miembro que es dueño de la cuenta"
+        },
+        "et": {
+          "name": "Minecrafti karistused (LibertyBans)",
+          "description": "Loeb keelud, vaigistused, hoiatused ja väljaheitmised LibertyBansi andmebaasist ning salvestab need konto omava liikme kohta"
+        },
+        "fr": {
+          "name": "Sanctions Minecraft (LibertyBans)",
+          "description": "Lit les bannissements, mises en sourdine, avertissements et expulsions d’une base LibertyBans et les enregistre pour le membre qui possède le compte"
+        },
+        "it": {
+          "name": "Sanzioni Minecraft (LibertyBans)",
+          "description": "Legge ban, mute, avvisi ed espulsioni da un database LibertyBans e li registra a carico del membro che possiede l’account"
+        },
+        "pl": {
+          "name": "Kary w Minecraft (LibertyBans)",
+          "description": "Odczytuje bany, wyciszenia, ostrzeżenia i wyrzucenia z bazy LibertyBans i zapisuje je na koncie członka, który jest właścicielem konta"
+        },
+        "pt": {
+          "name": "Punições do Minecraft (LibertyBans)",
+          "description": "Lê banimentos, silenciamentos, avisos e expulsões de um banco de dados LibertyBans e os registra no membro dono da conta"
+        },
+        "ru": {
+          "name": "Наказания Minecraft (LibertyBans)",
+          "description": "Читает баны, муты, предупреждения и кики из базы данных LibertyBans и записывает их на участника, которому принадлежит учетная запись"
+        },
+        "tr": {
+          "name": "Minecraft Cezaları (LibertyBans)",
+          "description": "Bir LibertyBans veritabanındaki yasakları, susturmaları, uyarıları ve atmaları okur ve hesabın sahibi olan üyenin kaydına yazar"
+        },
+        "zh": {
+          "name": "Minecraft 处罚（LibertyBans）",
+          "description": "从 LibertyBans 数据库读取封禁、禁言、警告和踢出记录，并将其记入拥有该账户的成员名下"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.0.0",
+      "author": "MrMirhan",
+      "icon": "Gavel",
+      "category": "gaming",
+      "verified": true,
+      "updatedAt": "2026-11-12T16:58:56Z",
+      "screenshots": [],
+      "tags": [
+        "gaming"
+      ],
+      "zip": "minecraft-libertybans.zip",
+      "dependencies": [
+        "punishments"
+      ],
+      "conflicts": [],
+      "hooks": {
+        "emits": [
+          "punishment.record",
+          "game-account.resolve"
+        ],
+        "listens": []
       },
       "stats": {
         "publicRoutes": 0,
@@ -4229,13 +4389,13 @@
           "description": "将本店铺已付款的订单发送至 Parasut，由其开具发票"
         }
       },
-      "version": "1.6.0",
+      "version": "1.7.0",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "FileText",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-09-20T12:27:54Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -4632,13 +4792,13 @@
           "description": "通过 PayTR 接受土耳其银行卡、分期付款和银行转账"
         }
       },
-      "version": "1.4.1",
+      "version": "1.4.3",
       "coreVersion": "^5.0.0",
       "author": "Blysis",
       "icon": "CreditCard",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-22T17:08:42Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -4715,13 +4875,13 @@
           "description": "模态弹窗通知和促销活动"
         }
       },
-      "version": "1.4.0",
-      "coreVersion": "^5.0.0",
+      "version": "1.5.0",
+      "coreVersion": "^5.37.0",
       "author": "Blysis",
       "icon": "Bell",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-09-20T04:45:04Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -4867,13 +5027,13 @@
           "description": "针对成员的封禁、禁言和警告，可在此发出，也可由其他位置的模块上报"
         }
       },
-      "version": "1.8.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Shield",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -5109,13 +5269,13 @@
           "description": "通过推荐新用户赚取积分"
         }
       },
-      "version": "1.7.0",
+      "version": "1.8.0",
       "coreVersion": "^5.26.0",
       "author": "Blysis",
       "icon": "UserPlus",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -5131,7 +5291,9 @@
           "referral.referral.used",
           "credit.change"
         ],
-        "listens": []
+        "listens": [
+          "store.order.completed"
+        ]
       },
       "stats": {
         "publicRoutes": 1,
@@ -5420,13 +5582,13 @@
           "description": "游戏服务器管理、RCON 和状态监控"
         }
       },
-      "version": "1.11.0",
-      "coreVersion": "^5.27.0",
+      "version": "1.12.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Server",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-25T16:14:40Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -5498,13 +5660,13 @@
           "description": "社区作品的展示库"
         }
       },
-      "version": "1.8.0",
-      "coreVersion": "^5.25.0",
+      "version": "1.9.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "LayoutGrid",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -5573,13 +5735,13 @@
           "description": "首页图片轮播和横幅"
         }
       },
-      "version": "1.2.2",
-      "coreVersion": "^5.0.0",
+      "version": "1.3.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Image",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-09-15T22:25:22Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -5800,13 +5962,13 @@
           "description": "运营这里的人，以及管理他们的界面。"
         }
       },
-      "version": "1.7.1",
-      "coreVersion": "^5.25.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.37.0",
       "author": "Blysis",
       "icon": "Users",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-10-26T17:03:52Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -5950,13 +6112,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.52.0",
-      "coreVersion": "^5.30.0",
+      "version": "2.54.0",
+      "coreVersion": "^5.37.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -5972,16 +6134,19 @@
           "server.command",
           "store.order.completed",
           "store.order.created",
+          "store.order.refunded",
           "store.product.created",
           "payment.providers",
           "payment.session",
           "currency.rate",
           "store.billing.required",
           "credit.change",
+          "credits.balance",
           "servers.list",
           "store.credits.purchased",
           "store.gift.sent",
-          "store.orders.delivery"
+          "store.orders.delivery",
+          "store.tax"
         ],
         "listens": [
           "user.registered",
@@ -6014,8 +6179,8 @@
       },
       "stats": {
         "publicRoutes": 5,
-        "adminRoutes": 14,
-        "apiRoutes": 50,
+        "adminRoutes": 15,
+        "apiRoutes": 51,
         "widgets": 6
       }
     },
@@ -6262,6 +6427,88 @@
       }
     },
     {
+      "id": "tax",
+      "name": "Tax",
+      "description": "Charge tax by the buyer's country, call it what the law calls it, and keep the reason and the evidence on every order.",
+      "i18n": {
+        "az": {
+          "name": "Vergi",
+          "description": "Vergini alıcının ölkəsinə görə tutun, qanunun adlandırdığı kimi adlandırın, səbəbi və sübutu hər sifarişdə saxlayın."
+        },
+        "de": {
+          "name": "Steuern",
+          "description": "Steuer nach dem Land des Käufers berechnen, sie so nennen, wie das Gesetz sie nennt, und Grund und Nachweis bei jeder Bestellung aufbewahren."
+        },
+        "es": {
+          "name": "Impuestos",
+          "description": "Cobra impuestos según el país del comprador, llámalos como los llama la ley y guarda el motivo y la prueba en cada pedido."
+        },
+        "et": {
+          "name": "Maksud",
+          "description": "Arvesta maksu ostja riigi järgi, nimeta seda nii, nagu seadus seda nimetab, ning hoia põhjus ja tõend iga tellimuse juures."
+        },
+        "fr": {
+          "name": "Taxes",
+          "description": "Facturez la taxe selon le pays de l'acheteur, nommez-la comme la loi la nomme et gardez le motif et la preuve sur chaque commande."
+        },
+        "it": {
+          "name": "Imposte",
+          "description": "Applica l'imposta in base al paese dell'acquirente, chiamala come la chiama la legge e conserva motivo e prova su ogni ordine."
+        },
+        "pl": {
+          "name": "Podatki",
+          "description": "Naliczaj podatek według kraju kupującego, nazywaj go tak, jak nazywa go prawo, i zachowuj podstawę oraz dowód przy każdym zamówieniu."
+        },
+        "pt": {
+          "name": "Impostos",
+          "description": "Cobre o imposto pelo país do comprador, chame-o como a lei o chama e guarde o motivo e a prova em cada encomenda."
+        },
+        "ru": {
+          "name": "Налоги",
+          "description": "Начисляйте налог по стране покупателя, называйте его так, как его называет закон, и храните основание и доказательства в каждом заказе."
+        },
+        "tr": {
+          "name": "Vergi",
+          "description": "Vergiyi alıcının ülkesine göre alın, yasadaki adıyla adlandırın, gerekçeyi ve kanıtı her siparişte saklayın."
+        },
+        "zh": {
+          "name": "税费",
+          "description": "按买家所在国家征税，使用法律规定的名称，并在每个订单上保留征税理由和依据。"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.30.0",
+      "author": "MrMirhan",
+      "icon": "Percent",
+      "category": "commerce",
+      "verified": true,
+      "updatedAt": "2026-11-12T16:58:56Z",
+      "screenshots": [],
+      "tags": [
+        "commerce"
+      ],
+      "zip": "tax.zip",
+      "dependencies": [
+        "store@^2.54.0"
+      ],
+      "conflicts": [],
+      "hooks": {
+        "emits": [
+          "geo.country"
+        ],
+        "listens": [
+          "store.tax",
+          "store.billing.required"
+        ]
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 1,
+        "apiRoutes": 1,
+        "widgets": 0
+      }
+    },
+    {
       "id": "tickets",
       "name": "Support Tickets",
       "description": "Customer support ticket system with departments and priority levels",
@@ -6311,13 +6558,13 @@
           "description": "带部门和优先级的客户支持工单系统"
         }
       },
-      "version": "1.10.1",
-      "coreVersion": "^5.30.0",
+      "version": "1.11.0",
+      "coreVersion": "^5.37.0",
       "author": "Blysis Team",
       "icon": "Ticket",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-11-11T10:51:51Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -6466,13 +6713,13 @@
           "description": "基于规则自动颁发的成就徽章"
         }
       },
-      "version": "1.9.0",
-      "coreVersion": "^5.30.0",
+      "version": "1.10.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Trophy",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -6850,13 +7097,13 @@
           "description": "将玩家引导至你所在的服务器列表，并统计投票人数"
         }
       },
-      "version": "1.7.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Vote",
       "category": "gaming",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "gaming"
@@ -7006,13 +7253,13 @@
           "description": "可配置奖品和冷却时间的转动赢奖游戏"
         }
       },
-      "version": "1.11.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.12.0",
+      "coreVersion": "^5.37.0",
       "author": "Blysis",
       "icon": "Dices",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-12T16:58:56Z",
       "screenshots": [],
       "tags": [
         "commerce"
