@@ -464,6 +464,15 @@ const authProvider = z
             .max(128)
             .regex(ENV_VAR_NAME, "envSecretVar must be an env var name")
             .optional(),
+        /**
+         * The authorization server's issuer, for a built-in provider whose
+         * Auth.js definition leaves it out. A server that sends the RFC 9207
+         * `iss` parameter on its callback is checked against it, and with none
+         * set Auth.js checks against a placeholder no server sends, so every
+         * sign-in fails with "unexpected iss". Discord started sending it in
+         * October 2026; its issuer is `https://discord.com`.
+         */
+        issuer: z.string().url().max(256).regex(/^https:\/\//, "issuer must be an https URL").optional(),
         /** Module-relative path to a file whose default export builds the provider. */
         factory: relativePath("factory").optional(),
         /**
@@ -501,6 +510,9 @@ const authProvider = z
         }
         if (value.envVars) {
             ctx.addIssue({ code: "custom", message: "envVars only applies to an auth provider with a factory" });
+        }
+        if (value.factory && value.issuer) {
+            ctx.addIssue({ code: "custom", message: "issuer only applies to a built-in auth provider; a factory sets its own" });
         }
         if (value.standardCallback !== undefined) {
             ctx.addIssue({

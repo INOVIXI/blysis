@@ -42,6 +42,8 @@ export interface DeclaredAuthProvider {
     envIdVar?: string;
     /** Env var holding the OAuth client secret. Built-in providers only. */
     envSecretVar?: string;
+    /** Authorization server issuer, passed to a built-in provider that leaves it out. */
+    issuer?: string;
     /** Module-relative path the generator imported the factory from. Module-supplied only. */
     factory?: string;
     /** Whether a module-supplied provider rides Auth.js's own `/api/auth/callback/<id>`. */
@@ -65,6 +67,7 @@ interface BuiltInProviderConfig {
     clientId: string;
     clientSecret: string;
     allowDangerousEmailAccountLinking: boolean;
+    issuer?: string;
 }
 
 interface ModuleProviderConfig {
@@ -192,6 +195,7 @@ export function resolveAuthProviders(
                 clientId,
                 clientSecret,
                 allowDangerousEmailAccountLinking: ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING,
+                ...(declared.issuer ? { issuer: declared.issuer } : {}),
             }),
         );
     }

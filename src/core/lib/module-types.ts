@@ -142,6 +142,7 @@ export interface ModuleManifest {
         id: string;           // Auth.js provider id, e.g. "discord"
         envIdVar: string;     // Env var holding the client id
         envSecretVar: string; // Env var holding the client secret
+        issuer?: string;      // Authorization server issuer, when Auth.js leaves it out
     }[];
 
     // Outbound webhook channels this module teaches core to talk to. Core owns
