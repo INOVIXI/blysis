@@ -26,3 +26,44 @@ export function crossRate(from: string, to: string, rates: Map<string, number>):
 
     return perBaseTo / perBaseFrom;
 }
+
+interface ListedCurrency {
+    code: string;
+    rate: number;
+}
+
+export type ShownCurrency<T extends ListedCurrency> = T & {
+    /** What the operator typed, kept for the day the switch goes off. */
+    manualRate: number;
+    /** The fetched rate against the list's base, or null when there is none. */
+    liveRate: number | null;
+    rateSource: "fetched" | "manual";
+};
+
+/**
+ * The currency list as prices are shown in it.
+ *
+ * The fetched rows are per dollar; the list is quoted against its own base,
+ * so each live rate goes through `crossRate` from the base. When the operator
+ * chose the fetched rates, a currency that has one shows it and a currency
+ * that has none keeps its typed rate, marked as such. Guarded by
+ * `a-shown-price-can-follow-the-fetched-rate`.
+ */
+export function shownRates<T extends ListedCurrency>(
+    currencies: T[],
+    base: string,
+    perDollar: Map<string, number>,
+    useFetched: boolean,
+): ShownCurrency<T>[] {
+    return currencies.map((currency) => {
+        const liveRate = crossRate(base, currency.code, perDollar);
+        const fetched = useFetched && liveRate !== null;
+        return {
+            ...currency,
+            rate: fetched ? liveRate : currency.rate,
+            manualRate: currency.rate,
+            liveRate,
+            rateSource: fetched ? "fetched" : "manual",
+        };
+    });
+}
