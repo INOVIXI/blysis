@@ -2,7 +2,7 @@
   "id": "game-connect",
   "name": "Game Connect",
   "description": "Let game servers connect to this site themselves: queued delivery that survives a restart, live status, the store and credits in game, and account linking, for any game with a client",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "coreVersion": "^5.26.0",
   "category": "gaming",
   "author": "Blysis",
@@ -37,6 +37,21 @@
       "max": 3600,
       "label": "Delivery lease (seconds)",
       "description": "How long a server may hold a delivery without answering before it is set aside for review."
+    },
+    {
+      "key": "usernamePlayerGames",
+      "type": "string",
+      "default": "",
+      "maxLength": 200,
+      "label": "Site usernames are player names",
+      "description": "Games, in lower case as their servers name them, where a member is the account in game with their username, case ignored, and no link code is offered. Empty: members link with a code."
+    },
+    {
+      "key": "offlineModeIds",
+      "type": "boolean",
+      "default": false,
+      "label": "Offline-mode ids",
+      "description": "On those games an account's id is the one an offline-mode server derives from its name (\"OfflinePlayer:\" + name, a version 3 UUID). Another id is not matched by name."
     }
   ],
   "api": [
@@ -304,6 +319,11 @@
       "priority": 20
     },
     {
+      "hook": "profile.linkedAccounts",
+      "type": "filter",
+      "handler": "hooks/profile-linked-accounts.ts"
+    },
+    {
       "hook": "store.orders.delivery",
       "type": "filter",
       "handler": "hooks/order-delivery.ts"
@@ -491,7 +511,9 @@
         "l_unlinkedPartly": "Unlinked {deleted} of {total}",
         "srv_pick": "Pick this server",
         "srv_revokeManyConfirm": "{count} servers can no longer connect. Their queued deliveries stay where they are.",
-        "srv_revokedPartly": "Revoked {deleted} of {total}"
+        "srv_revokedPartly": "Revoked {deleted} of {total}",
+        "link_byName": "Your {platform} account is {name}: your username here is your name in game.",
+        "link_noCodes": "Accounts here are linked by name, so there is no code to make."
       },
       "admin": {
         "module_game-connect_name": "Game Connect",
@@ -636,7 +658,9 @@
         "l_unlinkedPartly": "{total} bağlantıdan {deleted} tanesi kaldırıldı",
         "srv_pick": "Bu sunucuyu seç",
         "srv_revokeManyConfirm": "{count} sunucu artık bağlanamaz. Sıradaki teslimatları olduğu yerde kalır.",
-        "srv_revokedPartly": "{total} tokenden {deleted} tanesi iptal edildi"
+        "srv_revokedPartly": "{total} tokenden {deleted} tanesi iptal edildi",
+        "link_byName": "{platform} hesabın {name}: buradaki kullanıcı adın oyundaki adınla aynı.",
+        "link_noCodes": "Hesaplar burada adla bağlanır, bu yüzden kod gerekmez."
       },
       "admin": {
         "module_game-connect_name": "Oyun Bağlantısı",
@@ -781,7 +805,9 @@
         "l_unlinkedPartly": "{total} hesabdan {deleted} bağlantı kəsildi",
         "srv_pick": "Bu serveri seç",
         "srv_revokeManyConfirm": "{count} server artıq qoşula bilməz. Növbədəki çatdırılmaları yerində qalır.",
-        "srv_revokedPartly": "{total} tokendən {deleted} ləğv edildi"
+        "srv_revokedPartly": "{total} tokendən {deleted} ləğv edildi",
+        "link_byName": "{platform} hesabınız {name}: buradakı istifadəçi adınız oyundakı adınızdır.",
+        "link_noCodes": "Hesablar burada adla bağlanır, ona görə kod lazım deyil."
       },
       "admin": {
         "module_game-connect_name": "Game Connect",
@@ -926,7 +952,9 @@
         "l_unlinkedPartly": "{deleted} von {total} getrennt",
         "srv_pick": "Diesen Server auswählen",
         "srv_revokeManyConfirm": "{count} Server können sich nicht mehr verbinden. Ihre wartenden Lieferungen bleiben, wo sie sind.",
-        "srv_revokedPartly": "{deleted} von {total} widerrufen"
+        "srv_revokedPartly": "{deleted} von {total} widerrufen",
+        "link_byName": "Dein {platform}-Konto ist {name}: Dein Benutzername hier ist dein Spielername.",
+        "link_noCodes": "Konten werden hier über den Namen verknüpft, deshalb gibt es keinen Code."
       },
       "admin": {
         "module_game-connect_name": "Game Connect",
@@ -1071,7 +1099,9 @@
         "l_unlinkedPartly": "{deleted} de {total} desvinculadas",
         "srv_pick": "Elegir este servidor",
         "srv_revokeManyConfirm": "{count} servidores ya no pueden conectarse. Sus entregas en cola se quedan donde están.",
-        "srv_revokedPartly": "{deleted} de {total} revocados"
+        "srv_revokedPartly": "{deleted} de {total} revocados",
+        "link_byName": "Tu cuenta de {platform} es {name}: tu nombre de usuario aquí es tu nombre en el juego.",
+        "link_noCodes": "Aquí las cuentas se vinculan por el nombre, así que no hace falta ningún código."
       },
       "admin": {
         "module_game-connect_name": "Game Connect",
@@ -1216,7 +1246,9 @@
         "l_unlinkedPartly": "Seos eemaldatud: {deleted} / {total}",
         "srv_pick": "Vali see server",
         "srv_revokeManyConfirm": "Servereid, mis ei saa enam ühenduda: {count}. Nende järjekorras olevad tarned jäävad paigale.",
-        "srv_revokedPartly": "Tühistatud: {deleted} / {total}"
+        "srv_revokedPartly": "Tühistatud: {deleted} / {total}",
+        "link_byName": "Sinu {platform} konto on {name}: sinu kasutajanimi siin on sinu mängijanimi.",
+        "link_noCodes": "Kontod seotakse siin nime järgi, seega koodi pole vaja."
       },
       "admin": {
         "module_game-connect_name": "Game Connect",
@@ -1361,7 +1393,9 @@
         "l_unlinkedPartly": "{deleted} sur {total} déliés",
         "srv_pick": "Choisir ce serveur",
         "srv_revokeManyConfirm": "{count} serveurs ne peuvent plus se connecter. Leurs livraisons en attente restent où elles sont.",
-        "srv_revokedPartly": "{deleted} sur {total} révoqués"
+        "srv_revokedPartly": "{deleted} sur {total} révoqués",
+        "link_byName": "Votre compte {platform} est {name} : votre nom d’utilisateur ici est votre nom en jeu.",
+        "link_noCodes": "Ici, les comptes sont liés par leur nom : aucun code n’est nécessaire."
       },
       "admin": {
         "module_game-connect_name": "Game Connect",
@@ -1506,7 +1540,9 @@
         "l_unlinkedPartly": "{deleted} su {total} scollegati",
         "srv_pick": "Scegli questo server",
         "srv_revokeManyConfirm": "{count} server non possono più collegarsi. Le loro consegne in coda restano dove sono.",
-        "srv_revokedPartly": "{deleted} su {total} revocati"
+        "srv_revokedPartly": "{deleted} su {total} revocati",
+        "link_byName": "Il tuo account {platform} è {name}: il tuo nome utente qui è il tuo nome in gioco.",
+        "link_noCodes": "Qui gli account sono collegati per nome, quindi non serve alcun codice."
       },
       "admin": {
         "module_game-connect_name": "Game Connect",
@@ -1651,7 +1687,9 @@
         "l_unlinkedPartly": "Odłączono {deleted} z {total}",
         "srv_pick": "Wybierz ten serwer",
         "srv_revokeManyConfirm": "Serwery, które nie mogą się już połączyć: {count}. Ich dostawy w kolejce zostają tam, gdzie są.",
-        "srv_revokedPartly": "Unieważniono {deleted} z {total}"
+        "srv_revokedPartly": "Unieważniono {deleted} z {total}",
+        "link_byName": "Twoje konto {platform} to {name}: twoja nazwa użytkownika tutaj to twoja nazwa w grze.",
+        "link_noCodes": "Konta są tu łączone po nazwie, więc kod nie jest potrzebny."
       },
       "admin": {
         "module_game-connect_name": "Game Connect",
@@ -1796,7 +1834,9 @@
         "l_unlinkedPartly": "{deleted} de {total} desvinculadas",
         "srv_pick": "Escolher este servidor",
         "srv_revokeManyConfirm": "{count} servidores não podem mais se conectar. As entregas na fila deles ficam onde estão.",
-        "srv_revokedPartly": "{deleted} de {total} revogados"
+        "srv_revokedPartly": "{deleted} de {total} revogados",
+        "link_byName": "Sua conta de {platform} é {name}: seu nome de usuário aqui é seu nome no jogo.",
+        "link_noCodes": "Aqui as contas são vinculadas pelo nome, então não é preciso nenhum código."
       },
       "admin": {
         "module_game-connect_name": "Game Connect",
@@ -1941,7 +1981,9 @@
         "l_unlinkedPartly": "Отвязано {deleted} из {total}",
         "srv_pick": "Выбрать этот сервер",
         "srv_revokeManyConfirm": "Серверов, которые больше не могут подключиться: {count}. Их доставки в очереди остаются на месте.",
-        "srv_revokedPartly": "Отозвано {deleted} из {total}"
+        "srv_revokedPartly": "Отозвано {deleted} из {total}",
+        "link_byName": "Ваш аккаунт {platform}: {name}. Ваше имя пользователя здесь совпадает с именем в игре.",
+        "link_noCodes": "Здесь аккаунты связываются по имени, поэтому код не нужен."
       },
       "admin": {
         "module_game-connect_name": "Game Connect",
@@ -2086,7 +2128,9 @@
         "l_unlinkedPartly": "已解除 {deleted} / {total} 个绑定",
         "srv_pick": "选择此服务器",
         "srv_revokeManyConfirm": "{count} 个服务器将无法再连接。它们在队列中的发货保持不变。",
-        "srv_revokedPartly": "已吊销 {deleted} / {total} 个"
+        "srv_revokedPartly": "已吊销 {deleted} / {total} 个",
+        "link_byName": "你的 {platform} 账户是 {name}：你在本站的用户名就是你的游戏名。",
+        "link_noCodes": "本站按名称关联账户，因此无需绑定码。"
       },
       "admin": {
         "module_game-connect_name": "Game Connect",

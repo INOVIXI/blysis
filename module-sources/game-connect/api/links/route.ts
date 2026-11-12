@@ -1,10 +1,15 @@
 /**
  * GET    /api/v1/game-connect/links - the game accounts the signed-in member linked.
  * DELETE /api/v1/game-connect/links?id= - let one go.
+ *
+ * GET also names the players the member is by username (`byName`), which have
+ * no link to let go, and whether a code is left to make (`codes`).
  */
 import { NextRequest, NextResponse } from "next/server";
 import { prisma, rateLimitForRole } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
+import { accountsByName, codesOpen } from "../../lib/names";
+import { nameSettings } from "../../lib/settings";
 
 export async function GET() {
     const session = await auth();
@@ -16,7 +21,13 @@ export async function GET() {
         select: { id: true, platform: true, name: true, linkedAt: true },
         take: 20,
     });
-    return NextResponse.json({ links }, { headers: { "Cache-Control": "private, no-store" } });
+    const settings = await nameSettings();
+    const [named, codes] = await Promise.all([
+        accountsByName(settings, userId, new Set(links.map((link) => link.platform))),
+        codesOpen(settings),
+    ]);
+    const byName = named.map((account) => ({ platform: account.platform, name: account.name }));
+    return NextResponse.json({ links, byName, codes }, { headers: { "Cache-Control": "private, no-store" } });
 }
 
 export async function DELETE(request: NextRequest) {

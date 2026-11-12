@@ -7,6 +7,9 @@
  *
  * Each event goes only to the servers of that account's game. Sent to every
  * server, a server of one game would read the recipient's account in another.
+ *
+ * On a game where a username is a player name, a member with no link there
+ * is told as the player with their name.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
@@ -17,10 +20,20 @@ const links = [
     { platform: "minecraft", externalId: "uuid-ada", name: "AdaInGame", userId: "u_ada" },
 ];
 const emitted: Array<{ type: string; data: Record<string, unknown>; server: string | null }> = [];
+const settings: Record<string, unknown> = {};
+
+type LinkWhere = { userId?: { in: string[] }; platform?: string; name?: { equals: string } };
 
 vi.mock("@/core/sdk/server", () => ({
     prisma: {
-        user: { findUnique: vi.fn(async ({ where }: { where: { id: string } }) => users[where.id] ?? null) },
+        user: {
+            findUnique: vi.fn(async ({ where }: { where: { id: string } }) => users[where.id] ?? null),
+            findMany: vi.fn(async ({ where }: { where: { username: { equals: string } } }) =>
+                Object.entries(users)
+                    .filter(([, user]) => user.username.toLowerCase() === where.username.equals.toLowerCase())
+                    .map(([id]) => ({ id })),
+            ),
+        },
         gameConnectServer: {
             findMany: vi.fn(async () => [
                 { gameServerId: "gs_survival", game: "Minecraft" },
@@ -29,11 +42,16 @@ vi.mock("@/core/sdk/server", () => ({
             ]),
         },
         gameConnectLink: {
-            findMany: vi.fn(async ({ where }: { where: { userId: { in: string[] } } }) =>
-                links.filter((link) => where.userId.in.includes(link.userId)),
+            findMany: vi.fn(async ({ where }: { where: LinkWhere }) =>
+                links.filter((link) =>
+                    where.userId
+                        ? where.userId.in.includes(link.userId)
+                        : link.platform === where.platform && link.name.toLowerCase() === where.name?.equals.toLowerCase(),
+                ),
             ),
         },
     },
+    moduleSettings: vi.fn(async () => ({ ...settings })),
     log: { warn: vi.fn(), error: vi.fn(), info: vi.fn(), debug: vi.fn() },
 }));
 vi.mock("@/modules/game-connect/lib/events", () => ({
@@ -43,9 +61,12 @@ vi.mock("@/modules/game-connect/lib/events", () => ({
 }));
 
 const { default: onGiftSent } = await import("@/modules/game-connect/hooks/on-gift-sent");
+const { offlineId } = await import("@/modules/game-connect/lib/names");
 
 beforeEach(() => {
     emitted.length = 0;
+    delete users.u_cy;
+    for (const key of Object.keys(settings)) delete settings[key];
 });
 
 describe("a gift sent", () => {
@@ -75,6 +96,24 @@ describe("a gift sent", () => {
         users.u_cy = { username: "cy" };
         await onGiftSent({ senderId: "u_bo", recipientId: "u_cy", productName: "Hero rank", quantity: 1 });
         expect(emitted).toHaveLength(0);
+    });
+
+    it("is told to a member by their username on a game that links by name, with the id the name derives", async () => {
+        users.u_cy = { username: "cy" };
+        settings.usernamePlayerGames = "minecraft";
+        settings.offlineModeIds = true;
+        await onGiftSent({ senderId: "u_ada", recipientId: "u_cy", productName: "Hero rank", quantity: 1 });
+
+        expect(emitted.map((event) => event.server).sort()).toEqual(["gs_lobby", "gs_survival"]);
+        expect(emitted[0].data).toMatchObject({ player: { id: offlineId("cy"), name: "cy" }, platform: "minecraft", from: "AdaInGame" });
+    });
+
+    it("names the player by name alone when the site derives no id", async () => {
+        users.u_cy = { username: "cy" };
+        settings.usernamePlayerGames = "minecraft";
+        await onGiftSent({ senderId: "u_ada", recipientId: "u_cy", productName: "Hero rank", quantity: 1 });
+
+        expect(emitted[0].data).toMatchObject({ player: { id: null, name: "cy" } });
     });
 
     it("says nothing for a payload it cannot read", async () => {

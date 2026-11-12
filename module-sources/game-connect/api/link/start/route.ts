@@ -3,15 +3,23 @@
  *
  * @provider-callback: the caller is a game server, authenticated by its token
  * and its process in `serverPost`.
+ *
+ * Refused on a game where a username is a player name: there is nothing a
+ * code could add.
  */
 import { prisma, rateLimitStrict, resolveAppUrl } from "@/core/sdk/server";
 import { refuse } from "../../../lib/auth";
 import { CODE_TTL_MS, generateCode, hashCode } from "../../../lib/links";
+import { namesPlayers } from "../../../lib/names";
 import { memberOf, platformOf } from "../../../lib/players";
 import { playerRequest } from "../../../lib/schemas";
 import { ok, serverPost } from "../../../lib/server-route";
+import { nameSettings } from "../../../lib/settings";
 
 export const POST = serverPost(playerRequest, async (server, body) => {
+    if (namesPlayers(await nameSettings(), platformOf(server))) {
+        return refuse(409, "linked_by_name", "Players on this game are linked by name: the member whose username is the player name is that player.");
+    }
     const limited = await rateLimitStrict(`gc-link-start:${server.id}:${body.player.id}`, { maxRequests: 5, windowMs: 10 * 60_000 });
     if (!limited.success) return refuse(429, "rate_limited", "Too many codes asked for. Wait a few minutes.");
     if (await memberOf(server, body.player)) return refuse(409, "already_linked", "This account is already linked.");

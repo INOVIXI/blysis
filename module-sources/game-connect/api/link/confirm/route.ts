@@ -8,6 +8,9 @@
  * from being one click: the member is shown a stranger's name first.
  *
  * The server the player asked from is told, so it can say so in game.
+ *
+ * A code made in game before its game came to link players by username is
+ * refused, and not spent: turned back off, the code works again.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -15,11 +18,17 @@ import { rateLimitStrict, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { bind, peek, spend } from "../../../lib/links";
 import { emitEvent } from "../../../lib/events";
+import { namesPlayers } from "../../../lib/names";
+import { nameSettings } from "../../../lib/settings";
 
 const confirmSchema = z.object({ code: z.string().min(4).max(32), account: z.string().min(1).max(64) });
 
 function wrongCode(): NextResponse {
     return NextResponse.json({ error: "That code is wrong, used or expired.", code: "code_invalid" }, { status: 409 });
+}
+
+function linkedByName(): NextResponse {
+    return NextResponse.json({ error: "Players on that game are linked by name", code: "linked_by_name" }, { status: 409 });
 }
 
 async function signedIn(kind: string): Promise<string | NextResponse> {
@@ -36,6 +45,7 @@ export async function GET(request: NextRequest) {
     if (userId instanceof NextResponse) return userId;
     const code = await peek(request.nextUrl.searchParams.get("code") ?? "", "game");
     if (!code?.externalId || !code.name) return wrongCode();
+    if (namesPlayers(await nameSettings(), code.platform)) return linkedByName();
     return NextResponse.json({ platform: code.platform, name: code.name, expiresAt: code.expiresAt.toISOString() });
 }
 
@@ -51,6 +61,7 @@ export async function POST(request: NextRequest) {
     // Checked before the code is spent, so a page that showed nothing does not
     // burn the code of the player who made it.
     const shown = await peek(parsed.data.code, "game");
+    if (shown && namesPlayers(await nameSettings(), shown.platform)) return linkedByName();
     if (!shown?.name || shown.name.toLowerCase() !== parsed.data.account.trim().toLowerCase()) {
         return NextResponse.json({ error: "Confirm the account the code is for", code: "account_mismatch" }, { status: 409 });
     }
