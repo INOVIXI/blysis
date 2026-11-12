@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-12",
-  "updatedAt": "2026-11-12T10:12:16Z",
+  "updatedAt": "2026-11-12T13:52:18Z",
   "modules": [
     {
       "id": "announcements",
@@ -5950,13 +5950,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.52.1",
+      "version": "2.52.2",
       "coreVersion": "^5.30.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-11-12T10:12:16Z",
+      "updatedAt": "2026-11-12T13:52:18Z",
       "screenshots": [],
       "tags": [
         "commerce"
