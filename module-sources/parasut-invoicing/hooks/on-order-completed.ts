@@ -19,6 +19,7 @@ import type { InvoiceStatus } from "../lib/invoice-state";
 import { contactPayload, invoicePayload } from "../lib/invoice-payload";
 import { createRecord, isConfigured, ProviderError, withProvider } from "../lib/client";
 import { sendLegalDocument } from "../lib/send-document";
+import { invoiceRate, recordedTax, sendsByItself } from "../lib/recorded-tax";
 
 /**
  * The shop's tax rate, read where the store keeps it.
@@ -57,6 +58,9 @@ const onOrderCompleted: HookHandlerFor<"store.order.completed", "action"> = asyn
     // used to be read back out of the shop's own table here, which is a
     // module reaching into another module's data for what it was handed.
     const order = payload;
+    // What this sale was charged, when the store recorded it: a sale abroad
+    // may carry another country's rate or none at all.
+    const charged = recordedTax(order.metadata);
 
     const existing = await prisma.issuedInvoice.findUnique({ where: { orderId: order.id } });
     const decision = whatToDoWith(
@@ -107,7 +111,7 @@ const onOrderCompleted: HookHandlerFor<"store.order.completed", "action"> = asyn
                     order: {
                         orderNumber: order.orderNumber,
                         currency: order.currency ?? "",
-                        taxRate: await taxRate(),
+                        taxRate: invoiceRate(charged, await taxRate()),
                         lines: order.items.map((item) => ({
                             name: item.name,
                             quantity: item.quantity,
@@ -144,7 +148,7 @@ const onOrderCompleted: HookHandlerFor<"store.order.completed", "action"> = asyn
         // itself. Off by default: a document in front of the tax authority is
         // cancelled by a procedure rather than a delete, so an operator turns
         // this on knowing what it does, or presses the button per sale.
-        if (await sendsDocumentAutomatically()) {
+        if (sendsByItself(charged) && (await sendsDocumentAutomatically())) {
             await sendLegalDocument({
                 orderId: order.id,
                 salesInvoiceId: remote.id,

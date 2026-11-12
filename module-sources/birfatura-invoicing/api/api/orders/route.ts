@@ -116,6 +116,7 @@ export async function POST(request: NextRequest) {
                     email: order.buyerEmail ?? null,
                     paymentMethod: order.paymentMethod ?? null,
                     billingDetails: order.billingDetails,
+                    metadata: order.metadata,
                     items: order.items,
                 },
                 tax,
