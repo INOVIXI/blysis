@@ -10,8 +10,15 @@ import { login } from './helpers/login';
  * carries the bar's own translation key, so a German reader, for whom the
  * operator wrote nothing, still reads the bar's German word. The spec puts
  * the bar back as it found it.
+ *
+ * The navigation is found by its name, not as the bar across the top:
+ * Vanguard draws it down the left edge. The restore carries the origin, as
+ * every write from `page.request` must: without it the CSRF check refused it,
+ * and each run left one more label translated, until the next spec found
+ * three links named the same.
  */
-test('a translated navbar label reaches readers of that language only', async ({ page }) => {
+test('a translated navbar label reaches readers of that language only', async ({ page, baseURL }) => {
+    const origin = new URL(baseURL!).origin;
     await login(page);
     const before = await page.request.get('/api/v1/settings').then((r) => r.json());
 
@@ -22,15 +29,17 @@ test('a translated navbar label reaches readers of that language only', async ({
         await page.getByRole('button', { name: 'Save Navbar' }).click();
         await expect(page.getByText('Navbar saved')).toBeVisible();
 
-        const nav = page.locator('header nav').first();
         await page.goto('/tr');
-        await expect(nav).toContainText('Başlangıç noktası');
+        await expect(page.getByRole('navigation', { name: 'Ana menü' }).first()).toContainText('Başlangıç noktası');
         await page.goto('/de');
-        await expect(nav).toContainText('Startseite');
-        await expect(nav).not.toContainText('Başlangıç noktası');
+        const german = page.getByRole('navigation', { name: 'Hauptnavigation' }).first();
+        await expect(german).toContainText('Startseite');
+        await expect(german).not.toContainText('Başlangıç noktası');
     } finally {
-        await page.request.patch('/api/v1/settings', {
+        const restored = await page.request.patch('/api/v1/settings', {
+            headers: { origin },
             data: { navbar_links: before.settings?.navbar_links ?? null },
         });
+        expect(restored.ok(), 'the navbar is put back as it was').toBe(true);
     }
 });
