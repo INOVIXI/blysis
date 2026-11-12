@@ -39,6 +39,9 @@ function sanitizeReference(input: string): string {
     return input.replace(/[^a-zA-Z0-9-]/g, "");
 }
 
+/** The placeholders the store fills itself, which no variable may take. */
+const STORE_PLACEHOLDERS = new Set(["player", "product", "quantity", "order", "delivery", "unit"]);
+
 export interface DeliveryCommand {
     command: string;
     /** Which server to run it on. Null means the install's default server. */
@@ -103,11 +106,13 @@ export async function runDeliveryCommand(
  * Executes a product's delivery commands in order, stopping at the first
  * failure so a half-delivered purchase is visible rather than silently partial.
  *
- * Commands support `{player}`, `{product}`, `{quantity}`, and any custom
- * variable the product defines, then `{order}`, `{delivery}` and `{unit}`.
- * Those three come last so a product that already named a variable `unit`
- * keeps it, and a buyer's answer cannot carry them: braces never survive
- * `sanitizeRconArg`.
+ * Commands support `{player}`, `{product}`, `{quantity}`, `{order}`,
+ * `{delivery}` and `{unit}`, filled by the store, and any custom variable the
+ * product defines. The variables are the buyer's answers, sent with the
+ * checkout under names the buyer chooses, so none of them may stand in for
+ * one of the store's own (`STORE_PLACEHOLDERS`): `{order}` is what a game
+ * plugin pays once against. A buyer's answer cannot carry a placeholder
+ * either: braces never survive `sanitizeRconArg`.
  *
  * `{delivery}` is `<order>-<line>-<unit>` and is the same every time the same
  * unit of the same line is delivered, which is what lets a game plugin refuse
@@ -164,7 +169,10 @@ export async function deliverProduct(params: {
 
         if (params.variables) {
             for (const [key, value] of Object.entries(params.variables)) {
-                command = command.replace(new RegExp(`\\{${key}\\}`, "g"), sanitizeRconArg(value));
+                if (STORE_PLACEHOLDERS.has(key)) continue;
+                // Split rather than a pattern: the name is the buyer's, and a
+                // name like "(" made the pattern throw and the delivery fail.
+                command = command.split(`{${key}}`).join(sanitizeRconArg(value));
             }
         }
 
