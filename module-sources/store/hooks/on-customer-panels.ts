@@ -13,12 +13,14 @@
  * public catalogue carries.
  */
 import type { HookHandlerFor } from "@/core/sdk";
-import { moduleTranslator, prisma } from "@/core/sdk/server";
+import { formatSiteCurrency, moduleTranslator, prisma, siteCurrency } from "@/core/sdk/server";
+import { totalsIn } from "../lib/money-totals";
 
 const onCustomerPanels: HookHandlerFor<"admin.customer.panels", "filter"> = async (panels, context) => {
     const [orders, paid, balance] = await Promise.all([
         prisma.order.count({ where: { userId: context.userId } }),
-        prisma.order.aggregate({
+        prisma.order.groupBy({
+            by: ["currency"],
             where: { userId: context.userId, status: "COMPLETED" },
             _sum: { total: true },
         }),
@@ -40,6 +42,11 @@ const onCustomerPanels: HookHandlerFor<"admin.customer.panels", "filter"> = asyn
      */
     const t = await moduleTranslator("store", context.locale);
 
+    // Each currency the member paid in, converted before it is added. See
+    // `lib/money-totals.ts`.
+    const base = await siteCurrency();
+    const spent = await totalsIn(base, paid.map((row) => ({ key: "spent", currency: row.currency, amount: Number(row._sum.total ?? 0) })));
+
     return [
         ...panels,
         {
@@ -47,7 +54,7 @@ const onCustomerPanels: HookHandlerFor<"admin.customer.panels", "filter"> = asyn
             label: t("adm_customerPanel"),
             rows: [
                 { label: t("adm_customerOrders"), value: String(orders) },
-                { label: t("adm_customerSpent"), value: Number(paid._sum.total ?? 0).toFixed(2) },
+                { label: t("adm_customerSpent"), value: await formatSiteCurrency(spent.get("spent") ?? 0, context.locale) },
                 { label: t("adm_customerCredits"), value: Number(balance?.creditBalance ?? 0).toFixed(2) },
             ],
             href: "/admin/store/orders",

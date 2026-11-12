@@ -42,3 +42,27 @@ export function cashbackFor(order: EarningOrder, percent: number): CashbackDecis
 
     return { award: earned };
 }
+
+/** An order's total and the currency it was paid in. */
+export interface PaidSale {
+    total: unknown;
+    currency: string | null | undefined;
+}
+
+/**
+ * The sale in the shop's base currency, which is what credits are priced in.
+ *
+ * `rate` turns one unit of the order's currency into the base; the caller asks
+ * for it. An order paid in lira on a shop priced in dollars earned credits as
+ * if every lira were a dollar until this was asked. With no rate the answer is
+ * null and nothing is paid, for the reason the rest of this file gives:
+ * guessing in the earning direction is the expensive way to be wrong.
+ */
+export function saleInBase(sale: PaidSale, base: string, rate: number | null): number | null {
+    const total = Number(sale.total);
+    if (!Number.isFinite(total)) return null;
+    const paidIn = (sale.currency ?? "").trim().toUpperCase();
+    if (paidIn === "" || paidIn === base.trim().toUpperCase()) return total;
+    if (rate === null || !Number.isFinite(rate) || rate <= 0) return null;
+    return total * rate;
+}

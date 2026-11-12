@@ -43,6 +43,10 @@
   "dependencies": [],
   "hooksEmitted": [
     {
+      "hook": "currency.rate",
+      "type": "filter"
+    },
+    {
       "hook": "credits.credit.added",
       "type": "action"
     },
