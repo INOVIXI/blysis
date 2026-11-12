@@ -78,8 +78,10 @@ const db = {
             return { count: 1 };
         },
     },
-    chestItem: { createMany: async () => ({ count: 1 }) },
-    ownedProduct: { createMany: async () => ({ count: 1 }) },
+    // A refund also takes back what the order granted; these orders granted
+    // nothing the counting here is about. `fulfilment.test.ts` covers that.
+    chestItem: { createMany: async () => ({ count: 1 }), deleteMany: async () => ({ count: 0 }), findMany: async () => [] },
+    ownedProduct: { createMany: async () => ({ count: 1 }), findMany: async () => [] },
     payment: {
         create: async () => ({}),
         findFirst: async () => payment,
@@ -104,7 +106,10 @@ vi.mock("@/core/sdk/server", () => ({
 }));
 vi.mock("@/modules/store/lib/order-email", () => ({ sendOrderConfirmationEmail: async () => undefined }));
 vi.mock("@/modules/store/lib/delivery", () => ({ deliverProduct: async () => ({}) }));
-vi.mock("@/modules/store/lib/order-events", () => ({ announceOrderCompleted: async () => undefined }));
+vi.mock("@/modules/store/lib/order-events", () => ({
+    announceOrderCompleted: async () => undefined,
+    announceOrderRefunded: async () => undefined,
+}));
 
 const { settleOrder, refundPayment } = await import("@/modules/store/lib/fulfilment");
 
