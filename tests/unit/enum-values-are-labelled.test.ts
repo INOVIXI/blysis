@@ -127,10 +127,14 @@ describe("what a reader sees is a label, not a column", () => {
         expectKeys("punishments", "punishments", ["ban", "mute", "kick", "warning", "console"]);
         expectKeys("referral", "referral", ["pending", "completed", "rewarded", "creditsUnit"]);
         expectKeys("blog", "blog", ["adm_draft", "adm_published", "adm_scheduled", "adm_archived"]);
-        // Three states now, not one word for one of them. `new` had a name
-        // and `read` and `handled` were drawn as the column, on a screen that
-        // could not change any of the three anyway.
-        expectKeys("custom-forms", "customForms", ["adm_state_new", "adm_state_read", "adm_state_handled"]);
+        // Every state has a name, not one word for one of them. `new` had a
+        // name and `read` and `handled` were drawn as the column, on a screen
+        // that could not change any of the three anyway. The member reads
+        // the same states through `status_*`, which a public page receives.
+        expectKeys("custom-forms", "customForms", [
+            "adm_state_new", "adm_state_read", "adm_state_handled", "adm_state_approved", "adm_state_rejected",
+            "status_pending", "status_handled", "status_approved", "status_rejected",
+        ]);
 
         for (const locale of ["en", "tr"]) {
             const core = JSON.parse(fs.readFileSync(path.join(ROOT, "messages-core", `${locale}.json`), "utf8"));

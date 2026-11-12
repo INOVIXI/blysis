@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateSlug } from "@/core/sdk";
 import { isAdmin, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
-import { formCreateSchema } from "../lib/validations";
+import { formCreateSchema, limitWithoutSignIn } from "../lib/validations";
 
 /**
  * GET /api/v1/forms - the forms still taking answers, and the panel's list.
@@ -42,11 +42,14 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid payload" }, { status: 400 });
     }
-    const { title, description, fields } = parsed.data;
+    const { title, description, fields, requireSignIn = false, submissionLimit = null } = parsed.data;
+    if (limitWithoutSignIn(requireSignIn, submissionLimit)) {
+        return NextResponse.json({ error: "A limit needs sign-in", code: "limit_needs_sign_in" }, { status: 400 });
+    }
 
     const slug = generateSlug(title);
     const form = await prisma.customForm.create({
-        data: { title, slug, description: description || null, fields },
+        data: { title, slug, description: description || null, fields, requireSignIn, submissionLimit },
     });
 
     // Fire hook for cross-module reactions
