@@ -8,7 +8,8 @@ import { MemberLink, useRelativeTime } from "@/core/sdk/ui";
 interface RecentPurchase {
     username: string;
     avatar: string | null;
-    product: string;
+    /** Null for an order with no line to name. */
+    product: string | null;
     time: string;
 }
 
@@ -38,7 +39,7 @@ export function RecentPurchasesWidget() {
                         <MemberLink
                             username={purchase.username}
                             avatar={purchase.avatar}
-                            subtitle={purchase.product}
+                            subtitle={purchase.product ?? undefined}
                             className="flex-1"
                             nameClassName="text-sm"
                         />
