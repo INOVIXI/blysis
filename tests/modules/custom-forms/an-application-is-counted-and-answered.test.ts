@@ -52,8 +52,13 @@ const prisma = {
 };
 prisma.$transaction = fakeTransaction(prisma, [forms.table, submissions.table]);
 
-vi.mock("@/core/sdk/server", () => ({
+vi.mock("@/core/sdk/server", async () => ({
     prisma,
+    // No translations are seeded here: each record reads as written.
+    translateContent: async (_db: unknown, _kind: unknown, rows: unknown[]) => rows,
+    attachContentTranslations: async (_db: unknown, _kind: unknown, rows: object[]) => rows.map((row) => ({ ...row, translations: {} })),
+    saveContentTranslations: async () => undefined,
+    contentTranslationsInput: (await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")).contentTranslationsInput,
     isAdmin: async (id: string) => admins.has(id),
     readJsonBody: async (request: Request) => request.json(),
     rateLimitForRoleAsync: async () => true,

@@ -26,9 +26,16 @@ const findMany = vi.fn(async (args: { select: { items?: { select?: Record<string
     }));
 });
 
+// The leaderboards beside the list add each order in its own currency; they
+// have nothing to add here.
 vi.mock("@/core/sdk/server", () => ({
     isModuleEnabled: vi.fn(async () => true),
-    prisma: { order: { findMany } },
+    siteCurrency: vi.fn(async () => "USD"),
+    prisma: {
+        order: { findMany, groupBy: vi.fn(async () => []) },
+        creditTopUp: { groupBy: vi.fn(async () => []) },
+        user: { findMany: vi.fn(async () => []) },
+    },
 }));
 
 const { GET } = await import("@/modules/store/api/widget-stats/route");

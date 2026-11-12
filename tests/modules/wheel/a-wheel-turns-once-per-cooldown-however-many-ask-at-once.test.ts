@@ -104,6 +104,8 @@ const db = {
 
 vi.mock("@/core/sdk/server", () => ({
     prisma: db,
+    // No translations are seeded here: each record reads as written.
+    translateContent: async (_db: unknown, _kind: unknown, rows: unknown[]) => rows,
     rateLimitForRoleAsync: vi.fn(async () => true),
 }));
 vi.mock("@/core/sdk/auth", () => ({
