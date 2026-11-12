@@ -12,6 +12,15 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.35.0 - a member's face can come from a picture service. A module
+ * declares `avatarProviders` in its manifest, each an https address with
+ * `{name}` and `{size}` whose host is in its `csp["img-src"]`; the operator
+ * picks one beside the member picture setting, and `MemberAvatar` draws a
+ * member with no picture of their own, or every member while member pictures
+ * are off, from it by username, falling back to initials when it does not
+ * load. `MemberAvatar` is now a client component; its props are unchanged.
+ * Additive.
+ *
  * 5.34.0 - a module can show a member the sign-in methods they connected.
  * `signInMethodsOf` joins `@/core/sdk/server`, the methods without a token
  * column; `ProviderMark` and `providerLabel` join `@/core/sdk/ui` for a
@@ -20,7 +29,7 @@
  * core cannot answer a module's hook, so a module that lists a member's
  * accounts asks instead. Additive.
  *
- * 5.33.0 -a site can choose the currency a new visitor reads. `useSiteCurrency`
+ * 5.33.0 - a site can choose the currency a new visitor reads. `useSiteCurrency`
  * gains `setDefaultDisplay`, held for the page and never stored, which a
  * visitor's own `setDisplay` choice overrides, and `chosen`, which says
  * whether what is shown is that choice. `setDisplay(null)` clears the choice,
@@ -742,4 +751,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.34.0";
+export const CORE_API_VERSION = "5.35.0";

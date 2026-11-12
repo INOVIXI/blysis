@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, LoadFailed } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, LoadFailed, MemberAvatar } from "@/core/sdk/ui";
 import { Loader2, Users, UserPlus, Coins, Clock, Save } from "lucide-react";
 import { toast } from "sonner";
 import { AdminPageHeader } from "@/core/sdk/admin";
@@ -167,13 +167,7 @@ export default function AdminReferralPage() {
                                 {stats.topReferrers.map((referrer, index) => (
                                     <div key={index} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50">
                                         <span className="text-sm font-bold text-muted-foreground w-6">#{index + 1}</span>
-                                        <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
-                                            {referrer.avatar ? (
-                                                <img src={referrer.avatar} alt="" className="w-full h-full rounded-full object-cover" />
-                                            ) : (
-                                                <UserPlus className="w-4 h-4 text-muted-foreground" />
-                                            )}
-                                        </div>
+                                        <MemberAvatar name={referrer.username} src={referrer.avatar} size={32} />
                                         <div className="flex-1">
                                             <p className="text-sm font-medium">{referrer.username}</p>
                                             <p className="text-xs text-muted-foreground">

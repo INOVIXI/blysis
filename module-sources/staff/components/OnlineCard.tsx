@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Users } from "lucide-react";
 import { sharedJson } from "@/core/sdk";
-import { LoadFailed, Waiting, useBlockText, type BlockProps } from "@/core/sdk/ui";
+import { LoadFailed, MemberAvatar, Waiting, useBlockText, type BlockProps } from "@/core/sdk/ui";
 
 interface StaffMember {
     id: string;
@@ -68,17 +68,19 @@ export function OnlineCard({ settings }: BlockProps) {
                 <ul className="flex flex-col gap-2">
                     {members.slice(0, SHOWN).map((m) => {
                         const name = m.user?.username || m.name;
-                        const avatar = m.avatar || m.user?.avatar;
+                        // The picture an operator set for this entry is theirs to
+                        // show; a member's own face follows the site's rules.
+                        const avatar = m.avatar;
                         return (
                             <li key={m.id} data-staff-member className="flex items-center gap-3 rounded-md bg-muted/50 px-2.5 py-2">
-                                <span className="w-8 h-8 shrink-0 rounded overflow-hidden bg-primary/15 text-primary flex items-center justify-center text-sm font-bold" aria-hidden="true">
-                                    {avatar ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
+                                {avatar ? (
+                                    <span className="w-8 h-8 shrink-0 rounded overflow-hidden" aria-hidden="true">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img src={avatar} alt="" className="w-full h-full object-cover" />
-                                    ) : (
-                                        name.slice(0, 1).toUpperCase()
-                                    )}
-                                </span>
+                                    </span>
+                                ) : (
+                                    <MemberAvatar name={name} src={m.user?.avatar} size={32} className="rounded" />
+                                )}
                                 <span className="min-w-0">
                                     <span className="block truncate font-semibold text-foreground">{name}</span>
                                     <span data-staff-role className="block truncate text-xs font-semibold text-muted-foreground">{m.role}</span>

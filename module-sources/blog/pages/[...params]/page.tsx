@@ -1,5 +1,5 @@
 import { formatDate } from "@/core/sdk";
-import { RichContent, buttonClassName } from "@/core/sdk/ui";
+import { MemberAvatar, RichContent, buttonClassName } from "@/core/sdk/ui";
 import { ArrangedPage } from "@/core/sdk/page";
 import { buildArticleJsonLd, moduleSettings, prisma, resolveAppUrl } from "@/core/sdk/server";
 import { Link } from "@/core/sdk/navigation";
@@ -176,13 +176,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                                     {/* Author (may be null when account was deleted) */}
                                     {article.author && (
                                         <div className="flex items-center gap-3 mb-8 pb-8 border-b border-border">
-                                            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground font-bold">
-                                                {article.author.avatar ? (
-                                                    <Image src={article.author.avatar} alt={article.author.username} width={40} height={40} className="w-full h-full rounded-full object-cover" />
-                                                ) : (
-                                                    article.author.username.charAt(0).toUpperCase()
-                                                )}
-                                            </div>
+                                            <MemberAvatar name={article.author.username} src={article.author.avatar} size={40} />
                                             <div>
                                                 <p className="font-medium text-foreground">{article.author.username}</p>
                                                 <p className="text-sm text-muted-foreground">{t("author")}</p>

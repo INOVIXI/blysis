@@ -8,7 +8,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { ArrangedPage } from "@/core/sdk/page";
-import { Card, CardContent } from "@/core/sdk/ui";
+import { Card, CardContent, MemberAvatar } from "@/core/sdk/ui";
 import { readStaff } from "../../lib/read-staff";
 
 export default async function StaffPage() {
@@ -20,17 +20,18 @@ export default async function StaffPage() {
     ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6">
             {members.map((member) => {
-                const avatarUrl = member.avatar || member.user?.avatar;
                 return (
                     <Card key={member.id} className="text-center hover:shadow-md transition-shadow">
                         <CardContent className="p-6">
-                            <div className="w-20 h-20 rounded-full mx-auto mb-3 bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
-                                {avatarUrl ? (
-                                    <Image src={avatarUrl} alt={member.name} width={80} height={80} className="w-full h-full object-cover" />
-                                ) : (
-                                    member.name[0].toUpperCase()
-                                )}
-                            </div>
+                            {/* The picture an operator set for this entry is theirs to
+                                show; a member's own face follows the site's rules. */}
+                            {member.avatar ? (
+                                <div className="w-20 h-20 rounded-full mx-auto mb-3 overflow-hidden">
+                                    <Image src={member.avatar} alt={member.name} width={80} height={80} className="w-full h-full object-cover" />
+                                </div>
+                            ) : (
+                                <MemberAvatar name={member.user?.username || member.name} src={member.user?.avatar} size={80} className="mx-auto mb-3" />
+                            )}
                             <h2 className="font-bold text-foreground">{member.name}</h2>
                             <p className="text-sm text-primary font-medium">{member.role}</p>
                         </CardContent>

@@ -14,6 +14,15 @@ import { NextIntlClientProvider } from "next-intl";
 import fs from "node:fs";
 import path from "node:path";
 
+// The strip draws each face with the SDK's `MemberAvatar`, and the UI barrel
+// it comes from brings the locale-aware navigation along.
+vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams() }));
+vi.mock("@/core/lib/i18n/navigation", () => ({
+    Link: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
+    usePathname: () => "/",
+    useRouter: () => ({ push: () => {} }),
+}));
+
 const MANIFEST = JSON.parse(fs.readFileSync(path.join(process.cwd(), "module-sources/staff/module.json"), "utf8"));
 const { default: OnlineStaff } = await import("@/modules/staff/slots/OnlineStaff");
 

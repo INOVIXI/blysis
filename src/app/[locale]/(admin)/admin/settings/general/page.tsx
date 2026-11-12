@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
@@ -16,6 +16,8 @@ import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { useSettingsLoad } from "@/core/hooks/useSettingsLoad";
 import { MEMBER_AVATAR_UPLOADS_KEY } from "@/core/lib/member-uploads";
+import { MEMBER_AVATAR_PROVIDER_KEY } from "@/core/lib/member-face";
+import { readJson } from "@/core/lib/read-json";
 import {
     MEMBER_USERNAME_CHANGES_KEY,
     MEMBER_EMAIL_CHANGES_KEY,
@@ -27,7 +29,11 @@ import { SIGN_IN_METHOD_SIGN_UPS_KEY } from "@/core/lib/sign-in-methods-shared";
 interface FieldDef {
     key: string;
     labelKey: string;
-    type: "number" | "choice";
+    /**
+     * `avatarProvider` is a choice whose answers are the installed modules'
+     * picture services, which only the server knows; see `AvatarProviderOption`.
+     */
+    type: "number" | "choice" | "avatarProvider";
     defaultValue: string | number;
     descriptionKey?: string;
     /**
@@ -105,6 +111,13 @@ const AVATAR_CHOICES = [
 ] as const;
 
 
+/** A picture service as `/api/v1/admin/avatar-providers` lists it. */
+interface AvatarProviderOption {
+    id: string;
+    labelKey: string;
+    host: string;
+}
+
 interface SectionDef {
     titleKey: string;
     fields: FieldDef[];
@@ -124,6 +137,10 @@ const sections: SectionDef[] = [
         titleKey: "generalSettings_memberContent",
         fields: [
             { key: MEMBER_AVATAR_UPLOADS_KEY, labelKey: "generalSettings_memberAvatarUploads", type: "choice", defaultValue: "upload", choices: AVATAR_CHOICES, descriptionKey: "generalSettings_memberAvatarUploadsHint" },
+            // Beside the member picture setting because it answers the
+            // question that one leaves open: what a member with no picture,
+            // or every member when pictures are off, is drawn as.
+            { key: MEMBER_AVATAR_PROVIDER_KEY, labelKey: "generalSettings_memberAvatarProvider", type: "avatarProvider", defaultValue: "", descriptionKey: "generalSettings_memberAvatarProviderHint" },
         ],
     },
     {
@@ -173,6 +190,18 @@ export default function GeneralSettingsPage() {
     const t = useTranslations("admin");
     const [saving, setSaving] = useState(false);
     const [values, setValues] = useState<Record<string, string>>({});
+    const [avatarProviders, setAvatarProviders] = useState<AvatarProviderOption[]>([]);
+
+    // Not part of the settings read: a site with no provider installed still
+    // has a working form, and "None" is then the only answer offered.
+    useEffect(() => {
+        let active = true;
+        fetch("/api/v1/admin/avatar-providers")
+            .then((res) => readJson<{ providers?: AvatarProviderOption[] }>(res))
+            .then((data) => { if (active) setAvatarProviders(data.providers ?? []); })
+            .catch(() => {});
+        return () => { active = false; };
+    }, []);
 
     // Every field falls back to its default, so a failed read renders a form
     // full of defaults that saving would write over the real settings.
@@ -261,7 +290,26 @@ export default function GeneralSettingsPage() {
                                 {section.fields.map((field) => (
                                     <div key={field.key}>
                                         <Label htmlFor={field.key}>{t(field.labelKey)}</Label>
-                                        {field.type === "choice" ? (
+                                        {field.type === "avatarProvider" ? (
+                                            <NativeSelect
+                                                id={field.key}
+                                                value={values[field.key] as string}
+                                                onChange={(e) => setValue(field.key, e.target.value)}
+                                            >
+                                                <option value="">{t("generalSettings_avatarProviderNone")}</option>
+                                                {avatarProviders.map((provider) => (
+                                                    <option key={provider.id} value={provider.id}>
+                                                        {t.has(provider.labelKey) ? t(provider.labelKey) : provider.host}
+                                                    </option>
+                                                ))}
+                                                {/* A stored choice whose module is off or gone is
+                                                    still the value; shown by its id so saving the
+                                                    form does not silently replace it. */}
+                                                {values[field.key] && !avatarProviders.some((p) => p.id === values[field.key]) && (
+                                                    <option value={values[field.key]}>{values[field.key]}</option>
+                                                )}
+                                            </NativeSelect>
+                                        ) : field.type === "choice" ? (
                                             <NativeSelect
                                                 id={field.key}
                                                 value={values[field.key] as string}

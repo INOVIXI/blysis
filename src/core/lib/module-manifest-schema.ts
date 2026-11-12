@@ -843,6 +843,41 @@ const moderationProvider = z.object({
     handler: relativePath("handler"),
 });
 
+/**
+ * A picture service a member's face may be drawn from, by their name.
+ *
+ * Plain data and no handler: core builds the address itself, in the browser
+ * as well as on the server, so there is nothing of the module's to run. The
+ * address is https, its host is fixed (a token there would let a name pick
+ * the server), and it may carry only `{name}` and `{size}`. `{name}` is
+ * required, because a pattern without it draws one face for everybody; any
+ * other token is refused, because core has nothing to fill it with and the
+ * service would be asked for the literal braces.
+ *
+ * The host must also be in this manifest's `csp["img-src"]`, so what a site
+ * loads pictures from is declared where every other origin a module needs is.
+ */
+const AVATAR_PROVIDER_URL = /^https:\/\/[a-z0-9-]+(\.[a-z0-9-]+)+\/[A-Za-z0-9\-._~/?=&%{}]*$/;
+
+const avatarProvider = z
+    .object({
+        id: z.string().min(1).max(32).regex(SAFE_ID, "avatar provider id must be a lowercase slug"),
+        /** Resolved in the `admin` namespace of this module's `translations`. */
+        labelKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
+        url: z
+            .string()
+            .min(1)
+            .max(300)
+            .regex(AVATAR_PROVIDER_URL, "url must be an https address with a fixed host")
+            .refine((url) => url.includes("{name}"), "url must contain {name}")
+            .refine(
+                (url) => (url.match(/\{[^}]*\}/g) ?? []).every((token) => token === "{name}" || token === "{size}"),
+                "url may contain only {name} and {size}",
+            )
+            .refine((url) => !/[{}]/.test(url.replace(/\{(name|size)\}/g, "")), "url has an unmatched brace"),
+    })
+    .strict();
+
 type TranslationValue = string | { [key: string]: TranslationValue };
 const translationValue: z.ZodType<TranslationValue> = z.lazy(() =>
     z.union([z.string(), z.record(z.string(), translationValue)]),
@@ -1163,6 +1198,7 @@ export const moduleManifestSchema = z.object({
     seoRoutes: z.object({ handler: relativePath("handler") }).optional(),
     userDataExport: z.array(userDataExportEntry).max(50).optional(),
     moderationProviders: z.array(moderationProvider).max(20).optional(),
+    avatarProviders: z.array(avatarProvider).max(10).optional(),
     csp: cspContribution.optional(),
 }).strict().superRefine((m, ctx) => {
     // Every widget and section is also a block under its own id, unless a
@@ -1178,6 +1214,19 @@ export const moduleManifestSchema = z.object({
         if (seen.has(id)) ctx.addIssue({ code: "custom", path: ["blocks"], message: `"${id}" names two blocks, widgets or sections` });
         seen.add(id);
     }
+
+    const imageOrigins = new Set(m.csp?.["img-src"] ?? []);
+    const avatarIds = new Set<string>();
+    (m.avatarProviders ?? []).forEach((provider, p) => {
+        if (avatarIds.has(provider.id)) {
+            ctx.addIssue({ code: "custom", path: ["avatarProviders", p, "id"], message: `"${provider.id}" names two avatar providers` });
+        }
+        avatarIds.add(provider.id);
+        const origin = new URL(provider.url).origin;
+        if (!imageOrigins.has(origin)) {
+            ctx.addIssue({ code: "custom", path: ["avatarProviders", p, "url"], message: `declare ${origin} in csp["img-src"]` });
+        }
+    });
 
     const placeholderNames = new Set<string>();
     (m.placeholders ?? []).forEach((placeholder, p) => {
