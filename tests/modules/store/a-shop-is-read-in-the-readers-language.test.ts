@@ -39,7 +39,8 @@ const tables = {
     productCommand: fakeTable(),
     productVariable: fakeTable(),
     setting: fakeTable(),
-    order: { aggregate: async () => ({ _sum: { total: 0 } }) },
+    // The goal adds each currency apart and converts it (#124); nothing was paid here.
+    order: { aggregate: async () => ({ _sum: { total: 0 } }), groupBy: async () => [] },
     contentTranslation: fakeTable(() => ({ updatedAt: new Date() }), "id", [["owner", "entity", "recordId", "field", "locale"]]),
 };
 const db: Record<string, unknown> = { ...tables };
@@ -57,6 +58,7 @@ vi.mock("@/core/sdk/server", async () => {
         readJsonBody: async () => body.value,
         moduleSettings: async () => ({ lowStockAt: 0, enableUpgradeCredit: false }),
         siteTimeZone: async () => "UTC",
+        siteCurrency: async () => "USD",
         textContains: () => [],
         pageParams: () => ({ page: 1, limit: 12, skip: 0, take: 12 }),
     };

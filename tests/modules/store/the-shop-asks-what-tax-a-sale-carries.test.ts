@@ -93,7 +93,7 @@ vi.mock("@/core/sdk", async (importOriginal) => ({
 }));
 vi.mock("@/core/sdk/auth", () => ({ auth: async () => ({ user: { id: "buyer", role: "member" } }) }));
 vi.mock("@/modules/store/lib/upgrade-credit-server", () => ({
-    creditingPurchases: async () => [],
+    creditingPurchases: async () => new Set<string>(),
     ownedRungsOn: async () => [],
 }));
 vi.mock("@/modules/store/lib/order-events", () => ({
