@@ -140,7 +140,11 @@ export default function FormsPage() {
         fetch(`/api/v1/forms/${editingSlug}/allowances`)
             .then((res) => (res.ok ? res.json() : null))
             .then((data: Allowance | null) => { if (!cancelled) setAllowance(data); })
-            .catch(() => { if (!cancelled) setAllowance(null); });
+            .catch(() => {
+                if (cancelled) return;
+                setAllowance(null);
+                toast.error(t("adm_loadAllowanceFailed"));
+            });
         return () => { cancelled = true; };
     }, [editingSlug, t]);
 
