@@ -19,8 +19,8 @@ import { auth } from "@/core/sdk/auth";
 import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
 import { creditingPurchases } from "./upgrade-credit-server";
 import { PUBLIC_PRODUCT } from "./public-product";
-import { availabilityOf, effectivePrice } from "./availability";
-import { pricedForCampaign, runningCampaignEntries } from "./campaign-server";
+import { availabilityOf } from "./availability";
+import { offerPrice, runningCampaignEntries } from "./campaign-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "./availability-server";
 import { categoriesIn, productsIn, productsTranslatedAs } from "./store-text";
 
@@ -194,13 +194,13 @@ export async function readStoreProducts(options: {
     const ladder = visible.map((other) => ({
         id: other.id,
         categoryId: (other as unknown as { category: { id: string } | null }).category?.id ?? null,
-        price: pricedForCampaign(other.id, effectivePrice(rulesOf(other), now), campaignEntries).price,
+        price: offerPrice({ ...rulesOf(other), id: other.id }, campaignEntries, now).price,
     }));
 
     const annotated: ShelfProduct[] = visible.map((row) => {
         const rules = rulesOf(row);
         const state = availabilityOf({ ...rules, roleIds: [] }, { boughtByPerson: 0, soldInPeriod: 0 }, now, zone);
-        const priced = pricedForCampaign(row.id, effectivePrice(rules, now), campaignEntries);
+        const priced = offerPrice({ ...rules, id: row.id }, campaignEntries, now);
         const credit = upgradeCredit(
             {
                 id: row.id,

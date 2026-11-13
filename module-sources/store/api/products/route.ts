@@ -5,8 +5,8 @@ import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../lib/validations";
 import { availabilityData } from "../../lib/availability-input";
 import { PUBLIC_PRODUCT } from "../../lib/public-product";
-import { availabilityOf, effectivePrice } from "../../lib/availability";
-import { pricedForCampaign, runningCampaignEntries } from "../../lib/campaign-server";
+import { availabilityOf } from "../../lib/availability";
+import { offerPrice, runningCampaignEntries } from "../../lib/campaign-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "../../lib/availability-server";
 import { siteTimeZone } from "@/core/sdk/server";
 import { PRODUCT_FIELDS, PRODUCT_TEXT, localeOf, productsIn, productsTranslatedAs } from "../../lib/store-text";
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
                     // page, which knows the reader, says the rest.
                     restricted: row.roleIds.length > 0,
                 },
-                ...pricedForCampaign(row.id, effectivePrice(rules, now), campaignEntries),
+                ...offerPrice({ ...rules, id: row.id }, campaignEntries, now),
             };
         });
 

@@ -13,11 +13,11 @@
  * asked to hide while it is shut answers exactly as one that does not exist,
  * so the two cannot be told apart.
  */
-import { isAdmin, moduleSettings, prisma } from "@/core/sdk/server";
+import { isAdmin, moduleSettings, prisma, siteTimeZone } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { PUBLIC_PRODUCT } from "./public-product";
-import { availabilityFor, type ProductRow } from "./availability-server";
-import { effectivePrice } from "./availability";
+import { availabilityFor, rulesOf, type ProductRow } from "./availability-server";
+import { offerPrice, runningCampaignEntries } from "./campaign-server";
 import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
 import { creditingPurchases, ownedRungsOn } from "./upgrade-credit-server";
 import { productsIn } from "./store-text";
@@ -46,13 +46,20 @@ export async function readProduct(id: string, locale = "") {
 
     const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
 
+    // The price the card on the shelf shows and the till takes, a running
+    // campaign included. The availability answer carries the sale window
+    // alone.
+    const now = new Date();
+    const campaignEntries = await runningCampaignEntries(prisma, now, await siteTimeZone());
+    const priced = offerPrice({ ...rulesOf(product as unknown as ProductRow), id: product.id }, campaignEntries, now);
+
     // What this reader pays rather than what the product costs. Somebody
     // standing on a lower rung of the same ladder pays the difference, and
     // until now the only place that was true was the checkout.
     const ownedIds = await creditingPurchases(session?.user?.id);
     const ladder = await ownedRungsOn([product.category?.id], ownedIds);
     const credit = upgradeCredit(
-        { id: product.id, categoryId: product.category?.id ?? null, price: state.price },
+        { id: product.id, categoryId: product.category?.id ?? null, price: priced.price },
         ladder,
         ownedIds,
     );
@@ -79,12 +86,12 @@ export async function readProduct(id: string, locale = "") {
             remainingForPerson: state.remainingForPerson,
             remainingInPeriod: state.remainingInPeriod,
         },
-        price: priceAfterCredit(state.price, credit),
-        was: state.was,
-        onSale: state.onSale,
+        price: priceAfterCredit(priced.price, credit),
+        was: priced.was,
+        onSale: priced.onSale,
         /** Taken off because a cheaper rung on this ladder is already owned. */
         upgradeCredit: credit,
         /** What it costs somebody who owns nothing on this shelf. */
-        fullPrice: state.price,
+        fullPrice: priced.price,
     };
 }

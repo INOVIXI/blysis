@@ -38,6 +38,7 @@ const db = {
     user: { findUnique: vi.fn(async () => ({ receiveGifts: true, creditBalance: 10 })) },
     productVariable: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },
+    campaign: { findMany: vi.fn(async () => []) },
     setting: { findUnique: vi.fn(async () => null) },
     $transaction: vi.fn(async (work: (t: typeof tx) => Promise<unknown>) => work(tx)),
 };

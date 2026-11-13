@@ -14,9 +14,9 @@
  * how an operator says a shelf is a ladder; a grid of crate keys is not one,
  * and a key bought once used to come off every dearer key after it.
  */
-import { moduleSettings, prisma } from "@/core/sdk/server";
+import { moduleSettings, prisma, siteTimeZone } from "@/core/sdk/server";
 import { stillOwnedWhere } from "./ownership";
-import { effectivePrice } from "./availability";
+import { offerPrice, runningCampaignEntries } from "./campaign-server";
 import type { UpgradeCandidate } from "./upgrade-credit";
 
 export async function creditingPurchases(userId: string | null | undefined): Promise<Set<string>> {
@@ -75,18 +75,23 @@ export async function ownedRungsOn(
         take: 200,
     });
 
+    // Only read when somebody owns a rung here, which is the rare case.
+    const campaignEntries = rows.length > 0 ? await runningCampaignEntries(prisma, now, await siteTimeZone()) : [];
     return rows.map((row) => ({
         id: row.id,
         categoryId: row.categoryId,
-        // The price the shelf credits against: a sale on the rung somebody
-        // owns is what they actually put toward the one above it.
-        price: effectivePrice(
+        // The price the shelf credits against: a sale or a running campaign
+        // on the rung somebody owns is what they actually put toward the one
+        // above it, and the listing's ladder is priced the same way.
+        price: offerPrice(
             {
+                id: row.id,
                 price: Number(row.price),
                 salePrice: row.salePrice === null ? null : Number(row.salePrice),
                 saleFrom: row.saleFrom,
                 saleUntil: row.saleUntil,
             },
+            campaignEntries,
             now,
         ).price,
     }));

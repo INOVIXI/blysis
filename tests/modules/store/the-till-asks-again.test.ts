@@ -39,6 +39,7 @@ const db = {
     },
     productVariable: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },
+    campaign: { findMany: vi.fn(async () => []) },
     orderItem: { aggregate: vi.fn(async () => ({ _sum: { quantity: bought.current } })) },
     setting: { findUnique: vi.fn(async () => null) },
     user: { findUnique: vi.fn(async () => ({ creditBalance: 0, roleId: null })) },
@@ -373,6 +374,9 @@ describe("the screens in front of it", () => {
     it("carry the state and the sale to the page that draws them", () => {
         expect(LIST).toContain("availability:");
         expect(DETAIL).toContain("availability:");
-        expect(LIST).toContain("effectivePrice(");
+        // The sale and any running campaign, through the function the till
+        // prices with.
+        expect(LIST).toContain("offerPrice(");
+        expect(DETAIL).toContain("offerPrice(");
     });
 });

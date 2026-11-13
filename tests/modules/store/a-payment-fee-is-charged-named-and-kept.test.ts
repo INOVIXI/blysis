@@ -55,6 +55,7 @@ const db = {
     },
     productVariable: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },
+    campaign: { findMany: vi.fn(async () => []) },
     orderItem: { aggregate: vi.fn(async () => ({ _sum: { quantity: 0 } })) },
     setting: {
         findUnique: vi.fn(async ({ where }: { where: { key: string } }) => {

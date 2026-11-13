@@ -42,6 +42,9 @@ vi.mock("@/core/sdk/server", async () => ({
         // person and by everybody. Nothing here sets a limit, so the answer is
         // always none.
         orderItem: { aggregate: async () => ({ _sum: { quantity: null } }) },
+        // The shelf and the page both price through the running campaigns,
+        // and none runs here.
+        campaign: { findMany: async () => [] },
     },
     // The clock every schedule is read on. These rows carry no schedule, so
     // any zone gives the same answer.
