@@ -12,6 +12,11 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.39.0 - the account menu draws the `navbar.userMenu` slot, under the
+ * profile link, and hands what fills it `close`, which shuts the menu. A
+ * module that keeps a row about the account there requires this core: on an
+ * older one the row has nowhere to be drawn.
+ *
  * 5.38.0 - `FooterSocialLink` carries a `label`, and its `name` may be
  * `tiktok`. The site's social links became settings, one per network, and a
  * theme that draws them reads what to call each one rather than keeping a
@@ -787,4 +792,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.38.0";
+export const CORE_API_VERSION = "5.39.0";

@@ -2,8 +2,8 @@
   "id": "credits",
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
-  "version": "1.11.0",
-  "coreVersion": "^5.21.0",
+  "version": "1.12.0",
+  "coreVersion": "^5.39.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Coins",
@@ -24,6 +24,27 @@
       "component": "components/CreditsTab.tsx",
       "order": 35,
       "labelKey": "credits.profileTab"
+    }
+  ],
+  "navbarComponents": [
+    {
+      "id": "CreditBalanceChip",
+      "component": "components/CreditBalanceChip",
+      "order": 30
+    }
+  ],
+  "slotContents": [
+    {
+      "id": "credits-user-menu",
+      "slot": "navbar.userMenu",
+      "component": "slots/UserMenuBalance",
+      "order": 10
+    },
+    {
+      "id": "credits-store-top",
+      "slot": "store.index.top",
+      "component": "slots/StoreBalanceStrip",
+      "order": 10
     }
   ],
   "api": [
@@ -120,7 +141,10 @@
         "typeVoucher_create": "Voucher Made",
         "typeVoucher_redeem": "Voucher Redeemed",
         "typeWheel_prize": "Wheel Prize",
-        "typeWheel_spin": "Wheel Spin"
+        "typeWheel_spin": "Wheel Spin",
+        "bal_ariaLabel": "Your credits: {amount}",
+        "bal_menu": "Credits: {amount}",
+        "bal_store": "Your balance: {amount} credits"
       },
       "admin": {
         "module_credits_name": "Credit System",
@@ -201,7 +225,10 @@
         "typeVoucher_create": "Kupon Oluşturuldu",
         "typeVoucher_redeem": "Kupon Bozduruldu",
         "typeWheel_prize": "Çark Ödülü",
-        "typeWheel_spin": "Çark Çevirme"
+        "typeWheel_spin": "Çark Çevirme",
+        "bal_ariaLabel": "Krediniz: {amount}",
+        "bal_menu": "Kredi: {amount}",
+        "bal_store": "Bakiyeniz: {amount} kredi"
       },
       "admin": {
         "module_credits_name": "Kredi Sistemi",
@@ -282,7 +309,10 @@
         "typeGift_refund": "Hədiyyə geri alındı",
         "typePayment_refund": "Geri Qaytarmadan Sonra Geri Alındı",
         "typeVoucher_create": "Kupon yaradıldı",
-        "typeVoucher_redeem": "Kupon istifadə edildi"
+        "typeVoucher_redeem": "Kupon istifadə edildi",
+        "bal_ariaLabel": "Kreditləriniz: {amount}",
+        "bal_menu": "Kredit: {amount}",
+        "bal_store": "Balansınız: {amount} kredit"
       },
       "admin": {
         "module_credits_name": "Kredit sistemi",
@@ -363,7 +393,10 @@
         "typeGift_refund": "Geschenk zurückgenommen",
         "typePayment_refund": "Nach Erstattung zurückgebucht",
         "typeVoucher_create": "Gutschein erstellt",
-        "typeVoucher_redeem": "Gutschein eingelöst"
+        "typeVoucher_redeem": "Gutschein eingelöst",
+        "bal_ariaLabel": "Deine Credits: {amount}",
+        "bal_menu": "Credits: {amount}",
+        "bal_store": "Dein Guthaben: {amount} Credits"
       },
       "admin": {
         "module_credits_name": "Credit-System",
@@ -444,7 +477,10 @@
         "typeGift_refund": "Regalo recuperado",
         "typePayment_refund": "Retirado tras un reembolso",
         "typeVoucher_create": "Vale creado",
-        "typeVoucher_redeem": "Vale canjeado"
+        "typeVoucher_redeem": "Vale canjeado",
+        "bal_ariaLabel": "Tus créditos: {amount}",
+        "bal_menu": "Créditos: {amount}",
+        "bal_store": "Tu saldo: {amount} créditos"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -525,7 +561,10 @@
         "typeGift_refund": "Kingitus võeti tagasi",
         "typePayment_refund": "Tagasimakse järel tagasi võetud",
         "typeVoucher_create": "Kupong loodud",
-        "typeVoucher_redeem": "Kupong lunastatud"
+        "typeVoucher_redeem": "Kupong lunastatud",
+        "bal_ariaLabel": "Sinu krediidid: {amount}",
+        "bal_menu": "Krediidid: {amount}",
+        "bal_store": "Sinu saldo: {amount} krediiti"
       },
       "admin": {
         "module_credits_name": "Krediidisüsteem",
@@ -606,7 +645,10 @@
         "typeGift_refund": "Cadeau repris",
         "typePayment_refund": "Repris après un remboursement",
         "typeVoucher_create": "Bon créé",
-        "typeVoucher_redeem": "Bon utilisé"
+        "typeVoucher_redeem": "Bon utilisé",
+        "bal_ariaLabel": "Vos crédits : {amount}",
+        "bal_menu": "Crédits : {amount}",
+        "bal_store": "Votre solde : {amount} crédits"
       },
       "admin": {
         "module_credits_name": "Système de crédits",
@@ -687,7 +729,10 @@
         "typeGift_refund": "Regalo ripreso",
         "typePayment_refund": "Ripreso dopo un rimborso",
         "typeVoucher_create": "Buono creato",
-        "typeVoucher_redeem": "Buono riscattato"
+        "typeVoucher_redeem": "Buono riscattato",
+        "bal_ariaLabel": "I tuoi crediti: {amount}",
+        "bal_menu": "Crediti: {amount}",
+        "bal_store": "Il tuo saldo: {amount} crediti"
       },
       "admin": {
         "module_credits_name": "Sistema di crediti",
@@ -768,7 +813,10 @@
         "typeGift_refund": "Prezent cofnięty",
         "typePayment_refund": "Cofnięte po zwrocie",
         "typeVoucher_create": "Utworzono bon",
-        "typeVoucher_redeem": "Wykorzystano bon"
+        "typeVoucher_redeem": "Wykorzystano bon",
+        "bal_ariaLabel": "Twoje kredyty: {amount}",
+        "bal_menu": "Kredyty: {amount}",
+        "bal_store": "Twoje saldo: {amount} kredytów"
       },
       "admin": {
         "module_credits_name": "System kredytów",
@@ -849,7 +897,10 @@
         "typeGift_refund": "Presente recuperado",
         "typePayment_refund": "Retirado após reembolso",
         "typeVoucher_create": "Vale criado",
-        "typeVoucher_redeem": "Vale resgatado"
+        "typeVoucher_redeem": "Vale resgatado",
+        "bal_ariaLabel": "Seus créditos: {amount}",
+        "bal_menu": "Créditos: {amount}",
+        "bal_store": "Seu saldo: {amount} créditos"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -930,7 +981,10 @@
         "typeGift_refund": "Подарок отозван",
         "typePayment_refund": "Списано после возврата",
         "typeVoucher_create": "Ваучер создан",
-        "typeVoucher_redeem": "Ваучер погашен"
+        "typeVoucher_redeem": "Ваучер погашен",
+        "bal_ariaLabel": "Ваши кредиты: {amount}",
+        "bal_menu": "Кредиты: {amount}",
+        "bal_store": "Ваш баланс: {amount} кредитов"
       },
       "admin": {
         "module_credits_name": "Система кредитов",
@@ -1011,7 +1065,10 @@
         "typeGift_refund": "礼物已收回",
         "typePayment_refund": "退款后收回",
         "typeVoucher_create": "已创建兑换券",
-        "typeVoucher_redeem": "已兑换兑换券"
+        "typeVoucher_redeem": "已兑换兑换券",
+        "bal_ariaLabel": "你的积分：{amount}",
+        "bal_menu": "积分：{amount}",
+        "bal_store": "你的余额：{amount} 积分"
       },
       "admin": {
         "module_credits_name": "积分系统",

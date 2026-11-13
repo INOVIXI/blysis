@@ -12,7 +12,7 @@
  *      • layout.afterMain  - rendered immediately after the page content
  *      • head.extra        - rendered inside the <head> element
  *
- *  - LAYOUT-POSITION slots (7): named injection points wired into the
+ *  - LAYOUT-POSITION slots: named injection points wired into the
  *    core layout chrome (Navbar, Footer, MobileMenu). Themes and
  *    modules contribute via `slotContents` to add content into a specific
  *    visual region without modifying core React.
@@ -21,6 +21,8 @@
  *      • layout.overlay  - above everything, for modals and popups
  *      • navbar.start    - left side of the navbar (after logo, before menu)
  *      • navbar.end      - right side of the navbar (e.g. cart, notification bell)
+ *      • navbar.userMenu - inside the open account menu, under the profile link;
+ *                          handed `close`, which shuts the menu
  *      • footer.top      - top of the footer (e.g. CTA strip)
  *      • mobile.nav      - the navigation panel a phone opens
  *
@@ -43,6 +45,7 @@ export const CANONICAL_SLOTS = [
     "layout.overlay",
     "navbar.start",
     "navbar.end",
+    "navbar.userMenu",
     "footer.top",
     "mobile.nav",
     // Auth forms - a module puts a check in front of signing in or up.

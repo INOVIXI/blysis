@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { labelKeyFor } from "../lib/ledger-types";
 import { CreditPackages } from "./CreditPackages";
+import { announceBalanceChanged } from "../lib/use-credit-balance";
 import { SendCredits } from "./SendCredits";
 
 interface Transaction {
@@ -130,9 +131,10 @@ export default function CreditsTab() {
                 </CardContent>
             </Card>
 
-            <CreditPackages onBought={() => setReloadKey((k) => k + 1)} />
+            {/* The bar's chip and the account menu show this balance too. */}
+            <CreditPackages onBought={() => { setReloadKey((k) => k + 1); announceBalanceChanged(); }} />
 
-            <SendCredits balance={balance} onSent={() => setReloadKey((k) => k + 1)} />
+            <SendCredits balance={balance} onSent={() => { setReloadKey((k) => k + 1); announceBalanceChanged(); }} />
 
             <Card>
                 <CardHeader>

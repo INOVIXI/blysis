@@ -107,7 +107,12 @@ export default async function StorePage({ searchParams }: PageProps) {
                         return <ShelfRows shelves={shelves} lowStockAt={lowStockAt} />;
                     },
                 }}
-            />
+            >
+                {/* Above the arrangement rather than one of its blocks:
+                    `store.index.top` is news from another module for the
+                    whole page, such as what a member can spend. */}
+                <Slot name="store.index.top" />
+            </ArrangedPage>
         );
     }
 
@@ -205,6 +210,8 @@ export default async function StorePage({ searchParams }: PageProps) {
                     </section>
                 ) : null),
             }}
-        />
+        >
+            <Slot name="store.index.top" />
+        </ArrangedPage>
     );
 }
