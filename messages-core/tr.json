@@ -171,7 +171,10 @@
     "viewAll": "Tümünü gör",
     "auditSignInMethodConnect": "Bir giriş yöntemi bağladı",
     "auditSignInMethodDisconnect": "Bir giriş yönteminin bağlantısını kesti",
-    "auditSignInMethodRemove": "Bir üyenin giriş yöntemini kaldırdı"
+    "auditSignInMethodRemove": "Bir üyenin giriş yöntemini kaldırdı",
+    "auditModerationReasonCreate": "Red sebebi ekledi",
+    "auditModerationReasonUpdate": "Red sebebini değiştirdi",
+    "auditModerationReasonDelete": "Red sebebini sildi"
   },
   "nav": {
     "adminPanel": "Yönetici Paneli",
@@ -491,7 +494,10 @@
       "demo_disabled": "Burası herkese açık demo, bu yüzden bu değişiklik kaydedilmedi. Denemek için kendi kurulumunu çalıştır.",
       "username_taken": "Bu kullanıcı adı zaten alınmış.",
       "channel_pinned": "Kanalı bu sunucunun .env dosyası belirliyor (BLYSIS_UPDATE_CHANNEL), bu yüzden burada değiştirilemez.",
-      "not_on_channel": "Bu sürüm bir ön sürüm, bu site ise kararlı sürümleri izliyor."
+      "not_on_channel": "Bu sürüm bir ön sürüm, bu site ise kararlı sürümleri izliyor.",
+      "reason_in_use": "Bu sebep bir redde zaten verildi. Silmek yerine kapatın.",
+      "reason_shipped": "Hazır bir sebep silinemez. Bunun yerine kapatın.",
+      "reason_needs_name": "Sebebe bir ad verin."
     },
     "error_id": "Hata kimliği:",
     "error_title": "Bir şeyler ters gitti",
@@ -1383,7 +1389,22 @@
     "generalSettings_signInMethodSignUps": "Giriş yöntemleriyle yeni hesaplar",
     "generalSettings_signInMethodSignUpsHint": "Yalnızca bağlı üyeler seçildiğinde, sağlayıcıyla giriş sadece bunu hesap sayfasından bağlamış üyeler için çalışır ve bu yolla kimseye yeni hesap açılmaz.",
     "generalSettings_signInMethodSignUpsOpen": "Yeni gelen herkese hesap aç",
-    "generalSettings_signInMethodSignUpsClosed": "Yalnızca bağlı üyeler"
+    "generalSettings_signInMethodSignUpsClosed": "Yalnızca bağlı üyeler",
+    "moderationReason_spam": "Spam",
+    "moderationReason_abuse": "Hakaret veya taciz",
+    "moderationReason_advertising": "Reklam",
+    "moderationReason_offTopic": "Konu dışı",
+    "moderationReason_other": "Diğer",
+    "moderationReasons_title": "Red sebepleri",
+    "moderationReasons_subtitle": "Moderatörün bir gönderiyi reddederken seçtiği sebepler. Seçilen sebep yazara gösterilir.",
+    "moderationReasons_labelLabel": "Ad",
+    "moderationReasons_labelHint": "Hazır bir sebepte boş bırakırsanız her dildeki yerleşik ifadesi kullanılır.",
+    "moderationReasons_positionLabel": "Sıra",
+    "moderationReasons_positionHint": "Küçük sayılar listede önce gelir.",
+    "moderationReasons_enabledLabel": "Moderatörlere sunulsun",
+    "moderationReasons_enabledHint": "Kapatılan sebep artık sunulmaz, ama verildiği gönderilerde görünmeye devam eder.",
+    "moderationSettings_editReasons": "Red sebeplerini düzenle",
+    "crumb_reasons": "Sebepler"
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",

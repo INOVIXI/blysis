@@ -171,7 +171,10 @@
     "viewAll": "Vaata kõiki",
     "auditSignInMethodConnect": "Ühendas sisselogimisviisi",
     "auditSignInMethodDisconnect": "Katkestas sisselogimisviisi ühenduse",
-    "auditSignInMethodRemove": "Eemaldas liikme sisselogimisviisi"
+    "auditSignInMethodRemove": "Eemaldas liikme sisselogimisviisi",
+    "auditModerationReasonCreate": "Lisas tagasilükkamise põhjuse",
+    "auditModerationReasonUpdate": "Muutis tagasilükkamise põhjust",
+    "auditModerationReasonDelete": "Kustutas tagasilükkamise põhjuse"
   },
   "nav": {
     "adminPanel": "Halduspaneel",
@@ -491,7 +494,10 @@
       "demo_disabled": "See on avalik demo, seega seda muudatust ei salvestata. Proovimiseks käivita oma eksemplar.",
       "username_taken": "See kasutajanimi on juba võetud.",
       "channel_pinned": "Selle serveri .env määrab kanali (BLYSIS_UPDATE_CHANNEL), seega ei saa seda siin muuta.",
-      "not_on_channel": "See versioon on eelversioon ja see sait järgib stabiilseid versioone."
+      "not_on_channel": "See versioon on eelversioon ja see sait järgib stabiilseid versioone.",
+      "reason_in_use": "Seda põhjust on juba tagasilükkamisel kasutatud. Lülita see välja, selle asemel et kustutada.",
+      "reason_shipped": "Sisseehitatud põhjust ei saa kustutada. Lülita see hoopis välja.",
+      "reason_needs_name": "Anna põhjusele nimi."
     },
     "error_id": "Vea ID:",
     "error_title": "Midagi läks valesti",
@@ -1383,7 +1389,22 @@
     "generalSettings_signInMethodSignUps": "Uued kontod sisselogimisviiside kaudu",
     "generalSettings_signInMethodSignUpsHint": "Kui neid tohivad kasutada ainult ühendatud liikmed, töötab teenusepakkujaga sisselogimine ainult neile, kes ühendasid selle oma kontolehel, ja uusi kontosid nii ei looda.",
     "generalSettings_signInMethodSignUpsOpen": "Loo konto igale uuele",
-    "generalSettings_signInMethodSignUpsClosed": "Ainult ühendatud liikmed"
+    "generalSettings_signInMethodSignUpsClosed": "Ainult ühendatud liikmed",
+    "moderationReason_spam": "Rämpspost",
+    "moderationReason_abuse": "Solvangud või ahistamine",
+    "moderationReason_advertising": "Reklaam",
+    "moderationReason_offTopic": "Teemaväline",
+    "moderationReason_other": "Muu",
+    "moderationReasons_title": "Tagasilükkamise põhjused",
+    "moderationReasons_subtitle": "Põhjused, mille hulgast moderaator postitust tagasi lükates valib. Valitud põhjust näidatakse autorile.",
+    "moderationReasons_labelLabel": "Nimi",
+    "moderationReasons_labelHint": "Jäta sisseehitatud põhjuse puhul tühjaks, et säilitada selle sõnastus igas keeles.",
+    "moderationReasons_positionLabel": "Järjekord",
+    "moderationReasons_positionHint": "Väiksemad numbrid on loendis eespool.",
+    "moderationReasons_enabledLabel": "Moderaatoritele pakutav",
+    "moderationReasons_enabledHint": "Väljalülitatud põhjust enam ei pakuta, kuid see jääb nähtavaks postitustel, millele see anti.",
+    "moderationSettings_editReasons": "Muuda tagasilükkamise põhjuseid",
+    "crumb_reasons": "Põhjused"
   },
   "footer": {
     "quickLinks": "Kiirlingid",

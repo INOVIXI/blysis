@@ -171,7 +171,10 @@
     "viewAll": "Ver todo",
     "auditSignInMethodConnect": "Conectó un método de inicio de sesión",
     "auditSignInMethodDisconnect": "Desconectó un método de inicio de sesión",
-    "auditSignInMethodRemove": "Quitó un método de inicio de sesión de un miembro"
+    "auditSignInMethodRemove": "Quitó un método de inicio de sesión de un miembro",
+    "auditModerationReasonCreate": "Añadió un motivo de rechazo",
+    "auditModerationReasonUpdate": "Cambió un motivo de rechazo",
+    "auditModerationReasonDelete": "Eliminó un motivo de rechazo"
   },
   "nav": {
     "adminPanel": "Panel de administración",
@@ -491,7 +494,10 @@
       "demo_disabled": "Esta es la demo pública, así que este cambio no se guarda. Instala tu propia instancia para probarlo.",
       "username_taken": "Ese nombre de usuario ya está en uso.",
       "channel_pinned": "El .env de este servidor fija el canal (BLYSIS_UPDATE_CHANNEL), así que no se puede cambiar aquí.",
-      "not_on_channel": "Esa versión es preliminar y este sitio sigue las versiones estables."
+      "not_on_channel": "Esa versión es preliminar y este sitio sigue las versiones estables.",
+      "reason_in_use": "Este motivo ya se usó en un rechazo. Desactívalo en lugar de eliminarlo.",
+      "reason_shipped": "Un motivo predefinido no se puede eliminar. Desactívalo en su lugar.",
+      "reason_needs_name": "Ponle un nombre al motivo."
     },
     "error_id": "ID del error:",
     "error_title": "Algo salió mal",
@@ -1383,7 +1389,22 @@
     "generalSettings_signInMethodSignUps": "Cuentas nuevas desde métodos de inicio de sesión",
     "generalSettings_signInMethodSignUpsHint": "Si solo los miembros conectados pueden usarlos, iniciar sesión con un proveedor solo funciona para quienes lo conectaron desde su página de cuenta, y nadie obtiene una cuenta nueva así.",
     "generalSettings_signInMethodSignUpsOpen": "Crear una cuenta para cualquier persona nueva",
-    "generalSettings_signInMethodSignUpsClosed": "Solo miembros conectados"
+    "generalSettings_signInMethodSignUpsClosed": "Solo miembros conectados",
+    "moderationReason_spam": "Spam",
+    "moderationReason_abuse": "Insultos o acoso",
+    "moderationReason_advertising": "Publicidad",
+    "moderationReason_offTopic": "Fuera de tema",
+    "moderationReason_other": "Otro",
+    "moderationReasons_title": "Motivos de rechazo",
+    "moderationReasons_subtitle": "Los motivos entre los que elige un moderador al rechazar una publicación. Al autor se le muestra el elegido.",
+    "moderationReasons_labelLabel": "Nombre",
+    "moderationReasons_labelHint": "Déjalo vacío en un motivo predefinido para conservar su texto en todos los idiomas.",
+    "moderationReasons_positionLabel": "Orden",
+    "moderationReasons_positionHint": "Los números más bajos aparecen primero.",
+    "moderationReasons_enabledLabel": "Disponible para moderadores",
+    "moderationReasons_enabledHint": "Un motivo desactivado deja de ofrecerse y sigue visible en las publicaciones a las que se aplicó.",
+    "moderationSettings_editReasons": "Editar motivos de rechazo",
+    "crumb_reasons": "Motivos"
   },
   "footer": {
     "quickLinks": "Enlaces rápidos",

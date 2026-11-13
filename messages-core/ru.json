@@ -171,7 +171,10 @@
     "viewAll": "Смотреть все",
     "auditSignInMethodConnect": "Подключил способ входа",
     "auditSignInMethodDisconnect": "Отключил способ входа",
-    "auditSignInMethodRemove": "Удалил способ входа участника"
+    "auditSignInMethodRemove": "Удалил способ входа участника",
+    "auditModerationReasonCreate": "Добавил причину отклонения",
+    "auditModerationReasonUpdate": "Изменил причину отклонения",
+    "auditModerationReasonDelete": "Удалил причину отклонения"
   },
   "nav": {
     "adminPanel": "Панель администратора",
@@ -491,7 +494,10 @@
       "demo_disabled": "Это публичная демоверсия, поэтому изменение не сохраняется. Установите собственный экземпляр, чтобы попробовать.",
       "username_taken": "Это имя пользователя уже занято.",
       "channel_pinned": "Канал задан в .env этого сервера (BLYSIS_UPDATE_CHANNEL), поэтому здесь его изменить нельзя.",
-      "not_on_channel": "Эта версия предварительная, а этот сайт следует стабильным релизам."
+      "not_on_channel": "Эта версия предварительная, а этот сайт следует стабильным релизам.",
+      "reason_in_use": "Эта причина уже указана в отклонении. Отключите её вместо удаления.",
+      "reason_shipped": "Встроенную причину нельзя удалить. Вместо этого отключите её.",
+      "reason_needs_name": "Укажите название причины."
     },
     "error_id": "ID ошибки:",
     "error_title": "Что-то пошло не так",
@@ -1383,7 +1389,22 @@
     "generalSettings_signInMethodSignUps": "Новые аккаунты через способы входа",
     "generalSettings_signInMethodSignUpsHint": "Если доступно только подключённым участникам, вход через провайдера работает лишь для тех, кто подключил его на странице аккаунта, и новые аккаунты так не создаются.",
     "generalSettings_signInMethodSignUpsOpen": "Создавать аккаунт для новых людей",
-    "generalSettings_signInMethodSignUpsClosed": "Только подключённые участники"
+    "generalSettings_signInMethodSignUpsClosed": "Только подключённые участники",
+    "moderationReason_spam": "Спам",
+    "moderationReason_abuse": "Оскорбления или травля",
+    "moderationReason_advertising": "Реклама",
+    "moderationReason_offTopic": "Не по теме",
+    "moderationReason_other": "Другое",
+    "moderationReasons_title": "Причины отклонения",
+    "moderationReasons_subtitle": "Причины, из которых модератор выбирает при отклонении публикации. Автор видит выбранную причину.",
+    "moderationReasons_labelLabel": "Название",
+    "moderationReasons_labelHint": "Оставьте пустым для встроенной причины, чтобы сохранить её формулировку на всех языках.",
+    "moderationReasons_positionLabel": "Порядок",
+    "moderationReasons_positionHint": "Меньшие числа идут в списке первыми.",
+    "moderationReasons_enabledLabel": "Доступна модераторам",
+    "moderationReasons_enabledHint": "Отключённая причина больше не предлагается, но остаётся видна у публикаций, где её указали.",
+    "moderationSettings_editReasons": "Изменить причины отклонения",
+    "crumb_reasons": "Причины"
   },
   "footer": {
     "quickLinks": "Быстрые ссылки",

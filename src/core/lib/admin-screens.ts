@@ -89,6 +89,8 @@ export const CORE_ADMIN_SCREENS: AdminScreen[] = [
     { path: "/settings/site", permission: "admin.settings" },
     { path: "/settings/maintenance", permission: "admin.settings" },
     { path: "/settings/moderation", permission: "admin.settings" },
+    // The words a moderator rejects with are the moderators' to keep.
+    { path: "/settings/moderation/reasons", permission: "admin.moderation" },
     { path: "/settings/rate-limits", permission: "admin.settings" },
     { path: "/settings/alerting", permission: "admin.settings" },
 

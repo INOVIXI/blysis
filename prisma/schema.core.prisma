@@ -66,6 +66,7 @@ model User {
   restrictions     UserRestriction[]  @relation("UserRestrictions")
   warnings         UserWarning[]      @relation("UserWarnings")
   warningsIssued   UserWarning[]      @relation("WarningIssuer")
+  moderationDecisions ModerationDecision[] @relation("ModerationDecider")
   notifPrefs       NotificationPreference[] @relation("UserNotifPrefs")
   conversations    ConversationParticipant[] @relation("ConversationMember")
   messages         Message[]          @relation("MessageAuthor")
@@ -388,6 +389,52 @@ model ContentTranslation {
 
   // Also the read: a page of records asks by its leading three columns.
   @@unique([owner, entity, recordId, field, locale])
+}
+
+/// A reason a moderator can give for a rejection: the site's own list.
+///
+/// A row with a `key` is one core shipped; until the admin renames it, its
+/// wording is the catalogue's `admin.moderationReason_<key>`, so it reads in
+/// every language. `label` is the admin's own wording, translated through
+/// `ContentTranslation` (owner `core`, entity `moderation-reason`).
+/// See lib/moderation-reasons.ts.
+model ModerationReason {
+  id        String   @id @default(cuid())
+  key       String?  @unique
+  label     String?
+  position  Int      @default(0)
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  decisions ModerationDecision[]
+
+  @@index([enabled, position])
+}
+
+/// Every answer the moderation queue gave, by a person or by a reviewing
+/// module. `provider` is the id a module's `moderationProviders` entry
+/// declares and `itemId` is that module's row; neither is interpreted here.
+/// The latest row for an item is why it is in the state it is in.
+/// See lib/moderation-decisions.ts.
+model ModerationDecision {
+  id          String            @id @default(cuid())
+  provider    String
+  itemId      String
+  state       String
+  reasonId    String?
+  reason      ModerationReason? @relation(fields: [reasonId], references: [id], onDelete: Restrict)
+  note        String?
+  decidedById String?
+  decidedBy   User?             @relation(fields: [decidedById], references: [id], onDelete: SetNull, name: "ModerationDecider")
+  /// The module that decided, when no person did.
+  reviewer    String?
+  /// The author asked for a person; no reviewing module touches it again.
+  humanOnly   Boolean           @default(false)
+  createdAt   DateTime          @default(now())
+
+  @@index([provider, itemId, createdAt])
+  @@index([reasonId])
+  @@index([decidedById])
 }
 
 // Generic content revision history. Modules call recordRevision() before

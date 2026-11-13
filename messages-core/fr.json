@@ -171,7 +171,10 @@
     "viewAll": "Voir tout",
     "auditSignInMethodConnect": "A connecté une méthode de connexion",
     "auditSignInMethodDisconnect": "A déconnecté une méthode de connexion",
-    "auditSignInMethodRemove": "A retiré une méthode de connexion d'un membre"
+    "auditSignInMethodRemove": "A retiré une méthode de connexion d'un membre",
+    "auditModerationReasonCreate": "A ajouté un motif de refus",
+    "auditModerationReasonUpdate": "A modifié un motif de refus",
+    "auditModerationReasonDelete": "A supprimé un motif de refus"
   },
   "nav": {
     "adminPanel": "Panneau d’administration",
@@ -491,7 +494,10 @@
       "demo_disabled": "Ceci est la démo publique : cette modification n’est pas enregistrée. Installez votre propre instance pour l’essayer.",
       "username_taken": "Ce nom d’utilisateur est déjà pris.",
       "channel_pinned": "Le fichier .env de ce serveur fixe le canal (BLYSIS_UPDATE_CHANNEL), il ne peut donc pas être modifié ici.",
-      "not_on_channel": "Cette version est une préversion, et ce site suit les versions stables."
+      "not_on_channel": "Cette version est une préversion, et ce site suit les versions stables.",
+      "reason_in_use": "Ce motif a déjà servi pour un refus. Désactivez-le au lieu de le supprimer.",
+      "reason_shipped": "Un motif intégré ne peut pas être supprimé. Désactivez-le plutôt.",
+      "reason_needs_name": "Donnez un nom au motif."
     },
     "error_id": "ID de l’erreur :",
     "error_title": "Une erreur s’est produite",
@@ -1383,7 +1389,22 @@
     "generalSettings_signInMethodSignUps": "Nouveaux comptes via les méthodes de connexion",
     "generalSettings_signInMethodSignUpsHint": "Lorsque seuls les membres connectés peuvent les utiliser, la connexion via un fournisseur ne fonctionne que pour les membres qui l'ont connecté depuis leur page de compte, et personne n'obtient de nouveau compte ainsi.",
     "generalSettings_signInMethodSignUpsOpen": "Créer un compte pour tout nouveau venu",
-    "generalSettings_signInMethodSignUpsClosed": "Membres connectés uniquement"
+    "generalSettings_signInMethodSignUpsClosed": "Membres connectés uniquement",
+    "moderationReason_spam": "Spam",
+    "moderationReason_abuse": "Insultes ou harcèlement",
+    "moderationReason_advertising": "Publicité",
+    "moderationReason_offTopic": "Hors sujet",
+    "moderationReason_other": "Autre",
+    "moderationReasons_title": "Motifs de refus",
+    "moderationReasons_subtitle": "Les motifs parmi lesquels un modérateur choisit en refusant une publication. L’auteur voit celui qui a été choisi.",
+    "moderationReasons_labelLabel": "Nom",
+    "moderationReasons_labelHint": "Laissez vide pour un motif intégré afin de garder sa formulation dans toutes les langues.",
+    "moderationReasons_positionLabel": "Ordre",
+    "moderationReasons_positionHint": "Les plus petits nombres apparaissent en premier.",
+    "moderationReasons_enabledLabel": "Proposé aux modérateurs",
+    "moderationReasons_enabledHint": "Un motif désactivé n’est plus proposé et reste affiché sur les publications auxquelles il a été donné.",
+    "moderationSettings_editReasons": "Modifier les motifs de refus",
+    "crumb_reasons": "Motifs"
   },
   "footer": {
     "quickLinks": "Liens rapides",

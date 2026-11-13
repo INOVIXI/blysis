@@ -187,6 +187,9 @@ export const CORE_TABLES_WITHHELD: Record<string, string> = {
     // saved a global theme value; it is not data about that person.
     ThemeCustomization: "site configuration, not personal data",
     ThemeSetting: "site configuration, not personal data",
+    // A moderator's answer about somebody else's post: the note may name that
+    // author. What the moderator did is already in their ActivityLog rows.
+    ModerationDecision: "a decision about another member's content, recorded in ActivityLog",
 };
 
 /**

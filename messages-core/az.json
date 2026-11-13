@@ -171,7 +171,10 @@
     "viewAll": "Hamısına bax",
     "auditSignInMethodConnect": "Giriş üsulu bağladı",
     "auditSignInMethodDisconnect": "Giriş üsulunun bağlantısını kəsdi",
-    "auditSignInMethodRemove": "Üzvün giriş üsulunu sildi"
+    "auditSignInMethodRemove": "Üzvün giriş üsulunu sildi",
+    "auditModerationReasonCreate": "Rədd səbəbi əlavə etdi",
+    "auditModerationReasonUpdate": "Rədd səbəbini dəyişdi",
+    "auditModerationReasonDelete": "Rədd səbəbini sildi"
   },
   "nav": {
     "adminPanel": "Admin paneli",
@@ -491,7 +494,10 @@
       "demo_disabled": "Bu ictimai demodur, ona görə bu dəyişiklik saxlanılmır. Sınamaq üçün öz nüsxənizi işə salın.",
       "username_taken": "Bu istifadəçi adı artıq tutulub.",
       "channel_pinned": "Kanalı bu serverin .env faylı təyin edir (BLYSIS_UPDATE_CHANNEL), ona görə burada dəyişdirilə bilməz.",
-      "not_on_channel": "Bu versiya ilkin versiyadır, bu sayt isə stabil buraxılışları izləyir."
+      "not_on_channel": "Bu versiya ilkin versiyadır, bu sayt isə stabil buraxılışları izləyir.",
+      "reason_in_use": "Bu səbəb artıq bir rəddə verilib. Silmək əvəzinə söndürün.",
+      "reason_shipped": "Hazır səbəb silinə bilməz. Əvəzində söndürün.",
+      "reason_needs_name": "Səbəbə ad verin."
     },
     "error_id": "Xəta ID-si:",
     "error_title": "Nəsə səhv getdi",
@@ -1383,7 +1389,22 @@
     "generalSettings_signInMethodSignUps": "Giriş üsulları ilə yeni hesablar",
     "generalSettings_signInMethodSignUpsHint": "Yalnız bağlı üzvlər seçiləndə provayderlə giriş yalnız onu hesab səhifəsindən bağlamış üzvlər üçün işləyir və bu yolla heç kimə yeni hesab açılmır.",
     "generalSettings_signInMethodSignUpsOpen": "Yeni gələn hər kəsə hesab aç",
-    "generalSettings_signInMethodSignUpsClosed": "Yalnız bağlı üzvlər"
+    "generalSettings_signInMethodSignUpsClosed": "Yalnız bağlı üzvlər",
+    "moderationReason_spam": "Spam",
+    "moderationReason_abuse": "Təhqir və ya təcavüz",
+    "moderationReason_advertising": "Reklam",
+    "moderationReason_offTopic": "Mövzudan kənar",
+    "moderationReason_other": "Digər",
+    "moderationReasons_title": "Rədd səbəbləri",
+    "moderationReasons_subtitle": "Moderatorun paylaşımı rədd edərkən seçdiyi səbəblər. Seçilən səbəb müəllifə göstərilir.",
+    "moderationReasons_labelLabel": "Ad",
+    "moderationReasons_labelHint": "Hazır səbəbdə boş saxlasanız, hər dildə daxili ifadəsi istifadə olunur.",
+    "moderationReasons_positionLabel": "Sıra",
+    "moderationReasons_positionHint": "Kiçik rəqəmlər siyahıda əvvəl gəlir.",
+    "moderationReasons_enabledLabel": "Moderatorlara təklif olunsun",
+    "moderationReasons_enabledHint": "Söndürülmüş səbəb artıq təklif olunmur, amma verildiyi paylaşımlarda görünməyə davam edir.",
+    "moderationSettings_editReasons": "Rədd səbəblərini redaktə et",
+    "crumb_reasons": "Səbəblər"
   },
   "footer": {
     "quickLinks": "Sürətli keçidlər",

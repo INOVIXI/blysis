@@ -171,7 +171,10 @@
     "viewAll": "Vedi tutto",
     "auditSignInMethodConnect": "Ha collegato un metodo di accesso",
     "auditSignInMethodDisconnect": "Ha scollegato un metodo di accesso",
-    "auditSignInMethodRemove": "Ha rimosso un metodo di accesso di un membro"
+    "auditSignInMethodRemove": "Ha rimosso un metodo di accesso di un membro",
+    "auditModerationReasonCreate": "Ha aggiunto un motivo di rifiuto",
+    "auditModerationReasonUpdate": "Ha modificato un motivo di rifiuto",
+    "auditModerationReasonDelete": "Ha eliminato un motivo di rifiuto"
   },
   "nav": {
     "adminPanel": "Pannello di amministrazione",
@@ -491,7 +494,10 @@
       "demo_disabled": "Questa è la demo pubblica, quindi la modifica non viene salvata. Avvia una tua istanza per provarla.",
       "username_taken": "Questo nome utente è già in uso.",
       "channel_pinned": "Il file .env di questo server imposta il canale (BLYSIS_UPDATE_CHANNEL), quindi non si può cambiare qui.",
-      "not_on_channel": "Quella versione è preliminare e questo sito segue le versioni stabili."
+      "not_on_channel": "Quella versione è preliminare e questo sito segue le versioni stabili.",
+      "reason_in_use": "Questo motivo è già stato usato in un rifiuto. Disattivalo invece di eliminarlo.",
+      "reason_shipped": "Un motivo predefinito non può essere eliminato. Disattivalo invece.",
+      "reason_needs_name": "Dai un nome al motivo."
     },
     "error_id": "ID errore:",
     "error_title": "Qualcosa è andato storto",
@@ -1383,7 +1389,22 @@
     "generalSettings_signInMethodSignUps": "Nuovi account dai metodi di accesso",
     "generalSettings_signInMethodSignUpsHint": "Quando possono usarli solo i membri collegati, l'accesso tramite un provider funziona solo per chi lo ha collegato dalla pagina del proprio account, e nessuno ottiene un nuovo account in questo modo.",
     "generalSettings_signInMethodSignUpsOpen": "Crea un account per chiunque sia nuovo",
-    "generalSettings_signInMethodSignUpsClosed": "Solo membri collegati"
+    "generalSettings_signInMethodSignUpsClosed": "Solo membri collegati",
+    "moderationReason_spam": "Spam",
+    "moderationReason_abuse": "Insulti o molestie",
+    "moderationReason_advertising": "Pubblicità",
+    "moderationReason_offTopic": "Fuori tema",
+    "moderationReason_other": "Altro",
+    "moderationReasons_title": "Motivi di rifiuto",
+    "moderationReasons_subtitle": "I motivi tra cui un moderatore sceglie quando rifiuta un contenuto. All’autore viene mostrato quello scelto.",
+    "moderationReasons_labelLabel": "Nome",
+    "moderationReasons_labelHint": "Lascialo vuoto su un motivo predefinito per mantenerne il testo in ogni lingua.",
+    "moderationReasons_positionLabel": "Ordine",
+    "moderationReasons_positionHint": "I numeri più bassi compaiono per primi.",
+    "moderationReasons_enabledLabel": "Proposto ai moderatori",
+    "moderationReasons_enabledHint": "Un motivo disattivato non viene più proposto e resta visibile sui contenuti a cui è stato dato.",
+    "moderationSettings_editReasons": "Modifica i motivi di rifiuto",
+    "crumb_reasons": "Motivi"
   },
   "footer": {
     "quickLinks": "Link rapidi",

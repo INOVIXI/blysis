@@ -171,7 +171,10 @@
     "viewAll": "Zobacz wszystkie",
     "auditSignInMethodConnect": "Połączył metodę logowania",
     "auditSignInMethodDisconnect": "Odłączył metodę logowania",
-    "auditSignInMethodRemove": "Usunął metodę logowania członka"
+    "auditSignInMethodRemove": "Usunął metodę logowania członka",
+    "auditModerationReasonCreate": "Dodał powód odrzucenia",
+    "auditModerationReasonUpdate": "Zmienił powód odrzucenia",
+    "auditModerationReasonDelete": "Usunął powód odrzucenia"
   },
   "nav": {
     "adminPanel": "Panel administratora",
@@ -491,7 +494,10 @@
       "demo_disabled": "To publiczne demo, więc ta zmiana nie zostanie zapisana. Uruchom własną instancję, aby ją wypróbować.",
       "username_taken": "Ta nazwa użytkownika jest już zajęta.",
       "channel_pinned": "Plik .env tego serwera ustala kanał (BLYSIS_UPDATE_CHANNEL), więc nie można go tu zmienić.",
-      "not_on_channel": "Ta wersja jest przedpremierowa, a ta strona śledzi stabilne wydania."
+      "not_on_channel": "Ta wersja jest przedpremierowa, a ta strona śledzi stabilne wydania.",
+      "reason_in_use": "Ten powód został już użyty przy odrzuceniu. Wyłącz go zamiast usuwać.",
+      "reason_shipped": "Wbudowanego powodu nie można usunąć. Zamiast tego go wyłącz.",
+      "reason_needs_name": "Nadaj powodowi nazwę."
     },
     "error_id": "Identyfikator błędu:",
     "error_title": "Coś poszło nie tak",
@@ -1383,7 +1389,22 @@
     "generalSettings_signInMethodSignUps": "Nowe konta przez metody logowania",
     "generalSettings_signInMethodSignUpsHint": "Gdy mogą z nich korzystać tylko połączeni członkowie, logowanie przez dostawcę działa tylko dla tych, którzy połączyli go na stronie konta, i nikt nie dostaje w ten sposób nowego konta.",
     "generalSettings_signInMethodSignUpsOpen": "Twórz konto dla każdej nowej osoby",
-    "generalSettings_signInMethodSignUpsClosed": "Tylko połączeni członkowie"
+    "generalSettings_signInMethodSignUpsClosed": "Tylko połączeni członkowie",
+    "moderationReason_spam": "Spam",
+    "moderationReason_abuse": "Obelgi lub nękanie",
+    "moderationReason_advertising": "Reklama",
+    "moderationReason_offTopic": "Nie na temat",
+    "moderationReason_other": "Inne",
+    "moderationReasons_title": "Powody odrzucenia",
+    "moderationReasons_subtitle": "Powody, spośród których moderator wybiera przy odrzucaniu wpisu. Autor widzi wybrany powód.",
+    "moderationReasons_labelLabel": "Nazwa",
+    "moderationReasons_labelHint": "Zostaw puste przy wbudowanym powodzie, aby zachować jego brzmienie w każdym języku.",
+    "moderationReasons_positionLabel": "Kolejność",
+    "moderationReasons_positionHint": "Mniejsze liczby są wyżej na liście.",
+    "moderationReasons_enabledLabel": "Dostępny dla moderatorów",
+    "moderationReasons_enabledHint": "Wyłączony powód nie jest już oferowany, ale nadal widać go przy wpisach, którym go nadano.",
+    "moderationSettings_editReasons": "Edytuj powody odrzucenia",
+    "crumb_reasons": "Powody"
   },
   "footer": {
     "quickLinks": "Szybkie linki",

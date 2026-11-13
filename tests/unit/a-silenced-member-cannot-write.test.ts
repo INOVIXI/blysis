@@ -58,6 +58,7 @@ const NOT_SPEECH: Record<string, string> = {
     "module-sources/store/api/admin/credit-packages/route.ts": "written by staff",
     "module-sources/store/api/admin/orders/route.ts": "written by staff",
     "module-sources/store/api/admin/products/[id]/copy/route.ts": "written by staff",
+    "src/app/api/v1/admin/moderation/reasons/route.ts": "written by staff",
     "src/app/api/v1/admin/updates/route.ts": "written by staff",
     "src/app/api/v1/admin/warnings/route.ts": "written by staff",
     "src/app/api/v1/broadcasts/route.ts": "written by staff",

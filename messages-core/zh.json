@@ -171,7 +171,10 @@
     "viewAll": "查看全部",
     "auditSignInMethodConnect": "连接了一种登录方式",
     "auditSignInMethodDisconnect": "断开了一种登录方式",
-    "auditSignInMethodRemove": "移除了成员的一种登录方式"
+    "auditSignInMethodRemove": "移除了成员的一种登录方式",
+    "auditModerationReasonCreate": "添加了拒绝原因",
+    "auditModerationReasonUpdate": "修改了拒绝原因",
+    "auditModerationReasonDelete": "删除了拒绝原因"
   },
   "nav": {
     "adminPanel": "管理后台",
@@ -491,7 +494,10 @@
       "demo_disabled": "这是公开演示站，因此此更改不会被保存。请运行你自己的实例进行尝试。",
       "username_taken": "该用户名已被占用。",
       "channel_pinned": "此服务器的 .env 设置了渠道（BLYSIS_UPDATE_CHANNEL），因此无法在此更改。",
-      "not_on_channel": "该版本是预发布版本，而此站点只跟随稳定版本。"
+      "not_on_channel": "该版本是预发布版本，而此站点只跟随稳定版本。",
+      "reason_in_use": "此原因已被用于某次拒绝。请将其关闭，而不是删除。",
+      "reason_shipped": "内置原因无法删除，请改为关闭。",
+      "reason_needs_name": "请为原因命名。"
     },
     "error_id": "错误编号：",
     "error_title": "出了点问题",
@@ -1383,7 +1389,22 @@
     "generalSettings_signInMethodSignUps": "通过登录方式创建新账号",
     "generalSettings_signInMethodSignUpsHint": "设为仅限已连接成员时,通过服务商登录只对在账号页面连接过的成员有效,不会以此方式创建新账号。",
     "generalSettings_signInMethodSignUpsOpen": "为任何新用户创建账号",
-    "generalSettings_signInMethodSignUpsClosed": "仅限已连接成员"
+    "generalSettings_signInMethodSignUpsClosed": "仅限已连接成员",
+    "moderationReason_spam": "垃圾信息",
+    "moderationReason_abuse": "辱骂或骚扰",
+    "moderationReason_advertising": "广告",
+    "moderationReason_offTopic": "偏离主题",
+    "moderationReason_other": "其他",
+    "moderationReasons_title": "拒绝原因",
+    "moderationReasons_subtitle": "版主拒绝内容时可选择的原因。作者会看到所选的原因。",
+    "moderationReasons_labelLabel": "名称",
+    "moderationReasons_labelHint": "内置原因留空即可在所有语言中保留其默认措辞。",
+    "moderationReasons_positionLabel": "顺序",
+    "moderationReasons_positionHint": "数字越小，在列表中越靠前。",
+    "moderationReasons_enabledLabel": "向版主提供",
+    "moderationReasons_enabledHint": "关闭的原因不再提供，但在已使用该原因的内容上仍会显示。",
+    "moderationSettings_editReasons": "编辑拒绝原因",
+    "crumb_reasons": "原因"
   },
   "footer": {
     "quickLinks": "快速链接",

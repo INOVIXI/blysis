@@ -114,6 +114,13 @@ const CONSTRUCTED: { match: RegExp; built: string; resolves: (suffix: string) =>
     },
     // The appearance screen, over a colour a theme declares with no key of its own.
     { match: /^theme_color_(.+)$/, built: "`theme_color_${name}`", resolves: (s) => THEME_COLORS.has(s) },
+    // A shipped moderation reason with no wording of the admin's own. The proof
+    // is its key in the list lib/moderation-reasons.ts puts in place.
+    {
+        match: /^moderationReason_(.+)$/,
+        built: "`moderationReason_${row.key}`",
+        resolves: (s) => new RegExp(`SHIPPED_REASON_KEYS = \\[[^\\]]*"${s}"`).test(BLOB),
+    },
     // The alerting screen, over a health status.
     { match: /^health_(.+)$/, built: "`health_${status}`", resolves: (s) => BLOB.includes(s) },
     { match: /^alerting_(.+)Hint$/, built: "`alerting_${status}Hint`", resolves: (s) => BLOB.includes(s) },

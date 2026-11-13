@@ -198,12 +198,18 @@ export default function ModerationSettingsPage() {
                 </CardContent>
             </Card>
 
-            <div>
+            <div className="flex flex-wrap gap-x-6 gap-y-2">
                 <Link
                     href="/admin/moderation"
                     className="text-sm text-primary hover:underline"
                 >
                     {t("moderationSettings_openQueue")}
+                </Link>
+                <Link
+                    href="/admin/settings/moderation/reasons"
+                    className="text-sm text-primary hover:underline"
+                >
+                    {t("moderationSettings_editReasons")}
                 </Link>
             </div>
         </div>
