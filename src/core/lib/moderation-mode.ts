@@ -14,9 +14,7 @@
  */
 import { prisma } from "@/core/lib/db";
 
-export type ModerationState = "PENDING" | "APPROVED";
-
-export async function moderationStateFor(settingKey: string): Promise<ModerationState> {
+export async function moderationStateFor(settingKey: string): Promise<"PENDING" | "APPROVED"> {
     const setting = await prisma.setting.findUnique({ where: { key: "moderation" } });
     const value = setting?.value;
     if (!value || typeof value !== "object" || Array.isArray(value)) return "APPROVED";

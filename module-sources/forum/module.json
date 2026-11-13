@@ -2,7 +2,7 @@
   "id": "forum",
   "name": "Forum Module",
   "description": "Community discussion forum with categories, topics, and replies",
-  "version": "1.17.1",
+  "version": "1.18.0",
   "coreVersion": "^5.39.0",
   "category": "community",
   "author": "Blysis Team",

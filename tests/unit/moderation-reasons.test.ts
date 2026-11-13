@@ -244,7 +244,7 @@ describe("the reasons endpoints", () => {
     });
 
     it("list every reason with its wording in the admin's language", async () => {
-        const res = await reasonsRoute.GET(new NextRequest("http://x/api/v1/admin/moderation/reasons"));
+        const res = await reasonsRoute.GET();
         const body = await res.json();
         expect(body.reasons.map((r: { id: string }) => r.id).slice(0, 4)).toEqual(["reason_spam", "reason_abuse", "custom", "off"]);
         expect(body.reasons[0].displayLabel).toBe("tr:admin.moderationReason_spam");

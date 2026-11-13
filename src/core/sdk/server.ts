@@ -89,7 +89,6 @@ export { isModuleEnabled } from "@/core/lib/module-cache";
 
 // --- Moderation: whether what a person wrote waits for a moderator ---
 export { moderationStateFor } from "@/core/lib/moderation-mode";
-export type { ModerationState } from "@/core/lib/moderation-mode";
 
 // --- Module settings: what a module calls to read its own admin settings ---
 // Returns the manifest's declared defaults overlaid with whatever the admin has
