@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.54.0",
+  "version": "2.55.0",
   "coreVersion": "^5.37.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -151,6 +151,11 @@
       "hook": "store.community-goal",
       "type": "filter",
       "handler": "hooks/community-goal.ts"
+    },
+    {
+      "hook": "store.checkout.reminder",
+      "type": "action",
+      "handler": "hooks/on-checkout-reminder.ts"
     }
   ],
   "settings": [
@@ -244,6 +249,22 @@
       "default": false,
       "label": "Prices already include tax",
       "description": "On, the shown price is what the customer pays and holds the tax. Off, tax is added at checkout. Not used while a tax module is installed."
+    },
+    {
+      "key": "checkoutReminderEnabled",
+      "type": "boolean",
+      "default": false,
+      "label": "Remind about unpaid checkouts",
+      "description": "Email a buyer once when an order or a credit top-up they started stays unpaid. A buyer can switch it off in their notification settings."
+    },
+    {
+      "key": "checkoutReminderHours",
+      "type": "number",
+      "default": 2,
+      "min": 1,
+      "max": 72,
+      "label": "Hours before the reminder",
+      "description": "How long a checkout stays unpaid before its one reminder goes out."
     }
   ],
   "navGroups": [
@@ -460,6 +481,12 @@
       "path": "/store/cart",
       "handler": "api/cart/route.ts",
       "description": "Get, add items to, or clear the current user shopping cart.",
+      "openTo": "member"
+    },
+    {
+      "path": "/store/cart/restore",
+      "handler": "api/cart/restore/route.ts",
+      "description": "Fill the current user's cart again from one of their unpaid orders.",
       "openTo": "member"
     },
     {
@@ -900,6 +927,10 @@
     {
       "hook": "store.tax",
       "type": "filter"
+    },
+    {
+      "hook": "store.checkout.reminder",
+      "type": "action"
     }
   ],
   "translations": {
@@ -1554,7 +1585,9 @@
         "taxEvidence": "Billing address country: {billing}. Connection country: {ip}.",
         "taxEvidenceConflict": "The billing address and the connection are in different countries. Check the order before invoicing it.",
         "taxUnknown": "unknown",
-        "taxMayChange": "Tax at the shop's standard rate. It can change at checkout once your billing country is known."
+        "taxMayChange": "Tax at the shop's standard rate. It can change at checkout once your billing country is known.",
+        "cart_restored": "Your basket is back. Finish whenever you are ready.",
+        "cart_restoreFailed": "That order can no longer be picked up."
       },
       "cart": {
         "title": "Shopping Cart",
@@ -1778,7 +1811,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Order Complete"
+        "notificationType_store_order_completed": "Order Complete",
+        "notificationType_store_checkout_reminder": "Reminder about an unfinished purchase"
       },
       "pageDescriptions": {
         "store": "Browse everything on sale, filter it by category and add what you want to your cart in a couple of clicks.",
@@ -2442,7 +2476,9 @@
         "taxEvidence": "Fatura adresi ülkesi: {billing}. Bağlantı ülkesi: {ip}.",
         "taxEvidenceConflict": "Fatura adresi ile bağlantı farklı ülkelerde. Faturalandırmadan önce siparişi kontrol edin.",
         "taxUnknown": "bilinmiyor",
-        "taxMayChange": "Vergi mağazanın standart oranıyla gösteriliyor. Fatura ülkeniz belli olunca ödeme adımında değişebilir."
+        "taxMayChange": "Vergi mağazanın standart oranıyla gösteriliyor. Fatura ülkeniz belli olunca ödeme adımında değişebilir.",
+        "cart_restored": "Sepetin geri geldi. Hazır olduğunda tamamlayabilirsin.",
+        "cart_restoreFailed": "Bu sipariş artık devam ettirilemiyor."
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -2666,7 +2702,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Sipariş Tamamlandı"
+        "notificationType_store_order_completed": "Sipariş Tamamlandı",
+        "notificationType_store_checkout_reminder": "Yarım kalan alışveriş hatırlatması"
       },
       "pageDescriptions": {
         "store": "Satıştaki her şeye göz atın, kategoriye göre filtreleyin ve istediğinizi birkaç tıkla sepetinize ekleyin.",
@@ -3330,7 +3367,9 @@
         "taxEvidence": "Faktura ünvanının ölkəsi: {billing}. Bağlantının ölkəsi: {ip}.",
         "taxEvidenceConflict": "Faktura ünvanı ilə bağlantı fərqli ölkələrdədir. Faktura verməzdən əvvəl sifarişi yoxlayın.",
         "taxUnknown": "naməlum",
-        "taxMayChange": "Vergi mağazanın standart dərəcəsi ilə göstərilir. Faktura ölkəniz məlum olduqda ödəniş addımında dəyişə bilər."
+        "taxMayChange": "Vergi mağazanın standart dərəcəsi ilə göstərilir. Faktura ölkəniz məlum olduqda ödəniş addımında dəyişə bilər.",
+        "cart_restored": "Səbətiniz geri qayıtdı. Hazır olanda tamamlayın.",
+        "cart_restoreFailed": "Bu sifarişə artıq davam etmək olmur."
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -3554,7 +3593,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Sifariş tamamlandı"
+        "notificationType_store_order_completed": "Sifariş tamamlandı",
+        "notificationType_store_checkout_reminder": "Yarımçıq alış haqqında xatırlatma"
       },
       "pageDescriptions": {
         "store": "Satışdakı hər şeyə baxın, kateqoriyaya görə süzün və bir neçə kliklə istədiyinizi səbətə əlavə edin.",
@@ -4218,7 +4258,9 @@
         "taxEvidence": "Land der Rechnungsadresse: {billing}. Land der Verbindung: {ip}.",
         "taxEvidenceConflict": "Rechnungsadresse und Verbindung liegen in verschiedenen Ländern. Prüfe die Bestellung vor der Rechnungsstellung.",
         "taxUnknown": "unbekannt",
-        "taxMayChange": "Steuer zum Standardsatz des Shops. Sie kann sich an der Kasse ändern, sobald dein Rechnungsland bekannt ist."
+        "taxMayChange": "Steuer zum Standardsatz des Shops. Sie kann sich an der Kasse ändern, sobald dein Rechnungsland bekannt ist.",
+        "cart_restored": "Dein Warenkorb ist wieder da. Schließe ab, wann du willst.",
+        "cart_restoreFailed": "Diese Bestellung kann nicht mehr fortgesetzt werden."
       },
       "cart": {
         "title": "Warenkorb",
@@ -4442,7 +4484,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Bestellung abgeschlossen"
+        "notificationType_store_order_completed": "Bestellung abgeschlossen",
+        "notificationType_store_checkout_reminder": "Erinnerung an einen offenen Kauf"
       },
       "pageDescriptions": {
         "store": "Stöbere durch alles, was im Verkauf ist, filtere nach Kategorie und lege mit ein paar Klicks in den Warenkorb, was du willst.",
@@ -5106,7 +5149,9 @@
         "taxEvidence": "País de la dirección de facturación: {billing}. País de la conexión: {ip}.",
         "taxEvidenceConflict": "La dirección de facturación y la conexión están en países distintos. Revisa el pedido antes de facturarlo.",
         "taxUnknown": "desconocido",
-        "taxMayChange": "Impuesto al tipo general de la tienda. Puede cambiar al pagar, cuando se conozca tu país de facturación."
+        "taxMayChange": "Impuesto al tipo general de la tienda. Puede cambiar al pagar, cuando se conozca tu país de facturación.",
+        "cart_restored": "Tu carrito ha vuelto. Termina cuando quieras.",
+        "cart_restoreFailed": "Ese pedido ya no se puede retomar."
       },
       "cart": {
         "title": "Carrito de compra",
@@ -5330,7 +5375,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Pedido completado"
+        "notificationType_store_order_completed": "Pedido completado",
+        "notificationType_store_checkout_reminder": "Recordatorio de una compra sin terminar"
       },
       "pageDescriptions": {
         "store": "Explora todo lo que está a la venta, filtra por categoría y añade lo que quieras a tu carrito en un par de clics.",
@@ -5994,7 +6040,9 @@
         "taxEvidence": "Arveaadressi riik: {billing}. Ühenduse riik: {ip}.",
         "taxEvidenceConflict": "Arveaadress ja ühendus on eri riikides. Kontrolli tellimust enne arve väljastamist.",
         "taxUnknown": "teadmata",
-        "taxMayChange": "Maks poe tavamääraga. See võib kassas muutuda, kui sinu arveldusriik on teada."
+        "taxMayChange": "Maks poe tavamääraga. See võib kassas muutuda, kui sinu arveldusriik on teada.",
+        "cart_restored": "Sinu ostukorv on tagasi. Lõpeta, kui oled valmis.",
+        "cart_restoreFailed": "Seda tellimust ei saa enam jätkata."
       },
       "cart": {
         "title": "Ostukorv",
@@ -6218,7 +6266,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Tellimus valmis"
+        "notificationType_store_order_completed": "Tellimus valmis",
+        "notificationType_store_checkout_reminder": "Meeldetuletus pooleli jäänud ostust"
       },
       "pageDescriptions": {
         "store": "Sirvi kõike müügil olevat, filtreeri kategooria järgi ja lisa soovitud asjad ostukorvi paari klõpsuga.",
@@ -6882,7 +6931,9 @@
         "taxEvidence": "Pays de l'adresse de facturation : {billing}. Pays de la connexion : {ip}.",
         "taxEvidenceConflict": "L'adresse de facturation et la connexion sont dans des pays différents. Vérifiez la commande avant de la facturer.",
         "taxUnknown": "inconnu",
-        "taxMayChange": "Taxe au taux normal de la boutique. Elle peut changer au paiement, une fois votre pays de facturation connu."
+        "taxMayChange": "Taxe au taux normal de la boutique. Elle peut changer au paiement, une fois votre pays de facturation connu.",
+        "cart_restored": "Votre panier est de retour. Terminez quand vous voulez.",
+        "cart_restoreFailed": "Cette commande ne peut plus être reprise."
       },
       "cart": {
         "title": "Panier",
@@ -7106,7 +7157,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Commande terminée"
+        "notificationType_store_order_completed": "Commande terminée",
+        "notificationType_store_checkout_reminder": "Rappel d’un achat non terminé"
       },
       "pageDescriptions": {
         "store": "Parcourez tout ce qui est en vente, filtrez par catégorie et ajoutez ce qui vous plaît à votre panier en quelques clics.",
@@ -7770,7 +7822,9 @@
         "taxEvidence": "Paese dell'indirizzo di fatturazione: {billing}. Paese della connessione: {ip}.",
         "taxEvidenceConflict": "L'indirizzo di fatturazione e la connessione sono in paesi diversi. Controlla l'ordine prima di fatturarlo.",
         "taxUnknown": "sconosciuto",
-        "taxMayChange": "Imposta all'aliquota standard del negozio. Può cambiare al checkout, quando sarà noto il tuo paese di fatturazione."
+        "taxMayChange": "Imposta all'aliquota standard del negozio. Può cambiare al checkout, quando sarà noto il tuo paese di fatturazione.",
+        "cart_restored": "Il tuo carrello è tornato. Completa quando vuoi.",
+        "cart_restoreFailed": "Quell’ordine non può più essere ripreso."
       },
       "cart": {
         "title": "Carrello",
@@ -7994,7 +8048,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Ordine completato"
+        "notificationType_store_order_completed": "Ordine completato",
+        "notificationType_store_checkout_reminder": "Promemoria di un acquisto non concluso"
       },
       "pageDescriptions": {
         "store": "Sfoglia tutto ciò che è in vendita, filtralo per categoria e aggiungi al carrello ciò che ti serve in un paio di clic.",
@@ -8658,7 +8713,9 @@
         "taxEvidence": "Kraj adresu rozliczeniowego: {billing}. Kraj połączenia: {ip}.",
         "taxEvidenceConflict": "Adres rozliczeniowy i połączenie są w różnych krajach. Sprawdź zamówienie przed wystawieniem faktury.",
         "taxUnknown": "nieznany",
-        "taxMayChange": "Podatek według standardowej stawki sklepu. Może się zmienić przy płatności, gdy znany będzie kraj rozliczeniowy."
+        "taxMayChange": "Podatek według standardowej stawki sklepu. Może się zmienić przy płatności, gdy znany będzie kraj rozliczeniowy.",
+        "cart_restored": "Koszyk wrócił. Dokończ, kiedy zechcesz.",
+        "cart_restoreFailed": "Tego zamówienia nie można już wznowić."
       },
       "cart": {
         "title": "Koszyk",
@@ -8882,7 +8939,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Zamówienie zakończone"
+        "notificationType_store_order_completed": "Zamówienie zakończone",
+        "notificationType_store_checkout_reminder": "Przypomnienie o niedokończonym zakupie"
       },
       "pageDescriptions": {
         "store": "Przeglądaj wszystko, co jest w sprzedaży, filtruj według kategorii i dodawaj, co chcesz, do koszyka w kilku kliknięciach.",
@@ -9546,7 +9604,9 @@
         "taxEvidence": "País do endereço de faturação: {billing}. País da ligação: {ip}.",
         "taxEvidenceConflict": "O endereço de faturação e a ligação estão em países diferentes. Verifique a encomenda antes de a faturar.",
         "taxUnknown": "desconhecido",
-        "taxMayChange": "Imposto à taxa normal da loja. Pode mudar no checkout, quando o seu país de faturação for conhecido."
+        "taxMayChange": "Imposto à taxa normal da loja. Pode mudar no checkout, quando o seu país de faturação for conhecido.",
+        "cart_restored": "O seu carrinho está de volta. Conclua quando quiser.",
+        "cart_restoreFailed": "Esse pedido já não pode ser retomado."
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -9770,7 +9830,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Pedido concluído"
+        "notificationType_store_order_completed": "Pedido concluído",
+        "notificationType_store_checkout_reminder": "Lembrete de uma compra por concluir"
       },
       "pageDescriptions": {
         "store": "Veja tudo o que está à venda, filtre por categoria e adicione o que quiser ao carrinho em poucos cliques.",
@@ -10434,7 +10495,9 @@
         "taxEvidence": "Страна платёжного адреса: {billing}. Страна подключения: {ip}.",
         "taxEvidenceConflict": "Платёжный адрес и подключение находятся в разных странах. Проверьте заказ перед выставлением счёта.",
         "taxUnknown": "неизвестно",
-        "taxMayChange": "Налог по стандартной ставке магазина. Он может измениться при оформлении, когда станет известна страна платёжного адреса."
+        "taxMayChange": "Налог по стандартной ставке магазина. Он может измениться при оформлении, когда станет известна страна платёжного адреса.",
+        "cart_restored": "Ваша корзина снова на месте. Завершите, когда будете готовы.",
+        "cart_restoreFailed": "Этот заказ больше нельзя продолжить."
       },
       "cart": {
         "title": "Корзина",
@@ -10658,7 +10721,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "Заказ оформлен"
+        "notificationType_store_order_completed": "Заказ оформлен",
+        "notificationType_store_checkout_reminder": "Напоминание о незавершенной покупке"
       },
       "pageDescriptions": {
         "store": "Просматривайте все товары в продаже, фильтруйте их по категориям и добавляйте нужное в корзину в пару кликов.",
@@ -11322,7 +11386,9 @@
         "taxEvidence": "账单地址国家：{billing}。连接国家：{ip}。",
         "taxEvidenceConflict": "账单地址与连接位于不同国家。开具发票前请核对此订单。",
         "taxUnknown": "未知",
-        "taxMayChange": "税费按商店标准税率显示。确定您的账单国家后，结账时可能会变化。"
+        "taxMayChange": "税费按商店标准税率显示。确定您的账单国家后，结账时可能会变化。",
+        "cart_restored": "你的购物车已恢复。准备好后即可完成购买。",
+        "cart_restoreFailed": "该订单已无法继续。"
       },
       "cart": {
         "title": "购物车",
@@ -11546,7 +11612,8 @@
         "vip": "VIP"
       },
       "profile": {
-        "notificationType_store_order_completed": "下单完成"
+        "notificationType_store_order_completed": "下单完成",
+        "notificationType_store_checkout_reminder": "未完成购买的提醒"
       },
       "pageDescriptions": {
         "store": "浏览所有在售商品，按分类筛选，几次点击即可将想要的商品加入购物车。",
@@ -11584,6 +11651,13 @@
       "label": "Order complete",
       "channels": [
         "inapp"
+      ]
+    },
+    {
+      "eventType": "store.checkout.reminder",
+      "label": "Reminder about an unfinished purchase",
+      "channels": [
+        "email"
       ]
     }
   ],
@@ -12082,6 +12156,13 @@
           }
         ]
       }
+    }
+  ],
+  "cronJobs": [
+    {
+      "id": "checkout-reminders",
+      "schedule": "every-15-minutes",
+      "handler": "cron/checkout-reminders.ts"
     }
   ]
 }

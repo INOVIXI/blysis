@@ -233,6 +233,11 @@ model Order {
    * country, and the module talking to one is the only thing that knows.
    */
   billingDetails Json?
+  /// When the reminder about this unpaid checkout was dealt with: sent, or
+  /// passed over for a newer checkout of the same buyer. Set once, by a
+  /// conditional claim, so no checkout is reminded twice. See
+  /// lib/checkout-reminder.ts.
+  remindedAt    DateTime?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -247,6 +252,8 @@ model Order {
 
   // The revenue chart and the community goal both scan a date window.
   @@index([createdAt])
+  // The checkout reminder asks for unpaid orders in an age window.
+  @@index([status, createdAt])
 }
 
 enum OrderStatus {
@@ -579,6 +586,9 @@ model CreditTopUp {
   providerRef String?
   /// When the money went back and the credits were taken back.
   refundedAt  DateTime?
+  /// When the reminder about this unpaid top-up was dealt with. See
+  /// `Order.remindedAt`.
+  remindedAt  DateTime?
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
@@ -587,6 +597,8 @@ model CreditTopUp {
 
   @@index([userId])
   @@index([providerRef])
+  // The checkout reminder asks for unpaid top-ups in an age window.
+  @@index([status, createdAt])
 }
 
 enum CreditTopUpStatus {
