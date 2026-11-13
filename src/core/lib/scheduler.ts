@@ -356,6 +356,16 @@ export async function bootstrapScheduler(): Promise<void> {
     });
 
     registerCronJob({
+        key: "core:prune-ai-usage",
+        schedule: "every-day",
+        handler: async () => {
+            const { pruneUsage } = await import("./ai-usage");
+            const removed = await pruneUsage();
+            if (removed > 0) log.info("cron: prune-ai-usage complete", { job: "prune-ai-usage", removed });
+        },
+    });
+
+    registerCronJob({
         key: "core:automated-backup",
         // How often is the operator's answer, read on the tick rather than
         // here: a cadence changed on the backup screen takes effect on the

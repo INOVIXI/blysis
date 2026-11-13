@@ -437,6 +437,27 @@ model ModerationDecision {
   @@index([decidedById])
 }
 
+// One row per AI call, answered or refused. What it cost and how it ended,
+// never what was asked or answered: a post sent for review stays the post's.
+model AiUsage {
+  id                String   @id @default(cuid())
+  module            String
+  purpose           String
+  /// Null when no provider could be asked.
+  provider          String?
+  model             String?
+  inputTokens       Int      @default(0)
+  outputTokens      Int      @default(0)
+  cachedInputTokens Int      @default(0)
+  /// "ok" or an AiError kind.
+  outcome           String
+  durationMs        Int      @default(0)
+  createdAt         DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([module, createdAt])
+}
+
 // Generic content revision history. Modules call recordRevision() before
 // updates/deletes to snapshot the previous state. The (resource, resourceId)
 // pair identifies the entity; data holds the JSON snapshot.

@@ -29,15 +29,12 @@ import { getModuleStates } from "@/core/lib/module-cache";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { readSettingValues } from "@/core/lib/setting-values";
 import { errorText, log } from "@/core/lib/logger";
+import { rateLimit } from "@/core/lib/rate-limit";
 import { ENVELOPE_RULE, envelope, type UntrustedText } from "@/core/lib/ai-envelope";
-
-export { ACTIVE_AI_PROVIDER_KEY } from "@/core/lib/ai-key";
+import { AI_SETTING_KEYS, aiSettingsFrom } from "@/core/lib/ai-settings";
+import { recordUsage, withinBudget, type UsageRecord } from "@/core/lib/ai-usage";
 import { ACTIVE_AI_PROVIDER_KEY } from "@/core/lib/ai-key";
 
-const AI_TIMEOUT_KEY = "ai_timeout_seconds";
-const AI_TIMEOUT_DEFAULT_SECONDS = 30;
-const AI_TIMEOUT_MIN_SECONDS = 5;
-const AI_TIMEOUT_MAX_SECONDS = 120;
 const DEFAULT_MAX_OUTPUT_TOKENS = 1024;
 
 export type AiTier = "fast" | "smart";
@@ -76,6 +73,7 @@ export interface AiRequest {
 export interface AiResult {
     /** The parsed answer. A provider returns an object, never the raw text. */
     output: unknown;
+    /** `inputTokens` counts every input token; `cachedInputTokens` is the part read from a cache. */
     usage: { inputTokens: number; outputTokens: number; cachedInputTokens: number };
     model: string;
 }
@@ -126,7 +124,7 @@ async function installedIds(): Promise<string[]> {
 
 async function settings(): Promise<Record<string, unknown>> {
     try {
-        return await readSettingValues([ACTIVE_AI_PROVIDER_KEY, AI_TIMEOUT_KEY]);
+        return await readSettingValues([ACTIVE_AI_PROVIDER_KEY, ...Object.values(AI_SETTING_KEYS)]);
     } catch (err) {
         log.warn("[ai] settings could not be read", { error: errorText(err) });
         return {};
@@ -136,12 +134,6 @@ async function settings(): Promise<Record<string, unknown>> {
 function chosenIn(values: Record<string, unknown>): string | null {
     const raw = values[ACTIVE_AI_PROVIDER_KEY];
     return typeof raw === "string" && raw.trim() ? raw.trim() : null;
-}
-
-function timeoutSecondsIn(values: Record<string, unknown>): number {
-    const raw = Number(values[AI_TIMEOUT_KEY]);
-    if (!Number.isFinite(raw) || raw <= 0) return AI_TIMEOUT_DEFAULT_SECONDS;
-    return Math.min(AI_TIMEOUT_MAX_SECONDS, Math.max(AI_TIMEOUT_MIN_SECONDS, Math.round(raw)));
 }
 
 function pick(ids: string[], chosen: string | null): string | null {
@@ -202,15 +194,41 @@ async function withTimeout<R>(seconds: number, run: (signal: AbortSignal) => Pro
  */
 export async function generateStructured<T>(opts: GenerateOptions<T>): Promise<T> {
     const values = await settings();
+    const limits = aiSettingsFrom(values);
     const id = pick(await installedIds(), chosenIn(values));
     const provider = id ? await load(id) : null;
-    if (!id || !provider) throw new AiError("no_provider");
 
+    const usage: UsageRecord = {
+        module: opts.module,
+        purpose: opts.purpose,
+        provider: provider ? id : null,
+        model: null,
+        inputTokens: 0,
+        outputTokens: 0,
+        cachedInputTokens: 0,
+        outcome: "ok",
+        durationMs: 0,
+    };
+    const refuse = async (kind: AiErrorKind, message?: string): Promise<never> => {
+        await recordUsage({ ...usage, outcome: kind });
+        throw new AiError(kind, message);
+    };
+
+    if (!id || !provider) return refuse("no_provider");
+    if (!(await withinBudget(opts.module, limits))) return refuse("budget_exhausted");
+    if (limits.requestsPerMinute > 0) {
+        // One budget for the site: what costs the operator is the total.
+        const { success } = await rateLimit("ai:requests", { maxRequests: limits.requestsPerMinute, windowMs: 60_000 });
+        if (!success) return refuse("rate_limited");
+    }
+
+    const started = Date.now();
     let result: AiResult;
     try {
-        const model = opts.model?.trim() || (await provider.defaultModel(opts.tier ?? "fast"));
+        usage.model = opts.model?.trim() || (await provider.defaultModel(opts.tier ?? "fast"));
+        const model = usage.model;
         const schema = z.toJSONSchema(opts.schema) as Record<string, unknown>;
-        result = await withTimeout(timeoutSecondsIn(values), (signal) =>
+        result = await withTimeout(limits.timeoutSeconds, (signal) =>
             provider.generate({
                 system: `${opts.system}\n\n${ENVELOPE_RULE}`,
                 messages: [{ role: "user", text: envelope(opts.input.trusted, opts.input.untrusted) }],
@@ -221,10 +239,17 @@ export async function generateStructured<T>(opts: GenerateOptions<T>): Promise<T
             }),
         );
     } catch (err) {
-        if (err instanceof AiError) throw err;
+        usage.durationMs = Date.now() - started;
+        if (err instanceof AiError) return refuse(err.kind, err.message);
         log.warn("[ai] the provider failed", { provider: id, module: opts.module, purpose: opts.purpose, error: errorText(err) });
-        throw new AiError("provider_error", errorText(err));
+        return refuse("provider_error", errorText(err));
     }
+
+    usage.durationMs = Date.now() - started;
+    usage.model = result.model || usage.model;
+    usage.inputTokens = tokenCount(result.usage?.inputTokens);
+    usage.outputTokens = tokenCount(result.usage?.outputTokens);
+    usage.cachedInputTokens = tokenCount(result.usage?.cachedInputTokens);
 
     const parsed = opts.schema.safeParse(result.output);
     if (!parsed.success) {
@@ -234,7 +259,14 @@ export async function generateStructured<T>(opts: GenerateOptions<T>): Promise<T
             purpose: opts.purpose,
             issues: parsed.error.issues.length,
         });
-        throw new AiError("invalid_output");
+        return refuse("invalid_output");
     }
+    await recordUsage(usage);
     return parsed.data;
+}
+
+/** A provider's count as a whole number the usage table can hold. */
+function tokenCount(raw: unknown): number {
+    const n = Number(raw);
+    return Number.isFinite(n) && n > 0 ? Math.min(2_000_000_000, Math.round(n)) : 0;
 }
