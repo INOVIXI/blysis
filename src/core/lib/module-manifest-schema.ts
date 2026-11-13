@@ -1091,6 +1091,22 @@ export const moduleManifestSchema = z.object({
         .optional(),
 
     /**
+     * An AI provider: the handler core calls when a module asks for an answer
+     * (`generateStructured` in lib/ai.ts), the same shape as a mail transport.
+     * Core names no vendor and no model; the handler knows both. Its
+     * credential belongs in `secretSettings` like any other.
+     */
+    aiProvider: z
+        .object({
+            /** What the operator reads when they choose between providers. */
+            name: z.string().min(1).max(64),
+            /** Exports `isConfigured`, `defaultModel` and `generate`. */
+            handler: relativePath("aiProvider.handler"),
+        })
+        .strict()
+        .optional(),
+
+    /**
      * Keys in the site settings store whose value is a credential.
      *
      * A gateway's secret key, an invoicing provider's password, a webhook
@@ -1322,6 +1338,7 @@ export function collectManifestFileRefs(m: ValidatedModuleManifest): string[] {
     push(m.hooks?.onDisable);
     push(m.seoRoutes?.handler);
     m.moderationProviders?.forEach((r) => push(r.handler));
+    push(m.aiProvider?.handler);
     m.authProviders?.forEach((r) => push(r.factory));
 
     return [...new Set(refs)];

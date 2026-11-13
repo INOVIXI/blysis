@@ -220,6 +220,7 @@ function generateRegistry() {
     const allEmailApiKeySettings = new Set<string>();
     const allEmailApiKeyEnvVars = new Set<string>();
     const allEmailProviders: { id: string; name: string; handler: string; module: string }[] = [];
+    const allAiProviders: { id: string; name: string; handler: string; module: string }[] = [];
 
 
     for (const { moduleName, manifest } of loaded) {
@@ -247,6 +248,9 @@ function generateRegistry() {
                 handler: manifest.emailProvider.handler,
                 module: moduleName,
             });
+        }
+        if (manifest.aiProvider) {
+            allAiProviders.push({ id: moduleName, name: manifest.aiProvider.name, handler: manifest.aiProvider.handler, module: moduleName });
         }
         manifest.settingsCards?.forEach((sc) => allSettingsCards.push({ ...sc, module: moduleName }));
         manifest.navbarComponents?.forEach((nc) => allNavbarComponents.push({ ...nc, module: moduleName }));
@@ -539,6 +543,7 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
     // The transports installed, as names an operator reads. Plain data, kept
     // apart from the registry beside it: that one holds dynamic imports of
     // server-only handlers and has no business in a browser bundle.
+    dataContent += `export const ModuleAiProviders: { id: string; name: string }[] = ${JSON.stringify(allAiProviders.map((e) => ({ id: e.id, name: e.name })), null, 2)};\n\n`;
     dataContent += `export const ModuleEmailProviders: { id: string; name: string }[] = ${JSON.stringify(allEmailProviders.map((e) => ({ id: e.id, name: e.name })), null, 2)};\n\n`;
     dataContent += `export const ModuleWebhookChannels: { id: string; label: string; layout: "json" | "embed" | "attachment"; hosts?: string[]; urlPlaceholder?: string; module: string }[] = ${JSON.stringify(allWebhookChannels, null, 2)};\n`;
     // Picture services a member's face may come from. Plain data the layout
@@ -682,6 +687,18 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
     }
     emailContent += '};\n\n';
     fs.writeFileSync(EMAIL_FILE, emailContent);
+
+    // What answers when a module asks for AI. The same shape as mail: core
+    // loads the provider the operator chose and calls it, knowing no vendor.
+    const AI_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-ai.ts');
+    let aiContent = '// Auto-generated server-only AI provider registry\n\n';
+    aiContent += 'export const AiProviderRegistry: Record<string, () => Promise<unknown>> = {\n';
+    for (const ap of allAiProviders) {
+        const handlerPath = ap.handler.replace(/\.tsx?$/, '');
+        aiContent += `  '${ap.id}': () => import('@/modules/${ap.module}/${handlerPath}').then((mod) => mod.default || mod),\n`;
+    }
+    aiContent += '};\n';
+    fs.writeFileSync(AI_FILE, aiContent);
 
     const CRONS_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-crons.ts');
     let cronsContent = '// Auto-generated module cron jobs registry\n\n';

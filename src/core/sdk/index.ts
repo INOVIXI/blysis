@@ -187,3 +187,5 @@ export { renderMarkdown } from "@/core/lib/markdown";
  */
 export { ModuleEmailProviders as emailProviders } from "@/core/generated/module-data";
 export { ACTIVE_EMAIL_PROVIDER_KEY } from "@/core/lib/mailer-key";
+export { ModuleAiProviders as aiProviders } from "@/core/generated/module-data";
+export { ACTIVE_AI_PROVIDER_KEY } from "@/core/lib/ai-key";

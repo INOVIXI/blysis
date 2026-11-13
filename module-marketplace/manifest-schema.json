@@ -151,6 +151,26 @@
       ],
       "additionalProperties": false
     },
+    "aiProvider": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "handler": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "name",
+        "handler"
+      ],
+      "additionalProperties": false
+    },
     "secretSettings": {
       "maxItems": 50,
       "type": "array",
