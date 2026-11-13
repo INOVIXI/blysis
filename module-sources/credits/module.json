@@ -2,7 +2,7 @@
   "id": "credits",
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "coreVersion": "^5.21.0",
   "category": "commerce",
   "author": "Blysis",
@@ -120,7 +120,9 @@
         "typeVoucher_create": "Voucher Made",
         "typeVoucher_redeem": "Voucher Redeemed",
         "typeWheel_prize": "Wheel Prize",
-        "typeWheel_spin": "Wheel Spin"
+        "typeWheel_spin": "Wheel Spin",
+        "typeCrate_open": "Crate Opened",
+        "typeCrate_reward": "Crate Reward"
       },
       "admin": {
         "module_credits_name": "Credit System",
@@ -201,7 +203,9 @@
         "typeVoucher_create": "Kupon Oluşturuldu",
         "typeVoucher_redeem": "Kupon Bozduruldu",
         "typeWheel_prize": "Çark Ödülü",
-        "typeWheel_spin": "Çark Çevirme"
+        "typeWheel_spin": "Çark Çevirme",
+        "typeCrate_open": "Kasa Açıldı",
+        "typeCrate_reward": "Kasa Ödülü"
       },
       "admin": {
         "module_credits_name": "Kredi Sistemi",
@@ -282,7 +286,9 @@
         "typeGift_refund": "Hədiyyə geri alındı",
         "typePayment_refund": "Geri Qaytarmadan Sonra Geri Alındı",
         "typeVoucher_create": "Kupon yaradıldı",
-        "typeVoucher_redeem": "Kupon istifadə edildi"
+        "typeVoucher_redeem": "Kupon istifadə edildi",
+        "typeCrate_open": "Sandıq açıldı",
+        "typeCrate_reward": "Sandıq mükafatı"
       },
       "admin": {
         "module_credits_name": "Kredit sistemi",
@@ -363,7 +369,9 @@
         "typeGift_refund": "Geschenk zurückgenommen",
         "typePayment_refund": "Nach Erstattung zurückgebucht",
         "typeVoucher_create": "Gutschein erstellt",
-        "typeVoucher_redeem": "Gutschein eingelöst"
+        "typeVoucher_redeem": "Gutschein eingelöst",
+        "typeCrate_open": "Kiste geöffnet",
+        "typeCrate_reward": "Kistenbelohnung"
       },
       "admin": {
         "module_credits_name": "Credit-System",
@@ -444,7 +452,9 @@
         "typeGift_refund": "Regalo recuperado",
         "typePayment_refund": "Retirado tras un reembolso",
         "typeVoucher_create": "Vale creado",
-        "typeVoucher_redeem": "Vale canjeado"
+        "typeVoucher_redeem": "Vale canjeado",
+        "typeCrate_open": "Caja abierta",
+        "typeCrate_reward": "Recompensa de caja"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -525,7 +535,9 @@
         "typeGift_refund": "Kingitus võeti tagasi",
         "typePayment_refund": "Tagasimakse järel tagasi võetud",
         "typeVoucher_create": "Kupong loodud",
-        "typeVoucher_redeem": "Kupong lunastatud"
+        "typeVoucher_redeem": "Kupong lunastatud",
+        "typeCrate_open": "Kast avatud",
+        "typeCrate_reward": "Kasti auhind"
       },
       "admin": {
         "module_credits_name": "Krediidisüsteem",
@@ -606,7 +618,9 @@
         "typeGift_refund": "Cadeau repris",
         "typePayment_refund": "Repris après un remboursement",
         "typeVoucher_create": "Bon créé",
-        "typeVoucher_redeem": "Bon utilisé"
+        "typeVoucher_redeem": "Bon utilisé",
+        "typeCrate_open": "Caisse ouverte",
+        "typeCrate_reward": "Récompense de caisse"
       },
       "admin": {
         "module_credits_name": "Système de crédits",
@@ -687,7 +701,9 @@
         "typeGift_refund": "Regalo ripreso",
         "typePayment_refund": "Ripreso dopo un rimborso",
         "typeVoucher_create": "Buono creato",
-        "typeVoucher_redeem": "Buono riscattato"
+        "typeVoucher_redeem": "Buono riscattato",
+        "typeCrate_open": "Cassa aperta",
+        "typeCrate_reward": "Premio di una cassa"
       },
       "admin": {
         "module_credits_name": "Sistema di crediti",
@@ -768,7 +784,9 @@
         "typeGift_refund": "Prezent cofnięty",
         "typePayment_refund": "Cofnięte po zwrocie",
         "typeVoucher_create": "Utworzono bon",
-        "typeVoucher_redeem": "Wykorzystano bon"
+        "typeVoucher_redeem": "Wykorzystano bon",
+        "typeCrate_open": "Otwarta skrzynka",
+        "typeCrate_reward": "Nagroda ze skrzynki"
       },
       "admin": {
         "module_credits_name": "System kredytów",
@@ -849,7 +867,9 @@
         "typeGift_refund": "Presente recuperado",
         "typePayment_refund": "Retirado após reembolso",
         "typeVoucher_create": "Vale criado",
-        "typeVoucher_redeem": "Vale resgatado"
+        "typeVoucher_redeem": "Vale resgatado",
+        "typeCrate_open": "Caixa aberta",
+        "typeCrate_reward": "Recompensa de caixa"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -930,7 +950,9 @@
         "typeGift_refund": "Подарок отозван",
         "typePayment_refund": "Списано после возврата",
         "typeVoucher_create": "Ваучер создан",
-        "typeVoucher_redeem": "Ваучер погашен"
+        "typeVoucher_redeem": "Ваучер погашен",
+        "typeCrate_open": "Открытие сундука",
+        "typeCrate_reward": "Награда из сундука"
       },
       "admin": {
         "module_credits_name": "Система кредитов",
@@ -1011,7 +1033,9 @@
         "typeGift_refund": "礼物已收回",
         "typePayment_refund": "退款后收回",
         "typeVoucher_create": "已创建兑换券",
-        "typeVoucher_redeem": "已兑换兑换券"
+        "typeVoucher_redeem": "已兑换兑换券",
+        "typeCrate_open": "打开宝箱",
+        "typeCrate_reward": "宝箱奖励"
       },
       "admin": {
         "module_credits_name": "积分系统",
