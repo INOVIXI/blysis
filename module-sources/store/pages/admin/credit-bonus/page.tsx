@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AlertTriangle, Loader2, Pencil, Plus, Save, Trash2, X } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
     Badge,
@@ -14,13 +14,18 @@ import {
     CheckboxField,
     Input,
     Label,
+    ListControls,
     LoadFailed,
+    Pagination,
     useConfirm,
+    useFormRoute,
+    useLocalDateTime,
+    useRowList,
     useSiteCurrency,
     useSiteSettings,
 } from "@/core/sdk/ui";
 import { AdminPageHeader, RowActions } from "@/core/sdk/admin";
-import { dateLocaleTag, instantToWallClock, writeError } from "@/core/sdk";
+import { instantToWallClock, writeError } from "@/core/sdk";
 import { campaignInstant, campaignRunning, MAX_BONUS_TIERS, overlapping, readTiers } from "../../../lib/credit-bonus";
 
 /**
@@ -64,7 +69,7 @@ function asDates<T extends { startsAt: string; endsAt: string }>(row: T) {
 export default function CreditBonusPage() {
     const t = useTranslations("store");
     const commonT = useTranslations("common");
-    const localeTag = dateLocaleTag(useLocale());
+    const when = useLocalDateTime({ dateStyle: "medium", timeStyle: "short" });
     const { format: money } = useSiteCurrency();
     const { settings } = useSiteSettings();
     const timeZone = (settings.site_timezone as string) || "UTC";
@@ -74,9 +79,12 @@ export default function CreditBonusPage() {
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
     const [busy, setBusy] = useState(false);
-    /** "new", a campaign's id, or null when no form is open. */
-    const [editing, setEditing] = useState<string | null>(null);
+    // The form is a screen at `?form=new` or `?form=<id>`, not a card above
+    // the list of campaigns.
+    const { showForm, editingId, openForm, closeForm } = useFormRoute();
     const [draft, setDraft] = useState<Draft>(EMPTY);
+    // The name is what the card draws and what an operator remembers.
+    const list = useRowList(campaigns, { text: (campaign) => [campaign.name], pageSize: 20 });
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -95,8 +103,10 @@ export default function CreditBonusPage() {
 
     useEffect(() => { void load(); }, [load]);
 
-    const open = (campaign: Campaign | null) => {
-        setEditing(campaign ? campaign.id : "new");
+    // Filled from the campaign the address names once the rows arrive, so a
+    // reload of `?form=<id>` lands on the same edit rather than an empty form.
+    useEffect(() => {
+        const campaign = editingId ? campaigns.find((row) => row.id === editingId) : null;
         setDraft(campaign
             ? {
                 name: campaign.name,
@@ -106,16 +116,16 @@ export default function CreditBonusPage() {
                 tiers: readTiers(campaign.tiers).map((tier) => ({ minAmount: String(tier.minAmount), percent: String(tier.percent) })),
             }
             : EMPTY);
-    };
+    }, [editingId, campaigns, timeZone]);
 
     const save = async () => {
         setBusy(true);
         try {
-            const url = editing === "new"
-                ? "/api/v1/store/admin/credit-bonus-campaigns"
-                : `/api/v1/store/admin/credit-bonus-campaigns/${editing}`;
+            const url = editingId
+                ? `/api/v1/store/admin/credit-bonus-campaigns/${editingId}`
+                : "/api/v1/store/admin/credit-bonus-campaigns";
             const res = await fetch(url, {
-                method: editing === "new" ? "POST" : "PATCH",
+                method: editingId ? "PATCH" : "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     name: draft.name.trim(),
@@ -131,8 +141,8 @@ export default function CreditBonusPage() {
                 return;
             }
             toast.success(t("adm_creditBonusSaved"));
-            setEditing(null);
             await load();
+            closeForm();
         } catch {
             toast.error(t("adm_creditBonusSaveFailed"));
         } finally {
@@ -161,12 +171,12 @@ export default function CreditBonusPage() {
         <AdminPageHeader
             title={t("adm_creditBonusTitle")}
             description={t("adm_creditBonusSubtitle")}
-            actions={
-                <Button variant="outline" onClick={() => open(null)}>
+            actions={showForm ? undefined : (
+                <Button variant="outline" onClick={() => openForm()}>
                     <Plus className="w-4 h-4" aria-hidden="true" />
                     {t("adm_creditBonusAdd")}
                 </Button>
-            }
+            )}
         />
     );
     if (failed) return <>{header}<Card><CardContent><LoadFailed onRetry={load} /></CardContent></Card></>;
@@ -176,23 +186,21 @@ export default function CreditBonusPage() {
     // the shop's clock, as the server will read it.
     const draftStarts = draft.startsAt ? campaignInstant(draft.startsAt, timeZone) : null;
     const draftEnds = draft.endsAt ? campaignInstant(draft.endsAt, timeZone) : null;
-    const draftClash = editing !== null && draft.isActive && draftStarts !== null && draftEnds !== null &&
+    const draftClash = draft.isActive && draftStarts !== null && draftEnds !== null &&
         overlapping([
-            ...campaigns.filter((row) => row.id !== editing).map(asDates),
+            ...campaigns.filter((row) => row.id !== editingId).map(asDates),
             { id: "draft", isActive: true, startsAt: draftStarts, endsAt: draftEnds },
         ]).includes("draft");
     const setTier = (index: number, next: TierDraft) =>
         setDraft({ ...draft, tiers: draft.tiers.map((tier, at) => (at === index ? next : tier)) });
-    const when = (iso: string) => new Date(iso).toLocaleString(localeTag, { timeZone, dateStyle: "medium", timeStyle: "short" });
     const now = new Date();
 
-    return (
-        <>
-            {header}
-
-            {editing !== null && (
-                <Card className="mb-6">
-                    <CardHeader><CardTitle>{editing === "new" ? t("adm_creditBonusAdd") : t("adm_creditBonusEdit")}</CardTitle></CardHeader>
+    if (showForm) {
+        return (
+            <>
+                {header}
+                <Card>
+                    <CardHeader><CardTitle>{editingId ? t("adm_creditBonusEdit") : t("adm_creditBonusAdd")}</CardTitle></CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
@@ -259,7 +267,7 @@ export default function CreditBonusPage() {
                         )}
 
                         <div className="flex justify-end gap-2">
-                            <Button variant="ghost" disabled={busy} onClick={() => setEditing(null)}>{commonT("cancel")}</Button>
+                            <Button variant="ghost" disabled={busy} onClick={closeForm}>{commonT("cancel")}</Button>
                             <Button disabled={busy || draft.name.trim() === ""} onClick={save}>
                                 {busy ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Save className="w-4 h-4" aria-hidden="true" />}
                                 {t("adm_creditBonusSave")}
@@ -267,13 +275,23 @@ export default function CreditBonusPage() {
                         </div>
                     </CardContent>
                 </Card>
-            )}
+            </>
+        );
+    }
+
+    return (
+        <>
+            {header}
+
+            <ListControls className="mb-4" search={{ value: list.search, onChange: list.setSearch }} />
 
             {campaigns.length === 0 ? (
                 <Card><CardContent className="py-10 text-center text-muted-foreground">{t("adm_creditBonusNone")}</CardContent></Card>
+            ) : list.rows.length === 0 ? (
+                <Card><CardContent className="py-10 text-center text-muted-foreground">{commonT("noResults")}</CardContent></Card>
             ) : (
                 <div className="space-y-3">
-                    {campaigns.map((campaign) => {
+                    {list.rows.map((campaign) => {
                         const dated = asDates(campaign);
                         const state = !campaign.isActive
                             ? "off"
@@ -290,7 +308,7 @@ export default function CreditBonusPage() {
                                         </p>
                                         <RowActions
                                             actions={[
-                                                { icon: Pencil, label: t("adm_creditBonusEdit"), onClick: () => open(campaign) },
+                                                { icon: Pencil, label: t("adm_creditBonusEdit"), onClick: () => openForm(campaign.id) },
                                                 { icon: Trash2, label: t("adm_creditBonusDelete"), onClick: () => void remove(campaign), destructive: true },
                                             ]}
                                         />
@@ -313,6 +331,7 @@ export default function CreditBonusPage() {
                             </Card>
                         );
                     })}
+                    <Pagination page={list.page} pages={list.pages} total={list.total} onPageChange={list.setPage} />
                 </div>
             )}
         </>

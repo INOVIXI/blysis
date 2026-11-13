@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { hasPermission, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { CAMPAIGN_SELECT, campaignWrite } from "../../../lib/credit-bonus-server";
+import { creditBonusCampaignSchema } from "../../../lib/validations";
 
 /**
  * The credit bonus campaigns, for the panel: every one, running, ended or
@@ -28,7 +29,9 @@ export async function POST(request: NextRequest) {
 
     const body = await readJsonBody(request);
     if (body instanceof NextResponse) return body;
-    const write = await campaignWrite(body);
+    const parsed = creditBonusCampaignSchema.safeParse(body);
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
+    const write = await campaignWrite(parsed.data);
     if (!write.ok) return NextResponse.json({ error: write.error, code: write.code }, { status: 400 });
 
     const campaign = await prisma.creditBonusCampaign.create({ data: write.data, select: CAMPAIGN_SELECT });
