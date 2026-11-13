@@ -174,7 +174,8 @@
     "auditSignInMethodRemove": "A retiré une méthode de connexion d'un membre",
     "auditModerationReasonCreate": "A ajouté un motif de refus",
     "auditModerationReasonUpdate": "A modifié un motif de refus",
-    "auditModerationReasonDelete": "A supprimé un motif de refus"
+    "auditModerationReasonDelete": "A supprimé un motif de refus",
+    "auditModerationRequeue": "A remis du contenu dans la file de modération"
   },
   "nav": {
     "adminPanel": "Panneau d’administration",

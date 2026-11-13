@@ -174,7 +174,8 @@
     "auditSignInMethodRemove": "Eemaldas liikme sisselogimisviisi",
     "auditModerationReasonCreate": "Lisas tagasilükkamise põhjuse",
     "auditModerationReasonUpdate": "Muutis tagasilükkamise põhjust",
-    "auditModerationReasonDelete": "Kustutas tagasilükkamise põhjuse"
+    "auditModerationReasonDelete": "Kustutas tagasilükkamise põhjuse",
+    "auditModerationRequeue": "Pani sisu tagasi modereerimisjärjekorda"
   },
   "nav": {
     "adminPanel": "Halduspaneel",

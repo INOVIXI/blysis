@@ -174,7 +174,8 @@
     "auditSignInMethodRemove": "移除了成员的一种登录方式",
     "auditModerationReasonCreate": "添加了拒绝原因",
     "auditModerationReasonUpdate": "修改了拒绝原因",
-    "auditModerationReasonDelete": "删除了拒绝原因"
+    "auditModerationReasonDelete": "删除了拒绝原因",
+    "auditModerationRequeue": "将内容放回审核队列"
   },
   "nav": {
     "adminPanel": "管理后台",

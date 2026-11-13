@@ -174,7 +174,8 @@
     "auditSignInMethodRemove": "Usunął metodę logowania członka",
     "auditModerationReasonCreate": "Dodał powód odrzucenia",
     "auditModerationReasonUpdate": "Zmienił powód odrzucenia",
-    "auditModerationReasonDelete": "Usunął powód odrzucenia"
+    "auditModerationReasonDelete": "Usunął powód odrzucenia",
+    "auditModerationRequeue": "Przywrócił treść do kolejki moderacji"
   },
   "nav": {
     "adminPanel": "Panel administratora",

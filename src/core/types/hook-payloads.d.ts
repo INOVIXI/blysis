@@ -56,6 +56,15 @@ interface BlysisHookPayloads {
     };
     "user.warning.threshold": { userId: string; points: number; threshold: number };
 
+    /**
+     * Something a member wrote was rejected in the moderation queue, by a
+     * person or a reviewing module. `provider` is the id a module's
+     * `moderationProviders` entry declares; the decision row holds the reason.
+     */
+    "moderation.item.rejected": { provider: string; itemId: string; authorId: string; decisionId: string };
+    /** A rejection was taken back: the item was approved or put back in the queue. */
+    "moderation.item.restored": { provider: string; itemId: string; authorId: string; decisionId: string };
+
     /** An admin changed somebody else's account from the users screen. */
     "user.updated": { userId: string; changes: Record<string, unknown> };
     "user.banned": { userId: string; banned: boolean; reason: string | null };

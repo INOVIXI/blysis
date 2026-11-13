@@ -174,7 +174,8 @@
     "auditSignInMethodRemove": "Quitó un método de inicio de sesión de un miembro",
     "auditModerationReasonCreate": "Añadió un motivo de rechazo",
     "auditModerationReasonUpdate": "Cambió un motivo de rechazo",
-    "auditModerationReasonDelete": "Eliminó un motivo de rechazo"
+    "auditModerationReasonDelete": "Eliminó un motivo de rechazo",
+    "auditModerationRequeue": "Devolvió contenido a la cola de moderación"
   },
   "nav": {
     "adminPanel": "Panel de administración",

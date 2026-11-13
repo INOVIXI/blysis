@@ -174,7 +174,8 @@
     "auditSignInMethodRemove": "Удалил способ входа участника",
     "auditModerationReasonCreate": "Добавил причину отклонения",
     "auditModerationReasonUpdate": "Изменил причину отклонения",
-    "auditModerationReasonDelete": "Удалил причину отклонения"
+    "auditModerationReasonDelete": "Удалил причину отклонения",
+    "auditModerationRequeue": "Вернул контент в очередь модерации"
   },
   "nav": {
     "adminPanel": "Панель администратора",

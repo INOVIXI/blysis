@@ -174,7 +174,8 @@
     "auditSignInMethodRemove": "Removed a member's sign-in method",
     "auditModerationReasonCreate": "Added a rejection reason",
     "auditModerationReasonUpdate": "Changed a rejection reason",
-    "auditModerationReasonDelete": "Deleted a rejection reason"
+    "auditModerationReasonDelete": "Deleted a rejection reason",
+    "auditModerationRequeue": "Put content back in the moderation queue"
   },
   "nav": {
     "adminPanel": "Admin Panel",

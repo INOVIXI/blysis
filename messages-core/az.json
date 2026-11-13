@@ -174,7 +174,8 @@
     "auditSignInMethodRemove": "Üzvün giriş üsulunu sildi",
     "auditModerationReasonCreate": "Rədd səbəbi əlavə etdi",
     "auditModerationReasonUpdate": "Rədd səbəbini dəyişdi",
-    "auditModerationReasonDelete": "Rədd səbəbini sildi"
+    "auditModerationReasonDelete": "Rədd səbəbini sildi",
+    "auditModerationRequeue": "Məzmunu moderasiya növbəsinə qaytardı"
   },
   "nav": {
     "adminPanel": "Admin paneli",

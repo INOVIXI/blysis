@@ -3,11 +3,14 @@ import { z } from "zod";
 import { auth } from "@/core/lib/auth";
 import { isAdmin } from "@/core/lib/permissions";
 import { logActivity } from "@/core/lib/activity-log";
+import { prisma } from "@/core/lib/db";
 import { ModuleModerationProviders } from "@/core/generated/module-moderation";
 import { getModuleStates } from "@/core/lib/module-cache";
 import { readJsonBody } from "@/core/lib/api-body";
 import { pageParams } from "@/core/lib/page-params";
 import { log } from "@/core/lib/logger";
+import { resolveLocaleFromRequest } from "@/core/lib/i18n/resolve-locale";
+import { decide, latestDecisions } from "@/core/lib/moderation-decisions";
 
 async function loadActiveProviders() {
     const states = await getModuleStates();
@@ -15,9 +18,10 @@ async function loadActiveProviders() {
 }
 
 /**
- * GET /api/v1/admin/moderation?type=<provider-id>&page=1
- * Returns pending items for one provider. When type is omitted, returns
- * the per-provider pending counts.
+ * GET /api/v1/admin/moderation?type=<provider-id>&page=1[&state=rejected]
+ * Returns pending items for one provider, or with `state=rejected` what it
+ * rejected, each beside its latest decision. When type is omitted, returns
+ * the per-provider pending counts and whether each has a Rejected view.
  */
 export async function GET(request: NextRequest) {
     const session = await auth();
@@ -31,6 +35,7 @@ export async function GET(request: NextRequest) {
     const providers = await loadActiveProviders();
     const { searchParams } = new URL(request.url);
     const typeParam = searchParams.get("type");
+    const rejected = searchParams.get("state") === "rejected";
     const perPage = 20;
     const { page, skip, take } = pageParams(searchParams, { fixedLimit: perPage });
 
@@ -42,10 +47,11 @@ export async function GET(request: NextRequest) {
             settingKey?: string;
             settingLabelKey?: string;
             settingDescKey?: string;
+            canListRejected: boolean;
         }> = {};
         await Promise.all(
             providers.map(async (p) => {
-                labels[p.id] = {
+                const meta = {
                     label: p.label,
                     labelKey: p.labelKey,
                     settingKey: p.settingKey,
@@ -55,8 +61,10 @@ export async function GET(request: NextRequest) {
                 try {
                     const mod = await p.loader();
                     counts[p.id] = await mod.default.count();
+                    labels[p.id] = { ...meta, canListRejected: typeof mod.default.listRejected === "function" };
                 } catch {
                     counts[p.id] = 0;
+                    labels[p.id] = { ...meta, canListRejected: false };
                 }
             }),
         );
@@ -70,9 +78,20 @@ export async function GET(request: NextRequest) {
 
     try {
         const mod = await provider.loader();
-        const { items, total } = await mod.default.list(skip, take);
+        const impl = mod.default;
+        if (rejected && !impl.listRejected) {
+            return NextResponse.json({ error: "This kind keeps no list of what it rejected", code: "not_supported" }, { status: 400 });
+        }
+        const { items, total } = rejected ? await impl.listRejected!(skip, take) : await impl.list(skip, take);
+        const decisions = rejected
+            ? await latestDecisions(provider.id, items.map((i) => i.id), await resolveLocaleFromRequest())
+            : new Map();
         return NextResponse.json({
-            items: items.map((i) => ({ ...i, type: provider.id })),
+            items: items.map((i) => ({
+                ...i,
+                type: provider.id,
+                ...(rejected ? { decision: decisions.get(i.id) ?? null } : {}),
+            })),
             total,
             page,
             pages: Math.max(1, Math.ceil(total / perPage)),
@@ -84,14 +103,20 @@ export async function GET(request: NextRequest) {
 }
 
 const actionSchema = z.object({
-    ids: z.array(z.string().min(1)).min(1),
+    ids: z.array(z.string().min(1)).min(1).max(100),
     type: z.string().min(1),
-    action: z.enum(["approve", "reject"]),
+    action: z.enum(["approve", "reject", "requeue"]),
+    reasonId: z.string().min(1).optional(),
+    note: z.string().trim().max(500).optional(),
 });
+
+const STATE_FOR = { approve: "APPROVED", reject: "REJECTED", requeue: "PENDING" } as const;
 
 /**
  * POST /api/v1/admin/moderation
- * Body: { ids: string[], type, action: "approve" | "reject" }
+ * Body: { ids, type, action: "approve" | "reject" | "requeue", reasonId?, note? }
+ * A rejection names one of the site's enabled reasons; approving or
+ * requeueing works from any state, which is how a rejection is taken back.
  */
 export async function POST(request: NextRequest) {
     const session = await auth();
@@ -115,13 +140,30 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
 
-    const { ids, action } = parsed.data;
-    const newState = action === "approve" ? "APPROVED" : "REJECTED";
+    const { ids, action, reasonId, note } = parsed.data;
+    if (action === "reject") {
+        if (!reasonId) {
+            return NextResponse.json({ error: "A rejection needs a reason", code: "reason_required" }, { status: 400 });
+        }
+        const reason = await prisma.moderationReason.findUnique({ where: { id: reasonId }, select: { enabled: true } });
+        if (!reason?.enabled) {
+            return NextResponse.json({ error: "Unknown reason", code: "reason_unknown" }, { status: 400 });
+        }
+    }
 
-    let affected = 0;
+    let affected: string[];
     try {
         const mod = await provider.loader();
-        affected = await mod.default.bulkUpdate(ids, newState);
+        ({ affected } = await decide(
+            { id: provider.id, impl: mod.default },
+            {
+                ids,
+                state: STATE_FOR[action],
+                reasonId: action === "reject" ? reasonId : null,
+                note: note || null,
+                decidedById: session.user.id,
+            },
+        ));
     } catch (err) {
         log.error("[moderation] action failed", { error: err instanceof Error ? err.message : String(err) });
         return NextResponse.json({ error: "Operation failed" }, { status: 500 });
@@ -131,8 +173,8 @@ export async function POST(request: NextRequest) {
         userId: session.user.id,
         action: `moderation.${action}`,
         entity: provider.id,
-        metadata: { ids, count: affected },
+        metadata: { ids: affected, count: affected.length, ...(reasonId ? { reasonId } : {}) },
     }).catch(() => { });
 
-    return NextResponse.json({ ok: true, affected });
+    return NextResponse.json({ ok: true, affected: affected.length });
 }

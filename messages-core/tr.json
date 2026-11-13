@@ -174,7 +174,8 @@
     "auditSignInMethodRemove": "Bir üyenin giriş yöntemini kaldırdı",
     "auditModerationReasonCreate": "Red sebebi ekledi",
     "auditModerationReasonUpdate": "Red sebebini değiştirdi",
-    "auditModerationReasonDelete": "Red sebebini sildi"
+    "auditModerationReasonDelete": "Red sebebini sildi",
+    "auditModerationRequeue": "İçeriği moderasyon kuyruğuna geri koydu"
   },
   "nav": {
     "adminPanel": "Yönetici Paneli",

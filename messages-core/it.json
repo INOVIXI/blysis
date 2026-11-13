@@ -174,7 +174,8 @@
     "auditSignInMethodRemove": "Ha rimosso un metodo di accesso di un membro",
     "auditModerationReasonCreate": "Ha aggiunto un motivo di rifiuto",
     "auditModerationReasonUpdate": "Ha modificato un motivo di rifiuto",
-    "auditModerationReasonDelete": "Ha eliminato un motivo di rifiuto"
+    "auditModerationReasonDelete": "Ha eliminato un motivo di rifiuto",
+    "auditModerationRequeue": "Ha rimesso il contenuto nella coda di moderazione"
   },
   "nav": {
     "adminPanel": "Pannello di amministrazione",

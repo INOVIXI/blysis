@@ -174,7 +174,8 @@
     "auditSignInMethodRemove": "Hat die Anmeldemethode eines Mitglieds entfernt",
     "auditModerationReasonCreate": "Ablehnungsgrund hinzugefügt",
     "auditModerationReasonUpdate": "Ablehnungsgrund geändert",
-    "auditModerationReasonDelete": "Ablehnungsgrund gelöscht"
+    "auditModerationReasonDelete": "Ablehnungsgrund gelöscht",
+    "auditModerationRequeue": "Inhalt zurück in die Moderationswarteschlange gelegt"
   },
   "nav": {
     "adminPanel": "Admin-Bereich",
