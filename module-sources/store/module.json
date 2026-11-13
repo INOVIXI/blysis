@@ -1585,7 +1585,7 @@
         "cuse_lastUsed": "Last used",
         "cuse_noAccount": "Deleted account",
         "cuse_deletedCoupon": "Deleted coupon",
-        "cuse_loadFailed": "The coupon uses could not be loaded."
+        "cuse_couponsLoadFailed": "The coupon list for the filter could not be loaded."
       },
       "cart": {
         "title": "Shopping Cart",
@@ -2493,7 +2493,7 @@
         "cuse_lastUsed": "Son kullanım",
         "cuse_noAccount": "Silinmiş hesap",
         "cuse_deletedCoupon": "Silinmiş kupon",
-        "cuse_loadFailed": "Kupon kullanımları yüklenemedi."
+        "cuse_couponsLoadFailed": "Süzgeç için kupon listesi yüklenemedi."
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -3401,7 +3401,7 @@
         "cuse_lastUsed": "Son istifadə",
         "cuse_noAccount": "Silinmiş hesab",
         "cuse_deletedCoupon": "Silinmiş kupon",
-        "cuse_loadFailed": "Kupon istifadələri yüklənə bilmədi."
+        "cuse_couponsLoadFailed": "Süzgəc üçün kupon siyahısı yüklənə bilmədi."
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -4309,7 +4309,7 @@
         "cuse_lastUsed": "Zuletzt benutzt",
         "cuse_noAccount": "Gelöschtes Konto",
         "cuse_deletedCoupon": "Gelöschter Gutschein",
-        "cuse_loadFailed": "Die Gutscheinnutzungen konnten nicht geladen werden."
+        "cuse_couponsLoadFailed": "Die Gutscheinliste für den Filter konnte nicht geladen werden."
       },
       "cart": {
         "title": "Warenkorb",
@@ -5217,7 +5217,7 @@
         "cuse_lastUsed": "Último uso",
         "cuse_noAccount": "Cuenta eliminada",
         "cuse_deletedCoupon": "Cupón eliminado",
-        "cuse_loadFailed": "No se pudieron cargar los usos de cupones."
+        "cuse_couponsLoadFailed": "No se pudo cargar la lista de cupones del filtro."
       },
       "cart": {
         "title": "Carrito de compra",
@@ -6125,7 +6125,7 @@
         "cuse_lastUsed": "Viimati kasutatud",
         "cuse_noAccount": "Kustutatud konto",
         "cuse_deletedCoupon": "Kustutatud kupong",
-        "cuse_loadFailed": "Kupongide kasutusi ei õnnestunud laadida."
+        "cuse_couponsLoadFailed": "Filtri kupongide loendit ei õnnestunud laadida."
       },
       "cart": {
         "title": "Ostukorv",
@@ -7033,7 +7033,7 @@
         "cuse_lastUsed": "Dernière utilisation",
         "cuse_noAccount": "Compte supprimé",
         "cuse_deletedCoupon": "Coupon supprimé",
-        "cuse_loadFailed": "Les utilisations des coupons n'ont pas pu être chargées."
+        "cuse_couponsLoadFailed": "La liste des coupons du filtre n'a pas pu être chargée."
       },
       "cart": {
         "title": "Panier",
@@ -7941,7 +7941,7 @@
         "cuse_lastUsed": "Ultimo utilizzo",
         "cuse_noAccount": "Account eliminato",
         "cuse_deletedCoupon": "Coupon eliminato",
-        "cuse_loadFailed": "Non è stato possibile caricare gli utilizzi dei coupon."
+        "cuse_couponsLoadFailed": "Non è stato possibile caricare l'elenco dei coupon per il filtro."
       },
       "cart": {
         "title": "Carrello",
@@ -8849,7 +8849,7 @@
         "cuse_lastUsed": "Ostatnio użyty",
         "cuse_noAccount": "Usunięte konto",
         "cuse_deletedCoupon": "Usunięty kupon",
-        "cuse_loadFailed": "Nie udało się wczytać użyć kuponów."
+        "cuse_couponsLoadFailed": "Nie udało się wczytać listy kuponów do filtra."
       },
       "cart": {
         "title": "Koszyk",
@@ -9757,7 +9757,7 @@
         "cuse_lastUsed": "Último uso",
         "cuse_noAccount": "Conta excluída",
         "cuse_deletedCoupon": "Cupom excluído",
-        "cuse_loadFailed": "Não foi possível carregar os usos de cupons."
+        "cuse_couponsLoadFailed": "Não foi possível carregar a lista de cupons do filtro."
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -10665,7 +10665,7 @@
         "cuse_lastUsed": "Последнее использование",
         "cuse_noAccount": "Удалённый аккаунт",
         "cuse_deletedCoupon": "Удалённый купон",
-        "cuse_loadFailed": "Не удалось загрузить использования купонов."
+        "cuse_couponsLoadFailed": "Не удалось загрузить список купонов для фильтра."
       },
       "cart": {
         "title": "Корзина",
@@ -11573,7 +11573,7 @@
         "cuse_lastUsed": "最近使用",
         "cuse_noAccount": "已删除的账号",
         "cuse_deletedCoupon": "已删除的优惠码",
-        "cuse_loadFailed": "无法加载优惠码使用情况。"
+        "cuse_couponsLoadFailed": "无法加载筛选用的优惠码列表。"
       },
       "cart": {
         "title": "购物车",

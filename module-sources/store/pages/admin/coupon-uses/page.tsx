@@ -11,7 +11,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { Card, CardContent, ListControls, Pagination, useLocalDateTime } from "@/core/sdk/ui";
+import { Card, CardContent, ListControls, LoadFailed, Pagination, useLocalDateTime } from "@/core/sdk/ui";
 import { AdminPageHeader } from "@/core/sdk/admin";
 import { useRouter } from "@/core/sdk/navigation";
 
@@ -46,13 +46,18 @@ export default function CouponUsesPage() {
     const [total, setTotal] = useState(0);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
+    const [failed, setFailed] = useState(false);
 
     useEffect(() => {
+        // The filter still works without its list: the rows say which code
+        // they are, and "every coupon" needs nothing loaded.
+        let cancelled = false;
         fetch("/api/v1/store/coupons")
-            .then((res) => (res.ok ? res.json() : { coupons: [] }))
-            .then((data: { coupons?: CouponOption[] }) => setCoupons(data.coupons ?? []))
-            .catch(() => setCoupons([]));
-    }, []);
+            .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+            .then((data: { coupons?: CouponOption[] }) => { if (!cancelled) setCoupons(data.coupons ?? []); })
+            .catch(() => { if (!cancelled) toast.error(t("cuse_couponsLoadFailed")); });
+        return () => { cancelled = true; };
+    }, [t]);
 
     const load = useCallback(async () => {
         const query = new URLSearchParams({ page: String(page) });
@@ -65,12 +70,15 @@ export default function CouponUsesPage() {
             setRows(data.uses ?? []);
             setTotal(data.total ?? 0);
             setPages(Math.max(1, Math.ceil((data.total ?? 0) / (data.limit ?? 25))));
+            setFailed(false);
         } catch {
-            toast.error(t("cuse_loadFailed"));
+            // Said where the rows would be, so a failed read is not taken
+            // for "no coupon has been used yet".
+            setFailed(true);
         } finally {
             setLoading(false);
         }
-    }, [page, coupon, search, t]);
+    }, [page, coupon, search]);
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => { load(); }, [load]);
@@ -103,6 +111,8 @@ export default function CouponUsesPage() {
                 <CardContent className="p-0">
                     {loading ? (
                         <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
+                    ) : failed ? (
+                        <LoadFailed onRetry={() => void load()} />
                     ) : rows.length === 0 ? (
                         <p className="text-muted-foreground text-center py-8">{t("cuse_empty")}</p>
                     ) : (
