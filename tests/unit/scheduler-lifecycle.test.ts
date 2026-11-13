@@ -90,6 +90,7 @@ let pruned = {
 vi.mock("@/core/lib/retention", () => ({ pruneOldRecords: async () => pruned }));
 vi.mock("@/core/lib/health-alerting", () => ({ checkAndAlert: async () => ({ notified: false }) }));
 vi.mock("@/core/lib/ip-blocks", () => ({ invalidateIpBlockCache: () => { } }));
+vi.mock("@/core/lib/ai-usage", () => ({ pruneUsage: async () => 0 }));
 vi.mock("@/core/lib/backup", () => ({ createBackup: async () => ({ filename: "f", sizeBytes: 1 }) }));
 // The backup job asks whether it is switched on before it dumps anything, and
 // that read is a database call this file's prisma stub does not answer. Same
@@ -223,7 +224,7 @@ describe("bootstrapScheduler", () => {
         expect(keys).toEqual(expect.arrayContaining([
             "core:prune-revisions", "core:expire-warnings", "core:process-broadcasts",
             "core:process-email-queue", "core:retention-prune", "core:health-alerting",
-            "core:prune-ip-blocks", "core:automated-backup",
+            "core:prune-ip-blocks", "core:prune-ai-usage", "core:automated-backup",
         ]));
         expect(new Set(keys).size).toBe(keys.length);
     });

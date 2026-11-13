@@ -35,6 +35,15 @@ A module can also publish a live value for anyone writing for the site: `placeho
 - The root layout waits only 200 ms for the values. One that is not ready is fetched by the browser from `/api/v1/placeholders` after the page paints, so a slow handler costs its own value a moment and never the page.
 - The translation catalogue is filled on the server, after the cached catalogue is read and never into it, each value quoted so the message formatter prints it as text. The browser's second ask does not reach it: a value that was not ready shows its fallback in a translated string until the next page.
 
+## AI
+
+A module that wants a model's answer calls `generateStructured` in `src/core/lib/ai.ts` with a Zod schema. The vendor is a module too, declared under `aiProvider` the way a mail transport is, and core calls it directly rather than over the hook bus, whose listener timeout a model call would routinely hit. Four rules hold the design together:
+
+- Every failure is an `AiError`, never a partial answer, and a caller does nothing on any of them. A provider switched off, unconfigured or unreadable is `no_provider`, and a spend that cannot be read refuses a capped call.
+- Limits are checked before a request leaves the site, and a daily cap counts from midnight on the site's clock.
+- What a member wrote reaches the provider only inside the envelope in `src/core/lib/ai-envelope.ts`, which the text cannot close, and the system text says the envelope is data.
+- `AiUsage` holds counts and an outcome per call, never the prompt or the answer.
+
 ## Compiled, not loaded
 
 A module ships React server components, and Next.js compiles those at build time. There is no runtime loader, so installing a module rebuilds the site and restarts it. That decision has operational consequences, from the restart window to a single app process per installation; they are in [How an install becomes a build](./build-lifecycle.md).

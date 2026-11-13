@@ -90,6 +90,13 @@ export { isModuleEnabled } from "@/core/lib/module-cache";
 // --- Moderation: whether what a person wrote waits for a moderator ---
 export { moderationStateFor } from "@/core/lib/moderation-mode";
 
+// --- AI: an answer in a shape, from whichever provider the operator chose ---
+// A provider module implements `AiProvider`; any other module calls
+// `generateStructured` and treats every `AiError` as "do nothing".
+export { generateStructured, AiError } from "@/core/lib/ai";
+export type { AiProvider, AiRequest, AiResult, AiTier, AiErrorKind, GenerateOptions } from "@/core/lib/ai";
+export type { UntrustedText } from "@/core/lib/ai-envelope";
+
 // --- Module settings: what a module calls to read its own admin settings ---
 // Returns the manifest's declared defaults overlaid with whatever the admin has
 // saved, each value checked and clamped against its declaration, so every key

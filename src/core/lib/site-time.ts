@@ -109,6 +109,12 @@ export function wallClockToInstant(wall: string, zone: string): Date | null {
     return new Date(asUtc.getTime() + (naive.getTime() - shown.getTime()));
 }
 
+/** The instant the day containing `at` began on the site's clock. */
+export function startOfDayIn(at: Date, zone: string): Date {
+    const midnight = wallClockToInstant(`${instantToWallClock(at, zone).slice(0, 10)}T00:00`, zone);
+    return midnight ?? at;
+}
+
 /** The other direction, for a form that has to show what was saved. */
 export function instantToWallClock(at: Date, zone: string): string {
     const parts = Object.fromEntries(

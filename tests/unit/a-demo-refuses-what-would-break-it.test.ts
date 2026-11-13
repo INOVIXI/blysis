@@ -27,6 +27,7 @@ const ROOT = process.cwd();
 const MUST_REFUSE: [string, string, string][] = [
     ["POST", "/api/v1/admin/maintenance", "closing the site"],
     ["POST", "/api/v1/admin/rate-limits", "refusing every request"],
+    ["PATCH", "/api/v1/admin/ai", "capping every AI call at nothing"],
     ["DELETE", "/api/v1/roles/admin-role-id", "deleting the role that opens the panel"],
     ["PATCH", "/api/v1/roles/admin-role-id", "taking the panel's permissions off it"],
     ["PATCH", "/api/v1/admin/translations", "rewriting every string on the site"],
