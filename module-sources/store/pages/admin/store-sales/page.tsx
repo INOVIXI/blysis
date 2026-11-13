@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, Pencil, Plus, Save, Trash2 } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
     Badge,
@@ -14,13 +14,17 @@ import {
     CheckboxField,
     Input,
     Label,
+    ListControls,
     LoadFailed,
+    Pagination,
     useConfirm,
     useFormRoute,
+    useLocalDateTime,
+    useRowList,
     useSiteSettings,
 } from "@/core/sdk/ui";
 import { AdminPageHeader, ReferenceList, RowActions } from "@/core/sdk/admin";
-import { dateLocaleTag, instantToWallClock, writeError } from "@/core/sdk";
+import { instantToWallClock, writeError } from "@/core/sdk";
 import { MAX_SALE_PERCENT, MIN_SALE_PERCENT, saleState } from "../../../lib/store-sale";
 
 /**
@@ -59,7 +63,7 @@ const STATE_TONE = { running: "success", scheduled: "info", ended: "neutral", of
 export default function StoreSalesPage() {
     const t = useTranslations("store");
     const commonT = useTranslations("common");
-    const localeTag = dateLocaleTag(useLocale());
+    const when = useLocalDateTime({ dateStyle: "medium", timeStyle: "short" });
     const { settings } = useSiteSettings();
     const timeZone = (settings.site_timezone as string) || "UTC";
     const { confirm } = useConfirm();
@@ -72,6 +76,8 @@ export default function StoreSalesPage() {
     // the list of sales.
     const { showForm, editingId, openForm, closeForm } = useFormRoute();
     const [draft, setDraft] = useState<Draft>(EMPTY);
+    // The name is what the card draws and what an operator remembers.
+    const list = useRowList(sales, { text: (sale) => [sale.name], pageSize: 20 });
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -170,7 +176,6 @@ export default function StoreSalesPage() {
     );
     if (failed) return <>{header}<Card><CardContent><LoadFailed onRetry={load} /></CardContent></Card></>;
 
-    const when = (iso: string) => new Date(iso).toLocaleString(localeTag, { timeZone, dateStyle: "medium", timeStyle: "short" });
     const now = new Date();
     const percent = Number(draft.percent);
     const percentValid = Number.isInteger(percent) && percent >= MIN_SALE_PERCENT && percent <= MAX_SALE_PERCENT;
@@ -246,7 +251,11 @@ export default function StoreSalesPage() {
                 <Card><CardContent className="py-10 text-center text-muted-foreground">{t("adm_saleNone")}</CardContent></Card>
             ) : (
                 <div className="space-y-3">
-                    {sales.map((sale) => {
+                    <ListControls search={{ value: list.search, onChange: list.setSearch }} />
+                    {list.rows.length === 0 && (
+                        <Card><CardContent className="py-10 text-center text-muted-foreground">{commonT("noResults")}</CardContent></Card>
+                    )}
+                    {list.rows.map((sale) => {
                         const state = saleState({ ...sale, startsAt: new Date(sale.startsAt), endsAt: new Date(sale.endsAt) }, now);
                         return (
                             <Card key={sale.id}>
@@ -275,6 +284,7 @@ export default function StoreSalesPage() {
                             </Card>
                         );
                     })}
+                    <Pagination page={list.page} pages={list.pages} total={list.total} onPageChange={list.setPage} />
                 </div>
             )}
         </>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { hasPermission, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { STORE_SALE_SELECT, storeSaleWrite } from "../../../../lib/store-sale-server";
+import { storeSaleSchema } from "../../../../lib/validations";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -14,7 +15,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     const body = await readJsonBody(request);
     if (body instanceof NextResponse) return body;
-    const write = await storeSaleWrite(body);
+    const parsed = storeSaleSchema.safeParse(body);
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
+    const write = await storeSaleWrite(parsed.data);
     if (!write.ok) return NextResponse.json({ error: write.error, code: write.code }, { status: 400 });
 
     const updated = await prisma.storeSale.updateMany({ where: { id }, data: write.data });

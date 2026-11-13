@@ -57,6 +57,8 @@ const PICKS_RATHER_THAN_MANAGES: Record<string, string> = {
         "Picks the shelf a new product goes on, from the shelves a shopper can reach.",
     "module-sources/store/pages/admin/products/[id]/edit/page.tsx":
         "Picks the shelf a product being edited sits on, from the shelves a shopper can reach.",
+    "module-sources/store/pages/admin/store-sales/page.tsx":
+        "Picks the shelves a sale takes its percentage off, from the shelves a shopper can reach.",
 };
 
 function walk(dir: string, name: RegExp, out: string[] = []): string[] {

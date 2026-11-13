@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { hasPermission, logActivity, prisma, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { STORE_SALE_SELECT, storeSaleWrite } from "../../../lib/store-sale-server";
+import { storeSaleSchema } from "../../../lib/validations";
 
 /**
  * The store-wide sales, for the panel: every one, running, scheduled, ended
@@ -28,7 +29,9 @@ export async function POST(request: NextRequest) {
 
     const body = await readJsonBody(request);
     if (body instanceof NextResponse) return body;
-    const write = await storeSaleWrite(body);
+    const parsed = storeSaleSchema.safeParse(body);
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
+    const write = await storeSaleWrite(parsed.data);
     if (!write.ok) return NextResponse.json({ error: write.error, code: write.code }, { status: 400 });
 
     const sale = await prisma.storeSale.create({ data: write.data, select: STORE_SALE_SELECT });

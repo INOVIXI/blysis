@@ -5,10 +5,11 @@
  * Kept apart from `store-sale.ts` so the rule stays testable without a
  * database and the panel and the banner can import it.
  */
+import type { z } from "zod";
 import { prisma, siteTimeZone } from "@/core/sdk/server";
 import { effectivePrice } from "./availability";
 import { saleInstant, saleRunning, withStoreSale, type StoreSale } from "./store-sale";
-import { storeSaleSchema } from "./validations";
+import type { storeSaleSchema } from "./validations";
 
 /** The columns a sale is read with, by the shop and the panel alike. */
 export const STORE_SALE_SELECT = {
@@ -66,29 +67,30 @@ type SaleWrite =
     | { ok: false; error: string; code?: string };
 
 /**
- * A sale from the form, checked and with its dates as instants.
+ * A sale from the form, with its dates as instants and checked against each
+ * other.
  *
- * One function for create and edit, so the two cannot accept different
- * things. An edit sends the whole form, the same as a create.
+ * The route checks the body's shape with `storeSaleSchema` first; this is
+ * the part a schema cannot say. One function for create and edit, so the two
+ * cannot accept different things. An edit sends the whole form, the same as
+ * a create.
  */
-export async function storeSaleWrite(body: unknown): Promise<SaleWrite> {
-    const parsed = storeSaleSchema.safeParse(body);
-    if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+export async function storeSaleWrite(form: z.infer<typeof storeSaleSchema>): Promise<SaleWrite> {
     const zone = await siteTimeZone();
-    const startsAt = saleInstant(parsed.data.startsAt, zone);
-    const endsAt = saleInstant(parsed.data.endsAt, zone);
+    const startsAt = saleInstant(form.startsAt, zone);
+    const endsAt = saleInstant(form.endsAt, zone);
     if (!startsAt || !endsAt || endsAt.getTime() <= startsAt.getTime()) {
         return { ok: false, error: "The sale must end after it starts", code: "store_sale_dates" };
     }
     return {
         ok: true,
         data: {
-            name: parsed.data.name,
-            percent: parsed.data.percent,
-            categoryIds: [...new Set(parsed.data.categoryIds)],
+            name: form.name,
+            percent: form.percent,
+            categoryIds: [...new Set(form.categoryIds)],
             startsAt,
             endsAt,
-            isActive: parsed.data.isActive,
+            isActive: form.isActive,
         },
     };
 }
