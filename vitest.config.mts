@@ -115,7 +115,7 @@ export default defineConfig({
                 statements: 91,
                 branches: 86,
                 functions: 92,
-                lines: 92,
+                lines: 93,
                 'src/core/lib/permissions.ts': {
                     statements: 85, branches: 90, functions: 72, lines: 80,
                 },
