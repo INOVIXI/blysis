@@ -17,7 +17,8 @@ import { isAdmin, moduleSettings, prisma } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { PUBLIC_PRODUCT } from "./public-product";
 import { availabilityFor, type ProductRow } from "./availability-server";
-import { effectivePrice } from "./availability";
+import { withStoreSale } from "./store-sale";
+import { runningStoreSales } from "./store-sale-server";
 import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
 import { creditingPurchases, ownedRungsOn } from "./upgrade-credit-server";
 import { productsIn } from "./store-text";
@@ -46,13 +47,23 @@ export async function readProduct(id: string, locale = "") {
 
     const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
 
+    // The price the till takes: a store-wide sale, where one covers this
+    // shelf and beats the product's own price. See `withStoreSale`.
+    const now = new Date();
+    const priced = withStoreSale(
+        { price: state.price, was: state.was, onSale: state.onSale },
+        { listPrice: Number(product.price), categoryId: product.category?.id },
+        await runningStoreSales(now),
+        now,
+    );
+
     // What this reader pays rather than what the product costs. Somebody
     // standing on a lower rung of the same ladder pays the difference, and
     // until now the only place that was true was the checkout.
     const ownedIds = await creditingPurchases(session?.user?.id);
     const ladder = await ownedRungsOn([product.category?.id], ownedIds);
     const credit = upgradeCredit(
-        { id: product.id, categoryId: product.category?.id ?? null, price: state.price },
+        { id: product.id, categoryId: product.category?.id ?? null, price: priced.price },
         ladder,
         ownedIds,
     );
@@ -79,12 +90,12 @@ export async function readProduct(id: string, locale = "") {
             remainingForPerson: state.remainingForPerson,
             remainingInPeriod: state.remainingInPeriod,
         },
-        price: priceAfterCredit(state.price, credit),
-        was: state.was,
-        onSale: state.onSale,
+        price: priceAfterCredit(priced.price, credit),
+        was: priced.was,
+        onSale: priced.onSale,
         /** Taken off because a cheaper rung on this ladder is already owned. */
         upgradeCredit: credit,
         /** What it costs somebody who owns nothing on this shelf. */
-        fullPrice: state.price,
+        fullPrice: priced.price,
     };
 }

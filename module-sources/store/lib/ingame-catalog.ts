@@ -10,6 +10,8 @@
 import { applyFiltersAsync } from "@/core/sdk";
 import { prisma } from "@/core/sdk/server";
 import { effectivePrice } from "./availability";
+import { withStoreSale } from "./store-sale";
+import { runningStoreSales } from "./store-sale-server";
 import { rulesOf, type ProductRow } from "./availability-server";
 import { MAX_GAME_QUANTITY, optionsOf } from "./credit-purchase";
 
@@ -55,6 +57,9 @@ export async function inGameCatalog(now: Date = new Date()): Promise<InGameCatal
         applyFiltersAsync("servers.list", [] as ServerName[], {}),
     ]);
     const serverName = new Map((servers ?? []).map((s) => [s.id, s.name]));
+    // The price a purchase in game takes, store-wide sale included: see
+    // `priceInGame` in credit-purchase.ts, which reads the same rule.
+    const storeSales = await runningStoreSales(now);
 
     const byCategory = new Map<string, InGameProduct[]>();
     for (const product of products) {
@@ -69,7 +74,12 @@ export async function inGameCatalog(now: Date = new Date()): Promise<InGameCatal
             title: product.gameTitle || product.name,
             description: product.gameDescription ?? product.shortDesc ?? "",
             icon: product.gameIcon,
-            price: effectivePrice(rulesOf(product as unknown as ProductRow), now).price,
+            price: withStoreSale(
+                effectivePrice(rulesOf(product as unknown as ProductRow), now),
+                { listPrice: Number(product.price), categoryId: product.categoryId },
+                storeSales,
+                now,
+            ).price,
             giftable: product.giftable,
             maxQuantity: Math.max(1, Math.min(MAX_GAME_QUANTITY, product.perPersonLimit ?? MAX_GAME_QUANTITY)),
             stock: product.stock,

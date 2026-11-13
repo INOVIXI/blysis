@@ -31,6 +31,8 @@ const orderUpdate = vi.fn(async () => ({}));
 const stockTaken = vi.fn(async () => ({ count: 1 }));
 
 const db = {
+    // No store-wide sale is running.
+    storeSale: { findMany: async () => [] },
     // The stock read asks for tracked products only; the product read for all.
     product: {
         findMany: vi.fn(async (args?: { where?: { stock?: unknown } }) =>

@@ -7,6 +7,8 @@ import { claimStock, shortOfStock, stockClaims } from "../../lib/stock";
 import { countSales } from "../../lib/popularity";
 import { createCreditOrder, deliverPaidOrder, OUT_OF_STOCK } from "../../lib/credit-order";
 import { effectivePrice } from "../../lib/availability";
+import { withStoreSale } from "../../lib/store-sale";
+import { runningStoreSales } from "../../lib/store-sale-server";
 import { availabilityFor, pastTheLimit, rulesOf, type ProductRow } from "../../lib/availability-server";
 import { convertedCharge, resolveCurrency } from "../../lib/currency";
 import { startPaymentSession, listPaymentProviders } from "../../lib/payments";
@@ -201,6 +203,7 @@ export async function POST(request: NextRequest) {
         const ownedIds = await creditingPurchases(session.user.id);
 
         // ── Calculate item prices (with bulk discounts + cumulative upgrades) ──
+        const storeSales = await runningStoreSales(now);
         const { subtotal, orderItems } = computeOrderPricing({
             items,
             products: products.map((p) => ({
@@ -210,7 +213,14 @@ export async function POST(request: NextRequest) {
                 // What a sale sets, not what the column says: the shop shows
                 // the sale price and a checkout that charged the other one
                 // would be taking a different amount from the one on screen.
-                price: effectivePrice(rulesOf(p as unknown as ProductRow), now).price,
+                // A store-wide sale is one of them; `withStoreSale` says which
+                // of two offers wins.
+                price: withStoreSale(
+                    effectivePrice(rulesOf(p as unknown as ProductRow), now),
+                    { listPrice: rulesOf(p as unknown as ProductRow).price, categoryId: p.categoryId },
+                    storeSales,
+                    now,
+                ).price,
                 categoryId: p.categoryId,
             })),
             bulkDiscounts,

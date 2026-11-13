@@ -7,6 +7,8 @@ import { availabilityData } from "../../lib/availability-input";
 import { PUBLIC_PRODUCT } from "../../lib/public-product";
 import { availabilityOf, effectivePrice } from "../../lib/availability";
 import { pricedForCampaign, runningCampaignEntries } from "../../lib/campaign-server";
+import { withStoreSale } from "../../lib/store-sale";
+import { runningStoreSales } from "../../lib/store-sale-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "../../lib/availability-server";
 import { siteTimeZone } from "@/core/sdk/server";
 import { PRODUCT_FIELDS, PRODUCT_TEXT, localeOf, productsIn, productsTranslatedAs } from "../../lib/store-text";
@@ -79,6 +81,7 @@ export async function GET(request: NextRequest) {
         // Once for the whole page. A shop runs few campaigns and asking each
         // product for its entry would be a query a line.
         const campaignEntries = await runningCampaignEntries(prisma, now, zone);
+        const storeSales = await runningStoreSales(now);
         const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
         // In `?locale=`, and in the original where the operator wrote none.
         // The address carries the language, so a shared cache keeps one
@@ -111,7 +114,12 @@ export async function GET(request: NextRequest) {
                     // page, which knows the reader, says the rest.
                     restricted: row.roleIds.length > 0,
                 },
-                ...pricedForCampaign(row.id, effectivePrice(rules, now), campaignEntries),
+                ...withStoreSale(
+                    pricedForCampaign(row.id, effectivePrice(rules, now), campaignEntries),
+                    { listPrice: rules.price, categoryId: (row as unknown as { category: { id: string } | null }).category?.id },
+                    storeSales,
+                    now,
+                ),
             };
         });
 

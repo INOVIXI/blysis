@@ -18,6 +18,8 @@ import { moduleSettings, prisma, siteTimeZone } from "@/core/sdk/server";
 import { PUBLIC_PRODUCT } from "../lib/public-product";
 import { effectivePrice } from "../lib/availability";
 import { pricedForCampaign, runningCampaignEntries } from "../lib/campaign-server";
+import { withStoreSale } from "../lib/store-sale";
+import { runningStoreSales } from "../lib/store-sale-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "../lib/availability-server";
 import { categoryIdIn } from "../lib/comparison-subject";
 import { priceAfterCredit, upgradeCredit } from "../lib/upgrade-credit";
@@ -71,6 +73,14 @@ const columns = async (current: Column[], who?: ColumnsQuestion): Promise<Column
 
     const zone = await siteTimeZone();
     const campaignEntries = await runningCampaignEntries(prisma, now, zone);
+    const storeSales = await runningStoreSales(now);
+    // The price the card beside the table quotes, from the same rules.
+    const pricedNow = (row: ProductRow) => withStoreSale(
+        pricedForCampaign(row.id, effectivePrice(rulesOf(row), now), campaignEntries),
+        { listPrice: rulesOf(row).price, categoryId },
+        storeSales,
+        now,
+    );
     const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
 
     // Named in the reader's language, and the original where it has none.
@@ -108,7 +118,7 @@ const columns = async (current: Column[], who?: ColumnsQuestion): Promise<Column
     const ladder = visible.map((row) => ({
         id: row.id,
         categoryId,
-        price: pricedForCampaign(row.id, effectivePrice(rulesOf(row), now), campaignEntries).price,
+        price: pricedNow(row).price,
     }));
     /*
      * The reader's own language: this runs from an API route with no locale
@@ -146,7 +156,7 @@ const columns = async (current: Column[], who?: ColumnsQuestion): Promise<Column
                 stock: number | null; image: string | null; isFeatured: boolean;
                 comparePrice: unknown;
             };
-            const priced = pricedForCampaign(row.id, effectivePrice(rulesOf(row), now), campaignEntries);
+            const priced = pricedNow(row);
             // The struck-through figure the card already shows. `effectivePrice`
             // only knows about a sale window; a plain compare-at price is the
             // other half of it, and a table without it prices a rank lower than

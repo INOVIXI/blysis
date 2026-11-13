@@ -21,6 +21,8 @@ import { creditingPurchases } from "./upgrade-credit-server";
 import { PUBLIC_PRODUCT } from "./public-product";
 import { availabilityOf, effectivePrice } from "./availability";
 import { pricedForCampaign, runningCampaignEntries } from "./campaign-server";
+import { withStoreSale } from "./store-sale";
+import { runningStoreSales } from "./store-sale-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "./availability-server";
 import { categoriesIn, productsIn, productsTranslatedAs } from "./store-text";
 
@@ -177,7 +179,14 @@ export async function readStoreProducts(options: {
     // Once for the whole page: a shop runs few campaigns, and asking each
     // product for its entry would be a query a line.
     const campaignEntries = await runningCampaignEntries(prisma, now, zone);
+    const storeSales = await runningStoreSales(now);
     const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
+    const pricedNow = (row: ProductRow) => withStoreSale(
+        pricedForCampaign(row.id, effectivePrice(rulesOf(row), now), campaignEntries),
+        { listPrice: rulesOf(row).price, categoryId: (row as unknown as { category: { id: string } | null }).category?.id },
+        storeSales,
+        now,
+    );
 
     // Once for the page: empty for a visitor, and for a shop that has turned
     // the credit off.
@@ -194,13 +203,13 @@ export async function readStoreProducts(options: {
     const ladder = visible.map((other) => ({
         id: other.id,
         categoryId: (other as unknown as { category: { id: string } | null }).category?.id ?? null,
-        price: pricedForCampaign(other.id, effectivePrice(rulesOf(other), now), campaignEntries).price,
+        price: pricedNow(other).price,
     }));
 
     const annotated: ShelfProduct[] = visible.map((row) => {
         const rules = rulesOf(row);
         const state = availabilityOf({ ...rules, roleIds: [] }, { boughtByPerson: 0, soldInPeriod: 0 }, now, zone);
-        const priced = pricedForCampaign(row.id, effectivePrice(rules, now), campaignEntries);
+        const priced = pricedNow(row);
         const credit = upgradeCredit(
             {
                 id: row.id,

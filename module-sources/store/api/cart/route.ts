@@ -3,6 +3,7 @@ import { log, moduleSettings, prisma, rateLimitForRoleAsync, readJsonBody } from
 import { auth } from "@/core/sdk/auth";
 import { availabilityFor, type ProductRow } from "../../lib/availability-server";
 import { priceCartLines } from "../../lib/cart-pricing";
+import { saleAdjustedPrice } from "../../lib/store-sale-server";
 import { creditingPurchases, ownedRungsOn } from "../../lib/upgrade-credit-server";
 import { localeOf, productsIn } from "../../lib/store-text";
 import { z } from "zod";
@@ -35,6 +36,9 @@ export async function GET(request: NextRequest) {
                         stock: true,
                         isActive: true,
                         categoryId: true,
+                        salePrice: true,
+                        saleFrom: true,
+                        saleUntil: true,
                     },
                 },
             },
@@ -48,10 +52,14 @@ export async function GET(request: NextRequest) {
         // and was taken a smaller one a click later. A cart that disagrees with
         // the till is a cart nobody can trust in either direction.
         const ownedIds = await creditingPurchases(session.user.id);
+        // The price the checkout starts from, sale window and store-wide sale
+        // included, rather than the column: a cart that quoted the list price
+        // during a sale read higher than the till.
+        const listedAt = await saleAdjustedPrice(new Date());
         const basket = cartItems.map((item) => ({
             productId: item.product.id,
-            categoryId: (item.product as unknown as { categoryId: string | null }).categoryId ?? null,
-            price: Number(item.product.price),
+            categoryId: item.product.categoryId ?? null,
+            price: listedAt(item.product),
             quantity: item.quantity,
         }));
         // The arithmetic lives in `cart-pricing.ts` because the coupon
@@ -69,7 +77,7 @@ export async function GET(request: NextRequest) {
             ...item,
             product: named.get(item.product.id) ?? item.product,
             upgradeCredit: byProduct.get(item.product.id)?.upgradeCredit ?? 0,
-            payPrice: byProduct.get(item.product.id)?.payPrice ?? Number(item.product.price),
+            payPrice: byProduct.get(item.product.id)?.payPrice ?? listedAt(item.product),
         }));
 
         return NextResponse.json({
