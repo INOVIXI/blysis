@@ -94,6 +94,7 @@ function source(over: Record<string, unknown> = {}) {
         type: "DIGITAL",
         deliveryData: null,
         commandsPerUnit: false,
+        deliveryMode: "inherit",
         subscriptionInterval: null,
         subscriptionIntervalCount: 1,
         availableFrom: null,

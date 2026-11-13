@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, LoadFailed, usePrompt, useLocalDate } from "@/core/sdk/ui";
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, CheckboxField, LoadFailed, usePrompt, useLocalDate } from "@/core/sdk/ui";
 import { errorMessage } from "@/core/sdk";
 import { Gift, Package, Loader2 } from "lucide-react";
 
@@ -196,7 +196,14 @@ export function ProfileChestTab() {
                         {chestItems.map((item) => (
                             <div key={item.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                                 <div>
-                                    <p className="font-medium">{item.productName}</p>
+                                    <p className="font-medium flex flex-wrap items-center gap-2">
+                                        {item.productName}
+                                        {/* Every row here that is not a gift waiting to be accepted is
+                                            the member's to claim, and on a shop that holds purchases a
+                                            paid one sits here on purpose rather than because delivery
+                                            failed. Said on the row, so it does not read as lost. */}
+                                        {!item.pendingGift && <Badge tone="info">{t("tab_chest_waitingForYou")}</Badge>}
+                                    </p>
                                     <p className="text-xs text-muted-foreground">
                                         {t("tab_chest_qty")}: {item.quantity} · {formatDate(item.createdAt)}
                                         {item.from ? ` · ${t("tab_chest_from", { name: item.from })}` : ""}

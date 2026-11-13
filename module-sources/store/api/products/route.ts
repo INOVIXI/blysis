@@ -192,6 +192,7 @@ export async function POST(request: NextRequest) {
                 isFeatured: data.isFeatured ?? false,
                 giftable: data.giftable ?? true,
                 commandsPerUnit: data.commandsPerUnit ?? false,
+                deliveryMode: data.deliveryMode ?? "inherit",
                 showInGame: data.showInGame ?? false,
                 gameTitle: data.gameTitle || null,
                 gameDescription: data.gameDescription || null,

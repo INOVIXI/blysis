@@ -122,6 +122,9 @@ vi.mock("@/core/sdk/server", () => ({
     log,
     rolesHeldBy,
     revokeRole,
+    // Delivery asks whether the shop holds purchases in the chest. It does
+    // not here, so a paid order runs its commands as it always did.
+    moduleSettings: vi.fn(async () => ({})),
 }));
 
 /**

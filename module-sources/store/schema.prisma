@@ -156,6 +156,15 @@ model Product {
    */
   commandsPerUnit      Boolean   @default(false)
 
+  /**
+   * When a paid purchase reaches the game: `now` runs its commands at
+   * payment, `hold` leaves it in the buyer's chest until they claim it, and
+   * `inherit` follows the shop's `holdPurchasesInChest` setting. Only the
+   * commands wait; the product is owned, and its rank held, from payment, as
+   * `deliverPaidOrder` explains.
+   */
+  deliveryMode         String    @default("inherit")
+
   /** A sale with a start and an end, rather than a price somebody remembers. */
   salePrice            Decimal?  @db.Decimal(10, 2)
   saleFrom             DateTime?

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DELIVERY_MODES } from "./delivery-mode";
 
 // ==================== STORE SCHEMAS ====================
 
@@ -18,6 +19,8 @@ export const productSchema = z.object({
     giftable: z.boolean().optional(),
     /** Run the delivery commands once per unit bought rather than once per line. */
     commandsPerUnit: z.boolean().optional(),
+    /** At payment, in the chest until claimed, or as the shop does by default. */
+    deliveryMode: z.enum(DELIVERY_MODES).optional(),
     type: z.enum(["DIGITAL", "PHYSICAL", "GAME_ITEM", "SUBSCRIPTION"]).optional(),
     categoryId: z.string().optional().nullable(),
     deliveryData: z.any().optional(),
