@@ -23,7 +23,6 @@ const findUnique = vi.fn<(args: { where: Record<string, unknown> }) => Promise<u
 const findFirst = vi.fn<(args: { where: Record<string, unknown> }) => Promise<unknown>>();
 const commentFindMany = vi.fn(async () => [] as unknown[]);
 const commentCreate = vi.fn(async () => ({ id: "c1" }));
-const settingFindUnique = vi.fn(async () => null);
 
 vi.mock("@/core/sdk/server", () => ({
     // A member in good standing. The guarantee this file defends is not
@@ -32,7 +31,6 @@ vi.mock("@/core/sdk/server", () => ({
     prisma: {
         blogArticle: { findUnique: (a: unknown) => findUnique(a as never), findFirst: (a: unknown) => findFirst(a as never) },
         blogComment: { findMany: () => commentFindMany(), create: () => commentCreate() },
-        setting: { findUnique: () => settingFindUnique() },
     },
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     isAdmin: async () => false,
@@ -45,7 +43,7 @@ vi.mock("@/core/sdk/server", () => ({
     rateLimitForRole: async () => ({ success: true }),
     getClientIP: () => "203.0.113.1",
     moduleSettings: async () => ({ allowComments: true }),
-    getModerationMode: async () => "auto",
+    moderationStateFor: async () => "APPROVED",
     logActivity: async () => undefined,
     doActionAsync: async () => undefined,
 }));

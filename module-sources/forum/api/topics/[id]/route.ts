@@ -1,23 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { refuseSilenced, isRestrictedFrom } from "@/core/sdk/server";
+import { refuseSilenced, isRestrictedFrom, moderationStateFor } from "@/core/sdk/server";
 import { pageParams, hasPermission, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { forumPostSchema, forumTopicUpdateSchema } from "../../../lib/validations";
 import { countTopicView, readTopic } from "../../../lib/read-topic";
 import { accessToCategory } from "../../../lib/visible-categories";
-
-type ModerationSettingValue = {
-    blog_comments?: "auto" | "manual";
-    forum_topics?: "auto" | "manual";
-    forum_posts?: "auto" | "manual";
-    suggestions?: "auto" | "manual";
-};
-
-async function getModerationMode(field: keyof ModerationSettingValue): Promise<"auto" | "manual"> {
-    const setting = await prisma.setting.findUnique({ where: { key: "moderation" } });
-    const value = (setting?.value ?? {}) as ModerationSettingValue;
-    return value[field] === "manual" ? "manual" : "auto";
-}
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -104,8 +91,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "This topic is locked" }, { status: 403 });
     }
 
-    const mode = await getModerationMode("forum_posts");
-    const moderationState = mode === "manual" ? "PENDING" : "APPROVED";
+    const moderationState = await moderationStateFor("forum_posts");
 
     // Kept out of the forum without being kept off the site. Asked by this
     // module's own word: core stores the scope and never reads it.

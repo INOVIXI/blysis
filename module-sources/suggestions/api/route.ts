@@ -1,21 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { refuseSilenced, pageParams, hasPermission, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
+import { refuseSilenced, pageParams, hasPermission, prisma, rateLimitForRole, readJsonBody, moderationStateFor } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { readSuggestions } from "../lib/read-suggestions";
-
-type ModerationSettingValue = {
-    blog_comments?: "auto" | "manual";
-    forum_topics?: "auto" | "manual";
-    forum_posts?: "auto" | "manual";
-    suggestions?: "auto" | "manual";
-};
-
-async function getModerationMode(field: keyof ModerationSettingValue): Promise<"auto" | "manual"> {
-    const setting = await prisma.setting.findUnique({ where: { key: "moderation" } });
-    const value = (setting?.value ?? {}) as ModerationSettingValue;
-    return value[field] === "manual" ? "manual" : "auto";
-}
 
 // GET /api/v1/suggestions - Public list
 //
@@ -70,8 +57,7 @@ export async function POST(request: NextRequest) {
 
     const { title, content, visibility } = validation.data;
 
-    const mode = await getModerationMode("suggestions");
-    const moderationState = mode === "manual" ? "PENDING" : "APPROVED";
+    const moderationState = await moderationStateFor("suggestions");
 
     const suggestion = await prisma.suggestion.create({
         data: {

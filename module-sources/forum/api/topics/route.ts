@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isRestrictedFrom, refuseSilenced, textContains } from "@/core/sdk/server";
+import { isRestrictedFrom, refuseSilenced, textContains, moderationStateFor } from "@/core/sdk/server";
 import { visibleCategoryIds } from "../../lib/visible-categories";
 import { generateSlug } from "@/core/sdk";
 import { pageParams, isAdmin, moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
@@ -7,19 +7,6 @@ import { auth } from "@/core/sdk/auth";
 import { forumTopicSchema } from "../../lib/validations";
 import { denyGuestView } from "../../lib/guest-view";
 import { withCategoryNames } from "../../lib/category-text";
-
-type ModerationSettingValue = {
-    blog_comments?: "auto" | "manual";
-    forum_topics?: "auto" | "manual";
-    forum_posts?: "auto" | "manual";
-    suggestions?: "auto" | "manual";
-};
-
-async function getModerationMode(field: keyof ModerationSettingValue): Promise<"auto" | "manual"> {
-    const setting = await prisma.setting.findUnique({ where: { key: "moderation" } });
-    const value = (setting?.value ?? {}) as ModerationSettingValue;
-    return value[field] === "manual" ? "manual" : "auto";
-}
 
 // GET /api/v1/forum/topics
 export async function GET(request: NextRequest) {
@@ -117,8 +104,7 @@ export async function POST(request: NextRequest) {
         slug = `${slug}-${Date.now().toString(36)}`;
     }
 
-    const mode = await getModerationMode("forum_topics");
-    const moderationState = mode === "manual" ? "PENDING" : "APPROVED";
+    const moderationState = await moderationStateFor("forum_topics");
 
     // Kept out of the forum without being kept off the site. Asked by this
     // module's own word: core stores the scope and never reads it.

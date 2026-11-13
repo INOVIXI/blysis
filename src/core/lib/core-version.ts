@@ -12,6 +12,12 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.39.0 - `moderationStateFor` joins `@/core/sdk/server`. Whether what a
+ * person wrote is published or waits for a moderator was four copies of one
+ * function in three modules, held equal by a gate; a third mode was about to
+ * be added and every copy would have needed it. A module asks core now, with
+ * the `settingKey` its `moderationProviders` entry names.
+ *
  * 5.38.0 - `FooterSocialLink` carries a `label`, and its `name` may be
  * `tiktok`. The site's social links became settings, one per network, and a
  * theme that draws them reads what to call each one rather than keeping a
@@ -787,4 +793,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.38.0";
+export const CORE_API_VERSION = "5.39.0";
