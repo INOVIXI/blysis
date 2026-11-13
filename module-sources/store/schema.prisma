@@ -248,11 +248,12 @@ model Order {
   payments Payment[]
 
   @@index([userId])
-  @@index([status])
 
   // The revenue chart and the community goal both scan a date window.
   @@index([createdAt])
-  // The checkout reminder asks for unpaid orders in an age window.
+  // The checkout reminder asks for unpaid orders in an age window, and a
+  // filter on status alone uses this index too, because it starts with
+  // status.
   @@index([status, createdAt])
 }
 

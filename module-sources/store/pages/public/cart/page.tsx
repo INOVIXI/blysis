@@ -116,21 +116,8 @@ export default function CartPage() {
         // before the basket is read. The address is cleaned afterwards so a
         // reload does not ask twice.
         const restore = new URLSearchParams(window.location.search).get("restore");
-        if (restore) {
-            fetch("/api/v1/store/cart/restore", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ orderId: restore }),
-            })
-                .then((res) => (res.ok ? toast.success(t("cart_restored")) : toast.error(t("cart_restoreFailed"))))
-                .catch(() => toast.error(t("cart_restoreFailed")))
-                .finally(() => {
-                    router.replace("/store/cart");
-                    fetchCart();
-                });
-        } else {
-            fetchCart();
-        }
+        if (restore) void restoreCart(restore);
+        else fetchCart();
         // The wallet is a module too: no credits endpoint, no credits button.
         fetch("/api/v1/credits")
             .then(r => r.ok ? r.json() : null)
@@ -191,6 +178,25 @@ export default function CartPage() {
             console.error("Failed to fetch cart:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Its own function so the write it makes stays apart from the reads the
+    // page makes on load.
+    const restoreCart = async (orderId: string) => {
+        try {
+            const res = await fetch("/api/v1/store/cart/restore", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderId }),
+            });
+            if (res.ok) toast.success(t("cart_restored"));
+            else toast.error(t("cart_restoreFailed"));
+        } catch {
+            toast.error(t("cart_restoreFailed"));
+        } finally {
+            router.replace("/store/cart");
+            fetchCart();
         }
     };
 

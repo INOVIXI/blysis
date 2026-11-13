@@ -1812,7 +1812,7 @@
       },
       "profile": {
         "notificationType_store_order_completed": "Order Complete",
-        "notificationType_store_checkout_reminder": "Reminder about an unfinished purchase"
+        "notificationType_store_checkout_reminder": "Unfinished Purchase Reminder"
       },
       "pageDescriptions": {
         "store": "Browse everything on sale, filter it by category and add what you want to your cart in a couple of clicks.",
@@ -2703,7 +2703,7 @@
       },
       "profile": {
         "notificationType_store_order_completed": "Sipariş Tamamlandı",
-        "notificationType_store_checkout_reminder": "Yarım kalan alışveriş hatırlatması"
+        "notificationType_store_checkout_reminder": "Yarım Kalan Alışveriş Hatırlatması"
       },
       "pageDescriptions": {
         "store": "Satıştaki her şeye göz atın, kategoriye göre filtreleyin ve istediğinizi birkaç tıkla sepetinize ekleyin.",
