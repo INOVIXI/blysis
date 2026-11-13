@@ -7,6 +7,13 @@ import { cooldownHoursOf, drawPrize, nextTurnAt, refusalFor } from "../../lib/wh
 import { PRIZE_TEXT } from "../../lib/validations";
 
 /**
+ * Thrown inside the turn's transaction when the owner of a prize refuses it,
+ * so the payment and the spin row roll back with it. Returning a reason from
+ * the callback commits what came before it.
+ */
+class PrizeRefused extends Error {}
+
+/**
  * Turn a wheel.
  *
  * The rules - is it on, may this person reach it, have they turned it
@@ -191,7 +198,10 @@ export async function POST(request: NextRequest) {
             //
             // A refusal undoes the turn rather than recording a prize nobody
             // received: if the thing has since been taken down, the fairest
-            // answer is that the turn did not happen.
+            // answer is that the turn did not happen. It throws, because the
+            // payment and the spin row above are already written on this
+            // transaction and only a throw takes them back
+            // (a-prize-that-cannot-be-handed-over-takes-nothing.test.ts).
             const handed = await applyFiltersAsync("product.grant", { granted: false }, {
                 tx,
                 userId: session.user.id,
@@ -199,10 +209,13 @@ export async function POST(request: NextRequest) {
                 quantity: Math.max(1, selectedPrize.value || 1),
                 reason: `${wheel.name}: ${selectedPrize.name}`,
             });
-            if (!handed.granted) return "wheel_prize_unavailable";
+            if (!handed.granted) throw new PrizeRefused();
         }
 
         return null;
+    }).catch((err: unknown) => {
+        if (err instanceof PrizeRefused) return "wheel_prize_unavailable";
+        throw err;
     });
 
     // Why the turn did not happen, or null because it did. It used to be a

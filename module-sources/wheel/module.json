@@ -2,7 +2,7 @@
   "id": "wheel",
   "name": "Wheel of Fortune",
   "description": "Spin-to-win game with configurable prizes and cooldowns",
-  "version": "1.12.0",
+  "version": "1.12.1",
   "coreVersion": "^5.37.0",
   "category": "commerce",
   "author": "Blysis",
