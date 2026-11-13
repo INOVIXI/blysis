@@ -137,10 +137,15 @@ function chosenIn(values: Record<string, unknown>): string | null {
     return typeof raw === "string" && raw.trim() ? raw.trim() : null;
 }
 
-function pick(ids: string[], chosen: string | null): string | null {
-    if (ids.length === 0) return null;
-    if (ids.length === 1) return ids[0];
-    return chosen && ids.includes(chosen) ? chosen : null;
+/**
+ * A choice naming an installed provider is final: switched off, it means
+ * nobody answers, never the other one, which would send members' words to a
+ * vendor the operator chose against. A choice naming a provider no longer
+ * installed is no choice at all.
+ */
+function pick(usable: string[], chosen: string | null): string | null {
+    if (chosen && chosen in AiProviderRegistry) return usable.includes(chosen) ? chosen : null;
+    return usable.length === 1 ? usable[0] : null;
 }
 
 /**

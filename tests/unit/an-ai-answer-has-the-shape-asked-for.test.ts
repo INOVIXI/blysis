@@ -124,6 +124,20 @@ describe("which provider answers", () => {
         expect(await kindOf(ask())).toBe("no_provider");
     });
 
+    it("is nobody, not the other one, when the chosen module is switched off", async () => {
+        installed.beta = async () => provider("beta");
+        settings.ai_active_provider = "beta";
+        states = { beta: false };
+        expect(await kindOf(ask())).toBe("no_provider");
+        expect(asked).toEqual([]);
+    });
+
+    it("is the one left when the chosen module was uninstalled", async () => {
+        settings.ai_active_provider = "gone";
+        await ask();
+        expect(asked[0].provider).toBe("alpha");
+    });
+
     it("is nobody when whether the module is on cannot be read", async () => {
         statesUnreadable = true;
         expect(await kindOf(ask())).toBe("no_provider");
