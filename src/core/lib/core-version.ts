@@ -16,7 +16,13 @@
  * person wrote is published or waits for a moderator was four copies of one
  * function in three modules, held equal by a gate; a third mode was about to
  * be added and every copy would have needed it. A module asks core now, with
- * the `settingKey` its `moderationProviders` entry names.
+ * the `settingKey` its `moderationProviders` entry names. The same release
+ * gives a moderation provider two optional members, `listRejected` (the
+ * queue's Rejected view) and `read` (an item whole, with its author, for the
+ * author's own page), lets `bulkUpdate` take `PENDING`, and has core fire
+ * `moderation.item.rejected` and `moderation.item.restored` for the author of
+ * a decided item. All additions: a provider written against 5.38.0 still
+ * lists, approves and rejects.
  *
  * 5.38.0 - `FooterSocialLink` carries a `label`, and its `name` may be
  * `tiktok`. The site's social links became settings, one per network, and a
