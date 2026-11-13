@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-13",
-  "updatedAt": "2026-11-13T18:44:47Z",
+  "updatedAt": "2026-11-13T19:26:07Z",
   "modules": [
     {
       "id": "announcements",
@@ -2646,13 +2646,13 @@
           "description": "带铃铛图标的站内通知系统"
         }
       },
-      "version": "1.7.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.39.0",
       "author": "Blysis",
       "icon": "Bell",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-13T19:26:07Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2669,7 +2669,8 @@
           "wheel.prize.won",
           "referral.referral.used",
           "tickets.ticket.replied",
-          "forum.post.created"
+          "forum.post.created",
+          "moderation.item.rejected"
         ]
       },
       "stats": {

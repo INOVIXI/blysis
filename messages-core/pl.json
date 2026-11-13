@@ -1522,7 +1522,18 @@
     "signInMethods_disconnected": "{provider} zostało odłączone.",
     "signInMethods_failed": "Nie udało się. Spróbuj ponownie.",
     "signInMethods_errTaken": "To konto jest już tutaj połączone z innym członkiem. Nie zostało przeniesione do Twojego.",
-    "signInMethods_errNotStarted": "Nic nie zostało połączone. Zacznij na tej stronie od Połącz, a potem zaloguj się u dostawcy."
+    "signInMethods_errNotStarted": "Nic nie zostało połączone. Zacznij na tej stronie od Połącz, a potem zaloguj się u dostawcy.",
+    "moderationNotice_title": "O twoim wpisie",
+    "moderationNotice_description": "Co się stało z czymś, co napisałeś, i dlaczego.",
+    "moderationNotice_rejected": "Nieopublikowany",
+    "moderationNotice_pending": "Czeka na moderatora",
+    "moderationNotice_approved": "Opublikowany",
+    "moderationNotice_decidedAt": "Zdecydowano {when}",
+    "moderationNotice_reason": "Powód",
+    "moderationNotice_noReason": "Nie podano powodu.",
+    "moderationNotice_yourPost": "Co napisałeś",
+    "moderationNotice_yourPostOn": "Co napisałeś w: {title}",
+    "moderationNotice_open": "Otwórz tam, gdzie opublikowano"
   },
   "auth": {
     "accountLocked": "Zbyt wiele nieudanych prób. Konto zostało tymczasowo zablokowane. Sprawdź e-mail albo spróbuj ponownie za kilka minut.",

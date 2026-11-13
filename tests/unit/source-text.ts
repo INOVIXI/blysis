@@ -138,3 +138,18 @@ export function moduleSourceDirs(root: string, sub: string): string[] {
         .map((entry) => `module-sources/${entry.name}/${sub}`)
         .sort();
 }
+
+/**
+ * Every hook core fires by its literal name, from `src/core` and `src/app`.
+ *
+ * A module's manifest lists the hooks it fires in `hooksEmitted`; core has no
+ * manifest, so a gate asking "does anything fire this?" reads the calls. A
+ * name built at run time is not seen, which errs toward a gate failing.
+ */
+export function coreFiredHooks(root: string): Set<string> {
+    const fired = new Set<string>();
+    for (const line of grepTree(root, "doAction(Async)?\\(\\s*\"",["src/core", "src/app"], [".ts", ".tsx"])) {
+        for (const match of line.matchAll(/doAction(?:Async)?\(\s*"([a-z0-9.-]+)"/g)) fired.add(match[1]);
+    }
+    return fired;
+}

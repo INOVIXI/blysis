@@ -1522,7 +1522,18 @@
     "signInMethods_disconnected": "{provider} is disconnected.",
     "signInMethods_failed": "That did not work. Try again.",
     "signInMethods_errTaken": "That account is already connected to another member here. It was not moved to yours.",
-    "signInMethods_errNotStarted": "Nothing was connected. Start from this page with Connect, then sign in at the provider."
+    "signInMethods_errNotStarted": "Nothing was connected. Start from this page with Connect, then sign in at the provider.",
+    "moderationNotice_title": "About your post",
+    "moderationNotice_description": "What happened to something you wrote, and why.",
+    "moderationNotice_rejected": "Not published",
+    "moderationNotice_pending": "Waiting for a moderator",
+    "moderationNotice_approved": "Published",
+    "moderationNotice_decidedAt": "Decided on {when}",
+    "moderationNotice_reason": "Reason",
+    "moderationNotice_noReason": "No reason was recorded.",
+    "moderationNotice_yourPost": "What you wrote",
+    "moderationNotice_yourPostOn": "What you wrote on {title}",
+    "moderationNotice_open": "Open where it was posted"
   },
   "auth": {
     "accountLocked": "Too many failed attempts. Your account is temporarily locked. Check your email or try again in a few minutes.",

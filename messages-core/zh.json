@@ -1522,7 +1522,18 @@
     "signInMethods_disconnected": "{provider} 已断开。",
     "signInMethods_failed": "操作失败,请重试。",
     "signInMethods_errTaken": "该账号已连接到本站的另一位成员,没有被转移到你的账号。",
-    "signInMethods_errNotStarted": "未连接任何内容。请先在此页面点击“连接”,再到服务商处登录。"
+    "signInMethods_errNotStarted": "未连接任何内容。请先在此页面点击“连接”,再到服务商处登录。",
+    "moderationNotice_title": "关于你的内容",
+    "moderationNotice_description": "你所写内容的处理结果及原因。",
+    "moderationNotice_rejected": "未发布",
+    "moderationNotice_pending": "等待版主审核",
+    "moderationNotice_approved": "已发布",
+    "moderationNotice_decidedAt": "于 {when} 作出决定",
+    "moderationNotice_reason": "原因",
+    "moderationNotice_noReason": "未记录原因。",
+    "moderationNotice_yourPost": "你写的内容",
+    "moderationNotice_yourPostOn": "你在“{title}”中写的内容",
+    "moderationNotice_open": "在发布位置打开"
   },
   "auth": {
     "accountLocked": "尝试失败次数过多，你的账户已被暂时锁定。请查看邮箱，或几分钟后再试。",

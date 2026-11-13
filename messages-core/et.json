@@ -1522,7 +1522,18 @@
     "signInMethods_disconnected": "{provider} ühendus on katkestatud.",
     "signInMethods_failed": "See ei õnnestunud. Proovi uuesti.",
     "signInMethods_errTaken": "See konto on siin juba teise liikmega ühendatud. Seda ei viidud sinu kontole.",
-    "signInMethods_errNotStarted": "Midagi ei ühendatud. Alusta sellelt lehelt nupuga Ühenda ja logi siis teenusepakkuja juures sisse."
+    "signInMethods_errNotStarted": "Midagi ei ühendatud. Alusta sellelt lehelt nupuga Ühenda ja logi siis teenusepakkuja juures sisse.",
+    "moderationNotice_title": "Sinu postituse kohta",
+    "moderationNotice_description": "Mis juhtus millegagi, mille sa kirjutasid, ja miks.",
+    "moderationNotice_rejected": "Avaldamata",
+    "moderationNotice_pending": "Ootab moderaatorit",
+    "moderationNotice_approved": "Avaldatud",
+    "moderationNotice_decidedAt": "Otsustatud {when}",
+    "moderationNotice_reason": "Põhjus",
+    "moderationNotice_noReason": "Põhjust ei salvestatud.",
+    "moderationNotice_yourPost": "Mida sa kirjutasid",
+    "moderationNotice_yourPostOn": "Mida sa kirjutasid: {title}",
+    "moderationNotice_open": "Ava seal, kus see postitati"
   },
   "auth": {
     "accountLocked": "Liiga palju ebaõnnestunud katseid. Sinu konto on ajutiselt lukus. Vaata oma e-posti või proovi mõne minuti pärast uuesti.",

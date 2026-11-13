@@ -89,6 +89,20 @@ test("a rejection says why, stays in reach, and can be taken back", async ({ pag
         await reject(page, made.title, "Links to another server");
         await expect(rowOf(page, made.title)).toHaveCount(0);
 
+        // The author (here the admin wrote the topic) is told, and the link
+        // leads to a page that says why, without the moderators' note.
+        const notice = `/moderation/forum-topic/${made.topicId}`;
+        const inbox = await (await page.request.get("/api/v1/notifications")).json();
+        expect(
+            (inbox.notifications as { href: string | null }[]).some((n) => n.href === notice),
+            "a notification links to the notice",
+        ).toBe(true);
+        await page.goto(`/en${notice}`);
+        await expect(page.getByText("Not published")).toBeVisible();
+        await expect(page.getByText("Spam", { exact: true })).toBeVisible();
+        await expect(page.getByText("Links to another server")).toHaveCount(0);
+        await page.goto("/en/admin/moderation");
+
         await page.getByRole("tab", { name: "Rejected" }).click();
         const rejected = rowOf(page, made.title);
         await expect(rejected).toBeVisible();

@@ -1522,7 +1522,18 @@
     "signInMethods_disconnected": "{provider} est déconnecté.",
     "signInMethods_failed": "Cela n'a pas fonctionné. Réessayez.",
     "signInMethods_errTaken": "Ce compte est déjà connecté à un autre membre ici. Il n'a pas été déplacé vers le vôtre.",
-    "signInMethods_errNotStarted": "Rien n'a été connecté. Commencez sur cette page avec Connecter, puis connectez-vous chez le fournisseur."
+    "signInMethods_errNotStarted": "Rien n'a été connecté. Commencez sur cette page avec Connecter, puis connectez-vous chez le fournisseur.",
+    "moderationNotice_title": "À propos de ta publication",
+    "moderationNotice_description": "Ce qui est arrivé à quelque chose que tu as écrit, et pourquoi.",
+    "moderationNotice_rejected": "Non publié",
+    "moderationNotice_pending": "En attente d’un modérateur",
+    "moderationNotice_approved": "Publié",
+    "moderationNotice_decidedAt": "Décidé le {when}",
+    "moderationNotice_reason": "Motif",
+    "moderationNotice_noReason": "Aucun motif n’a été enregistré.",
+    "moderationNotice_yourPost": "Ce que tu as écrit",
+    "moderationNotice_yourPostOn": "Ce que tu as écrit sur {title}",
+    "moderationNotice_open": "Ouvrir là où c’est publié"
   },
   "auth": {
     "accountLocked": "Trop de tentatives échouées. Votre compte est temporairement verrouillé. Consultez vos e-mails ou réessayez dans quelques minutes.",

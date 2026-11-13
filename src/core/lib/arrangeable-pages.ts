@@ -19,6 +19,11 @@ export const CORE_PAGES: ModulePage[] = pagesOf("core", {
             layout: { rows: [{ split: "1", cells: [[{ key: "form", block: "core.form" }, { key: "results", block: "core.results" }]] }] },
         },
         {
+            id: "moderation",
+            blocks: [{ id: "notice", widths: ["wide", "full", "narrow"] }],
+            layout: { rows: [{ split: "1", cells: [[{ key: "notice", block: "core.notice" }]] }] },
+        },
+        {
             id: "profile",
             blocks: [{ id: "account", widths: ["wide", "full"] }],
             layout: { rows: [{ split: "1", cells: [[{ key: "account", block: "core.account" }]] }] },

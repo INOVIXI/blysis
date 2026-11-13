@@ -1522,7 +1522,18 @@
     "signInMethods_disconnected": "{provider} bağlantısı kesildi.",
     "signInMethods_failed": "Olmadı. Tekrar dene.",
     "signInMethods_errTaken": "Bu hesap burada zaten başka bir üyeye bağlı. Senin hesabına taşınmadı.",
-    "signInMethods_errNotStarted": "Hiçbir şey bağlanmadı. Bu sayfada Bağla ile başla, sonra sağlayıcıda giriş yap."
+    "signInMethods_errNotStarted": "Hiçbir şey bağlanmadı. Bu sayfada Bağla ile başla, sonra sağlayıcıda giriş yap.",
+    "moderationNotice_title": "Gönderin hakkında",
+    "moderationNotice_description": "Yazdığın bir şeye ne olduğu ve nedeni.",
+    "moderationNotice_rejected": "Yayınlanmadı",
+    "moderationNotice_pending": "Moderatör bekleniyor",
+    "moderationNotice_approved": "Yayında",
+    "moderationNotice_decidedAt": "{when} tarihinde karar verildi",
+    "moderationNotice_reason": "Sebep",
+    "moderationNotice_noReason": "Bir sebep kaydedilmedi.",
+    "moderationNotice_yourPost": "Yazdığın",
+    "moderationNotice_yourPostOn": "{title} için yazdığın",
+    "moderationNotice_open": "Paylaşıldığı yerde aç"
   },
   "auth": {
     "accountLocked": "Çok fazla başarısız deneme. Hesabın geçici olarak kilitlendi. E-postanı kontrol et veya birkaç dakika sonra tekrar dene.",

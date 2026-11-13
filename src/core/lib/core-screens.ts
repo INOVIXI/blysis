@@ -46,6 +46,7 @@ export const CORE_SCREENS: CoreScreen[] = [
     { path: "/auth/error", titleKey: "auth.errorTitle", descriptionKey: "auth.errorDefault" },
     { path: "/activity", titleKey: "activity.title", descriptionKey: "activity.description" },
     { path: "/profile", titleKey: "profile.title", descriptionKey: "profile.metaDescription" },
+    { path: "/moderation/[provider]/[id]", titleKey: "profile.moderationNotice_title", descriptionKey: "profile.moderationNotice_description", index: false },
     { path: "/search", titleKey: "search.title", descriptionKey: "search.metaDescription", index: false },
     { path: "/maintenance", titleKey: "maintenance.title", descriptionKey: "maintenance.defaultMessage", index: false },
 ];

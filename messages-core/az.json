@@ -1522,7 +1522,18 @@
     "signInMethods_disconnected": "{provider} bağlantısı kəsildi.",
     "signInMethods_failed": "Alınmadı. Yenidən cəhd et.",
     "signInMethods_errTaken": "Bu hesab burada artıq başqa üzvə bağlıdır. Sənin hesabına köçürülmədi.",
-    "signInMethods_errNotStarted": "Heç nə bağlanmadı. Bu səhifədə Bağla ilə başla, sonra provayderdə daxil ol."
+    "signInMethods_errNotStarted": "Heç nə bağlanmadı. Bu səhifədə Bağla ilə başla, sonra provayderdə daxil ol.",
+    "moderationNotice_title": "Paylaşımın haqqında",
+    "moderationNotice_description": "Yazdığın bir şeyə nə olduğu və səbəbi.",
+    "moderationNotice_rejected": "Dərc edilmədi",
+    "moderationNotice_pending": "Moderator gözlənilir",
+    "moderationNotice_approved": "Dərc edilib",
+    "moderationNotice_decidedAt": "{when} tarixində qərar verildi",
+    "moderationNotice_reason": "Səbəb",
+    "moderationNotice_noReason": "Səbəb qeyd edilməyib.",
+    "moderationNotice_yourPost": "Yazdığın",
+    "moderationNotice_yourPostOn": "{title} üçün yazdığın",
+    "moderationNotice_open": "Paylaşıldığı yerdə aç"
   },
   "auth": {
     "accountLocked": "Həddindən artıq uğursuz cəhd. Hesabınız müvəqqəti bloklanıb. E-poçtunuzu yoxlayın və ya bir neçə dəqiqədən sonra yenidən cəhd edin.",

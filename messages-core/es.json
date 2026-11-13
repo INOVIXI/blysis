@@ -1522,7 +1522,18 @@
     "signInMethods_disconnected": "{provider} está desconectado.",
     "signInMethods_failed": "No funcionó. Inténtalo de nuevo.",
     "signInMethods_errTaken": "Esa cuenta ya está conectada a otro miembro aquí. No se ha movido a la tuya.",
-    "signInMethods_errNotStarted": "No se conectó nada. Empieza en esta página con Conectar y luego inicia sesión en el proveedor."
+    "signInMethods_errNotStarted": "No se conectó nada. Empieza en esta página con Conectar y luego inicia sesión en el proveedor.",
+    "moderationNotice_title": "Sobre tu publicación",
+    "moderationNotice_description": "Qué pasó con algo que escribiste y por qué.",
+    "moderationNotice_rejected": "No publicado",
+    "moderationNotice_pending": "Esperando a un moderador",
+    "moderationNotice_approved": "Publicado",
+    "moderationNotice_decidedAt": "Decidido el {when}",
+    "moderationNotice_reason": "Motivo",
+    "moderationNotice_noReason": "No se registró ningún motivo.",
+    "moderationNotice_yourPost": "Lo que escribiste",
+    "moderationNotice_yourPostOn": "Lo que escribiste en {title}",
+    "moderationNotice_open": "Abrir donde se publicó"
   },
   "auth": {
     "accountLocked": "Demasiados intentos fallidos. Tu cuenta está bloqueada temporalmente. Revisa tu correo o inténtalo de nuevo en unos minutos.",

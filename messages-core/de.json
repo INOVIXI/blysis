@@ -1522,7 +1522,18 @@
     "signInMethods_disconnected": "{provider} ist getrennt.",
     "signInMethods_failed": "Das hat nicht geklappt. Versuche es noch einmal.",
     "signInMethods_errTaken": "Dieses Konto ist hier bereits mit einem anderen Mitglied verbunden. Es wurde nicht zu deinem verschoben.",
-    "signInMethods_errNotStarted": "Es wurde nichts verbunden. Beginne auf dieser Seite mit Verbinden und melde dich dann beim Anbieter an."
+    "signInMethods_errNotStarted": "Es wurde nichts verbunden. Beginne auf dieser Seite mit Verbinden und melde dich dann beim Anbieter an.",
+    "moderationNotice_title": "Zu deinem Beitrag",
+    "moderationNotice_description": "Was mit etwas passiert ist, das du geschrieben hast, und warum.",
+    "moderationNotice_rejected": "Nicht veröffentlicht",
+    "moderationNotice_pending": "Wartet auf einen Moderator",
+    "moderationNotice_approved": "Veröffentlicht",
+    "moderationNotice_decidedAt": "Entschieden am {when}",
+    "moderationNotice_reason": "Grund",
+    "moderationNotice_noReason": "Es wurde kein Grund angegeben.",
+    "moderationNotice_yourPost": "Was du geschrieben hast",
+    "moderationNotice_yourPostOn": "Was du zu {title} geschrieben hast",
+    "moderationNotice_open": "Dort öffnen, wo es gepostet wurde"
   },
   "auth": {
     "accountLocked": "Zu viele fehlgeschlagene Versuche. Dein Konto ist vorübergehend gesperrt. Prüfe deine E-Mails oder versuche es in ein paar Minuten erneut.",

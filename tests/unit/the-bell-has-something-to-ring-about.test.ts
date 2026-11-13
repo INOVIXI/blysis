@@ -21,6 +21,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { coreFiredHooks } from "./source-text";
 
 const MODULE = path.join("module-sources", "in-app-notifications");
 
@@ -78,7 +79,10 @@ describe("the bell has something to ring about", () => {
     });
 
     it("hooks every hook it listens for onto one another module actually fires", () => {
-        const fired = new Set<string>();
+        // Core fires some of its own, a rejection in the moderation queue
+        // among them, and has no manifest to list them in.
+        const fired = coreFiredHooks(process.cwd());
+        expect(fired.has("user.registered"), "the scan of core found nothing").toBe(true);
         for (const dir of fs.readdirSync("module-sources")) {
             const file = path.join("module-sources", dir, "module.json");
             if (!fs.existsSync(file)) continue;

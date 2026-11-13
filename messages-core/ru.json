@@ -1522,7 +1522,18 @@
     "signInMethods_disconnected": "{provider} отключён.",
     "signInMethods_failed": "Не получилось. Попробуйте ещё раз.",
     "signInMethods_errTaken": "Этот аккаунт уже подключён к другому участнику. Он не был перенесён к вам.",
-    "signInMethods_errNotStarted": "Ничего не подключено. Начните на этой странице с кнопки «Подключить», затем войдите у провайдера."
+    "signInMethods_errNotStarted": "Ничего не подключено. Начните на этой странице с кнопки «Подключить», затем войдите у провайдера.",
+    "moderationNotice_title": "О твоей публикации",
+    "moderationNotice_description": "Что случилось с тем, что ты написал, и почему.",
+    "moderationNotice_rejected": "Не опубликовано",
+    "moderationNotice_pending": "Ожидает модератора",
+    "moderationNotice_approved": "Опубликовано",
+    "moderationNotice_decidedAt": "Решение принято {when}",
+    "moderationNotice_reason": "Причина",
+    "moderationNotice_noReason": "Причина не указана.",
+    "moderationNotice_yourPost": "Что ты написал",
+    "moderationNotice_yourPostOn": "Что ты написал в «{title}»",
+    "moderationNotice_open": "Открыть там, где опубликовано"
   },
   "auth": {
     "accountLocked": "Слишком много неудачных попыток. Учетная запись временно заблокирована. Проверьте e-mail или попробуйте снова через несколько минут.",

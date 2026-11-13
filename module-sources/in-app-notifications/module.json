@@ -2,8 +2,8 @@
   "id": "in-app-notifications",
   "name": "In-App Notifications",
   "description": "In-app notification system with bell icon",
-  "version": "1.7.0",
-  "coreVersion": "^5.26.0",
+  "version": "1.8.0",
+  "coreVersion": "^5.39.0",
   "category": "community",
   "author": "Blysis",
   "icon": "Bell",
@@ -65,7 +65,9 @@
         "notif_ticketRepliedTitle": "New reply on your ticket",
         "notif_ticketRepliedMessage": "Support replied to \"{subject}\".",
         "notif_forumReplyTitle": "New reply on your topic",
-        "notif_forumReplyMessage": "Someone replied to \"{title}\"."
+        "notif_forumReplyMessage": "Someone replied to \"{title}\".",
+        "notif_moderationRejectedTitle": "Your post was not published",
+        "notif_moderationRejectedMessage": "A moderator rejected it. Open it to see why."
       },
       "pageTitles": {
         "notifications": "Notifications"
@@ -76,6 +78,9 @@
       },
       "pageDescriptions": {
         "notifications": "See every notification you have been sent, mark them as read and open the page each one points to."
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "Your Post Was Rejected"
       }
     },
     "tr": {
@@ -112,7 +117,9 @@
         "notif_ticketRepliedTitle": "Destek talebine yanıt geldi",
         "notif_ticketRepliedMessage": "Destek ekibi \"{subject}\" talebine yanıt verdi.",
         "notif_forumReplyTitle": "Konuna yanıt geldi",
-        "notif_forumReplyMessage": "Birisi \"{title}\" konusuna yanıt verdi."
+        "notif_forumReplyMessage": "Birisi \"{title}\" konusuna yanıt verdi.",
+        "notif_moderationRejectedTitle": "Gönderin yayınlanmadı",
+        "notif_moderationRejectedMessage": "Bir moderatör gönderini reddetti. Sebebini görmek için aç."
       },
       "pageTitles": {
         "notifications": "Bildirimler"
@@ -123,6 +130,9 @@
       },
       "pageDescriptions": {
         "notifications": "Size gönderilen tüm bildirimleri görün, okundu olarak işaretleyin ve her birinin işaret ettiği sayfayı açın."
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "Gönderiniz Reddedildi"
       }
     },
     "az": {
@@ -159,7 +169,9 @@
         "notif_ticketRepliedTitle": "Sorğunuza yeni cavab",
         "notif_ticketRepliedMessage": "Dəstək «{subject}» sorğusuna cavab verdi.",
         "notif_forumReplyTitle": "Mövzunuza yeni cavab",
-        "notif_forumReplyMessage": "Kimsə «{title}» mövzusuna cavab yazdı."
+        "notif_forumReplyMessage": "Kimsə «{title}» mövzusuna cavab yazdı.",
+        "notif_moderationRejectedTitle": "Paylaşımın dərc edilmədi",
+        "notif_moderationRejectedMessage": "Moderator onu rədd etdi. Səbəbini görmək üçün aç."
       },
       "pageTitles": {
         "notifications": "Bildirişlər"
@@ -170,6 +182,9 @@
       },
       "pageDescriptions": {
         "notifications": "Sizə göndərilmiş bütün bildirişlərə baxın, onları oxunmuş kimi işarələyin və hər birinin göstərdiyi səhifəni açın."
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "Paylaşımlarından biri rədd edildi"
       }
     },
     "de": {
@@ -206,7 +221,9 @@
         "notif_ticketRepliedTitle": "Neue Antwort auf dein Ticket",
         "notif_ticketRepliedMessage": "Der Support hat auf „{subject}“ geantwortet.",
         "notif_forumReplyTitle": "Neue Antwort in deinem Thema",
-        "notif_forumReplyMessage": "Jemand hat auf „{title}“ geantwortet."
+        "notif_forumReplyMessage": "Jemand hat auf „{title}“ geantwortet.",
+        "notif_moderationRejectedTitle": "Dein Beitrag wurde nicht veröffentlicht",
+        "notif_moderationRejectedMessage": "Ein Moderator hat ihn abgelehnt. Öffne ihn, um den Grund zu sehen."
       },
       "pageTitles": {
         "notifications": "Benachrichtigungen"
@@ -217,6 +234,9 @@
       },
       "pageDescriptions": {
         "notifications": "Sieh dir jede Benachrichtigung an, die dir gesendet wurde, markiere sie als gelesen und öffne die Seite, auf die sie verweist."
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "Ein Beitrag von dir wurde abgelehnt"
       }
     },
     "es": {
@@ -253,7 +273,9 @@
         "notif_ticketRepliedTitle": "Nueva respuesta en tu ticket",
         "notif_ticketRepliedMessage": "Soporte ha respondido a «{subject}».",
         "notif_forumReplyTitle": "Nueva respuesta en tu tema",
-        "notif_forumReplyMessage": "Alguien ha respondido a «{title}»."
+        "notif_forumReplyMessage": "Alguien ha respondido a «{title}».",
+        "notif_moderationRejectedTitle": "Tu publicación no se ha publicado",
+        "notif_moderationRejectedMessage": "Un moderador la rechazó. Ábrela para ver el motivo."
       },
       "pageTitles": {
         "notifications": "Notificaciones"
@@ -264,6 +286,9 @@
       },
       "pageDescriptions": {
         "notifications": "Consulta todas las notificaciones que te han enviado, márcalas como leídas y abre la página a la que apunta cada una."
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "Se rechazó una publicación tuya"
       }
     },
     "et": {
@@ -300,7 +325,9 @@
         "notif_ticketRepliedTitle": "Uus vastus sinu pileti all",
         "notif_ticketRepliedMessage": "Tugi vastas teemale „{subject}“.",
         "notif_forumReplyTitle": "Uus vastus sinu teemale",
-        "notif_forumReplyMessage": "Keegi vastas teemale „{title}“."
+        "notif_forumReplyMessage": "Keegi vastas teemale „{title}“.",
+        "notif_moderationRejectedTitle": "Sinu postitust ei avaldatud",
+        "notif_moderationRejectedMessage": "Moderaator lükkas selle tagasi. Ava see, et näha põhjust."
       },
       "pageTitles": {
         "notifications": "Teavitused"
@@ -311,6 +338,9 @@
       },
       "pageDescriptions": {
         "notifications": "Vaata kõiki sulle saadetud teavitusi, märgi need loetuks ja ava leht, millele iga teavitus viitab."
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "Sinu postitus lükati tagasi"
       }
     },
     "fr": {
@@ -347,7 +377,9 @@
         "notif_ticketRepliedTitle": "Nouvelle réponse à votre demande",
         "notif_ticketRepliedMessage": "Le support a répondu à « {subject} ».",
         "notif_forumReplyTitle": "Nouvelle réponse à votre sujet",
-        "notif_forumReplyMessage": "Quelqu’un a répondu à « {title} »."
+        "notif_forumReplyMessage": "Quelqu’un a répondu à « {title} ».",
+        "notif_moderationRejectedTitle": "Ta publication n’a pas été publiée",
+        "notif_moderationRejectedMessage": "Un modérateur l’a refusée. Ouvre-la pour voir pourquoi."
       },
       "pageTitles": {
         "notifications": "Notifications"
@@ -358,6 +390,9 @@
       },
       "pageDescriptions": {
         "notifications": "Consultez toutes les notifications qui vous ont été envoyées, marquez-les comme lues et ouvrez la page vers laquelle chacune renvoie."
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "Une de tes publications a été refusée"
       }
     },
     "it": {
@@ -394,7 +429,9 @@
         "notif_ticketRepliedTitle": "Nuova risposta al tuo ticket",
         "notif_ticketRepliedMessage": "Il supporto ha risposto a «{subject}».",
         "notif_forumReplyTitle": "Nuova risposta al tuo argomento",
-        "notif_forumReplyMessage": "Qualcuno ha risposto a «{title}»."
+        "notif_forumReplyMessage": "Qualcuno ha risposto a «{title}».",
+        "notif_moderationRejectedTitle": "Il tuo contenuto non è stato pubblicato",
+        "notif_moderationRejectedMessage": "Un moderatore lo ha rifiutato. Aprilo per vedere il motivo."
       },
       "pageTitles": {
         "notifications": "Notifiche"
@@ -405,6 +442,9 @@
       },
       "pageDescriptions": {
         "notifications": "Vedi ogni notifica che ti è stata inviata, segna come letta e apri la pagina a cui ciascuna rimanda."
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "Un tuo contenuto è stato rifiutato"
       }
     },
     "pl": {
@@ -441,7 +481,9 @@
         "notif_ticketRepliedTitle": "Nowa odpowiedź w Twoim zgłoszeniu",
         "notif_ticketRepliedMessage": "Support odpowiedział na „{subject}”.",
         "notif_forumReplyTitle": "Nowa odpowiedź w Twoim temacie",
-        "notif_forumReplyMessage": "Ktoś odpowiedział w temacie „{title}”."
+        "notif_forumReplyMessage": "Ktoś odpowiedział w temacie „{title}”.",
+        "notif_moderationRejectedTitle": "Twój wpis nie został opublikowany",
+        "notif_moderationRejectedMessage": "Moderator go odrzucił. Otwórz go, aby zobaczyć powód."
       },
       "pageTitles": {
         "notifications": "Powiadomienia"
@@ -452,6 +494,9 @@
       },
       "pageDescriptions": {
         "notifications": "Zobacz wszystkie powiadomienia, jakie do Ciebie trafiły, oznacz je jako przeczytane i otwórz stronę, na którą każde z nich prowadzi."
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "Twój wpis został odrzucony"
       }
     },
     "pt": {
@@ -488,7 +533,9 @@
         "notif_ticketRepliedTitle": "Nova resposta no seu ticket",
         "notif_ticketRepliedMessage": "O suporte respondeu a “{subject}”.",
         "notif_forumReplyTitle": "Nova resposta no seu tópico",
-        "notif_forumReplyMessage": "Alguém respondeu a “{title}”."
+        "notif_forumReplyMessage": "Alguém respondeu a “{title}”.",
+        "notif_moderationRejectedTitle": "A tua publicação não foi publicada",
+        "notif_moderationRejectedMessage": "Um moderador rejeitou-a. Abre-a para ver o motivo."
       },
       "pageTitles": {
         "notifications": "Notificações"
@@ -499,6 +546,9 @@
       },
       "pageDescriptions": {
         "notifications": "Veja todas as notificações que você recebeu, marque-as como lidas e abra a página para a qual cada uma aponta."
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "Uma publicação tua foi rejeitada"
       }
     },
     "ru": {
@@ -535,7 +585,9 @@
         "notif_ticketRepliedTitle": "Новый ответ в обращении",
         "notif_ticketRepliedMessage": "Поддержка ответила в обращении «{subject}».",
         "notif_forumReplyTitle": "Новый ответ в вашей теме",
-        "notif_forumReplyMessage": "Кто-то ответил в теме «{title}»."
+        "notif_forumReplyMessage": "Кто-то ответил в теме «{title}».",
+        "notif_moderationRejectedTitle": "Твоя публикация не опубликована",
+        "notif_moderationRejectedMessage": "Модератор отклонил её. Открой, чтобы узнать причину."
       },
       "pageTitles": {
         "notifications": "Уведомления"
@@ -546,6 +598,9 @@
       },
       "pageDescriptions": {
         "notifications": "Все уведомления, которые вам отправили: отмечайте их как прочитанные и открывайте страницу, на которую ведет каждое из них."
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "Твоя публикация отклонена"
       }
     },
     "zh": {
@@ -582,7 +637,9 @@
         "notif_ticketRepliedTitle": "你的工单有新回复",
         "notif_ticketRepliedMessage": "客服回复了“{subject}”。",
         "notif_forumReplyTitle": "你的主题有新回复",
-        "notif_forumReplyMessage": "有人回复了“{title}”。"
+        "notif_forumReplyMessage": "有人回复了“{title}”。",
+        "notif_moderationRejectedTitle": "你的内容未发布",
+        "notif_moderationRejectedMessage": "版主拒绝了它。打开查看原因。"
       },
       "pageTitles": {
         "notifications": "通知"
@@ -593,6 +650,9 @@
       },
       "pageDescriptions": {
         "notifications": "查看所有发送给你的通知，将它们标为已读，并打开每条通知指向的页面。"
+      },
+      "profile": {
+        "notificationType_moderation_item_rejected": "你的内容被拒绝"
       }
     }
   },
@@ -639,6 +699,11 @@
       "hook": "forum.post.created",
       "type": "action",
       "handler": "listeners/forum-post-created.ts"
+    },
+    {
+      "hook": "moderation.item.rejected",
+      "type": "action",
+      "handler": "listeners/moderation-rejected.ts"
     }
   ],
   "pages": [
@@ -668,6 +733,15 @@
           }
         ]
       }
+    }
+  ],
+  "notificationTypes": [
+    {
+      "eventType": "moderation.item.rejected",
+      "label": "Your Post Was Rejected",
+      "channels": [
+        "inapp"
+      ]
     }
   ]
 }
