@@ -1405,7 +1405,22 @@
     "moderationReasons_enabledLabel": "Доступна модераторам",
     "moderationReasons_enabledHint": "Отключённая причина больше не предлагается, но остаётся видна у публикаций, где её указали.",
     "moderationSettings_editReasons": "Изменить причины отклонения",
-    "crumb_reasons": "Причины"
+    "crumb_reasons": "Причины",
+    "moderation_viewLabel": "Какие элементы",
+    "moderation_viewPending": "Ожидают",
+    "moderation_viewRejected": "Отклонённые",
+    "moderation_requeue": "Вернуть в очередь",
+    "moderation_requeued": "Возвращено в очередь: {count}",
+    "moderation_requeuedSingle": "Возвращено в очередь",
+    "moderation_nothingRejected": "Ничего не отклонено.",
+    "moderation_noReasons": "Ни одна причина отклонения не включена. Сначала включите её в настройках модерации.",
+    "moderation_rejectReason": "Причина",
+    "moderation_rejectNote": "Заметка (необязательно)",
+    "moderation_rejectNoteHint": "Заметку видят только модераторы. Автору показывается причина.",
+    "moderation_decisionReason": "Причина: {reason}",
+    "moderation_decisionNote": "Заметка: {note}",
+    "moderation_decidedBy": "Отклонил(а) {name}, {when}",
+    "moderation_decidedAt": "Отклонено {when}"
   },
   "footer": {
     "quickLinks": "Быстрые ссылки",

@@ -1405,7 +1405,22 @@
     "moderationReasons_enabledLabel": "向版主提供",
     "moderationReasons_enabledHint": "关闭的原因不再提供，但在已使用该原因的内容上仍会显示。",
     "moderationSettings_editReasons": "编辑拒绝原因",
-    "crumb_reasons": "原因"
+    "crumb_reasons": "原因",
+    "moderation_viewLabel": "显示哪些",
+    "moderation_viewPending": "待审核",
+    "moderation_viewRejected": "已拒绝",
+    "moderation_requeue": "放回队列",
+    "moderation_requeued": "已将 {count} 项放回队列",
+    "moderation_requeuedSingle": "已放回队列",
+    "moderation_nothingRejected": "没有被拒绝的内容。",
+    "moderation_noReasons": "没有启用任何拒绝原因。请先在审核设置中启用一个。",
+    "moderation_rejectReason": "原因",
+    "moderation_rejectNote": "备注（可选）",
+    "moderation_rejectNoteHint": "备注仅版主可见。作者看到的是原因。",
+    "moderation_decisionReason": "原因：{reason}",
+    "moderation_decisionNote": "备注：{note}",
+    "moderation_decidedBy": "由 {name} 于 {when} 拒绝",
+    "moderation_decidedAt": "于 {when} 被拒绝"
   },
   "footer": {
     "quickLinks": "快速链接",

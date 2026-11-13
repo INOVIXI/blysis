@@ -1405,7 +1405,22 @@
     "moderationReasons_enabledLabel": "Offered to moderators",
     "moderationReasons_enabledHint": "A reason that is switched off is no longer offered, and still shows on the posts it was given to.",
     "moderationSettings_editReasons": "Edit rejection reasons",
-    "crumb_reasons": "Reasons"
+    "crumb_reasons": "Reasons",
+    "moderation_viewLabel": "Which items",
+    "moderation_viewPending": "Waiting",
+    "moderation_viewRejected": "Rejected",
+    "moderation_requeue": "Back to queue",
+    "moderation_requeued": "Put {count} items back in the queue",
+    "moderation_requeuedSingle": "Back in the queue",
+    "moderation_nothingRejected": "Nothing has been rejected.",
+    "moderation_noReasons": "No rejection reason is switched on. Turn one on under Moderation settings first.",
+    "moderation_rejectReason": "Reason",
+    "moderation_rejectNote": "Note (optional)",
+    "moderation_rejectNoteHint": "Only moderators see the note. The author is shown the reason.",
+    "moderation_decisionReason": "Reason: {reason}",
+    "moderation_decisionNote": "Note: {note}",
+    "moderation_decidedBy": "Rejected by {name} on {when}",
+    "moderation_decidedAt": "Rejected on {when}"
   },
   "footer": {
     "quickLinks": "Quick Links",

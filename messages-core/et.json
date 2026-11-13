@@ -1405,7 +1405,22 @@
     "moderationReasons_enabledLabel": "Moderaatoritele pakutav",
     "moderationReasons_enabledHint": "Väljalülitatud põhjust enam ei pakuta, kuid see jääb nähtavaks postitustel, millele see anti.",
     "moderationSettings_editReasons": "Muuda tagasilükkamise põhjuseid",
-    "crumb_reasons": "Põhjused"
+    "crumb_reasons": "Põhjused",
+    "moderation_viewLabel": "Millised üksused",
+    "moderation_viewPending": "Ootel",
+    "moderation_viewRejected": "Tagasi lükatud",
+    "moderation_requeue": "Tagasi järjekorda",
+    "moderation_requeued": "{count} üksust pandi tagasi järjekorda",
+    "moderation_requeuedSingle": "Tagasi järjekorras",
+    "moderation_nothingRejected": "Midagi pole tagasi lükatud.",
+    "moderation_noReasons": "Ükski tagasilükkamise põhjus pole sisse lülitatud. Lülita esmalt üks modereerimise seadetes sisse.",
+    "moderation_rejectReason": "Põhjus",
+    "moderation_rejectNote": "Märkus (valikuline)",
+    "moderation_rejectNoteHint": "Märkust näevad ainult moderaatorid. Autorile näidatakse põhjust.",
+    "moderation_decisionReason": "Põhjus: {reason}",
+    "moderation_decisionNote": "Märkus: {note}",
+    "moderation_decidedBy": "Lükkas tagasi {name}, {when}",
+    "moderation_decidedAt": "Tagasi lükatud {when}"
   },
   "footer": {
     "quickLinks": "Kiirlingid",

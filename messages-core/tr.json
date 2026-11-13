@@ -1405,7 +1405,22 @@
     "moderationReasons_enabledLabel": "Moderatörlere sunulsun",
     "moderationReasons_enabledHint": "Kapatılan sebep artık sunulmaz, ama verildiği gönderilerde görünmeye devam eder.",
     "moderationSettings_editReasons": "Red sebeplerini düzenle",
-    "crumb_reasons": "Sebepler"
+    "crumb_reasons": "Sebepler",
+    "moderation_viewLabel": "Hangi öğeler",
+    "moderation_viewPending": "Bekleyenler",
+    "moderation_viewRejected": "Reddedilenler",
+    "moderation_requeue": "Kuyruğa geri koy",
+    "moderation_requeued": "{count} öğe kuyruğa geri kondu",
+    "moderation_requeuedSingle": "Kuyruğa geri kondu",
+    "moderation_nothingRejected": "Reddedilmiş bir şey yok.",
+    "moderation_noReasons": "Açık bir red sebebi yok. Önce Moderasyon ayarlarından birini açın.",
+    "moderation_rejectReason": "Sebep",
+    "moderation_rejectNote": "Not (isteğe bağlı)",
+    "moderation_rejectNoteHint": "Notu yalnızca moderatörler görür. Yazara sebep gösterilir.",
+    "moderation_decisionReason": "Sebep: {reason}",
+    "moderation_decisionNote": "Not: {note}",
+    "moderation_decidedBy": "{name} tarafından {when} tarihinde reddedildi",
+    "moderation_decidedAt": "{when} tarihinde reddedildi"
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",

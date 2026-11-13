@@ -1405,7 +1405,22 @@
     "moderationReasons_enabledLabel": "Disponível para moderadores",
     "moderationReasons_enabledHint": "Um motivo desativado deixa de ser oferecido e continua visível nas publicações a que foi dado.",
     "moderationSettings_editReasons": "Editar motivos de rejeição",
-    "crumb_reasons": "Motivos"
+    "crumb_reasons": "Motivos",
+    "moderation_viewLabel": "Quais itens",
+    "moderation_viewPending": "Pendentes",
+    "moderation_viewRejected": "Rejeitados",
+    "moderation_requeue": "Voltar à fila",
+    "moderation_requeued": "{count} itens devolvidos à fila",
+    "moderation_requeuedSingle": "De volta à fila",
+    "moderation_nothingRejected": "Nada foi rejeitado.",
+    "moderation_noReasons": "Nenhum motivo de rejeição está ativo. Ative um primeiro nas definições de moderação.",
+    "moderation_rejectReason": "Motivo",
+    "moderation_rejectNote": "Nota (opcional)",
+    "moderation_rejectNoteHint": "Só os moderadores veem a nota. Ao autor é mostrado o motivo.",
+    "moderation_decisionReason": "Motivo: {reason}",
+    "moderation_decisionNote": "Nota: {note}",
+    "moderation_decidedBy": "Rejeitado por {name} em {when}",
+    "moderation_decidedAt": "Rejeitado em {when}"
   },
   "footer": {
     "quickLinks": "Links rápidos",

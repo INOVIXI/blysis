@@ -1405,7 +1405,22 @@
     "moderationReasons_enabledLabel": "Proposé aux modérateurs",
     "moderationReasons_enabledHint": "Un motif désactivé n’est plus proposé et reste affiché sur les publications auxquelles il a été donné.",
     "moderationSettings_editReasons": "Modifier les motifs de refus",
-    "crumb_reasons": "Motifs"
+    "crumb_reasons": "Motifs",
+    "moderation_viewLabel": "Quels éléments",
+    "moderation_viewPending": "En attente",
+    "moderation_viewRejected": "Refusés",
+    "moderation_requeue": "Remettre en file",
+    "moderation_requeued": "{count} éléments remis en file",
+    "moderation_requeuedSingle": "Remis en file",
+    "moderation_nothingRejected": "Rien n’a été refusé.",
+    "moderation_noReasons": "Aucun motif de refus n’est activé. Activez-en un d’abord dans les réglages de modération.",
+    "moderation_rejectReason": "Motif",
+    "moderation_rejectNote": "Note (facultative)",
+    "moderation_rejectNoteHint": "Seuls les modérateurs voient la note. L’auteur voit le motif.",
+    "moderation_decisionReason": "Motif : {reason}",
+    "moderation_decisionNote": "Note : {note}",
+    "moderation_decidedBy": "Refusé par {name} le {when}",
+    "moderation_decidedAt": "Refusé le {when}"
   },
   "footer": {
     "quickLinks": "Liens rapides",

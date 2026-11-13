@@ -1405,7 +1405,22 @@
     "moderationReasons_enabledLabel": "Moderatorlara təklif olunsun",
     "moderationReasons_enabledHint": "Söndürülmüş səbəb artıq təklif olunmur, amma verildiyi paylaşımlarda görünməyə davam edir.",
     "moderationSettings_editReasons": "Rədd səbəblərini redaktə et",
-    "crumb_reasons": "Səbəblər"
+    "crumb_reasons": "Səbəblər",
+    "moderation_viewLabel": "Hansı elementlər",
+    "moderation_viewPending": "Gözləyənlər",
+    "moderation_viewRejected": "Rədd edilənlər",
+    "moderation_requeue": "Növbəyə qaytar",
+    "moderation_requeued": "{count} element növbəyə qaytarıldı",
+    "moderation_requeuedSingle": "Növbəyə qaytarıldı",
+    "moderation_nothingRejected": "Rədd edilmiş heç nə yoxdur.",
+    "moderation_noReasons": "Aktiv rədd səbəbi yoxdur. Əvvəlcə Moderasiya ayarlarından birini aktivləşdirin.",
+    "moderation_rejectReason": "Səbəb",
+    "moderation_rejectNote": "Qeyd (istəyə bağlı)",
+    "moderation_rejectNoteHint": "Qeydi yalnız moderatorlar görür. Müəllifə səbəb göstərilir.",
+    "moderation_decisionReason": "Səbəb: {reason}",
+    "moderation_decisionNote": "Qeyd: {note}",
+    "moderation_decidedBy": "{name} tərəfindən {when} tarixində rədd edildi",
+    "moderation_decidedAt": "{when} tarixində rədd edildi"
   },
   "footer": {
     "quickLinks": "Sürətli keçidlər",

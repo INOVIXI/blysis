@@ -1405,7 +1405,22 @@
     "moderationReasons_enabledLabel": "Moderatoren anbieten",
     "moderationReasons_enabledHint": "Ein abgeschalteter Grund wird nicht mehr angeboten und bleibt bei den Beiträgen sichtbar, denen er gegeben wurde.",
     "moderationSettings_editReasons": "Ablehnungsgründe bearbeiten",
-    "crumb_reasons": "Gründe"
+    "crumb_reasons": "Gründe",
+    "moderation_viewLabel": "Welche Einträge",
+    "moderation_viewPending": "Wartend",
+    "moderation_viewRejected": "Abgelehnt",
+    "moderation_requeue": "Zurück in die Warteschlange",
+    "moderation_requeued": "{count} Einträge zurück in die Warteschlange gelegt",
+    "moderation_requeuedSingle": "Zurück in der Warteschlange",
+    "moderation_nothingRejected": "Es wurde nichts abgelehnt.",
+    "moderation_noReasons": "Kein Ablehnungsgrund ist eingeschaltet. Schalten Sie zuerst einen in den Moderationseinstellungen ein.",
+    "moderation_rejectReason": "Grund",
+    "moderation_rejectNote": "Notiz (optional)",
+    "moderation_rejectNoteHint": "Nur Moderatoren sehen die Notiz. Dem Autor wird der Grund angezeigt.",
+    "moderation_decisionReason": "Grund: {reason}",
+    "moderation_decisionNote": "Notiz: {note}",
+    "moderation_decidedBy": "Abgelehnt von {name} am {when}",
+    "moderation_decidedAt": "Abgelehnt am {when}"
   },
   "footer": {
     "quickLinks": "Schnelllinks",

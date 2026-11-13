@@ -1405,7 +1405,22 @@
     "moderationReasons_enabledLabel": "Dostępny dla moderatorów",
     "moderationReasons_enabledHint": "Wyłączony powód nie jest już oferowany, ale nadal widać go przy wpisach, którym go nadano.",
     "moderationSettings_editReasons": "Edytuj powody odrzucenia",
-    "crumb_reasons": "Powody"
+    "crumb_reasons": "Powody",
+    "moderation_viewLabel": "Które elementy",
+    "moderation_viewPending": "Oczekujące",
+    "moderation_viewRejected": "Odrzucone",
+    "moderation_requeue": "Z powrotem do kolejki",
+    "moderation_requeued": "Przywrócono {count} elementów do kolejki",
+    "moderation_requeuedSingle": "Z powrotem w kolejce",
+    "moderation_nothingRejected": "Nic nie zostało odrzucone.",
+    "moderation_noReasons": "Żaden powód odrzucenia nie jest włączony. Najpierw włącz jeden w ustawieniach moderacji.",
+    "moderation_rejectReason": "Powód",
+    "moderation_rejectNote": "Notatka (opcjonalnie)",
+    "moderation_rejectNoteHint": "Notatkę widzą tylko moderatorzy. Autor widzi powód.",
+    "moderation_decisionReason": "Powód: {reason}",
+    "moderation_decisionNote": "Notatka: {note}",
+    "moderation_decidedBy": "Odrzucone przez {name}, {when}",
+    "moderation_decidedAt": "Odrzucone {when}"
   },
   "footer": {
     "quickLinks": "Szybkie linki",

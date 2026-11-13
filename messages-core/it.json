@@ -1405,7 +1405,22 @@
     "moderationReasons_enabledLabel": "Proposto ai moderatori",
     "moderationReasons_enabledHint": "Un motivo disattivato non viene più proposto e resta visibile sui contenuti a cui è stato dato.",
     "moderationSettings_editReasons": "Modifica i motivi di rifiuto",
-    "crumb_reasons": "Motivi"
+    "crumb_reasons": "Motivi",
+    "moderation_viewLabel": "Quali elementi",
+    "moderation_viewPending": "In attesa",
+    "moderation_viewRejected": "Rifiutati",
+    "moderation_requeue": "Rimetti in coda",
+    "moderation_requeued": "{count} elementi rimessi in coda",
+    "moderation_requeuedSingle": "Di nuovo in coda",
+    "moderation_nothingRejected": "Non è stato rifiutato nulla.",
+    "moderation_noReasons": "Nessun motivo di rifiuto è attivo. Attivane prima uno nelle impostazioni di moderazione.",
+    "moderation_rejectReason": "Motivo",
+    "moderation_rejectNote": "Nota (facoltativa)",
+    "moderation_rejectNoteHint": "Solo i moderatori vedono la nota. All’autore viene mostrato il motivo.",
+    "moderation_decisionReason": "Motivo: {reason}",
+    "moderation_decisionNote": "Nota: {note}",
+    "moderation_decidedBy": "Rifiutato da {name} il {when}",
+    "moderation_decidedAt": "Rifiutato il {when}"
   },
   "footer": {
     "quickLinks": "Link rapidi",
