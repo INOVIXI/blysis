@@ -12,6 +12,16 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.40.0 - a module can ask an AI model. `@/core/sdk/server` gains
+ * `generateStructured`, which takes a Zod schema and answers with a value of
+ * its type or throws `AiError` (and the types `AiProvider`, `AiRequest`,
+ * `AiResult`, `AiTier`, `AiErrorKind`, `GenerateOptions`, `UntrustedText`).
+ * A provider is a module declared under the new manifest key `aiProvider`,
+ * the way a mail transport is, and `@/core/sdk` gains `aiProviders` and
+ * `ACTIVE_AI_PROVIDER_KEY` for its own settings screen. A module that calls
+ * a model names what it sends under the new key `aiPurposes`, which the AI
+ * screen lists. All additions.
+ *
  * 5.39.0 - `moderationStateFor` joins `@/core/sdk/server`. Whether what a
  * person wrote is published or waits for a moderator was four copies of one
  * function in three modules, held equal by a gate; a third mode was about to
@@ -799,4 +809,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.39.0";
+export const CORE_API_VERSION = "5.40.0";
