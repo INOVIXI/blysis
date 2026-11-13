@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-11-12",
-  "updatedAt": "2026-11-12T16:58:56Z",
+  "updated": "2026-11-13",
+  "updatedAt": "2026-11-13T19:26:07Z",
   "modules": [
     {
       "id": "announcements",
@@ -365,13 +365,13 @@
           "description": "新闻与公告系统"
         }
       },
-      "version": "1.15.0",
-      "coreVersion": "^5.37.0",
+      "version": "1.16.0",
+      "coreVersion": "^5.39.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-11-12T16:58:56Z",
+      "updatedAt": "2026-11-13T18:44:47Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2158,13 +2158,13 @@
           "description": "带分类、主题和回复的社区讨论论坛"
         }
       },
-      "version": "1.17.0",
-      "coreVersion": "^5.37.0",
+      "version": "1.18.0",
+      "coreVersion": "^5.39.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-11-12T16:58:56Z",
+      "updatedAt": "2026-11-13T18:44:47Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2646,13 +2646,13 @@
           "description": "带铃铛图标的站内通知系统"
         }
       },
-      "version": "1.7.0",
-      "coreVersion": "^5.26.0",
+      "version": "1.8.0",
+      "coreVersion": "^5.39.0",
       "author": "Blysis",
       "icon": "Bell",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-25T09:40:22Z",
+      "updatedAt": "2026-11-13T19:26:07Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2669,7 +2669,8 @@
           "wheel.prize.won",
           "referral.referral.used",
           "tickets.ticket.replied",
-          "forum.post.created"
+          "forum.post.created",
+          "moderation.item.rejected"
         ]
       },
       "stats": {
@@ -6319,13 +6320,13 @@
           "description": "带投票功能的社区功能建议"
         }
       },
-      "version": "1.10.0",
-      "coreVersion": "^5.30.0",
+      "version": "1.11.0",
+      "coreVersion": "^5.39.0",
       "author": "Blysis",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-10-26T10:34:40Z",
+      "updatedAt": "2026-11-13T18:44:47Z",
       "screenshots": [],
       "tags": [
         "community"

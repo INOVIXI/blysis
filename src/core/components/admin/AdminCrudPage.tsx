@@ -317,8 +317,12 @@ export function AdminCrudPage({ title, subtitle, apiPath, listPath, fields, list
         const ok = await confirm({ title: ct("crud_deleteItem"), message: ct("crud_deleteItemConfirm"), variant: "danger", confirmText: ct("crud_delete") });
         if (!ok) return;
         const res = await fetch(`${apiPath}/${id}`, { method: "DELETE" });
-        if (res.ok) { toast.success(ct("crud_deleted")); fetchItems(); }
-        else toast.error(ct("crud_deleteFailed"));
+        // A refusal that says why (a reason a decision gave, say) is shown as
+        // that sentence, the way the bulk delete above already did.
+        const failed = await writeError(res, ct("crud_deleteFailed"), ct);
+        if (failed) { toast.error(failed); return; }
+        toast.success(ct("crud_deleted"));
+        fetchItems();
     };
 
     const renderField = (field: CrudField) => {

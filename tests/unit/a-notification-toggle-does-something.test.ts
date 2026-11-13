@@ -40,6 +40,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { notificationTypeKey } from "@/core/components/profile/NotificationPrefsTab";
+import { coreFiredHooks } from "./source-text";
 
 const MODULES = "module-sources";
 
@@ -59,7 +60,9 @@ for (const id of fs.readdirSync(MODULES)) {
     if (fs.existsSync(file)) manifests.set(id, JSON.parse(fs.readFileSync(file, "utf8")));
 }
 
-const fired = new Set<string>();
+// Core fires some of its own, a rejection in the moderation queue among
+// them, and has no manifest to list them in.
+const fired = coreFiredHooks(process.cwd());
 for (const manifest of manifests.values()) {
     for (const hook of manifest.hooksEmitted ?? []) {
         const name = typeof hook === "string" ? hook : hook.name ?? hook.hook;

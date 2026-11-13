@@ -1,70 +1,71 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "@/core/lib/i18n/navigation";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
-import {
-    Check,
-    X,
-    Loader2,
-    ExternalLink,
-} from "lucide-react";
+import { SegmentedTabs } from "@/core/components/ui/segmented-tabs";
+import { Check, X, Loader2, Undo2 } from "lucide-react";
 import { toast } from "sonner";
-import { useConfirm } from "@/core/components/ui/confirm-dialog";
 import { useTranslations } from "next-intl";
 import { writeError } from "@/core/lib/write-result";
-import { Checkbox } from "@/core/components/ui/checkbox";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { FilterChips } from "@/core/components/admin/FilterChips";
 import { BulkBar } from "@/core/components/admin/BulkBar";
-import { Badge } from "@/core/components/ui/badge";
 import { headerState } from "@/core/lib/bulk-selection";
-import { useLocalDateTime } from "@/core/hooks/useLocalDate";
+import { ModerationRow, type ModerationRowItem } from "./ModerationRow";
+import { RejectDialog } from "./RejectDialog";
 
-interface ModerationItem {
-    id: string;
-    type: string;
-    author: { id: string; username: string } | null;
-    preview: string;
-    title?: string;
-    createdAt: string;
-    href?: string;
+interface KindMeta {
+    label: string;
+    labelKey?: string;
+    canListRejected?: boolean;
 }
 
 interface CountsPayload {
     counts: Record<string, number>;
-    types: Record<string, { label: string; labelKey?: string }>;
+    types: Record<string, KindMeta>;
 }
 
 interface ListPayload {
-    items: ModerationItem[];
+    items: ModerationRowItem[];
     total: number;
     page: number;
     pages: number;
 }
 
+type View = "pending" | "rejected";
+type Action = "approve" | "reject" | "requeue";
+
+/**
+ * The moderation queue, and what it rejected.
+ *
+ * Rejecting used to be final and silent: the item left this screen and no
+ * screen showed it again. The Rejected view lists it now beside the reason
+ * and who gave it, for every kind whose module can list what it rejected,
+ * and either view can send an item the other way.
+ */
 export default function ModerationPage() {
-    // The site's zone, not the machine's: without it the server and the
-    // browser disagree about what day a timestamp near midnight is.
-    const formatDateTime = useLocalDateTime();
     const t = useTranslations("admin");
     const commonT = useTranslations("common");
-    const [types, setTypes] = useState<Record<string, { label: string; labelKey?: string }>>({});
+    const [types, setTypes] = useState<Record<string, KindMeta>>({});
     const [counts, setCounts] = useState<Record<string, number>>({});
+    const [view, setView] = useState<View>("pending");
     const [activeTab, setActiveTab] = useState<string>("all");
-    const [items, setItems] = useState<ModerationItem[]>([]);
+    const [items, setItems] = useState<ModerationRowItem[]>([]);
     const [selected, setSelected] = useState<Set<string>>(new Set());
     const [loading, setLoading] = useState(true);
     const [working, setWorking] = useState(false);
     const [page, setPage] = useState(1);
     const [pages, setPages] = useState(1);
     const [total, setTotal] = useState(0);
+    /** The rows a rejection is being asked about; null while the dialog is closed. */
+    const [rejecting, setRejecting] = useState<ModerationRowItem[] | null>(null);
 
-    const { confirm } = useConfirm();
-
-    const typeIds = useMemo(() => Object.keys(types), [types]);
+    const typeIds = useMemo(
+        () => Object.keys(types).filter((id) => view === "pending" || types[id].canListRejected),
+        [types, view],
+    );
 
     const typeLabel = useCallback(
         (id: string): string => {
@@ -94,16 +95,17 @@ export default function ModerationPage() {
         }
         setLoading(true);
         setSelected(new Set());
+        const state = view === "rejected" ? "&state=rejected" : "";
         try {
             if (activeTab === "all") {
                 const results = await Promise.all(
                     typeIds.map((id) =>
-                        fetch(`/api/v1/admin/moderation?type=${encodeURIComponent(id)}&page=1`).then(
+                        fetch(`/api/v1/admin/moderation?type=${encodeURIComponent(id)}&page=1${state}`).then(
                             (r) => (r.ok ? (r.json() as Promise<ListPayload>) : null),
                         ),
                     ),
                 );
-                const combined: ModerationItem[] = [];
+                const combined: ModerationRowItem[] = [];
                 let sum = 0;
                 for (const r of results) {
                     if (r) {
@@ -111,16 +113,17 @@ export default function ModerationPage() {
                         sum += r.total;
                     }
                 }
-                combined.sort(
-                    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-                );
+                // Newest first: the queue by when an item was written, the
+                // Rejected view by when it was decided.
+                const when = (i: ModerationRowItem) => new Date(i.decision?.decidedAt ?? i.createdAt).getTime();
+                combined.sort((a, b) => when(b) - when(a));
                 setItems(combined);
                 setTotal(sum);
                 setPages(1);
                 setPage(1);
             } else {
                 const res = await fetch(
-                    `/api/v1/admin/moderation?type=${encodeURIComponent(activeTab)}&page=${page}`,
+                    `/api/v1/admin/moderation?type=${encodeURIComponent(activeTab)}&page=${page}${state}`,
                 );
                 if (res.ok) {
                     const data: ListPayload = await res.json();
@@ -132,7 +135,7 @@ export default function ModerationPage() {
         } finally {
             setLoading(false);
         }
-    }, [activeTab, page, typeIds]);
+    }, [activeTab, page, typeIds, view]);
 
     useEffect(() => {
         fetchCounts();
@@ -159,92 +162,95 @@ export default function ModerationPage() {
         }
     };
 
-    const performAction = async (
-        type: string,
-        ids: string[],
-        action: "approve" | "reject",
-    ) => {
-        const res = await fetch("/api/v1/admin/moderation", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ ids, type, action }),
-        });
-        const failed = await writeError(res, commonT("somethingWentWrong"), t);
-        if (failed) {
-            toast.error(failed);
-            return false;
-        }
-        return true;
-    };
-
-    const handleSingle = async (item: ModerationItem, action: "approve" | "reject") => {
-        if (action === "reject") {
-            const ok = await confirm({
-                title: t("moderation_rejectSingleTitle"),
-                message: t("moderation_rejectSingleMessage"),
-                variant: "danger",
-                confirmText: t("moderation_rejectSingle"),
+    /** One request per kind, since a decision is made by that kind's module. */
+    const perform = async (rows: ModerationRowItem[], action: Action, extra: { reasonId?: string; note?: string } = {}) => {
+        const byType = new Map<string, string[]>();
+        for (const row of rows) byType.set(row.type, [...(byType.get(row.type) ?? []), row.id]);
+        let done = 0;
+        for (const [type, ids] of byType.entries()) {
+            const res = await fetch("/api/v1/admin/moderation", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ ids, type, action, ...extra }),
             });
-            if (!ok) return;
+            const failed = await writeError(res, commonT("somethingWentWrong"), t);
+            if (failed) toast.error(failed);
+            else done += ids.length;
         }
-        setWorking(true);
-        try {
-            const ok = await performAction(item.type, [item.id], action);
-            if (ok) {
-                toast.success(
-                    action === "approve"
-                        ? t("moderation_approvedSingle")
-                        : t("moderation_rejectedSingle"),
-                );
-                await fetchCounts();
-                await fetchItems();
-            }
-        } finally {
-            setWorking(false);
-        }
+        return done;
     };
 
-    const handleBulk = async (action: "approve" | "reject") => {
-        if (selected.size === 0) {
+    const finish = async (action: Action, done: number, single: boolean) => {
+        if (done > 0) {
+            const key = {
+                approve: single ? "moderation_approvedSingle" : "moderation_approved",
+                reject: single ? "moderation_rejectedSingle" : "moderation_rejected",
+                requeue: single ? "moderation_requeuedSingle" : "moderation_requeued",
+            }[action];
+            toast.success(t(key, { count: done }));
+        }
+        await fetchCounts();
+        await fetchItems();
+    };
+
+    const act = async (rows: ModerationRowItem[], action: Exclude<Action, "reject">) => {
+        if (rows.length === 0) {
             toast.error(t("moderation_selectAtLeast"));
             return;
         }
-        if (action === "reject") {
-            const ok = await confirm({
-                title: t("moderation_rejectTitle", { count: selected.size }),
-                message: t("moderation_rejectMessage"),
-                variant: "danger",
-                confirmText: t("moderation_rejectAll"),
-            });
-            if (!ok) return;
-        }
         setWorking(true);
         try {
-            const byType = new Map<string, string[]>();
-            for (const item of items) {
-                if (!selected.has(item.id)) continue;
-                const list = byType.get(item.type) ?? [];
-                list.push(item.id);
-                byType.set(item.type, list);
-            }
-            let totalAffected = 0;
-            for (const [type, ids] of byType.entries()) {
-                const ok = await performAction(type, ids, action);
-                if (ok) totalAffected += ids.length;
-            }
-            toast.success(
-                action === "approve"
-                    ? t("moderation_approved", { count: totalAffected })
-                    : t("moderation_rejected", { count: totalAffected }),
-            );
-            await fetchCounts();
-            await fetchItems();
+            await finish(action, await perform(rows, action), rows.length === 1);
         } finally {
             setWorking(false);
         }
     };
 
+    const askReject = (rows: ModerationRowItem[]) => {
+        if (rows.length === 0) {
+            toast.error(t("moderation_selectAtLeast"));
+            return;
+        }
+        setRejecting(rows);
+    };
+
+    const confirmReject = async (reasonId: string, note: string) => {
+        if (!rejecting) return;
+        const rows = rejecting;
+        setWorking(true);
+        try {
+            const done = await perform(rows, "reject", { reasonId, ...(note ? { note } : {}) });
+            setRejecting(null);
+            await finish("reject", done, rows.length === 1);
+        } finally {
+            setWorking(false);
+        }
+    };
+
+    const chosenRows = items.filter((i) => selected.has(i.id));
     const totalAll = typeIds.reduce((sum, id) => sum + (counts[id] || 0), 0);
+    const anyRejectedView = Object.values(types).some((meta) => meta.canListRejected);
+
+    const rowActions = (item: ModerationRowItem) =>
+        view === "pending" ? (
+            <>
+                <Button size="sm" disabled={working} onClick={() => act([item], "approve")}>
+                    <Check className="w-4 h-4" aria-hidden="true" /> {t("moderation_approve")}
+                </Button>
+                <Button size="sm" variant="destructive" disabled={working} onClick={() => askReject([item])}>
+                    <X className="w-4 h-4" aria-hidden="true" /> {t("moderation_reject")}
+                </Button>
+            </>
+        ) : (
+            <>
+                <Button size="sm" disabled={working} onClick={() => act([item], "approve")}>
+                    <Check className="w-4 h-4" aria-hidden="true" /> {t("moderation_approve")}
+                </Button>
+                <Button size="sm" variant="outline" disabled={working} onClick={() => act([item], "requeue")}>
+                    <Undo2 className="w-4 h-4" aria-hidden="true" /> {t("moderation_requeue")}
+                </Button>
+            </>
+        );
 
     return (
         <>
@@ -253,14 +259,29 @@ export default function ModerationPage() {
                 description={t("moderation_description")}
             />
 
+            {anyRejectedView && (
+                <SegmentedTabs
+                    className="mb-4"
+                    label={t("moderation_viewLabel")}
+                    activeId={view}
+                    onChange={(id) => { setView(id as View); setActiveTab("all"); setPage(1); }}
+                    tabs={[
+                        { id: "pending", label: t("moderation_viewPending") },
+                        { id: "rejected", label: t("moderation_viewRejected") },
+                    ]}
+                />
+            )}
+
             <FilterChips
                 className="mb-4"
                 label={t("moderation_kind")}
                 active={activeTab}
                 onSelect={(id) => { setActiveTab(id); setPage(1); }}
                 chips={[
-                    { id: "all", label: t("moderation_all"), count: totalAll },
-                    ...typeIds.map((id) => ({ id, label: typeLabel(id), count: counts[id] || 0 })),
+                    // The queue counts what waits; nothing counts the Rejected
+                    // view, so its chips carry no number rather than a wrong one.
+                    { id: "all", label: t("moderation_all"), count: view === "pending" ? totalAll : undefined },
+                    ...typeIds.map((id) => ({ id, label: typeLabel(id), count: view === "pending" ? counts[id] || 0 : undefined })),
                 ]}
             />
 
@@ -273,98 +294,47 @@ export default function ModerationPage() {
                             onToggleAll={toggleAll}
                             idle={t("moderation_itemsCount", { count: items.length })}
                             actions={
-                                <>
-                                    <Button size="sm" disabled={working} onClick={() => handleBulk("approve")}>
-                                        <Check className="w-4 h-4" /> {t("moderation_approve")}
-                                    </Button>
-                                    <Button size="sm" variant="destructive" disabled={working} onClick={() => handleBulk("reject")}>
-                                        <X className="w-4 h-4" /> {t("moderation_reject")}
-                                    </Button>
-                                </>
+                                view === "pending" ? (
+                                    <>
+                                        <Button size="sm" disabled={working} onClick={() => act(chosenRows, "approve")}>
+                                            <Check className="w-4 h-4" aria-hidden="true" /> {t("moderation_approve")}
+                                        </Button>
+                                        <Button size="sm" variant="destructive" disabled={working} onClick={() => askReject(chosenRows)}>
+                                            <X className="w-4 h-4" aria-hidden="true" /> {t("moderation_reject")}
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button size="sm" disabled={working} onClick={() => act(chosenRows, "approve")}>
+                                            <Check className="w-4 h-4" aria-hidden="true" /> {t("moderation_approve")}
+                                        </Button>
+                                        <Button size="sm" variant="outline" disabled={working} onClick={() => act(chosenRows, "requeue")}>
+                                            <Undo2 className="w-4 h-4" aria-hidden="true" /> {t("moderation_requeue")}
+                                        </Button>
+                                    </>
+                                )
                             }
                         />
                     )}
                     {loading ? (
                         <div className="flex justify-center py-12">
-                            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" aria-hidden="true" />
                         </div>
                     ) : items.length === 0 ? (
                         <p className="text-muted-foreground text-center py-12">
-                            {t("moderation_nothingToReview")}
+                            {view === "pending" ? t("moderation_nothingToReview") : t("moderation_nothingRejected")}
                         </p>
                     ) : (
                         <div className="divide-y">
                             {items.map((item) => (
-                                <div key={`${item.type}:${item.id}`} className="p-4 flex items-start gap-3">
-                                    <Checkbox
-                                        checked={selected.has(item.id)}
-                                        onChange={() => toggleOne(item.id)}
-                                        aria-label={t("common_selectRow")}
-                                        className="mt-0.5"
-                                    />
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                            {/* A name, set as a name. It was
-                                                uppercased and in a monospace
-                                                face, which is how this site
-                                                draws a machine's word. */}
-                                            <Badge tone="neutral">{typeLabel(item.type)}</Badge>
-                                            <span className="font-medium text-sm">
-                                                {item.author?.username ?? t("moderation_anonymous")}
-                                            </span>
-                                            {item.title && (
-                                                <span className="text-xs text-muted-foreground truncate">
-                                                    {t("moderation_onTitle", { title: item.title })}
-                                                </span>
-                                            )}
-                                            {item.href && (
-                                                <Link
-                                                    href={item.href}
-                                                    target="_blank"
-                                                    className="text-xs text-primary hover:underline inline-flex items-center gap-1"
-                                                >
-                                                    <ExternalLink className="w-3 h-3" /> {t("moderation_view")}
-                                                </Link>
-                                            )}
-                                        </div>
-                                        <p className="text-sm text-muted-foreground whitespace-pre-wrap line-clamp-3">
-                                            {item.preview}
-                                        </p>
-                                        <p className="text-[11px] text-muted-foreground mt-1">
-                                            {formatDateTime(item.createdAt)}
-                                        </p>
-                                    </div>
-                                    {/*
-                                      * The two answers a row is waiting for,
-                                      * and they are the point of the screen.
-                                      * They were an outline button holding a
-                                      * grey tick and a ghost button holding a
-                                      * red cross - so the one thing an
-                                      * operator came here to do was the
-                                      * faintest thing on the row, and the two
-                                      * halves of one decision did not look
-                                      * like a pair. They say what they do now,
-                                      * and the same two words appear on the
-                                      * bar above when several rows are ticked.
-                                      */}
-                                    <div className="flex shrink-0 gap-2">
-                                        <Button
-                                            size="sm"
-                                            disabled={working}
-                                            onClick={() => handleSingle(item, "approve")}
-                                        >
-                                            <Check className="w-4 h-4" /> {t("moderation_approve")}
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            variant="destructive"
-                                            disabled={working}
-                                            onClick={() => handleSingle(item, "reject")}
-                                        >
-                                            <X className="w-4 h-4" /> {t("moderation_reject")}
-                                        </Button>
-                                    </div>
-                                </div>
+                                <ModerationRow
+                                    key={`${item.type}:${item.id}`}
+                                    item={item}
+                                    kindLabel={typeLabel(item.type)}
+                                    selected={selected.has(item.id)}
+                                    onToggle={() => toggleOne(item.id)}
+                                    actions={rowActions(item)}
+                                />
                             ))}
                         </div>
                     )}
@@ -373,6 +343,13 @@ export default function ModerationPage() {
                     )}
                 </CardContent>
             </Card>
+
+            <RejectDialog
+                count={rejecting ? rejecting.length : null}
+                working={working}
+                onCancel={() => setRejecting(null)}
+                onConfirm={confirmReject}
+            />
         </>
     );
 }

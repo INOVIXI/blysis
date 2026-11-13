@@ -54,6 +54,8 @@ export const CORE_ADMIN_API: AdminApiRoute[] = [
     { path: "/v1/admin/warnings", permission: "admin.moderation" },
     { path: "/v1/admin/warnings/[id]", permission: "admin.moderation" },
     { path: "/v1/admin/moderation", permission: "admin.moderation" },
+    { path: "/v1/admin/moderation/reasons", permission: "admin.moderation" },
+    { path: "/v1/admin/moderation/reasons/[id]", permission: "admin.moderation" },
     { path: "/v1/admin/ip-blocks", permission: "admin.moderation" },
     { path: "/v1/admin/ip-blocks/[id]", permission: "admin.moderation" },
     { path: "/v1/admin/customers/[id]/restrictions", permission: "admin.moderation" },

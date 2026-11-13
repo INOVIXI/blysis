@@ -791,6 +791,16 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
 
     const MODERATION_FILE = path.join(path.dirname(OUTPUT_FILE), 'module-moderation.ts');
     let moderationContent = '// Auto-generated moderation provider registry - server only\n\n';
+    moderationContent += "export type ModerationState = 'APPROVED' | 'REJECTED' | 'PENDING';\n\n";
+    moderationContent += "/** An item whole, for the author's own page and for a reviewing module. */\n";
+    moderationContent += "export interface ModeratedText {\n";
+    moderationContent += "    id: string;\n";
+    moderationContent += "    authorId: string | null;\n";
+    moderationContent += "    title?: string;\n";
+    moderationContent += "    body: string;\n";
+    moderationContent += "    state: ModerationState;\n";
+    moderationContent += "    href?: string;\n";
+    moderationContent += "}\n\n";
     moderationContent += "export interface ModerationItem {\n";
     moderationContent += "    id: string;\n";
     moderationContent += "    author: { id: string; username: string } | null;\n";
@@ -802,7 +812,12 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
     moderationContent += "export interface ModerationProvider {\n";
     moderationContent += "    count(): Promise<number>;\n";
     moderationContent += "    list(skip: number, take: number): Promise<{ items: ModerationItem[]; total: number }>;\n";
-    moderationContent += "    bulkUpdate(ids: string[], newState: 'APPROVED' | 'REJECTED'): Promise<number>;\n";
+    moderationContent += "    bulkUpdate(ids: string[], newState: ModerationState): Promise<number>;\n";
+    // Optional, so a provider written before them still lists, approves and
+    // rejects: one without `listRejected` shows no Rejected view, one without
+    // `read` tells no author and is never handed to a reviewing module.
+    moderationContent += "    listRejected?(skip: number, take: number): Promise<{ items: ModerationItem[]; total: number }>;\n";
+    moderationContent += "    read?(ids: string[]): Promise<ModeratedText[]>;\n";
     moderationContent += "}\n\n";
     moderationContent += "export const ModuleModerationProviders: { id: string; label: string; labelKey?: string; settingKey?: string; settingLabelKey?: string; settingDescKey?: string; module: string; loader: () => Promise<{ default: ModerationProvider }> }[] = [\n";
     for (const mp of allModerationProviders) {
