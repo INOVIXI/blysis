@@ -16,6 +16,7 @@ import { deliverProduct } from "./delivery";
 import { deliveryFor } from "./chest";
 import { releaseStock, stockClaims } from "./stock";
 import { uncountSales } from "./popularity";
+import { withdrawThankYouCoupon } from "./thank-you-coupon";
 
 export const PENDING = "pending";
 
@@ -173,6 +174,9 @@ export async function cancelGift(senderId: string, itemId: string): Promise<Gift
                 const refund = Number(order.total);
                 await tx.order.update({ where: { id: order.id }, data: { status: "REFUNDED" } });
                 await tx.ownedProduct.deleteMany({ where: { orderId: order.id, userId: item.userId } });
+                // A gift taken back is a refund, and the coupon the purchase
+                // earned goes with it, as `takeBackOrder` does for a gateway.
+                await withdrawThankYouCoupon(tx, order.id);
                 const claims = stockClaims(order.items);
                 await releaseStock(tx, claims);
                 await uncountSales(tx, claims);

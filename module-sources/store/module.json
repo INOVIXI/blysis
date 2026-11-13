@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.54.0",
+  "version": "2.55.0",
   "coreVersion": "^5.37.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -244,6 +244,41 @@
       "default": false,
       "label": "Prices already include tax",
       "description": "On, the shown price is what the customer pays and holds the tax. Off, tax is added at checkout. Not used while a tax module is installed."
+    },
+    {
+      "key": "thankYouCouponEnabled",
+      "type": "boolean",
+      "default": false,
+      "label": "Thank buyers with a coupon",
+      "description": "After a paid order, the buyer gets a coupon for their next order that only they can use, once. Shown in the order email and on the order."
+    },
+    {
+      "key": "thankYouCouponPercent",
+      "type": "number",
+      "default": 10,
+      "min": 1,
+      "max": 90,
+      "label": "Thank-you coupon discount (%)",
+      "description": "How much the thank-you coupon takes off the next order."
+    },
+    {
+      "key": "thankYouCouponDays",
+      "type": "number",
+      "default": 30,
+      "min": 1,
+      "max": 365,
+      "label": "Thank-you coupon lasts (days)",
+      "description": "How long the buyer has to use it, counted from the payment."
+    },
+    {
+      "key": "thankYouCouponMinTotal",
+      "type": "number",
+      "default": 0,
+      "min": 0,
+      "max": 100000,
+      "step": 0.01,
+      "label": "Thank-you coupon minimum order",
+      "description": "An order has to total at least this, in the site currency, to earn one. Zero is any paid order; a free order never earns one."
     }
   ],
   "navGroups": [
@@ -1554,7 +1589,14 @@
         "taxEvidence": "Billing address country: {billing}. Connection country: {ip}.",
         "taxEvidenceConflict": "The billing address and the connection are in different countries. Check the order before invoicing it.",
         "taxUnknown": "unknown",
-        "taxMayChange": "Tax at the shop's standard rate. It can change at checkout once your billing country is known."
+        "taxMayChange": "Tax at the shop's standard rate. It can change at checkout once your billing country is known.",
+        "tab_orders_thanksTitle": "A thank-you coupon",
+        "tab_orders_thanksBody": "{percent}% off your next order, for you only and once. Use it by {date}.",
+        "adm_couponPersonal": "Personal",
+        "tab_orders_thanksLive": "Ready to use",
+        "tab_orders_thanksUsed": "Used",
+        "tab_orders_thanksExpired": "Expired",
+        "tab_orders_thanksWithdrawn": "Withdrawn"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -2442,7 +2484,14 @@
         "taxEvidence": "Fatura adresi ülkesi: {billing}. Bağlantı ülkesi: {ip}.",
         "taxEvidenceConflict": "Fatura adresi ile bağlantı farklı ülkelerde. Faturalandırmadan önce siparişi kontrol edin.",
         "taxUnknown": "bilinmiyor",
-        "taxMayChange": "Vergi mağazanın standart oranıyla gösteriliyor. Fatura ülkeniz belli olunca ödeme adımında değişebilir."
+        "taxMayChange": "Vergi mağazanın standart oranıyla gösteriliyor. Fatura ülkeniz belli olunca ödeme adımında değişebilir.",
+        "tab_orders_thanksTitle": "Teşekkür kuponu",
+        "tab_orders_thanksBody": "Bir sonraki siparişinde %{percent} indirim; yalnızca senin için ve bir kez. {date} tarihine kadar kullan.",
+        "adm_couponPersonal": "Kişisel",
+        "tab_orders_thanksLive": "Kullanıma hazır",
+        "tab_orders_thanksUsed": "Kullanıldı",
+        "tab_orders_thanksExpired": "Süresi doldu",
+        "tab_orders_thanksWithdrawn": "Geri alındı"
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -3330,7 +3379,14 @@
         "taxEvidence": "Faktura ünvanının ölkəsi: {billing}. Bağlantının ölkəsi: {ip}.",
         "taxEvidenceConflict": "Faktura ünvanı ilə bağlantı fərqli ölkələrdədir. Faktura verməzdən əvvəl sifarişi yoxlayın.",
         "taxUnknown": "naməlum",
-        "taxMayChange": "Vergi mağazanın standart dərəcəsi ilə göstərilir. Faktura ölkəniz məlum olduqda ödəniş addımında dəyişə bilər."
+        "taxMayChange": "Vergi mağazanın standart dərəcəsi ilə göstərilir. Faktura ölkəniz məlum olduqda ödəniş addımında dəyişə bilər.",
+        "tab_orders_thanksTitle": "Təşəkkür kuponu",
+        "tab_orders_thanksBody": "Növbəti sifarişinizə {percent}% endirim, yalnız sizin üçün və bir dəfə. {date} tarixinədək istifadə edin.",
+        "adm_couponPersonal": "Şəxsi",
+        "tab_orders_thanksLive": "İstifadəyə hazırdır",
+        "tab_orders_thanksUsed": "İstifadə olunub",
+        "tab_orders_thanksExpired": "Müddəti bitib",
+        "tab_orders_thanksWithdrawn": "Geri götürülüb"
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -4218,7 +4274,14 @@
         "taxEvidence": "Land der Rechnungsadresse: {billing}. Land der Verbindung: {ip}.",
         "taxEvidenceConflict": "Rechnungsadresse und Verbindung liegen in verschiedenen Ländern. Prüfe die Bestellung vor der Rechnungsstellung.",
         "taxUnknown": "unbekannt",
-        "taxMayChange": "Steuer zum Standardsatz des Shops. Sie kann sich an der Kasse ändern, sobald dein Rechnungsland bekannt ist."
+        "taxMayChange": "Steuer zum Standardsatz des Shops. Sie kann sich an der Kasse ändern, sobald dein Rechnungsland bekannt ist.",
+        "tab_orders_thanksTitle": "Ein Dankeschön-Gutschein",
+        "tab_orders_thanksBody": "{percent} % Rabatt auf deine nächste Bestellung, nur für dich und einmal. Einlösbar bis {date}.",
+        "adm_couponPersonal": "Persönlich",
+        "tab_orders_thanksLive": "Einlösbar",
+        "tab_orders_thanksUsed": "Eingelöst",
+        "tab_orders_thanksExpired": "Abgelaufen",
+        "tab_orders_thanksWithdrawn": "Zurückgezogen"
       },
       "cart": {
         "title": "Warenkorb",
@@ -5106,7 +5169,14 @@
         "taxEvidence": "País de la dirección de facturación: {billing}. País de la conexión: {ip}.",
         "taxEvidenceConflict": "La dirección de facturación y la conexión están en países distintos. Revisa el pedido antes de facturarlo.",
         "taxUnknown": "desconocido",
-        "taxMayChange": "Impuesto al tipo general de la tienda. Puede cambiar al pagar, cuando se conozca tu país de facturación."
+        "taxMayChange": "Impuesto al tipo general de la tienda. Puede cambiar al pagar, cuando se conozca tu país de facturación.",
+        "tab_orders_thanksTitle": "Un cupón de agradecimiento",
+        "tab_orders_thanksBody": "Un {percent} % de descuento en tu próximo pedido, solo para ti y una vez. Úsalo antes del {date}.",
+        "adm_couponPersonal": "Personal",
+        "tab_orders_thanksLive": "Listo para usar",
+        "tab_orders_thanksUsed": "Usado",
+        "tab_orders_thanksExpired": "Caducado",
+        "tab_orders_thanksWithdrawn": "Retirado"
       },
       "cart": {
         "title": "Carrito de compra",
@@ -5994,7 +6064,14 @@
         "taxEvidence": "Arveaadressi riik: {billing}. Ühenduse riik: {ip}.",
         "taxEvidenceConflict": "Arveaadress ja ühendus on eri riikides. Kontrolli tellimust enne arve väljastamist.",
         "taxUnknown": "teadmata",
-        "taxMayChange": "Maks poe tavamääraga. See võib kassas muutuda, kui sinu arveldusriik on teada."
+        "taxMayChange": "Maks poe tavamääraga. See võib kassas muutuda, kui sinu arveldusriik on teada.",
+        "tab_orders_thanksTitle": "Tänukupong",
+        "tab_orders_thanksBody": "{percent}% allahindlust sinu järgmisele tellimusele, ainult sulle ja ühe korra. Kasuta enne {date}.",
+        "adm_couponPersonal": "Isiklik",
+        "tab_orders_thanksLive": "Kasutamiseks valmis",
+        "tab_orders_thanksUsed": "Kasutatud",
+        "tab_orders_thanksExpired": "Aegunud",
+        "tab_orders_thanksWithdrawn": "Tühistatud"
       },
       "cart": {
         "title": "Ostukorv",
@@ -6882,7 +6959,14 @@
         "taxEvidence": "Pays de l'adresse de facturation : {billing}. Pays de la connexion : {ip}.",
         "taxEvidenceConflict": "L'adresse de facturation et la connexion sont dans des pays différents. Vérifiez la commande avant de la facturer.",
         "taxUnknown": "inconnu",
-        "taxMayChange": "Taxe au taux normal de la boutique. Elle peut changer au paiement, une fois votre pays de facturation connu."
+        "taxMayChange": "Taxe au taux normal de la boutique. Elle peut changer au paiement, une fois votre pays de facturation connu.",
+        "tab_orders_thanksTitle": "Un coupon de remerciement",
+        "tab_orders_thanksBody": "{percent} % de réduction sur votre prochaine commande, pour vous seul et une fois. À utiliser avant le {date}.",
+        "adm_couponPersonal": "Personnel",
+        "tab_orders_thanksLive": "Prêt à l’emploi",
+        "tab_orders_thanksUsed": "Utilisé",
+        "tab_orders_thanksExpired": "Expiré",
+        "tab_orders_thanksWithdrawn": "Retiré"
       },
       "cart": {
         "title": "Panier",
@@ -7770,7 +7854,14 @@
         "taxEvidence": "Paese dell'indirizzo di fatturazione: {billing}. Paese della connessione: {ip}.",
         "taxEvidenceConflict": "L'indirizzo di fatturazione e la connessione sono in paesi diversi. Controlla l'ordine prima di fatturarlo.",
         "taxUnknown": "sconosciuto",
-        "taxMayChange": "Imposta all'aliquota standard del negozio. Può cambiare al checkout, quando sarà noto il tuo paese di fatturazione."
+        "taxMayChange": "Imposta all'aliquota standard del negozio. Può cambiare al checkout, quando sarà noto il tuo paese di fatturazione.",
+        "tab_orders_thanksTitle": "Un coupon di ringraziamento",
+        "tab_orders_thanksBody": "Il {percent}% di sconto sul tuo prossimo ordine, solo per te e una volta. Usalo entro il {date}.",
+        "adm_couponPersonal": "Personale",
+        "tab_orders_thanksLive": "Pronto all’uso",
+        "tab_orders_thanksUsed": "Usato",
+        "tab_orders_thanksExpired": "Scaduto",
+        "tab_orders_thanksWithdrawn": "Ritirato"
       },
       "cart": {
         "title": "Carrello",
@@ -8658,7 +8749,14 @@
         "taxEvidence": "Kraj adresu rozliczeniowego: {billing}. Kraj połączenia: {ip}.",
         "taxEvidenceConflict": "Adres rozliczeniowy i połączenie są w różnych krajach. Sprawdź zamówienie przed wystawieniem faktury.",
         "taxUnknown": "nieznany",
-        "taxMayChange": "Podatek według standardowej stawki sklepu. Może się zmienić przy płatności, gdy znany będzie kraj rozliczeniowy."
+        "taxMayChange": "Podatek według standardowej stawki sklepu. Może się zmienić przy płatności, gdy znany będzie kraj rozliczeniowy.",
+        "tab_orders_thanksTitle": "Kupon z podziękowaniem",
+        "tab_orders_thanksBody": "{percent}% zniżki na następne zamówienie, tylko dla Ciebie i jeden raz. Wykorzystaj do {date}.",
+        "adm_couponPersonal": "Osobisty",
+        "tab_orders_thanksLive": "Gotowy do użycia",
+        "tab_orders_thanksUsed": "Wykorzystany",
+        "tab_orders_thanksExpired": "Wygasł",
+        "tab_orders_thanksWithdrawn": "Wycofany"
       },
       "cart": {
         "title": "Koszyk",
@@ -9546,7 +9644,14 @@
         "taxEvidence": "País do endereço de faturação: {billing}. País da ligação: {ip}.",
         "taxEvidenceConflict": "O endereço de faturação e a ligação estão em países diferentes. Verifique a encomenda antes de a faturar.",
         "taxUnknown": "desconhecido",
-        "taxMayChange": "Imposto à taxa normal da loja. Pode mudar no checkout, quando o seu país de faturação for conhecido."
+        "taxMayChange": "Imposto à taxa normal da loja. Pode mudar no checkout, quando o seu país de faturação for conhecido.",
+        "tab_orders_thanksTitle": "Um cupom de agradecimento",
+        "tab_orders_thanksBody": "{percent}% de desconto no seu próximo pedido, só para você e uma vez. Use até {date}.",
+        "adm_couponPersonal": "Pessoal",
+        "tab_orders_thanksLive": "Pronto para usar",
+        "tab_orders_thanksUsed": "Usado",
+        "tab_orders_thanksExpired": "Expirado",
+        "tab_orders_thanksWithdrawn": "Retirado"
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -10434,7 +10539,14 @@
         "taxEvidence": "Страна платёжного адреса: {billing}. Страна подключения: {ip}.",
         "taxEvidenceConflict": "Платёжный адрес и подключение находятся в разных странах. Проверьте заказ перед выставлением счёта.",
         "taxUnknown": "неизвестно",
-        "taxMayChange": "Налог по стандартной ставке магазина. Он может измениться при оформлении, когда станет известна страна платёжного адреса."
+        "taxMayChange": "Налог по стандартной ставке магазина. Он может измениться при оформлении, когда станет известна страна платёжного адреса.",
+        "tab_orders_thanksTitle": "Купон в знак благодарности",
+        "tab_orders_thanksBody": "Скидка {percent}% на ваш следующий заказ, только для вас и один раз. Используйте до {date}.",
+        "adm_couponPersonal": "Личный",
+        "tab_orders_thanksLive": "Готов к использованию",
+        "tab_orders_thanksUsed": "Использован",
+        "tab_orders_thanksExpired": "Истёк",
+        "tab_orders_thanksWithdrawn": "Отозван"
       },
       "cart": {
         "title": "Корзина",
@@ -11322,7 +11434,14 @@
         "taxEvidence": "账单地址国家：{billing}。连接国家：{ip}。",
         "taxEvidenceConflict": "账单地址与连接位于不同国家。开具发票前请核对此订单。",
         "taxUnknown": "未知",
-        "taxMayChange": "税费按商店标准税率显示。确定您的账单国家后，结账时可能会变化。"
+        "taxMayChange": "税费按商店标准税率显示。确定您的账单国家后，结账时可能会变化。",
+        "tab_orders_thanksTitle": "感谢优惠券",
+        "tab_orders_thanksBody": "下一笔订单享 {percent}% 折扣，仅限你本人使用一次。请在 {date} 前使用。",
+        "adm_couponPersonal": "个人",
+        "tab_orders_thanksLive": "可以使用",
+        "tab_orders_thanksUsed": "已使用",
+        "tab_orders_thanksExpired": "已过期",
+        "tab_orders_thanksWithdrawn": "已撤回"
       },
       "cart": {
         "title": "购物车",

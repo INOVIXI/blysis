@@ -332,6 +332,12 @@ model Coupon {
   /// Which categories the code works on. Empty is every category. A line
   /// matching either list is covered once.
   categoryIds   String[]
+  /// Who may redeem it. Null is anybody holding the code, which is what
+  /// every coupon written before a coupon could be personal meant.
+  userId        String?
+  /// The paid order a thank-you coupon was minted for. Unique, so a replayed
+  /// settlement finds the one it already made instead of making a second.
+  issuedForOrderId String?  @unique
   isActive      Boolean     @default(true)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt

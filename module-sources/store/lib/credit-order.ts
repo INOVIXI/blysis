@@ -13,6 +13,7 @@ import { claimStock, stockClaims } from "./stock";
 import { countSales } from "./popularity";
 import { recordedVariables } from "./chest";
 import { deliverProduct } from "./delivery";
+import { issueThankYouCoupon, readThankYouSettings } from "./thank-you-coupon";
 
 /** Thrown inside the transaction, so the debit rolls back with it. */
 export const INSUFFICIENT_CREDITS = "INSUFFICIENT_CREDITS";
@@ -111,6 +112,15 @@ export async function createCreditOrder(tx: PrismaTransaction, input: CreditOrde
             skipDuplicates: true,
         });
     }
+
+    // Paid in credits is paid: the thank-you is the same as for a card, on
+    // the same transaction as the debit, so a purchase that rolls back mints
+    // nothing. Whoever paid is thanked, which for a gift is the sender.
+    await issueThankYouCoupon(
+        tx,
+        { id: order.id, orderNumber: order.orderNumber, userId: input.buyerId, total: input.total },
+        await readThankYouSettings(),
+    );
 
     return order;
 }

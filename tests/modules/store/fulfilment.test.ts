@@ -42,6 +42,8 @@ const db = {
         updateMany: vi.fn(async () => ({ count: 0 })),
         deleteMany: vi.fn(async () => ({ count: 0 })),
     },
+    // A refund withdraws the thank-you coupon the order earned; these orders earned none.
+    coupon: { updateMany: vi.fn(async () => ({ count: 0 })) },
     ownedProduct: {
         upsert: vi.fn(async () => ({})),
         createMany: vi.fn(async () => ({ count: 1 })),
@@ -122,6 +124,8 @@ vi.mock("@/core/sdk/server", () => ({
     log,
     rolesHeldBy,
     revokeRole,
+    // Settlement asks whether the shop thanks buyers with a coupon; it does not here.
+    moduleSettings: vi.fn(async () => ({})),
 }));
 
 /**

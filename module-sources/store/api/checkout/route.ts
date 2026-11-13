@@ -28,6 +28,7 @@ import { creditingPurchases, ownedRungsOn } from "../../lib/upgrade-credit-serve
 import { z } from "zod";
 import { isPlayerName } from "../../lib/player-name";
 import { payCreatorCommission } from "../../lib/creator-commission";
+import { couponOpenTo } from "../../lib/thank-you-coupon";
 
 const LIMIT_REACHED = "LIMIT_REACHED";
 
@@ -237,9 +238,12 @@ export async function POST(request: NextRequest) {
                 );
             }
             const couponError = await prisma.$transaction(async (tx): Promise<string | null> => {
-                const coupon = await tx.coupon.findUnique({
+                const found = await tx.coupon.findUnique({
                     where: { code: couponCode.toUpperCase() },
                 });
+                // Somebody else's personal coupon is a code this buyer does
+                // not have, and is refused as one.
+                const coupon = found && couponOpenTo(found, session.user.id) ? found : null;
                 // Only the part of the basket the offer covers. A coupon
                 // naming no product and no category covers all of it, which
                 // is what every coupon written before there was a way to say

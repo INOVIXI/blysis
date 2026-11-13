@@ -1,14 +1,33 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/core/sdk/navigation";
 import { Button, Card, CardContent, buttonClassName } from "@/core/sdk/ui";
 import { Footer, Navbar } from "@/core/sdk/layout";
 import { ThemeComponentSlot } from "@/core/sdk/theme";
 import { CheckCircle, ShoppingBag, ArrowRight } from "lucide-react";
+import { ThankYouCouponNote, type ThankYouCouponJson } from "../../../components/ThankYouCouponNote";
 
 export default function OrderSuccessPage() {
     const t = useTranslations("store");
+    const [coupon, setCoupon] = useState<ThankYouCouponJson | null>(null);
+
+    // The page a gateway returns the buyer to names no order, so it asks for
+    // their newest one. A webhook that has not landed yet means no coupon
+    // here; the email and the order list carry it once it does.
+    useEffect(() => {
+        let cancelled = false;
+        fetch("/api/v1/store/orders?limit=1")
+            .then((r) => (r.ok ? r.json() : null))
+            .then((data) => {
+                const found = data?.orders?.[0]?.thankYouCoupon as ThankYouCouponJson | null | undefined;
+                if (!cancelled && found && found.standing === "live") setCoupon(found);
+            })
+            .catch(() => {});
+        return () => { cancelled = true; };
+    }, []);
+
     return (
         <div className="min-h-screen flex flex-col bg-muted">
             <ThemeComponentSlot name="Hero" />
@@ -25,6 +44,12 @@ export default function OrderSuccessPage() {
                         <p className="text-muted-foreground mb-8">
                             {t("orderSuccess_body")}
                         </p>
+
+                        {coupon && (
+                            <div className="text-left mb-8 -mt-5">
+                                <ThankYouCouponNote coupon={coupon} />
+                            </div>
+                        )}
 
                         <div className="flex flex-col sm:flex-row gap-3 justify-center">
                             <Link href="/profile" className={buttonClassName("outline", "default")}>
