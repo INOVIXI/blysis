@@ -13,3 +13,15 @@ export const creditPurchaseSchema = z.object({
     userId: z.string().trim().min(1).max(64),
     amount: z.number().int().min(1).max(100_000),
 });
+
+/**
+ * A change to a member's balance by hand: signed, whole, never zero, with the
+ * reason the member will read on the row. The rules beyond the shape are
+ * `adjustmentRefusal` in `adjust.ts`.
+ */
+export const creditAdjustSchema = z.object({
+    userId: z.string().trim().min(1).max(64),
+    amount: z.number().int(),
+    reason: z.string().max(500),
+    allowNegative: z.boolean().optional(),
+});

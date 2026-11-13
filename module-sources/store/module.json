@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.55.0",
+  "version": "2.56.0",
   "coreVersion": "^5.37.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -333,6 +333,13 @@
       "permission": "store.manage"
     },
     {
+      "label": "Credit Top-ups",
+      "path": "/store/credit-top-ups",
+      "icon": "Wallet",
+      "group": "commerce",
+      "permission": "store.manage"
+    },
+    {
       "label": "Credit Bonus",
       "path": "/store/credit-bonus",
       "icon": "Gift",
@@ -451,6 +458,11 @@
     {
       "path": "/store/credit-packages",
       "component": "pages/admin/credit-packages/page.tsx",
+      "permission": "store.manage"
+    },
+    {
+      "path": "/store/credit-top-ups",
+      "component": "pages/admin/credit-top-ups/page.tsx",
       "permission": "store.manage"
     },
     {
@@ -761,6 +773,12 @@
       "handler": "api/credits/transfer/route.ts",
       "description": "Send credits to another member.",
       "openTo": "member"
+    },
+    {
+      "path": "/store/admin/credit-top-ups",
+      "handler": "api/admin/credit-top-ups/route.ts",
+      "description": "List every credit top-up a buyer started, with its status, gateway, amount and bonus (admin).",
+      "permission": "store.manage"
     },
     {
       "path": "/store/admin/credit-packages",
@@ -1609,7 +1627,27 @@
         "adm_creditBonusState_running": "Running",
         "adm_creditBonusState_scheduled": "Scheduled",
         "adm_creditBonusState_ended": "Ended",
-        "adm_creditBonusState_off": "Off"
+        "adm_creditBonusState_off": "Off",
+        "tup_title": "Credit top-ups",
+        "tup_subtitle": "Every top-up a buyer started: who paid, through which gateway, what it cost and how many credits it gave.",
+        "tup_status": "Status",
+        "tup_status_all": "All",
+        "tup_status_PENDING": "Waiting for payment",
+        "tup_status_COMPLETED": "Paid",
+        "tup_status_CANCELLED": "Abandoned",
+        "tup_status_REFUNDED": "Refunded",
+        "tup_search": "Search by buyer",
+        "tup_gateway": "Gateway",
+        "tup_everyGateway": "Every gateway",
+        "tup_empty": "No top-up matches.",
+        "tup_started": "Started",
+        "tup_buyer": "Buyer",
+        "tup_paid": "Amount",
+        "tup_feeIncluded": "including a {fee} fee",
+        "tup_credits": "Credits",
+        "tup_bonus": "+{count} bonus",
+        "tup_noAccount": "Deleted account",
+        "tup_loadFailed": "The top-ups could not be loaded."
       },
       "cart": {
         "title": "Shopping Cart",
@@ -1811,7 +1849,8 @@
         "settings_store": "Payments",
         "settings_store_description": "Stripe and PayPal configuration.",
         "menu_store_payment_fees": "Payment Fees",
-        "menu_store_credit_bonus": "Credit Bonus"
+        "menu_store_credit_bonus": "Credit Bonus",
+        "menu_store_credit_top-ups": "Credit Top-ups"
       },
       "activity": {
         "kindStoreOrderCompleted": "Order",
@@ -2532,7 +2571,27 @@
         "adm_creditBonusState_running": "Devam ediyor",
         "adm_creditBonusState_scheduled": "Planlandı",
         "adm_creditBonusState_ended": "Sona erdi",
-        "adm_creditBonusState_off": "Kapalı"
+        "adm_creditBonusState_off": "Kapalı",
+        "tup_title": "Kredi yüklemeleri",
+        "tup_subtitle": "Bir alıcının başlattığı her yükleme: kim ödedi, hangi ödeme sağlayıcısıyla, ne kadar tuttu ve kaç kredi verdi.",
+        "tup_status": "Durum",
+        "tup_status_all": "Tümü",
+        "tup_status_PENDING": "Ödeme bekleniyor",
+        "tup_status_COMPLETED": "Ödendi",
+        "tup_status_CANCELLED": "Yarıda bırakıldı",
+        "tup_status_REFUNDED": "İade edildi",
+        "tup_search": "Alıcıya göre ara",
+        "tup_gateway": "Ödeme sağlayıcısı",
+        "tup_everyGateway": "Tüm ödeme sağlayıcıları",
+        "tup_empty": "Eşleşen yükleme yok.",
+        "tup_started": "Başlangıç",
+        "tup_buyer": "Alıcı",
+        "tup_paid": "Tutar",
+        "tup_feeIncluded": "{fee} ücret dahil",
+        "tup_credits": "Kredi",
+        "tup_bonus": "+{count} bonus",
+        "tup_noAccount": "Silinmiş hesap",
+        "tup_loadFailed": "Yüklemeler yüklenemedi."
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -2734,7 +2793,8 @@
         "settings_store": "Ödemeler",
         "settings_store_description": "Stripe ve PayPal ayarları.",
         "menu_store_payment_fees": "Ödeme Ücretleri",
-        "menu_store_credit_bonus": "Kredi Bonusu"
+        "menu_store_credit_bonus": "Kredi Bonusu",
+        "menu_store_credit_top-ups": "Kredi Yüklemeleri"
       },
       "activity": {
         "kindStoreOrderCompleted": "Sipariş",
@@ -3455,7 +3515,27 @@
         "adm_creditBonusState_running": "Davam edir",
         "adm_creditBonusState_scheduled": "Planlaşdırılıb",
         "adm_creditBonusState_ended": "Bitib",
-        "adm_creditBonusState_off": "Söndürülüb"
+        "adm_creditBonusState_off": "Söndürülüb",
+        "tup_title": "Kredit artırmaları",
+        "tup_subtitle": "Alıcının başlatdığı hər artırma: kim ödədi, hansı ödəniş sistemi ilə, nə qədər tutdu və neçə kredit verdi.",
+        "tup_status": "Status",
+        "tup_status_all": "Hamısı",
+        "tup_status_PENDING": "Ödəniş gözlənilir",
+        "tup_status_COMPLETED": "Ödənildi",
+        "tup_status_CANCELLED": "Yarımçıq qaldı",
+        "tup_status_REFUNDED": "Geri qaytarıldı",
+        "tup_search": "Alıcıya görə axtar",
+        "tup_gateway": "Ödəniş sistemi",
+        "tup_everyGateway": "Bütün ödəniş sistemləri",
+        "tup_empty": "Uyğun artırma yoxdur.",
+        "tup_started": "Başlanğıc",
+        "tup_buyer": "Alıcı",
+        "tup_paid": "Məbləğ",
+        "tup_feeIncluded": "{fee} haqq daxil",
+        "tup_credits": "Kredit",
+        "tup_bonus": "+{count} bonus",
+        "tup_noAccount": "Silinmiş hesab",
+        "tup_loadFailed": "Artırmalar yüklənə bilmədi."
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -3657,7 +3737,8 @@
         "settings_store": "Ödənişlər",
         "settings_store_description": "Stripe və PayPal konfiqurasiyası.",
         "menu_store_payment_fees": "Ödəniş haqları",
-        "menu_store_credit_bonus": "Kredit Bonusu"
+        "menu_store_credit_bonus": "Kredit Bonusu",
+        "menu_store_credit_top-ups": "Kredit Artırmaları"
       },
       "activity": {
         "kindStoreOrderCompleted": "Sifariş",
@@ -4378,7 +4459,27 @@
         "adm_creditBonusState_running": "Läuft",
         "adm_creditBonusState_scheduled": "Geplant",
         "adm_creditBonusState_ended": "Beendet",
-        "adm_creditBonusState_off": "Aus"
+        "adm_creditBonusState_off": "Aus",
+        "tup_title": "Credit-Aufladungen",
+        "tup_subtitle": "Jede gestartete Aufladung: wer bezahlt hat, über welches Zahlungssystem, was sie gekostet hat und wie viele Credits sie brachte.",
+        "tup_status": "Status",
+        "tup_status_all": "Alle",
+        "tup_status_PENDING": "Wartet auf Zahlung",
+        "tup_status_COMPLETED": "Bezahlt",
+        "tup_status_CANCELLED": "Abgebrochen",
+        "tup_status_REFUNDED": "Erstattet",
+        "tup_search": "Nach Käufer suchen",
+        "tup_gateway": "Zahlungssystem",
+        "tup_everyGateway": "Alle Zahlungssysteme",
+        "tup_empty": "Keine passende Aufladung.",
+        "tup_started": "Gestartet",
+        "tup_buyer": "Käufer",
+        "tup_paid": "Betrag",
+        "tup_feeIncluded": "inklusive {fee} Gebühr",
+        "tup_credits": "Credits",
+        "tup_bonus": "+{count} Bonus",
+        "tup_noAccount": "Gelöschtes Konto",
+        "tup_loadFailed": "Die Aufladungen konnten nicht geladen werden."
       },
       "cart": {
         "title": "Warenkorb",
@@ -4580,7 +4681,8 @@
         "settings_store": "Zahlungen",
         "settings_store_description": "Konfiguration von Stripe und PayPal.",
         "menu_store_payment_fees": "Zahlungsgebühren",
-        "menu_store_credit_bonus": "Credit-Bonus"
+        "menu_store_credit_bonus": "Credit-Bonus",
+        "menu_store_credit_top-ups": "Credit-Aufladungen"
       },
       "activity": {
         "kindStoreOrderCompleted": "Bestellung",
@@ -5301,7 +5403,27 @@
         "adm_creditBonusState_running": "En curso",
         "adm_creditBonusState_scheduled": "Programada",
         "adm_creditBonusState_ended": "Terminada",
-        "adm_creditBonusState_off": "Desactivada"
+        "adm_creditBonusState_off": "Desactivada",
+        "tup_title": "Recargas de créditos",
+        "tup_subtitle": "Cada recarga iniciada: quién pagó, con qué pasarela, cuánto costó y cuántos créditos dio.",
+        "tup_status": "Estado",
+        "tup_status_all": "Todas",
+        "tup_status_PENDING": "Esperando el pago",
+        "tup_status_COMPLETED": "Pagada",
+        "tup_status_CANCELLED": "Abandonada",
+        "tup_status_REFUNDED": "Reembolsada",
+        "tup_search": "Buscar por comprador",
+        "tup_gateway": "Pasarela",
+        "tup_everyGateway": "Todas las pasarelas",
+        "tup_empty": "Ninguna recarga coincide.",
+        "tup_started": "Iniciada",
+        "tup_buyer": "Comprador",
+        "tup_paid": "Importe",
+        "tup_feeIncluded": "incluye {fee} de comisión",
+        "tup_credits": "Créditos",
+        "tup_bonus": "+{count} de bonificación",
+        "tup_noAccount": "Cuenta eliminada",
+        "tup_loadFailed": "No se pudieron cargar las recargas."
       },
       "cart": {
         "title": "Carrito de compra",
@@ -5503,7 +5625,8 @@
         "settings_store": "Pagos",
         "settings_store_description": "Configuración de Stripe y PayPal.",
         "menu_store_payment_fees": "Comisiones de pago",
-        "menu_store_credit_bonus": "Bonificación de créditos"
+        "menu_store_credit_bonus": "Bonificación de créditos",
+        "menu_store_credit_top-ups": "Recargas de Créditos"
       },
       "activity": {
         "kindStoreOrderCompleted": "Pedido",
@@ -6224,7 +6347,27 @@
         "adm_creditBonusState_running": "Käib",
         "adm_creditBonusState_scheduled": "Ajastatud",
         "adm_creditBonusState_ended": "Lõppenud",
-        "adm_creditBonusState_off": "Väljas"
+        "adm_creditBonusState_off": "Väljas",
+        "tup_title": "Krediidi laadimised",
+        "tup_subtitle": "Iga alustatud laadimine: kes maksis, millise makseviisiga, palju see maksis ja mitu krediiti see andis.",
+        "tup_status": "Olek",
+        "tup_status_all": "Kõik",
+        "tup_status_PENDING": "Ootab makset",
+        "tup_status_COMPLETED": "Makstud",
+        "tup_status_CANCELLED": "Pooleli jäetud",
+        "tup_status_REFUNDED": "Tagasi makstud",
+        "tup_search": "Otsi ostja järgi",
+        "tup_gateway": "Makseviis",
+        "tup_everyGateway": "Kõik makseviisid",
+        "tup_empty": "Sobivaid laadimisi pole.",
+        "tup_started": "Alustatud",
+        "tup_buyer": "Ostja",
+        "tup_paid": "Summa",
+        "tup_feeIncluded": "sh tasu {fee}",
+        "tup_credits": "Krediit",
+        "tup_bonus": "+{count} boonust",
+        "tup_noAccount": "Kustutatud konto",
+        "tup_loadFailed": "Laadimisi ei õnnestunud laadida."
       },
       "cart": {
         "title": "Ostukorv",
@@ -6426,7 +6569,8 @@
         "settings_store": "Maksed",
         "settings_store_description": "Stripe'i ja PayPali seadistus.",
         "menu_store_payment_fees": "Maksetasud",
-        "menu_store_credit_bonus": "Krediidiboonus"
+        "menu_store_credit_bonus": "Krediidiboonus",
+        "menu_store_credit_top-ups": "Krediidi Laadimised"
       },
       "activity": {
         "kindStoreOrderCompleted": "Tellimus",
@@ -7147,7 +7291,27 @@
         "adm_creditBonusState_running": "En cours",
         "adm_creditBonusState_scheduled": "Programmée",
         "adm_creditBonusState_ended": "Terminée",
-        "adm_creditBonusState_off": "Désactivée"
+        "adm_creditBonusState_off": "Désactivée",
+        "tup_title": "Recharges de crédits",
+        "tup_subtitle": "Chaque recharge commencée : qui a payé, par quelle passerelle, combien elle a coûté et combien de crédits elle a donnés.",
+        "tup_status": "Statut",
+        "tup_status_all": "Toutes",
+        "tup_status_PENDING": "En attente de paiement",
+        "tup_status_COMPLETED": "Payée",
+        "tup_status_CANCELLED": "Abandonnée",
+        "tup_status_REFUNDED": "Remboursée",
+        "tup_search": "Rechercher par acheteur",
+        "tup_gateway": "Passerelle",
+        "tup_everyGateway": "Toutes les passerelles",
+        "tup_empty": "Aucune recharge ne correspond.",
+        "tup_started": "Commencée",
+        "tup_buyer": "Acheteur",
+        "tup_paid": "Montant",
+        "tup_feeIncluded": "dont {fee} de frais",
+        "tup_credits": "Crédits",
+        "tup_bonus": "+{count} en bonus",
+        "tup_noAccount": "Compte supprimé",
+        "tup_loadFailed": "Les recharges n'ont pas pu être chargées."
       },
       "cart": {
         "title": "Panier",
@@ -7349,7 +7513,8 @@
         "settings_store": "Paiements",
         "settings_store_description": "Configuration de Stripe et PayPal.",
         "menu_store_payment_fees": "Frais de paiement",
-        "menu_store_credit_bonus": "Bonus de crédits"
+        "menu_store_credit_bonus": "Bonus de crédits",
+        "menu_store_credit_top-ups": "Recharges de Crédits"
       },
       "activity": {
         "kindStoreOrderCompleted": "Commande",
@@ -8070,7 +8235,27 @@
         "adm_creditBonusState_running": "In corso",
         "adm_creditBonusState_scheduled": "Programmata",
         "adm_creditBonusState_ended": "Terminata",
-        "adm_creditBonusState_off": "Disattivata"
+        "adm_creditBonusState_off": "Disattivata",
+        "tup_title": "Ricariche di crediti",
+        "tup_subtitle": "Ogni ricarica avviata: chi ha pagato, con quale gateway, quanto è costata e quanti crediti ha dato.",
+        "tup_status": "Stato",
+        "tup_status_all": "Tutte",
+        "tup_status_PENDING": "In attesa di pagamento",
+        "tup_status_COMPLETED": "Pagata",
+        "tup_status_CANCELLED": "Abbandonata",
+        "tup_status_REFUNDED": "Rimborsata",
+        "tup_search": "Cerca per acquirente",
+        "tup_gateway": "Gateway",
+        "tup_everyGateway": "Tutti i gateway",
+        "tup_empty": "Nessuna ricarica corrisponde.",
+        "tup_started": "Avviata",
+        "tup_buyer": "Acquirente",
+        "tup_paid": "Importo",
+        "tup_feeIncluded": "inclusa una commissione di {fee}",
+        "tup_credits": "Crediti",
+        "tup_bonus": "+{count} di bonus",
+        "tup_noAccount": "Account eliminato",
+        "tup_loadFailed": "Non è stato possibile caricare le ricariche."
       },
       "cart": {
         "title": "Carrello",
@@ -8272,7 +8457,8 @@
         "settings_store": "Pagamenti",
         "settings_store_description": "Configurazione di Stripe e PayPal.",
         "menu_store_payment_fees": "Commissioni di pagamento",
-        "menu_store_credit_bonus": "Bonus crediti"
+        "menu_store_credit_bonus": "Bonus crediti",
+        "menu_store_credit_top-ups": "Ricariche di Crediti"
       },
       "activity": {
         "kindStoreOrderCompleted": "Ordine",
@@ -8993,7 +9179,27 @@
         "adm_creditBonusState_running": "Trwa",
         "adm_creditBonusState_scheduled": "Zaplanowana",
         "adm_creditBonusState_ended": "Zakończona",
-        "adm_creditBonusState_off": "Wyłączona"
+        "adm_creditBonusState_off": "Wyłączona",
+        "tup_title": "Doładowania kredytów",
+        "tup_subtitle": "Każde rozpoczęte doładowanie: kto zapłacił, przez którą bramkę, ile kosztowało i ile kredytów dało.",
+        "tup_status": "Status",
+        "tup_status_all": "Wszystkie",
+        "tup_status_PENDING": "Czeka na płatność",
+        "tup_status_COMPLETED": "Opłacone",
+        "tup_status_CANCELLED": "Porzucone",
+        "tup_status_REFUNDED": "Zwrócone",
+        "tup_search": "Szukaj po kupującym",
+        "tup_gateway": "Bramka",
+        "tup_everyGateway": "Wszystkie bramki",
+        "tup_empty": "Brak pasujących doładowań.",
+        "tup_started": "Rozpoczęto",
+        "tup_buyer": "Kupujący",
+        "tup_paid": "Kwota",
+        "tup_feeIncluded": "w tym opłata {fee}",
+        "tup_credits": "Kredyty",
+        "tup_bonus": "+{count} bonusu",
+        "tup_noAccount": "Usunięte konto",
+        "tup_loadFailed": "Nie udało się wczytać doładowań."
       },
       "cart": {
         "title": "Koszyk",
@@ -9195,7 +9401,8 @@
         "settings_store": "Płatności",
         "settings_store_description": "Konfiguracja Stripe i PayPal.",
         "menu_store_payment_fees": "Opłaty za płatności",
-        "menu_store_credit_bonus": "Bonus kredytów"
+        "menu_store_credit_bonus": "Bonus kredytów",
+        "menu_store_credit_top-ups": "Doładowania Kredytów"
       },
       "activity": {
         "kindStoreOrderCompleted": "Zamówienie",
@@ -9916,7 +10123,27 @@
         "adm_creditBonusState_running": "A decorrer",
         "adm_creditBonusState_scheduled": "Agendada",
         "adm_creditBonusState_ended": "Terminada",
-        "adm_creditBonusState_off": "Desligada"
+        "adm_creditBonusState_off": "Desligada",
+        "tup_title": "Recargas de créditos",
+        "tup_subtitle": "Cada recarga iniciada: quem pagou, por qual gateway, quanto custou e quantos créditos deu.",
+        "tup_status": "Status",
+        "tup_status_all": "Todas",
+        "tup_status_PENDING": "Aguardando pagamento",
+        "tup_status_COMPLETED": "Paga",
+        "tup_status_CANCELLED": "Abandonada",
+        "tup_status_REFUNDED": "Reembolsada",
+        "tup_search": "Pesquisar por comprador",
+        "tup_gateway": "Gateway",
+        "tup_everyGateway": "Todos os gateways",
+        "tup_empty": "Nenhuma recarga corresponde.",
+        "tup_started": "Iniciada",
+        "tup_buyer": "Comprador",
+        "tup_paid": "Valor",
+        "tup_feeIncluded": "inclui taxa de {fee}",
+        "tup_credits": "Créditos",
+        "tup_bonus": "+{count} de bônus",
+        "tup_noAccount": "Conta excluída",
+        "tup_loadFailed": "Não foi possível carregar as recargas."
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -10118,7 +10345,8 @@
         "settings_store": "Pagamentos",
         "settings_store_description": "Configuração do Stripe e do PayPal.",
         "menu_store_payment_fees": "Taxas de pagamento",
-        "menu_store_credit_bonus": "Bónus de créditos"
+        "menu_store_credit_bonus": "Bónus de créditos",
+        "menu_store_credit_top-ups": "Recargas de Créditos"
       },
       "activity": {
         "kindStoreOrderCompleted": "Pedido",
@@ -10839,7 +11067,27 @@
         "adm_creditBonusState_running": "Идёт",
         "adm_creditBonusState_scheduled": "Запланирована",
         "adm_creditBonusState_ended": "Завершена",
-        "adm_creditBonusState_off": "Выключена"
+        "adm_creditBonusState_off": "Выключена",
+        "tup_title": "Пополнения кредитов",
+        "tup_subtitle": "Каждое начатое пополнение: кто платил, через какой шлюз, сколько стоило и сколько кредитов дало.",
+        "tup_status": "Статус",
+        "tup_status_all": "Все",
+        "tup_status_PENDING": "Ожидает оплаты",
+        "tup_status_COMPLETED": "Оплачено",
+        "tup_status_CANCELLED": "Брошено",
+        "tup_status_REFUNDED": "Возвращено",
+        "tup_search": "Поиск по покупателю",
+        "tup_gateway": "Шлюз",
+        "tup_everyGateway": "Все шлюзы",
+        "tup_empty": "Подходящих пополнений нет.",
+        "tup_started": "Начато",
+        "tup_buyer": "Покупатель",
+        "tup_paid": "Сумма",
+        "tup_feeIncluded": "включая комиссию {fee}",
+        "tup_credits": "Кредиты",
+        "tup_bonus": "+{count} бонус",
+        "tup_noAccount": "Удалённый аккаунт",
+        "tup_loadFailed": "Не удалось загрузить пополнения."
       },
       "cart": {
         "title": "Корзина",
@@ -11041,7 +11289,8 @@
         "settings_store": "Оплата",
         "settings_store_description": "Настройка Stripe и PayPal.",
         "menu_store_payment_fees": "Платёжные комиссии",
-        "menu_store_credit_bonus": "Бонус на кредиты"
+        "menu_store_credit_bonus": "Бонус на кредиты",
+        "menu_store_credit_top-ups": "Пополнения Кредитов"
       },
       "activity": {
         "kindStoreOrderCompleted": "Заказ",
@@ -11762,7 +12011,27 @@
         "adm_creditBonusState_running": "进行中",
         "adm_creditBonusState_scheduled": "已排期",
         "adm_creditBonusState_ended": "已结束",
-        "adm_creditBonusState_off": "已关闭"
+        "adm_creditBonusState_off": "已关闭",
+        "tup_title": "积分充值",
+        "tup_subtitle": "每一笔已发起的充值：谁付款、通过哪个支付渠道、花了多少以及获得多少积分。",
+        "tup_status": "状态",
+        "tup_status_all": "全部",
+        "tup_status_PENDING": "等待付款",
+        "tup_status_COMPLETED": "已付款",
+        "tup_status_CANCELLED": "已放弃",
+        "tup_status_REFUNDED": "已退款",
+        "tup_search": "按买家搜索",
+        "tup_gateway": "支付渠道",
+        "tup_everyGateway": "全部支付渠道",
+        "tup_empty": "没有符合条件的充值。",
+        "tup_started": "发起时间",
+        "tup_buyer": "买家",
+        "tup_paid": "金额",
+        "tup_feeIncluded": "含 {fee} 手续费",
+        "tup_credits": "积分",
+        "tup_bonus": "+{count} 奖励",
+        "tup_noAccount": "已删除的账号",
+        "tup_loadFailed": "无法加载充值记录。"
       },
       "cart": {
         "title": "购物车",
@@ -11964,7 +12233,8 @@
         "settings_store": "支付",
         "settings_store_description": "Stripe 与 PayPal 配置。",
         "menu_store_payment_fees": "支付手续费",
-        "menu_store_credit_bonus": "积分奖励"
+        "menu_store_credit_bonus": "积分奖励",
+        "menu_store_credit_top-ups": "积分充值"
       },
       "activity": {
         "kindStoreOrderCompleted": "订单",

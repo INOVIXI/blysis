@@ -19,6 +19,13 @@ import type { PrismaTransaction } from "@/core/sdk/server";
 export async function moveCredits(
     tx: PrismaTransaction,
     movement: { userId: string | null; amount: number; type: string; description?: string | null; ledgerId?: string },
+    /**
+     * Let a debit take the balance below zero. Only an operator changing a
+     * balance by hand asks for it (`lib/adjust.ts`), for a chargeback on
+     * credits already spent. A third argument rather than a field of the
+     * movement, so nothing that asks `credit.change` can pass it along.
+     */
+    options: { allowNegative?: boolean } = {},
 ): Promise<boolean> {
     const { userId, amount } = movement;
 
@@ -37,10 +44,12 @@ export async function moveCredits(
         return true;
     }
 
-    if (amount < 0) {
+    if (amount < 0 && options.allowNegative) {
+        await tx.user.update({ where: { id: userId }, data: { creditBalance: { decrement: Math.abs(amount) } } });
+    } else if (amount < 0) {
         // Conditional, always. Two requests that both read "enough" must not
-        // both succeed, and there is no caller anywhere with a reason to take
-        // credits somebody does not have.
+        // both succeed, and no automatic caller has a reason to take credits
+        // somebody does not have.
         const debited = await tx.user.updateMany({
             where: { id: userId, creditBalance: { gte: Math.abs(amount) } },
             data: { creditBalance: { decrement: Math.abs(amount) } },
