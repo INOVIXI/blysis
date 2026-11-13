@@ -2,7 +2,7 @@
   "id": "changelog",
   "name": "Changelog",
   "description": "Release notes and update history",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "coreVersion": "^5.34.0",
   "category": "community",
   "author": "Blysis",
@@ -104,6 +104,8 @@
       "changelog": {
         "adm_addKind": "Add a kind",
         "adm_coverHelp": "Shown at the top of the release's own page. The timeline stays a list.",
+        "adm_releasedLabel": "Release date",
+        "adm_releasedHelp": "The day this release shipped. Leave empty for today. A release that is not out yet is not dated here.",
         "adm_coverLabel": "Cover image",
         "adm_detailsHelp": "Optional. Fill this in and the release gets a page of its own, linked from the timeline.",
         "adm_detailsLabel": "Full note",
@@ -198,6 +200,8 @@
       "changelog": {
         "adm_addKind": "Tür ekle",
         "adm_coverHelp": "Sürümün kendi sayfasının başında görünür. Zaman çizelgesi liste olarak kalır.",
+        "adm_releasedLabel": "Yayın tarihi",
+        "adm_releasedHelp": "Bu sürümün çıktığı gün. Boş bırakılırsa bugün olur. Henüz çıkmamış bir sürüm buraya tarihlenmez.",
         "adm_coverLabel": "Kapak görseli",
         "adm_detailsHelp": "İsteğe bağlı. Doldurursanız sürüm kendi sayfasını alır ve zaman çizelgesinden bağlanır.",
         "adm_detailsLabel": "Tam not",
@@ -292,6 +296,8 @@
       "changelog": {
         "adm_addKind": "Növ əlavə et",
         "adm_coverHelp": "Buraxılışın öz səhifəsinin yuxarısında göstərilir. Xronologiya siyahı olaraq qalır.",
+        "adm_releasedLabel": "Buraxılış tarixi",
+        "adm_releasedHelp": "Bu buraxılışın çıxdığı gün. Boş qalsa, bu gün olur. Hələ çıxmamış buraxılış burada tarixlənmir.",
         "adm_coverLabel": "Qapaq şəkli",
         "adm_detailsHelp": "İstəyə bağlıdır. Doldurun və buraxılış xronologiyadan keçid verilən öz səhifəsini alır.",
         "adm_detailsLabel": "Tam qeyd",
@@ -386,6 +392,8 @@
       "changelog": {
         "adm_addKind": "Art hinzufügen",
         "adm_coverHelp": "Wird oben auf der eigenen Seite des Releases angezeigt. Die Zeitleiste bleibt eine Liste.",
+        "adm_releasedLabel": "Veröffentlichungsdatum",
+        "adm_releasedHelp": "Der Tag, an dem diese Version erschienen ist. Leer lassen für heute. Eine noch nicht erschienene Version wird hier nicht datiert.",
         "adm_coverLabel": "Titelbild",
         "adm_detailsHelp": "Optional. Fülle es aus, dann bekommt das Release eine eigene Seite, die von der Zeitleiste verlinkt wird.",
         "adm_detailsLabel": "Vollständige Notiz",
@@ -480,6 +488,8 @@
       "changelog": {
         "adm_addKind": "Añadir un tipo",
         "adm_coverHelp": "Se muestra arriba de la página propia de la versión. La línea de tiempo sigue siendo una lista.",
+        "adm_releasedLabel": "Fecha de lanzamiento",
+        "adm_releasedHelp": "El día en que salió esta versión. Déjalo vacío para hoy. Una versión que aún no ha salido no se fecha aquí.",
         "adm_coverLabel": "Imagen de portada",
         "adm_detailsHelp": "Opcional. Rellénalo y la versión tendrá una página propia, enlazada desde la línea de tiempo.",
         "adm_detailsLabel": "Nota completa",
@@ -574,6 +584,8 @@
       "changelog": {
         "adm_addKind": "Lisa liik",
         "adm_coverHelp": "Kuvatakse väljaande enda lehe ülaosas. Ajajoon jääb loendiks.",
+        "adm_releasedLabel": "Väljalaske kuupäev",
+        "adm_releasedHelp": "Päev, mil see versioon välja tuli. Jäta tühjaks tänase jaoks. Veel välja tulemata versiooni siin ei dateerita.",
         "adm_coverLabel": "Kaanepilt",
         "adm_detailsHelp": "Valikuline. Täida see ja väljaandel tekib oma leht, mis on ajajoonelt lingitud.",
         "adm_detailsLabel": "Täielik märkus",
@@ -668,6 +680,8 @@
       "changelog": {
         "adm_addKind": "Ajouter un type",
         "adm_coverHelp": "Affiché en haut de la page de la version. La chronologie reste une liste.",
+        "adm_releasedLabel": "Date de sortie",
+        "adm_releasedHelp": "Le jour où cette version est sortie. Laissez vide pour aujourd'hui. Une version pas encore sortie n'est pas datée ici.",
         "adm_coverLabel": "Image de couverture",
         "adm_detailsHelp": "Facultatif. Remplissez ce champ pour que la version ait sa propre page, reliée depuis la chronologie.",
         "adm_detailsLabel": "Note complète",
@@ -762,6 +776,8 @@
       "changelog": {
         "adm_addKind": "Aggiungi un tipo",
         "adm_coverHelp": "Mostrata in cima alla pagina della release. La cronologia resta un elenco.",
+        "adm_releasedLabel": "Data di rilascio",
+        "adm_releasedHelp": "Il giorno in cui è uscita questa versione. Lascia vuoto per oggi. Una versione non ancora uscita non si data qui.",
         "adm_coverLabel": "Immagine di copertina",
         "adm_detailsHelp": "Facoltativo. Compilalo e la release avrà una pagina dedicata, collegata dalla cronologia.",
         "adm_detailsLabel": "Nota completa",
@@ -856,6 +872,8 @@
       "changelog": {
         "adm_addKind": "Dodaj rodzaj",
         "adm_coverHelp": "Wyświetlane na górze własnej strony wydania. Oś czasu pozostaje listą.",
+        "adm_releasedLabel": "Data wydania",
+        "adm_releasedHelp": "Dzień, w którym ukazała się ta wersja. Zostaw puste dla dzisiejszej daty. Wersji, która jeszcze się nie ukazała, nie datuje się tutaj.",
         "adm_coverLabel": "Obraz okładki",
         "adm_detailsHelp": "Opcjonalne. Wypełnij, a wydanie dostanie własną stronę, linkowaną z osi czasu.",
         "adm_detailsLabel": "Pełna notatka",
@@ -950,6 +968,8 @@
       "changelog": {
         "adm_addKind": "Adicionar um tipo",
         "adm_coverHelp": "Exibida no topo da própria página da versão. A linha do tempo continua sendo uma lista.",
+        "adm_releasedLabel": "Data de lançamento",
+        "adm_releasedHelp": "O dia em que esta versão saiu. Deixe vazio para hoje. Uma versão que ainda não saiu não é datada aqui.",
         "adm_coverLabel": "Imagem de capa",
         "adm_detailsHelp": "Opcional. Preencha e a versão ganha uma página própria, linkada na linha do tempo.",
         "adm_detailsLabel": "Nota completa",
@@ -1044,6 +1064,8 @@
       "changelog": {
         "adm_addKind": "Добавить тип",
         "adm_coverHelp": "Показывается вверху собственной страницы выпуска. Лента остается списком.",
+        "adm_releasedLabel": "Дата выпуска",
+        "adm_releasedHelp": "День, когда вышла эта версия. Оставьте пустым для сегодняшней даты. Ещё не вышедшая версия здесь не датируется.",
         "adm_coverLabel": "Обложка",
         "adm_detailsHelp": "Необязательно. Заполните, и у выпуска появится собственная страница, ссылка на которую будет в ленте.",
         "adm_detailsLabel": "Полное описание",
@@ -1138,6 +1160,8 @@
       "changelog": {
         "adm_addKind": "添加类型",
         "adm_coverHelp": "显示在该版本自己页面的顶部。时间线仍为列表。",
+        "adm_releasedLabel": "发布日期",
+        "adm_releasedHelp": "此版本发布的日期。留空则为今天。尚未发布的版本不在此处设定日期。",
         "adm_coverLabel": "封面图片",
         "adm_detailsHelp": "可选。填写后，该版本将拥有独立页面，并可从时间线链接过去。",
         "adm_detailsLabel": "完整说明",

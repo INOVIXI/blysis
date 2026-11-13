@@ -43,6 +43,9 @@ export default function Page() {
                 // behaviour - no page, and no link on the timeline.
                 { key: "details", label: t("adm_detailsLabel"), type: "translatableRichtext", placeholder: t("adm_detailsPlaceholder"), description: t("adm_detailsHelp") },
                 { key: "coverImage", label: t("adm_coverLabel"), type: "image", description: t("adm_coverHelp") },
+                // The timeline is dated by this, so a release written up after
+                // it shipped can still sit on the day it shipped.
+                { key: "createdAt", label: t("adm_releasedLabel"), type: "datetime", description: t("adm_releasedHelp") },
                 {
                     key: "type",
                     label: t("adm_field4Label"),

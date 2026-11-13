@@ -3,6 +3,7 @@ import { contentTranslationsInput, deleteContentTranslations, isAdmin, prisma, r
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { ENTRY_TEXT, TRANSLATED_FIELDS, entrySlug } from "../../lib/entry-page";
+import { RELEASED_ON } from "../../lib/released-on";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -26,7 +27,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     // reach that a create cannot. This used to be `{ ...body }` handed
     // straight to Prisma, which let an admin write any column on the model -
     // `id`, so the revision rows recorded against the old one no longer found
-    // it, and `createdAt`, which is what the public list orders by - while
+    // it, and `createdAt` unbounded, a date in the future included - while
     // skipping every bound POST enforces on the same fields. Any key outside
     // this list was passed through to Prisma too and answered 500, because a
     // column it does not know is a validation error thrown, not returned.
@@ -41,6 +42,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         color: z.string().regex(/^#[0-9a-fA-F]{6}$/),
         isActive: z.boolean(),
         publishAt: z.string().datetime().nullable(),
+        // The day it shipped, bounded like a create's. An empty date field
+        // sends null, which keeps the day already recorded.
+        createdAt: RELEASED_ON.nullable(),
     }).partial();
 
     const validation = patchSchema.safeParse(body);
@@ -51,7 +55,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
     if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
 
-    const { content, details, publishAt, title, ...rest } = validation.data;
+    const { content, details, publishAt, title, createdAt, ...rest } = validation.data;
     const patchData = {
         ...rest,
         ...(title !== undefined ? { title, slug: entrySlug(title) } : {}),
@@ -61,6 +65,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         // number in front of it keeps every shared link working.
         ...(details !== undefined ? { details: details ? details : null } : {}),
         ...(publishAt !== undefined ? { publishAt: publishAt ? new Date(publishAt) : null } : {}),
+        ...(createdAt ? { createdAt: new Date(createdAt) } : {}),
     };
     const entry = await prisma.$transaction(async (tx) => {
         const updated = await tx.changelogEntry.update({ where: { id }, data: patchData });
