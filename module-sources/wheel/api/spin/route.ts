@@ -7,9 +7,10 @@ import { cooldownHoursOf, drawPrize, nextTurnAt, refusalFor } from "../../lib/wh
 import { PRIZE_TEXT } from "../../lib/validations";
 
 /**
- * Thrown inside the turn's transaction when the owner of a prize refuses it,
- * so the payment and the spin row roll back with it. Returning a reason from
- * the callback commits what came before it.
+ * Thrown inside the turn's transaction when the owner of a prize refuses it
+ * (the wallet, the shop or whoever owns a product), so the payment and the
+ * spin row roll back with it. Returning a reason from the callback commits
+ * what came before it.
  */
 class PrizeRefused extends Error {}
 
@@ -172,24 +173,28 @@ export async function POST(request: NextRequest) {
             },
         });
 
+        // A prize nobody handed over is not a prize, whoever refused it: the
+        // turn does not happen (a-prize-that-cannot-be-handed-over-takes-nothing.test.ts).
         if (selectedPrize.type === "credits" && selectedPrize.value > 0) {
-            await applyFiltersAsync("credit.change", { applied: false }, {
+            const credited = await applyFiltersAsync("credit.change", { applied: false }, {
                 tx,
                 userId: session.user.id,
                 amount: selectedPrize.value,
                 type: "wheel_prize",
                 description: `${wheel.name}: ${selectedPrize.name}`,
             });
+            if (!credited.applied) throw new PrizeRefused();
         } else if (couponCode) {
             // What a discount is belongs to the shop: this module knew its
             // table, its `FIXED` against `PERCENT` and its usage limit.
-            await applyFiltersAsync("coupon.issue", { issued: false }, {
+            const issued = await applyFiltersAsync("coupon.issue", { issued: false }, {
                 tx,
                 code: couponCode,
                 description: `${wheel.name} prize: ${selectedPrize.name}`,
                 amount: selectedPrize.value,
                 usageLimit: 1,
             });
+            if (!issued.issued) throw new PrizeRefused();
         } else if (selectedPrize.type === "product" && selectedPrize.productId) {
             // What a thing is belongs to whoever owns it. This module used to
             // know about credits and discounts and nothing else, so a prize of
@@ -200,8 +205,7 @@ export async function POST(request: NextRequest) {
             // received: if the thing has since been taken down, the fairest
             // answer is that the turn did not happen. It throws, because the
             // payment and the spin row above are already written on this
-            // transaction and only a throw takes them back
-            // (a-prize-that-cannot-be-handed-over-takes-nothing.test.ts).
+            // transaction and only a throw takes them back.
             const handed = await applyFiltersAsync("product.grant", { granted: false }, {
                 tx,
                 userId: session.user.id,

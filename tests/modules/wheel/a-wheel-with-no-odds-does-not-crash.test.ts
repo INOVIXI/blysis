@@ -65,6 +65,12 @@ vi.mock("@/core/sdk/server", async () => ({
 }));
 
 vi.mock("@/core/sdk/auth", () => ({ auth: async () => ({ user: { id: "u1", role: "user" } }) }));
+// A credits prize is paid by the wallet, and a turn whose prize nobody pays
+// does not happen; the wallet here pays whatever it is asked to.
+vi.mock("@/core/sdk", async () => ({
+    ...(await vi.importActual<typeof import("@/core/sdk")>("@/core/sdk")),
+    applyFiltersAsync: async (hook: string, value: unknown) => (hook === "credit.change" ? { applied: true } : value),
+}));
 
 async function spin(query = "") {
     const route = await import("@/modules/wheel/api/spin/route");
