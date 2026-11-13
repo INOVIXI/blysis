@@ -88,6 +88,8 @@ const BOUNDED: Record<string, string> = {
         "A settings form. What it repeats is the fields of one record.",
     "src/app/[locale]/(admin)/admin/settings/rate-limits/page.tsx":
         "One row per limit the app declares, which is as long as the code.",
+    "src/app/[locale]/(admin)/admin/settings/ai/page.tsx":
+        "The providers installed and one row per purpose the installed modules declare. Usage is totalled into those rows, so the list is as long as the code, not as long as the site has run.",
     "src/app/[locale]/(admin)/admin/settings/theme/page.tsx":
         "The themes installed, which an operator installs one at a time.",
     "src/app/[locale]/(admin)/admin/modules/updates/page.tsx":

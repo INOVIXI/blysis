@@ -1107,6 +1107,24 @@ export const moduleManifestSchema = z.object({
         .optional(),
 
     /**
+     * What this module sends to an AI provider, one entry per kind of call.
+     * The AI screen lists every one, so an operator choosing a vendor can see
+     * what will leave their site before it does. Both keys resolve in this
+     * module's `admin` translations; `id` is the `purpose` the module passes
+     * to `generateStructured`.
+     */
+    aiPurposes: z
+        .array(
+            z.object({
+                id: z.string().min(1).max(64).regex(SAFE_SLUG),
+                labelKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
+                sendsKey: z.string().min(1).max(128).regex(/^[a-zA-Z0-9._-]+$/),
+            }).strict(),
+        )
+        .max(20)
+        .optional(),
+
+    /**
      * Keys in the site settings store whose value is a credential.
      *
      * A gateway's secret key, an invoicing provider's password, a webhook

@@ -44,6 +44,24 @@ describe("the aiProvider manifest key", () => {
     });
 });
 
+describe("the aiPurposes manifest key", () => {
+    const purpose = { id: "review", labelKey: "example_purposeReview", sendsKey: "example_sendsReview" };
+
+    it("names what a module sends out, in words the operator reads", () => {
+        const parsed = moduleManifestSchema.safeParse({ ...base(), aiPurposes: [purpose] });
+        expect(parsed.success, JSON.stringify(parsed.error?.issues)).toBe(true);
+    });
+
+    it("refuses a purpose that does not say what it sends", () => {
+        const { sendsKey: _sendsKey, ...unsaid } = purpose;
+        expect(moduleManifestSchema.safeParse({ ...base(), aiPurposes: [unsaid] }).success).toBe(false);
+    });
+
+    it("refuses a purpose id that is not a slug", () => {
+        expect(moduleManifestSchema.safeParse({ ...base(), aiPurposes: [{ ...purpose, id: "Review Posts" }] }).success).toBe(false);
+    });
+});
+
 describe("the registry", () => {
     const generator = read("scripts/generate-registry.ts");
 

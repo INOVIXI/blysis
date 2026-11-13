@@ -25,6 +25,7 @@
  */
 import { z } from "zod";
 import { AiProviderRegistry } from "@/core/generated/module-ai";
+import { ModuleAiProviders } from "@/core/generated/module-data";
 import { getModuleStates } from "@/core/lib/module-cache";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { readSettingValues } from "@/core/lib/setting-values";
@@ -166,6 +167,24 @@ async function load(id: string): Promise<AiProvider | null> {
         log.error("[ai] the provider could not be loaded", { provider: id, error: errorText(err) });
         return null;
     }
+}
+
+export interface AiProviderStatus {
+    id: string;
+    name: string;
+    enabled: boolean;
+    configured: boolean;
+}
+
+/** Every installed provider and whether it could answer, for the AI screen. */
+export async function aiProviderStatus(): Promise<AiProviderStatus[]> {
+    const usable = new Set(await installedIds());
+    return Promise.all(
+        ModuleAiProviders.map(async ({ id, name }) => {
+            const enabled = usable.has(id);
+            return { id, name, enabled, configured: enabled && (await load(id)) !== null };
+        }),
+    );
 }
 
 async function withTimeout<R>(seconds: number, run: (signal: AbortSignal) => Promise<R>): Promise<R> {

@@ -15,7 +15,7 @@ export const AI_SETTING_KEYS = {
 } as const;
 
 /** Zero means no limit for the two that may be switched off. */
-const AI_SETTING_BOUNDS = {
+export const AI_SETTING_BOUNDS = {
     timeoutSeconds: { min: 5, max: 120, fallback: 30 },
     dailyTokenLimit: { min: 0, max: 1_000_000_000, fallback: 0 },
     requestsPerMinute: { min: 0, max: 10_000, fallback: 30 },

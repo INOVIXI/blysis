@@ -70,6 +70,7 @@ import {
     SlidersHorizontal,
     Cpu,
     ArrowUpCircle,
+    Bot,
 } from "lucide-react";
 
 /** Lucide-compatible icon component used across the admin sidebar. */
@@ -325,6 +326,7 @@ export const CORE_NAV_GROUPS: NavGroup[] = [
                 items: [
                     { href: "/admin/settings/general", label: "General", labelKey: "sidebar_general", icon: Cog },
                     { href: "/admin/settings/site", label: "Site Config", labelKey: "sidebar_siteConfig", icon: Globe },
+                    { href: "/admin/settings/ai", label: "AI", labelKey: "sidebar_ai", icon: Bot },
                 ],
             },
         ],

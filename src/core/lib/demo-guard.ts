@@ -57,6 +57,7 @@ export const DEMO_REFUSES: readonly DemoRule[] = [
     // ── It locks somebody out ────────────────────────────────────────────
     { pattern: /^\/api\/v1\/admin\/maintenance$/, why: "closes the site to everybody" },
     { pattern: /^\/api\/v1\/admin\/rate-limits$/, why: "a ceiling of zero refuses every request" },
+    { pattern: /^\/api\/v1\/admin\/ai$/, why: "a cap of one token stops every module that asks a model" },
     { pattern: /^\/api\/v1\/roles(?:\/|$)/, why: "the admin role is what opens the panel" },
     { pattern: /^\/api\/v1\/admin\/translations/, why: "every screen would read its own keys" },
     { pattern: /^\/api\/v1\/admin\/languages$/, why: "a site offering one language turns away every visitor reading another" },

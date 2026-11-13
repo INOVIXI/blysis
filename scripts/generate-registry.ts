@@ -221,6 +221,7 @@ function generateRegistry() {
     const allEmailApiKeyEnvVars = new Set<string>();
     const allEmailProviders: { id: string; name: string; handler: string; module: string }[] = [];
     const allAiProviders: { id: string; name: string; handler: string; module: string }[] = [];
+    const allAiPurposes: { module: string; id: string; labelKey: string; sendsKey: string }[] = [];
 
 
     for (const { moduleName, manifest } of loaded) {
@@ -252,6 +253,7 @@ function generateRegistry() {
         if (manifest.aiProvider) {
             allAiProviders.push({ id: moduleName, name: manifest.aiProvider.name, handler: manifest.aiProvider.handler, module: moduleName });
         }
+        manifest.aiPurposes?.forEach((purpose) => allAiPurposes.push({ module: moduleName, ...purpose }));
         manifest.settingsCards?.forEach((sc) => allSettingsCards.push({ ...sc, module: moduleName }));
         manifest.navbarComponents?.forEach((nc) => allNavbarComponents.push({ ...nc, module: moduleName }));
         manifest.footerComponents?.forEach((fc) => allFooterComponents.push({ ...fc, module: moduleName }));
@@ -544,6 +546,8 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
     // apart from the registry beside it: that one holds dynamic imports of
     // server-only handlers and has no business in a browser bundle.
     dataContent += `export const ModuleAiProviders: { id: string; name: string }[] = ${JSON.stringify(allAiProviders.map((e) => ({ id: e.id, name: e.name })), null, 2)};\n\n`;
+    // What each module sends to an AI provider, for the AI screen to list.
+    dataContent += `export const ModuleAiPurposes: { module: string; id: string; labelKey: string; sendsKey: string }[] = ${JSON.stringify(allAiPurposes, null, 2)};\n\n`;
     dataContent += `export const ModuleEmailProviders: { id: string; name: string }[] = ${JSON.stringify(allEmailProviders.map((e) => ({ id: e.id, name: e.name })), null, 2)};\n\n`;
     dataContent += `export const ModuleWebhookChannels: { id: string; label: string; layout: "json" | "embed" | "attachment"; hosts?: string[]; urlPlaceholder?: string; module: string }[] = ${JSON.stringify(allWebhookChannels, null, 2)};\n`;
     // Picture services a member's face may come from. Plain data the layout

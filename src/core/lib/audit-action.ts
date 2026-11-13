@@ -40,6 +40,7 @@ const CORE_AUDIT_NAMES: Record<string, string> = {
     "admin.user.data_exported": "auditUserDataExported",
     "admin.user.deleted": "auditUserDeleted",
     "admin.user.sign_in_method.remove": "auditSignInMethodRemove",
+    "ai.settings.update": "auditAiSettingsUpdate",
     "alerting.update": "auditAlertingUpdate",
     "apikey.create": "auditApiKeyCreate",
     "apikey.revoke": "auditApiKeyRevoke",
