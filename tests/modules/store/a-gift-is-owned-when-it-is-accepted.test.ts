@@ -123,6 +123,17 @@ describe("a gift's ownership", () => {
         expect(calls.owned).toEqual([]);
     });
 
+    it("forgets the sender's player name on an item handed over, so a claim does not deliver back to the sender", async () => {
+        db.chestItem.findFirst.mockResolvedValue({ ...boughtGift, giftedById: "cy", playerName: "Cy" });
+        await activateGift("bo", "c1");
+        expect(tx.chestItem.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: { giftState: null, playerName: null } }));
+    });
+
+    it("keeps the name a buyer typed for the recipient on a gift bought as one", async () => {
+        await activateGift("bo", "c1");
+        expect(tx.chestItem.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: { giftState: null } }));
+    });
+
     it("is left with nobody when the sender takes the gift back", async () => {
         const result = await cancelGift("ada", "c1");
         expect(result.ok).toBe(true);
