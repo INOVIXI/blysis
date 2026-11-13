@@ -170,6 +170,36 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Subscriptions cannot be paid with credits" }, { status: 400 });
         }
 
+        // ── Credits-only store ──
+        // With the setting on, money reaches the shop only through a top-up and
+        // every order is paid from the balance. Checked here, on what was sent,
+        // because the cart hiding the gateways is a courtesy: a request naming
+        // one is refused, a free order included, so there is no total that
+        // opens the door. A subscription is refused too: it renews by charging
+        // a gateway, which is the one thing this mode rules out.
+        //
+        // Tax stays on the order, below, as it is in the normal mode. A balance
+        // spendable on anything in the shop is taxed when it is spent, on the
+        // thing bought, not when it is loaded; that also keeps one tax record
+        // per sale for an invoice. The payment method's fee is the opposite:
+        // it is charged on the top-up, where a gateway is used, and an order
+        // paid from the balance carries none.
+        const { creditsOnlyStore } = await moduleSettings<{ creditsOnlyStore?: boolean }>("store");
+        if (creditsOnlyStore === true) {
+            if (isSubscriptionCheckout) {
+                return NextResponse.json(
+                    { error: "Subscriptions are not sold while the store takes only credits", code: "store_credits_only_subscription" },
+                    { status: 400 },
+                );
+            }
+            if (paymentMethod !== "credits") {
+                return NextResponse.json(
+                    { error: "This store takes only credits. Load credits first, then pay with them.", code: "store_credits_only" },
+                    { status: 400 },
+                );
+            }
+        }
+
         // ── Validate product variables ──
         const allVariables = await prisma.productVariable.findMany({
             where: { productId: { in: productIds } },
@@ -385,8 +415,12 @@ export async function POST(request: NextRequest) {
             const balance = Number(user?.creditBalance || 0);
 
             if (balance < total) {
+                // The code lets the cart say it in the buyer's language and
+                // send them to the top-up page with what is missing.
                 return NextResponse.json({
                     error: `Insufficient credit balance. You have ${balance.toFixed(2)} credits but need ${total.toFixed(2)}.`,
+                    code: "store_insufficient_credits",
+                    missing: Math.round((total - balance) * 100) / 100,
                 }, { status: 400 });
             }
 
@@ -731,7 +765,7 @@ export async function POST(request: NextRequest) {
         }
         if (error instanceof Error && error.message === "INSUFFICIENT_CREDITS") {
             return NextResponse.json(
-                { error: "Insufficient credit balance." },
+                { error: "Insufficient credit balance.", code: "store_insufficient_credits" },
                 { status: 400 },
             );
         }

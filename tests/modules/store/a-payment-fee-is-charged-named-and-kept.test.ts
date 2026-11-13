@@ -70,6 +70,8 @@ const db = {
         findUnique: vi.fn(async () => ({ id: "pack-1", name: "Big pack", credits: 1000, bonusCredits: 0, price: 50, isActive: true })),
     },
     creditTopUp: { create: topUpCreate },
+    // No bonus campaign runs here: the fee is what is being read.
+    creditBonusCampaign: { findMany: vi.fn(async () => []) },
     $transaction: vi.fn(),
 };
 

@@ -3,7 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Box } from "lucide-react";
 import { Link } from "@/core/sdk/navigation";
-import { Badge, buttonClassName, useSiteCurrency } from "@/core/sdk/ui";
+import { Badge, buttonClassName } from "@/core/sdk/ui";
+import { useStorePrice } from "../lib/use-store-price";
 import type { ShelfProduct } from "../lib/read-store";
 
 /**
@@ -15,7 +16,7 @@ import type { ShelfProduct } from "../lib/read-store";
  */
 export function FeaturedProduct({ product }: { product: ShelfProduct }) {
     const t = useTranslations("store");
-    const { format: formatPrice } = useSiteCurrency();
+    const { format: formatPrice } = useStorePrice();
     const was = product.was ?? product.comparePrice ?? null;
     const onSale = was !== null && was > product.price;
     const percent = onSale ? Math.round((1 - product.price / was) * 100) : 0;

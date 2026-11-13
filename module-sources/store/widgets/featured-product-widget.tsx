@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/core/sdk/navigation";
-import { Button, useSiteCurrency, buttonClassName } from "@/core/sdk/ui";
+import { Button, buttonClassName } from "@/core/sdk/ui";
+import { useStorePrice } from "../lib/use-store-price";
 import { Crown } from "lucide-react";
 
 interface Product {
@@ -18,7 +19,7 @@ interface Product {
 export function FeaturedProductWidget() {
     const sidebarT = useTranslations('sidebar');
     const locale = useLocale();
-    const { format: formatPrice } = useSiteCurrency();
+    const { format: formatPrice } = useStorePrice();
     const [product, setProduct] = useState<Product | null>(null);
 
     useEffect(() => {

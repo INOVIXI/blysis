@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { Card, CardContent, CardHeader, CardTitle, LoadFailed, Pagination, useLocalDate } from "@/core/sdk/ui";
+import { Card, CardContent, CardHeader, CardTitle, LoadFailed, Pagination, buttonClassName, useLocalDate } from "@/core/sdk/ui";
+import { Link } from "@/core/sdk/navigation";
 import {
     ArrowDownLeft,
     ArrowUpRight,
@@ -16,7 +17,6 @@ import {
     Wallet,
 } from "lucide-react";
 import { labelKeyFor } from "../lib/ledger-types";
-import { CreditPackages } from "./CreditPackages";
 import { SendCredits } from "./SendCredits";
 
 interface Transaction {
@@ -90,6 +90,18 @@ export default function CreditsTab() {
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
+    // Credits are bought on the store's own page. The store is another
+    // module, so the button is drawn only when it answers: a wallet on a site
+    // without a store has nothing to load from.
+    const [canLoad, setCanLoad] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        fetch("/api/v1/store/credits/options")
+            .then((r) => { if (!cancelled) setCanLoad(r.ok); })
+            .catch(() => undefined);
+        return () => { cancelled = true; };
+    }, []);
 
     useEffect(() => {
         let cancelled = false;
@@ -118,7 +130,7 @@ export default function CreditsTab() {
                 <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">{t("balance")}</CardTitle>
                 </CardHeader>
-                <CardContent className="flex items-center gap-3">
+                <CardContent className="flex flex-wrap items-center gap-3">
                     <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-primary">
                         <Coins className="h-5 w-5" aria-hidden="true" />
                     </span>
@@ -127,10 +139,13 @@ export default function CreditsTab() {
                     ) : (
                         <p className="text-3xl font-bold tabular-nums">{balance.toFixed(2)}</p>
                     )}
+                    {canLoad && (
+                        <Link href="/store/credits" className={buttonClassName("default", "sm", "ml-auto")}>
+                            {t("loadCredits")}
+                        </Link>
+                    )}
                 </CardContent>
             </Card>
-
-            <CreditPackages onBought={() => setReloadKey((k) => k + 1)} />
 
             <SendCredits balance={balance} onSent={() => setReloadKey((k) => k + 1)} />
 
