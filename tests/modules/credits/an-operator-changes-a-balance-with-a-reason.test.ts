@@ -99,14 +99,14 @@ describe("the rules for a change by hand", () => {
 
 describe("the movement", () => {
     it("adds and writes the reason on the row the member reads", async () => {
-        await expect(adjustBalance(current.tx as never, { userId: "m1", amount: 25, reason: " Bug bounty " })).resolves.toBe(true);
+        await expect(adjustBalance(current.tx as never, { userId: "m1", amount: 25, reason: " Bug bounty " }, 50)).resolves.toBe(true);
         expect(current.state.balance).toBe(75);
         expect(current.state.rows).toEqual([{ userId: "m1", amount: 25, type: "admin_grant", description: "Bug bounty" }]);
     });
 
     it("takes nothing when the balance was spent before the debit, whatever was read first", async () => {
         current.state.balance = 10;
-        await expect(adjustBalance(current.tx as never, { userId: "m1", amount: -20, reason: "Chargeback" })).resolves.toBe(false);
+        await expect(adjustBalance(current.tx as never, { userId: "m1", amount: -20, reason: "Chargeback" }, 50)).resolves.toBe(false);
         expect(current.state.balance).toBe(10);
         expect(current.state.rows).toEqual([]);
     });
@@ -114,10 +114,38 @@ describe("the movement", () => {
     it("goes below zero only when that was allowed, with its row", async () => {
         current.state.balance = 10;
         await expect(
-            adjustBalance(current.tx as never, { userId: "m1", amount: -20, reason: "Chargeback", allowNegative: true }),
+            adjustBalance(current.tx as never, { userId: "m1", amount: -20, reason: "Chargeback", allowNegative: true }, 10),
         ).resolves.toBe(true);
         expect(current.state.balance).toBe(-10);
         expect(current.state.rows).toEqual([{ userId: "m1", amount: -20, type: "admin_remove", description: "Chargeback" }]);
+    });
+
+    it("leaves no deeper debt than the operator allowed when the member spends in between", async () => {
+        // The operator read 10 and allowed -10. The member spent 8 before
+        // the debit landed; taking 20 now would leave -18.
+        current.state.balance = 2;
+        await expect(
+            adjustBalance(current.tx as never, { userId: "m1", amount: -20, reason: "Chargeback", allowNegative: true }, 10),
+        ).resolves.toBe(false);
+        expect(current.state.balance).toBe(2);
+        expect(current.state.rows).toEqual([]);
+    });
+
+    it("still takes a debt that is no deeper than the one allowed", async () => {
+        // Credits arrived in between: the debt is smaller than the one agreed.
+        current.state.balance = 15;
+        await expect(
+            adjustBalance(current.tx as never, { userId: "m1", amount: -20, reason: "Chargeback", allowNegative: true }, 10),
+        ).resolves.toBe(true);
+        expect(current.state.balance).toBe(-5);
+    });
+
+    it("debits with a condition on the balance, never a bare decrement", async () => {
+        await adjustBalance(current.tx as never, { userId: "m1", amount: -80, reason: "Chargeback", allowNegative: true }, 50);
+        expect(current.tx.user.update).not.toHaveBeenCalled();
+        expect(current.tx.user.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+            where: { id: "m1", creditBalance: { gte: 50 } },
+        }));
     });
 });
 
@@ -138,6 +166,20 @@ describe("the endpoint", () => {
         expect(res.status).toBe(409);
         await expect(res.json()).resolves.toMatchObject({ code: "credits_adjust_below_zero" });
         expect(current.state.balance).toBe(50);
+    });
+
+    it("says the balance moved when a debt was allowed and the member spent first", async () => {
+        // The route reads 50; the member spends 45 before the debit.
+        current.tx.user.findUnique.mockImplementationOnce(async () => {
+            const read = { id: "m1", username: "Steve", creditBalance: current.state.balance };
+            current.state.balance = 5;
+            return read;
+        });
+        const res = await post({ userId: "m1", amount: -80, reason: "Chargeback", allowNegative: true });
+        expect(res.status).toBe(409);
+        await expect(res.json()).resolves.toMatchObject({ code: "credits_adjust_balance_moved" });
+        expect(current.state.balance).toBe(5);
+        expect(current.state.rows).toEqual([]);
     });
 
     it("refuses a change without a reason", async () => {

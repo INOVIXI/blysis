@@ -20,12 +20,13 @@ export async function moveCredits(
     tx: PrismaTransaction,
     movement: { userId: string | null; amount: number; type: string; description?: string | null; ledgerId?: string },
     /**
-     * Let a debit take the balance below zero. Only an operator changing a
-     * balance by hand asks for it (`lib/adjust.ts`), for a chargeback on
-     * credits already spent. A third argument rather than a field of the
-     * movement, so nothing that asks `credit.change` can pass it along.
+     * Let a debit take the balance below zero, from the balance the caller
+     * read. Only an operator changing a balance by hand asks for it
+     * (`lib/adjust.ts`), for a chargeback on credits already spent. A third
+     * argument rather than a field of the movement, so nothing that asks
+     * `credit.change` can pass it along.
      */
-    options: { allowNegative?: boolean } = {},
+    options: { negativeFrom?: number } = {},
 ): Promise<boolean> {
     const { userId, amount } = movement;
 
@@ -44,15 +45,18 @@ export async function moveCredits(
         return true;
     }
 
-    if (amount < 0 && options.allowNegative) {
-        await tx.user.update({ where: { id: userId }, data: { creditBalance: { decrement: Math.abs(amount) } } });
-    } else if (amount < 0) {
+    if (amount < 0) {
         // Conditional, always. Two requests that both read "enough" must not
         // both succeed, and no automatic caller has a reason to take credits
-        // somebody does not have.
+        // somebody does not have. An operator who allowed a debt allowed the
+        // one they were shown: the balance must still hold what they read,
+        // so a spend that lands between the read and this debit refuses the
+        // change rather than leaving a deeper debt nobody agreed to.
+        const debit = Math.abs(amount);
+        const mustHold = options.negativeFrom === undefined ? debit : Math.min(debit, options.negativeFrom);
         const debited = await tx.user.updateMany({
-            where: { id: userId, creditBalance: { gte: Math.abs(amount) } },
-            data: { creditBalance: { decrement: Math.abs(amount) } },
+            where: { id: userId, creditBalance: { gte: mustHold } },
+            data: { creditBalance: { decrement: debit } },
         });
         if (debited.count === 0) return false;
     } else {

@@ -12,7 +12,9 @@
  * A removal stops at zero like every other debit (`moveCredits`), because a
  * negative balance is a debt the site has to collect. Taking a member below
  * zero, for a chargeback on credits they already spent, is a separate choice
- * the operator makes on purpose with `allowNegative`.
+ * the operator makes on purpose with `allowNegative`, and it is a choice
+ * about the balance they read: if the member spends in the meantime, the
+ * change is refused rather than leaving a larger debt.
  *
  * Guarded by `tests/modules/credits/an-operator-changes-a-balance-with-a-reason.test.ts`.
  */
@@ -55,11 +57,11 @@ export function adjustmentRefusal(adjustment: Omit<Adjustment, "userId">, balanc
 
 /**
  * Moves the balance and writes the row that explains it, on the caller's
- * transaction. Answers false when a removal would take the balance below
- * zero and that was not allowed: the conditional debit in `moveCredits`
- * found the balance short, whatever a read before it said.
+ * transaction. Answers false when the conditional debit in `moveCredits`
+ * found the balance short, whatever a read before it said: below zero when
+ * that was not allowed, or below `seenBalance` when it was.
  */
-export async function adjustBalance(tx: PrismaTransaction, adjustment: Adjustment): Promise<boolean> {
+export async function adjustBalance(tx: PrismaTransaction, adjustment: Adjustment, seenBalance: number): Promise<boolean> {
     return moveCredits(
         tx,
         {
@@ -68,6 +70,6 @@ export async function adjustBalance(tx: PrismaTransaction, adjustment: Adjustmen
             type: adjustment.amount > 0 ? ADMIN_GRANT : ADMIN_REMOVE,
             description: adjustment.reason.trim(),
         },
-        { allowNegative: adjustment.allowNegative === true && adjustment.amount < 0 },
+        adjustment.allowNegative === true && adjustment.amount < 0 ? { negativeFrom: seenBalance } : {},
     );
 }

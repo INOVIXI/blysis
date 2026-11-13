@@ -32,23 +32,23 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "credits_adjust_no_member", code: "credits_adjust_no_member" }, { status: 404 });
     }
 
-    const refusal = adjustmentRefusal(adjustment, Number(member.creditBalance));
+    const seen = Number(member.creditBalance);
+    const refusal = adjustmentRefusal(adjustment, seen);
     if (refusal) {
         return NextResponse.json({ error: refusal, code: refusal }, { status: refusal === "credits_adjust_below_zero" ? 409 : 400 });
     }
 
     const balance = await prisma.$transaction(async (tx) => {
-        if (!(await adjustBalance(tx, adjustment))) return null;
+        if (!(await adjustBalance(tx, adjustment, seen))) return null;
         const after = await tx.user.findUniqueOrThrow({ where: { id: adjustment.userId }, select: { creditBalance: true } });
         return Number(after.creditBalance);
     });
     // Spent between the read above and the debit: the conditional debit is
-    // the one that decides.
+    // the one that decides. Without leave to go below zero the balance came
+    // up short; with it, the balance is no longer the one the operator saw.
     if (balance === null) {
-        return NextResponse.json(
-            { error: "credits_adjust_below_zero", code: "credits_adjust_below_zero" },
-            { status: 409 },
-        );
+        const code = adjustment.allowNegative ? "credits_adjust_balance_moved" : "credits_adjust_below_zero";
+        return NextResponse.json({ error: code, code }, { status: 409 });
     }
 
     logActivity({

@@ -91,6 +91,7 @@
           "credits_adjust_too_large": "One change can move at most 1,000,000 credits.",
           "credits_adjust_no_reason": "Say why. The member reads the reason in their credit history.",
           "credits_adjust_below_zero": "The member does not hold that many credits. Allow the balance to go below zero to take them anyway.",
+          "credits_adjust_balance_moved": "The balance changed while you were changing it. Read it again and decide again.",
           "credits_adjust_no_member": "That member no longer exists."
         },
         "history": "Transaction History",
@@ -214,6 +215,7 @@
           "credits_adjust_too_large": "Tek bir değişiklik en fazla 1.000.000 kredi taşıyabilir.",
           "credits_adjust_no_reason": "Nedenini yazın. Üye bu nedeni kredi geçmişinde okur.",
           "credits_adjust_below_zero": "Üyenin bu kadar kredisi yok. Yine de almak için bakiyenin sıfırın altına inmesine izin verin.",
+          "credits_adjust_balance_moved": "Siz değiştirirken bakiye değişti. Bakiyeye yeniden bakıp yeniden karar verin.",
           "credits_adjust_no_member": "Bu üye artık mevcut değil."
         },
         "history": "İşlem Geçmişi",
@@ -337,6 +339,7 @@
           "credits_adjust_too_large": "Bir dəyişiklik ən çoxu 1.000.000 kredit köçürə bilər.",
           "credits_adjust_no_reason": "Səbəbini yazın. Üzv bu səbəbi kredit tarixçəsində oxuyur.",
           "credits_adjust_below_zero": "Üzvün bu qədər krediti yoxdur. Yenə də götürmək üçün balansın sıfırdan aşağı düşməsinə icazə verin.",
+          "credits_adjust_balance_moved": "Siz dəyişərkən balans dəyişdi. Balansa yenidən baxıb yenidən qərar verin.",
           "credits_adjust_no_member": "Bu üzv artıq mövcud deyil."
         },
         "history": "Əməliyyat tarixçəsi",
@@ -460,6 +463,7 @@
           "credits_adjust_too_large": "Eine Änderung kann höchstens 1.000.000 Credits bewegen.",
           "credits_adjust_no_reason": "Gib einen Grund an. Das Mitglied liest ihn in seinem Credit-Verlauf.",
           "credits_adjust_below_zero": "Das Mitglied hat nicht so viele Credits. Erlaube einen Kontostand unter null, um sie trotzdem abzuziehen.",
+          "credits_adjust_balance_moved": "Der Kontostand hat sich während deiner Änderung geändert. Lies ihn neu und entscheide noch einmal.",
           "credits_adjust_no_member": "Dieses Mitglied gibt es nicht mehr."
         },
         "history": "Transaktionsverlauf",
@@ -583,6 +587,7 @@
           "credits_adjust_too_large": "Un cambio puede mover como máximo 1.000.000 de créditos.",
           "credits_adjust_no_reason": "Indica el motivo. El miembro lo lee en su historial de créditos.",
           "credits_adjust_below_zero": "El miembro no tiene tantos créditos. Permite que el saldo baje de cero para quitarlos de todos modos.",
+          "credits_adjust_balance_moved": "El saldo cambió mientras lo modificabas. Vuelve a leerlo y decide de nuevo.",
           "credits_adjust_no_member": "Ese miembro ya no existe."
         },
         "history": "Historial de transacciones",
@@ -706,6 +711,7 @@
           "credits_adjust_too_large": "Üks muudatus võib liigutada kõige rohkem 1 000 000 krediiti.",
           "credits_adjust_no_reason": "Kirjuta põhjus. Liige näeb seda oma krediidiajaloos.",
           "credits_adjust_below_zero": "Liikmel pole nii palju krediiti. Luba saldol minna alla nulli, et need ikkagi ära võtta.",
+          "credits_adjust_balance_moved": "Saldo muutus sinu muutmise ajal. Loe see uuesti ja otsusta uuesti.",
           "credits_adjust_no_member": "Seda liiget enam pole."
         },
         "history": "Tehingute ajalugu",
@@ -829,6 +835,7 @@
           "credits_adjust_too_large": "Une modification peut déplacer au plus 1 000 000 crédits.",
           "credits_adjust_no_reason": "Indiquez la raison. Le membre la lit dans son historique de crédits.",
           "credits_adjust_below_zero": "Le membre ne possède pas autant de crédits. Autorisez un solde négatif pour les retirer quand même.",
+          "credits_adjust_balance_moved": "Le solde a changé pendant votre modification. Relisez-le et décidez à nouveau.",
           "credits_adjust_no_member": "Ce membre n'existe plus."
         },
         "history": "Historique des transactions",
@@ -952,6 +959,7 @@
           "credits_adjust_too_large": "Una modifica può spostare al massimo 1.000.000 crediti.",
           "credits_adjust_no_reason": "Indica il motivo. Il membro lo legge nella sua cronologia dei crediti.",
           "credits_adjust_below_zero": "Il membro non ha così tanti crediti. Consenti al saldo di scendere sotto zero per toglierli comunque.",
+          "credits_adjust_balance_moved": "Il saldo è cambiato mentre lo modificavi. Rileggilo e decidi di nuovo.",
           "credits_adjust_no_member": "Questo membro non esiste più."
         },
         "history": "Cronologia transazioni",
@@ -1075,6 +1083,7 @@
           "credits_adjust_too_large": "Jedna zmiana może przenieść najwyżej 1 000 000 kredytów.",
           "credits_adjust_no_reason": "Podaj powód. Członek przeczyta go w swojej historii kredytów.",
           "credits_adjust_below_zero": "Członek nie ma tylu kredytów. Zezwól na saldo poniżej zera, aby i tak je odebrać.",
+          "credits_adjust_balance_moved": "Saldo zmieniło się w trakcie Twojej zmiany. Odczytaj je ponownie i zdecyduj jeszcze raz.",
           "credits_adjust_no_member": "Ten członek już nie istnieje."
         },
         "history": "Historia transakcji",
@@ -1198,6 +1207,7 @@
           "credits_adjust_too_large": "Uma alteração pode mover no máximo 1.000.000 de créditos.",
           "credits_adjust_no_reason": "Diga o motivo. O membro lê o motivo no histórico de créditos.",
           "credits_adjust_below_zero": "O membro não tem tantos créditos. Permita que o saldo fique abaixo de zero para retirá-los mesmo assim.",
+          "credits_adjust_balance_moved": "O saldo mudou enquanto você o alterava. Leia-o de novo e decida novamente.",
           "credits_adjust_no_member": "Esse membro não existe mais."
         },
         "history": "Histórico de transações",
@@ -1321,6 +1331,7 @@
           "credits_adjust_too_large": "Одно изменение может переместить не больше 1 000 000 кредитов.",
           "credits_adjust_no_reason": "Укажите причину. Участник увидит её в истории кредитов.",
           "credits_adjust_below_zero": "У участника нет столько кредитов. Разрешите балансу уйти ниже нуля, чтобы всё равно их списать.",
+          "credits_adjust_balance_moved": "Баланс изменился, пока вы его меняли. Посмотрите его снова и решите ещё раз.",
           "credits_adjust_no_member": "Этого участника больше нет."
         },
         "history": "История операций",
@@ -1444,6 +1455,7 @@
           "credits_adjust_too_large": "一次更改最多可变动 1,000,000 积分。",
           "credits_adjust_no_reason": "请说明原因。会员会在积分记录中看到这条原因。",
           "credits_adjust_below_zero": "该会员没有这么多积分。如仍要扣除，请允许余额低于零。",
+          "credits_adjust_balance_moved": "在您修改时余额已发生变化。请重新查看余额后再决定。",
           "credits_adjust_no_member": "该会员已不存在。"
         },
         "history": "交易记录",
