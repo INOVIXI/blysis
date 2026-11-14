@@ -1,0 +1,485 @@
+{
+  "id": "anthropic-provider",
+  "name": "Claude (Anthropic) AI Provider",
+  "description": "Answers this site's AI calls with Claude models through the Anthropic API",
+  "version": "1.0.0",
+  "coreVersion": "^5.41.0",
+  "category": "integration",
+  "author": "Blysis",
+  "icon": "Bot",
+  "secretSettings": [
+    "anthropic_api_key"
+  ],
+  "aiProvider": {
+    "name": "Claude (Anthropic)",
+    "handler": "lib/provider.ts"
+  },
+  "permissions": [
+    {
+      "name": "anthropic-provider.manage",
+      "labelKey": "anthropicProvider.perm_manage"
+    }
+  ],
+  "adminRoutes": [
+    {
+      "path": "/settings/anthropic",
+      "component": "pages/admin/page.tsx",
+      "permission": "anthropic-provider.manage"
+    }
+  ],
+  "settingsCards": [
+    {
+      "title": "Claude (Anthropic)",
+      "description": "API key and models for Anthropic.",
+      "href": "/settings/anthropic",
+      "icon": "Bot",
+      "color": "text-primary"
+    }
+  ],
+  "api": [
+    {
+      "path": "/anthropic-provider/admin/connection",
+      "handler": "api/admin/connection/route.ts",
+      "method": "POST",
+      "description": "Try the stored Anthropic key and list the models it may use.",
+      "permission": "anthropic-provider.manage"
+    }
+  ],
+  "demoUnsafe": [
+    "/anthropic-provider/admin/connection"
+  ],
+  "translations": {
+    "en": {
+      "anthropicProvider": {
+        "adm_chooseLink": "Which provider answers is chosen under Settings > AI.",
+        "adm_connDesc": "Save the key first. Trying it lists the models it may use, and the model fields then suggest them. Nothing is sent to Anthropic until you press the button.",
+        "adm_connOk": "Connected. {count, plural, one {# model} other {# models}} found.",
+        "adm_connTry": "Try the connection",
+        "adm_conn_failed": "Anthropic answered with an error. Try again later.",
+        "adm_conn_not_configured": "No key is saved yet. Save one, then try again.",
+        "adm_conn_rate_limited": "Anthropic asked this site to slow down. Try again in a minute.",
+        "adm_conn_unauthorized": "Anthropic refused the key. Check that it was copied whole and is still active.",
+        "adm_conn_unreachable": "Anthropic could not be reached from this server.",
+        "adm_effortDesc": "How much the model thinks before it answers. More effort costs more tokens and takes longer. Auto sends nothing and leaves it to the model.",
+        "adm_effortLabel": "Effort",
+        "adm_effort_auto": "Auto (the model decides)",
+        "adm_effort_high": "High",
+        "adm_effort_low": "Low",
+        "adm_effort_max": "Maximum",
+        "adm_effort_medium": "Medium",
+        "adm_effort_xhigh": "Very high",
+        "adm_fastDesc": "Used for quick, frequent calls such as sorting posts. Empty uses {model}.",
+        "adm_fastLabel": "Fast model",
+        "adm_keyDesc": "Your Anthropic API key. It is stored encrypted and never shown again.",
+        "adm_keyLabel": "API key",
+        "adm_smartDesc": "Used where a call needs more judgement, such as drafting a reply. Empty uses {model}.",
+        "adm_smartLabel": "Smart model",
+        "adm_subtitle": "The key and the models this site asks Anthropic with.",
+        "adm_title": "Anthropic settings",
+        "perm_manage": "Manage"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "Claude (Anthropic) AI Provider",
+        "module_anthropic-provider_description": "Answers this site's AI calls with Claude models.",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "API key and models for Anthropic."
+      }
+    },
+    "tr": {
+      "anthropicProvider": {
+        "adm_chooseLink": "Hangi sağlayıcının yanıt vereceği Ayarlar > Yapay Zekâ altında seçilir.",
+        "adm_connDesc": "Önce anahtarı kaydedin. Denemek, anahtarın kullanabildiği modelleri listeler ve model alanları bunları önerir. Düğmeye basana kadar Anthropic tarafına hiçbir şey gönderilmez.",
+        "adm_connOk": "Bağlandı. {count} model bulundu.",
+        "adm_connTry": "Bağlantıyı dene",
+        "adm_conn_failed": "Anthropic bir hatayla yanıt verdi. Daha sonra yeniden deneyin.",
+        "adm_conn_not_configured": "Henüz kayıtlı bir anahtar yok. Birini kaydedip yeniden deneyin.",
+        "adm_conn_rate_limited": "Anthropic bu siteden yavaşlamasını istedi. Bir dakika sonra yeniden deneyin.",
+        "adm_conn_unauthorized": "Anthropic anahtarı reddetti. Eksiksiz kopyalandığını ve hâlâ etkin olduğunu kontrol edin.",
+        "adm_conn_unreachable": "Bu sunucudan Anthropic hizmetine ulaşılamadı.",
+        "adm_effortDesc": "Modelin yanıt vermeden önce ne kadar düşüneceği. Daha çok çaba daha çok token harcar ve daha uzun sürer. Otomatik hiçbir şey göndermez, kararı modele bırakır.",
+        "adm_effortLabel": "Çaba",
+        "adm_effort_auto": "Otomatik (model karar verir)",
+        "adm_effort_high": "Yüksek",
+        "adm_effort_low": "Düşük",
+        "adm_effort_max": "En yüksek",
+        "adm_effort_medium": "Orta",
+        "adm_effort_xhigh": "Çok yüksek",
+        "adm_fastDesc": "Gönderileri ayırmak gibi kısa ve sık çağrılarda kullanılır. Boş bırakılırsa {model} kullanılır.",
+        "adm_fastLabel": "Hızlı model",
+        "adm_keyDesc": "Anthropic API anahtarınız. Şifreli saklanır ve bir daha gösterilmez.",
+        "adm_keyLabel": "API anahtarı",
+        "adm_smartDesc": "Yanıt taslağı yazmak gibi daha çok muhakeme isteyen çağrılarda kullanılır. Boş bırakılırsa {model} kullanılır.",
+        "adm_smartLabel": "Güçlü model",
+        "adm_subtitle": "Bu sitenin Anthropic ile kullandığı anahtar ve modeller.",
+        "adm_title": "Anthropic ayarları",
+        "perm_manage": "Yönetebilir"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "Claude (Anthropic) Yapay Zekâ Sağlayıcısı",
+        "module_anthropic-provider_description": "Bu sitenin yapay zekâ çağrılarını Claude modelleri ile yanıtlar.",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "Anthropic için API anahtarı ve modeller."
+      }
+    },
+    "az": {
+      "anthropicProvider": {
+        "adm_chooseLink": "Hansı provayderin cavab verəcəyi Parametrlər > Süni intellekt bölməsində seçilir.",
+        "adm_connDesc": "Əvvəlcə açarı yadda saxlayın. Sınaq açarın istifadə edə bildiyi modelləri siyahıya alır və model sahələri onları təklif edir. Düyməni basana qədər Anthropic xidmətinə heç nə göndərilmir.",
+        "adm_connOk": "Qoşuldu. {count} model tapıldı.",
+        "adm_connTry": "Bağlantını yoxla",
+        "adm_conn_failed": "Anthropic xəta ilə cavab verdi. Sonra yenidən cəhd edin.",
+        "adm_conn_not_configured": "Hələ yadda saxlanmış açar yoxdur. Birini yadda saxlayıb yenidən cəhd edin.",
+        "adm_conn_rate_limited": "Anthropic bu saytdan yavaşlamağı xahiş etdi. Bir dəqiqədən sonra yenidən cəhd edin.",
+        "adm_conn_unauthorized": "Anthropic açarı rədd etdi. Tam kopyalandığını və hələ aktiv olduğunu yoxlayın.",
+        "adm_conn_unreachable": "Bu serverdən Anthropic xidmətinə çatmaq mümkün olmadı.",
+        "adm_effortDesc": "Modelin cavab verməzdən əvvəl nə qədər düşündüyü. Daha çox səy daha çox token xərcləyir və daha uzun çəkir. Avtomatik heç nə göndərmir, qərarı modelə buraxır.",
+        "adm_effortLabel": "Səy",
+        "adm_effort_auto": "Avtomatik (model qərar verir)",
+        "adm_effort_high": "Yüksək",
+        "adm_effort_low": "Aşağı",
+        "adm_effort_max": "Maksimum",
+        "adm_effort_medium": "Orta",
+        "adm_effort_xhigh": "Çox yüksək",
+        "adm_fastDesc": "Yazıların çeşidlənməsi kimi qısa və tez-tez çağırışlar üçün istifadə olunur. Boş qalsa, {model} istifadə olunur.",
+        "adm_fastLabel": "Sürətli model",
+        "adm_keyDesc": "Anthropic API açarınız. Şifrələnmiş saxlanılır və bir daha göstərilmir.",
+        "adm_keyLabel": "API açarı",
+        "adm_smartDesc": "Cavab qaralaması kimi daha çox mühakimə tələb edən çağırışlar üçün istifadə olunur. Boş qalsa, {model} istifadə olunur.",
+        "adm_smartLabel": "Güclü model",
+        "adm_subtitle": "Bu saytın Anthropic ilə istifadə etdiyi açar və modellər.",
+        "adm_title": "Anthropic parametrləri",
+        "perm_manage": "İdarə et"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "Claude (Anthropic) süni intellekt provayderi",
+        "module_anthropic-provider_description": "Bu saytın süni intellekt çağırışlarını Claude modelləri ilə cavablandırır.",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "Anthropic üçün API açarı və modellər."
+      }
+    },
+    "de": {
+      "anthropicProvider": {
+        "adm_chooseLink": "Welcher Anbieter antwortet, wird unter Einstellungen > KI gewählt.",
+        "adm_connDesc": "Speichere zuerst den Schlüssel. Der Test listet die Modelle, die er nutzen darf, und die Modellfelder schlagen sie dann vor. Bis du den Knopf drückst, wird nichts an Anthropic gesendet.",
+        "adm_connOk": "Verbunden. {count, plural, one {# Modell} other {# Modelle}} gefunden.",
+        "adm_connTry": "Verbindung testen",
+        "adm_conn_failed": "Anthropic hat mit einem Fehler geantwortet. Versuche es später erneut.",
+        "adm_conn_not_configured": "Es ist noch kein Schlüssel gespeichert. Speichere einen und versuche es erneut.",
+        "adm_conn_rate_limited": "Anthropic bittet diese Seite, langsamer zu machen. Versuche es in einer Minute erneut.",
+        "adm_conn_unauthorized": "Anthropic hat den Schlüssel abgelehnt. Prüfe, ob er vollständig kopiert wurde und noch aktiv ist.",
+        "adm_conn_unreachable": "Anthropic war von diesem Server aus nicht erreichbar.",
+        "adm_effortDesc": "Wie viel das Modell nachdenkt, bevor es antwortet. Mehr Aufwand kostet mehr Tokens und dauert länger. Automatisch sendet nichts und überlässt es dem Modell.",
+        "adm_effortLabel": "Aufwand",
+        "adm_effort_auto": "Automatisch (das Modell entscheidet)",
+        "adm_effort_high": "Hoch",
+        "adm_effort_low": "Niedrig",
+        "adm_effort_max": "Maximal",
+        "adm_effort_medium": "Mittel",
+        "adm_effort_xhigh": "Sehr hoch",
+        "adm_fastDesc": "Für kurze, häufige Aufrufe wie das Einordnen von Beiträgen. Leer bedeutet {model}.",
+        "adm_fastLabel": "Schnelles Modell",
+        "adm_keyDesc": "Dein Anthropic-API-Schlüssel. Er wird verschlüsselt gespeichert und nie wieder angezeigt.",
+        "adm_keyLabel": "API-Schlüssel",
+        "adm_smartDesc": "Für Aufrufe, die mehr Urteilsvermögen brauchen, etwa den Entwurf einer Antwort. Leer bedeutet {model}.",
+        "adm_smartLabel": "Starkes Modell",
+        "adm_subtitle": "Der Schlüssel und die Modelle, mit denen diese Seite Anthropic fragt.",
+        "adm_title": "Anthropic-Einstellungen",
+        "perm_manage": "Verwalten"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "Claude (Anthropic) KI-Anbieter",
+        "module_anthropic-provider_description": "Beantwortet die KI-Aufrufe dieser Seite mit Claude-Modellen.",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "API-Schlüssel und Modelle für Anthropic."
+      }
+    },
+    "es": {
+      "anthropicProvider": {
+        "adm_chooseLink": "El proveedor que responde se elige en Ajustes > IA.",
+        "adm_connDesc": "Guarda primero la clave. Probarla lista los modelos que puede usar y los campos de modelo los sugieren. No se envía nada a Anthropic hasta que pulses el botón.",
+        "adm_connOk": "Conectado. {count, plural, one {# modelo encontrado} other {# modelos encontrados}}.",
+        "adm_connTry": "Probar la conexión",
+        "adm_conn_failed": "Anthropic respondió con un error. Vuelve a intentarlo más tarde.",
+        "adm_conn_not_configured": "Todavía no hay ninguna clave guardada. Guarda una y vuelve a intentarlo.",
+        "adm_conn_rate_limited": "Anthropic pidió a este sitio que vaya más despacio. Vuelve a intentarlo en un minuto.",
+        "adm_conn_unauthorized": "Anthropic rechazó la clave. Comprueba que se copió entera y que sigue activa.",
+        "adm_conn_unreachable": "No se pudo contactar con Anthropic desde este servidor.",
+        "adm_effortDesc": "Cuánto piensa el modelo antes de responder. Más esfuerzo gasta más tokens y tarda más. Automático no envía nada y lo deja al modelo.",
+        "adm_effortLabel": "Esfuerzo",
+        "adm_effort_auto": "Automático (decide el modelo)",
+        "adm_effort_high": "Alto",
+        "adm_effort_low": "Bajo",
+        "adm_effort_max": "Máximo",
+        "adm_effort_medium": "Medio",
+        "adm_effort_xhigh": "Muy alto",
+        "adm_fastDesc": "Para llamadas breves y frecuentes, como clasificar publicaciones. Vacío usa {model}.",
+        "adm_fastLabel": "Modelo rápido",
+        "adm_keyDesc": "Tu clave de API de Anthropic. Se guarda cifrada y no se vuelve a mostrar.",
+        "adm_keyLabel": "Clave de API",
+        "adm_smartDesc": "Para llamadas que requieren más criterio, como redactar una respuesta. Vacío usa {model}.",
+        "adm_smartLabel": "Modelo potente",
+        "adm_subtitle": "La clave y los modelos con los que este sitio pregunta a Anthropic.",
+        "adm_title": "Ajustes de Anthropic",
+        "perm_manage": "Gestionar"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "Proveedor de IA Claude (Anthropic)",
+        "module_anthropic-provider_description": "Responde a las llamadas de IA de este sitio con modelos Claude.",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "Clave de API y modelos de Anthropic."
+      }
+    },
+    "et": {
+      "anthropicProvider": {
+        "adm_chooseLink": "Vastava teenusepakkuja valib Seaded > Tehisintellekt.",
+        "adm_connDesc": "Salvesta kõigepealt võti. Proovimine loetleb mudelid, mida see kasutada tohib, ja mudeliväljad pakuvad neid siis välja. Kuni nuppu ei vajutata, ei saadeta teenusele Anthropic midagi.",
+        "adm_connOk": "Ühendatud. Leiti {count, plural, one {# mudel} other {# mudelit}}.",
+        "adm_connTry": "Proovi ühendust",
+        "adm_conn_failed": "Anthropic vastas veaga. Proovi hiljem uuesti.",
+        "adm_conn_not_configured": "Võtit pole veel salvestatud. Salvesta see ja proovi uuesti.",
+        "adm_conn_rate_limited": "Anthropic palus sel saidil aeglasemalt käia. Proovi minuti pärast uuesti.",
+        "adm_conn_unauthorized": "Anthropic lükkas võtme tagasi. Kontrolli, et see kopeeriti tervikuna ja on endiselt aktiivne.",
+        "adm_conn_unreachable": "Sellest serverist ei õnnestunud teenusega Anthropic ühendust saada.",
+        "adm_effortDesc": "Kui palju mudel enne vastamist mõtleb. Suurem pingutus kulutab rohkem tokeneid ja võtab kauem aega. Automaatne ei saada midagi ja jätab otsuse mudelile.",
+        "adm_effortLabel": "Pingutus",
+        "adm_effort_auto": "Automaatne (mudel otsustab)",
+        "adm_effort_high": "Kõrge",
+        "adm_effort_low": "Madal",
+        "adm_effort_max": "Maksimaalne",
+        "adm_effort_medium": "Keskmine",
+        "adm_effort_xhigh": "Väga kõrge",
+        "adm_fastDesc": "Lühikeste ja sagedaste päringute jaoks, näiteks postituste sorteerimiseks. Tühjana kasutatakse mudelit {model}.",
+        "adm_fastLabel": "Kiire mudel",
+        "adm_keyDesc": "Sinu Anthropic API võti. See salvestatakse krüpteeritult ja seda ei näidata enam kunagi.",
+        "adm_keyLabel": "API võti",
+        "adm_smartDesc": "Päringute jaoks, mis vajavad rohkem otsustusvõimet, näiteks vastuse mustandi kirjutamiseks. Tühjana kasutatakse mudelit {model}.",
+        "adm_smartLabel": "Võimekas mudel",
+        "adm_subtitle": "Võti ja mudelid, millega see sait teenuse Anthropic poole pöördub.",
+        "adm_title": "Anthropic seaded",
+        "perm_manage": "Halda"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "Claude (Anthropic) tehisintellekti teenusepakkuja",
+        "module_anthropic-provider_description": "Vastab selle saidi tehisintellekti päringutele, kasutades Claude'i mudeleid.",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "Anthropic API võti ja mudelid."
+      }
+    },
+    "fr": {
+      "anthropicProvider": {
+        "adm_chooseLink": "Le fournisseur qui répond se choisit dans Paramètres > IA.",
+        "adm_connDesc": "Enregistrez d’abord la clé. L’essai liste les modèles qu’elle peut utiliser, que les champs de modèle proposent ensuite. Rien n’est envoyé à Anthropic tant que vous n’appuyez pas sur le bouton.",
+        "adm_connOk": "Connecté. {count, plural, one {# modèle trouvé} other {# modèles trouvés}}.",
+        "adm_connTry": "Tester la connexion",
+        "adm_conn_failed": "Anthropic a répondu par une erreur. Réessayez plus tard.",
+        "adm_conn_not_configured": "Aucune clé n’est encore enregistrée. Enregistrez-en une, puis réessayez.",
+        "adm_conn_rate_limited": "Anthropic demande à ce site de ralentir. Réessayez dans une minute.",
+        "adm_conn_unauthorized": "Anthropic a refusé la clé. Vérifiez qu’elle a été copiée en entier et qu’elle est toujours active.",
+        "adm_conn_unreachable": "Anthropic est injoignable depuis ce serveur.",
+        "adm_effortDesc": "Combien le modèle réfléchit avant de répondre. Plus d’effort consomme plus de tokens et prend plus de temps. Automatique n’envoie rien et laisse le modèle décider.",
+        "adm_effortLabel": "Effort",
+        "adm_effort_auto": "Automatique (le modèle décide)",
+        "adm_effort_high": "Élevé",
+        "adm_effort_low": "Faible",
+        "adm_effort_max": "Maximal",
+        "adm_effort_medium": "Moyen",
+        "adm_effort_xhigh": "Très élevé",
+        "adm_fastDesc": "Pour les appels courts et fréquents, comme le tri des messages. Vide utilise {model}.",
+        "adm_fastLabel": "Modèle rapide",
+        "adm_keyDesc": "Votre clé d’API Anthropic. Elle est stockée chiffrée et n’est plus jamais affichée.",
+        "adm_keyLabel": "Clé d’API",
+        "adm_smartDesc": "Pour les appels qui demandent plus de discernement, comme rédiger une réponse. Vide utilise {model}.",
+        "adm_smartLabel": "Modèle puissant",
+        "adm_subtitle": "La clé et les modèles avec lesquels ce site interroge Anthropic.",
+        "adm_title": "Paramètres Anthropic",
+        "perm_manage": "Gérer"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "Fournisseur d’IA Claude (Anthropic)",
+        "module_anthropic-provider_description": "Répond aux appels d’IA de ce site avec les modèles Claude.",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "Clé d’API et modèles pour Anthropic."
+      }
+    },
+    "it": {
+      "anthropicProvider": {
+        "adm_chooseLink": "Il provider che risponde si sceglie in Impostazioni > IA.",
+        "adm_connDesc": "Salva prima la chiave. La prova elenca i modelli che può usare, che i campi del modello poi suggeriscono. Nulla viene inviato a Anthropic finché non premi il pulsante.",
+        "adm_connOk": "Connesso. {count, plural, one {# modello trovato} other {# modelli trovati}}.",
+        "adm_connTry": "Prova la connessione",
+        "adm_conn_failed": "Anthropic ha risposto con un errore. Riprova più tardi.",
+        "adm_conn_not_configured": "Non è ancora salvata nessuna chiave. Salvane una e riprova.",
+        "adm_conn_rate_limited": "Anthropic ha chiesto a questo sito di rallentare. Riprova tra un minuto.",
+        "adm_conn_unauthorized": "Anthropic ha rifiutato la chiave. Controlla che sia stata copiata per intero e che sia ancora attiva.",
+        "adm_conn_unreachable": "Impossibile raggiungere Anthropic da questo server.",
+        "adm_effortDesc": "Quanto il modello ragiona prima di rispondere. Più impegno consuma più token e richiede più tempo. Automatico non invia nulla e lascia decidere al modello.",
+        "adm_effortLabel": "Impegno",
+        "adm_effort_auto": "Automatico (decide il modello)",
+        "adm_effort_high": "Alto",
+        "adm_effort_low": "Basso",
+        "adm_effort_max": "Massimo",
+        "adm_effort_medium": "Medio",
+        "adm_effort_xhigh": "Molto alto",
+        "adm_fastDesc": "Per chiamate brevi e frequenti, come smistare i post. Vuoto usa {model}.",
+        "adm_fastLabel": "Modello veloce",
+        "adm_keyDesc": "La tua chiave API Anthropic. Viene salvata cifrata e non viene più mostrata.",
+        "adm_keyLabel": "Chiave API",
+        "adm_smartDesc": "Per chiamate che richiedono più giudizio, come scrivere la bozza di una risposta. Vuoto usa {model}.",
+        "adm_smartLabel": "Modello potente",
+        "adm_subtitle": "La chiave e i modelli con cui questo sito interroga Anthropic.",
+        "adm_title": "Impostazioni Anthropic",
+        "perm_manage": "Gestisci"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "Provider IA Claude (Anthropic)",
+        "module_anthropic-provider_description": "Risponde alle chiamate IA di questo sito con i modelli Claude.",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "Chiave API e modelli per Anthropic."
+      }
+    },
+    "pl": {
+      "anthropicProvider": {
+        "adm_chooseLink": "Dostawcę, który odpowiada, wybiera się w Ustawienia > AI.",
+        "adm_connDesc": "Najpierw zapisz klucz. Próba wyświetla modele, których może używać, a pola modeli je podpowiadają. Do Anthropic nic nie jest wysyłane, dopóki nie naciśniesz przycisku.",
+        "adm_connOk": "Połączono. Znaleziono {count, plural, one {# model} few {# modele} many {# modeli} other {# modelu}}.",
+        "adm_connTry": "Sprawdź połączenie",
+        "adm_conn_failed": "Anthropic odpowiedział błędem. Spróbuj ponownie później.",
+        "adm_conn_not_configured": "Nie zapisano jeszcze klucza. Zapisz go i spróbuj ponownie.",
+        "adm_conn_rate_limited": "Anthropic poprosił tę stronę o zwolnienie. Spróbuj ponownie za minutę.",
+        "adm_conn_unauthorized": "Anthropic odrzucił klucz. Sprawdź, czy został skopiowany w całości i czy jest nadal aktywny.",
+        "adm_conn_unreachable": "Nie udało się połączyć z Anthropic z tego serwera.",
+        "adm_effortDesc": "Ile model myśli przed odpowiedzią. Większy wysiłek zużywa więcej tokenów i trwa dłużej. Automatycznie nie wysyła nic i zostawia decyzję modelowi.",
+        "adm_effortLabel": "Wysiłek",
+        "adm_effort_auto": "Automatycznie (decyduje model)",
+        "adm_effort_high": "Wysoki",
+        "adm_effort_low": "Niski",
+        "adm_effort_max": "Maksymalny",
+        "adm_effort_medium": "Średni",
+        "adm_effort_xhigh": "Bardzo wysoki",
+        "adm_fastDesc": "Do krótkich, częstych wywołań, takich jak sortowanie postów. Puste oznacza {model}.",
+        "adm_fastLabel": "Szybki model",
+        "adm_keyDesc": "Twój klucz API Anthropic. Jest przechowywany w postaci zaszyfrowanej i nigdy więcej nie jest pokazywany.",
+        "adm_keyLabel": "Klucz API",
+        "adm_smartDesc": "Do wywołań wymagających więcej osądu, takich jak szkic odpowiedzi. Puste oznacza {model}.",
+        "adm_smartLabel": "Mocny model",
+        "adm_subtitle": "Klucz i modele, z którymi ta strona pyta Anthropic.",
+        "adm_title": "Ustawienia Anthropic",
+        "perm_manage": "Zarządzaj"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "Dostawca AI Claude (Anthropic)",
+        "module_anthropic-provider_description": "Odpowiada na wywołania AI tej strony za pomocą modeli Claude.",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "Klucz API i modele dla Anthropic."
+      }
+    },
+    "pt": {
+      "anthropicProvider": {
+        "adm_chooseLink": "O provedor que responde é escolhido em Configurações > IA.",
+        "adm_connDesc": "Salve a chave primeiro. O teste lista os modelos que ela pode usar, e os campos de modelo passam a sugeri-los. Nada é enviado ao Anthropic até você apertar o botão.",
+        "adm_connOk": "Conectado. {count, plural, one {# modelo encontrado} other {# modelos encontrados}}.",
+        "adm_connTry": "Testar a conexão",
+        "adm_conn_failed": "O Anthropic respondeu com um erro. Tente de novo mais tarde.",
+        "adm_conn_not_configured": "Nenhuma chave foi salva ainda. Salve uma e tente de novo.",
+        "adm_conn_rate_limited": "O Anthropic pediu que este site desacelere. Tente de novo em um minuto.",
+        "adm_conn_unauthorized": "O Anthropic recusou a chave. Confira se ela foi copiada inteira e se ainda está ativa.",
+        "adm_conn_unreachable": "Não foi possível alcançar o Anthropic a partir deste servidor.",
+        "adm_effortDesc": "Quanto o modelo pensa antes de responder. Mais esforço gasta mais tokens e demora mais. Automático não envia nada e deixa a decisão para o modelo.",
+        "adm_effortLabel": "Esforço",
+        "adm_effort_auto": "Automático (o modelo decide)",
+        "adm_effort_high": "Alto",
+        "adm_effort_low": "Baixo",
+        "adm_effort_max": "Máximo",
+        "adm_effort_medium": "Médio",
+        "adm_effort_xhigh": "Muito alto",
+        "adm_fastDesc": "Para chamadas curtas e frequentes, como classificar publicações. Vazio usa {model}.",
+        "adm_fastLabel": "Modelo rápido",
+        "adm_keyDesc": "Sua chave de API do Anthropic. Ela é guardada criptografada e nunca mais é exibida.",
+        "adm_keyLabel": "Chave de API",
+        "adm_smartDesc": "Para chamadas que exigem mais critério, como redigir uma resposta. Vazio usa {model}.",
+        "adm_smartLabel": "Modelo avançado",
+        "adm_subtitle": "A chave e os modelos com que este site pergunta ao Anthropic.",
+        "adm_title": "Configurações do Anthropic",
+        "perm_manage": "Gerenciar"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "Provedor de IA Claude (Anthropic)",
+        "module_anthropic-provider_description": "Responde às chamadas de IA deste site com modelos Claude.",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "Chave de API e modelos do Anthropic."
+      }
+    },
+    "ru": {
+      "anthropicProvider": {
+        "adm_chooseLink": "Какой провайдер отвечает, выбирается в разделе Настройки > ИИ.",
+        "adm_connDesc": "Сначала сохраните ключ. Проверка перечисляет модели, доступные ключу, и поля моделей начинают их подсказывать. Пока вы не нажмёте кнопку, в Anthropic ничего не отправляется.",
+        "adm_connOk": "Подключено. {count, plural, one {Найдена # модель} few {Найдено # модели} many {Найдено # моделей} other {Найдено # модели}}.",
+        "adm_connTry": "Проверить подключение",
+        "adm_conn_failed": "Anthropic ответил ошибкой. Попробуйте позже.",
+        "adm_conn_not_configured": "Ключ ещё не сохранён. Сохраните его и попробуйте снова.",
+        "adm_conn_rate_limited": "Anthropic просит этот сайт снизить частоту запросов. Попробуйте через минуту.",
+        "adm_conn_unauthorized": "Anthropic отклонил ключ. Проверьте, что он скопирован целиком и всё ещё действует.",
+        "adm_conn_unreachable": "Не удалось связаться с Anthropic с этого сервера.",
+        "adm_effortDesc": "Сколько модель думает перед ответом. Больше усилия тратит больше токенов и занимает больше времени. «Авто» ничего не отправляет и оставляет решение модели.",
+        "adm_effortLabel": "Усилие",
+        "adm_effort_auto": "Авто (решает модель)",
+        "adm_effort_high": "Высокое",
+        "adm_effort_low": "Низкое",
+        "adm_effort_max": "Максимальное",
+        "adm_effort_medium": "Среднее",
+        "adm_effort_xhigh": "Очень высокое",
+        "adm_fastDesc": "Для коротких частых запросов, например сортировки публикаций. Если пусто, используется {model}.",
+        "adm_fastLabel": "Быстрая модель",
+        "adm_keyDesc": "Ваш ключ API Anthropic. Он хранится в зашифрованном виде и больше никогда не показывается.",
+        "adm_keyLabel": "Ключ API",
+        "adm_smartDesc": "Для запросов, где нужно больше рассуждений, например черновика ответа. Если пусто, используется {model}.",
+        "adm_smartLabel": "Сильная модель",
+        "adm_subtitle": "Ключ и модели, с которыми этот сайт обращается к Anthropic.",
+        "adm_title": "Настройки Anthropic",
+        "perm_manage": "Управление"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "ИИ-провайдер Claude (Anthropic)",
+        "module_anthropic-provider_description": "Отвечает на ИИ-запросы сайта с помощью моделей Claude.",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "Ключ API и модели Anthropic."
+      }
+    },
+    "zh": {
+      "anthropicProvider": {
+        "adm_chooseLink": "由哪个服务商回答，在“设置 > AI”中选择。",
+        "adm_connDesc": "请先保存密钥。测试会列出该密钥可用的模型，模型字段随后会给出建议。在你按下按钮之前，不会向 Anthropic 发送任何内容。",
+        "adm_connOk": "已连接。找到 {count} 个模型。",
+        "adm_connTry": "测试连接",
+        "adm_conn_failed": "Anthropic 返回了错误。请稍后重试。",
+        "adm_conn_not_configured": "尚未保存密钥。请保存后重试。",
+        "adm_conn_rate_limited": "Anthropic 要求本站放慢请求速度。请一分钟后重试。",
+        "adm_conn_unauthorized": "Anthropic 拒绝了该密钥。请检查它是否完整复制且仍然有效。",
+        "adm_conn_unreachable": "无法从此服务器连接到 Anthropic。",
+        "adm_effortDesc": "模型回答前思考的多少。思考越多，消耗的令牌越多，耗时越长。“自动”不发送任何设置，交给模型决定。",
+        "adm_effortLabel": "思考程度",
+        "adm_effort_auto": "自动（由模型决定）",
+        "adm_effort_high": "高",
+        "adm_effort_low": "低",
+        "adm_effort_max": "最高",
+        "adm_effort_medium": "中",
+        "adm_effort_xhigh": "很高",
+        "adm_fastDesc": "用于整理帖子等简短而频繁的调用。留空则使用 {model}。",
+        "adm_fastLabel": "快速模型",
+        "adm_keyDesc": "你的 Anthropic API 密钥。它会加密保存，之后不再显示。",
+        "adm_keyLabel": "API 密钥",
+        "adm_smartDesc": "用于起草回复等需要更多判断的调用。留空则使用 {model}。",
+        "adm_smartLabel": "强力模型",
+        "adm_subtitle": "本站向 Anthropic 提问时使用的密钥和模型。",
+        "adm_title": "Anthropic 设置",
+        "perm_manage": "管理"
+      },
+      "admin": {
+        "module_anthropic-provider_name": "Claude (Anthropic) AI 服务商",
+        "module_anthropic-provider_description": "使用 Claude 模型 回答本站的 AI 调用。",
+        "settings_anthropic-provider": "Claude (Anthropic)",
+        "settings_anthropic-provider_description": "Anthropic 的 API 密钥和模型。"
+      }
+    }
+  }
+}
