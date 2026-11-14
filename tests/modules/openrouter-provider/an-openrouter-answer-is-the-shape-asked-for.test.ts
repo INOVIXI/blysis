@@ -116,6 +116,18 @@ describe("the request", () => {
         expect(sent[0].headers.get("x-title")).toBe("Kayadibi Network");
     });
 
+    it("carries none of the OpenAI account the server environment may name", async () => {
+        vi.stubEnv("OPENAI_ORG_ID", "org-operator");
+        vi.stubEnv("OPENAI_PROJECT_ID", "proj-operator");
+        try {
+            await provider.generate(request());
+        } finally {
+            vi.unstubAllEnvs();
+        }
+        expect(sent[0].headers.get("openai-organization")).toBeNull();
+        expect(sent[0].headers.get("openai-project")).toBeNull();
+    });
+
     it("routes only to hosts that honour the schema", async () => {
         await provider.generate(request());
         expect(sent[0].body).toMatchObject({

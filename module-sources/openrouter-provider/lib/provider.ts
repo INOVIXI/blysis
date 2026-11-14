@@ -69,6 +69,11 @@ function client(config: Config & { apiKey: string }): OpenAI {
     return new OpenAI({
         apiKey: config.apiKey,
         baseURL: process.env.OPENROUTER_BASE_URL?.trim() || OPENROUTER_API,
+        // Left unset, the SDK fills these from OPENAI_ORG_ID and
+        // OPENAI_PROJECT_ID and sends the operator's OpenAI account to
+        // OpenRouter with every request.
+        organization: null,
+        project: null,
         maxRetries: 0,
         // How OpenRouter attributes a request to the app that sent it.
         defaultHeaders: { "HTTP-Referer": resolveAppUrl(), "X-Title": config.title },
