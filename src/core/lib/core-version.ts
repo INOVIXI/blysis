@@ -18,7 +18,8 @@
  * `ReviewCapacity`) and what its screens need from the queue:
  * `moderationKinds`, `moderationReasons`, `readModerated` and `moderate`
  * (with `ModerationKind`, `ModerateInput`, `ModerateResult`). A moderation
- * setting may now be "review". An addition.
+ * setting may now be "review". `siteLanguage` answers the language the site
+ * opens in, for a job with no visitor to ask. An addition.
  *
  * 5.42.0 - the account menu draws the `navbar.userMenu` slot, under the
  * profile link, and hands what fills it `close`, which shuts the menu. A

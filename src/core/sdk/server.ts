@@ -315,3 +315,5 @@ export { isRestrictedFrom, restrictionsOn } from "@/core/lib/restrictions-server
 // A module's own words on the server, outside a page. `getTranslations` needs
 // a route segment to find a locale in and an API route has none.
 export { moduleTranslator } from "@/core/lib/module-translator";
+// The language the site opens in, for a job with no visitor to take one from.
+export { siteLanguage } from "@/core/lib/i18n/site-languages-setting";
