@@ -24,6 +24,14 @@ const PURPOSE = "reply";
 const MINUTE = 60_000;
 /** How long a failed call waits before it is tried again, per attempt so far. */
 const RETRY_STEP = 5 * MINUTE;
+/**
+ * How many due jobs one round looks at, per question it may ask the model.
+ * The operator's limit counts questions: a ticket let go without one (a
+ * department that is off, a ticket closed meanwhile) costs a read, and
+ * counting it would let a busy desk's quiet departments hold up the rest.
+ */
+const LOOK_AHEAD = 20;
+const MAX_LOOKED_AT = 500;
 
 let running = false;
 
@@ -41,29 +49,33 @@ export async function forget(ticketId: string): Promise<void> {
     await prisma.aiSupportJob.deleteMany({ where: { ticketId } });
 }
 
-export async function runAnswerRound(now = new Date()): Promise<{ handled: number }> {
+export async function runAnswerRound(now = new Date()): Promise<{ handled: number; asked: number }> {
     // One round at a time in a process: a slow model must not let the next
     // minute's round answer the same ticket again.
-    if (running) return { handled: 0 };
+    if (running) return { handled: 0, asked: 0 };
     running = true;
     try {
         const config = await readConfig();
         const jobs = await prisma.aiSupportJob.findMany({
             where: { dueAt: { lte: now } },
             orderBy: { dueAt: "asc" },
-            take: config.perRun,
+            take: Math.min(config.perRun * LOOK_AHEAD, MAX_LOOKED_AT),
             select: { id: true, ticketId: true, attempts: true },
         });
+        let handled = 0;
+        let asked = 0;
         for (const job of jobs) {
+            if (asked >= config.perRun) break;
+            handled += 1;
             try {
-                await answer(job, config, now);
+                if (await answer(job, config, now)) asked += 1;
             } catch (err) {
                 // One ticket's failure is not the round's: the next job runs.
                 log.error("[ai-support] a ticket could not be answered", { ticketId: job.ticketId, error: err instanceof Error ? err.message : String(err) });
                 await prisma.aiSupportJob.deleteMany({ where: { id: job.id } });
             }
         }
-        return { handled: jobs.length };
+        return { handled, asked };
     } finally {
         running = false;
     }
@@ -75,11 +87,13 @@ interface Job {
     attempts: number;
 }
 
-async function drop(job: Job): Promise<void> {
+async function drop(job: Job): Promise<false> {
     await prisma.aiSupportJob.deleteMany({ where: { id: job.id } });
+    return false;
 }
 
-async function answer(job: Job, config: AiSupportConfig, now: Date): Promise<void> {
+/** Works one job through; true when it asked the model. */
+async function answer(job: Job, config: AiSupportConfig, now: Date): Promise<boolean> {
     const thread = await readThread(job.ticketId);
     const last = thread?.messages[thread.messages.length - 1];
     // Nothing to answer: gone, finished, stopped, or the member is not the
@@ -92,23 +106,25 @@ async function answer(job: Job, config: AiSupportConfig, now: Date): Promise<voi
         where: { ticketId: thread.id, afterMessageId: last.id },
         select: { id: true, status: true, reply: true, canAnswer: true, confidence: true },
     });
+    let asked = false;
     if (!draft) {
+        asked = true;
         const made = await draftFor(job, thread, last.id, config, now);
-        if (!made) return;
+        if (!made) return asked;
         draft = made;
     }
-    if (mode !== "auto" || draft.status !== "draft") return drop(job);
+    if (mode !== "auto" || draft.status !== "draft") return (await drop(job)) || asked;
 
     const sure = draft.canAnswer && (draft.confidence ?? 0) >= config.threshold;
     const sent = await prisma.aiSupportDraft.count({ where: { ticketId: thread.id, status: "sent" } });
     const timeZone = await siteTimeZone();
-    if (!sure || sent >= config.maxAuto || !inWindow(now, timeZone, config.days, config.from, config.to)) return drop(job);
+    if (!sure || sent >= config.maxAuto || !inWindow(now, timeZone, config.days, config.from, config.to)) return (await drop(job)) || asked;
 
     // Staff answer first. Until the wait is over the draft waits with the job.
     const answerableAt = new Date(last.createdAt.getTime() + config.waitMinutes * MINUTE);
     if (now < answerableAt) {
         await prisma.aiSupportJob.update({ where: { id: job.id }, data: { dueAt: answerableAt } });
-        return;
+        return asked;
     }
 
     const outcome = await postReply({ ticketId: thread.id, content: draft.reply, afterMessageId: last.id });
@@ -117,6 +133,7 @@ async function answer(job: Job, config: AiSupportConfig, now: Date): Promise<voi
         data: { status: outcome.ok ? "sent" : outcome.reason === "stale" ? "stale" : "draft" },
     });
     await drop(job);
+    return asked;
 }
 
 interface DraftRow {

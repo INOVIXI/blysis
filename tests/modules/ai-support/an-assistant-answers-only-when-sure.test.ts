@@ -306,4 +306,16 @@ describe("the queue", () => {
         expect(store.jobs).toHaveLength(1);
         expect(store.jobs[0].dueAt).toEqual(later(2));
     });
+
+    it("spends a round's room on questions to the model, not on tickets it lets go", async () => {
+        settings = { ...settings, [SETTING_KEYS.perRun]: 1 };
+        store.jobs = [];
+        // Older than the ticket it can answer, and nothing to answer.
+        for (const id of ["gone-1", "gone-2", "gone-3"]) await enqueue(id, START);
+        await enqueue("t1", later(1));
+        await runAnswerRound(later(2));
+        expect(generateStructured).toHaveBeenCalledTimes(1);
+        expect(store.drafts).toHaveLength(1);
+        expect(store.jobs).toHaveLength(0);
+    });
 });
