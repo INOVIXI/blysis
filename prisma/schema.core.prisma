@@ -437,6 +437,25 @@ model ModerationDecision {
   @@index([decidedById])
 }
 
+/// What core's review round handed a reviewing module, one row per version of
+/// an item's text: an edit is a new row, judged again. `settled` means an answer
+/// came back for it; `attempts` counts the calls that failed it. Holds no text.
+/// See lib/moderation-review.ts.
+model ModerationReview {
+  id        String   @id @default(cuid())
+  provider  String
+  itemId    String
+  version   String
+  reviewer  String
+  attempts  Int      @default(0)
+  settled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provider, itemId, version])
+  @@index([updatedAt])
+}
+
 // One row per AI call, answered or refused. What it cost and how it ended,
 // never what was asked or answered: a post sent for review stays the post's.
 model AiUsage {

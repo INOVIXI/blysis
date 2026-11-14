@@ -44,6 +44,8 @@ import { errorText, log } from "./logger";
  *   Revision           365  (longer - it's a compliance/audit trail)
  *   UserSession         30  (past expiresAt OR revoked)
  *   VerificationToken   already expired
+ *   ModerationReview    90   (since last touched; an item still waiting is
+ *                             only judged again, which costs a call)
  *
  * Returns a summary of how many rows each table dropped so the cron log
  * is useful for ops.
@@ -60,6 +62,7 @@ export interface PruneResult {
     revision: number;
     userSession: number;
     verificationToken: number;
+    moderationReview: number;
 }
 
 export async function pruneOldRecords(): Promise<PruneResult> {
@@ -69,6 +72,7 @@ export async function pruneOldRecords(): Promise<PruneResult> {
         revision: 0,
         userSession: 0,
         verificationToken: 0,
+        moderationReview: 0,
     };
 
     const cutoff = (days: number) => new Date(Date.now() - days * DAY_MS);
@@ -131,6 +135,15 @@ export async function pruneOldRecords(): Promise<PruneResult> {
         result.verificationToken = r.count;
     } catch (err) {
         log.error("[retention] verificationToken prune failed", { error: errorText(err) });
+    }
+
+    try {
+        const r = await prisma.moderationReview.deleteMany({
+            where: { updatedAt: { lt: cutoff(90) } },
+        });
+        result.moderationReview = r.count;
+    } catch (err) {
+        log.error("[retention] moderationReview prune failed", { error: errorText(err) });
     }
 
     return result;

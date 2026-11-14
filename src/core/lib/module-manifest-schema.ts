@@ -1237,6 +1237,20 @@ export const moduleManifestSchema = z.object({
     seoRoutes: z.object({ handler: relativePath("handler") }).optional(),
     userDataExport: z.array(userDataExportEntry).max(50).optional(),
     moderationProviders: z.array(moderationProvider).max(20).optional(),
+    /**
+     * A module that decides what waits in the moderation queue, for the kinds
+     * an admin set to "review". Core runs the round and applies the answers;
+     * the handler only judges. See `src/core/lib/moderation-review.ts`.
+     */
+    moderationReviewer: z
+        .object({
+            /** What the moderation screens call it. */
+            name: z.string().min(1).max(64),
+            /** Exports `capacity` and `review`. */
+            handler: relativePath("moderationReviewer.handler"),
+        })
+        .strict()
+        .optional(),
     avatarProviders: z.array(avatarProvider).max(10).optional(),
     csp: cspContribution.optional(),
 }).strict().superRefine((m, ctx) => {
@@ -1356,6 +1370,7 @@ export function collectManifestFileRefs(m: ValidatedModuleManifest): string[] {
     push(m.hooks?.onDisable);
     push(m.seoRoutes?.handler);
     m.moderationProviders?.forEach((r) => push(r.handler));
+    push(m.moderationReviewer?.handler);
     push(m.aiProvider?.handler);
     m.authProviders?.forEach((r) => push(r.factory));
 

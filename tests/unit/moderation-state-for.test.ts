@@ -27,6 +27,11 @@ describe("moderationStateFor", () => {
         expect(await moderationStateFor("forum_posts")).toBe("PENDING");
     });
 
+    it("holds a post for a reviewer when its kind is set to review, so nothing is published unread", async () => {
+        stored = { value: { forum_posts: "review" } };
+        expect(await moderationStateFor("forum_posts")).toBe("PENDING");
+    });
+
     it("publishes a post whose kind is set to auto", async () => {
         stored = { value: { forum_posts: "auto" } };
         expect(await moderationStateFor("forum_posts")).toBe("APPROVED");

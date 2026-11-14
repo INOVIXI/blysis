@@ -366,6 +366,17 @@ export async function bootstrapScheduler(): Promise<void> {
     });
 
     registerCronJob({
+        key: "core:moderation-review",
+        schedule: "every-minute",
+        handler: async () => {
+            // A no-op without a reviewing module or a kind set to "review".
+            const { runReviewRound } = await import("./moderation-review");
+            const handed = await runReviewRound();
+            if (handed > 0) log.info("cron: moderation-review round complete", { job: "moderation-review", handed });
+        },
+    });
+
+    registerCronJob({
         key: "core:automated-backup",
         // How often is the operator's answer, read on the tick rather than
         // here: a cadence changed on the backup screen takes effect on the

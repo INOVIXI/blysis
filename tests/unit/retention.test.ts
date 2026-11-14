@@ -8,6 +8,7 @@ const revisionDeleteMany = vi.fn();
 const userSessionDeleteMany = vi.fn();
 const verificationTokenDeleteMany = vi.fn();
 const webhookLogDeleteMany = vi.fn();
+const moderationReviewDeleteMany = vi.fn();
 
 vi.mock("@/core/lib/db", () => ({
     prisma: {
@@ -17,6 +18,7 @@ vi.mock("@/core/lib/db", () => ({
         revision: { deleteMany: (...a: unknown[]) => revisionDeleteMany(...a) },
         userSession: { deleteMany: (...a: unknown[]) => userSessionDeleteMany(...a) },
         verificationToken: { deleteMany: (...a: unknown[]) => verificationTokenDeleteMany(...a) },
+        moderationReview: { deleteMany: (...a: unknown[]) => moderationReviewDeleteMany(...a) },
         // Present, because the module that owns it is installed. Core still
         // must not touch it.
         webhookLog: { deleteMany: (...a: unknown[]) => webhookLogDeleteMany(...a) },
@@ -39,6 +41,7 @@ beforeEach(async () => {
         userSessionDeleteMany,
         verificationTokenDeleteMany,
         webhookLogDeleteMany,
+        moderationReviewDeleteMany,
     ]) {
         fn.mockReset().mockResolvedValue(count(0));
     }
@@ -58,7 +61,16 @@ describe("retention: pruneOldRecords", () => {
             revision: 3,
             userSession: 0,
             verificationToken: 4,
+            moderationReview: 0,
         });
+    });
+
+    it("forgets what the review round handed over 90 days after it last touched it", async () => {
+        moderationReviewDeleteMany.mockResolvedValue(count(2));
+        const before = Date.now();
+        expect((await mod.pruneOldRecords()).moderationReview).toBe(2);
+        const arg = moderationReviewDeleteMany.mock.calls[0]?.[0] as { where: { updatedAt: { lt: Date } } };
+        expect(Math.abs(arg.where.updatedAt.lt.getTime() - (before - 90 * DAY_MS))).toBeLessThan(200);
     });
 
     it("keeps activity feed items for 180 days", async () => {
