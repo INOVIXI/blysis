@@ -34,6 +34,12 @@ export interface SettingsField {
     defaultValue?: string;
     accept?: string;
     options?: { value: string; label: string }[];
+    /**
+     * Values a text field offers without limiting the answer to them, such
+     * as the models a vendor listed a moment ago: a new one still has to be
+     * typeable before this screen has heard of it.
+     */
+    suggestions?: string[];
 }
 
 interface SettingsFormProps {
@@ -233,17 +239,25 @@ export function SettingsForm({ title, subtitle, fields, children }: SettingsForm
                                         ))}
                                     </NativeSelect>
                                 ) : (
-                                    <Input
-                                        type={field.type || "text"}
-                                        value={values[field.key] || ""}
-                                        onChange={(e) => setValues({ ...values, [field.key]: e.target.value })}
-                                        placeholder={
-                                            isSecretField(field) && stored.has(field.key)
-                                                ? t("settingsForm_secretKept")
-                                                : field.placeholder
-                                        }
-                                        aria-label={field.label}
-                                    />
+                                    <>
+                                        <Input
+                                            type={field.type || "text"}
+                                            value={values[field.key] || ""}
+                                            onChange={(e) => setValues({ ...values, [field.key]: e.target.value })}
+                                            placeholder={
+                                                isSecretField(field) && stored.has(field.key)
+                                                    ? t("settingsForm_secretKept")
+                                                    : field.placeholder
+                                            }
+                                            aria-label={field.label}
+                                            list={field.suggestions?.length ? `${FORM_ID}-${field.key}-suggestions` : undefined}
+                                        />
+                                        {field.suggestions?.length ? (
+                                            <datalist id={`${FORM_ID}-${field.key}-suggestions`}>
+                                                {field.suggestions.map((value) => <option key={value} value={value} />)}
+                                            </datalist>
+                                        ) : null}
+                                    </>
                                 )}
                                 {field.description && (
                                     <p className="text-xs text-muted-foreground mt-1">{field.description}</p>

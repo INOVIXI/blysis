@@ -12,6 +12,11 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.41.0 - a `SettingsForm` text field can carry `suggestions`, values it
+ * offers without limiting the answer to them, so a provider screen can list
+ * the models its vendor reported while still taking one released since.
+ * An addition.
+ *
  * 5.40.0 - a module can ask an AI model. `@/core/sdk/server` gains
  * `generateStructured`, which takes a Zod schema and answers with a value of
  * its type or throws `AiError` (and the types `AiProvider`, `AiRequest`,
@@ -809,4 +814,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.40.0";
+export const CORE_API_VERSION = "5.41.0";
