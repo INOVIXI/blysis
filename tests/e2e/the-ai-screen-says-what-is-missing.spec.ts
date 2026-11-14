@@ -26,8 +26,11 @@ test("the AI screen says what is missing and keeps what it saves", async ({ page
             await expect(missing.getByRole("link")).toHaveAttribute("href", /\/admin\/modules$/);
         } else {
             await expect(missing).toHaveCount(0);
+            // The settings sidebar lists each provider's screen under the same
+            // name, so a row is the item that also carries the provider's state.
+            const rows = page.getByRole("listitem").filter({ hasText: /Switched off|Needs its key|Ready/ });
             for (const provider of providers) {
-                await expect(page.getByRole("listitem").filter({ hasText: provider.name })).toBeVisible();
+                await expect(rows.filter({ hasText: provider.name })).toBeVisible();
             }
         }
 
