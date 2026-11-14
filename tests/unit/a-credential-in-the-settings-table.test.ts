@@ -60,7 +60,7 @@ const WAS_PLAINTEXT: Record<string, string> = {
 const LOOKS_LIKE_A_CREDENTIAL = /secret|password|token|api_key|apikey|private/i;
 
 /** Keys core reads for itself. None of them is a credential. */
-const CORE_OWN_KEYS = new Set(["password_hash_algorithm", "password_min_length", "password_reset_expiry_minutes"]);
+const CORE_OWN_KEYS = new Set(["legacy_password_hashes", "password_hash_algorithm", "password_min_length", "password_reset_expiry_minutes"]);
 
 function tsFiles(dir: string, out: string[] = []): string[] {
     if (!fs.existsSync(dir)) return out;

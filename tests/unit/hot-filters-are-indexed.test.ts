@@ -47,6 +47,7 @@ const EXEMPT: Record<string, string> = {
     "User.loginSessions": "a relation filter, which this scan cannot see through: the join uses UserSession.userId and the conditions are isRevoked and expiresAt, all indexed",
     "User.isBanned": "counting the administrators who can still sign in, which runs once per ban, demotion or deletion - an admin action, not a request path, and the row it protects against losing is the last one",
     "User.isDeleted": "the same count, for the same reason",
+    "User.password": "a compare-and-swap on the hash a sign-in just checked, paired with the user's id, which is the primary key, so the planner has one row before this condition is applied",
     "User.role": "the same count: a relation filter this scan cannot see through, joining on User.roleId to a table with three rows in it",
 };
 
