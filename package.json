@@ -57,6 +57,7 @@
     "report:permissions": "npx tsx scripts/permission-report.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
     "@auth/core": "^0.41.3",
     "@auth/prisma-adapter": "^2.11.1",
     "@aws-sdk/client-s3": "^3.1146.0",
@@ -88,6 +89,7 @@
     "next-intl": "^4.14.9",
     "nodemailer": "^10.0.15",
     "nprogress": "^0.2.0",
+    "openai": "^7.56.0",
     "otpauth": "^9.5.2",
     "pg": "^8.23.1",
     "postcss": "^8.5.31",

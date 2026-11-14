@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "updated": "2026-11-13",
-  "updatedAt": "2026-11-13T19:26:07Z",
+  "updated": "2026-11-14",
+  "updatedAt": "2026-11-14T10:02:55Z",
   "modules": [
     {
       "id": "announcements",
@@ -79,6 +79,81 @@
         "publicRoutes": 0,
         "adminRoutes": 1,
         "apiRoutes": 3,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "anthropic-provider",
+      "name": "Claude (Anthropic) AI Provider",
+      "description": "Answers this site's AI calls with Claude models through the Anthropic API",
+      "i18n": {
+        "az": {
+          "name": "Claude (Anthropic) süni intellekt provayderi",
+          "description": "Bu saytın süni intellekt çağırışlarını Claude modelləri ilə cavablandırır."
+        },
+        "de": {
+          "name": "Claude (Anthropic) KI-Anbieter",
+          "description": "Beantwortet die KI-Aufrufe dieser Seite mit Claude-Modellen."
+        },
+        "es": {
+          "name": "Proveedor de IA Claude (Anthropic)",
+          "description": "Responde a las llamadas de IA de este sitio con modelos Claude."
+        },
+        "et": {
+          "name": "Claude (Anthropic) tehisintellekti teenusepakkuja",
+          "description": "Vastab selle saidi tehisintellekti päringutele, kasutades Claude'i mudeleid."
+        },
+        "fr": {
+          "name": "Fournisseur d’IA Claude (Anthropic)",
+          "description": "Répond aux appels d’IA de ce site avec les modèles Claude."
+        },
+        "it": {
+          "name": "Provider IA Claude (Anthropic)",
+          "description": "Risponde alle chiamate IA di questo sito con i modelli Claude."
+        },
+        "pl": {
+          "name": "Dostawca AI Claude (Anthropic)",
+          "description": "Odpowiada na wywołania AI tej strony za pomocą modeli Claude."
+        },
+        "pt": {
+          "name": "Provedor de IA Claude (Anthropic)",
+          "description": "Responde às chamadas de IA deste site com modelos Claude."
+        },
+        "ru": {
+          "name": "ИИ-провайдер Claude (Anthropic)",
+          "description": "Отвечает на ИИ-запросы сайта с помощью моделей Claude."
+        },
+        "tr": {
+          "name": "Claude (Anthropic) Yapay Zekâ Sağlayıcısı",
+          "description": "Bu sitenin yapay zekâ çağrılarını Claude modelleri ile yanıtlar."
+        },
+        "zh": {
+          "name": "Claude (Anthropic) AI 服务商",
+          "description": "使用 Claude 模型 回答本站的 AI 调用。"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.41.0",
+      "author": "Blysis",
+      "icon": "Bot",
+      "category": "integration",
+      "verified": true,
+      "updatedAt": "2026-11-14T10:02:55Z",
+      "screenshots": [],
+      "tags": [
+        "integration"
+      ],
+      "zip": "anthropic-provider.zip",
+      "dependencies": [],
+      "conflicts": [],
+      "hooks": {
+        "emits": [],
+        "listens": []
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 1,
+        "apiRoutes": 1,
         "widgets": 0
       }
     },
@@ -4249,6 +4324,156 @@
           "payment.providers",
           "payment.session"
         ]
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 1,
+        "apiRoutes": 1,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "openai-provider",
+      "name": "OpenAI AI Provider",
+      "description": "Answers this site's AI calls with OpenAI models through the OpenAI API",
+      "i18n": {
+        "az": {
+          "name": "OpenAI süni intellekt provayderi",
+          "description": "Bu saytın süni intellekt çağırışlarını OpenAI modelləri ilə cavablandırır."
+        },
+        "de": {
+          "name": "OpenAI KI-Anbieter",
+          "description": "Beantwortet die KI-Aufrufe dieser Seite mit OpenAI-Modellen."
+        },
+        "es": {
+          "name": "Proveedor de IA OpenAI",
+          "description": "Responde a las llamadas de IA de este sitio con modelos de OpenAI."
+        },
+        "et": {
+          "name": "OpenAI tehisintellekti teenusepakkuja",
+          "description": "Vastab selle saidi tehisintellekti päringutele, kasutades OpenAI mudeleid."
+        },
+        "fr": {
+          "name": "Fournisseur d’IA OpenAI",
+          "description": "Répond aux appels d’IA de ce site avec les modèles OpenAI."
+        },
+        "it": {
+          "name": "Provider IA OpenAI",
+          "description": "Risponde alle chiamate IA di questo sito con i modelli OpenAI."
+        },
+        "pl": {
+          "name": "Dostawca AI OpenAI",
+          "description": "Odpowiada na wywołania AI tej strony za pomocą modeli OpenAI."
+        },
+        "pt": {
+          "name": "Provedor de IA OpenAI",
+          "description": "Responde às chamadas de IA deste site com modelos da OpenAI."
+        },
+        "ru": {
+          "name": "ИИ-провайдер OpenAI",
+          "description": "Отвечает на ИИ-запросы сайта с помощью моделей OpenAI."
+        },
+        "tr": {
+          "name": "OpenAI Yapay Zekâ Sağlayıcısı",
+          "description": "Bu sitenin yapay zekâ çağrılarını OpenAI modelleri ile yanıtlar."
+        },
+        "zh": {
+          "name": "OpenAI AI 服务商",
+          "description": "使用 OpenAI 模型 回答本站的 AI 调用。"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.41.0",
+      "author": "Blysis",
+      "icon": "Bot",
+      "category": "integration",
+      "verified": true,
+      "updatedAt": "2026-11-14T10:02:55Z",
+      "screenshots": [],
+      "tags": [
+        "integration"
+      ],
+      "zip": "openai-provider.zip",
+      "dependencies": [],
+      "conflicts": [],
+      "hooks": {
+        "emits": [],
+        "listens": []
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 1,
+        "apiRoutes": 1,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "openrouter-provider",
+      "name": "OpenRouter AI Provider",
+      "description": "Answers this site's AI calls with any model OpenRouter offers",
+      "i18n": {
+        "az": {
+          "name": "OpenRouter süni intellekt provayderi",
+          "description": "Bu saytın süni intellekt çağırışlarını OpenRouter-in təklif etdiyi istənilən model ilə cavablandırır."
+        },
+        "de": {
+          "name": "OpenRouter KI-Anbieter",
+          "description": "Beantwortet die KI-Aufrufe dieser Seite mit jedem Modell, das OpenRouter anbietet."
+        },
+        "es": {
+          "name": "Proveedor de IA OpenRouter",
+          "description": "Responde a las llamadas de IA de este sitio con cualquier modelo que ofrezca OpenRouter."
+        },
+        "et": {
+          "name": "OpenRouter tehisintellekti teenusepakkuja",
+          "description": "Vastab selle saidi tehisintellekti päringutele, kasutades mis tahes OpenRouteri pakutavat mudelit."
+        },
+        "fr": {
+          "name": "Fournisseur d’IA OpenRouter",
+          "description": "Répond aux appels d’IA de ce site avec n’importe quel modèle proposé par OpenRouter."
+        },
+        "it": {
+          "name": "Provider IA OpenRouter",
+          "description": "Risponde alle chiamate IA di questo sito con qualsiasi modello offerto da OpenRouter."
+        },
+        "pl": {
+          "name": "Dostawca AI OpenRouter",
+          "description": "Odpowiada na wywołania AI tej strony za pomocą dowolnego modelu z OpenRouter."
+        },
+        "pt": {
+          "name": "Provedor de IA OpenRouter",
+          "description": "Responde às chamadas de IA deste site com qualquer modelo oferecido pelo OpenRouter."
+        },
+        "ru": {
+          "name": "ИИ-провайдер OpenRouter",
+          "description": "Отвечает на ИИ-запросы сайта с помощью любой модели из OpenRouter."
+        },
+        "tr": {
+          "name": "OpenRouter Yapay Zekâ Sağlayıcısı",
+          "description": "Bu sitenin yapay zekâ çağrılarını OpenRouter'ın sunduğu herhangi bir model ile yanıtlar."
+        },
+        "zh": {
+          "name": "OpenRouter AI 服务商",
+          "description": "使用 OpenRouter 提供的任意模型 回答本站的 AI 调用。"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.41.0",
+      "author": "Blysis",
+      "icon": "Bot",
+      "category": "integration",
+      "verified": true,
+      "updatedAt": "2026-11-14T10:02:55Z",
+      "screenshots": [],
+      "tags": [
+        "integration"
+      ],
+      "zip": "openrouter-provider.zip",
+      "dependencies": [],
+      "conflicts": [],
+      "hooks": {
+        "emits": [],
+        "listens": []
       },
       "stats": {
         "publicRoutes": 0,
