@@ -59,7 +59,7 @@ const MUST_REFUSE: [string, string, string][] = [
 const SAFE_FAMILIES: { pattern: RegExp; why: string }[] = [
     { pattern: /^\/api\/v1\/(?:blog|forum|help|changelog|custom-pages|showcase|slider|popups|announcements|comparison-tables|seo\/pages)/, why: "content the demo exists to show somebody writing" },
     { pattern: /^\/api\/v1\/(?:store|products|orders|coupons|bulk-discounts|creator-codes|gift-codes|credit-packages|store-campaigns|community-goal|product-commands|product-variables|chest|cart|widget-stats)/, why: "the shop, minus the checkout, which is refused" },
-    { pattern: /^\/api\/v1\/(?:tickets|suggestions|forms|vote|trophies|wheel|servers|staff|punishments|referral|licenses|license-keys|profile-posts|credits|currency|minecraft|discord\/(?!test-send)|in-app-notifications|notifications|activity-feed|messages|search)/, why: "a module doing its own job, on rows the reset puts back" },
+    { pattern: /^\/api\/v1\/(?:tickets|suggestions|forms|vote|trophies|wheel|crates|servers|staff|punishments|referral|licenses|license-keys|profile-posts|credits|currency|minecraft|discord\/(?!test-send)|in-app-notifications|notifications|activity-feed|messages|search)/, why: "a module doing its own job, on rows the reset puts back" },
     { pattern: /^\/api\/v1\/auth\/(?:profile|register|login|logout|forgot-password|reset-password|verify-email|resend|session|linked-accounts|sign-in-methods)/, why: "a member acting on their own account, minus the four that are refused" },
     { pattern: /^\/api\/v1\/(?:sessions|users\/me|account)/, why: "the same" },
     { pattern: /^\/api\/v1\/themes\/[^/]+\/(?:customization|settings)/, why: "per-mode colour tokens, which the reset puts back" },

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-14",
-  "updatedAt": "2026-11-14T12:08:12Z",
+  "updatedAt": "2026-11-14T12:08:57Z",
   "modules": [
     {
       "id": "announcements",
@@ -1021,6 +1021,92 @@
         "publicRoutes": 0,
         "adminRoutes": 0,
         "apiRoutes": 0,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "crates",
+      "name": "Crates",
+      "description": "Crates with published odds, opened with credits or keys sold in the store",
+      "i18n": {
+        "az": {
+          "name": "Sandıqlar",
+          "description": "Ehtimalları açıq göstərilən, kreditlə və ya mağazada satılan açarlarla açılan sandıqlar"
+        },
+        "de": {
+          "name": "Kisten",
+          "description": "Kisten mit veröffentlichten Chancen, geöffnet mit Credits oder im Shop verkauften Schlüsseln"
+        },
+        "es": {
+          "name": "Cajas",
+          "description": "Cajas con probabilidades publicadas, abiertas con créditos o llaves vendidas en la tienda"
+        },
+        "et": {
+          "name": "Kastid",
+          "description": "Avaldatud tõenäosustega kastid, mida avatakse krediidi või poes müüdud võtmetega"
+        },
+        "fr": {
+          "name": "Caisses",
+          "description": "Des caisses aux probabilités publiées, ouvertes avec des crédits ou des clés vendues dans la boutique"
+        },
+        "it": {
+          "name": "Casse",
+          "description": "Casse con probabilità pubblicate, aperte con crediti o chiavi vendute nel negozio"
+        },
+        "pl": {
+          "name": "Skrzynki",
+          "description": "Skrzynki z opublikowanymi szansami, otwierane kredytami lub kluczami ze sklepu"
+        },
+        "pt": {
+          "name": "Caixas",
+          "description": "Caixas com probabilidades publicadas, abertas com créditos ou chaves vendidas na loja"
+        },
+        "ru": {
+          "name": "Сундуки",
+          "description": "Сундуки с опубликованными шансами, открываемые за кредиты или ключи из магазина"
+        },
+        "tr": {
+          "name": "Kasalar",
+          "description": "Olasılıkları açıkça gösterilen, krediyle ya da mağazada satılan anahtarlarla açılan kasalar"
+        },
+        "zh": {
+          "name": "宝箱",
+          "description": "公开概率的宝箱，可用积分或商店出售的钥匙打开"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.37.0",
+      "author": "Blysis",
+      "icon": "Package",
+      "category": "commerce",
+      "verified": true,
+      "updatedAt": "2026-11-14T12:08:57Z",
+      "screenshots": [],
+      "tags": [
+        "commerce"
+      ],
+      "zip": "crates.zip",
+      "dependencies": [
+        "credits",
+        "store"
+      ],
+      "conflicts": [],
+      "hooks": {
+        "emits": [
+          "crates.opened",
+          "credit.change",
+          "product.grant",
+          "grantable.options"
+        ],
+        "listens": [
+          "store.order.completed",
+          "store.order.refunded"
+        ]
+      },
+      "stats": {
+        "publicRoutes": 1,
+        "adminRoutes": 3,
+        "apiRoutes": 9,
         "widgets": 0
       }
     },

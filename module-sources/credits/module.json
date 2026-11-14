@@ -117,7 +117,9 @@
         "typeWheel_prize": "Wheel Prize",
         "typeWheel_spin": "Wheel Spin",
         "typeTop_up_bonus": "Top-up Bonus",
-        "loadCredits": "Load credits"
+        "loadCredits": "Load credits",
+        "typeCrate_open": "Crate Opened",
+        "typeCrate_reward": "Crate Reward"
       },
       "admin": {
         "module_credits_name": "Credit System",
@@ -195,7 +197,9 @@
         "typeWheel_prize": "Çark Ödülü",
         "typeWheel_spin": "Çark Çevirme",
         "typeTop_up_bonus": "Yükleme Bonusu",
-        "loadCredits": "Kredi yükle"
+        "loadCredits": "Kredi yükle",
+        "typeCrate_open": "Kasa Açıldı",
+        "typeCrate_reward": "Kasa Ödülü"
       },
       "admin": {
         "module_credits_name": "Kredi Sistemi",
@@ -273,7 +277,9 @@
         "typeVoucher_create": "Kupon yaradıldı",
         "typeVoucher_redeem": "Kupon istifadə edildi",
         "typeTop_up_bonus": "Yükləmə Bonusu",
-        "loadCredits": "Kredit yüklə"
+        "loadCredits": "Kredit yüklə",
+        "typeCrate_open": "Sandıq açıldı",
+        "typeCrate_reward": "Sandıq mükafatı"
       },
       "admin": {
         "module_credits_name": "Kredit sistemi",
@@ -351,7 +357,9 @@
         "typeVoucher_create": "Gutschein erstellt",
         "typeVoucher_redeem": "Gutschein eingelöst",
         "typeTop_up_bonus": "Aufladebonus",
-        "loadCredits": "Credits aufladen"
+        "loadCredits": "Credits aufladen",
+        "typeCrate_open": "Kiste geöffnet",
+        "typeCrate_reward": "Kistenbelohnung"
       },
       "admin": {
         "module_credits_name": "Credit-System",
@@ -429,7 +437,9 @@
         "typeVoucher_create": "Vale creado",
         "typeVoucher_redeem": "Vale canjeado",
         "typeTop_up_bonus": "Bonificación de recarga",
-        "loadCredits": "Recargar créditos"
+        "loadCredits": "Recargar créditos",
+        "typeCrate_open": "Caja abierta",
+        "typeCrate_reward": "Recompensa de caja"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -507,7 +517,9 @@
         "typeVoucher_create": "Kupong loodud",
         "typeVoucher_redeem": "Kupong lunastatud",
         "typeTop_up_bonus": "Laadimisboonus",
-        "loadCredits": "Laadi krediite"
+        "loadCredits": "Laadi krediite",
+        "typeCrate_open": "Kast avatud",
+        "typeCrate_reward": "Kasti auhind"
       },
       "admin": {
         "module_credits_name": "Krediidisüsteem",
@@ -585,7 +597,9 @@
         "typeVoucher_create": "Bon créé",
         "typeVoucher_redeem": "Bon utilisé",
         "typeTop_up_bonus": "Bonus de recharge",
-        "loadCredits": "Recharger des crédits"
+        "loadCredits": "Recharger des crédits",
+        "typeCrate_open": "Caisse ouverte",
+        "typeCrate_reward": "Récompense de caisse"
       },
       "admin": {
         "module_credits_name": "Système de crédits",
@@ -663,7 +677,9 @@
         "typeVoucher_create": "Buono creato",
         "typeVoucher_redeem": "Buono riscattato",
         "typeTop_up_bonus": "Bonus ricarica",
-        "loadCredits": "Ricarica crediti"
+        "loadCredits": "Ricarica crediti",
+        "typeCrate_open": "Cassa aperta",
+        "typeCrate_reward": "Premio di una cassa"
       },
       "admin": {
         "module_credits_name": "Sistema di crediti",
@@ -741,7 +757,9 @@
         "typeVoucher_create": "Utworzono bon",
         "typeVoucher_redeem": "Wykorzystano bon",
         "typeTop_up_bonus": "Bonus za doładowanie",
-        "loadCredits": "Doładuj kredyty"
+        "loadCredits": "Doładuj kredyty",
+        "typeCrate_open": "Otwarta skrzynka",
+        "typeCrate_reward": "Nagroda ze skrzynki"
       },
       "admin": {
         "module_credits_name": "System kredytów",
@@ -819,7 +837,9 @@
         "typeVoucher_create": "Vale criado",
         "typeVoucher_redeem": "Vale resgatado",
         "typeTop_up_bonus": "Bónus de carregamento",
-        "loadCredits": "Carregar créditos"
+        "loadCredits": "Carregar créditos",
+        "typeCrate_open": "Caixa aberta",
+        "typeCrate_reward": "Recompensa de caixa"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -897,7 +917,9 @@
         "typeVoucher_create": "Ваучер создан",
         "typeVoucher_redeem": "Ваучер погашен",
         "typeTop_up_bonus": "Бонус за пополнение",
-        "loadCredits": "Пополнить кредиты"
+        "loadCredits": "Пополнить кредиты",
+        "typeCrate_open": "Открытие сундука",
+        "typeCrate_reward": "Награда из сундука"
       },
       "admin": {
         "module_credits_name": "Система кредитов",
@@ -975,7 +997,9 @@
         "typeVoucher_create": "已创建兑换券",
         "typeVoucher_redeem": "已兑换兑换券",
         "typeTop_up_bonus": "充值奖励",
-        "loadCredits": "充值积分"
+        "loadCredits": "充值积分",
+        "typeCrate_open": "打开宝箱",
+        "typeCrate_reward": "宝箱奖励"
       },
       "admin": {
         "module_credits_name": "积分系统",

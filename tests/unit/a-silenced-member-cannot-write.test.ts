@@ -42,6 +42,7 @@ const NOT_SPEECH: Record<string, string> = {
     "module-sources/store/api/credits/buy/route.ts": "a top-up is a purchase, written down before it is paid for",
     "module-sources/store/api/gift-codes/route.ts": "redeeming what was bought is not speech",
     "module-sources/wheel/api/spin/route.ts": "spending a spin they already hold is not speech",
+    "module-sources/crates/api/open/route.ts": "opening a crate they paid for is not speech",
     "module-sources/vote/api/record/route.ts": "a vote is a callback from a server list, not a post",
 
     // A count, not a sentence. Nobody reads a like.
