@@ -5,7 +5,8 @@ import { useTranslations } from "next-intl";
 import { useState, useEffect, use } from "react";
 import { Link } from "@/core/sdk/navigation";
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, MemberAvatar, RichContent, RichTextEditor, NativeSelect, buttonClassName, useLocalDate, useLocalDateTime } from "@/core/sdk/ui";
-import { ArrowLeft, Loader2, Send } from "lucide-react";
+import { Bot, Loader2, Pause, Play, Send, UserRound } from "lucide-react";
+import { Slot, useSlotHasContent } from "@/core/sdk/layout";
 import { isOpenState, stateLabel, stateTone, type TicketState } from "../../../../lib/ticket-states";
 import { toast } from "sonner";
 import { writeError } from "@/core/sdk";
@@ -17,12 +18,15 @@ interface Message {
     id: string;
     content: string;
     isStaffReply: boolean;
+    /** A support assistant's: it has no account, and is never staff. */
+    byAssistant?: boolean;
     createdAt: string;
+    /** Null for the assistant, and for an account deleted since. */
     user: {
         id: string;
         username: string;
         avatar: string | null;
-    };
+    } | null;
 }
 
 interface Ticket {
@@ -32,10 +36,19 @@ interface Ticket {
     priority: string;
     createdAt: string;
     department: { id: string; name: string; color: string | null };
-    user: { id: string; username: string; avatar: string | null };
+    user: { id: string; username: string; avatar: string | null } | null;
     assignedTo: { id: string; username: string } | null;
     messages: Message[];
+    assistantPaused?: boolean;
+    askedForPersonAt?: string | null;
 }
+
+/**
+ * Where a support assistant, when one is installed, shows what it would
+ * answer. Whatever fills it is handed the ticket and a way to put text in
+ * the reply box; staff still read, edit and send it themselves.
+ */
+const DRAFT_SLOT = "tickets.admin.ticket.reply";
 
 // The two lists are the desk's own now, so a state an operator added is one
 // this screen offers without anybody editing it.
@@ -67,6 +80,7 @@ export default function AdminTicketDetailPage(props: PageProps) {
     const [replyContent, setReplyContent] = useState("");
     const [sending, setSending] = useState(false);
     const [updating, setUpdating] = useState(false);
+    const hasAssistant = useSlotHasContent(DRAFT_SLOT);
 
     const fetchTicket = async () => {
         try {
@@ -96,7 +110,7 @@ export default function AdminTicketDetailPage(props: PageProps) {
             const res = await fetch(`/api/v1/tickets/${ticketId}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content: replyContent, ticketId }),
+                body: JSON.stringify({ content: replyContent }),
             });
             if (res.ok) {
                 setReplyContent("");
@@ -127,6 +141,26 @@ export default function AdminTicketDetailPage(props: PageProps) {
         }
     };
 
+    const addDraft = (text: string) => setReplyContent((prev) => (prev.trim() ? `${prev}\n\n${text}` : text));
+
+    const setAssistant = async (paused: boolean) => {
+        setUpdating(true);
+        try {
+            const res = await fetch(`/api/v1/tickets/${ticketId}/assistant`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paused }),
+            });
+            const failed = await writeError(res, t("adm_assistantFailed"), t);
+            if (failed) { toast.error(failed); return; }
+            fetchTicket();
+        } catch {
+            toast.error(t("adm_assistantFailed"));
+        } finally {
+            setUpdating(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
@@ -149,7 +183,7 @@ export default function AdminTicketDetailPage(props: PageProps) {
             <AdminPageHeader
                 title={ticket.subject}
                 description={<>
-                    {t("adm_openedBy", { name: ticket.user.username, date: formatDate(ticket.createdAt) })}
+                    {t("adm_openedBy", { name: ticket.user?.username ?? t("deletedMember"), date: formatDate(ticket.createdAt) })}
                 </>}
                 backHref="/admin/tickets"
                 backLabel={commonT("back")}
@@ -174,10 +208,22 @@ export default function AdminTicketDetailPage(props: PageProps) {
                         <Card key={msg.id} className={msg.isStaffReply ? "bg-primary/5 border-primary/30" : ""}>
                             <CardContent className="p-4">
                                 <div className="flex items-center gap-3 mb-3">
-                                    <MemberAvatar name={msg.user.username} src={msg.user.avatar} size={32} />
+                                    {msg.byAssistant ? (
+                                        <span className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                            <Bot className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
+                                        </span>
+                                    ) : msg.user ? (
+                                        <MemberAvatar name={msg.user.username} src={msg.user.avatar} size={32} />
+                                    ) : (
+                                        <span className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                            <UserRound className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
+                                        </span>
+                                    )}
                                     <div className="min-w-0">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-sm font-medium">{msg.user.username}</span>
+                                            <span className="text-sm font-medium">
+                                                {msg.byAssistant ? t("assistant_name") : (msg.user?.username ?? t("deletedMember"))}
+                                            </span>
                                             {msg.isStaffReply && <Badge tone="info">{t("staff")}</Badge>}
                                         </div>
                                         <p className="text-xs text-muted-foreground">
@@ -203,6 +249,8 @@ export default function AdminTicketDetailPage(props: PageProps) {
                             </CardContent>
                         </Card>
                     ) : (
+                        <>
+                        <Slot name={DRAFT_SLOT} context={{ ticketId: ticket.id, onUseDraft: addDraft }} />
                         <Card>
                             <CardContent className="p-4">
                                 {/* What a person writes is Markdown, which is
@@ -226,6 +274,7 @@ export default function AdminTicketDetailPage(props: PageProps) {
                                 </Button>
                             </CardContent>
                         </Card>
+                        </>
                     )}
                 </div>
 
@@ -269,6 +318,33 @@ export default function AdminTicketDetailPage(props: PageProps) {
                             </div>
                         </CardContent>
                     </Card>
+
+                    {hasAssistant && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>{t("adm_assistant")}</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3 text-sm">
+                                <p className="text-muted-foreground">
+                                    {ticket.assistantPaused ? t("adm_assistantPaused") : t("adm_assistantOn")}
+                                </p>
+                                {ticket.assistantPaused && ticket.askedForPersonAt && (
+                                    <Badge tone="warning">{t("adm_wantsPerson")}</Badge>
+                                )}
+                                <div>
+                                    {ticket.assistantPaused ? (
+                                        <Button size="sm" variant="outline" onClick={() => setAssistant(false)} disabled={updating}>
+                                            <Play className="w-4 h-4" aria-hidden="true" /> {t("adm_assistantResume")}
+                                        </Button>
+                                    ) : (
+                                        <Button size="sm" variant="outline" onClick={() => setAssistant(true)} disabled={updating}>
+                                            <Pause className="w-4 h-4" aria-hidden="true" /> {t("adm_assistantPause")}
+                                        </Button>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
 
                     <Card>
                         <CardHeader>

@@ -88,6 +88,12 @@ model Ticket {
 
   messages TicketMessage[]
 
+  /// Set when a support assistant must not answer here: the member asked
+  /// for a person, or the team stopped it. Only the team clears it.
+  assistantPaused  Boolean   @default(false)
+  /// When the member asked for a person, so the team's list can say so.
+  askedForPersonAt DateTime?
+
   @@index([userId])
   @@index([departmentId])
   @@index([status])
@@ -140,6 +146,9 @@ model TicketMessage {
   id          String   @id @default(cuid())
   content     String   @db.Text
   isStaffReply Boolean @default(false)
+  /// Written by a support assistant on a module's behalf, never by a person.
+  /// Members always see such a message labelled as the assistant's.
+  byAssistant  Boolean @default(false)
   attachments String[] @default([])
   createdAt   DateTime @default(now())
 
