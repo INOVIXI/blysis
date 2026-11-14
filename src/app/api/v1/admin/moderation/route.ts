@@ -3,14 +3,14 @@ import { z } from "zod";
 import { auth } from "@/core/lib/auth";
 import { isAdmin } from "@/core/lib/permissions";
 import { logActivity } from "@/core/lib/activity-log";
-import { prisma } from "@/core/lib/db";
 import { ModuleModerationProviders, ModuleModerationReviewers } from "@/core/generated/module-moderation";
 import { getModuleStates } from "@/core/lib/module-cache";
 import { readJsonBody } from "@/core/lib/api-body";
 import { pageParams } from "@/core/lib/page-params";
 import { log } from "@/core/lib/logger";
 import { resolveLocaleFromRequest } from "@/core/lib/i18n/resolve-locale";
-import { decide, latestDecisions } from "@/core/lib/moderation-decisions";
+import { latestDecisions } from "@/core/lib/moderation-decisions";
+import { moderate, type ModerateResult } from "@/core/lib/moderation-access";
 import { reviewerStatus } from "@/core/lib/moderation-review";
 
 /** A reviewer's name as its manifest gives it; its id once it is uninstalled. */
@@ -149,45 +149,24 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: parsed.error.issues[0]?.message || "Invalid" }, { status: 400 });
     }
 
-    const providers = await loadActiveProviders();
-    const provider = providers.find((p) => p.id === parsed.data.type);
-    if (!provider) {
-        return NextResponse.json({ error: "Invalid type" }, { status: 400 });
-    }
-
-    const { ids, action, reasonId, note } = parsed.data;
-    if (action === "reject") {
-        if (!reasonId) {
-            return NextResponse.json({ error: "A rejection needs a reason", code: "reason_required" }, { status: 400 });
-        }
-        const reason = await prisma.moderationReason.findUnique({ where: { id: reasonId }, select: { enabled: true } });
-        if (!reason?.enabled) {
-            return NextResponse.json({ error: "Unknown reason", code: "reason_unknown" }, { status: 400 });
-        }
-    }
-
-    let affected: string[];
+    const { ids, type, action, reasonId, note } = parsed.data;
+    let result: ModerateResult;
     try {
-        const mod = await provider.loader();
-        ({ affected } = await decide(
-            { id: provider.id, impl: mod.default },
-            {
-                ids,
-                state: STATE_FOR[action],
-                reasonId: action === "reject" ? reasonId : null,
-                note: note || null,
-                decidedById: session.user.id,
-            },
-        ));
+        result = await moderate({ kind: type, ids, state: STATE_FOR[action], reasonId, note: note || null, decidedById: session.user.id });
     } catch (err) {
         log.error("[moderation] action failed", { error: err instanceof Error ? err.message : String(err) });
         return NextResponse.json({ error: "Operation failed" }, { status: 500 });
     }
+    if (!result.ok) {
+        const error = { unknown_kind: "Invalid type", reason_required: "A rejection needs a reason", reason_unknown: "Unknown reason" }[result.code];
+        return NextResponse.json(result.code === "unknown_kind" ? { error } : { error, code: result.code }, { status: 400 });
+    }
+    const { affected } = result;
 
     logActivity({
         userId: session.user.id,
         action: `moderation.${action}`,
-        entity: provider.id,
+        entity: type,
         metadata: { ids: affected, count: affected.length, ...(reasonId ? { reasonId } : {}) },
     }).catch(() => { });
 

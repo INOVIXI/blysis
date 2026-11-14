@@ -104,3 +104,8 @@ export async function reasonLabel(reasonId: string, locale: string): Promise<str
     const [view] = await worded([row], locale);
     return view.label;
 }
+
+/** The reasons a rejection may give now, worded for `locale`: what a module offers an admin to choose from. */
+export async function moderationReasons(locale: string): Promise<{ id: string; label: string }[]> {
+    return (await listReasons(locale)).map((reason) => ({ id: reason.id, label: reason.label }));
+}

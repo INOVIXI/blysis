@@ -89,6 +89,13 @@ export { isModuleEnabled } from "@/core/lib/module-cache";
 
 // --- Moderation: whether what a person wrote waits for a moderator ---
 export { moderationStateFor } from "@/core/lib/moderation-mode";
+// A module that reviews the queue implements `ModerationReviewer` and names
+// it under `moderationReviewer`; core's round hands it what waits. Its
+// screens reach the queue only through these.
+export type { ModerationReviewer, ReviewItem, ReviewVerdict, ReviewCapacity, ModeratedText } from "@/core/generated/module-moderation";
+export { moderationKinds, readModerated, moderate } from "@/core/lib/moderation-access";
+export type { ModerationKind, ModerateInput, ModerateResult } from "@/core/lib/moderation-access";
+export { moderationReasons } from "@/core/lib/moderation-reasons";
 
 // --- AI: an answer in a shape, from whichever provider the operator chose ---
 // A provider module implements `AiProvider`; any other module calls
