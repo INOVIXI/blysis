@@ -27,6 +27,7 @@ import { ChevronRight } from "lucide-react";
 import { readProduct } from "../../../../lib/read-product";
 import { readBulkLadder } from "../../../../lib/read-bulk-rules";
 import { readRelated } from "../../../../lib/read-store";
+import { StoreSaleBanner } from "../../../../components/StoreSaleBanner";
 import { storeHref } from "../../../../components/StoreFront";
 import { ProductCard } from "../../../../components/ProductCard";
 import { ProductGallery } from "../../../../components/ProductGallery";
@@ -118,6 +119,8 @@ export default async function ProductPage({ params }: PageProps) {
                     );
                 },
             }}
-        />
+        >
+            <StoreSaleBanner />
+        </ArrangedPage>
     );
 }

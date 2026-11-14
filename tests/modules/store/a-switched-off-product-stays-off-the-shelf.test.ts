@@ -33,6 +33,8 @@ let callerIsAdmin = false;
 vi.mock("@/core/sdk/server", async () => ({
     ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
+        // No store-wide sale is running.
+        storeSale: { findMany: async () => [] },
         product: {
             findMany: (args: unknown) => findMany(args as never),
             count: (args: unknown) => count(args as never),

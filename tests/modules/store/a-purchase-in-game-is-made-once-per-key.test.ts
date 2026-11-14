@@ -44,6 +44,8 @@ const tx = {
     order: { findFirst: vi.fn(async () => existing) },
 };
 const db = {
+    // No store-wide sale is running.
+    storeSale: { findMany: async () => [] },
     product: { findFirst: vi.fn(async () => product), findMany: vi.fn(async () => []) },
     ownedProduct: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },

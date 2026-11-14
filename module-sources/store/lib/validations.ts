@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_SALE_PERCENT, MIN_SALE_PERCENT } from "./store-sale";
 
 // ==================== STORE SCHEMAS ====================
 
@@ -129,6 +130,20 @@ export const creditBonusCampaignSchema = z.object({
         minAmount: z.number().positive().max(1_000_000),
         percent: z.number().int().min(1).max(500),
     })).min(1).max(10),
+});
+
+/**
+ * A store-wide sale as the panel sends it. The dates are the operator's wall
+ * clock on the site's zone, or an instant with its offset; their order is
+ * checked once they are read, in `storeSaleWrite`.
+ */
+export const storeSaleSchema = z.object({
+    name: z.string().trim().min(1, "Name is required").max(100),
+    percent: z.number().int().min(MIN_SALE_PERCENT).max(MAX_SALE_PERCENT),
+    categoryIds: z.array(z.string().min(1).max(64)).max(200).default([]),
+    startsAt: z.string().min(16).max(40),
+    endsAt: z.string().min(16).max(40),
+    isActive: z.boolean().default(true),
 });
 
 export const campaignSchema = z.object({

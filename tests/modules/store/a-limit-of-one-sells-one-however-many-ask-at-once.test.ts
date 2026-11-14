@@ -13,6 +13,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const order = { id: "o1", orderNumber: "ORD-1", items: [] };
 const tx = { $executeRaw: vi.fn(async () => 1) };
 const db = {
+    // No store-wide sale is running.
+    storeSale: { findMany: async () => [] },
     product: {
         findFirst: vi.fn(async () => ({
             id: "p1",

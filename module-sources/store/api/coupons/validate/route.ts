@@ -4,6 +4,7 @@ import { auth } from "@/core/sdk/auth";
 import { couponValidateSchema } from "../../../lib/validations";
 import { computeCouponDiscount, scopedSubtotal } from "../../../lib/pricing";
 import { priceCartLines } from "../../../lib/cart-pricing";
+import { saleAdjustedPrice } from "../../../lib/store-sale-server";
 import { creditingPurchases, ownedRungsOn } from "../../../lib/upgrade-credit-server";
 import { couponOpenTo } from "../../../lib/thank-you-coupon";
 
@@ -53,12 +54,15 @@ export async function POST(request: NextRequest) {
      */
     const cartItems = await prisma.cartItem.findMany({
         where: { userId: session.user.id },
-        include: { product: { select: { id: true, price: true, categoryId: true } } },
+        include: { product: { select: { id: true, price: true, categoryId: true, salePrice: true, saleFrom: true, saleUntil: true } } },
     });
+    // From the price the checkout charges, so a minimum purchase is met or
+    // missed here exactly as it will be there.
+    const listedAt = await saleAdjustedPrice(new Date());
     const basket = cartItems.map((item) => ({
         productId: item.product.id,
         categoryId: item.product.categoryId ?? null,
-        price: Number(item.product.price),
+        price: listedAt(item.product),
         quantity: item.quantity,
     }));
     const ownedIds = await creditingPurchases(session.user.id);

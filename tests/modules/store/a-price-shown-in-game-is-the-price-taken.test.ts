@@ -34,7 +34,11 @@ let kept: Record<string, unknown> | null = null;
 const taxModule = { current: null as StoreTaxAnswer | null };
 const taxAsked: StoreTaxContext[] = [];
 
+/** The store-wide sales running, none unless a test starts one. */
+const storeSales: Record<string, unknown>[] = [];
+
 const db = {
+    storeSale: { findMany: vi.fn(async () => storeSales) },
     product: {
         findFirst: vi.fn(async () => product),
         findMany: vi.fn(async () =>
@@ -90,6 +94,7 @@ const ask = { buyerId: "u1", productId: "p_big", quantity: 1, recipientId: null 
 const buy = { ...ask, fields: {}, playerName: "Steve", playerId: "uuid-1", channel: "game:survival" };
 
 beforeEach(() => {
+    storeSales.length = 0;
     owned.length = 0;
     bulk.length = 0;
     charged = null;
@@ -115,6 +120,16 @@ describe("a price quoted in game", () => {
         await expect(quoteWithCredits({ ...ask, quantity: 3 })).resolves.toEqual({ ok: true, each: 4, total: 12 });
         await purchaseWithCredits({ ...buy, quantity: 3 });
         expect(charged).toBe(12);
+    });
+
+    it("takes off a store-wide sale that covers the shelf, as the purchase does", async () => {
+        storeSales.push({
+            id: "s1", name: "Weekend", percent: 20, categoryIds: [], isActive: true,
+            startsAt: new Date(Date.now() - 60_000), endsAt: new Date(Date.now() + 60_000),
+        });
+        await expect(quoteWithCredits(ask)).resolves.toEqual({ ok: true, each: 4, total: 4 });
+        await purchaseWithCredits(buy);
+        expect(charged).toBe(4);
     });
 
     it("for a gift, is refused where the gift would be, and tells nothing of what the member owns", async () => {

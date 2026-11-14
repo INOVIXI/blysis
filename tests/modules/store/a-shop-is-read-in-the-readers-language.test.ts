@@ -35,6 +35,7 @@ const tables = {
     creditPackage: fakeTable(() => ({ isActive: true, order: 0, bonusCredits: 0, availableFrom: null, availableUntil: null })),
     campaign: fakeTable(() => ({ isActive: true, days: [], createdAt: new Date(), entries: [] })),
     campaignEntry: fakeTable(),
+    storeSale: fakeTable(),
     ownedProduct: fakeTable(),
     productCommand: fakeTable(),
     productVariable: fakeTable(),

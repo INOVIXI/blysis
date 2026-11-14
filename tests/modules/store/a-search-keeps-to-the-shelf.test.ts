@@ -18,6 +18,8 @@ vi.mock("@/core/sdk/server", async () => {
         moduleSettings: async () => ({ lowStockAt: 0 }),
         siteTimeZone: async () => "UTC",
         prisma: {
+            // No store-wide sale is running.
+            storeSale: { findMany: async () => [] },
             product: {
                 findMany: async (query: { where: unknown }) => { asked.where = query.where; return []; },
                 count: async () => 0,

@@ -21,6 +21,8 @@ const inGame = {
     category: { id: "c1", showInGame: true },
 };
 const db = {
+    // No store-wide sale is running.
+    storeSale: { findMany: async () => [] },
     product: {
         findFirst: vi.fn(async () => ({
             id: "p1",

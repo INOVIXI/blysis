@@ -6407,8 +6407,8 @@
       },
       "stats": {
         "publicRoutes": 5,
-        "adminRoutes": 16,
-        "apiRoutes": 54,
+        "adminRoutes": 17,
+        "apiRoutes": 56,
         "widgets": 6
       }
     },

@@ -15,6 +15,8 @@ import { applyFiltersAsync, doActionAsync } from "@/core/sdk";
 import { log, logActivity, prisma, siteTimeZone, type PrismaTransaction } from "@/core/sdk/server";
 import { availabilityFor, rulesOf, type ProductRow } from "./availability-server";
 import { effectivePrice } from "./availability";
+import { withStoreSale } from "./store-sale";
+import { runningStoreSales } from "./store-sale-server";
 import { computeOrderPricing, computeTotals } from "./pricing";
 import { creditingPurchases, ownedRungsOn } from "./upgrade-credit-server";
 import { resolveCurrency } from "./currency";
@@ -113,7 +115,14 @@ async function priceInGame(product: PricedProduct, quantity: number, ownerId: st
                 id: product.id,
                 name: product.name,
                 type: product.type,
-                price: effectivePrice(rulesOf(product as unknown as ProductRow), now).price,
+                // The sale window and a store-wide sale, as the checkout and
+                // the in-game catalogue price it.
+                price: withStoreSale(
+                    effectivePrice(rulesOf(product as unknown as ProductRow), now),
+                    { listPrice: rulesOf(product as unknown as ProductRow).price, categoryId: product.categoryId },
+                    await runningStoreSales(now),
+                    now,
+                ).price,
                 categoryId: product.categoryId,
             },
         ],

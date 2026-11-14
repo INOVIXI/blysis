@@ -415,6 +415,33 @@ model CampaignEntry {
   @@index([productId])
 }
 
+/**
+ * A percentage off the whole shop, or off chosen shelves, between two instants.
+ *
+ * A campaign moves named products to named prices, which is the wrong tool
+ * for "everything is 20% off this weekend": an operator would type a price
+ * for every product and type them all again when one changes. This is the
+ * one number, and the rule for how it meets a product's own sale is
+ * `withStoreSale` in lib/store-sale.ts.
+ */
+model StoreSale {
+  id          String   @id @default(cuid())
+  name        String
+  /** Whole percent off the list price, 1 to 90. */
+  percent     Int
+  /** Shelves it covers, with the shelves under them. Empty is the whole store. */
+  categoryIds String[] @default([])
+  startsAt    DateTime
+  /** The first instant it no longer applies. */
+  endsAt      DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Every price the shop shows or takes asks which sales are running now.
+  @@index([isActive, startsAt, endsAt])
+}
+
 model BulkDiscount {
   id           String   @id @default(cuid())
   name         String

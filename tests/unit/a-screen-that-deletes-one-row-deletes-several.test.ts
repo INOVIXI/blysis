@@ -55,6 +55,8 @@ const ONE_AT_A_TIME: Record<string, string> = {
         "A campaign is a schedule an operator designed; there are a few and each is deliberate. Deleting several at once is not a thing anybody wants to do quickly.",
     "module-sources/store/pages/admin/credit-bonus/page.tsx":
         "A credit bonus campaign is a dated offer an operator designed, a few in a year, and the screen marks the ones that overlap. Deleting several at once is not a thing anybody wants to do quickly.",
+    "module-sources/store/pages/admin/store-sales/page.tsx":
+        "A store-wide sale is a dated discount an operator designed, a few in a year. Deleting several at once is not a thing anybody wants to do quickly, and switching one off keeps it for next time.",
     "module-sources/seo/pages/admin/pages/page.tsx":
         "The list here is a picker for which page to edit, not a list of rows to act on. What gets deleted is one page's override, from that page's own panel.",
     "module-sources/store/pages/admin/settings/payment-fees/page.tsx":

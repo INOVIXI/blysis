@@ -401,6 +401,13 @@
       "icon": "Target",
       "group": "commerce",
       "permission": "store.manage"
+    },
+    {
+      "label": "Store Sales",
+      "path": "/store/sales",
+      "icon": "BadgePercent",
+      "group": "commerce",
+      "permission": "store.manage"
     }
   ],
   "routes": [
@@ -517,6 +524,11 @@
     {
       "path": "/settings/payment-fees",
       "component": "pages/admin/settings/payment-fees/page.tsx",
+      "permission": "store.manage"
+    },
+    {
+      "path": "/store/sales",
+      "component": "pages/admin/store-sales/page.tsx",
       "permission": "store.manage"
     }
   ],
@@ -847,6 +859,18 @@
       "handler": "api/cart/restore/route.ts",
       "description": "Fill the current user's cart again from one of their unpaid orders.",
       "openTo": "member"
+    },
+    {
+      "path": "/store/admin/store-sales",
+      "handler": "api/admin/store-sales/route.ts",
+      "description": "List and create store-wide sales (admin).",
+      "permission": "store.manage"
+    },
+    {
+      "path": "/store/admin/store-sales/[id]",
+      "handler": "api/admin/store-sales/[id]/route.ts",
+      "description": "Edit or delete a store-wide sale (admin).",
+      "permission": "store.manage"
     }
   ],
   "dashboardCards": [
@@ -1435,7 +1459,8 @@
           "chest_gift_to_self": "That is your own chest.",
           "fee_rate_unavailable": "That payment method cannot be used right now: its fee cannot be converted into this currency. Pick another method or try again later.",
           "credit_bonus_dates": "The campaign must end after it starts.",
-          "credit_bonus_tiers": "Each tier must ask for more money and give a higher percent (1 to 500) than the one before. Up to 10 tiers."
+          "credit_bonus_tiers": "Each tier must ask for more money and give a higher percent (1 to 500) than the one before. Up to 10 tiers.",
+          "store_sale_dates": "The sale must end after it starts."
         },
         "err_checkoutFailed": "Checkout failed",
         "err_couponMinPurchase": "Spend at least {amount} to use this code.",
@@ -1684,7 +1709,37 @@
         "tab_orders_thanksExpired": "Expired",
         "tab_orders_thanksWithdrawn": "Withdrawn",
         "cart_restored": "Your basket is back. Finish whenever you are ready.",
-        "cart_restoreFailed": "That order can no longer be picked up."
+        "cart_restoreFailed": "That order can no longer be picked up.",
+        "saleBanner_wholeStore": "{percent}% off everything in the store.",
+        "saleBanner_shelves": "{percent}% off {shelves}.",
+        "saleBanner_until": "Ends {date}.",
+        "adm_saleTitle": "Store sales",
+        "adm_saleSubtitle": "A percentage off the whole store, or off chosen shelves, for a set time.",
+        "adm_saleAdd": "Add a sale",
+        "adm_saleEdit": "Edit sale",
+        "adm_saleName": "Name (only you see it)",
+        "adm_salePercent": "Percent off",
+        "adm_saleStarts": "Starts",
+        "adm_saleEnds": "Ends",
+        "adm_saleZone": "Dates are on the site's clock ({zone}).",
+        "adm_saleCategories": "Shelves",
+        "adm_saleCategoriesHint": "Leave empty for the whole store. A shelf includes the shelves under it.",
+        "adm_saleRule": "The sale takes its percent off a product's list price. A product already cheaper on its own sale or a campaign keeps the lower price; the two are never added together. When two sales cover one product, the larger percent applies.",
+        "adm_saleActive": "Active",
+        "adm_saleSave": "Save sale",
+        "adm_saleSaved": "Sale saved.",
+        "adm_saleSaveFailed": "The sale could not be saved.",
+        "adm_saleDelete": "Delete sale",
+        "adm_saleDeleteConfirm": "Delete the sale \"{name}\"? Prices go back to normal at once if it is running.",
+        "adm_saleDeleted": "Sale deleted.",
+        "adm_saleNone": "No store sales yet.",
+        "adm_saleState_running": "Running",
+        "adm_saleState_scheduled": "Scheduled",
+        "adm_saleState_ended": "Ended",
+        "adm_saleState_off": "Off",
+        "adm_saleWholeStore": "{percent}% off the whole store",
+        "adm_saleShelves": "{percent}% off {count} chosen shelves",
+        "adm_saleWindow": "{starts} to {ends}"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -1886,7 +1941,8 @@
         "settings_store": "Payments",
         "settings_store_description": "Stripe and PayPal configuration.",
         "menu_store_payment_fees": "Payment Fees",
-        "menu_store_credit_bonus": "Credit Bonus"
+        "menu_store_credit_bonus": "Credit Bonus",
+        "menu_store_store_sales": "Store Sales"
       },
       "activity": {
         "kindStoreOrderCompleted": "Order",
@@ -1902,7 +1958,10 @@
         "auditPaymentFeeReset": "Returned a payment method to its gateway's fee",
         "auditCreditBonusCreated": "Added a credit bonus campaign",
         "auditCreditBonusUpdated": "Changed a credit bonus campaign",
-        "auditCreditBonusDeleted": "Deleted a credit bonus campaign"
+        "auditCreditBonusDeleted": "Deleted a credit bonus campaign",
+        "auditStoreSaleCreated": "Added a store sale",
+        "auditStoreSaleUpdated": "Changed a store sale",
+        "auditStoreSaleDeleted": "Deleted a store sale"
       },
       "pageTitles": {
         "store": "Store",
@@ -2368,7 +2427,8 @@
           "chest_gift_to_self": "Bu senin kendi sandığın.",
           "fee_rate_unavailable": "Bu ödeme yöntemi şu anda kullanılamıyor: ücreti bu para birimine çevrilemiyor. Başka bir yöntem seçin ya da daha sonra yeniden deneyin.",
           "credit_bonus_dates": "Kampanya başladıktan sonra bitmelidir.",
-          "credit_bonus_tiers": "Her kademe bir öncekinden daha fazla ödeme istemeli ve daha yüksek bir yüzde (1-500) vermelidir. En fazla 10 kademe."
+          "credit_bonus_tiers": "Her kademe bir öncekinden daha fazla ödeme istemeli ve daha yüksek bir yüzde (1-500) vermelidir. En fazla 10 kademe.",
+          "store_sale_dates": "İndirim başladıktan sonra bitmelidir."
         },
         "err_checkoutFailed": "Ödeme tamamlanamadı",
         "err_couponMinPurchase": "Bu kodu kullanmak için en az {amount} harcayın.",
@@ -2617,7 +2677,37 @@
         "tab_orders_thanksExpired": "Süresi doldu",
         "tab_orders_thanksWithdrawn": "Geri alındı",
         "cart_restored": "Sepetin geri geldi. Hazır olduğunda tamamlayabilirsin.",
-        "cart_restoreFailed": "Bu sipariş artık devam ettirilemiyor."
+        "cart_restoreFailed": "Bu sipariş artık devam ettirilemiyor.",
+        "saleBanner_wholeStore": "Mağazadaki her şeyde %{percent} indirim.",
+        "saleBanner_shelves": "{shelves} için %{percent} indirim.",
+        "saleBanner_until": "{date} tarihinde biter.",
+        "adm_saleTitle": "Mağaza indirimleri",
+        "adm_saleSubtitle": "Belirli bir süre için tüm mağazada veya seçilen raflarda yüzde indirim.",
+        "adm_saleAdd": "İndirim ekle",
+        "adm_saleEdit": "İndirimi düzenle",
+        "adm_saleName": "Ad (yalnızca siz görürsünüz)",
+        "adm_salePercent": "İndirim yüzdesi",
+        "adm_saleStarts": "Başlangıç",
+        "adm_saleEnds": "Bitiş",
+        "adm_saleZone": "Tarihler sitenin saatine göredir ({zone}).",
+        "adm_saleCategories": "Raflar",
+        "adm_saleCategoriesHint": "Tüm mağaza için boş bırakın. Bir raf, altındaki rafları da kapsar.",
+        "adm_saleRule": "İndirim, yüzdesini ürünün liste fiyatından düşer. Kendi indirimi ya da bir kampanyayla zaten daha ucuz olan ürün düşük fiyatında kalır; ikisi asla toplanmaz. İki indirim aynı ürünü kapsarsa büyük yüzde geçerli olur.",
+        "adm_saleActive": "Etkin",
+        "adm_saleSave": "İndirimi kaydet",
+        "adm_saleSaved": "İndirim kaydedildi.",
+        "adm_saleSaveFailed": "İndirim kaydedilemedi.",
+        "adm_saleDelete": "İndirimi sil",
+        "adm_saleDeleteConfirm": "\"{name}\" indirimi silinsin mi? Devam ediyorsa fiyatlar hemen normale döner.",
+        "adm_saleDeleted": "İndirim silindi.",
+        "adm_saleNone": "Henüz mağaza indirimi yok.",
+        "adm_saleState_running": "Devam ediyor",
+        "adm_saleState_scheduled": "Planlandı",
+        "adm_saleState_ended": "Bitti",
+        "adm_saleState_off": "Kapalı",
+        "adm_saleWholeStore": "Tüm mağazada %{percent} indirim",
+        "adm_saleShelves": "Seçilen {count} rafta %{percent} indirim",
+        "adm_saleWindow": "{starts} - {ends}"
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -2819,7 +2909,8 @@
         "settings_store": "Ödemeler",
         "settings_store_description": "Stripe ve PayPal ayarları.",
         "menu_store_payment_fees": "Ödeme Ücretleri",
-        "menu_store_credit_bonus": "Kredi Bonusu"
+        "menu_store_credit_bonus": "Kredi Bonusu",
+        "menu_store_store_sales": "Mağaza İndirimleri"
       },
       "activity": {
         "kindStoreOrderCompleted": "Sipariş",
@@ -2835,7 +2926,10 @@
         "auditPaymentFeeReset": "Bir ödeme yöntemi ağ geçidinin ücretine döndürüldü",
         "auditCreditBonusCreated": "Kredi bonus kampanyası ekledi",
         "auditCreditBonusUpdated": "Kredi bonus kampanyasını değiştirdi",
-        "auditCreditBonusDeleted": "Kredi bonus kampanyasını sildi"
+        "auditCreditBonusDeleted": "Kredi bonus kampanyasını sildi",
+        "auditStoreSaleCreated": "Mağaza indirimi ekledi",
+        "auditStoreSaleUpdated": "Mağaza indirimini değiştirdi",
+        "auditStoreSaleDeleted": "Mağaza indirimini sildi"
       },
       "pageTitles": {
         "store": "Mağaza",
@@ -3301,7 +3395,8 @@
           "chest_gift_to_self": "Bu sizin öz sandığınızdır.",
           "fee_rate_unavailable": "Bu ödəniş üsulu hazırda istifadə edilə bilməz: onun haqqı bu valyutaya çevrilə bilmir. Başqa üsul seçin və ya sonra yenidən cəhd edin.",
           "credit_bonus_dates": "Kampaniya başladıqdan sonra bitməlidir.",
-          "credit_bonus_tiers": "Hər pillə əvvəlkindən daha çox ödəniş istəməli və daha yüksək faiz (1-500) verməlidir. Ən çox 10 pillə."
+          "credit_bonus_tiers": "Hər pillə əvvəlkindən daha çox ödəniş istəməli və daha yüksək faiz (1-500) verməlidir. Ən çox 10 pillə.",
+          "store_sale_dates": "Endirim başladıqdan sonra bitməlidir."
         },
         "err_checkoutFailed": "Ödəniş alınmadı",
         "err_couponMinPurchase": "Bu kodu istifadə etmək üçün ən azı {amount} xərcləyin.",
@@ -3550,7 +3645,37 @@
         "tab_orders_thanksExpired": "Müddəti bitib",
         "tab_orders_thanksWithdrawn": "Geri götürülüb",
         "cart_restored": "Səbətiniz geri qayıtdı. Hazır olanda tamamlayın.",
-        "cart_restoreFailed": "Bu sifarişə artıq davam etmək olmur."
+        "cart_restoreFailed": "Bu sifarişə artıq davam etmək olmur.",
+        "saleBanner_wholeStore": "Mağazadakı hər şeyə %{percent} endirim.",
+        "saleBanner_shelves": "{shelves} üçün %{percent} endirim.",
+        "saleBanner_until": "{date} tarixində bitir.",
+        "adm_saleTitle": "Mağaza endirimləri",
+        "adm_saleSubtitle": "Müəyyən müddət üçün bütün mağazaya və ya seçilmiş rəflərə faizlə endirim.",
+        "adm_saleAdd": "Endirim əlavə et",
+        "adm_saleEdit": "Endirimi redaktə et",
+        "adm_saleName": "Ad (yalnız siz görürsünüz)",
+        "adm_salePercent": "Endirim faizi",
+        "adm_saleStarts": "Başlayır",
+        "adm_saleEnds": "Bitir",
+        "adm_saleZone": "Tarixlər saytın saatı ilədir ({zone}).",
+        "adm_saleCategories": "Rəflər",
+        "adm_saleCategoriesHint": "Bütün mağaza üçün boş saxlayın. Rəf altındakı rəfləri də əhatə edir.",
+        "adm_saleRule": "Endirim faizini məhsulun siyahı qiymətindən çıxır. Öz endirimi və ya kampaniya ilə artıq daha ucuz olan məhsul aşağı qiymətdə qalır; ikisi heç vaxt toplanmır. İki endirim eyni məhsulu əhatə edərsə, böyük faiz tətbiq olunur.",
+        "adm_saleActive": "Aktiv",
+        "adm_saleSave": "Endirimi saxla",
+        "adm_saleSaved": "Endirim saxlanıldı.",
+        "adm_saleSaveFailed": "Endirim saxlanıla bilmədi.",
+        "adm_saleDelete": "Endirimi sil",
+        "adm_saleDeleteConfirm": "\"{name}\" endirimi silinsin? Davam edirsə, qiymətlər dərhal normala qayıdır.",
+        "adm_saleDeleted": "Endirim silindi.",
+        "adm_saleNone": "Hələ mağaza endirimi yoxdur.",
+        "adm_saleState_running": "Davam edir",
+        "adm_saleState_scheduled": "Planlaşdırılıb",
+        "adm_saleState_ended": "Bitib",
+        "adm_saleState_off": "Söndürülüb",
+        "adm_saleWholeStore": "Bütün mağazaya %{percent} endirim",
+        "adm_saleShelves": "Seçilmiş {count} rəfə %{percent} endirim",
+        "adm_saleWindow": "{starts} - {ends}"
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -3752,7 +3877,8 @@
         "settings_store": "Ödənişlər",
         "settings_store_description": "Stripe və PayPal konfiqurasiyası.",
         "menu_store_payment_fees": "Ödəniş haqları",
-        "menu_store_credit_bonus": "Kredit Bonusu"
+        "menu_store_credit_bonus": "Kredit Bonusu",
+        "menu_store_store_sales": "Mağaza endirimləri"
       },
       "activity": {
         "kindStoreOrderCompleted": "Sifariş",
@@ -3768,7 +3894,10 @@
         "auditPaymentFeeReset": "Ödəniş üsulu şlüzün öz haqqına qaytarıldı",
         "auditCreditBonusCreated": "Kredit bonus kampaniyası əlavə etdi",
         "auditCreditBonusUpdated": "Kredit bonus kampaniyasını dəyişdi",
-        "auditCreditBonusDeleted": "Kredit bonus kampaniyasını sildi"
+        "auditCreditBonusDeleted": "Kredit bonus kampaniyasını sildi",
+        "auditStoreSaleCreated": "Mağaza endirimi əlavə etdi",
+        "auditStoreSaleUpdated": "Mağaza endirimini dəyişdi",
+        "auditStoreSaleDeleted": "Mağaza endirimini sildi"
       },
       "pageTitles": {
         "store": "Mağaza",
@@ -4234,7 +4363,8 @@
           "chest_gift_to_self": "Das ist deine eigene Truhe.",
           "fee_rate_unavailable": "Diese Zahlungsart ist gerade nicht verfügbar: Ihre Gebühr kann nicht in diese Währung umgerechnet werden. Wähle eine andere Zahlungsart oder versuche es später erneut.",
           "credit_bonus_dates": "Die Aktion muss nach ihrem Beginn enden.",
-          "credit_bonus_tiers": "Jede Stufe muss mehr Geld verlangen und einen höheren Prozentsatz (1 bis 500) geben als die vorige. Höchstens 10 Stufen."
+          "credit_bonus_tiers": "Jede Stufe muss mehr Geld verlangen und einen höheren Prozentsatz (1 bis 500) geben als die vorige. Höchstens 10 Stufen.",
+          "store_sale_dates": "Der Rabatt muss nach seinem Beginn enden."
         },
         "err_checkoutFailed": "Kasse fehlgeschlagen",
         "err_couponMinPurchase": "Gib mindestens {amount} aus, um diesen Code zu nutzen.",
@@ -4483,7 +4613,37 @@
         "tab_orders_thanksExpired": "Abgelaufen",
         "tab_orders_thanksWithdrawn": "Zurückgezogen",
         "cart_restored": "Dein Warenkorb ist wieder da. Schließe ab, wann du willst.",
-        "cart_restoreFailed": "Diese Bestellung kann nicht mehr fortgesetzt werden."
+        "cart_restoreFailed": "Diese Bestellung kann nicht mehr fortgesetzt werden.",
+        "saleBanner_wholeStore": "{percent} % Rabatt auf alles im Shop.",
+        "saleBanner_shelves": "{percent} % Rabatt auf {shelves}.",
+        "saleBanner_until": "Endet am {date}.",
+        "adm_saleTitle": "Shop-Rabatte",
+        "adm_saleSubtitle": "Ein Prozentrabatt auf den ganzen Shop oder auf ausgewählte Kategorien, für eine feste Zeit.",
+        "adm_saleAdd": "Rabatt hinzufügen",
+        "adm_saleEdit": "Rabatt bearbeiten",
+        "adm_saleName": "Name (nur für dich sichtbar)",
+        "adm_salePercent": "Rabatt in Prozent",
+        "adm_saleStarts": "Beginnt",
+        "adm_saleEnds": "Endet",
+        "adm_saleZone": "Die Zeiten gelten in der Zeitzone der Seite ({zone}).",
+        "adm_saleCategories": "Kategorien",
+        "adm_saleCategoriesHint": "Leer lassen für den ganzen Shop. Eine Kategorie schließt ihre Unterkategorien ein.",
+        "adm_saleRule": "Der Rabatt wird vom Listenpreis eines Produkts abgezogen. Ein Produkt, das durch seinen eigenen Sale oder eine Kampagne schon günstiger ist, behält den niedrigeren Preis; beides wird nie addiert. Decken zwei Rabatte ein Produkt ab, gilt der höhere Prozentsatz.",
+        "adm_saleActive": "Aktiv",
+        "adm_saleSave": "Rabatt speichern",
+        "adm_saleSaved": "Rabatt gespeichert.",
+        "adm_saleSaveFailed": "Der Rabatt konnte nicht gespeichert werden.",
+        "adm_saleDelete": "Rabatt löschen",
+        "adm_saleDeleteConfirm": "Den Rabatt „{name}“ löschen? Läuft er gerade, gelten sofort wieder die normalen Preise.",
+        "adm_saleDeleted": "Rabatt gelöscht.",
+        "adm_saleNone": "Noch keine Shop-Rabatte.",
+        "adm_saleState_running": "Läuft",
+        "adm_saleState_scheduled": "Geplant",
+        "adm_saleState_ended": "Beendet",
+        "adm_saleState_off": "Aus",
+        "adm_saleWholeStore": "{percent} % auf den ganzen Shop",
+        "adm_saleShelves": "{percent} % auf {count} ausgewählte Kategorien",
+        "adm_saleWindow": "{starts} bis {ends}"
       },
       "cart": {
         "title": "Warenkorb",
@@ -4685,7 +4845,8 @@
         "settings_store": "Zahlungen",
         "settings_store_description": "Konfiguration von Stripe und PayPal.",
         "menu_store_payment_fees": "Zahlungsgebühren",
-        "menu_store_credit_bonus": "Credit-Bonus"
+        "menu_store_credit_bonus": "Credit-Bonus",
+        "menu_store_store_sales": "Shop-Rabatte"
       },
       "activity": {
         "kindStoreOrderCompleted": "Bestellung",
@@ -4701,7 +4862,10 @@
         "auditPaymentFeeReset": "Zahlungsart auf die Gebühr des Gateways zurückgesetzt",
         "auditCreditBonusCreated": "Hat eine Credit-Bonusaktion hinzugefügt",
         "auditCreditBonusUpdated": "Hat eine Credit-Bonusaktion geändert",
-        "auditCreditBonusDeleted": "Hat eine Credit-Bonusaktion gelöscht"
+        "auditCreditBonusDeleted": "Hat eine Credit-Bonusaktion gelöscht",
+        "auditStoreSaleCreated": "Hat einen Shop-Rabatt hinzugefügt",
+        "auditStoreSaleUpdated": "Hat einen Shop-Rabatt geändert",
+        "auditStoreSaleDeleted": "Hat einen Shop-Rabatt gelöscht"
       },
       "pageTitles": {
         "store": "Shop",
@@ -5167,7 +5331,8 @@
           "chest_gift_to_self": "Ese es tu propio cofre.",
           "fee_rate_unavailable": "Ese método de pago no se puede usar ahora: su comisión no se puede convertir a esta moneda. Elige otro método o inténtalo más tarde.",
           "credit_bonus_dates": "La campaña debe terminar después de empezar.",
-          "credit_bonus_tiers": "Cada nivel debe pedir más dinero y dar un porcentaje mayor (1 a 500) que el anterior. Hasta 10 niveles."
+          "credit_bonus_tiers": "Cada nivel debe pedir más dinero y dar un porcentaje mayor (1 a 500) que el anterior. Hasta 10 niveles.",
+          "store_sale_dates": "La rebaja debe terminar después de empezar."
         },
         "err_checkoutFailed": "Falló el pago",
         "err_couponMinPurchase": "Gasta al menos {amount} para usar este código.",
@@ -5416,7 +5581,37 @@
         "tab_orders_thanksExpired": "Caducado",
         "tab_orders_thanksWithdrawn": "Retirado",
         "cart_restored": "Tu carrito ha vuelto. Termina cuando quieras.",
-        "cart_restoreFailed": "Ese pedido ya no se puede retomar."
+        "cart_restoreFailed": "Ese pedido ya no se puede retomar.",
+        "saleBanner_wholeStore": "{percent} % de descuento en toda la tienda.",
+        "saleBanner_shelves": "{percent} % de descuento en {shelves}.",
+        "saleBanner_until": "Termina el {date}.",
+        "adm_saleTitle": "Rebajas de la tienda",
+        "adm_saleSubtitle": "Un porcentaje de descuento en toda la tienda, o en las categorías elegidas, durante un tiempo fijo.",
+        "adm_saleAdd": "Añadir rebaja",
+        "adm_saleEdit": "Editar rebaja",
+        "adm_saleName": "Nombre (solo lo ves tú)",
+        "adm_salePercent": "Porcentaje de descuento",
+        "adm_saleStarts": "Empieza",
+        "adm_saleEnds": "Termina",
+        "adm_saleZone": "Las fechas siguen el reloj del sitio ({zone}).",
+        "adm_saleCategories": "Categorías",
+        "adm_saleCategoriesHint": "Déjalo vacío para toda la tienda. Una categoría incluye las que están debajo.",
+        "adm_saleRule": "La rebaja descuenta su porcentaje del precio de lista del producto. Un producto que ya es más barato por su propia oferta o por una campaña mantiene el precio más bajo; nunca se suman. Si dos rebajas cubren un producto, se aplica el porcentaje mayor.",
+        "adm_saleActive": "Activa",
+        "adm_saleSave": "Guardar rebaja",
+        "adm_saleSaved": "Rebaja guardada.",
+        "adm_saleSaveFailed": "No se pudo guardar la rebaja.",
+        "adm_saleDelete": "Eliminar rebaja",
+        "adm_saleDeleteConfirm": "¿Eliminar la rebaja \"{name}\"? Si está en curso, los precios vuelven a la normalidad al instante.",
+        "adm_saleDeleted": "Rebaja eliminada.",
+        "adm_saleNone": "Aún no hay rebajas de la tienda.",
+        "adm_saleState_running": "En curso",
+        "adm_saleState_scheduled": "Programada",
+        "adm_saleState_ended": "Terminada",
+        "adm_saleState_off": "Desactivada",
+        "adm_saleWholeStore": "{percent} % en toda la tienda",
+        "adm_saleShelves": "{percent} % en {count} categorías elegidas",
+        "adm_saleWindow": "{starts} a {ends}"
       },
       "cart": {
         "title": "Carrito de compra",
@@ -5618,7 +5813,8 @@
         "settings_store": "Pagos",
         "settings_store_description": "Configuración de Stripe y PayPal.",
         "menu_store_payment_fees": "Comisiones de pago",
-        "menu_store_credit_bonus": "Bonificación de créditos"
+        "menu_store_credit_bonus": "Bonificación de créditos",
+        "menu_store_store_sales": "Rebajas de la tienda"
       },
       "activity": {
         "kindStoreOrderCompleted": "Pedido",
@@ -5634,7 +5830,10 @@
         "auditPaymentFeeReset": "Un método de pago volvió a la comisión de su pasarela",
         "auditCreditBonusCreated": "Añadió una campaña de bonificación de créditos",
         "auditCreditBonusUpdated": "Cambió una campaña de bonificación de créditos",
-        "auditCreditBonusDeleted": "Eliminó una campaña de bonificación de créditos"
+        "auditCreditBonusDeleted": "Eliminó una campaña de bonificación de créditos",
+        "auditStoreSaleCreated": "Añadió una rebaja de la tienda",
+        "auditStoreSaleUpdated": "Cambió una rebaja de la tienda",
+        "auditStoreSaleDeleted": "Eliminó una rebaja de la tienda"
       },
       "pageTitles": {
         "store": "Tienda",
@@ -6100,7 +6299,8 @@
           "chest_gift_to_self": "See on sinu enda kirst.",
           "fee_rate_unavailable": "Seda makseviisi ei saa praegu kasutada: selle tasu ei saa sellesse valuutasse teisendada. Vali muu makseviis või proovi hiljem uuesti.",
           "credit_bonus_dates": "Kampaania peab lõppema pärast algust.",
-          "credit_bonus_tiers": "Iga aste peab nõudma rohkem raha ja andma suurema protsendi (1 kuni 500) kui eelmine. Kuni 10 astet."
+          "credit_bonus_tiers": "Iga aste peab nõudma rohkem raha ja andma suurema protsendi (1 kuni 500) kui eelmine. Kuni 10 astet.",
+          "store_sale_dates": "Allahindlus peab lõppema pärast algust."
         },
         "err_checkoutFailed": "Vormistamine ebaõnnestus",
         "err_couponMinPurchase": "Selle koodi kasutamiseks kuluta vähemalt {amount}.",
@@ -6349,7 +6549,37 @@
         "tab_orders_thanksExpired": "Aegunud",
         "tab_orders_thanksWithdrawn": "Tühistatud",
         "cart_restored": "Sinu ostukorv on tagasi. Lõpeta, kui oled valmis.",
-        "cart_restoreFailed": "Seda tellimust ei saa enam jätkata."
+        "cart_restoreFailed": "Seda tellimust ei saa enam jätkata.",
+        "saleBanner_wholeStore": "{percent}% allahindlust kõigele poes.",
+        "saleBanner_shelves": "{percent}% allahindlust: {shelves}.",
+        "saleBanner_until": "Lõpeb {date}.",
+        "adm_saleTitle": "Poe allahindlused",
+        "adm_saleSubtitle": "Protsentuaalne allahindlus kogu poele või valitud kategooriatele kindlaks ajaks.",
+        "adm_saleAdd": "Lisa allahindlus",
+        "adm_saleEdit": "Muuda allahindlust",
+        "adm_saleName": "Nimi (näed ainult sina)",
+        "adm_salePercent": "Allahindluse protsent",
+        "adm_saleStarts": "Algab",
+        "adm_saleEnds": "Lõpeb",
+        "adm_saleZone": "Ajad on saidi kellaajas ({zone}).",
+        "adm_saleCategories": "Kategooriad",
+        "adm_saleCategoriesHint": "Jäta tühjaks kogu poe jaoks. Kategooria hõlmab ka selle alamkategooriaid.",
+        "adm_saleRule": "Allahindlus arvestatakse toote hinnakirja hinnast. Toode, mis on juba oma soodushinna või kampaania tõttu odavam, jääb madalama hinna juurde; neid ei liideta kunagi. Kui kaks allahindlust katavad sama toodet, kehtib suurem protsent.",
+        "adm_saleActive": "Aktiivne",
+        "adm_saleSave": "Salvesta allahindlus",
+        "adm_saleSaved": "Allahindlus salvestatud.",
+        "adm_saleSaveFailed": "Allahindlust ei õnnestunud salvestada.",
+        "adm_saleDelete": "Kustuta allahindlus",
+        "adm_saleDeleteConfirm": "Kas kustutada allahindlus „{name}“? Kui see kehtib, lähevad hinnad kohe tavaliseks tagasi.",
+        "adm_saleDeleted": "Allahindlus kustutatud.",
+        "adm_saleNone": "Poe allahindlusi veel pole.",
+        "adm_saleState_running": "Kehtib",
+        "adm_saleState_scheduled": "Plaanitud",
+        "adm_saleState_ended": "Lõppenud",
+        "adm_saleState_off": "Väljas",
+        "adm_saleWholeStore": "{percent}% kogu poele",
+        "adm_saleShelves": "{percent}% {count} valitud kategooriale",
+        "adm_saleWindow": "{starts} kuni {ends}"
       },
       "cart": {
         "title": "Ostukorv",
@@ -6551,7 +6781,8 @@
         "settings_store": "Maksed",
         "settings_store_description": "Stripe'i ja PayPali seadistus.",
         "menu_store_payment_fees": "Maksetasud",
-        "menu_store_credit_bonus": "Krediidiboonus"
+        "menu_store_credit_bonus": "Krediidiboonus",
+        "menu_store_store_sales": "Poe allahindlused"
       },
       "activity": {
         "kindStoreOrderCompleted": "Tellimus",
@@ -6567,7 +6798,10 @@
         "auditPaymentFeeReset": "Makseviis taastati makselüüsi tasule",
         "auditCreditBonusCreated": "Lisas krediidiboonuse kampaania",
         "auditCreditBonusUpdated": "Muutis krediidiboonuse kampaaniat",
-        "auditCreditBonusDeleted": "Kustutas krediidiboonuse kampaania"
+        "auditCreditBonusDeleted": "Kustutas krediidiboonuse kampaania",
+        "auditStoreSaleCreated": "Lisas poe allahindluse",
+        "auditStoreSaleUpdated": "Muutis poe allahindlust",
+        "auditStoreSaleDeleted": "Kustutas poe allahindluse"
       },
       "pageTitles": {
         "store": "Pood",
@@ -7033,7 +7267,8 @@
           "chest_gift_to_self": "C’est votre propre coffre.",
           "fee_rate_unavailable": "Ce moyen de paiement n'est pas utilisable pour le moment : ses frais ne peuvent pas être convertis dans cette devise. Choisissez un autre moyen ou réessayez plus tard.",
           "credit_bonus_dates": "La campagne doit se terminer après son début.",
-          "credit_bonus_tiers": "Chaque palier doit demander plus d'argent et donner un pourcentage plus élevé (1 à 500) que le précédent. 10 paliers au plus."
+          "credit_bonus_tiers": "Chaque palier doit demander plus d'argent et donner un pourcentage plus élevé (1 à 500) que le précédent. 10 paliers au plus.",
+          "store_sale_dates": "Les soldes doivent se terminer après leur début."
         },
         "err_checkoutFailed": "Échec du paiement",
         "err_couponMinPurchase": "Dépensez au moins {amount} pour utiliser ce code.",
@@ -7282,7 +7517,37 @@
         "tab_orders_thanksExpired": "Expiré",
         "tab_orders_thanksWithdrawn": "Retiré",
         "cart_restored": "Votre panier est de retour. Terminez quand vous voulez.",
-        "cart_restoreFailed": "Cette commande ne peut plus être reprise."
+        "cart_restoreFailed": "Cette commande ne peut plus être reprise.",
+        "saleBanner_wholeStore": "{percent} % de réduction sur toute la boutique.",
+        "saleBanner_shelves": "{percent} % de réduction sur {shelves}.",
+        "saleBanner_until": "Se termine le {date}.",
+        "adm_saleTitle": "Soldes de la boutique",
+        "adm_saleSubtitle": "Un pourcentage de réduction sur toute la boutique, ou sur des rayons choisis, pendant une durée fixe.",
+        "adm_saleAdd": "Ajouter des soldes",
+        "adm_saleEdit": "Modifier les soldes",
+        "adm_saleName": "Nom (visible par vous seul)",
+        "adm_salePercent": "Pourcentage de réduction",
+        "adm_saleStarts": "Début",
+        "adm_saleEnds": "Fin",
+        "adm_saleZone": "Les dates suivent l'heure du site ({zone}).",
+        "adm_saleCategories": "Rayons",
+        "adm_saleCategoriesHint": "Laissez vide pour toute la boutique. Un rayon comprend les rayons qui sont dessous.",
+        "adm_saleRule": "Les soldes retirent leur pourcentage du prix catalogue d'un produit. Un produit déjà moins cher grâce à sa propre promotion ou à une campagne garde le prix le plus bas ; les deux ne s'additionnent jamais. Si deux soldes couvrent un produit, le plus grand pourcentage s'applique.",
+        "adm_saleActive": "Actif",
+        "adm_saleSave": "Enregistrer les soldes",
+        "adm_saleSaved": "Soldes enregistrés.",
+        "adm_saleSaveFailed": "Les soldes n'ont pas pu être enregistrés.",
+        "adm_saleDelete": "Supprimer les soldes",
+        "adm_saleDeleteConfirm": "Supprimer les soldes « {name} » ? S'ils sont en cours, les prix reviennent aussitôt à la normale.",
+        "adm_saleDeleted": "Soldes supprimés.",
+        "adm_saleNone": "Aucun solde pour l'instant.",
+        "adm_saleState_running": "En cours",
+        "adm_saleState_scheduled": "Programmés",
+        "adm_saleState_ended": "Terminés",
+        "adm_saleState_off": "Désactivés",
+        "adm_saleWholeStore": "{percent} % sur toute la boutique",
+        "adm_saleShelves": "{percent} % sur {count} rayons choisis",
+        "adm_saleWindow": "du {starts} au {ends}"
       },
       "cart": {
         "title": "Panier",
@@ -7484,7 +7749,8 @@
         "settings_store": "Paiements",
         "settings_store_description": "Configuration de Stripe et PayPal.",
         "menu_store_payment_fees": "Frais de paiement",
-        "menu_store_credit_bonus": "Bonus de crédits"
+        "menu_store_credit_bonus": "Bonus de crédits",
+        "menu_store_store_sales": "Soldes de la boutique"
       },
       "activity": {
         "kindStoreOrderCompleted": "Commande",
@@ -7500,7 +7766,10 @@
         "auditPaymentFeeReset": "Moyen de paiement remis aux frais de sa passerelle",
         "auditCreditBonusCreated": "A ajouté une campagne de bonus de crédits",
         "auditCreditBonusUpdated": "A modifié une campagne de bonus de crédits",
-        "auditCreditBonusDeleted": "A supprimé une campagne de bonus de crédits"
+        "auditCreditBonusDeleted": "A supprimé une campagne de bonus de crédits",
+        "auditStoreSaleCreated": "A ajouté des soldes",
+        "auditStoreSaleUpdated": "A modifié des soldes",
+        "auditStoreSaleDeleted": "A supprimé des soldes"
       },
       "pageTitles": {
         "store": "Boutique",
@@ -7966,7 +8235,8 @@
           "chest_gift_to_self": "È il tuo baule.",
           "fee_rate_unavailable": "Questo metodo di pagamento non può essere usato ora: la sua commissione non può essere convertita in questa valuta. Scegli un altro metodo o riprova più tardi.",
           "credit_bonus_dates": "La campagna deve finire dopo l'inizio.",
-          "credit_bonus_tiers": "Ogni livello deve chiedere più denaro e dare una percentuale più alta (da 1 a 500) del precedente. Al massimo 10 livelli."
+          "credit_bonus_tiers": "Ogni livello deve chiedere più denaro e dare una percentuale più alta (da 1 a 500) del precedente. Al massimo 10 livelli.",
+          "store_sale_dates": "I saldi devono finire dopo l'inizio."
         },
         "err_checkoutFailed": "Pagamento non riuscito",
         "err_couponMinPurchase": "Spendi almeno {amount} per usare questo codice.",
@@ -8215,7 +8485,37 @@
         "tab_orders_thanksExpired": "Scaduto",
         "tab_orders_thanksWithdrawn": "Ritirato",
         "cart_restored": "Il tuo carrello è tornato. Completa quando vuoi.",
-        "cart_restoreFailed": "Quell’ordine non può più essere ripreso."
+        "cart_restoreFailed": "Quell’ordine non può più essere ripreso.",
+        "saleBanner_wholeStore": "{percent}% di sconto su tutto il negozio.",
+        "saleBanner_shelves": "{percent}% di sconto su {shelves}.",
+        "saleBanner_until": "Termina il {date}.",
+        "adm_saleTitle": "Saldi del negozio",
+        "adm_saleSubtitle": "Una percentuale di sconto su tutto il negozio, o sulle categorie scelte, per un periodo stabilito.",
+        "adm_saleAdd": "Aggiungi saldi",
+        "adm_saleEdit": "Modifica saldi",
+        "adm_saleName": "Nome (lo vedi solo tu)",
+        "adm_salePercent": "Percentuale di sconto",
+        "adm_saleStarts": "Inizio",
+        "adm_saleEnds": "Fine",
+        "adm_saleZone": "Le date seguono l'orario del sito ({zone}).",
+        "adm_saleCategories": "Categorie",
+        "adm_saleCategoriesHint": "Lascia vuoto per tutto il negozio. Una categoria include quelle al suo interno.",
+        "adm_saleRule": "I saldi tolgono la loro percentuale dal prezzo di listino di un prodotto. Un prodotto già più economico grazie alla propria offerta o a una campagna mantiene il prezzo più basso; i due non si sommano mai. Se due saldi coprono un prodotto, vale la percentuale maggiore.",
+        "adm_saleActive": "Attivo",
+        "adm_saleSave": "Salva saldi",
+        "adm_saleSaved": "Saldi salvati.",
+        "adm_saleSaveFailed": "Impossibile salvare i saldi.",
+        "adm_saleDelete": "Elimina saldi",
+        "adm_saleDeleteConfirm": "Eliminare i saldi \"{name}\"? Se sono in corso, i prezzi tornano subito normali.",
+        "adm_saleDeleted": "Saldi eliminati.",
+        "adm_saleNone": "Ancora nessun saldo del negozio.",
+        "adm_saleState_running": "In corso",
+        "adm_saleState_scheduled": "Programmati",
+        "adm_saleState_ended": "Terminati",
+        "adm_saleState_off": "Disattivati",
+        "adm_saleWholeStore": "{percent}% su tutto il negozio",
+        "adm_saleShelves": "{percent}% su {count} categorie scelte",
+        "adm_saleWindow": "dal {starts} al {ends}"
       },
       "cart": {
         "title": "Carrello",
@@ -8417,7 +8717,8 @@
         "settings_store": "Pagamenti",
         "settings_store_description": "Configurazione di Stripe e PayPal.",
         "menu_store_payment_fees": "Commissioni di pagamento",
-        "menu_store_credit_bonus": "Bonus crediti"
+        "menu_store_credit_bonus": "Bonus crediti",
+        "menu_store_store_sales": "Saldi del negozio"
       },
       "activity": {
         "kindStoreOrderCompleted": "Ordine",
@@ -8433,7 +8734,10 @@
         "auditPaymentFeeReset": "Metodo di pagamento riportato alla commissione del suo gateway",
         "auditCreditBonusCreated": "Ha aggiunto una campagna bonus crediti",
         "auditCreditBonusUpdated": "Ha modificato una campagna bonus crediti",
-        "auditCreditBonusDeleted": "Ha eliminato una campagna bonus crediti"
+        "auditCreditBonusDeleted": "Ha eliminato una campagna bonus crediti",
+        "auditStoreSaleCreated": "Ha aggiunto dei saldi",
+        "auditStoreSaleUpdated": "Ha modificato dei saldi",
+        "auditStoreSaleDeleted": "Ha eliminato dei saldi"
       },
       "pageTitles": {
         "store": "Store",
@@ -8899,7 +9203,8 @@
           "chest_gift_to_self": "To twoja własna skrzynia.",
           "fee_rate_unavailable": "Tej metody płatności nie można teraz użyć: jej opłaty nie da się przeliczyć na tę walutę. Wybierz inną metodę lub spróbuj później.",
           "credit_bonus_dates": "Kampania musi kończyć się po rozpoczęciu.",
-          "credit_bonus_tiers": "Każdy próg musi wymagać więcej pieniędzy i dawać wyższy procent (1 do 500) niż poprzedni. Najwyżej 10 progów."
+          "credit_bonus_tiers": "Każdy próg musi wymagać więcej pieniędzy i dawać wyższy procent (1 do 500) niż poprzedni. Najwyżej 10 progów.",
+          "store_sale_dates": "Wyprzedaż musi kończyć się po swoim początku."
         },
         "err_checkoutFailed": "Płatność nie powiodła się",
         "err_couponMinPurchase": "Wydaj co najmniej {amount}, aby użyć tego kodu.",
@@ -9148,7 +9453,37 @@
         "tab_orders_thanksExpired": "Wygasł",
         "tab_orders_thanksWithdrawn": "Wycofany",
         "cart_restored": "Koszyk wrócił. Dokończ, kiedy zechcesz.",
-        "cart_restoreFailed": "Tego zamówienia nie można już wznowić."
+        "cart_restoreFailed": "Tego zamówienia nie można już wznowić.",
+        "saleBanner_wholeStore": "{percent}% zniżki na wszystko w sklepie.",
+        "saleBanner_shelves": "{percent}% zniżki na {shelves}.",
+        "saleBanner_until": "Kończy się {date}.",
+        "adm_saleTitle": "Wyprzedaże sklepu",
+        "adm_saleSubtitle": "Procentowa zniżka na cały sklep lub wybrane kategorie, na określony czas.",
+        "adm_saleAdd": "Dodaj wyprzedaż",
+        "adm_saleEdit": "Edytuj wyprzedaż",
+        "adm_saleName": "Nazwa (widzisz ją tylko ty)",
+        "adm_salePercent": "Procent zniżki",
+        "adm_saleStarts": "Początek",
+        "adm_saleEnds": "Koniec",
+        "adm_saleZone": "Daty są według zegara strony ({zone}).",
+        "adm_saleCategories": "Kategorie",
+        "adm_saleCategoriesHint": "Zostaw puste dla całego sklepu. Kategoria obejmuje kategorie pod nią.",
+        "adm_saleRule": "Wyprzedaż odejmuje swój procent od ceny katalogowej produktu. Produkt, który jest już tańszy dzięki własnej promocji lub kampanii, zachowuje niższą cenę; zniżki nigdy się nie sumują. Gdy dwie wyprzedaże obejmują jeden produkt, obowiązuje większy procent.",
+        "adm_saleActive": "Aktywna",
+        "adm_saleSave": "Zapisz wyprzedaż",
+        "adm_saleSaved": "Wyprzedaż zapisana.",
+        "adm_saleSaveFailed": "Nie udało się zapisać wyprzedaży.",
+        "adm_saleDelete": "Usuń wyprzedaż",
+        "adm_saleDeleteConfirm": "Usunąć wyprzedaż „{name}”? Jeśli trwa, ceny od razu wracają do normy.",
+        "adm_saleDeleted": "Wyprzedaż usunięta.",
+        "adm_saleNone": "Nie ma jeszcze wyprzedaży sklepu.",
+        "adm_saleState_running": "Trwa",
+        "adm_saleState_scheduled": "Zaplanowana",
+        "adm_saleState_ended": "Zakończona",
+        "adm_saleState_off": "Wyłączona",
+        "adm_saleWholeStore": "{percent}% na cały sklep",
+        "adm_saleShelves": "{percent}% na wybrane kategorie: {count}",
+        "adm_saleWindow": "od {starts} do {ends}"
       },
       "cart": {
         "title": "Koszyk",
@@ -9350,7 +9685,8 @@
         "settings_store": "Płatności",
         "settings_store_description": "Konfiguracja Stripe i PayPal.",
         "menu_store_payment_fees": "Opłaty za płatności",
-        "menu_store_credit_bonus": "Bonus kredytów"
+        "menu_store_credit_bonus": "Bonus kredytów",
+        "menu_store_store_sales": "Wyprzedaże sklepu"
       },
       "activity": {
         "kindStoreOrderCompleted": "Zamówienie",
@@ -9366,7 +9702,10 @@
         "auditPaymentFeeReset": "Przywrócono opłatę bramki dla metody płatności",
         "auditCreditBonusCreated": "Dodał kampanię bonusu kredytów",
         "auditCreditBonusUpdated": "Zmienił kampanię bonusu kredytów",
-        "auditCreditBonusDeleted": "Usunął kampanię bonusu kredytów"
+        "auditCreditBonusDeleted": "Usunął kampanię bonusu kredytów",
+        "auditStoreSaleCreated": "Dodał wyprzedaż sklepu",
+        "auditStoreSaleUpdated": "Zmienił wyprzedaż sklepu",
+        "auditStoreSaleDeleted": "Usunął wyprzedaż sklepu"
       },
       "pageTitles": {
         "store": "Sklep",
@@ -9832,7 +10171,8 @@
           "chest_gift_to_self": "Esse é o seu próprio baú.",
           "fee_rate_unavailable": "Esse método de pagamento não pode ser usado agora: a sua taxa não pode ser convertida para esta moeda. Escolha outro método ou tente mais tarde.",
           "credit_bonus_dates": "A campanha tem de terminar depois de começar.",
-          "credit_bonus_tiers": "Cada escalão tem de pedir mais dinheiro e dar uma percentagem maior (1 a 500) do que o anterior. Até 10 escalões."
+          "credit_bonus_tiers": "Cada escalão tem de pedir mais dinheiro e dar uma percentagem maior (1 a 500) do que o anterior. Até 10 escalões.",
+          "store_sale_dates": "A promoção deve terminar depois de começar."
         },
         "err_checkoutFailed": "Falha na finalização da compra",
         "err_couponMinPurchase": "Gaste pelo menos {amount} para usar este código.",
@@ -10081,7 +10421,37 @@
         "tab_orders_thanksExpired": "Expirado",
         "tab_orders_thanksWithdrawn": "Retirado",
         "cart_restored": "O seu carrinho está de volta. Conclua quando quiser.",
-        "cart_restoreFailed": "Esse pedido já não pode ser retomado."
+        "cart_restoreFailed": "Esse pedido já não pode ser retomado.",
+        "saleBanner_wholeStore": "{percent}% de desconto em toda a loja.",
+        "saleBanner_shelves": "{percent}% de desconto em {shelves}.",
+        "saleBanner_until": "Termina em {date}.",
+        "adm_saleTitle": "Promoções da loja",
+        "adm_saleSubtitle": "Uma porcentagem de desconto em toda a loja, ou em categorias escolhidas, por um tempo definido.",
+        "adm_saleAdd": "Adicionar promoção",
+        "adm_saleEdit": "Editar promoção",
+        "adm_saleName": "Nome (só você vê)",
+        "adm_salePercent": "Porcentagem de desconto",
+        "adm_saleStarts": "Começa",
+        "adm_saleEnds": "Termina",
+        "adm_saleZone": "As datas seguem o relógio do site ({zone}).",
+        "adm_saleCategories": "Categorias",
+        "adm_saleCategoriesHint": "Deixe vazio para toda a loja. Uma categoria inclui as que estão abaixo dela.",
+        "adm_saleRule": "A promoção tira sua porcentagem do preço de tabela do produto. Um produto já mais barato pela própria oferta ou por uma campanha fica com o preço menor; os dois nunca se somam. Quando duas promoções cobrem um produto, vale a maior porcentagem.",
+        "adm_saleActive": "Ativa",
+        "adm_saleSave": "Salvar promoção",
+        "adm_saleSaved": "Promoção salva.",
+        "adm_saleSaveFailed": "Não foi possível salvar a promoção.",
+        "adm_saleDelete": "Excluir promoção",
+        "adm_saleDeleteConfirm": "Excluir a promoção \"{name}\"? Se estiver em andamento, os preços voltam ao normal na hora.",
+        "adm_saleDeleted": "Promoção excluída.",
+        "adm_saleNone": "Ainda não há promoções da loja.",
+        "adm_saleState_running": "Em andamento",
+        "adm_saleState_scheduled": "Agendada",
+        "adm_saleState_ended": "Encerrada",
+        "adm_saleState_off": "Desativada",
+        "adm_saleWholeStore": "{percent}% em toda a loja",
+        "adm_saleShelves": "{percent}% em {count} categorias escolhidas",
+        "adm_saleWindow": "{starts} a {ends}"
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -10283,7 +10653,8 @@
         "settings_store": "Pagamentos",
         "settings_store_description": "Configuração do Stripe e do PayPal.",
         "menu_store_payment_fees": "Taxas de pagamento",
-        "menu_store_credit_bonus": "Bónus de créditos"
+        "menu_store_credit_bonus": "Bónus de créditos",
+        "menu_store_store_sales": "Promoções da loja"
       },
       "activity": {
         "kindStoreOrderCompleted": "Pedido",
@@ -10299,7 +10670,10 @@
         "auditPaymentFeeReset": "Um método de pagamento voltou à taxa do seu gateway",
         "auditCreditBonusCreated": "Adicionou uma campanha de bónus de créditos",
         "auditCreditBonusUpdated": "Alterou uma campanha de bónus de créditos",
-        "auditCreditBonusDeleted": "Eliminou uma campanha de bónus de créditos"
+        "auditCreditBonusDeleted": "Eliminou uma campanha de bónus de créditos",
+        "auditStoreSaleCreated": "Adicionou uma promoção da loja",
+        "auditStoreSaleUpdated": "Alterou uma promoção da loja",
+        "auditStoreSaleDeleted": "Excluiu uma promoção da loja"
       },
       "pageTitles": {
         "store": "Loja",
@@ -10765,7 +11139,8 @@
           "chest_gift_to_self": "Это ваш собственный сундук.",
           "fee_rate_unavailable": "Этот способ оплаты сейчас недоступен: его комиссию нельзя пересчитать в эту валюту. Выберите другой способ или попробуйте позже.",
           "credit_bonus_dates": "Акция должна заканчиваться после начала.",
-          "credit_bonus_tiers": "Каждый уровень должен требовать больше денег и давать больший процент (от 1 до 500), чем предыдущий. Не более 10 уровней."
+          "credit_bonus_tiers": "Каждый уровень должен требовать больше денег и давать больший процент (от 1 до 500), чем предыдущий. Не более 10 уровней.",
+          "store_sale_dates": "Распродажа должна заканчиваться после начала."
         },
         "err_checkoutFailed": "Не удалось оформить заказ",
         "err_couponMinPurchase": "Чтобы использовать этот код, потратьте не меньше {amount}.",
@@ -11014,7 +11389,37 @@
         "tab_orders_thanksExpired": "Истёк",
         "tab_orders_thanksWithdrawn": "Отозван",
         "cart_restored": "Ваша корзина снова на месте. Завершите, когда будете готовы.",
-        "cart_restoreFailed": "Этот заказ больше нельзя продолжить."
+        "cart_restoreFailed": "Этот заказ больше нельзя продолжить.",
+        "saleBanner_wholeStore": "Скидка {percent}% на всё в магазине.",
+        "saleBanner_shelves": "Скидка {percent}% на {shelves}.",
+        "saleBanner_until": "До {date}.",
+        "adm_saleTitle": "Распродажи магазина",
+        "adm_saleSubtitle": "Скидка в процентах на весь магазин или на выбранные категории на заданное время.",
+        "adm_saleAdd": "Добавить распродажу",
+        "adm_saleEdit": "Изменить распродажу",
+        "adm_saleName": "Название (видите только вы)",
+        "adm_salePercent": "Процент скидки",
+        "adm_saleStarts": "Начало",
+        "adm_saleEnds": "Конец",
+        "adm_saleZone": "Время указано по часам сайта ({zone}).",
+        "adm_saleCategories": "Категории",
+        "adm_saleCategoriesHint": "Оставьте пустым для всего магазина. Категория включает вложенные в неё категории.",
+        "adm_saleRule": "Распродажа снимает свой процент с обычной цены товара. Товар, который уже дешевле благодаря своей скидке или кампании, сохраняет меньшую цену; скидки никогда не складываются. Если два предложения охватывают один товар, действует больший процент.",
+        "adm_saleActive": "Активна",
+        "adm_saleSave": "Сохранить распродажу",
+        "adm_saleSaved": "Распродажа сохранена.",
+        "adm_saleSaveFailed": "Не удалось сохранить распродажу.",
+        "adm_saleDelete": "Удалить распродажу",
+        "adm_saleDeleteConfirm": "Удалить распродажу «{name}»? Если она идёт, цены сразу вернутся к обычным.",
+        "adm_saleDeleted": "Распродажа удалена.",
+        "adm_saleNone": "Распродаж магазина пока нет.",
+        "adm_saleState_running": "Идёт",
+        "adm_saleState_scheduled": "Запланирована",
+        "adm_saleState_ended": "Завершена",
+        "adm_saleState_off": "Выключена",
+        "adm_saleWholeStore": "{percent}% на весь магазин",
+        "adm_saleShelves": "{percent}% на выбранные категории: {count}",
+        "adm_saleWindow": "с {starts} по {ends}"
       },
       "cart": {
         "title": "Корзина",
@@ -11216,7 +11621,8 @@
         "settings_store": "Оплата",
         "settings_store_description": "Настройка Stripe и PayPal.",
         "menu_store_payment_fees": "Платёжные комиссии",
-        "menu_store_credit_bonus": "Бонус на кредиты"
+        "menu_store_credit_bonus": "Бонус на кредиты",
+        "menu_store_store_sales": "Распродажи магазина"
       },
       "activity": {
         "kindStoreOrderCompleted": "Заказ",
@@ -11232,7 +11638,10 @@
         "auditPaymentFeeReset": "Для способа оплаты возвращена комиссия шлюза",
         "auditCreditBonusCreated": "Добавил бонусную акцию на кредиты",
         "auditCreditBonusUpdated": "Изменил бонусную акцию на кредиты",
-        "auditCreditBonusDeleted": "Удалил бонусную акцию на кредиты"
+        "auditCreditBonusDeleted": "Удалил бонусную акцию на кредиты",
+        "auditStoreSaleCreated": "Добавил распродажу магазина",
+        "auditStoreSaleUpdated": "Изменил распродажу магазина",
+        "auditStoreSaleDeleted": "Удалил распродажу магазина"
       },
       "pageTitles": {
         "store": "Магазин",
@@ -11698,7 +12107,8 @@
           "chest_gift_to_self": "这是你自己的箱子。",
           "fee_rate_unavailable": "该支付方式目前无法使用：其手续费无法换算为此货币。请选择其他方式或稍后再试。",
           "credit_bonus_dates": "活动的结束时间必须晚于开始时间。",
-          "credit_bonus_tiers": "每个档位要求的金额和给出的百分比（1 至 500）都必须高于上一个档位。最多 10 个档位。"
+          "credit_bonus_tiers": "每个档位要求的金额和给出的百分比（1 至 500）都必须高于上一个档位。最多 10 个档位。",
+          "store_sale_dates": "促销的结束时间必须晚于开始时间。"
         },
         "err_checkoutFailed": "结账失败",
         "err_couponMinPurchase": "消费满 {amount} 方可使用此优惠码。",
@@ -11947,7 +12357,37 @@
         "tab_orders_thanksExpired": "已过期",
         "tab_orders_thanksWithdrawn": "已撤回",
         "cart_restored": "你的购物车已恢复。准备好后即可完成购买。",
-        "cart_restoreFailed": "该订单已无法继续。"
+        "cart_restoreFailed": "该订单已无法继续。",
+        "saleBanner_wholeStore": "全店商品 {percent}% 折扣。",
+        "saleBanner_shelves": "{shelves} {percent}% 折扣。",
+        "saleBanner_until": "{date} 结束。",
+        "adm_saleTitle": "全店促销",
+        "adm_saleSubtitle": "在固定时间内为全店或所选分类提供百分比折扣。",
+        "adm_saleAdd": "添加促销",
+        "adm_saleEdit": "编辑促销",
+        "adm_saleName": "名称（仅你可见）",
+        "adm_salePercent": "折扣百分比",
+        "adm_saleStarts": "开始",
+        "adm_saleEnds": "结束",
+        "adm_saleZone": "时间按网站时区（{zone}）计算。",
+        "adm_saleCategories": "分类",
+        "adm_saleCategoriesHint": "留空表示全店。一个分类包含其下的子分类。",
+        "adm_saleRule": "促销从商品的标价中减去其百分比。已因自身特价或活动而更便宜的商品保留较低价格；两者绝不叠加。当两个促销覆盖同一商品时，按较大的百分比计算。",
+        "adm_saleActive": "启用",
+        "adm_saleSave": "保存促销",
+        "adm_saleSaved": "促销已保存。",
+        "adm_saleSaveFailed": "无法保存促销。",
+        "adm_saleDelete": "删除促销",
+        "adm_saleDeleteConfirm": "删除促销“{name}”？如果正在进行，价格会立即恢复正常。",
+        "adm_saleDeleted": "促销已删除。",
+        "adm_saleNone": "还没有全店促销。",
+        "adm_saleState_running": "进行中",
+        "adm_saleState_scheduled": "已排期",
+        "adm_saleState_ended": "已结束",
+        "adm_saleState_off": "已关闭",
+        "adm_saleWholeStore": "全店 {percent}% 折扣",
+        "adm_saleShelves": "{count} 个所选分类 {percent}% 折扣",
+        "adm_saleWindow": "{starts} 至 {ends}"
       },
       "cart": {
         "title": "购物车",
@@ -12149,7 +12589,8 @@
         "settings_store": "支付",
         "settings_store_description": "Stripe 与 PayPal 配置。",
         "menu_store_payment_fees": "支付手续费",
-        "menu_store_credit_bonus": "积分奖励"
+        "menu_store_credit_bonus": "积分奖励",
+        "menu_store_store_sales": "全店促销"
       },
       "activity": {
         "kindStoreOrderCompleted": "订单",
@@ -12165,7 +12606,10 @@
         "auditPaymentFeeReset": "支付方式已恢复为网关的手续费",
         "auditCreditBonusCreated": "添加了积分奖励活动",
         "auditCreditBonusUpdated": "修改了积分奖励活动",
-        "auditCreditBonusDeleted": "删除了积分奖励活动"
+        "auditCreditBonusDeleted": "删除了积分奖励活动",
+        "auditStoreSaleCreated": "添加了全店促销",
+        "auditStoreSaleUpdated": "修改了全店促销",
+        "auditStoreSaleDeleted": "删除了全店促销"
       },
       "pageTitles": {
         "store": "商店",
@@ -12403,6 +12847,18 @@
     {
       "action": "store.payment_fee.reset",
       "nameKey": "auditPaymentFeeReset"
+    },
+    {
+      "action": "store.sale.created",
+      "nameKey": "auditStoreSaleCreated"
+    },
+    {
+      "action": "store.sale.updated",
+      "nameKey": "auditStoreSaleUpdated"
+    },
+    {
+      "action": "store.sale.deleted",
+      "nameKey": "auditStoreSaleDeleted"
     }
   ],
   "blocks": [
