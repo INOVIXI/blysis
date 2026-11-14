@@ -54,6 +54,8 @@ const db = {
     productVariable: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },
     orderItem: { aggregate: vi.fn(async () => ({ _sum: { quantity: 0 } })) },
+    // No campaign runs in these tests.
+    campaign: { findMany: vi.fn(async () => []) },
     setting: {
         findUnique: vi.fn(async ({ where }: { where: { key: string } }) => (where.key === "default_currency" ? { value: "EUR" } : null)),
     },

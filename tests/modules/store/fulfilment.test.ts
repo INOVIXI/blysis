@@ -36,7 +36,11 @@ const db = {
         updateMany: vi.fn(async () => ({ count: 1 })),
         count: vi.fn(async () => 0),
     },
-    coupon: { findUnique: vi.fn(async () => null as unknown) },
+    coupon: {
+        findUnique: vi.fn(async () => null as unknown),
+        // A refund withdraws the thank-you coupon the order earned; these orders earned none.
+        updateMany: vi.fn(async () => ({ count: 0 })),
+    },
     chestItem: {
         create: vi.fn(async () => ({})),
         createMany: vi.fn(async () => ({ count: 1 })),
@@ -44,8 +48,6 @@ const db = {
         updateMany: vi.fn(async () => ({ count: 0 })),
         deleteMany: vi.fn(async () => ({ count: 0 })),
     },
-    // A refund withdraws the thank-you coupon the order earned; these orders earned none.
-    coupon: { updateMany: vi.fn(async () => ({ count: 0 })) },
     ownedProduct: {
         upsert: vi.fn(async () => ({})),
         createMany: vi.fn(async () => ({ count: 1 })),

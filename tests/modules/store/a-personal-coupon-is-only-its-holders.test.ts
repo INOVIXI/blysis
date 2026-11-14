@@ -68,6 +68,10 @@ const db = {
     productVariable: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },
     orderItem: { aggregate: vi.fn(async () => ({ _sum: { quantity: 0 } })) },
+    // No store-wide sale runs in these tests.
+    storeSale: { findMany: vi.fn(async () => []) },
+    // No campaign runs in these tests.
+    campaign: { findMany: vi.fn(async () => []) },
     setting: { findUnique: vi.fn(async () => null) },
     user: { findUnique: vi.fn(async () => ({ email: "buyer@example.com", username: "Steve", creditBalance: 0 })) },
     order: { create: vi.fn(async () => ({ id: "o1", orderNumber: "ORD-1" })), update: vi.fn(async () => ({})) },

@@ -49,6 +49,7 @@ vi.mock("@/core/sdk/ui", () => ({ RichContent: () => null }));
 vi.mock("@/modules/store/components/ProductGallery", () => ({ ProductGallery: () => null }));
 vi.mock("@/modules/store/components/ProductView", () => ({ ProductView: () => null }));
 vi.mock("@/modules/store/components/ProductCard", () => ({ ProductCard: () => null }));
+vi.mock("@/modules/store/components/StoreSaleBanner", () => ({ StoreSaleBanner: () => null }));
 vi.mock("@/modules/store/lib/read-bulk-rules", () => ({ readBulkLadder: async () => [] }));
 vi.mock("@/modules/store/lib/read-store", () => ({ readRelated: async () => [] }));
 
