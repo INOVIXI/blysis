@@ -1,6 +1,6 @@
 {
   "$comment": "The catalogue the admin update screen reads. Published beside module-marketplace/index.json on the same base, so a fork or an air-gapped mirror serves its own by pointing BLYSIS_MARKETPLACE_BASE somewhere else. Newest last is not required; the reader sorts.",
-  "updated": "2026-11-02",
+  "updated": "2026-11-14",
   "releases": [
     {
       "version": "0.2.1",
@@ -103,6 +103,14 @@
       "tag": "0.5.1",
       "publishedAt": "2026-11-02T07:52:02Z",
       "notes": "BLYSIS_AUTOMATED_BACKUP in .env can fix the automated backup on or off, and follow-redirects moves past a high advisory.",
+      "security": true,
+      "minVersion": null
+    },
+    {
+      "version": "0.6.0",
+      "tag": "0.6.0",
+      "publishedAt": "2026-11-14T20:38:45Z",
+      "notes": "AI moderation and support replies, credits, crates and store-wide sales, rejections a member is told about and can question, and fixes for free PayTR test orders, wheel and checkout abuse and referral farming.",
       "security": true,
       "minVersion": null
     }
