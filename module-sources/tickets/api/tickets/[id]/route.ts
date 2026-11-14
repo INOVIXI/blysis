@@ -145,7 +145,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
             type: "tickets.ticket.replied",
             actorId: session.user.id,
             title: `Replied to ticket: ${ticket.subject}`,
-            href: `/tickets/${ticket.id}`,
+            href: `/support/${ticket.id}`,
             icon: "Ticket",
             isPublic: false,
         },

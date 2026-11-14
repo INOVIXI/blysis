@@ -226,7 +226,7 @@ export async function POST(request: NextRequest) {
             type: "tickets.ticket.opened",
             actorId: session.user.id,
             title: `Opened ticket: ${ticket.subject}`,
-            href: `/tickets/${ticket.id}`,
+            href: `/support/${ticket.id}`,
             icon: "Ticket",
             isPublic: false,
         },

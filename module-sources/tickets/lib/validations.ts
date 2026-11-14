@@ -26,9 +26,13 @@ export const ticketSchema = z.object({
     message: z.string().min(10, "Message must be at least 10 characters").max(20_000),
 });
 
+/**
+ * A reply. The ticket is the one in the address; asking for its id again in
+ * the body refused every reply a member sent, because their screen posts the
+ * text alone.
+ */
 export const ticketMessageSchema = z.object({
     content: z.string().min(1, "Message is required").max(20_000),
-    ticketId: z.string().min(1),
     attachments: z.array(z.string().url()).optional(),
 });
 
