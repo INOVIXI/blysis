@@ -1583,7 +1583,7 @@
     "moderationNotice_title": "关于你的内容",
     "moderationNotice_description": "你所写内容的处理结果及原因。",
     "moderationNotice_rejected": "未发布",
-    "moderationNotice_pending": "等待版主审核",
+    "moderationNotice_pending": "等待审核",
     "moderationNotice_approved": "已发布",
     "moderationNotice_decidedAt": "于 {when} 作出决定",
     "moderationNotice_reason": "原因",

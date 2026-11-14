@@ -1583,7 +1583,7 @@
     "moderationNotice_title": "Gönderin hakkında",
     "moderationNotice_description": "Yazdığın bir şeye ne olduğu ve nedeni.",
     "moderationNotice_rejected": "Yayınlanmadı",
-    "moderationNotice_pending": "Moderatör bekleniyor",
+    "moderationNotice_pending": "İncelenmeyi bekliyor",
     "moderationNotice_approved": "Yayında",
     "moderationNotice_decidedAt": "{when} tarihinde karar verildi",
     "moderationNotice_reason": "Sebep",

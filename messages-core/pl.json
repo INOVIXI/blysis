@@ -1583,7 +1583,7 @@
     "moderationNotice_title": "O twoim wpisie",
     "moderationNotice_description": "Co się stało z czymś, co napisałeś, i dlaczego.",
     "moderationNotice_rejected": "Nieopublikowany",
-    "moderationNotice_pending": "Czeka na moderatora",
+    "moderationNotice_pending": "Czeka na sprawdzenie",
     "moderationNotice_approved": "Opublikowany",
     "moderationNotice_decidedAt": "Zdecydowano {when}",
     "moderationNotice_reason": "Powód",

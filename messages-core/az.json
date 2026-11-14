@@ -1583,7 +1583,7 @@
     "moderationNotice_title": "Paylaşımın haqqında",
     "moderationNotice_description": "Yazdığın bir şeyə nə olduğu və səbəbi.",
     "moderationNotice_rejected": "Dərc edilmədi",
-    "moderationNotice_pending": "Moderator gözlənilir",
+    "moderationNotice_pending": "Yoxlanılmağı gözləyir",
     "moderationNotice_approved": "Dərc edilib",
     "moderationNotice_decidedAt": "{when} tarixində qərar verildi",
     "moderationNotice_reason": "Səbəb",

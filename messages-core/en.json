@@ -1583,7 +1583,7 @@
     "moderationNotice_title": "About your post",
     "moderationNotice_description": "What happened to something you wrote, and why.",
     "moderationNotice_rejected": "Not published",
-    "moderationNotice_pending": "Waiting for a moderator",
+    "moderationNotice_pending": "Waiting to be checked",
     "moderationNotice_approved": "Published",
     "moderationNotice_decidedAt": "Decided on {when}",
     "moderationNotice_reason": "Reason",

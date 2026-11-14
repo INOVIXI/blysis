@@ -1583,7 +1583,7 @@
     "moderationNotice_title": "Sul tuo contenuto",
     "moderationNotice_description": "Cosa è successo a qualcosa che hai scritto, e perché.",
     "moderationNotice_rejected": "Non pubblicato",
-    "moderationNotice_pending": "In attesa di un moderatore",
+    "moderationNotice_pending": "In attesa di verifica",
     "moderationNotice_approved": "Pubblicato",
     "moderationNotice_decidedAt": "Deciso il {when}",
     "moderationNotice_reason": "Motivo",

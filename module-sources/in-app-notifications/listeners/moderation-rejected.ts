@@ -22,7 +22,7 @@ export default async function onModerationRejected(payload: {
     await createNotification({
         userId: recipient,
         title: "Your post was not published",
-        message: "A moderator rejected it. Open it to see why.",
+        message: "It was rejected. Open it to see why.",
         titleKey: "notif_moderationRejectedTitle",
         messageKey: "notif_moderationRejectedMessage",
         type: "warning",

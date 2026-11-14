@@ -1583,7 +1583,7 @@
     "moderationNotice_title": "Sinu postituse kohta",
     "moderationNotice_description": "Mis juhtus millegagi, mille sa kirjutasid, ja miks.",
     "moderationNotice_rejected": "Avaldamata",
-    "moderationNotice_pending": "Ootab moderaatorit",
+    "moderationNotice_pending": "Ootab ülevaatust",
     "moderationNotice_approved": "Avaldatud",
     "moderationNotice_decidedAt": "Otsustatud {when}",
     "moderationNotice_reason": "Põhjus",

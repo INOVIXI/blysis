@@ -1583,7 +1583,7 @@
     "moderationNotice_title": "Zu deinem Beitrag",
     "moderationNotice_description": "Was mit etwas passiert ist, das du geschrieben hast, und warum.",
     "moderationNotice_rejected": "Nicht veröffentlicht",
-    "moderationNotice_pending": "Wartet auf einen Moderator",
+    "moderationNotice_pending": "Wartet auf Prüfung",
     "moderationNotice_approved": "Veröffentlicht",
     "moderationNotice_decidedAt": "Entschieden am {when}",
     "moderationNotice_reason": "Grund",

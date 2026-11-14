@@ -1583,7 +1583,7 @@
     "moderationNotice_title": "О твоей публикации",
     "moderationNotice_description": "Что случилось с тем, что ты написал, и почему.",
     "moderationNotice_rejected": "Не опубликовано",
-    "moderationNotice_pending": "Ожидает модератора",
+    "moderationNotice_pending": "Ожидает проверки",
     "moderationNotice_approved": "Опубликовано",
     "moderationNotice_decidedAt": "Решение принято {when}",
     "moderationNotice_reason": "Причина",
