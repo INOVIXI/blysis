@@ -168,10 +168,14 @@ describe("taking a decision back", () => {
             body: JSON.stringify({ ids: ["r2", "r4"], action: "approve" }),
         }));
         expect(res.status).toBe(200);
-        expect(moderated).toEqual([
+        // One decision per kind, in no promised order: the log is read newest
+        // first, and two rows written in the same test can share a millisecond
+        // or not, which flipped this on a slower Windows runner.
+        expect(moderated).toHaveLength(2);
+        expect(moderated).toEqual(expect.arrayContaining([
             { kind: "forum-post", ids: ["p1"], state: "APPROVED", decidedById: "admin-1" },
             { kind: "blog-comment", ids: ["c9"], state: "APPROVED", decidedById: "admin-1" },
-        ]);
+        ]));
     });
 
     it("puts an item back in the queue", async () => {
