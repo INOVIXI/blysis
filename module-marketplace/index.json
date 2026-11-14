@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-14",
-  "updatedAt": "2026-11-14T15:13:20Z",
+  "updatedAt": "2026-11-14T17:31:20Z",
   "modules": [
     {
       "id": "ai-moderation",
@@ -75,6 +75,94 @@
         "publicRoutes": 0,
         "adminRoutes": 3,
         "apiRoutes": 5,
+        "widgets": 0
+      }
+    },
+    {
+      "id": "ai-support",
+      "name": "AI Support",
+      "description": "Drafts answers to support tickets with an AI model, and answers on its own only where you allow it and it is sure",
+      "i18n": {
+        "az": {
+          "name": "AI Dəstək",
+          "description": "Dəstək biletlərinə AI modeli ilə cavab qaralaması hazırlayır, özü isə yalnız icazə verdiyiniz yerdə və əmin olduqda cavab verir."
+        },
+        "de": {
+          "name": "KI-Support",
+          "description": "Entwirft mit einem KI-Modell Antworten auf Support-Tickets und antwortet nur dort selbst, wo Sie es erlauben und es sich sicher ist."
+        },
+        "es": {
+          "name": "Soporte con IA",
+          "description": "Redacta respuestas a los tickets de soporte con un modelo de IA y solo responde por sí mismo donde lo permites y cuando está seguro."
+        },
+        "et": {
+          "name": "AI-tugi",
+          "description": "Koostab AI mudeliga tugipiletitele vastuste mustandeid ja vastab ise ainult seal, kus sa lubad, ja siis, kui on kindel."
+        },
+        "fr": {
+          "name": "Support IA",
+          "description": "Rédige des réponses aux tickets de support avec un modèle d'IA et ne répond lui-même que là où vous l'autorisez et quand il est sûr."
+        },
+        "it": {
+          "name": "Supporto IA",
+          "description": "Prepara bozze di risposta ai ticket di supporto con un modello di IA e risponde da solo solo dove lo consenti e quando è sicuro."
+        },
+        "pl": {
+          "name": "Wsparcie AI",
+          "description": "Przygotowuje modelem AI szkice odpowiedzi na zgłoszenia i odpowiada sam tylko tam, gdzie na to pozwolisz, i gdy jest pewny."
+        },
+        "pt": {
+          "name": "Suporte com IA",
+          "description": "Prepara rascunhos de resposta aos tickets de suporte com um modelo de IA e só responde sozinho onde permitir e quando tem certeza."
+        },
+        "ru": {
+          "name": "ИИ-поддержка",
+          "description": "Готовит черновики ответов на обращения с помощью ИИ-модели и отвечает сам только там, где вы разрешили, и когда уверен."
+        },
+        "tr": {
+          "name": "AI Destek",
+          "description": "Destek biletlerine bir AI modeliyle yanıt taslağı hazırlar; yalnızca izin verdiğiniz yerde ve emin olduğunda kendisi yanıtlar."
+        },
+        "zh": {
+          "name": "AI 客服",
+          "description": "用 AI 模型为客服工单起草回复，只在你允许的地方且有把握时才自行回复。"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.43.0",
+      "author": "Blysis",
+      "icon": "Bot",
+      "category": "management",
+      "verified": true,
+      "updatedAt": "2026-11-14T17:31:20Z",
+      "screenshots": [],
+      "tags": [
+        "management"
+      ],
+      "zip": "ai-support.zip",
+      "dependencies": [
+        "tickets@^1.12.0"
+      ],
+      "conflicts": [],
+      "hooks": {
+        "emits": [
+          "tickets.thread.read",
+          "tickets.reply.post",
+          "tickets.ticket.classify",
+          "tickets.departments.list",
+          "tickets.priorities.list",
+          "support.knowledge",
+          "support.sources"
+        ],
+        "listens": [
+          "tickets.ticket.opened",
+          "tickets.ticket.replied"
+        ]
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 2,
+        "apiRoutes": 4,
         "widgets": 0
       }
     },
@@ -2805,13 +2893,13 @@
           "description": "带分类和可搜索文章的知识库"
         }
       },
-      "version": "1.12.0",
+      "version": "1.13.0",
       "coreVersion": "^5.34.0",
       "author": "Blysis Team",
       "icon": "HelpCircle",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-11-12T16:58:56Z",
+      "updatedAt": "2026-11-14T17:31:20Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -2823,7 +2911,10 @@
         "emits": [
           "helpcenter.article.created"
         ],
-        "listens": []
+        "listens": [
+          "support.knowledge",
+          "support.sources"
+        ]
       },
       "stats": {
         "publicRoutes": 3,
@@ -2882,13 +2973,13 @@
           "description": "带铃铛图标的站内通知系统"
         }
       },
-      "version": "1.8.1",
+      "version": "1.8.2",
       "coreVersion": "^5.39.0",
       "author": "Blysis",
       "icon": "Bell",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-11-14T15:13:20Z",
+      "updatedAt": "2026-11-14T17:31:20Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -6947,13 +7038,13 @@
           "description": "带部门和优先级的客户支持工单系统"
         }
       },
-      "version": "1.11.0",
+      "version": "1.12.0",
       "coreVersion": "^5.37.0",
       "author": "Blysis Team",
       "icon": "Ticket",
       "category": "management",
       "verified": true,
-      "updatedAt": "2026-11-12T16:58:56Z",
+      "updatedAt": "2026-11-14T17:31:20Z",
       "screenshots": [],
       "tags": [
         "management"
@@ -6966,14 +7057,23 @@
           "tickets.ticket.closed",
           "tickets.ticket.opened",
           "tickets.ticket.replied",
-          "tickets.ticket.updated"
+          "tickets.ticket.updated",
+          "tickets.ticket.handedOff"
         ],
-        "listens": []
+        "listens": [
+          "tickets.thread.read",
+          "tickets.reply.post",
+          "tickets.ticket.classify",
+          "tickets.departments.list",
+          "tickets.priorities.list",
+          "support.knowledge",
+          "support.sources"
+        ]
       },
       "stats": {
         "publicRoutes": 3,
         "adminRoutes": 5,
-        "apiRoutes": 8,
+        "apiRoutes": 9,
         "widgets": 0
       }
     },
