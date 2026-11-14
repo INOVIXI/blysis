@@ -1470,7 +1470,14 @@
     "ai_sendsHelp": "Açık olan her modülün sağlayıcıya ne gönderdiği, kendi ifadesiyle.",
     "ai_sendsEmpty": "Açık olan hiçbir modül yapay zekâ sağlayıcısına bir şey göndermiyor.",
     "sidebar_ai": "Yapay Zekâ",
-    "crumb_ai": "Yapay Zekâ"
+    "crumb_ai": "Yapay Zekâ",
+    "moderation_askedPerson": "Yazar bir insan istedi",
+    "moderationSettings_reviewerOn": "{name}, kendisine bırakılan her türü inceler. Karar veremediği her şey bir insanı bekler.",
+    "moderationSettings_reviewConflict": "Birden fazla inceleme modülü açık olduğu için hiçbiri inceleme yapmıyor. Biri hariç hepsini kapat.",
+    "moderationSettings_reviewWaiting": "Açık bir inceleme modülü yok, bu yüzden bunlar bir insanı bekler.",
+    "moderationSettings_modeFor": "Yeni {kind} için ne olacağı",
+    "moderationSettings_review": "{name} inceler",
+    "moderationSettings_reviewNobody": "İncelenir (açık inceleyici yok)"
   },
   "footer": {
     "quickLinks": "Hızlı Bağlantılar",
@@ -1583,7 +1590,13 @@
     "moderationNotice_noReason": "Bir sebep kaydedilmedi.",
     "moderationNotice_yourPost": "Yazdığın",
     "moderationNotice_yourPostOn": "{title} için yazdığın",
-    "moderationNotice_open": "Paylaşıldığı yerde aç"
+    "moderationNotice_open": "Paylaşıldığı yerde aç",
+    "moderationNotice_byReviewer": "Bu karar bir insan tarafından değil, otomatik olarak verildi. Yanlış olduğunu düşünüyorsan bir insanın bakmasını isteyebilirsin. Bunu bir kez isteyebilirsin.",
+    "moderationNotice_askPerson": "Bir insan baksın",
+    "moderationNotice_asked": "Bir insan bakacak.",
+    "moderationNotice_askFailed": "Bu işlem gerçekleşmedi. Biraz sonra yeniden dene.",
+    "moderationNotice_askLimited": "Çok sık istedin. Daha sonra yeniden dene.",
+    "moderationNotice_personWillLook": "Buna bir insanın bakmasını istedin. Bakılana kadar bekler ve verilen karar kesindir."
   },
   "auth": {
     "accountLocked": "Çok fazla başarısız deneme. Hesabın geçici olarak kilitlendi. E-postanı kontrol et veya birkaç dakika sonra tekrar dene.",

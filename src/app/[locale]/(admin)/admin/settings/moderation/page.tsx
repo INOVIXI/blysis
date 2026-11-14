@@ -4,16 +4,15 @@ import { useEffect, useState } from "react";
 import { Link } from "@/core/lib/i18n/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
-import { Loader2, Save } from "lucide-react";
+import { AlertTriangle, Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { badgeClassName } from "@/core/components/ui/badge";
-import { Checkbox } from "@/core/components/ui/checkbox";
+import { NativeSelect } from "@/core/components/ui/native-select";
 import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { errorMessage } from "@/core/lib/write-result";
 
-type ModerationMode = "auto" | "manual";
+type ModerationMode = "auto" | "manual" | "review";
 
 interface ModerationField {
     settingKey: string;
@@ -22,12 +21,18 @@ interface ModerationField {
     descKey?: string;
 }
 
+function modeOf(raw: unknown): ModerationMode {
+    return raw === "manual" || raw === "review" ? raw : "auto";
+}
+
 export default function ModerationSettingsPage() {
     const t = useTranslations("admin");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [fields, setFields] = useState<ModerationField[]>([]);
     const [config, setConfig] = useState<Record<string, ModerationMode>>({});
+    const [reviewer, setReviewer] = useState<{ id: string; name: string } | null>(null);
+    const [reviewerConflict, setReviewerConflict] = useState(false);
     // Both reads already returned null on a failure, and both nulls then
     // became `{}`: every type read as "auto" and saving wrote that over
     // whatever the site actually had. A failure is a failure now.
@@ -59,12 +64,12 @@ export default function ModerationSettingsPage() {
                     });
                 }
                 setFields(builtFields);
+                setReviewer(modPayload?.reviewer ?? null);
+                setReviewerConflict(modPayload?.reviewerConflict === true);
 
                 const stored = (settingsPayload?.settings?.moderation ?? {}) as Record<string, unknown>;
                 const next: Record<string, ModerationMode> = {};
-                for (const f of builtFields) {
-                    next[f.settingKey] = stored[f.settingKey] === "manual" ? "manual" : "auto";
-                }
+                for (const f of builtFields) next[f.settingKey] = modeOf(stored[f.settingKey]);
                 setConfig(next);
             })
             .catch(() => {
@@ -78,13 +83,6 @@ export default function ModerationSettingsPage() {
             });
         return () => { cancelled = true; };
     }, [t, attempt]);
-
-    const toggleField = (key: string) => {
-        setConfig((prev) => ({
-            ...prev,
-            [key]: prev[key] === "manual" ? "auto" : "manual",
-        }));
-    };
 
     const onSave = async () => {
         setSaving(true);
@@ -155,6 +153,15 @@ export default function ModerationSettingsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-base">{t("moderationSettings_approvalRequired")}</CardTitle>
+                    {reviewer && (
+                        <p className="text-sm text-muted-foreground">{t("moderationSettings_reviewerOn", { name: reviewer.name })}</p>
+                    )}
+                    {reviewerConflict && (
+                        <p role="alert" className="text-sm text-warning flex items-start gap-2">
+                            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+                            {t("moderationSettings_reviewConflict")}
+                        </p>
+                    )}
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {fields.length === 0 ? (
@@ -162,38 +169,47 @@ export default function ModerationSettingsPage() {
                             {t("moderationSettings_noProviders")}
                         </p>
                     ) : (
-                        fields.map((field) => (
-                            <label
-                                key={field.settingKey}
-                                className="flex items-start gap-3 cursor-pointer border border-border rounded-md p-3 hover:bg-muted"
-                            >
-                                <Checkbox
-                                    checked={config[field.settingKey] === "manual"}
-                                    onChange={() => toggleField(field.settingKey)}
-                                    className="mt-0.5"
-                                />
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-foreground">
-                                        {field.labelKey && t.has(field.labelKey) ? t(field.labelKey) : field.label}
-                                    </p>
-                                    {field.descKey && t.has(field.descKey) && (
-                                        <p className="text-xs text-muted-foreground">{t(field.descKey)}</p>
-                                    )}
-                                </div>
-                                {/* The setting's own value used to be printed
-                                    here, so the badge read AUTO and MANUAL -
-                                    the two words the column stores, in the
-                                    typeface of a machine, on a screen an
-                                    operator reads. */}
-                                <span
-                                    className={badgeClassName(config[field.settingKey] === "manual" ? "warning" : "neutral")}
+                        fields.map((field) => {
+                            const label = field.labelKey && t.has(field.labelKey) ? t(field.labelKey) : field.label;
+                            const mode = config[field.settingKey] ?? "auto";
+                            // "review" stays on offer for a kind already set to it, so
+                            // opening this screen while the reviewer is off does not
+                            // quietly turn the kind into something else on save.
+                            const offerReview = reviewer !== null || mode === "review";
+                            return (
+                                <div
+                                    key={field.settingKey}
+                                    className="flex flex-col sm:flex-row sm:items-start gap-3 border border-border rounded-md p-3"
                                 >
-                                    {config[field.settingKey] === "manual"
-                                        ? t("moderationSettings_manual")
-                                        : t("moderationSettings_auto")}
-                                </span>
-                            </label>
-                        ))
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium text-foreground">{label}</p>
+                                        {field.descKey && t.has(field.descKey) && (
+                                            <p className="text-xs text-muted-foreground">{t(field.descKey)}</p>
+                                        )}
+                                        {mode === "review" && reviewer === null && (
+                                            <p className="text-xs text-warning mt-1 flex items-start gap-1.5">
+                                                <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" aria-hidden="true" />
+                                                {t("moderationSettings_reviewWaiting")}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <NativeSelect
+                                        value={mode}
+                                        onChange={(e) => setConfig((prev) => ({ ...prev, [field.settingKey]: modeOf(e.target.value) }))}
+                                        aria-label={t("moderationSettings_modeFor", { kind: label })}
+                                        className="sm:w-56"
+                                    >
+                                        <option value="auto">{t("moderationSettings_auto")}</option>
+                                        <option value="manual">{t("moderationSettings_manual")}</option>
+                                        {offerReview && (
+                                            <option value="review">
+                                                {reviewer ? t("moderationSettings_review", { name: reviewer.name }) : t("moderationSettings_reviewNobody")}
+                                            </option>
+                                        )}
+                                    </NativeSelect>
+                                </div>
+                            );
+                        })
                     )}
                 </CardContent>
             </Card>

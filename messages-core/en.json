@@ -1470,7 +1470,14 @@
     "ai_sendsHelp": "What each switched-on module sends to the provider, in its own words.",
     "ai_sendsEmpty": "No switched-on module sends anything to an AI provider.",
     "sidebar_ai": "AI",
-    "crumb_ai": "AI"
+    "crumb_ai": "AI",
+    "moderation_askedPerson": "Author asked for a person",
+    "moderationSettings_reviewerOn": "{name} reviews every kind set to it. Whatever it cannot decide waits for a person.",
+    "moderationSettings_reviewConflict": "More than one reviewing module is switched on, so none of them reviews. Switch all but one off.",
+    "moderationSettings_reviewWaiting": "No reviewing module is on, so these wait for a person.",
+    "moderationSettings_modeFor": "What happens to new {kind}",
+    "moderationSettings_review": "Reviewed by {name}",
+    "moderationSettings_reviewNobody": "Reviewed (no reviewer is on)"
   },
   "footer": {
     "quickLinks": "Quick Links",
@@ -1583,7 +1590,13 @@
     "moderationNotice_noReason": "No reason was recorded.",
     "moderationNotice_yourPost": "What you wrote",
     "moderationNotice_yourPostOn": "What you wrote on {title}",
-    "moderationNotice_open": "Open where it was posted"
+    "moderationNotice_open": "Open where it was posted",
+    "moderationNotice_byReviewer": "This was decided automatically, not by a person. If you think it is wrong, you can ask a person to look at it. You can ask once.",
+    "moderationNotice_askPerson": "Ask a person to look",
+    "moderationNotice_asked": "A person will look at it.",
+    "moderationNotice_askFailed": "That did not go through. Try again in a moment.",
+    "moderationNotice_askLimited": "You have asked too often. Try again later.",
+    "moderationNotice_personWillLook": "You asked a person to look at this. It waits until they do, and what they decide is final."
   },
   "auth": {
     "accountLocked": "Too many failed attempts. Your account is temporarily locked. Check your email or try again in a few minutes.",

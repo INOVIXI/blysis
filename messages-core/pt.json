@@ -1470,7 +1470,14 @@
     "ai_sendsHelp": "O que cada módulo ativo envia ao fornecedor, nas suas próprias palavras.",
     "ai_sendsEmpty": "Nenhum módulo ativo envia nada a um fornecedor de IA.",
     "sidebar_ai": "IA",
-    "crumb_ai": "IA"
+    "crumb_ai": "IA",
+    "moderation_askedPerson": "O autor pediu uma pessoa",
+    "moderationSettings_reviewerOn": "{name} revê cada tipo atribuído a ele. O que não conseguir decidir espera por uma pessoa.",
+    "moderationSettings_reviewConflict": "Há mais de um módulo de revisão ativado, por isso nenhum revê. Desativa todos menos um.",
+    "moderationSettings_reviewWaiting": "Nenhum módulo de revisão está ativado, por isso estes esperam por uma pessoa.",
+    "moderationSettings_modeFor": "O que acontece com novos {kind}",
+    "moderationSettings_review": "Revisto por {name}",
+    "moderationSettings_reviewNobody": "Revisto (nenhum revisor ativado)"
   },
   "footer": {
     "quickLinks": "Links rápidos",
@@ -1583,7 +1590,13 @@
     "moderationNotice_noReason": "Nenhum motivo foi registado.",
     "moderationNotice_yourPost": "O que escreveste",
     "moderationNotice_yourPostOn": "O que escreveste em {title}",
-    "moderationNotice_open": "Abrir onde foi publicado"
+    "moderationNotice_open": "Abrir onde foi publicado",
+    "moderationNotice_byReviewer": "Isto foi decidido automaticamente, não por uma pessoa. Se achas que está errado, podes pedir que uma pessoa o reveja. Podes pedir uma vez.",
+    "moderationNotice_askPerson": "Pedir a uma pessoa",
+    "moderationNotice_asked": "Uma pessoa vai rever.",
+    "moderationNotice_askFailed": "Não foi possível. Tenta novamente daqui a pouco.",
+    "moderationNotice_askLimited": "Pediste demasiadas vezes. Tenta mais tarde.",
+    "moderationNotice_personWillLook": "Pediste que uma pessoa revisse isto. Fica a aguardar até que o faça, e a decisão dela é final."
   },
   "auth": {
     "accountLocked": "Muitas tentativas sem sucesso. Sua conta foi bloqueada temporariamente. Verifique seu e-mail ou tente novamente em alguns minutos.",

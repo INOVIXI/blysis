@@ -16,14 +16,20 @@ type State = "APPROVED" | "REJECTED" | "PENDING";
 interface Item { id: string; authorId: string | null; state: State }
 
 let items: Item[] = [];
-let decisions: { id: string; provider: string; itemId: string; state: string; reasonId: string | null; note: string | null; decidedById: string | null; reviewer: string | null; createdAt: Date }[] = [];
+let decisions: { id: string; provider: string; itemId: string; state: string; reasonId: string | null; note: string | null; decidedById: string | null; reviewer: string | null; humanOnly?: boolean; createdAt: Date }[] = [];
+let reviewersOn: { id: string; name: string; module: string }[] = [];
 const fired: { name: string; payload: unknown }[] = [];
 let reasonEnabled: Record<string, boolean> = {};
 
 function readable() {
     return {
         count: async () => items.filter((i) => i.state === "PENDING").length,
-        list: async () => ({ items: [], total: 0 }),
+        list: async () => ({
+            items: items.filter((i) => i.state === "PENDING").map((i) => ({
+                id: i.id, author: null, preview: "text", createdAt: new Date(0),
+            })),
+            total: items.filter((i) => i.state === "PENDING").length,
+        }),
         listRejected: async () => ({
             items: items.filter((i) => i.state === "REJECTED").map((i) => ({
                 id: i.id, author: i.authorId ? { id: i.authorId, username: `${i.authorId}-name` } : null,
@@ -47,6 +53,9 @@ function older() {
 }
 
 vi.mock("@/core/generated/module-moderation", () => ({
+    get ModuleModerationReviewers() {
+        return reviewersOn.map((r) => ({ ...r, loader: async () => ({ default: {} }) }));
+    },
     ModuleModerationProviders: [
         { id: "forum-post", label: "Forum posts", module: "forum", loader: async () => ({ default: readable() }) },
         { id: "old-kind", label: "Old", module: "elsewhere", loader: async () => ({ default: older() }) },
@@ -113,6 +122,7 @@ beforeEach(() => {
     decisions = [];
     fired.length = 0;
     reasonEnabled = { spam: true, retired: false };
+    reviewersOn = [];
 });
 
 describe("rejecting", () => {
@@ -204,5 +214,42 @@ describe("the Rejected view", () => {
         expect(p1.decision).toMatchObject({ reason: "tr:spam", note: "links", decidedBy: { id: "mod-1", username: "mod" }, reviewer: null });
         const p3 = body.items.find((i: { id: string }) => i.id === "p3");
         expect(p3.decision).toBeNull();
+    });
+});
+
+describe("a reviewing module in the queue", () => {
+    it("is named in the overview, so the settings screen can offer review", async () => {
+        reviewersOn = [{ id: "ai-moderation", name: "AI moderation", module: "ai-moderation" }];
+        const body = await (await route.GET(new NextRequest("http://x/api/v1/admin/moderation"))).json();
+        expect(body.reviewer).toEqual({ id: "ai-moderation", name: "AI moderation" });
+        expect(body.reviewerConflict).toBe(false);
+    });
+
+    it("is absent from the overview when none is on, and two on is a conflict rather than a choice", async () => {
+        let body = await (await route.GET(new NextRequest("http://x/api/v1/admin/moderation"))).json();
+        expect(body.reviewer).toBeNull();
+        expect(body.reviewerConflict).toBe(false);
+
+        reviewersOn = [
+            { id: "ai-moderation", name: "AI moderation", module: "ai-moderation" },
+            { id: "other", name: "Other", module: "other" },
+        ];
+        body = await (await route.GET(new NextRequest("http://x/api/v1/admin/moderation"))).json();
+        expect(body.reviewer).toBeNull();
+        expect(body.reviewerConflict).toBe(true);
+    });
+
+    it("is named in the Rejected view for what it rejected", async () => {
+        reviewersOn = [{ id: "ai-moderation", name: "AI moderation", module: "ai-moderation" }];
+        decisions.push({ id: "d9", provider: "forum-post", itemId: "p3", state: "REJECTED", reasonId: "spam", note: null, decidedById: null, reviewer: "ai-moderation", createdAt: new Date(5) });
+        const body = await (await route.GET(new NextRequest("http://x/api/v1/admin/moderation?type=forum-post&state=rejected"))).json();
+        expect(body.items.find((i: { id: string }) => i.id === "p3").decision).toMatchObject({ decidedBy: null, reviewer: "AI moderation" });
+    });
+
+    it("marks a waiting item whose author asked a person to look at it", async () => {
+        decisions.push({ id: "d9", provider: "forum-post", itemId: "p2", state: "PENDING", reasonId: null, note: null, decidedById: "u2", reviewer: null, humanOnly: true, createdAt: new Date(5) });
+        const body = await (await route.GET(new NextRequest("http://x/api/v1/admin/moderation?type=forum-post"))).json();
+        const flags = Object.fromEntries(body.items.map((i: { id: string; askedPerson: boolean }) => [i.id, i.askedPerson]));
+        expect(flags).toEqual({ p1: false, p2: true, p4: false });
     });
 });

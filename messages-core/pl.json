@@ -1470,7 +1470,14 @@
     "ai_sendsHelp": "Co każdy włączony moduł wysyła do dostawcy, jego własnymi słowami.",
     "ai_sendsEmpty": "Żaden włączony moduł nie wysyła niczego do dostawcy AI.",
     "sidebar_ai": "AI",
-    "crumb_ai": "AI"
+    "crumb_ai": "AI",
+    "moderation_askedPerson": "Autor poprosił o człowieka",
+    "moderationSettings_reviewerOn": "{name} sprawdza każdy przypisany mu rodzaj. To, czego nie potrafi rozstrzygnąć, czeka na człowieka.",
+    "moderationSettings_reviewConflict": "Włączony jest więcej niż jeden moduł sprawdzający, więc żaden z nich nie sprawdza. Wyłącz wszystkie oprócz jednego.",
+    "moderationSettings_reviewWaiting": "Żaden moduł sprawdzający nie jest włączony, więc te czekają na człowieka.",
+    "moderationSettings_modeFor": "Co dzieje się z nowymi {kind}",
+    "moderationSettings_review": "Sprawdza {name}",
+    "moderationSettings_reviewNobody": "Sprawdzane (brak włączonego sprawdzającego)"
   },
   "footer": {
     "quickLinks": "Szybkie linki",
@@ -1583,7 +1590,13 @@
     "moderationNotice_noReason": "Nie podano powodu.",
     "moderationNotice_yourPost": "Co napisałeś",
     "moderationNotice_yourPostOn": "Co napisałeś w: {title}",
-    "moderationNotice_open": "Otwórz tam, gdzie opublikowano"
+    "moderationNotice_open": "Otwórz tam, gdzie opublikowano",
+    "moderationNotice_byReviewer": "Tę decyzję podjął automat, nie człowiek. Jeśli uważasz, że jest błędna, możesz poprosić, by spojrzał na nią człowiek. Możesz poprosić raz.",
+    "moderationNotice_askPerson": "Poproś człowieka",
+    "moderationNotice_asked": "Człowiek to sprawdzi.",
+    "moderationNotice_askFailed": "To się nie udało. Spróbuj ponownie za chwilę.",
+    "moderationNotice_askLimited": "Prosisz zbyt często. Spróbuj później.",
+    "moderationNotice_personWillLook": "Poprosiłeś, by człowiek to sprawdził. Czeka, aż to zrobi, a jego decyzja jest ostateczna."
   },
   "auth": {
     "accountLocked": "Zbyt wiele nieudanych prób. Konto zostało tymczasowo zablokowane. Sprawdź e-mail albo spróbuj ponownie za kilka minut.",

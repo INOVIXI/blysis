@@ -1470,7 +1470,14 @@
     "ai_sendsHelp": "每个已开启的模块会向服务商发送什么，用它自己的话说明。",
     "ai_sendsEmpty": "没有已开启的模块向 AI 服务商发送任何内容。",
     "sidebar_ai": "AI",
-    "crumb_ai": "AI"
+    "crumb_ai": "AI",
+    "moderation_askedPerson": "作者请求人工审核",
+    "moderationSettings_reviewerOn": "{name} 会审核分配给它的每种内容。它无法决定的内容会留给人工处理。",
+    "moderationSettings_reviewConflict": "启用了多个审核模块，因此它们都不会审核。请只保留一个。",
+    "moderationSettings_reviewWaiting": "没有启用审核模块，因此这些内容会等待人工处理。",
+    "moderationSettings_modeFor": "新的{kind}如何处理",
+    "moderationSettings_review": "由 {name} 审核",
+    "moderationSettings_reviewNobody": "审核（未启用审核者）"
   },
   "footer": {
     "quickLinks": "快速链接",
@@ -1583,7 +1590,13 @@
     "moderationNotice_noReason": "未记录原因。",
     "moderationNotice_yourPost": "你写的内容",
     "moderationNotice_yourPostOn": "你在“{title}”中写的内容",
-    "moderationNotice_open": "在发布位置打开"
+    "moderationNotice_open": "在发布位置打开",
+    "moderationNotice_byReviewer": "这是自动做出的决定，而不是由人做出的。如果你认为有误，可以请求人工查看。只能请求一次。",
+    "moderationNotice_askPerson": "请求人工查看",
+    "moderationNotice_asked": "将由人工查看。",
+    "moderationNotice_askFailed": "未能完成。请稍后再试。",
+    "moderationNotice_askLimited": "请求过于频繁。请稍后再试。",
+    "moderationNotice_personWillLook": "你已请求人工查看。在其查看前会一直等待，其决定为最终决定。"
   },
   "auth": {
     "accountLocked": "尝试失败次数过多，你的账户已被暂时锁定。请查看邮箱，或几分钟后再试。",

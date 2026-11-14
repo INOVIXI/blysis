@@ -33,7 +33,7 @@ export default async function ModerationNoticePage({ params }: { params: Promise
         <ArrangedPage
             page="core.moderation"
             frame={{ title: t("moderationNotice_title"), description: t("moderationNotice_description") }}
-            blocks={{ notice: () => <ModerationNoticeCard notice={notice} /> }}
+            blocks={{ notice: () => <ModerationNoticeCard notice={notice} provider={provider} itemId={id} /> }}
         />
     );
 }

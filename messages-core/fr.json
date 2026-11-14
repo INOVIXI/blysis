@@ -1470,7 +1470,14 @@
     "ai_sendsHelp": "Ce que chaque module activé envoie au fournisseur, dans ses propres mots.",
     "ai_sendsEmpty": "Aucun module activé n’envoie quoi que ce soit à un fournisseur d’IA.",
     "sidebar_ai": "IA",
-    "crumb_ai": "IA"
+    "crumb_ai": "IA",
+    "moderation_askedPerson": "L'auteur a demandé une personne",
+    "moderationSettings_reviewerOn": "{name} examine chaque type qui lui est confié. Ce qu'il ne peut pas trancher attend une personne.",
+    "moderationSettings_reviewConflict": "Plusieurs modules d'examen sont activés, donc aucun n'examine. Désactive-les tous sauf un.",
+    "moderationSettings_reviewWaiting": "Aucun module d'examen n'est activé, donc ceux-ci attendent une personne.",
+    "moderationSettings_modeFor": "Ce qui arrive aux nouveaux {kind}",
+    "moderationSettings_review": "Examiné par {name}",
+    "moderationSettings_reviewNobody": "Examiné (aucun examinateur activé)"
   },
   "footer": {
     "quickLinks": "Liens rapides",
@@ -1583,7 +1590,13 @@
     "moderationNotice_noReason": "Aucun motif n’a été enregistré.",
     "moderationNotice_yourPost": "Ce que tu as écrit",
     "moderationNotice_yourPostOn": "Ce que tu as écrit sur {title}",
-    "moderationNotice_open": "Ouvrir là où c’est publié"
+    "moderationNotice_open": "Ouvrir là où c’est publié",
+    "moderationNotice_byReviewer": "Cette décision a été prise automatiquement, pas par une personne. Si tu penses qu'elle est fausse, tu peux demander qu'une personne la revoie. Tu peux le demander une fois.",
+    "moderationNotice_askPerson": "Demander à une personne",
+    "moderationNotice_asked": "Une personne va le revoir.",
+    "moderationNotice_askFailed": "Cela n'a pas abouti. Réessaie dans un instant.",
+    "moderationNotice_askLimited": "Tu as demandé trop souvent. Réessaie plus tard.",
+    "moderationNotice_personWillLook": "Tu as demandé qu'une personne revoie ceci. Cela attend qu'elle le fasse, et sa décision est définitive."
   },
   "auth": {
     "accountLocked": "Trop de tentatives échouées. Votre compte est temporairement verrouillé. Consultez vos e-mails ou réessayez dans quelques minutes.",
