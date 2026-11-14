@@ -44,6 +44,8 @@ A module that wants a model's answer calls `generateStructured` in `src/core/lib
 - What a member wrote reaches the provider only inside the envelope in `src/core/lib/ai-envelope.ts`, which the text cannot close, and the system text says the envelope is data.
 - `AiUsage` holds counts and an outcome per call, never the prompt or the answer.
 
+A module can also judge the moderation queue, declared under `moderationReviewer`, for the kinds an admin set to "review". The reviewer only answers. Core runs the round in `src/core/lib/moderation-review.ts`, reads each item again before applying anything, and decides through the same `decide` a moderator's button uses. An answer core cannot apply, a call that fails past its attempts, or two reviewers switched on all leave the item waiting for a person. An author may ask a person to look at a reviewer's rejection once (`src/core/lib/moderation-ask-person.ts`), and no reviewer touches that item again.
+
 ## Compiled, not loaded
 
 A module ships React server components, and Next.js compiles those at build time. There is no runtime loader, so installing a module rebuilds the site and restarts it. That decision has operational consequences, from the restart window to a single app process per installation; they are in [How an install becomes a build](./build-lifecycle.md).

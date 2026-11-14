@@ -12,6 +12,15 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.43.0 - a module can review the moderation queue. The manifest gains
+ * `moderationReviewer`, and `@/core/sdk/server` gains the types it
+ * implements (`ModerationReviewer`, `ReviewItem`, `ReviewVerdict`,
+ * `ReviewCapacity`) and what its screens need from the queue:
+ * `moderationKinds`, `moderationReasons`, `readModerated` and `moderate`
+ * (with `ModerationKind`, `ModerateInput`, `ModerateResult`). A moderation
+ * setting may now be "review". `siteLanguage` answers the language the site
+ * opens in, for a job with no visitor to ask. An addition.
+ *
  * 5.42.0 - the account menu draws the `navbar.userMenu` slot, under the
  * profile link, and hands what fills it `close`, which shuts the menu. A
  * module that keeps a row about the account there requires this core: on an
@@ -819,4 +828,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.42.0";
+export const CORE_API_VERSION = "5.43.0";

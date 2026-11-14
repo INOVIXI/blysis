@@ -7,6 +7,8 @@
  * stored once, and the page shows the reason in whatever language the author
  * reads it in.
  */
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const created: Record<string, unknown>[] = [];
@@ -41,6 +43,13 @@ describe("a rejection", () => {
             messageKey: "notif_moderationRejectedMessage",
             href: "/moderation/forum-post/p1",
         });
+    });
+
+    it("does not say a person decided, since a reviewing module may have", async () => {
+        await onRejected(payload);
+        const manifest = JSON.parse(readFileSync(path.join(process.cwd(), "module-sources/in-app-notifications/module.json"), "utf8"));
+        const shipped = manifest.translations.en.inAppNotifications.notif_moderationRejectedMessage as string;
+        for (const text of [created[0].message as string, shipped]) expect(text.toLowerCase()).not.toContain("moderator");
     });
 
     it("tells nobody who switched it off", async () => {

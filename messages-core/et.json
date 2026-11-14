@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Muutis tagasilükkamise põhjust",
     "auditModerationReasonDelete": "Kustutas tagasilükkamise põhjuse",
     "auditModerationRequeue": "Pani sisu tagasi modereerimisjärjekorda",
-    "auditAiSettingsUpdate": "Muutis tehisintellekti seadeid"
+    "auditAiSettingsUpdate": "Muutis tehisintellekti seadeid",
+    "auditModerationAskPerson": "Palus inimesel tagasi lükatud postituse üle vaadata"
   },
   "nav": {
     "adminPanel": "Halduspaneel",
@@ -1470,7 +1471,14 @@
     "ai_sendsHelp": "Mida iga sisse lülitatud moodul teenusepakkujale saadab, tema enda sõnadega.",
     "ai_sendsEmpty": "Ükski sisse lülitatud moodul ei saada tehisintellekti teenusepakkujale midagi.",
     "sidebar_ai": "Tehisintellekt",
-    "crumb_ai": "Tehisintellekt"
+    "crumb_ai": "Tehisintellekt",
+    "moderation_askedPerson": "Autor palus inimese ülevaatust",
+    "moderationSettings_reviewerOn": "{name} vaatab üle iga sellele määratud liigi. Mida see otsustada ei suuda, ootab inimest.",
+    "moderationSettings_reviewConflict": "Sisse on lülitatud rohkem kui üks ülevaatusmoodul, seega ükski neist ei vaata üle. Lülita kõik peale ühe välja.",
+    "moderationSettings_reviewWaiting": "Ükski ülevaatusmoodul pole sees, seega need ootavad inimest.",
+    "moderationSettings_modeFor": "Mis juhtub uute {kind} sisuga",
+    "moderationSettings_review": "Vaatab üle {name}",
+    "moderationSettings_reviewNobody": "Vaadatakse üle (ükski ülevaataja pole sees)"
   },
   "footer": {
     "quickLinks": "Kiirlingid",
@@ -1576,14 +1584,20 @@
     "moderationNotice_title": "Sinu postituse kohta",
     "moderationNotice_description": "Mis juhtus millegagi, mille sa kirjutasid, ja miks.",
     "moderationNotice_rejected": "Avaldamata",
-    "moderationNotice_pending": "Ootab moderaatorit",
+    "moderationNotice_pending": "Ootab ülevaatust",
     "moderationNotice_approved": "Avaldatud",
     "moderationNotice_decidedAt": "Otsustatud {when}",
     "moderationNotice_reason": "Põhjus",
     "moderationNotice_noReason": "Põhjust ei salvestatud.",
     "moderationNotice_yourPost": "Mida sa kirjutasid",
     "moderationNotice_yourPostOn": "Mida sa kirjutasid: {title}",
-    "moderationNotice_open": "Ava seal, kus see postitati"
+    "moderationNotice_open": "Ava seal, kus see postitati",
+    "moderationNotice_byReviewer": "Selle otsustas automaatika, mitte inimene. Kui arvad, et see on vale, võid paluda, et inimene selle üle vaataks. Seda saad paluda ühe korra.",
+    "moderationNotice_askPerson": "Palu inimesel üle vaadata",
+    "moderationNotice_asked": "Inimene vaatab selle üle.",
+    "moderationNotice_askFailed": "See ei õnnestunud. Proovi hetke pärast uuesti.",
+    "moderationNotice_askLimited": "Oled liiga sageli palunud. Proovi hiljem uuesti.",
+    "moderationNotice_personWillLook": "Palusid, et inimene selle üle vaataks. See ootab, kuni ta seda teeb, ja tema otsus on lõplik."
   },
   "auth": {
     "accountLocked": "Liiga palju ebaõnnestunud katseid. Sinu konto on ajutiselt lukus. Vaata oma e-posti või proovi mõne minuti pärast uuesti.",

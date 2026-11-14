@@ -214,6 +214,7 @@ function generateRegistry() {
     const allNotificationTypes: ({ eventType: string; label: string; description?: string; channels?: string[]; module: string })[] = [];
     const allSeoRoutes: ({ module: string; handler: string })[] = [];
     const allUserDataTables: ({ model: string; key: string; column: string; erasure?: "purge" | "retain"; module: string })[] = [];
+    const allModerationReviewers: { id: string; name: string; handler: string; module: string }[] = [];
     const allModerationProviders: ({ id: string; label: string; labelKey?: string; settingKey?: string; settingLabelKey?: string; settingDescKey?: string; handler: string; module: string })[] = [];
     const allSettings: Record<string, ModuleSetting[]> = {};
     const allSecretSettings = new Set<string>();
@@ -277,6 +278,9 @@ function generateRegistry() {
         }
         manifest.userDataExport?.forEach((u) => allUserDataTables.push({ ...u, module: moduleName }));
         manifest.moderationProviders?.forEach((mp) => allModerationProviders.push({ ...mp, module: moduleName }));
+        if (manifest.moderationReviewer) {
+            allModerationReviewers.push({ id: moduleName, name: manifest.moderationReviewer.name, handler: manifest.moderationReviewer.handler, module: moduleName });
+        }
 
         // Canonical `slots` field. `slotContents` above is the same contribution
         // under its original name, so both feed the one registry `<Slot>` reads.
@@ -850,6 +854,56 @@ export const ModulePages: ModulePage[] = ${JSON.stringify([...allPages].sort((a,
         if (mp.settingLabelKey) meta.settingLabelKey = mp.settingLabelKey;
         if (mp.settingDescKey) meta.settingDescKey = mp.settingDescKey;
         moderationContent += `  { ...${JSON.stringify(meta)}, loader: () => import('${importPath}') as Promise<{ default: ModerationProvider }> },\n`;
+    }
+    moderationContent += "];\n\n";
+    // A module that judges what waits, for the kinds set to "review". Core's
+    // round (moderation-review.ts) reads the queue, hands it over in batches
+    // and applies the answers; the reviewer never touches a provider itself.
+    moderationContent += `/** One waiting item, as a reviewer is shown it. */
+export interface ReviewItem {
+    /** The moderation provider's id, such as "forum-post". */
+    kind: string;
+    /** What that kind is called, in English as its manifest says. */
+    kindLabel: string;
+    itemId: string;
+    /** Changes when the text does: an edited post is a new one to judge. */
+    version: string;
+    authorId: string | null;
+    title?: string;
+    body: string;
+}
+
+export interface ReviewVerdict {
+    itemId: string;
+    /** "leave" hands the item to a person, and so does any answer core cannot apply. */
+    decision: 'approve' | 'reject' | 'leave';
+    /** One of the site's enabled reasons; a rejection without one is left. */
+    reasonId?: string | null;
+}
+
+/** How much the reviewer takes on, from its own settings. */
+export interface ReviewCapacity {
+    /** Items one round hands over at most. */
+    perRun: number;
+    /** Items in one call to \`review\`. */
+    batchSize: number;
+    /** Failed calls an item survives before it is left for a person. */
+    maxAttempts: number;
+    /** Provider ids it reviews; empty means every kind set to "review". */
+    kinds: string[];
+}
+
+export interface ModerationReviewer {
+    capacity(): Promise<ReviewCapacity>;
+    /** Throws when it could not judge; every item in the batch then counts a failed attempt. */
+    review(items: ReviewItem[]): Promise<ReviewVerdict[]>;
+}
+
+`;
+    moderationContent += "export const ModuleModerationReviewers: { id: string; name: string; module: string; loader: () => Promise<{ default: ModerationReviewer }> }[] = [\n";
+    for (const mr of allModerationReviewers) {
+        const handlerPath = mr.handler.replace(/\.tsx?$/, '');
+        moderationContent += `  { ...${JSON.stringify({ id: mr.id, name: mr.name, module: mr.module })}, loader: () => import('@/modules/${mr.module}/${handlerPath}') as Promise<{ default: ModerationReviewer }> },\n`;
     }
     moderationContent += "];\n";
     fs.writeFileSync(MODERATION_FILE, moderationContent);

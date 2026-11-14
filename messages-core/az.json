@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Rədd səbəbini dəyişdi",
     "auditModerationReasonDelete": "Rədd səbəbini sildi",
     "auditModerationRequeue": "Məzmunu moderasiya növbəsinə qaytardı",
-    "auditAiSettingsUpdate": "Süni intellekt ayarlarını dəyişdi"
+    "auditAiSettingsUpdate": "Süni intellekt ayarlarını dəyişdi",
+    "auditModerationAskPerson": "Rədd edilmiş paylaşıma insanın baxmasını istədi"
   },
   "nav": {
     "adminPanel": "Admin paneli",
@@ -1470,7 +1471,14 @@
     "ai_sendsHelp": "Açıq olan hər modulun təminatçıya nə göndərdiyi, öz ifadəsi ilə.",
     "ai_sendsEmpty": "Açıq olan heç bir modul süni intellekt təminatçısına heç nə göndərmir.",
     "sidebar_ai": "Süni İntellekt",
-    "crumb_ai": "Süni İntellekt"
+    "crumb_ai": "Süni İntellekt",
+    "moderation_askedPerson": "Müəllif insan baxışı istədi",
+    "moderationSettings_reviewerOn": "{name} ona həvalə olunan hər növü yoxlayır. Qərar verə bilmədiyi hər şey insanı gözləyir.",
+    "moderationSettings_reviewConflict": "Birdən çox yoxlama modulu aktivdir, ona görə heç biri yoxlamır. Biri istisna olmaqla hamısını söndür.",
+    "moderationSettings_reviewWaiting": "Aktiv yoxlama modulu yoxdur, ona görə bunlar insanı gözləyir.",
+    "moderationSettings_modeFor": "Yeni {kind} ilə nə baş verir",
+    "moderationSettings_review": "{name} yoxlayır",
+    "moderationSettings_reviewNobody": "Yoxlanılır (aktiv yoxlayıcı yoxdur)"
   },
   "footer": {
     "quickLinks": "Sürətli keçidlər",
@@ -1576,14 +1584,20 @@
     "moderationNotice_title": "Paylaşımın haqqında",
     "moderationNotice_description": "Yazdığın bir şeyə nə olduğu və səbəbi.",
     "moderationNotice_rejected": "Dərc edilmədi",
-    "moderationNotice_pending": "Moderator gözlənilir",
+    "moderationNotice_pending": "Yoxlanılmağı gözləyir",
     "moderationNotice_approved": "Dərc edilib",
     "moderationNotice_decidedAt": "{when} tarixində qərar verildi",
     "moderationNotice_reason": "Səbəb",
     "moderationNotice_noReason": "Səbəb qeyd edilməyib.",
     "moderationNotice_yourPost": "Yazdığın",
     "moderationNotice_yourPostOn": "{title} üçün yazdığın",
-    "moderationNotice_open": "Paylaşıldığı yerdə aç"
+    "moderationNotice_open": "Paylaşıldığı yerdə aç",
+    "moderationNotice_byReviewer": "Bu qərarı insan yox, avtomatik sistem verib. Səhv olduğunu düşünürsənsə, bir insanın baxmasını istəyə bilərsən. Bunu bir dəfə istəyə bilərsən.",
+    "moderationNotice_askPerson": "İnsan baxsın",
+    "moderationNotice_asked": "Bir insan baxacaq.",
+    "moderationNotice_askFailed": "Bu alınmadı. Bir azdan yenidən cəhd et.",
+    "moderationNotice_askLimited": "Çox tez-tez istədin. Sonra yenidən cəhd et.",
+    "moderationNotice_personWillLook": "Buna insanın baxmasını istədin. O baxana qədər gözləyir və onun qərarı qətidir."
   },
   "auth": {
     "accountLocked": "Həddindən artıq uğursuz cəhd. Hesabınız müvəqqəti bloklanıb. E-poçtunuzu yoxlayın və ya bir neçə dəqiqədən sonra yenidən cəhd edin.",

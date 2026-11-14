@@ -2693,6 +2693,26 @@
         ]
       }
     },
+    "moderationReviewer": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "handler": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "name",
+        "handler"
+      ],
+      "additionalProperties": false
+    },
     "avatarProviders": {
       "maxItems": 10,
       "type": "array",

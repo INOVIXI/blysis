@@ -3,14 +3,21 @@ import { z } from "zod";
 import { auth } from "@/core/lib/auth";
 import { isAdmin } from "@/core/lib/permissions";
 import { logActivity } from "@/core/lib/activity-log";
-import { prisma } from "@/core/lib/db";
-import { ModuleModerationProviders } from "@/core/generated/module-moderation";
+import { ModuleModerationProviders, ModuleModerationReviewers } from "@/core/generated/module-moderation";
 import { getModuleStates } from "@/core/lib/module-cache";
 import { readJsonBody } from "@/core/lib/api-body";
 import { pageParams } from "@/core/lib/page-params";
 import { log } from "@/core/lib/logger";
 import { resolveLocaleFromRequest } from "@/core/lib/i18n/resolve-locale";
-import { decide, latestDecisions } from "@/core/lib/moderation-decisions";
+import { latestDecisions } from "@/core/lib/moderation-decisions";
+import { moderate, type ModerateResult } from "@/core/lib/moderation-access";
+import { reviewerStatus } from "@/core/lib/moderation-review";
+
+/** A reviewer's name as its manifest gives it; its id once it is uninstalled. */
+function reviewerName(id: string | null): string | null {
+    if (!id) return null;
+    return ModuleModerationReviewers.find((r) => r.id === id)?.name ?? id;
+}
 
 async function loadActiveProviders() {
     const states = await getModuleStates();
@@ -21,7 +28,9 @@ async function loadActiveProviders() {
  * GET /api/v1/admin/moderation?type=<provider-id>&page=1[&state=rejected]
  * Returns pending items for one provider, or with `state=rejected` what it
  * rejected, each beside its latest decision. When type is omitted, returns
- * the per-provider pending counts and whether each has a Rejected view.
+ * the per-provider pending counts, whether each has a Rejected view, and
+ * which reviewing module is on (`reviewerConflict` when more than one is,
+ * since then none reviews).
  */
 export async function GET(request: NextRequest) {
     const session = await auth();
@@ -68,7 +77,8 @@ export async function GET(request: NextRequest) {
                 }
             }),
         );
-        return NextResponse.json({ counts, types: labels });
+        const { reviewer, conflict } = await reviewerStatus();
+        return NextResponse.json({ counts, types: labels, reviewer, reviewerConflict: conflict });
     }
 
     const provider = providers.find((p) => p.id === typeParam);
@@ -83,15 +93,20 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "This kind keeps no list of what it rejected", code: "not_supported" }, { status: 400 });
         }
         const { items, total } = rejected ? await impl.listRejected!(skip, take) : await impl.list(skip, take);
-        const decisions = rejected
-            ? await latestDecisions(provider.id, items.map((i) => i.id), await resolveLocaleFromRequest())
-            : new Map();
+        const decisions = await latestDecisions(provider.id, items.map((i) => i.id), await resolveLocaleFromRequest());
         return NextResponse.json({
-            items: items.map((i) => ({
-                ...i,
-                type: provider.id,
-                ...(rejected ? { decision: decisions.get(i.id) ?? null } : {}),
-            })),
+            items: items.map((i) => {
+                const decision = decisions.get(i.id) ?? null;
+                return {
+                    ...i,
+                    type: provider.id,
+                    ...(rejected
+                        ? { decision: decision ? { ...decision, reviewer: reviewerName(decision.reviewer) } : null }
+                        // Waiting because its author asked a person: a moderator
+                        // should know no reviewer will take it off their hands.
+                        : { askedPerson: decision?.humanOnly === true }),
+                };
+            }),
             total,
             page,
             pages: Math.max(1, Math.ceil(total / perPage)),
@@ -134,45 +149,24 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: parsed.error.issues[0]?.message || "Invalid" }, { status: 400 });
     }
 
-    const providers = await loadActiveProviders();
-    const provider = providers.find((p) => p.id === parsed.data.type);
-    if (!provider) {
-        return NextResponse.json({ error: "Invalid type" }, { status: 400 });
-    }
-
-    const { ids, action, reasonId, note } = parsed.data;
-    if (action === "reject") {
-        if (!reasonId) {
-            return NextResponse.json({ error: "A rejection needs a reason", code: "reason_required" }, { status: 400 });
-        }
-        const reason = await prisma.moderationReason.findUnique({ where: { id: reasonId }, select: { enabled: true } });
-        if (!reason?.enabled) {
-            return NextResponse.json({ error: "Unknown reason", code: "reason_unknown" }, { status: 400 });
-        }
-    }
-
-    let affected: string[];
+    const { ids, type, action, reasonId, note } = parsed.data;
+    let result: ModerateResult;
     try {
-        const mod = await provider.loader();
-        ({ affected } = await decide(
-            { id: provider.id, impl: mod.default },
-            {
-                ids,
-                state: STATE_FOR[action],
-                reasonId: action === "reject" ? reasonId : null,
-                note: note || null,
-                decidedById: session.user.id,
-            },
-        ));
+        result = await moderate({ kind: type, ids, state: STATE_FOR[action], reasonId, note: note || null, decidedById: session.user.id });
     } catch (err) {
         log.error("[moderation] action failed", { error: err instanceof Error ? err.message : String(err) });
         return NextResponse.json({ error: "Operation failed" }, { status: 500 });
     }
+    if (!result.ok) {
+        const said = { unknown_kind: "Invalid type", reason_required: "A rejection needs a reason", reason_unknown: "Unknown reason" }[result.code];
+        return NextResponse.json({ error: said, code: result.code }, { status: 400 });
+    }
+    const { affected } = result;
 
     logActivity({
         userId: session.user.id,
         action: `moderation.${action}`,
-        entity: provider.id,
+        entity: type,
         metadata: { ids: affected, count: affected.length, ...(reasonId ? { reasonId } : {}) },
     }).catch(() => { });
 

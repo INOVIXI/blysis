@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Ablehnungsgrund geändert",
     "auditModerationReasonDelete": "Ablehnungsgrund gelöscht",
     "auditModerationRequeue": "Inhalt zurück in die Moderationswarteschlange gelegt",
-    "auditAiSettingsUpdate": "Hat die KI-Einstellungen geändert"
+    "auditAiSettingsUpdate": "Hat die KI-Einstellungen geändert",
+    "auditModerationAskPerson": "Hat eine Person gebeten, sich einen abgelehnten Beitrag anzusehen"
   },
   "nav": {
     "adminPanel": "Admin-Bereich",
@@ -1470,7 +1471,14 @@
     "ai_sendsHelp": "Was jedes eingeschaltete Modul an den Anbieter sendet, in seinen eigenen Worten.",
     "ai_sendsEmpty": "Kein eingeschaltetes Modul sendet etwas an einen KI-Anbieter.",
     "sidebar_ai": "KI",
-    "crumb_ai": "KI"
+    "crumb_ai": "KI",
+    "moderation_askedPerson": "Autor hat eine Person angefragt",
+    "moderationSettings_reviewerOn": "{name} prüft jede Art, die ihm zugewiesen ist. Was es nicht entscheiden kann, wartet auf eine Person.",
+    "moderationSettings_reviewConflict": "Mehr als ein Prüfmodul ist eingeschaltet, daher prüft keines davon. Schalte alle bis auf eines aus.",
+    "moderationSettings_reviewWaiting": "Kein Prüfmodul ist eingeschaltet, daher warten diese auf eine Person.",
+    "moderationSettings_modeFor": "Was mit neuen {kind} geschieht",
+    "moderationSettings_review": "Wird von {name} geprüft",
+    "moderationSettings_reviewNobody": "Wird geprüft (kein Prüfer eingeschaltet)"
   },
   "footer": {
     "quickLinks": "Schnelllinks",
@@ -1576,14 +1584,20 @@
     "moderationNotice_title": "Zu deinem Beitrag",
     "moderationNotice_description": "Was mit etwas passiert ist, das du geschrieben hast, und warum.",
     "moderationNotice_rejected": "Nicht veröffentlicht",
-    "moderationNotice_pending": "Wartet auf einen Moderator",
+    "moderationNotice_pending": "Wartet auf Prüfung",
     "moderationNotice_approved": "Veröffentlicht",
     "moderationNotice_decidedAt": "Entschieden am {when}",
     "moderationNotice_reason": "Grund",
     "moderationNotice_noReason": "Es wurde kein Grund angegeben.",
     "moderationNotice_yourPost": "Was du geschrieben hast",
     "moderationNotice_yourPostOn": "Was du zu {title} geschrieben hast",
-    "moderationNotice_open": "Dort öffnen, wo es gepostet wurde"
+    "moderationNotice_open": "Dort öffnen, wo es gepostet wurde",
+    "moderationNotice_byReviewer": "Das wurde automatisch entschieden, nicht von einer Person. Wenn du es für falsch hältst, kannst du eine Person bitten, es sich anzusehen. Das geht einmal.",
+    "moderationNotice_askPerson": "Eine Person ansehen lassen",
+    "moderationNotice_asked": "Eine Person sieht es sich an.",
+    "moderationNotice_askFailed": "Das hat nicht geklappt. Versuche es gleich noch einmal.",
+    "moderationNotice_askLimited": "Du hast zu oft gefragt. Versuche es später noch einmal.",
+    "moderationNotice_personWillLook": "Du hast eine Person gebeten, sich das anzusehen. Es wartet, bis sie es tut, und ihre Entscheidung ist endgültig."
   },
   "auth": {
     "accountLocked": "Zu viele fehlgeschlagene Versuche. Dein Konto ist vorübergehend gesperrt. Prüfe deine E-Mails oder versuche es in ein paar Minuten erneut.",

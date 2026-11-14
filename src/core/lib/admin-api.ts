@@ -136,6 +136,10 @@ export interface MemberMutation {
  */
 export const MEMBER_MUTATIONS: MemberMutation[] = [
     {
+        path: "/v1/moderation/[provider]/[id]/ask-person",
+        reason: "An author asking a person to look at their own post, once, after a reviewing module rejected it. The handler answers the author and nobody else, and is rate limited per member.",
+    },
+    {
         path: "/v1/auth/register",
         reason: "Creating the account. There is nobody to hold a permission yet, and the rate limiter is what stands here instead.",
     },

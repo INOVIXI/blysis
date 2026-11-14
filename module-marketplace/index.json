@@ -1,8 +1,83 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-14",
-  "updatedAt": "2026-11-14T12:11:44Z",
+  "updatedAt": "2026-11-14T15:13:20Z",
   "modules": [
+    {
+      "id": "ai-moderation",
+      "name": "AI Moderation",
+      "description": "Reviews what waits in the moderation queue with an AI model and leaves anything it is not sure of to a person",
+      "i18n": {
+        "az": {
+          "name": "Süni intellekt moderasiyası",
+          "description": "Moderasiya növbəsində gözləyənləri süni intellekt modeli ilə yoxlayır, əmin olmadığı hər şeyi insana buraxır."
+        },
+        "de": {
+          "name": "KI-Moderation",
+          "description": "Prüft, was in der Moderationswarteschlange wartet, mit einem KI-Modell und überlässt alles, worin es unsicher ist, einer Person."
+        },
+        "es": {
+          "name": "Moderación con IA",
+          "description": "Revisa con un modelo de IA lo que espera en la cola de moderación y deja a una persona todo aquello de lo que no está seguro."
+        },
+        "et": {
+          "name": "Tehisintellekti modereerimine",
+          "description": "Vaatab tehisintellekti mudeliga üle, mis modereerimisjärjekorras ootab, ja jätab kõik, milles see kindel pole, inimesele."
+        },
+        "fr": {
+          "name": "Modération par IA",
+          "description": "Examine avec un modèle d'IA ce qui attend dans la file de modération et laisse à une personne tout ce dont il n'est pas sûr."
+        },
+        "it": {
+          "name": "Moderazione IA",
+          "description": "Esamina con un modello di IA ciò che attende nella coda di moderazione e lascia a una persona tutto ciò di cui non è sicuro."
+        },
+        "pl": {
+          "name": "Moderacja AI",
+          "description": "Sprawdza modelem AI to, co czeka w kolejce moderacji, i zostawia człowiekowi wszystko, czego nie jest pewien."
+        },
+        "pt": {
+          "name": "Moderação com IA",
+          "description": "Revê com um modelo de IA o que espera na fila de moderação e deixa a uma pessoa tudo aquilo de que não tem certeza."
+        },
+        "ru": {
+          "name": "ИИ-модерация",
+          "description": "Проверяет с помощью модели ИИ то, что ждёт в очереди модерации, и оставляет человеку всё, в чём не уверена."
+        },
+        "tr": {
+          "name": "AI Moderasyon",
+          "description": "Moderasyon kuyruğunda bekleyenleri bir AI modeliyle inceler, emin olmadığı her şeyi bir insana bırakır."
+        },
+        "zh": {
+          "name": "AI 审核",
+          "description": "用 AI 模型审核审核队列中等待的内容，并将它不确定的内容留给人工处理。"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.43.0",
+      "author": "Blysis",
+      "icon": "Bot",
+      "category": "community",
+      "verified": true,
+      "updatedAt": "2026-11-14T15:13:20Z",
+      "screenshots": [],
+      "tags": [
+        "community"
+      ],
+      "zip": "ai-moderation.zip",
+      "dependencies": [],
+      "conflicts": [],
+      "hooks": {
+        "emits": [],
+        "listens": []
+      },
+      "stats": {
+        "publicRoutes": 0,
+        "adminRoutes": 3,
+        "apiRoutes": 5,
+        "widgets": 0
+      }
+    },
     {
       "id": "announcements",
       "name": "Announcements",
@@ -2807,13 +2882,13 @@
           "description": "带铃铛图标的站内通知系统"
         }
       },
-      "version": "1.8.0",
+      "version": "1.8.1",
       "coreVersion": "^5.39.0",
       "author": "Blysis",
       "icon": "Bell",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-11-13T19:26:07Z",
+      "updatedAt": "2026-11-14T15:13:20Z",
       "screenshots": [],
       "tags": [
         "community"

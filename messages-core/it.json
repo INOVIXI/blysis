@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Ha modificato un motivo di rifiuto",
     "auditModerationReasonDelete": "Ha eliminato un motivo di rifiuto",
     "auditModerationRequeue": "Ha rimesso il contenuto nella coda di moderazione",
-    "auditAiSettingsUpdate": "Ha modificato le impostazioni IA"
+    "auditAiSettingsUpdate": "Ha modificato le impostazioni IA",
+    "auditModerationAskPerson": "Ha chiesto che una persona esamini un contenuto rifiutato"
   },
   "nav": {
     "adminPanel": "Pannello di amministrazione",
@@ -1470,7 +1471,14 @@
     "ai_sendsHelp": "Cosa invia al fornitore ogni modulo attivo, con parole sue.",
     "ai_sendsEmpty": "Nessun modulo attivo invia qualcosa a un fornitore di IA.",
     "sidebar_ai": "IA",
-    "crumb_ai": "IA"
+    "crumb_ai": "IA",
+    "moderation_askedPerson": "L'autore ha chiesto una persona",
+    "moderationSettings_reviewerOn": "{name} esamina ogni tipo affidato a lui. Ciò che non sa decidere attende una persona.",
+    "moderationSettings_reviewConflict": "È attivo più di un modulo di revisione, quindi nessuno esamina. Disattivali tutti tranne uno.",
+    "moderationSettings_reviewWaiting": "Nessun modulo di revisione è attivo, quindi questi attendono una persona.",
+    "moderationSettings_modeFor": "Cosa succede ai nuovi {kind}",
+    "moderationSettings_review": "Esaminato da {name}",
+    "moderationSettings_reviewNobody": "Esaminato (nessun revisore attivo)"
   },
   "footer": {
     "quickLinks": "Link rapidi",
@@ -1576,14 +1584,20 @@
     "moderationNotice_title": "Sul tuo contenuto",
     "moderationNotice_description": "Cosa è successo a qualcosa che hai scritto, e perché.",
     "moderationNotice_rejected": "Non pubblicato",
-    "moderationNotice_pending": "In attesa di un moderatore",
+    "moderationNotice_pending": "In attesa di verifica",
     "moderationNotice_approved": "Pubblicato",
     "moderationNotice_decidedAt": "Deciso il {when}",
     "moderationNotice_reason": "Motivo",
     "moderationNotice_noReason": "Non è stato registrato alcun motivo.",
     "moderationNotice_yourPost": "Cosa hai scritto",
     "moderationNotice_yourPostOn": "Cosa hai scritto su {title}",
-    "moderationNotice_open": "Apri dove è stato pubblicato"
+    "moderationNotice_open": "Apri dove è stato pubblicato",
+    "moderationNotice_byReviewer": "Questa decisione è stata presa automaticamente, non da una persona. Se pensi che sia sbagliata, puoi chiedere che una persona la riveda. Puoi chiederlo una volta.",
+    "moderationNotice_askPerson": "Chiedi a una persona",
+    "moderationNotice_asked": "Una persona lo esaminerà.",
+    "moderationNotice_askFailed": "Non è andato a buon fine. Riprova tra poco.",
+    "moderationNotice_askLimited": "Hai chiesto troppe volte. Riprova più tardi.",
+    "moderationNotice_personWillLook": "Hai chiesto che una persona lo esamini. Resta in attesa finché non lo fa, e la sua decisione è definitiva."
   },
   "auth": {
     "accountLocked": "Troppi tentativi falliti. Il tuo account è bloccato temporaneamente. Controlla la tua email o riprova tra qualche minuto.",

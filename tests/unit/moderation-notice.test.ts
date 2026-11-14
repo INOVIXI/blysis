@@ -40,6 +40,10 @@ vi.mock("@/core/lib/moderation-decisions", () => ({
         new Map(ids.map((id) => [id, { reason: `${locale}:Spam`, note: "moderators only", decidedBy: { id: "m1", username: "mod" }, reviewer: null, decidedAt: new Date("2026-11-13T12:00:00Z") }])),
 }));
 
+// Who may ask a person is its own file's business, tested beside it in
+// an-author-asks-a-person-once.test.ts.
+vi.mock("@/core/lib/moderation-ask-person", () => ({ askPersonState: async () => ({ canAsk: false, asked: false }) }));
+
 const { readNotice } = await import("@/core/lib/moderation-notice");
 
 beforeEach(() => {

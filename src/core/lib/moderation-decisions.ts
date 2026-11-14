@@ -25,6 +25,12 @@ export interface DecisionInput {
     decidedById?: string | null;
     /** The module that decided, when no person did. */
     reviewer?: string | null;
+    /**
+     * The author asked a person to look at it (`moderation-ask-person.ts`).
+     * Recorded so no reviewer touches the item again, and announced to
+     * nobody: the author did it themselves.
+     */
+    humanOnly?: boolean;
 }
 
 export interface DecisionView {
@@ -32,6 +38,8 @@ export interface DecisionView {
     note: string | null;
     decidedBy: { id: string; username: string } | null;
     reviewer: string | null;
+    /** The author asked a person to look at it; no reviewer will again. */
+    humanOnly: boolean;
     decidedAt: Date;
 }
 
@@ -58,13 +66,14 @@ export async function decide(
             note: input.note ?? null,
             decidedById: input.decidedById ?? null,
             reviewer: input.reviewer ?? null,
+            humanOnly: input.humanOnly === true,
         })),
         select: { id: true, itemId: true },
     });
     const decisionOf = new Map(recorded.map((row) => [row.itemId, row.id]));
 
     for (const item of changing) {
-        if (!item.authorId) continue;
+        if (!item.authorId || input.humanOnly) continue;
         const decisionId = decisionOf.get(item.id);
         if (!decisionId) continue;
         const payload = { provider: provider.id, itemId: item.id, authorId: item.authorId, decisionId };
@@ -98,6 +107,7 @@ export async function latestDecisions(
                 reasonId: true,
                 note: true,
                 reviewer: true,
+                humanOnly: true,
                 createdAt: true,
                 decidedBy: { select: { id: true, username: true } },
             },
@@ -112,6 +122,7 @@ export async function latestDecisions(
             note: row.note,
             decidedBy: row.decidedBy,
             reviewer: row.reviewer,
+            humanOnly: row.humanOnly === true,
             decidedAt: row.createdAt,
         });
     }

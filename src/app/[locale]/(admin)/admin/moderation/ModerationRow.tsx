@@ -11,6 +11,7 @@ export interface ModerationDecisionView {
     reason: string | null;
     note: string | null;
     decidedBy: { id: string; username: string } | null;
+    /** The reviewing module's name, when it decided rather than a person. */
     reviewer: string | null;
     decidedAt: string;
 }
@@ -25,6 +26,8 @@ export interface ModerationRowItem {
     href?: string;
     /** Present in the Rejected view: why the item is there. */
     decision?: ModerationDecisionView | null;
+    /** In the queue: its author asked a person, so no reviewer will take it. */
+    askedPerson?: boolean;
 }
 
 interface ModerationRowProps {
@@ -61,6 +64,7 @@ export function ModerationRow({ item, kindLabel, selected, onToggle, actions }: 
                     <span className="font-medium text-sm">
                         {item.author?.username ?? t("moderation_anonymous")}
                     </span>
+                    {item.askedPerson && <Badge tone="warning">{t("moderation_askedPerson")}</Badge>}
                     {item.title && (
                         <span className="text-xs text-muted-foreground truncate">
                             {t("moderation_onTitle", { title: item.title })}
@@ -93,7 +97,9 @@ export function ModerationRow({ item, kindLabel, selected, onToggle, actions }: 
                         <p className="text-muted-foreground">
                             {decision.decidedBy
                                 ? t("moderation_decidedBy", { name: decision.decidedBy.username, when: formatDateTime(decision.decidedAt) })
-                                : t("moderation_decidedAt", { when: formatDateTime(decision.decidedAt) })}
+                                : decision.reviewer
+                                    ? t("moderation_decidedBy", { name: decision.reviewer, when: formatDateTime(decision.decidedAt) })
+                                    : t("moderation_decidedAt", { when: formatDateTime(decision.decidedAt) })}
                         </p>
                     </div>
                 )}

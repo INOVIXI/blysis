@@ -38,7 +38,7 @@ describe("module statsApi handlers", () => {
     const modules = modulesWithStatsApi();
 
     it("finds the modules it is meant to be checking", () => {
-        expect(modules.map((m) => m.id).sort()).toEqual(["blog", "forum", "store", "tickets"]);
+        expect(modules.map((m) => m.id).sort()).toEqual(["ai-moderation", "blog", "forum", "store", "tickets"]);
     });
 
     it.each(modules.map((m) => m.id))("%s checks for an admin before answering", (id) => {

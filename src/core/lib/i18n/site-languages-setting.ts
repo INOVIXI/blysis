@@ -49,6 +49,14 @@ export async function getSiteLanguages(): Promise<SiteLanguages> {
     }
 }
 
+/**
+ * The language the site opens in, for work with no visitor to ask: a job
+ * writing what the site's admins will read.
+ */
+export async function siteLanguage(): Promise<string> {
+    return (await getSiteLanguages()).preferred;
+}
+
 export function invalidateSiteLanguages(): void {
     const cache = held();
     cache.value = null;

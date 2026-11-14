@@ -56,6 +56,7 @@ const CORE_AUDIT_NAMES: Record<string, string> = {
     "moderation.approve": "auditModerationApprove",
     "moderation.reject": "auditModerationReject",
     "moderation.requeue": "auditModerationRequeue",
+    "moderation.ask_person": "auditModerationAskPerson",
     "moderation.reason.create": "auditModerationReasonCreate",
     "moderation.reason.delete": "auditModerationReasonDelete",
     "moderation.reason.update": "auditModerationReasonUpdate",

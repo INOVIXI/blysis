@@ -85,12 +85,13 @@ vi.mock("@/core/lib/email", () => ({ processEmailQueue: async () => ({ sent: 0, 
  * changes ago, so this stub described a contract nothing had.
  */
 let pruned = {
-    activityLog: 0, activityFeed: 0, revision: 0, userSession: 0, verificationToken: 0,
+    activityLog: 0, activityFeed: 0, revision: 0, userSession: 0, verificationToken: 0, moderationReview: 0,
 };
 vi.mock("@/core/lib/retention", () => ({ pruneOldRecords: async () => pruned }));
 vi.mock("@/core/lib/health-alerting", () => ({ checkAndAlert: async () => ({ notified: false }) }));
 vi.mock("@/core/lib/ip-blocks", () => ({ invalidateIpBlockCache: () => { } }));
 vi.mock("@/core/lib/ai-usage", () => ({ pruneUsage: async () => 0 }));
+vi.mock("@/core/lib/moderation-review", () => ({ runReviewRound: async () => 0 }));
 vi.mock("@/core/lib/backup", () => ({ createBackup: async () => ({ filename: "f", sizeBytes: 1 }) }));
 // The backup job asks whether it is switched on before it dumps anything, and
 // that read is a database call this file's prisma stub does not answer. Same
@@ -225,6 +226,7 @@ describe("bootstrapScheduler", () => {
             "core:prune-revisions", "core:expire-warnings", "core:process-broadcasts",
             "core:process-email-queue", "core:retention-prune", "core:health-alerting",
             "core:prune-ip-blocks", "core:prune-ai-usage", "core:automated-backup",
+            "core:moderation-review",
         ]));
         expect(new Set(keys).size).toBe(keys.length);
     });
@@ -439,7 +441,7 @@ describe("what the retention sweep reports", () => {
     // that pruned nothing but the admin audit trail said nothing at all.
     it("counts and names every table the sweep touched", async () => {
         vi.useFakeTimers();
-        pruned = { activityLog: 7, activityFeed: 0, revision: 0, userSession: 0, verificationToken: 0 };
+        pruned = { activityLog: 7, activityFeed: 0, revision: 0, userSession: 0, verificationToken: 0, moderationReview: 0 };
         const { log } = await import("@/core/lib/logger");
         const { bootstrapScheduler, runJobNow } = await load();
         await bootstrapScheduler();

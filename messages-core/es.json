@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Cambió un motivo de rechazo",
     "auditModerationReasonDelete": "Eliminó un motivo de rechazo",
     "auditModerationRequeue": "Devolvió contenido a la cola de moderación",
-    "auditAiSettingsUpdate": "Cambió los ajustes de IA"
+    "auditAiSettingsUpdate": "Cambió los ajustes de IA",
+    "auditModerationAskPerson": "Pidió que una persona revisara una publicación rechazada"
   },
   "nav": {
     "adminPanel": "Panel de administración",
@@ -1470,7 +1471,14 @@
     "ai_sendsHelp": "Lo que cada módulo activado envía al proveedor, con sus propias palabras.",
     "ai_sendsEmpty": "Ningún módulo activado envía nada a un proveedor de IA.",
     "sidebar_ai": "IA",
-    "crumb_ai": "IA"
+    "crumb_ai": "IA",
+    "moderation_askedPerson": "El autor pidió una persona",
+    "moderationSettings_reviewerOn": "{name} revisa cada tipo que se le asigna. Lo que no puede decidir espera a una persona.",
+    "moderationSettings_reviewConflict": "Hay más de un módulo de revisión activado, así que ninguno revisa. Desactívalos todos menos uno.",
+    "moderationSettings_reviewWaiting": "No hay ningún módulo de revisión activado, así que estos esperan a una persona.",
+    "moderationSettings_modeFor": "Qué pasa con {kind} nuevos",
+    "moderationSettings_review": "Lo revisa {name}",
+    "moderationSettings_reviewNobody": "Revisado (no hay revisor activado)"
   },
   "footer": {
     "quickLinks": "Enlaces rápidos",
@@ -1576,14 +1584,20 @@
     "moderationNotice_title": "Sobre tu publicación",
     "moderationNotice_description": "Qué pasó con algo que escribiste y por qué.",
     "moderationNotice_rejected": "No publicado",
-    "moderationNotice_pending": "Esperando a un moderador",
+    "moderationNotice_pending": "Pendiente de revisión",
     "moderationNotice_approved": "Publicado",
     "moderationNotice_decidedAt": "Decidido el {when}",
     "moderationNotice_reason": "Motivo",
     "moderationNotice_noReason": "No se registró ningún motivo.",
     "moderationNotice_yourPost": "Lo que escribiste",
     "moderationNotice_yourPostOn": "Lo que escribiste en {title}",
-    "moderationNotice_open": "Abrir donde se publicó"
+    "moderationNotice_open": "Abrir donde se publicó",
+    "moderationNotice_byReviewer": "Esto se decidió automáticamente, no una persona. Si crees que es un error, puedes pedir que una persona lo revise. Puedes pedirlo una vez.",
+    "moderationNotice_askPerson": "Pedir que lo revise una persona",
+    "moderationNotice_asked": "Una persona lo revisará.",
+    "moderationNotice_askFailed": "No se pudo completar. Inténtalo de nuevo en un momento.",
+    "moderationNotice_askLimited": "Lo has pedido demasiadas veces. Inténtalo más tarde.",
+    "moderationNotice_personWillLook": "Pediste que una persona revisara esto. Espera hasta que lo haga, y su decisión es definitiva."
   },
   "auth": {
     "accountLocked": "Demasiados intentos fallidos. Tu cuenta está bloqueada temporalmente. Revisa tu correo o inténtalo de nuevo en unos minutos.",

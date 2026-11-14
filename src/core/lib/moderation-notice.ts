@@ -13,6 +13,7 @@
 import { ModuleModerationProviders, type ModerationState } from "@/core/generated/module-moderation";
 import { getModuleStates } from "@/core/lib/module-cache";
 import { latestDecisions } from "@/core/lib/moderation-decisions";
+import { askPersonState } from "@/core/lib/moderation-ask-person";
 
 /** How much of the post the page quotes back. */
 const EXCERPT = 500;
@@ -24,6 +25,10 @@ export interface ModerationNotice {
     reason: string | null;
     decidedAt: string | null;
     href?: string;
+    /** A reviewing module rejected it and the author may ask a person, once. */
+    canAskPerson: boolean;
+    /** The author asked; a person decides from here. */
+    askedPerson: boolean;
 }
 
 export async function readNotice(
@@ -42,7 +47,11 @@ export async function readNotice(
     const [item] = await impl.read([itemId]);
     if (!item || !item.authorId || item.authorId !== userId) return null;
 
-    const decision = (await latestDecisions(providerId, [itemId], locale)).get(itemId);
+    const [decisions, ask] = await Promise.all([
+        latestDecisions(providerId, [itemId], locale),
+        askPersonState(providerId, itemId),
+    ]);
+    const decision = decisions.get(itemId);
     return {
         title: item.title,
         excerpt: item.body.slice(0, EXCERPT),
@@ -50,5 +59,7 @@ export async function readNotice(
         reason: decision?.reason ?? null,
         decidedAt: decision ? decision.decidedAt.toISOString() : null,
         href: item.href,
+        canAskPerson: ask.canAsk,
+        askedPerson: ask.asked,
     };
 }

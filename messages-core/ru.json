@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Изменил причину отклонения",
     "auditModerationReasonDelete": "Удалил причину отклонения",
     "auditModerationRequeue": "Вернул контент в очередь модерации",
-    "auditAiSettingsUpdate": "Изменил настройки ИИ"
+    "auditAiSettingsUpdate": "Изменил настройки ИИ",
+    "auditModerationAskPerson": "Попросил человека посмотреть отклонённую публикацию"
   },
   "nav": {
     "adminPanel": "Панель администратора",
@@ -1470,7 +1471,14 @@
     "ai_sendsHelp": "Что каждый включённый модуль отправляет поставщику, его собственными словами.",
     "ai_sendsEmpty": "Ни один включённый модуль ничего не отправляет поставщику ИИ.",
     "sidebar_ai": "ИИ",
-    "crumb_ai": "ИИ"
+    "crumb_ai": "ИИ",
+    "moderation_askedPerson": "Автор попросил проверку человеком",
+    "moderationSettings_reviewerOn": "{name} проверяет каждый назначенный ему тип. То, что он не может решить, ждёт человека.",
+    "moderationSettings_reviewConflict": "Включено больше одного модуля проверки, поэтому ни один из них не проверяет. Отключите все, кроме одного.",
+    "moderationSettings_reviewWaiting": "Ни один модуль проверки не включён, поэтому они ждут человека.",
+    "moderationSettings_modeFor": "Что происходит с новыми: {kind}",
+    "moderationSettings_review": "Проверяет {name}",
+    "moderationSettings_reviewNobody": "Проверяется (проверяющий не включён)"
   },
   "footer": {
     "quickLinks": "Быстрые ссылки",
@@ -1576,14 +1584,20 @@
     "moderationNotice_title": "О твоей публикации",
     "moderationNotice_description": "Что случилось с тем, что ты написал, и почему.",
     "moderationNotice_rejected": "Не опубликовано",
-    "moderationNotice_pending": "Ожидает модератора",
+    "moderationNotice_pending": "Ожидает проверки",
     "moderationNotice_approved": "Опубликовано",
     "moderationNotice_decidedAt": "Решение принято {when}",
     "moderationNotice_reason": "Причина",
     "moderationNotice_noReason": "Причина не указана.",
     "moderationNotice_yourPost": "Что ты написал",
     "moderationNotice_yourPostOn": "Что ты написал в «{title}»",
-    "moderationNotice_open": "Открыть там, где опубликовано"
+    "moderationNotice_open": "Открыть там, где опубликовано",
+    "moderationNotice_byReviewer": "Это решение принято автоматически, а не человеком. Если вы считаете его ошибочным, можете попросить человека посмотреть. Попросить можно один раз.",
+    "moderationNotice_askPerson": "Попросить человека",
+    "moderationNotice_asked": "Человек посмотрит.",
+    "moderationNotice_askFailed": "Не получилось. Попробуйте ещё раз через минуту.",
+    "moderationNotice_askLimited": "Слишком много запросов. Попробуйте позже.",
+    "moderationNotice_personWillLook": "Вы попросили человека посмотреть. Это ждёт его решения, и оно окончательное."
   },
   "auth": {
     "accountLocked": "Слишком много неудачных попыток. Учетная запись временно заблокирована. Проверьте e-mail или попробуйте снова через несколько минут.",
