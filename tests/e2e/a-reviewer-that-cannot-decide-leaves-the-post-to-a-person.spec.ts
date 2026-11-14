@@ -91,7 +91,8 @@ test("a reviewer that cannot decide leaves the post to a person", async ({ page,
 
         await page.goto("/en/admin/ai-moderation?applied=error");
         await expect(page.getByRole("heading", { name: "AI Moderation" })).toBeVisible();
-        await expect(page.getByText("Could not decide").first()).toBeVisible();
+        // The row's badge, not the filter's option of the same name.
+        await expect(page.getByRole("listitem").getByText("Could not decide").first()).toBeVisible();
 
         await page.goto(`/en/admin/ai-moderation/${review!.id}`);
         await expect(page.getByText(made.title)).toBeVisible();
