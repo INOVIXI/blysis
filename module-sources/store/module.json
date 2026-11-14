@@ -586,6 +586,11 @@
       "path": "/store/sales",
       "component": "pages/admin/store-sales/page.tsx",
       "permission": "store.manage"
+    },
+    {
+      "path": "/store/coupon-uses",
+      "component": "pages/admin/coupon-uses/page.tsx",
+      "permission": "store.manage"
     }
   ],
   "seoRoutes": {
@@ -934,6 +939,12 @@
       "method": "GET",
       "description": "How credits are loaded and spent here: top-up limits, preset amounts, running bonus campaigns and whether the store takes only credits.",
       "openTo": "public"
+    },
+    {
+      "path": "/store/admin/coupon-uses",
+      "handler": "api/admin/coupon-uses/route.ts",
+      "description": "List each customer's uses of each coupon (admin).",
+      "permission": "store.manage"
     }
   ],
   "dashboardCards": [
@@ -1532,7 +1543,8 @@
           "store_credits_only_subscription": "Subscriptions are not sold while the store takes only credits.",
           "store_insufficient_credits": "You do not have enough credits for this order.",
           "payment_not_configured": "Payments are not set up on this site yet.",
-          "credit_package_unavailable": "That package is not for sale any more."
+          "credit_package_unavailable": "That package is not for sale any more.",
+          "coupon_already_used": "You have already used this code as many times as it allows."
         },
         "err_checkoutFailed": "Checkout failed",
         "err_couponMinPurchase": "Spend at least {amount} to use this code.",
@@ -1846,7 +1858,26 @@
         "adm_deliveryModeNow": "At once, when it is paid for",
         "adm_deliveryModeHold": "Held in the chest until the buyer claims it",
         "adm_deliveryModeHint": "Held: the commands wait until the buyer claims it from their chest, on the site or in the game. The product is owned, and its rank held, from payment either way. The shop's default is in the store's module settings.",
-        "tab_chest_waitingForYou": "Waiting for you to claim"
+        "tab_chest_waitingForYou": "Waiting for you to claim",
+        "adm_perCustomerLimit": "Uses per customer",
+        "adm_perCustomerLimitHint": "How many orders one customer may place with this code. A refunded or cancelled order gives its use back. Empty is no limit.",
+        "adm_perCustomerIs": "{count, plural, one {# use per customer} other {# uses per customer}}",
+        "adm_perCustomerNone": "No limit per customer",
+        "cuse_title": "Coupon uses",
+        "cuse_subtitle": "Who used which code and how often. A refunded or cancelled order gives its use back.",
+        "cuse_search": "Search by username",
+        "cuse_coupon": "Coupon",
+        "cuse_everyCoupon": "Every coupon",
+        "cuse_empty": "No coupon has been used yet.",
+        "cuse_customer": "Customer",
+        "cuse_held": "Paid uses",
+        "cuse_heldOfLimit": "{held} of {limit}",
+        "cuse_waiting": "Waiting for payment",
+        "cuse_returned": "Given back",
+        "cuse_lastUsed": "Last used",
+        "cuse_noAccount": "Deleted account",
+        "cuse_deletedCoupon": "Deleted coupon",
+        "cuse_couponsLoadFailed": "The coupon list for the filter could not be loaded."
       },
       "cart": {
         "title": "Shopping Cart",
@@ -2546,7 +2577,8 @@
           "store_credits_only_subscription": "Mağaza yalnızca kredi kabul ederken abonelik satılmıyor.",
           "store_insufficient_credits": "Bu sipariş için yeterli kredin yok.",
           "payment_not_configured": "Bu sitede ödemeler henüz ayarlanmadı.",
-          "credit_package_unavailable": "Bu paket artık satışta değil."
+          "credit_package_unavailable": "Bu paket artık satışta değil.",
+          "coupon_already_used": "Bu kodu izin verilen sayıda zaten kullandınız."
         },
         "err_checkoutFailed": "Ödeme tamamlanamadı",
         "err_couponMinPurchase": "Bu kodu kullanmak için en az {amount} harcayın.",
@@ -2860,7 +2892,26 @@
         "adm_deliveryModeNow": "Hemen, ödendiği anda",
         "adm_deliveryModeHold": "Alıcı alana kadar sandıkta bekler",
         "adm_deliveryModeHint": "Bekletilirse komutlar, alıcı ürünü sandığından sitede ya da oyunda alana kadar çalışmaz. Ürün her durumda ödeme anından itibaren sahiplidir, rütbesi de verilir. Mağazanın varsayılanı modül ayarlarındadır.",
-        "tab_chest_waitingForYou": "Almanı bekliyor"
+        "tab_chest_waitingForYou": "Almanı bekliyor",
+        "adm_perCustomerLimit": "Müşteri başına kullanım",
+        "adm_perCustomerLimitHint": "Bir müşterinin bu kodla kaç sipariş verebileceği. İade edilen ya da iptal edilen sipariş, kullanım hakkını geri verir. Boş bırakılırsa sınır yoktur.",
+        "adm_perCustomerIs": "Müşteri başına {count} kullanım",
+        "adm_perCustomerNone": "Müşteri başına sınır yok",
+        "cuse_title": "Kupon kullanımları",
+        "cuse_subtitle": "Hangi kodu kimin ve kaç kez kullandığı. İade edilen ya da iptal edilen sipariş, kullanım hakkını geri verir.",
+        "cuse_search": "Kullanıcı adına göre ara",
+        "cuse_coupon": "Kupon",
+        "cuse_everyCoupon": "Tüm kuponlar",
+        "cuse_empty": "Henüz hiçbir kupon kullanılmadı.",
+        "cuse_customer": "Müşteri",
+        "cuse_held": "Ödenmiş kullanımlar",
+        "cuse_heldOfLimit": "{held} / {limit}",
+        "cuse_waiting": "Ödeme bekleniyor",
+        "cuse_returned": "Geri verilen",
+        "cuse_lastUsed": "Son kullanım",
+        "cuse_noAccount": "Silinmiş hesap",
+        "cuse_deletedCoupon": "Silinmiş kupon",
+        "cuse_couponsLoadFailed": "Süzgeç için kupon listesi yüklenemedi."
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -3560,7 +3611,8 @@
           "store_credits_only_subscription": "Mağaza yalnız kredit qəbul etdiyi müddətdə abunəlik satılmır.",
           "store_insufficient_credits": "Bu sifariş üçün kifayət qədər kreditiniz yoxdur.",
           "payment_not_configured": "Bu saytda ödənişlər hələ qurulmayıb.",
-          "credit_package_unavailable": "Bu paket artıq satışda deyil."
+          "credit_package_unavailable": "Bu paket artıq satışda deyil.",
+          "coupon_already_used": "Bu kodu icazə verilən sayda artıq istifadə etmisiniz."
         },
         "err_checkoutFailed": "Ödəniş alınmadı",
         "err_couponMinPurchase": "Bu kodu istifadə etmək üçün ən azı {amount} xərcləyin.",
@@ -3874,7 +3926,26 @@
         "adm_deliveryModeNow": "Dərhal, ödəniləndə",
         "adm_deliveryModeHold": "Alıcı götürənə qədər sandıqda saxlanılır",
         "adm_deliveryModeHint": "Saxlanılırsa, əmrlər alıcı onu sandığından saytda və ya oyunda götürənə qədər gözləyir. Məhsul hər halda ödənişdən sonra alıcınındır, rütbəsi də verilir. Mağazanın standartı modul parametrlərindədir.",
-        "tab_chest_waitingForYou": "Götürməyini gözləyir"
+        "tab_chest_waitingForYou": "Götürməyini gözləyir",
+        "adm_perCustomerLimit": "Müştəri başına istifadə",
+        "adm_perCustomerLimitHint": "Bir müştərinin bu kodla neçə sifariş verə biləcəyi. Geri qaytarılan və ya ləğv edilən sifariş istifadəni geri verir. Boş qalsa, limit yoxdur.",
+        "adm_perCustomerIs": "Müştəri başına {count} istifadə",
+        "adm_perCustomerNone": "Müştəri başına limit yoxdur",
+        "cuse_title": "Kupon istifadələri",
+        "cuse_subtitle": "Hansı kodu kimin və neçə dəfə istifadə etdiyi. Geri qaytarılan və ya ləğv edilən sifariş istifadəni geri verir.",
+        "cuse_search": "İstifadəçi adına görə axtar",
+        "cuse_coupon": "Kupon",
+        "cuse_everyCoupon": "Bütün kuponlar",
+        "cuse_empty": "Hələ heç bir kupon istifadə edilməyib.",
+        "cuse_customer": "Müştəri",
+        "cuse_held": "Ödənilmiş istifadələr",
+        "cuse_heldOfLimit": "{held} / {limit}",
+        "cuse_waiting": "Ödəniş gözlənilir",
+        "cuse_returned": "Geri verilən",
+        "cuse_lastUsed": "Son istifadə",
+        "cuse_noAccount": "Silinmiş hesab",
+        "cuse_deletedCoupon": "Silinmiş kupon",
+        "cuse_couponsLoadFailed": "Süzgəc üçün kupon siyahısı yüklənə bilmədi."
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -4574,7 +4645,8 @@
           "store_credits_only_subscription": "Abos werden nicht verkauft, solange der Shop nur Credits nimmt.",
           "store_insufficient_credits": "Du hast nicht genug Credits für diese Bestellung.",
           "payment_not_configured": "Zahlungen sind auf dieser Seite noch nicht eingerichtet.",
-          "credit_package_unavailable": "Dieses Paket wird nicht mehr verkauft."
+          "credit_package_unavailable": "Dieses Paket wird nicht mehr verkauft.",
+          "coupon_already_used": "Du hast diesen Code bereits so oft benutzt, wie er erlaubt."
         },
         "err_checkoutFailed": "Kasse fehlgeschlagen",
         "err_couponMinPurchase": "Gib mindestens {amount} aus, um diesen Code zu nutzen.",
@@ -4888,7 +4960,26 @@
         "adm_deliveryModeNow": "Sofort, sobald bezahlt",
         "adm_deliveryModeHold": "In der Truhe, bis der Käufer ihn abholt",
         "adm_deliveryModeHint": "Zurückgehalten: Die Befehle warten, bis der Käufer ihn aus seiner Truhe abholt, auf der Website oder im Spiel. Das Produkt gehört ihm und sein Rang gilt in jedem Fall ab der Zahlung. Der Standard des Shops steht in den Moduleinstellungen.",
-        "tab_chest_waitingForYou": "Wartet darauf, dass du es abholst"
+        "tab_chest_waitingForYou": "Wartet darauf, dass du es abholst",
+        "adm_perCustomerLimit": "Nutzungen pro Kunde",
+        "adm_perCustomerLimitHint": "Wie viele Bestellungen ein Kunde mit diesem Code aufgeben darf. Eine erstattete oder stornierte Bestellung gibt ihre Nutzung zurück. Leer bedeutet keine Grenze.",
+        "adm_perCustomerIs": "{count, plural, one {# Nutzung pro Kunde} other {# Nutzungen pro Kunde}}",
+        "adm_perCustomerNone": "Keine Grenze pro Kunde",
+        "cuse_title": "Gutscheinnutzungen",
+        "cuse_subtitle": "Wer welchen Code wie oft benutzt hat. Eine erstattete oder stornierte Bestellung gibt ihre Nutzung zurück.",
+        "cuse_search": "Nach Benutzername suchen",
+        "cuse_coupon": "Gutschein",
+        "cuse_everyCoupon": "Alle Gutscheine",
+        "cuse_empty": "Es wurde noch kein Gutschein benutzt.",
+        "cuse_customer": "Kunde",
+        "cuse_held": "Bezahlte Nutzungen",
+        "cuse_heldOfLimit": "{held} von {limit}",
+        "cuse_waiting": "Wartet auf Zahlung",
+        "cuse_returned": "Zurückgegeben",
+        "cuse_lastUsed": "Zuletzt benutzt",
+        "cuse_noAccount": "Gelöschtes Konto",
+        "cuse_deletedCoupon": "Gelöschter Gutschein",
+        "cuse_couponsLoadFailed": "Die Gutscheinliste für den Filter konnte nicht geladen werden."
       },
       "cart": {
         "title": "Warenkorb",
@@ -5588,7 +5679,8 @@
           "store_credits_only_subscription": "No se venden suscripciones mientras la tienda solo acepte créditos.",
           "store_insufficient_credits": "No tienes créditos suficientes para este pedido.",
           "payment_not_configured": "Los pagos aún no están configurados en este sitio.",
-          "credit_package_unavailable": "Ese paquete ya no está a la venta."
+          "credit_package_unavailable": "Ese paquete ya no está a la venta.",
+          "coupon_already_used": "Ya has usado este código tantas veces como permite."
         },
         "err_checkoutFailed": "Falló el pago",
         "err_couponMinPurchase": "Gasta al menos {amount} para usar este código.",
@@ -5902,7 +5994,26 @@
         "adm_deliveryModeNow": "Al momento, cuando se paga",
         "adm_deliveryModeHold": "Guardada en el cofre hasta que el comprador la reclame",
         "adm_deliveryModeHint": "Guardada: los comandos esperan hasta que el comprador la reclame desde su cofre, en el sitio o en el juego. El producto es suyo, y su rango se otorga, desde el pago en cualquier caso. El valor por defecto de la tienda está en los ajustes del módulo.",
-        "tab_chest_waitingForYou": "Esperando a que lo reclames"
+        "tab_chest_waitingForYou": "Esperando a que lo reclames",
+        "adm_perCustomerLimit": "Usos por cliente",
+        "adm_perCustomerLimitHint": "Cuántos pedidos puede hacer un cliente con este código. Un pedido reembolsado o cancelado devuelve su uso. Vacío es sin límite.",
+        "adm_perCustomerIs": "{count, plural, one {# uso por cliente} other {# usos por cliente}}",
+        "adm_perCustomerNone": "Sin límite por cliente",
+        "cuse_title": "Usos de cupones",
+        "cuse_subtitle": "Quién usó cada código y cuántas veces. Un pedido reembolsado o cancelado devuelve su uso.",
+        "cuse_search": "Buscar por nombre de usuario",
+        "cuse_coupon": "Cupón",
+        "cuse_everyCoupon": "Todos los cupones",
+        "cuse_empty": "Todavía no se ha usado ningún cupón.",
+        "cuse_customer": "Cliente",
+        "cuse_held": "Usos pagados",
+        "cuse_heldOfLimit": "{held} de {limit}",
+        "cuse_waiting": "Esperando el pago",
+        "cuse_returned": "Devueltos",
+        "cuse_lastUsed": "Último uso",
+        "cuse_noAccount": "Cuenta eliminada",
+        "cuse_deletedCoupon": "Cupón eliminado",
+        "cuse_couponsLoadFailed": "No se pudo cargar la lista de cupones del filtro."
       },
       "cart": {
         "title": "Carrito de compra",
@@ -6602,7 +6713,8 @@
           "store_credits_only_subscription": "Tellimusi ei müüda, kui pood võtab vastu ainult krediite.",
           "store_insufficient_credits": "Sul ei ole selle tellimuse jaoks piisavalt krediite.",
           "payment_not_configured": "Sellel saidil ei ole makseid veel seadistatud.",
-          "credit_package_unavailable": "See pakett enam ei ole müügil."
+          "credit_package_unavailable": "See pakett enam ei ole müügil.",
+          "coupon_already_used": "Oled seda koodi juba nii mitu korda kasutanud, kui see lubab."
         },
         "err_checkoutFailed": "Vormistamine ebaõnnestus",
         "err_couponMinPurchase": "Selle koodi kasutamiseks kuluta vähemalt {amount}.",
@@ -6916,7 +7028,26 @@
         "adm_deliveryModeNow": "Kohe, kui see on makstud",
         "adm_deliveryModeHold": "Kirstus, kuni ostja selle kätte võtab",
         "adm_deliveryModeHint": "Hoitakse: käsud ootavad, kuni ostja selle oma kirstust kätte võtab, veebilehel või mängus. Toode kuulub talle ja auaste antakse igal juhul maksmisest alates. Poe vaikeväärtus on mooduli seadetes.",
-        "tab_chest_waitingForYou": "Ootab, et sa selle kätte võtaksid"
+        "tab_chest_waitingForYou": "Ootab, et sa selle kätte võtaksid",
+        "adm_perCustomerLimit": "Kasutuskordi kliendi kohta",
+        "adm_perCustomerLimitHint": "Mitu tellimust võib üks klient selle koodiga teha. Tagasi makstud või tühistatud tellimus annab kasutuskorra tagasi. Tühi tähendab piiranguta.",
+        "adm_perCustomerIs": "{count, plural, one {# kasutus kliendi kohta} other {# kasutust kliendi kohta}}",
+        "adm_perCustomerNone": "Kliendi kohta piiranguta",
+        "cuse_title": "Kupongide kasutused",
+        "cuse_subtitle": "Kes millist koodi ja kui tihti kasutas. Tagasi makstud või tühistatud tellimus annab kasutuskorra tagasi.",
+        "cuse_search": "Otsi kasutajanime järgi",
+        "cuse_coupon": "Kupong",
+        "cuse_everyCoupon": "Kõik kupongid",
+        "cuse_empty": "Ühtegi kupongi pole veel kasutatud.",
+        "cuse_customer": "Klient",
+        "cuse_held": "Makstud kasutused",
+        "cuse_heldOfLimit": "{held} / {limit}",
+        "cuse_waiting": "Ootab makset",
+        "cuse_returned": "Tagasi antud",
+        "cuse_lastUsed": "Viimati kasutatud",
+        "cuse_noAccount": "Kustutatud konto",
+        "cuse_deletedCoupon": "Kustutatud kupong",
+        "cuse_couponsLoadFailed": "Filtri kupongide loendit ei õnnestunud laadida."
       },
       "cart": {
         "title": "Ostukorv",
@@ -7616,7 +7747,8 @@
           "store_credits_only_subscription": "Les abonnements ne sont pas vendus tant que la boutique n’accepte que les crédits.",
           "store_insufficient_credits": "Vous n’avez pas assez de crédits pour cette commande.",
           "payment_not_configured": "Les paiements ne sont pas encore configurés sur ce site.",
-          "credit_package_unavailable": "Ce pack n’est plus en vente."
+          "credit_package_unavailable": "Ce pack n’est plus en vente.",
+          "coupon_already_used": "Vous avez déjà utilisé ce code autant de fois qu'il le permet."
         },
         "err_checkoutFailed": "Échec du paiement",
         "err_couponMinPurchase": "Dépensez au moins {amount} pour utiliser ce code.",
@@ -7930,7 +8062,26 @@
         "adm_deliveryModeNow": "Tout de suite, dès le paiement",
         "adm_deliveryModeHold": "Gardé dans le coffre jusqu'à ce que l'acheteur le réclame",
         "adm_deliveryModeHint": "Gardé : les commandes attendent que l'acheteur le réclame depuis son coffre, sur le site ou en jeu. Le produit lui appartient, et son grade est accordé, dès le paiement dans tous les cas. Le réglage par défaut de la boutique est dans les paramètres du module.",
-        "tab_chest_waitingForYou": "En attente de ta réclamation"
+        "tab_chest_waitingForYou": "En attente de ta réclamation",
+        "adm_perCustomerLimit": "Utilisations par client",
+        "adm_perCustomerLimitHint": "Combien de commandes un client peut passer avec ce code. Une commande remboursée ou annulée rend son utilisation. Vide signifie sans limite.",
+        "adm_perCustomerIs": "{count, plural, one {# utilisation par client} other {# utilisations par client}}",
+        "adm_perCustomerNone": "Pas de limite par client",
+        "cuse_title": "Utilisations des coupons",
+        "cuse_subtitle": "Qui a utilisé quel code et combien de fois. Une commande remboursée ou annulée rend son utilisation.",
+        "cuse_search": "Rechercher par nom d'utilisateur",
+        "cuse_coupon": "Coupon",
+        "cuse_everyCoupon": "Tous les coupons",
+        "cuse_empty": "Aucun coupon n'a encore été utilisé.",
+        "cuse_customer": "Client",
+        "cuse_held": "Utilisations payées",
+        "cuse_heldOfLimit": "{held} sur {limit}",
+        "cuse_waiting": "En attente de paiement",
+        "cuse_returned": "Rendues",
+        "cuse_lastUsed": "Dernière utilisation",
+        "cuse_noAccount": "Compte supprimé",
+        "cuse_deletedCoupon": "Coupon supprimé",
+        "cuse_couponsLoadFailed": "La liste des coupons du filtre n'a pas pu être chargée."
       },
       "cart": {
         "title": "Panier",
@@ -8630,7 +8781,8 @@
           "store_credits_only_subscription": "Gli abbonamenti non sono in vendita mentre il negozio accetta solo crediti.",
           "store_insufficient_credits": "Non hai abbastanza crediti per questo ordine.",
           "payment_not_configured": "I pagamenti non sono ancora configurati su questo sito.",
-          "credit_package_unavailable": "Questo pacchetto non è più in vendita."
+          "credit_package_unavailable": "Questo pacchetto non è più in vendita.",
+          "coupon_already_used": "Hai già usato questo codice tutte le volte che è consentito."
         },
         "err_checkoutFailed": "Pagamento non riuscito",
         "err_couponMinPurchase": "Spendi almeno {amount} per usare questo codice.",
@@ -8944,7 +9096,26 @@
         "adm_deliveryModeNow": "Subito, appena pagato",
         "adm_deliveryModeHold": "Tenuto nel baule finché l'acquirente non lo riscatta",
         "adm_deliveryModeHint": "Tenuto: i comandi aspettano finché l'acquirente non lo riscatta dal suo baule, sul sito o in gioco. Il prodotto è suo, e il suo grado assegnato, dal pagamento in ogni caso. L'impostazione predefinita del negozio è nelle impostazioni del modulo.",
-        "tab_chest_waitingForYou": "In attesa che tu lo riscatti"
+        "tab_chest_waitingForYou": "In attesa che tu lo riscatti",
+        "adm_perCustomerLimit": "Utilizzi per cliente",
+        "adm_perCustomerLimitHint": "Quanti ordini un cliente può fare con questo codice. Un ordine rimborsato o annullato restituisce il suo utilizzo. Vuoto significa nessun limite.",
+        "adm_perCustomerIs": "{count, plural, one {# utilizzo per cliente} other {# utilizzi per cliente}}",
+        "adm_perCustomerNone": "Nessun limite per cliente",
+        "cuse_title": "Utilizzi dei coupon",
+        "cuse_subtitle": "Chi ha usato quale codice e quante volte. Un ordine rimborsato o annullato restituisce il suo utilizzo.",
+        "cuse_search": "Cerca per nome utente",
+        "cuse_coupon": "Coupon",
+        "cuse_everyCoupon": "Tutti i coupon",
+        "cuse_empty": "Nessun coupon è stato ancora usato.",
+        "cuse_customer": "Cliente",
+        "cuse_held": "Utilizzi pagati",
+        "cuse_heldOfLimit": "{held} su {limit}",
+        "cuse_waiting": "In attesa di pagamento",
+        "cuse_returned": "Restituiti",
+        "cuse_lastUsed": "Ultimo utilizzo",
+        "cuse_noAccount": "Account eliminato",
+        "cuse_deletedCoupon": "Coupon eliminato",
+        "cuse_couponsLoadFailed": "Non è stato possibile caricare l'elenco dei coupon per il filtro."
       },
       "cart": {
         "title": "Carrello",
@@ -9644,7 +9815,8 @@
           "store_credits_only_subscription": "Subskrypcje nie są sprzedawane, gdy sklep przyjmuje tylko kredyty.",
           "store_insufficient_credits": "Nie masz wystarczająco kredytów na to zamówienie.",
           "payment_not_configured": "Płatności nie są jeszcze skonfigurowane na tej stronie.",
-          "credit_package_unavailable": "Ten pakiet nie jest już dostępny."
+          "credit_package_unavailable": "Ten pakiet nie jest już dostępny.",
+          "coupon_already_used": "Ten kod został już przez Ciebie użyty tyle razy, ile pozwala."
         },
         "err_checkoutFailed": "Płatność nie powiodła się",
         "err_couponMinPurchase": "Wydaj co najmniej {amount}, aby użyć tego kodu.",
@@ -9958,7 +10130,26 @@
         "adm_deliveryModeNow": "Od razu, po opłaceniu",
         "adm_deliveryModeHold": "W skrzyni, dopóki kupujący go nie odbierze",
         "adm_deliveryModeHint": "Wstrzymany: komendy czekają, aż kupujący odbierze go ze swojej skrzyni, na stronie lub w grze. Produkt należy do niego, a ranga jest nadana, od chwili płatności w każdym przypadku. Domyślne ustawienie sklepu jest w ustawieniach modułu.",
-        "tab_chest_waitingForYou": "Czeka, aż go odbierzesz"
+        "tab_chest_waitingForYou": "Czeka, aż go odbierzesz",
+        "adm_perCustomerLimit": "Użycia na klienta",
+        "adm_perCustomerLimitHint": "Ile zamówień jeden klient może złożyć z tym kodem. Zwrócone lub anulowane zamówienie oddaje swoje użycie. Puste oznacza brak limitu.",
+        "adm_perCustomerIs": "{count, plural, one {# użycie na klienta} few {# użycia na klienta} many {# użyć na klienta} other {# użycia na klienta}}",
+        "adm_perCustomerNone": "Bez limitu na klienta",
+        "cuse_title": "Użycia kuponów",
+        "cuse_subtitle": "Kto użył którego kodu i ile razy. Zwrócone lub anulowane zamówienie oddaje swoje użycie.",
+        "cuse_search": "Szukaj po nazwie użytkownika",
+        "cuse_coupon": "Kupon",
+        "cuse_everyCoupon": "Wszystkie kupony",
+        "cuse_empty": "Żaden kupon nie został jeszcze użyty.",
+        "cuse_customer": "Klient",
+        "cuse_held": "Opłacone użycia",
+        "cuse_heldOfLimit": "{held} z {limit}",
+        "cuse_waiting": "Czeka na płatność",
+        "cuse_returned": "Zwrócone",
+        "cuse_lastUsed": "Ostatnio użyty",
+        "cuse_noAccount": "Usunięte konto",
+        "cuse_deletedCoupon": "Usunięty kupon",
+        "cuse_couponsLoadFailed": "Nie udało się wczytać listy kuponów do filtra."
       },
       "cart": {
         "title": "Koszyk",
@@ -10658,7 +10849,8 @@
           "store_credits_only_subscription": "As subscrições não são vendidas enquanto a loja só aceitar créditos.",
           "store_insufficient_credits": "Não tem créditos suficientes para esta encomenda.",
           "payment_not_configured": "Os pagamentos ainda não estão configurados neste site.",
-          "credit_package_unavailable": "Este pacote não está mais à venda."
+          "credit_package_unavailable": "Este pacote não está mais à venda.",
+          "coupon_already_used": "Você já usou este código tantas vezes quanto ele permite."
         },
         "err_checkoutFailed": "Falha na finalização da compra",
         "err_couponMinPurchase": "Gaste pelo menos {amount} para usar este código.",
@@ -10972,7 +11164,26 @@
         "adm_deliveryModeNow": "Na hora, quando é paga",
         "adm_deliveryModeHold": "Guardada no baú até o comprador resgatar",
         "adm_deliveryModeHint": "Guardada: os comandos esperam até o comprador resgatar do seu baú, no site ou no jogo. O produto é dele, e o cargo concedido, desde o pagamento em qualquer caso. O padrão da loja está nas configurações do módulo.",
-        "tab_chest_waitingForYou": "Esperando você resgatar"
+        "tab_chest_waitingForYou": "Esperando você resgatar",
+        "adm_perCustomerLimit": "Usos por cliente",
+        "adm_perCustomerLimitHint": "Quantos pedidos um cliente pode fazer com este código. Um pedido reembolsado ou cancelado devolve o uso. Vazio é sem limite.",
+        "adm_perCustomerIs": "{count, plural, one {# uso por cliente} other {# usos por cliente}}",
+        "adm_perCustomerNone": "Sem limite por cliente",
+        "cuse_title": "Usos de cupons",
+        "cuse_subtitle": "Quem usou cada código e quantas vezes. Um pedido reembolsado ou cancelado devolve o uso.",
+        "cuse_search": "Pesquisar por nome de usuário",
+        "cuse_coupon": "Cupom",
+        "cuse_everyCoupon": "Todos os cupons",
+        "cuse_empty": "Nenhum cupom foi usado ainda.",
+        "cuse_customer": "Cliente",
+        "cuse_held": "Usos pagos",
+        "cuse_heldOfLimit": "{held} de {limit}",
+        "cuse_waiting": "Aguardando pagamento",
+        "cuse_returned": "Devolvidos",
+        "cuse_lastUsed": "Último uso",
+        "cuse_noAccount": "Conta excluída",
+        "cuse_deletedCoupon": "Cupom excluído",
+        "cuse_couponsLoadFailed": "Não foi possível carregar a lista de cupons do filtro."
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -11672,7 +11883,8 @@
           "store_credits_only_subscription": "Подписки не продаются, пока магазин принимает только кредиты.",
           "store_insufficient_credits": "Для этого заказа недостаточно кредитов.",
           "payment_not_configured": "Платежи на этом сайте ещё не настроены.",
-          "credit_package_unavailable": "Этот пакет больше не продается."
+          "credit_package_unavailable": "Этот пакет больше не продается.",
+          "coupon_already_used": "Вы уже использовали этот код столько раз, сколько он позволяет."
         },
         "err_checkoutFailed": "Не удалось оформить заказ",
         "err_couponMinPurchase": "Чтобы использовать этот код, потратьте не меньше {amount}.",
@@ -11986,7 +12198,26 @@
         "adm_deliveryModeNow": "Сразу после оплаты",
         "adm_deliveryModeHold": "Хранится в сундуке, пока покупатель её не заберёт",
         "adm_deliveryModeHint": "Хранится: команды ждут, пока покупатель не заберёт покупку из сундука, на сайте или в игре. Товар в любом случае принадлежит ему с момента оплаты, ранг тоже выдаётся. Значение магазина по умолчанию задаётся в настройках модуля.",
-        "tab_chest_waitingForYou": "Ждёт, пока ты заберёшь"
+        "tab_chest_waitingForYou": "Ждёт, пока ты заберёшь",
+        "adm_perCustomerLimit": "Использований на покупателя",
+        "adm_perCustomerLimitHint": "Сколько заказов один покупатель может оформить с этим кодом. Возвращённый или отменённый заказ возвращает использование. Пусто означает без ограничения.",
+        "adm_perCustomerIs": "{count, plural, one {# использование на покупателя} few {# использования на покупателя} many {# использований на покупателя} other {# использования на покупателя}}",
+        "adm_perCustomerNone": "Без ограничения на покупателя",
+        "cuse_title": "Использования купонов",
+        "cuse_subtitle": "Кто какой код использовал и сколько раз. Возвращённый или отменённый заказ возвращает использование.",
+        "cuse_search": "Поиск по имени пользователя",
+        "cuse_coupon": "Купон",
+        "cuse_everyCoupon": "Все купоны",
+        "cuse_empty": "Купоны ещё не использовались.",
+        "cuse_customer": "Покупатель",
+        "cuse_held": "Оплаченные использования",
+        "cuse_heldOfLimit": "{held} из {limit}",
+        "cuse_waiting": "Ожидает оплаты",
+        "cuse_returned": "Возвращено",
+        "cuse_lastUsed": "Последнее использование",
+        "cuse_noAccount": "Удалённый аккаунт",
+        "cuse_deletedCoupon": "Удалённый купон",
+        "cuse_couponsLoadFailed": "Не удалось загрузить список купонов для фильтра."
       },
       "cart": {
         "title": "Корзина",
@@ -12686,7 +12917,8 @@
           "store_credits_only_subscription": "商店仅接受积分期间不出售订阅。",
           "store_insufficient_credits": "你的积分不足以支付此订单。",
           "payment_not_configured": "本站尚未设置付款方式。",
-          "credit_package_unavailable": "该套餐已不再出售。"
+          "credit_package_unavailable": "该套餐已不再出售。",
+          "coupon_already_used": "你已达到此优惠码允许的使用次数。"
         },
         "err_checkoutFailed": "结账失败",
         "err_couponMinPurchase": "消费满 {amount} 方可使用此优惠码。",
@@ -13000,7 +13232,26 @@
         "adm_deliveryModeNow": "立即，付款时发放",
         "adm_deliveryModeHold": "存放在箱子里，直到买家领取",
         "adm_deliveryModeHint": "存放时，命令会等到买家在网站或游戏中从箱子领取后再执行。无论哪种方式，商品自付款起即归买家所有，其等级也会授予。商店的默认设置在模块设置中。",
-        "tab_chest_waitingForYou": "等待你领取"
+        "tab_chest_waitingForYou": "等待你领取",
+        "adm_perCustomerLimit": "每位顾客可用次数",
+        "adm_perCustomerLimitHint": "每位顾客可用此优惠码下多少个订单。已退款或已取消的订单会退回其使用次数。留空表示不限。",
+        "adm_perCustomerIs": "每位顾客 {count} 次",
+        "adm_perCustomerNone": "每位顾客不限次数",
+        "cuse_title": "优惠码使用情况",
+        "cuse_subtitle": "谁用了哪个优惠码、用了几次。已退款或已取消的订单会退回其使用次数。",
+        "cuse_search": "按用户名搜索",
+        "cuse_coupon": "优惠码",
+        "cuse_everyCoupon": "全部优惠码",
+        "cuse_empty": "还没有人使用过优惠码。",
+        "cuse_customer": "顾客",
+        "cuse_held": "已付款使用",
+        "cuse_heldOfLimit": "{held} / {limit}",
+        "cuse_waiting": "等待付款",
+        "cuse_returned": "已退回",
+        "cuse_lastUsed": "最近使用",
+        "cuse_noAccount": "已删除的账号",
+        "cuse_deletedCoupon": "已删除的优惠码",
+        "cuse_couponsLoadFailed": "无法加载筛选用的优惠码列表。"
       },
       "cart": {
         "title": "购物车",

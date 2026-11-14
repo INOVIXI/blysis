@@ -10,6 +10,7 @@ import { effectivePrice } from "../../lib/availability";
 import { withStoreSale } from "../../lib/store-sale";
 import { runningStoreSales } from "../../lib/store-sale-server";
 import { availabilityFor, pastTheLimit, rulesOf, type ProductRow } from "../../lib/availability-server";
+import { customerUses, pastCouponLimit } from "../../lib/coupon-limit";
 import { convertedCharge, resolveCurrency } from "../../lib/currency";
 import { startPaymentSession, listPaymentProviders } from "../../lib/payments";
 import { paymentFeeFor } from "../../lib/payment-fee-server";
@@ -33,6 +34,7 @@ import { payCreatorCommission } from "../../lib/creator-commission";
 import { couponOpenTo } from "../../lib/thank-you-coupon";
 
 const LIMIT_REACHED = "LIMIT_REACHED";
+const COUPON_ALREADY_USED = "COUPON_ALREADY_USED";
 
 const checkoutSchema = z.object({
     items: z.array(z.object({
@@ -269,6 +271,9 @@ export async function POST(request: NextRequest) {
         // code was silently ignored - the customer paid full price with
         // no feedback that their code didn't work.
         let couponDiscount = 0;
+        // Written on the order, so the customer's uses can be counted from
+        // their orders: see `coupon-limit.ts`.
+        let couponId: string | null = null;
         if (couponCode) {
             const { enableCoupons } = await moduleSettings<{ enableCoupons: boolean }>("store");
             if (!enableCoupons) {
@@ -297,7 +302,15 @@ export async function POST(request: NextRequest) {
                     })),
                     products.map((product) => ({ id: product.id, categoryId: product.categoryId ?? null })),
                 );
-                const { code, discount } = computeCouponDiscount(coupon, subtotal, new Date(), eligible);
+                // How often this customer already used it, their unpaid
+                // checkouts of the last hour included. The order is written
+                // after this transaction, so two checkouts sent together can
+                // both pass here; each is counted again under a lock when it
+                // is paid, which is the count that decides.
+                const used = coupon?.perCustomerLimit
+                    ? await customerUses(tx, coupon.id, session.user.id, now)
+                    : 0;
+                const { code, discount } = computeCouponDiscount(coupon, subtotal, new Date(), eligible, used);
                 if (code) return code;
                 // Claim the use conditionally. The count read above is a
                 // snapshot, so two orders redeeming the last use of a
@@ -313,6 +326,7 @@ export async function POST(request: NextRequest) {
                 });
                 if (claimed.count === 0) return "coupon_used_up";
                 couponDiscount = discount;
+                couponId = coupon!.id;
                 return null;
             });
             if (couponError) {
@@ -444,9 +458,12 @@ export async function POST(request: NextRequest) {
             // payment the same way.
             // The limit is counted again under the lock the game takes: two
             // credits checkouts sent together both passed the count above.
+            // The coupon's per-customer limit is counted again the same way.
             const buyerId = session.user.id;
-            const order = await prisma.$transaction(async (tx) =>
-                (await pastTheLimit(tx, products, orderItems, buyerId, now)) ? null : createCreditOrder(tx, {
+            const order = await prisma.$transaction(async (tx) => {
+                if (await pastTheLimit(tx, products, orderItems, buyerId, now)) return LIMIT_REACHED;
+                if (await pastCouponLimit(tx, couponId, buyerId, now)) return COUPON_ALREADY_USED;
+                return createCreditOrder(tx, {
                     buyerId,
                     ownerId: buyerId,
                     gift: false,
@@ -465,12 +482,16 @@ export async function POST(request: NextRequest) {
                     notes,
                     billingDetails,
                     metadata: orderMetadata,
+                    couponId,
                     playerName,
                     description: `Store purchase (${orderItems.map((i) => i.name).join(", ")})`,
-                }),
-            );
-            if (!order) {
+                });
+            });
+            if (order === LIMIT_REACHED) {
                 return NextResponse.json({ error: "limit_reached", code: "store_limit_reached" }, { status: 409 });
+            }
+            if (order === COUPON_ALREADY_USED) {
+                return NextResponse.json({ error: "coupon_already_used", code: "coupon_already_used" }, { status: 409 });
             }
 
             // Delivery runs after the commit: a game server that is down must
@@ -529,6 +550,7 @@ export async function POST(request: NextRequest) {
                 billingDetails,
                 notes,
                 paymentMethod,
+                couponId,
                 metadata: orderMetadata,
                 items: { create: orderItems },
             },
@@ -572,6 +594,9 @@ export async function POST(request: NextRequest) {
                     if (await pastTheLimit(tx, products, orderItems, freeBuyerId, now, order.id)) {
                         throw new Error(LIMIT_REACHED);
                     }
+                    if (await pastCouponLimit(tx, couponId, freeBuyerId, now, order.id)) {
+                        throw new Error(COUPON_ALREADY_USED);
+                    }
                     const claims = stockClaims(orderItems);
                     if ((await claimStock(tx, claims)).length > 0) throw new Error(OUT_OF_STOCK);
                     await countSales(tx, claims);
@@ -601,9 +626,12 @@ export async function POST(request: NextRequest) {
                 // A refused order must not sit PENDING, where it would hold
                 // the buyer's allowance for an hour.
                 const message = error instanceof Error ? error.message : "";
-                if (message !== LIMIT_REACHED && message !== OUT_OF_STOCK) throw error;
+                if (message !== LIMIT_REACHED && message !== OUT_OF_STOCK && message !== COUPON_ALREADY_USED) throw error;
                 await prisma.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });
                 if (message === OUT_OF_STOCK) throw error;
+                if (message === COUPON_ALREADY_USED) {
+                    return NextResponse.json({ error: "coupon_already_used", code: "coupon_already_used" }, { status: 409 });
+                }
                 return NextResponse.json({ error: "limit_reached", code: "store_limit_reached" }, { status: 409 });
             }
 

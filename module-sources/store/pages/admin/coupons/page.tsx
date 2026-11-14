@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Badge, Button, Card, CardContent, Checkbox, Input, Label, ListControls, Pagination, useConfirm, useFormRoute, useRowList, useSiteCurrency, NativeSelect, buttonClassName, useLocalDate } from "@/core/sdk/ui";
 import { couponStanding, STANDING_TONE } from "../../../lib/coupon-standing";
 import { Link } from "@/core/sdk/navigation";
-import { Loader2, Pencil, Plus, ToggleLeft, ToggleRight, Trash2, Tag } from "lucide-react";
+import { Loader2, Pencil, Plus, ToggleLeft, ToggleRight, Trash2, Tag, Users } from "lucide-react";
 import { toast } from "sonner";
 import { deleteEach, errorMessage, writeError } from "@/core/sdk";
 import { AdminPageHeader, BulkBar, ReferenceList, RowActions } from "@/core/sdk/admin";
@@ -21,6 +21,7 @@ interface Coupon {
     maxDiscount: number | null;
     usageLimit: number | null;
     usageCount: number;
+    perCustomerLimit: number | null;
     startsAt: string | null;
     expiresAt: string | null;
     productIds?: string[];
@@ -60,6 +61,8 @@ export default function AdminCouponsPage() {
         minPurchase: "",
         maxDiscount: "",
         usageLimit: "",
+        // One use each for a new coupon; emptied, it is no limit.
+        perCustomerLimit: "1",
         startsAt: "",
         expiresAt: "",
         productIds: [] as string[],
@@ -91,7 +94,7 @@ export default function AdminCouponsPage() {
     useEffect(() => {
         setError(null);
         if (!editingId) {
-            setForm({ code: "", description: "", type: "PERCENTAGE", value: "", minPurchase: "", maxDiscount: "", usageLimit: "", startsAt: "", expiresAt: "", productIds: [], categoryIds: [], isActive: true });
+            setForm({ code: "", description: "", type: "PERCENTAGE", value: "", minPurchase: "", maxDiscount: "", usageLimit: "", perCustomerLimit: "1", startsAt: "", expiresAt: "", productIds: [], categoryIds: [], isActive: true });
             return;
         }
         const coupon = coupons.find((row) => row.id === editingId);
@@ -104,6 +107,7 @@ export default function AdminCouponsPage() {
             minPurchase: coupon.minPurchase ? String(coupon.minPurchase) : "",
             maxDiscount: coupon.maxDiscount ? String(coupon.maxDiscount) : "",
             usageLimit: coupon.usageLimit ? String(coupon.usageLimit) : "",
+            perCustomerLimit: coupon.perCustomerLimit ? String(coupon.perCustomerLimit) : "",
             startsAt: coupon.startsAt ? new Date(coupon.startsAt).toISOString().slice(0, 16) : "",
             expiresAt: coupon.expiresAt ? new Date(coupon.expiresAt).toISOString().slice(0, 16) : "",
             productIds: coupon.productIds ?? [],
@@ -130,6 +134,7 @@ export default function AdminCouponsPage() {
                     minPurchase: form.minPurchase ? parseFloat(form.minPurchase) : null,
                     maxDiscount: form.maxDiscount ? parseFloat(form.maxDiscount) : null,
                     usageLimit: form.usageLimit ? parseInt(form.usageLimit) : null,
+                    perCustomerLimit: form.perCustomerLimit ? parseInt(form.perCustomerLimit) : null,
                     startsAt: form.startsAt ? new Date(form.startsAt).toISOString() : null,
                     expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
                     productIds: form.productIds,
@@ -352,6 +357,21 @@ export default function AdminCouponsPage() {
                                 </div>
                             </div>
 
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <Label>{t("adm_perCustomerLimit")}</Label>
+                                    <Input
+                                        aria-label={t("adm_perCustomerLimit")}
+                                        type="number"
+                                        min="1"
+                                        value={form.perCustomerLimit}
+                                        onChange={(e) => setForm({ ...form, perCustomerLimit: e.target.value })}
+                                        placeholder={t("adm_unlimited")}
+                                    />
+                                    <p className="mt-1 text-xs text-muted-foreground">{t("adm_perCustomerLimitHint")}</p>
+                                </div>
+                            </div>
+
                             {/*
                               * Both ends of the window. `startsAt` was read
                               * from the row, honoured by the basket and shown
@@ -403,6 +423,7 @@ export default function AdminCouponsPage() {
                 title={t("adm_coupons")}
                 description={t("adm_manageDiscountCodes")}
                 actions={<>
+                    <Link href="/admin/store/coupon-uses" className={buttonClassName("outline", "default")}><Users className="w-4 h-4" /> {t("cuse_title")}</Link>
                     <Link href={formHref()} className={buttonClassName("default", "default")}><Plus className="w-4 h-4" /> {t("adm_newCoupon")}</Link>
                 </>}
             />
@@ -502,6 +523,11 @@ export default function AdminCouponsPage() {
                                             </td>
                                             <td className="py-3 px-4 text-sm">
                                                 {coupon.usageCount} / {coupon.usageLimit || "∞"}
+                                                <p className="text-xs text-muted-foreground">
+                                                    {coupon.perCustomerLimit
+                                                        ? t("adm_perCustomerIs", { count: coupon.perCustomerLimit })
+                                                        : t("adm_perCustomerNone")}
+                                                </p>
                                             </td>
                                             <td className="py-3 px-4 text-sm text-muted-foreground">
                                                 {coupon.expiresAt
@@ -540,6 +566,7 @@ export default function AdminCouponsPage() {
                                                             label: coupon.isActive ? t("adm_couponTurnOff") : t("adm_couponTurnOn"),
                                                             onClick: () => toggleActive(coupon),
                                                         },
+                                                        { icon: Users, label: t("cuse_title"), href: `/admin/store/coupon-uses?coupon=${coupon.id}` },
                                                         { icon: Pencil, label: commonT("edit"), onClick: () => openForm(coupon.id) },
                                                         {
                                                             icon: Trash2,

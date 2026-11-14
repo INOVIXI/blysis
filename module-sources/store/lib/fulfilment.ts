@@ -23,11 +23,19 @@ import { ALREADY, OK, failed, refused } from "./payment-outcome";
 import { payCommissionFor, takeBackCommission } from "./creator-commission";
 import { pastTheLimit } from "./availability-server";
 import { issueThankYouCoupon, readThankYouSettings, type ThankYouCoupon } from "./thank-you-coupon";
+import { pastCouponLimit } from "./coupon-limit";
 
 /** Thrown inside a settlement to roll it back: the order would pass a limit. */
 class PastTheLimit extends Error {
     constructor(readonly productId: string) {
         super("past the per-person limit");
+    }
+}
+
+/** Thrown inside a settlement to roll it back: the buyer has used the order's coupon as often as it allows. */
+class PastCouponLimit extends Error {
+    constructor(readonly couponId: string) {
+        super("past the coupon's per-customer limit");
     }
 }
 
@@ -209,6 +217,14 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
         });
         if (claimed.count === 0) return { settled: false, short: [] as string[], thanks: null as ThankYouCoupon | null };
 
+        // The coupon's per-customer limit, counted again now that the money
+        // is here, for the same reason as the product limit below: several
+        // checkouts opened together each passed the count at checkout.
+        // Thrown, so the claim rolls back with it.
+        if (order.couponId && (await pastCouponLimit(tx, order.couponId, buyerId, now, order.id))) {
+            throw new PastCouponLimit(order.couponId);
+        }
+
         // Paid here, inside the claim, and nowhere at checkout: an order
         // nobody pays for earns its creator nothing, and a retried webhook
         // that loses the claim pays nothing twice.
@@ -342,8 +358,25 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
         if (error instanceof PastTheLimit) {
             return { settled: false, short: [] as string[], thanks: null as ThankYouCoupon | null, past: error.productId };
         }
+        if (error instanceof PastCouponLimit) {
+            return { settled: false, short: [] as string[], thanks: null as ThankYouCoupon | null, coupon: error.couponId };
+        }
         throw error;
     });
+
+    // Refused like the per-person limit below, and for the same reason: the
+    // money arrived for a discount this customer had already used up, and an
+    // operator has to refund it. A retry settles it if the order holding the
+    // use was refunded in the meantime.
+    if ("coupon" in settled) {
+        log.error("[store] a paid order uses a coupon past its per-customer limit; refund it", {
+            orderId: order.id,
+            couponId: settled.coupon,
+            provider: settlement.provider,
+            providerRef: settlement.providerRef,
+        });
+        return refused(`order passes the per-customer limit of coupon ${settled.coupon}`);
+    }
 
     // Refused rather than acknowledged, like a short payment: the money
     // arrived for more than this member may buy, and an operator has to

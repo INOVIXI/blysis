@@ -43,6 +43,8 @@ export interface CreditOrderInput {
     notes?: string | null;
     billingDetails: Prisma.InputJsonValue | typeof Prisma.JsonNull;
     metadata: Prisma.InputJsonValue;
+    /** The coupon the order was placed with, counted against the buyer's uses of it. */
+    couponId?: string | null;
     playerName: string | null;
     description: string;
 }
@@ -82,6 +84,7 @@ export async function createCreditOrder(tx: PrismaTransaction, input: CreditOrde
             currency: input.currency.toUpperCase(),
             notes: input.notes ?? null,
             paymentMethod: "credits",
+            couponId: input.couponId ?? null,
             metadata: input.metadata,
             items: { create: input.lines },
         },

@@ -34,7 +34,9 @@ const db = {
         findUnique: vi.fn(),
         update: vi.fn(async () => ({})),
         updateMany: vi.fn(async () => ({ count: 1 })),
+        count: vi.fn(async () => 0),
     },
+    coupon: { findUnique: vi.fn(async () => null as unknown) },
     chestItem: {
         create: vi.fn(async () => ({})),
         createMany: vi.fn(async () => ({ count: 1 })),
@@ -427,6 +429,55 @@ describe("settleOrder, against a per-person limit", () => {
         expect(outcome).toEqual({ handled: true, duplicate: false, error: null });
         expect(db.payment.create).toHaveBeenCalled();
         db.product.findMany.mockImplementation(async () => []);
+    });
+});
+
+describe("settleOrder, for an order placed with a coupon", () => {
+    const withCoupon = { ...paidOrder, status: "PENDING", couponId: "coupon-1" };
+
+    it("settles nothing when the buyer already holds the coupon's last use, and says so", async () => {
+        // Two checkouts opened together with a one-use-each code: the other
+        // one was paid first.
+        db.order.findUnique.mockResolvedValueOnce(withCoupon);
+        db.coupon.findUnique.mockResolvedValueOnce({ perCustomerLimit: 1 });
+        db.order.count.mockResolvedValueOnce(1);
+
+        const outcome = await settleOrder(settlement);
+
+        expect(outcome.handled).toBe(false);
+        expect(outcome.error).toMatch(/per-customer limit/);
+        expect(db.payment.create).not.toHaveBeenCalled();
+        expect(db.chestItem.createMany).not.toHaveBeenCalled();
+        expect(announceOrderCompleted).not.toHaveBeenCalled();
+        expect(log.error).toHaveBeenCalled();
+        // Counted under a lock, inside the claim, paid orders only, leaving
+        // out the order being settled.
+        expect(executeRaw).toHaveBeenCalled();
+        const counted = JSON.stringify(db.order.count.mock.calls[0]);
+        expect(counted).toContain('"not":"order-1"');
+        expect(counted).not.toContain("PENDING");
+        expect(calls.find((call) => call.op === "order.count")?.viaTx).toBe(true);
+    });
+
+    it("settles an order that is the buyer's first use", async () => {
+        db.order.findUnique.mockResolvedValueOnce(withCoupon);
+        db.coupon.findUnique.mockResolvedValueOnce({ perCustomerLimit: 1 });
+        db.order.count.mockResolvedValueOnce(0);
+
+        const outcome = await settleOrder(settlement);
+
+        expect(outcome).toEqual({ handled: true, duplicate: false, error: null });
+        expect(db.payment.create).toHaveBeenCalled();
+    });
+
+    it("takes no lock for a coupon without a per-customer limit", async () => {
+        db.order.findUnique.mockResolvedValueOnce(withCoupon);
+        db.coupon.findUnique.mockResolvedValueOnce({ perCustomerLimit: null });
+
+        const outcome = await settleOrder(settlement);
+
+        expect(outcome).toEqual({ handled: true, duplicate: false, error: null });
+        expect(db.order.count).not.toHaveBeenCalled();
     });
 });
 
