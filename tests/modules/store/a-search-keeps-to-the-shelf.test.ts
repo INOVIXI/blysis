@@ -32,7 +32,7 @@ vi.mock("@/core/sdk/server", async () => {
 vi.mock("@/core/sdk/auth", () => ({ auth: async () => null }));
 vi.mock("@/modules/store/lib/campaign-server", () => ({
     runningCampaignEntries: async () => [],
-    pricedForCampaign: () => ({ price: 0 }),
+    offerPrice: () => ({ price: 0, was: null, onSale: false }),
 }));
 vi.mock("@/modules/store/lib/upgrade-credit-server", () => ({ creditingPurchases: async () => [] }));
 

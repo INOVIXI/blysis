@@ -14,7 +14,7 @@ import { Prisma } from "@prisma/client";
 import { applyFiltersAsync, doActionAsync } from "@/core/sdk";
 import { log, logActivity, prisma, siteTimeZone, type PrismaTransaction } from "@/core/sdk/server";
 import { availabilityFor, rulesOf, type ProductRow } from "./availability-server";
-import { effectivePrice } from "./availability";
+import { offerPrice, runningCampaignEntries } from "./campaign-server";
 import { withStoreSale } from "./store-sale";
 import { runningStoreSales } from "./store-sale-server";
 import { computeOrderPricing, computeTotals } from "./pricing";
@@ -102,12 +102,13 @@ interface PricedProduct {
 
 /**
  * What this member pays for this many, with every rule checkout applies that a
- * game can meet: the sale window, an upgrade credit for a lower rung they own,
+ * game can meet: the sale window, a running campaign, an upgrade credit for a lower rung they own,
  * a bulk discount for the quantity, tax. One function, so the price a game
  * quotes and the price a purchase takes cannot drift apart.
  */
 async function priceInGame(product: PricedProduct, quantity: number, ownerId: string, answers: Record<string, string>, now: Date) {
     const ownedIds = await creditingPurchases(ownerId);
+    const campaignEntries = await runningCampaignEntries(prisma, now, await siteTimeZone());
     const { subtotal, orderItems } = computeOrderPricing({
         items: [{ productId: product.id, quantity }],
         products: [
@@ -115,10 +116,10 @@ async function priceInGame(product: PricedProduct, quantity: number, ownerId: st
                 id: product.id,
                 name: product.name,
                 type: product.type,
-                // The sale window and a store-wide sale, as the checkout and
-                // the in-game catalogue price it.
+                // The sale window, a running campaign and a store-wide sale,
+                // as the checkout and the in-game catalogue price it.
                 price: withStoreSale(
-                    effectivePrice(rulesOf(product as unknown as ProductRow), now),
+                    offerPrice({ ...rulesOf(product as unknown as ProductRow), id: product.id }, campaignEntries, now),
                     { listPrice: rulesOf(product as unknown as ProductRow).price, categoryId: product.categoryId },
                     await runningStoreSales(now),
                     now,

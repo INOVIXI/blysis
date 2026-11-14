@@ -49,6 +49,7 @@ const db = {
     product: { findFirst: vi.fn(async () => product), findMany: vi.fn(async () => []) },
     ownedProduct: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },
+    campaign: { findMany: vi.fn(async () => []) },
     productVariable: { findMany: vi.fn(async () => []) },
     setting: { findUnique: vi.fn(async () => null) },
     user: { findUnique: vi.fn(async () => ({ receiveGifts: true, creditBalance: 9 })) },

@@ -3,13 +3,13 @@
  *
  * Only shelves and products an admin marked for games, and a product only on
  * a shelf that is shown too, so hiding a shelf hides everything on it. The
- * price is the one the site would charge now, sale included. The list is one
+ * price is the one the site would charge now, sale and campaign included. The list is one
  * for every player, so what an upgrade credit or a bulk discount takes off is
  * not in it: a game asks `quoteWithCredits` for the basket on its screen.
  */
 import { applyFiltersAsync } from "@/core/sdk";
-import { prisma } from "@/core/sdk/server";
-import { effectivePrice } from "./availability";
+import { prisma, siteTimeZone } from "@/core/sdk/server";
+import { offerPrice, runningCampaignEntries } from "./campaign-server";
 import { withStoreSale } from "./store-sale";
 import { runningStoreSales } from "./store-sale-server";
 import { rulesOf, type ProductRow } from "./availability-server";
@@ -57,8 +57,9 @@ export async function inGameCatalog(now: Date = new Date()): Promise<InGameCatal
         applyFiltersAsync("servers.list", [] as ServerName[], {}),
     ]);
     const serverName = new Map((servers ?? []).map((s) => [s.id, s.name]));
-    // The price a purchase in game takes, store-wide sale included: see
-    // `priceInGame` in credit-purchase.ts, which reads the same rule.
+    // The price `priceInGame` in credit-purchase.ts takes, campaign and
+    // store-wide sale included.
+    const campaignEntries = await runningCampaignEntries(prisma, now, await siteTimeZone());
     const storeSales = await runningStoreSales(now);
 
     const byCategory = new Map<string, InGameProduct[]>();
@@ -75,7 +76,7 @@ export async function inGameCatalog(now: Date = new Date()): Promise<InGameCatal
             description: product.gameDescription ?? product.shortDesc ?? "",
             icon: product.gameIcon,
             price: withStoreSale(
-                effectivePrice(rulesOf(product as unknown as ProductRow), now),
+                offerPrice({ ...rulesOf(product as unknown as ProductRow), id: product.id }, campaignEntries, now),
                 { listPrice: Number(product.price), categoryId: product.categoryId },
                 storeSales,
                 now,

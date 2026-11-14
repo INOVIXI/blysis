@@ -14,9 +14,9 @@
  * how an operator says a shelf is a ladder; a grid of crate keys is not one,
  * and a key bought once used to come off every dearer key after it.
  */
-import { moduleSettings, prisma } from "@/core/sdk/server";
+import { moduleSettings, prisma, siteTimeZone } from "@/core/sdk/server";
 import { stillOwnedWhere } from "./ownership";
-import { effectivePrice } from "./availability";
+import { offerPrice, runningCampaignEntries } from "./campaign-server";
 import { withStoreSale } from "./store-sale";
 import { runningStoreSales } from "./store-sale-server";
 import type { UpgradeCandidate } from "./upgrade-credit";
@@ -78,22 +78,25 @@ export async function ownedRungsOn(
     });
 
     // Only read when somebody owns a rung here, which is the rare case.
+    const campaignEntries = rows.length > 0 ? await runningCampaignEntries(prisma, now, await siteTimeZone()) : [];
     const storeSales = rows.length > 0 ? await runningStoreSales(now) : [];
     return rows.map((row) => ({
         id: row.id,
         categoryId: row.categoryId,
-        // The price the shelf credits against: a sale on the rung somebody
-        // owns is what they actually put toward the one above it, and a
-        // store-wide sale lowers it as it lowers the rung they are buying,
-        // as the shelf draws both.
+        // The price the shelf credits against: a sale, a running campaign or
+        // a store-wide sale on the rung somebody owns is what they actually
+        // put toward the one above it, as the shelf draws the rung they are
+        // buying.
         price: withStoreSale(
-            effectivePrice(
+            offerPrice(
                 {
+                    id: row.id,
                     price: Number(row.price),
                     salePrice: row.salePrice === null ? null : Number(row.salePrice),
                     saleFrom: row.saleFrom,
                     saleUntil: row.saleUntil,
                 },
+                campaignEntries,
                 now,
             ),
             { listPrice: Number(row.price), categoryId: row.categoryId },

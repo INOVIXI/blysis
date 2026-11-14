@@ -19,8 +19,8 @@ import { auth } from "@/core/sdk/auth";
 import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
 import { creditingPurchases } from "./upgrade-credit-server";
 import { PUBLIC_PRODUCT } from "./public-product";
-import { availabilityOf, effectivePrice } from "./availability";
-import { pricedForCampaign, runningCampaignEntries } from "./campaign-server";
+import { availabilityOf } from "./availability";
+import { offerPrice, runningCampaignEntries } from "./campaign-server";
 import { withStoreSale } from "./store-sale";
 import { runningStoreSales } from "./store-sale-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "./availability-server";
@@ -182,7 +182,7 @@ export async function readStoreProducts(options: {
     const storeSales = await runningStoreSales(now);
     const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
     const pricedNow = (row: ProductRow) => withStoreSale(
-        pricedForCampaign(row.id, effectivePrice(rulesOf(row), now), campaignEntries),
+        offerPrice({ ...rulesOf(row), id: row.id }, campaignEntries, now),
         { listPrice: rulesOf(row).price, categoryId: (row as unknown as { category: { id: string } | null }).category?.id },
         storeSales,
         now,

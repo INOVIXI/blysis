@@ -5,8 +5,8 @@ import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../lib/validations";
 import { availabilityData } from "../../lib/availability-input";
 import { PUBLIC_PRODUCT } from "../../lib/public-product";
-import { availabilityOf, effectivePrice } from "../../lib/availability";
-import { pricedForCampaign, runningCampaignEntries } from "../../lib/campaign-server";
+import { availabilityOf } from "../../lib/availability";
+import { offerPrice, runningCampaignEntries } from "../../lib/campaign-server";
 import { withStoreSale } from "../../lib/store-sale";
 import { runningStoreSales } from "../../lib/store-sale-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "../../lib/availability-server";
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
                     restricted: row.roleIds.length > 0,
                 },
                 ...withStoreSale(
-                    pricedForCampaign(row.id, effectivePrice(rules, now), campaignEntries),
+                    offerPrice({ ...rules, id: row.id }, campaignEntries, now),
                     { listPrice: rules.price, categoryId: (row as unknown as { category: { id: string } | null }).category?.id },
                     storeSales,
                     now,

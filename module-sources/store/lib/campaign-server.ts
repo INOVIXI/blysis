@@ -6,6 +6,7 @@
  * answer is the same for everybody, so it stays cacheable alongside the rest
  * of the listing - a campaign is announced, not hidden.
  */
+import { effectivePrice, type ProductRules } from "./availability";
 import { campaignIsRunning, campaignPriceFor, type CampaignEntry } from "./campaign";
 
 interface CampaignReader {
@@ -68,8 +69,38 @@ export async function runningCampaignEntries(
         );
 }
 
+/**
+ * What a product costs right now, before anything personal: the lowest of its
+ * list price, its own sale price inside the sale's window, and the price of
+ * any campaign running now.
+ *
+ * Every screen that quotes a price and both tills that take one ask this one
+ * function - the listing, the product page, the comparison table, the in-game
+ * catalogue, the checkout and a purchase in game - and so does the upgrade
+ * credit for the rung a buyer owns. The listing used to apply the campaign
+ * and the checkout did not, so a card that said 60 was charged at 100.
+ * `tests/modules/store/a-campaign-price-is-the-price-taken.test.ts` holds the
+ * shelf and the till together.
+ *
+ * A campaign entry's stock figure is not read here. Nothing counts what has
+ * sold at a campaign price, so no screen can say when the figure is reached,
+ * and a till that stopped at it on its own would charge more than the card
+ * showed. The figure and its count belong together, at the shelf and the
+ * till at once.
+ *
+ * Upgrade credit, bulk discounts, coupons and creator codes apply afterwards,
+ * to this price.
+ */
+export function offerPrice(
+    product: { id: string } & Pick<ProductRules, "price" | "salePrice" | "saleFrom" | "saleUntil">,
+    entries: CampaignEntry[],
+    now: Date,
+): { price: number; was: number | null; onSale: boolean } {
+    return pricedForCampaign(product.id, effectivePrice(product, now), entries);
+}
+
 /** The price a product is listed at, once any running campaign is applied. */
-export function pricedForCampaign(
+function pricedForCampaign(
     productId: string,
     priced: { price: number; was: number | null; onSale: boolean },
     entries: CampaignEntry[],

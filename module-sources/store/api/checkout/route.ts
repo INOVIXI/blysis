@@ -6,7 +6,7 @@ import { auth } from "@/core/sdk/auth";
 import { claimStock, shortOfStock, stockClaims } from "../../lib/stock";
 import { countSales } from "../../lib/popularity";
 import { createCreditOrder, deliverPaidOrder, OUT_OF_STOCK } from "../../lib/credit-order";
-import { effectivePrice } from "../../lib/availability";
+import { offerPrice, runningCampaignEntries } from "../../lib/campaign-server";
 import { withStoreSale } from "../../lib/store-sale";
 import { runningStoreSales } from "../../lib/store-sale-server";
 import { availabilityFor, pastTheLimit, rulesOf, type ProductRow } from "../../lib/availability-server";
@@ -235,6 +235,9 @@ export async function POST(request: NextRequest) {
         // turned the credit off, and a lapsed purchase stops crediting.
         const ownedIds = await creditingPurchases(session.user.id);
 
+        // Read once for the basket, as the listing reads them once a page.
+        const campaignEntries = await runningCampaignEntries(prisma, now, zone);
+
         // ── Calculate item prices (with bulk discounts + cumulative upgrades) ──
         const storeSales = await runningStoreSales(now);
         const { subtotal, orderItems } = computeOrderPricing({
@@ -243,13 +246,12 @@ export async function POST(request: NextRequest) {
                 id: p.id,
                 name: p.name,
                 type: p.type,
-                // What a sale sets, not what the column says: the shop shows
-                // the sale price and a checkout that charged the other one
-                // would be taking a different amount from the one on screen.
-                // A store-wide sale is one of them; `withStoreSale` says which
-                // of two offers wins.
+                // What the shelf shows, not what the column says: a sale, a
+                // running campaign or a store-wide sale sets it, and a checkout
+                // that charged the column would take a different amount from
+                // the one on screen. `withStoreSale` says which of two offers wins.
                 price: withStoreSale(
-                    effectivePrice(rulesOf(p as unknown as ProductRow), now),
+                    offerPrice({ ...rulesOf(p as unknown as ProductRow), id: p.id }, campaignEntries, now),
                     { listPrice: rulesOf(p as unknown as ProductRow).price, categoryId: p.categoryId },
                     storeSales,
                     now,

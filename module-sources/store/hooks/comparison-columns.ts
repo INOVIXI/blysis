@@ -16,8 +16,7 @@
 import { getTranslations } from "next-intl/server";
 import { moduleSettings, prisma, siteTimeZone } from "@/core/sdk/server";
 import { PUBLIC_PRODUCT } from "../lib/public-product";
-import { effectivePrice } from "../lib/availability";
-import { pricedForCampaign, runningCampaignEntries } from "../lib/campaign-server";
+import { offerPrice, runningCampaignEntries } from "../lib/campaign-server";
 import { withStoreSale } from "../lib/store-sale";
 import { runningStoreSales } from "../lib/store-sale-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "../lib/availability-server";
@@ -76,7 +75,7 @@ const columns = async (current: Column[], who?: ColumnsQuestion): Promise<Column
     const storeSales = await runningStoreSales(now);
     // The price the card beside the table quotes, from the same rules.
     const pricedNow = (row: ProductRow) => withStoreSale(
-        pricedForCampaign(row.id, effectivePrice(rulesOf(row), now), campaignEntries),
+        offerPrice({ ...rulesOf(row), id: row.id }, campaignEntries, now),
         { listPrice: rulesOf(row).price, categoryId },
         storeSales,
         now,
@@ -157,10 +156,10 @@ const columns = async (current: Column[], who?: ColumnsQuestion): Promise<Column
                 comparePrice: unknown;
             };
             const priced = pricedNow(row);
-            // The struck-through figure the card already shows. `effectivePrice`
-            // only knows about a sale window; a plain compare-at price is the
-            // other half of it, and a table without it prices a rank lower than
-            // the card beside it does.
+            // The struck-through figure the card already shows. `offerPrice`
+            // only knows about a sale window and a campaign; a plain
+            // compare-at price is the other half of it, and a table without
+            // it prices a rank lower than the card beside it does.
             const compareAt = source.comparePrice === null ? null : Number(source.comparePrice);
             const was = priced.was ?? (compareAt !== null && compareAt > priced.price ? compareAt : null);
             const credit = upgradeCredit({ id: source.id, categoryId, price: priced.price }, ladder, ownedIds);

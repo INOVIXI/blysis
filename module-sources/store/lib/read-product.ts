@@ -13,10 +13,11 @@
  * asked to hide while it is shut answers exactly as one that does not exist,
  * so the two cannot be told apart.
  */
-import { isAdmin, moduleSettings, prisma } from "@/core/sdk/server";
+import { isAdmin, moduleSettings, prisma, siteTimeZone } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { PUBLIC_PRODUCT } from "./public-product";
-import { availabilityFor, type ProductRow } from "./availability-server";
+import { availabilityFor, rulesOf, type ProductRow } from "./availability-server";
+import { offerPrice, runningCampaignEntries } from "./campaign-server";
 import { withStoreSale } from "./store-sale";
 import { runningStoreSales } from "./store-sale-server";
 import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
@@ -47,11 +48,14 @@ export async function readProduct(id: string, locale = "") {
 
     const { lowStockAt } = await moduleSettings<{ lowStockAt: number }>("store");
 
-    // The price the till takes: a store-wide sale, where one covers this
-    // shelf and beats the product's own price. See `withStoreSale`.
+    // The price the card on the shelf shows and the till takes: a running
+    // campaign, then a store-wide sale where one covers this shelf and beats
+    // it (see `withStoreSale`). The availability answer carries the sale
+    // window alone.
     const now = new Date();
+    const campaignEntries = await runningCampaignEntries(prisma, now, await siteTimeZone());
     const priced = withStoreSale(
-        { price: state.price, was: state.was, onSale: state.onSale },
+        offerPrice({ ...rulesOf(product as unknown as ProductRow), id: product.id }, campaignEntries, now),
         { listPrice: Number(product.price), categoryId: product.category?.id },
         await runningStoreSales(now),
         now,
