@@ -6372,7 +6372,8 @@
           "store.credits.purchased",
           "store.gift.sent",
           "store.orders.delivery",
-          "store.tax"
+          "store.tax",
+          "store.checkout.reminder"
         ],
         "listens": [
           "user.registered",
@@ -6400,13 +6401,14 @@
           "store.gift.cancel",
           "store.gifts.sent",
           "store.gifts.receive",
-          "store.community-goal"
+          "store.community-goal",
+          "store.checkout.reminder"
         ]
       },
       "stats": {
         "publicRoutes": 5,
         "adminRoutes": 16,
-        "apiRoutes": 53,
+        "apiRoutes": 54,
         "widgets": 6
       }
     },

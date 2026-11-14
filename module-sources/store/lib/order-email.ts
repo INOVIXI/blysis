@@ -168,7 +168,7 @@ function stringsFor(locale: string | null | undefined): OrderEmailStrings {
  * site, and the difference only shows the day somebody writes
  * `href='${escapeHtml(url)}'` in whichever file has the shorter one.
  */
-function escapeHtml(value: string): string {
+export function escapeHtml(value: string): string {
     return value
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
