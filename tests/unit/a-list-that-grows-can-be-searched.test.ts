@@ -36,6 +36,8 @@ const ROOT = process.cwd();
  * Screens whose list does not grow with use. Each line says why.
  */
 const BOUNDED: Record<string, string> = {
+    "module-sources/ai-support/pages/admin/settings/page.tsx":
+        "A settings form. What repeats on it is the desk's departments, the seven days of the week and the knowledge sources installed: each as long as an operator made it, not as long as the site has been running.",
     "src/app/[locale]/(admin)/admin/cron/page.tsx":
         "The jobs the app and its modules declare. The list is as long as the code, not as long as the site has been running.",
     "src/app/[locale]/(admin)/admin/modules/page.tsx":

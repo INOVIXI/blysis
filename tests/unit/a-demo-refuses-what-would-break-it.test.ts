@@ -66,6 +66,7 @@ const SAFE_FAMILIES: { pattern: RegExp; why: string }[] = [
     { pattern: /^\/api\/v1\/(?:webhook|webhooks)\//, why: "a provider calling in, authenticated by its own signature rather than by a session" },
     { pattern: /^\/api\/v1\/(?:birfatura|parasut|iyzico|paytr|param|stripe|paypal|mollie|midtrans|razorpay|mercadopago|coinbase-commerce|coinpayments|nowpayments|paymentwall|paysafecard)/, why: "a gateway's own callback, the same" },
     { pattern: /^\/api\/v1\/(?:admin\/dev|admin\/moderation|admin\/warnings|moderation|ai-moderation\/admin\/undo)/, why: "moderation of seeded rows, which the reset puts back" },
+    { pattern: /^\/api\/v1\/ai-support\/admin\/drafts\//, why: "staff marking the assistant's draft used or set aside: a status on a row the reset clears, sent to nobody" },
     { pattern: /^\/api(?:\/v1)?\/setup/, why: "answered only while setup is incomplete, which a demo never is" },
     { pattern: /^\/api\/v1\/a\/b$/, why: "the module dispatcher: it forwards, and the proxy has already read the real path" },
     { pattern: /^\/api\/v1\/(?:error-report|notification-preferences)$/, why: "a browser reporting its own trouble, and a member's own switches" },
