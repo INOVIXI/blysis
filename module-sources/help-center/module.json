@@ -2,7 +2,7 @@
   "id": "help-center",
   "name": "Help Center",
   "description": "Knowledge base with categories and searchable articles",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "coreVersion": "^5.34.0",
   "category": "management",
   "author": "Blysis Team",
@@ -201,7 +201,8 @@
         "subtitle": "Search our knowledge base or browse categories below",
         "title": "Help Center",
         "views": "{count} views",
-        "wasHelpful": "Was this article helpful?"
+        "wasHelpful": "Was this article helpful?",
+        "knowledge_articles": "Help center articles"
       },
       "admin": {
         "menu_help-center": "Help Center",
@@ -334,7 +335,8 @@
         "subtitle": "Bilgi bankamızda arayın veya aşağıdaki kategorilere göz atın",
         "title": "Yardım Merkezi",
         "views": "{count} görüntülenme",
-        "wasHelpful": "Bu makale yardımcı oldu mu?"
+        "wasHelpful": "Bu makale yardımcı oldu mu?",
+        "knowledge_articles": "Yardım merkezi makaleleri"
       },
       "admin": {
         "menu_help-center": "Yardım Merkezi",
@@ -467,7 +469,8 @@
         "subtitle": "Bilik bazamızda axtarış edin və ya aşağıdakı kateqoriyalara baxın",
         "title": "Yardım mərkəzi",
         "views": "{count} baxış",
-        "wasHelpful": "Bu məqalə faydalı oldu?"
+        "wasHelpful": "Bu məqalə faydalı oldu?",
+        "knowledge_articles": "Yardım mərkəzi məqalələri"
       },
       "admin": {
         "menu_help-center": "Yardım mərkəzi",
@@ -600,7 +603,8 @@
         "subtitle": "Durchsuche unsere Wissensdatenbank oder stöbere unten in den Kategorien",
         "title": "Hilfe-Center",
         "views": "{count} Aufrufe",
-        "wasHelpful": "War dieser Artikel hilfreich?"
+        "wasHelpful": "War dieser Artikel hilfreich?",
+        "knowledge_articles": "Artikel im Hilfe-Center"
       },
       "admin": {
         "menu_help-center": "Hilfe-Center",
@@ -733,7 +737,8 @@
         "subtitle": "Busca en nuestra base de conocimiento o explora las categorías de abajo",
         "title": "Centro de ayuda",
         "views": "{count} vistas",
-        "wasHelpful": "¿Te ha sido útil este artículo?"
+        "wasHelpful": "¿Te ha sido útil este artículo?",
+        "knowledge_articles": "Artículos del centro de ayuda"
       },
       "admin": {
         "menu_help-center": "Centro de ayuda",
@@ -866,7 +871,8 @@
         "subtitle": "Otsi meie teadmusbaasist või sirvi allpool olevaid kategooriaid",
         "title": "Abikeskus",
         "views": "{count} vaatamist",
-        "wasHelpful": "Kas see artikkel aitas?"
+        "wasHelpful": "Kas see artikkel aitas?",
+        "knowledge_articles": "Abikeskuse artiklid"
       },
       "admin": {
         "menu_help-center": "Abikeskus",
@@ -999,7 +1005,8 @@
         "subtitle": "Recherchez dans notre base de connaissances ou parcourez les catégories ci-dessous",
         "title": "Centre d’aide",
         "views": "{count} vues",
-        "wasHelpful": "Cet article vous a-t-il été utile ?"
+        "wasHelpful": "Cet article vous a-t-il été utile ?",
+        "knowledge_articles": "Articles du centre d'aide"
       },
       "admin": {
         "menu_help-center": "Centre d’aide",
@@ -1132,7 +1139,8 @@
         "subtitle": "Cerca nella nostra base di conoscenza o sfoglia le categorie qui sotto",
         "title": "Centro assistenza",
         "views": "{count} visualizzazioni",
-        "wasHelpful": "Questo articolo è stato utile?"
+        "wasHelpful": "Questo articolo è stato utile?",
+        "knowledge_articles": "Articoli del centro assistenza"
       },
       "admin": {
         "menu_help-center": "Centro assistenza",
@@ -1265,7 +1273,8 @@
         "subtitle": "Przeszukaj naszą bazę wiedzy albo przeglądaj poniższe kategorie",
         "title": "Centrum pomocy",
         "views": "{count, plural, one {# wyświetlenie} few {# wyświetlenia} many {# wyświetleń} other {# wyświetlenia}}",
-        "wasHelpful": "Czy ten artykuł był pomocny?"
+        "wasHelpful": "Czy ten artykuł był pomocny?",
+        "knowledge_articles": "Artykuły centrum pomocy"
       },
       "admin": {
         "menu_help-center": "Centrum pomocy",
@@ -1398,7 +1407,8 @@
         "subtitle": "Pesquise na nossa base de conhecimento ou navegue pelas categorias abaixo",
         "title": "Central de ajuda",
         "views": "{count} visualizações",
-        "wasHelpful": "Este artigo foi útil?"
+        "wasHelpful": "Este artigo foi útil?",
+        "knowledge_articles": "Artigos do centro de ajuda"
       },
       "admin": {
         "menu_help-center": "Central de ajuda",
@@ -1531,7 +1541,8 @@
         "subtitle": "Ищите в базе знаний или выберите категорию ниже",
         "title": "Центр справки",
         "views": "Просмотров: {count}",
-        "wasHelpful": "Была ли эта статья полезной?"
+        "wasHelpful": "Была ли эта статья полезной?",
+        "knowledge_articles": "Статьи справочного центра"
       },
       "admin": {
         "menu_help-center": "Центр справки",
@@ -1664,7 +1675,8 @@
         "subtitle": "搜索我们的知识库，或浏览下方的分类",
         "title": "帮助中心",
         "views": "{count} 次浏览",
-        "wasHelpful": "这篇文章对你有帮助吗？"
+        "wasHelpful": "这篇文章对你有帮助吗？",
+        "knowledge_articles": "帮助中心文章"
       },
       "admin": {
         "menu_help-center": "帮助中心",
@@ -1894,6 +1906,18 @@
           }
         ]
       }
+    }
+  ],
+  "hookListeners": [
+    {
+      "hook": "support.knowledge",
+      "type": "filter",
+      "handler": "hooks/knowledge.ts"
+    },
+    {
+      "hook": "support.sources",
+      "type": "filter",
+      "handler": "hooks/knowledge-source.ts"
     }
   ]
 }
