@@ -25,8 +25,13 @@ import { withStoreSale } from "./store-sale";
 import { runningStoreSales } from "./store-sale-server";
 import { hideShut, onTheShelfWhere, rulesOf, type ProductRow } from "./availability-server";
 import { categoriesIn, productsIn, productsTranslatedAs } from "./store-text";
+import { publicVariants, type PublicVariant } from "./variants";
 
 export const PRODUCTS_PER_PAGE = 12;
+
+function lowestOf(variants: PublicVariant[]): number | null {
+    return variants.length > 0 ? Math.min(...variants.map((variant) => variant.price)) : null;
+}
 
 export type StoreSort = "newest" | "price_asc" | "price_desc" | "popular";
 
@@ -97,6 +102,11 @@ export interface ShelfProduct {
     shortDesc: string | null;
     /** How long a purchase lasts, in days; null is owned outright. */
     durationDays: number | null;
+    /**
+     * The lowest price a variant sells for, for "from" on the card, any offer
+     * and credit taken off; null for a product sold as itself.
+     */
+    fromPrice: number | null;
     stock: number | null;
     isFeatured: boolean;
     category: { id: string; name: string; slug: string } | null;
@@ -164,7 +174,8 @@ export async function readStoreProducts(options: {
     const [products, total] = await Promise.all([
         prisma.product.findMany({
             where,
-            select: PUBLIC_PRODUCT,
+            // With the variants, which only `publicVariants` passes on.
+            select: { ...PUBLIC_PRODUCT, variants: true },
             skip: (page - 1) * perPage,
             take: perPage,
             orderBy: options.sort === "popular" ? [{ unitsSold: "desc" as const }, { createdAt: "desc" as const }]
@@ -239,6 +250,12 @@ export async function readStoreProducts(options: {
             image: source.image,
             shortDesc: source.shortDesc ?? null,
             durationDays: source.durationDays ?? null,
+            fromPrice: lowestOf(publicVariants((row as unknown as { variants: unknown }).variants, options.locale || "en", {
+                listPrice: rules.price,
+                offeredPrice: priced.price,
+                credit,
+                durationDays: source.durationDays ?? null,
+            })),
             stock: source.stock,
             isFeatured: source.isFeatured,
             category: source.category,

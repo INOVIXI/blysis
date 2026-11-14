@@ -1,8 +1,33 @@
 import { z } from "zod";
 import { MAX_SALE_PERCENT, MIN_SALE_PERCENT } from "./store-sale";
 import { DELIVERY_MODES } from "./delivery-mode";
+import { MAX_VARIANTS } from "./variants";
 
 // ==================== STORE SCHEMAS ====================
+
+/**
+ * One variant as the product form sends it. The id is missing on a new one:
+ * the server makes it, because a browser on a plain http address has no
+ * `crypto.randomUUID` to make one with.
+ */
+export const productVariantSchema = z.object({
+    id: z.string().trim().max(64).optional(),
+    label: z.union([
+        z.string().trim().min(1, "A variant needs a name").max(100),
+        z.record(z.string(), z.string().max(100)).refine((v) => typeof v.default === "string" && v.default.trim() !== "", "A variant needs a name"),
+    ]),
+    price: z.number().min(0, "Price must be positive").max(10_000_000),
+    units: z.number().int().min(1).max(10_000).optional(),
+    durationDays: z.number().int().min(1).max(3650).optional().nullable(),
+    variables: z.record(z.string().trim().min(1).max(64), z.string().max(200)).optional(),
+    commands: z.array(z.object({
+        command: z.string().trim().min(1).max(1_000),
+        serverId: z.string().max(64).optional().nullable(),
+        target: z.enum(["server", "player"]).optional().nullable(),
+        whenOnline: z.boolean().optional().nullable(),
+    })).max(50).optional(),
+    isActive: z.boolean().optional(),
+});
 
 export const productSchema = z.object({
     name: z.string().min(1, "Name is required").max(200),
@@ -67,6 +92,8 @@ export const productSchema = z.object({
     gameDescription: z.string().trim().max(500).optional().nullable(),
     /** Free text each game reads its own way: a material, an item model, a sprite. */
     gameIcon: z.string().trim().max(100).optional().nullable(),
+    /** The ways it is sold, in the order a buyer sees them. Empty sells it as itself. */
+    variants: z.array(productVariantSchema).max(MAX_VARIANTS).optional(),
 });
 
 export const categorySchema = z.object({

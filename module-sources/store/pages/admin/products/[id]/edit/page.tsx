@@ -13,6 +13,8 @@ import { isDeliveryMode, type DeliveryMode } from "../../../../../lib/delivery-m
 import { GrantFields } from "../../_fields/GrantFields";
 import { InGameFields } from "../../_fields/InGameFields";
 import { EMPTY_IN_GAME, inGameFrom, inGamePayload, type InGameValue } from "../../_fields/in-game-payload";
+import { VariantFields } from "../../_fields/VariantFields";
+import { variantDraftsFrom, variantsPayload, type VariantDraft } from "../../_fields/variant-payload";
 import { EMPTY_GRANT, grantPayload, type GrantValue } from "../../_fields/grant-payload";
 import { RequirementFields } from "../../_fields/RequirementFields";
 import { EMPTY_REQUIREMENT, requirementPayload, type RequirementValue } from "../../_fields/requirement-payload";
@@ -87,6 +89,7 @@ export default function EditProductPage(props: PageProps) {
     // load, and saving it would have written those blanks over the product.
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
+    const [variants, setVariants] = useState<VariantDraft[]>([]);
 
     useEffect(() => {
         let cancelled = false;
@@ -128,6 +131,7 @@ export default function EditProductPage(props: PageProps) {
                     subscriptionIntervalCount: p.subscriptionIntervalCount ? String(p.subscriptionIntervalCount) : "1",
                 });
                 setInGame(inGameFrom(p));
+                setVariants(variantDraftsFrom(p.variants));
             }
             setCategories(catData.categories || []);
             const where = timeZone;
@@ -209,6 +213,7 @@ export default function EditProductPage(props: PageProps) {
                 ...grantPayload(grant),
                 ...requirementPayload(requires),
                 ...inGamePayload(inGame),
+                variants: variantsPayload(variants),
             };
 
             const res = await fetch(`/api/v1/store/products/${productId}`, {
@@ -418,6 +423,8 @@ export default function EditProductPage(props: PageProps) {
                         <AvailabilityFields value={availability} onChange={setAvailability} timeZone={timeZone} />
 
                         <InGameFields value={inGame} onChange={setInGame} kind="product" />
+
+                        <VariantFields value={variants} onChange={setVariants} />
 
                         {/* Delivery commands */}
                         <Card>

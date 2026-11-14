@@ -8,6 +8,7 @@
 // inlining the arithmetic.
 
 import { lineCredit, priceAfterCredit, type UpgradeCandidate } from "./upgrade-credit";
+import { chosenVariant, offeredVariantPrice, snapshotOf, variablesWithVariant, variantLineName, type VariantSnapshot } from "./variants";
 
 /**
  * Money, to the cent.
@@ -30,8 +31,13 @@ export interface PricingProduct {
     id: string;
     name: string;
     type?: string | null;
+    /** What the shelf shows for the product itself, any offer already taken off. */
     price: number;
     categoryId?: string | null;
+    /** The product's own price before any offer, which a variant's offer is a share of. */
+    listPrice?: number;
+    /** The product's variants column, as stored. */
+    variants?: unknown;
 }
 
 /**
@@ -67,6 +73,8 @@ export function scopeCoversLine(
 export interface PricingItemInput {
     productId: string;
     quantity: number;
+    /** The variant chosen, for a product sold in variants. */
+    variantId?: string | null;
 }
 
 export interface PricingBulkDiscount {
@@ -86,6 +94,8 @@ export interface ComputedOrderItem {
         type: string | null | undefined;
         variables: Record<string, string>;
         bulkDiscount?: number;
+        /** What the line keeps of its variant; see `lib/variants.ts`. */
+        variant?: VariantSnapshot;
     };
 }
 
@@ -114,14 +124,24 @@ export function computeOrderPricing(params: {
      */
     ownedRungs: readonly UpgradeCandidate[];
     variables?: Record<string, Record<string, string>>;
+    /** The buyer's language, which a variant's name is kept in. */
+    locale?: string;
 }): { subtotal: number; orderItems: ComputedOrderItem[] } {
-    const { items, products, bulkDiscounts, ownedProductIds, ownedRungs, variables } = params;
+    const { items, products, bulkDiscounts, ownedProductIds, ownedRungs, variables, locale = "en" } = params;
 
     let subtotal = 0;
     const credited = new Set<string>();
     const orderItems = items.map((item): ComputedOrderItem => {
         const product = products.find((p) => p.id === item.productId)!;
-        let price = Number(product.price);
+        // Asked again here although the route asked first: a line priced at
+        // the product's own price because its variant went missing would
+        // charge a buyer of six keys for one.
+        const choice = chosenVariant(product.variants, item.variantId);
+        if (!choice.ok) throw new Error(choice.code);
+        const variant = choice.variant;
+        let price = variant
+            ? offeredVariantPrice(variant.price, product.listPrice ?? Number(product.price), Number(product.price))
+            : Number(product.price);
 
         // Pay the difference where a cheaper rung on the same ladder is
         // already owned. The rule is `upgrade-credit.ts`, because four screens
@@ -153,13 +173,14 @@ export function computeOrderPricing(params: {
 
         return {
             productId: product.id,
-            name: product.name,
+            name: variantLineName(product.name, variant, locale),
             price,
             quantity: item.quantity,
             metadata: {
                 type: product.type,
-                variables: variables?.[product.id] || {},
+                variables: variablesWithVariant(variables?.[product.id], variant),
                 ...(bulkDiscountApplied > 0 ? { bulkDiscount: bulkDiscountApplied } : {}),
+                ...(variant ? { variant: snapshotOf(variant, locale) } : {}),
             },
         };
     });

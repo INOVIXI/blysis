@@ -12,6 +12,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { errorMessage } from "@/core/sdk";
 import { AvailabilityNote, LowStockNote, type AvailabilityInfo } from "./AvailabilityNote";
 import { type BulkRung } from "../lib/pricing";
+import type { PublicVariant } from "../lib/variants";
 
 interface Product {
     id: string;
@@ -48,6 +49,8 @@ interface Product {
     was?: number | null;
     onSale?: boolean;
     lowStockAt?: number;
+    /** The ways it is sold, priced for this reader; empty sells the product itself. */
+    variants?: PublicVariant[];
 }
 
 /**
@@ -98,6 +101,11 @@ export function ProductView({
     const [addedToCart, setAddedToCart] = useState(false);
     const [variables, setVariables] = useState<{ name: string; label: string; type: string; required: boolean; placeholder?: string; options?: string }[]>([]);
     const [variableValues, setVariableValues] = useState<Record<string, string>>({});
+    // The first variant is chosen from the start, so the price and the
+    // buttons always describe something a buyer can pay for.
+    const variants = initialProduct.variants ?? [];
+    const [variantId, setVariantId] = useState<string | null>(variants[0]?.id ?? null);
+    const variant = variants.find((entry) => entry.id === variantId) ?? null;
 
 
     // Fetch product variables, asked in the page's language: the label and
@@ -126,7 +134,7 @@ export function ProductView({
             const res = await fetch("/api/v1/store/cart", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ productId: product.id, quantity }),
+                body: JSON.stringify({ productId: product.id, quantity, variantId }),
             });
             if (res.ok) {
                 setAddedToCart(true);
@@ -157,7 +165,7 @@ export function ProductView({
             const res = await fetch("/api/v1/store/cart", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ productId: product.id, quantity }),
+                body: JSON.stringify({ productId: product.id, quantity, variantId }),
             });
             if (res.ok) {
                 router.push("/store/cart");
@@ -178,7 +186,10 @@ export function ProductView({
     // the product before this rendered, and a product it could not read is a
     // 404 rather than a page saying so.
 
-    const maxStock = product.stock ?? 99;
+    // A variant of several units takes that many off the shelf each.
+    const unitsEach = variant?.units ?? 1;
+    const maxStock = product.stock === null ? 99 : Math.max(1, Math.floor(product.stock / unitsEach));
+    const unitPrice = variant ? variant.price : product.price;
     /*
      * The rung this quantity has reached, and what the line costs with it.
      *
@@ -190,7 +201,7 @@ export function ProductView({
     const bulkPercent = bulkLadder
         .filter((rung) => rung.minQuantity <= quantity)
         .reduce((best, rung) => Math.max(best, rung.discountPercent), 0);
-    const totalPrice = Math.round(product.price * quantity * (1 - bulkPercent / 100) * 100) / 100;
+    const totalPrice = Math.round(unitPrice * quantity * (1 - bulkPercent / 100) * 100) / 100;
     const upgradeCredit = Number(product.upgradeCredit ?? 0);
     const inStock = product.stock === null || product.stock > 0;
     // The window, the per-person limit and today's allowance, answered by the
@@ -237,7 +248,7 @@ export function ProductView({
                     ) : product.comparePrice ? (
                         <span className="text-lg text-muted-foreground line-through">{formatPrice(product.comparePrice)}</span>
                     ) : null}
-                    <span className="text-3xl font-bold text-foreground">{formatPrice(product.price)}</span>
+                    <span className="text-3xl font-bold text-foreground">{formatPrice(unitPrice)}</span>
                 </div>
                 {upgradeCredit > 0 ? (
                     <div className="mt-2 inline-block rounded bg-success/10 px-2 py-1 text-xs font-medium text-success">
@@ -249,6 +260,39 @@ export function ProductView({
                     </div>
                 ) : null}
             </div>
+
+            {/* The ways it is sold. Each says what it saves against the
+                dearest per unit, worked out from the prices, never typed. */}
+            {variants.length > 0 && (
+                <fieldset className="mb-4">
+                    <legend className="mb-2 block text-sm font-medium text-foreground">{t("variantPick")}</legend>
+                    <div className="grid grid-cols-2 gap-2">
+                        {variants.map((entry) => {
+                            const chosen = entry.id === variantId;
+                            return (
+                                <button
+                                    key={entry.id}
+                                    type="button"
+                                    aria-pressed={chosen}
+                                    onClick={() => { setVariantId(entry.id); setQuantity(1); }}
+                                    className={`flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-colors ${chosen ? "border-primary bg-primary/10" : "border-border hover:bg-muted"}`}
+                                >
+                                    <span className="text-sm font-semibold text-foreground">{entry.label}</span>
+                                    <span className="flex items-baseline gap-1 text-sm text-muted-foreground">
+                                        <span>{formatPrice(entry.price)}</span>
+                                        {entry.price < entry.fullPrice && (
+                                            <span className="line-through">{formatPrice(entry.fullPrice)}</span>
+                                        )}
+                                    </span>
+                                    {entry.saving > 0 && (
+                                        <Badge tone="success">{t("variantSaving", { percent: entry.saving })}</Badge>
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </fieldset>
+            )}
 
             {availability && (
                 <div className="mb-4">

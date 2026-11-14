@@ -11,10 +11,11 @@ import { applyFiltersAsync, generateOrderNumber } from "@/core/sdk";
 import { log, moduleSettings, prisma, type PrismaTransaction } from "@/core/sdk/server";
 import { claimStock, stockClaims } from "./stock";
 import { countSales } from "./popularity";
-import { recordedVariables } from "./chest";
+import { chestFieldsFor, recordedVariables } from "./chest";
 import { deliverProduct } from "./delivery";
 import { issueThankYouCoupon, readThankYouSettings } from "./thank-you-coupon";
 import { waitsInChest } from "./delivery-mode";
+import { snapshotIn, unitsDelivered } from "./variants";
 
 /** Thrown inside the transaction, so the debit rolls back with it. */
 export const INSUFFICIENT_CREDITS = "INSUFFICIENT_CREDITS";
@@ -96,7 +97,7 @@ export async function createCreditOrder(tx: PrismaTransaction, input: CreditOrde
             userId: input.ownerId,
             productId: line.productId,
             productName: line.name,
-            quantity: line.quantity,
+            ...chestFieldsFor(line),
             orderId: order.id,
             playerName: input.gift ? null : input.playerName,
             variables: recordedVariables(line.metadata) ?? Prisma.JsonNull,
@@ -189,7 +190,10 @@ export async function deliverPaidOrder(
     }
 
     for (const line of lines) {
-        const commands = byProduct.get(line.productId);
+        // A variant with commands of its own runs those instead of the
+        // product's, read from what the line kept when it was bought.
+        const variant = snapshotIn(line.metadata);
+        const commands = variant && variant.commands.length > 0 ? variant.commands : byProduct.get(line.productId);
         if (!commands || commands.length === 0) continue;
         // The line's chest rows are claimed before its commands run, and put
         // back if nothing could take them. Closing them only afterwards left
@@ -230,7 +234,7 @@ export async function deliverPaidOrder(
                 userId: player.userId,
                 productName: line.name,
                 commands: commands.map((c) => ({ command: c.command, serverId: c.serverId, target: c.target, whenOnline: c.whenOnline })),
-                quantity: line.quantity,
+                quantity: unitsDelivered(line.quantity, variant),
                 variables,
                 reference: { kind: "order", id: order.id, label: line.name },
                 line: line.id,

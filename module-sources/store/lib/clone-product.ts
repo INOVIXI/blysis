@@ -34,6 +34,8 @@ export interface CopyableProduct<TJson, TMoney, TType> {
     stock: number | null;
     type: TType;
     deliveryData: TJson | null;
+    /** The ways it is sold. Optional, so a caller holding an older shape still copies. */
+    variants?: TJson | null;
     commandsPerUnit: boolean;
     deliveryMode: string;
     subscriptionInterval: string | null;
@@ -120,6 +122,9 @@ export function copyOf<TJson, TMoney, TType>(
         isFeatured: false,
         type: product.type,
         deliveryData: product.deliveryData,
+        // Same ids as the original's: an id only has to be unique within its
+        // own product, and the copy's orders start from nothing.
+        ...(product.variants != null ? { variants: product.variants } : {}),
         commandsPerUnit: product.commandsPerUnit,
         deliveryMode: product.deliveryMode,
         subscriptionInterval: product.subscriptionInterval,
