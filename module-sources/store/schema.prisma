@@ -260,7 +260,6 @@ model Order {
   payments Payment[]
 
   @@index([userId])
-  @@index([status])
   // Read as "how many times has this customer used this coupon".
   @@index([couponId, userId])
 
