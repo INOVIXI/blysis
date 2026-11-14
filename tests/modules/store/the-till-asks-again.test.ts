@@ -31,6 +31,8 @@ const orderUpdate = vi.fn(async () => ({}));
 const stockTaken = vi.fn(async () => ({ count: 1 }));
 
 const db = {
+    // No store-wide sale is running.
+    storeSale: { findMany: async () => [] },
     // The stock read asks for tracked products only; the product read for all.
     product: {
         findMany: vi.fn(async (args?: { where?: { stock?: unknown } }) =>
@@ -39,6 +41,7 @@ const db = {
     },
     productVariable: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },
+    campaign: { findMany: vi.fn(async () => []) },
     orderItem: { aggregate: vi.fn(async () => ({ _sum: { quantity: bought.current } })) },
     setting: { findUnique: vi.fn(async () => null) },
     user: { findUnique: vi.fn(async () => ({ creditBalance: 0, roleId: null })) },
@@ -373,6 +376,9 @@ describe("the screens in front of it", () => {
     it("carry the state and the sale to the page that draws them", () => {
         expect(LIST).toContain("availability:");
         expect(DETAIL).toContain("availability:");
-        expect(LIST).toContain("effectivePrice(");
+        // The sale and any running campaign, through the function the till
+        // prices with.
+        expect(LIST).toContain("offerPrice(");
+        expect(DETAIL).toContain("offerPrice(");
     });
 });

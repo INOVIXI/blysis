@@ -21,6 +21,8 @@ const findMany = vi.fn<(args: unknown) => Promise<unknown[]>>(async () => []);
 vi.mock("@/core/sdk/server", async () => ({
     ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
+        // No store-wide sale is running.
+        storeSale: { findMany: async () => [] },
         product: { findMany: (args: unknown) => findMany(args) },
         // No campaign is running, so a column's price is the shelf's own.
         campaign: { findMany: async () => [] },

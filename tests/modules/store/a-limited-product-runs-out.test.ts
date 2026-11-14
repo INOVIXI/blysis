@@ -81,6 +81,8 @@ const db = {
     // A refund also takes back what the order granted; these orders granted
     // nothing the counting here is about. `fulfilment.test.ts` covers that.
     chestItem: { createMany: async () => ({ count: 1 }), deleteMany: async () => ({ count: 0 }), findMany: async () => [] },
+    // A refund withdraws the thank-you coupon the order earned; these orders earned none.
+    coupon: { updateMany: vi.fn(async () => ({ count: 0 })) },
     ownedProduct: { createMany: async () => ({ count: 1 }), findMany: async () => [] },
     payment: {
         create: async () => ({}),
@@ -103,6 +105,8 @@ const db = {
 vi.mock("@/core/sdk/server", () => ({
     prisma: db,
     log: { error: logError, warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
+    // Settlement asks whether the shop thanks buyers with a coupon; it does not here.
+    moduleSettings: vi.fn(async () => ({})),
 }));
 vi.mock("@/modules/store/lib/order-email", () => ({ sendOrderConfirmationEmail: async () => undefined }));
 vi.mock("@/modules/store/lib/delivery", () => ({ deliverProduct: async () => ({}) }));

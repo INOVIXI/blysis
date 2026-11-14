@@ -35,6 +35,7 @@ export interface CopyableProduct<TJson, TMoney, TType> {
     type: TType;
     deliveryData: TJson | null;
     commandsPerUnit: boolean;
+    deliveryMode: string;
     subscriptionInterval: string | null;
     subscriptionIntervalCount: number | null;
     availableFrom: Date | null;
@@ -120,6 +121,7 @@ export function copyOf<TJson, TMoney, TType>(
         type: product.type,
         deliveryData: product.deliveryData,
         commandsPerUnit: product.commandsPerUnit,
+        deliveryMode: product.deliveryMode,
         subscriptionInterval: product.subscriptionInterval,
         subscriptionIntervalCount: product.subscriptionIntervalCount,
         // The id names a price object belonging to the original. Two products

@@ -72,6 +72,14 @@ describe("what a product costs while a campaign runs", () => {
         expect(campaignPriceFor("vip", 20, [{ productId: "vip", price: Number.NaN }])).toBe(20);
     });
 
+    it("is the better of two campaigns that both list the product, in either order", () => {
+        // Two campaigns open at once over one product are two offers, and the
+        // buyer gets the lower. The first row found used to win, so the order
+        // the database returned them in set the price.
+        expect(campaignPriceFor("vip", 20, [{ productId: "vip", price: 15 }, { productId: "vip", price: 12 }])).toBe(12);
+        expect(campaignPriceFor("vip", 20, [{ productId: "vip", price: 12 }, { productId: "vip", price: 15 }])).toBe(12);
+    });
+
     it("allows a campaign to make something free", () => {
         // Zero is a price an operator can mean, unlike a negative one.
         expect(campaignPriceFor("vip", 20, [{ productId: "vip", price: 0 }])).toBe(0);

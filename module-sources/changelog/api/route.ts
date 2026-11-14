@@ -3,6 +3,7 @@ import { attachContentTranslations, contentTranslationsInput, isAdmin, prisma, r
 import { auth } from "@/core/sdk/auth";
 import { z } from "zod";
 import { ENTRY_TEXT, TRANSLATED_FIELDS, entrySlug } from "../lib/entry-page";
+import { RELEASED_ON } from "../lib/released-on";
 import { readChangelogEntries } from "../lib/read-entries";
 
 // The read and what counts as published live in lib/read-entries.ts, because
@@ -43,6 +44,7 @@ export async function POST(request: NextRequest) {
         type: z.string().max(50).optional(),
         color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
         publishAt: z.string().datetime().optional().nullable(),
+        createdAt: RELEASED_ON.optional().nullable(),
     });
     const validation = schema.safeParse(body);
     if (!validation.success) return NextResponse.json({ error: validation.error.issues[0].message }, { status: 400 });
@@ -50,7 +52,7 @@ export async function POST(request: NextRequest) {
     const translations = contentTranslationsInput(body, TRANSLATED_FIELDS);
     if (!translations.ok) return NextResponse.json({ error: translations.error }, { status: 400 });
 
-    const { version, title, content, details, coverImage, type, color, publishAt } = validation.data;
+    const { version, title, content, details, coverImage, type, color, publishAt, createdAt } = validation.data;
 
     const entry = await prisma.$transaction(async (tx) => {
         const created = await tx.changelogEntry.create({ data: {
@@ -66,6 +68,9 @@ export async function POST(request: NextRequest) {
             type: type || "update",
             color: color || "#3b82f6",
             publishAt: publishAt ? new Date(publishAt) : null,
+            // A release written up after it shipped keeps the day it shipped:
+            // the timeline is ordered and dated by this column.
+            ...(createdAt ? { createdAt: new Date(createdAt) } : {}),
         } });
         if (translations.value) await saveContentTranslations(tx, { ...ENTRY_TEXT, recordId: created.id }, translations.value);
         return created;

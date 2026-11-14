@@ -46,6 +46,7 @@ vi.mock("@/core/sdk/ui", () => ({
 
 vi.mock("@/modules/store/components/StoreControls", () => ({ StoreSearch: () => null, StoreSort: () => null }));
 vi.mock("@/modules/store/components/ProductCard", () => ({ ProductCard: () => null }));
+vi.mock("@/modules/store/components/StoreSaleBanner", () => ({ StoreSaleBanner: () => null }));
 
 vi.mock("@/modules/store/lib/read-store", () => ({
     STORE_SORTS: ["newest", "price_asc", "price_desc", "popular"],

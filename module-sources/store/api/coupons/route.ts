@@ -66,6 +66,11 @@ export async function POST(request: NextRequest) {
     const coupon = await prisma.coupon.create({
         data: {
             ...validation.data,
+            // One use each unless the operator says otherwise: a code handed
+            // out to everybody is meant once per person far more often than
+            // it is meant as many times as one person likes. Null, sent on
+            // purpose, is no limit.
+            perCustomerLimit: validation.data.perCustomerLimit === undefined ? 1 : validation.data.perCustomerLimit,
             startsAt: validation.data.startsAt ? new Date(validation.data.startsAt) : null,
             expiresAt: validation.data.expiresAt ? new Date(validation.data.expiresAt) : null,
         },

@@ -23,6 +23,8 @@ const orderUpdate = vi.fn(async () => ({}));
 const topUpCreate = vi.fn(async () => ({ id: "topup-1" }));
 
 const db = {
+    // No store-wide sale is running.
+    storeSale: { findMany: async () => [] },
     product: {
         // The stock check asks only for products that count their stock, and
         // this one does not.
@@ -57,6 +59,7 @@ const db = {
     },
     productVariable: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },
+    campaign: { findMany: vi.fn(async () => []) },
     orderItem: { aggregate: vi.fn(async () => ({ _sum: { quantity: 0 } })) },
     setting: {
         findUnique: vi.fn(async ({ where }: { where: { key: string } }) => {

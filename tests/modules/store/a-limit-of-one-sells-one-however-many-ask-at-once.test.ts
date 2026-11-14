@@ -13,6 +13,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const order = { id: "o1", orderNumber: "ORD-1", items: [] };
 const tx = { $executeRaw: vi.fn(async () => 1) };
 const db = {
+    // No store-wide sale is running.
+    storeSale: { findMany: async () => [] },
     product: {
         findFirst: vi.fn(async () => ({
             id: "p1",
@@ -30,6 +32,7 @@ const db = {
     user: { findUnique: vi.fn(async () => ({ receiveGifts: true, creditBalance: 10 })) },
     productVariable: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },
+    campaign: { findMany: vi.fn(async () => []) },
     setting: { findUnique: vi.fn(async () => null) },
     $transaction: vi.fn(async (work: (t: typeof tx) => Promise<unknown>) => work(tx)),
 };

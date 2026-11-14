@@ -8,11 +8,13 @@
  */
 import { Prisma } from "@prisma/client";
 import { applyFiltersAsync, generateOrderNumber } from "@/core/sdk";
-import { log, prisma, type PrismaTransaction } from "@/core/sdk/server";
+import { log, moduleSettings, prisma, type PrismaTransaction } from "@/core/sdk/server";
 import { claimStock, stockClaims } from "./stock";
 import { countSales } from "./popularity";
 import { recordedVariables } from "./chest";
 import { deliverProduct } from "./delivery";
+import { issueThankYouCoupon, readThankYouSettings } from "./thank-you-coupon";
+import { waitsInChest } from "./delivery-mode";
 
 /** Thrown inside the transaction, so the debit rolls back with it. */
 export const INSUFFICIENT_CREDITS = "INSUFFICIENT_CREDITS";
@@ -41,6 +43,8 @@ export interface CreditOrderInput {
     notes?: string | null;
     billingDetails: Prisma.InputJsonValue | typeof Prisma.JsonNull;
     metadata: Prisma.InputJsonValue;
+    /** The coupon the order was placed with, counted against the buyer's uses of it. */
+    couponId?: string | null;
     playerName: string | null;
     description: string;
 }
@@ -80,6 +84,7 @@ export async function createCreditOrder(tx: PrismaTransaction, input: CreditOrde
             currency: input.currency.toUpperCase(),
             notes: input.notes ?? null,
             paymentMethod: "credits",
+            couponId: input.couponId ?? null,
             metadata: input.metadata,
             items: { create: input.lines },
         },
@@ -112,6 +117,15 @@ export async function createCreditOrder(tx: PrismaTransaction, input: CreditOrde
         });
     }
 
+    // Paid in credits is paid: the thank-you is the same as for a card, on
+    // the same transaction as the debit, so a purchase that rolls back mints
+    // nothing. Whoever paid is thanked, which for a gift is the sender.
+    await issueThankYouCoupon(
+        tx,
+        { id: order.id, orderNumber: order.orderNumber, userId: input.buyerId, total: input.total },
+        await readThankYouSettings(),
+    );
+
     return order;
 }
 
@@ -123,7 +137,7 @@ export interface DeliveryPlayer {
 
 /**
  * Hands a paid order's lines to delivery, and closes the chest rows that
- * delivery took.
+ * delivery took. A line whose product waits in the chest is not handed over.
  *
  * Every paid line also gets a chest row. Before this, a line whose commands
  * ran at payment kept an unredeemed row too, and its buyer could claim the
@@ -143,23 +157,26 @@ export async function deliverPaidOrder(
     const lines = order.items.filter((item): item is typeof item & { productId: string } => Boolean(item.productId));
     if (lines.length === 0) return;
 
+    const productIds = [...new Set(lines.map((line) => line.productId))];
     const commandRows = await prisma.productCommand.findMany({
-        where: { productId: { in: [...new Set(lines.map((line) => line.productId))] } },
+        where: { productId: { in: productIds } },
         orderBy: { order: "asc" },
     });
-    // Only a line of more than one can run more than once, so a basket of
-    // single items asks nothing more of the database than it used to.
-    const several = [...new Set(lines.filter((line) => line.quantity > 1).map((line) => line.productId))];
-    const perUnit = new Set(
-        several.length === 0
-            ? []
-            : (
-                  await prisma.product.findMany({
-                      where: { id: { in: several }, commandsPerUnit: true },
-                      select: { id: true },
-                      take: several.length,
-                  })
-              ).map((row) => row.id),
+    // How each product delivers: once a line or once a unit, and at payment
+    // or from the chest. Read for every line now, where it used to be read
+    // only for a line of more than one: whether a line waits in the chest is
+    // a question every line has.
+    const [rules, { holdPurchasesInChest }] = await Promise.all([
+        prisma.product.findMany({
+            where: { id: { in: productIds } },
+            select: { id: true, commandsPerUnit: true, deliveryMode: true },
+            take: productIds.length,
+        }),
+        moduleSettings<{ holdPurchasesInChest: boolean }>("store"),
+    ]);
+    const perUnit = new Set(rules.filter((row) => row.commandsPerUnit).map((row) => row.id));
+    const held = new Set(
+        rules.filter((row) => waitsInChest(row.deliveryMode, holdPurchasesInChest === true)).map((row) => row.id),
     );
     // A line's place is counted by id, the way a chest claim counts it, so
     // `{delivery}` comes out the same whichever of the two runs the line.
@@ -174,7 +191,6 @@ export async function deliverPaidOrder(
     for (const line of lines) {
         const commands = byProduct.get(line.productId);
         if (!commands || commands.length === 0) continue;
-
         // The line's chest rows are claimed before its commands run, and put
         // back if nothing could take them. Closing them only afterwards left
         // them claimable for as long as delivery took, so a chest claim in
@@ -185,6 +201,15 @@ export async function deliverPaidOrder(
             select: { id: true, isRedeemed: true },
             take: 100,
         });
+        // Left in the chest for its buyer to claim, from the site or in the
+        // game, through the same conditional claim as any other row, so it is
+        // delivered once whichever claims it. Untouched here, it stays an
+        // unredeemed row, which is also what a refund takes back without
+        // running anything. Ownership and a rank are not held: settlement
+        // wrote them, because upgrade prices, per-person limits and a refund
+        // all read ownership from the moment of payment. A line with no row
+        // to claim from is delivered now rather than left with nowhere to be.
+        if (held.has(line.productId) && rows.length > 0) continue;
         const open = rows.filter((row) => !row.isRedeemed).map((row) => row.id);
         if (rows.length > 0 && open.length === 0) continue;
         const claimedAt = new Date();

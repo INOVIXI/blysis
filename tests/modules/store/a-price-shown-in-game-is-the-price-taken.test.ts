@@ -27,6 +27,8 @@ const product = {
     perPersonLimit: null,
 };
 const owned: { productId: string }[] = [];
+/** The campaigns switched on, each open all day, every day. */
+const campaigns: { isActive: boolean; days: number[]; fromMinute: null; untilMinute: null; entries: { productId: string; price: number; stock: null }[] }[] = [];
 const bulk: { minQuantity: number; discountPercent: number; isActive: boolean; productIds: string[]; categoryIds: string[] }[] = [];
 let charged: number | null = null;
 let kept: Record<string, unknown> | null = null;
@@ -34,14 +36,24 @@ let kept: Record<string, unknown> | null = null;
 const taxModule = { current: null as StoreTaxAnswer | null };
 const taxAsked: StoreTaxContext[] = [];
 
+/** The store-wide sales running, none unless a test starts one. */
+const storeSales: Record<string, unknown>[] = [];
+
 const db = {
+    storeSale: { findMany: vi.fn(async () => storeSales) },
     product: {
         findFirst: vi.fn(async () => product),
-        findMany: vi.fn(async () =>
-            owned.length === 0 ? [] : [{ id: "p_small", categoryId: "c1", price: 1, salePrice: null, saleFrom: null, saleUntil: null }],
+        // The catalogue asks for what games show; the upgrade credit asks for
+        // the rungs a member owns.
+        findMany: vi.fn(async (args?: { where?: { showInGame?: boolean } }) =>
+            args?.where?.showInGame ? [product]
+            : owned.length === 0 ? [] : [{ id: "p_small", categoryId: "c1", price: 1, salePrice: null, saleFrom: null, saleUntil: null }],
         ),
     },
     ownedProduct: { findMany: vi.fn(async () => owned) },
+    campaign: { findMany: vi.fn(async () => campaigns) },
+    category: { findMany: vi.fn(async () => [{ id: "c1", name: "Ranks", icon: null }]) },
+    productCommand: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => bulk) },
     productVariable: { findMany: vi.fn(async () => []) },
     setting: { findUnique: vi.fn(async () => null) },
@@ -56,7 +68,8 @@ vi.mock("@/core/sdk/server", () => ({
     logActivity: vi.fn(async () => undefined),
     siteTimeZone: vi.fn(async () => "UTC"),
 }));
-vi.mock("@/core/sdk", () => ({
+vi.mock("@/core/sdk", async (importOriginal) => ({
+    ...(await importOriginal<typeof import("@/core/sdk")>()),
     applyFiltersAsync: vi.fn(async (hook: string, value: unknown, context: unknown) => {
         if (hook !== "store.tax") return value;
         taxAsked.push(context as StoreTaxContext);
@@ -85,13 +98,16 @@ vi.mock("@/modules/store/lib/order-events", () => ({
 }));
 
 const { quoteWithCredits, purchaseWithCredits } = await import("@/modules/store/lib/credit-purchase");
+const { inGameCatalog } = await import("@/modules/store/lib/ingame-catalog");
 
 const ask = { buyerId: "u1", productId: "p_big", quantity: 1, recipientId: null };
 const buy = { ...ask, fields: {}, playerName: "Steve", playerId: "uuid-1", channel: "game:survival" };
 
 beforeEach(() => {
+    storeSales.length = 0;
     owned.length = 0;
     bulk.length = 0;
+    campaigns.length = 0;
     charged = null;
     kept = null;
     taxModule.current = null;
@@ -115,6 +131,25 @@ describe("a price quoted in game", () => {
         await expect(quoteWithCredits({ ...ask, quantity: 3 })).resolves.toEqual({ ok: true, each: 4, total: 12 });
         await purchaseWithCredits({ ...buy, quantity: 3 });
         expect(charged).toBe(12);
+    });
+
+    it("takes off a store-wide sale that covers the shelf, as the purchase does", async () => {
+        storeSales.push({
+            id: "s1", name: "Weekend", percent: 20, categoryIds: [], isActive: true,
+            startsAt: new Date(Date.now() - 60_000), endsAt: new Date(Date.now() + 60_000),
+        });
+        await expect(quoteWithCredits(ask)).resolves.toEqual({ ok: true, each: 4, total: 4 });
+        await purchaseWithCredits(buy);
+        expect(charged).toBe(4);
+    });
+
+    it("is the running campaign's price, in the catalogue, the quote and the purchase", async () => {
+        campaigns.push({ isActive: true, days: [], fromMinute: null, untilMinute: null, entries: [{ productId: "p_big", price: 3, stock: null }] });
+        const catalogue = await inGameCatalog();
+        expect(catalogue.categories[0]?.products[0]?.price).toBe(3);
+        await expect(quoteWithCredits(ask)).resolves.toEqual({ ok: true, each: 3, total: 3 });
+        await purchaseWithCredits(buy);
+        expect(charged).toBe(3);
     });
 
     it("for a gift, is refused where the gift would be, and tells nothing of what the member owns", async () => {

@@ -227,9 +227,16 @@ describe("every module that shows a price", () => {
         expect(priced.length).toBeGreaterThan(8);
         for (const file of priced) {
             const source = fs.readFileSync(file, "utf8");
-            const wired = source.includes("useSiteCurrency") || source.includes("siteCurrency()");
+            // Or through the store's own wrapper, which writes a price as
+            // credits in a credits-only store and asks core otherwise.
+            const wired = source.includes("useSiteCurrency") || source.includes("siteCurrency()") || source.includes("useStorePrice");
             expect(wired, `${rel(file)} formats money without asking core what the currency is`).toBe(true);
         }
+    });
+
+    it("lets the store's wrapper write money only as core does", () => {
+        const source = read("module-sources/store/lib/use-store-price.ts");
+        expect(source).toContain("useSiteCurrency()");
     });
 
     it("uses the server helper where a hook cannot run", () => {

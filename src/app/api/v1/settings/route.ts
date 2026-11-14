@@ -68,6 +68,7 @@ const PER_KEY_LIMITS: Record<string, number> = {
     footer_legal_links: 8_000,
     footer_copyright: 300,
     password_hash_algorithm: 16,
+    legacy_password_hashes: 8,
     username_rule: 32,
     currency: 16,
     currency_symbol: 8,

@@ -42,7 +42,14 @@ vi.mock("@/core/sdk/layout", () => ({
     ),
 }));
 
-vi.mock("@/core/sdk", () => ({ errorMessage: () => "went wrong" }));
+// The price asks the store once whether it takes only credits; unanswered
+// here, so it is written in money.
+vi.mock("@/core/sdk", () => ({
+    errorMessage: () => "went wrong",
+    peekShared: () => undefined,
+    sharedJson: () => new Promise(() => {}),
+    dateLocaleTag: (locale: string) => locale,
+}));
 
 vi.mock("@/core/sdk/ui", () => ({
     Button: ({ children, ...rest }: React.ComponentProps<"button">) => <button {...rest}>{children}</button>,

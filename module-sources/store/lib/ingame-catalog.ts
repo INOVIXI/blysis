@@ -3,13 +3,15 @@
  *
  * Only shelves and products an admin marked for games, and a product only on
  * a shelf that is shown too, so hiding a shelf hides everything on it. The
- * price is the one the site would charge now, sale included. The list is one
+ * price is the one the site would charge now, sale and campaign included. The list is one
  * for every player, so what an upgrade credit or a bulk discount takes off is
  * not in it: a game asks `quoteWithCredits` for the basket on its screen.
  */
 import { applyFiltersAsync } from "@/core/sdk";
-import { prisma } from "@/core/sdk/server";
-import { effectivePrice } from "./availability";
+import { prisma, siteTimeZone } from "@/core/sdk/server";
+import { offerPrice, runningCampaignEntries } from "./campaign-server";
+import { withStoreSale } from "./store-sale";
+import { runningStoreSales } from "./store-sale-server";
 import { rulesOf, type ProductRow } from "./availability-server";
 import { MAX_GAME_QUANTITY, optionsOf } from "./credit-purchase";
 
@@ -55,6 +57,10 @@ export async function inGameCatalog(now: Date = new Date()): Promise<InGameCatal
         applyFiltersAsync("servers.list", [] as ServerName[], {}),
     ]);
     const serverName = new Map((servers ?? []).map((s) => [s.id, s.name]));
+    // The price `priceInGame` in credit-purchase.ts takes, campaign and
+    // store-wide sale included.
+    const campaignEntries = await runningCampaignEntries(prisma, now, await siteTimeZone());
+    const storeSales = await runningStoreSales(now);
 
     const byCategory = new Map<string, InGameProduct[]>();
     for (const product of products) {
@@ -69,7 +75,12 @@ export async function inGameCatalog(now: Date = new Date()): Promise<InGameCatal
             title: product.gameTitle || product.name,
             description: product.gameDescription ?? product.shortDesc ?? "",
             icon: product.gameIcon,
-            price: effectivePrice(rulesOf(product as unknown as ProductRow), now).price,
+            price: withStoreSale(
+                offerPrice({ ...rulesOf(product as unknown as ProductRow), id: product.id }, campaignEntries, now),
+                { listPrice: Number(product.price), categoryId: product.categoryId },
+                storeSales,
+                now,
+            ).price,
             giftable: product.giftable,
             maxQuantity: Math.max(1, Math.min(MAX_GAME_QUANTITY, product.perPersonLimit ?? MAX_GAME_QUANTITY)),
             stock: product.stock,

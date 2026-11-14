@@ -229,6 +229,7 @@ export interface CouponInput {
     minPurchase?: DecimalLike | null;
     usageLimit?: number | null;
     usageCount?: number;
+    perCustomerLimit?: number | null;
     startsAt?: Date | null;
     expiresAt?: Date | null;
 }
@@ -255,6 +256,7 @@ export type CouponRefusal =
     | "coupon_not_started"
     | "coupon_expired"
     | "coupon_used_up"
+    | "coupon_already_used"
     | "coupon_min_purchase"
     | "coupon_not_for_these_items";
 
@@ -319,6 +321,13 @@ export function computeCouponDiscount(
      * a shop that overcharges or undercharges.
      */
     eligibleSubtotal: number = subtotal,
+    /**
+     * Orders this customer already holds with the coupon, counted by
+     * `customerUses` in `coupon-limit.ts`. Zero for a caller that does not
+     * know who is buying, which leaves the per-customer limit to the count
+     * taken under a lock when the order is paid.
+     */
+    usedByCustomer = 0,
 ): CouponResult {
     const no = (code: CouponRefusal, error: string): CouponResult => ({ error, code, discount: 0 });
 
@@ -328,6 +337,9 @@ export function computeCouponDiscount(
     if (coupon.expiresAt && coupon.expiresAt < now) return no("coupon_expired", "Coupon has expired");
     if (coupon.usageLimit && (coupon.usageCount ?? 0) >= coupon.usageLimit) {
         return no("coupon_used_up", "Coupon usage limit reached");
+    }
+    if (coupon.perCustomerLimit && usedByCustomer >= coupon.perCustomerLimit) {
+        return no("coupon_already_used", "Coupon already used as often as one customer may");
     }
     if (coupon.minPurchase && subtotal < Number(coupon.minPurchase)) {
         return no("coupon_min_purchase", `Coupon requires a minimum purchase of ${Number(coupon.minPurchase)}`);

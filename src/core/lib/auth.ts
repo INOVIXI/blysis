@@ -21,9 +21,9 @@ import { recordSignIn, touchSession, SESSION_TOUCH_INTERVAL_MS } from "./session
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { coreAuthAdapter } from "./auth-adapter";
 import { prisma } from "./db";
-import { hashPassword, needsRehash, verifyPassword } from "./password-hash";
+import { verifyPassword } from "./password-hash";
+import { upgradeStoredHash } from "./password-upgrade";
 import { memberStanding } from "./member-standing";
-import { getHashAlgorithm } from "./security-settings";
 import {
     getLockoutStatus,
     registerFailedLogin,
@@ -241,27 +241,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     return null;
                 }
 
-                /**
-                 * The only moment a stored hash can be moved to the algorithm
-                 * an operator has since chosen: the password is in this
-                 * process now and never again. It runs after the password
-                 * check and before the two-factor one on purpose - the
-                 * password is proven here, and a member who cannot produce
-                 * their second factor has still proven it.
-                 *
-                 * Detached, and its failure is not the member's problem: a
-                 * write that does not land leaves the old hash, which still
-                 * verifies, and the next login tries again.
-                 */
-                if (needsRehash(user.password, await getHashAlgorithm())) {
-                    void (async () => {
-                        const moved = await hashPassword(
-                            credentials.password as string,
-                            await getHashAlgorithm(),
-                        );
-                        await prisma.user.update({ where: { id: user.id }, data: { password: moved } });
-                    })().catch(() => { /* Old hash stands. Tried again next time. */ });
-                }
+                // The password is proven here and never in this process
+                // again, so this is where an old hash is replaced. Before the
+                // second factor on purpose: a member who cannot produce it has
+                // still proven the password. `password-upgrade.ts` says why an
+                // imported hash is waited for and every other one is not.
+                await upgradeStoredHash(user.id, credentials.password as string, user.password);
 
                 // Second factor, only if the fields exist on the user: they are added by
                 // whichever module provides it.

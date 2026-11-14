@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-14",
-  "updatedAt": "2026-11-14T10:02:55Z",
+  "updatedAt": "2026-11-14T12:11:44Z",
   "modules": [
     {
       "id": "announcements",
@@ -524,13 +524,13 @@
           "description": "版本说明与更新历史"
         }
       },
-      "version": "1.11.0",
+      "version": "1.12.0",
       "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "History",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-11-12T16:58:56Z",
+      "updatedAt": "2026-11-14T12:11:44Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -1025,6 +1025,92 @@
       }
     },
     {
+      "id": "crates",
+      "name": "Crates",
+      "description": "Crates with published odds, opened with credits or keys sold in the store",
+      "i18n": {
+        "az": {
+          "name": "Sandıqlar",
+          "description": "Ehtimalları açıq göstərilən, kreditlə və ya mağazada satılan açarlarla açılan sandıqlar"
+        },
+        "de": {
+          "name": "Kisten",
+          "description": "Kisten mit veröffentlichten Chancen, geöffnet mit Credits oder im Shop verkauften Schlüsseln"
+        },
+        "es": {
+          "name": "Cajas",
+          "description": "Cajas con probabilidades publicadas, abiertas con créditos o llaves vendidas en la tienda"
+        },
+        "et": {
+          "name": "Kastid",
+          "description": "Avaldatud tõenäosustega kastid, mida avatakse krediidi või poes müüdud võtmetega"
+        },
+        "fr": {
+          "name": "Caisses",
+          "description": "Des caisses aux probabilités publiées, ouvertes avec des crédits ou des clés vendues dans la boutique"
+        },
+        "it": {
+          "name": "Casse",
+          "description": "Casse con probabilità pubblicate, aperte con crediti o chiavi vendute nel negozio"
+        },
+        "pl": {
+          "name": "Skrzynki",
+          "description": "Skrzynki z opublikowanymi szansami, otwierane kredytami lub kluczami ze sklepu"
+        },
+        "pt": {
+          "name": "Caixas",
+          "description": "Caixas com probabilidades publicadas, abertas com créditos ou chaves vendidas na loja"
+        },
+        "ru": {
+          "name": "Сундуки",
+          "description": "Сундуки с опубликованными шансами, открываемые за кредиты или ключи из магазина"
+        },
+        "tr": {
+          "name": "Kasalar",
+          "description": "Olasılıkları açıkça gösterilen, krediyle ya da mağazada satılan anahtarlarla açılan kasalar"
+        },
+        "zh": {
+          "name": "宝箱",
+          "description": "公开概率的宝箱，可用积分或商店出售的钥匙打开"
+        }
+      },
+      "version": "1.0.0",
+      "coreVersion": "^5.37.0",
+      "author": "Blysis",
+      "icon": "Package",
+      "category": "commerce",
+      "verified": true,
+      "updatedAt": "2026-11-14T12:08:57Z",
+      "screenshots": [],
+      "tags": [
+        "commerce"
+      ],
+      "zip": "crates.zip",
+      "dependencies": [
+        "credits",
+        "store"
+      ],
+      "conflicts": [],
+      "hooks": {
+        "emits": [
+          "crates.opened",
+          "credit.change",
+          "product.grant",
+          "grantable.options"
+        ],
+        "listens": [
+          "store.order.completed",
+          "store.order.refunded"
+        ]
+      },
+      "stats": {
+        "publicRoutes": 1,
+        "adminRoutes": 3,
+        "apiRoutes": 9,
+        "widgets": 0
+      }
+    },
+    {
       "id": "credits",
       "name": "Credit System",
       "description": "Virtual currency wallet for users",
@@ -1074,13 +1160,13 @@
           "description": "为用户提供的虚拟货币钱包"
         }
       },
-      "version": "1.11.0",
-      "coreVersion": "^5.21.0",
+      "version": "1.13.0",
+      "coreVersion": "^5.42.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-11-12T16:58:56Z",
+      "updatedAt": "2026-11-14T12:08:12Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -1105,8 +1191,8 @@
       },
       "stats": {
         "publicRoutes": 0,
-        "adminRoutes": 1,
-        "apiRoutes": 2,
+        "adminRoutes": 3,
+        "apiRoutes": 4,
         "widgets": 0
       }
     },
@@ -6338,13 +6424,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.54.0",
+      "version": "2.56.0",
       "coreVersion": "^5.37.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-11-12T16:58:56Z",
+      "updatedAt": "2026-11-14T12:08:12Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -6372,7 +6458,8 @@
           "store.credits.purchased",
           "store.gift.sent",
           "store.orders.delivery",
-          "store.tax"
+          "store.tax",
+          "store.checkout.reminder"
         ],
         "listens": [
           "user.registered",
@@ -6400,13 +6487,14 @@
           "store.gift.cancel",
           "store.gifts.sent",
           "store.gifts.receive",
-          "store.community-goal"
+          "store.community-goal",
+          "store.checkout.reminder"
         ]
       },
       "stats": {
-        "publicRoutes": 5,
-        "adminRoutes": 15,
-        "apiRoutes": 51,
+        "publicRoutes": 6,
+        "adminRoutes": 19,
+        "apiRoutes": 59,
         "widgets": 6
       }
     },
@@ -7479,13 +7567,13 @@
           "description": "可配置奖品和冷却时间的转动赢奖游戏"
         }
       },
-      "version": "1.12.0",
+      "version": "1.12.1",
       "coreVersion": "^5.37.0",
       "author": "Blysis",
       "icon": "Dices",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-11-12T16:58:56Z",
+      "updatedAt": "2026-11-14T12:10:00Z",
       "screenshots": [],
       "tags": [
         "commerce"

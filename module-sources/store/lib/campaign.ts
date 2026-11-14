@@ -46,6 +46,8 @@ export function campaignIsRunning(hours: CampaignHours, at: Date, zone: string):
  * product is on its own sale and somebody sets the campaign from the list
  * price.
  *
+ * Two campaigns listing the product give the lower of their two prices.
+ *
  * Zero is a price an operator can mean; a negative one and a number that is
  * not a number are not, and are ignored rather than charged.
  */
@@ -54,8 +56,10 @@ export function campaignPriceFor(
     ordinaryPrice: number,
     entries: CampaignEntry[],
 ): number {
-    const entry = entries.find((candidate) => candidate.productId === productId);
-    if (!entry) return ordinaryPrice;
-    if (!Number.isFinite(entry.price) || entry.price < 0) return ordinaryPrice;
-    return Math.min(ordinaryPrice, entry.price);
+    // Every entry for the product, not the first: two campaigns open at once
+    // over one product are two offers, and the order the rows arrive in must
+    // not decide which one the buyer gets.
+    return entries
+        .filter((entry) => entry.productId === productId && Number.isFinite(entry.price) && entry.price >= 0)
+        .reduce((best, entry) => Math.min(best, entry.price), ordinaryPrice);
 }

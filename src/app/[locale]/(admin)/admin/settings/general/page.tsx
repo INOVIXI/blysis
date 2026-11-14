@@ -92,6 +92,16 @@ const SIGN_UP_CHOICES = [
     { value: "false", labelKey: "generalSettings_signInMethodSignUpsClosed" },
 ] as const;
 
+/**
+ * Whether a password hash a site imported from an older system still signs
+ * in. Its own words: "allowed" says nothing about what happens to the hash,
+ * and what happens to it is the point - it is replaced at that sign-in.
+ */
+const LEGACY_HASH_CHOICES = [
+    { value: "false", labelKey: "generalSettings_legacyPasswordHashesOff" },
+    { value: "true", labelKey: "generalSettings_legacyPasswordHashesOn" },
+] as const;
+
 /** Asked for, or not. */
 const REQUIRED_CHOICES = [
     { value: "true", labelKey: "generalSettings_required" },
@@ -131,6 +141,7 @@ const sections: SectionDef[] = [
             { key: "email_verify_expiry_hours", labelKey: "generalSettings_emailVerifyExpiry", type: "number", defaultValue: 24 },
             { key: "password_reset_expiry_minutes", labelKey: "generalSettings_passwordResetExpiry", type: "number", defaultValue: 60 },
             { key: "password_hash_algorithm", labelKey: "generalSettings_hashAlgorithm", type: "choice", defaultValue: "bcrypt", choices: HASH_CHOICES, descriptionKey: "generalSettings_hashAlgorithmHint" },
+            { key: "legacy_password_hashes", labelKey: "generalSettings_legacyPasswordHashes", type: "choice", defaultValue: "false", choices: LEGACY_HASH_CHOICES, descriptionKey: "generalSettings_legacyPasswordHashesHint" },
         ],
     },
     {

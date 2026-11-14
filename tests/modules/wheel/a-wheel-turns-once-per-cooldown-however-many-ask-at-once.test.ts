@@ -113,8 +113,10 @@ vi.mock("@/core/sdk/auth", () => ({
 }));
 vi.mock("@/core/sdk", () => ({
     applyFiltersAsync: vi.fn(async (hook: string, value: unknown, args: { amount?: number }) => {
-        if (hook === "credit.change" && (args.amount ?? 0) < 0) {
-            state.charged += 1;
+        if (hook === "credit.change") {
+            // The prize is credited too: a turn whose prize nobody pays
+            // does not happen.
+            if ((args.amount ?? 0) < 0) state.charged += 1;
             return { applied: true };
         }
         return value;

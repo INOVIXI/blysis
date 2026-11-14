@@ -1,0 +1,141 @@
+// Crates Module - Database Models
+// These models are merged into prisma/schema.prisma by merge-schemas.ts
+
+// @@user-relations-start
+//   crateOpenings    CrateOpening[]     @relation("CrateOpenings")
+//   crateKeys        CrateKey[]         @relation("CrateKeys")
+// @@user-relations-end
+
+// ==================== CRATES ====================
+
+/**
+ * A crate a member opens for one reward drawn by weight.
+ *
+ * It is paid for in one of two ways, and both may be offered at once: credits
+ * straight from the balance (`cost`), or a key bought in the store
+ * (`keyProductId`), which is how a crate is sold for money without this module
+ * knowing anything about a payment. The store sells the key through its own
+ * checkout, and the paid order is what puts the key on the member's ring.
+ */
+model CrateBox {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  description    String?
+  image          String?
+  /** Credits per opening. Zero means it is not sold for credits. */
+  cost           Int      @default(0)
+  /** The store product whose purchase gives one key per unit. Null sells no key. */
+  keyProductId   String?
+  /** How many times one member may open it per period. Zero is no limit. */
+  perPersonLimit Int      @default(0)
+  /** day | week | month | ever - see lib/crates.ts */
+  perPersonPeriod String  @default("day")
+  /** Role ids that may open it. Empty means anyone with an account. */
+  roleIds        String[] @default([])
+  isActive       Boolean  @default(true)
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  rewards  CrateReward[]
+  openings CrateOpening[]
+  keys     CrateKey[]
+
+  @@index([isActive, order])
+  // A paid order asks which crates its products are keys to.
+  @@index([keyProductId])
+}
+
+model CrateReward {
+  id        String   @id @default(cuid())
+  crateId   String
+  crate     CrateBox @relation(fields: [crateId], references: [id], onDelete: Cascade)
+  name      String
+  /** credits | product | nothing */
+  kind      String   @default("credits")
+  /** A store product, as `grantable.options` named it, for a reward of kind `product`. */
+  productId String?
+  /** Credits paid out, or how many of the product. */
+  value     Int      @default(0)
+  /** A weight, not a percentage: the draw adds them up and takes a share. */
+  weight    Int      @default(10)
+  /** common | uncommon | rare | epic | legendary, drawn in the theme's own colours. */
+  rarity    String   @default("common")
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+
+  @@index([crateId])
+}
+
+/**
+ * One opening, kept with what came out of it.
+ *
+ * The reward's name, kind and value are copied rather than read through the
+ * reward, as an order keeps its items' names: an operator who renames or
+ * deletes a reward later must not change what somebody's history says they
+ * received.
+ */
+model CrateOpening {
+  id          String    @id @default(cuid())
+  crateId     String?
+  crate       CrateBox? @relation(fields: [crateId], references: [id], onDelete: SetNull)
+  crateName   String
+  userId      String
+  user        User      @relation("CrateOpenings", fields: [userId], references: [id], onDelete: Cascade)
+  rewardId    String?
+  rewardName  String
+  rewardKind  String
+  rewardValue Int       @default(0)
+  rarity      String    @default("common")
+  /** key | credits */
+  paidWith    String
+  /** Credits taken, when it was paid with credits. */
+  cost        Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  // "How many times has this member opened this crate since then" is the
+  // question every per-person limit asks, and the history reads newest first.
+  @@index([userId, crateId, createdAt])
+  @@index([userId, createdAt])
+  @@index([crateId, createdAt])
+}
+
+/** The keys one member holds for one crate. */
+model CrateKey {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation("CrateKeys", fields: [userId], references: [id], onDelete: Cascade)
+  crateId   String
+  crate     CrateBox @relation(fields: [crateId], references: [id], onDelete: Cascade)
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, crateId])
+  @@index([crateId])
+}
+
+/**
+ * Keys handed over for one line of one paid order.
+ *
+ * The store announces a completed order every time a gateway retries its
+ * webhook and every time somebody reloads a return page that settles it, so
+ * "an order was paid" arrives more than once for the same money. This row is
+ * what makes the second arrival give nothing: one per order line and crate,
+ * and the keys are added only by the call that wrote it.
+ */
+model CrateKeyGrant {
+  id          String    @id @default(cuid())
+  orderId     String
+  orderItemId String
+  userId      String
+  crateId     String
+  quantity    Int
+  /** Set when the order was refunded and its unspent keys were taken back. */
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([orderItemId, crateId])
+  @@index([orderId])
+  @@index([userId])
+}

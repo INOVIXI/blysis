@@ -33,8 +33,11 @@ const tables = {
     product: fakeTable(),
     category: fakeTable(() => ({ isActive: true, order: 0, layout: "grid", parentId: null, image: null, description: null, children: [] })),
     creditPackage: fakeTable(() => ({ isActive: true, order: 0, bonusCredits: 0, availableFrom: null, availableUntil: null })),
+    // The package list carries the running bonus campaigns; none run here.
+    creditBonusCampaign: { findMany: async () => [] },
     campaign: fakeTable(() => ({ isActive: true, days: [], createdAt: new Date(), entries: [] })),
     campaignEntry: fakeTable(),
+    storeSale: fakeTable(),
     ownedProduct: fakeTable(),
     productCommand: fakeTable(),
     productVariable: fakeTable(),

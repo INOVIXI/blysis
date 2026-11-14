@@ -32,6 +32,8 @@ vi.mock("@/core/sdk/server", () => ({
     prisma: { ...db, $transaction: async (run: (tx: typeof db) => unknown) => run(db) },
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
     logActivity: vi.fn(async () => {}),
+    // Settlement asks whether the shop thanks buyers with a coupon; it does not here.
+    moduleSettings: vi.fn(async () => ({})),
 }));
 vi.mock("@/modules/store/lib/order-email", () => ({ sendOrderConfirmationEmail: vi.fn(async () => {}) }));
 vi.mock("@/modules/store/lib/delivery", () => ({ deliverProduct: vi.fn(async () => {}) }));

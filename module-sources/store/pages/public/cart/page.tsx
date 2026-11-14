@@ -5,7 +5,8 @@ import { BillingFields, EMPTY_BILLING } from "./BillingFields";
 import type { BillingDetails } from "../../../lib/billing";
 import Image from "next/image";
 import { Link, useRouter } from "@/core/sdk/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, useConfirm, useSiteCurrency, buttonClassName, Waiting } from "@/core/sdk/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, useConfirm, buttonClassName, Waiting } from "@/core/sdk/ui";
+import { useStorePrice } from "../../../lib/use-store-price";
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Loader2, Check, X, CreditCard, Coins, ShoppingCart } from "lucide-react";
 import { NavIcon } from "@/core/sdk/ui";
@@ -76,7 +77,7 @@ function ProviderIcon({ name }: { name?: string }) {
 
 export default function CartPage() {
     const router = useRouter();
-    const { format: formatPrice } = useSiteCurrency();
+    const { format: formatPrice, creditsOnly } = useStorePrice();
     const t = useTranslations('store');
     // The basket's products named in the reader's language.
     const locale = useLocale();
@@ -111,7 +112,13 @@ export default function CartPage() {
     const [taxCountryKnown, setTaxCountryKnown] = useState(false);
 
     useEffect(() => {
-        fetchCart();
+        // A checkout reminder links here with the unpaid order it is about:
+        // starting that checkout emptied the basket, so it is filled again
+        // before the basket is read. The address is cleaned afterwards so a
+        // reload does not ask twice.
+        const restore = new URLSearchParams(window.location.search).get("restore");
+        if (restore) void restoreCart(restore);
+        else fetchCart();
         // The wallet is a module too: no credits endpoint, no credits button.
         fetch("/api/v1/credits")
             .then(r => r.ok ? r.json() : null)
@@ -123,6 +130,13 @@ export default function CartPage() {
             })
             .catch(() => {});
     }, []);
+
+    // A store that takes only credits offers the balance and nothing else;
+    // the checkout refuses a gateway on its own, this only saves the trip.
+    useEffect(() => {
+        if (creditsOnly) setPaymentMethod("credits");
+    }, [creditsOnly]);
+    const shownProviders = creditsOnly ? [] : providers;
 
     // Which gateways are installed and configured is a question only the
     // server can answer - it is the sum of the payment.providers filter - and
@@ -172,6 +186,25 @@ export default function CartPage() {
             console.error("Failed to fetch cart:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Its own function so the write it makes stays apart from the reads the
+    // page makes on load.
+    const restoreCart = async (orderId: string) => {
+        try {
+            const res = await fetch("/api/v1/store/cart/restore", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderId }),
+            });
+            if (res.ok) toast.success(t("cart_restored"));
+            else toast.error(t("cart_restoreFailed"));
+        } catch {
+            toast.error(t("cart_restoreFailed"));
+        } finally {
+            router.replace("/store/cart");
+            fetchCart();
         }
     };
 
@@ -623,7 +656,7 @@ export default function CartPage() {
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">{t('paymentMethod')}</label>
                                     <div className="grid gap-2">
-                                        {providers.map((provider) => (
+                                        {shownProviders.map((provider) => (
                                             <button
                                                 key={provider.id}
                                                 type="button"
@@ -684,10 +717,15 @@ export default function CartPage() {
                                                 </div>
                                             </button>
                                         )}
-                                        {providers.length === 0 && !creditsAvailable && (
+                                        {shownProviders.length === 0 && !creditsAvailable && (
                                             <p className="text-sm text-muted-foreground">{t('noPaymentMethods')}</p>
                                         )}
                                     </div>
+                                    {creditsAvailable && cart && creditBalance < orderTotal && (
+                                        <Link href="/store/credits" className="block text-sm text-primary hover:underline">
+                                            {t("topUp_loadForCart")}
+                                        </Link>
+                                    )}
                                 </div>
 
                                 {checkoutError && (

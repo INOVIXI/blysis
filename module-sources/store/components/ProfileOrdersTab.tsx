@@ -10,6 +10,7 @@ import { ChevronDown, ChevronUp, Package, Receipt, ShoppingCart, Loader2 } from 
 import { dateLocaleTag } from "@/core/sdk";
 import { ORDER_STATUSES, ORDER_STATUS_KEYS, orderStatusLabel } from "../lib/order-status";
 import { DeliveryBadge } from "./DeliveryBadge";
+import { ThankYouCouponNote, type ThankYouCouponJson } from "./ThankYouCouponNote";
 import { readTaxRecord, taxLineText } from "../lib/tax";
 
 interface Order {
@@ -34,6 +35,8 @@ interface Order {
     }[];
     /** Where the delivery stands, when a module queues it. */
     delivery: OrderDelivery | null;
+    /** The coupon this order earned its buyer, when the shop gives one. */
+    thankYouCoupon?: ThankYouCouponJson | null;
 }
 
 interface Page {
@@ -228,6 +231,7 @@ export function ProfileOrdersTab() {
                                                 </div>
                                             </>
                                         )}
+                                        {order.thankYouCoupon && <ThankYouCouponNote coupon={order.thankYouCoupon} />}
                                     </div>
                                 )}
                             </div>

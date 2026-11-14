@@ -33,6 +33,8 @@ let callerIsAdmin = false;
 vi.mock("@/core/sdk/server", async () => ({
     ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
+        // No store-wide sale is running.
+        storeSale: { findMany: async () => [] },
         product: {
             findMany: (args: unknown) => findMany(args as never),
             count: (args: unknown) => count(args as never),
@@ -42,6 +44,9 @@ vi.mock("@/core/sdk/server", async () => ({
         // person and by everybody. Nothing here sets a limit, so the answer is
         // always none.
         orderItem: { aggregate: async () => ({ _sum: { quantity: null } }) },
+        // The shelf and the page both price through the running campaigns,
+        // and none runs here.
+        campaign: { findMany: async () => [] },
     },
     // The clock every schedule is read on. These rows carry no schedule, so
     // any zone gives the same answer.

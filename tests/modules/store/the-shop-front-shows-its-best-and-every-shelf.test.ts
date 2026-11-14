@@ -49,6 +49,8 @@ const matches = (where: Where) => (r: Record<string, unknown>) =>
 vi.mock("@/core/sdk/server", async () => ({
     ...(await vi.importActual<typeof import("@/core/lib/content-translations")>("@/core/lib/content-translations")),
     prisma: {
+        // No store-wide sale is running.
+        storeSale: { findMany: async () => [] },
         product: {
             findMany: async ({ where, skip = 0, take }: { where: Where; skip?: number; take?: number }) =>
                 ROWS.filter(matches(where)).slice(skip, take === undefined ? undefined : skip + take),

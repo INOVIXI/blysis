@@ -37,6 +37,10 @@ const DIRS = ["src/app", "src/core", "module-sources"];
 const MAY_STAY_SILENT: Record<string, string> = {
     "module-sources/in-app-notifications/components/NotificationBell.tsx":
         "Both are mark-read PATCHes, not reads. Each checks res.ok before it touches the badge.",
+    "module-sources/credits/components/CreditsTab.tsx":
+        "A capability probe: whether the store answers, so the tab can offer its load-credits page. No answer means no button, which is what a failure should mean.",
+    "module-sources/store/pages/public/credits/page.tsx":
+        "Only the balance line is silent: it is a courtesy beside the form and claims nothing when absent. The settings, the payment methods and the packages each show a failure of their own.",
     "module-sources/store/pages/admin/products/[id]/edit/page.tsx":
         "Populates the command, variable and server pickers inside the edit form. The product itself is guarded, so a failed load no longer renders a blank form that could be saved over the product.",
     "module-sources/store/pages/admin/products/new/page.tsx":

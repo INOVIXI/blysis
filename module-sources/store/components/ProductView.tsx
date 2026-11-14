@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "@/core/sdk/navigation";
-import { Badge, Button, NativeSelect, useSiteCurrency } from "@/core/sdk/ui";
+import { Badge, Button, NativeSelect } from "@/core/sdk/ui";
+import { useStorePrice } from "../lib/use-store-price";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -78,7 +79,7 @@ export function ProductView({
     const router = useRouter();
     const pathname = usePathname();
     const { status: authStatus } = useSession();
-    const { format: formatPrice } = useSiteCurrency();
+    const { format: formatPrice } = useStorePrice();
     const t = useTranslations('store');
     const commonT = useTranslations('common');
 

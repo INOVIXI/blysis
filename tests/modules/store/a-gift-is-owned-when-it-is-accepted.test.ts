@@ -21,6 +21,8 @@ const tx = {
         updateMany: vi.fn(async () => ({ count: 1 })),
         deleteMany: vi.fn(async () => ({ count: 1 })),
     },
+    // A refund withdraws the thank-you coupon the order earned; these orders earned none.
+    coupon: { updateMany: vi.fn(async () => ({ count: 0 })) },
     ownedProduct: {
         createMany: vi.fn(async (args: { data: { userId: string; productId: string; orderId?: string }[] }) => {
             calls.owned.push(args);
@@ -121,6 +123,17 @@ describe("a gift's ownership", () => {
         const result = await activateGift("bo", "c1");
         expect(result).toEqual({ ok: true });
         expect(calls.owned).toEqual([]);
+    });
+
+    it("forgets the sender's player name on an item handed over, so a claim does not deliver back to the sender", async () => {
+        db.chestItem.findFirst.mockResolvedValue({ ...boughtGift, giftedById: "cy", playerName: "Cy" });
+        await activateGift("bo", "c1");
+        expect(tx.chestItem.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: { giftState: null, playerName: null } }));
+    });
+
+    it("keeps the name a buyer typed for the recipient on a gift bought as one", async () => {
+        await activateGift("bo", "c1");
+        expect(tx.chestItem.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: { giftState: null } }));
     });
 
     it("is left with nobody when the sender takes the gift back", async () => {

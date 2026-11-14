@@ -62,7 +62,6 @@ const SHARED_NAMESPACES = new Set(["admin"]);
  * govern. Do not add one.
  */
 const DECLARED_BUT_UNENFORCED = [
-    "credits.view",
     "forum.view",
     "help-center.view",
     "store.view",

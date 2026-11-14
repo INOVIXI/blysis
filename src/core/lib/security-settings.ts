@@ -31,6 +31,7 @@ const SETTING_KEYS = {
     settingsCacheSeconds: "settings_cache_seconds",
     maxLoginAttempts: "max_login_attempts",
     passwordHashAlgorithm: "password_hash_algorithm",
+    legacyPasswordHashes: "legacy_password_hashes",
     usernameRule: "username_rule",
     usernameMinLength: "username_min_length",
     registrationDailyCap: "registration_daily_cap",
@@ -241,6 +242,19 @@ export async function enforcePasswordPolicy(password: unknown): Promise<Password
 export async function getHashAlgorithm(): Promise<HashAlgorithm> {
     const raw = await readSetting(SETTING_KEYS.passwordHashAlgorithm);
     return isHashAlgorithm(raw) ? raw : DEFAULT_ALGORITHM;
+}
+
+/**
+ * Whether a password hash imported from an older system may be signed in
+ * with (`legacy-password-hash.ts`).
+ *
+ * Off unless the row says exactly "true": a missing row, a typo or a failed
+ * read all leave a fast hash unreadable, which costs a member a password
+ * reset rather than costing the site its weakest accounts.
+ */
+export async function legacyPasswordHashesAccepted(): Promise<boolean> {
+    const raw = await readSetting(SETTING_KEYS.legacyPasswordHashes);
+    return raw === true || raw === "true";
 }
 
 /** The username rule an operator picked, or core's own. */

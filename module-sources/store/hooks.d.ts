@@ -69,6 +69,22 @@ declare global {
         "store.credits.purchased": { userId: string; amount: number };
         /** A gift landed pending in a member's chest: bought for them, or handed over from another chest. */
         "store.gift.sent": { senderId: string; recipientId: string; productName: string; quantity: number };
+        /**
+         * A checkout the buyer started stayed unpaid past the operator's wait.
+         * Fired at most once per checkout; whoever delivers it asks the
+         * buyer's notification settings first.
+         */
+        "store.checkout.reminder": {
+            userId: string;
+            kind: "order" | "topUp";
+            /** The order's or the top-up's own id. */
+            id: string;
+            /** The buyer-facing number, for an order. */
+            orderNumber: string | null;
+            total: number;
+            /** Where the buyer picks it up again, as a path on this site. */
+            resumePath: string;
+        };
     }
 
     /**

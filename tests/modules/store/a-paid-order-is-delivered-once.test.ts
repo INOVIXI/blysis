@@ -11,6 +11,10 @@
  *
  * A gift that waits can be accepted or taken back, and two people doing both
  * at once must leave exactly one of them standing, with the money moved once.
+ *
+ * A shop, or one product, may hold a paid line in the chest instead. Then
+ * payment runs nothing, the buyer's claim runs it once, and a refund takes
+ * the row back without running anything.
  */
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { fakeTable, fakeTransaction } from "../game-connect/fake-prisma";
@@ -21,18 +25,21 @@ const orders = fakeTable();
 const ownedProducts = fakeTable();
 const products = fakeTable();
 const orderItems = fakeTable();
+const coupons = fakeTable();
 
-const client = { chestItem: chestItems, productCommand: productCommands, order: orders, ownedProduct: ownedProducts, product: products, orderItem: orderItems };
+const client = { chestItem: chestItems, productCommand: productCommands, order: orders, ownedProduct: ownedProducts, product: products, orderItem: orderItems, coupon: coupons };
 const prismaMock = {
     ...client,
     user: { findUnique: vi.fn(async () => ({ creditBalance: 0 })) },
     $transaction: fakeTransaction(client, [chestItems.table, orders.table, ownedProducts.table]),
 };
 
+/** The store's settings as `moduleSettings("store")` answers them. */
+let storeSettings: Record<string, unknown> = {};
 vi.mock("@/core/sdk/server", () => ({
     prisma: prismaMock,
     log: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
-    moduleSettings: vi.fn(async () => ({})),
+    moduleSettings: vi.fn(async () => storeSettings),
 }));
 
 const refunds: { userId: string; amount: number }[] = [];
@@ -60,6 +67,8 @@ vi.mock("@/modules/store/lib/delivery", () => ({ deliverProduct }));
 
 const { deliverPaidOrder } = await import("@/modules/store/lib/credit-order");
 const { activateGift, cancelGift, claimChestItem, PENDING } = await import("@/modules/store/lib/gifts");
+const { takeBackOrder } = await import("@/modules/store/lib/take-back");
+const { waitsInChest } = await import("@/modules/store/lib/delivery-mode");
 
 const line = { id: "line-1", productId: "p1", name: "VIP", quantity: 1, metadata: null };
 const buyer = { name: "Steve", id: "uuid-1", userId: "u1" };
@@ -67,6 +76,7 @@ const buyer = { name: "Steve", id: "uuid-1", userId: "u1" };
 beforeEach(() => {
     vi.clearAllMocks();
     refunds.length = 0;
+    storeSettings = {};
     chestItems.table.rows = [];
     orders.table.rows = [];
     ownedProducts.table.rows = [];
@@ -247,5 +257,131 @@ describe("a gift that waits", () => {
         await expect(cancelGift("u1", "c1")).resolves.toMatchObject({ ok: true, refunded: 0 });
         expect(chestItems.table.rows[0]).toMatchObject({ userId: "u1", giftState: null, giftedById: null });
         expect(refunds).toEqual([]);
+    });
+});
+
+describe("a paid line held in the chest", () => {
+    function paidRow() {
+        chestItems.table.rows.push({ id: "c1", orderId: "o1", productId: "p1", productName: "VIP", quantity: 1, playerName: "Steve", variables: null, userId: "u1", isRedeemed: false, giftState: null });
+    }
+
+    it("runs no command at payment and stays in the chest", async () => {
+        products.table.rows = [{ id: "p1", commandsPerUnit: false, deliveryMode: "hold" }];
+        paidRow();
+
+        await deliverPaidOrder({ id: "o1", items: [line] }, buyer);
+
+        expect(deliverProduct).not.toHaveBeenCalled();
+        expect(chestItems.table.rows[0]).toMatchObject({ isRedeemed: false });
+    });
+
+    it("is delivered now when there is no chest row to hold it in", async () => {
+        products.table.rows = [{ id: "p1", commandsPerUnit: false, deliveryMode: "hold" }];
+
+        await deliverPaidOrder({ id: "o1", items: [line] }, buyer);
+
+        expect(deliverProduct).toHaveBeenCalledTimes(1);
+    });
+
+    it("is delivered once when claimed, and payment does not run it again after", async () => {
+        products.table.rows = [{ id: "p1", commandsPerUnit: false, deliveryMode: "hold" }];
+        paidRow();
+
+        await deliverPaidOrder({ id: "o1", items: [line] }, buyer);
+        await expect(claimChestItem("u1", "c1", { name: null, id: null })).resolves.toEqual({ ok: true });
+        await expect(claimChestItem("u1", "c1", { name: null, id: null })).resolves.toEqual({ ok: false, code: "already_claimed" });
+        await deliverPaidOrder({ id: "o1", items: [line] }, buyer);
+
+        expect(deliverProduct).toHaveBeenCalledTimes(1);
+        expect(deliverProduct).toHaveBeenCalledWith(expect.objectContaining({ playerName: "Steve", reference: { kind: "chest", id: "c1", label: "VIP" } }));
+        expect(chestItems.table.rows[0]).toMatchObject({ isRedeemed: true });
+    });
+
+    it("claimed twice at once, is delivered once", async () => {
+        products.table.rows = [{ id: "p1", commandsPerUnit: false, deliveryMode: "hold" }];
+        paidRow();
+
+        const answers = await Promise.all([
+            claimChestItem("u1", "c1", { name: null, id: null }),
+            claimChestItem("u1", "c1", { name: null, id: null }),
+        ]);
+
+        expect(answers.filter((a) => a.ok)).toHaveLength(1);
+        expect(deliverProduct).toHaveBeenCalledTimes(1);
+    });
+
+    it("is taken back by a refund without a command being run", async () => {
+        products.table.rows = [{ id: "p1", commandsPerUnit: false, deliveryMode: "hold", durationDays: null, grantsRoleId: null }];
+        orders.table.rows.push({ id: "o1", orderNumber: "ORD-1", userId: "u1", status: "COMPLETED", metadata: {} });
+        paidRow();
+        await deliverPaidOrder({ id: "o1", items: [line] }, buyer);
+
+        await takeBackOrder(prismaMock as never, { id: "o1", metadata: {} });
+
+        expect(chestItems.table.rows).toEqual([]);
+        expect(deliverProduct).not.toHaveBeenCalled();
+        // Nothing reached the game, so nothing is listed as kept there.
+        expect(orders.table.rows[0].metadata).toEqual({});
+        await expect(claimChestItem("u1", "c1", { name: null, id: null })).resolves.toEqual({ ok: false, code: "not_found" });
+    });
+
+    it("follows the shop when the product inherits, and the product when it says otherwise", async () => {
+        storeSettings = { holdPurchasesInChest: true };
+        products.table.rows = [{ id: "p1", commandsPerUnit: false, deliveryMode: "inherit" }];
+        paidRow();
+        await deliverPaidOrder({ id: "o1", items: [line] }, buyer);
+        expect(deliverProduct).not.toHaveBeenCalled();
+
+        products.table.rows = [{ id: "p1", commandsPerUnit: false, deliveryMode: "now" }];
+        await deliverPaidOrder({ id: "o1", items: [line] }, buyer);
+        expect(deliverProduct).toHaveBeenCalledTimes(1);
+        expect(chestItems.table.rows[0]).toMatchObject({ isRedeemed: true });
+    });
+
+    it("holds only the lines whose product holds", async () => {
+        const key = { id: "line-0", productId: "p0", name: "Key", quantity: 1, metadata: null };
+        products.table.rows = [
+            { id: "p1", commandsPerUnit: false, deliveryMode: "hold" },
+            { id: "p0", commandsPerUnit: false, deliveryMode: "inherit" },
+        ];
+        productCommands.table.rows.push({ id: "cmd-0", productId: "p0", command: "key {player}", serverId: null, target: "server", whenOnline: true, order: 0 });
+        paidRow();
+        chestItems.table.rows.push({ id: "c0", orderId: "o1", productId: "p0", userId: "u1", isRedeemed: false, giftState: null });
+
+        await deliverPaidOrder({ id: "o1", items: [line, key] }, buyer);
+
+        expect(deliverProduct).toHaveBeenCalledTimes(1);
+        expect(deliverProduct).toHaveBeenCalledWith(expect.objectContaining({ line: "line-0" }));
+        expect(chestItems.table.rows.find((row) => row.id === "c1")).toMatchObject({ isRedeemed: false });
+        expect(chestItems.table.rows.find((row) => row.id === "c0")).toMatchObject({ isRedeemed: true });
+    });
+
+    // A gift never reaches payment-time delivery: it waits for its recipient
+    // whatever the shop holds, and is claimed by them like any other row.
+    it("leaves a gift as it was: accepted by its recipient, then claimed once", async () => {
+        storeSettings = { holdPurchasesInChest: true };
+        products.table.rows = [{ id: "p1", commandsPerUnit: false, deliveryMode: "now" }];
+        orders.table.rows.push({ id: "o1", orderNumber: "ORD-1", userId: "u1", total: 50, status: "COMPLETED", metadata: { gift: true }, items: [] });
+        chestItems.table.rows.push({ id: "c1", orderId: "o1", productId: "p1", productName: "VIP", quantity: 1, playerName: null, variables: null, userId: "u2", giftedById: "u1", giftedToId: "u2", isRedeemed: false, giftState: PENDING });
+
+        await expect(claimChestItem("u2", "c1", { name: "Alex", id: null })).resolves.toEqual({ ok: false, code: "not_pending" });
+        await expect(activateGift("u2", "c1")).resolves.toEqual({ ok: true });
+        await expect(claimChestItem("u2", "c1", { name: "Alex", id: null })).resolves.toEqual({ ok: true });
+
+        expect(deliverProduct).toHaveBeenCalledTimes(1);
+        expect(deliverProduct).toHaveBeenCalledWith(expect.objectContaining({ playerName: "Alex", userId: "u2" }));
+        expect(refunds).toEqual([]);
+    });
+});
+
+describe("which way a product delivers", () => {
+    it("is the product's own answer first, then the shop's", () => {
+        expect(waitsInChest("hold", false)).toBe(true);
+        expect(waitsInChest("now", true)).toBe(false);
+        expect(waitsInChest("inherit", true)).toBe(true);
+        expect(waitsInChest("inherit", false)).toBe(false);
+        // A value nothing wrote is the shop's, not a guess.
+        expect(waitsInChest(null, true)).toBe(true);
+        expect(waitsInChest("later", false)).toBe(false);
     });
 });

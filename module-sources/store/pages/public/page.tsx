@@ -34,6 +34,7 @@ import { FeaturedProduct } from "../../components/FeaturedProduct";
 import { ProductCard } from "../../components/ProductCard";
 import { StoreSearch, StoreSort } from "../../components/StoreControls";
 import { CategoryCards, CategoryChips, ShelfRows, SubcategoryCards, storeHref } from "../../components/StoreFront";
+import { StoreSaleBanner } from "../../components/StoreSaleBanner";
 import {
     readFeatured,
     readShelves,
@@ -107,7 +108,14 @@ export default async function StorePage({ searchParams }: PageProps) {
                         return <ShelfRows shelves={shelves} lowStockAt={lowStockAt} />;
                     },
                 }}
-            />
+            >
+                {/* Above the arrangement rather than one of its blocks: a
+                    sale is news for the whole page, wherever a theme puts
+                    the rest of it, and so is `store.index.top`, news from
+                    another module such as what a member can spend. */}
+                <StoreSaleBanner />
+                <Slot name="store.index.top" />
+            </ArrangedPage>
         );
     }
 
@@ -205,6 +213,9 @@ export default async function StorePage({ searchParams }: PageProps) {
                     </section>
                 ) : null),
             }}
-        />
+        >
+            <StoreSaleBanner />
+            <Slot name="store.index.top" />
+        </ArrangedPage>
     );
 }

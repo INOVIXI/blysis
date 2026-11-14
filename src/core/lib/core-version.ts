@@ -12,6 +12,11 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.42.0 - the account menu draws the `navbar.userMenu` slot, under the
+ * profile link, and hands what fills it `close`, which shuts the menu. A
+ * module that keeps a row about the account there requires this core: on an
+ * older one the row has nowhere to be drawn.
+ *
  * 5.41.0 - a `SettingsForm` text field can carry `suggestions`, values it
  * offers without limiting the answer to them, so a provider screen can list
  * the models its vendor reported while still taking one released since.
@@ -814,4 +819,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.41.0";
+export const CORE_API_VERSION = "5.42.0";

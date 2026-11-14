@@ -156,6 +156,15 @@ model Product {
    */
   commandsPerUnit      Boolean   @default(false)
 
+  /**
+   * When a paid purchase reaches the game: `now` runs its commands at
+   * payment, `hold` leaves it in the buyer's chest until they claim it, and
+   * `inherit` follows the shop's `holdPurchasesInChest` setting. Only the
+   * commands wait; the product is owned, and its rank held, from payment, as
+   * `deliverPaidOrder` explains.
+   */
+  deliveryMode         String    @default("inherit")
+
   /** A sale with a start and an end, rather than a price somebody remembers. */
   salePrice            Decimal?  @db.Decimal(10, 2)
   saleFrom             DateTime?
@@ -222,6 +231,9 @@ model Order {
   paymentFee    Decimal     @default(0) @db.Decimal(10, 2)
   paymentMethod String?
   paymentId     String?
+  /// The coupon this order was placed with. A plain id like the coupon's own
+  /// product lists: deleting a coupon must not touch the orders that used it.
+  couponId      String?
   notes         String?
   metadata      Json?
   /**
@@ -233,6 +245,11 @@ model Order {
    * country, and the module talking to one is the only thing that knows.
    */
   billingDetails Json?
+  /// When the reminder about this unpaid checkout was dealt with: sent, or
+  /// passed over for a newer checkout of the same buyer. Set once, by a
+  /// conditional claim, so no checkout is reminded twice. See
+  /// lib/checkout-reminder.ts.
+  remindedAt    DateTime?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -243,10 +260,15 @@ model Order {
   payments Payment[]
 
   @@index([userId])
-  @@index([status])
+  // Read as "how many times has this customer used this coupon".
+  @@index([couponId, userId])
 
   // The revenue chart and the community goal both scan a date window.
   @@index([createdAt])
+  // The checkout reminder asks for unpaid orders in an age window, and a
+  // filter on status alone uses this index too, because it starts with
+  // status.
+  @@index([status, createdAt])
 }
 
 enum OrderStatus {
@@ -324,6 +346,12 @@ model Coupon {
   maxDiscount   Decimal?    @db.Decimal(10, 2)
   usageLimit    Int?
   usageCount    Int         @default(0)
+  /// How many orders one customer may place with the code. Null is no limit,
+  /// which is what every coupon written before there was a way to say so
+  /// meant; a coupon made in the panel starts at one. Counted from the orders
+  /// that carry it, so a refunded or cancelled order gives its use back. See
+  /// lib/coupon-limit.ts.
+  perCustomerLimit Int?
   startsAt      DateTime?
   expiresAt     DateTime?
   /// Which products the code works on. Empty is every product, which is what
@@ -332,6 +360,12 @@ model Coupon {
   /// Which categories the code works on. Empty is every category. A line
   /// matching either list is covered once.
   categoryIds   String[]
+  /// Who may redeem it. Null is anybody holding the code, which is what
+  /// every coupon written before a coupon could be personal meant.
+  userId        String?
+  /// The paid order a thank-you coupon was minted for. Unique, so a replayed
+  /// settlement finds the one it already made instead of making a second.
+  issuedForOrderId String?  @unique
   isActive      Boolean     @default(true)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -399,6 +433,33 @@ model CampaignEntry {
   // to choose between them.
   @@unique([campaignId, productId])
   @@index([productId])
+}
+
+/**
+ * A percentage off the whole shop, or off chosen shelves, between two instants.
+ *
+ * A campaign moves named products to named prices, which is the wrong tool
+ * for "everything is 20% off this weekend": an operator would type a price
+ * for every product and type them all again when one changes. This is the
+ * one number, and the rule for how it meets a product's own sale is
+ * `withStoreSale` in lib/store-sale.ts.
+ */
+model StoreSale {
+  id          String   @id @default(cuid())
+  name        String
+  /** Whole percent off the list price, 1 to 90. */
+  percent     Int
+  /** Shelves it covers, with the shelves under them. Empty is the whole store. */
+  categoryIds String[] @default([])
+  startsAt    DateTime
+  /** The first instant it no longer applies. */
+  endsAt      DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Every price the shop shows or takes asks which sales are running now.
+  @@index([isActive, startsAt, endsAt])
 }
 
 model BulkDiscount {
@@ -559,6 +620,21 @@ model CreditPackage {
   @@index([isActive, order])
 }
 
+/// A limited-time bonus on credit top-ups, larger for a larger payment.
+/// `tiers` is a list of { minAmount, percent }. See lib/credit-bonus.ts.
+model CreditBonusCampaign {
+  id        String   @id @default(cuid())
+  name      String
+  startsAt  DateTime
+  endsAt    DateTime
+  isActive  Boolean  @default(true)
+  tiers     Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, endsAt])
+}
+
 /// One wallet top-up a buyer started: the credits it sells and what it costs.
 /// Its id is the reference the gateway carries, so settling it reads the
 /// credits, the buyer and the price from here rather than from whatever the
@@ -579,6 +655,15 @@ model CreditTopUp {
   providerRef String?
   /// When the money went back and the credits were taken back.
   refundedAt  DateTime?
+  /// A bonus campaign's extra credits, decided when the payment started and
+  /// paid as their own ledger row when it settles. See lib/credit-bonus.ts.
+  bonusCredits    Int     @default(0)
+  /// The campaign that gave them. A plain id: the campaign may be deleted
+  /// and the top-up still has to pay what the buyer was shown.
+  bonusCampaignId String?
+  /// When the reminder about this unpaid top-up was dealt with. See
+  /// `Order.remindedAt`.
+  remindedAt  DateTime?
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
@@ -587,6 +672,8 @@ model CreditTopUp {
 
   @@index([userId])
   @@index([providerRef])
+  // The checkout reminder asks for unpaid top-ups in an age window.
+  @@index([status, createdAt])
 }
 
 enum CreditTopUpStatus {

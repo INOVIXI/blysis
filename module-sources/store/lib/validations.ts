@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { MAX_SALE_PERCENT, MIN_SALE_PERCENT } from "./store-sale";
+import { DELIVERY_MODES } from "./delivery-mode";
 
 // ==================== STORE SCHEMAS ====================
 
@@ -18,6 +20,8 @@ export const productSchema = z.object({
     giftable: z.boolean().optional(),
     /** Run the delivery commands once per unit bought rather than once per line. */
     commandsPerUnit: z.boolean().optional(),
+    /** At payment, in the chest until claimed, or as the shop does by default. */
+    deliveryMode: z.enum(DELIVERY_MODES).optional(),
     type: z.enum(["DIGITAL", "PHYSICAL", "GAME_ITEM", "SUBSCRIPTION"]).optional(),
     categoryId: z.string().optional().nullable(),
     deliveryData: z.any().optional(),
@@ -114,6 +118,37 @@ export const creditPackageSchema = z.object({
     order: z.number().int().min(0).max(9999).default(0),
 });
 
+/**
+ * A credit bonus campaign as a form sends it. The dates are the operator's
+ * wall clock on the site's zone, or an instant with its offset; the order of
+ * the dates and of the tiers is checked after they are read, by
+ * `campaignProblem` in `credit-bonus.ts`.
+ */
+export const creditBonusCampaignSchema = z.object({
+    name: z.string().trim().min(1, "Name is required").max(100),
+    startsAt: z.string().min(16).max(40),
+    endsAt: z.string().min(16).max(40),
+    isActive: z.boolean().default(true),
+    tiers: z.array(z.object({
+        minAmount: z.number().positive().max(1_000_000),
+        percent: z.number().int().min(1).max(500),
+    })).min(1).max(10),
+});
+
+/**
+ * A store-wide sale as the panel sends it. The dates are the operator's wall
+ * clock on the site's zone, or an instant with its offset; their order is
+ * checked once they are read, in `storeSaleWrite`.
+ */
+export const storeSaleSchema = z.object({
+    name: z.string().trim().min(1, "Name is required").max(100),
+    percent: z.number().int().min(MIN_SALE_PERCENT).max(MAX_SALE_PERCENT),
+    categoryIds: z.array(z.string().min(1).max(64)).max(200).default([]),
+    startsAt: z.string().min(16).max(40),
+    endsAt: z.string().min(16).max(40),
+    isActive: z.boolean().default(true),
+});
+
 export const campaignSchema = z.object({
     name: z.string().min(1, "Name is required").max(100),
     isActive: z.boolean().optional(),
@@ -140,6 +175,12 @@ export const couponSchema = z.object({
     minPurchase: z.number().min(0).optional().nullable(),
     maxDiscount: z.number().min(0).optional().nullable(),
     usageLimit: z.number().int().min(1).optional().nullable(),
+    /**
+     * Orders one customer may place with the code. Null is no limit. No
+     * default here: an edit that does not send it must leave an existing
+     * coupon as it was, so the default of one is set where a coupon is made.
+     */
+    perCustomerLimit: z.number().int().min(1).max(1_000_000).optional().nullable(),
     startsAt: z.string().datetime().optional().nullable(),
     expiresAt: z.string().datetime().optional().nullable(),
     /**

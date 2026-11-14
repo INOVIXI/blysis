@@ -6,8 +6,11 @@ import { auth } from "@/core/sdk/auth";
 import { claimStock, shortOfStock, stockClaims } from "../../lib/stock";
 import { countSales } from "../../lib/popularity";
 import { createCreditOrder, deliverPaidOrder, OUT_OF_STOCK } from "../../lib/credit-order";
-import { effectivePrice } from "../../lib/availability";
+import { offerPrice, runningCampaignEntries } from "../../lib/campaign-server";
+import { withStoreSale } from "../../lib/store-sale";
+import { runningStoreSales } from "../../lib/store-sale-server";
 import { availabilityFor, pastTheLimit, rulesOf, type ProductRow } from "../../lib/availability-server";
+import { customerUses, pastCouponLimit } from "../../lib/coupon-limit";
 import { convertedCharge, resolveCurrency } from "../../lib/currency";
 import { startPaymentSession, listPaymentProviders } from "../../lib/payments";
 import { paymentFeeFor } from "../../lib/payment-fee-server";
@@ -28,8 +31,10 @@ import { creditingPurchases, ownedRungsOn } from "../../lib/upgrade-credit-serve
 import { z } from "zod";
 import { isPlayerName } from "../../lib/player-name";
 import { payCreatorCommission } from "../../lib/creator-commission";
+import { couponOpenTo } from "../../lib/thank-you-coupon";
 
 const LIMIT_REACHED = "LIMIT_REACHED";
+const COUPON_ALREADY_USED = "COUPON_ALREADY_USED";
 
 const checkoutSchema = z.object({
     items: z.array(z.object({
@@ -170,6 +175,36 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Subscriptions cannot be paid with credits" }, { status: 400 });
         }
 
+        // ── Credits-only store ──
+        // With the setting on, money reaches the shop only through a top-up and
+        // every order is paid from the balance. Checked here, on what was sent,
+        // because the cart hiding the gateways is a courtesy: a request naming
+        // one is refused, a free order included, so there is no total that
+        // opens the door. A subscription is refused too: it renews by charging
+        // a gateway, which is the one thing this mode rules out.
+        //
+        // Tax stays on the order, below, as it is in the normal mode. A balance
+        // spendable on anything in the shop is taxed when it is spent, on the
+        // thing bought, not when it is loaded; that also keeps one tax record
+        // per sale for an invoice. The payment method's fee is the opposite:
+        // it is charged on the top-up, where a gateway is used, and an order
+        // paid from the balance carries none.
+        const { creditsOnlyStore } = await moduleSettings<{ creditsOnlyStore?: boolean }>("store");
+        if (creditsOnlyStore === true) {
+            if (isSubscriptionCheckout) {
+                return NextResponse.json(
+                    { error: "Subscriptions are not sold while the store takes only credits", code: "store_credits_only_subscription" },
+                    { status: 400 },
+                );
+            }
+            if (paymentMethod !== "credits") {
+                return NextResponse.json(
+                    { error: "This store takes only credits. Load credits first, then pay with them.", code: "store_credits_only" },
+                    { status: 400 },
+                );
+            }
+        }
+
         // ── Validate product variables ──
         const allVariables = await prisma.productVariable.findMany({
             where: { productId: { in: productIds } },
@@ -200,17 +235,27 @@ export async function POST(request: NextRequest) {
         // turned the credit off, and a lapsed purchase stops crediting.
         const ownedIds = await creditingPurchases(session.user.id);
 
+        // Read once for the basket, as the listing reads them once a page.
+        const campaignEntries = await runningCampaignEntries(prisma, now, zone);
+
         // ── Calculate item prices (with bulk discounts + cumulative upgrades) ──
+        const storeSales = await runningStoreSales(now);
         const { subtotal, orderItems } = computeOrderPricing({
             items,
             products: products.map((p) => ({
                 id: p.id,
                 name: p.name,
                 type: p.type,
-                // What a sale sets, not what the column says: the shop shows
-                // the sale price and a checkout that charged the other one
-                // would be taking a different amount from the one on screen.
-                price: effectivePrice(rulesOf(p as unknown as ProductRow), now).price,
+                // What the shelf shows, not what the column says: a sale, a
+                // running campaign or a store-wide sale sets it, and a checkout
+                // that charged the column would take a different amount from
+                // the one on screen. `withStoreSale` says which of two offers wins.
+                price: withStoreSale(
+                    offerPrice({ ...rulesOf(p as unknown as ProductRow), id: p.id }, campaignEntries, now),
+                    { listPrice: rulesOf(p as unknown as ProductRow).price, categoryId: p.categoryId },
+                    storeSales,
+                    now,
+                ).price,
                 categoryId: p.categoryId,
             })),
             bulkDiscounts,
@@ -228,6 +273,9 @@ export async function POST(request: NextRequest) {
         // code was silently ignored - the customer paid full price with
         // no feedback that their code didn't work.
         let couponDiscount = 0;
+        // Written on the order, so the customer's uses can be counted from
+        // their orders: see `coupon-limit.ts`.
+        let couponId: string | null = null;
         if (couponCode) {
             const { enableCoupons } = await moduleSettings<{ enableCoupons: boolean }>("store");
             if (!enableCoupons) {
@@ -237,9 +285,12 @@ export async function POST(request: NextRequest) {
                 );
             }
             const couponError = await prisma.$transaction(async (tx): Promise<string | null> => {
-                const coupon = await tx.coupon.findUnique({
+                const found = await tx.coupon.findUnique({
                     where: { code: couponCode.toUpperCase() },
                 });
+                // Somebody else's personal coupon is a code this buyer does
+                // not have, and is refused as one.
+                const coupon = found && couponOpenTo(found, session.user.id) ? found : null;
                 // Only the part of the basket the offer covers. A coupon
                 // naming no product and no category covers all of it, which
                 // is what every coupon written before there was a way to say
@@ -253,7 +304,15 @@ export async function POST(request: NextRequest) {
                     })),
                     products.map((product) => ({ id: product.id, categoryId: product.categoryId ?? null })),
                 );
-                const { code, discount } = computeCouponDiscount(coupon, subtotal, new Date(), eligible);
+                // How often this customer already used it, their unpaid
+                // checkouts of the last hour included. The order is written
+                // after this transaction, so two checkouts sent together can
+                // both pass here; each is counted again under a lock when it
+                // is paid, which is the count that decides.
+                const used = coupon?.perCustomerLimit
+                    ? await customerUses(tx, coupon.id, session.user.id, now)
+                    : 0;
+                const { code, discount } = computeCouponDiscount(coupon, subtotal, new Date(), eligible, used);
                 if (code) return code;
                 // Claim the use conditionally. The count read above is a
                 // snapshot, so two orders redeeming the last use of a
@@ -269,6 +328,7 @@ export async function POST(request: NextRequest) {
                 });
                 if (claimed.count === 0) return "coupon_used_up";
                 couponDiscount = discount;
+                couponId = coupon!.id;
                 return null;
             });
             if (couponError) {
@@ -385,8 +445,12 @@ export async function POST(request: NextRequest) {
             const balance = Number(user?.creditBalance || 0);
 
             if (balance < total) {
+                // The code lets the cart say it in the buyer's language and
+                // send them to the top-up page with what is missing.
                 return NextResponse.json({
                     error: `Insufficient credit balance. You have ${balance.toFixed(2)} credits but need ${total.toFixed(2)}.`,
+                    code: "store_insufficient_credits",
+                    missing: Math.round((total - balance) * 100) / 100,
                 }, { status: 400 });
             }
 
@@ -396,9 +460,12 @@ export async function POST(request: NextRequest) {
             // payment the same way.
             // The limit is counted again under the lock the game takes: two
             // credits checkouts sent together both passed the count above.
+            // The coupon's per-customer limit is counted again the same way.
             const buyerId = session.user.id;
-            const order = await prisma.$transaction(async (tx) =>
-                (await pastTheLimit(tx, products, orderItems, buyerId, now)) ? null : createCreditOrder(tx, {
+            const order = await prisma.$transaction(async (tx) => {
+                if (await pastTheLimit(tx, products, orderItems, buyerId, now)) return LIMIT_REACHED;
+                if (await pastCouponLimit(tx, couponId, buyerId, now)) return COUPON_ALREADY_USED;
+                return createCreditOrder(tx, {
                     buyerId,
                     ownerId: buyerId,
                     gift: false,
@@ -417,12 +484,16 @@ export async function POST(request: NextRequest) {
                     notes,
                     billingDetails,
                     metadata: orderMetadata,
+                    couponId,
                     playerName,
                     description: `Store purchase (${orderItems.map((i) => i.name).join(", ")})`,
-                }),
-            );
-            if (!order) {
+                });
+            });
+            if (order === LIMIT_REACHED) {
                 return NextResponse.json({ error: "limit_reached", code: "store_limit_reached" }, { status: 409 });
+            }
+            if (order === COUPON_ALREADY_USED) {
+                return NextResponse.json({ error: "coupon_already_used", code: "coupon_already_used" }, { status: 409 });
             }
 
             // Delivery runs after the commit: a game server that is down must
@@ -481,6 +552,7 @@ export async function POST(request: NextRequest) {
                 billingDetails,
                 notes,
                 paymentMethod,
+                couponId,
                 metadata: orderMetadata,
                 items: { create: orderItems },
             },
@@ -524,6 +596,9 @@ export async function POST(request: NextRequest) {
                     if (await pastTheLimit(tx, products, orderItems, freeBuyerId, now, order.id)) {
                         throw new Error(LIMIT_REACHED);
                     }
+                    if (await pastCouponLimit(tx, couponId, freeBuyerId, now, order.id)) {
+                        throw new Error(COUPON_ALREADY_USED);
+                    }
                     const claims = stockClaims(orderItems);
                     if ((await claimStock(tx, claims)).length > 0) throw new Error(OUT_OF_STOCK);
                     await countSales(tx, claims);
@@ -553,9 +628,12 @@ export async function POST(request: NextRequest) {
                 // A refused order must not sit PENDING, where it would hold
                 // the buyer's allowance for an hour.
                 const message = error instanceof Error ? error.message : "";
-                if (message !== LIMIT_REACHED && message !== OUT_OF_STOCK) throw error;
+                if (message !== LIMIT_REACHED && message !== OUT_OF_STOCK && message !== COUPON_ALREADY_USED) throw error;
                 await prisma.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });
                 if (message === OUT_OF_STOCK) throw error;
+                if (message === COUPON_ALREADY_USED) {
+                    return NextResponse.json({ error: "coupon_already_used", code: "coupon_already_used" }, { status: 409 });
+                }
                 return NextResponse.json({ error: "limit_reached", code: "store_limit_reached" }, { status: 409 });
             }
 
@@ -731,7 +809,7 @@ export async function POST(request: NextRequest) {
         }
         if (error instanceof Error && error.message === "INSUFFICIENT_CREDITS") {
             return NextResponse.json(
-                { error: "Insufficient credit balance." },
+                { error: "Insufficient credit balance.", code: "store_insufficient_credits" },
                 { status: 400 },
             );
         }

@@ -22,6 +22,8 @@ const settings = { current: { taxRate: 20, taxIncluded: false, enableCoupons: tr
 const orderCreate = vi.fn(async () => ({ id: "o1", orderNumber: "ORD-1" }));
 
 const db = {
+    // No store-wide sale is running.
+    storeSale: { findMany: async () => [] },
     product: {
         findMany: vi.fn(async ({ where }: { where: { stock?: unknown } }) =>
             where.stock
@@ -58,6 +60,7 @@ const db = {
     },
     productVariable: { findMany: vi.fn(async () => []) },
     bulkDiscount: { findMany: vi.fn(async () => []) },
+    campaign: { findMany: vi.fn(async () => []) },
     orderItem: { aggregate: vi.fn(async () => ({ _sum: { quantity: 0 } })) },
     setting: {
         findUnique: vi.fn(async ({ where }: { where: { key: string } }) => (where.key === "default_currency" ? { value: "EUR" } : null)),
