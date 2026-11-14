@@ -41,7 +41,6 @@ vi.mock("@/core/sdk", () => ({ doActionAsync: async () => {} }));
 
 const list = () => import("../../../module-sources/changelog/api/route");
 const one = () => import("../../../module-sources/changelog/api/[id]/route");
-const page = () => import("../../../module-sources/changelog/api/entry/[number]/route");
 const params = (id: string) => ({ params: Promise.resolve({ id }) });
 
 async function create(payload: Record<string, unknown>) {
