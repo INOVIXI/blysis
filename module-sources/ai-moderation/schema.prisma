@@ -1,0 +1,38 @@
+// AI Moderation - Database Models
+
+// @@user-relations-start
+//   aiModerationReviews AiModerationReview[] @relation("AiModerationReviewAuthor")
+// @@user-relations-end
+
+// ==================== AI MODERATION ====================
+
+/// One item the AI reviewer was handed, and what came of it. Holds the
+/// model's reasons for the admins, never the post itself: that stays in the
+/// module that owns it and is read through core when an admin opens a row.
+model AiModerationReview {
+  id         String   @id @default(cuid())
+  /// The moderation provider's id, such as "forum-post".
+  provider   String
+  itemId     String
+  /// Which text was judged; an edit is a new version.
+  version    String
+  authorId   String?
+  author     User?    @relation("AiModerationReviewAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  /// What the model said: approve, reject, unsure, or error.
+  verdict    String
+  /// What the reviewer answered core: approve, reject or leave.
+  applied    String
+  reasonId   String?
+  confidence Int?
+  rationale  String?
+  /// The model the operator chose; null for the provider's fast model.
+  model      String?
+  /// Why no verdict came back: an AI error kind, or "missing".
+  error      String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([applied, createdAt])
+  @@index([provider, itemId])
+  @@index([authorId])
+}
