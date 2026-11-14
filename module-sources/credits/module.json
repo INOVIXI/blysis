@@ -3,7 +3,7 @@
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
   "version": "1.13.0",
-  "coreVersion": "^5.21.0",
+  "coreVersion": "^5.42.0",
   "category": "commerce",
   "author": "Blysis",
   "icon": "Coins",
@@ -165,7 +165,10 @@
         "adj_confirmRemove": "{amount} credits are taken from {name}. Only another change gives them back.",
         "adj_done": "{name} now holds {balance} credits.",
         "adj_failed": "The balance could not be changed.",
-        "adj_fillItIn": "Pick a member, enter how many credits and say why."
+        "adj_fillItIn": "Pick a member, enter how many credits and say why.",
+        "bal_ariaLabel": "Your credits: {amount}",
+        "bal_menu": "Credits: {amount}",
+        "bal_store": "Your balance: {amount} credits"
       },
       "admin": {
         "module_credits_name": "Credit System",
@@ -282,7 +285,10 @@
         "adj_confirmRemove": "{name} kullanıcısından {amount} kredi düşülecek. Yalnızca yeni bir değişiklik bunları geri verir.",
         "adj_done": "{name} artık {balance} krediye sahip.",
         "adj_failed": "Bakiye değiştirilemedi.",
-        "adj_fillItIn": "Bir üye seçin, kaç kredi olduğunu girin ve nedenini yazın."
+        "adj_fillItIn": "Bir üye seçin, kaç kredi olduğunu girin ve nedenini yazın.",
+        "bal_ariaLabel": "Krediniz: {amount}",
+        "bal_menu": "Kredi: {amount}",
+        "bal_store": "Bakiyeniz: {amount} kredi"
       },
       "admin": {
         "module_credits_name": "Kredi Sistemi",
@@ -399,7 +405,10 @@
         "adj_confirmRemove": "{name} istifadəçisindən {amount} kredit çıxılacaq. Onları yalnız yeni dəyişiklik geri qaytarır.",
         "adj_done": "{name} artıq {balance} kreditə malikdir.",
         "adj_failed": "Balans dəyişdirilə bilmədi.",
-        "adj_fillItIn": "Üzv seçin, neçə kredit olduğunu daxil edin və səbəbini yazın."
+        "adj_fillItIn": "Üzv seçin, neçə kredit olduğunu daxil edin və səbəbini yazın.",
+        "bal_ariaLabel": "Kreditləriniz: {amount}",
+        "bal_menu": "Kredit: {amount}",
+        "bal_store": "Balansınız: {amount} kredit"
       },
       "admin": {
         "module_credits_name": "Kredit sistemi",
@@ -516,7 +525,10 @@
         "adj_confirmRemove": "{name} werden {amount} Credits abgezogen. Nur eine weitere Änderung gibt sie zurück.",
         "adj_done": "{name} hat jetzt {balance} Credits.",
         "adj_failed": "Der Kontostand konnte nicht geändert werden.",
-        "adj_fillItIn": "Wähle ein Mitglied, gib die Anzahl Credits ein und nenne einen Grund."
+        "adj_fillItIn": "Wähle ein Mitglied, gib die Anzahl Credits ein und nenne einen Grund.",
+        "bal_ariaLabel": "Deine Credits: {amount}",
+        "bal_menu": "Credits: {amount}",
+        "bal_store": "Dein Guthaben: {amount} Credits"
       },
       "admin": {
         "module_credits_name": "Credit-System",
@@ -633,7 +645,10 @@
         "adj_confirmRemove": "Se quitarán {amount} créditos a {name}. Solo otro cambio los devuelve.",
         "adj_done": "{name} tiene ahora {balance} créditos.",
         "adj_failed": "No se pudo cambiar el saldo.",
-        "adj_fillItIn": "Elige un miembro, indica cuántos créditos y explica el motivo."
+        "adj_fillItIn": "Elige un miembro, indica cuántos créditos y explica el motivo.",
+        "bal_ariaLabel": "Tus créditos: {amount}",
+        "bal_menu": "Créditos: {amount}",
+        "bal_store": "Tu saldo: {amount} créditos"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -750,7 +765,10 @@
         "adj_confirmRemove": "Kasutajalt {name} võetakse {amount} krediiti. Need tuleb tagasi ainult uue muudatusega.",
         "adj_done": "Kasutajal {name} on nüüd {balance} krediiti.",
         "adj_failed": "Saldot ei õnnestunud muuta.",
-        "adj_fillItIn": "Vali liige, sisesta krediitide arv ja kirjuta põhjus."
+        "adj_fillItIn": "Vali liige, sisesta krediitide arv ja kirjuta põhjus.",
+        "bal_ariaLabel": "Sinu krediidid: {amount}",
+        "bal_menu": "Krediidid: {amount}",
+        "bal_store": "Sinu saldo: {amount} krediiti"
       },
       "admin": {
         "module_credits_name": "Krediidisüsteem",
@@ -867,7 +885,10 @@
         "adj_confirmRemove": "{amount} crédits seront retirés à {name}. Seule une autre modification les rendra.",
         "adj_done": "{name} possède maintenant {balance} crédits.",
         "adj_failed": "Le solde n'a pas pu être modifié.",
-        "adj_fillItIn": "Choisissez un membre, saisissez le nombre de crédits et indiquez la raison."
+        "adj_fillItIn": "Choisissez un membre, saisissez le nombre de crédits et indiquez la raison.",
+        "bal_ariaLabel": "Vos crédits : {amount}",
+        "bal_menu": "Crédits : {amount}",
+        "bal_store": "Votre solde : {amount} crédits"
       },
       "admin": {
         "module_credits_name": "Système de crédits",
@@ -984,7 +1005,10 @@
         "adj_confirmRemove": "A {name} verranno tolti {amount} crediti. Solo un'altra modifica li restituisce.",
         "adj_done": "{name} ora ha {balance} crediti.",
         "adj_failed": "Non è stato possibile modificare il saldo.",
-        "adj_fillItIn": "Scegli un membro, inserisci quanti crediti e indica il motivo."
+        "adj_fillItIn": "Scegli un membro, inserisci quanti crediti e indica il motivo.",
+        "bal_ariaLabel": "I tuoi crediti: {amount}",
+        "bal_menu": "Crediti: {amount}",
+        "bal_store": "Il tuo saldo: {amount} crediti"
       },
       "admin": {
         "module_credits_name": "Sistema di crediti",
@@ -1101,7 +1125,10 @@
         "adj_confirmRemove": "{name} straci {amount} kredytów. Odda je tylko kolejna zmiana.",
         "adj_done": "{name} ma teraz {balance} kredytów.",
         "adj_failed": "Nie udało się zmienić salda.",
-        "adj_fillItIn": "Wybierz członka, wpisz liczbę kredytów i podaj powód."
+        "adj_fillItIn": "Wybierz członka, wpisz liczbę kredytów i podaj powód.",
+        "bal_ariaLabel": "Twoje kredyty: {amount}",
+        "bal_menu": "Kredyty: {amount}",
+        "bal_store": "Twoje saldo: {amount} kredytów"
       },
       "admin": {
         "module_credits_name": "System kredytów",
@@ -1218,7 +1245,10 @@
         "adj_confirmRemove": "Serão retirados {amount} créditos de {name}. Só outra alteração os devolve.",
         "adj_done": "{name} agora tem {balance} créditos.",
         "adj_failed": "Não foi possível alterar o saldo.",
-        "adj_fillItIn": "Escolha um membro, informe quantos créditos e diga o motivo."
+        "adj_fillItIn": "Escolha um membro, informe quantos créditos e diga o motivo.",
+        "bal_ariaLabel": "Seus créditos: {amount}",
+        "bal_menu": "Créditos: {amount}",
+        "bal_store": "Seu saldo: {amount} créditos"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -1335,7 +1365,10 @@
         "adj_confirmRemove": "У {name} будет списано {amount} кредитов. Вернуть их можно только новым изменением.",
         "adj_done": "Теперь у {name} {balance} кредитов.",
         "adj_failed": "Не удалось изменить баланс.",
-        "adj_fillItIn": "Выберите участника, введите число кредитов и укажите причину."
+        "adj_fillItIn": "Выберите участника, введите число кредитов и укажите причину.",
+        "bal_ariaLabel": "Ваши кредиты: {amount}",
+        "bal_menu": "Кредиты: {amount}",
+        "bal_store": "Ваш баланс: {amount} кредитов"
       },
       "admin": {
         "module_credits_name": "Система кредитов",
@@ -1452,7 +1485,10 @@
         "adj_confirmRemove": "将从 {name} 扣除 {amount} 积分。只能通过再次调整退回。",
         "adj_done": "{name} 现在有 {balance} 积分。",
         "adj_failed": "无法调整余额。",
-        "adj_fillItIn": "请选择会员、填写积分数量并说明原因。"
+        "adj_fillItIn": "请选择会员、填写积分数量并说明原因。",
+        "bal_ariaLabel": "你的积分：{amount}",
+        "bal_menu": "积分：{amount}",
+        "bal_store": "你的余额：{amount} 积分"
       },
       "admin": {
         "module_credits_name": "积分系统",
@@ -1580,6 +1616,27 @@
     {
       "action": "credits.balance.adjusted",
       "nameKey": "auditBalanceAdjusted"
+    }
+  ],
+  "navbarComponents": [
+    {
+      "id": "CreditBalanceChip",
+      "component": "components/CreditBalanceChip",
+      "order": 30
+    }
+  ],
+  "slotContents": [
+    {
+      "id": "credits-user-menu",
+      "slot": "navbar.userMenu",
+      "component": "slots/UserMenuBalance",
+      "order": 10
+    },
+    {
+      "id": "credits-store-top",
+      "slot": "store.index.top",
+      "component": "slots/StoreBalanceStrip",
+      "order": 10
     }
   ]
 }

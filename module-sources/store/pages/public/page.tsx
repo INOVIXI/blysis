@@ -111,8 +111,10 @@ export default async function StorePage({ searchParams }: PageProps) {
             >
                 {/* Above the arrangement rather than one of its blocks: a
                     sale is news for the whole page, wherever a theme puts
-                    the rest of it. */}
+                    the rest of it, and so is `store.index.top`, news from
+                    another module such as what a member can spend. */}
                 <StoreSaleBanner />
+                <Slot name="store.index.top" />
             </ArrangedPage>
         );
     }
@@ -213,6 +215,7 @@ export default async function StorePage({ searchParams }: PageProps) {
             }}
         >
             <StoreSaleBanner />
+            <Slot name="store.index.top" />
         </ArrangedPage>
     );
 }

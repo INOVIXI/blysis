@@ -114,6 +114,10 @@ export function NavbarActions() {
                                 <Link href="/profile" className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground" onClick={() => setMenuOpen(false)}>
                                     <User className="w-4 h-4" /> {t('profile')}
                                 </Link>
+                                {/* Rows a module keeps about the account, such as a
+                                    balance. `close` lets a row's link shut the menu
+                                    the way the links above do. */}
+                                <Slot name="navbar.userMenu" context={{ close: () => setMenuOpen(false) }} />
                                 {isStaffUser && (
                                     <Link href="/admin" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground" onClick={() => setMenuOpen(false)}>
                                         <Shield className="w-4 h-4" /> {t('adminPanel')}

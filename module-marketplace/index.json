@@ -1161,7 +1161,7 @@
         }
       },
       "version": "1.13.0",
-      "coreVersion": "^5.21.0",
+      "coreVersion": "^5.42.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
