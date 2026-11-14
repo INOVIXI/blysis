@@ -36,8 +36,20 @@
     {
       "path": "/credits/purchase",
       "handler": "api/credits/purchase/route.ts",
-      "description": "Purchase credits via the configured payment gateway.",
+      "description": "Add credits to a member's balance (admin). Kept for integrations; the panel uses /credits/admin/adjust.",
       "permission": "credits.manage"
+    },
+    {
+      "path": "/credits/admin/adjust",
+      "handler": "api/credits/admin/adjust/route.ts",
+      "description": "Add credits to a member's balance or take them off, with a reason (admin).",
+      "permission": "credits.manage"
+    },
+    {
+      "path": "/credits/admin/ledger",
+      "handler": "api/credits/admin/ledger/route.ts",
+      "description": "List every member's credit ledger, newest first (admin).",
+      "permission": "credits.view"
     }
   ],
   "dependencies": [],
@@ -69,7 +81,13 @@
           "credits_no_recipient": "No account by that name.",
           "credits_same_account": "That is your own account.",
           "credits_amount_not_positive": "Send a whole number of credits, at least one.",
-          "credits_insufficient_balance": "You do not have that many credits."
+          "credits_insufficient_balance": "You do not have that many credits.",
+          "credits_adjust_zero": "Enter a whole number of credits, at least one.",
+          "credits_adjust_too_large": "One change can move at most 1,000,000 credits.",
+          "credits_adjust_no_reason": "Say why. The member reads the reason in their credit history.",
+          "credits_adjust_below_zero": "The member does not hold that many credits. Allow the balance to go below zero to take them anyway.",
+          "credits_adjust_balance_moved": "The balance changed while you were changing it. Read it again and decide again.",
+          "credits_adjust_no_member": "That member no longer exists."
         },
         "history": "Transaction History",
         "noTransactions": "No transactions yet",
@@ -119,21 +137,52 @@
         "typeTop_up_bonus": "Top-up Bonus",
         "loadCredits": "Load credits",
         "typeCrate_open": "Crate Opened",
-        "typeCrate_reward": "Crate Reward"
+        "typeCrate_reward": "Crate Reward",
+        "led_title": "Credit ledger",
+        "led_subtitle": "Every credit that moved: spent, bought, won, sent and changed by hand.",
+        "led_member": "Member",
+        "led_type": "Kind",
+        "led_everyType": "Every kind",
+        "led_direction": "Direction",
+        "led_direction_all": "All",
+        "led_direction_in": "Credits in",
+        "led_direction_out": "Credits out",
+        "led_balanceOf": "{name} holds {balance} credits.",
+        "led_when": "When",
+        "led_nobody": "The site",
+        "led_loadFailed": "The ledger could not be loaded.",
+        "adj_title": "Change a balance",
+        "adj_subtitle": "Add credits to a member's balance or take them off. The reason goes on the row the member reads, and the change goes to the activity log.",
+        "adj_direction": "Change",
+        "adj_add": "Add credits",
+        "adj_remove": "Remove credits",
+        "adj_reasonHint": "The member sees this reason in their credit history.",
+        "adj_allowNegative": "Allow the balance to go below zero",
+        "adj_allowNegativeHint": "For a chargeback on credits already spent. The member cannot spend again until the balance is above zero.",
+        "adj_confirmAddTitle": "Add credits?",
+        "adj_confirmRemoveTitle": "Remove credits?",
+        "adj_confirmAdd": "{amount} credits go to {name}.",
+        "adj_confirmRemove": "{amount} credits are taken from {name}. Only another change gives them back.",
+        "adj_done": "{name} now holds {balance} credits.",
+        "adj_failed": "The balance could not be changed.",
+        "adj_fillItIn": "Pick a member, enter how many credits and say why."
       },
       "admin": {
         "module_credits_name": "Credit System",
         "module_credits_description": "Virtual currency wallet for users",
         "menu_credits_credit_settings": "Credit Settings",
         "settings_credits": "Credits",
-        "settings_credits_description": "How much of a purchase comes back as credits."
+        "settings_credits_description": "How much of a purchase comes back as credits.",
+        "menu_credits_credit_ledger": "Credit Ledger",
+        "menu_credits": "Credits"
       },
       "profile": {
         "notificationType_credits_credit_added": "Credits Added to Your Balance"
       },
       "activity": {
         "kindCreditAdded": "Credits Received",
-        "creditAdded": "Received {amount} credits"
+        "creditAdded": "Received {amount} credits",
+        "auditBalanceAdjusted": "Changed a member's credit balance"
       }
     },
     "tr": {
@@ -149,7 +198,13 @@
           "credits_no_recipient": "Bu adda bir hesap yok.",
           "credits_same_account": "Burası kendi hesabınız.",
           "credits_amount_not_positive": "En az bir olmak üzere tam sayı kadar kredi gönderin.",
-          "credits_insufficient_balance": "Bu kadar krediniz yok."
+          "credits_insufficient_balance": "Bu kadar krediniz yok.",
+          "credits_adjust_zero": "En az bir olmak üzere tam sayı bir kredi miktarı girin.",
+          "credits_adjust_too_large": "Tek bir değişiklik en fazla 1.000.000 kredi taşıyabilir.",
+          "credits_adjust_no_reason": "Nedenini yazın. Üye bu nedeni kredi geçmişinde okur.",
+          "credits_adjust_below_zero": "Üyenin bu kadar kredisi yok. Yine de almak için bakiyenin sıfırın altına inmesine izin verin.",
+          "credits_adjust_balance_moved": "Siz değiştirirken bakiye değişti. Bakiyeye yeniden bakıp yeniden karar verin.",
+          "credits_adjust_no_member": "Bu üye artık mevcut değil."
         },
         "history": "İşlem Geçmişi",
         "noTransactions": "Henüz işlem yok",
@@ -199,21 +254,52 @@
         "typeTop_up_bonus": "Yükleme Bonusu",
         "loadCredits": "Kredi yükle",
         "typeCrate_open": "Kasa Açıldı",
-        "typeCrate_reward": "Kasa Ödülü"
+        "typeCrate_reward": "Kasa Ödülü",
+        "led_title": "Kredi defteri",
+        "led_subtitle": "Hareket eden her kredi: harcanan, satın alınan, kazanılan, gönderilen ve elle değiştirilen.",
+        "led_member": "Üye",
+        "led_type": "Tür",
+        "led_everyType": "Tüm türler",
+        "led_direction": "Yön",
+        "led_direction_all": "Tümü",
+        "led_direction_in": "Giren kredi",
+        "led_direction_out": "Çıkan kredi",
+        "led_balanceOf": "{name} şu anda {balance} krediye sahip.",
+        "led_when": "Ne zaman",
+        "led_nobody": "Site",
+        "led_loadFailed": "Kredi defteri yüklenemedi.",
+        "adj_title": "Bakiye değiştir",
+        "adj_subtitle": "Bir üyenin bakiyesine kredi ekleyin ya da düşün. Neden, üyenin okuduğu satıra yazılır ve değişiklik etkinlik kaydına girer.",
+        "adj_direction": "Değişiklik",
+        "adj_add": "Kredi ekle",
+        "adj_remove": "Kredi düş",
+        "adj_reasonHint": "Üye bu nedeni kredi geçmişinde görür.",
+        "adj_allowNegative": "Bakiyenin sıfırın altına inmesine izin ver",
+        "adj_allowNegativeHint": "Zaten harcanmış krediler için yapılan ters ibraz içindir. Bakiye sıfırın üstüne çıkana kadar üye harcama yapamaz.",
+        "adj_confirmAddTitle": "Kredi eklensin mi?",
+        "adj_confirmRemoveTitle": "Kredi düşülsün mü?",
+        "adj_confirmAdd": "{name} kullanıcısına {amount} kredi eklenecek.",
+        "adj_confirmRemove": "{name} kullanıcısından {amount} kredi düşülecek. Yalnızca yeni bir değişiklik bunları geri verir.",
+        "adj_done": "{name} artık {balance} krediye sahip.",
+        "adj_failed": "Bakiye değiştirilemedi.",
+        "adj_fillItIn": "Bir üye seçin, kaç kredi olduğunu girin ve nedenini yazın."
       },
       "admin": {
         "module_credits_name": "Kredi Sistemi",
         "module_credits_description": "Kullanıcılar için sanal para cüzdanı",
         "menu_credits_credit_settings": "Kredi Ayarları",
         "settings_credits": "Krediler",
-        "settings_credits_description": "Bir alışverişin ne kadarı kredi olarak geri döner."
+        "settings_credits_description": "Bir alışverişin ne kadarı kredi olarak geri döner.",
+        "menu_credits_credit_ledger": "Kredi Defteri",
+        "menu_credits": "Krediler"
       },
       "profile": {
         "notificationType_credits_credit_added": "Bakiyenize Kredi Eklendi"
       },
       "activity": {
         "kindCreditAdded": "Gelen Kredi",
-        "creditAdded": "{amount} kredi aldı"
+        "creditAdded": "{amount} kredi aldı",
+        "auditBalanceAdjusted": "Bir üyenin kredi bakiyesini değiştirdi"
       }
     },
     "az": {
@@ -229,7 +315,13 @@
           "credits_no_recipient": "Bu adda hesab yoxdur.",
           "credits_same_account": "Bu sizin öz hesabınızdır.",
           "credits_amount_not_positive": "Ən azı bir olmaqla tam sayda kredit göndərin.",
-          "credits_insufficient_balance": "Sizin bu qədər krediniz yoxdur."
+          "credits_insufficient_balance": "Sizin bu qədər krediniz yoxdur.",
+          "credits_adjust_zero": "Ən azı bir olmaqla tam ədəd kredit miqdarı daxil edin.",
+          "credits_adjust_too_large": "Bir dəyişiklik ən çoxu 1.000.000 kredit köçürə bilər.",
+          "credits_adjust_no_reason": "Səbəbini yazın. Üzv bu səbəbi kredit tarixçəsində oxuyur.",
+          "credits_adjust_below_zero": "Üzvün bu qədər krediti yoxdur. Yenə də götürmək üçün balansın sıfırdan aşağı düşməsinə icazə verin.",
+          "credits_adjust_balance_moved": "Siz dəyişərkən balans dəyişdi. Balansa yenidən baxıb yenidən qərar verin.",
+          "credits_adjust_no_member": "Bu üzv artıq mövcud deyil."
         },
         "history": "Əməliyyat tarixçəsi",
         "noTransactions": "Hələ əməliyyat yoxdur",
@@ -279,21 +371,52 @@
         "typeTop_up_bonus": "Yükləmə Bonusu",
         "loadCredits": "Kredit yüklə",
         "typeCrate_open": "Sandıq açıldı",
-        "typeCrate_reward": "Sandıq mükafatı"
+        "typeCrate_reward": "Sandıq mükafatı",
+        "led_title": "Kredit dəftəri",
+        "led_subtitle": "Hərəkət edən hər kredit: xərclənən, alınan, qazanılan, göndərilən və əllə dəyişdirilən.",
+        "led_member": "Üzv",
+        "led_type": "Növ",
+        "led_everyType": "Bütün növlər",
+        "led_direction": "İstiqamət",
+        "led_direction_all": "Hamısı",
+        "led_direction_in": "Daxil olan kredit",
+        "led_direction_out": "Çıxan kredit",
+        "led_balanceOf": "{name} hazırda {balance} kreditə malikdir.",
+        "led_when": "Nə vaxt",
+        "led_nobody": "Sayt",
+        "led_loadFailed": "Kredit dəftəri yüklənə bilmədi.",
+        "adj_title": "Balansı dəyiş",
+        "adj_subtitle": "Üzvün balansına kredit əlavə edin və ya çıxın. Səbəb üzvün oxuduğu sətirə yazılır, dəyişiklik isə fəaliyyət jurnalına düşür.",
+        "adj_direction": "Dəyişiklik",
+        "adj_add": "Kredit əlavə et",
+        "adj_remove": "Krediti çıx",
+        "adj_reasonHint": "Üzv bu səbəbi kredit tarixçəsində görür.",
+        "adj_allowNegative": "Balansın sıfırdan aşağı düşməsinə icazə ver",
+        "adj_allowNegativeHint": "Artıq xərclənmiş kreditlər üçün geri qaytarma halında. Balans sıfırdan yuxarı olana qədər üzv xərcləyə bilməz.",
+        "adj_confirmAddTitle": "Kredit əlavə edilsin?",
+        "adj_confirmRemoveTitle": "Kredit çıxılsın?",
+        "adj_confirmAdd": "{name} istifadəçisinə {amount} kredit əlavə ediləcək.",
+        "adj_confirmRemove": "{name} istifadəçisindən {amount} kredit çıxılacaq. Onları yalnız yeni dəyişiklik geri qaytarır.",
+        "adj_done": "{name} artıq {balance} kreditə malikdir.",
+        "adj_failed": "Balans dəyişdirilə bilmədi.",
+        "adj_fillItIn": "Üzv seçin, neçə kredit olduğunu daxil edin və səbəbini yazın."
       },
       "admin": {
         "module_credits_name": "Kredit sistemi",
         "module_credits_description": "İstifadəçilər üçün virtual valyuta pul kisəsi",
         "menu_credits_credit_settings": "Kredit parametrləri",
         "settings_credits": "Kreditlər",
-        "settings_credits_description": "Alışın nə qədəri kredit olaraq geri qayıdır."
+        "settings_credits_description": "Alışın nə qədəri kredit olaraq geri qayıdır.",
+        "menu_credits_credit_ledger": "Kredit Dəftəri",
+        "menu_credits": "Kreditlər"
       },
       "profile": {
         "notificationType_credits_credit_added": "Balansınıza kredit əlavə olundu"
       },
       "activity": {
         "kindCreditAdded": "Kreditlər qəbul edildi",
-        "creditAdded": "{amount} kredit aldı"
+        "creditAdded": "{amount} kredit aldı",
+        "auditBalanceAdjusted": "Üzvün kredit balansını dəyişdi"
       }
     },
     "de": {
@@ -309,7 +432,13 @@
           "credits_no_recipient": "Kein Konto mit diesem Namen.",
           "credits_same_account": "Das ist dein eigenes Konto.",
           "credits_amount_not_positive": "Sende eine ganze Zahl Credits, mindestens eins.",
-          "credits_insufficient_balance": "Du hast nicht so viele Credits."
+          "credits_insufficient_balance": "Du hast nicht so viele Credits.",
+          "credits_adjust_zero": "Gib eine ganze Zahl an Credits ein, mindestens eins.",
+          "credits_adjust_too_large": "Eine Änderung kann höchstens 1.000.000 Credits bewegen.",
+          "credits_adjust_no_reason": "Gib einen Grund an. Das Mitglied liest ihn in seinem Credit-Verlauf.",
+          "credits_adjust_below_zero": "Das Mitglied hat nicht so viele Credits. Erlaube einen Kontostand unter null, um sie trotzdem abzuziehen.",
+          "credits_adjust_balance_moved": "Der Kontostand hat sich während deiner Änderung geändert. Lies ihn neu und entscheide noch einmal.",
+          "credits_adjust_no_member": "Dieses Mitglied gibt es nicht mehr."
         },
         "history": "Transaktionsverlauf",
         "noTransactions": "Noch keine Transaktionen",
@@ -359,21 +488,52 @@
         "typeTop_up_bonus": "Aufladebonus",
         "loadCredits": "Credits aufladen",
         "typeCrate_open": "Kiste geöffnet",
-        "typeCrate_reward": "Kistenbelohnung"
+        "typeCrate_reward": "Kistenbelohnung",
+        "led_title": "Credit-Journal",
+        "led_subtitle": "Jeder bewegte Credit: ausgegeben, gekauft, gewonnen, gesendet und von Hand geändert.",
+        "led_member": "Mitglied",
+        "led_type": "Art",
+        "led_everyType": "Alle Arten",
+        "led_direction": "Richtung",
+        "led_direction_all": "Alle",
+        "led_direction_in": "Eingänge",
+        "led_direction_out": "Ausgänge",
+        "led_balanceOf": "{name} hat {balance} Credits.",
+        "led_when": "Wann",
+        "led_nobody": "Die Seite",
+        "led_loadFailed": "Das Journal konnte nicht geladen werden.",
+        "adj_title": "Kontostand ändern",
+        "adj_subtitle": "Füge dem Kontostand eines Mitglieds Credits hinzu oder ziehe sie ab. Der Grund steht in der Zeile, die das Mitglied liest, und die Änderung landet im Aktivitätsprotokoll.",
+        "adj_direction": "Änderung",
+        "adj_add": "Credits hinzufügen",
+        "adj_remove": "Credits abziehen",
+        "adj_reasonHint": "Das Mitglied sieht diesen Grund in seinem Credit-Verlauf.",
+        "adj_allowNegative": "Kontostand unter null erlauben",
+        "adj_allowNegativeHint": "Für eine Rückbuchung auf bereits ausgegebene Credits. Das Mitglied kann erst wieder ausgeben, wenn der Kontostand über null liegt.",
+        "adj_confirmAddTitle": "Credits hinzufügen?",
+        "adj_confirmRemoveTitle": "Credits abziehen?",
+        "adj_confirmAdd": "{name} erhält {amount} Credits.",
+        "adj_confirmRemove": "{name} werden {amount} Credits abgezogen. Nur eine weitere Änderung gibt sie zurück.",
+        "adj_done": "{name} hat jetzt {balance} Credits.",
+        "adj_failed": "Der Kontostand konnte nicht geändert werden.",
+        "adj_fillItIn": "Wähle ein Mitglied, gib die Anzahl Credits ein und nenne einen Grund."
       },
       "admin": {
         "module_credits_name": "Credit-System",
         "module_credits_description": "Virtuelles Guthabenkonto für Mitglieder",
         "menu_credits_credit_settings": "Credit-Einstellungen",
         "settings_credits": "Credits",
-        "settings_credits_description": "Wie viel eines Kaufs als Credits zurückkommt."
+        "settings_credits_description": "Wie viel eines Kaufs als Credits zurückkommt.",
+        "menu_credits_credit_ledger": "Credit-Journal",
+        "menu_credits": "Credits"
       },
       "profile": {
         "notificationType_credits_credit_added": "Credits auf dein Guthaben gebucht"
       },
       "activity": {
         "kindCreditAdded": "Credits erhalten",
-        "creditAdded": "{amount} Guthaben erhalten"
+        "creditAdded": "{amount} Guthaben erhalten",
+        "auditBalanceAdjusted": "Hat den Credit-Kontostand eines Mitglieds geändert"
       }
     },
     "es": {
@@ -389,7 +549,13 @@
           "credits_no_recipient": "No hay ninguna cuenta con ese nombre.",
           "credits_same_account": "Esa es tu propia cuenta.",
           "credits_amount_not_positive": "Envía un número entero de créditos, como mínimo uno.",
-          "credits_insufficient_balance": "No tienes tantos créditos."
+          "credits_insufficient_balance": "No tienes tantos créditos.",
+          "credits_adjust_zero": "Introduce un número entero de créditos, al menos uno.",
+          "credits_adjust_too_large": "Un cambio puede mover como máximo 1.000.000 de créditos.",
+          "credits_adjust_no_reason": "Indica el motivo. El miembro lo lee en su historial de créditos.",
+          "credits_adjust_below_zero": "El miembro no tiene tantos créditos. Permite que el saldo baje de cero para quitarlos de todos modos.",
+          "credits_adjust_balance_moved": "El saldo cambió mientras lo modificabas. Vuelve a leerlo y decide de nuevo.",
+          "credits_adjust_no_member": "Ese miembro ya no existe."
         },
         "history": "Historial de transacciones",
         "noTransactions": "Aún no hay transacciones",
@@ -439,21 +605,52 @@
         "typeTop_up_bonus": "Bonificación de recarga",
         "loadCredits": "Recargar créditos",
         "typeCrate_open": "Caja abierta",
-        "typeCrate_reward": "Recompensa de caja"
+        "typeCrate_reward": "Recompensa de caja",
+        "led_title": "Libro de créditos",
+        "led_subtitle": "Cada crédito que se movió: gastado, comprado, ganado, enviado y cambiado a mano.",
+        "led_member": "Miembro",
+        "led_type": "Tipo",
+        "led_everyType": "Todos los tipos",
+        "led_direction": "Dirección",
+        "led_direction_all": "Todo",
+        "led_direction_in": "Entradas",
+        "led_direction_out": "Salidas",
+        "led_balanceOf": "{name} tiene {balance} créditos.",
+        "led_when": "Cuándo",
+        "led_nobody": "El sitio",
+        "led_loadFailed": "No se pudo cargar el libro de créditos.",
+        "adj_title": "Cambiar un saldo",
+        "adj_subtitle": "Añade créditos al saldo de un miembro o quítaselos. El motivo va en la fila que lee el miembro y el cambio queda en el registro de actividad.",
+        "adj_direction": "Cambio",
+        "adj_add": "Añadir créditos",
+        "adj_remove": "Quitar créditos",
+        "adj_reasonHint": "El miembro ve este motivo en su historial de créditos.",
+        "adj_allowNegative": "Permitir que el saldo baje de cero",
+        "adj_allowNegativeHint": "Para un contracargo de créditos ya gastados. El miembro no podrá gastar hasta que el saldo vuelva a estar por encima de cero.",
+        "adj_confirmAddTitle": "¿Añadir créditos?",
+        "adj_confirmRemoveTitle": "¿Quitar créditos?",
+        "adj_confirmAdd": "{name} recibirá {amount} créditos.",
+        "adj_confirmRemove": "Se quitarán {amount} créditos a {name}. Solo otro cambio los devuelve.",
+        "adj_done": "{name} tiene ahora {balance} créditos.",
+        "adj_failed": "No se pudo cambiar el saldo.",
+        "adj_fillItIn": "Elige un miembro, indica cuántos créditos y explica el motivo."
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
         "module_credits_description": "Monedero de moneda virtual para los usuarios",
         "menu_credits_credit_settings": "Ajustes de créditos",
         "settings_credits": "Créditos",
-        "settings_credits_description": "Qué parte de una compra vuelve en forma de créditos."
+        "settings_credits_description": "Qué parte de una compra vuelve en forma de créditos.",
+        "menu_credits_credit_ledger": "Libro de Créditos",
+        "menu_credits": "Créditos"
       },
       "profile": {
         "notificationType_credits_credit_added": "Créditos añadidos a tu saldo"
       },
       "activity": {
         "kindCreditAdded": "Créditos recibidos",
-        "creditAdded": "Recibió {amount} créditos"
+        "creditAdded": "Recibió {amount} créditos",
+        "auditBalanceAdjusted": "Cambió el saldo de créditos de un miembro"
       }
     },
     "et": {
@@ -469,7 +666,13 @@
           "credits_no_recipient": "Sellise nimega kontot pole.",
           "credits_same_account": "See on sinu enda konto.",
           "credits_amount_not_positive": "Saada täisarv krediite, vähemalt üks.",
-          "credits_insufficient_balance": "Sul pole nii palju krediite."
+          "credits_insufficient_balance": "Sul pole nii palju krediite.",
+          "credits_adjust_zero": "Sisesta krediitide täisarv, vähemalt üks.",
+          "credits_adjust_too_large": "Üks muudatus võib liigutada kõige rohkem 1 000 000 krediiti.",
+          "credits_adjust_no_reason": "Kirjuta põhjus. Liige näeb seda oma krediidiajaloos.",
+          "credits_adjust_below_zero": "Liikmel pole nii palju krediiti. Luba saldol minna alla nulli, et need ikkagi ära võtta.",
+          "credits_adjust_balance_moved": "Saldo muutus sinu muutmise ajal. Loe see uuesti ja otsusta uuesti.",
+          "credits_adjust_no_member": "Seda liiget enam pole."
         },
         "history": "Tehingute ajalugu",
         "noTransactions": "Tehinguid pole veel",
@@ -519,21 +722,52 @@
         "typeTop_up_bonus": "Laadimisboonus",
         "loadCredits": "Laadi krediite",
         "typeCrate_open": "Kast avatud",
-        "typeCrate_reward": "Kasti auhind"
+        "typeCrate_reward": "Kasti auhind",
+        "led_title": "Krediidiraamat",
+        "led_subtitle": "Iga liikunud krediit: kulutatud, ostetud, võidetud, saadetud ja käsitsi muudetud.",
+        "led_member": "Liige",
+        "led_type": "Liik",
+        "led_everyType": "Kõik liigid",
+        "led_direction": "Suund",
+        "led_direction_all": "Kõik",
+        "led_direction_in": "Sissetulek",
+        "led_direction_out": "Väljaminek",
+        "led_balanceOf": "Kasutajal {name} on {balance} krediiti.",
+        "led_when": "Millal",
+        "led_nobody": "Sait",
+        "led_loadFailed": "Krediidiraamatut ei õnnestunud laadida.",
+        "adj_title": "Muuda saldot",
+        "adj_subtitle": "Lisa liikme saldole krediiti või võta seda maha. Põhjus kirjutatakse reale, mida liige loeb, ja muudatus läheb tegevuslogisse.",
+        "adj_direction": "Muudatus",
+        "adj_add": "Lisa krediiti",
+        "adj_remove": "Võta krediiti maha",
+        "adj_reasonHint": "Liige näeb seda põhjust oma krediidiajaloos.",
+        "adj_allowNegative": "Luba saldol minna alla nulli",
+        "adj_allowNegativeHint": "Juba kulutatud krediidi tagasinõude jaoks. Liige ei saa kulutada enne, kui saldo on üle nulli.",
+        "adj_confirmAddTitle": "Lisada krediiti?",
+        "adj_confirmRemoveTitle": "Võtta krediiti maha?",
+        "adj_confirmAdd": "Kasutaja {name} saab {amount} krediiti.",
+        "adj_confirmRemove": "Kasutajalt {name} võetakse {amount} krediiti. Need tuleb tagasi ainult uue muudatusega.",
+        "adj_done": "Kasutajal {name} on nüüd {balance} krediiti.",
+        "adj_failed": "Saldot ei õnnestunud muuta.",
+        "adj_fillItIn": "Vali liige, sisesta krediitide arv ja kirjuta põhjus."
       },
       "admin": {
         "module_credits_name": "Krediidisüsteem",
         "module_credits_description": "Kasutajate virtuaalse valuuta rahakott",
         "menu_credits_credit_settings": "Krediidi seaded",
         "settings_credits": "Krediidid",
-        "settings_credits_description": "Kui suur osa ostust tuleb krediitidena tagasi."
+        "settings_credits_description": "Kui suur osa ostust tuleb krediitidena tagasi.",
+        "menu_credits_credit_ledger": "Krediidiraamat",
+        "menu_credits": "Krediidid"
       },
       "profile": {
         "notificationType_credits_credit_added": "Krediite lisati sinu saldole"
       },
       "activity": {
         "kindCreditAdded": "Krediite saadud",
-        "creditAdded": "Sai {amount} krediiti"
+        "creditAdded": "Sai {amount} krediiti",
+        "auditBalanceAdjusted": "Muutis liikme krediidisaldot"
       }
     },
     "fr": {
@@ -549,7 +783,13 @@
           "credits_no_recipient": "Aucun compte ne porte ce nom.",
           "credits_same_account": "C’est votre propre compte.",
           "credits_amount_not_positive": "Indiquez un nombre entier de crédits, au moins un.",
-          "credits_insufficient_balance": "Vous n’avez pas autant de crédits."
+          "credits_insufficient_balance": "Vous n’avez pas autant de crédits.",
+          "credits_adjust_zero": "Saisissez un nombre entier de crédits, au moins un.",
+          "credits_adjust_too_large": "Une modification peut déplacer au plus 1 000 000 crédits.",
+          "credits_adjust_no_reason": "Indiquez la raison. Le membre la lit dans son historique de crédits.",
+          "credits_adjust_below_zero": "Le membre ne possède pas autant de crédits. Autorisez un solde négatif pour les retirer quand même.",
+          "credits_adjust_balance_moved": "Le solde a changé pendant votre modification. Relisez-le et décidez à nouveau.",
+          "credits_adjust_no_member": "Ce membre n'existe plus."
         },
         "history": "Historique des transactions",
         "noTransactions": "Aucune transaction pour le moment",
@@ -599,21 +839,52 @@
         "typeTop_up_bonus": "Bonus de recharge",
         "loadCredits": "Recharger des crédits",
         "typeCrate_open": "Caisse ouverte",
-        "typeCrate_reward": "Récompense de caisse"
+        "typeCrate_reward": "Récompense de caisse",
+        "led_title": "Registre des crédits",
+        "led_subtitle": "Chaque crédit qui a bougé : dépensé, acheté, gagné, envoyé et modifié à la main.",
+        "led_member": "Membre",
+        "led_type": "Type",
+        "led_everyType": "Tous les types",
+        "led_direction": "Sens",
+        "led_direction_all": "Tout",
+        "led_direction_in": "Entrées",
+        "led_direction_out": "Sorties",
+        "led_balanceOf": "{name} possède {balance} crédits.",
+        "led_when": "Quand",
+        "led_nobody": "Le site",
+        "led_loadFailed": "Le registre n'a pas pu être chargé.",
+        "adj_title": "Modifier un solde",
+        "adj_subtitle": "Ajoutez des crédits au solde d'un membre ou retirez-en. La raison figure sur la ligne que lit le membre et la modification va dans le journal d'activité.",
+        "adj_direction": "Modification",
+        "adj_add": "Ajouter des crédits",
+        "adj_remove": "Retirer des crédits",
+        "adj_reasonHint": "Le membre voit cette raison dans son historique de crédits.",
+        "adj_allowNegative": "Autoriser un solde négatif",
+        "adj_allowNegativeHint": "Pour une rétrofacturation sur des crédits déjà dépensés. Le membre ne pourra plus dépenser tant que le solde n'est pas repassé au-dessus de zéro.",
+        "adj_confirmAddTitle": "Ajouter des crédits ?",
+        "adj_confirmRemoveTitle": "Retirer des crédits ?",
+        "adj_confirmAdd": "{name} recevra {amount} crédits.",
+        "adj_confirmRemove": "{amount} crédits seront retirés à {name}. Seule une autre modification les rendra.",
+        "adj_done": "{name} possède maintenant {balance} crédits.",
+        "adj_failed": "Le solde n'a pas pu être modifié.",
+        "adj_fillItIn": "Choisissez un membre, saisissez le nombre de crédits et indiquez la raison."
       },
       "admin": {
         "module_credits_name": "Système de crédits",
         "module_credits_description": "Portefeuille de monnaie virtuelle pour les utilisateurs",
         "menu_credits_credit_settings": "Paramètres des crédits",
         "settings_credits": "Crédits",
-        "settings_credits_description": "Part d’un achat restituée en crédits."
+        "settings_credits_description": "Part d’un achat restituée en crédits.",
+        "menu_credits_credit_ledger": "Registre des Crédits",
+        "menu_credits": "Crédits"
       },
       "profile": {
         "notificationType_credits_credit_added": "Crédits ajoutés à votre solde"
       },
       "activity": {
         "kindCreditAdded": "Crédits reçus",
-        "creditAdded": "A reçu {amount} crédits"
+        "creditAdded": "A reçu {amount} crédits",
+        "auditBalanceAdjusted": "A modifié le solde de crédits d'un membre"
       }
     },
     "it": {
@@ -629,7 +900,13 @@
           "credits_no_recipient": "Nessun account con questo nome.",
           "credits_same_account": "Questo è il tuo account.",
           "credits_amount_not_positive": "Invia un numero intero di crediti, almeno uno.",
-          "credits_insufficient_balance": "Non hai così tanti crediti."
+          "credits_insufficient_balance": "Non hai così tanti crediti.",
+          "credits_adjust_zero": "Inserisci un numero intero di crediti, almeno uno.",
+          "credits_adjust_too_large": "Una modifica può spostare al massimo 1.000.000 crediti.",
+          "credits_adjust_no_reason": "Indica il motivo. Il membro lo legge nella sua cronologia dei crediti.",
+          "credits_adjust_below_zero": "Il membro non ha così tanti crediti. Consenti al saldo di scendere sotto zero per toglierli comunque.",
+          "credits_adjust_balance_moved": "Il saldo è cambiato mentre lo modificavi. Rileggilo e decidi di nuovo.",
+          "credits_adjust_no_member": "Questo membro non esiste più."
         },
         "history": "Cronologia transazioni",
         "noTransactions": "Nessuna transazione ancora",
@@ -679,21 +956,52 @@
         "typeTop_up_bonus": "Bonus ricarica",
         "loadCredits": "Ricarica crediti",
         "typeCrate_open": "Cassa aperta",
-        "typeCrate_reward": "Premio di una cassa"
+        "typeCrate_reward": "Premio di una cassa",
+        "led_title": "Registro dei crediti",
+        "led_subtitle": "Ogni credito che si è mosso: speso, comprato, vinto, inviato e cambiato a mano.",
+        "led_member": "Membro",
+        "led_type": "Tipo",
+        "led_everyType": "Tutti i tipi",
+        "led_direction": "Direzione",
+        "led_direction_all": "Tutto",
+        "led_direction_in": "Entrate",
+        "led_direction_out": "Uscite",
+        "led_balanceOf": "{name} ha {balance} crediti.",
+        "led_when": "Quando",
+        "led_nobody": "Il sito",
+        "led_loadFailed": "Non è stato possibile caricare il registro.",
+        "adj_title": "Modifica un saldo",
+        "adj_subtitle": "Aggiungi crediti al saldo di un membro o toglili. Il motivo va sulla riga che il membro legge e la modifica finisce nel registro attività.",
+        "adj_direction": "Modifica",
+        "adj_add": "Aggiungi crediti",
+        "adj_remove": "Togli crediti",
+        "adj_reasonHint": "Il membro vede questo motivo nella sua cronologia dei crediti.",
+        "adj_allowNegative": "Consenti al saldo di scendere sotto zero",
+        "adj_allowNegativeHint": "Per uno storno su crediti già spesi. Il membro non potrà spendere finché il saldo non torna sopra zero.",
+        "adj_confirmAddTitle": "Aggiungere crediti?",
+        "adj_confirmRemoveTitle": "Togliere crediti?",
+        "adj_confirmAdd": "{name} riceverà {amount} crediti.",
+        "adj_confirmRemove": "A {name} verranno tolti {amount} crediti. Solo un'altra modifica li restituisce.",
+        "adj_done": "{name} ora ha {balance} crediti.",
+        "adj_failed": "Non è stato possibile modificare il saldo.",
+        "adj_fillItIn": "Scegli un membro, inserisci quanti crediti e indica il motivo."
       },
       "admin": {
         "module_credits_name": "Sistema di crediti",
         "module_credits_description": "Portafoglio di valuta virtuale per gli utenti",
         "menu_credits_credit_settings": "Impostazioni crediti",
         "settings_credits": "Crediti",
-        "settings_credits_description": "Quanta parte di un acquisto torna come crediti."
+        "settings_credits_description": "Quanta parte di un acquisto torna come crediti.",
+        "menu_credits_credit_ledger": "Registro dei Crediti",
+        "menu_credits": "Crediti"
       },
       "profile": {
         "notificationType_credits_credit_added": "Crediti aggiunti al tuo saldo"
       },
       "activity": {
         "kindCreditAdded": "Crediti ricevuti",
-        "creditAdded": "Ha ricevuto {amount} crediti"
+        "creditAdded": "Ha ricevuto {amount} crediti",
+        "auditBalanceAdjusted": "Ha modificato il saldo crediti di un membro"
       }
     },
     "pl": {
@@ -709,7 +1017,13 @@
           "credits_no_recipient": "Nie ma konta o tej nazwie.",
           "credits_same_account": "To Twoje własne konto.",
           "credits_amount_not_positive": "Wyślij całkowitą liczbę kredytów, co najmniej jeden.",
-          "credits_insufficient_balance": "Nie masz tylu kredytów."
+          "credits_insufficient_balance": "Nie masz tylu kredytów.",
+          "credits_adjust_zero": "Wpisz całkowitą liczbę kredytów, co najmniej jeden.",
+          "credits_adjust_too_large": "Jedna zmiana może przenieść najwyżej 1 000 000 kredytów.",
+          "credits_adjust_no_reason": "Podaj powód. Członek przeczyta go w swojej historii kredytów.",
+          "credits_adjust_below_zero": "Członek nie ma tylu kredytów. Zezwól na saldo poniżej zera, aby i tak je odebrać.",
+          "credits_adjust_balance_moved": "Saldo zmieniło się w trakcie Twojej zmiany. Odczytaj je ponownie i zdecyduj jeszcze raz.",
+          "credits_adjust_no_member": "Ten członek już nie istnieje."
         },
         "history": "Historia transakcji",
         "noTransactions": "Nie ma jeszcze transakcji",
@@ -759,21 +1073,52 @@
         "typeTop_up_bonus": "Bonus za doładowanie",
         "loadCredits": "Doładuj kredyty",
         "typeCrate_open": "Otwarta skrzynka",
-        "typeCrate_reward": "Nagroda ze skrzynki"
+        "typeCrate_reward": "Nagroda ze skrzynki",
+        "led_title": "Księga kredytów",
+        "led_subtitle": "Każdy kredyt, który się przesunął: wydany, kupiony, wygrany, wysłany i zmieniony ręcznie.",
+        "led_member": "Członek",
+        "led_type": "Rodzaj",
+        "led_everyType": "Wszystkie rodzaje",
+        "led_direction": "Kierunek",
+        "led_direction_all": "Wszystko",
+        "led_direction_in": "Wpływy",
+        "led_direction_out": "Wypływy",
+        "led_balanceOf": "{name} ma {balance} kredytów.",
+        "led_when": "Kiedy",
+        "led_nobody": "Strona",
+        "led_loadFailed": "Nie udało się wczytać księgi kredytów.",
+        "adj_title": "Zmień saldo",
+        "adj_subtitle": "Dodaj kredyty do salda członka lub je odejmij. Powód trafia do wiersza, który czyta członek, a zmiana do dziennika aktywności.",
+        "adj_direction": "Zmiana",
+        "adj_add": "Dodaj kredyty",
+        "adj_remove": "Odejmij kredyty",
+        "adj_reasonHint": "Członek zobaczy ten powód w swojej historii kredytów.",
+        "adj_allowNegative": "Zezwól na saldo poniżej zera",
+        "adj_allowNegativeHint": "Na wypadek obciążenia zwrotnego za już wydane kredyty. Członek nie wyda nic, dopóki saldo nie będzie powyżej zera.",
+        "adj_confirmAddTitle": "Dodać kredyty?",
+        "adj_confirmRemoveTitle": "Odjąć kredyty?",
+        "adj_confirmAdd": "{name} otrzyma {amount} kredytów.",
+        "adj_confirmRemove": "{name} straci {amount} kredytów. Odda je tylko kolejna zmiana.",
+        "adj_done": "{name} ma teraz {balance} kredytów.",
+        "adj_failed": "Nie udało się zmienić salda.",
+        "adj_fillItIn": "Wybierz członka, wpisz liczbę kredytów i podaj powód."
       },
       "admin": {
         "module_credits_name": "System kredytów",
         "module_credits_description": "Wirtualny portfel walutowy dla użytkowników",
         "menu_credits_credit_settings": "Ustawienia kredytów",
         "settings_credits": "Kredyty",
-        "settings_credits_description": "Jaka część zakupu wraca jako kredyty."
+        "settings_credits_description": "Jaka część zakupu wraca jako kredyty.",
+        "menu_credits_credit_ledger": "Księga Kredytów",
+        "menu_credits": "Kredyty"
       },
       "profile": {
         "notificationType_credits_credit_added": "Kredyty dodane do Twojego salda"
       },
       "activity": {
         "kindCreditAdded": "Otrzymano kredyty",
-        "creditAdded": "Otrzymane kredyty: {amount}"
+        "creditAdded": "Otrzymane kredyty: {amount}",
+        "auditBalanceAdjusted": "Zmienił saldo kredytów członka"
       }
     },
     "pt": {
@@ -789,7 +1134,13 @@
           "credits_no_recipient": "Não existe conta com esse nome.",
           "credits_same_account": "Essa é a sua própria conta.",
           "credits_amount_not_positive": "Envie um número inteiro de créditos, de pelo menos um.",
-          "credits_insufficient_balance": "Você não tem tantos créditos."
+          "credits_insufficient_balance": "Você não tem tantos créditos.",
+          "credits_adjust_zero": "Informe um número inteiro de créditos, pelo menos um.",
+          "credits_adjust_too_large": "Uma alteração pode mover no máximo 1.000.000 de créditos.",
+          "credits_adjust_no_reason": "Diga o motivo. O membro lê o motivo no histórico de créditos.",
+          "credits_adjust_below_zero": "O membro não tem tantos créditos. Permita que o saldo fique abaixo de zero para retirá-los mesmo assim.",
+          "credits_adjust_balance_moved": "O saldo mudou enquanto você o alterava. Leia-o de novo e decida novamente.",
+          "credits_adjust_no_member": "Esse membro não existe mais."
         },
         "history": "Histórico de transações",
         "noTransactions": "Nenhuma transação ainda",
@@ -839,21 +1190,52 @@
         "typeTop_up_bonus": "Bónus de carregamento",
         "loadCredits": "Carregar créditos",
         "typeCrate_open": "Caixa aberta",
-        "typeCrate_reward": "Recompensa de caixa"
+        "typeCrate_reward": "Recompensa de caixa",
+        "led_title": "Livro de créditos",
+        "led_subtitle": "Cada crédito que se moveu: gasto, comprado, ganho, enviado e alterado à mão.",
+        "led_member": "Membro",
+        "led_type": "Tipo",
+        "led_everyType": "Todos os tipos",
+        "led_direction": "Direção",
+        "led_direction_all": "Tudo",
+        "led_direction_in": "Entradas",
+        "led_direction_out": "Saídas",
+        "led_balanceOf": "{name} tem {balance} créditos.",
+        "led_when": "Quando",
+        "led_nobody": "O site",
+        "led_loadFailed": "Não foi possível carregar o livro de créditos.",
+        "adj_title": "Alterar um saldo",
+        "adj_subtitle": "Adicione créditos ao saldo de um membro ou retire-os. O motivo vai na linha que o membro lê e a alteração vai para o registro de atividade.",
+        "adj_direction": "Alteração",
+        "adj_add": "Adicionar créditos",
+        "adj_remove": "Remover créditos",
+        "adj_reasonHint": "O membro vê este motivo no histórico de créditos.",
+        "adj_allowNegative": "Permitir que o saldo fique abaixo de zero",
+        "adj_allowNegativeHint": "Para um estorno de créditos já gastos. O membro não poderá gastar até o saldo voltar a ficar acima de zero.",
+        "adj_confirmAddTitle": "Adicionar créditos?",
+        "adj_confirmRemoveTitle": "Remover créditos?",
+        "adj_confirmAdd": "{name} receberá {amount} créditos.",
+        "adj_confirmRemove": "Serão retirados {amount} créditos de {name}. Só outra alteração os devolve.",
+        "adj_done": "{name} agora tem {balance} créditos.",
+        "adj_failed": "Não foi possível alterar o saldo.",
+        "adj_fillItIn": "Escolha um membro, informe quantos créditos e diga o motivo."
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
         "module_credits_description": "Carteira de moeda virtual para os usuários",
         "menu_credits_credit_settings": "Configurações de créditos",
         "settings_credits": "Créditos",
-        "settings_credits_description": "Quanto de uma compra volta como créditos."
+        "settings_credits_description": "Quanto de uma compra volta como créditos.",
+        "menu_credits_credit_ledger": "Livro de Créditos",
+        "menu_credits": "Créditos"
       },
       "profile": {
         "notificationType_credits_credit_added": "Créditos adicionados ao seu saldo"
       },
       "activity": {
         "kindCreditAdded": "Créditos recebidos",
-        "creditAdded": "Recebeu {amount} créditos"
+        "creditAdded": "Recebeu {amount} créditos",
+        "auditBalanceAdjusted": "Alterou o saldo de créditos de um membro"
       }
     },
     "ru": {
@@ -869,7 +1251,13 @@
           "credits_no_recipient": "Нет участника с таким именем.",
           "credits_same_account": "Это ваша собственная учетная запись.",
           "credits_amount_not_positive": "Укажите целое количество кредитов, не меньше одного.",
-          "credits_insufficient_balance": "У вас недостаточно кредитов."
+          "credits_insufficient_balance": "У вас недостаточно кредитов.",
+          "credits_adjust_zero": "Введите целое число кредитов, не меньше одного.",
+          "credits_adjust_too_large": "Одно изменение может переместить не больше 1 000 000 кредитов.",
+          "credits_adjust_no_reason": "Укажите причину. Участник увидит её в истории кредитов.",
+          "credits_adjust_below_zero": "У участника нет столько кредитов. Разрешите балансу уйти ниже нуля, чтобы всё равно их списать.",
+          "credits_adjust_balance_moved": "Баланс изменился, пока вы его меняли. Посмотрите его снова и решите ещё раз.",
+          "credits_adjust_no_member": "Этого участника больше нет."
         },
         "history": "История операций",
         "noTransactions": "Операций пока нет",
@@ -919,21 +1307,52 @@
         "typeTop_up_bonus": "Бонус за пополнение",
         "loadCredits": "Пополнить кредиты",
         "typeCrate_open": "Открытие сундука",
-        "typeCrate_reward": "Награда из сундука"
+        "typeCrate_reward": "Награда из сундука",
+        "led_title": "Журнал кредитов",
+        "led_subtitle": "Каждое движение кредитов: потрачено, куплено, выиграно, отправлено и изменено вручную.",
+        "led_member": "Участник",
+        "led_type": "Вид",
+        "led_everyType": "Все виды",
+        "led_direction": "Направление",
+        "led_direction_all": "Все",
+        "led_direction_in": "Поступления",
+        "led_direction_out": "Списания",
+        "led_balanceOf": "У {name} {balance} кредитов.",
+        "led_when": "Когда",
+        "led_nobody": "Сайт",
+        "led_loadFailed": "Не удалось загрузить журнал.",
+        "adj_title": "Изменить баланс",
+        "adj_subtitle": "Начислите кредиты на баланс участника или спишите их. Причина записывается в строку, которую видит участник, а изменение попадает в журнал действий.",
+        "adj_direction": "Изменение",
+        "adj_add": "Начислить кредиты",
+        "adj_remove": "Списать кредиты",
+        "adj_reasonHint": "Участник увидит эту причину в истории кредитов.",
+        "adj_allowNegative": "Разрешить баланс ниже нуля",
+        "adj_allowNegativeHint": "Для возврата платежа за уже потраченные кредиты. Участник не сможет тратить, пока баланс снова не станет выше нуля.",
+        "adj_confirmAddTitle": "Начислить кредиты?",
+        "adj_confirmRemoveTitle": "Списать кредиты?",
+        "adj_confirmAdd": "{name} получит {amount} кредитов.",
+        "adj_confirmRemove": "У {name} будет списано {amount} кредитов. Вернуть их можно только новым изменением.",
+        "adj_done": "Теперь у {name} {balance} кредитов.",
+        "adj_failed": "Не удалось изменить баланс.",
+        "adj_fillItIn": "Выберите участника, введите число кредитов и укажите причину."
       },
       "admin": {
         "module_credits_name": "Система кредитов",
         "module_credits_description": "Кошелек виртуальной валюты для участников",
         "menu_credits_credit_settings": "Настройки кредитов",
         "settings_credits": "Кредиты",
-        "settings_credits_description": "Какая часть покупки возвращается кредитами."
+        "settings_credits_description": "Какая часть покупки возвращается кредитами.",
+        "menu_credits_credit_ledger": "Журнал Кредитов",
+        "menu_credits": "Кредиты"
       },
       "profile": {
         "notificationType_credits_credit_added": "Кредиты зачислены на ваш баланс"
       },
       "activity": {
         "kindCreditAdded": "Получены кредиты",
-        "creditAdded": "Получено кредитов: {amount}"
+        "creditAdded": "Получено кредитов: {amount}",
+        "auditBalanceAdjusted": "Изменил баланс кредитов участника"
       }
     },
     "zh": {
@@ -949,7 +1368,13 @@
           "credits_no_recipient": "没有该名称的账户。",
           "credits_same_account": "这是你自己的账户。",
           "credits_amount_not_positive": "请发送整数积分，至少为 1。",
-          "credits_insufficient_balance": "你的积分不足。"
+          "credits_insufficient_balance": "你的积分不足。",
+          "credits_adjust_zero": "请输入整数个积分，至少为一。",
+          "credits_adjust_too_large": "一次更改最多可变动 1,000,000 积分。",
+          "credits_adjust_no_reason": "请说明原因。会员会在积分记录中看到这条原因。",
+          "credits_adjust_below_zero": "该会员没有这么多积分。如仍要扣除，请允许余额低于零。",
+          "credits_adjust_balance_moved": "在您修改时余额已发生变化。请重新查看余额后再决定。",
+          "credits_adjust_no_member": "该会员已不存在。"
         },
         "history": "交易记录",
         "noTransactions": "暂无交易记录",
@@ -999,21 +1424,52 @@
         "typeTop_up_bonus": "充值奖励",
         "loadCredits": "充值积分",
         "typeCrate_open": "打开宝箱",
-        "typeCrate_reward": "宝箱奖励"
+        "typeCrate_reward": "宝箱奖励",
+        "led_title": "积分流水",
+        "led_subtitle": "每一笔积分变动：消费、购买、获奖、转出以及手动更改。",
+        "led_member": "会员",
+        "led_type": "类型",
+        "led_everyType": "全部类型",
+        "led_direction": "方向",
+        "led_direction_all": "全部",
+        "led_direction_in": "收入",
+        "led_direction_out": "支出",
+        "led_balanceOf": "{name} 当前有 {balance} 积分。",
+        "led_when": "时间",
+        "led_nobody": "站点",
+        "led_loadFailed": "无法加载积分流水。",
+        "adj_title": "调整余额",
+        "adj_subtitle": "为会员余额增加或扣除积分。原因会写在会员看到的那一行，更改会记入活动日志。",
+        "adj_direction": "更改",
+        "adj_add": "增加积分",
+        "adj_remove": "扣除积分",
+        "adj_reasonHint": "会员会在积分记录中看到这条原因。",
+        "adj_allowNegative": "允许余额低于零",
+        "adj_allowNegativeHint": "用于已消费积分的拒付。在余额回到零以上之前，会员无法再消费。",
+        "adj_confirmAddTitle": "增加积分？",
+        "adj_confirmRemoveTitle": "扣除积分？",
+        "adj_confirmAdd": "将给 {name} 增加 {amount} 积分。",
+        "adj_confirmRemove": "将从 {name} 扣除 {amount} 积分。只能通过再次调整退回。",
+        "adj_done": "{name} 现在有 {balance} 积分。",
+        "adj_failed": "无法调整余额。",
+        "adj_fillItIn": "请选择会员、填写积分数量并说明原因。"
       },
       "admin": {
         "module_credits_name": "积分系统",
         "module_credits_description": "为用户提供的虚拟货币钱包",
         "menu_credits_credit_settings": "积分设置",
         "settings_credits": "积分",
-        "settings_credits_description": "一次购买可返还多少积分。"
+        "settings_credits_description": "一次购买可返还多少积分。",
+        "menu_credits_credit_ledger": "积分流水",
+        "menu_credits": "积分"
       },
       "profile": {
         "notificationType_credits_credit_added": "积分已添加到你的余额"
       },
       "activity": {
         "kindCreditAdded": "已收到积分",
-        "creditAdded": "获得 {amount} 积分"
+        "creditAdded": "获得 {amount} 积分",
+        "auditBalanceAdjusted": "调整了会员的积分余额"
       }
     }
   },
@@ -1063,6 +1519,16 @@
       "path": "/settings/credits",
       "component": "pages/admin/page.tsx",
       "permission": "credits.manage"
+    },
+    {
+      "path": "/credits/ledger",
+      "component": "pages/admin/ledger/page.tsx",
+      "permission": "credits.view"
+    },
+    {
+      "path": "/credits/adjust",
+      "component": "pages/admin/adjust/page.tsx",
+      "permission": "credits.manage"
     }
   ],
   "settingsCards": [
@@ -1101,6 +1567,19 @@
       "icon": "Coins",
       "group": "commerce",
       "permission": "credits.manage"
+    },
+    {
+      "label": "Credit Ledger",
+      "path": "/credits/ledger",
+      "icon": "BookOpen",
+      "group": "commerce",
+      "permission": "credits.view"
+    }
+  ],
+  "auditActions": [
+    {
+      "action": "credits.balance.adjusted",
+      "nameKey": "auditBalanceAdjusted"
     }
   ]
 }
