@@ -9,6 +9,7 @@ import {
     type AvailabilityValue,
 } from "../../_fields/AvailabilityFields";
 import { timeFromMinutes } from "../../_fields/time-of-day";
+import { isDeliveryMode, type DeliveryMode } from "../../../../../lib/delivery-mode";
 import { GrantFields } from "../../_fields/GrantFields";
 import { InGameFields } from "../../_fields/InGameFields";
 import { EMPTY_IN_GAME, inGameFrom, inGamePayload, type InGameValue } from "../../_fields/in-game-payload";
@@ -78,6 +79,7 @@ export default function EditProductPage(props: PageProps) {
         isFeatured: false,
         giftable: true,
         commandsPerUnit: false,
+        deliveryMode: "inherit" as DeliveryMode,
         subscriptionInterval: "month" as string,
         subscriptionIntervalCount: "1",
     });
@@ -121,6 +123,7 @@ export default function EditProductPage(props: PageProps) {
                     isFeatured: p.isFeatured ?? false,
                     giftable: p.giftable ?? true,
                     commandsPerUnit: p.commandsPerUnit ?? false,
+                    deliveryMode: isDeliveryMode(p.deliveryMode) ? p.deliveryMode : "inherit",
                     subscriptionInterval: p.subscriptionInterval || "month",
                     subscriptionIntervalCount: p.subscriptionIntervalCount ? String(p.subscriptionIntervalCount) : "1",
                 });
@@ -199,6 +202,7 @@ export default function EditProductPage(props: PageProps) {
                 isFeatured: form.isFeatured,
                 giftable: form.giftable,
                 commandsPerUnit: form.commandsPerUnit,
+                deliveryMode: form.deliveryMode,
                 subscriptionInterval: form.type === "SUBSCRIPTION" ? form.subscriptionInterval : null,
                 subscriptionIntervalCount: form.type === "SUBSCRIPTION" ? parseInt(form.subscriptionIntervalCount) || 1 : null,
                 ...availabilityPayload(availability),
@@ -428,6 +432,22 @@ export default function EditProductPage(props: PageProps) {
                                     label={t("adm_commandsPerUnit")}
                                     description={t("adm_commandsPerUnitHint")}
                                 />
+                                <div className="space-y-1">
+                                    <Label htmlFor="deliveryMode">{t("adm_deliveryMode")}</Label>
+                                    <NativeSelect
+                                        id="deliveryMode"
+                                        value={form.deliveryMode}
+                                        onChange={(e) =>
+                                            setForm({ ...form, deliveryMode: isDeliveryMode(e.target.value) ? e.target.value : "inherit" })
+                                        }
+                                        className="w-full"
+                                    >
+                                        <option value="inherit">{t("adm_deliveryModeInherit")}</option>
+                                        <option value="now">{t("adm_deliveryModeNow")}</option>
+                                        <option value="hold">{t("adm_deliveryModeHold")}</option>
+                                    </NativeSelect>
+                                    <p className="text-sm text-muted-foreground">{t("adm_deliveryModeHint")}</p>
+                                </div>
                                 <ProductCommandsEditor productId={productId} />
                             </CardContent>
                         </Card>

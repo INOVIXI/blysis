@@ -342,6 +342,13 @@
       "default": false,
       "label": "Credits-only store",
       "description": "Prices show as credits and orders are paid only from the credit balance. Payment gateways are then used only to load credits."
+    },
+    {
+      "key": "holdPurchasesInChest",
+      "type": "boolean",
+      "default": false,
+      "label": "Hold purchases in the chest",
+      "description": "Leave a paid purchase in the buyer's chest until they claim it, instead of running its commands at once. A product can choose for itself."
     }
   ],
   "navGroups": [
@@ -1833,7 +1840,13 @@
         "topUp_campaignTitle": "Top-up bonus is on",
         "topUp_campaignTier": "Pay {amount} or more: +{percent}%",
         "topUp_campaignEnds": "Ends in {days, plural, one {# day} other {# days}} {hours, plural, one {# hour} other {# hours}}",
-        "topUp_campaignEndsSoon": "Ends in {hours, plural, one {# hour} other {# hours}} {minutes, plural, one {# minute} other {# minutes}}"
+        "topUp_campaignEndsSoon": "Ends in {hours, plural, one {# hour} other {# hours}} {minutes, plural, one {# minute} other {# minutes}}",
+        "adm_deliveryMode": "When the purchase is delivered",
+        "adm_deliveryModeInherit": "As the shop does by default",
+        "adm_deliveryModeNow": "At once, when it is paid for",
+        "adm_deliveryModeHold": "Held in the chest until the buyer claims it",
+        "adm_deliveryModeHint": "Held: the commands wait until the buyer claims it from their chest, on the site or in the game. The product is owned, and its rank held, from payment either way. The shop's default is in the store's module settings.",
+        "tab_chest_waitingForYou": "Waiting for you to claim"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -2841,7 +2854,13 @@
         "topUp_campaignTitle": "Yükleme bonusu aktif",
         "topUp_campaignTier": "{amount} veya daha fazla öde: +%{percent}",
         "topUp_campaignEnds": "{days} gün {hours} saat sonra bitiyor",
-        "topUp_campaignEndsSoon": "{hours} saat {minutes} dakika sonra bitiyor"
+        "topUp_campaignEndsSoon": "{hours} saat {minutes} dakika sonra bitiyor",
+        "adm_deliveryMode": "Satın alma ne zaman teslim edilir",
+        "adm_deliveryModeInherit": "Mağazanın varsayılanı gibi",
+        "adm_deliveryModeNow": "Hemen, ödendiği anda",
+        "adm_deliveryModeHold": "Alıcı alana kadar sandıkta bekler",
+        "adm_deliveryModeHint": "Bekletilirse komutlar, alıcı ürünü sandığından sitede ya da oyunda alana kadar çalışmaz. Ürün her durumda ödeme anından itibaren sahiplidir, rütbesi de verilir. Mağazanın varsayılanı modül ayarlarındadır.",
+        "tab_chest_waitingForYou": "Almanı bekliyor"
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -3849,7 +3868,13 @@
         "topUp_campaignTitle": "Yükləmə bonusu aktivdir",
         "topUp_campaignTier": "{amount} və ya daha çox ödə: +{percent}%",
         "topUp_campaignEnds": "{days} gün {hours} saat sonra bitir",
-        "topUp_campaignEndsSoon": "{hours} saat {minutes} dəqiqə sonra bitir"
+        "topUp_campaignEndsSoon": "{hours} saat {minutes} dəqiqə sonra bitir",
+        "adm_deliveryMode": "Alış nə vaxt təhvil verilir",
+        "adm_deliveryModeInherit": "Mağazanın standartı kimi",
+        "adm_deliveryModeNow": "Dərhal, ödəniləndə",
+        "adm_deliveryModeHold": "Alıcı götürənə qədər sandıqda saxlanılır",
+        "adm_deliveryModeHint": "Saxlanılırsa, əmrlər alıcı onu sandığından saytda və ya oyunda götürənə qədər gözləyir. Məhsul hər halda ödənişdən sonra alıcınındır, rütbəsi də verilir. Mağazanın standartı modul parametrlərindədir.",
+        "tab_chest_waitingForYou": "Götürməyini gözləyir"
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -4857,7 +4882,13 @@
         "topUp_campaignTitle": "Aufladebonus läuft",
         "topUp_campaignTier": "Zahle {amount} oder mehr: +{percent} %",
         "topUp_campaignEnds": "Endet in {days, plural, one {# Tag} other {# Tagen}} {hours, plural, one {# Stunde} other {# Stunden}}",
-        "topUp_campaignEndsSoon": "Endet in {hours, plural, one {# Stunde} other {# Stunden}} {minutes, plural, one {# Minute} other {# Minuten}}"
+        "topUp_campaignEndsSoon": "Endet in {hours, plural, one {# Stunde} other {# Stunden}} {minutes, plural, one {# Minute} other {# Minuten}}",
+        "adm_deliveryMode": "Wann der Kauf geliefert wird",
+        "adm_deliveryModeInherit": "Wie der Shop es standardmäßig tut",
+        "adm_deliveryModeNow": "Sofort, sobald bezahlt",
+        "adm_deliveryModeHold": "In der Truhe, bis der Käufer ihn abholt",
+        "adm_deliveryModeHint": "Zurückgehalten: Die Befehle warten, bis der Käufer ihn aus seiner Truhe abholt, auf der Website oder im Spiel. Das Produkt gehört ihm und sein Rang gilt in jedem Fall ab der Zahlung. Der Standard des Shops steht in den Moduleinstellungen.",
+        "tab_chest_waitingForYou": "Wartet darauf, dass du es abholst"
       },
       "cart": {
         "title": "Warenkorb",
@@ -5865,7 +5896,13 @@
         "topUp_campaignTitle": "Bonificación de recarga activa",
         "topUp_campaignTier": "Paga {amount} o más: +{percent} %",
         "topUp_campaignEnds": "Termina en {days, plural, one {# día} other {# días}} {hours, plural, one {# hora} other {# horas}}",
-        "topUp_campaignEndsSoon": "Termina en {hours, plural, one {# hora} other {# horas}} {minutes, plural, one {# minuto} other {# minutos}}"
+        "topUp_campaignEndsSoon": "Termina en {hours, plural, one {# hora} other {# horas}} {minutes, plural, one {# minuto} other {# minutos}}",
+        "adm_deliveryMode": "Cuándo se entrega la compra",
+        "adm_deliveryModeInherit": "Como hace la tienda por defecto",
+        "adm_deliveryModeNow": "Al momento, cuando se paga",
+        "adm_deliveryModeHold": "Guardada en el cofre hasta que el comprador la reclame",
+        "adm_deliveryModeHint": "Guardada: los comandos esperan hasta que el comprador la reclame desde su cofre, en el sitio o en el juego. El producto es suyo, y su rango se otorga, desde el pago en cualquier caso. El valor por defecto de la tienda está en los ajustes del módulo.",
+        "tab_chest_waitingForYou": "Esperando a que lo reclames"
       },
       "cart": {
         "title": "Carrito de compra",
@@ -6873,7 +6910,13 @@
         "topUp_campaignTitle": "Laadimisboonus kehtib",
         "topUp_campaignTier": "Maksa {amount} või rohkem: +{percent}%",
         "topUp_campaignEnds": "Lõpeb {days, plural, one {# päeva} other {# päeva}} {hours, plural, one {# tunni} other {# tunni}} pärast",
-        "topUp_campaignEndsSoon": "Lõpeb {hours, plural, one {# tunni} other {# tunni}} {minutes, plural, one {# minuti} other {# minuti}} pärast"
+        "topUp_campaignEndsSoon": "Lõpeb {hours, plural, one {# tunni} other {# tunni}} {minutes, plural, one {# minuti} other {# minuti}} pärast",
+        "adm_deliveryMode": "Millal ost kätte toimetatakse",
+        "adm_deliveryModeInherit": "Nagu pood vaikimisi teeb",
+        "adm_deliveryModeNow": "Kohe, kui see on makstud",
+        "adm_deliveryModeHold": "Kirstus, kuni ostja selle kätte võtab",
+        "adm_deliveryModeHint": "Hoitakse: käsud ootavad, kuni ostja selle oma kirstust kätte võtab, veebilehel või mängus. Toode kuulub talle ja auaste antakse igal juhul maksmisest alates. Poe vaikeväärtus on mooduli seadetes.",
+        "tab_chest_waitingForYou": "Ootab, et sa selle kätte võtaksid"
       },
       "cart": {
         "title": "Ostukorv",
@@ -7881,7 +7924,13 @@
         "topUp_campaignTitle": "Bonus de recharge en cours",
         "topUp_campaignTier": "Payez {amount} ou plus : +{percent} %",
         "topUp_campaignEnds": "Se termine dans {days, plural, one {# jour} other {# jours}} {hours, plural, one {# heure} other {# heures}}",
-        "topUp_campaignEndsSoon": "Se termine dans {hours, plural, one {# heure} other {# heures}} {minutes, plural, one {# minute} other {# minutes}}"
+        "topUp_campaignEndsSoon": "Se termine dans {hours, plural, one {# heure} other {# heures}} {minutes, plural, one {# minute} other {# minutes}}",
+        "adm_deliveryMode": "Quand l'achat est livré",
+        "adm_deliveryModeInherit": "Comme la boutique le fait par défaut",
+        "adm_deliveryModeNow": "Tout de suite, dès le paiement",
+        "adm_deliveryModeHold": "Gardé dans le coffre jusqu'à ce que l'acheteur le réclame",
+        "adm_deliveryModeHint": "Gardé : les commandes attendent que l'acheteur le réclame depuis son coffre, sur le site ou en jeu. Le produit lui appartient, et son grade est accordé, dès le paiement dans tous les cas. Le réglage par défaut de la boutique est dans les paramètres du module.",
+        "tab_chest_waitingForYou": "En attente de ta réclamation"
       },
       "cart": {
         "title": "Panier",
@@ -8889,7 +8938,13 @@
         "topUp_campaignTitle": "Bonus ricarica attivo",
         "topUp_campaignTier": "Paga {amount} o più: +{percent}%",
         "topUp_campaignEnds": "Termina tra {days, plural, one {# giorno} other {# giorni}} {hours, plural, one {# ora} other {# ore}}",
-        "topUp_campaignEndsSoon": "Termina tra {hours, plural, one {# ora} other {# ore}} {minutes, plural, one {# minuto} other {# minuti}}"
+        "topUp_campaignEndsSoon": "Termina tra {hours, plural, one {# ora} other {# ore}} {minutes, plural, one {# minuto} other {# minuti}}",
+        "adm_deliveryMode": "Quando viene consegnato l'acquisto",
+        "adm_deliveryModeInherit": "Come fa il negozio di default",
+        "adm_deliveryModeNow": "Subito, appena pagato",
+        "adm_deliveryModeHold": "Tenuto nel baule finché l'acquirente non lo riscatta",
+        "adm_deliveryModeHint": "Tenuto: i comandi aspettano finché l'acquirente non lo riscatta dal suo baule, sul sito o in gioco. Il prodotto è suo, e il suo grado assegnato, dal pagamento in ogni caso. L'impostazione predefinita del negozio è nelle impostazioni del modulo.",
+        "tab_chest_waitingForYou": "In attesa che tu lo riscatti"
       },
       "cart": {
         "title": "Carrello",
@@ -9897,7 +9952,13 @@
         "topUp_campaignTitle": "Trwa bonus za doładowanie",
         "topUp_campaignTier": "Zapłać {amount} lub więcej: +{percent}%",
         "topUp_campaignEnds": "Kończy się za {days, plural, one {# dzień} other {# dni}} {hours, plural, one {# godzinę} few {# godziny} many {# godzin} other {# godziny}}",
-        "topUp_campaignEndsSoon": "Kończy się za {hours, plural, one {# godzinę} few {# godziny} many {# godzin} other {# godziny}} {minutes, plural, one {# minutę} few {# minuty} many {# minut} other {# minuty}}"
+        "topUp_campaignEndsSoon": "Kończy się za {hours, plural, one {# godzinę} few {# godziny} many {# godzin} other {# godziny}} {minutes, plural, one {# minutę} few {# minuty} many {# minut} other {# minuty}}",
+        "adm_deliveryMode": "Kiedy zakup jest dostarczany",
+        "adm_deliveryModeInherit": "Tak jak domyślnie robi sklep",
+        "adm_deliveryModeNow": "Od razu, po opłaceniu",
+        "adm_deliveryModeHold": "W skrzyni, dopóki kupujący go nie odbierze",
+        "adm_deliveryModeHint": "Wstrzymany: komendy czekają, aż kupujący odbierze go ze swojej skrzyni, na stronie lub w grze. Produkt należy do niego, a ranga jest nadana, od chwili płatności w każdym przypadku. Domyślne ustawienie sklepu jest w ustawieniach modułu.",
+        "tab_chest_waitingForYou": "Czeka, aż go odbierzesz"
       },
       "cart": {
         "title": "Koszyk",
@@ -10905,7 +10966,13 @@
         "topUp_campaignTitle": "Bónus de carregamento ativo",
         "topUp_campaignTier": "Pague {amount} ou mais: +{percent}%",
         "topUp_campaignEnds": "Termina dentro de {days, plural, one {# dia} other {# dias}} {hours, plural, one {# hora} other {# horas}}",
-        "topUp_campaignEndsSoon": "Termina dentro de {hours, plural, one {# hora} other {# horas}} {minutes, plural, one {# minuto} other {# minutos}}"
+        "topUp_campaignEndsSoon": "Termina dentro de {hours, plural, one {# hora} other {# horas}} {minutes, plural, one {# minuto} other {# minutos}}",
+        "adm_deliveryMode": "Quando a compra é entregue",
+        "adm_deliveryModeInherit": "Como a loja faz por padrão",
+        "adm_deliveryModeNow": "Na hora, quando é paga",
+        "adm_deliveryModeHold": "Guardada no baú até o comprador resgatar",
+        "adm_deliveryModeHint": "Guardada: os comandos esperam até o comprador resgatar do seu baú, no site ou no jogo. O produto é dele, e o cargo concedido, desde o pagamento em qualquer caso. O padrão da loja está nas configurações do módulo.",
+        "tab_chest_waitingForYou": "Esperando você resgatar"
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -11913,7 +11980,13 @@
         "topUp_campaignTitle": "Действует бонус за пополнение",
         "topUp_campaignTier": "Оплатите от {amount}: +{percent}%",
         "topUp_campaignEnds": "Закончится через {days, plural, one {# день} few {# дня} many {# дней} other {# дня}} {hours, plural, one {# час} few {# часа} many {# часов} other {# часа}}",
-        "topUp_campaignEndsSoon": "Закончится через {hours, plural, one {# час} few {# часа} many {# часов} other {# часа}} {minutes, plural, one {# минуту} few {# минуты} many {# минут} other {# минуты}}"
+        "topUp_campaignEndsSoon": "Закончится через {hours, plural, one {# час} few {# часа} many {# часов} other {# часа}} {minutes, plural, one {# минуту} few {# минуты} many {# минут} other {# минуты}}",
+        "adm_deliveryMode": "Когда выдаётся покупка",
+        "adm_deliveryModeInherit": "Как в магазине по умолчанию",
+        "adm_deliveryModeNow": "Сразу после оплаты",
+        "adm_deliveryModeHold": "Хранится в сундуке, пока покупатель её не заберёт",
+        "adm_deliveryModeHint": "Хранится: команды ждут, пока покупатель не заберёт покупку из сундука, на сайте или в игре. Товар в любом случае принадлежит ему с момента оплаты, ранг тоже выдаётся. Значение магазина по умолчанию задаётся в настройках модуля.",
+        "tab_chest_waitingForYou": "Ждёт, пока ты заберёшь"
       },
       "cart": {
         "title": "Корзина",
@@ -12921,7 +12994,13 @@
         "topUp_campaignTitle": "充值奖励进行中",
         "topUp_campaignTier": "付款满 {amount}：+{percent}%",
         "topUp_campaignEnds": "{days} 天 {hours} 小时后结束",
-        "topUp_campaignEndsSoon": "{hours} 小时 {minutes} 分钟后结束"
+        "topUp_campaignEndsSoon": "{hours} 小时 {minutes} 分钟后结束",
+        "adm_deliveryMode": "购买何时发放",
+        "adm_deliveryModeInherit": "跟随商店的默认设置",
+        "adm_deliveryModeNow": "立即，付款时发放",
+        "adm_deliveryModeHold": "存放在箱子里，直到买家领取",
+        "adm_deliveryModeHint": "存放时，命令会等到买家在网站或游戏中从箱子领取后再执行。无论哪种方式，商品自付款起即归买家所有，其等级也会授予。商店的默认设置在模块设置中。",
+        "tab_chest_waitingForYou": "等待你领取"
       },
       "cart": {
         "title": "购物车",

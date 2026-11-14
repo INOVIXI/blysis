@@ -124,7 +124,9 @@ vi.mock("@/core/sdk/server", () => ({
     log,
     rolesHeldBy,
     revokeRole,
-    // Settlement asks whether the shop thanks buyers with a coupon; it does not here.
+    // Settlement asks whether the shop thanks buyers with a coupon, and
+    // delivery whether it holds purchases in the chest. Neither does here,
+    // so a paid order runs its commands as it always did.
     moduleSettings: vi.fn(async () => ({})),
 }));
 
