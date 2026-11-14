@@ -26,6 +26,8 @@ const db = {
         })),
     },
     creditTopUp: { create: vi.fn(async () => ({ id: "topup-1" })) },
+    // No bonus campaign runs here: `a-top-up-bonus-is-fixed-when-the-payment-starts.test.ts` is where one does.
+    creditBonusCampaign: { findMany: vi.fn(async () => []) },
     user: { findUnique: vi.fn(async () => ({ email: "buyer@example.com", username: "Steve" })) },
 };
 
@@ -73,7 +75,16 @@ describe("buying credits", () => {
         expect(res.status).toBe(200);
         expect(db.creditTopUp.create).toHaveBeenCalledWith(
             expect.objectContaining({
-                data: { userId: "user-1", credits: 1200, amount: 9.99, fee: 0, currency: "USD", provider: "iyzico" },
+                data: {
+                    userId: "user-1",
+                    credits: 1200,
+                    amount: 9.99,
+                    fee: 0,
+                    currency: "USD",
+                    provider: "iyzico",
+                    bonusCredits: 0,
+                    bonusCampaignId: null,
+                },
             }),
         );
     });

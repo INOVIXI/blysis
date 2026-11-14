@@ -15,6 +15,8 @@ import { resolveCurrency } from "../../../lib/currency";
 import { buyableNow, packageSnapshot } from "../../../lib/credit-packages";
 import { paymentFeeFor } from "../../../lib/payment-fee-server";
 import { grossUpForFee } from "../../../lib/pricing";
+import { bestBonus } from "../../../lib/credit-bonus";
+import { runningBonusCampaigns } from "../../../lib/credit-bonus-server";
 
 const buyCreditsSchema = z.object({
     /** A loose amount, for a shop that sells credits by the unit. */
@@ -61,6 +63,9 @@ export async function POST(request: NextRequest) {
         // between must not change what somebody already bought.
         let amount: number;
         let totalAmount: number;
+        // The credits a bonus campaign's percent is taken of: a package's own
+        // `credits` without its fixed bonus, so no bonus is paid on a bonus.
+        let baseCredits: number;
         let description: string;
 
         if (validation.data.packageId) {
@@ -76,6 +81,7 @@ export async function POST(request: NextRequest) {
             const sold = packageSnapshot(pack);
             amount = sold.credits;
             totalAmount = sold.price;
+            baseCredits = pack.credits;
             description = sold.name;
         } else if (validation.data.amount) {
             // A module setting rather than a `credits_price_per_unit` row, which
@@ -85,6 +91,7 @@ export async function POST(request: NextRequest) {
             const { creditsPricePerUnit } = await moduleSettings<{ creditsPricePerUnit: number }>("store");
 
             amount = validation.data.amount;
+            baseCredits = amount;
             // A per-credit price is a fraction by nature (0.013 a credit), so
             // the product of it is almost never a whole cent. Rounded here,
             // because what the gateway charges is rounded whether we do it or
@@ -135,6 +142,13 @@ export async function POST(request: NextRequest) {
         // English, like the line an order carries: see the checkout route.
         if (surcharge > 0) lines.push({ name: "Payment processing fee", quantity: 1, unitAmount: surcharge });
 
+        // Decided now and written on the row, never looked up at settlement:
+        // a campaign that ends while the gateway is still settling must pay
+        // what the buyer was shown. The tier is chosen by the price, before
+        // the method's fee, because the fee is not a purchase.
+        const startedAt = new Date();
+        const bonus = bestBonus(await runningBonusCampaigns(startedAt), { paid: totalAmount, baseCredits }, startedAt);
+
         const buyer = await prisma.user.findUnique({
             where: { id: session.user.id },
             select: { email: true, username: true },
@@ -144,7 +158,16 @@ export async function POST(request: NextRequest) {
         // buyer's id used to be the reference, and the credits travelled as
         // metadata, which most gateways cannot carry. See `credit-top-up.ts`.
         const topUp = await prisma.creditTopUp.create({
-            data: { userId: session.user.id, credits: amount, amount: totalAmount, fee: surcharge, currency, provider },
+            data: {
+                userId: session.user.id,
+                credits: amount,
+                amount: totalAmount,
+                fee: surcharge,
+                currency,
+                provider,
+                bonusCredits: bonus?.credits ?? 0,
+                bonusCampaignId: bonus?.campaignId ?? null,
+            },
             select: { id: true },
         });
 

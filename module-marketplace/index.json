@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-14",
-  "updatedAt": "2026-11-14T10:02:55Z",
+  "updatedAt": "2026-11-14T12:05:31Z",
   "modules": [
     {
       "id": "announcements",
@@ -1074,13 +1074,13 @@
           "description": "为用户提供的虚拟货币钱包"
         }
       },
-      "version": "1.11.0",
+      "version": "1.12.0",
       "coreVersion": "^5.21.0",
       "author": "Blysis",
       "icon": "Coins",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-11-12T16:58:56Z",
+      "updatedAt": "2026-11-14T12:05:31Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -6338,13 +6338,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.54.0",
+      "version": "2.55.0",
       "coreVersion": "^5.37.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-11-12T16:58:56Z",
+      "updatedAt": "2026-11-14T12:05:31Z",
       "screenshots": [],
       "tags": [
         "commerce"
@@ -6405,8 +6405,8 @@
       },
       "stats": {
         "publicRoutes": 5,
-        "adminRoutes": 15,
-        "apiRoutes": 51,
+        "adminRoutes": 16,
+        "apiRoutes": 53,
         "widgets": 6
       }
     },

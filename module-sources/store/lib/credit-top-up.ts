@@ -24,6 +24,8 @@ export interface TopUpRow {
     fee?: number | { toString(): string } | null;
     currency: string;
     status: string;
+    /** A bonus campaign's credits, decided when the payment started. */
+    bonusCredits?: number | null;
 }
 
 /**
@@ -88,6 +90,22 @@ export async function settleCredits(settlement: PaymentSettlement, topUp: TopUpR
                 description: `Purchased ${topUp.credits} credits via ${settlement.provider} (${settlement.providerRef})`,
                 ledgerId,
             });
+            // Its own row, so a member and an admin can tell the offer from
+            // the purchase, and its own deterministic id, so a retry that
+            // got past the claim still cannot pay it twice. Inside the same
+            // transaction: a bonus written after it would be paid again by a
+            // retry that lost the claim race.
+            const bonus = Math.floor(Number(topUp.bonusCredits ?? 0));
+            if (bonus > 0) {
+                await applyFiltersAsync("credit.change", { applied: false }, {
+                    tx,
+                    userId,
+                    amount: bonus,
+                    type: "top_up_bonus",
+                    description: `Top-up bonus for ${settlement.provider} (${settlement.providerRef})`,
+                    ledgerId: `bonus:${ledgerId}`,
+                });
+            }
             return true;
         });
         if (!credited) return ALREADY;
@@ -121,6 +139,9 @@ export async function cancelTopUp(topUp: TopUpRow): Promise<PaymentOutcome> {
 /**
  * The money for a top-up went back: take its credits back off the account.
  *
+ * A campaign bonus goes back with them, in the same debit: it was given for
+ * money that is no longer here.
+ *
  * As far as the balance still holds them. A debit the balance cannot cover is
  * refused by the wallet, and the credits already spent are what an operator
  * has to chase; the error log says how many. Stamped in the same transaction,
@@ -129,10 +150,11 @@ export async function cancelTopUp(topUp: TopUpRow): Promise<PaymentOutcome> {
 export async function refundTopUp(provider: string, providerRef: string): Promise<PaymentOutcome> {
     const topUp = await prisma.creditTopUp.findFirst({
         where: { provider, providerRef },
-        select: { id: true, userId: true, credits: true, refundedAt: true },
+        select: { id: true, userId: true, credits: true, bonusCredits: true, refundedAt: true },
     });
     if (!topUp) return failed("unknown payment");
     if (topUp.refundedAt) return ALREADY;
+    const given = topUp.credits + Math.max(0, Math.floor(Number(topUp.bonusCredits ?? 0)));
 
     const kept = await prisma.$transaction(async (tx) => {
         const claimed = await tx.creditTopUp.updateMany({
@@ -142,7 +164,7 @@ export async function refundTopUp(provider: string, providerRef: string): Promis
         if (claimed.count === 0) return null;
         if (!topUp.userId) return 0;
         const holder = await tx.user.findUnique({ where: { id: topUp.userId }, select: { creditBalance: true } });
-        const take = Math.min(topUp.credits, Math.max(0, Math.floor(Number(holder?.creditBalance ?? 0))));
+        const take = Math.min(given, Math.max(0, Math.floor(Number(holder?.creditBalance ?? 0))));
         if (take > 0) {
             await applyFiltersAsync("credit.change", { applied: false }, {
                 tx,
@@ -153,7 +175,7 @@ export async function refundTopUp(provider: string, providerRef: string): Promis
                 ledgerId: `refund:${creditLedgerId(provider, providerRef)}`,
             });
         }
-        return topUp.credits - take;
+        return given - take;
     });
     if (kept === null) return ALREADY;
     if (kept > 0) {

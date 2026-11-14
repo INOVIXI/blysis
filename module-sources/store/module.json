@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.54.0",
+  "version": "2.55.0",
   "coreVersion": "^5.37.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -333,6 +333,13 @@
       "permission": "store.manage"
     },
     {
+      "label": "Credit Bonus",
+      "path": "/store/credit-bonus",
+      "icon": "Gift",
+      "group": "commerce",
+      "permission": "store.manage"
+    },
+    {
       "label": "Community Goal",
       "path": "/settings/goals",
       "icon": "Target",
@@ -444,6 +451,11 @@
     {
       "path": "/store/credit-packages",
       "component": "pages/admin/credit-packages/page.tsx",
+      "permission": "store.manage"
+    },
+    {
+      "path": "/store/credit-bonus",
+      "component": "pages/admin/credit-bonus/page.tsx",
       "permission": "store.manage"
     },
     {
@@ -760,6 +772,18 @@
       "path": "/store/admin/credit-packages/[id]",
       "handler": "api/admin/credit-packages/[id]/route.ts",
       "description": "Edit a credit package, or take it off sale (admin).",
+      "permission": "store.manage"
+    },
+    {
+      "path": "/store/admin/credit-bonus-campaigns",
+      "handler": "api/admin/credit-bonus-campaigns/route.ts",
+      "description": "List and create credit bonus campaigns (admin).",
+      "permission": "store.manage"
+    },
+    {
+      "path": "/store/admin/credit-bonus-campaigns/[id]",
+      "handler": "api/admin/credit-bonus-campaigns/[id]/route.ts",
+      "description": "Edit or delete a credit bonus campaign (admin).",
       "permission": "store.manage"
     }
   ],
@@ -1343,7 +1367,9 @@
           "chest_gift_not_pending": "That gift is no longer waiting.",
           "chest_recipient_refuses_gifts": "That member does not accept gifts.",
           "chest_gift_to_self": "That is your own chest.",
-          "fee_rate_unavailable": "That payment method cannot be used right now: its fee cannot be converted into this currency. Pick another method or try again later."
+          "fee_rate_unavailable": "That payment method cannot be used right now: its fee cannot be converted into this currency. Pick another method or try again later.",
+          "credit_bonus_dates": "The campaign must end after it starts.",
+          "credit_bonus_tiers": "Each tier must ask for more money and give a higher percent (1 to 500) than the one before. Up to 10 tiers."
         },
         "err_checkoutFailed": "Checkout failed",
         "err_couponMinPurchase": "Spend at least {amount} to use this code.",
@@ -1554,7 +1580,36 @@
         "taxEvidence": "Billing address country: {billing}. Connection country: {ip}.",
         "taxEvidenceConflict": "The billing address and the connection are in different countries. Check the order before invoicing it.",
         "taxUnknown": "unknown",
-        "taxMayChange": "Tax at the shop's standard rate. It can change at checkout once your billing country is known."
+        "taxMayChange": "Tax at the shop's standard rate. It can change at checkout once your billing country is known.",
+        "adm_creditBonusTitle": "Credit Bonus Campaigns",
+        "adm_creditBonusSubtitle": "Give more credits on a top-up for a limited time. A larger payment reaches a higher tier.",
+        "adm_creditBonusAdd": "Add campaign",
+        "adm_creditBonusEdit": "Edit campaign",
+        "adm_creditBonusDelete": "Delete campaign",
+        "adm_creditBonusDeleteConfirm": "Delete \"{name}\"? Top-ups already started keep the bonus they were shown.",
+        "adm_creditBonusDeleted": "Campaign deleted",
+        "adm_creditBonusSaved": "Campaign saved",
+        "adm_creditBonusSave": "Save",
+        "adm_creditBonusSaveFailed": "The campaign could not be saved.",
+        "adm_creditBonusNone": "No bonus campaigns yet.",
+        "adm_creditBonusName": "Name (only you see it)",
+        "adm_creditBonusStarts": "Starts",
+        "adm_creditBonusEnds": "Ends",
+        "adm_creditBonusZone": "Times are on the site clock ({zone}).",
+        "adm_creditBonusTiers": "Tiers",
+        "adm_creditBonusTiersHint": "The highest tier a payment reaches applies. The percent is taken of the credits bought, not of a package's own bonus.",
+        "adm_creditBonusMinAmount": "From payment of",
+        "adm_creditBonusPercent": "Bonus percent",
+        "adm_creditBonusAddTier": "Add tier",
+        "adm_creditBonusRemoveTier": "Remove tier",
+        "adm_creditBonusActive": "Active",
+        "adm_creditBonusOverlap": "This campaign runs at the same time as another. Each payment gets the larger bonus of the two.",
+        "adm_creditBonusWindow": "{starts} to {ends}",
+        "adm_creditBonusTierLine": "From {amount}: +{percent}%",
+        "adm_creditBonusState_running": "Running",
+        "adm_creditBonusState_scheduled": "Scheduled",
+        "adm_creditBonusState_ended": "Ended",
+        "adm_creditBonusState_off": "Off"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -1755,7 +1810,8 @@
         "menu_store_community_goal": "Community Goal",
         "settings_store": "Payments",
         "settings_store_description": "Stripe and PayPal configuration.",
-        "menu_store_payment_fees": "Payment Fees"
+        "menu_store_payment_fees": "Payment Fees",
+        "menu_store_credit_bonus": "Credit Bonus"
       },
       "activity": {
         "kindStoreOrderCompleted": "Order",
@@ -1768,7 +1824,10 @@
         "auditCreditPackageRetired": "Took a credit package off sale",
         "auditCreditsTransferred": "Sent credits to a member",
         "auditPaymentFeeUpdated": "Changed a payment method's fee",
-        "auditPaymentFeeReset": "Returned a payment method to its gateway's fee"
+        "auditPaymentFeeReset": "Returned a payment method to its gateway's fee",
+        "auditCreditBonusCreated": "Added a credit bonus campaign",
+        "auditCreditBonusUpdated": "Changed a credit bonus campaign",
+        "auditCreditBonusDeleted": "Deleted a credit bonus campaign"
       },
       "pageTitles": {
         "store": "Store",
@@ -2231,7 +2290,9 @@
           "chest_gift_not_pending": "Bu hediye artık beklemiyor.",
           "chest_recipient_refuses_gifts": "Bu üye hediye kabul etmiyor.",
           "chest_gift_to_self": "Bu senin kendi sandığın.",
-          "fee_rate_unavailable": "Bu ödeme yöntemi şu anda kullanılamıyor: ücreti bu para birimine çevrilemiyor. Başka bir yöntem seçin ya da daha sonra yeniden deneyin."
+          "fee_rate_unavailable": "Bu ödeme yöntemi şu anda kullanılamıyor: ücreti bu para birimine çevrilemiyor. Başka bir yöntem seçin ya da daha sonra yeniden deneyin.",
+          "credit_bonus_dates": "Kampanya başladıktan sonra bitmelidir.",
+          "credit_bonus_tiers": "Her kademe bir öncekinden daha fazla ödeme istemeli ve daha yüksek bir yüzde (1-500) vermelidir. En fazla 10 kademe."
         },
         "err_checkoutFailed": "Ödeme tamamlanamadı",
         "err_couponMinPurchase": "Bu kodu kullanmak için en az {amount} harcayın.",
@@ -2442,7 +2503,36 @@
         "taxEvidence": "Fatura adresi ülkesi: {billing}. Bağlantı ülkesi: {ip}.",
         "taxEvidenceConflict": "Fatura adresi ile bağlantı farklı ülkelerde. Faturalandırmadan önce siparişi kontrol edin.",
         "taxUnknown": "bilinmiyor",
-        "taxMayChange": "Vergi mağazanın standart oranıyla gösteriliyor. Fatura ülkeniz belli olunca ödeme adımında değişebilir."
+        "taxMayChange": "Vergi mağazanın standart oranıyla gösteriliyor. Fatura ülkeniz belli olunca ödeme adımında değişebilir.",
+        "adm_creditBonusTitle": "Kredi Bonus Kampanyaları",
+        "adm_creditBonusSubtitle": "Sınırlı bir süre için yüklemede daha fazla kredi verin. Daha büyük bir ödeme daha yüksek bir kademeye ulaşır.",
+        "adm_creditBonusAdd": "Kampanya ekle",
+        "adm_creditBonusEdit": "Kampanyayı düzenle",
+        "adm_creditBonusDelete": "Kampanyayı sil",
+        "adm_creditBonusDeleteConfirm": "\"{name}\" silinsin mi? Başlamış yüklemeler gösterilen bonusu korur.",
+        "adm_creditBonusDeleted": "Kampanya silindi",
+        "adm_creditBonusSaved": "Kampanya kaydedildi",
+        "adm_creditBonusSave": "Kaydet",
+        "adm_creditBonusSaveFailed": "Kampanya kaydedilemedi.",
+        "adm_creditBonusNone": "Henüz bonus kampanyası yok.",
+        "adm_creditBonusName": "Ad (yalnızca siz görürsünüz)",
+        "adm_creditBonusStarts": "Başlangıç",
+        "adm_creditBonusEnds": "Bitiş",
+        "adm_creditBonusZone": "Saatler site saatine göredir ({zone}).",
+        "adm_creditBonusTiers": "Kademeler",
+        "adm_creditBonusTiersHint": "Ödemenin ulaştığı en yüksek kademe uygulanır. Yüzde, paketin kendi bonusundan değil, satın alınan kredilerden hesaplanır.",
+        "adm_creditBonusMinAmount": "Ödeme tutarı en az",
+        "adm_creditBonusPercent": "Bonus yüzdesi",
+        "adm_creditBonusAddTier": "Kademe ekle",
+        "adm_creditBonusRemoveTier": "Kademeyi kaldır",
+        "adm_creditBonusActive": "Etkin",
+        "adm_creditBonusOverlap": "Bu kampanya başka bir kampanyayla aynı anda çalışıyor. Her ödeme ikisinden büyük olan bonusu alır.",
+        "adm_creditBonusWindow": "{starts} - {ends}",
+        "adm_creditBonusTierLine": "{amount} ve üzeri: +%{percent}",
+        "adm_creditBonusState_running": "Devam ediyor",
+        "adm_creditBonusState_scheduled": "Planlandı",
+        "adm_creditBonusState_ended": "Sona erdi",
+        "adm_creditBonusState_off": "Kapalı"
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -2643,7 +2733,8 @@
         "menu_store_community_goal": "Topluluk Hedefi",
         "settings_store": "Ödemeler",
         "settings_store_description": "Stripe ve PayPal ayarları.",
-        "menu_store_payment_fees": "Ödeme Ücretleri"
+        "menu_store_payment_fees": "Ödeme Ücretleri",
+        "menu_store_credit_bonus": "Kredi Bonusu"
       },
       "activity": {
         "kindStoreOrderCompleted": "Sipariş",
@@ -2656,7 +2747,10 @@
         "auditCreditPackageRetired": "Kredi paketi satıştan kaldırıldı",
         "auditCreditsTransferred": "Üyeye kredi gönderildi",
         "auditPaymentFeeUpdated": "Bir ödeme yönteminin ücreti değiştirildi",
-        "auditPaymentFeeReset": "Bir ödeme yöntemi ağ geçidinin ücretine döndürüldü"
+        "auditPaymentFeeReset": "Bir ödeme yöntemi ağ geçidinin ücretine döndürüldü",
+        "auditCreditBonusCreated": "Kredi bonus kampanyası ekledi",
+        "auditCreditBonusUpdated": "Kredi bonus kampanyasını değiştirdi",
+        "auditCreditBonusDeleted": "Kredi bonus kampanyasını sildi"
       },
       "pageTitles": {
         "store": "Mağaza",
@@ -3119,7 +3213,9 @@
           "chest_gift_not_pending": "O hədiyyə artıq gözləmir.",
           "chest_recipient_refuses_gifts": "O üzv hədiyyə qəbul etmir.",
           "chest_gift_to_self": "Bu sizin öz sandığınızdır.",
-          "fee_rate_unavailable": "Bu ödəniş üsulu hazırda istifadə edilə bilməz: onun haqqı bu valyutaya çevrilə bilmir. Başqa üsul seçin və ya sonra yenidən cəhd edin."
+          "fee_rate_unavailable": "Bu ödəniş üsulu hazırda istifadə edilə bilməz: onun haqqı bu valyutaya çevrilə bilmir. Başqa üsul seçin və ya sonra yenidən cəhd edin.",
+          "credit_bonus_dates": "Kampaniya başladıqdan sonra bitməlidir.",
+          "credit_bonus_tiers": "Hər pillə əvvəlkindən daha çox ödəniş istəməli və daha yüksək faiz (1-500) verməlidir. Ən çox 10 pillə."
         },
         "err_checkoutFailed": "Ödəniş alınmadı",
         "err_couponMinPurchase": "Bu kodu istifadə etmək üçün ən azı {amount} xərcləyin.",
@@ -3330,7 +3426,36 @@
         "taxEvidence": "Faktura ünvanının ölkəsi: {billing}. Bağlantının ölkəsi: {ip}.",
         "taxEvidenceConflict": "Faktura ünvanı ilə bağlantı fərqli ölkələrdədir. Faktura verməzdən əvvəl sifarişi yoxlayın.",
         "taxUnknown": "naməlum",
-        "taxMayChange": "Vergi mağazanın standart dərəcəsi ilə göstərilir. Faktura ölkəniz məlum olduqda ödəniş addımında dəyişə bilər."
+        "taxMayChange": "Vergi mağazanın standart dərəcəsi ilə göstərilir. Faktura ölkəniz məlum olduqda ödəniş addımında dəyişə bilər.",
+        "adm_creditBonusTitle": "Kredit Bonus Kampaniyaları",
+        "adm_creditBonusSubtitle": "Məhdud müddətə yükləmədə daha çox kredit verin. Daha böyük ödəniş daha yüksək pilləyə çatır.",
+        "adm_creditBonusAdd": "Kampaniya əlavə et",
+        "adm_creditBonusEdit": "Kampaniyanı redaktə et",
+        "adm_creditBonusDelete": "Kampaniyanı sil",
+        "adm_creditBonusDeleteConfirm": "\"{name}\" silinsin? Artıq başlamış yükləmələr göstərilən bonusu saxlayır.",
+        "adm_creditBonusDeleted": "Kampaniya silindi",
+        "adm_creditBonusSaved": "Kampaniya yadda saxlanıldı",
+        "adm_creditBonusSave": "Yadda saxla",
+        "adm_creditBonusSaveFailed": "Kampaniya yadda saxlanıla bilmədi.",
+        "adm_creditBonusNone": "Hələ bonus kampaniyası yoxdur.",
+        "adm_creditBonusName": "Ad (yalnız siz görürsünüz)",
+        "adm_creditBonusStarts": "Başlayır",
+        "adm_creditBonusEnds": "Bitir",
+        "adm_creditBonusZone": "Vaxtlar sayt saatına görədir ({zone}).",
+        "adm_creditBonusTiers": "Pillələr",
+        "adm_creditBonusTiersHint": "Ödənişin çatdığı ən yüksək pillə tətbiq olunur. Faiz paketin öz bonusundan deyil, alınan kreditlərdən hesablanır.",
+        "adm_creditBonusMinAmount": "Ödəniş məbləği ən azı",
+        "adm_creditBonusPercent": "Bonus faizi",
+        "adm_creditBonusAddTier": "Pillə əlavə et",
+        "adm_creditBonusRemoveTier": "Pilləni sil",
+        "adm_creditBonusActive": "Aktiv",
+        "adm_creditBonusOverlap": "Bu kampaniya başqası ilə eyni vaxtda işləyir. Hər ödəniş ikisindən böyük olan bonusu alır.",
+        "adm_creditBonusWindow": "{starts} - {ends}",
+        "adm_creditBonusTierLine": "{amount} və yuxarı: +{percent}%",
+        "adm_creditBonusState_running": "Davam edir",
+        "adm_creditBonusState_scheduled": "Planlaşdırılıb",
+        "adm_creditBonusState_ended": "Bitib",
+        "adm_creditBonusState_off": "Söndürülüb"
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -3531,7 +3656,8 @@
         "menu_store_community_goal": "İcma hədəfi",
         "settings_store": "Ödənişlər",
         "settings_store_description": "Stripe və PayPal konfiqurasiyası.",
-        "menu_store_payment_fees": "Ödəniş haqları"
+        "menu_store_payment_fees": "Ödəniş haqları",
+        "menu_store_credit_bonus": "Kredit Bonusu"
       },
       "activity": {
         "kindStoreOrderCompleted": "Sifariş",
@@ -3544,7 +3670,10 @@
         "auditCreditPackageRetired": "Kredit paketini satışdan çıxardı",
         "auditCreditsTransferred": "Üzvə kredit göndərdi",
         "auditPaymentFeeUpdated": "Ödəniş üsulunun haqqı dəyişdirildi",
-        "auditPaymentFeeReset": "Ödəniş üsulu şlüzün öz haqqına qaytarıldı"
+        "auditPaymentFeeReset": "Ödəniş üsulu şlüzün öz haqqına qaytarıldı",
+        "auditCreditBonusCreated": "Kredit bonus kampaniyası əlavə etdi",
+        "auditCreditBonusUpdated": "Kredit bonus kampaniyasını dəyişdi",
+        "auditCreditBonusDeleted": "Kredit bonus kampaniyasını sildi"
       },
       "pageTitles": {
         "store": "Mağaza",
@@ -4007,7 +4136,9 @@
           "chest_gift_not_pending": "Dieses Geschenk wartet nicht mehr.",
           "chest_recipient_refuses_gifts": "Dieses Mitglied nimmt keine Geschenke an.",
           "chest_gift_to_self": "Das ist deine eigene Truhe.",
-          "fee_rate_unavailable": "Diese Zahlungsart ist gerade nicht verfügbar: Ihre Gebühr kann nicht in diese Währung umgerechnet werden. Wähle eine andere Zahlungsart oder versuche es später erneut."
+          "fee_rate_unavailable": "Diese Zahlungsart ist gerade nicht verfügbar: Ihre Gebühr kann nicht in diese Währung umgerechnet werden. Wähle eine andere Zahlungsart oder versuche es später erneut.",
+          "credit_bonus_dates": "Die Aktion muss nach ihrem Beginn enden.",
+          "credit_bonus_tiers": "Jede Stufe muss mehr Geld verlangen und einen höheren Prozentsatz (1 bis 500) geben als die vorige. Höchstens 10 Stufen."
         },
         "err_checkoutFailed": "Kasse fehlgeschlagen",
         "err_couponMinPurchase": "Gib mindestens {amount} aus, um diesen Code zu nutzen.",
@@ -4218,7 +4349,36 @@
         "taxEvidence": "Land der Rechnungsadresse: {billing}. Land der Verbindung: {ip}.",
         "taxEvidenceConflict": "Rechnungsadresse und Verbindung liegen in verschiedenen Ländern. Prüfe die Bestellung vor der Rechnungsstellung.",
         "taxUnknown": "unbekannt",
-        "taxMayChange": "Steuer zum Standardsatz des Shops. Sie kann sich an der Kasse ändern, sobald dein Rechnungsland bekannt ist."
+        "taxMayChange": "Steuer zum Standardsatz des Shops. Sie kann sich an der Kasse ändern, sobald dein Rechnungsland bekannt ist.",
+        "adm_creditBonusTitle": "Credit-Bonusaktionen",
+        "adm_creditBonusSubtitle": "Gib für begrenzte Zeit mehr Credits beim Aufladen. Eine größere Zahlung erreicht eine höhere Stufe.",
+        "adm_creditBonusAdd": "Aktion hinzufügen",
+        "adm_creditBonusEdit": "Aktion bearbeiten",
+        "adm_creditBonusDelete": "Aktion löschen",
+        "adm_creditBonusDeleteConfirm": "„{name}\" löschen? Bereits begonnene Aufladungen behalten den angezeigten Bonus.",
+        "adm_creditBonusDeleted": "Aktion gelöscht",
+        "adm_creditBonusSaved": "Aktion gespeichert",
+        "adm_creditBonusSave": "Speichern",
+        "adm_creditBonusSaveFailed": "Die Aktion konnte nicht gespeichert werden.",
+        "adm_creditBonusNone": "Noch keine Bonusaktionen.",
+        "adm_creditBonusName": "Name (nur für dich sichtbar)",
+        "adm_creditBonusStarts": "Beginn",
+        "adm_creditBonusEnds": "Ende",
+        "adm_creditBonusZone": "Zeiten gelten nach der Uhr der Website ({zone}).",
+        "adm_creditBonusTiers": "Stufen",
+        "adm_creditBonusTiersHint": "Es gilt die höchste Stufe, die eine Zahlung erreicht. Der Prozentsatz gilt für die gekauften Credits, nicht für den eigenen Bonus eines Pakets.",
+        "adm_creditBonusMinAmount": "Ab Zahlung von",
+        "adm_creditBonusPercent": "Bonus in Prozent",
+        "adm_creditBonusAddTier": "Stufe hinzufügen",
+        "adm_creditBonusRemoveTier": "Stufe entfernen",
+        "adm_creditBonusActive": "Aktiv",
+        "adm_creditBonusOverlap": "Diese Aktion läuft gleichzeitig mit einer anderen. Jede Zahlung erhält den größeren der beiden Boni.",
+        "adm_creditBonusWindow": "{starts} bis {ends}",
+        "adm_creditBonusTierLine": "Ab {amount}: +{percent} %",
+        "adm_creditBonusState_running": "Läuft",
+        "adm_creditBonusState_scheduled": "Geplant",
+        "adm_creditBonusState_ended": "Beendet",
+        "adm_creditBonusState_off": "Aus"
       },
       "cart": {
         "title": "Warenkorb",
@@ -4419,7 +4579,8 @@
         "menu_store_community_goal": "Gemeinschaftsziel",
         "settings_store": "Zahlungen",
         "settings_store_description": "Konfiguration von Stripe und PayPal.",
-        "menu_store_payment_fees": "Zahlungsgebühren"
+        "menu_store_payment_fees": "Zahlungsgebühren",
+        "menu_store_credit_bonus": "Credit-Bonus"
       },
       "activity": {
         "kindStoreOrderCompleted": "Bestellung",
@@ -4432,7 +4593,10 @@
         "auditCreditPackageRetired": "Ein Credit-Paket aus dem Verkauf genommen",
         "auditCreditsTransferred": "Credits an ein Mitglied gesendet",
         "auditPaymentFeeUpdated": "Gebühr einer Zahlungsart geändert",
-        "auditPaymentFeeReset": "Zahlungsart auf die Gebühr des Gateways zurückgesetzt"
+        "auditPaymentFeeReset": "Zahlungsart auf die Gebühr des Gateways zurückgesetzt",
+        "auditCreditBonusCreated": "Hat eine Credit-Bonusaktion hinzugefügt",
+        "auditCreditBonusUpdated": "Hat eine Credit-Bonusaktion geändert",
+        "auditCreditBonusDeleted": "Hat eine Credit-Bonusaktion gelöscht"
       },
       "pageTitles": {
         "store": "Shop",
@@ -4895,7 +5059,9 @@
           "chest_gift_not_pending": "Ese regalo ya no está esperando.",
           "chest_recipient_refuses_gifts": "Ese miembro no acepta regalos.",
           "chest_gift_to_self": "Ese es tu propio cofre.",
-          "fee_rate_unavailable": "Ese método de pago no se puede usar ahora: su comisión no se puede convertir a esta moneda. Elige otro método o inténtalo más tarde."
+          "fee_rate_unavailable": "Ese método de pago no se puede usar ahora: su comisión no se puede convertir a esta moneda. Elige otro método o inténtalo más tarde.",
+          "credit_bonus_dates": "La campaña debe terminar después de empezar.",
+          "credit_bonus_tiers": "Cada nivel debe pedir más dinero y dar un porcentaje mayor (1 a 500) que el anterior. Hasta 10 niveles."
         },
         "err_checkoutFailed": "Falló el pago",
         "err_couponMinPurchase": "Gasta al menos {amount} para usar este código.",
@@ -5106,7 +5272,36 @@
         "taxEvidence": "País de la dirección de facturación: {billing}. País de la conexión: {ip}.",
         "taxEvidenceConflict": "La dirección de facturación y la conexión están en países distintos. Revisa el pedido antes de facturarlo.",
         "taxUnknown": "desconocido",
-        "taxMayChange": "Impuesto al tipo general de la tienda. Puede cambiar al pagar, cuando se conozca tu país de facturación."
+        "taxMayChange": "Impuesto al tipo general de la tienda. Puede cambiar al pagar, cuando se conozca tu país de facturación.",
+        "adm_creditBonusTitle": "Campañas de bonificación de créditos",
+        "adm_creditBonusSubtitle": "Da más créditos en cada recarga durante un tiempo limitado. Un pago mayor alcanza un nivel más alto.",
+        "adm_creditBonusAdd": "Añadir campaña",
+        "adm_creditBonusEdit": "Editar campaña",
+        "adm_creditBonusDelete": "Eliminar campaña",
+        "adm_creditBonusDeleteConfirm": "¿Eliminar «{name}»? Las recargas ya iniciadas conservan la bonificación que se mostró.",
+        "adm_creditBonusDeleted": "Campaña eliminada",
+        "adm_creditBonusSaved": "Campaña guardada",
+        "adm_creditBonusSave": "Guardar",
+        "adm_creditBonusSaveFailed": "No se pudo guardar la campaña.",
+        "adm_creditBonusNone": "Aún no hay campañas de bonificación.",
+        "adm_creditBonusName": "Nombre (solo lo ves tú)",
+        "adm_creditBonusStarts": "Empieza",
+        "adm_creditBonusEnds": "Termina",
+        "adm_creditBonusZone": "Las horas siguen el reloj del sitio ({zone}).",
+        "adm_creditBonusTiers": "Niveles",
+        "adm_creditBonusTiersHint": "Se aplica el nivel más alto que alcanza el pago. El porcentaje se calcula sobre los créditos comprados, no sobre la bonificación propia del paquete.",
+        "adm_creditBonusMinAmount": "Desde un pago de",
+        "adm_creditBonusPercent": "Porcentaje de bonificación",
+        "adm_creditBonusAddTier": "Añadir nivel",
+        "adm_creditBonusRemoveTier": "Quitar nivel",
+        "adm_creditBonusActive": "Activa",
+        "adm_creditBonusOverlap": "Esta campaña coincide con otra. Cada pago recibe la mayor de las dos bonificaciones.",
+        "adm_creditBonusWindow": "Del {starts} al {ends}",
+        "adm_creditBonusTierLine": "Desde {amount}: +{percent} %",
+        "adm_creditBonusState_running": "En curso",
+        "adm_creditBonusState_scheduled": "Programada",
+        "adm_creditBonusState_ended": "Terminada",
+        "adm_creditBonusState_off": "Desactivada"
       },
       "cart": {
         "title": "Carrito de compra",
@@ -5307,7 +5502,8 @@
         "menu_store_community_goal": "Objetivo de la comunidad",
         "settings_store": "Pagos",
         "settings_store_description": "Configuración de Stripe y PayPal.",
-        "menu_store_payment_fees": "Comisiones de pago"
+        "menu_store_payment_fees": "Comisiones de pago",
+        "menu_store_credit_bonus": "Bonificación de créditos"
       },
       "activity": {
         "kindStoreOrderCompleted": "Pedido",
@@ -5320,7 +5516,10 @@
         "auditCreditPackageRetired": "Quitó un paquete de créditos de la venta",
         "auditCreditsTransferred": "Envió créditos a un miembro",
         "auditPaymentFeeUpdated": "Se cambió la comisión de un método de pago",
-        "auditPaymentFeeReset": "Un método de pago volvió a la comisión de su pasarela"
+        "auditPaymentFeeReset": "Un método de pago volvió a la comisión de su pasarela",
+        "auditCreditBonusCreated": "Añadió una campaña de bonificación de créditos",
+        "auditCreditBonusUpdated": "Cambió una campaña de bonificación de créditos",
+        "auditCreditBonusDeleted": "Eliminó una campaña de bonificación de créditos"
       },
       "pageTitles": {
         "store": "Tienda",
@@ -5783,7 +5982,9 @@
           "chest_gift_not_pending": "See kingitus enam ei oota.",
           "chest_recipient_refuses_gifts": "See liige ei võta kingitusi vastu.",
           "chest_gift_to_self": "See on sinu enda kirst.",
-          "fee_rate_unavailable": "Seda makseviisi ei saa praegu kasutada: selle tasu ei saa sellesse valuutasse teisendada. Vali muu makseviis või proovi hiljem uuesti."
+          "fee_rate_unavailable": "Seda makseviisi ei saa praegu kasutada: selle tasu ei saa sellesse valuutasse teisendada. Vali muu makseviis või proovi hiljem uuesti.",
+          "credit_bonus_dates": "Kampaania peab lõppema pärast algust.",
+          "credit_bonus_tiers": "Iga aste peab nõudma rohkem raha ja andma suurema protsendi (1 kuni 500) kui eelmine. Kuni 10 astet."
         },
         "err_checkoutFailed": "Vormistamine ebaõnnestus",
         "err_couponMinPurchase": "Selle koodi kasutamiseks kuluta vähemalt {amount}.",
@@ -5994,7 +6195,36 @@
         "taxEvidence": "Arveaadressi riik: {billing}. Ühenduse riik: {ip}.",
         "taxEvidenceConflict": "Arveaadress ja ühendus on eri riikides. Kontrolli tellimust enne arve väljastamist.",
         "taxUnknown": "teadmata",
-        "taxMayChange": "Maks poe tavamääraga. See võib kassas muutuda, kui sinu arveldusriik on teada."
+        "taxMayChange": "Maks poe tavamääraga. See võib kassas muutuda, kui sinu arveldusriik on teada.",
+        "adm_creditBonusTitle": "Krediidiboonuse kampaaniad",
+        "adm_creditBonusSubtitle": "Anna piiratud ajaks laadimisel rohkem krediiti. Suurem makse jõuab kõrgemale astmele.",
+        "adm_creditBonusAdd": "Lisa kampaania",
+        "adm_creditBonusEdit": "Muuda kampaaniat",
+        "adm_creditBonusDelete": "Kustuta kampaania",
+        "adm_creditBonusDeleteConfirm": "Kas kustutada „{name}\"? Juba alustatud laadimised saavad näidatud boonuse.",
+        "adm_creditBonusDeleted": "Kampaania kustutatud",
+        "adm_creditBonusSaved": "Kampaania salvestatud",
+        "adm_creditBonusSave": "Salvesta",
+        "adm_creditBonusSaveFailed": "Kampaaniat ei saanud salvestada.",
+        "adm_creditBonusNone": "Boonuskampaaniaid veel pole.",
+        "adm_creditBonusName": "Nimi (näed ainult sina)",
+        "adm_creditBonusStarts": "Algab",
+        "adm_creditBonusEnds": "Lõpeb",
+        "adm_creditBonusZone": "Ajad on saidi kella järgi ({zone}).",
+        "adm_creditBonusTiers": "Astmed",
+        "adm_creditBonusTiersHint": "Kehtib kõrgeim aste, milleni makse jõuab. Protsent arvutatakse ostetud krediidist, mitte paketi enda boonusest.",
+        "adm_creditBonusMinAmount": "Alates maksest",
+        "adm_creditBonusPercent": "Boonuse protsent",
+        "adm_creditBonusAddTier": "Lisa aste",
+        "adm_creditBonusRemoveTier": "Eemalda aste",
+        "adm_creditBonusActive": "Aktiivne",
+        "adm_creditBonusOverlap": "See kampaania kattub teisega. Iga makse saab kahest suurema boonuse.",
+        "adm_creditBonusWindow": "{starts} kuni {ends}",
+        "adm_creditBonusTierLine": "Alates {amount}: +{percent}%",
+        "adm_creditBonusState_running": "Käib",
+        "adm_creditBonusState_scheduled": "Ajastatud",
+        "adm_creditBonusState_ended": "Lõppenud",
+        "adm_creditBonusState_off": "Väljas"
       },
       "cart": {
         "title": "Ostukorv",
@@ -6195,7 +6425,8 @@
         "menu_store_community_goal": "Kogukonna eesmärk",
         "settings_store": "Maksed",
         "settings_store_description": "Stripe'i ja PayPali seadistus.",
-        "menu_store_payment_fees": "Maksetasud"
+        "menu_store_payment_fees": "Maksetasud",
+        "menu_store_credit_bonus": "Krediidiboonus"
       },
       "activity": {
         "kindStoreOrderCompleted": "Tellimus",
@@ -6208,7 +6439,10 @@
         "auditCreditPackageRetired": "Eemaldas krediitpaketi müügist",
         "auditCreditsTransferred": "Saatis krediite liikmele",
         "auditPaymentFeeUpdated": "Makseviisi tasu muudeti",
-        "auditPaymentFeeReset": "Makseviis taastati makselüüsi tasule"
+        "auditPaymentFeeReset": "Makseviis taastati makselüüsi tasule",
+        "auditCreditBonusCreated": "Lisas krediidiboonuse kampaania",
+        "auditCreditBonusUpdated": "Muutis krediidiboonuse kampaaniat",
+        "auditCreditBonusDeleted": "Kustutas krediidiboonuse kampaania"
       },
       "pageTitles": {
         "store": "Pood",
@@ -6671,7 +6905,9 @@
           "chest_gift_not_pending": "Ce cadeau n’attend plus.",
           "chest_recipient_refuses_gifts": "Ce membre n’accepte pas les cadeaux.",
           "chest_gift_to_self": "C’est votre propre coffre.",
-          "fee_rate_unavailable": "Ce moyen de paiement n'est pas utilisable pour le moment : ses frais ne peuvent pas être convertis dans cette devise. Choisissez un autre moyen ou réessayez plus tard."
+          "fee_rate_unavailable": "Ce moyen de paiement n'est pas utilisable pour le moment : ses frais ne peuvent pas être convertis dans cette devise. Choisissez un autre moyen ou réessayez plus tard.",
+          "credit_bonus_dates": "La campagne doit se terminer après son début.",
+          "credit_bonus_tiers": "Chaque palier doit demander plus d'argent et donner un pourcentage plus élevé (1 à 500) que le précédent. 10 paliers au plus."
         },
         "err_checkoutFailed": "Échec du paiement",
         "err_couponMinPurchase": "Dépensez au moins {amount} pour utiliser ce code.",
@@ -6882,7 +7118,36 @@
         "taxEvidence": "Pays de l'adresse de facturation : {billing}. Pays de la connexion : {ip}.",
         "taxEvidenceConflict": "L'adresse de facturation et la connexion sont dans des pays différents. Vérifiez la commande avant de la facturer.",
         "taxUnknown": "inconnu",
-        "taxMayChange": "Taxe au taux normal de la boutique. Elle peut changer au paiement, une fois votre pays de facturation connu."
+        "taxMayChange": "Taxe au taux normal de la boutique. Elle peut changer au paiement, une fois votre pays de facturation connu.",
+        "adm_creditBonusTitle": "Campagnes de bonus de crédits",
+        "adm_creditBonusSubtitle": "Offrez plus de crédits à chaque recharge pendant une durée limitée. Un paiement plus élevé atteint un palier supérieur.",
+        "adm_creditBonusAdd": "Ajouter une campagne",
+        "adm_creditBonusEdit": "Modifier la campagne",
+        "adm_creditBonusDelete": "Supprimer la campagne",
+        "adm_creditBonusDeleteConfirm": "Supprimer « {name} » ? Les recharges déjà commencées gardent le bonus affiché.",
+        "adm_creditBonusDeleted": "Campagne supprimée",
+        "adm_creditBonusSaved": "Campagne enregistrée",
+        "adm_creditBonusSave": "Enregistrer",
+        "adm_creditBonusSaveFailed": "La campagne n'a pas pu être enregistrée.",
+        "adm_creditBonusNone": "Aucune campagne de bonus pour le moment.",
+        "adm_creditBonusName": "Nom (visible par vous seul)",
+        "adm_creditBonusStarts": "Début",
+        "adm_creditBonusEnds": "Fin",
+        "adm_creditBonusZone": "Les heures suivent l'horloge du site ({zone}).",
+        "adm_creditBonusTiers": "Paliers",
+        "adm_creditBonusTiersHint": "Le palier le plus élevé atteint par le paiement s'applique. Le pourcentage porte sur les crédits achetés, pas sur le bonus propre du pack.",
+        "adm_creditBonusMinAmount": "À partir d'un paiement de",
+        "adm_creditBonusPercent": "Pourcentage de bonus",
+        "adm_creditBonusAddTier": "Ajouter un palier",
+        "adm_creditBonusRemoveTier": "Retirer le palier",
+        "adm_creditBonusActive": "Active",
+        "adm_creditBonusOverlap": "Cette campagne se déroule en même temps qu'une autre. Chaque paiement reçoit le plus grand des deux bonus.",
+        "adm_creditBonusWindow": "Du {starts} au {ends}",
+        "adm_creditBonusTierLine": "Dès {amount} : +{percent} %",
+        "adm_creditBonusState_running": "En cours",
+        "adm_creditBonusState_scheduled": "Programmée",
+        "adm_creditBonusState_ended": "Terminée",
+        "adm_creditBonusState_off": "Désactivée"
       },
       "cart": {
         "title": "Panier",
@@ -7083,7 +7348,8 @@
         "menu_store_community_goal": "Objectif communautaire",
         "settings_store": "Paiements",
         "settings_store_description": "Configuration de Stripe et PayPal.",
-        "menu_store_payment_fees": "Frais de paiement"
+        "menu_store_payment_fees": "Frais de paiement",
+        "menu_store_credit_bonus": "Bonus de crédits"
       },
       "activity": {
         "kindStoreOrderCompleted": "Commande",
@@ -7096,7 +7362,10 @@
         "auditCreditPackageRetired": "A retiré un pack de crédits de la vente",
         "auditCreditsTransferred": "A envoyé des crédits à un membre",
         "auditPaymentFeeUpdated": "Frais d'un moyen de paiement modifiés",
-        "auditPaymentFeeReset": "Moyen de paiement remis aux frais de sa passerelle"
+        "auditPaymentFeeReset": "Moyen de paiement remis aux frais de sa passerelle",
+        "auditCreditBonusCreated": "A ajouté une campagne de bonus de crédits",
+        "auditCreditBonusUpdated": "A modifié une campagne de bonus de crédits",
+        "auditCreditBonusDeleted": "A supprimé une campagne de bonus de crédits"
       },
       "pageTitles": {
         "store": "Boutique",
@@ -7559,7 +7828,9 @@
           "chest_gift_not_pending": "Quel regalo non è più in attesa.",
           "chest_recipient_refuses_gifts": "Quel membro non accetta regali.",
           "chest_gift_to_self": "È il tuo baule.",
-          "fee_rate_unavailable": "Questo metodo di pagamento non può essere usato ora: la sua commissione non può essere convertita in questa valuta. Scegli un altro metodo o riprova più tardi."
+          "fee_rate_unavailable": "Questo metodo di pagamento non può essere usato ora: la sua commissione non può essere convertita in questa valuta. Scegli un altro metodo o riprova più tardi.",
+          "credit_bonus_dates": "La campagna deve finire dopo l'inizio.",
+          "credit_bonus_tiers": "Ogni livello deve chiedere più denaro e dare una percentuale più alta (da 1 a 500) del precedente. Al massimo 10 livelli."
         },
         "err_checkoutFailed": "Pagamento non riuscito",
         "err_couponMinPurchase": "Spendi almeno {amount} per usare questo codice.",
@@ -7770,7 +8041,36 @@
         "taxEvidence": "Paese dell'indirizzo di fatturazione: {billing}. Paese della connessione: {ip}.",
         "taxEvidenceConflict": "L'indirizzo di fatturazione e la connessione sono in paesi diversi. Controlla l'ordine prima di fatturarlo.",
         "taxUnknown": "sconosciuto",
-        "taxMayChange": "Imposta all'aliquota standard del negozio. Può cambiare al checkout, quando sarà noto il tuo paese di fatturazione."
+        "taxMayChange": "Imposta all'aliquota standard del negozio. Può cambiare al checkout, quando sarà noto il tuo paese di fatturazione.",
+        "adm_creditBonusTitle": "Campagne bonus crediti",
+        "adm_creditBonusSubtitle": "Dai più crediti a ogni ricarica per un periodo limitato. Un pagamento più alto raggiunge un livello superiore.",
+        "adm_creditBonusAdd": "Aggiungi campagna",
+        "adm_creditBonusEdit": "Modifica campagna",
+        "adm_creditBonusDelete": "Elimina campagna",
+        "adm_creditBonusDeleteConfirm": "Eliminare «{name}»? Le ricariche già avviate mantengono il bonus mostrato.",
+        "adm_creditBonusDeleted": "Campagna eliminata",
+        "adm_creditBonusSaved": "Campagna salvata",
+        "adm_creditBonusSave": "Salva",
+        "adm_creditBonusSaveFailed": "Impossibile salvare la campagna.",
+        "adm_creditBonusNone": "Nessuna campagna bonus per ora.",
+        "adm_creditBonusName": "Nome (lo vedi solo tu)",
+        "adm_creditBonusStarts": "Inizio",
+        "adm_creditBonusEnds": "Fine",
+        "adm_creditBonusZone": "Gli orari seguono l'orologio del sito ({zone}).",
+        "adm_creditBonusTiers": "Livelli",
+        "adm_creditBonusTiersHint": "Si applica il livello più alto raggiunto dal pagamento. La percentuale è sui crediti acquistati, non sul bonus proprio del pacchetto.",
+        "adm_creditBonusMinAmount": "Da un pagamento di",
+        "adm_creditBonusPercent": "Percentuale bonus",
+        "adm_creditBonusAddTier": "Aggiungi livello",
+        "adm_creditBonusRemoveTier": "Rimuovi livello",
+        "adm_creditBonusActive": "Attiva",
+        "adm_creditBonusOverlap": "Questa campagna si sovrappone a un'altra. Ogni pagamento riceve il bonus maggiore dei due.",
+        "adm_creditBonusWindow": "Dal {starts} al {ends}",
+        "adm_creditBonusTierLine": "Da {amount}: +{percent}%",
+        "adm_creditBonusState_running": "In corso",
+        "adm_creditBonusState_scheduled": "Programmata",
+        "adm_creditBonusState_ended": "Terminata",
+        "adm_creditBonusState_off": "Disattivata"
       },
       "cart": {
         "title": "Carrello",
@@ -7971,7 +8271,8 @@
         "menu_store_community_goal": "Obiettivo della community",
         "settings_store": "Pagamenti",
         "settings_store_description": "Configurazione di Stripe e PayPal.",
-        "menu_store_payment_fees": "Commissioni di pagamento"
+        "menu_store_payment_fees": "Commissioni di pagamento",
+        "menu_store_credit_bonus": "Bonus crediti"
       },
       "activity": {
         "kindStoreOrderCompleted": "Ordine",
@@ -7984,7 +8285,10 @@
         "auditCreditPackageRetired": "Ha tolto un pacchetto di crediti dalla vendita",
         "auditCreditsTransferred": "Ha inviato crediti a un membro",
         "auditPaymentFeeUpdated": "Commissione di un metodo di pagamento modificata",
-        "auditPaymentFeeReset": "Metodo di pagamento riportato alla commissione del suo gateway"
+        "auditPaymentFeeReset": "Metodo di pagamento riportato alla commissione del suo gateway",
+        "auditCreditBonusCreated": "Ha aggiunto una campagna bonus crediti",
+        "auditCreditBonusUpdated": "Ha modificato una campagna bonus crediti",
+        "auditCreditBonusDeleted": "Ha eliminato una campagna bonus crediti"
       },
       "pageTitles": {
         "store": "Store",
@@ -8447,7 +8751,9 @@
           "chest_gift_not_pending": "Ten prezent już nie czeka.",
           "chest_recipient_refuses_gifts": "Ten członek nie przyjmuje prezentów.",
           "chest_gift_to_self": "To twoja własna skrzynia.",
-          "fee_rate_unavailable": "Tej metody płatności nie można teraz użyć: jej opłaty nie da się przeliczyć na tę walutę. Wybierz inną metodę lub spróbuj później."
+          "fee_rate_unavailable": "Tej metody płatności nie można teraz użyć: jej opłaty nie da się przeliczyć na tę walutę. Wybierz inną metodę lub spróbuj później.",
+          "credit_bonus_dates": "Kampania musi kończyć się po rozpoczęciu.",
+          "credit_bonus_tiers": "Każdy próg musi wymagać więcej pieniędzy i dawać wyższy procent (1 do 500) niż poprzedni. Najwyżej 10 progów."
         },
         "err_checkoutFailed": "Płatność nie powiodła się",
         "err_couponMinPurchase": "Wydaj co najmniej {amount}, aby użyć tego kodu.",
@@ -8658,7 +8964,36 @@
         "taxEvidence": "Kraj adresu rozliczeniowego: {billing}. Kraj połączenia: {ip}.",
         "taxEvidenceConflict": "Adres rozliczeniowy i połączenie są w różnych krajach. Sprawdź zamówienie przed wystawieniem faktury.",
         "taxUnknown": "nieznany",
-        "taxMayChange": "Podatek według standardowej stawki sklepu. Może się zmienić przy płatności, gdy znany będzie kraj rozliczeniowy."
+        "taxMayChange": "Podatek według standardowej stawki sklepu. Może się zmienić przy płatności, gdy znany będzie kraj rozliczeniowy.",
+        "adm_creditBonusTitle": "Kampanie bonusów kredytowych",
+        "adm_creditBonusSubtitle": "Dawaj więcej kredytów przy doładowaniu przez ograniczony czas. Większa płatność osiąga wyższy próg.",
+        "adm_creditBonusAdd": "Dodaj kampanię",
+        "adm_creditBonusEdit": "Edytuj kampanię",
+        "adm_creditBonusDelete": "Usuń kampanię",
+        "adm_creditBonusDeleteConfirm": "Usunąć „{name}\"? Rozpoczęte doładowania zachowają pokazany bonus.",
+        "adm_creditBonusDeleted": "Kampania usunięta",
+        "adm_creditBonusSaved": "Kampania zapisana",
+        "adm_creditBonusSave": "Zapisz",
+        "adm_creditBonusSaveFailed": "Nie udało się zapisać kampanii.",
+        "adm_creditBonusNone": "Brak kampanii bonusowych.",
+        "adm_creditBonusName": "Nazwa (widzisz ją tylko ty)",
+        "adm_creditBonusStarts": "Początek",
+        "adm_creditBonusEnds": "Koniec",
+        "adm_creditBonusZone": "Godziny według zegara witryny ({zone}).",
+        "adm_creditBonusTiers": "Progi",
+        "adm_creditBonusTiersHint": "Obowiązuje najwyższy próg, który osiąga płatność. Procent liczy się od kupionych kredytów, nie od własnego bonusu pakietu.",
+        "adm_creditBonusMinAmount": "Od płatności",
+        "adm_creditBonusPercent": "Procent bonusu",
+        "adm_creditBonusAddTier": "Dodaj próg",
+        "adm_creditBonusRemoveTier": "Usuń próg",
+        "adm_creditBonusActive": "Aktywna",
+        "adm_creditBonusOverlap": "Ta kampania trwa w tym samym czasie co inna. Każda płatność dostaje większy z dwóch bonusów.",
+        "adm_creditBonusWindow": "Od {starts} do {ends}",
+        "adm_creditBonusTierLine": "Od {amount}: +{percent}%",
+        "adm_creditBonusState_running": "Trwa",
+        "adm_creditBonusState_scheduled": "Zaplanowana",
+        "adm_creditBonusState_ended": "Zakończona",
+        "adm_creditBonusState_off": "Wyłączona"
       },
       "cart": {
         "title": "Koszyk",
@@ -8859,7 +9194,8 @@
         "menu_store_community_goal": "Cel społeczności",
         "settings_store": "Płatności",
         "settings_store_description": "Konfiguracja Stripe i PayPal.",
-        "menu_store_payment_fees": "Opłaty za płatności"
+        "menu_store_payment_fees": "Opłaty za płatności",
+        "menu_store_credit_bonus": "Bonus kredytów"
       },
       "activity": {
         "kindStoreOrderCompleted": "Zamówienie",
@@ -8872,7 +9208,10 @@
         "auditCreditPackageRetired": "Wycofano pakiet kredytów z sprzedaży",
         "auditCreditsTransferred": "Wysłano kredyty członkowi",
         "auditPaymentFeeUpdated": "Zmieniono opłatę metody płatności",
-        "auditPaymentFeeReset": "Przywrócono opłatę bramki dla metody płatności"
+        "auditPaymentFeeReset": "Przywrócono opłatę bramki dla metody płatności",
+        "auditCreditBonusCreated": "Dodał kampanię bonusu kredytów",
+        "auditCreditBonusUpdated": "Zmienił kampanię bonusu kredytów",
+        "auditCreditBonusDeleted": "Usunął kampanię bonusu kredytów"
       },
       "pageTitles": {
         "store": "Sklep",
@@ -9335,7 +9674,9 @@
           "chest_gift_not_pending": "Esse presente não está mais esperando.",
           "chest_recipient_refuses_gifts": "Esse membro não aceita presentes.",
           "chest_gift_to_self": "Esse é o seu próprio baú.",
-          "fee_rate_unavailable": "Esse método de pagamento não pode ser usado agora: a sua taxa não pode ser convertida para esta moeda. Escolha outro método ou tente mais tarde."
+          "fee_rate_unavailable": "Esse método de pagamento não pode ser usado agora: a sua taxa não pode ser convertida para esta moeda. Escolha outro método ou tente mais tarde.",
+          "credit_bonus_dates": "A campanha tem de terminar depois de começar.",
+          "credit_bonus_tiers": "Cada escalão tem de pedir mais dinheiro e dar uma percentagem maior (1 a 500) do que o anterior. Até 10 escalões."
         },
         "err_checkoutFailed": "Falha na finalização da compra",
         "err_couponMinPurchase": "Gaste pelo menos {amount} para usar este código.",
@@ -9546,7 +9887,36 @@
         "taxEvidence": "País do endereço de faturação: {billing}. País da ligação: {ip}.",
         "taxEvidenceConflict": "O endereço de faturação e a ligação estão em países diferentes. Verifique a encomenda antes de a faturar.",
         "taxUnknown": "desconhecido",
-        "taxMayChange": "Imposto à taxa normal da loja. Pode mudar no checkout, quando o seu país de faturação for conhecido."
+        "taxMayChange": "Imposto à taxa normal da loja. Pode mudar no checkout, quando o seu país de faturação for conhecido.",
+        "adm_creditBonusTitle": "Campanhas de bónus de créditos",
+        "adm_creditBonusSubtitle": "Dê mais créditos em cada carregamento durante um tempo limitado. Um pagamento maior atinge um escalão mais alto.",
+        "adm_creditBonusAdd": "Adicionar campanha",
+        "adm_creditBonusEdit": "Editar campanha",
+        "adm_creditBonusDelete": "Eliminar campanha",
+        "adm_creditBonusDeleteConfirm": "Eliminar «{name}»? Os carregamentos já iniciados mantêm o bónus mostrado.",
+        "adm_creditBonusDeleted": "Campanha eliminada",
+        "adm_creditBonusSaved": "Campanha guardada",
+        "adm_creditBonusSave": "Guardar",
+        "adm_creditBonusSaveFailed": "Não foi possível guardar a campanha.",
+        "adm_creditBonusNone": "Ainda não há campanhas de bónus.",
+        "adm_creditBonusName": "Nome (só você o vê)",
+        "adm_creditBonusStarts": "Começa",
+        "adm_creditBonusEnds": "Termina",
+        "adm_creditBonusZone": "As horas seguem o relógio do site ({zone}).",
+        "adm_creditBonusTiers": "Escalões",
+        "adm_creditBonusTiersHint": "Aplica-se o escalão mais alto que o pagamento atinge. A percentagem é calculada sobre os créditos comprados, não sobre o bónus próprio do pacote.",
+        "adm_creditBonusMinAmount": "A partir de um pagamento de",
+        "adm_creditBonusPercent": "Percentagem de bónus",
+        "adm_creditBonusAddTier": "Adicionar escalão",
+        "adm_creditBonusRemoveTier": "Remover escalão",
+        "adm_creditBonusActive": "Ativa",
+        "adm_creditBonusOverlap": "Esta campanha decorre ao mesmo tempo que outra. Cada pagamento recebe o maior dos dois bónus.",
+        "adm_creditBonusWindow": "De {starts} a {ends}",
+        "adm_creditBonusTierLine": "A partir de {amount}: +{percent}%",
+        "adm_creditBonusState_running": "A decorrer",
+        "adm_creditBonusState_scheduled": "Agendada",
+        "adm_creditBonusState_ended": "Terminada",
+        "adm_creditBonusState_off": "Desligada"
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -9747,7 +10117,8 @@
         "menu_store_community_goal": "Meta da comunidade",
         "settings_store": "Pagamentos",
         "settings_store_description": "Configuração do Stripe e do PayPal.",
-        "menu_store_payment_fees": "Taxas de pagamento"
+        "menu_store_payment_fees": "Taxas de pagamento",
+        "menu_store_credit_bonus": "Bónus de créditos"
       },
       "activity": {
         "kindStoreOrderCompleted": "Pedido",
@@ -9760,7 +10131,10 @@
         "auditCreditPackageRetired": "Tirou um pacote de créditos de venda",
         "auditCreditsTransferred": "Enviou créditos a um membro",
         "auditPaymentFeeUpdated": "A taxa de um método de pagamento foi alterada",
-        "auditPaymentFeeReset": "Um método de pagamento voltou à taxa do seu gateway"
+        "auditPaymentFeeReset": "Um método de pagamento voltou à taxa do seu gateway",
+        "auditCreditBonusCreated": "Adicionou uma campanha de bónus de créditos",
+        "auditCreditBonusUpdated": "Alterou uma campanha de bónus de créditos",
+        "auditCreditBonusDeleted": "Eliminou uma campanha de bónus de créditos"
       },
       "pageTitles": {
         "store": "Loja",
@@ -10223,7 +10597,9 @@
           "chest_gift_not_pending": "Этот подарок больше не ждёт.",
           "chest_recipient_refuses_gifts": "Этот участник не принимает подарки.",
           "chest_gift_to_self": "Это ваш собственный сундук.",
-          "fee_rate_unavailable": "Этот способ оплаты сейчас недоступен: его комиссию нельзя пересчитать в эту валюту. Выберите другой способ или попробуйте позже."
+          "fee_rate_unavailable": "Этот способ оплаты сейчас недоступен: его комиссию нельзя пересчитать в эту валюту. Выберите другой способ или попробуйте позже.",
+          "credit_bonus_dates": "Акция должна заканчиваться после начала.",
+          "credit_bonus_tiers": "Каждый уровень должен требовать больше денег и давать больший процент (от 1 до 500), чем предыдущий. Не более 10 уровней."
         },
         "err_checkoutFailed": "Не удалось оформить заказ",
         "err_couponMinPurchase": "Чтобы использовать этот код, потратьте не меньше {amount}.",
@@ -10434,7 +10810,36 @@
         "taxEvidence": "Страна платёжного адреса: {billing}. Страна подключения: {ip}.",
         "taxEvidenceConflict": "Платёжный адрес и подключение находятся в разных странах. Проверьте заказ перед выставлением счёта.",
         "taxUnknown": "неизвестно",
-        "taxMayChange": "Налог по стандартной ставке магазина. Он может измениться при оформлении, когда станет известна страна платёжного адреса."
+        "taxMayChange": "Налог по стандартной ставке магазина. Он может измениться при оформлении, когда станет известна страна платёжного адреса.",
+        "adm_creditBonusTitle": "Бонусные акции на кредиты",
+        "adm_creditBonusSubtitle": "Давайте больше кредитов при пополнении в течение ограниченного времени. Больший платёж достигает более высокого уровня.",
+        "adm_creditBonusAdd": "Добавить акцию",
+        "adm_creditBonusEdit": "Изменить акцию",
+        "adm_creditBonusDelete": "Удалить акцию",
+        "adm_creditBonusDeleteConfirm": "Удалить «{name}»? Уже начатые пополнения сохранят показанный бонус.",
+        "adm_creditBonusDeleted": "Акция удалена",
+        "adm_creditBonusSaved": "Акция сохранена",
+        "adm_creditBonusSave": "Сохранить",
+        "adm_creditBonusSaveFailed": "Не удалось сохранить акцию.",
+        "adm_creditBonusNone": "Бонусных акций пока нет.",
+        "adm_creditBonusName": "Название (видно только вам)",
+        "adm_creditBonusStarts": "Начало",
+        "adm_creditBonusEnds": "Окончание",
+        "adm_creditBonusZone": "Время указано по часам сайта ({zone}).",
+        "adm_creditBonusTiers": "Уровни",
+        "adm_creditBonusTiersHint": "Действует самый высокий уровень, которого достигает платёж. Процент берётся от купленных кредитов, а не от собственного бонуса пакета.",
+        "adm_creditBonusMinAmount": "От суммы платежа",
+        "adm_creditBonusPercent": "Процент бонуса",
+        "adm_creditBonusAddTier": "Добавить уровень",
+        "adm_creditBonusRemoveTier": "Убрать уровень",
+        "adm_creditBonusActive": "Включена",
+        "adm_creditBonusOverlap": "Эта акция идёт одновременно с другой. Каждый платёж получает больший из двух бонусов.",
+        "adm_creditBonusWindow": "С {starts} по {ends}",
+        "adm_creditBonusTierLine": "От {amount}: +{percent}%",
+        "adm_creditBonusState_running": "Идёт",
+        "adm_creditBonusState_scheduled": "Запланирована",
+        "adm_creditBonusState_ended": "Завершена",
+        "adm_creditBonusState_off": "Выключена"
       },
       "cart": {
         "title": "Корзина",
@@ -10635,7 +11040,8 @@
         "menu_store_community_goal": "Цель сообщества",
         "settings_store": "Оплата",
         "settings_store_description": "Настройка Stripe и PayPal.",
-        "menu_store_payment_fees": "Платёжные комиссии"
+        "menu_store_payment_fees": "Платёжные комиссии",
+        "menu_store_credit_bonus": "Бонус на кредиты"
       },
       "activity": {
         "kindStoreOrderCompleted": "Заказ",
@@ -10648,7 +11054,10 @@
         "auditCreditPackageRetired": "Снял пакет кредитов с продажи",
         "auditCreditsTransferred": "Отправил кредиты участнику",
         "auditPaymentFeeUpdated": "Изменена комиссия способа оплаты",
-        "auditPaymentFeeReset": "Для способа оплаты возвращена комиссия шлюза"
+        "auditPaymentFeeReset": "Для способа оплаты возвращена комиссия шлюза",
+        "auditCreditBonusCreated": "Добавил бонусную акцию на кредиты",
+        "auditCreditBonusUpdated": "Изменил бонусную акцию на кредиты",
+        "auditCreditBonusDeleted": "Удалил бонусную акцию на кредиты"
       },
       "pageTitles": {
         "store": "Магазин",
@@ -11111,7 +11520,9 @@
           "chest_gift_not_pending": "这个礼物已不在等待中。",
           "chest_recipient_refuses_gifts": "该成员不接受礼物。",
           "chest_gift_to_self": "这是你自己的箱子。",
-          "fee_rate_unavailable": "该支付方式目前无法使用：其手续费无法换算为此货币。请选择其他方式或稍后再试。"
+          "fee_rate_unavailable": "该支付方式目前无法使用：其手续费无法换算为此货币。请选择其他方式或稍后再试。",
+          "credit_bonus_dates": "活动的结束时间必须晚于开始时间。",
+          "credit_bonus_tiers": "每个档位要求的金额和给出的百分比（1 至 500）都必须高于上一个档位。最多 10 个档位。"
         },
         "err_checkoutFailed": "结账失败",
         "err_couponMinPurchase": "消费满 {amount} 方可使用此优惠码。",
@@ -11322,7 +11733,36 @@
         "taxEvidence": "账单地址国家：{billing}。连接国家：{ip}。",
         "taxEvidenceConflict": "账单地址与连接位于不同国家。开具发票前请核对此订单。",
         "taxUnknown": "未知",
-        "taxMayChange": "税费按商店标准税率显示。确定您的账单国家后，结账时可能会变化。"
+        "taxMayChange": "税费按商店标准税率显示。确定您的账单国家后，结账时可能会变化。",
+        "adm_creditBonusTitle": "充值积分奖励活动",
+        "adm_creditBonusSubtitle": "在限定时间内为充值赠送更多积分。付款越多，达到的档位越高。",
+        "adm_creditBonusAdd": "添加活动",
+        "adm_creditBonusEdit": "编辑活动",
+        "adm_creditBonusDelete": "删除活动",
+        "adm_creditBonusDeleteConfirm": "删除“{name}”？已开始的充值仍会获得当时显示的奖励。",
+        "adm_creditBonusDeleted": "活动已删除",
+        "adm_creditBonusSaved": "活动已保存",
+        "adm_creditBonusSave": "保存",
+        "adm_creditBonusSaveFailed": "无法保存活动。",
+        "adm_creditBonusNone": "暂无奖励活动。",
+        "adm_creditBonusName": "名称（仅你可见）",
+        "adm_creditBonusStarts": "开始时间",
+        "adm_creditBonusEnds": "结束时间",
+        "adm_creditBonusZone": "时间按站点时区计算（{zone}）。",
+        "adm_creditBonusTiers": "档位",
+        "adm_creditBonusTiersHint": "按付款达到的最高档位计算。百分比按购买的积分计算，不包括套餐自带的奖励。",
+        "adm_creditBonusMinAmount": "付款金额满",
+        "adm_creditBonusPercent": "奖励百分比",
+        "adm_creditBonusAddTier": "添加档位",
+        "adm_creditBonusRemoveTier": "移除档位",
+        "adm_creditBonusActive": "启用",
+        "adm_creditBonusOverlap": "此活动与另一个活动时间重叠。每笔付款获得两者中较大的奖励。",
+        "adm_creditBonusWindow": "{starts} 至 {ends}",
+        "adm_creditBonusTierLine": "满 {amount}：+{percent}%",
+        "adm_creditBonusState_running": "进行中",
+        "adm_creditBonusState_scheduled": "已排期",
+        "adm_creditBonusState_ended": "已结束",
+        "adm_creditBonusState_off": "已关闭"
       },
       "cart": {
         "title": "购物车",
@@ -11523,7 +11963,8 @@
         "menu_store_community_goal": "社区目标",
         "settings_store": "支付",
         "settings_store_description": "Stripe 与 PayPal 配置。",
-        "menu_store_payment_fees": "支付手续费"
+        "menu_store_payment_fees": "支付手续费",
+        "menu_store_credit_bonus": "积分奖励"
       },
       "activity": {
         "kindStoreOrderCompleted": "订单",
@@ -11536,7 +11977,10 @@
         "auditCreditPackageRetired": "将一个积分套餐停售",
         "auditCreditsTransferred": "向成员转赠了积分",
         "auditPaymentFeeUpdated": "更改了支付方式的手续费",
-        "auditPaymentFeeReset": "支付方式已恢复为网关的手续费"
+        "auditPaymentFeeReset": "支付方式已恢复为网关的手续费",
+        "auditCreditBonusCreated": "添加了积分奖励活动",
+        "auditCreditBonusUpdated": "修改了积分奖励活动",
+        "auditCreditBonusDeleted": "删除了积分奖励活动"
       },
       "pageTitles": {
         "store": "商店",
@@ -11742,6 +12186,18 @@
     {
       "action": "store.credit_package.retired",
       "nameKey": "auditCreditPackageRetired"
+    },
+    {
+      "action": "store.credit_bonus.created",
+      "nameKey": "auditCreditBonusCreated"
+    },
+    {
+      "action": "store.credit_bonus.updated",
+      "nameKey": "auditCreditBonusUpdated"
+    },
+    {
+      "action": "store.credit_bonus.deleted",
+      "nameKey": "auditCreditBonusDeleted"
     },
     {
       "action": "store.credits.transferred",
