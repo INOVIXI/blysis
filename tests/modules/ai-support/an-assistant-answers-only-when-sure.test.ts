@@ -14,12 +14,21 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-interface Job { id: string; ticketId: string; dueAt: Date; attempts: number }
+interface Job { id: string; ticketId: string; dueAt: Date; attempts: number; updatedAt: Date }
 interface Draft { id: string; ticketId: string; afterMessageId: string; status: string; [key: string]: unknown }
 
 const store = { jobs: [] as Job[], drafts: [] as Draft[] };
 let settings: Record<string, unknown> = {};
 let seq = 0;
+/** Each write to a job stamps it later than the last, as `@updatedAt` does. */
+let clock = 0;
+const stamp = () => new Date(Date.UTC(2030, 0, 1) + ++clock);
+/** A job matches a filter when every field is equal, a date by its time. */
+const sameJob = (job: Job, filter: Record<string, unknown>) =>
+    Object.entries(filter).every(([k, v]) => {
+        const held = (job as unknown as Record<string, unknown>)[k];
+        return held instanceof Date && v instanceof Date ? held.getTime() === v.getTime() : held === v;
+    });
 
 const MINUTE = 60_000;
 const START = new Date("2026-11-16T10:00:00Z");
@@ -65,19 +74,24 @@ const where = <T extends Record<string, unknown>>(rows: T[], filter: Record<stri
 
 const prisma = {
     aiSupportJob: {
+        // Copies, as a query returns: a later write must not change what a round already read.
         findMany: vi.fn(async ({ where: filter, take }: { where: Record<string, unknown>; take: number }) =>
-            where(store.jobs as unknown as Record<string, unknown>[], filter).slice(0, take)),
+            where(store.jobs as unknown as Record<string, unknown>[], filter).slice(0, take).map((job) => ({ ...job }))),
         upsert: vi.fn(async ({ where: w, create, update }: { where: { ticketId: string }; create: Partial<Job>; update: Partial<Job> }) => {
             const found = store.jobs.find((j) => j.ticketId === w.ticketId);
-            if (found) return Object.assign(found, update);
-            const job = { id: `j${++seq}`, attempts: 0, ...create } as Job;
+            if (found) return Object.assign(found, update, { updatedAt: stamp() });
+            const job = { id: `j${++seq}`, attempts: 0, ...create, updatedAt: stamp() } as Job;
             store.jobs.push(job);
             return job;
         }),
-        update: vi.fn(async ({ where: w, data }: { where: { id: string }; data: Partial<Job> }) => Object.assign(store.jobs.find((j) => j.id === w.id)!, data)),
+        updateMany: vi.fn(async ({ where: w, data }: { where: Record<string, unknown>; data: Partial<Job> }) => {
+            const found = store.jobs.filter((j) => sameJob(j, w));
+            for (const job of found) Object.assign(job, data, { updatedAt: stamp() });
+            return { count: found.length };
+        }),
         deleteMany: vi.fn(async ({ where: w }: { where: Record<string, unknown> }) => {
             const before = store.jobs.length;
-            store.jobs = store.jobs.filter((j) => !Object.entries(w).every(([k, v]) => (j as unknown as Record<string, unknown>)[k] === v));
+            store.jobs = store.jobs.filter((j) => !sameJob(j, w));
             return { count: before - store.jobs.length };
         }),
     },
@@ -305,6 +319,18 @@ describe("the queue", () => {
         await enqueue("t1", later(2));
         expect(store.jobs).toHaveLength(1);
         expect(store.jobs[0].dueAt).toEqual(later(2));
+    });
+
+    it("keeps a member's new message that arrives while the round works on the ticket", async () => {
+        generateStructured.mockImplementationOnce(async () => {
+            thread!.messages.push({ id: "m-2", author: "member", content: "Any news?", createdAt: later(1) });
+            await enqueue("t1", later(1));
+            return sure();
+        });
+        await runAnswerRound(later(1));
+        expect(store.jobs).toHaveLength(1);
+        await runAnswerRound(later(2));
+        expect(store.drafts.map((d) => d.afterMessageId)).toEqual(["m-1", "m-2"]);
     });
 
     it("spends a round's room on questions to the model, not on tickets it lets go", async () => {

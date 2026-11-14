@@ -60,7 +60,7 @@ export async function runAnswerRound(now = new Date()): Promise<{ handled: numbe
             where: { dueAt: { lte: now } },
             orderBy: { dueAt: "asc" },
             take: Math.min(config.perRun * LOOK_AHEAD, MAX_LOOKED_AT),
-            select: { id: true, ticketId: true, attempts: true },
+            select: { id: true, ticketId: true, attempts: true, updatedAt: true },
         });
         let handled = 0;
         let asked = 0;
@@ -72,7 +72,7 @@ export async function runAnswerRound(now = new Date()): Promise<{ handled: numbe
             } catch (err) {
                 // One ticket's failure is not the round's: the next job runs.
                 log.error("[ai-support] a ticket could not be answered", { ticketId: job.ticketId, error: err instanceof Error ? err.message : String(err) });
-                await prisma.aiSupportJob.deleteMany({ where: { id: job.id } });
+                await drop(job);
             }
         }
         return { handled, asked };
@@ -85,11 +85,28 @@ interface Job {
     id: string;
     ticketId: string;
     attempts: number;
+    /** As the round read it. A member writing meanwhile moves it. */
+    updatedAt: Date;
+}
+
+/**
+ * The job as the round read it, and no later one. A member who writes while
+ * the round is asking the model about their last message refreshes the same
+ * row; letting the job go by its id alone deleted that new message's request
+ * with it, and the member's second message was never answered.
+ */
+function unchanged(job: Job) {
+    return { id: job.id, updatedAt: job.updatedAt };
 }
 
 async function drop(job: Job): Promise<false> {
-    await prisma.aiSupportJob.deleteMany({ where: { id: job.id } });
+    await prisma.aiSupportJob.deleteMany({ where: unchanged(job) });
     return false;
+}
+
+/** Move the job on, unless something newer has moved it already. */
+async function reschedule(job: Job, data: { dueAt: Date; attempts?: number }): Promise<void> {
+    await prisma.aiSupportJob.updateMany({ where: unchanged(job), data });
 }
 
 /** Works one job through; true when it asked the model. */
@@ -123,7 +140,7 @@ async function answer(job: Job, config: AiSupportConfig, now: Date): Promise<boo
     // Staff answer first. Until the wait is over the draft waits with the job.
     const answerableAt = new Date(last.createdAt.getTime() + config.waitMinutes * MINUTE);
     if (now < answerableAt) {
-        await prisma.aiSupportJob.update({ where: { id: job.id }, data: { dueAt: answerableAt } });
+        await reschedule(job, { dueAt: answerableAt });
         return asked;
     }
 
@@ -187,7 +204,7 @@ async function draftFor(job: Job, thread: DeskThread, afterMessageId: string, co
             await drop(job);
             return null;
         }
-        await prisma.aiSupportJob.update({ where: { id: job.id }, data: { attempts, dueAt: new Date(now.getTime() + attempts * RETRY_STEP) } });
+        await reschedule(job, { attempts, dueAt: new Date(now.getTime() + attempts * RETRY_STEP) });
         return null;
     }
 
