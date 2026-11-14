@@ -61,11 +61,14 @@ test("a ticket the assistant cannot answer waits for a person", async ({ page, b
         await page.getByRole("button", { name: "Send Reply" }).click();
         await expect(page.getByText("It has been an hour now.")).toBeVisible();
 
-        const ran = await page.request.post(`/api/v1/admin/cron/${encodeURIComponent("ai-support:answer-tickets")}/run`, { headers: { origin } });
-        expect(ran.ok(), "running the assistant's round").toBe(true);
-
-        const draft = (await (await page.request.get(`/api/v1/ai-support/tickets/${ticketId}/draft`)).json()).draft;
-        expect(draft, "the assistant recorded that it could not answer").toMatchObject({ status: "failed" });
+        // The site runs the same round every minute, one at a time; a run
+        // asked for while that one is going returns at once. So the round is
+        // asked again until a run has taken this ticket.
+        await expect.poll(async () => {
+            const ran = await page.request.post(`/api/v1/admin/cron/${encodeURIComponent("ai-support:answer-tickets")}/run`, { headers: { origin } });
+            expect(ran.ok(), "running the assistant's round").toBe(true);
+            return (await (await page.request.get(`/api/v1/ai-support/tickets/${ticketId}/draft`)).json()).draft?.status ?? null;
+        }, { message: "the assistant recorded that it could not answer", timeout: 30_000, intervals: [250, 500, 1000] }).toBe("failed");
 
         // Nothing reached the member: the conversation is the two messages it had.
         const thread = await (await page.request.get(`/api/v1/tickets/${ticketId}`)).json();
