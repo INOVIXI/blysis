@@ -1,0 +1,55 @@
+// AI Support - Database Models
+
+// @@user-relations-start
+//   aiSupportDrafts AiSupportDraft[] @relation("AiSupportDraftMember")
+// @@user-relations-end
+
+// ==================== AI SUPPORT ====================
+
+/// A ticket waiting for the assistant's round. One per ticket: a member who
+/// writes again while it waits moves it, rather than adding a second.
+model AiSupportJob {
+  id        String   @id @default(cuid())
+  ticketId  String   @unique
+  dueAt     DateTime @default(now())
+  /// Failed calls so far; the operator's limit turns the next into a failed draft.
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dueAt])
+}
+
+/// What the assistant would answer to one member message, and what came of
+/// it. The message it sent, if it sent one, lives on the ticket; this is the
+/// record staff read and use, pruned after the operator's retention window.
+model AiSupportDraft {
+  id             String   @id @default(cuid())
+  ticketId       String
+  /// The member's message this answers. A newer message makes it stale.
+  afterMessageId String
+  /// Who opened the ticket, for their data export and erasure.
+  userId         String?
+  user           User?    @relation("AiSupportDraftMember", fields: [userId], references: [id], onDelete: SetNull)
+  /// draft, sent, used, discarded, stale or failed.
+  status         String   @default("draft")
+  reply          String   @db.Text
+  canAnswer      Boolean  @default(false)
+  confidence     Int?
+  /// The knowledge the answer relied on: source, title and link.
+  sources        Json?
+  /// A department or priority the model suggested, when sorting is on.
+  departmentId   String?
+  priority       String?
+  /// The model the operator chose; null for the provider's smart model.
+  model          String?
+  /// Why no answer came back: an AI error kind.
+  error          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([ticketId, afterMessageId])
+  @@index([status, createdAt])
+  @@index([createdAt])
+  @@index([userId])
+}

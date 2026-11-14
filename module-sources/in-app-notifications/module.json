@@ -2,7 +2,7 @@
   "id": "in-app-notifications",
   "name": "In-App Notifications",
   "description": "In-app notification system with bell icon",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "coreVersion": "^5.39.0",
   "category": "community",
   "author": "Blysis",
@@ -67,7 +67,9 @@
         "notif_forumReplyTitle": "New reply on your topic",
         "notif_forumReplyMessage": "Someone replied to \"{title}\".",
         "notif_moderationRejectedTitle": "Your post was not published",
-        "notif_moderationRejectedMessage": "It was rejected. Open it to see why."
+        "notif_moderationRejectedMessage": "It was rejected. Open it to see why.",
+        "notif_ticketAssistantTitle": "The assistant answered your ticket",
+        "notif_ticketAssistantMessage": "An AI assistant replied to \"{subject}\". You can ask for a person there."
       },
       "pageTitles": {
         "notifications": "Notifications"
@@ -119,7 +121,9 @@
         "notif_forumReplyTitle": "Konuna yanıt geldi",
         "notif_forumReplyMessage": "Birisi \"{title}\" konusuna yanıt verdi.",
         "notif_moderationRejectedTitle": "Gönderin yayınlanmadı",
-        "notif_moderationRejectedMessage": "Gönderin reddedildi. Sebebini görmek için aç."
+        "notif_moderationRejectedMessage": "Gönderin reddedildi. Sebebini görmek için aç.",
+        "notif_ticketAssistantTitle": "Asistan talebinize yanıt verdi",
+        "notif_ticketAssistantMessage": "Bir AI asistan \"{subject}\" talebine yanıt verdi. Orada personele aktarabilirsiniz."
       },
       "pageTitles": {
         "notifications": "Bildirimler"
@@ -171,7 +175,9 @@
         "notif_forumReplyTitle": "Mövzunuza yeni cavab",
         "notif_forumReplyMessage": "Kimsə «{title}» mövzusuna cavab yazdı.",
         "notif_moderationRejectedTitle": "Paylaşımın dərc edilmədi",
-        "notif_moderationRejectedMessage": "O, rədd edildi. Səbəbini görmək üçün aç."
+        "notif_moderationRejectedMessage": "O, rədd edildi. Səbəbini görmək üçün aç.",
+        "notif_ticketAssistantTitle": "Köməkçi sorğunuza cavab verdi",
+        "notif_ticketAssistantMessage": "AI köməkçi «{subject}» sorğusuna cavab verdi. Orada insanla danışmağı istəyə bilərsiniz."
       },
       "pageTitles": {
         "notifications": "Bildirişlər"
@@ -223,7 +229,9 @@
         "notif_forumReplyTitle": "Neue Antwort in deinem Thema",
         "notif_forumReplyMessage": "Jemand hat auf „{title}“ geantwortet.",
         "notif_moderationRejectedTitle": "Dein Beitrag wurde nicht veröffentlicht",
-        "notif_moderationRejectedMessage": "Er wurde abgelehnt. Öffne ihn, um den Grund zu sehen."
+        "notif_moderationRejectedMessage": "Er wurde abgelehnt. Öffne ihn, um den Grund zu sehen.",
+        "notif_ticketAssistantTitle": "Der Assistent hat auf Ihr Ticket geantwortet",
+        "notif_ticketAssistantMessage": "Ein KI-Assistent hat auf „{subject}“ geantwortet. Dort können Sie um eine Person bitten."
       },
       "pageTitles": {
         "notifications": "Benachrichtigungen"
@@ -275,7 +283,9 @@
         "notif_forumReplyTitle": "Nueva respuesta en tu tema",
         "notif_forumReplyMessage": "Alguien ha respondido a «{title}».",
         "notif_moderationRejectedTitle": "Tu publicación no se ha publicado",
-        "notif_moderationRejectedMessage": "Se rechazó. Ábrela para ver el motivo."
+        "notif_moderationRejectedMessage": "Se rechazó. Ábrela para ver el motivo.",
+        "notif_ticketAssistantTitle": "El asistente ha respondido a tu ticket",
+        "notif_ticketAssistantMessage": "Un asistente de IA ha respondido a «{subject}». Allí puedes pedir hablar con una persona."
       },
       "pageTitles": {
         "notifications": "Notificaciones"
@@ -327,7 +337,9 @@
         "notif_forumReplyTitle": "Uus vastus sinu teemale",
         "notif_forumReplyMessage": "Keegi vastas teemale „{title}“.",
         "notif_moderationRejectedTitle": "Sinu postitust ei avaldatud",
-        "notif_moderationRejectedMessage": "See lükati tagasi. Ava see, et näha põhjust."
+        "notif_moderationRejectedMessage": "See lükati tagasi. Ava see, et näha põhjust.",
+        "notif_ticketAssistantTitle": "Assistent vastas sinu piletile",
+        "notif_ticketAssistantMessage": "AI-assistent vastas teemale „{subject}“. Seal saad paluda inimest."
       },
       "pageTitles": {
         "notifications": "Teavitused"
@@ -379,7 +391,9 @@
         "notif_forumReplyTitle": "Nouvelle réponse à votre sujet",
         "notif_forumReplyMessage": "Quelqu’un a répondu à « {title} ».",
         "notif_moderationRejectedTitle": "Ta publication n’a pas été publiée",
-        "notif_moderationRejectedMessage": "Elle a été refusée. Ouvre-la pour voir pourquoi."
+        "notif_moderationRejectedMessage": "Elle a été refusée. Ouvre-la pour voir pourquoi.",
+        "notif_ticketAssistantTitle": "L'assistant a répondu à votre ticket",
+        "notif_ticketAssistantMessage": "Un assistant IA a répondu à « {subject} ». Vous pouvez y demander une personne."
       },
       "pageTitles": {
         "notifications": "Notifications"
@@ -431,7 +445,9 @@
         "notif_forumReplyTitle": "Nuova risposta al tuo argomento",
         "notif_forumReplyMessage": "Qualcuno ha risposto a «{title}».",
         "notif_moderationRejectedTitle": "Il tuo contenuto non è stato pubblicato",
-        "notif_moderationRejectedMessage": "È stato rifiutato. Aprilo per vedere il motivo."
+        "notif_moderationRejectedMessage": "È stato rifiutato. Aprilo per vedere il motivo.",
+        "notif_ticketAssistantTitle": "L'assistente ha risposto al tuo ticket",
+        "notif_ticketAssistantMessage": "Un assistente IA ha risposto a «{subject}». Lì puoi chiedere di parlare con una persona."
       },
       "pageTitles": {
         "notifications": "Notifiche"
@@ -483,7 +499,9 @@
         "notif_forumReplyTitle": "Nowa odpowiedź w Twoim temacie",
         "notif_forumReplyMessage": "Ktoś odpowiedział w temacie „{title}”.",
         "notif_moderationRejectedTitle": "Twój wpis nie został opublikowany",
-        "notif_moderationRejectedMessage": "Został odrzucony. Otwórz go, aby zobaczyć powód."
+        "notif_moderationRejectedMessage": "Został odrzucony. Otwórz go, aby zobaczyć powód.",
+        "notif_ticketAssistantTitle": "Asystent odpowiedział na Twoje zgłoszenie",
+        "notif_ticketAssistantMessage": "Asystent AI odpowiedział na „{subject}”. Możesz tam poprosić o człowieka."
       },
       "pageTitles": {
         "notifications": "Powiadomienia"
@@ -535,7 +553,9 @@
         "notif_forumReplyTitle": "Nova resposta no seu tópico",
         "notif_forumReplyMessage": "Alguém respondeu a “{title}”.",
         "notif_moderationRejectedTitle": "A tua publicação não foi publicada",
-        "notif_moderationRejectedMessage": "Foi rejeitada. Abre-a para ver o motivo."
+        "notif_moderationRejectedMessage": "Foi rejeitada. Abre-a para ver o motivo.",
+        "notif_ticketAssistantTitle": "O assistente respondeu ao seu ticket",
+        "notif_ticketAssistantMessage": "Um assistente de IA respondeu a “{subject}”. Pode pedir lá para falar com uma pessoa."
       },
       "pageTitles": {
         "notifications": "Notificações"
@@ -587,7 +607,9 @@
         "notif_forumReplyTitle": "Новый ответ в вашей теме",
         "notif_forumReplyMessage": "Кто-то ответил в теме «{title}».",
         "notif_moderationRejectedTitle": "Твоя публикация не опубликована",
-        "notif_moderationRejectedMessage": "Она отклонена. Откройте, чтобы узнать причину."
+        "notif_moderationRejectedMessage": "Она отклонена. Откройте, чтобы узнать причину.",
+        "notif_ticketAssistantTitle": "Ассистент ответил на ваше обращение",
+        "notif_ticketAssistantMessage": "ИИ-ассистент ответил в обращении «{subject}». Там можно позвать человека."
       },
       "pageTitles": {
         "notifications": "Уведомления"
@@ -639,7 +661,9 @@
         "notif_forumReplyTitle": "你的主题有新回复",
         "notif_forumReplyMessage": "有人回复了“{title}”。",
         "notif_moderationRejectedTitle": "你的内容未发布",
-        "notif_moderationRejectedMessage": "它已被拒绝。打开查看原因。"
+        "notif_moderationRejectedMessage": "它已被拒绝。打开查看原因。",
+        "notif_ticketAssistantTitle": "助手回复了你的工单",
+        "notif_ticketAssistantMessage": "AI 助手回复了“{subject}”。你可以在那里转人工。"
       },
       "pageTitles": {
         "notifications": "通知"

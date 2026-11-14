@@ -20,9 +20,12 @@ interface Ticket {
     createdAt: string;
     updatedAt: string;
     department: { id: string; name: string; color: string | null };
-    user: { id: string; username: string; avatar: string | null };
+    /** Null once the account that opened it is deleted. */
+    user: { id: string; username: string; avatar: string | null } | null;
     assignedTo: { id: string; username: string; avatar: string | null } | null;
     _count: { messages: number };
+    assistantPaused?: boolean;
+    askedForPersonAt?: string | null;
 }
 
 export default function AdminTicketsPage() {
@@ -173,9 +176,13 @@ export default function AdminTicketsPage() {
                                         </Link>
                                         {/* English, on a Turkish page, and "1 messages" in either. */}
                                         <p className="text-xs text-muted-foreground">{t("adm_messageCount", { count: ticket._count.messages })}</p>
+                                        {/* The member stopped the assistant and asked for a person. */}
+                                        {ticket.assistantPaused && ticket.askedForPersonAt && (
+                                            <Badge tone="warning" className="mt-1">{t("adm_wantsPerson")}</Badge>
+                                        )}
                                     </td>
                                     <td className="px-4 py-4 text-sm">
-                                        {ticket.user.username}
+                                        {ticket.user?.username ?? t("deletedMember")}
                                     </td>
                                     <td className="px-4 py-4 text-sm">
                                         {ticket.department.name}

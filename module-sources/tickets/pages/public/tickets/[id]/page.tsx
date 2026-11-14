@@ -5,6 +5,7 @@ import { Link } from "@/core/sdk/navigation";
 import { useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { Bot, UserRound } from "lucide-react";
 import { Badge, Button, MemberAvatar, RichContent, RichTextEditor, buttonClassName } from "@/core/sdk/ui";
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { useRelativeTime } from "@/core/sdk/ui";
@@ -14,8 +15,11 @@ interface Message {
     id: string;
     content: string;
     isStaffReply: boolean;
+    /** A support assistant's, which no setting may present as a person's. */
+    byAssistant?: boolean;
     createdAt: string;
-    user: { id: string; username: string; avatar: string | null };
+    /** Null for the assistant, and for an account deleted since. */
+    user: { id: string; username: string; avatar: string | null } | null;
 }
 
 interface Ticket {
@@ -29,6 +33,8 @@ interface Ticket {
     user: { id: string; username: string; avatar: string | null };
     assignedTo: { id: string; username: string; avatar: string | null } | null;
     messages: Message[];
+    assistantPaused?: boolean;
+    askedForPersonAt?: string | null;
 }
 
 interface PageProps {
@@ -55,6 +61,7 @@ export default function TicketDetailPage({ params }: PageProps) {
     const [reply, setReply] = useState("");
     const [sending, setSending] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [asking, setAsking] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -108,6 +115,27 @@ export default function TicketDetailPage({ params }: PageProps) {
             toast.error(err instanceof Error ? err.message : t("replyFailed"));
         } finally {
             setSending(false);
+        }
+    };
+
+    /*
+     * Asking for a person stops the assistant on this ticket. It is offered
+     * once the assistant has spoken, and only the team can undo it.
+     */
+    const askForPerson = async () => {
+        setAsking(true);
+        try {
+            const res = await fetch(`/api/v1/tickets/${id}/assistant`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paused: true }),
+            });
+            if (!res.ok) throw new Error("ask-failed");
+            setTicket((prev) => prev ? { ...prev, assistantPaused: true, askedForPersonAt: new Date().toISOString() } : null);
+        } catch {
+            toast.error(t("assistant_askFailed"));
+        } finally {
+            setAsking(false);
         }
     };
 
@@ -172,14 +200,28 @@ export default function TicketDetailPage({ params }: PageProps) {
                                     key={message.id}
                                     className={`bg-card rounded-xl border p-4 ${message.isStaffReply
                                         ? "border-primary/20 bg-primary/50"
-                                        : "border-border"
+                                        : message.byAssistant ? "border-dashed border-border" : "border-border"
                                         }`}
                                 >
                                     <div className="flex items-center gap-3 mb-3">
-                                        <MemberAvatar name={message.user.username} src={message.user.avatar} size={40} />
+                                        {/* The assistant has no account and no face: an icon,
+                                            never a person's avatar, and a name no setting changes. */}
+                                        {message.byAssistant ? (
+                                            <span className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                                <Bot className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
+                                            </span>
+                                        ) : message.user ? (
+                                            <MemberAvatar name={message.user.username} src={message.user.avatar} size={40} />
+                                        ) : (
+                                            <span className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                                <UserRound className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
+                                            </span>
+                                        )}
                                         <div>
                                             <div className="flex items-center gap-2">
-                                                <span className="font-medium text-foreground">{message.user.username}</span>
+                                                <span className="font-medium text-foreground">
+                                                    {message.byAssistant ? t("assistant_name") : (message.user?.username ?? t("deletedMember"))}
+                                                </span>
                                                 {message.isStaffReply && (
                                                     <Badge tone="info">{t("staff")}</Badge>
                                                 )}
@@ -188,9 +230,25 @@ export default function TicketDetailPage({ params }: PageProps) {
                                         </div>
                                     </div>
                                     <RichContent markdown={message.content} keepLineBreaks />
+                                    {message.byAssistant && (
+                                        <p className="mt-3 text-xs text-muted-foreground">{t("assistant_note")}</p>
+                                    )}
                                 </div>
                             ))}
                         </div>
+
+                        {isOpenState(ticket.status, states.statuses) && (
+                            ticket.assistantPaused && ticket.askedForPersonAt ? (
+                                <p className="text-sm text-muted-foreground">{t("assistant_asked")}</p>
+                            ) : !ticket.assistantPaused && ticket.messages.some((message) => message.byAssistant) ? (
+                                <div className="bg-card rounded-xl border border-border p-4 flex flex-wrap items-center justify-between gap-3">
+                                    <p className="text-sm text-muted-foreground">{t("assistant_askPersonHint")}</p>
+                                    <Button variant="outline" onClick={askForPerson} disabled={asking}>
+                                        <UserRound className="w-4 h-4" aria-hidden="true" /> {t("assistant_askPerson")}
+                                    </Button>
+                                </div>
+                            ) : null
+                        )}
 
                         {/* Reply Form */}
                         {/* Still open, by the state rather than by one name. */}

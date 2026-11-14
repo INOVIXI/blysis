@@ -2,7 +2,7 @@
   "id": "tickets",
   "name": "Support Tickets",
   "description": "Customer support ticket system with departments and priority levels",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "coreVersion": "^5.37.0",
   "category": "management",
   "author": "Blysis Team",
@@ -150,6 +150,13 @@
       "handler": "api/tickets/states/route.ts",
       "description": "List, add, change and remove the states a ticket can be in (admin).",
       "permission": "tickets.manage"
+    },
+    {
+      "path": "/tickets/[id]/assistant",
+      "handler": "api/tickets/[id]/assistant/route.ts",
+      "method": "POST",
+      "description": "Stop a support assistant on a ticket and ask for a person, or let it answer again (staff).",
+      "permission": "tickets.manage"
     }
   ],
   "dashboardCards": [
@@ -186,6 +193,10 @@
     },
     {
       "hook": "tickets.ticket.updated",
+      "type": "action"
+    },
+    {
+      "hook": "tickets.ticket.handedOff",
       "type": "action"
     }
   ],
@@ -351,7 +362,22 @@
         "title": "Support Tickets",
         "updatedAt": "Updated",
         "urgent": "Urgent",
-        "waitingReply": "Waiting for Reply"
+        "waitingReply": "Waiting for Reply",
+        "assistant_name": "AI assistant",
+        "assistant_note": "Written by an AI assistant, not by a person. It can be wrong.",
+        "assistant_askPerson": "Talk to a person",
+        "assistant_askPersonHint": "The assistant will stop answering and the support team will reply here.",
+        "assistant_asked": "You asked for a person. The support team will answer here.",
+        "assistant_askFailed": "Could not ask for a person. Try again.",
+        "deletedMember": "Deleted account",
+        "adm_assistant": "Assistant",
+        "adm_assistantOn": "The assistant may answer this ticket.",
+        "adm_assistantPaused": "The assistant is stopped on this ticket.",
+        "adm_assistantPause": "Stop the assistant",
+        "adm_assistantResume": "Let the assistant answer",
+        "adm_assistantFailed": "Could not change the assistant.",
+        "adm_wantsPerson": "Wants a person",
+        "knowledge_cannedResponses": "Canned responses"
       },
       "admin": {
         "menu_tickets": "Tickets",
@@ -580,7 +606,22 @@
         "title": "Destek Talepleri",
         "updatedAt": "Güncellendi",
         "urgent": "Acil",
-        "waitingReply": "Yanıt Bekleniyor"
+        "waitingReply": "Yanıt Bekleniyor",
+        "assistant_name": "AI asistan",
+        "assistant_note": "Bunu bir kişi değil, bir AI asistan yazdı. Yanlış olabilir.",
+        "assistant_askPerson": "Personele aktar",
+        "assistant_askPersonHint": "Asistan yanıt vermeyi bırakır ve destek ekibi burada yanıtlar.",
+        "assistant_asked": "Bir kişiyle görüşmek istediniz. Destek ekibi burada yanıtlayacak.",
+        "assistant_askFailed": "Personele aktarılamadı. Tekrar deneyin.",
+        "deletedMember": "Silinmiş hesap",
+        "adm_assistant": "Asistan",
+        "adm_assistantOn": "Asistan bu bileti yanıtlayabilir.",
+        "adm_assistantPaused": "Asistan bu bilette durduruldu.",
+        "adm_assistantPause": "Asistanı durdur",
+        "adm_assistantResume": "Asistan yanıtlasın",
+        "adm_assistantFailed": "Asistan değiştirilemedi.",
+        "adm_wantsPerson": "Personel istiyor",
+        "knowledge_cannedResponses": "Hazır yanıtlar"
       },
       "admin": {
         "menu_tickets": "Destek Talepleri",
@@ -809,7 +850,22 @@
         "title": "Dəstək biletləri",
         "updatedAt": "Yeniləndi",
         "urgent": "Təcili",
-        "waitingReply": "Cavab gözlənilir"
+        "waitingReply": "Cavab gözlənilir",
+        "assistant_name": "AI köməkçi",
+        "assistant_note": "Bunu bir insan deyil, AI köməkçi yazıb. Səhv ola bilər.",
+        "assistant_askPerson": "İnsanla danış",
+        "assistant_askPersonHint": "Köməkçi cavab verməyi dayandıracaq və dəstək komandası burada cavab verəcək.",
+        "assistant_asked": "İnsanla danışmaq istədiniz. Dəstək komandası burada cavab verəcək.",
+        "assistant_askFailed": "İnsana yönləndirmək alınmadı. Yenidən cəhd edin.",
+        "deletedMember": "Silinmiş hesab",
+        "adm_assistant": "Köməkçi",
+        "adm_assistantOn": "Köməkçi bu biletə cavab verə bilər.",
+        "adm_assistantPaused": "Köməkçi bu biletdə dayandırılıb.",
+        "adm_assistantPause": "Köməkçini dayandır",
+        "adm_assistantResume": "Köməkçi cavab versin",
+        "adm_assistantFailed": "Köməkçini dəyişmək alınmadı.",
+        "adm_wantsPerson": "İnsan istəyir",
+        "knowledge_cannedResponses": "Hazır cavablar"
       },
       "admin": {
         "menu_tickets": "Biletlər",
@@ -1038,7 +1094,22 @@
         "title": "Support-Tickets",
         "updatedAt": "Aktualisiert",
         "urgent": "Dringend",
-        "waitingReply": "Warte auf Antwort"
+        "waitingReply": "Warte auf Antwort",
+        "assistant_name": "KI-Assistent",
+        "assistant_note": "Von einem KI-Assistenten geschrieben, nicht von einer Person. Es kann falsch sein.",
+        "assistant_askPerson": "Mit einer Person sprechen",
+        "assistant_askPersonHint": "Der Assistent antwortet dann nicht mehr, und das Support-Team antwortet hier.",
+        "assistant_asked": "Sie haben um eine Person gebeten. Das Support-Team antwortet hier.",
+        "assistant_askFailed": "Die Anfrage nach einer Person ist fehlgeschlagen. Versuchen Sie es erneut.",
+        "deletedMember": "Gelöschtes Konto",
+        "adm_assistant": "Assistent",
+        "adm_assistantOn": "Der Assistent darf dieses Ticket beantworten.",
+        "adm_assistantPaused": "Der Assistent ist bei diesem Ticket angehalten.",
+        "adm_assistantPause": "Assistent anhalten",
+        "adm_assistantResume": "Assistent antworten lassen",
+        "adm_assistantFailed": "Der Assistent konnte nicht geändert werden.",
+        "adm_wantsPerson": "Möchte eine Person",
+        "knowledge_cannedResponses": "Textbausteine"
       },
       "admin": {
         "menu_tickets": "Tickets",
@@ -1267,7 +1338,22 @@
         "title": "Tickets de soporte",
         "updatedAt": "Actualizado",
         "urgent": "Urgente",
-        "waitingReply": "Esperando respuesta"
+        "waitingReply": "Esperando respuesta",
+        "assistant_name": "Asistente de IA",
+        "assistant_note": "Lo escribió un asistente de IA, no una persona. Puede estar equivocado.",
+        "assistant_askPerson": "Hablar con una persona",
+        "assistant_askPersonHint": "El asistente dejará de responder y el equipo de soporte contestará aquí.",
+        "assistant_asked": "Pediste hablar con una persona. El equipo de soporte responderá aquí.",
+        "assistant_askFailed": "No se pudo pedir una persona. Inténtalo de nuevo.",
+        "deletedMember": "Cuenta eliminada",
+        "adm_assistant": "Asistente",
+        "adm_assistantOn": "El asistente puede responder este ticket.",
+        "adm_assistantPaused": "El asistente está detenido en este ticket.",
+        "adm_assistantPause": "Detener el asistente",
+        "adm_assistantResume": "Dejar que el asistente responda",
+        "adm_assistantFailed": "No se pudo cambiar el asistente.",
+        "adm_wantsPerson": "Quiere una persona",
+        "knowledge_cannedResponses": "Respuestas predefinidas"
       },
       "admin": {
         "menu_tickets": "Tickets",
@@ -1496,7 +1582,22 @@
         "title": "Tugipiletid",
         "updatedAt": "Uuendatud",
         "urgent": "Kiireloomuline",
-        "waitingReply": "Ootab vastust"
+        "waitingReply": "Ootab vastust",
+        "assistant_name": "AI-assistent",
+        "assistant_note": "Selle kirjutas AI-assistent, mitte inimene. See võib olla vale.",
+        "assistant_askPerson": "Räägi inimesega",
+        "assistant_askPersonHint": "Assistent lõpetab vastamise ja tugimeeskond vastab siin.",
+        "assistant_asked": "Palusid inimest. Tugimeeskond vastab siin.",
+        "assistant_askFailed": "Inimese palumine ebaõnnestus. Proovi uuesti.",
+        "deletedMember": "Kustutatud konto",
+        "adm_assistant": "Assistent",
+        "adm_assistantOn": "Assistent võib sellele piletile vastata.",
+        "adm_assistantPaused": "Assistent on selle pileti juures peatatud.",
+        "adm_assistantPause": "Peata assistent",
+        "adm_assistantResume": "Lase assistendil vastata",
+        "adm_assistantFailed": "Assistenti ei õnnestunud muuta.",
+        "adm_wantsPerson": "Soovib inimest",
+        "knowledge_cannedResponses": "Valmisvastused"
       },
       "admin": {
         "menu_tickets": "Piletid",
@@ -1725,7 +1826,22 @@
         "title": "Tickets d’assistance",
         "updatedAt": "Mis à jour le",
         "urgent": "Urgente",
-        "waitingReply": "En attente de réponse"
+        "waitingReply": "En attente de réponse",
+        "assistant_name": "Assistant IA",
+        "assistant_note": "Écrit par un assistant IA, pas par une personne. Il peut se tromper.",
+        "assistant_askPerson": "Parler à une personne",
+        "assistant_askPersonHint": "L'assistant cessera de répondre et l'équipe d'assistance répondra ici.",
+        "assistant_asked": "Vous avez demandé une personne. L'équipe d'assistance répondra ici.",
+        "assistant_askFailed": "Impossible de demander une personne. Réessayez.",
+        "deletedMember": "Compte supprimé",
+        "adm_assistant": "Assistant",
+        "adm_assistantOn": "L'assistant peut répondre à ce ticket.",
+        "adm_assistantPaused": "L'assistant est arrêté sur ce ticket.",
+        "adm_assistantPause": "Arrêter l'assistant",
+        "adm_assistantResume": "Laisser l'assistant répondre",
+        "adm_assistantFailed": "Impossible de modifier l'assistant.",
+        "adm_wantsPerson": "Veut une personne",
+        "knowledge_cannedResponses": "Réponses prédéfinies"
       },
       "admin": {
         "menu_tickets": "Tickets",
@@ -1954,7 +2070,22 @@
         "title": "Ticket di supporto",
         "updatedAt": "Aggiornato",
         "urgent": "Urgente",
-        "waitingReply": "In attesa di risposta"
+        "waitingReply": "In attesa di risposta",
+        "assistant_name": "Assistente IA",
+        "assistant_note": "Scritto da un assistente IA, non da una persona. Può essere sbagliato.",
+        "assistant_askPerson": "Parla con una persona",
+        "assistant_askPersonHint": "L'assistente smetterà di rispondere e il team di supporto risponderà qui.",
+        "assistant_asked": "Hai chiesto di parlare con una persona. Il team di supporto risponderà qui.",
+        "assistant_askFailed": "Impossibile chiedere una persona. Riprova.",
+        "deletedMember": "Account eliminato",
+        "adm_assistant": "Assistente",
+        "adm_assistantOn": "L'assistente può rispondere a questo ticket.",
+        "adm_assistantPaused": "L'assistente è fermo su questo ticket.",
+        "adm_assistantPause": "Ferma l'assistente",
+        "adm_assistantResume": "Lascia rispondere l'assistente",
+        "adm_assistantFailed": "Impossibile modificare l'assistente.",
+        "adm_wantsPerson": "Vuole una persona",
+        "knowledge_cannedResponses": "Risposte predefinite"
       },
       "admin": {
         "menu_tickets": "Ticket",
@@ -2183,7 +2314,22 @@
         "title": "Zgłoszenia wsparcia",
         "updatedAt": "Zaktualizowano",
         "urgent": "Pilny",
-        "waitingReply": "Czeka na odpowiedź"
+        "waitingReply": "Czeka na odpowiedź",
+        "assistant_name": "Asystent AI",
+        "assistant_note": "Napisane przez asystenta AI, nie przez człowieka. Może być błędne.",
+        "assistant_askPerson": "Porozmawiaj z człowiekiem",
+        "assistant_askPersonHint": "Asystent przestanie odpowiadać, a zespół wsparcia odpowie tutaj.",
+        "assistant_asked": "Poprosiłeś o kontakt z człowiekiem. Zespół wsparcia odpowie tutaj.",
+        "assistant_askFailed": "Nie udało się poprosić o człowieka. Spróbuj ponownie.",
+        "deletedMember": "Usunięte konto",
+        "adm_assistant": "Asystent",
+        "adm_assistantOn": "Asystent może odpowiadać na to zgłoszenie.",
+        "adm_assistantPaused": "Asystent jest wstrzymany w tym zgłoszeniu.",
+        "adm_assistantPause": "Wstrzymaj asystenta",
+        "adm_assistantResume": "Pozwól asystentowi odpowiadać",
+        "adm_assistantFailed": "Nie udało się zmienić asystenta.",
+        "adm_wantsPerson": "Chce człowieka",
+        "knowledge_cannedResponses": "Gotowe odpowiedzi"
       },
       "admin": {
         "menu_tickets": "Zgłoszenia",
@@ -2412,7 +2558,22 @@
         "title": "Tickets de suporte",
         "updatedAt": "Atualizado",
         "urgent": "Urgente",
-        "waitingReply": "Aguardando resposta"
+        "waitingReply": "Aguardando resposta",
+        "assistant_name": "Assistente de IA",
+        "assistant_note": "Escrito por um assistente de IA, não por uma pessoa. Pode estar errado.",
+        "assistant_askPerson": "Falar com uma pessoa",
+        "assistant_askPersonHint": "O assistente deixará de responder e a equipa de suporte responderá aqui.",
+        "assistant_asked": "Pediu para falar com uma pessoa. A equipa de suporte responderá aqui.",
+        "assistant_askFailed": "Não foi possível pedir uma pessoa. Tente novamente.",
+        "deletedMember": "Conta eliminada",
+        "adm_assistant": "Assistente",
+        "adm_assistantOn": "O assistente pode responder a este ticket.",
+        "adm_assistantPaused": "O assistente está parado neste ticket.",
+        "adm_assistantPause": "Parar o assistente",
+        "adm_assistantResume": "Deixar o assistente responder",
+        "adm_assistantFailed": "Não foi possível alterar o assistente.",
+        "adm_wantsPerson": "Quer uma pessoa",
+        "knowledge_cannedResponses": "Respostas predefinidas"
       },
       "admin": {
         "menu_tickets": "Tickets",
@@ -2641,7 +2802,22 @@
         "title": "Обращения в поддержку",
         "updatedAt": "Обновлено",
         "urgent": "Срочный",
-        "waitingReply": "Ожидает ответа"
+        "waitingReply": "Ожидает ответа",
+        "assistant_name": "ИИ-ассистент",
+        "assistant_note": "Это написал ИИ-ассистент, а не человек. Ответ может быть неверным.",
+        "assistant_askPerson": "Позвать человека",
+        "assistant_askPersonHint": "Ассистент перестанет отвечать, и здесь ответит служба поддержки.",
+        "assistant_asked": "Вы попросили человека. Служба поддержки ответит здесь.",
+        "assistant_askFailed": "Не удалось позвать человека. Попробуйте ещё раз.",
+        "deletedMember": "Удалённый аккаунт",
+        "adm_assistant": "Ассистент",
+        "adm_assistantOn": "Ассистент может отвечать на этот тикет.",
+        "adm_assistantPaused": "Ассистент остановлен в этом тикете.",
+        "adm_assistantPause": "Остановить ассистента",
+        "adm_assistantResume": "Разрешить ассистенту отвечать",
+        "adm_assistantFailed": "Не удалось изменить ассистента.",
+        "adm_wantsPerson": "Нужен человек",
+        "knowledge_cannedResponses": "Шаблоны ответов"
       },
       "admin": {
         "menu_tickets": "Обращения",
@@ -2870,7 +3046,22 @@
         "title": "支持工单",
         "updatedAt": "更新时间",
         "urgent": "紧急",
-        "waitingReply": "等待回复"
+        "waitingReply": "等待回复",
+        "assistant_name": "AI 助手",
+        "assistant_note": "此回复由 AI 助手而非真人撰写，可能有误。",
+        "assistant_askPerson": "转人工",
+        "assistant_askPersonHint": "助手将停止回复，客服团队会在这里回复你。",
+        "assistant_asked": "你已要求转人工，客服团队会在这里回复你。",
+        "assistant_askFailed": "转人工失败，请重试。",
+        "deletedMember": "已删除的账户",
+        "adm_assistant": "助手",
+        "adm_assistantOn": "助手可以回复此工单。",
+        "adm_assistantPaused": "助手已在此工单上停止。",
+        "adm_assistantPause": "停止助手",
+        "adm_assistantResume": "让助手回复",
+        "adm_assistantFailed": "无法更改助手设置。",
+        "adm_wantsPerson": "需要人工",
+        "knowledge_cannedResponses": "预设回复"
       },
       "admin": {
         "menu_tickets": "工单",
@@ -3121,6 +3312,43 @@
           }
         ]
       }
+    }
+  ],
+  "hookListeners": [
+    {
+      "hook": "tickets.thread.read",
+      "type": "filter",
+      "handler": "hooks/thread-read.ts"
+    },
+    {
+      "hook": "tickets.reply.post",
+      "type": "filter",
+      "handler": "hooks/reply-post.ts"
+    },
+    {
+      "hook": "tickets.ticket.classify",
+      "type": "filter",
+      "handler": "hooks/classify.ts"
+    },
+    {
+      "hook": "tickets.departments.list",
+      "type": "filter",
+      "handler": "hooks/departments-list.ts"
+    },
+    {
+      "hook": "tickets.priorities.list",
+      "type": "filter",
+      "handler": "hooks/priorities-list.ts"
+    },
+    {
+      "hook": "support.knowledge",
+      "type": "filter",
+      "handler": "hooks/knowledge.ts"
+    },
+    {
+      "hook": "support.sources",
+      "type": "filter",
+      "handler": "hooks/knowledge-source.ts"
     }
   ]
 }
