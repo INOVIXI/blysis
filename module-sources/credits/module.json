@@ -2,7 +2,7 @@
   "id": "credits",
   "name": "Credit System",
   "description": "Virtual currency wallet for users",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "coreVersion": "^5.21.0",
   "category": "commerce",
   "author": "Blysis",
@@ -65,16 +65,11 @@
         "adm_title": "Credits",
         "amount": "Amount",
         "balance": "Credit Balance",
-        "buy_bonus": "+{count} bonus",
-        "buy_buy": "Buy",
-        "buy_failed": "That purchase could not be started.",
-        "buy_title": "Buy credits",
         "err": {
           "credits_no_recipient": "No account by that name.",
           "credits_same_account": "That is your own account.",
           "credits_amount_not_positive": "Send a whole number of credits, at least one.",
-          "credits_insufficient_balance": "You do not have that many credits.",
-          "credit_package_unavailable": "That package is not for sale any more."
+          "credits_insufficient_balance": "You do not have that many credits."
         },
         "history": "Transaction History",
         "noTransactions": "No transactions yet",
@@ -121,12 +116,8 @@
         "typeVoucher_redeem": "Voucher Redeemed",
         "typeWheel_prize": "Wheel Prize",
         "typeWheel_spin": "Wheel Spin",
-        "buy_campaignTitle": "Top-up bonus is on",
-        "buy_campaignTier": "Pay {amount} or more: +{percent}%",
-        "buy_campaignBonus": "+{percent}% campaign bonus: +{count} credits",
-        "buy_campaignEnds": "Ends in {days, plural, one {# day} other {# days}} {hours, plural, one {# hour} other {# hours}}",
-        "buy_campaignEndsSoon": "Ends in {hours, plural, one {# hour} other {# hours}} {minutes, plural, one {# minute} other {# minutes}}",
-        "typeTop_up_bonus": "Top-up Bonus"
+        "typeTop_up_bonus": "Top-up Bonus",
+        "loadCredits": "Load credits"
       },
       "admin": {
         "module_credits_name": "Credit System",
@@ -152,16 +143,11 @@
         "adm_title": "Krediler",
         "amount": "Miktar",
         "balance": "Kredi Bakiyesi",
-        "buy_bonus": "+{count} bonus",
-        "buy_buy": "Satın al",
-        "buy_failed": "Satın alma başlatılamadı.",
-        "buy_title": "Kredi satın al",
         "err": {
           "credits_no_recipient": "Bu adda bir hesap yok.",
           "credits_same_account": "Burası kendi hesabınız.",
           "credits_amount_not_positive": "En az bir olmak üzere tam sayı kadar kredi gönderin.",
-          "credits_insufficient_balance": "Bu kadar krediniz yok.",
-          "credit_package_unavailable": "Bu paket artık satışta değil."
+          "credits_insufficient_balance": "Bu kadar krediniz yok."
         },
         "history": "İşlem Geçmişi",
         "noTransactions": "Henüz işlem yok",
@@ -208,12 +194,8 @@
         "typeVoucher_redeem": "Kupon Bozduruldu",
         "typeWheel_prize": "Çark Ödülü",
         "typeWheel_spin": "Çark Çevirme",
-        "buy_campaignTitle": "Yükleme bonusu aktif",
-        "buy_campaignTier": "{amount} veya daha fazla öde: +%{percent}",
-        "buy_campaignBonus": "+%{percent} kampanya bonusu: +{count} kredi",
-        "buy_campaignEnds": "{days} gün {hours} saat sonra bitiyor",
-        "buy_campaignEndsSoon": "{hours} saat {minutes} dakika sonra bitiyor",
-        "typeTop_up_bonus": "Yükleme Bonusu"
+        "typeTop_up_bonus": "Yükleme Bonusu",
+        "loadCredits": "Kredi yükle"
       },
       "admin": {
         "module_credits_name": "Kredi Sistemi",
@@ -239,16 +221,11 @@
         "adm_title": "Kreditlər",
         "amount": "Məbləğ",
         "balance": "Kredit balansı",
-        "buy_bonus": "+{count} bonus",
-        "buy_buy": "Al",
-        "buy_failed": "Bu alış başladıla bilmədi.",
-        "buy_title": "Kredit alın",
         "err": {
           "credits_no_recipient": "Bu adda hesab yoxdur.",
           "credits_same_account": "Bu sizin öz hesabınızdır.",
           "credits_amount_not_positive": "Ən azı bir olmaqla tam sayda kredit göndərin.",
-          "credits_insufficient_balance": "Sizin bu qədər krediniz yoxdur.",
-          "credit_package_unavailable": "Bu paket artıq satışda deyil."
+          "credits_insufficient_balance": "Sizin bu qədər krediniz yoxdur."
         },
         "history": "Əməliyyat tarixçəsi",
         "noTransactions": "Hələ əməliyyat yoxdur",
@@ -295,12 +272,8 @@
         "typePayment_refund": "Geri Qaytarmadan Sonra Geri Alındı",
         "typeVoucher_create": "Kupon yaradıldı",
         "typeVoucher_redeem": "Kupon istifadə edildi",
-        "buy_campaignTitle": "Yükləmə bonusu aktivdir",
-        "buy_campaignTier": "{amount} və ya daha çox ödə: +{percent}%",
-        "buy_campaignBonus": "+{percent}% kampaniya bonusu: +{count} kredit",
-        "buy_campaignEnds": "{days} gün {hours} saat sonra bitir",
-        "buy_campaignEndsSoon": "{hours} saat {minutes} dəqiqə sonra bitir",
-        "typeTop_up_bonus": "Yükləmə Bonusu"
+        "typeTop_up_bonus": "Yükləmə Bonusu",
+        "loadCredits": "Kredit yüklə"
       },
       "admin": {
         "module_credits_name": "Kredit sistemi",
@@ -326,16 +299,11 @@
         "adm_title": "Credits",
         "amount": "Betrag",
         "balance": "Credit-Guthaben",
-        "buy_bonus": "+{count} Bonus",
-        "buy_buy": "Kaufen",
-        "buy_failed": "Dieser Kauf konnte nicht gestartet werden.",
-        "buy_title": "Credits kaufen",
         "err": {
           "credits_no_recipient": "Kein Konto mit diesem Namen.",
           "credits_same_account": "Das ist dein eigenes Konto.",
           "credits_amount_not_positive": "Sende eine ganze Zahl Credits, mindestens eins.",
-          "credits_insufficient_balance": "Du hast nicht so viele Credits.",
-          "credit_package_unavailable": "Dieses Paket wird nicht mehr verkauft."
+          "credits_insufficient_balance": "Du hast nicht so viele Credits."
         },
         "history": "Transaktionsverlauf",
         "noTransactions": "Noch keine Transaktionen",
@@ -382,12 +350,8 @@
         "typePayment_refund": "Nach Erstattung zurückgebucht",
         "typeVoucher_create": "Gutschein erstellt",
         "typeVoucher_redeem": "Gutschein eingelöst",
-        "buy_campaignTitle": "Aufladebonus läuft",
-        "buy_campaignTier": "Zahle {amount} oder mehr: +{percent} %",
-        "buy_campaignBonus": "+{percent} % Aktionsbonus: +{count} Credits",
-        "buy_campaignEnds": "Endet in {days, plural, one {# Tag} other {# Tagen}} {hours, plural, one {# Stunde} other {# Stunden}}",
-        "buy_campaignEndsSoon": "Endet in {hours, plural, one {# Stunde} other {# Stunden}} {minutes, plural, one {# Minute} other {# Minuten}}",
-        "typeTop_up_bonus": "Aufladebonus"
+        "typeTop_up_bonus": "Aufladebonus",
+        "loadCredits": "Credits aufladen"
       },
       "admin": {
         "module_credits_name": "Credit-System",
@@ -413,16 +377,11 @@
         "adm_title": "Créditos",
         "amount": "Cantidad",
         "balance": "Saldo de créditos",
-        "buy_bonus": "+{count} de bonificación",
-        "buy_buy": "Comprar",
-        "buy_failed": "No se pudo iniciar esa compra.",
-        "buy_title": "Comprar créditos",
         "err": {
           "credits_no_recipient": "No hay ninguna cuenta con ese nombre.",
           "credits_same_account": "Esa es tu propia cuenta.",
           "credits_amount_not_positive": "Envía un número entero de créditos, como mínimo uno.",
-          "credits_insufficient_balance": "No tienes tantos créditos.",
-          "credit_package_unavailable": "Ese paquete ya no está a la venta."
+          "credits_insufficient_balance": "No tienes tantos créditos."
         },
         "history": "Historial de transacciones",
         "noTransactions": "Aún no hay transacciones",
@@ -469,12 +428,8 @@
         "typePayment_refund": "Retirado tras un reembolso",
         "typeVoucher_create": "Vale creado",
         "typeVoucher_redeem": "Vale canjeado",
-        "buy_campaignTitle": "Bonificación de recarga activa",
-        "buy_campaignTier": "Paga {amount} o más: +{percent} %",
-        "buy_campaignBonus": "+{percent} % de bonificación: +{count} créditos",
-        "buy_campaignEnds": "Termina en {days, plural, one {# día} other {# días}} {hours, plural, one {# hora} other {# horas}}",
-        "buy_campaignEndsSoon": "Termina en {hours, plural, one {# hora} other {# horas}} {minutes, plural, one {# minuto} other {# minutos}}",
-        "typeTop_up_bonus": "Bonificación de recarga"
+        "typeTop_up_bonus": "Bonificación de recarga",
+        "loadCredits": "Recargar créditos"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -500,16 +455,11 @@
         "adm_title": "Krediidid",
         "amount": "Summa",
         "balance": "Krediidisaldo",
-        "buy_bonus": "+{count} boonust",
-        "buy_buy": "Osta",
-        "buy_failed": "Seda ostu ei õnnestunud alustada.",
-        "buy_title": "Osta krediite",
         "err": {
           "credits_no_recipient": "Sellise nimega kontot pole.",
           "credits_same_account": "See on sinu enda konto.",
           "credits_amount_not_positive": "Saada täisarv krediite, vähemalt üks.",
-          "credits_insufficient_balance": "Sul pole nii palju krediite.",
-          "credit_package_unavailable": "See pakett enam ei ole müügil."
+          "credits_insufficient_balance": "Sul pole nii palju krediite."
         },
         "history": "Tehingute ajalugu",
         "noTransactions": "Tehinguid pole veel",
@@ -556,12 +506,8 @@
         "typePayment_refund": "Tagasimakse järel tagasi võetud",
         "typeVoucher_create": "Kupong loodud",
         "typeVoucher_redeem": "Kupong lunastatud",
-        "buy_campaignTitle": "Laadimisboonus kehtib",
-        "buy_campaignTier": "Maksa {amount} või rohkem: +{percent}%",
-        "buy_campaignBonus": "+{percent}% kampaaniaboonus: +{count} krediiti",
-        "buy_campaignEnds": "Lõpeb {days, plural, one {# päeva} other {# päeva}} {hours, plural, one {# tunni} other {# tunni}} pärast",
-        "buy_campaignEndsSoon": "Lõpeb {hours, plural, one {# tunni} other {# tunni}} {minutes, plural, one {# minuti} other {# minuti}} pärast",
-        "typeTop_up_bonus": "Laadimisboonus"
+        "typeTop_up_bonus": "Laadimisboonus",
+        "loadCredits": "Laadi krediite"
       },
       "admin": {
         "module_credits_name": "Krediidisüsteem",
@@ -587,16 +533,11 @@
         "adm_title": "Crédits",
         "amount": "Montant",
         "balance": "Solde de crédits",
-        "buy_bonus": "+{count} bonus",
-        "buy_buy": "Acheter",
-        "buy_failed": "Cet achat n’a pas pu être lancé.",
-        "buy_title": "Acheter des crédits",
         "err": {
           "credits_no_recipient": "Aucun compte ne porte ce nom.",
           "credits_same_account": "C’est votre propre compte.",
           "credits_amount_not_positive": "Indiquez un nombre entier de crédits, au moins un.",
-          "credits_insufficient_balance": "Vous n’avez pas autant de crédits.",
-          "credit_package_unavailable": "Ce pack n’est plus en vente."
+          "credits_insufficient_balance": "Vous n’avez pas autant de crédits."
         },
         "history": "Historique des transactions",
         "noTransactions": "Aucune transaction pour le moment",
@@ -643,12 +584,8 @@
         "typePayment_refund": "Repris après un remboursement",
         "typeVoucher_create": "Bon créé",
         "typeVoucher_redeem": "Bon utilisé",
-        "buy_campaignTitle": "Bonus de recharge en cours",
-        "buy_campaignTier": "Payez {amount} ou plus : +{percent} %",
-        "buy_campaignBonus": "+{percent} % de bonus : +{count} crédits",
-        "buy_campaignEnds": "Se termine dans {days, plural, one {# jour} other {# jours}} {hours, plural, one {# heure} other {# heures}}",
-        "buy_campaignEndsSoon": "Se termine dans {hours, plural, one {# heure} other {# heures}} {minutes, plural, one {# minute} other {# minutes}}",
-        "typeTop_up_bonus": "Bonus de recharge"
+        "typeTop_up_bonus": "Bonus de recharge",
+        "loadCredits": "Recharger des crédits"
       },
       "admin": {
         "module_credits_name": "Système de crédits",
@@ -674,16 +611,11 @@
         "adm_title": "Crediti",
         "amount": "Importo",
         "balance": "Saldo crediti",
-        "buy_bonus": "+{count} bonus",
-        "buy_buy": "Acquista",
-        "buy_failed": "Non è stato possibile avviare questo acquisto.",
-        "buy_title": "Acquista crediti",
         "err": {
           "credits_no_recipient": "Nessun account con questo nome.",
           "credits_same_account": "Questo è il tuo account.",
           "credits_amount_not_positive": "Invia un numero intero di crediti, almeno uno.",
-          "credits_insufficient_balance": "Non hai così tanti crediti.",
-          "credit_package_unavailable": "Questo pacchetto non è più in vendita."
+          "credits_insufficient_balance": "Non hai così tanti crediti."
         },
         "history": "Cronologia transazioni",
         "noTransactions": "Nessuna transazione ancora",
@@ -730,12 +662,8 @@
         "typePayment_refund": "Ripreso dopo un rimborso",
         "typeVoucher_create": "Buono creato",
         "typeVoucher_redeem": "Buono riscattato",
-        "buy_campaignTitle": "Bonus ricarica attivo",
-        "buy_campaignTier": "Paga {amount} o più: +{percent}%",
-        "buy_campaignBonus": "+{percent}% di bonus: +{count} crediti",
-        "buy_campaignEnds": "Termina tra {days, plural, one {# giorno} other {# giorni}} {hours, plural, one {# ora} other {# ore}}",
-        "buy_campaignEndsSoon": "Termina tra {hours, plural, one {# ora} other {# ore}} {minutes, plural, one {# minuto} other {# minuti}}",
-        "typeTop_up_bonus": "Bonus ricarica"
+        "typeTop_up_bonus": "Bonus ricarica",
+        "loadCredits": "Ricarica crediti"
       },
       "admin": {
         "module_credits_name": "Sistema di crediti",
@@ -761,16 +689,11 @@
         "adm_title": "Kredyty",
         "amount": "Kwota",
         "balance": "Saldo kredytów",
-        "buy_bonus": "+{count} bonusu",
-        "buy_buy": "Kup",
-        "buy_failed": "Nie udało się rozpocząć tego zakupu.",
-        "buy_title": "Kup kredyty",
         "err": {
           "credits_no_recipient": "Nie ma konta o tej nazwie.",
           "credits_same_account": "To Twoje własne konto.",
           "credits_amount_not_positive": "Wyślij całkowitą liczbę kredytów, co najmniej jeden.",
-          "credits_insufficient_balance": "Nie masz tylu kredytów.",
-          "credit_package_unavailable": "Ten pakiet nie jest już dostępny."
+          "credits_insufficient_balance": "Nie masz tylu kredytów."
         },
         "history": "Historia transakcji",
         "noTransactions": "Nie ma jeszcze transakcji",
@@ -817,12 +740,8 @@
         "typePayment_refund": "Cofnięte po zwrocie",
         "typeVoucher_create": "Utworzono bon",
         "typeVoucher_redeem": "Wykorzystano bon",
-        "buy_campaignTitle": "Trwa bonus za doładowanie",
-        "buy_campaignTier": "Zapłać {amount} lub więcej: +{percent}%",
-        "buy_campaignBonus": "+{percent}% bonusu z kampanii: +{count} kredytów",
-        "buy_campaignEnds": "Kończy się za {days, plural, one {# dzień} other {# dni}} {hours, plural, one {# godzinę} few {# godziny} many {# godzin} other {# godziny}}",
-        "buy_campaignEndsSoon": "Kończy się za {hours, plural, one {# godzinę} few {# godziny} many {# godzin} other {# godziny}} {minutes, plural, one {# minutę} few {# minuty} many {# minut} other {# minuty}}",
-        "typeTop_up_bonus": "Bonus za doładowanie"
+        "typeTop_up_bonus": "Bonus za doładowanie",
+        "loadCredits": "Doładuj kredyty"
       },
       "admin": {
         "module_credits_name": "System kredytów",
@@ -848,16 +767,11 @@
         "adm_title": "Créditos",
         "amount": "Valor",
         "balance": "Saldo de créditos",
-        "buy_bonus": "+{count} de bônus",
-        "buy_buy": "Comprar",
-        "buy_failed": "Não foi possível iniciar esta compra.",
-        "buy_title": "Comprar créditos",
         "err": {
           "credits_no_recipient": "Não existe conta com esse nome.",
           "credits_same_account": "Essa é a sua própria conta.",
           "credits_amount_not_positive": "Envie um número inteiro de créditos, de pelo menos um.",
-          "credits_insufficient_balance": "Você não tem tantos créditos.",
-          "credit_package_unavailable": "Este pacote não está mais à venda."
+          "credits_insufficient_balance": "Você não tem tantos créditos."
         },
         "history": "Histórico de transações",
         "noTransactions": "Nenhuma transação ainda",
@@ -904,12 +818,8 @@
         "typePayment_refund": "Retirado após reembolso",
         "typeVoucher_create": "Vale criado",
         "typeVoucher_redeem": "Vale resgatado",
-        "buy_campaignTitle": "Bónus de carregamento ativo",
-        "buy_campaignTier": "Pague {amount} ou mais: +{percent}%",
-        "buy_campaignBonus": "+{percent}% de bónus: +{count} créditos",
-        "buy_campaignEnds": "Termina dentro de {days, plural, one {# dia} other {# dias}} {hours, plural, one {# hora} other {# horas}}",
-        "buy_campaignEndsSoon": "Termina dentro de {hours, plural, one {# hora} other {# horas}} {minutes, plural, one {# minuto} other {# minutos}}",
-        "typeTop_up_bonus": "Bónus de carregamento"
+        "typeTop_up_bonus": "Bónus de carregamento",
+        "loadCredits": "Carregar créditos"
       },
       "admin": {
         "module_credits_name": "Sistema de créditos",
@@ -935,16 +845,11 @@
         "adm_title": "Кредиты",
         "amount": "Сумма",
         "balance": "Баланс кредитов",
-        "buy_bonus": "{count, plural, one {+# бонус} few {+# бонуса} many {+# бонусов} other {+# бонуса}}",
-        "buy_buy": "Купить",
-        "buy_failed": "Не удалось начать покупку.",
-        "buy_title": "Купить кредиты",
         "err": {
           "credits_no_recipient": "Нет участника с таким именем.",
           "credits_same_account": "Это ваша собственная учетная запись.",
           "credits_amount_not_positive": "Укажите целое количество кредитов, не меньше одного.",
-          "credits_insufficient_balance": "У вас недостаточно кредитов.",
-          "credit_package_unavailable": "Этот пакет больше не продается."
+          "credits_insufficient_balance": "У вас недостаточно кредитов."
         },
         "history": "История операций",
         "noTransactions": "Операций пока нет",
@@ -991,12 +896,8 @@
         "typePayment_refund": "Списано после возврата",
         "typeVoucher_create": "Ваучер создан",
         "typeVoucher_redeem": "Ваучер погашен",
-        "buy_campaignTitle": "Действует бонус за пополнение",
-        "buy_campaignTier": "Оплатите от {amount}: +{percent}%",
-        "buy_campaignBonus": "Бонус акции +{percent}%: +{count} кредитов",
-        "buy_campaignEnds": "Закончится через {days, plural, one {# день} few {# дня} many {# дней} other {# дня}} {hours, plural, one {# час} few {# часа} many {# часов} other {# часа}}",
-        "buy_campaignEndsSoon": "Закончится через {hours, plural, one {# час} few {# часа} many {# часов} other {# часа}} {minutes, plural, one {# минуту} few {# минуты} many {# минут} other {# минуты}}",
-        "typeTop_up_bonus": "Бонус за пополнение"
+        "typeTop_up_bonus": "Бонус за пополнение",
+        "loadCredits": "Пополнить кредиты"
       },
       "admin": {
         "module_credits_name": "Система кредитов",
@@ -1022,16 +923,11 @@
         "adm_title": "积分",
         "amount": "数量",
         "balance": "积分余额",
-        "buy_bonus": "+{count} 赠送",
-        "buy_buy": "购买",
-        "buy_failed": "无法开始此次购买。",
-        "buy_title": "购买积分",
         "err": {
           "credits_no_recipient": "没有该名称的账户。",
           "credits_same_account": "这是你自己的账户。",
           "credits_amount_not_positive": "请发送整数积分，至少为 1。",
-          "credits_insufficient_balance": "你的积分不足。",
-          "credit_package_unavailable": "该套餐已不再出售。"
+          "credits_insufficient_balance": "你的积分不足。"
         },
         "history": "交易记录",
         "noTransactions": "暂无交易记录",
@@ -1078,12 +974,8 @@
         "typePayment_refund": "退款后收回",
         "typeVoucher_create": "已创建兑换券",
         "typeVoucher_redeem": "已兑换兑换券",
-        "buy_campaignTitle": "充值奖励进行中",
-        "buy_campaignTier": "付款满 {amount}：+{percent}%",
-        "buy_campaignBonus": "活动奖励 +{percent}%：+{count} 积分",
-        "buy_campaignEnds": "{days} 天 {hours} 小时后结束",
-        "buy_campaignEndsSoon": "{hours} 小时 {minutes} 分钟后结束",
-        "typeTop_up_bonus": "充值奖励"
+        "typeTop_up_bonus": "充值奖励",
+        "loadCredits": "充值积分"
       },
       "admin": {
         "module_credits_name": "积分系统",

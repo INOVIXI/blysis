@@ -2,7 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/core/sdk/navigation";
-import { Badge, useSiteCurrency } from "@/core/sdk/ui";
+import { Badge } from "@/core/sdk/ui";
+import { useStorePrice } from "../lib/use-store-price";
 import { Box } from "lucide-react";
 import { AvailabilityNote, LowStockNote, type AvailabilityInfo } from "./AvailabilityNote";
 
@@ -62,7 +63,7 @@ interface Props {
 
 export function ProductCard({ product, lowStockAt = 0, showCategory = false }: Props) {
     const t = useTranslations("store");
-    const { format: formatPrice } = useSiteCurrency();
+    const { format: formatPrice } = useStorePrice();
 
     const credit = Number(product.upgradeCredit ?? 0);
     const upgrading = credit > 0;

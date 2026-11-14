@@ -17,10 +17,16 @@ import { paymentFeeFor } from "../../../lib/payment-fee-server";
 import { grossUpForFee } from "../../../lib/pricing";
 import { bestBonus } from "../../../lib/credit-bonus";
 import { runningBonusCampaigns } from "../../../lib/credit-bonus-server";
+import { MIN_CHARGE, quoteTopUp, readTopUpLimits, type TopUpSettings } from "../../../lib/credit-top-up-quote";
 
 const buyCreditsSchema = z.object({
-    /** A loose amount, for a shop that sells credits by the unit. */
-    amount: z.number().int().min(1, "Minimum 1 credit").max(100000, "Maximum 100,000 credits").optional(),
+    /**
+     * A typed amount, in whole credits: the buyer types money and the screen
+     * turns it into credits with `creditsFor`. What it may cost is the
+     * operator's min and max, checked below in money; this bound only keeps
+     * the arithmetic finite.
+     */
+    amount: z.number().int().min(1, "Minimum 1 credit").max(1_000_000_000).optional(),
     /** Or a package, which decides both numbers itself. */
     packageId: z.string().min(1).max(64).optional(),
     provider: z.string().min(1).max(32).optional(),
@@ -67,6 +73,13 @@ export async function POST(request: NextRequest) {
         // `credits` without its fixed bonus, so no bonus is paid on a bonus.
         let baseCredits: number;
         let description: string;
+        // Decided now and written on the row, never looked up at settlement:
+        // a campaign that ends while the gateway is still settling must pay
+        // what the buyer was shown. The tier is chosen by the price, before
+        // the method's fee, because the fee is not a purchase.
+        const startedAt = new Date();
+        const campaigns = await runningBonusCampaigns(startedAt);
+        let bonus: ReturnType<typeof bestBonus>;
 
         if (validation.data.packageId) {
             const pack = await prisma.creditPackage.findUnique({
@@ -83,26 +96,32 @@ export async function POST(request: NextRequest) {
             totalAmount = sold.price;
             baseCredits = pack.credits;
             description = sold.name;
+            // A package is the operator's own offer, so the typed limits do
+            // not apply to it; the gateway's floor does.
+            if (Math.round(totalAmount * 100) < Math.round(MIN_CHARGE * 100)) {
+                return NextResponse.json(
+                    { error: "That amount is below the smallest top-up", code: "credit_top_up_below_min", min: MIN_CHARGE },
+                    { status: 400 },
+                );
+            }
+            bonus = bestBonus(campaigns, { paid: totalAmount, baseCredits }, startedAt);
         } else if (validation.data.amount) {
-            // A module setting rather than a `credits_price_per_unit` row, which
-            // is what this read before. Nothing wrote that row - no screen, no
-            // API, no manifest default - so every site sold credits at exactly
-            // the fallback and no operator could change it.
-            const { creditsPricePerUnit } = await moduleSettings<{ creditsPricePerUnit: number }>("store");
-
-            amount = validation.data.amount;
-            baseCredits = amount;
-            // A per-credit price is a fraction by nature (0.013 a credit), so
-            // the product of it is almost never a whole cent. Rounded here,
-            // because what the gateway charges is rounded whether we do it or
-            // not.
-            totalAmount = Math.round(amount * creditsPricePerUnit * 100) / 100;
+            // Priced, limited and given its bonus by `quoteTopUp`, the function
+            // the buyer's screen previewed it with. The limits are money, so a
+            // change to the price of a credit cannot quietly move them.
+            const limits = readTopUpLimits(await moduleSettings<TopUpSettings>("store"));
+            const quote = quoteTopUp(validation.data.amount, limits, campaigns, startedAt);
+            if (quote.refusal) {
+                const { code, ...limit } = quote.refusal;
+                return NextResponse.json({ error: "That amount cannot be bought", code, ...limit }, { status: 400 });
+            }
+            amount = quote.credits;
+            baseCredits = quote.credits;
+            totalAmount = quote.paid;
             description = `${amount} credits`;
+            bonus = quote.bonus;
         } else {
             return NextResponse.json({ error: "Choose a package or an amount" }, { status: 400 });
-        }
-        if (Math.round(totalAmount * 100) < 50) {
-            return NextResponse.json({ error: "Minimum purchase amount is $0.50" }, { status: 400 });
         }
 
         // Without a named provider, take the first gateway that can hold this
@@ -142,13 +161,6 @@ export async function POST(request: NextRequest) {
         // English, like the line an order carries: see the checkout route.
         if (surcharge > 0) lines.push({ name: "Payment processing fee", quantity: 1, unitAmount: surcharge });
 
-        // Decided now and written on the row, never looked up at settlement:
-        // a campaign that ends while the gateway is still settling must pay
-        // what the buyer was shown. The tier is chosen by the price, before
-        // the method's fee, because the fee is not a purchase.
-        const startedAt = new Date();
-        const bonus = bestBonus(await runningBonusCampaigns(startedAt), { paid: totalAmount, baseCredits }, startedAt);
-
         const buyer = await prisma.user.findUnique({
             where: { id: session.user.id },
             select: { email: true, username: true },
@@ -185,8 +197,8 @@ export async function POST(request: NextRequest) {
                 userId: session.user.id,
                 creditAmount: String(amount),
             },
-            successPath: "/store?credits=purchased",
-            cancelPath: "/store?credits=cancelled",
+            successPath: "/store/credits?credits=purchased",
+            cancelPath: "/store/credits?credits=cancelled",
         });
 
         if (!payment.handled || !payment.redirectUrl) {

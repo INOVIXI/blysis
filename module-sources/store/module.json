@@ -2,7 +2,7 @@
   "id": "store",
   "name": "Store Module",
   "description": "Complete e-commerce functionality with products, categories, cart and orders",
-  "version": "2.55.0",
+  "version": "2.56.0",
   "coreVersion": "^5.37.0",
   "category": "commerce",
   "author": "Blysis Team",
@@ -300,6 +300,48 @@
       "max": 72,
       "label": "Hours before the reminder",
       "description": "How long a checkout stays unpaid before its one reminder goes out."
+    },
+    {
+      "key": "creditsTopUpMin",
+      "type": "number",
+      "default": 1,
+      "min": 0.5,
+      "max": 100000,
+      "step": 0.01,
+      "label": "Smallest top-up",
+      "description": "The least a member can load at once by typing an amount, in the site currency. Card gateways refuse very small charges, so it cannot go below 0.50."
+    },
+    {
+      "key": "creditsTopUpMax",
+      "type": "number",
+      "default": 10000,
+      "min": 1,
+      "max": 1000000,
+      "step": 0.01,
+      "label": "Largest top-up",
+      "description": "The most a member can load at once by typing an amount, in the site currency."
+    },
+    {
+      "key": "creditsTopUpPresets",
+      "type": "string",
+      "default": "50, 100, 250, 500, 1000",
+      "maxLength": 200,
+      "label": "Top-up amounts offered",
+      "description": "Amounts in the site currency offered as one-press choices on the load-credits page, separated by commas. An amount outside the limits is left out."
+    },
+    {
+      "key": "creditsTopUpTyped",
+      "type": "boolean",
+      "default": true,
+      "label": "Let members type an amount",
+      "description": "Off, the load-credits page offers only the amounts above and the credit packages."
+    },
+    {
+      "key": "creditsOnlyStore",
+      "type": "boolean",
+      "default": false,
+      "label": "Credits-only store",
+      "description": "Prices show as credits and orders are paid only from the credit balance. Payment gateways are then used only to load credits."
     }
   ],
   "navGroups": [
@@ -443,6 +485,13 @@
       "component": "pages/public/vip/page.tsx",
       "titleKey": "pageTitles.vip",
       "descriptionKey": "pageDescriptions.vip"
+    },
+    {
+      "path": "/store/credits",
+      "component": "pages/public/credits/page.tsx",
+      "noindex": true,
+      "titleKey": "pageTitles.storeCredits",
+      "descriptionKey": "pageDescriptions.storeCredits"
     }
   ],
   "adminRoutes": [
@@ -871,6 +920,13 @@
       "handler": "api/admin/store-sales/[id]/route.ts",
       "description": "Edit or delete a store-wide sale (admin).",
       "permission": "store.manage"
+    },
+    {
+      "path": "/store/credits/options",
+      "handler": "api/credits/options/route.ts",
+      "method": "GET",
+      "description": "How credits are loaded and spent here: top-up limits, preset amounts, running bonus campaigns and whether the store takes only credits.",
+      "openTo": "public"
     }
   ],
   "dashboardCards": [
@@ -1020,7 +1076,8 @@
     "en": {
       "nav": {
         "adm_minPurchase": "Min: {amount}",
-        "store": "Store"
+        "store": "Store",
+        "loadCredits": "Load credits"
       },
       "store": {
         "addToCart": "Add to Cart",
@@ -1460,7 +1517,15 @@
           "fee_rate_unavailable": "That payment method cannot be used right now: its fee cannot be converted into this currency. Pick another method or try again later.",
           "credit_bonus_dates": "The campaign must end after it starts.",
           "credit_bonus_tiers": "Each tier must ask for more money and give a higher percent (1 to 500) than the one before. Up to 10 tiers.",
-          "store_sale_dates": "The sale must end after it starts."
+          "store_sale_dates": "The sale must end after it starts.",
+          "credit_top_up_below_min": "That amount is below the smallest top-up.",
+          "credit_top_up_above_max": "That amount is above the largest top-up.",
+          "credit_top_up_typed_off": "Pick one of the offered amounts.",
+          "store_credits_only": "This store takes only credits. Load credits first, then pay with them.",
+          "store_credits_only_subscription": "Subscriptions are not sold while the store takes only credits.",
+          "store_insufficient_credits": "You do not have enough credits for this order.",
+          "payment_not_configured": "Payments are not set up on this site yet.",
+          "credit_package_unavailable": "That package is not for sale any more."
         },
         "err_checkoutFailed": "Checkout failed",
         "err_couponMinPurchase": "Spend at least {amount} to use this code.",
@@ -1739,7 +1804,36 @@
         "adm_saleState_off": "Off",
         "adm_saleWholeStore": "{percent}% off the whole store",
         "adm_saleShelves": "{percent}% off {count} chosen shelves",
-        "adm_saleWindow": "{starts} to {ends}"
+        "adm_saleWindow": "{starts} to {ends}",
+        "price_credits": "{amount} credits",
+        "topUp_title": "Load credits",
+        "topUp_subtitle": "Pay once, then shop with your balance.",
+        "topUp_amountTitle": "How much?",
+        "topUp_balance": "Your balance: {amount} credits",
+        "topUp_presets": "Quick amounts",
+        "topUp_amountLabel": "Amount ({currency})",
+        "topUp_limits": "From {min} to {max}",
+        "topUp_youGet": "You get",
+        "topUp_credits": "{count, plural, one {# credit} other {# credits}}",
+        "topUp_bonusLine": "Campaign bonus +{percent}%",
+        "topUp_youPay": "You pay",
+        "topUp_nudge": "Add {amount} more to get a {percent}% bonus.",
+        "topUp_belowMin": "The least you can load is {amount}.",
+        "topUp_aboveMax": "The most you can load at once is {amount}.",
+        "topUp_presetOnly": "Pick one of the amounts above.",
+        "topUp_buy": "Continue to payment",
+        "topUp_failed": "That payment could not be started.",
+        "topUp_purchased": "Payment received. Your credits arrive as soon as the payment settles.",
+        "topUp_cancelled": "The payment was cancelled. Nothing was charged.",
+        "topUp_packages": "Packages",
+        "topUp_loadForCart": "Not enough credits? Load more",
+        "topUp_packageBonus": "+{count} bonus",
+        "topUp_packageCampaign": "+{percent}% campaign bonus: +{count} credits",
+        "topUp_packageBuy": "Buy",
+        "topUp_campaignTitle": "Top-up bonus is on",
+        "topUp_campaignTier": "Pay {amount} or more: +{percent}%",
+        "topUp_campaignEnds": "Ends in {days, plural, one {# day} other {# days}} {hours, plural, one {# hour} other {# hours}}",
+        "topUp_campaignEndsSoon": "Ends in {hours, plural, one {# hour} other {# hours}} {minutes, plural, one {# minute} other {# minutes}}"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -1968,7 +2062,8 @@
         "cart": "Cart",
         "product": "Product",
         "orderSuccess": "Order Complete",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "Load credits"
       },
       "profile": {
         "notificationType_store_order_completed": "Order Complete",
@@ -1979,7 +2074,8 @@
         "cart": "Review everything in your cart, change a quantity or remove an item, then go through to checkout.",
         "product": "See what this product includes, what it costs and what you receive once the order is paid, then add it to your cart.",
         "orderSuccess": "Your order is complete: see what happens next, find it again in your order history or carry on shopping.",
-        "vip": "Compare the VIP ranks side by side, see what each one unlocks and pick the one that suits you best."
+        "vip": "Compare the VIP ranks side by side, see what each one unlocks and pick the one that suits you best.",
+        "storeCredits": "Load credits in the site currency, see the bonus a running campaign adds, and pay once to shop with your balance."
       },
       "footer": {
         "section_game": "Game"
@@ -1988,7 +2084,8 @@
     "tr": {
       "nav": {
         "adm_minPurchase": "En az: {amount}",
-        "store": "Mağaza"
+        "store": "Mağaza",
+        "loadCredits": "Kredi yükle"
       },
       "store": {
         "addToCart": "Sepete Ekle",
@@ -2428,7 +2525,15 @@
           "fee_rate_unavailable": "Bu ödeme yöntemi şu anda kullanılamıyor: ücreti bu para birimine çevrilemiyor. Başka bir yöntem seçin ya da daha sonra yeniden deneyin.",
           "credit_bonus_dates": "Kampanya başladıktan sonra bitmelidir.",
           "credit_bonus_tiers": "Her kademe bir öncekinden daha fazla ödeme istemeli ve daha yüksek bir yüzde (1-500) vermelidir. En fazla 10 kademe.",
-          "store_sale_dates": "İndirim başladıktan sonra bitmelidir."
+          "store_sale_dates": "İndirim başladıktan sonra bitmelidir.",
+          "credit_top_up_below_min": "Bu tutar en düşük yükleme tutarının altında.",
+          "credit_top_up_above_max": "Bu tutar en yüksek yükleme tutarının üstünde.",
+          "credit_top_up_typed_off": "Sunulan tutarlardan birini seç.",
+          "store_credits_only": "Bu mağaza yalnızca kredi kabul ediyor. Önce kredi yükle, sonra krediyle öde.",
+          "store_credits_only_subscription": "Mağaza yalnızca kredi kabul ederken abonelik satılmıyor.",
+          "store_insufficient_credits": "Bu sipariş için yeterli kredin yok.",
+          "payment_not_configured": "Bu sitede ödemeler henüz ayarlanmadı.",
+          "credit_package_unavailable": "Bu paket artık satışta değil."
         },
         "err_checkoutFailed": "Ödeme tamamlanamadı",
         "err_couponMinPurchase": "Bu kodu kullanmak için en az {amount} harcayın.",
@@ -2707,7 +2812,36 @@
         "adm_saleState_off": "Kapalı",
         "adm_saleWholeStore": "Tüm mağazada %{percent} indirim",
         "adm_saleShelves": "Seçilen {count} rafta %{percent} indirim",
-        "adm_saleWindow": "{starts} - {ends}"
+        "adm_saleWindow": "{starts} - {ends}",
+        "price_credits": "{amount} kredi",
+        "topUp_title": "Kredi yükle",
+        "topUp_subtitle": "Bir kez öde, sonra bakiyenle alışveriş yap.",
+        "topUp_amountTitle": "Ne kadar?",
+        "topUp_balance": "Bakiyen: {amount} kredi",
+        "topUp_presets": "Hazır tutarlar",
+        "topUp_amountLabel": "Tutar ({currency})",
+        "topUp_limits": "{min} ile {max} arası",
+        "topUp_youGet": "Alacağın",
+        "topUp_credits": "{count} kredi",
+        "topUp_bonusLine": "Kampanya bonusu +%{percent}",
+        "topUp_youPay": "Ödeyeceğin",
+        "topUp_nudge": "%{percent} bonus için {amount} daha ekle.",
+        "topUp_belowMin": "En az {amount} yükleyebilirsin.",
+        "topUp_aboveMax": "Tek seferde en fazla {amount} yükleyebilirsin.",
+        "topUp_presetOnly": "Yukarıdaki tutarlardan birini seç.",
+        "topUp_buy": "Ödemeye geç",
+        "topUp_failed": "Ödeme başlatılamadı.",
+        "topUp_purchased": "Ödeme alındı. Kredilerin ödeme onaylanır onaylanmaz hesabına geçer.",
+        "topUp_cancelled": "Ödeme iptal edildi. Hiçbir ücret alınmadı.",
+        "topUp_packages": "Paketler",
+        "topUp_loadForCart": "Kredin yetmiyor mu? Kredi yükle",
+        "topUp_packageBonus": "+{count} bonus",
+        "topUp_packageCampaign": "+%{percent} kampanya bonusu: +{count} kredi",
+        "topUp_packageBuy": "Satın al",
+        "topUp_campaignTitle": "Yükleme bonusu aktif",
+        "topUp_campaignTier": "{amount} veya daha fazla öde: +%{percent}",
+        "topUp_campaignEnds": "{days} gün {hours} saat sonra bitiyor",
+        "topUp_campaignEndsSoon": "{hours} saat {minutes} dakika sonra bitiyor"
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -2936,7 +3070,8 @@
         "cart": "Sepet",
         "product": "Ürün",
         "orderSuccess": "Sipariş Tamamlandı",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "Kredi yükle"
       },
       "profile": {
         "notificationType_store_order_completed": "Sipariş Tamamlandı",
@@ -2947,7 +3082,8 @@
         "cart": "Sepetinizdeki her şeyi gözden geçirin, adetleri değiştirin ya da bir ürünü çıkarın, ardından ödemeye geçin.",
         "product": "Bu ürünün neleri kapsadığını, fiyatını ve ödeme tamamlandığında neler alacağınızı görün, sonra sepetinize ekleyin.",
         "orderSuccess": "Siparişiniz tamamlandı: sırada ne olduğunu görün, sipariş geçmişinizden tekrar bulun ya da alışverişe devam edin.",
-        "vip": "VIP rütbelerini yan yana karşılaştırın, her birinin neleri açtığını görün ve size en uygun olanı seçin."
+        "vip": "VIP rütbelerini yan yana karşılaştırın, her birinin neleri açtığını görün ve size en uygun olanı seçin.",
+        "storeCredits": "Site para biriminde kredi yükle, süren kampanyanın eklediği bonusu gör ve bakiyenle alışveriş yapmak için bir kez öde."
       },
       "footer": {
         "section_game": "Oyun"
@@ -2956,7 +3092,8 @@
     "az": {
       "nav": {
         "adm_minPurchase": "Min: {amount}",
-        "store": "Mağaza"
+        "store": "Mağaza",
+        "loadCredits": "Kredit yüklə"
       },
       "store": {
         "addToCart": "Səbətə at",
@@ -3396,7 +3533,15 @@
           "fee_rate_unavailable": "Bu ödəniş üsulu hazırda istifadə edilə bilməz: onun haqqı bu valyutaya çevrilə bilmir. Başqa üsul seçin və ya sonra yenidən cəhd edin.",
           "credit_bonus_dates": "Kampaniya başladıqdan sonra bitməlidir.",
           "credit_bonus_tiers": "Hər pillə əvvəlkindən daha çox ödəniş istəməli və daha yüksək faiz (1-500) verməlidir. Ən çox 10 pillə.",
-          "store_sale_dates": "Endirim başladıqdan sonra bitməlidir."
+          "store_sale_dates": "Endirim başladıqdan sonra bitməlidir.",
+          "credit_top_up_below_min": "Bu məbləğ ən kiçik yükləmədən azdır.",
+          "credit_top_up_above_max": "Bu məbləğ ən böyük yükləmədən çoxdur.",
+          "credit_top_up_typed_off": "Təklif olunan məbləğlərdən birini seçin.",
+          "store_credits_only": "Bu mağaza yalnız kredit qəbul edir. Əvvəlcə kredit yükləyin, sonra kreditlə ödəyin.",
+          "store_credits_only_subscription": "Mağaza yalnız kredit qəbul etdiyi müddətdə abunəlik satılmır.",
+          "store_insufficient_credits": "Bu sifariş üçün kifayət qədər kreditiniz yoxdur.",
+          "payment_not_configured": "Bu saytda ödənişlər hələ qurulmayıb.",
+          "credit_package_unavailable": "Bu paket artıq satışda deyil."
         },
         "err_checkoutFailed": "Ödəniş alınmadı",
         "err_couponMinPurchase": "Bu kodu istifadə etmək üçün ən azı {amount} xərcləyin.",
@@ -3675,7 +3820,36 @@
         "adm_saleState_off": "Söndürülüb",
         "adm_saleWholeStore": "Bütün mağazaya %{percent} endirim",
         "adm_saleShelves": "Seçilmiş {count} rəfə %{percent} endirim",
-        "adm_saleWindow": "{starts} - {ends}"
+        "adm_saleWindow": "{starts} - {ends}",
+        "price_credits": "{amount} kredit",
+        "topUp_title": "Kredit yüklə",
+        "topUp_subtitle": "Bir dəfə ödə, sonra balansınla alış-veriş et.",
+        "topUp_amountTitle": "Nə qədər?",
+        "topUp_balance": "Balansınız: {amount} kredit",
+        "topUp_presets": "Hazır məbləğlər",
+        "topUp_amountLabel": "Məbləğ ({currency})",
+        "topUp_limits": "{min} ilə {max} arası",
+        "topUp_youGet": "Alacağınız",
+        "topUp_credits": "{count} kredit",
+        "topUp_bonusLine": "Kampaniya bonusu +{percent}%",
+        "topUp_youPay": "Ödəyəcəyiniz",
+        "topUp_nudge": "{percent}% bonus üçün daha {amount} əlavə et.",
+        "topUp_belowMin": "Ən az {amount} yükləyə bilərsiniz.",
+        "topUp_aboveMax": "Bir dəfəyə ən çox {amount} yükləyə bilərsiniz.",
+        "topUp_presetOnly": "Yuxarıdakı məbləğlərdən birini seçin.",
+        "topUp_buy": "Ödənişə keç",
+        "topUp_failed": "Ödəniş başladıla bilmədi.",
+        "topUp_purchased": "Ödəniş alındı. Kreditləriniz ödəniş təsdiqlənən kimi hesabınıza keçəcək.",
+        "topUp_cancelled": "Ödəniş ləğv edildi. Heç bir məbləğ tutulmadı.",
+        "topUp_packages": "Paketlər",
+        "topUp_loadForCart": "Kredit çatmır? Kredit yüklə",
+        "topUp_packageBonus": "+{count} bonus",
+        "topUp_packageCampaign": "+{percent}% kampaniya bonusu: +{count} kredit",
+        "topUp_packageBuy": "Al",
+        "topUp_campaignTitle": "Yükləmə bonusu aktivdir",
+        "topUp_campaignTier": "{amount} və ya daha çox ödə: +{percent}%",
+        "topUp_campaignEnds": "{days} gün {hours} saat sonra bitir",
+        "topUp_campaignEndsSoon": "{hours} saat {minutes} dəqiqə sonra bitir"
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -3904,7 +4078,8 @@
         "cart": "Səbət",
         "product": "Məhsul",
         "orderSuccess": "Sifariş tamamlandı",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "Kredit yüklə"
       },
       "profile": {
         "notificationType_store_order_completed": "Sifariş tamamlandı",
@@ -3915,7 +4090,8 @@
         "cart": "Səbətinizdəki hər şeyi nəzərdən keçirin, miqdarı dəyişin və ya məhsulu çıxarın, sonra ödənişə keçin.",
         "product": "Bu məhsulun nəyi əhatə etdiyini, nə qədər olduğunu və sifarişə ödəniş edildikdən sonra nə alacağınızı görün, sonra onu səbətinizə əlavə edin.",
         "orderSuccess": "Sifarişiniz tamamlandı: növbəti addımların nə olduğunu görün, onu sifariş tarixçənizdə yenidən tapın və ya alış-verişə davam edin.",
-        "vip": "VIP rütbələrini yan-yana müqayisə edin, hər birinin nə açdığını görün və sizə ən uyğun olanı seçin."
+        "vip": "VIP rütbələrini yan-yana müqayisə edin, hər birinin nə açdığını görün və sizə ən uyğun olanı seçin.",
+        "storeCredits": "Sayt valyutasında kredit yükləyin, davam edən kampaniyanın əlavə etdiyi bonusu görün və balansla alış-veriş üçün bir dəfə ödəyin."
       },
       "footer": {
         "section_game": "Oyun"
@@ -3924,7 +4100,8 @@
     "de": {
       "nav": {
         "adm_minPurchase": "Min.: {amount}",
-        "store": "Shop"
+        "store": "Shop",
+        "loadCredits": "Credits aufladen"
       },
       "store": {
         "addToCart": "In den Warenkorb",
@@ -4364,7 +4541,15 @@
           "fee_rate_unavailable": "Diese Zahlungsart ist gerade nicht verfügbar: Ihre Gebühr kann nicht in diese Währung umgerechnet werden. Wähle eine andere Zahlungsart oder versuche es später erneut.",
           "credit_bonus_dates": "Die Aktion muss nach ihrem Beginn enden.",
           "credit_bonus_tiers": "Jede Stufe muss mehr Geld verlangen und einen höheren Prozentsatz (1 bis 500) geben als die vorige. Höchstens 10 Stufen.",
-          "store_sale_dates": "Der Rabatt muss nach seinem Beginn enden."
+          "store_sale_dates": "Der Rabatt muss nach seinem Beginn enden.",
+          "credit_top_up_below_min": "Dieser Betrag liegt unter der kleinsten Aufladung.",
+          "credit_top_up_above_max": "Dieser Betrag liegt über der größten Aufladung.",
+          "credit_top_up_typed_off": "Wähle einen der angebotenen Beträge.",
+          "store_credits_only": "Dieser Shop nimmt nur Credits. Lade zuerst Credits auf und bezahle dann damit.",
+          "store_credits_only_subscription": "Abos werden nicht verkauft, solange der Shop nur Credits nimmt.",
+          "store_insufficient_credits": "Du hast nicht genug Credits für diese Bestellung.",
+          "payment_not_configured": "Zahlungen sind auf dieser Seite noch nicht eingerichtet.",
+          "credit_package_unavailable": "Dieses Paket wird nicht mehr verkauft."
         },
         "err_checkoutFailed": "Kasse fehlgeschlagen",
         "err_couponMinPurchase": "Gib mindestens {amount} aus, um diesen Code zu nutzen.",
@@ -4643,7 +4828,36 @@
         "adm_saleState_off": "Aus",
         "adm_saleWholeStore": "{percent} % auf den ganzen Shop",
         "adm_saleShelves": "{percent} % auf {count} ausgewählte Kategorien",
-        "adm_saleWindow": "{starts} bis {ends}"
+        "adm_saleWindow": "{starts} bis {ends}",
+        "price_credits": "{amount} Credits",
+        "topUp_title": "Credits aufladen",
+        "topUp_subtitle": "Einmal zahlen, dann mit deinem Guthaben einkaufen.",
+        "topUp_amountTitle": "Wie viel?",
+        "topUp_balance": "Dein Guthaben: {amount} Credits",
+        "topUp_presets": "Schnellbeträge",
+        "topUp_amountLabel": "Betrag ({currency})",
+        "topUp_limits": "Von {min} bis {max}",
+        "topUp_youGet": "Du bekommst",
+        "topUp_credits": "{count, plural, one {# Credit} other {# Credits}}",
+        "topUp_bonusLine": "Aktionsbonus +{percent} %",
+        "topUp_youPay": "Du zahlst",
+        "topUp_nudge": "Lege {amount} mehr drauf für {percent} % Bonus.",
+        "topUp_belowMin": "Du kannst mindestens {amount} aufladen.",
+        "topUp_aboveMax": "Du kannst höchstens {amount} auf einmal aufladen.",
+        "topUp_presetOnly": "Wähle einen der Beträge oben.",
+        "topUp_buy": "Weiter zur Zahlung",
+        "topUp_failed": "Diese Zahlung konnte nicht gestartet werden.",
+        "topUp_purchased": "Zahlung erhalten. Deine Credits kommen, sobald die Zahlung abgeschlossen ist.",
+        "topUp_cancelled": "Die Zahlung wurde abgebrochen. Es wurde nichts abgebucht.",
+        "topUp_packages": "Pakete",
+        "topUp_loadForCart": "Nicht genug Credits? Jetzt aufladen",
+        "topUp_packageBonus": "+{count} Bonus",
+        "topUp_packageCampaign": "+{percent} % Aktionsbonus: +{count} Credits",
+        "topUp_packageBuy": "Kaufen",
+        "topUp_campaignTitle": "Aufladebonus läuft",
+        "topUp_campaignTier": "Zahle {amount} oder mehr: +{percent} %",
+        "topUp_campaignEnds": "Endet in {days, plural, one {# Tag} other {# Tagen}} {hours, plural, one {# Stunde} other {# Stunden}}",
+        "topUp_campaignEndsSoon": "Endet in {hours, plural, one {# Stunde} other {# Stunden}} {minutes, plural, one {# Minute} other {# Minuten}}"
       },
       "cart": {
         "title": "Warenkorb",
@@ -4872,7 +5086,8 @@
         "cart": "Warenkorb",
         "product": "Produkt",
         "orderSuccess": "Bestellung abgeschlossen",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "Credits aufladen"
       },
       "profile": {
         "notificationType_store_order_completed": "Bestellung abgeschlossen",
@@ -4883,7 +5098,8 @@
         "cart": "Sieh dir alles in deinem Warenkorb an, ändere die Menge oder entferne einen Artikel und gehe dann zur Kasse.",
         "product": "Sieh dir an, was dieses Produkt enthält, was es kostet und was du nach der Bezahlung erhältst, und leg es dann in deinen Warenkorb.",
         "orderSuccess": "Deine Bestellung ist abgeschlossen: Sieh nach, was als Nächstes passiert, finde sie in deinem Bestellverlauf wieder oder stöbere weiter im Shop.",
-        "vip": "Vergleiche die VIP-Ränge nebeneinander, sieh, was jeder freischaltet, und wähle den, der am besten zu dir passt."
+        "vip": "Vergleiche die VIP-Ränge nebeneinander, sieh, was jeder freischaltet, und wähle den, der am besten zu dir passt.",
+        "storeCredits": "Lade Credits in der Währung der Seite auf, sieh den Bonus einer laufenden Aktion und zahle einmal, um mit deinem Guthaben einzukaufen."
       },
       "footer": {
         "section_game": "Spiel"
@@ -4892,7 +5108,8 @@
     "es": {
       "nav": {
         "adm_minPurchase": "Mín.: {amount}",
-        "store": "Tienda"
+        "store": "Tienda",
+        "loadCredits": "Recargar créditos"
       },
       "store": {
         "addToCart": "Añadir al carrito",
@@ -5332,7 +5549,15 @@
           "fee_rate_unavailable": "Ese método de pago no se puede usar ahora: su comisión no se puede convertir a esta moneda. Elige otro método o inténtalo más tarde.",
           "credit_bonus_dates": "La campaña debe terminar después de empezar.",
           "credit_bonus_tiers": "Cada nivel debe pedir más dinero y dar un porcentaje mayor (1 a 500) que el anterior. Hasta 10 niveles.",
-          "store_sale_dates": "La rebaja debe terminar después de empezar."
+          "store_sale_dates": "La rebaja debe terminar después de empezar.",
+          "credit_top_up_below_min": "Ese importe está por debajo de la recarga mínima.",
+          "credit_top_up_above_max": "Ese importe supera la recarga máxima.",
+          "credit_top_up_typed_off": "Elige uno de los importes ofrecidos.",
+          "store_credits_only": "Esta tienda solo acepta créditos. Recarga créditos primero y paga con ellos.",
+          "store_credits_only_subscription": "No se venden suscripciones mientras la tienda solo acepte créditos.",
+          "store_insufficient_credits": "No tienes créditos suficientes para este pedido.",
+          "payment_not_configured": "Los pagos aún no están configurados en este sitio.",
+          "credit_package_unavailable": "Ese paquete ya no está a la venta."
         },
         "err_checkoutFailed": "Falló el pago",
         "err_couponMinPurchase": "Gasta al menos {amount} para usar este código.",
@@ -5611,7 +5836,36 @@
         "adm_saleState_off": "Desactivada",
         "adm_saleWholeStore": "{percent} % en toda la tienda",
         "adm_saleShelves": "{percent} % en {count} categorías elegidas",
-        "adm_saleWindow": "{starts} a {ends}"
+        "adm_saleWindow": "{starts} a {ends}",
+        "price_credits": "{amount} créditos",
+        "topUp_title": "Recargar créditos",
+        "topUp_subtitle": "Paga una vez y compra con tu saldo.",
+        "topUp_amountTitle": "¿Cuánto?",
+        "topUp_balance": "Tu saldo: {amount} créditos",
+        "topUp_presets": "Importes rápidos",
+        "topUp_amountLabel": "Importe ({currency})",
+        "topUp_limits": "De {min} a {max}",
+        "topUp_youGet": "Recibes",
+        "topUp_credits": "{count, plural, one {# crédito} other {# créditos}}",
+        "topUp_bonusLine": "Bonificación de campaña +{percent} %",
+        "topUp_youPay": "Pagas",
+        "topUp_nudge": "Añade {amount} más para obtener un {percent} % de bonificación.",
+        "topUp_belowMin": "Lo mínimo que puedes recargar es {amount}.",
+        "topUp_aboveMax": "Lo máximo que puedes recargar de una vez es {amount}.",
+        "topUp_presetOnly": "Elige uno de los importes de arriba.",
+        "topUp_buy": "Continuar al pago",
+        "topUp_failed": "No se pudo iniciar ese pago.",
+        "topUp_purchased": "Pago recibido. Tus créditos llegan en cuanto se confirme el pago.",
+        "topUp_cancelled": "El pago se canceló. No se ha cobrado nada.",
+        "topUp_packages": "Paquetes",
+        "topUp_loadForCart": "¿No tienes créditos suficientes? Recarga más",
+        "topUp_packageBonus": "+{count} de bonificación",
+        "topUp_packageCampaign": "+{percent} % de bonificación: +{count} créditos",
+        "topUp_packageBuy": "Comprar",
+        "topUp_campaignTitle": "Bonificación de recarga activa",
+        "topUp_campaignTier": "Paga {amount} o más: +{percent} %",
+        "topUp_campaignEnds": "Termina en {days, plural, one {# día} other {# días}} {hours, plural, one {# hora} other {# horas}}",
+        "topUp_campaignEndsSoon": "Termina en {hours, plural, one {# hora} other {# horas}} {minutes, plural, one {# minuto} other {# minutos}}"
       },
       "cart": {
         "title": "Carrito de compra",
@@ -5840,7 +6094,8 @@
         "cart": "Carrito",
         "product": "Producto",
         "orderSuccess": "Pedido completado",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "Recargar créditos"
       },
       "profile": {
         "notificationType_store_order_completed": "Pedido completado",
@@ -5851,7 +6106,8 @@
         "cart": "Revisa todo lo que tienes en el carrito, cambia una cantidad o quita un artículo y luego continúa al pago.",
         "product": "Consulta qué incluye este producto, cuánto cuesta y qué recibirás una vez pagado el pedido, y después añádelo al carrito.",
         "orderSuccess": "Tu pedido está completo: mira qué pasa ahora, encuéntralo de nuevo en tu historial de pedidos o sigue comprando.",
-        "vip": "Compara los rangos VIP lado a lado, mira qué desbloquea cada uno y elige el que mejor te convenga."
+        "vip": "Compara los rangos VIP lado a lado, mira qué desbloquea cada uno y elige el que mejor te convenga.",
+        "storeCredits": "Recarga créditos en la moneda del sitio, mira la bonificación de la campaña en curso y paga una vez para comprar con tu saldo."
       },
       "footer": {
         "section_game": "Juego"
@@ -5860,7 +6116,8 @@
     "et": {
       "nav": {
         "adm_minPurchase": "Min: {amount}",
-        "store": "Pood"
+        "store": "Pood",
+        "loadCredits": "Laadi krediite"
       },
       "store": {
         "addToCart": "Lisa ostukorvi",
@@ -6300,7 +6557,15 @@
           "fee_rate_unavailable": "Seda makseviisi ei saa praegu kasutada: selle tasu ei saa sellesse valuutasse teisendada. Vali muu makseviis või proovi hiljem uuesti.",
           "credit_bonus_dates": "Kampaania peab lõppema pärast algust.",
           "credit_bonus_tiers": "Iga aste peab nõudma rohkem raha ja andma suurema protsendi (1 kuni 500) kui eelmine. Kuni 10 astet.",
-          "store_sale_dates": "Allahindlus peab lõppema pärast algust."
+          "store_sale_dates": "Allahindlus peab lõppema pärast algust.",
+          "credit_top_up_below_min": "See summa on väiksem kui väikseim laadimine.",
+          "credit_top_up_above_max": "See summa on suurem kui suurim laadimine.",
+          "credit_top_up_typed_off": "Vali üks pakutud summadest.",
+          "store_credits_only": "See pood võtab vastu ainult krediite. Laadi esmalt krediite ja maksa nendega.",
+          "store_credits_only_subscription": "Tellimusi ei müüda, kui pood võtab vastu ainult krediite.",
+          "store_insufficient_credits": "Sul ei ole selle tellimuse jaoks piisavalt krediite.",
+          "payment_not_configured": "Sellel saidil ei ole makseid veel seadistatud.",
+          "credit_package_unavailable": "See pakett enam ei ole müügil."
         },
         "err_checkoutFailed": "Vormistamine ebaõnnestus",
         "err_couponMinPurchase": "Selle koodi kasutamiseks kuluta vähemalt {amount}.",
@@ -6579,7 +6844,36 @@
         "adm_saleState_off": "Väljas",
         "adm_saleWholeStore": "{percent}% kogu poele",
         "adm_saleShelves": "{percent}% {count} valitud kategooriale",
-        "adm_saleWindow": "{starts} kuni {ends}"
+        "adm_saleWindow": "{starts} kuni {ends}",
+        "price_credits": "{amount} krediiti",
+        "topUp_title": "Laadi krediite",
+        "topUp_subtitle": "Maksa üks kord ja osta siis oma saldoga.",
+        "topUp_amountTitle": "Kui palju?",
+        "topUp_balance": "Sinu saldo: {amount} krediiti",
+        "topUp_presets": "Kiirsummad",
+        "topUp_amountLabel": "Summa ({currency})",
+        "topUp_limits": "{min} kuni {max}",
+        "topUp_youGet": "Saad",
+        "topUp_credits": "{count, plural, one {# krediit} other {# krediiti}}",
+        "topUp_bonusLine": "Kampaaniaboonus +{percent}%",
+        "topUp_youPay": "Maksad",
+        "topUp_nudge": "Lisa veel {amount}, et saada {percent}% boonust.",
+        "topUp_belowMin": "Vähim, mida saad laadida, on {amount}.",
+        "topUp_aboveMax": "Korraga saad laadida kõige rohkem {amount}.",
+        "topUp_presetOnly": "Vali üks ülaltoodud summadest.",
+        "topUp_buy": "Jätka maksmisega",
+        "topUp_failed": "Seda makset ei õnnestunud alustada.",
+        "topUp_purchased": "Makse on vastu võetud. Krediidid jõuavad sinuni kohe, kui makse kinnitatakse.",
+        "topUp_cancelled": "Makse tühistati. Midagi ei võetud.",
+        "topUp_packages": "Paketid",
+        "topUp_loadForCart": "Krediite ei jätku? Laadi juurde",
+        "topUp_packageBonus": "+{count} boonust",
+        "topUp_packageCampaign": "+{percent}% kampaaniaboonus: +{count} krediiti",
+        "topUp_packageBuy": "Osta",
+        "topUp_campaignTitle": "Laadimisboonus kehtib",
+        "topUp_campaignTier": "Maksa {amount} või rohkem: +{percent}%",
+        "topUp_campaignEnds": "Lõpeb {days, plural, one {# päeva} other {# päeva}} {hours, plural, one {# tunni} other {# tunni}} pärast",
+        "topUp_campaignEndsSoon": "Lõpeb {hours, plural, one {# tunni} other {# tunni}} {minutes, plural, one {# minuti} other {# minuti}} pärast"
       },
       "cart": {
         "title": "Ostukorv",
@@ -6808,7 +7102,8 @@
         "cart": "Ostukorv",
         "product": "Toode",
         "orderSuccess": "Tellimus valmis",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "Laadi krediite"
       },
       "profile": {
         "notificationType_store_order_completed": "Tellimus valmis",
@@ -6819,7 +7114,8 @@
         "cart": "Vaata üle oma ostukorv, muuda kogust või eemalda toode ning mine seejärel tellimise juurde.",
         "product": "Vaata, mida see toode sisaldab, mis see maksab ja mida saad pärast tellimuse tasumist, ning lisa see seejärel ostukorvi.",
         "orderSuccess": "Sinu tellimus on tehtud: vaata, mis edasi saab, leia see tellimuste ajaloost uuesti üles või jätka ostlemist.",
-        "vip": "Võrdle VIP-astmeid kõrvuti, vaata, mida iga aste avab, ja vali endale sobivaim."
+        "vip": "Võrdle VIP-astmeid kõrvuti, vaata, mida iga aste avab, ja vali endale sobivaim.",
+        "storeCredits": "Laadi krediite saidi valuutas, vaata käimasoleva kampaania boonust ja maksa üks kord, et oma saldoga osta."
       },
       "footer": {
         "section_game": "Mäng"
@@ -6828,7 +7124,8 @@
     "fr": {
       "nav": {
         "adm_minPurchase": "Min. : {amount}",
-        "store": "Boutique"
+        "store": "Boutique",
+        "loadCredits": "Recharger des crédits"
       },
       "store": {
         "addToCart": "Ajouter au panier",
@@ -7268,7 +7565,15 @@
           "fee_rate_unavailable": "Ce moyen de paiement n'est pas utilisable pour le moment : ses frais ne peuvent pas être convertis dans cette devise. Choisissez un autre moyen ou réessayez plus tard.",
           "credit_bonus_dates": "La campagne doit se terminer après son début.",
           "credit_bonus_tiers": "Chaque palier doit demander plus d'argent et donner un pourcentage plus élevé (1 à 500) que le précédent. 10 paliers au plus.",
-          "store_sale_dates": "Les soldes doivent se terminer après leur début."
+          "store_sale_dates": "Les soldes doivent se terminer après leur début.",
+          "credit_top_up_below_min": "Ce montant est inférieur à la recharge minimale.",
+          "credit_top_up_above_max": "Ce montant dépasse la recharge maximale.",
+          "credit_top_up_typed_off": "Choisissez l’un des montants proposés.",
+          "store_credits_only": "Cette boutique n’accepte que les crédits. Rechargez d’abord, puis payez avec vos crédits.",
+          "store_credits_only_subscription": "Les abonnements ne sont pas vendus tant que la boutique n’accepte que les crédits.",
+          "store_insufficient_credits": "Vous n’avez pas assez de crédits pour cette commande.",
+          "payment_not_configured": "Les paiements ne sont pas encore configurés sur ce site.",
+          "credit_package_unavailable": "Ce pack n’est plus en vente."
         },
         "err_checkoutFailed": "Échec du paiement",
         "err_couponMinPurchase": "Dépensez au moins {amount} pour utiliser ce code.",
@@ -7547,7 +7852,36 @@
         "adm_saleState_off": "Désactivés",
         "adm_saleWholeStore": "{percent} % sur toute la boutique",
         "adm_saleShelves": "{percent} % sur {count} rayons choisis",
-        "adm_saleWindow": "du {starts} au {ends}"
+        "adm_saleWindow": "du {starts} au {ends}",
+        "price_credits": "{amount} crédits",
+        "topUp_title": "Recharger des crédits",
+        "topUp_subtitle": "Payez une fois, puis achetez avec votre solde.",
+        "topUp_amountTitle": "Combien ?",
+        "topUp_balance": "Votre solde : {amount} crédits",
+        "topUp_presets": "Montants rapides",
+        "topUp_amountLabel": "Montant ({currency})",
+        "topUp_limits": "De {min} à {max}",
+        "topUp_youGet": "Vous recevez",
+        "topUp_credits": "{count, plural, one {# crédit} other {# crédits}}",
+        "topUp_bonusLine": "Bonus de campagne +{percent} %",
+        "topUp_youPay": "Vous payez",
+        "topUp_nudge": "Ajoutez {amount} de plus pour obtenir {percent} % de bonus.",
+        "topUp_belowMin": "Le minimum à recharger est de {amount}.",
+        "topUp_aboveMax": "Le maximum à recharger en une fois est de {amount}.",
+        "topUp_presetOnly": "Choisissez l’un des montants ci-dessus.",
+        "topUp_buy": "Continuer vers le paiement",
+        "topUp_failed": "Ce paiement n’a pas pu être lancé.",
+        "topUp_purchased": "Paiement reçu. Vos crédits arrivent dès que le paiement est confirmé.",
+        "topUp_cancelled": "Le paiement a été annulé. Rien n’a été débité.",
+        "topUp_packages": "Packs",
+        "topUp_loadForCart": "Pas assez de crédits ? Rechargez",
+        "topUp_packageBonus": "+{count} bonus",
+        "topUp_packageCampaign": "+{percent} % de bonus : +{count} crédits",
+        "topUp_packageBuy": "Acheter",
+        "topUp_campaignTitle": "Bonus de recharge en cours",
+        "topUp_campaignTier": "Payez {amount} ou plus : +{percent} %",
+        "topUp_campaignEnds": "Se termine dans {days, plural, one {# jour} other {# jours}} {hours, plural, one {# heure} other {# heures}}",
+        "topUp_campaignEndsSoon": "Se termine dans {hours, plural, one {# heure} other {# heures}} {minutes, plural, one {# minute} other {# minutes}}"
       },
       "cart": {
         "title": "Panier",
@@ -7776,7 +8110,8 @@
         "cart": "Panier",
         "product": "Produit",
         "orderSuccess": "Commande terminée",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "Recharger des crédits"
       },
       "profile": {
         "notificationType_store_order_completed": "Commande terminée",
@@ -7787,7 +8122,8 @@
         "cart": "Vérifiez le contenu de votre panier, modifiez une quantité ou retirez un article, puis passez à la caisse.",
         "product": "Découvrez ce que comprend ce produit, son prix et ce que vous recevez une fois la commande réglée, puis ajoutez-le à votre panier.",
         "orderSuccess": "Votre commande est validée : découvrez la suite, retrouvez-la dans votre historique de commandes ou poursuivez vos achats.",
-        "vip": "Comparez les rangs VIP côte à côte, découvrez ce que débloque chacun et choisissez celui qui vous convient le mieux."
+        "vip": "Comparez les rangs VIP côte à côte, découvrez ce que débloque chacun et choisissez celui qui vous convient le mieux.",
+        "storeCredits": "Rechargez des crédits dans la devise du site, voyez le bonus de la campagne en cours et payez une fois pour acheter avec votre solde."
       },
       "footer": {
         "section_game": "Jeu"
@@ -7796,7 +8132,8 @@
     "it": {
       "nav": {
         "adm_minPurchase": "Min: {amount}",
-        "store": "Store"
+        "store": "Store",
+        "loadCredits": "Ricarica crediti"
       },
       "store": {
         "addToCart": "Aggiungi al carrello",
@@ -8236,7 +8573,15 @@
           "fee_rate_unavailable": "Questo metodo di pagamento non può essere usato ora: la sua commissione non può essere convertita in questa valuta. Scegli un altro metodo o riprova più tardi.",
           "credit_bonus_dates": "La campagna deve finire dopo l'inizio.",
           "credit_bonus_tiers": "Ogni livello deve chiedere più denaro e dare una percentuale più alta (da 1 a 500) del precedente. Al massimo 10 livelli.",
-          "store_sale_dates": "I saldi devono finire dopo l'inizio."
+          "store_sale_dates": "I saldi devono finire dopo l'inizio.",
+          "credit_top_up_below_min": "Questo importo è inferiore alla ricarica minima.",
+          "credit_top_up_above_max": "Questo importo supera la ricarica massima.",
+          "credit_top_up_typed_off": "Scegli uno degli importi proposti.",
+          "store_credits_only": "Questo negozio accetta solo crediti. Ricarica prima i crediti, poi paga con quelli.",
+          "store_credits_only_subscription": "Gli abbonamenti non sono in vendita mentre il negozio accetta solo crediti.",
+          "store_insufficient_credits": "Non hai abbastanza crediti per questo ordine.",
+          "payment_not_configured": "I pagamenti non sono ancora configurati su questo sito.",
+          "credit_package_unavailable": "Questo pacchetto non è più in vendita."
         },
         "err_checkoutFailed": "Pagamento non riuscito",
         "err_couponMinPurchase": "Spendi almeno {amount} per usare questo codice.",
@@ -8515,7 +8860,36 @@
         "adm_saleState_off": "Disattivati",
         "adm_saleWholeStore": "{percent}% su tutto il negozio",
         "adm_saleShelves": "{percent}% su {count} categorie scelte",
-        "adm_saleWindow": "dal {starts} al {ends}"
+        "adm_saleWindow": "dal {starts} al {ends}",
+        "price_credits": "{amount} crediti",
+        "topUp_title": "Ricarica crediti",
+        "topUp_subtitle": "Paga una volta, poi acquista con il tuo saldo.",
+        "topUp_amountTitle": "Quanto?",
+        "topUp_balance": "Il tuo saldo: {amount} crediti",
+        "topUp_presets": "Importi rapidi",
+        "topUp_amountLabel": "Importo ({currency})",
+        "topUp_limits": "Da {min} a {max}",
+        "topUp_youGet": "Ricevi",
+        "topUp_credits": "{count, plural, one {# credito} other {# crediti}}",
+        "topUp_bonusLine": "Bonus campagna +{percent}%",
+        "topUp_youPay": "Paghi",
+        "topUp_nudge": "Aggiungi altri {amount} per ottenere il {percent}% di bonus.",
+        "topUp_belowMin": "Il minimo che puoi ricaricare è {amount}.",
+        "topUp_aboveMax": "Il massimo che puoi ricaricare in una volta è {amount}.",
+        "topUp_presetOnly": "Scegli uno degli importi qui sopra.",
+        "topUp_buy": "Procedi al pagamento",
+        "topUp_failed": "Non è stato possibile avviare questo pagamento.",
+        "topUp_purchased": "Pagamento ricevuto. I crediti arrivano non appena il pagamento è confermato.",
+        "topUp_cancelled": "Il pagamento è stato annullato. Non è stato addebitato nulla.",
+        "topUp_packages": "Pacchetti",
+        "topUp_loadForCart": "Crediti insufficienti? Ricarica",
+        "topUp_packageBonus": "+{count} bonus",
+        "topUp_packageCampaign": "+{percent}% di bonus: +{count} crediti",
+        "topUp_packageBuy": "Acquista",
+        "topUp_campaignTitle": "Bonus ricarica attivo",
+        "topUp_campaignTier": "Paga {amount} o più: +{percent}%",
+        "topUp_campaignEnds": "Termina tra {days, plural, one {# giorno} other {# giorni}} {hours, plural, one {# ora} other {# ore}}",
+        "topUp_campaignEndsSoon": "Termina tra {hours, plural, one {# ora} other {# ore}} {minutes, plural, one {# minuto} other {# minuti}}"
       },
       "cart": {
         "title": "Carrello",
@@ -8744,7 +9118,8 @@
         "cart": "Carrello",
         "product": "Prodotto",
         "orderSuccess": "Ordine completato",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "Ricarica crediti"
       },
       "profile": {
         "notificationType_store_order_completed": "Ordine completato",
@@ -8755,7 +9130,8 @@
         "cart": "Controlla tutto ciò che c’è nel carrello, cambia la quantità o rimuovi un articolo, poi vai al pagamento.",
         "product": "Scopri cosa comprende questo prodotto, quanto costa e cosa ricevi una volta pagato l’ordine, poi aggiungilo al carrello.",
         "orderSuccess": "Il tuo ordine è completato: scopri cosa succede ora, ritrovalo nello storico ordini o continua a fare acquisti.",
-        "vip": "Confronta i rank VIP uno accanto all’altro, scopri cosa sblocca ciascuno e scegli quello più adatto a te."
+        "vip": "Confronta i rank VIP uno accanto all’altro, scopri cosa sblocca ciascuno e scegli quello più adatto a te.",
+        "storeCredits": "Ricarica crediti nella valuta del sito, vedi il bonus della campagna in corso e paga una volta per acquistare con il tuo saldo."
       },
       "footer": {
         "section_game": "Gioco"
@@ -8764,7 +9140,8 @@
     "pl": {
       "nav": {
         "adm_minPurchase": "Min.: {amount}",
-        "store": "Sklep"
+        "store": "Sklep",
+        "loadCredits": "Doładuj kredyty"
       },
       "store": {
         "addToCart": "Dodaj do koszyka",
@@ -9204,7 +9581,15 @@
           "fee_rate_unavailable": "Tej metody płatności nie można teraz użyć: jej opłaty nie da się przeliczyć na tę walutę. Wybierz inną metodę lub spróbuj później.",
           "credit_bonus_dates": "Kampania musi kończyć się po rozpoczęciu.",
           "credit_bonus_tiers": "Każdy próg musi wymagać więcej pieniędzy i dawać wyższy procent (1 do 500) niż poprzedni. Najwyżej 10 progów.",
-          "store_sale_dates": "Wyprzedaż musi kończyć się po swoim początku."
+          "store_sale_dates": "Wyprzedaż musi kończyć się po swoim początku.",
+          "credit_top_up_below_min": "Ta kwota jest niższa niż najmniejsze doładowanie.",
+          "credit_top_up_above_max": "Ta kwota przekracza największe doładowanie.",
+          "credit_top_up_typed_off": "Wybierz jedną z oferowanych kwot.",
+          "store_credits_only": "Ten sklep przyjmuje tylko kredyty. Najpierw doładuj kredyty, potem nimi zapłać.",
+          "store_credits_only_subscription": "Subskrypcje nie są sprzedawane, gdy sklep przyjmuje tylko kredyty.",
+          "store_insufficient_credits": "Nie masz wystarczająco kredytów na to zamówienie.",
+          "payment_not_configured": "Płatności nie są jeszcze skonfigurowane na tej stronie.",
+          "credit_package_unavailable": "Ten pakiet nie jest już dostępny."
         },
         "err_checkoutFailed": "Płatność nie powiodła się",
         "err_couponMinPurchase": "Wydaj co najmniej {amount}, aby użyć tego kodu.",
@@ -9483,7 +9868,36 @@
         "adm_saleState_off": "Wyłączona",
         "adm_saleWholeStore": "{percent}% na cały sklep",
         "adm_saleShelves": "{percent}% na wybrane kategorie: {count}",
-        "adm_saleWindow": "od {starts} do {ends}"
+        "adm_saleWindow": "od {starts} do {ends}",
+        "price_credits": "{amount} kredytów",
+        "topUp_title": "Doładuj kredyty",
+        "topUp_subtitle": "Zapłać raz, a potem kupuj z salda.",
+        "topUp_amountTitle": "Ile?",
+        "topUp_balance": "Twoje saldo: {amount} kredytów",
+        "topUp_presets": "Szybkie kwoty",
+        "topUp_amountLabel": "Kwota ({currency})",
+        "topUp_limits": "Od {min} do {max}",
+        "topUp_youGet": "Otrzymasz",
+        "topUp_credits": "{count, plural, one {# kredyt} few {# kredyty} many {# kredytów} other {# kredytu}}",
+        "topUp_bonusLine": "Bonus z kampanii +{percent}%",
+        "topUp_youPay": "Płacisz",
+        "topUp_nudge": "Dodaj jeszcze {amount}, aby dostać {percent}% bonusu.",
+        "topUp_belowMin": "Najmniej możesz doładować {amount}.",
+        "topUp_aboveMax": "Jednorazowo możesz doładować najwyżej {amount}.",
+        "topUp_presetOnly": "Wybierz jedną z kwot powyżej.",
+        "topUp_buy": "Przejdź do płatności",
+        "topUp_failed": "Nie udało się rozpocząć tej płatności.",
+        "topUp_purchased": "Płatność otrzymana. Kredyty pojawią się, gdy płatność zostanie rozliczona.",
+        "topUp_cancelled": "Płatność anulowano. Nic nie zostało pobrane.",
+        "topUp_packages": "Pakiety",
+        "topUp_loadForCart": "Za mało kredytów? Doładuj",
+        "topUp_packageBonus": "+{count} bonusu",
+        "topUp_packageCampaign": "+{percent}% bonusu z kampanii: +{count} kredytów",
+        "topUp_packageBuy": "Kup",
+        "topUp_campaignTitle": "Trwa bonus za doładowanie",
+        "topUp_campaignTier": "Zapłać {amount} lub więcej: +{percent}%",
+        "topUp_campaignEnds": "Kończy się za {days, plural, one {# dzień} other {# dni}} {hours, plural, one {# godzinę} few {# godziny} many {# godzin} other {# godziny}}",
+        "topUp_campaignEndsSoon": "Kończy się za {hours, plural, one {# godzinę} few {# godziny} many {# godzin} other {# godziny}} {minutes, plural, one {# minutę} few {# minuty} many {# minut} other {# minuty}}"
       },
       "cart": {
         "title": "Koszyk",
@@ -9712,7 +10126,8 @@
         "cart": "Koszyk",
         "product": "Produkt",
         "orderSuccess": "Zamówienie zakończone",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "Doładuj kredyty"
       },
       "profile": {
         "notificationType_store_order_completed": "Zamówienie zakończone",
@@ -9723,7 +10138,8 @@
         "cart": "Sprawdź wszystko w koszyku, zmień ilość lub usuń produkt, a potem przejdź do płatności.",
         "product": "Zobacz, co zawiera ten produkt, ile kosztuje i co dostaniesz po opłaceniu zamówienia, a potem dodaj go do koszyka.",
         "orderSuccess": "Zamówienie zostało zrealizowane: zobacz, co dalej, znajdź je w historii zamówień albo kontynuuj zakupy.",
-        "vip": "Porównaj rangi VIP obok siebie, zobacz, co każda z nich odblokowuje, i wybierz tę, która najbardziej Ci odpowiada."
+        "vip": "Porównaj rangi VIP obok siebie, zobacz, co każda z nich odblokowuje, i wybierz tę, która najbardziej Ci odpowiada.",
+        "storeCredits": "Doładuj kredyty w walucie strony, zobacz bonus trwającej kampanii i zapłać raz, by kupować z salda."
       },
       "footer": {
         "section_game": "Gra"
@@ -9732,7 +10148,8 @@
     "pt": {
       "nav": {
         "adm_minPurchase": "Mín.: {amount}",
-        "store": "Loja"
+        "store": "Loja",
+        "loadCredits": "Carregar créditos"
       },
       "store": {
         "addToCart": "Adicionar ao carrinho",
@@ -10172,7 +10589,15 @@
           "fee_rate_unavailable": "Esse método de pagamento não pode ser usado agora: a sua taxa não pode ser convertida para esta moeda. Escolha outro método ou tente mais tarde.",
           "credit_bonus_dates": "A campanha tem de terminar depois de começar.",
           "credit_bonus_tiers": "Cada escalão tem de pedir mais dinheiro e dar uma percentagem maior (1 a 500) do que o anterior. Até 10 escalões.",
-          "store_sale_dates": "A promoção deve terminar depois de começar."
+          "store_sale_dates": "A promoção deve terminar depois de começar.",
+          "credit_top_up_below_min": "Esse valor está abaixo do carregamento mínimo.",
+          "credit_top_up_above_max": "Esse valor está acima do carregamento máximo.",
+          "credit_top_up_typed_off": "Escolha um dos valores oferecidos.",
+          "store_credits_only": "Esta loja só aceita créditos. Carregue créditos primeiro e pague com eles.",
+          "store_credits_only_subscription": "As subscrições não são vendidas enquanto a loja só aceitar créditos.",
+          "store_insufficient_credits": "Não tem créditos suficientes para esta encomenda.",
+          "payment_not_configured": "Os pagamentos ainda não estão configurados neste site.",
+          "credit_package_unavailable": "Este pacote não está mais à venda."
         },
         "err_checkoutFailed": "Falha na finalização da compra",
         "err_couponMinPurchase": "Gaste pelo menos {amount} para usar este código.",
@@ -10451,7 +10876,36 @@
         "adm_saleState_off": "Desativada",
         "adm_saleWholeStore": "{percent}% em toda a loja",
         "adm_saleShelves": "{percent}% em {count} categorias escolhidas",
-        "adm_saleWindow": "{starts} a {ends}"
+        "adm_saleWindow": "{starts} a {ends}",
+        "price_credits": "{amount} créditos",
+        "topUp_title": "Carregar créditos",
+        "topUp_subtitle": "Pague uma vez e compre com o seu saldo.",
+        "topUp_amountTitle": "Quanto?",
+        "topUp_balance": "O seu saldo: {amount} créditos",
+        "topUp_presets": "Valores rápidos",
+        "topUp_amountLabel": "Valor ({currency})",
+        "topUp_limits": "De {min} a {max}",
+        "topUp_youGet": "Recebe",
+        "topUp_credits": "{count, plural, one {# crédito} other {# créditos}}",
+        "topUp_bonusLine": "Bónus de campanha +{percent}%",
+        "topUp_youPay": "Paga",
+        "topUp_nudge": "Adicione mais {amount} para obter {percent}% de bónus.",
+        "topUp_belowMin": "O mínimo que pode carregar é {amount}.",
+        "topUp_aboveMax": "O máximo que pode carregar de uma vez é {amount}.",
+        "topUp_presetOnly": "Escolha um dos valores acima.",
+        "topUp_buy": "Continuar para o pagamento",
+        "topUp_failed": "Não foi possível iniciar este pagamento.",
+        "topUp_purchased": "Pagamento recebido. Os seus créditos chegam assim que o pagamento for confirmado.",
+        "topUp_cancelled": "O pagamento foi cancelado. Nada foi cobrado.",
+        "topUp_packages": "Pacotes",
+        "topUp_loadForCart": "Créditos insuficientes? Carregue mais",
+        "topUp_packageBonus": "+{count} de bônus",
+        "topUp_packageCampaign": "+{percent}% de bónus: +{count} créditos",
+        "topUp_packageBuy": "Comprar",
+        "topUp_campaignTitle": "Bónus de carregamento ativo",
+        "topUp_campaignTier": "Pague {amount} ou mais: +{percent}%",
+        "topUp_campaignEnds": "Termina dentro de {days, plural, one {# dia} other {# dias}} {hours, plural, one {# hora} other {# horas}}",
+        "topUp_campaignEndsSoon": "Termina dentro de {hours, plural, one {# hora} other {# horas}} {minutes, plural, one {# minuto} other {# minutos}}"
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -10680,7 +11134,8 @@
         "cart": "Carrinho",
         "product": "Produto",
         "orderSuccess": "Pedido concluído",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "Carregar créditos"
       },
       "profile": {
         "notificationType_store_order_completed": "Pedido concluído",
@@ -10691,7 +11146,8 @@
         "cart": "Revise tudo o que está no seu carrinho, altere a quantidade ou remova um item e depois siga para a finalização da compra.",
         "product": "Veja o que este produto inclui, quanto custa e o que você recebe depois que o pedido for pago, e então adicione-o ao carrinho.",
         "orderSuccess": "Seu pedido foi concluído: veja o que acontece agora, encontre-o novamente no histórico de pedidos ou continue comprando.",
-        "vip": "Compare os cargos VIP lado a lado, veja o que cada um libera e escolha o que mais combina com você."
+        "vip": "Compare os cargos VIP lado a lado, veja o que cada um libera e escolha o que mais combina com você.",
+        "storeCredits": "Carregue créditos na moeda do site, veja o bónus da campanha em curso e pague uma vez para comprar com o seu saldo."
       },
       "footer": {
         "section_game": "Jogo"
@@ -10700,7 +11156,8 @@
     "ru": {
       "nav": {
         "adm_minPurchase": "Мин.: {amount}",
-        "store": "Магазин"
+        "store": "Магазин",
+        "loadCredits": "Пополнить кредиты"
       },
       "store": {
         "addToCart": "В корзину",
@@ -11140,7 +11597,15 @@
           "fee_rate_unavailable": "Этот способ оплаты сейчас недоступен: его комиссию нельзя пересчитать в эту валюту. Выберите другой способ или попробуйте позже.",
           "credit_bonus_dates": "Акция должна заканчиваться после начала.",
           "credit_bonus_tiers": "Каждый уровень должен требовать больше денег и давать больший процент (от 1 до 500), чем предыдущий. Не более 10 уровней.",
-          "store_sale_dates": "Распродажа должна заканчиваться после начала."
+          "store_sale_dates": "Распродажа должна заканчиваться после начала.",
+          "credit_top_up_below_min": "Сумма меньше минимального пополнения.",
+          "credit_top_up_above_max": "Сумма больше максимального пополнения.",
+          "credit_top_up_typed_off": "Выберите одну из предложенных сумм.",
+          "store_credits_only": "Этот магазин принимает только кредиты. Сначала пополните кредиты, затем оплатите ими.",
+          "store_credits_only_subscription": "Подписки не продаются, пока магазин принимает только кредиты.",
+          "store_insufficient_credits": "Для этого заказа недостаточно кредитов.",
+          "payment_not_configured": "Платежи на этом сайте ещё не настроены.",
+          "credit_package_unavailable": "Этот пакет больше не продается."
         },
         "err_checkoutFailed": "Не удалось оформить заказ",
         "err_couponMinPurchase": "Чтобы использовать этот код, потратьте не меньше {amount}.",
@@ -11419,7 +11884,36 @@
         "adm_saleState_off": "Выключена",
         "adm_saleWholeStore": "{percent}% на весь магазин",
         "adm_saleShelves": "{percent}% на выбранные категории: {count}",
-        "adm_saleWindow": "с {starts} по {ends}"
+        "adm_saleWindow": "с {starts} по {ends}",
+        "price_credits": "{amount} кредитов",
+        "topUp_title": "Пополнить кредиты",
+        "topUp_subtitle": "Оплатите один раз и покупайте с баланса.",
+        "topUp_amountTitle": "Сколько?",
+        "topUp_balance": "Ваш баланс: {amount} кредитов",
+        "topUp_presets": "Быстрые суммы",
+        "topUp_amountLabel": "Сумма ({currency})",
+        "topUp_limits": "От {min} до {max}",
+        "topUp_youGet": "Вы получите",
+        "topUp_credits": "{count, plural, one {# кредит} few {# кредита} many {# кредитов} other {# кредита}}",
+        "topUp_bonusLine": "Бонус акции +{percent}%",
+        "topUp_youPay": "Вы платите",
+        "topUp_nudge": "Добавьте ещё {amount}, чтобы получить бонус {percent}%.",
+        "topUp_belowMin": "Минимальная сумма пополнения: {amount}.",
+        "topUp_aboveMax": "Максимальная сумма за раз: {amount}.",
+        "topUp_presetOnly": "Выберите одну из сумм выше.",
+        "topUp_buy": "Перейти к оплате",
+        "topUp_failed": "Не удалось начать оплату.",
+        "topUp_purchased": "Платёж получен. Кредиты поступят, как только платёж будет подтверждён.",
+        "topUp_cancelled": "Оплата отменена. Деньги не списаны.",
+        "topUp_packages": "Пакеты",
+        "topUp_loadForCart": "Не хватает кредитов? Пополните",
+        "topUp_packageBonus": "{count, plural, one {+# бонус} few {+# бонуса} many {+# бонусов} other {+# бонуса}}",
+        "topUp_packageCampaign": "Бонус акции +{percent}%: +{count} кредитов",
+        "topUp_packageBuy": "Купить",
+        "topUp_campaignTitle": "Действует бонус за пополнение",
+        "topUp_campaignTier": "Оплатите от {amount}: +{percent}%",
+        "topUp_campaignEnds": "Закончится через {days, plural, one {# день} few {# дня} many {# дней} other {# дня}} {hours, plural, one {# час} few {# часа} many {# часов} other {# часа}}",
+        "topUp_campaignEndsSoon": "Закончится через {hours, plural, one {# час} few {# часа} many {# часов} other {# часа}} {minutes, plural, one {# минуту} few {# минуты} many {# минут} other {# минуты}}"
       },
       "cart": {
         "title": "Корзина",
@@ -11648,7 +12142,8 @@
         "cart": "Корзина",
         "product": "Товар",
         "orderSuccess": "Заказ оформлен",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "Пополнить кредиты"
       },
       "profile": {
         "notificationType_store_order_completed": "Заказ оформлен",
@@ -11659,7 +12154,8 @@
         "cart": "Проверьте всё, что в корзине, измените количество или удалите товар, затем перейдите к оформлению заказа.",
         "product": "Посмотрите, что входит в этот товар, сколько он стоит и что вы получите после оплаты заказа, затем добавьте его в корзину.",
         "orderSuccess": "Заказ оформлен: узнайте, что будет дальше, найдите его в истории заказов или продолжайте покупки.",
-        "vip": "Сравните VIP-ранги рядом, посмотрите, что открывает каждый из них, и выберите тот, который подходит вам лучше всего."
+        "vip": "Сравните VIP-ранги рядом, посмотрите, что открывает каждый из них, и выберите тот, который подходит вам лучше всего.",
+        "storeCredits": "Пополните кредиты в валюте сайта, посмотрите бонус текущей акции и оплатите один раз, чтобы покупать с баланса."
       },
       "footer": {
         "section_game": "Игра"
@@ -11668,7 +12164,8 @@
     "zh": {
       "nav": {
         "adm_minPurchase": "最低：{amount}",
-        "store": "商店"
+        "store": "商店",
+        "loadCredits": "充值积分"
       },
       "store": {
         "addToCart": "加入购物车",
@@ -12108,7 +12605,15 @@
           "fee_rate_unavailable": "该支付方式目前无法使用：其手续费无法换算为此货币。请选择其他方式或稍后再试。",
           "credit_bonus_dates": "活动的结束时间必须晚于开始时间。",
           "credit_bonus_tiers": "每个档位要求的金额和给出的百分比（1 至 500）都必须高于上一个档位。最多 10 个档位。",
-          "store_sale_dates": "促销的结束时间必须晚于开始时间。"
+          "store_sale_dates": "促销的结束时间必须晚于开始时间。",
+          "credit_top_up_below_min": "该金额低于最低充值额。",
+          "credit_top_up_above_max": "该金额高于最高充值额。",
+          "credit_top_up_typed_off": "请选择提供的金额之一。",
+          "store_credits_only": "本商店仅接受积分。请先充值积分，再用积分付款。",
+          "store_credits_only_subscription": "商店仅接受积分期间不出售订阅。",
+          "store_insufficient_credits": "你的积分不足以支付此订单。",
+          "payment_not_configured": "本站尚未设置付款方式。",
+          "credit_package_unavailable": "该套餐已不再出售。"
         },
         "err_checkoutFailed": "结账失败",
         "err_couponMinPurchase": "消费满 {amount} 方可使用此优惠码。",
@@ -12387,7 +12892,36 @@
         "adm_saleState_off": "已关闭",
         "adm_saleWholeStore": "全店 {percent}% 折扣",
         "adm_saleShelves": "{count} 个所选分类 {percent}% 折扣",
-        "adm_saleWindow": "{starts} 至 {ends}"
+        "adm_saleWindow": "{starts} 至 {ends}",
+        "price_credits": "{amount} 积分",
+        "topUp_title": "充值积分",
+        "topUp_subtitle": "付款一次，然后用余额购物。",
+        "topUp_amountTitle": "充值多少？",
+        "topUp_balance": "你的余额：{amount} 积分",
+        "topUp_presets": "快捷金额",
+        "topUp_amountLabel": "金额（{currency}）",
+        "topUp_limits": "{min} 至 {max}",
+        "topUp_youGet": "你将获得",
+        "topUp_credits": "{count} 积分",
+        "topUp_bonusLine": "活动奖励 +{percent}%",
+        "topUp_youPay": "你需支付",
+        "topUp_nudge": "再充 {amount} 即可获得 {percent}% 奖励。",
+        "topUp_belowMin": "最低充值金额为 {amount}。",
+        "topUp_aboveMax": "单次最多可充值 {amount}。",
+        "topUp_presetOnly": "请选择上方的一个金额。",
+        "topUp_buy": "前往付款",
+        "topUp_failed": "无法开始此次付款。",
+        "topUp_purchased": "已收到付款。付款确认后积分即会到账。",
+        "topUp_cancelled": "付款已取消，未扣任何费用。",
+        "topUp_packages": "套餐",
+        "topUp_loadForCart": "积分不足？去充值",
+        "topUp_packageBonus": "+{count} 赠送",
+        "topUp_packageCampaign": "活动奖励 +{percent}%：+{count} 积分",
+        "topUp_packageBuy": "购买",
+        "topUp_campaignTitle": "充值奖励进行中",
+        "topUp_campaignTier": "付款满 {amount}：+{percent}%",
+        "topUp_campaignEnds": "{days} 天 {hours} 小时后结束",
+        "topUp_campaignEndsSoon": "{hours} 小时 {minutes} 分钟后结束"
       },
       "cart": {
         "title": "购物车",
@@ -12616,7 +13150,8 @@
         "cart": "购物车",
         "product": "商品",
         "orderSuccess": "下单完成",
-        "vip": "VIP"
+        "vip": "VIP",
+        "storeCredits": "充值积分"
       },
       "profile": {
         "notificationType_store_order_completed": "下单完成",
@@ -12627,7 +13162,8 @@
         "cart": "查看购物车中的所有商品，修改数量或移除商品，然后前往结账。",
         "product": "了解此商品包含的内容、价格，以及订单付款后你将获得的东西，然后将其加入购物车。",
         "orderSuccess": "订单已完成：了解接下来会发生什么，可在订单历史中再次找到它，或继续购物。",
-        "vip": "并排比较各个 VIP 等级，了解每个等级解锁的内容，选出最适合你的一个。"
+        "vip": "并排比较各个 VIP 等级，了解每个等级解锁的内容，选出最适合你的一个。",
+        "storeCredits": "以站点货币充值积分，查看进行中活动的奖励，付款一次即可用余额购物。"
       },
       "footer": {
         "section_game": "游戏"
@@ -12775,6 +13311,13 @@
       "href": "/store",
       "icon": "ShoppingBag",
       "position": 30
+    },
+    {
+      "label": "Load Credits",
+      "labelKey": "loadCredits",
+      "href": "/store/credits",
+      "icon": "Wallet",
+      "position": 31
     }
   ],
   "footerLinks": [
@@ -13181,6 +13724,48 @@
                 {
                   "key": "ranks",
                   "block": "store.ranks"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "credits",
+      "blocks": [
+        {
+          "id": "amount",
+          "widths": [
+            "wide",
+            "full",
+            "narrow"
+          ]
+        },
+        {
+          "id": "packages",
+          "widths": [
+            "narrow",
+            "wide",
+            "full"
+          ]
+        }
+      ],
+      "layout": {
+        "rows": [
+          {
+            "split": "2-1",
+            "cells": [
+              [
+                {
+                  "key": "amount",
+                  "block": "store.amount"
+                }
+              ],
+              [
+                {
+                  "key": "packages",
+                  "block": "store.packages"
                 }
               ]
             ]

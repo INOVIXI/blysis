@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/core/sdk/navigation";
-import { LoadFailed, useSiteCurrency, buttonClassName } from "@/core/sdk/ui";
+import { LoadFailed, buttonClassName } from "@/core/sdk/ui";
+import { useStorePrice } from "../../../lib/use-store-price";
 import { ArrangedClientPage } from "@/core/sdk/layout";
 import { Check, Minus, Crown, Loader2 } from "lucide-react";
 
@@ -44,7 +45,7 @@ export default function VipTablePage() {
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
-    const { format: formatPrice } = useSiteCurrency();
+    const { format: formatPrice } = useStorePrice();
 
     useEffect(() => {
         let cancelled = false;
