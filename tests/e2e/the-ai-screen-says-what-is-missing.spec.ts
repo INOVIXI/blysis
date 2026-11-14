@@ -2,9 +2,10 @@ import { test, expect } from "@playwright/test";
 import { login } from "./helpers/login";
 
 /**
- * The AI screen on a site with no AI provider installed, which is every site
- * until an operator installs one: it says so on the screen and points at
- * where to get one, and the limits it shows are the ones it saved.
+ * The AI screen says what is missing. On a site with no AI provider installed
+ * it says so and points at where to get one; on a build with providers it
+ * lists every one of them. Either way the limits it shows are the ones it
+ * saved.
  *
  * The retention value is put back afterwards, whatever the run did.
  */
@@ -18,9 +19,17 @@ test("the AI screen says what is missing and keeps what it saves", async ({ page
     try {
         await page.goto("/en/admin/settings/ai");
 
+        const providers: { name: string }[] = before.providers;
         const missing = page.getByTestId("ai-no-provider");
-        await expect(missing).toBeVisible();
-        await expect(missing.getByRole("link")).toHaveAttribute("href", /\/admin\/modules$/);
+        if (providers.length === 0) {
+            await expect(missing).toBeVisible();
+            await expect(missing.getByRole("link")).toHaveAttribute("href", /\/admin\/modules$/);
+        } else {
+            await expect(missing).toHaveCount(0);
+            for (const provider of providers) {
+                await expect(page.getByRole("listitem").filter({ hasText: provider.name })).toBeVisible();
+            }
+        }
 
         const retention = page.getByLabel("Keep usage records for (days)");
         await expect(retention).toHaveValue(String(kept));
