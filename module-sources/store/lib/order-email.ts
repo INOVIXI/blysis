@@ -1,4 +1,6 @@
-import { formatSiteCurrency, log, queueEmail } from "@/core/sdk/server";
+import { dateLocaleTag } from "@/core/sdk";
+import { formatSiteCurrency, log, queueEmail, siteTimeZone } from "@/core/sdk/server";
+import type { ThankYouCoupon } from "./thank-you-coupon";
 
 /**
  * The buyer's order confirmation.
@@ -24,6 +26,10 @@ interface OrderEmailStrings {
     orderLabel: string;
     totalLabel: string;
     footer: string;
+    /** Shown only when the order earned a thank-you coupon. */
+    couponHeading: string;
+    /** `{percent}` and `{date}` are filled in; the code is printed beneath it. */
+    couponBody: string;
 }
 
 const STRINGS: Record<string, OrderEmailStrings> = {
@@ -34,6 +40,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "Order",
         totalLabel: "Total",
         footer: "You can view your order details in your profile.",
+        couponHeading: "A thank-you from us",
+        couponBody: "Here is {percent}% off your next order. The code is yours alone and works once, until {date}.",
     },
     tr: {
         subject: "Sipariş onayı",
@@ -42,6 +50,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "Sipariş",
         totalLabel: "Toplam",
         footer: "Sipariş ayrıntılarını profilinizden görebilirsiniz.",
+        couponHeading: "Bizden bir teşekkür",
+        couponBody: "Bir sonraki siparişinde %{percent} indirim. Kod yalnızca sana ait ve {date} tarihine kadar bir kez kullanılabilir.",
     },
     az: {
         subject: "Sifariş təsdiqi",
@@ -50,6 +60,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "Sifariş",
         totalLabel: "Cəmi",
         footer: "Sifariş təfərrüatlarına profilinizdən baxa bilərsiniz.",
+        couponHeading: "Bizdən təşəkkür",
+        couponBody: "Növbəti sifarişinizə {percent}% endirim. Kod yalnız sizindir və {date} tarixinədək bir dəfə işləyir.",
     },
     de: {
         subject: "Bestellbestätigung",
@@ -58,6 +70,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "Bestellung",
         totalLabel: "Gesamt",
         footer: "Du kannst die Details deiner Bestellung in deinem Profil ansehen.",
+        couponHeading: "Ein Dankeschön von uns",
+        couponBody: "Hier sind {percent} % Rabatt auf deine nächste Bestellung. Der Code gehört nur dir und gilt einmal, bis {date}.",
     },
     es: {
         subject: "Confirmación de pedido",
@@ -66,6 +80,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "Pedido",
         totalLabel: "Total",
         footer: "Puedes ver los detalles de tu pedido en tu perfil.",
+        couponHeading: "Un agradecimiento de nuestra parte",
+        couponBody: "Aquí tienes un {percent} % de descuento en tu próximo pedido. El código es solo tuyo y sirve una vez, hasta el {date}.",
     },
     et: {
         subject: "Tellimuse kinnitus",
@@ -74,6 +90,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "Tellimus",
         totalLabel: "Kokku",
         footer: "Tellimuse üksikasju näed oma profiilis.",
+        couponHeading: "Tänu meilt",
+        couponBody: "Siin on {percent}% allahindlust sinu järgmisele tellimusele. Kood on ainult sinu ja kehtib ühe korra, kuni {date}.",
     },
     fr: {
         subject: "Confirmation de commande",
@@ -82,6 +100,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "Commande",
         totalLabel: "Total",
         footer: "Vous pouvez consulter les détails de votre commande dans votre profil.",
+        couponHeading: "Un remerciement de notre part",
+        couponBody: "Voici {percent} % de réduction sur votre prochaine commande. Le code est à vous seul et fonctionne une fois, jusqu’au {date}.",
     },
     it: {
         subject: "Conferma dell’ordine",
@@ -90,6 +110,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "Ordine",
         totalLabel: "Totale",
         footer: "Puoi vedere i dettagli del tuo ordine nel tuo profilo.",
+        couponHeading: "Un ringraziamento da parte nostra",
+        couponBody: "Ecco il {percent}% di sconto sul tuo prossimo ordine. Il codice è solo tuo e vale una volta, fino al {date}.",
     },
     pl: {
         subject: "Potwierdzenie zamówienia",
@@ -98,6 +120,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "Zamówienie",
         totalLabel: "Razem",
         footer: "Szczegóły zamówienia znajdziesz w swoim profilu.",
+        couponHeading: "Podziękowanie od nas",
+        couponBody: "Oto {percent}% zniżki na Twoje następne zamówienie. Kod należy tylko do Ciebie i działa raz, do {date}.",
     },
     pt: {
         subject: "Confirmação do pedido",
@@ -106,6 +130,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "Pedido",
         totalLabel: "Total",
         footer: "Você pode ver os detalhes do seu pedido no seu perfil.",
+        couponHeading: "Um agradecimento nosso",
+        couponBody: "Aqui está {percent}% de desconto no seu próximo pedido. O código é só seu e funciona uma vez, até {date}.",
     },
     ru: {
         subject: "Подтверждение заказа",
@@ -114,6 +140,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "Заказ",
         totalLabel: "Итого",
         footer: "Подробности заказа можно посмотреть в вашем профиле.",
+        couponHeading: "Спасибо от нас",
+        couponBody: "Вот скидка {percent}% на ваш следующий заказ. Код принадлежит только вам и действует один раз, до {date}.",
     },
     zh: {
         subject: "订单确认",
@@ -122,6 +150,8 @@ const STRINGS: Record<string, OrderEmailStrings> = {
         orderLabel: "订单",
         totalLabel: "总计",
         footer: "你可以在个人资料中查看订单详情。",
+        couponHeading: "我们的一点谢意",
+        couponBody: "这是你下一笔订单的 {percent}% 折扣。此代码仅限你本人使用一次，有效期至 {date}。",
     },
 };
 
@@ -147,16 +177,35 @@ function escapeHtml(value: string): string {
         .replace(/'/g, "&#39;");
 }
 
+/** The coupon paragraph, in the buyer's words and on the site's clock. */
+async function couponLines(
+    t: OrderEmailStrings,
+    coupon: ThankYouCoupon,
+    locale: string,
+): Promise<{ heading: string; body: string; code: string }> {
+    const date = coupon.expiresAt
+        ? new Intl.DateTimeFormat(dateLocaleTag(locale), { dateStyle: "long", timeZone: await siteTimeZone() }).format(coupon.expiresAt)
+        : "";
+    return {
+        heading: t.couponHeading,
+        body: t.couponBody.replace("{percent}", String(coupon.percent)).replace("{date}", date),
+        code: coupon.code,
+    };
+}
+
 export async function sendOrderConfirmationEmail(input: {
     to: string;
     orderNumber: string;
     total: number;
     locale?: string | null;
+    /** The thank-you coupon this order earned, when the shop gives one. */
+    coupon?: ThankYouCoupon | null;
 }): Promise<void> {
     const t = stringsFor(input.locale);
     const total = await formatSiteCurrency(input.total, input.locale ?? "en");
     const orderNumber = escapeHtml(input.orderNumber);
     const subject = `${t.subject} - ${input.orderNumber}`;
+    const coupon = input.coupon ? await couponLines(t, input.coupon, input.locale ?? "en") : null;
 
     const body = [
         t.heading,
@@ -165,8 +214,18 @@ export async function sendOrderConfirmationEmail(input: {
         `${t.orderLabel}: ${input.orderNumber}`,
         `${t.totalLabel}: ${total}`,
         "",
+        ...(coupon ? [coupon.heading, coupon.body, coupon.code, ""] : []),
         t.footer,
     ].join("\n");
+
+    const couponHtml = coupon
+        ? `
+                <div style="border: 1px dashed #9ca3af; padding: 16px; border-radius: 8px; margin: 16px 0; text-align: center;">
+                    <p style="margin: 0; color: #1f2937; font-weight: bold;">${escapeHtml(coupon.heading)}</p>
+                    <p style="margin: 8px 0; color: #6b7280;">${escapeHtml(coupon.body)}</p>
+                    <p style="margin: 0; color: #1f2937; font-family: monospace; font-size: 18px; letter-spacing: 2px;">${escapeHtml(coupon.code)}</p>
+                </div>`
+        : "";
 
     const html = `
             <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
@@ -175,7 +234,7 @@ export async function sendOrderConfirmationEmail(input: {
                 <div style="background: #f9fafb; padding: 16px; border-radius: 8px; margin: 16px 0;">
                     <p style="margin: 0; color: #1f2937;"><strong>${escapeHtml(t.orderLabel)}:</strong> ${orderNumber}</p>
                     <p style="margin: 4px 0 0; color: #1f2937;"><strong>${escapeHtml(t.totalLabel)}:</strong> ${escapeHtml(total)}</p>
-                </div>
+                </div>${couponHtml}
                 <p style="color: #6b7280;">${escapeHtml(t.footer)}</p>
             </div>
         `;

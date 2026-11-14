@@ -4,6 +4,7 @@ import { orderListOwner } from "../../lib/order-list-owner";
 import { auth } from "@/core/sdk/auth";
 import { ORDER_STATUSES } from "../../lib/order-status";
 import { deliveryOf } from "../../lib/order-delivery";
+import { thankYouCouponsFor } from "../../lib/thank-you-coupon";
 
 /**
  * Orders are listed here and made at `/store/checkout`.
@@ -107,10 +108,15 @@ export async function GET(request: NextRequest) {
         const counts: Record<string, number> = {};
         for (const row of byStatus) counts[row.status] = row._count;
 
-        const delivery = await deliveryOf(orders.map((order) => order.id));
+        const ids = orders.map((order) => order.id);
+        const [delivery, thanks] = await Promise.all([deliveryOf(ids), thankYouCouponsFor(ids, session.user.id)]);
 
         return NextResponse.json({
-            orders: orders.map((order) => ({ ...order, delivery: delivery[order.id] ?? null })),
+            orders: orders.map((order) => ({
+                ...order,
+                delivery: delivery[order.id] ?? null,
+                thankYouCoupon: thanks[order.id] ?? null,
+            })),
             counts,
             pagination: { page, limit, total, pages: Math.ceil(total / limit) },
         });

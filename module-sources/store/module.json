@@ -244,6 +244,41 @@
       "default": false,
       "label": "Prices already include tax",
       "description": "On, the shown price is what the customer pays and holds the tax. Off, tax is added at checkout. Not used while a tax module is installed."
+    },
+    {
+      "key": "thankYouCouponEnabled",
+      "type": "boolean",
+      "default": false,
+      "label": "Thank buyers with a coupon",
+      "description": "After a paid order, the buyer gets a coupon for their next order that only they can use, once. Shown in the order email and on the order."
+    },
+    {
+      "key": "thankYouCouponPercent",
+      "type": "number",
+      "default": 10,
+      "min": 1,
+      "max": 90,
+      "label": "Thank-you coupon discount (%)",
+      "description": "How much the thank-you coupon takes off the next order."
+    },
+    {
+      "key": "thankYouCouponDays",
+      "type": "number",
+      "default": 30,
+      "min": 1,
+      "max": 365,
+      "label": "Thank-you coupon lasts (days)",
+      "description": "How long the buyer has to use it, counted from the payment."
+    },
+    {
+      "key": "thankYouCouponMinTotal",
+      "type": "number",
+      "default": 0,
+      "min": 0,
+      "max": 100000,
+      "step": 0.01,
+      "label": "Thank-you coupon minimum order",
+      "description": "An order has to total at least this, in the site currency, to earn one. Zero is any paid order; a free order never earns one."
     }
   ],
   "navGroups": [
@@ -1609,7 +1644,14 @@
         "adm_creditBonusState_running": "Running",
         "adm_creditBonusState_scheduled": "Scheduled",
         "adm_creditBonusState_ended": "Ended",
-        "adm_creditBonusState_off": "Off"
+        "adm_creditBonusState_off": "Off",
+        "tab_orders_thanksTitle": "A thank-you coupon",
+        "tab_orders_thanksBody": "{percent}% off your next order, for you only and once. Use it by {date}.",
+        "adm_couponPersonal": "Personal",
+        "tab_orders_thanksLive": "Ready to use",
+        "tab_orders_thanksUsed": "Used",
+        "tab_orders_thanksExpired": "Expired",
+        "tab_orders_thanksWithdrawn": "Withdrawn"
       },
       "cart": {
         "title": "Shopping Cart",
@@ -2532,7 +2574,14 @@
         "adm_creditBonusState_running": "Devam ediyor",
         "adm_creditBonusState_scheduled": "Planlandı",
         "adm_creditBonusState_ended": "Sona erdi",
-        "adm_creditBonusState_off": "Kapalı"
+        "adm_creditBonusState_off": "Kapalı",
+        "tab_orders_thanksTitle": "Teşekkür kuponu",
+        "tab_orders_thanksBody": "Bir sonraki siparişinde %{percent} indirim; yalnızca senin için ve bir kez. {date} tarihine kadar kullan.",
+        "adm_couponPersonal": "Kişisel",
+        "tab_orders_thanksLive": "Kullanıma hazır",
+        "tab_orders_thanksUsed": "Kullanıldı",
+        "tab_orders_thanksExpired": "Süresi doldu",
+        "tab_orders_thanksWithdrawn": "Geri alındı"
       },
       "cart": {
         "title": "Alışveriş Sepeti",
@@ -3455,7 +3504,14 @@
         "adm_creditBonusState_running": "Davam edir",
         "adm_creditBonusState_scheduled": "Planlaşdırılıb",
         "adm_creditBonusState_ended": "Bitib",
-        "adm_creditBonusState_off": "Söndürülüb"
+        "adm_creditBonusState_off": "Söndürülüb",
+        "tab_orders_thanksTitle": "Təşəkkür kuponu",
+        "tab_orders_thanksBody": "Növbəti sifarişinizə {percent}% endirim, yalnız sizin üçün və bir dəfə. {date} tarixinədək istifadə edin.",
+        "adm_couponPersonal": "Şəxsi",
+        "tab_orders_thanksLive": "İstifadəyə hazırdır",
+        "tab_orders_thanksUsed": "İstifadə olunub",
+        "tab_orders_thanksExpired": "Müddəti bitib",
+        "tab_orders_thanksWithdrawn": "Geri götürülüb"
       },
       "cart": {
         "title": "Alış-veriş səbəti",
@@ -4378,7 +4434,14 @@
         "adm_creditBonusState_running": "Läuft",
         "adm_creditBonusState_scheduled": "Geplant",
         "adm_creditBonusState_ended": "Beendet",
-        "adm_creditBonusState_off": "Aus"
+        "adm_creditBonusState_off": "Aus",
+        "tab_orders_thanksTitle": "Ein Dankeschön-Gutschein",
+        "tab_orders_thanksBody": "{percent} % Rabatt auf deine nächste Bestellung, nur für dich und einmal. Einlösbar bis {date}.",
+        "adm_couponPersonal": "Persönlich",
+        "tab_orders_thanksLive": "Einlösbar",
+        "tab_orders_thanksUsed": "Eingelöst",
+        "tab_orders_thanksExpired": "Abgelaufen",
+        "tab_orders_thanksWithdrawn": "Zurückgezogen"
       },
       "cart": {
         "title": "Warenkorb",
@@ -5301,7 +5364,14 @@
         "adm_creditBonusState_running": "En curso",
         "adm_creditBonusState_scheduled": "Programada",
         "adm_creditBonusState_ended": "Terminada",
-        "adm_creditBonusState_off": "Desactivada"
+        "adm_creditBonusState_off": "Desactivada",
+        "tab_orders_thanksTitle": "Un cupón de agradecimiento",
+        "tab_orders_thanksBody": "Un {percent} % de descuento en tu próximo pedido, solo para ti y una vez. Úsalo antes del {date}.",
+        "adm_couponPersonal": "Personal",
+        "tab_orders_thanksLive": "Listo para usar",
+        "tab_orders_thanksUsed": "Usado",
+        "tab_orders_thanksExpired": "Caducado",
+        "tab_orders_thanksWithdrawn": "Retirado"
       },
       "cart": {
         "title": "Carrito de compra",
@@ -6224,7 +6294,14 @@
         "adm_creditBonusState_running": "Käib",
         "adm_creditBonusState_scheduled": "Ajastatud",
         "adm_creditBonusState_ended": "Lõppenud",
-        "adm_creditBonusState_off": "Väljas"
+        "adm_creditBonusState_off": "Väljas",
+        "tab_orders_thanksTitle": "Tänukupong",
+        "tab_orders_thanksBody": "{percent}% allahindlust sinu järgmisele tellimusele, ainult sulle ja ühe korra. Kasuta enne {date}.",
+        "adm_couponPersonal": "Isiklik",
+        "tab_orders_thanksLive": "Kasutamiseks valmis",
+        "tab_orders_thanksUsed": "Kasutatud",
+        "tab_orders_thanksExpired": "Aegunud",
+        "tab_orders_thanksWithdrawn": "Tühistatud"
       },
       "cart": {
         "title": "Ostukorv",
@@ -7147,7 +7224,14 @@
         "adm_creditBonusState_running": "En cours",
         "adm_creditBonusState_scheduled": "Programmée",
         "adm_creditBonusState_ended": "Terminée",
-        "adm_creditBonusState_off": "Désactivée"
+        "adm_creditBonusState_off": "Désactivée",
+        "tab_orders_thanksTitle": "Un coupon de remerciement",
+        "tab_orders_thanksBody": "{percent} % de réduction sur votre prochaine commande, pour vous seul et une fois. À utiliser avant le {date}.",
+        "adm_couponPersonal": "Personnel",
+        "tab_orders_thanksLive": "Prêt à l’emploi",
+        "tab_orders_thanksUsed": "Utilisé",
+        "tab_orders_thanksExpired": "Expiré",
+        "tab_orders_thanksWithdrawn": "Retiré"
       },
       "cart": {
         "title": "Panier",
@@ -8070,7 +8154,14 @@
         "adm_creditBonusState_running": "In corso",
         "adm_creditBonusState_scheduled": "Programmata",
         "adm_creditBonusState_ended": "Terminata",
-        "adm_creditBonusState_off": "Disattivata"
+        "adm_creditBonusState_off": "Disattivata",
+        "tab_orders_thanksTitle": "Un coupon di ringraziamento",
+        "tab_orders_thanksBody": "Il {percent}% di sconto sul tuo prossimo ordine, solo per te e una volta. Usalo entro il {date}.",
+        "adm_couponPersonal": "Personale",
+        "tab_orders_thanksLive": "Pronto all’uso",
+        "tab_orders_thanksUsed": "Usato",
+        "tab_orders_thanksExpired": "Scaduto",
+        "tab_orders_thanksWithdrawn": "Ritirato"
       },
       "cart": {
         "title": "Carrello",
@@ -8993,7 +9084,14 @@
         "adm_creditBonusState_running": "Trwa",
         "adm_creditBonusState_scheduled": "Zaplanowana",
         "adm_creditBonusState_ended": "Zakończona",
-        "adm_creditBonusState_off": "Wyłączona"
+        "adm_creditBonusState_off": "Wyłączona",
+        "tab_orders_thanksTitle": "Kupon z podziękowaniem",
+        "tab_orders_thanksBody": "{percent}% zniżki na następne zamówienie, tylko dla Ciebie i jeden raz. Wykorzystaj do {date}.",
+        "adm_couponPersonal": "Osobisty",
+        "tab_orders_thanksLive": "Gotowy do użycia",
+        "tab_orders_thanksUsed": "Wykorzystany",
+        "tab_orders_thanksExpired": "Wygasł",
+        "tab_orders_thanksWithdrawn": "Wycofany"
       },
       "cart": {
         "title": "Koszyk",
@@ -9916,7 +10014,14 @@
         "adm_creditBonusState_running": "A decorrer",
         "adm_creditBonusState_scheduled": "Agendada",
         "adm_creditBonusState_ended": "Terminada",
-        "adm_creditBonusState_off": "Desligada"
+        "adm_creditBonusState_off": "Desligada",
+        "tab_orders_thanksTitle": "Um cupom de agradecimento",
+        "tab_orders_thanksBody": "{percent}% de desconto no seu próximo pedido, só para você e uma vez. Use até {date}.",
+        "adm_couponPersonal": "Pessoal",
+        "tab_orders_thanksLive": "Pronto para usar",
+        "tab_orders_thanksUsed": "Usado",
+        "tab_orders_thanksExpired": "Expirado",
+        "tab_orders_thanksWithdrawn": "Retirado"
       },
       "cart": {
         "title": "Carrinho de compras",
@@ -10839,7 +10944,14 @@
         "adm_creditBonusState_running": "Идёт",
         "adm_creditBonusState_scheduled": "Запланирована",
         "adm_creditBonusState_ended": "Завершена",
-        "adm_creditBonusState_off": "Выключена"
+        "adm_creditBonusState_off": "Выключена",
+        "tab_orders_thanksTitle": "Купон в знак благодарности",
+        "tab_orders_thanksBody": "Скидка {percent}% на ваш следующий заказ, только для вас и один раз. Используйте до {date}.",
+        "adm_couponPersonal": "Личный",
+        "tab_orders_thanksLive": "Готов к использованию",
+        "tab_orders_thanksUsed": "Использован",
+        "tab_orders_thanksExpired": "Истёк",
+        "tab_orders_thanksWithdrawn": "Отозван"
       },
       "cart": {
         "title": "Корзина",
@@ -11762,7 +11874,14 @@
         "adm_creditBonusState_running": "进行中",
         "adm_creditBonusState_scheduled": "已排期",
         "adm_creditBonusState_ended": "已结束",
-        "adm_creditBonusState_off": "已关闭"
+        "adm_creditBonusState_off": "已关闭",
+        "tab_orders_thanksTitle": "感谢优惠券",
+        "tab_orders_thanksBody": "下一笔订单享 {percent}% 折扣，仅限你本人使用一次。请在 {date} 前使用。",
+        "adm_couponPersonal": "个人",
+        "tab_orders_thanksLive": "可以使用",
+        "tab_orders_thanksUsed": "已使用",
+        "tab_orders_thanksExpired": "已过期",
+        "tab_orders_thanksWithdrawn": "已撤回"
       },
       "cart": {
         "title": "购物车",

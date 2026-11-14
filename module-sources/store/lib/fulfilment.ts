@@ -22,6 +22,7 @@ import { revokeRefundedRoles, takeBackOrder, type GrantedRole } from "./take-bac
 import { ALREADY, OK, failed, refused } from "./payment-outcome";
 import { payCommissionFor, takeBackCommission } from "./creator-commission";
 import { pastTheLimit } from "./availability-server";
+import { issueThankYouCoupon, readThankYouSettings, type ThankYouCoupon } from "./thank-you-coupon";
 
 /** Thrown inside a settlement to roll it back: the order would pass a limit. */
 class PastTheLimit extends Error {
@@ -193,6 +194,10 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
     // for.
     const roleGrants: { userId: string; roleId: string; expiresAt: Date | null }[] = [];
 
+    // Read before the claim: a settings lookup is not something to hold a
+    // transaction open for.
+    const thankYouSettings = buyerId ? await readThankYouSettings() : {};
+
     const settled = await prisma.$transaction(async (tx) => {
         const claimed = await tx.order.updateMany({
             where: { id: order.id, status: { in: ["PENDING", "PROCESSING"] } },
@@ -202,7 +207,7 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
                 paymentId: settlement.providerRef,
             },
         });
-        if (claimed.count === 0) return { settled: false, short: [] as string[] };
+        if (claimed.count === 0) return { settled: false, short: [] as string[], thanks: null as ThankYouCoupon | null };
 
         // Paid here, inside the claim, and nowhere at checkout: an order
         // nobody pays for earns its creator nothing, and a retried webhook
@@ -323,9 +328,20 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
                 ...(settlement.metadata ? { metadata: settlement.metadata } : {}),
             },
         });
-        return { settled: true, short };
+
+        // Inside the claim, so the coupon exists exactly when the paid order
+        // does: a limit that rolls the settlement back takes it too.
+        const thanks = await issueThankYouCoupon(
+            tx,
+            { id: order.id, orderNumber: order.orderNumber, userId: buyerId, total: Number(order.total) },
+            thankYouSettings,
+            now,
+        );
+        return { settled: true, short, thanks };
     }).catch((error: unknown) => {
-        if (error instanceof PastTheLimit) return { settled: false, short: [] as string[], past: error.productId };
+        if (error instanceof PastTheLimit) {
+            return { settled: false, short: [] as string[], thanks: null as ThankYouCoupon | null, past: error.productId };
+        }
         throw error;
     });
 
@@ -387,6 +403,7 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
         orderNumber: order.orderNumber,
         total: Number(order.total),
         locale: buyer.locale,
+        coupon: settled.thanks,
     }).catch((error: unknown) =>
         log.error("[store] order confirmation email failed", { orderId: order.id, error: String(error) }),
     );

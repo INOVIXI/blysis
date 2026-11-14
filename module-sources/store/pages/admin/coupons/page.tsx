@@ -25,6 +25,8 @@ interface Coupon {
     expiresAt: string | null;
     productIds?: string[];
     categoryIds?: string[];
+    /** Set on a coupon only one member may redeem, such as a thank-you coupon. */
+    userId?: string | null;
     isActive: boolean;
 }
 
@@ -462,6 +464,7 @@ export default function AdminCouponsPage() {
                                                 <div className="flex items-center gap-2">
                                                     <Tag className="w-4 h-4 text-muted-foreground" />
                                                     <code className="font-mono font-bold">{coupon.code}</code>
+                                                    {coupon.userId && <Badge tone="info">{t("adm_couponPersonal")}</Badge>}
                                                 </div>
                                                 {coupon.description && (
                                                     <p className="text-xs text-muted-foreground mt-0.5">{coupon.description}</p>

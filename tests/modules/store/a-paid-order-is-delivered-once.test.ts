@@ -21,8 +21,9 @@ const orders = fakeTable();
 const ownedProducts = fakeTable();
 const products = fakeTable();
 const orderItems = fakeTable();
+const coupons = fakeTable();
 
-const client = { chestItem: chestItems, productCommand: productCommands, order: orders, ownedProduct: ownedProducts, product: products, orderItem: orderItems };
+const client = { chestItem: chestItems, productCommand: productCommands, order: orders, ownedProduct: ownedProducts, product: products, orderItem: orderItems, coupon: coupons };
 const prismaMock = {
     ...client,
     user: { findUnique: vi.fn(async () => ({ creditBalance: 0 })) },

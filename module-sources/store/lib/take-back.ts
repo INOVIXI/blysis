@@ -14,6 +14,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma, rolesHeldBy, revokeRole, log, type PrismaTransaction } from "@/core/sdk/server";
 import { stillOwnedWhere } from "./ownership";
+import { withdrawThankYouCoupon } from "./thank-you-coupon";
 
 const DAY = 86_400_000;
 
@@ -37,6 +38,8 @@ export async function takeBackOrder(
     order: { id: string; metadata: unknown },
 ): Promise<GrantedRole[]> {
     await tx.chestItem.deleteMany({ where: { orderId: order.id, isRedeemed: false } });
+    // The coupon the payment earned goes with the payment.
+    await withdrawThankYouCoupon(tx, order.id);
 
     const delivered = await tx.chestItem.findMany({
         where: { orderId: order.id, isRedeemed: true },

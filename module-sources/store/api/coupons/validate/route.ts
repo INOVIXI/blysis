@@ -5,6 +5,7 @@ import { couponValidateSchema } from "../../../lib/validations";
 import { computeCouponDiscount, scopedSubtotal } from "../../../lib/pricing";
 import { priceCartLines } from "../../../lib/cart-pricing";
 import { creditingPurchases, ownedRungsOn } from "../../../lib/upgrade-credit-server";
+import { couponOpenTo } from "../../../lib/thank-you-coupon";
 
 // POST /api/v1/store/coupons/validate - Check coupon validity
 export async function POST(request: NextRequest) {
@@ -36,7 +37,9 @@ export async function POST(request: NextRequest) {
     const coupon = await prisma.coupon.findUnique({
         where: { code: code.toUpperCase() },
     });
-    if (!coupon) {
+    // Somebody else's personal coupon answers exactly as a code that does not
+    // exist, so the preview cannot be used to find out that one does.
+    if (!coupon || !couponOpenTo(coupon, session.user.id)) {
         return NextResponse.json({ valid: false, code: "coupon_unknown" });
     }
 

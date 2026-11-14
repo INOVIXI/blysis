@@ -21,6 +21,8 @@ const tx = {
         updateMany: vi.fn(async () => ({ count: 1 })),
         deleteMany: vi.fn(async () => ({ count: 1 })),
     },
+    // A refund withdraws the thank-you coupon the order earned; these orders earned none.
+    coupon: { updateMany: vi.fn(async () => ({ count: 0 })) },
     ownedProduct: {
         createMany: vi.fn(async (args: { data: { userId: string; productId: string; orderId?: string }[] }) => {
             calls.owned.push(args);
