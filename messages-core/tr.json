@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Red sebebini değiştirdi",
     "auditModerationReasonDelete": "Red sebebini sildi",
     "auditModerationRequeue": "İçeriği moderasyon kuyruğuna geri koydu",
-    "auditAiSettingsUpdate": "Yapay zekâ ayarlarını değiştirdi"
+    "auditAiSettingsUpdate": "Yapay zekâ ayarlarını değiştirdi",
+    "auditModerationAskPerson": "Reddedilen bir gönderiye bir insanın bakmasını istedi"
   },
   "nav": {
     "adminPanel": "Yönetici Paneli",

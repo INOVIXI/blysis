@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Изменил причину отклонения",
     "auditModerationReasonDelete": "Удалил причину отклонения",
     "auditModerationRequeue": "Вернул контент в очередь модерации",
-    "auditAiSettingsUpdate": "Изменил настройки ИИ"
+    "auditAiSettingsUpdate": "Изменил настройки ИИ",
+    "auditModerationAskPerson": "Попросил человека посмотреть отклонённую публикацию"
   },
   "nav": {
     "adminPanel": "Панель администратора",

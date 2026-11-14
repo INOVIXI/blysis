@@ -8,7 +8,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { logActivity, moderate, prisma, readJsonBody } from "@/core/sdk/server";
+import { logActivity, moderate, prisma, rateLimitForRoleAsync, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { requireManager } from "../../../lib/admin";
 
@@ -18,8 +18,13 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-    const manager = await requireManager(await auth());
+    const session = await auth();
+    const manager = await requireManager(session);
     if (manager instanceof NextResponse) return manager;
+    // Each call may publish a hundred posts; a script looping on it should
+    // meet a ceiling before it meets the whole queue.
+    const allowed = await rateLimitForRoleAsync(`ai-moderation-undo:${manager.userId}`, { maxRequests: 60, windowMs: 60_000 }, session?.user?.role);
+    if (!allowed) return NextResponse.json({ error: "Too many requests", code: "rate_limited" }, { status: 429 });
 
     const body = await readJsonBody(request);
     if (body instanceof NextResponse) return body;
@@ -44,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     logActivity({
         userId: manager.userId,
-        action: `ai-moderation.undo.${parsed.data.action}`,
+        action: parsed.data.action === "approve" ? "ai-moderation.undo.approve" : "ai-moderation.undo.requeue",
         entity: "AiModerationReview",
         metadata: { reviews: parsed.data.ids.length, affected },
     }).catch(() => { });

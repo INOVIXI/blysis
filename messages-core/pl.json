@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Zmienił powód odrzucenia",
     "auditModerationReasonDelete": "Usunął powód odrzucenia",
     "auditModerationRequeue": "Przywrócił treść do kolejki moderacji",
-    "auditAiSettingsUpdate": "Zmienił ustawienia AI"
+    "auditAiSettingsUpdate": "Zmienił ustawienia AI",
+    "auditModerationAskPerson": "Poprosił, by człowiek sprawdził odrzucony wpis"
   },
   "nav": {
     "adminPanel": "Panel administratora",

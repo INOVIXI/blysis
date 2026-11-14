@@ -63,11 +63,19 @@ export default function AiModerationLogPage() {
     const picks = useRowPicks(reviews);
 
     useEffect(() => {
+        // The kinds name the filter and the badges; a failed read says so
+        // rather than leaving a filter that looks like it has nothing in it.
+        let cancelled = false;
         fetch(`/api/v1/ai-moderation/admin/options?locale=${encodeURIComponent(locale)}`)
-            .then((res) => (res.ok ? res.json() : null))
-            .then((data) => setKinds(data?.kinds ?? []))
-            .catch(() => setKinds([]));
-    }, [locale]);
+            .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+            .then((data) => {
+                if (!cancelled) setKinds(data?.kinds ?? []);
+            })
+            .catch(() => {
+                if (!cancelled) toast.error(t("settings_optionsFailed"));
+            });
+        return () => { cancelled = true; };
+    }, [locale, t]);
 
     const load = useCallback(async () => {
         const params = new URLSearchParams({ page: String(page) });

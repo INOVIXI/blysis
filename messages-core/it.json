@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Ha modificato un motivo di rifiuto",
     "auditModerationReasonDelete": "Ha eliminato un motivo di rifiuto",
     "auditModerationRequeue": "Ha rimesso il contenuto nella coda di moderazione",
-    "auditAiSettingsUpdate": "Ha modificato le impostazioni IA"
+    "auditAiSettingsUpdate": "Ha modificato le impostazioni IA",
+    "auditModerationAskPerson": "Ha chiesto che una persona esamini un contenuto rifiutato"
   },
   "nav": {
     "adminPanel": "Pannello di amministrazione",

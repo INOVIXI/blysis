@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Muutis tagasilükkamise põhjust",
     "auditModerationReasonDelete": "Kustutas tagasilükkamise põhjuse",
     "auditModerationRequeue": "Pani sisu tagasi modereerimisjärjekorda",
-    "auditAiSettingsUpdate": "Muutis tehisintellekti seadeid"
+    "auditAiSettingsUpdate": "Muutis tehisintellekti seadeid",
+    "auditModerationAskPerson": "Palus inimesel tagasi lükatud postituse üle vaadata"
   },
   "nav": {
     "adminPanel": "Halduspaneel",

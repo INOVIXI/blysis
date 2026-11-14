@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "A modifié un motif de refus",
     "auditModerationReasonDelete": "A supprimé un motif de refus",
     "auditModerationRequeue": "A remis du contenu dans la file de modération",
-    "auditAiSettingsUpdate": "A modifié les réglages d’IA"
+    "auditAiSettingsUpdate": "A modifié les réglages d’IA",
+    "auditModerationAskPerson": "A demandé qu'une personne revoie une publication refusée"
   },
   "nav": {
     "adminPanel": "Panneau d’administration",

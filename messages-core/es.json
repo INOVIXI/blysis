@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Cambió un motivo de rechazo",
     "auditModerationReasonDelete": "Eliminó un motivo de rechazo",
     "auditModerationRequeue": "Devolvió contenido a la cola de moderación",
-    "auditAiSettingsUpdate": "Cambió los ajustes de IA"
+    "auditAiSettingsUpdate": "Cambió los ajustes de IA",
+    "auditModerationAskPerson": "Pidió que una persona revisara una publicación rechazada"
   },
   "nav": {
     "adminPanel": "Panel de administración",

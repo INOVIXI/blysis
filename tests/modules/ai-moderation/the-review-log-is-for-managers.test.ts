@@ -18,6 +18,7 @@ interface Row {
 
 let session: { user: { id: string } } | null = { user: { id: "admin-1" } };
 let permitted = true;
+let allowed = true;
 let rows: Row[] = [];
 const moderated: Record<string, unknown>[] = [];
 const deleted: unknown[] = [];
@@ -40,6 +41,7 @@ function matches(row: Row, where: Record<string, unknown> = {}): boolean {
 vi.mock("@/core/sdk/auth", () => ({ auth: async () => session }));
 vi.mock("@/core/sdk/server", () => ({
     hasPermission: async () => permitted,
+    rateLimitForRoleAsync: async () => allowed,
     readSettingValues: async (keys: string[]) => Object.fromEntries(keys.map((k) => [k, settings[k]])),
     siteTimeZone: async () => "UTC",
     pageParams: (params: URLSearchParams, opts: { defaultLimit: number }) => {
@@ -96,6 +98,7 @@ function get(url: string) {
 beforeEach(() => {
     session = { user: { id: "admin-1" } };
     permitted = true;
+    allowed = true;
     rows = [row("r1", "approve"), row("r2", "reject", { itemId: "p1" }), row("r3", "leave", { createdAt: new Date(Date.now() - 3 * 86_400_000) })];
     moderated.length = 0;
     deleted.length = 0;
@@ -174,6 +177,13 @@ describe("taking a decision back", () => {
     it("puts an item back in the queue", async () => {
         await undo.POST(new NextRequest("http://x/api/v1/ai-moderation/admin/undo", { method: "POST", body: JSON.stringify({ ids: ["r1"], action: "requeue" }) }));
         expect(moderated).toEqual([{ kind: "forum-post", ids: ["item-r1"], state: "PENDING", decidedById: "admin-1" }]);
+    });
+
+    it("is rate limited", async () => {
+        allowed = false;
+        const res = await undo.POST(new NextRequest("http://x/api/v1/ai-moderation/admin/undo", { method: "POST", body: JSON.stringify({ ids: ["r1"], action: "requeue" }) }));
+        expect(res.status).toBe(429);
+        expect(moderated).toEqual([]);
     });
 
     it("refuses an action it does not know", async () => {

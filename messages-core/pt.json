@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Alterou um motivo de rejeição",
     "auditModerationReasonDelete": "Eliminou um motivo de rejeição",
     "auditModerationRequeue": "Devolveu conteúdo à fila de moderação",
-    "auditAiSettingsUpdate": "Alterou as definições de IA"
+    "auditAiSettingsUpdate": "Alterou as definições de IA",
+    "auditModerationAskPerson": "Pediu que uma pessoa revisse uma publicação rejeitada"
   },
   "nav": {
     "adminPanel": "Painel administrativo",

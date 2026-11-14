@@ -14,10 +14,10 @@ import { auth } from "@/core/sdk/auth";
 import { MANAGE } from "../../lib/admin";
 
 const ROWS = [
-    { id: "approve", label: "Approved", where: { applied: "approve", verdict: { not: "error" } } },
-    { id: "reject", label: "Rejected", where: { applied: "reject", verdict: { not: "error" } } },
-    { id: "leave", label: "Left for a person", where: { applied: "leave", verdict: { not: "error" } } },
-    { id: "error", label: "Could not decide", where: { verdict: "error" } },
+    { id: "approve", label: "Approved", key: "aiModeration.dashboard_approve", where: { applied: "approve", verdict: { not: "error" } } },
+    { id: "reject", label: "Rejected", key: "aiModeration.dashboard_reject", where: { applied: "reject", verdict: { not: "error" } } },
+    { id: "leave", label: "Left for a person", key: "aiModeration.dashboard_leave", where: { applied: "leave", verdict: { not: "error" } } },
+    { id: "error", label: "Could not decide", key: "aiModeration.dashboard_error", where: { verdict: "error" } },
 ] as const;
 
 const BADGE_COLOR = { approve: "green", reject: "red", leave: "yellow", error: "gray" } as const;
@@ -49,7 +49,7 @@ export async function GET() {
                 href: `/admin/ai-moderation?applied=${row.id}&days=1`,
                 primary: String(counts[i]),
                 badge: row.label,
-                badgeKey: `aiModeration.dashboard_${row.id}`,
+                badgeKey: row.key,
                 badgeColor: BADGE_COLOR[row.id],
             })),
         }],

@@ -158,8 +158,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Operation failed" }, { status: 500 });
     }
     if (!result.ok) {
-        const error = { unknown_kind: "Invalid type", reason_required: "A rejection needs a reason", reason_unknown: "Unknown reason" }[result.code];
-        return NextResponse.json(result.code === "unknown_kind" ? { error } : { error, code: result.code }, { status: 400 });
+        const said = { unknown_kind: "Invalid type", reason_required: "A rejection needs a reason", reason_unknown: "Unknown reason" }[result.code];
+        return NextResponse.json({ error: said, code: result.code }, { status: 400 });
     }
     const { affected } = result;
 

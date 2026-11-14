@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "修改了拒绝原因",
     "auditModerationReasonDelete": "删除了拒绝原因",
     "auditModerationRequeue": "将内容放回审核队列",
-    "auditAiSettingsUpdate": "更改了 AI 设置"
+    "auditAiSettingsUpdate": "更改了 AI 设置",
+    "auditModerationAskPerson": "请求人工查看被拒绝的内容"
   },
   "nav": {
     "adminPanel": "管理后台",

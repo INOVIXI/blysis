@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Rədd səbəbini dəyişdi",
     "auditModerationReasonDelete": "Rədd səbəbini sildi",
     "auditModerationRequeue": "Məzmunu moderasiya növbəsinə qaytardı",
-    "auditAiSettingsUpdate": "Süni intellekt ayarlarını dəyişdi"
+    "auditAiSettingsUpdate": "Süni intellekt ayarlarını dəyişdi",
+    "auditModerationAskPerson": "Rədd edilmiş paylaşıma insanın baxmasını istədi"
   },
   "nav": {
     "adminPanel": "Admin paneli",

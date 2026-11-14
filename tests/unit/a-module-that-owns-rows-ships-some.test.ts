@@ -48,6 +48,7 @@ const NOTHING_TO_SHOW: Record<string, string> = {
     "external-data": "A source names a table in a database this site does not own. A seeded source is a source that cannot be read.",
     "minecraft-litebans": "What probing one operator's LiteBans database reported.",
     "minecraft-libertybans": "How far through one operator's LibertyBans history the last read got.",
+    "ai-moderation": "What a model said about real posts on this site. A made-up verdict is a judgement no model made, shown beside a post it never read.",
     "game-connect": "Tokens, claims and presence that a running game server writes. A seeded token is a credential nobody holds, and a seeded delivery is a command that never ran.",
 };
 

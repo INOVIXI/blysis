@@ -103,6 +103,16 @@
       "handler": "cron/prune.ts"
     }
   ],
+  "auditActions": [
+    {
+      "action": "ai-moderation.undo.approve",
+      "nameKey": "auditUndoApprove"
+    },
+    {
+      "action": "ai-moderation.undo.requeue",
+      "nameKey": "auditUndoRequeue"
+    }
+  ],
   "userDataExport": [
     {
       "model": "aiModerationReview",
@@ -216,6 +226,10 @@
         "dashboard_reject": "Rejected",
         "dashboard_leave": "Left for a person",
         "dashboard_error": "Could not decide"
+      },
+      "activity": {
+        "auditUndoApprove": "Approved posts the AI reviewer had decided",
+        "auditUndoRequeue": "Put posts the AI reviewer had decided back in the queue"
       }
     },
     "tr": {
@@ -322,6 +336,10 @@
         "dashboard_reject": "Reddedildi",
         "dashboard_leave": "İnsana bırakıldı",
         "dashboard_error": "Karar verilemedi"
+      },
+      "activity": {
+        "auditUndoApprove": "AI inceleyicinin karar verdiği gönderileri onayladı",
+        "auditUndoRequeue": "AI inceleyicinin karar verdiği gönderileri kuyruğa geri koydu"
       }
     },
     "az": {
@@ -428,6 +446,10 @@
         "dashboard_reject": "Rədd edildi",
         "dashboard_leave": "İnsana buraxıldı",
         "dashboard_error": "Qərar verilə bilmədi"
+      },
+      "activity": {
+        "auditUndoApprove": "Süni intellekt yoxlayıcısının qərar verdiyi paylaşımları təsdiqlədi",
+        "auditUndoRequeue": "Süni intellekt yoxlayıcısının qərar verdiyi paylaşımları növbəyə qaytardı"
       }
     },
     "de": {
@@ -534,6 +556,10 @@
         "dashboard_reject": "Abgelehnt",
         "dashboard_leave": "Einer Person überlassen",
         "dashboard_error": "Keine Entscheidung möglich"
+      },
+      "activity": {
+        "auditUndoApprove": "Hat Beiträge freigegeben, über die der KI-Prüfer entschieden hatte",
+        "auditUndoRequeue": "Hat Beiträge, über die der KI-Prüfer entschieden hatte, zurück in die Warteschlange gelegt"
       }
     },
     "es": {
@@ -640,6 +666,10 @@
         "dashboard_reject": "Rechazadas",
         "dashboard_leave": "Dejadas a una persona",
         "dashboard_error": "No pudo decidir"
+      },
+      "activity": {
+        "auditUndoApprove": "Aprobó publicaciones que había decidido el revisor de IA",
+        "auditUndoRequeue": "Devolvió a la cola publicaciones que había decidido el revisor de IA"
       }
     },
     "et": {
@@ -746,6 +776,10 @@
         "dashboard_reject": "Tagasi lükatud",
         "dashboard_leave": "Inimesele jäetud",
         "dashboard_error": "Otsust ei saadud"
+      },
+      "activity": {
+        "auditUndoApprove": "Kiitis heaks postitused, mille kohta tehisintellekti ülevaataja oli otsustanud",
+        "auditUndoRequeue": "Pani postitused, mille kohta tehisintellekti ülevaataja oli otsustanud, tagasi järjekorda"
       }
     },
     "fr": {
@@ -852,6 +886,10 @@
         "dashboard_reject": "Refusées",
         "dashboard_leave": "Laissées à une personne",
         "dashboard_error": "Pas de décision"
+      },
+      "activity": {
+        "auditUndoApprove": "A approuvé des publications tranchées par l'examinateur IA",
+        "auditUndoRequeue": "A remis dans la file des publications tranchées par l'examinateur IA"
       }
     },
     "it": {
@@ -958,6 +996,10 @@
         "dashboard_reject": "Rifiutati",
         "dashboard_leave": "Lasciati a una persona",
         "dashboard_error": "Nessuna decisione"
+      },
+      "activity": {
+        "auditUndoApprove": "Ha approvato contenuti decisi dal revisore IA",
+        "auditUndoRequeue": "Ha rimesso in coda contenuti decisi dal revisore IA"
       }
     },
     "pl": {
@@ -1064,6 +1106,10 @@
         "dashboard_reject": "Odrzucone",
         "dashboard_leave": "Zostawione człowiekowi",
         "dashboard_error": "Brak decyzji"
+      },
+      "activity": {
+        "auditUndoApprove": "Zatwierdził wpisy, o których zdecydował sprawdzający AI",
+        "auditUndoRequeue": "Odłożył do kolejki wpisy, o których zdecydował sprawdzający AI"
       }
     },
     "pt": {
@@ -1170,6 +1216,10 @@
         "dashboard_reject": "Rejeitadas",
         "dashboard_leave": "Deixadas a uma pessoa",
         "dashboard_error": "Sem decisão"
+      },
+      "activity": {
+        "auditUndoApprove": "Aprovou publicações decididas pelo revisor de IA",
+        "auditUndoRequeue": "Devolveu à fila publicações decididas pelo revisor de IA"
       }
     },
     "ru": {
@@ -1276,6 +1326,10 @@
         "dashboard_reject": "Отклонено",
         "dashboard_leave": "Оставлено человеку",
         "dashboard_error": "Нет решения"
+      },
+      "activity": {
+        "auditUndoApprove": "Одобрил публикации, по которым решал ИИ-проверяющий",
+        "auditUndoRequeue": "Вернул в очередь публикации, по которым решал ИИ-проверяющий"
       }
     },
     "zh": {
@@ -1382,6 +1436,10 @@
         "dashboard_reject": "已拒绝",
         "dashboard_leave": "留给人工",
         "dashboard_error": "无法决定"
+      },
+      "activity": {
+        "auditUndoApprove": "批准了 AI 审核者已决定的内容",
+        "auditUndoRequeue": "将 AI 审核者已决定的内容放回队列"
       }
     }
   }

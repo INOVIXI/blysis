@@ -42,13 +42,20 @@ export default function AiModerationSettingsPage() {
     const { loading, failed, retry } = useSettingsLoad((settings) => setConfig(configFrom(settings)));
 
     useEffect(() => {
+        // A language switched while this was in flight must not be overwritten
+        // by the answer in the language it left.
+        let cancelled = false;
         fetch(`/api/v1/ai-moderation/admin/options?locale=${encodeURIComponent(locale)}`)
-            .then((res) => (res.ok ? res.json() : null))
+            .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
             .then((data) => {
+                if (cancelled) return;
                 setKinds(data?.kinds ?? []);
                 setReasons(data?.reasons ?? []);
             })
-            .catch(() => toast.error(t("settings_optionsFailed")));
+            .catch(() => {
+                if (!cancelled) toast.error(t("settings_optionsFailed"));
+            });
+        return () => { cancelled = true; };
     }, [locale, t]);
 
     const kindName = (kind: Choice) => (kind.labelKey && tAdmin.has(kind.labelKey) ? tAdmin(kind.labelKey) : kind.label);
@@ -140,7 +147,7 @@ export default function AiModerationSettingsPage() {
                     {kinds.length === 0 ? (
                         <p className="text-sm text-muted-foreground">{t("settings_noKinds")}</p>
                     ) : (
-                        <div className="grid gap-2 sm:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                             {kinds.map((kind) => (
                                 <CheckboxField
                                     key={kind.id}
@@ -204,14 +211,14 @@ export default function AiModerationSettingsPage() {
             <Card>
                 <CardHeader><CardTitle className="text-base">{t("settings_decideTitle")}</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         {number("approveAt", t("settings_approveAt"), t("settings_approveAtHint"))}
                         {number("rejectAt", t("settings_rejectAt"), t("settings_rejectAtHint"))}
                     </div>
                     <div className="space-y-2">
                         <p className="text-sm font-medium">{t("settings_rejectKinds")}</p>
                         <p className="text-xs text-muted-foreground">{t("settings_rejectKindsHint")}</p>
-                        <div className="grid gap-2 sm:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                             {kinds.map((kind) => (
                                 <CheckboxField
                                     key={kind.id}
@@ -231,7 +238,7 @@ export default function AiModerationSettingsPage() {
                         {reasons.length === 0 ? (
                             <p className="text-sm text-muted-foreground">{t("settings_noReasons")}</p>
                         ) : (
-                            <div className="grid gap-2 sm:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                 {reasons.map((reason) => (
                                     <CheckboxField
                                         key={reason.id}
@@ -249,7 +256,7 @@ export default function AiModerationSettingsPage() {
             <Card>
                 <CardHeader><CardTitle className="text-base">{t("settings_paceTitle")}</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         {number("perRun", t("settings_perRun"), t("settings_perRunHint"))}
                         {number("batchSize", t("settings_batchSize"), t("settings_batchSizeHint"))}
                         {number("maxAttempts", t("settings_maxAttempts"), t("settings_maxAttemptsHint"))}

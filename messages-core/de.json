@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Ablehnungsgrund geändert",
     "auditModerationReasonDelete": "Ablehnungsgrund gelöscht",
     "auditModerationRequeue": "Inhalt zurück in die Moderationswarteschlange gelegt",
-    "auditAiSettingsUpdate": "Hat die KI-Einstellungen geändert"
+    "auditAiSettingsUpdate": "Hat die KI-Einstellungen geändert",
+    "auditModerationAskPerson": "Hat eine Person gebeten, sich einen abgelehnten Beitrag anzusehen"
   },
   "nav": {
     "adminPanel": "Admin-Bereich",

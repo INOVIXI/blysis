@@ -176,7 +176,8 @@
     "auditModerationReasonUpdate": "Changed a rejection reason",
     "auditModerationReasonDelete": "Deleted a rejection reason",
     "auditModerationRequeue": "Put content back in the moderation queue",
-    "auditAiSettingsUpdate": "Changed the AI settings"
+    "auditAiSettingsUpdate": "Changed the AI settings",
+    "auditModerationAskPerson": "Asked a person to look at a rejected post"
   },
   "nav": {
     "adminPanel": "Admin Panel",
