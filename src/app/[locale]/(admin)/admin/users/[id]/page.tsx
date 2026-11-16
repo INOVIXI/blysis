@@ -22,6 +22,7 @@ import { AdminPageHeader } from "@/core/components/admin/AdminPageHeader";
 import { LoadFailed } from "@/core/components/ui/load-failed";
 import { CustomerView } from "./CustomerView";
 import { SignInMethodsCard } from "./SignInMethodsCard";
+import { PasswordCard } from "./PasswordCard";
 
 interface UserDetail {
     id: string;
@@ -84,6 +85,11 @@ export default function AdminUserDetailPage() {
     const [deleteReason, setDeleteReason] = useState("");
     const [deletingAccount, setDeletingAccount] = useState(false);
     const [deleteError, setDeleteError] = useState("");
+
+    const canSetPassword =
+        !!session?.user &&
+        session.user.id !== userId &&
+        user?.role?.name !== "admin";
 
     const canImpersonate =
         !!session?.user &&
@@ -386,6 +392,10 @@ export default function AdminUserDetailPage() {
                     </Card>
 
                     <SignInMethodsCard userId={user.id} username={user.username} />
+
+                    {/* Another administrator changes their own, from their profile;
+                        the route refuses it too. */}
+                    {canSetPassword && <PasswordCard userId={user.id} username={user.username} />}
 
                     {/* Ban/Unban */}
                     <Card className={user.isBanned ? "border-destructive/30" : ""}>
