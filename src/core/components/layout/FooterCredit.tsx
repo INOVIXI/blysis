@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CREDIT_NAME, CREDIT_URL } from "@/core/config/credit";
+import { CREDIT_URL } from "@/core/config/credit";
 import { cn } from "@/core/lib/utils";
 
 /**
@@ -12,10 +12,13 @@ import { cn } from "@/core/lib/utils";
  */
 export function FooterCredit({ className }: { className?: string }) {
     const t = useTranslations("footer");
+    // The product's name from the catalogue, so a build under another name
+    // credits itself; see core-does-not-put-its-own-name-on-a-page.test.ts.
+    const common = useTranslations("common");
     return (
         <p className={cn("text-sm text-muted-foreground", className)}>
             {t.rich("poweredBy", {
-                name: CREDIT_NAME,
+                name: common("appName"),
                 link: (chunks) => (
                     <a
                         href={CREDIT_URL}

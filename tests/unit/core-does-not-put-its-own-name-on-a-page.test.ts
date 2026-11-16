@@ -42,6 +42,15 @@ const ARGUED_FOR: Record<string, string> = {
         "nothing: it reads the catalogue's `appName`. Listed so a literal creeping back in is a change to this list rather than a silent one.",
 };
 
+/**
+ * Where the product's own address is the point. The same bar as above: a
+ * reason a reviewer would accept, for a file that exists.
+ */
+const DOMAIN_ARGUED_FOR: Record<string, string> = {
+    "src/core/config/credit.ts":
+        "the footer credit's link to the software every site runs on, the same on every install by design. A visitor follows it; nothing sends from it or treats it as this installation's own host.",
+};
+
 function walk(dir: string, out: string[] = []): string[] {
     if (!fs.existsSync(dir)) return out;
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -95,6 +104,7 @@ describe("core", () => {
         // which fails SPF at the receiving end and lands in a spam folder.
         const offenders: string[] = [];
         for (const file of FILES) {
+            if (DOMAIN_ARGUED_FOR[rel(file)]) continue;
             const code = stripComments(fs.readFileSync(file, "utf8"));
             for (const literal of literals(code)) {
                 // A top level domain, not any dotted name: `blysis.shared-request`
@@ -108,7 +118,7 @@ describe("core", () => {
     });
 
     it("gives every exception a reason, and keeps none that has gone", () => {
-        for (const [file, reason] of Object.entries(ARGUED_FOR)) {
+        for (const [file, reason] of Object.entries({ ...ARGUED_FOR, ...DOMAIN_ARGUED_FOR })) {
             expect(fs.existsSync(path.join(ROOT, file)), `${file} is argued for but missing`).toBe(true);
             expect(reason.length, `${file} needs a real reason`).toBeGreaterThan(60);
         }
