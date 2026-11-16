@@ -87,6 +87,13 @@ export { copyText } from "@/core/lib/copy-text";
  */
 export { isPrivateHost } from "@/core/lib/url-safety";
 
+/**
+ * Whether a stored string is an address a page may draw a picture from: an
+ * http(s) address or a file under the site's own `/uploads/`. For a picture
+ * field's schema, in place of `.url()`, which refuses an upload.
+ */
+export { isPictureAddress } from "@/core/lib/picture-address";
+
 export { writeError, errorMessage } from "@/core/lib/write-result";
 // Deleting several rows and saying what actually happened. There is no
 // endpoint that takes a list of ids, so this is several requests - and the

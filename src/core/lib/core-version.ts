@@ -12,6 +12,11 @@
  * symbol changes shape or is removed - that is the signal a module's declared
  * range is meant to catch.
  *
+ * 5.44.0 - `isPictureAddress` joins `@/core/sdk`: whether a stored string is
+ * an http(s) address or a file under the site's own `/uploads/`. A picture
+ * field that asked zod for `.url()` refused an upload and accepted any scheme;
+ * a module that checks with this requires this core. An addition.
+ *
  * 5.43.0 - a module can review the moderation queue. The manifest gains
  * `moderationReviewer`, and `@/core/sdk/server` gains the types it
  * implements (`ModerationReviewer`, `ReviewItem`, `ReviewVerdict`,
@@ -828,4 +833,4 @@
  * installs, and a module that declared none had no range for a major to
  * protect.
  */
-export const CORE_API_VERSION = "5.43.0";
+export const CORE_API_VERSION = "5.44.0";

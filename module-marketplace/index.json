@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-16",
-  "updatedAt": "2026-11-16T18:03:54Z",
+  "updatedAt": "2026-11-16T19:15:25Z",
   "modules": [
     {
       "id": "ai-moderation",
@@ -603,13 +603,13 @@
           "description": "新闻与公告系统"
         }
       },
-      "version": "1.16.0",
-      "coreVersion": "^5.39.0",
+      "version": "1.16.1",
+      "coreVersion": "^5.44.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-11-13T18:44:47Z",
+      "updatedAt": "2026-11-16T19:15:25Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -6590,13 +6590,13 @@
           "description": "完整的电商功能，包括商品、分类、购物车和订单"
         }
       },
-      "version": "2.57.0",
-      "coreVersion": "^5.37.0",
+      "version": "2.57.1",
+      "coreVersion": "^5.44.0",
       "author": "Blysis Team",
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-11-16T18:03:54Z",
+      "updatedAt": "2026-11-16T19:15:25Z",
       "screenshots": [],
       "tags": [
         "commerce"

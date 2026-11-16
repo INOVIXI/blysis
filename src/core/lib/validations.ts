@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isPictureAddress } from "./picture-address";
 import { checkPasswordPolicy, PASSWORD_POLICY } from "./password-policy";
 
 // ==================== AUTH SCHEMAS ====================
@@ -53,7 +54,8 @@ export const updateUserSchema = z.object({
      * answers a link, because whoever controls the mailbox controls the login.
      */
     email: z.string().email("Invalid email").max(254).optional(),
-    avatar: z.string().url("Invalid URL").optional().nullable(),
+    // `/api/v1/me/avatar` answers `/uploads/...`, which `.url()` refused.
+    avatar: z.string().max(2_000).refine((value) => isPictureAddress(value), "Invalid URL").optional().nullable(),
     /**
      * The profile route wrote both of these to the user row untyped, so a
      * signed-in account could store whatever fitted under the body cap in a
