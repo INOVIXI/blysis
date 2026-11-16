@@ -171,17 +171,17 @@ model Product {
   saleUntil            DateTime?
 
   /**
-   * Whether a connected game sells this, and how it is drawn there. Shown
-   * only when its shelf is shown too. The icon is free text each game reads
-   * its own way: a material, an item model, a sprite name.
-   */
-  /**
    * The ways it is sold, as `lib/variants.ts` reads them: a pack of three, a
    * rank for six months. Null or empty sells the product as it is. JSON on
    * the product because a variant is never read without it.
    */
   variants             Json?
 
+  /**
+   * Whether a connected game sells this, and how it is drawn there. Shown
+   * only when its shelf is shown too. The icon is free text each game reads
+   * its own way: a material, an item model, a sprite name.
+   */
   showInGame           Boolean   @default(false)
   gameTitle            String?
   gameDescription      String?
