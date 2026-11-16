@@ -10,12 +10,14 @@
 import { cached } from "./cache";
 import { readSettingValues } from "./setting-values";
 import { log, errorText } from "./logger";
+import { sessionDeadline } from "./session-registry";
 import {
     DEFAULT_SESSION_POLICY,
     PROVIDER_SIGN_IN_REMEMBERED_KEY,
     REMEMBERED_LIFETIME_DAYS,
     SESSION_LIFETIME_HOURS,
     SESSION_RENEWAL_KEY,
+    renewedDeadline,
     sessionPolicyFrom,
     type SessionPolicy,
 } from "./session-lifetime";
@@ -42,4 +44,18 @@ export async function getSessionPolicy(): Promise<SessionPolicy> {
         log.error("[sessions] could not read the session settings", { error: errorText(err) });
         return DEFAULT_SESSION_POLICY;
     }
+}
+
+/**
+ * The deadline a token past the one it carries may still be held to, or null
+ * when the session is over.
+ *
+ * The row is read only on a site that renews sessions: anywhere else nothing
+ * can have moved the deadline, and a browser still holding an ended session
+ * would otherwise cost a row read on every request it makes.
+ */
+export async function deadlineAfterExpiry(tokenId: string): Promise<number | null> {
+    const policy = await getSessionPolicy();
+    if (!policy.renew) return null;
+    return renewedDeadline(policy, await sessionDeadline(tokenId));
 }

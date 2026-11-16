@@ -11,15 +11,14 @@ import { SignInRefusal } from "./sign-in-refusal";
 import {
     SESSION_COOKIE_MAX_AGE_SECONDS,
     parseRemember,
-    renewedDeadline,
     sessionExpired,
     sessionExpiresAt,
 } from "./session-lifetime";
-import { getSessionPolicy } from "./session-policy";
+import { deadlineAfterExpiry, getSessionPolicy } from "./session-policy";
 import { shouldRecheckSession } from "./session-recheck";
 import { SESSION_RECHECK_INTERVAL_SECONDS } from "./session-recheck";
 import { forgetChecked, markChecked, wasCheckedWithin } from "./session-check-memo";
-import { recordSignIn, sessionDeadline, touchSession, SESSION_TOUCH_INTERVAL_MS } from "./session-registry";
+import { recordSignIn, touchSession, SESSION_TOUCH_INTERVAL_MS } from "./session-registry";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { coreAuthAdapter } from "./auth-adapter";
 import { prisma } from "./db";
@@ -499,7 +498,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 if (!expiredId) return null as unknown as typeof token;
                 const renewedKey = `renewed:${expiredId}`;
                 if (!wasCheckedWithin(renewedKey, SESSION_RECHECK_INTERVAL_SECONDS * 1000)) {
-                    const deadline = renewedDeadline(await getSessionPolicy(), await sessionDeadline(expiredId));
+                    const deadline = await deadlineAfterExpiry(expiredId);
                     if (deadline === null) return null as unknown as typeof token;
                     token.absoluteExpiry = deadline;
                     markChecked(renewedKey);
