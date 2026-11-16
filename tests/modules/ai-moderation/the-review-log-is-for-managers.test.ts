@@ -99,7 +99,14 @@ beforeEach(() => {
     session = { user: { id: "admin-1" } };
     permitted = true;
     allowed = true;
-    rows = [row("r1", "approve"), row("r2", "reject", { itemId: "p1" }), row("r3", "leave", { createdAt: new Date(Date.now() - 3 * 86_400_000) })];
+    // Three moments apart, so "newest first" has one answer: two rows made
+    // by `new Date()` in a row share a millisecond only most of the time.
+    const now = Date.now();
+    rows = [
+        row("r1", "approve", { createdAt: new Date(now) }),
+        row("r2", "reject", { itemId: "p1", createdAt: new Date(now - 60_000) }),
+        row("r3", "leave", { createdAt: new Date(now - 3 * 86_400_000) }),
+    ];
     moderated.length = 0;
     deleted.length = 0;
     settings = {};
