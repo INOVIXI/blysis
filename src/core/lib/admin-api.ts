@@ -45,6 +45,7 @@ export const CORE_ADMIN_API: AdminApiRoute[] = [
     { path: "/v1/users", permission: "admin.users" },
     { path: "/v1/users/[id]", permission: "admin.users" },
     { path: "/v1/users/[id]/delete", permission: "admin.users.delete" },
+    { path: "/v1/users/[id]/password", permission: "admin.users" },
     { path: "/v1/users/[id]/sign-in-methods/[provider]", permission: "admin.users" },
     { path: "/v1/admin/impersonate/start", permission: "admin.users.impersonate" },
     { path: "/v1/admin/impersonate/stop", permission: "admin.users.impersonate" },
