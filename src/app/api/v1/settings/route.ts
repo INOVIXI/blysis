@@ -13,6 +13,7 @@ import { readJsonBody } from "@/core/lib/api-body";
 import { log } from "@/core/lib/logger";
 import { isSecretSetting, settingsForStorage, withoutSecrets } from "@/core/lib/secret-settings";
 import { MEMBER_FACE_CACHE_KEY } from "@/core/lib/member-face-rules";
+import { SESSION_POLICY_CACHE_KEY } from "@/core/lib/session-policy";
 import { cleanTranslatableText, isTranslatableText, longestText } from "@/core/lib/i18n/translatable-text";
 
 const settingKeySchema = z.string().regex(/^[a-zA-Z0-9_]+$/, "Invalid setting key format");
@@ -251,6 +252,8 @@ export async function PATCH(request: NextRequest) {
     await invalidate("public-settings");
     // Every page's layout reads how faces are drawn from its own entry.
     await invalidate(MEMBER_FACE_CACHE_KEY);
+    // A lifetime saved now applies to the next sign-in, not one a minute later.
+    await invalidate(SESSION_POLICY_CACHE_KEY);
     // The mailer keeps its transport for ten seconds; an admin who has just
     // pasted an API key should be able to send a test message straight away.
     invalidateEmailConfig();

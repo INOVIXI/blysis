@@ -9,15 +9,17 @@ import { loginAllowedFrom, noteFailedLoginFrom } from "./login-throttle";
 import { CALLBACK_URL_COOKIE, CSRF_TOKEN_COOKIE, SECURE_SESSION_COOKIES, SESSION_TOKEN_COOKIE } from "./session-cookie";
 import { SignInRefusal } from "./sign-in-refusal";
 import {
-    REMEMBERED_MAX_AGE_SECONDS,
+    SESSION_COOKIE_MAX_AGE_SECONDS,
     parseRemember,
+    renewedDeadline,
     sessionExpired,
     sessionExpiresAt,
 } from "./session-lifetime";
+import { getSessionPolicy } from "./session-policy";
 import { shouldRecheckSession } from "./session-recheck";
 import { SESSION_RECHECK_INTERVAL_SECONDS } from "./session-recheck";
 import { forgetChecked, markChecked, wasCheckedWithin } from "./session-check-memo";
-import { recordSignIn, touchSession, SESSION_TOUCH_INTERVAL_MS } from "./session-registry";
+import { recordSignIn, sessionDeadline, touchSession, SESSION_TOUCH_INTERVAL_MS } from "./session-registry";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { coreAuthAdapter } from "./auth-adapter";
 import { prisma } from "./db";
@@ -86,10 +88,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: coreAuthAdapter(PrismaAdapter(prisma), prisma),
     session: {
         strategy: "jwt",
-        // The cookie is issued at the longest lifetime any session can have;
-        // a session the user did not ask to keep is cut short by the
-        // absolute deadline the jwt callback enforces. See session-lifetime.ts.
-        maxAge: REMEMBERED_MAX_AGE_SECONDS,
+        // The cookie is issued at the longest lifetime any setting can give a
+        // session; the lifetime that applies is cut short by the deadline the
+        // jwt callback enforces. See session-lifetime.ts.
+        maxAge: SESSION_COOKIE_MAX_AGE_SECONDS,
         // Auth.js consults updateAge in the database-session branch only, so
         // under the jwt strategy it throttles nothing. Role, ban and
         // revocation freshness is the jwt callback's job; session-recheck.ts
@@ -456,12 +458,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 token.rolePriority = (user as { rolePriority?: number }).rolePriority ?? 0;
                 // Generate a stable per-login token id for session tracking
                 token.tokenId = crypto.randomUUID();
-                // Only the credentials provider offers the checkbox; an OAuth
-                // sign-in takes the short lifetime, which is what every
-                // session got before "keep me signed in" existed.
-                token.absoluteExpiry = sessionExpiresAt(
-                    (user as { remember?: boolean }).remember === true,
-                );
+                // Only the credentials provider offers the checkbox. A provider
+                // sign-in takes the short lifetime unless the operator chose
+                // to keep those as long as a remembered one.
+                const policy = await getSessionPolicy();
+                const viaProvider = account?.type === "oauth" || account?.type === "oidc";
+                token.remembered =
+                    (user as { remember?: boolean }).remember === true ||
+                    (viaProvider && policy.providerRemembered);
+                token.absoluteExpiry = sessionExpiresAt(policy, token.remembered);
                 // authorize() just read this user out of the database, so the
                 // first request after signing in has nothing to re-check.
                 token.checkedAt = Date.now();
@@ -484,8 +489,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // Enforced on every request, not only on refresh: the cookie now
             // outlives the un-remembered session by design, so nothing else
             // would end it.
+            //
+            // A site that renews sessions keeps the moved deadline on the
+            // session's row, because the cookie carrying this token is not
+            // written back on an ordinary request. A token past the deadline
+            // it carries is asked about once per recheck interval per worker.
             if (sessionExpired(token)) {
-                return null as unknown as typeof token;
+                const expiredId = typeof token.tokenId === "string" ? token.tokenId : null;
+                if (!expiredId) return null as unknown as typeof token;
+                const renewedKey = `renewed:${expiredId}`;
+                if (!wasCheckedWithin(renewedKey, SESSION_RECHECK_INTERVAL_SECONDS * 1000)) {
+                    const deadline = renewedDeadline(await getSessionPolicy(), await sessionDeadline(expiredId));
+                    if (deadline === null) return null as unknown as typeof token;
+                    token.absoluteExpiry = deadline;
+                    markChecked(renewedKey);
+                }
             }
 
             // ─── Impersonation: start ───
@@ -627,8 +645,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 // rate: "last active" is rendered as a date and a time, so a
                 // write a minute per session bought nothing a reader could
                 // see. The row's own condition catches the other workers.
+                //
+                // Renewal rides on the same write: a site that renews sessions
+                // moves the row's deadline a full lifetime past this request.
                 if (tokenId && !wasCheckedWithin(`activity:${tokenId}`, SESSION_TOUCH_INTERVAL_MS)) {
-                    await touchSession(tokenId);
+                    const policy = await getSessionPolicy();
+                    const now = Date.now();
+                    const renewTo = policy.renew
+                        ? new Date(sessionExpiresAt(policy, token.remembered === true, now))
+                        : undefined;
+                    await touchSession(tokenId, new Date(now), renewTo);
+                    if (renewTo) token.absoluteExpiry = renewTo.getTime();
                     markChecked(`activity:${tokenId}`);
                 }
 
@@ -711,6 +738,8 @@ declare module "@auth/core/jwt" {
         tokenId?: string;
         /** Epoch ms after which this session stops working. See session-lifetime.ts. */
         absoluteExpiry?: number;
+        /** Whether the session was signed in to be kept; renewal extends it by that lifetime. */
+        remembered?: boolean;
         /** Set while impersonating - holds the real admin's user id. */
         originalUserId?: string;
         /** Epoch ms of the last database check. See session-recheck.ts. */
