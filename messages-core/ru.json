@@ -1497,7 +1497,7 @@
     "quickLinks": "Быстрые ссылки",
     "legal": "Правовая информация",
     "allRightsReserved": "Все права защищены.",
-    "madeBy": "Сделано: <link>{vendor}</link>"
+    "poweredBy": "Работает на <link>{name}</link>"
   },
   "profile": {
     "accountDeleted": "Учетная запись удалена",

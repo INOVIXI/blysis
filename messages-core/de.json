@@ -1497,7 +1497,7 @@
     "quickLinks": "Schnelllinks",
     "legal": "Rechtliches",
     "allRightsReserved": "Alle Rechte vorbehalten.",
-    "madeBy": "Erstellt von <link>{vendor}</link>"
+    "poweredBy": "Betrieben mit <link>{name}</link>"
   },
   "profile": {
     "accountDeleted": "Konto gelöscht",

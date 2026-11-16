@@ -1497,7 +1497,7 @@
     "quickLinks": "快速链接",
     "legal": "法律信息",
     "allRightsReserved": "版权所有。",
-    "madeBy": "由 <link>{vendor}</link> 制作"
+    "poweredBy": "由 <link>{name}</link> 提供支持"
   },
   "profile": {
     "accountDeleted": "账户已删除",

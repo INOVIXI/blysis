@@ -1497,7 +1497,7 @@
     "quickLinks": "Sürətli keçidlər",
     "legal": "Hüquqi",
     "allRightsReserved": "Bütün hüquqlar qorunur.",
-    "madeBy": "<link>{vendor}</link> tərəfindən hazırlanıb"
+    "poweredBy": "<link>{name}</link> ilə işləyir"
   },
   "profile": {
     "accountDeleted": "Hesab silindi",

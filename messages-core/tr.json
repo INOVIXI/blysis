@@ -1497,7 +1497,7 @@
     "quickLinks": "Hızlı Bağlantılar",
     "legal": "Yasal",
     "allRightsReserved": "Tüm hakları saklıdır.",
-    "madeBy": "<link>{vendor}</link> tarafından yapıldı"
+    "poweredBy": "Gücünü <link>{name}</link>'ten alır"
   },
   "profile": {
     "accountDeleted": "Hesap silindi",
