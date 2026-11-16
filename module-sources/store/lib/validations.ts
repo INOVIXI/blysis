@@ -1,9 +1,17 @@
 import { z } from "zod";
+import { isPictureAddress } from "@/core/sdk";
 import { MAX_SALE_PERCENT, MIN_SALE_PERCENT } from "./store-sale";
 import { DELIVERY_MODES } from "./delivery-mode";
 import { MAX_VARIANTS } from "./variants";
 
 // ==================== STORE SCHEMAS ====================
+
+/**
+ * A picture: a web address or the site's own upload (`isPictureAddress`).
+ * `.url()` refused an upload, which answers `/uploads/...`, and took any
+ * scheme at all.
+ */
+const picture = z.string().trim().max(2_000).refine((value) => isPictureAddress(value), "Not a picture address");
 
 /**
  * One variant as the product form sends it. The id is missing on a new one:
@@ -36,8 +44,8 @@ export const productSchema = z.object({
     shortDesc: z.string().max(500).optional().nullable(),
     price: z.number().min(0, "Price must be positive"),
     comparePrice: z.number().min(0).optional().nullable(),
-    image: z.string().url().optional().nullable(),
-    images: z.array(z.string().url()).optional(),
+    image: picture.optional().nullable(),
+    images: z.array(picture).optional(),
     stock: z.number().int().min(0).optional().nullable(),
     isActive: z.boolean().optional(),
     isFeatured: z.boolean().optional(),
@@ -102,7 +110,7 @@ export const categorySchema = z.object({
     visibleAfterProductIds: z.array(z.string().max(64)).max(20).optional(),
     slug: z.string().min(1).optional(),
     description: z.string().max(500).optional(),
-    image: z.string().url().optional().nullable(),
+    image: picture.optional().nullable(),
     parentId: z.string().optional().nullable(),
     order: z.number().int().optional(),
     isActive: z.boolean().optional(),

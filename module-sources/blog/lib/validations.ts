@@ -1,6 +1,14 @@
 import { z } from "zod";
+import { isPictureAddress } from "@/core/sdk";
 
 // ==================== BLOG SCHEMAS ====================
+
+/**
+ * A picture: a web address or the site's own upload (`isPictureAddress`).
+ * `.url()` refused an upload, which answers `/uploads/...`, and took any
+ * scheme at all.
+ */
+const picture = z.string().trim().max(2_000).refine((value) => isPictureAddress(value), "Not a picture address");
 
 export const blogCategorySchema = z.object({
     name: z.string().min(1, "Name is required").max(100),
@@ -19,7 +27,8 @@ export const blogArticleSchema = z.object({
     slug: z.string().min(1).max(200).optional(),
     excerpt: z.string().max(500).optional(),
     content: z.string().min(10, "Content must be at least 10 characters").max(100000, "Content is too long"),
-    coverImage: z.string().url().optional().nullable(),
+    // The form sends "" for no cover, which is no cover rather than a bad one.
+    coverImage: z.preprocess((value) => (value === "" ? null : value), picture.nullable().optional()),
     status: z.enum(ARTICLE_STATUSES).optional(),
     publishedAt: z.string().datetime().optional().nullable(),
     publishAt: z.string().datetime().optional().nullable(),
