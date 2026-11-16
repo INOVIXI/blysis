@@ -252,6 +252,23 @@ export function snapshotIn(value: unknown): VariantSnapshot | null {
     };
 }
 
+/**
+ * A kept variant as its buyer may read it: everything but the commands it
+ * runs, which are the shop's as much on an order as on the product page.
+ * Anything that is not a kept variant is handed back as it came.
+ */
+export function buyersVariant(value: unknown): unknown {
+    if (!isRecord(value) || !("commands" in value)) return value;
+    const { commands: _commands, ...rest } = value;
+    return rest;
+}
+
+/** An order line's metadata as its buyer may read it; see `buyersVariant`. */
+export function buyersLineMetadata(metadata: unknown): unknown {
+    if (!isRecord(metadata) || !isRecord(metadata.variant)) return metadata;
+    return { ...metadata, variant: buyersVariant(metadata.variant) };
+}
+
 /** How many units a line of this many delivers. */
 export function unitsDelivered(quantity: number, variant: { units: number } | null): number {
     return quantity * (variant?.units ?? 1);

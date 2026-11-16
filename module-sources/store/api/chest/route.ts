@@ -3,6 +3,7 @@ import { moduleSettings, prisma, rateLimitForRole, readJsonBody } from "@/core/s
 import { auth } from "@/core/sdk/auth";
 import { PENDING, receivesGifts, sentGifts, setReceivesGifts } from "../../lib/gifts";
 import { chestSettingsSchema } from "../../lib/validations";
+import { buyersVariant } from "../../lib/variants";
 
 /**
  * GET /api/v1/chest - what a member has bought and not yet claimed.
@@ -64,6 +65,7 @@ export async function GET() {
         // still waiting cannot be passed on before it is accepted.
         items: items.map((item) => ({
             ...item,
+            variant: buyersVariant(item.variant),
             pendingGift: item.giftState === PENDING,
             from: item.giftedById ? (senders.get(item.giftedById) ?? null) : null,
             canGift: item.giftState !== PENDING && travels.has(item.productId),
