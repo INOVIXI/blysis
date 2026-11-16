@@ -83,12 +83,17 @@ export async function recordSignIn(record: SignInRecord): Promise<void> {
  *
  * The `lastActiveAt` condition is what keeps several workers from each writing
  * the same row: only one of them finds it stale, and the rest write nothing.
+ *
+ * `renewTo` is the deadline a site that renews sessions on activity moves the
+ * row to (`session-lifetime.ts`). It rides on the same write, so renewal costs
+ * nothing the activity stamp did not already cost, and it inherits the same
+ * interval: a deadline is at most that much behind the member's last request.
  */
-export async function touchSession(tokenId: string, at: Date = new Date()): Promise<void> {
+export async function touchSession(tokenId: string, at: Date = new Date(), renewTo?: Date): Promise<void> {
     try {
         await prisma.userSession.updateMany({
             where: { tokenId, lastActiveAt: { lt: new Date(at.getTime() - SESSION_TOUCH_INTERVAL_MS) } },
-            data: { lastActiveAt: at },
+            data: renewTo ? { lastActiveAt: at, expiresAt: renewTo } : { lastActiveAt: at },
         });
     } catch (err) {
         log.error("[sessions] could not refresh a device's last activity", { error: errorText(err) });
@@ -186,4 +191,21 @@ export async function callerToken(source: { headers: Headers }): Promise<Record<
 export async function callerSessionTokenId(request: Request): Promise<string | null> {
     const tokenId = (await callerToken(request))?.tokenId;
     return typeof tokenId === "string" && tokenId !== "" ? tokenId : null;
+}
+
+/**
+ * The deadline and revocation of one session, for a token past the deadline
+ * it carries. Null when the row is missing or cannot be read: a session the
+ * registry cannot vouch for is not renewed.
+ */
+export async function sessionDeadline(tokenId: string): Promise<{ expiresAt: Date; isRevoked: boolean } | null> {
+    try {
+        return await prisma.userSession.findUnique({
+            where: { tokenId },
+            select: { expiresAt: true, isRevoked: true },
+        });
+    } catch (err) {
+        log.error("[sessions] could not read a session's deadline", { error: errorText(err) });
+        return null;
+    }
 }

@@ -3,6 +3,8 @@ import { slugify } from "@/core/sdk";
 import { contentTranslationsInput, hasPermission, log, moduleSettings, pageParams, prisma, readJsonBody, saveContentTranslations, textContains } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../lib/validations";
+import { variantsToSave } from "../../lib/variant-save";
+import { publicVariants, variantsRefusal } from "../../lib/variants";
 import { availabilityData } from "../../lib/availability-input";
 import { PUBLIC_PRODUCT } from "../../lib/public-product";
 import { availabilityOf } from "../../lib/availability";
@@ -55,7 +57,9 @@ export async function GET(request: NextRequest) {
         const [products, total] = await Promise.all([
             prisma.product.findMany({
                 where,
-                select: PUBLIC_PRODUCT,
+                // With the variants, which hold their commands: only what
+                // `publicVariants` keeps of them is sent on.
+                select: { ...PUBLIC_PRODUCT, variants: true },
                 skip,
                 take,
                 // Popularity is a column now. It used to be a `groupBy` over
@@ -88,14 +92,21 @@ export async function GET(request: NextRequest) {
         // answer per language.
         const named = await productsIn(products, localeOf(request));
         const onShelf = hideShut(named as unknown as ProductRow[], now, zone);
-        const annotated = onShelf.map((row) => {
-            const rules = rulesOf(row);
+        const annotated = onShelf.map((source) => {
+            const { variants, ...row } = source as typeof source & { variants?: unknown };
+            const rules = rulesOf(source);
             // Nobody in particular: this answer is shared-cached, so it
             // carries no per-person counting and no rank. Judging the rank
             // here would tell a VIP their own product is not for them, since
             // the same answer is served to everybody; `restricted` below says
             // a rank is needed and the product page, which knows the reader,
             // says whether it is theirs.
+            const priced = withStoreSale(
+                offerPrice({ ...rules, id: row.id }, campaignEntries, now),
+                { listPrice: rules.price, categoryId: (row as unknown as { category: { id: string } | null }).category?.id },
+                storeSales,
+                now,
+            );
             const state = availabilityOf(
                 { ...rules, roleIds: [] },
                 { boughtByPerson: 0, soldInPeriod: 0 },
@@ -114,12 +125,15 @@ export async function GET(request: NextRequest) {
                     // page, which knows the reader, says the rest.
                     restricted: row.roleIds.length > 0,
                 },
-                ...withStoreSale(
-                    offerPrice({ ...rules, id: row.id }, campaignEntries, now),
-                    { listPrice: rules.price, categoryId: (row as unknown as { category: { id: string } | null }).category?.id },
-                    storeSales,
-                    now,
-                ),
+                ...priced,
+                // Nobody in particular, so no upgrade credit: the same answer
+                // is served to everybody.
+                variants: publicVariants(variants, localeOf(request) || "en", {
+                    listPrice: rules.price,
+                    offeredPrice: priced.price,
+                    credit: 0,
+                    durationDays: (source as unknown as { durationDays: number | null }).durationDays ?? null,
+                }),
             };
         });
 
@@ -184,6 +198,11 @@ export async function POST(request: NextRequest) {
         }
 
         const scheduled = await availabilityData(data);
+        const variants = data.variants && data.variants.length > 0 ? await variantsToSave(null, data.variants, null) : undefined;
+        const refusal = variantsRefusal(data.type, variants);
+        if (refusal) {
+            return NextResponse.json({ error: "A subscription is not sold in variants", code: refusal }, { status: 400 });
+        }
         const product = await prisma.$transaction(async (tx) => {
             const created = await tx.product.create({
             data: {
@@ -210,6 +229,7 @@ export async function POST(request: NextRequest) {
                 deliveryData: data.deliveryData,
                 subscriptionInterval: data.type === "SUBSCRIPTION" ? data.subscriptionInterval : null,
                 subscriptionIntervalCount: data.type === "SUBSCRIPTION" ? data.subscriptionIntervalCount : null,
+                ...(variants !== undefined ? { variants } : {}),
                 ...scheduled,
             },
             include: {

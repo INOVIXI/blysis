@@ -44,6 +44,8 @@ export interface CardProduct {
     fullPrice?: number;
     comparePrice?: number | null;
     was?: number | null;
+    /** The cheapest variant's price, for a product sold in variants. */
+    fromPrice?: number | null;
     image: string | null;
     /** The one line about it the operator wrote for a card. */
     shortDesc?: string | null;
@@ -73,7 +75,10 @@ export function ProductCard({ product, lowStockAt = 0, showCategory = false }: P
     const was = upgrading
         ? (product.fullPrice ?? null)
         : product.was ?? product.comparePrice ?? null;
-    const onSale = was !== null && Number(was) > Number(product.price);
+    // Sold in variants: the card names where the prices start, and leaves
+    // the offers to the page that lists each variant.
+    const from = product.fromPrice ?? null;
+    const onSale = from === null && was !== null && Number(was) > Number(product.price);
     // A product that cannot be bought right now is dimmed rather than
     // captioned twice: the badge says why, the image says at a glance.
     const shut = product.availability ? !product.availability.buyable : false;
@@ -128,7 +133,7 @@ export function ProductCard({ product, lowStockAt = 0, showCategory = false }: P
                 <div className="mt-auto flex items-end justify-between gap-2 pt-2">
                     <div className="flex flex-wrap items-baseline gap-2">
                         <span className={`text-lg font-bold ${onSale ? "text-primary" : "text-foreground"}`}>
-                            {formatPrice(Number(product.price))}
+                            {from !== null ? t("fromPrice", { price: formatPrice(from) }) : formatPrice(Number(product.price))}
                         </span>
                         {onSale && (
                             <span className="text-sm text-muted-foreground line-through">
@@ -139,7 +144,7 @@ export function ProductCard({ product, lowStockAt = 0, showCategory = false }: P
                             the card shows a lower number than the one beside
                             it for no visible reason, which reads as a mistake
                             rather than an offer. */}
-                        {upgrading && (
+                        {upgrading && from === null && (
                             <span className="w-full text-xs font-medium text-success">
                                 {t("upgradeNote", { amount: credit.toFixed(2) })}
                             </span>

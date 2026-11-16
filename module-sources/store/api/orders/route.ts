@@ -5,6 +5,7 @@ import { auth } from "@/core/sdk/auth";
 import { ORDER_STATUSES } from "../../lib/order-status";
 import { deliveryOf } from "../../lib/order-delivery";
 import { thankYouCouponsFor } from "../../lib/thank-you-coupon";
+import { buyersLineMetadata } from "../../lib/variants";
 
 /**
  * Orders are listed here and made at `/store/checkout`.
@@ -114,6 +115,11 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
             orders: orders.map((order) => ({
                 ...order,
+                // A buyer's own list shows what they bought, not the commands
+                // it runs; staff serving everybody's orders see the whole line.
+                items: owner === null
+                    ? order.items
+                    : order.items.map((item) => ({ ...item, metadata: buyersLineMetadata(item.metadata) })),
                 delivery: delivery[order.id] ?? null,
                 thankYouCoupon: thanks[order.id] ?? null,
             })),

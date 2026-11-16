@@ -25,6 +25,12 @@ import {
     EMAIL_CHANGE_VERIFICATION_KEY,
 } from "@/core/lib/member-identity";
 import { SIGN_IN_METHOD_SIGN_UPS_KEY } from "@/core/lib/sign-in-methods-shared";
+import {
+    PROVIDER_SIGN_IN_REMEMBERED_KEY,
+    REMEMBERED_LIFETIME_DAYS,
+    SESSION_LIFETIME_HOURS,
+    SESSION_RENEWAL_KEY,
+} from "@/core/lib/session-lifetime";
 
 interface FieldDef {
     key: string;
@@ -102,6 +108,21 @@ const LEGACY_HASH_CHOICES = [
     { value: "true", labelKey: "generalSettings_legacyPasswordHashesOn" },
 ] as const;
 
+/**
+ * Whether a session's deadline counts from the sign-in or from the member's
+ * latest visit. Its own words, because "on" says nothing about which clock.
+ */
+const SESSION_RENEWAL_CHOICES = [
+    { value: "false", labelKey: "generalSettings_sessionRenewalOff" },
+    { value: "true", labelKey: "generalSettings_sessionRenewalOn" },
+] as const;
+
+/** How long a sign-in through a provider is kept, which has no checkbox of its own. */
+const PROVIDER_REMEMBERED_CHOICES = [
+    { value: "false", labelKey: "generalSettings_providerRememberedOff" },
+    { value: "true", labelKey: "generalSettings_providerRememberedOn" },
+] as const;
+
 /** Asked for, or not. */
 const REQUIRED_CHOICES = [
     { value: "true", labelKey: "generalSettings_required" },
@@ -142,6 +163,15 @@ const sections: SectionDef[] = [
             { key: "password_reset_expiry_minutes", labelKey: "generalSettings_passwordResetExpiry", type: "number", defaultValue: 60 },
             { key: "password_hash_algorithm", labelKey: "generalSettings_hashAlgorithm", type: "choice", defaultValue: "bcrypt", choices: HASH_CHOICES, descriptionKey: "generalSettings_hashAlgorithmHint" },
             { key: "legacy_password_hashes", labelKey: "generalSettings_legacyPasswordHashes", type: "choice", defaultValue: "false", choices: LEGACY_HASH_CHOICES, descriptionKey: "generalSettings_legacyPasswordHashesHint" },
+        ],
+    },
+    {
+        titleKey: "generalSettings_sessions",
+        fields: [
+            { key: SESSION_LIFETIME_HOURS.key, labelKey: "generalSettings_sessionLifetime", type: "number", defaultValue: SESSION_LIFETIME_HOURS.defaultValue, descriptionKey: "generalSettings_sessionLifetimeHint" },
+            { key: REMEMBERED_LIFETIME_DAYS.key, labelKey: "generalSettings_rememberedLifetime", type: "number", defaultValue: REMEMBERED_LIFETIME_DAYS.defaultValue, descriptionKey: "generalSettings_rememberedLifetimeHint" },
+            { key: SESSION_RENEWAL_KEY, labelKey: "generalSettings_sessionRenewal", type: "choice", defaultValue: "false", choices: SESSION_RENEWAL_CHOICES, descriptionKey: "generalSettings_sessionRenewalHint" },
+            { key: PROVIDER_SIGN_IN_REMEMBERED_KEY, labelKey: "generalSettings_providerRemembered", type: "choice", defaultValue: "false", choices: PROVIDER_REMEMBERED_CHOICES, descriptionKey: "generalSettings_providerRememberedHint" },
         ],
     },
     {

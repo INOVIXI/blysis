@@ -58,6 +58,7 @@ vi.mock("@/modules/store/lib/popularity", () => ({
 }));
 vi.mock("@/modules/store/lib/chest", () => ({
     recordedVariables: vi.fn(() => null),
+    chestFieldsFor: vi.fn((line: { quantity: number }) => ({ quantity: line.quantity, variant: null })),
     deliveryFor: vi.fn(),
 }));
 vi.mock("@/modules/store/lib/delivery", () => ({ deliverProduct: vi.fn(async () => undefined) }));

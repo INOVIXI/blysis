@@ -171,6 +171,13 @@ model Product {
   saleUntil            DateTime?
 
   /**
+   * The ways it is sold, as `lib/variants.ts` reads them: a pack of three, a
+   * rank for six months. Null or empty sells the product as it is. JSON on
+   * the product because a variant is never read without it.
+   */
+  variants             Json?
+
+  /**
    * Whether a connected game sells this, and how it is drawn there. Shown
    * only when its shelf is shown too. The icon is free text each game reads
    * its own way: a material, an item model, a sprite name.
@@ -298,6 +305,9 @@ model OrderItem {
 model CartItem {
   id       String @id @default(cuid())
   quantity Int    @default(1)
+  /// The variant chosen, for a product sold in variants. One line per
+  /// product still: choosing another variant replaces the one in the basket.
+  variantId String?
 
   userId    String
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -544,6 +554,12 @@ model ChestItem {
    */
   playerName  String?
   variables   Json?
+  /**
+   * The variant it was bought as, copied from the order line
+   * (`VariantSnapshot`): its own commands, if it has any, are the ones a
+   * claim runs. Null for a product sold without variants.
+   */
+  variant     Json?
   isRedeemed  Boolean  @default(false)
   redeemedAt  DateTime?
   giftedToId  String?

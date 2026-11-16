@@ -17,6 +17,9 @@
  * says so and the screen asks.
  */
 
+import { Prisma } from "@prisma/client";
+import { snapshotIn, unitsDelivered } from "./variants";
+
 /** A chest row, as far as delivering it is concerned. */
 export interface ChestRow {
     productName: string;
@@ -95,4 +98,23 @@ export function recordedPlayerName(orderMetadata: unknown): string | null {
 export function recordedVariables(lineMetadata: unknown): Record<string, string> | null {
     if (typeof lineMetadata !== "object" || lineMetadata === null) return null;
     return answersIn((lineMetadata as Record<string, unknown>).variables) ?? null;
+}
+
+/**
+ * The chest row's quantity and variant for an order line.
+ *
+ * A line bought as a variant becomes a row of the units it delivers, so a
+ * claim, which reads only the row, hands out six keys for a pack of six. The
+ * variant goes with it for its own commands. A line without one is the row it
+ * always was.
+ */
+export function chestFieldsFor(line: { quantity: number; metadata: unknown }): {
+    quantity: number;
+    variant: Prisma.InputJsonValue | typeof Prisma.JsonNull;
+} {
+    const variant = snapshotIn(line.metadata);
+    return {
+        quantity: unitsDelivered(line.quantity, variant),
+        variant: variant ? (variant as unknown as Prisma.InputJsonValue) : Prisma.JsonNull,
+    };
 }

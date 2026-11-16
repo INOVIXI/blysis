@@ -24,6 +24,11 @@ interface CartItem {
     payPrice?: number;
     /** Taken off because a cheaper rung on the same shelf is already owned. */
     upgradeCredit?: number;
+    /** The variant chosen, for a product sold in variants. */
+    variantId?: string | null;
+    variant?: { id: string; label: string; units: number } | null;
+    /** Sold in variants, and the one on this line is gone: pick again on its page. */
+    needsVariant?: boolean;
     product: {
         id: string;
         name: string;
@@ -208,12 +213,12 @@ export default function CartPage() {
         }
     };
 
-    const updateQuantity = async (productId: string, quantity: number) => {
+    const updateQuantity = async (productId: string, quantity: number, variantId?: string | null) => {
         try {
             const res = await fetch("/api/v1/store/cart", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ productId, quantity }),
+                body: JSON.stringify({ productId, quantity, variantId: variantId ?? null }),
             });
             const failed = await writeError(res, t("cartUpdateFailed"), t);
             if (failed) { toast.error(failed); return; }
@@ -318,13 +323,15 @@ export default function CartPage() {
 
         try {
             // Step 1: Create the order via the standard checkout endpoint
-            const res = await fetch("/api/v1/store/checkout", {
+            // In the reader's language, which a variant's name is kept in on the order.
+            const res = await fetch(`/api/v1/store/checkout?locale=${encodeURIComponent(locale)}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     items: cart.items.map((item) => ({
                         productId: item.product.id,
                         quantity: item.quantity,
+                        variantId: item.variantId ?? null,
                     })),
                     playerName: playerName.trim(),
                     ...(billingRequired ? { billingDetails: billing } : {}),
@@ -450,6 +457,12 @@ export default function CartPage() {
                                             >
                                                 {item.product.name}
                                             </Link>
+                                            {item.variant && (
+                                                <p className="text-sm text-muted-foreground">{item.variant.label}</p>
+                                            )}
+                                            {item.needsVariant && (
+                                                <p className="text-sm text-destructive">{t("cart_variantGone")}</p>
+                                            )}
                                             {/* The line has to be the number the
                                                 till takes. It summed list
                                                 prices while the checkout
@@ -477,7 +490,7 @@ export default function CartPage() {
                                                 variant="outline"
                                                 size="icon"
                                                 aria-label={t("cart_decreaseQuantity", { name: item.product.name })}
-                                                onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))}
+                                                onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1), item.variantId)}
                                             >
                                                 <span aria-hidden="true">-</span>
                                             </Button>
@@ -486,7 +499,7 @@ export default function CartPage() {
                                                 variant="outline"
                                                 size="icon"
                                                 aria-label={t("cart_increaseQuantity", { name: item.product.name })}
-                                                onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                                                onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.variantId)}
                                             >
                                                 <span aria-hidden="true">+</span>
                                             </Button>

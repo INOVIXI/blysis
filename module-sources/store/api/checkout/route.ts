@@ -15,7 +15,7 @@ import { convertedCharge, resolveCurrency } from "../../lib/currency";
 import { startPaymentSession, listPaymentProviders } from "../../lib/payments";
 import { paymentFeeFor } from "../../lib/payment-fee-server";
 import { announceOrderCreated, announceOrderCompleted } from "../../lib/order-events";
-import { recordedVariables } from "../../lib/chest";
+import { chestFieldsFor, recordedVariables } from "../../lib/chest";
 import { billingRefusal, normaliseBilling, type BillingDetails } from "../../lib/billing";
 import { processorTaxLine, taxRecord } from "../../lib/tax";
 import { headerReader, resolveTax } from "../../lib/tax-server";
@@ -32,6 +32,8 @@ import { z } from "zod";
 import { isPlayerName } from "../../lib/player-name";
 import { payCreatorCommission } from "../../lib/creator-commission";
 import { couponOpenTo } from "../../lib/thank-you-coupon";
+import { chosenVariant, variantsRefusal } from "../../lib/variants";
+import { localeOf } from "../../lib/store-text";
 
 const LIMIT_REACHED = "LIMIT_REACHED";
 const COUPON_ALREADY_USED = "COUPON_ALREADY_USED";
@@ -42,6 +44,9 @@ const checkoutSchema = z.object({
         // The most a cart holds of one line (`api/cart/route.ts`). Without it a
         // free line, or one that runs its commands per unit, delivered any count.
         quantity: z.number().int().min(1, "Quantity must be at least 1").max(99, "Quantity must be at most 99"),
+        // Which variant, for a product sold in variants. Only the id: the
+        // price is the variant's own, read from the product below.
+        variantId: z.string().max(64).nullish(),
     }), { message: "Your cart is empty" }).min(1, "Your cart is empty"),
     playerName: z
         .string()
@@ -112,6 +117,29 @@ export async function POST(request: NextRequest) {
 
         if (products.length !== items.length) {
             return NextResponse.json({ error: "Some products are not available" }, { status: 400 });
+        }
+
+        // ── Check each line names a variant its product sells ──
+        //
+        // A product sold in variants is never sold at its own price, and a
+        // variant id the product does not offer (taken away, switched off,
+        // or made up) is refused rather than priced as something else.
+        for (const item of items) {
+            const product = products.find((p) => p.id === item.productId)!;
+            const refusal = variantsRefusal(product.type, product.variants);
+            const choice = chosenVariant(product.variants, item.variantId);
+            if (refusal) {
+                return NextResponse.json(
+                    { error: `${product.name}: ${refusal}`, code: refusal, productId: product.id },
+                    { status: 409 },
+                );
+            }
+            if (!choice.ok) {
+                return NextResponse.json(
+                    { error: `${product.name}: ${choice.code}`, code: choice.code, productId: product.id },
+                    { status: 409 },
+                );
+            }
         }
 
         // ── Check each product is for sale, to this person, right now ──
@@ -256,6 +284,10 @@ export async function POST(request: NextRequest) {
                     storeSales,
                     now,
                 ).price,
+                // A variant takes the same share off its own price as the
+                // offer above took off the product's.
+                listPrice: rulesOf(p as unknown as ProductRow).price,
+                variants: p.variants,
                 categoryId: p.categoryId,
             })),
             bulkDiscounts,
@@ -264,6 +296,7 @@ export async function POST(request: NextRequest) {
             // the one product an upgrade does not contain.
             ownedRungs: await ownedRungsOn(products.map((p) => p.categoryId), ownedIds, now),
             variables,
+            locale: localeOf(request) || "en",
         });
 
         // ── Apply coupon ──
@@ -554,7 +587,12 @@ export async function POST(request: NextRequest) {
                 paymentMethod,
                 couponId,
                 metadata: orderMetadata,
-                items: { create: orderItems },
+                items: {
+                    create: orderItems.map((item) => ({
+                        ...item,
+                        metadata: item.metadata as unknown as Prisma.InputJsonValue,
+                    })),
+                },
             },
         });
 
@@ -609,7 +647,7 @@ export async function POST(request: NextRequest) {
                             userId: freeBuyerId,
                             productId: item.productId,
                             productName: item.name,
-                            quantity: item.quantity,
+                            ...chestFieldsFor(item),
                             orderId: order.id,
                             playerName,
                             variables: recordedVariables(item.metadata) ?? Prisma.JsonNull,

@@ -11,6 +11,7 @@
  * since been switched off or deleted is left out rather than refused, and the
  * basket's line cap still holds.
  */
+import { snapshotIn } from "./variants";
 
 /** The most of one line a basket holds, as the checkout accepts it. */
 const MAX_QUANTITY = 99;
@@ -19,8 +20,8 @@ export interface RestoreDb {
     order: {
         findFirst(args: {
             where: { id: string; userId: string; status: "PENDING" };
-            select: { items: { select: { productId: true; quantity: true } } };
-        }): Promise<{ items: { productId: string | null; quantity: number }[] } | null>;
+            select: { items: { select: { productId: true; quantity: true; metadata: true } } };
+        }): Promise<{ items: { productId: string | null; quantity: number; metadata?: unknown }[] } | null>;
     };
     product: {
         findMany(args: {
@@ -32,8 +33,8 @@ export interface RestoreDb {
         findMany(args: { where: { userId: string }; select: { productId: true } }): Promise<{ productId: string }[]>;
         upsert(args: {
             where: { userId_productId: { userId: string; productId: string } };
-            update: { quantity: number };
-            create: { userId: string; productId: string; quantity: number };
+            update: { quantity: number; variantId: string | null };
+            create: { userId: string; productId: string; quantity: number; variantId: string | null };
         }): Promise<unknown>;
     };
 }
@@ -47,13 +48,18 @@ export async function restoreCartFromOrder(
 ): Promise<number | null> {
     const order = await db.order.findFirst({
         where: { id: orderId, userId, status: "PENDING" },
-        select: { items: { select: { productId: true, quantity: true } } },
+        select: { items: { select: { productId: true, quantity: true, metadata: true } } },
     });
     if (!order) return null;
 
     const wanted = new Map<string, number>();
+    // The variant each line was put in the basket as, so the basket comes
+    // back as it was. One the shop has since taken away leaves the line
+    // asking for another, as the cart says.
+    const variantOf = new Map<string, string | null>();
     for (const item of order.items) {
         if (!item.productId) continue;
+        variantOf.set(item.productId, snapshotIn(item.metadata)?.id ?? null);
         wanted.set(item.productId, Math.min(MAX_QUANTITY, (wanted.get(item.productId) ?? 0) + item.quantity));
     }
     if (wanted.size === 0) return 0;
@@ -74,8 +80,8 @@ export async function restoreCartFromOrder(
         const quantity = wanted.get(id) ?? 1;
         await db.cartItem.upsert({
             where: { userId_productId: { userId, productId: id } },
-            update: { quantity },
-            create: { userId, productId: id, quantity },
+            update: { quantity, variantId: variantOf.get(id) ?? null },
+            create: { userId, productId: id, quantity, variantId: variantOf.get(id) ?? null },
         });
         restored++;
     }

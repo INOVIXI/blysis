@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getClientIP, prisma, rateLimitForRole, rateLimits } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { scopedSubtotal } from "../../../lib/pricing";
+import { basketLinePrice } from "../../../lib/variants";
 
 /**
  * GET /api/v1/store/creator-codes/validate?code=XXX
@@ -39,12 +40,12 @@ export async function GET(request: NextRequest) {
 
     const cartItems = await prisma.cartItem.findMany({
         where: { userId: session.user.id },
-        include: { product: { select: { id: true, price: true, categoryId: true } } },
+        include: { product: { select: { id: true, price: true, categoryId: true, variants: true } } },
     });
     const lines = cartItems.map((item) => ({
         productId: item.product.id,
         categoryId: item.product.categoryId ?? null,
-        price: Number(item.product.price),
+        price: basketLinePrice(item.product, item.variantId, Number(item.product.price)),
         quantity: item.quantity,
     }));
     const eligible = scopedSubtotal(

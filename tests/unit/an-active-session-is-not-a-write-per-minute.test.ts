@@ -34,14 +34,14 @@ const userSession = {
     },
     updateMany: async ({ where, data }: {
         where: { tokenId: string; lastActiveAt?: { lt: Date } };
-        data: { lastActiveAt: Date };
+        data: { lastActiveAt: Date; expiresAt?: Date };
     }) => {
         const hit = rows.filter(
             (r) =>
                 r.tokenId === where.tokenId &&
                 (where.lastActiveAt === undefined || r.lastActiveAt.getTime() < where.lastActiveAt.lt.getTime()),
         );
-        for (const r of hit) r.lastActiveAt = data.lastActiveAt;
+        for (const r of hit) Object.assign(r, data);
         writes.push({ tokenId: where.tokenId, count: hit.length });
         return { count: hit.length };
     },
@@ -102,5 +102,23 @@ describe("the statement itself", () => {
 
     it("says nothing about a token with no row", async () => {
         await expect(touchSession("never-recorded")).resolves.toBeUndefined();
+    });
+
+    it("moves a renewing site's deadline on the same write, and only on it", async () => {
+        // Renewal adds no write of its own: a row another worker just
+        // refreshed keeps its deadline too, because the member was active
+        // inside the interval and the deadline is at most that far behind.
+        await userSession.create({
+            data: { tokenId: "t1", userId: "u1", expiresAt: new Date(NOW + 86_400_000) },
+        });
+        rows[0].lastActiveAt = new Date(NOW);
+
+        await touchSession("t1", new Date(NOW + MINUTE), new Date(NOW + 10 * 86_400_000));
+        expect(rows[0].expiresAt.getTime()).toBe(NOW + 86_400_000);
+
+        const at = new Date(NOW + SESSION_TOUCH_INTERVAL_MS + MINUTE);
+        await touchSession("t1", at, new Date(at.getTime() + 86_400_000));
+        expect(rows[0].expiresAt.getTime()).toBe(at.getTime() + 86_400_000);
+        expect(writes).toHaveLength(2);
     });
 });

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { contentTranslationsInput, hasPermission, log, moduleSettings, prisma, readJsonBody, saveContentTranslations } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../../lib/validations";
+import { variantsToSave } from "../../../lib/variant-save";
+import { variantsRefusal } from "../../../lib/variants";
 import { availabilityData } from "../../../lib/availability-input";
 import { PUBLIC_PRODUCT } from "../../../lib/public-product";
 import { readProduct } from "../../../lib/read-product";
@@ -62,9 +64,15 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             return NextResponse.json({ error: "Product not found" }, { status: 404 });
         }
 
-        const data = { ...validation.data };
+        const { variants: sentVariants, ...data } = validation.data;
         if (data.description !== undefined) {
             data.description = data.description;
+        }
+        // Only when the form sent them: a save of another field leaves them be.
+        const variants = sentVariants !== undefined ? await variantsToSave(id, sentVariants, existing.variants) : undefined;
+        const refusal = variantsRefusal(data.type ?? existing.type, variants !== undefined ? variants : existing.variants);
+        if (refusal) {
+            return NextResponse.json({ error: "A subscription is not sold in variants", code: refusal }, { status: 400 });
         }
 
         // The schedule arrives as wall-clock strings; the column holds
@@ -77,7 +85,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         const product = await prisma.$transaction(async (tx) => {
             const updated = await tx.product.update({
                 where: { id },
-                data: { ...data, ...scheduled },
+                data: { ...data, ...scheduled, ...(variants !== undefined ? { variants } : {}) },
                 include: { category: true },
             });
             if (translations.value) await saveContentTranslations(tx, { ...PRODUCT_TEXT, recordId: id }, translations.value);

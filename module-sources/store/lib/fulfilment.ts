@@ -15,7 +15,8 @@ import { announceOrderCompleted, announceOrderRefunded } from "./order-events";
 import { claimStock, releaseStock, stockClaims } from "./stock";
 import { countSales, uncountSales } from "./popularity";
 import { extendedExpiry } from "./ownership";
-import { recordedPlayerName, recordedVariables } from "./chest";
+import { chestFieldsFor, recordedPlayerName, recordedVariables } from "./chest";
+import { snapshotIn } from "./variants";
 import { chargeShortfall } from "./charge";
 import { cancelTopUp, findTopUp, refundTopUp, settleCredits } from "./credit-top-up";
 import { revokeRefundedRoles, takeBackOrder, type GrantedRole } from "./take-back";
@@ -114,6 +115,19 @@ async function highestPriority<T extends { grantsRoleId: string }>(
     });
     const top = ranked[0]?.id;
     return naming.find((p) => p.grantsRoleId === top) ?? naming[0];
+}
+
+/**
+ * How long a product bought in this order lasts: the variant's duration when
+ * the line was bought as one that carries its own, otherwise the product's.
+ * A basket holds a product once, so its first line is the one.
+ */
+function durationBought(
+    product: { id: string; durationDays: number | null },
+    lines: { productId: string | null; metadata: unknown }[],
+): number | null {
+    const line = lines.find((entry) => entry.productId === product.id);
+    return snapshotIn(line?.metadata)?.durationDays ?? product.durationDays;
 }
 
 export async function settleOrder(settlement: PaymentSettlement): Promise<PaymentOutcome> {
@@ -249,7 +263,7 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
                     userId: buyerId,
                     productId: item.productId as string,
                     productName: item.name,
-                    quantity: item.quantity,
+                    ...chestFieldsFor(item),
                     orderId: order.id,
                     playerName: deliverTo,
                     variables: recordedVariables(item.metadata) ?? Prisma.JsonNull,
@@ -271,7 +285,11 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
             // back with it.
             const past = await pastTheLimit(tx, grants, granted, buyerId, now, order.id);
             if (past) throw new PastTheLimit(past);
-            const timed = grants.filter((p) => p.durationDays !== null && p.durationDays > 0);
+            // A variant's own duration stands in for the product's: six
+            // months of a rank is the variant the buyer paid for, read from
+            // what the line kept rather than from the product now.
+            const lasting = grants.map((product) => ({ ...product, durationDays: durationBought(product, granted) }));
+            const timed = lasting.filter((p) => p.durationDays !== null && p.durationDays > 0);
             const timedIds = new Set(timed.map((p) => p.id));
             const outright = productIds.filter((id) => !timedIds.has(id));
 
@@ -309,7 +327,7 @@ export async function settleOrder(settlement: PaymentSettlement): Promise<Paymen
                 }
             }
 
-            const granting = await roleGrantedBy(tx, grants);
+            const granting = await roleGrantedBy(tx, lasting);
             if (granting) {
                 // A rank is added to what the buyer already holds rather than
                 // replacing it. The shape this replaces held one role per

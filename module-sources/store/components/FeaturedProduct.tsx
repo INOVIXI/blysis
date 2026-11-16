@@ -18,7 +18,9 @@ export function FeaturedProduct({ product }: { product: ShelfProduct }) {
     const t = useTranslations("store");
     const { format: formatPrice } = useStorePrice();
     const was = product.was ?? product.comparePrice ?? null;
-    const onSale = was !== null && was > product.price;
+    // Sold in variants: the prices start somewhere, and the page lists them.
+    const from = product.fromPrice;
+    const onSale = from === null && was !== null && was > product.price;
     const percent = onSale ? Math.round((1 - product.price / was) * 100) : 0;
     const href = `/store/product/${product.number}/${product.slug}`;
 
@@ -33,7 +35,9 @@ export function FeaturedProduct({ product }: { product: ShelfProduct }) {
                 <h2 data-featured-name className="text-3xl font-extrabold text-foreground">{product.name}</h2>
                 {product.shortDesc ? <p className="max-w-xl text-muted-foreground">{product.shortDesc}</p> : null}
                 <div className="flex flex-wrap items-baseline gap-3">
-                    <span data-featured-price className="text-2xl font-bold text-foreground">{formatPrice(product.price)}</span>
+                    <span data-featured-price className="text-2xl font-bold text-foreground">
+                        {from !== null ? t("fromPrice", { price: formatPrice(from) }) : formatPrice(product.price)}
+                    </span>
                     {onSale ? <span className="text-muted-foreground line-through">{formatPrice(was)}</span> : null}
                 </div>
                 <div className="flex flex-wrap gap-3">

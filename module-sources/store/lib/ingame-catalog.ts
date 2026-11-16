@@ -14,6 +14,7 @@ import { withStoreSale } from "./store-sale";
 import { runningStoreSales } from "./store-sale-server";
 import { rulesOf, type ProductRow } from "./availability-server";
 import { MAX_GAME_QUANTITY, optionsOf } from "./credit-purchase";
+import { offeredVariants } from "./variants";
 
 /**
  * A game server as the servers module describes it. Spelled out here: this
@@ -64,6 +65,8 @@ export async function inGameCatalog(now: Date = new Date()): Promise<InGameCatal
 
     const byCategory = new Map<string, InGameProduct[]>();
     for (const product of products) {
+        // Sold in variants: a game cannot buy one yet, see `sellableInGame`.
+        if (offeredVariants(product.variants).length > 0) continue;
         const places = new Set<string>();
         for (const command of commands) {
             if (command.productId !== product.id || command.target === "player") continue;

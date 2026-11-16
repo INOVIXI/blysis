@@ -23,6 +23,7 @@ import { runningStoreSales } from "./store-sale-server";
 import { priceAfterCredit, upgradeCredit } from "./upgrade-credit";
 import { creditingPurchases, ownedRungsOn } from "./upgrade-credit-server";
 import { productsIn } from "./store-text";
+import { publicVariants } from "./variants";
 
 export type ProductRead = Awaited<ReturnType<typeof readProduct>>;
 
@@ -33,7 +34,10 @@ export async function readProduct(id: string, locale = "") {
             isActive: true,
             OR: [{ id }, { slug: id }, ...(isNaN(Number(id)) ? [] : [{ number: Number(id) }])],
         },
-        select: PUBLIC_PRODUCT,
+        // The variants hold their commands, so they are read here and
+        // never by the shared public select: `publicVariants` decides what
+        // of them a page sees.
+        select: { ...PUBLIC_PRODUCT, variants: true },
     });
     if (!found) return null;
     const [product] = await productsIn([found], locale);
@@ -72,8 +76,16 @@ export async function readProduct(id: string, locale = "") {
         ownedIds,
     );
 
+    const { variants: rawVariants, ...shown } = product;
     return {
-        ...product,
+        ...shown,
+        /** What it is sold as, for this reader; empty sells the product itself. */
+        variants: publicVariants(rawVariants, locale || "en", {
+            listPrice: Number(product.price),
+            offeredPrice: priced.price,
+            credit,
+            durationDays: product.durationDays ?? null,
+        }),
         /*
          * A number, not a Decimal.
          *
