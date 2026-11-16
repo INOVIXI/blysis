@@ -7,7 +7,7 @@ Blysis runs on a Linux server with Docker. The installer sets up everything else
 On a fresh VPS, as a user that can use `sudo`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/INOVIXI/blysis/main/install.sh | sudo bash
+curl -fsSL https://blysis.com/install.sh | sudo bash
 ```
 
 It installs Docker if the machine does not have it, generates every secret, writes the configuration, pulls the prebuilt image, starts the database, Redis and the site, waits until the site answers, and prints its address and the admin password. Copy the password before the terminal scrolls.

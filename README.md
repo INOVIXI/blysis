@@ -12,7 +12,7 @@
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/INOVIXI/blysis/main/install.sh | sudo bash
+curl -fsSL https://blysis.com/install.sh | sudo bash
 ```
 
 One command on a fresh VPS. It installs Docker if the machine lacks it, generates every secret, starts the site and prints its URL and the admin password. Give it a domain and it also obtains and renews an HTTPS certificate. Open the site, finish the setup wizard, and install modules from **Admin > Modules**.
