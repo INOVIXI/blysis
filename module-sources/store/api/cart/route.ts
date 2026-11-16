@@ -6,11 +6,15 @@ import { priceCartLines } from "../../lib/cart-pricing";
 import { saleAdjustedPrice } from "../../lib/store-sale-server";
 import { creditingPurchases, ownedRungsOn } from "../../lib/upgrade-credit-server";
 import { localeOf, productsIn } from "../../lib/store-text";
+import { basketLinePrice, chosenVariant, offeredVariants, unitsDelivered } from "../../lib/variants";
+import { textFor } from "@/core/sdk";
 import { z } from "zod";
 
 const cartItemSchema = z.object({
     productId: z.string(),
     quantity: z.number().int().min(0).max(99),
+    /** The variant chosen, for a product sold in variants. */
+    variantId: z.string().max(64).nullish(),
 });
 
 // GET /api/v1/store/cart - Get user's cart, its products named in `?locale=`
@@ -39,6 +43,7 @@ export async function GET(request: NextRequest) {
                         salePrice: true,
                         saleFrom: true,
                         saleUntil: true,
+                        variants: true,
                     },
                 },
             },
@@ -56,10 +61,18 @@ export async function GET(request: NextRequest) {
         // included, rather than the column: a cart that quoted the list price
         // during a sale read higher than the till.
         const listedAt = await saleAdjustedPrice(new Date());
+        const locale = localeOf(request);
+        // A line's variant, read from the product now. One the operator took
+        // away is none, and the line says so rather than falling back to the
+        // product's own price: the checkout refuses it the same way.
+        const variantOf = (item: (typeof cartItems)[number]) =>
+            item.variantId ? (offeredVariants(item.product.variants).find((v) => v.id === item.variantId) ?? null) : null;
+        const priceOf = (item: (typeof cartItems)[number]) =>
+            basketLinePrice(item.product, item.variantId, listedAt(item.product));
         const basket = cartItems.map((item) => ({
             productId: item.product.id,
             categoryId: item.product.categoryId ?? null,
-            price: listedAt(item.product),
+            price: priceOf(item),
             quantity: item.quantity,
         }));
         // The arithmetic lives in `cart-pricing.ts` because the coupon
@@ -72,13 +85,21 @@ export async function GET(request: NextRequest) {
             await ownedRungsOn(basket.map((line) => line.categoryId), ownedIds),
         );
         const byProduct = new Map(lines.map((line) => [line.productId, line]));
-        const named = new Map((await productsIn(cartItems.map((item) => item.product), localeOf(request))).map((p) => [p.id, p]));
-        const priced = cartItems.map((item) => ({
-            ...item,
-            product: named.get(item.product.id) ?? item.product,
-            upgradeCredit: byProduct.get(item.product.id)?.upgradeCredit ?? 0,
-            payPrice: byProduct.get(item.product.id)?.payPrice ?? listedAt(item.product),
-        }));
+        const named = new Map((await productsIn(cartItems.map((item) => item.product), locale)).map((p) => [p.id, p]));
+        const priced = cartItems.map((item) => {
+            const variant = variantOf(item);
+            const { variants: _variants, ...product } = named.get(item.product.id) ?? item.product;
+            return {
+                ...item,
+                product,
+                variant: variant ? { id: variant.id, label: textFor(variant.label, locale), units: variant.units } : null,
+                // A product that sells only in variants, with none on the line
+                // any more, cannot be checked out as it is.
+                needsVariant: offeredVariants(item.product.variants).length > 0 && !variant,
+                upgradeCredit: byProduct.get(item.product.id)?.upgradeCredit ?? 0,
+                payPrice: byProduct.get(item.product.id)?.payPrice ?? priceOf(item),
+            };
+        });
 
         return NextResponse.json({
             items: priced,
@@ -123,7 +144,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { productId, quantity } = validation.data;
+        const { productId, quantity, variantId } = validation.data;
 
         // quantity=0 means remove item from cart
         if (quantity === 0) {
@@ -148,8 +169,15 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Check stock
-        if (product.stock !== null && product.stock < quantity) {
+        // A product sold in variants goes into the basket as one of them.
+        const choice = chosenVariant(product.variants, variantId);
+        if (!choice.ok) {
+            return NextResponse.json({ error: choice.code, code: choice.code }, { status: 400 });
+        }
+
+        // Check stock, in the units the variant delivers.
+        const units = unitsDelivered(quantity, choice.variant);
+        if (product.stock !== null && product.stock < units) {
             return NextResponse.json(
                 { error: "Insufficient stock" },
                 { status: 400 }
@@ -205,11 +233,12 @@ export async function POST(request: NextRequest) {
                     productId,
                 },
             },
-            update: { quantity },
+            update: { quantity, variantId: choice.variant?.id ?? null },
             create: {
                 userId: session.user.id,
                 productId,
                 quantity,
+                variantId: choice.variant?.id ?? null,
             },
             include: {
                 product: {

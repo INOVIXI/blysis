@@ -15,6 +15,8 @@
  * off negative numbers without a check that can be raced.
  */
 
+import { snapshotIn, unitsDelivered } from "./variants";
+
 export interface StockClaim {
     productId: string;
     quantity: number;
@@ -54,12 +56,16 @@ export interface StockClient {
  * are two conditions against two different values, so an order for two of the
  * last one would take one and quietly fail the other; summed, it is one
  * all-or-nothing decision.
+ *
+ * A line bought as a variant takes the units it delivers, read from what the
+ * line kept: a pack of six keys is six keys off a shelf of keys.
  */
-export function stockClaims(items: { productId: string | null; quantity: number }[]): StockClaim[] {
+export function stockClaims(items: { productId: string | null; quantity: number; metadata?: unknown }[]): StockClaim[] {
     const totals = new Map<string, number>();
     for (const item of items) {
         if (!item.productId) continue;
-        totals.set(item.productId, (totals.get(item.productId) ?? 0) + item.quantity);
+        const units = unitsDelivered(item.quantity, snapshotIn(item.metadata));
+        totals.set(item.productId, (totals.get(item.productId) ?? 0) + units);
     }
     return [...totals].map(([productId, quantity]) => ({ productId, quantity }));
 }

@@ -25,6 +25,7 @@ import { NO_HEADERS, resolveTax } from "./tax-server";
 import { createCreditOrder, deliverPaidOrder, INSUFFICIENT_CREDITS, OUT_OF_STOCK } from "./credit-order";
 import { announceOrderCompleted, announceOrderCreated } from "./order-events";
 import { receivesGifts, siteAllowsGifting } from "./gifts";
+import { offeredVariants } from "./variants";
 
 /** Thrown inside the transaction when the limit filled while this purchase waited for it. */
 export const LIMIT_REACHED = "LIMIT_REACHED";
@@ -168,6 +169,10 @@ async function sellableInGame(productId: string, quantity: number) {
     if (!product.showInGame || !product.category?.showInGame) return notSellable("not_in_game");
     // A subscription renews through a gateway; credits cannot carry one.
     if (product.type === "SUBSCRIPTION") return notSellable("not_in_game");
+    // A game's buy screen names a product and a count, not a variant, and a
+    // product sold in variants has no price of its own to charge. The site
+    // sells it until a game can ask which one.
+    if (offeredVariants(product.variants).length > 0) return notSellable("not_in_game");
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_GAME_QUANTITY) return notSellable("quantity_invalid");
     return product;
 }

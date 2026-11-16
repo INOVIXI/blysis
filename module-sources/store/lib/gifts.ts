@@ -14,6 +14,7 @@ import { applyFiltersAsync } from "@/core/sdk";
 import { log, moduleSettings, prisma } from "@/core/sdk/server";
 import { deliverProduct } from "./delivery";
 import { deliveryFor } from "./chest";
+import { snapshotIn } from "./variants";
 import { releaseStock, stockClaims } from "./stock";
 import { uncountSales } from "./popularity";
 import { withdrawThankYouCoupon } from "./thank-you-coupon";
@@ -259,7 +260,12 @@ export async function claimChestItem(
     if (item.isRedeemed) return { ok: false, code: "already_claimed" };
     if (item.giftState === PENDING) return { ok: false, code: "not_pending" };
 
-    const commands = await prisma.productCommand.findMany({ where: { productId: item.productId }, orderBy: { order: "asc" } });
+    // A row bought as a variant with commands of its own runs those.
+    const variant = snapshotIn(item.variant);
+    const commands =
+        variant && variant.commands.length > 0
+            ? variant.commands
+            : await prisma.productCommand.findMany({ where: { productId: item.productId }, orderBy: { order: "asc" } });
     const delivery = commands.length > 0 ? deliveryFor(item, { playerName: player.name }) : null;
     if (delivery && "needsPlayerName" in delivery) return { ok: false, code: "needs_player_name" };
     // Read before the row is claimed, so a read that fails leaves it claimable.
