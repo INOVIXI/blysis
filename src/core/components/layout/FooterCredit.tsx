@@ -9,6 +9,10 @@ import { cn } from "@/core/lib/utils";
  * it. One sentence, one key: three keys glued together read as "Built with
  * by Blysis" in English and came out in the wrong order in Turkish, where
  * the verb is last.
+ *
+ * The whole sentence is the link. With only the name linked, a site named
+ * like the product drew two links called "Blysis", its own name home and
+ * this one away, which `a-control-says-which-one-it-is.spec.ts` refuses.
  */
 export function FooterCredit({ className }: { className?: string }) {
     const t = useTranslations("footer");
