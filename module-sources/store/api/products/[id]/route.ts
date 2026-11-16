@@ -3,6 +3,7 @@ import { contentTranslationsInput, hasPermission, log, moduleSettings, prisma, r
 import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../../lib/validations";
 import { variantsToSave } from "../../../lib/variant-save";
+import { variantsRefusal } from "../../../lib/variants";
 import { availabilityData } from "../../../lib/availability-input";
 import { PUBLIC_PRODUCT } from "../../../lib/public-product";
 import { readProduct } from "../../../lib/read-product";
@@ -69,6 +70,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         }
         // Only when the form sent them: a save of another field leaves them be.
         const variants = sentVariants !== undefined ? await variantsToSave(id, sentVariants, existing.variants) : undefined;
+        const refusal = variantsRefusal(data.type ?? existing.type, variants !== undefined ? variants : existing.variants);
+        if (refusal) {
+            return NextResponse.json({ error: "A subscription is not sold in variants", code: refusal }, { status: 400 });
+        }
 
         // The schedule arrives as wall-clock strings; the column holds
         // instants. Splitting them out keeps the string fields off the update.

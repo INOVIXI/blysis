@@ -134,6 +134,18 @@ export function offeredVariants(raw: unknown): ProductVariant[] {
 }
 
 /**
+ * Why a product of this type may not offer these variants, or null.
+ *
+ * A subscription renews at what its first checkout charged, on the product's
+ * own interval, so a variant's price and duration would be charged on the
+ * wrong clock: a "12 months" variant of a monthly plan, every month. Asked
+ * when a product is saved and again at the checkout.
+ */
+export function variantsRefusal(type: string | null | undefined, raw: unknown): "store_variant_subscription" | null {
+    return type === "SUBSCRIPTION" && offeredVariants(raw).length > 0 ? "store_variant_subscription" : null;
+}
+
+/**
  * The variant a basket line names, or why it names none a buyer may have.
  *
  * A product that offers variants is never sold without one: its own price is

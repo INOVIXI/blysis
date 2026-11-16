@@ -32,7 +32,7 @@ import { z } from "zod";
 import { isPlayerName } from "../../lib/player-name";
 import { payCreatorCommission } from "../../lib/creator-commission";
 import { couponOpenTo } from "../../lib/thank-you-coupon";
-import { chosenVariant, unitsDelivered } from "../../lib/variants";
+import { chosenVariant, variantsRefusal } from "../../lib/variants";
 import { localeOf } from "../../lib/store-text";
 
 const LIMIT_REACHED = "LIMIT_REACHED";
@@ -126,7 +126,14 @@ export async function POST(request: NextRequest) {
         // or made up) is refused rather than priced as something else.
         for (const item of items) {
             const product = products.find((p) => p.id === item.productId)!;
+            const refusal = variantsRefusal(product.type, product.variants);
             const choice = chosenVariant(product.variants, item.variantId);
+            if (refusal) {
+                return NextResponse.json(
+                    { error: `${product.name}: ${refusal}`, code: refusal, productId: product.id },
+                    { status: 409 },
+                );
+            }
             if (!choice.ok) {
                 return NextResponse.json(
                     { error: `${product.name}: ${choice.code}`, code: choice.code, productId: product.id },

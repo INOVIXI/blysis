@@ -4,7 +4,7 @@ import { contentTranslationsInput, hasPermission, log, moduleSettings, pageParam
 import { auth } from "@/core/sdk/auth";
 import { productSchema } from "../../lib/validations";
 import { variantsToSave } from "../../lib/variant-save";
-import { publicVariants } from "../../lib/variants";
+import { publicVariants, variantsRefusal } from "../../lib/variants";
 import { availabilityData } from "../../lib/availability-input";
 import { PUBLIC_PRODUCT } from "../../lib/public-product";
 import { availabilityOf } from "../../lib/availability";
@@ -199,6 +199,10 @@ export async function POST(request: NextRequest) {
 
         const scheduled = await availabilityData(data);
         const variants = data.variants && data.variants.length > 0 ? await variantsToSave(null, data.variants, null) : undefined;
+        const refusal = variantsRefusal(data.type, variants);
+        if (refusal) {
+            return NextResponse.json({ error: "A subscription is not sold in variants", code: refusal }, { status: 400 });
+        }
         const product = await prisma.$transaction(async (tx) => {
             const created = await tx.product.create({
             data: {

@@ -1564,7 +1564,8 @@
           "credit_package_unavailable": "That package is not for sale any more.",
           "coupon_already_used": "You have already used this code as many times as it allows.",
           "store_variant_required": "Choose one of the ways this product is sold.",
-          "store_variant_unavailable": "That option is no longer sold. Choose another on the product page."
+          "store_variant_unavailable": "That option is no longer sold. Choose another on the product page.",
+          "store_variant_subscription": "A subscription renews at one price on its own schedule, so it is not sold in variants. Remove its variants or choose another type."
         },
         "err_checkoutFailed": "Checkout failed",
         "err_couponMinPurchase": "Spend at least {amount} to use this code.",
@@ -2651,7 +2652,8 @@
           "credit_package_unavailable": "Bu paket artık satışta değil.",
           "coupon_already_used": "Bu kodu izin verilen sayıda zaten kullandınız.",
           "store_variant_required": "Bu ürünün satış seçeneklerinden birini seç.",
-          "store_variant_unavailable": "Bu seçenek artık satılmıyor. Ürün sayfasından başka birini seç."
+          "store_variant_unavailable": "Bu seçenek artık satılmıyor. Ürün sayfasından başka birini seç.",
+          "store_variant_subscription": "Abonelik kendi döngüsünde tek bir fiyatla yenilenir, bu yüzden seçeneklerle satılmaz. Seçeneklerini kaldır ya da başka bir tür seç."
         },
         "err_checkoutFailed": "Ödeme tamamlanamadı",
         "err_couponMinPurchase": "Bu kodu kullanmak için en az {amount} harcayın.",
@@ -3738,7 +3740,8 @@
           "credit_package_unavailable": "Bu paket artıq satışda deyil.",
           "coupon_already_used": "Bu kodu icazə verilən sayda artıq istifadə etmisiniz.",
           "store_variant_required": "Bu məhsulun satış variantlarından birini seç.",
-          "store_variant_unavailable": "Bu seçim artıq satılmır. Məhsul səhifəsində başqasını seç."
+          "store_variant_unavailable": "Bu seçim artıq satılmır. Məhsul səhifəsində başqasını seç.",
+          "store_variant_subscription": "Abunəlik öz dövründə bir qiymətlə yenilənir, ona görə variantlarla satılmır. Variantlarını sil və ya başqa növ seç."
         },
         "err_checkoutFailed": "Ödəniş alınmadı",
         "err_couponMinPurchase": "Bu kodu istifadə etmək üçün ən azı {amount} xərcləyin.",
@@ -4825,7 +4828,8 @@
           "credit_package_unavailable": "Dieses Paket wird nicht mehr verkauft.",
           "coupon_already_used": "Du hast diesen Code bereits so oft benutzt, wie er erlaubt.",
           "store_variant_required": "Wähle eine der Arten, wie dieses Produkt verkauft wird.",
-          "store_variant_unavailable": "Diese Option wird nicht mehr verkauft. Wähle auf der Produktseite eine andere."
+          "store_variant_unavailable": "Diese Option wird nicht mehr verkauft. Wähle auf der Produktseite eine andere.",
+          "store_variant_subscription": "Ein Abo verlängert sich zu einem Preis in seinem eigenen Rhythmus und wird daher nicht in Varianten verkauft. Entferne die Varianten oder wähle einen anderen Typ."
         },
         "err_checkoutFailed": "Kasse fehlgeschlagen",
         "err_couponMinPurchase": "Gib mindestens {amount} aus, um diesen Code zu nutzen.",
@@ -5912,7 +5916,8 @@
           "credit_package_unavailable": "Ese paquete ya no está a la venta.",
           "coupon_already_used": "Ya has usado este código tantas veces como permite.",
           "store_variant_required": "Elige una de las formas en que se vende este producto.",
-          "store_variant_unavailable": "Esa opción ya no se vende. Elige otra en la página del producto."
+          "store_variant_unavailable": "Esa opción ya no se vende. Elige otra en la página del producto.",
+          "store_variant_subscription": "Una suscripción se renueva a un solo precio en su propio ciclo, así que no se vende en variantes. Quita sus variantes o elige otro tipo."
         },
         "err_checkoutFailed": "Falló el pago",
         "err_couponMinPurchase": "Gasta al menos {amount} para usar este código.",
@@ -6999,7 +7004,8 @@
           "credit_package_unavailable": "See pakett enam ei ole müügil.",
           "coupon_already_used": "Oled seda koodi juba nii mitu korda kasutanud, kui see lubab.",
           "store_variant_required": "Vali üks viisidest, kuidas seda toodet müüakse.",
-          "store_variant_unavailable": "Seda valikut enam ei müüda. Vali toote lehel muu."
+          "store_variant_unavailable": "Seda valikut enam ei müüda. Vali toote lehel muu.",
+          "store_variant_subscription": "Tellimus uueneb oma tsüklis ühe hinnaga, seega seda ei müüda variantidena. Eemalda variandid või vali muu tüüp."
         },
         "err_checkoutFailed": "Vormistamine ebaõnnestus",
         "err_couponMinPurchase": "Selle koodi kasutamiseks kuluta vähemalt {amount}.",
@@ -8086,7 +8092,8 @@
           "credit_package_unavailable": "Ce pack n’est plus en vente.",
           "coupon_already_used": "Vous avez déjà utilisé ce code autant de fois qu'il le permet.",
           "store_variant_required": "Choisis une des façons dont ce produit est vendu.",
-          "store_variant_unavailable": "Cette option n'est plus vendue. Choisis-en une autre sur la page du produit."
+          "store_variant_unavailable": "Cette option n'est plus vendue. Choisis-en une autre sur la page du produit.",
+          "store_variant_subscription": "Un abonnement se renouvelle à un seul prix selon son propre rythme, il n'est donc pas vendu en variantes. Retire ses variantes ou choisis un autre type."
         },
         "err_checkoutFailed": "Échec du paiement",
         "err_couponMinPurchase": "Dépensez au moins {amount} pour utiliser ce code.",
@@ -9173,7 +9180,8 @@
           "credit_package_unavailable": "Questo pacchetto non è più in vendita.",
           "coupon_already_used": "Hai già usato questo codice tutte le volte che è consentito.",
           "store_variant_required": "Scegli uno dei modi in cui è venduto questo prodotto.",
-          "store_variant_unavailable": "Questa opzione non è più in vendita. Scegline un'altra nella pagina del prodotto."
+          "store_variant_unavailable": "Questa opzione non è più in vendita. Scegline un'altra nella pagina del prodotto.",
+          "store_variant_subscription": "Un abbonamento si rinnova a un unico prezzo con il proprio ciclo, quindi non si vende in varianti. Rimuovi le varianti o scegli un altro tipo."
         },
         "err_checkoutFailed": "Pagamento non riuscito",
         "err_couponMinPurchase": "Spendi almeno {amount} per usare questo codice.",
@@ -10260,7 +10268,8 @@
           "credit_package_unavailable": "Ten pakiet nie jest już dostępny.",
           "coupon_already_used": "Ten kod został już przez Ciebie użyty tyle razy, ile pozwala.",
           "store_variant_required": "Wybierz jeden ze sposobów sprzedaży tego produktu.",
-          "store_variant_unavailable": "Ta opcja nie jest już sprzedawana. Wybierz inną na stronie produktu."
+          "store_variant_unavailable": "Ta opcja nie jest już sprzedawana. Wybierz inną na stronie produktu.",
+          "store_variant_subscription": "Subskrypcja odnawia się w jednej cenie we własnym cyklu, więc nie jest sprzedawana w wariantach. Usuń warianty lub wybierz inny typ."
         },
         "err_checkoutFailed": "Płatność nie powiodła się",
         "err_couponMinPurchase": "Wydaj co najmniej {amount}, aby użyć tego kodu.",
@@ -11347,7 +11356,8 @@
           "credit_package_unavailable": "Este pacote não está mais à venda.",
           "coupon_already_used": "Você já usou este código tantas vezes quanto ele permite.",
           "store_variant_required": "Escolhe uma das formas como este produto é vendido.",
-          "store_variant_unavailable": "Essa opção já não está à venda. Escolhe outra na página do produto."
+          "store_variant_unavailable": "Essa opção já não está à venda. Escolhe outra na página do produto.",
+          "store_variant_subscription": "Uma subscrição renova-se a um único preço no seu próprio ciclo, por isso não é vendida em variantes. Remove as variantes ou escolhe outro tipo."
         },
         "err_checkoutFailed": "Falha na finalização da compra",
         "err_couponMinPurchase": "Gaste pelo menos {amount} para usar este código.",
@@ -12434,7 +12444,8 @@
           "credit_package_unavailable": "Этот пакет больше не продается.",
           "coupon_already_used": "Вы уже использовали этот код столько раз, сколько он позволяет.",
           "store_variant_required": "Выберите один из способов продажи этого товара.",
-          "store_variant_unavailable": "Этот вариант больше не продаётся. Выберите другой на странице товара."
+          "store_variant_unavailable": "Этот вариант больше не продаётся. Выберите другой на странице товара.",
+          "store_variant_subscription": "Подписка продлевается по одной цене в своём цикле, поэтому не продаётся вариантами. Удалите варианты или выберите другой тип."
         },
         "err_checkoutFailed": "Не удалось оформить заказ",
         "err_couponMinPurchase": "Чтобы использовать этот код, потратьте не меньше {amount}.",
@@ -13521,7 +13532,8 @@
           "credit_package_unavailable": "该套餐已不再出售。",
           "coupon_already_used": "你已达到此优惠码允许的使用次数。",
           "store_variant_required": "请选择此商品的一种出售方式。",
-          "store_variant_unavailable": "此选项已停售。请在商品页面选择其他选项。"
+          "store_variant_unavailable": "此选项已停售。请在商品页面选择其他选项。",
+          "store_variant_subscription": "订阅按自身周期以单一价格续费，因此不能按规格出售。请删除其规格或选择其他类型。"
         },
         "err_checkoutFailed": "结账失败",
         "err_couponMinPurchase": "消费满 {amount} 方可使用此优惠码。",
