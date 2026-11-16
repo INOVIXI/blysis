@@ -1497,7 +1497,7 @@
     "quickLinks": "Kiirlingid",
     "legal": "Õiguslik teave",
     "allRightsReserved": "Kõik õigused kaitstud.",
-    "madeBy": "Tegi <link>{vendor}</link>"
+    "poweredBy": "<link>Toetab {name}</link>"
   },
   "profile": {
     "accountDeleted": "Konto kustutatud",

@@ -2,7 +2,7 @@
 #
 # You should not need to read this file. Run the installer instead:
 #
-#   curl -fsSL https://raw.githubusercontent.com/INOVIXI/blysis/main/install.sh | sudo bash
+#   curl -fsSL https://blysis.com/install.sh | sudo bash
 #
 # It writes the .env this file needs, picks the ports, and starts everything.
 # To drive compose by hand, copy .env.example to .env and set at minimum
