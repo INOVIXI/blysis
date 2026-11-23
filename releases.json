@@ -1,6 +1,6 @@
 {
   "$comment": "The catalogue the admin update screen reads. Published beside module-marketplace/index.json on the same base, so a fork or an air-gapped mirror serves its own by pointing BLYSIS_MARKETPLACE_BASE somewhere else. Newest last is not required; the reader sorts.",
-  "updated": "2026-11-14",
+  "updated": "2026-11-23",
   "releases": [
     {
       "version": "0.2.1",
@@ -111,6 +111,14 @@
       "tag": "0.6.0",
       "publishedAt": "2026-11-14T20:38:45Z",
       "notes": "AI moderation and support replies, credits, crates and store-wide sales, rejections a member is told about and can question, and fixes for free PayTR test orders, wheel and checkout abuse and referral farming.",
+      "security": true,
+      "minVersion": null
+    },
+    {
+      "version": "0.7.0",
+      "tag": "0.7.0",
+      "publishedAt": "2026-11-23T16:42:54Z",
+      "notes": "Products sold in variants, session lifetimes an operator sets and a new password an admin can give a member, with fixes for unpublished blog articles read through the API, provider sign-in over an ended session, closed downloads still handed out, and the effect and minimatch advisories.",
       "security": true,
       "minVersion": null
     }
