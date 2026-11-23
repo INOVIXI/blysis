@@ -60,10 +60,14 @@ test('a provider sign-in nobody connected says to connect it first', async ({ pa
 
 test('a provider sign-in over a session that had ended says so and signs the old cookie out', async ({ page }) => {
     await login(page);
+    // The session here is a live one, standing in for the ended one, and
+    // Auth.js rewrites a live session's cookie on every read of it: a read
+    // sent before the sign-out has answered can put the cookie back after it.
+    // So the session is read only once the sign-out is done.
+    const signedOut = page.waitForResponse((res) => res.url().includes('/api/auth/signout') && res.request().method() === 'POST');
     await page.goto('/en/auth/error?error=SessionEnded');
     await expect(page.getByText('had already ended')).toBeVisible();
-    await expect.poll(async () => {
-        const session = await (await page.request.get('/api/auth/session')).json();
-        return session?.user ?? null;
-    }).toBeNull();
+    expect((await signedOut).ok()).toBe(true);
+    const session = await (await page.request.get('/api/auth/session')).json();
+    expect(session?.user ?? null).toBeNull();
 });
