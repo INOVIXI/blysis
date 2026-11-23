@@ -11,6 +11,7 @@ import { SignInRefusal } from "./sign-in-refusal";
 import {
     SESSION_COOKIE_MAX_AGE_SECONDS,
     parseRemember,
+    rememberedSession,
     sessionExpired,
     sessionExpiresAt,
 } from "./session-lifetime";
@@ -650,8 +651,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 if (tokenId && !wasCheckedWithin(`activity:${tokenId}`, SESSION_TOUCH_INTERVAL_MS)) {
                     const policy = await getSessionPolicy();
                     const now = Date.now();
+                    // Written back, so a token minted before the claim
+                    // existed carries it from here on.
+                    token.remembered = rememberedSession(token, policy, now);
                     const renewTo = policy.renew
-                        ? new Date(sessionExpiresAt(policy, token.remembered === true, now))
+                        ? new Date(sessionExpiresAt(policy, token.remembered, now))
                         : undefined;
                     await touchSession(tokenId, new Date(now), renewTo);
                     if (renewTo) token.absoluteExpiry = renewTo.getTime();

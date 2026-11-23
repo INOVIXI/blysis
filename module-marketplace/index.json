@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-23",
-  "updatedAt": "2026-11-23T13:58:10Z",
+  "updatedAt": "2026-11-23T15:11:10Z",
   "modules": [
     {
       "id": "ai-moderation",
@@ -603,13 +603,13 @@
           "description": "新闻与公告系统"
         }
       },
-      "version": "1.16.1",
+      "version": "1.16.2",
       "coreVersion": "^5.44.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-11-16T19:15:25Z",
+      "updatedAt": "2026-11-23T13:48:25Z",
       "screenshots": [],
       "tags": [
         "community"
@@ -2030,13 +2030,13 @@
           "description": "文件库：版本发布、指南以及其他值得分享的内容"
         }
       },
-      "version": "1.8.0",
+      "version": "1.8.1",
       "coreVersion": "^5.34.0",
       "author": "Blysis",
       "icon": "Download",
       "category": "content",
       "verified": true,
-      "updatedAt": "2026-11-12T16:58:56Z",
+      "updatedAt": "2026-11-23T14:50:29Z",
       "screenshots": [],
       "tags": [
         "content"
@@ -6596,7 +6596,7 @@
       "icon": "ShoppingBag",
       "category": "commerce",
       "verified": true,
-      "updatedAt": "2026-11-23T13:58:10Z",
+      "updatedAt": "2026-11-23T15:11:10Z",
       "screenshots": [],
       "tags": [
         "commerce"

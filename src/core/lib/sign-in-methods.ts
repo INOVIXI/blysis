@@ -22,6 +22,8 @@ import { getModuleStates } from "./module-cache";
 import { isEnabledIn } from "./module-enabled";
 import { callerToken } from "./session-registry";
 import { sessionExpired } from "./session-lifetime";
+import { isLegacyPasswordHash } from "./legacy-password-hash";
+import { legacyPasswordHashesAccepted } from "./security-settings";
 import {
     disconnectRefusal,
     oauthSignInRefusal,
@@ -93,6 +95,17 @@ async function sessionLive(token: Record<string, unknown>, tokenId: string): Pro
 }
 
 /**
+ * Whether a cookie that still decodes names a session that is over. A token
+ * that cannot name its session row is not judged here, as before: it links
+ * nothing, because no connect note can be read with it.
+ */
+async function sessionEnded(token: Record<string, unknown>): Promise<boolean> {
+    if (sessionExpired(token)) return true;
+    const tokenId = typeof token.tokenId === "string" ? token.tokenId : "";
+    return tokenId !== "" && !(await sessionLive(token, tokenId));
+}
+
+/**
  * Off is the closed position, so a settings read that fails answers closed:
  * an account that should not have been made is harder to undo than a sign-in
  * somebody retries.
@@ -134,16 +147,18 @@ export async function oauthSignInGate(input: {
     const token = await callerToken({ headers: input.headers });
     const sub = typeof token?.sub === "string" && token.sub !== "" ? token.sub : null;
     const caller = token && sub
-        ? { userId: sub, impersonating: typeof token.originalUserId === "string" && token.originalUserId !== "" }
+        ? {
+            userId: sub,
+            impersonating: typeof token.originalUserId === "string" && token.originalUserId !== "",
+            ended: await sessionEnded(token),
+        }
         : null;
 
     let connectStarted = false;
     let callerHasProvider = false;
-    if (token && caller && !caller.impersonating && !bound) {
+    if (token && caller && !caller.impersonating && !caller.ended && !bound) {
         const tokenId = typeof token.tokenId === "string" ? token.tokenId : "";
-        connectStarted = tokenId !== ""
-            && (await sessionLive(token, tokenId))
-            && (await takeConnect(caller.userId, tokenId, provider));
+        connectStarted = tokenId !== "" && (await takeConnect(caller.userId, tokenId, provider));
         if (connectStarted) {
             callerHasProvider = (await prisma.account.count({ where: { userId: caller.userId, provider } })) > 0;
         }
@@ -198,10 +213,20 @@ export async function signInMethodsOf(userId: string): Promise<SignInMethodRow[]
     });
 }
 
+/**
+ * Whether a stored password is one the site will sign somebody in with. A
+ * hash imported from an older system is read only while the operator allows
+ * it (`password-hash.ts`), so until then it is no way in.
+ */
+async function signsIn(password: string | null | undefined): Promise<boolean> {
+    if (!password) return false;
+    return !isLegacyPasswordHash(password) || (await legacyPasswordHashesAccepted());
+}
+
 /** Whether a member can sign in with a password; the page needs it to explain a refused disconnect. */
 export async function hasPassword(userId: string): Promise<boolean> {
     const user = await prisma.user.findUnique({ where: { id: userId }, select: { password: true } });
-    return Boolean(user?.password);
+    return signsIn(user?.password);
 }
 
 export type DisconnectResult =
@@ -217,6 +242,10 @@ export type DisconnectResult =
  * through, and the account is left with no way in at all.
  */
 export async function disconnectSignInMethod(userId: string, provider: string): Promise<DisconnectResult> {
+    // Only a method that can sign somebody in today counts as another way in:
+    // one whose module was switched off, or whose credentials were removed,
+    // would leave an account nobody can enter.
+    const working = new Set(await connectableProviders());
     return prisma.$transaction(async (tx) => {
         await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${userId} FOR UPDATE`;
         const user = await tx.user.findUnique({ where: { id: userId }, select: { password: true } });
@@ -229,7 +258,8 @@ export async function disconnectSignInMethod(userId: string, provider: string): 
         const target = accounts.find((account) => account.provider === provider);
         if (!target) return { ok: false, code: "not_found" } as const;
 
-        const refusal = disconnectRefusal({ hasPassword: Boolean(user.password), otherMethods: accounts.length - 1 });
+        const otherMethods = accounts.filter((account) => account.id !== target.id && working.has(account.provider)).length;
+        const refusal = disconnectRefusal({ hasPassword: await signsIn(user.password), otherMethods });
         if (refusal) return { ok: false, code: refusal } as const;
 
         await tx.account.delete({ where: { id: target.id } });

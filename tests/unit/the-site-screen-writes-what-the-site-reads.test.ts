@@ -73,6 +73,16 @@ describe("what the screen saves", () => {
         for (const key of Object.keys(patch)) expect(key).toMatch(/^site_[a-z_]+$/);
     });
 
+    it("saves an address typed without its scheme as the web address it is", () => {
+        const form = siteFormFromSettings({});
+        const patch = siteSettingsPatch({ ...form, site_facebook_url: "facebook.com/acme", site_discord_url: "discord.gg/acme" }, {});
+        expect(patch.site_facebook_url).toBe("https://facebook.com/acme");
+        expect(patch.site_discord_url).toBe("https://discord.gg/acme");
+        // A page of the site's own and a cleared field stay as they are.
+        expect(siteSettingsPatch({ ...form, site_discord_url: "/discord" }, {}).site_discord_url).toBe("/discord");
+        expect(siteSettingsPatch({ ...form, site_x_url: "" }, {}).site_x_url).toBe("");
+    });
+
     it("empties an old key it carried forward, so clearing the field later is not undone by it", () => {
         const loaded = { socialFacebook: "https://facebook.com/acme", siteDescription: "" };
         const patch = siteSettingsPatch(siteFormFromSettings(loaded), loaded);

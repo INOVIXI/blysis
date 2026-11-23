@@ -4,6 +4,7 @@ import { attachContentTranslations, contentTranslationsInput, deleteContentTrans
 import { auth } from "@/core/sdk/auth";
 import { blogArticleSchema } from "../../../lib/validations";
 import { ARTICLE_FIELDS, ARTICLE_TEXT, articlesIn, localeOf } from "../../../lib/blog-text";
+import { isPublishedArticle } from "../../../lib/visible-article";
 
 interface RouteParams {
     params: Promise<{ id: string }>;
@@ -41,13 +42,20 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
-    // Non-admins cannot see scheduled/future articles
+    // A reader gets what was published, by the rule every other door reads
+    // through. This one tested only a future `publishAt`, so a draft, an
+    // archived article or one pulled back came back whole to anybody counting
+    // through the numbers. Reading one before it is out is an editorial act:
+    // its author, and whoever may publish or edit any article.
     const session = await auth();
-    // Reading an article before its hour is an editorial act: whoever may
-    // publish is whoever may see what has not been published yet.
-    const mayPublish = session?.user?.id ? await hasPermission(session.user.id, "blog.publish") : false;
-    if (!mayPublish && article.publishAt && article.publishAt.getTime() > Date.now()) {
-        return NextResponse.json({ error: "Article not found" }, { status: 404 });
+    if (!isPublishedArticle(article)) {
+        const userId = session?.user?.id;
+        const editorial = userId !== undefined && (
+            article.authorId === userId
+            || await hasPermission(userId, "blog.publish")
+            || await hasPermission(userId, "blog.edit-any")
+        );
+        if (!editorial) return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
     if (new URL(request.url).searchParams.get("scope") === "admin") {
@@ -90,10 +98,6 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (!isAuthor && !mayEditAny) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-
-    // Snapshot the previous state for rollback
-    const { recordRevision } = await import("@/core/sdk/server");
-    await recordRevision("blog.article", id, article, "update", session.user.id);
 
     const body = await readJsonBody(request);
     if (body instanceof NextResponse) return body;
@@ -167,6 +171,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             },
         };
     }
+
+    // Snapshot the previous state for rollback, once the edit is certain to
+    // be written: taken before the body was read, every refused edit left a
+    // copy of the article in its history.
+    const { recordRevision } = await import("@/core/sdk/server");
+    await recordRevision("blog.article", id, article, "update", session.user.id);
 
     const updatedArticle = await prisma.$transaction(async (tx) => {
         const updated = await tx.blogArticle.update({

@@ -7,6 +7,7 @@ import { useSiteSettings } from "@/core/hooks/useSiteSettings";
 import { defaultFooterColumns, drawnFooterColumns, parseFooterColumns, parseHiddenLinks, type FooterColumnLink } from "@/core/lib/footer-columns";
 import { isEnabledIn } from "@/core/lib/module-enabled";
 import { SITE_SOCIAL_LINKS, type SiteSocialLink } from "@/core/lib/site-contact";
+import { linkTarget } from "@/core/lib/setting-link";
 import { useAllModules } from "@/core/providers/module-provider";
 import { useText } from "@/core/hooks/useText";
 
@@ -99,9 +100,12 @@ export function useFooter(): FooterContent {
         site_tiktok_url: filled(settings.site_tiktok_url),
         site_discord_url: filled(settings.site_discord_url) ?? filled(settings.hero_discord_url),
     };
+    // An address saved before the screen added the scheme is read as the
+    // one it means, and one that is no link at all is not drawn.
     const social: FooterSocialLink[] = SITE_SOCIAL_LINKS.flatMap((link) => {
-        const href = addresses[link.key];
-        return href ? [{ name: link.name, label: link.name === "community" ? navT("community") : link.label, href }] : [];
+        const raw = addresses[link.key];
+        const target = linkTarget(raw);
+        return target ? [{ name: link.name, label: link.name === "community" ? navT("community") : link.label, href: target.href }] : [];
     });
 
     return {
