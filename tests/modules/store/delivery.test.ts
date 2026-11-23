@@ -42,6 +42,31 @@ describe("deliverProduct", () => {
         expect(ran()[0].command).toBe("give Notch VIP Rank 3");
     });
 
+    it("keeps {product} the product's name on a line bought as a variant, and names the variant in {variant}", async () => {
+        // The line is named "VIP - 6 months" for the buyer's receipt. A
+        // command that passes {product} to the game meant the product, as it
+        // did before products had variants.
+        answers(ok);
+        await deliverProduct({
+            playerName: "Notch",
+            productName: "VIP - 6 months",
+            variantLabel: "6 months",
+            commands: [{ command: "say {player} bought {product} for {variant}" }],
+        });
+        expect(ran()[0].command).toBe("say Notch bought VIP for 6 months");
+    });
+
+    it("leaves {variant} empty for a product sold without variants, and a buyer's answer cannot fill it", async () => {
+        answers(ok);
+        await deliverProduct({
+            playerName: "Notch",
+            productName: "Kit",
+            commands: [{ command: "give {player} {product}[{variant}]" }],
+            variables: { variant: "admin" },
+        });
+        expect(ran()[0].command).toBe("give Notch Kit[]");
+    });
+
     it("substitutes a product's own variables too", async () => {
         answers(ok);
         await deliverProduct({

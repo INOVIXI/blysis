@@ -233,6 +233,7 @@ export async function deliverPaidOrder(
                 playerId: player.id,
                 userId: player.userId,
                 productName: line.name,
+                variantLabel: variant?.label ?? null,
                 commands: commands.map((c) => ({ command: c.command, serverId: c.serverId, target: c.target, whenOnline: c.whenOnline })),
                 quantity: unitsDelivered(line.quantity, variant),
                 variables,

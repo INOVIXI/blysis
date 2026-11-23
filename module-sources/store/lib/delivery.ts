@@ -12,6 +12,7 @@
  * command template into a command line.
  */
 import { applyFiltersAsync } from "@/core/sdk";
+import { productNameOf } from "./variants";
 
 /**
  * Placeholders are substituted into a command line that a game server will
@@ -40,7 +41,7 @@ function sanitizeReference(input: string): string {
 }
 
 /** The placeholders the store fills itself, which no variable may take. */
-const STORE_PLACEHOLDERS = new Set(["player", "product", "quantity", "order", "delivery", "unit"]);
+const STORE_PLACEHOLDERS = new Set(["player", "product", "variant", "quantity", "order", "delivery", "unit"]);
 
 export interface DeliveryCommand {
     command: string;
@@ -106,8 +107,8 @@ export async function runDeliveryCommand(
  * Executes a product's delivery commands in order, stopping at the first
  * failure so a half-delivered purchase is visible rather than silently partial.
  *
- * Commands support `{player}`, `{product}`, `{quantity}`, `{order}`,
- * `{delivery}` and `{unit}`, filled by the store, and any custom variable the
+ * Commands support `{player}`, `{product}`, `{variant}`, `{quantity}`,
+ * `{order}`, `{delivery}` and `{unit}`, filled by the store, and any custom variable the
  * product defines. The variables are the buyer's answers, sent with the
  * checkout under names the buyer chooses, so none of them may stand in for
  * one of the store's own (`STORE_PLACEHOLDERS`): `{order}` is what a game
@@ -121,6 +122,8 @@ export async function runDeliveryCommand(
 export async function deliverProduct(params: {
     playerName: string;
     productName: string;
+    /** The label of the variant the line was bought as, kept on the line or row. */
+    variantLabel?: string | null;
     commands: DeliveryCommand[];
     quantity?: number;
     variables?: Record<string, string>;
@@ -147,7 +150,11 @@ export async function deliverProduct(params: {
 }): Promise<DeliveryResult> {
     const results: string[] = [];
     const safePlayerName = sanitizePlayerName(params.playerName);
-    const safeProductName = sanitizeRconArg(params.productName);
+    // {product} is the product, as it was before products had variants: a
+    // line's own name carries the variant for the receipt, and {variant} says
+    // which one on its own.
+    const safeProductName = sanitizeRconArg(productNameOf(params.productName, params.variantLabel));
+    const safeVariant = sanitizeRconArg(params.variantLabel ?? "");
     const reference = params.reference ?? { kind: "manual" as const, id: null, label: params.productName };
     // One key per delivery and place, so a queue keeps a purchase's lines
     // together on each server and in the order the product lists them.
@@ -165,6 +172,7 @@ export async function deliverProduct(params: {
         let command = entry.command
             .replace(/\{player\}/g, safePlayerName)
             .replace(/\{product\}/g, safeProductName)
+            .replace(/\{variant\}/g, safeVariant)
             .replace(/\{quantity\}/g, String(params.quantity || 1));
 
         if (params.variables) {
