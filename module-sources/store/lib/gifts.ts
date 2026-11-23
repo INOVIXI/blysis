@@ -286,6 +286,7 @@ export async function claimChestItem(
             playerId: sameName ? player.id : null,
             userId,
             productName: delivery.productName,
+            variantLabel: variant?.label ?? null,
             commands: commands.map((c) => ({ command: c.command, serverId: c.serverId, target: c.target, whenOnline: c.whenOnline })),
             quantity: delivery.quantity,
             variables: delivery.variables,

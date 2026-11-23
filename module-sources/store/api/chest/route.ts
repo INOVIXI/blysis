@@ -63,7 +63,9 @@ export async function GET() {
         // is left to ask, and refusing is the answer that cannot move
         // something an operator meant to keep in one place. A gift that is
         // still waiting cannot be passed on before it is accepted.
-        items: items.map((item) => ({
+        // The values a row delivers with stay on the server, like the
+        // variant's commands: they carry the operator's own (`buyersLineMetadata`).
+        items: items.map(({ variables: _variables, ...item }) => ({
             ...item,
             variant: buyersVariant(item.variant),
             pendingGift: item.giftState === PENDING,

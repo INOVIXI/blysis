@@ -234,6 +234,19 @@ export function variantLineName(productName: string, variant: ProductVariant | n
     return label ? `${productName} - ${label}` : productName;
 }
 
+/**
+ * The product's own name back out of a line's, given the label the line kept.
+ *
+ * The other way round from `variantLineName`, which wrote the line's name
+ * from the same label (`snapshotOf` keeps it in the buyer's language too). A
+ * name that does not end the way it would have is handed back whole.
+ */
+export function productNameOf(lineName: string, variantLabel: string | null | undefined): string {
+    const label = variantLabel?.trim();
+    const suffix = label ? ` - ${label}` : "";
+    return suffix && lineName.endsWith(suffix) ? lineName.slice(0, -suffix.length) : lineName;
+}
+
 /** What a line keeps of the variant it was bought as. */
 export function snapshotOf(variant: ProductVariant, locale: string): VariantSnapshot {
     return {
@@ -275,10 +288,17 @@ export function buyersVariant(value: unknown): unknown {
     return rest;
 }
 
-/** An order line's metadata as its buyer may read it; see `buyersVariant`. */
+/**
+ * An order line's metadata as its buyer may read it: the variant without its
+ * commands (`buyersVariant`), and without the values the line delivers with.
+ * Those carry the operator's own values over the buyer's answers
+ * (`variablesWithVariant`), which the product page keeps off the shelf, and
+ * no screen a buyer sees reads them.
+ */
 export function buyersLineMetadata(metadata: unknown): unknown {
-    if (!isRecord(metadata) || !isRecord(metadata.variant)) return metadata;
-    return { ...metadata, variant: buyersVariant(metadata.variant) };
+    if (!isRecord(metadata)) return metadata;
+    const { variables: _variables, ...rest } = metadata;
+    return isRecord(rest.variant) ? { ...rest, variant: buyersVariant(rest.variant) } : rest;
 }
 
 /** How many units a line of this many delivers. */

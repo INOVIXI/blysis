@@ -12,6 +12,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const SECRET = "lp user {player} parent addtemp vip 180d";
+// A value the operator set on the variant, which the line's answers carry for
+// delivery: `variablesWithVariant` lays it over the buyer's own answers.
+const OPERATOR_VALUE = "operator-only-180d";
 
 const variant = {
     id: "six",
@@ -27,7 +30,7 @@ const line = {
     name: "VIP - 6 months",
     quantity: 1,
     price: 30,
-    metadata: { type: "ONE_TIME", variables: {}, variant },
+    metadata: { type: "ONE_TIME", variables: { duration: OPERATOR_VALUE }, variant },
     product: { id: "prod-1", name: "VIP", slug: "vip", image: null },
 };
 
@@ -52,6 +55,7 @@ const db = {
                 productName: "VIP - 6 months",
                 quantity: 1,
                 variant,
+                variables: { duration: OPERATOR_VALUE },
                 giftState: null,
                 giftedById: null,
                 isRedeemed: false,
@@ -124,5 +128,24 @@ describe("a variant's commands", () => {
         admin = true;
         const res = await readOrder(request("http://localhost/api/v1/store/orders/order-1"), { params: Promise.resolve({ id: "order-1" }) });
         expect(await res.text()).toContain(SECRET);
+    });
+});
+
+describe("the values a line delivers with", () => {
+    // The product page keeps the operator's values off the shelf
+    // (`publicVariants`), and no screen a buyer sees reads them.
+    it("are not on the buyer's order, their order list or their chest", async () => {
+        const order = await readOrder(request("http://localhost/api/v1/store/orders/order-1"), { params: Promise.resolve({ id: "order-1" }) });
+        expect(await order.text()).not.toContain(OPERATOR_VALUE);
+        const list = await listOrders(request("http://localhost/api/v1/store/orders"));
+        expect(await list.text()).not.toContain(OPERATOR_VALUE);
+        const chest = await readChest();
+        expect(await chest.text()).not.toContain(OPERATOR_VALUE);
+    });
+
+    it("stay on the order for staff who serve it", async () => {
+        admin = true;
+        const res = await readOrder(request("http://localhost/api/v1/store/orders/order-1"), { params: Promise.resolve({ id: "order-1" }) });
+        expect(await res.text()).toContain(OPERATOR_VALUE);
     });
 });
