@@ -41,6 +41,7 @@ const REFUSAL_KEYS: Record<ConnectRefusal, string> = {
     already_connected: "auth.err.already_connected",
     impersonating: "auth.err.impersonating",
     connect_first: "profile.signInMethods_errNotStarted",
+    session_ended: "auth.errorSessionEnded",
 };
 
 /**

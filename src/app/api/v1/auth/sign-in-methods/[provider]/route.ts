@@ -14,6 +14,13 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized", code: "unauthorized" }, { status: 401 });
 
+    // The same refusal a connect makes. An admin acting as a member would
+    // take a way into the member's account away, and the log would name the
+    // member as the one who did it.
+    if (session.user.originalUserId) {
+        return NextResponse.json({ error: "Not while acting as another member", code: "impersonating" }, { status: 403 });
+    }
+
     const allowed = await rateLimitForRoleAsync(
         `sign-in-method-disconnect:${session.user.id}`,
         { maxRequests: 30, windowMs: 60_000 },

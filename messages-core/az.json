@@ -1742,7 +1742,8 @@
     "demoAsMember": "Üzv kimi",
     "demoResetNote": "Buradakı hər şey hər saat bərpa olunur, ona görə etdiklərinizlə növbəti ziyarətçinin təcrübəsi pozulmur. Bəzi əməliyyatlar söndürülüb: e-poçt göndərmək, real ödənişlər və istifadə etdiyiniz hesabı kilidləyəcək hər şey.",
     "demoFillFor": "Məlumatları {who} doldurun",
-    "errorConnectFirst": "Bu giriş burada heç bir hesaba bağlı deyil. İstifadəçi adın və şifrənlə daxil ol, sonra hesab səhifəndən bağla."
+    "errorConnectFirst": "Bu giriş burada heç bir hesaba bağlı deyil. İstifadəçi adın və şifrənlə daxil ol, sonra hesab səhifəndən bağla.",
+    "errorSessionEnded": "Bu brauzerdəki sessiya artıq bitmişdi, ona görə də ondan çıxış edildi. Yenidən daxil ol."
   },
   "search": {
     "title": "Axtarış",

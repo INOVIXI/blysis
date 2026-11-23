@@ -73,10 +73,12 @@ const prisma = {
 };
 
 let caller: Record<string, unknown> | null = null;
+let legacyHashesOn = false;
 let states: Record<string, boolean> | Error = {};
 
 vi.mock("@/core/lib/db", () => ({ prisma, default: prisma }));
 vi.mock("@/core/lib/session-registry", () => ({ callerToken: async () => caller }));
+vi.mock("@/core/lib/security-settings", () => ({ legacyPasswordHashesAccepted: async () => legacyHashesOn }));
 vi.mock("@/core/lib/module-cache", () => ({
     getModuleStates: async () => {
         if (states instanceof Error) throw states;
@@ -117,6 +119,7 @@ beforeEach(() => {
     db.settingThrows = false;
     caller = null;
     states = {};
+    legacyHashesOn = false;
 });
 
 describe("a connect note", () => {
@@ -143,14 +146,16 @@ describe("a connect note", () => {
         await lib.startConnect("m1", "t1", "alpha");
         db.sessions.set("t1", { isRevoked: true });
         caller = signedIn();
-        expect((await gate()).refusal).toBe("not_started");
+        expect((await gate()).refusal).toBe("session_ended");
 
         db.sessions.set("t1", { isRevoked: false });
         caller = signedIn({ absoluteExpiry: Date.now() - 1000 });
-        expect((await gate()).refusal).toBe("not_started");
+        expect((await gate()).refusal).toBe("session_ended");
 
         caller = signedIn({ tokenId: "unknown" });
-        expect((await gate()).refusal).toBe("not_started");
+        expect((await gate()).refusal).toBe("session_ended");
+        // None of them spent the note the live session left.
+        expect(db.notes).toHaveLength(1);
     });
 
     it("is not spent by a session that cannot name itself", async () => {
@@ -208,6 +213,30 @@ describe("a provider account nobody holds, nobody signed in", () => {
     it("is told the same when the setting cannot be read", async () => {
         db.settingThrows = true;
         expect((await gate()).refusal).toBe("connect_first");
+    });
+});
+
+describe("a browser whose session has ended", () => {
+    it("is told so for a provider account nobody holds, and nothing is linked", async () => {
+        db.sessions.set("t1", { isRevoked: true });
+        caller = signedIn();
+        expect(await gate()).toEqual({ refusal: "session_ended", memberId: "m1" });
+        caller = signedIn({ absoluteExpiry: Date.now() - 1000 });
+        expect((await gate()).refusal).toBe("session_ended");
+        expect(db.accounts).toHaveLength(0);
+    });
+
+    it("is told so, not that the account is taken, for somebody else's", async () => {
+        db.accounts.push({ id: "a1", userId: "m2", provider: "alpha", providerAccountId: "p-42", displayName: null, connectedAt: null });
+        db.sessions.set("t1", { isRevoked: true });
+        caller = signedIn();
+        expect((await gate()).refusal).toBe("session_ended");
+    });
+
+    it("signs its own member back in with what is theirs", async () => {
+        db.accounts.push({ id: "a1", userId: "m1", provider: "alpha", providerAccountId: "p-42", displayName: null, connectedAt: null });
+        caller = signedIn({ absoluteExpiry: Date.now() - 1000 });
+        expect(await gate()).toEqual({ refusal: null, memberId: "m1" });
     });
 });
 
@@ -273,12 +302,47 @@ describe("disconnectSignInMethod", () => {
         expect(await lib.signInMethodsOf("m1")).toEqual([]);
     });
 
+    // What a member can sign in with on this install: alpha and gamma are on
+    // and configured.
+    const bothWork = () => {
+        vi.stubEnv("T_ALPHA_ID", "id");
+        vi.stubEnv("T_ALPHA_SECRET", "secret");
+        vi.stubEnv("T_GAMMA_KEY", "key");
+        states = { "alpha-auth": true, "gamma-auth": true };
+    };
+
     it("keeps the last way into an account with no password", async () => {
+        bothWork();
         db.accounts.push(own("m2", "alpha"));
         expect(await lib.disconnectSignInMethod("m2", "alpha")).toEqual({ ok: false, code: "last_sign_in_method" });
         db.accounts.push(own("m2", "gamma"));
         expect((await lib.disconnectSignInMethod("m2", "alpha")).ok).toBe(true);
         expect(await lib.disconnectSignInMethod("m2", "gamma")).toEqual({ ok: false, code: "last_sign_in_method" });
+        vi.unstubAllEnvs();
+    });
+
+    it("does not count a method whose module is switched off as a way in", async () => {
+        bothWork();
+        states = { "alpha-auth": true, "gamma-auth": false };
+        db.accounts.push(own("m2", "alpha"), own("m2", "gamma"));
+        // gamma cannot sign anybody in now, so alpha is the last way in.
+        expect(await lib.disconnectSignInMethod("m2", "alpha")).toEqual({ ok: false, code: "last_sign_in_method" });
+        // Dropping the one that does not work leaves the one that does.
+        expect((await lib.disconnectSignInMethod("m2", "gamma")).ok).toBe(true);
+        vi.unstubAllEnvs();
+    });
+
+    it("does not count an imported password the site will not read as a way in", async () => {
+        bothWork();
+        db.users.set("m3", { password: "$SHA$salt$" + "a".repeat(64) });
+        db.accounts.push(own("m3", "alpha"));
+        expect(await lib.hasPassword("m3")).toBe(false);
+        expect(await lib.disconnectSignInMethod("m3", "alpha")).toEqual({ ok: false, code: "last_sign_in_method" });
+
+        legacyHashesOn = true;
+        expect(await lib.hasPassword("m3")).toBe(true);
+        expect((await lib.disconnectSignInMethod("m3", "alpha")).ok).toBe(true);
+        vi.unstubAllEnvs();
     });
 
     it("answers not found for what is not there or nobody", async () => {

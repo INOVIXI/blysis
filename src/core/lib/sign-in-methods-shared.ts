@@ -27,6 +27,11 @@ export const CONNECT_REFUSAL = {
     impersonating: "impersonating",
     /** Nobody signed in, nothing bound, and the site takes no new accounts this way. */
     connectFirst: "connect_first",
+    /**
+     * The cookie names a member whose session is over: past its deadline, or
+     * signed out from another device. Auth.js would still link to it.
+     */
+    sessionEnded: "session_ended",
 } as const;
 
 export type ConnectRefusal = (typeof CONNECT_REFUSAL)[keyof typeof CONNECT_REFUSAL];
@@ -50,6 +55,8 @@ export function isConnectRefusal(value: unknown): value is ConnectRefusal {
  */
 export function connectRefusalPath(code: ConnectRefusal): string {
     if (code === CONNECT_REFUSAL.connectFirst) return "/auth/error?error=ConnectFirst";
+    // Whoever reads it is signed out, so the account page is no place for it.
+    if (code === CONNECT_REFUSAL.sessionEnded) return "/auth/error?error=SessionEnded";
     return `/profile?section=${SIGN_IN_METHODS_SECTION}&${CONNECT_ERROR_PARAM}=${code}`;
 }
 
@@ -59,9 +66,10 @@ export interface OAuthSignInFacts {
     /**
      * Who the browser's session cookie names, or null when it carries none
      * that decodes. `impersonating` because the cookie's subject is then the
-     * admin, not the member on screen.
+     * admin, not the member on screen. `ended` when the session it names is
+     * over, though the cookie still decodes.
      */
-    caller: { userId: string; impersonating: boolean } | null;
+    caller: { userId: string; impersonating: boolean; ended: boolean } | null;
     /** Whether the caller already holds an account from this provider. */
     callerHasProvider: boolean;
     /** Whether this very session asked, minutes ago, to connect this provider. */
@@ -86,7 +94,11 @@ export function oauthSignInRefusal(facts: OAuthSignInFacts): ConnectRefusal | nu
     }
 
     if (caller.impersonating) return CONNECT_REFUSAL.impersonating;
-    if (boundTo) return boundTo === caller.userId ? null : CONNECT_REFUSAL.taken;
+    if (boundTo === caller.userId) return null;
+    // Refused either way, because Auth.js links to the cookie's member or
+    // refuses the account as somebody else's; the answer is what differs.
+    if (caller.ended) return CONNECT_REFUSAL.sessionEnded;
+    if (boundTo) return CONNECT_REFUSAL.taken;
     if (!facts.connectStarted) return CONNECT_REFUSAL.notStarted;
     if (facts.callerHasProvider) return CONNECT_REFUSAL.alreadyConnected;
     return null;
