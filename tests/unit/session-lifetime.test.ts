@@ -7,6 +7,7 @@ import {
     SESSION_LIFETIME_HOURS,
     SESSION_RENEWAL_KEY,
     parseRemember,
+    rememberedSession,
     renewedDeadline,
     sessionExpired,
     sessionExpiresAt,
@@ -122,5 +123,26 @@ describe("sessionExpired", () => {
         expect(sessionExpired({ absoluteExpiry: "soon" }, NOW)).toBe(false);
         expect(sessionExpired({ absoluteExpiry: Number.NaN }, NOW)).toBe(false);
         expect(sessionExpired({ absoluteExpiry: Number.POSITIVE_INFINITY }, NOW)).toBe(false);
+    });
+});
+
+describe("rememberedSession", () => {
+    const policy = { ...DEFAULT_SESSION_POLICY, shortMs: 24 * 3_600_000, rememberedMs: 30 * 86_400_000 };
+    const now = Date.UTC(2026, 10, 23, 12);
+
+    it("takes the token's own word when it has one", () => {
+        expect(rememberedSession({ remembered: true, absoluteExpiry: now + 1_000 }, policy, now)).toBe(true);
+        expect(rememberedSession({ remembered: false, absoluteExpiry: now + 20 * 86_400_000 }, policy, now)).toBe(false);
+    });
+
+    it("keeps a session minted before the claim remembered when its deadline says it was", () => {
+        // Signed in with "remember me" before tokens carried the claim: the
+        // deadline is weeks away, which a short session can never be.
+        expect(rememberedSession({ absoluteExpiry: now + 20 * 86_400_000 }, policy, now)).toBe(true);
+    });
+
+    it("leaves a short one short, and one with no deadline at all", () => {
+        expect(rememberedSession({ absoluteExpiry: now + 3_600_000 }, policy, now)).toBe(false);
+        expect(rememberedSession({}, policy, now)).toBe(false);
     });
 });
