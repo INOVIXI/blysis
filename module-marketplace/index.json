@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-23",
-  "updatedAt": "2026-11-23T12:32:21Z",
+  "updatedAt": "2026-11-23T13:48:25Z",
   "modules": [
     {
       "id": "ai-moderation",
@@ -603,13 +603,13 @@
           "description": "新闻与公告系统"
         }
       },
-      "version": "1.16.1",
+      "version": "1.16.2",
       "coreVersion": "^5.44.0",
       "author": "Blysis",
       "icon": "Newspaper",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-11-16T19:15:25Z",
+      "updatedAt": "2026-11-23T13:48:25Z",
       "screenshots": [],
       "tags": [
         "community"
