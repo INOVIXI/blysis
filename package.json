@@ -114,7 +114,8 @@
     "nodemailer": "$nodemailer",
     "mysql2": "$mysql2",
     "deepmerge-ts": "^8.0.2",
-    "js-yaml": "^4.3.2"
+    "js-yaml": "^4.3.2",
+    "effect": "^3.22.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
