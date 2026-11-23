@@ -39,3 +39,19 @@ export function publishedArticle(): {
         OR: [{ publishAt: null }, { publishAt: { lte: now } }],
     };
 }
+
+/**
+ * The same question as `publishedArticle()`, asked of a row already read.
+ *
+ * The article endpoint finds its row by id, slug or number and then decides
+ * who may see it, because an editor reads a draft through the same door. Two
+ * spellings of one rule, side by side, so a change to one is seen in the other.
+ */
+export function isPublishedArticle(
+    article: { status: string; publishedAt: Date | null; publishAt: Date | null },
+    now: Date = new Date(),
+): boolean {
+    return article.status === "PUBLISHED"
+        && article.publishedAt !== null && article.publishedAt <= now
+        && (article.publishAt === null || article.publishAt <= now);
+}
