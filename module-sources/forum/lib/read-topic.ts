@@ -121,7 +121,6 @@ export async function readTopic(id: string, postsPage: number, locale = ""): Pro
         ...named,
         posts: named.posts.map(({ likes, ...post }) => ({ ...post, liked: likes.length > 0 })),
     };
-    if (!topic) return null;
     if (!(await accessToCategory(topic.categoryId, reader?.user?.role ?? null)).view) return null;
     if (!readerIsAdmin && topic.moderationState !== "APPROVED") return null;
 
