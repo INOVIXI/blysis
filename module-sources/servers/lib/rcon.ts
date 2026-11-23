@@ -30,9 +30,10 @@ interface RconClient {
 }
 
 /**
- * `rcon-client` is CommonJS and must not be traced into the bundle: the
- * modules that need it are compiled into the same build as the ones that do
- * not. `eval('require')` keeps the bundler from following it.
+ * `rcon-client` must not be traced into the bundle: the modules that need it
+ * are compiled into the same build as the ones that do not. `eval('require')`
+ * keeps the bundler from following it. Since 5.0 the package is ESM, which
+ * Node's `require` loads from 22.12 on; the project requires Node 24.
  */
 function loadRcon(): { connect: (config: RconConfig) => Promise<RconClient> } {
     // eslint-disable-next-line no-eval
