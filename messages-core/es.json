@@ -1742,7 +1742,8 @@
     "demoAsMember": "Como miembro",
     "demoResetNote": "Todo lo de aquí se restablece cada hora, así que lo que hagas no estropeará la experiencia del siguiente visitante. Algunas acciones están desactivadas: enviar correos, pagos reales y cualquier cosa que bloquee la cuenta que estás usando.",
     "demoFillFor": "Rellena los datos {who}",
-    "errorConnectFirst": "Este inicio de sesión no está conectado a ninguna cuenta aquí. Entra con tu usuario y contraseña y luego conéctalo desde tu página de cuenta."
+    "errorConnectFirst": "Este inicio de sesión no está conectado a ninguna cuenta aquí. Entra con tu usuario y contraseña y luego conéctalo desde tu página de cuenta.",
+    "errorSessionEnded": "La sesión de este navegador ya había terminado, así que se ha cerrado. Inicia sesión de nuevo."
   },
   "search": {
     "title": "Buscar",

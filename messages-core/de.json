@@ -1742,7 +1742,8 @@
     "demoAsMember": "Als Mitglied",
     "demoResetNote": "Alles hier wird jede Stunde zurückgesetzt, damit nichts, was du tust, den nächsten Besuch stört. Einige Aktionen sind deaktiviert: E-Mails versenden, echte Zahlungen und alles, was das gerade genutzte Konto sperren würde.",
     "demoFillFor": "Trage die Angaben {who} ein",
-    "errorConnectFirst": "Diese Anmeldung ist hier mit keinem Konto verbunden. Melde dich mit Benutzername und Passwort an und verbinde sie dann auf deiner Kontoseite."
+    "errorConnectFirst": "Diese Anmeldung ist hier mit keinem Konto verbunden. Melde dich mit Benutzername und Passwort an und verbinde sie dann auf deiner Kontoseite.",
+    "errorSessionEnded": "Die Sitzung in diesem Browser war bereits abgelaufen und wurde abgemeldet. Melde dich erneut an."
   },
   "search": {
     "title": "Suche",

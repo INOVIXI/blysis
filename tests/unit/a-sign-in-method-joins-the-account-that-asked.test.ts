@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import type { Adapter, AdapterAccount } from "@auth/core/adapters";
 import {
     CONNECT_REFUSAL,
+    connectRefusalPath,
     disconnectRefusal,
     oauthSignInRefusal,
     signInMethodSignUps,
@@ -32,7 +33,7 @@ const facts = (over: Partial<OAuthSignInFacts> = {}): OAuthSignInFacts => ({
     ...over,
 });
 
-const member = { userId: "m1", impersonating: false };
+const member = { userId: "m1", impersonating: false, ended: false };
 
 describe("oauthSignInRefusal, nobody signed in", () => {
     it("signs in to the account the provider account is bound to", () => {
@@ -82,7 +83,7 @@ describe("oauthSignInRefusal, a member signed in", () => {
         // Auth.js links to the cookie's `sub`, which is still the admin's own
         // id during an impersonation: the member's screen would attach the
         // provider account to the admin.
-        const acting = { userId: "m1", impersonating: true };
+        const acting = { userId: "m1", impersonating: true, ended: false };
         expect(oauthSignInRefusal(facts({ caller: acting, connectStarted: true })))
             .toBe(CONNECT_REFUSAL.impersonating);
         expect(oauthSignInRefusal(facts({ caller: acting, boundTo: "m1" })))
@@ -92,6 +93,30 @@ describe("oauthSignInRefusal, a member signed in", () => {
     it("is not stopped by the site closing new accounts, because none is made", () => {
         expect(oauthSignInRefusal(facts({ caller: member, connectStarted: true, newAccountsOpen: false })))
             .toBeNull();
+    });
+});
+
+describe("oauthSignInRefusal, a cookie whose session has ended", () => {
+    // The cookie outlives the session: a deadline passed, or the member signed
+    // the device out from another one. Auth.js still links to whoever it
+    // names, so nothing may be linked to it, and the person at the keyboard is
+    // told their session ended rather than that somebody else holds the account.
+    const ended = { userId: "m1", impersonating: false, ended: true };
+
+    it("links nothing to it and says the session ended", () => {
+        expect(oauthSignInRefusal(facts({ caller: ended }))).toBe(CONNECT_REFUSAL.sessionEnded);
+    });
+
+    it("says the session ended, not that the account is somebody else's", () => {
+        expect(oauthSignInRefusal(facts({ caller: ended, boundTo: "m2" }))).toBe(CONNECT_REFUSAL.sessionEnded);
+    });
+
+    it("lets its own member sign in again", () => {
+        expect(oauthSignInRefusal(facts({ caller: ended, boundTo: "m1" }))).toBeNull();
+    });
+
+    it("sends the reader to a page that can say so while signed out", () => {
+        expect(connectRefusalPath(CONNECT_REFUSAL.sessionEnded)).toBe("/auth/error?error=SessionEnded");
     });
 });
 
