@@ -8,11 +8,14 @@
  * variables a client component could never see. One list of keys, here, is
  * what both halves read now (`the-site-screen-writes-what-the-site-reads`).
  *
- * No imports: the settings screen is a client component and the public
- * settings route runs on the server, and both need this.
+ * Nothing server-only, and nothing that is: the settings screen is a client
+ * component and the public settings route runs on the server, and both need
+ * this. `setting-link.ts` is plain functions with no imports of its own.
  */
 
 /** A place the site can be found off the site. */
+import { webAddress } from "@/core/lib/setting-link";
+
 export interface SiteSocialLink {
     /** The setting that holds the address. */
     key: string;
@@ -91,6 +94,9 @@ export function siteSettingsPatch(form: SiteForm, loaded: Record<string, unknown
             if (text(loaded[old])) patch[old] = "";
         }
     }
+    // Saved as the address it is, so every place that draws it gets a link
+    // off the site rather than a path on it.
+    for (const link of SITE_SOCIAL_LINKS) patch[link.key] = webAddress(patch[link.key]);
     patch.site_timezone = text(form.site_timezone) || DEFAULT_TIMEZONE;
     return patch;
 }
