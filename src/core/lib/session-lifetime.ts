@@ -101,6 +101,24 @@ export function parseRemember(raw: unknown): boolean {
     return value === "true" || value === "1" || value === "on" || value === "yes";
 }
 
+/**
+ * Whether a token is a remembered session.
+ *
+ * The `remembered` claim is newer than "remember me": a token minted before
+ * it carries only its deadline. Renewal measures the next deadline by this
+ * answer, so reading a missing claim as no cut a member's thirty days to a
+ * day on their first request after the operator turned renewal on. A deadline
+ * further away than a short session can ever be is a remembered one.
+ */
+export function rememberedSession(
+    token: { remembered?: unknown; absoluteExpiry?: unknown },
+    policy: SessionPolicy,
+    now: number = Date.now(),
+): boolean {
+    if (typeof token.remembered === "boolean") return token.remembered;
+    return typeof token.absoluteExpiry === "number" && token.absoluteExpiry - now > policy.shortMs;
+}
+
 /** Epoch milliseconds at which a session minted (or last renewed) now stops working. */
 export function sessionExpiresAt(policy: SessionPolicy, remember: boolean, now: number = Date.now()): number {
     return now + (remember ? policy.rememberedMs : policy.shortMs);

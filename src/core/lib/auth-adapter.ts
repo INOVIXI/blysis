@@ -88,15 +88,20 @@ function usableEmail(value: unknown): value is string {
 /**
  * A username seed from whatever the provider gave us. Display names are
  * free-form - emoji, spaces, non-Latin scripts - so this keeps only what a
- * username may contain and falls back to the local part of the email.
+ * username typed at sign-up may contain (letters, digits, underscores) and
+ * falls back to the local part of the email. A dot used to survive, and
+ * `/u/john.doe` looks like a file to the proxy, which then stands aside with
+ * maintenance and the IP blocklist (`proxy-paths.ts`).
  */
 export function baseUsername(name: unknown, email: string): string {
     const source = typeof name === "string" && name.trim() ? name : email.split("@")[0];
     const slug = source
         .normalize("NFKD")
-        .replace(/[^\w.-]+/g, "_")
+        // The accents NFKD splits off, so "José" stays "Jose" and not "Jos_e".
+        .replace(/\p{M}+/gu, "")
+        .replace(/\W+/g, "_")
         .replace(/_{2,}/g, "_")
-        .replace(/^[_.-]+|[_.-]+$/g, "")
+        .replace(/^_+|_+$/g, "")
         .slice(0, USERNAME_MAX);
     return slug || `user_${crypto.randomUUID().slice(0, 8)}`;
 }

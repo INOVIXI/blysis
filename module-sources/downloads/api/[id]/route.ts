@@ -45,6 +45,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     const download = await prisma.download.findUnique({ where: { id } });
     if (!download) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    // A closed file is off the list and off its guide page; its old address
+    // must not go on handing it out, counting it and firing the hook. An
+    // administrator can still fetch it to check it before reopening it.
+    if (!download.isActive && !(session?.user?.id && (await isAdmin(session.user.id)))) {
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
 
     // Validate URL to prevent path traversal and SSRF
     if (download.fileUrl && !download.fileUrl.startsWith('https://')) {

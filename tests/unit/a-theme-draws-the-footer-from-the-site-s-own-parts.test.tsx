@@ -81,6 +81,18 @@ describe("what the footer says, for a theme that draws it", () => {
         expect(result.current.columns.map((c) => c.title)).toEqual([EN.footer.quickLinks]);
     });
 
+    it("draws a social address only where it leads off the site to the network", () => {
+        // Saved before the screen added the scheme: drawn as it stood, a bare
+        // host became a path on this site, and anything else went in as typed.
+        state.settings = {
+            site_facebook_url: "facebook.com/acme",
+            site_x_url: "javascript:alert(1)",
+            site_youtube_url: "https://youtube.com/@acme",
+        };
+        const { result } = renderHook(() => useFooter(), { wrapper });
+        expect(result.current.social.map((l) => l.href)).toEqual(["https://facebook.com/acme", "https://youtube.com/@acme"]);
+    });
+
     it("leaves the copyright line to the theme unless the operator wrote one", () => {
         expect(renderHook(() => useFooter(), { wrapper }).result.current.copyright).toBeNull();
         state.settings = { footer_copyright: "All ours." };

@@ -93,6 +93,21 @@ describe("baseUsername", () => {
         expect(slug).not.toBe("");
         expect(slug.length).toBeLessThanOrEqual(24);
     });
+
+    it("gives the shape a username typed at sign-up has: letters, digits, underscores", () => {
+        // A dot made the profile address look like a file, and the proxy
+        // stands aside for files: maintenance and the IP blocklist with it.
+        expect(baseUsername("john.doe", "x@example.com")).toBe("john_doe");
+        expect(baseUsername("-ada-lovelace-", "x@example.com")).toBe("ada_lovelace");
+        expect(baseUsername("", "john.doe@example.com")).toBe("john_doe");
+        for (const name of ["a.b-c", "José Ñandú", "x..y", "dots.and-dashes.everywhere"]) {
+            expect(baseUsername(name, "x@example.com"), name).toMatch(/^[A-Za-z0-9_]+$/);
+        }
+    });
+
+    it("keeps an accented letter as its letter rather than a gap", () => {
+        expect(baseUsername("José Ñandú", "x@example.com")).toBe("Jose_Nandu");
+    });
 });
 
 describe("placeholderEmail", () => {

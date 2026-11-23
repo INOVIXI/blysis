@@ -1742,7 +1742,8 @@
     "demoAsMember": "As a member",
     "demoResetNote": "Everything here is put back every hour, so nothing you do can spoil it for the next visitor. A few actions are switched off: sending mail, real payments, and anything that would lock the account you are using.",
     "demoFillFor": "Fill in the details {who}",
-    "errorConnectFirst": "This sign-in is not connected to an account here. Sign in with your username and password, then connect it from your account page."
+    "errorConnectFirst": "This sign-in is not connected to an account here. Sign in with your username and password, then connect it from your account page.",
+    "errorSessionEnded": "The session this browser held had already ended, so it has been signed out. Sign in again."
   },
   "search": {
     "title": "Search",
