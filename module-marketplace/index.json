@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "updated": "2026-11-23",
-  "updatedAt": "2026-11-23T12:32:21Z",
+  "updatedAt": "2026-11-23T13:51:14Z",
   "modules": [
     {
       "id": "ai-moderation",
@@ -2482,13 +2482,13 @@
           "description": "带分类、主题和回复的社区讨论论坛"
         }
       },
-      "version": "1.18.0",
+      "version": "1.18.1",
       "coreVersion": "^5.39.0",
       "author": "Blysis Team",
       "icon": "MessageSquare",
       "category": "community",
       "verified": true,
-      "updatedAt": "2026-11-13T18:44:47Z",
+      "updatedAt": "2026-11-23T13:51:14Z",
       "screenshots": [],
       "tags": [
         "community"

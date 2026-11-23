@@ -3,7 +3,7 @@ import { refuseSilenced, isRestrictedFrom, moderationStateFor } from "@/core/sdk
 import { pageParams, hasPermission, prisma, rateLimitForRole, readJsonBody } from "@/core/sdk/server";
 import { auth } from "@/core/sdk/auth";
 import { forumPostSchema, forumTopicUpdateSchema } from "../../../lib/validations";
-import { countTopicView, readTopic } from "../../../lib/read-topic";
+import { readTopic } from "../../../lib/read-topic";
 import { accessToCategory } from "../../../lib/visible-categories";
 
 type RouteParams = { params: Promise<{ id: string }> };
@@ -14,7 +14,8 @@ type RouteParams = { params: Promise<{ id: string }> };
 // page renders the topic on the server now and the two must not disagree: a
 // private section hidden by one and not the other is worse than one nobody
 // hid. This endpoint is still what pages the replies and what the page asks
-// again after somebody posts.
+// again after somebody posts, which is why it counts no view: the page counts
+// the one visit when it renders, and turning a page of replies is not another.
 export async function GET(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
 
@@ -27,7 +28,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     if (!read) {
         return NextResponse.json({ error: "Topic not found" }, { status: 404 });
     }
-    await countTopicView(read.topic.id);
 
     return NextResponse.json(read);
 }
