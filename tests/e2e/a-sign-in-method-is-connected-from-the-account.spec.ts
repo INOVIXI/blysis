@@ -57,3 +57,13 @@ test('a provider sign-in nobody connected says to connect it first', async ({ pa
     await page.goto('/en/auth/error?error=ConnectFirst');
     await expect(page.getByText('connect it from your account page')).toBeVisible();
 });
+
+test('a provider sign-in over a session that had ended says so and signs the old cookie out', async ({ page }) => {
+    await login(page);
+    await page.goto('/en/auth/error?error=SessionEnded');
+    await expect(page.getByText('had already ended')).toBeVisible();
+    await expect.poll(async () => {
+        const session = await (await page.request.get('/api/auth/session')).json();
+        return session?.user ?? null;
+    }).toBeNull();
+});

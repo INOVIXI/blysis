@@ -93,6 +93,17 @@ async function sessionLive(token: Record<string, unknown>, tokenId: string): Pro
 }
 
 /**
+ * Whether a cookie that still decodes names a session that is over. A token
+ * that cannot name its session row is not judged here, as before: it links
+ * nothing, because no connect note can be read with it.
+ */
+async function sessionEnded(token: Record<string, unknown>): Promise<boolean> {
+    if (sessionExpired(token)) return true;
+    const tokenId = typeof token.tokenId === "string" ? token.tokenId : "";
+    return tokenId !== "" && !(await sessionLive(token, tokenId));
+}
+
+/**
  * Off is the closed position, so a settings read that fails answers closed:
  * an account that should not have been made is harder to undo than a sign-in
  * somebody retries.
@@ -134,16 +145,18 @@ export async function oauthSignInGate(input: {
     const token = await callerToken({ headers: input.headers });
     const sub = typeof token?.sub === "string" && token.sub !== "" ? token.sub : null;
     const caller = token && sub
-        ? { userId: sub, impersonating: typeof token.originalUserId === "string" && token.originalUserId !== "" }
+        ? {
+            userId: sub,
+            impersonating: typeof token.originalUserId === "string" && token.originalUserId !== "",
+            ended: await sessionEnded(token),
+        }
         : null;
 
     let connectStarted = false;
     let callerHasProvider = false;
-    if (token && caller && !caller.impersonating && !bound) {
+    if (token && caller && !caller.impersonating && !caller.ended && !bound) {
         const tokenId = typeof token.tokenId === "string" ? token.tokenId : "";
-        connectStarted = tokenId !== ""
-            && (await sessionLive(token, tokenId))
-            && (await takeConnect(caller.userId, tokenId, provider));
+        connectStarted = tokenId !== "" && (await takeConnect(caller.userId, tokenId, provider));
         if (connectStarted) {
             callerHasProvider = (await prisma.account.count({ where: { userId: caller.userId, provider } })) > 0;
         }

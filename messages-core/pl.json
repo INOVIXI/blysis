@@ -1742,7 +1742,8 @@
     "demoAsMember": "jako członek",
     "demoResetNote": "Wszystko tutaj przywracane jest co godzinę, więc nic, co zrobisz, nie zepsuje strony następnym odwiedzającym. Kilka działań jest wyłączonych: wysyłanie poczty, prawdziwe płatności i wszystko, co zablokowałoby konto, z którego korzystasz.",
     "demoFillFor": "Wypełnij dane {who}",
-    "errorConnectFirst": "To logowanie nie jest tutaj połączone z żadnym kontem. Zaloguj się nazwą użytkownika i hasłem, a potem połącz je na stronie konta."
+    "errorConnectFirst": "To logowanie nie jest tutaj połączone z żadnym kontem. Zaloguj się nazwą użytkownika i hasłem, a potem połącz je na stronie konta.",
+    "errorSessionEnded": "Sesja w tej przeglądarce już wygasła, więc została wylogowana. Zaloguj się ponownie."
   },
   "search": {
     "title": "Szukaj",

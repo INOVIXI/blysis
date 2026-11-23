@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/core/lib/i18n/navigation";
 import { buttonClassName } from "@/core/components/ui/button";
@@ -11,6 +13,13 @@ export default function AuthErrorPage() {
     const searchParams = useSearchParams();
     const errorType = searchParams.get("error") || "Default";
 
+    // A provider sign-in was refused because the browser still held the
+    // cookie of a session that is over, and Auth.js would have linked to it.
+    // Signing that cookie out is what lets "Try again" work.
+    useEffect(() => {
+        if (errorType === "SessionEnded") void signOut({ redirect: false });
+    }, [errorType]);
+
     const message = (() => {
         switch (errorType) {
             case "Configuration": return t("errorConfiguration");
@@ -18,6 +27,7 @@ export default function AuthErrorPage() {
             case "Verification": return t("errorVerification");
             case "OAuthAccountNotLinked": return t("errorOAuthAccountNotLinked");
             case "ConnectFirst": return t("errorConnectFirst");
+            case "SessionEnded": return t("errorSessionEnded");
             default: return t("errorDefault");
         }
     })();

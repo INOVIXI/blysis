@@ -1742,7 +1742,8 @@
     "demoAsMember": "En tant que membre",
     "demoResetNote": "Tout ici est remis à zéro chaque heure, afin que rien de ce que vous faites ne gêne le visiteur suivant. Quelques actions sont désactivées : envoi d’e-mails, paiements réels et tout ce qui verrouillerait le compte que vous utilisez.",
     "demoFillFor": "Renseignez les informations {who}",
-    "errorConnectFirst": "Cette connexion n'est liée à aucun compte ici. Connectez-vous avec votre nom d'utilisateur et votre mot de passe, puis connectez-la depuis votre page de compte."
+    "errorConnectFirst": "Cette connexion n'est liée à aucun compte ici. Connectez-vous avec votre nom d'utilisateur et votre mot de passe, puis connectez-la depuis votre page de compte.",
+    "errorSessionEnded": "La session de ce navigateur avait déjà pris fin, elle a donc été fermée. Connecte-toi à nouveau."
   },
   "search": {
     "title": "Recherche",

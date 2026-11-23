@@ -1742,7 +1742,8 @@
     "demoAsMember": "Come membro",
     "demoResetNote": "Tutto qui viene ripristinato ogni ora, così nulla di ciò che fai può rovinarlo per il visitatore successivo. Alcune azioni sono disattivate: invio di email, pagamenti reali e tutto ciò che bloccherebbe l’account che stai usando.",
     "demoFillFor": "Compila i dati {who}",
-    "errorConnectFirst": "Questo accesso non è collegato a nessun account qui. Accedi con nome utente e password, poi collegalo dalla pagina del tuo account."
+    "errorConnectFirst": "Questo accesso non è collegato a nessun account qui. Accedi con nome utente e password, poi collegalo dalla pagina del tuo account.",
+    "errorSessionEnded": "La sessione di questo browser era già scaduta, quindi è stata chiusa. Accedi di nuovo."
   },
   "search": {
     "title": "Cerca",

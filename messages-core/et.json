@@ -1742,7 +1742,8 @@
     "demoAsMember": "Liikmena",
     "demoResetNote": "Kõik siin pannakse iga tund tagasi, nii et miski, mida teed, ei riku seda järgmisele külastajale. Mõned toimingud on välja lülitatud: e-kirjade saatmine, päris maksed ja kõik, mis lukustaks sinu kasutatava konto.",
     "demoFillFor": "Täida andmed {who}",
-    "errorConnectFirst": "See sisselogimine pole siin ühegi kontoga ühendatud. Logi sisse kasutajanime ja parooliga ning ühenda see siis oma kontolehel."
+    "errorConnectFirst": "See sisselogimine pole siin ühegi kontoga ühendatud. Logi sisse kasutajanime ja parooliga ning ühenda see siis oma kontolehel.",
+    "errorSessionEnded": "Selle brauseri seanss oli juba lõppenud, seega logiti see välja. Logi uuesti sisse."
   },
   "search": {
     "title": "Otsi",
