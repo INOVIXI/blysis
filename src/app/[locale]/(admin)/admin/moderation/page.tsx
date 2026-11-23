@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Card, CardContent } from "@/core/components/ui/card";
 import { Button } from "@/core/components/ui/button";
 import { Pagination } from "@/core/components/ui/pagination";
@@ -61,6 +61,13 @@ export default function ModerationPage() {
     const [total, setTotal] = useState(0);
     /** The rows a rejection is being asked about; null while the dialog is closed. */
     const [rejecting, setRejecting] = useState<ModerationRowItem[] | null>(null);
+    /**
+     * The newest list request. A view change and a decision each ask again,
+     * and the answers come back in any order; only the newest one may draw,
+     * or the queue lands under the Rejected tab. Guarded by
+     * tests/unit/a-moderation-list-shows-the-view-it-was-asked-for.test.tsx.
+     */
+    const newestList = useRef(0);
 
     const typeIds = useMemo(
         () => Object.keys(types).filter((id) => view === "pending" || types[id].canListRejected),
@@ -86,6 +93,8 @@ export default function ModerationPage() {
     }, []);
 
     const fetchItems = useCallback(async () => {
+        const request = ++newestList.current;
+        const superseded = () => request !== newestList.current;
         if (typeIds.length === 0) {
             setItems([]);
             setTotal(0);
@@ -105,6 +114,7 @@ export default function ModerationPage() {
                         ),
                     ),
                 );
+                if (superseded()) return;
                 const combined: ModerationRowItem[] = [];
                 let sum = 0;
                 for (const r of results) {
@@ -127,13 +137,14 @@ export default function ModerationPage() {
                 );
                 if (res.ok) {
                     const data: ListPayload = await res.json();
+                    if (superseded()) return;
                     setItems(data.items);
                     setTotal(data.total);
                     setPages(data.pages);
                 }
             }
         } finally {
-            setLoading(false);
+            if (!superseded()) setLoading(false);
         }
     }, [activeTab, page, typeIds, view]);
 
