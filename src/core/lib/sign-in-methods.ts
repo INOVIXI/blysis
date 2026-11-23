@@ -22,6 +22,8 @@ import { getModuleStates } from "./module-cache";
 import { isEnabledIn } from "./module-enabled";
 import { callerToken } from "./session-registry";
 import { sessionExpired } from "./session-lifetime";
+import { isLegacyPasswordHash } from "./legacy-password-hash";
+import { legacyPasswordHashesAccepted } from "./security-settings";
 import {
     disconnectRefusal,
     oauthSignInRefusal,
@@ -198,10 +200,20 @@ export async function signInMethodsOf(userId: string): Promise<SignInMethodRow[]
     });
 }
 
+/**
+ * Whether a stored password is one the site will sign somebody in with. A
+ * hash imported from an older system is read only while the operator allows
+ * it (`password-hash.ts`), so until then it is no way in.
+ */
+async function signsIn(password: string | null | undefined): Promise<boolean> {
+    if (!password) return false;
+    return !isLegacyPasswordHash(password) || (await legacyPasswordHashesAccepted());
+}
+
 /** Whether a member can sign in with a password; the page needs it to explain a refused disconnect. */
 export async function hasPassword(userId: string): Promise<boolean> {
     const user = await prisma.user.findUnique({ where: { id: userId }, select: { password: true } });
-    return Boolean(user?.password);
+    return signsIn(user?.password);
 }
 
 export type DisconnectResult =
@@ -217,6 +229,10 @@ export type DisconnectResult =
  * through, and the account is left with no way in at all.
  */
 export async function disconnectSignInMethod(userId: string, provider: string): Promise<DisconnectResult> {
+    // Only a method that can sign somebody in today counts as another way in:
+    // one whose module was switched off, or whose credentials were removed,
+    // would leave an account nobody can enter.
+    const working = new Set(await connectableProviders());
     return prisma.$transaction(async (tx) => {
         await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${userId} FOR UPDATE`;
         const user = await tx.user.findUnique({ where: { id: userId }, select: { password: true } });
@@ -229,7 +245,8 @@ export async function disconnectSignInMethod(userId: string, provider: string): 
         const target = accounts.find((account) => account.provider === provider);
         if (!target) return { ok: false, code: "not_found" } as const;
 
-        const refusal = disconnectRefusal({ hasPassword: Boolean(user.password), otherMethods: accounts.length - 1 });
+        const otherMethods = accounts.filter((account) => account.id !== target.id && working.has(account.provider)).length;
+        const refusal = disconnectRefusal({ hasPassword: await signsIn(user.password), otherMethods });
         if (refusal) return { ok: false, code: refusal } as const;
 
         await tx.account.delete({ where: { id: target.id } });
